@@ -1,0 +1,293 @@
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:t_max/data/comscaleinfo_data.dart';
+import 'package:t_max/data/currentport_data.dart';
+import 'package:t_max/data/modifyscale_data.dart';
+import 'package:t_max/pages/dialog/showComPort_dialog.dart';
+import '../../data/comport_data.dart';
+import '../../data/device_data.dart';
+import '../../data/dialog_data.dart';
+import '../../data/scalecmd_data.dart';
+import '../../eventbus/eventbus.dart';
+import '../../main.dart';
+import '../widget/comdropdown.dart';
+import '../widget/comportdorpdown.dart';
+import '../widget/dropdown.dart';
+
+List<String> comLists = [];
+String comPort = "";
+// List<String> comPortList = ['COM1', 'COM2', 'COM3'];
+List<String> baudRateList = [
+  '115200',
+  '57600',
+  '19200',
+  '14400',
+  '9600',
+  '4800',
+  '2400'
+];
+List<String> dataBitsList = ['8', '7', '6', '5'];
+List<String> stopBitsList = ['1', '1.5', '2'];
+List<String> checkBitsList = ['None', 'Odd', 'Even'];
+List<String> protocolList = ['Xon/Xoff', 'None', 'Rts/Cts', 'Dsr/Dtr'];
+String dialogtype = "com";
+String connectionType = "";
+TextEditingController deviceNum =
+    TextEditingController(text: myDevicedata.scaleSn);
+TextEditingController deviceName =
+    TextEditingController(text: myDevicedata.name);
+TextEditingController model = TextEditingController();
+TextEditingController description = TextEditingController();
+
+modifyAddComPortDialog(BuildContext context) {
+  tempCurrentPort = myCurrentPort;
+  return showDialog(
+      barrierDismissible: false, //设置为false，点击空白处弹窗不关闭
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(builder: ((context, setState) {
+          return AlertDialog(
+            title: Container(
+                color: Colors.blue.shade900,
+                child: Row(
+                  children: const [
+                    Icon(Icons.usb, color: Colors.white),
+                    Text("设备信息修改", style: TextStyle(color: Colors.white))
+                  ],
+                )),
+            content: Container(
+              height: 465,
+              decoration: const BoxDecoration(
+                  color: Color.fromARGB(255, 233, 232, 232)),
+              child: Column(
+                children: [
+                  const SizedBox(height: 2),
+                  Container(
+                    decoration: const BoxDecoration(color: Colors.white),
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 10),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: const [
+                            Text("基本信息设置"),
+                          ],
+                        ),
+                        const SizedBox(height: 15),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text("连接名称："),
+                                SizedBox(
+                                  width: 200,
+                                  height: 30,
+                                  child: TextField(
+                                    controller: deviceName,
+                                    maxLength: 20,
+                                    maxLengthEnforcement:
+                                        MaxLengthEnforcement.enforced,
+                                    maxLines: 1,
+                                    textAlignVertical: TextAlignVertical.top,
+                                    decoration: const InputDecoration(
+                                      counterText: "",
+                                      // hintText: "请输入机种类型，如：ztp",
+                                      border: OutlineInputBorder(),
+                                    ),
+                                    onChanged: (value) {
+                                      print(value);
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(height: 15),
+                                const Text("串口："),
+                                ComDropdown(),
+                                const SizedBox(height: 15),
+                                const Text("数据位："),
+                                ComPortDropdown(1, dataBitsList,
+                                    myCurrentPort.dataBits.toString()),
+                                const SizedBox(height: 15),
+                                const Text("停止位："),
+                                ComPortDropdown(
+                                    2,
+                                    stopBitsList,
+                                    (myCurrentPort.stopBits == 0)
+                                        ? (stopBitsList[0])
+                                        : (myCurrentPort.stopBits == 1)
+                                            ? (stopBitsList[1])
+                                            : (myCurrentPort.stopBits == 2)
+                                                ? (stopBitsList[2])
+                                                : stopBitsList[0]),
+                                const SizedBox(height: 15),
+                                const Text("设备编号："),
+                                SizedBox(
+                                  width: 200,
+                                  height: 30,
+                                  child: TextField(
+                                    controller: deviceNum,
+                                    maxLength: 20,
+                                    maxLengthEnforcement:
+                                        MaxLengthEnforcement.enforced,
+                                    maxLines: 1,
+                                    textAlignVertical: TextAlignVertical.top,
+                                    decoration: const InputDecoration(
+                                      counterText: "",
+                                      // hintText: "请输入机种类型，如：ztp",
+                                      border: OutlineInputBorder(),
+                                    ),
+                                    onChanged: (value) {
+                                      print(value);
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(width: 60),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text("机种类型："),
+                                SizedBox(
+                                  width: 200,
+                                  height: 30,
+                                  child: TextField(
+                                    controller: deviceName,
+                                    maxLength: 20,
+                                    maxLengthEnforcement:
+                                        MaxLengthEnforcement.enforced,
+                                    maxLines: 1,
+                                    textAlignVertical: TextAlignVertical.top,
+                                    decoration: const InputDecoration(
+                                      counterText: '',
+                                      // hintText: "请输入机种类型，如：ztp",
+                                      border: OutlineInputBorder(),
+                                    ),
+                                    onChanged: (value) {
+                                      print(value);
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(height: 15),
+                                const Text("波特率："),
+                                ComPortDropdown(3, baudRateList,
+                                    myCurrentPort.baud.toString()),
+                                const SizedBox(height: 15),
+                                const Text("校验："),
+                                ComPortDropdown(
+                                    4,
+                                    checkBitsList,
+                                    (myCurrentPort.parity == 0)
+                                        ? (checkBitsList[0])
+                                        : (myCurrentPort.parity == 1)
+                                            ? (checkBitsList[1])
+                                            : (myCurrentPort.parity == 2)
+                                                ? (checkBitsList[2])
+                                                : checkBitsList[0]),
+                                // Dropdown(checkBitsList),
+                                const SizedBox(height: 15),
+                                const Text("协议："),
+                                // Dropdown(protocolList),
+                                Container(
+                                  child: DropdownButtonFormField<String>(
+                                    isExpanded: true,
+
+                                    // decoration: const InputDecoration(border: OutlineInputBorder()),
+                                    // 设置默认值
+                                    // value: protocolList[0],
+
+                                    // 选择回调
+                                    onChanged: (String? newPosition) {
+                                      myComportdata.parity =
+                                          newPosition.toString();
+                                      if (kDebugMode) {
+                                        print(myComportdata.parity);
+                                      }
+                                      setState(() {
+                                        eventBus.fire(
+                                            EventComportdata(myComportdata));
+                                      });
+                                    },
+                                    // 传入可选的数组
+                                    items: protocolList
+                                        .map<DropdownMenuItem<String>>(
+                                            (String value) {
+                                      return DropdownMenuItem(
+                                          value: value, child: Text(value));
+                                    }).toList(),
+                                  ),
+                                  height: 53,
+                                  width: 200,
+                                  padding: const EdgeInsets.all(0),
+                                ),
+                                const SizedBox(height: 15),
+                                const Text(""),
+                                ElevatedButton(
+                                    onPressed: () {}, child: const Text("测试连接"))
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  OutlinedButton(
+                      child: const Text("确定"),
+                      onPressed: () {
+                        modifyComInfo();
+                        // myDialogData.type = dialogtype;
+                        // print(myDialogData.type);
+                        // connectionType =
+                        // deviceName.text.toString() + ",Icons.usb";
+                        // 传值
+                        Navigator.of(context).pop(connectionType);
+                      }),
+                  const SizedBox(width: 20),
+                  OutlinedButton(
+                      child: const Text("取消"),
+                      onPressed: () {
+                        Navigator.of(context)
+                            .pop(); // to go back to screen after submitting
+                      })
+                ],
+              )
+            ],
+          );
+        }));
+      });
+}
+
+void sendModifyInfo(String modifyString) {
+  myScaleCmd.cmdMode = "modify_scale";
+  myScaleCmd.cmdData = modifyString;
+  print(jsonEncode(myScaleCmd));
+  MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
+}
+
+void getScaleList() {
+  myScaleCmd.cmdMode = "get_scale_list";
+  myScaleCmd.cmdData = "";
+  MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
+}
+
+void modifyComInfo() {
+  String infoString = jsonEncode(tempCurrentPort);
+  myMediaConf.mediaInfoJson = infoString;
+  myMediaConf.type = myDevicedata.mediaType;
+  myModifyScale.scaleId = int.parse(myDevicedata.scaleID);
+  myModifyScale.mediaConf = myMediaConf;
+  String modifyInfoString = jsonEncode(myModifyScale);
+  sendModifyInfo(modifyInfoString);
+}
