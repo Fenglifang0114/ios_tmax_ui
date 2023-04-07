@@ -36,7 +36,8 @@ class _AddDevicePageState extends State<AddDevicePage> {
 
   late ScrollController _pageScrollerController;
 
-  String scaleUrl = 'ws://127.0.0.1:7878/tmax?scaleid=';
+  // String scaleUrl = 'ws://127.0.0.1:7878/tmax?scaleid=';
+  String scaleUrl = 'ws://10.5.52.55:7878/tmax?scaleid=';
 
   var _eventbus1;
   var _eventbus2;

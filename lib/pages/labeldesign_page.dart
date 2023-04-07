@@ -13,11 +13,13 @@ import '../main.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
+import 'addDevice_page.dart';
 import 'dialog/barcodeedit_dialog.dart';
 import 'dialog/qrcodeedit_dialog.dart';
 import 'widget/draggablefliating.dart';
 import 'widget/dropdown copy.dart';
 import 'widget/textlistItem.dart';
+import 'widget/themeColor.dart';
 
 class LabelDesignPage extends StatefulWidget {
   const LabelDesignPage({Key? key}) : super(key: key);
@@ -564,8 +566,10 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                   ),
                   ElevatedButton(
                       onPressed: () async {
+                        final directory = Directory.current.path;
                         String? outputFile =
                             (await FilePicker.platform.saveFile(
+                          initialDirectory: directory,
                           dialogTitle: 'Output file:',
                           type: FileType.custom,
                           allowedExtensions: ['json'],
@@ -595,8 +599,10 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                       onPressed: () async {
                         String filePath = '';
                         try {
+                          final directory = Directory.current.path;
                           FilePickerResult? result =
                               await FilePicker.platform.pickFiles(
+                            initialDirectory: directory,
                             type: FileType.custom,
                             allowedExtensions: ['json'],
                           );
@@ -702,31 +708,67 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
               const SizedBox(
                 width: 10,
               ),
-              ElevatedButton(
-                  onPressed: () {
-                    _exportCSV();
-                    setState(() {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: const Text('Download successful !',
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold)), ////此处需要秤回复
-                          backgroundColor: Colors.green.shade900));
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green.shade900, // 设置按钮的背景色
-                    elevation: 10, // 设置按钮的阴影
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
-                    ),
+              Column(
+                children: [
+                  const SizedBox(
+                    height: 10,
                   ),
-                  child: const Text('Download',
+                  ElevatedButton(
+                      onPressed: () {
+                        final directory = Directory.current.path;
+                        String dataTime = getDateTime();
+                        String outputFile;
+                        final file =
+                            File('$directory\\Download\\$dataTime.json');
+                        outputFile = file.path;
+                        _saveFormatToJson(outputFile);
+                        _exportCSV();
+                        setState(() {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: const Text('Download successful !',
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold)), ////此处需要秤回复
+                              backgroundColor: Colors.green.shade900));
+                        });
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green.shade900, // 设置按钮的背景色
+                        elevation: 10, // 设置按钮的阴影
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
+                        ),
+                      ),
+                      child: const Text('Download',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ))),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white, // 设置按钮的背景色
+                      elevation: 10, // 设置按钮的阴影
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
+                      ),
+                    ),
+                    child: Text(
+                      'Exit',
                       style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ))),
+                          color: Colors.blue.shade900,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
             ],
           ),
         ),
@@ -789,6 +831,24 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     );
   }
 
+  String pad0(int num) {
+    if (num < 10) {
+      return '0${num.toString()}';
+    }
+    return num.toString();
+  }
+
+  String getDateTime() {
+    // 1 yymmdd   2 ddmmyy 3 mmddyy
+    var currTime = DateTime.now();
+    String format = '';
+
+    format =
+        "${currTime.year}${pad0(currTime.month)}${pad0(currTime.day)}${pad0(currTime.hour)}${pad0(currTime.minute)}${pad0(currTime.second)}";
+
+    return format;
+  }
+
   double _getPageWidth() {
     if (_selectedPageSize == _pageSizes[0]) {
       return 480;
@@ -828,7 +888,8 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   void sendFormatToScale(String modifyString) {
     myScaleCmd.cmdMode = "down_print_format_to_scale";
     myScaleCmd.cmdData = modifyString;
-    MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
+    webchannel1.sendMessage(jsonEncode(myScaleCmd));
+    // MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
     print(jsonEncode(myScaleCmd));
   }
 

@@ -26,6 +26,7 @@ import '../dialog/setting_dialog.dart';
 import '../dialog/showComPort_dialog.dart';
 import 'package:path/path.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+import 'package:path_provider/path_provider.dart';
 
 class ShowWeightReport extends StatefulWidget {
   const ShowWeightReport({Key? key}) : super(key: key);
@@ -587,13 +588,19 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                           // elevation: 5.0,
                           child: const Text("Export report"),
                           onPressed: () async {
+                            final directory = Directory.current.path;
                             String? outputFile =
                                 (await FilePicker.platform.saveFile(
+                              initialDirectory: directory,
+                              type: FileType.custom,
                               dialogTitle: 'Output file:',
                               allowedExtensions: ["xlsx"],
                               fileName: 'report.xlsx',
                             ));
-                            _creatFile(outputFile!);
+                            if (outputFile != null) {
+                              _creatFile(outputFile);
+                            }
+
                             setState(() {
                               _errorText.text = "success";
                             });

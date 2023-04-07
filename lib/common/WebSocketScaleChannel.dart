@@ -1,29 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
-
-import 'package:get/get_rx/src/rx_typedefs/rx_typedefs.dart';
-import 'package:provider/provider.dart';
-import 'package:t_max/data/cominfo_data.dart';
-import 'package:t_max/data/cominfoslist_data.dart';
-import 'package:t_max/data/comscaleinfo_data.dart';
-import 'package:t_max/data/modifyresult_data.dart';
-import 'package:t_max/data/record_data.dart';
-
-import 'package:t_max/data/scalelist_data.dart';
-import 'package:t_max/pages/dialog/modifyComPort_dialog.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:flutter/material.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
-import '../data/comInfo_data.dart';
 import '../data/reqweightdata_data.dart';
-import '../data/sigalscale_data.dart';
+
 import '../eventbus/eventbus.dart';
 
 class WebSocketScaleChannel {
   late String url; //= 'ws://127.0.0.1:7878/tmax?scaleid=';
   late int scaleId;
-  late IOWebSocketChannel channel;
+  late IOWebSocketChannel channel = IOWebSocketChannel.connect(url);
   WebSocketScaleChannel(this.url);
   bool heartStatus = false;
   // late Timer hearTimer;
