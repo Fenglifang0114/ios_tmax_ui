@@ -45,13 +45,15 @@ class _TrialPageState extends State<TrialPage> {
       home: Scaffold(
           // AppBar：相当于iOS 的导航栏
           appBar: PreferredSize(
-              preferredSize: const Size.fromHeight(30),
-              child: AppBar(
-                title: version(),
-                //设置状态栏颜色渐变
-                flexibleSpace: Container(
-                    decoration: BoxDecoration(gradient: boxGradient())),
-              )),
+            preferredSize: const Size.fromHeight(30),
+            child: Offstage(
+                child: AppBar(
+              title: version(),
+              //设置状态栏颜色渐变
+              flexibleSpace:
+                  Container(decoration: BoxDecoration(gradient: boxGradient())),
+            )),
+          ),
           body: ListView(
             children: [
               Container(
