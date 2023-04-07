@@ -11,6 +11,7 @@ import '../data/device_data.dart';
 import '../eventbus/eventbus.dart';
 import '../pages/widget/themeColor.dart';
 import 'dialog/showComPort_dialog.dart';
+import 'labeldesign_page.dart';
 import 'widget/reusableListItem.dart';
 import 'widget/showWeightReport.dart';
 import 'widget/leftSidebar.dart';
@@ -202,6 +203,45 @@ class _AddDevicePageState extends State<AddDevicePage> {
                       const Divider(
                         height: 1.0,
                         color: Color(0xFF004a98),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(
+                            left: 20, top: 5, right: 20), //设置 child 居中
+                        alignment: const Alignment(0, 0),
+                        height: 40,
+                        width: 200, //边框设置
+                        decoration: new BoxDecoration(
+                            //背景
+                            color: Colors.yellow.shade900,
+                            //设置四周圆角 角度
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(20)),
+                            //设置四周边框
+                            // border: new Border.all(width: 1, color: Colors.red),
+                            boxShadow: const [
+                              BoxShadow(
+                                  color: Colors.blue,
+                                  offset: Offset(0.0, 2.0),
+                                  blurRadius: 1.0,
+                                  spreadRadius: 1.0),
+                            ]),
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return const LabelDesignPage();
+                            }));
+                          },
+                          child: const Text(
+                            "Print Format Design",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 15,
                       ),
                       Container(
                         margin: const EdgeInsets.only(

@@ -79,7 +79,7 @@ class _HomePageState extends State<HomePage> {
     // final _height = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: PreferredSize(
-          preferredSize: Size.fromHeight(30),
+          preferredSize: const Size.fromHeight(30),
           child: AppBar(
             title: version(),
             actions: [
@@ -94,9 +94,9 @@ class _HomePageState extends State<HomePage> {
                         ),
                         // Text(
                         //     "当前时间：${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')} ${(now.hour.toString().padLeft(2, '0'))}:${(now.minute.toString().padLeft(2, '0'))}:${(now.second.toString().padLeft(2, '0'))}"),
-                        SizedBox(width: 30),
+                        const SizedBox(width: 30),
                         Text("Current Device: " + myDevicedata.name + "  "),
-                        SizedBox(width: 30),
+                        const SizedBox(width: 30),
                         Text("Current User: " + myUserData.userName + "  "),
                       ],
                     ),
@@ -141,14 +141,14 @@ class _HomePageState extends State<HomePage> {
               //左侧添加设备
               Container(
                 width: 200,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                     border: Border(
                         right: BorderSide(width: 0.5, color: Colors.black))),
                 child: Column(
                   children: <Widget>[
                     Row(
                       children: [
-                        Icon(Icons.device_hub),
+                        const Icon(Icons.device_hub),
                         Text(S.of(context).operation_tips),
                       ],
                     ),
@@ -205,7 +205,7 @@ class _HomePageState extends State<HomePage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: const [
-                              Text("Contact us: http://www.xxxxxxxxxxx",
+                              Text("Contact us: https://www.t-scale.com/CN",
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 15)),
                             ],
@@ -236,8 +236,8 @@ class _HomePageState extends State<HomePage> {
       //SpUtil.putString(SpConstant.LANGUAGE, value);
       setState(() {
         groupValue = value;
-        if (value == "zh") S.load(Locale('zh', 'CN'));
-        if (value == "en") S.load(Locale('en', 'US'));
+        if (value == "zh") S.load(const Locale('zh', 'CN'));
+        if (value == "en") S.load(const Locale('en', 'US'));
       });
     }
   }

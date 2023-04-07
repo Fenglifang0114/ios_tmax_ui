@@ -152,3 +152,43 @@ class EventUserInfo {
   dynamic obj;
   EventUserInfo(this.obj);
 }
+
+class EventText {
+  dynamic obj;
+  EventText(this.obj);
+}
+
+class EventOffset {
+  dynamic obj;
+  EventOffset(this.obj);
+}
+
+class EventPageSize {
+  dynamic obj;
+  EventPageSize(this.obj);
+}
+
+class EventCurrentBarCodeRowDataList {
+  dynamic obj;
+  EventCurrentBarCodeRowDataList(this.obj);
+}
+
+class EventSavedBarcodeName {
+  dynamic obj;
+  EventSavedBarcodeName(this.obj);
+}
+
+class EventSavedQrcodeName {
+  dynamic obj;
+  EventSavedQrcodeName(this.obj);
+}
+
+class EventOffsetDataList {
+  dynamic obj;
+  EventOffsetDataList(this.obj);
+}
+
+class EventSelectIndex {
+  dynamic obj;
+  EventSelectIndex(this.obj);
+}
