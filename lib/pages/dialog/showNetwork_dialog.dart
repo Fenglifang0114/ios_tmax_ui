@@ -121,8 +121,8 @@ showAddNetworkDialog(BuildContext context) {
                                 ),
                                 const SizedBox(height: 20),
                                 const Text(""),
-                                ElevatedButton(
-                                    onPressed: () {}, child: const Text("测试连接"))
+                                // ElevatedButton(
+                                //     onPressed: () {}, child: const Text("测试连接"))
                               ],
                             ),
                           ],

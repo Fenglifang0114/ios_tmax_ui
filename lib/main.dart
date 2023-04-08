@@ -23,8 +23,8 @@ class MyApp extends StatelessWidget {
   // 重写build 方法，build 方法返回值为Widget类型，返回内容为屏幕上显示内容。
   @override
   Widget build(BuildContext context) {
-    // webchannel = WebSocketChannel('ws://127.0.0.1:7878/tmax?scaleid=0');
-    webchannel = WebSocketChannel('ws://10.5.52.55:7878/tmax?scaleid=0');
+    webchannel = WebSocketChannel('ws://127.0.0.1:7878/tmax?scaleid=0');
+    // webchannel = WebSocketChannel('ws://10.5.100.80:7878/tmax?scaleid=0');
     webchannel.connect();
 
     return MaterialApp(

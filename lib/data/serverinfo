@@ -350,3 +350,5 @@ ws://127.0.0.1:7878/tmax?scaleid=1
 	{"Req":"del_rec","ReqData":"{\"RecId\":3}"}
 	response:
 	{"MsgType":8,"MsgBody":"ok","ScaleId":1}
+
+9. {"MsgType":13,"MsgBody":"no response, time out","ScaleId":1}  下载后秤反馈的消息

@@ -98,8 +98,8 @@ modifyAddBluetoothDialog(BuildContext context) {
                                 ),
                                 const SizedBox(height: 116),
                                 const Text(""),
-                                ElevatedButton(
-                                    onPressed: () {}, child: const Text("测试连接"))
+                                // ElevatedButton(
+                                //     onPressed: () {}, child: const Text("测试连接"))
                               ],
                             ),
                           ],

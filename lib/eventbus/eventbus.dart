@@ -192,3 +192,8 @@ class EventSelectIndex {
   dynamic obj;
   EventSelectIndex(this.obj);
 }
+
+class EventDownloadResponse {
+  dynamic obj;
+  EventDownloadResponse(this.obj);
+}

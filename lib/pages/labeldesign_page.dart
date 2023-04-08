@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
+import 'package:t_max/data/downloadresponse.dart';
 import '../data/barcoderowdata.dart';
 import '../data/formatdata.dart';
 import '../data/offset.dart';
@@ -9,7 +10,6 @@ import '../data/pagesize.dart';
 import '../data/scalecmd_data.dart';
 import '../data/text.dart';
 import '../eventbus/eventbus.dart';
-import '../main.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
@@ -19,7 +19,6 @@ import 'dialog/qrcodeedit_dialog.dart';
 import 'widget/draggablefliating.dart';
 import 'widget/dropdown copy.dart';
 import 'widget/textlistItem.dart';
-import 'widget/themeColor.dart';
 
 class LabelDesignPage extends StatefulWidget {
   const LabelDesignPage({Key? key}) : super(key: key);
@@ -99,7 +98,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   var _eventbus3;
   var _eventbus4;
   var _eventbus5;
-  // var _eventbus6;
+  var _eventbus6;
   final FocusNode _focusNodeContent = FocusNode();
   final FocusNode _focusNodeFontSize = FocusNode();
   final FocusNode _focusNodexPos = FocusNode();
@@ -122,6 +121,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   String _selectedPrintDirection = 'Forward';
   String _selectFontBold = 'false';
   String _selectFontReverse = 'false';
+  bool downloadStatus = true;
 
   final List<String> _printers = [
     'EPM205',
@@ -293,13 +293,26 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         });
       }
     });
-    // _eventbus6 = eventBus.on<EventSelectIndex>().listen((event) {
-    //   if (mounted) {
-    //     setState(() {
-    //       mySelectIndex = event.obj;
-    //     });
-    //   }
-    // });
+    _eventbus6 = eventBus.on<EventDownloadResponse>().listen((event) {
+      if (mounted) {
+        setState(() {
+          downloadStatus = true;
+          myDownloadResponse = event.obj;
+          if (myDownloadResponse.msgBody.isNotEmpty) {
+            setState(() {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(myDownloadResponse.msgBody,
+                      style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold)), ////此处需要秤回复
+                  backgroundColor: (myDownloadResponse.msgBody.contains('ok'))
+                      ? Colors.red.shade900
+                      : Colors.green.shade900));
+            });
+          }
+        });
+      }
+    });
 
     _focusNodeContent.addListener(() {
       if (!_focusNodeContent.hasFocus) {
@@ -352,7 +365,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     _eventbus3.cancel();
     _eventbus4.cancel();
     _eventbus5.cancel();
-    // _eventbus6.cancel();
+    _eventbus6.cancel();
     super.dispose();
   }
 
@@ -532,25 +545,28 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                         const SizedBox(
                           height: 10,
                         ),
-                        ElevatedButton(
-                            onPressed: () {
-                              deleteAllItem();
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  Colors.yellow.shade900, // 设置按钮的背景色
-                              elevation: 10, // 设置按钮的阴影
-                              shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(8), // 设置按钮的圆角
+                        SizedBox(
+                          width: 150,
+                          child: ElevatedButton(
+                              onPressed: () {
+                                deleteAllItem();
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    Colors.yellow.shade900, // 设置按钮的背景色
+                                elevation: 10, // 设置按钮的阴影
+                                shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(8), // 设置按钮的圆角
+                                ),
                               ),
-                            ),
-                            child: const Text('New  Format',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ))),
+                              child: const Text('New Format',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ))),
+                        ),
                       ],
                     ),
                   )
@@ -564,208 +580,231 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                   const SizedBox(
                     height: 10,
                   ),
-                  ElevatedButton(
-                      onPressed: () async {
-                        final directory = Directory.current.path;
-                        String? outputFile =
-                            (await FilePicker.platform.saveFile(
-                          initialDirectory: directory,
-                          dialogTitle: 'Output file:',
-                          type: FileType.custom,
-                          allowedExtensions: ['json'],
-                          fileName: 'formatdata1.json',
-                        ));
-                        if (outputFile != null) {
-                          _saveFormatToJson(outputFile);
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.yellow.shade900, // 设置按钮的背景色
-                        elevation: 10, // 设置按钮的阴影
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
-                        ),
-                      ),
-                      child: const Text('Save  Format',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ))),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  ElevatedButton(
-                      onPressed: () async {
-                        String filePath = '';
-                        try {
+                  SizedBox(
+                    width: 150,
+                    child: ElevatedButton(
+                        onPressed: () async {
                           final directory = Directory.current.path;
-                          FilePickerResult? result =
-                              await FilePicker.platform.pickFiles(
+                          String? outputFile =
+                              (await FilePicker.platform.saveFile(
                             initialDirectory: directory,
+                            dialogTitle: 'Output file:',
                             type: FileType.custom,
                             allowedExtensions: ['json'],
-                          );
-                          if (result != null && result.files.isNotEmpty) {
-                            filePath = result.files.single.path!;
+                            fileName: 'formatdata1.json',
+                          ));
+                          if (outputFile != null) {
+                            _saveFormatToJson(outputFile);
                           }
-                        } catch (e) {
-                          print(e);
-                        }
-                        if (filePath != '') {
-                          deleteAllItem();
-                          _openJsonFile(filePath);
-                        }
-                      },
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.yellow.shade900, // 设置按钮的背景色
+                          elevation: 10, // 设置按钮的阴影
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
+                          ),
+                        ),
+                        child: const Text('Save File',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ))),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  SizedBox(
+                    width: 150,
+                    child: ElevatedButton(
+                        onPressed: () async {
+                          String filePath = '';
+                          try {
+                            final directory = Directory.current.path;
+                            FilePickerResult? result =
+                                await FilePicker.platform.pickFiles(
+                              initialDirectory: directory,
+                              type: FileType.custom,
+                              allowedExtensions: ['json'],
+                            );
+                            if (result != null && result.files.isNotEmpty) {
+                              filePath = result.files.single.path!;
+                            }
+                          } catch (e) {
+                            print(e);
+                          }
+                          if (filePath != '') {
+                            deleteAllItem();
+                            _openJsonFile(filePath);
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.yellow.shade900, // 设置按钮的背景色
+                          elevation: 10, // 设置按钮的阴影
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
+                          ),
+                        ),
+                        child: const Text('Open File',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ))),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              Column(
+                children: [
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  SizedBox(
+                    width: 150,
+                    child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.yellow.shade900, // 设置按钮的背景色
+                        backgroundColor: Colors.white, // 设置按钮的背景色
                         elevation: 10, // 设置按钮的阴影
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
                         ),
                       ),
-                      child: const Text('Open Format',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ))),
-                ],
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              Column(
-                children: [
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white, // 设置按钮的背景色
-                      elevation: 10, // 设置按钮的阴影
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
+                      child: Text(
+                        'BarCode Edit',
+                        style: TextStyle(
+                            color: Colors.blue.shade900,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
                       ),
-                    ),
-                    child: Text(
-                      'BarCode Edit',
-                      style: TextStyle(
-                          color: Colors.blue.shade900,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    onPressed: () async {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return MyBarCodeDialog();
-                        },
-                      ).then((value) {
-                        if (value != null) {
-                          setState(() {
-                            // rowDataList = value;
-                          });
-                        }
-                      });
-                    },
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white, // 设置按钮的背景色
-                      elevation: 10, // 设置按钮的阴影
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
-                      ),
-                    ),
-                    child: Text(
-                      'Qrcode   Edit',
-                      style: TextStyle(
-                          color: Colors.blue.shade900,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    onPressed: () async {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return MyQrcodeDialog();
-                        },
-                      ).then((value) {
-                        if (value != null) {
-                          setState(() {
-                            // rowDataList = value;
-                          });
-                        }
-                      });
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              Column(
-                children: [
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  ElevatedButton(
-                      onPressed: () {
-                        final directory = Directory.current.path;
-                        String dataTime = getDateTime();
-                        String outputFile;
-                        final file =
-                            File('$directory\\Download\\$dataTime.json');
-                        outputFile = file.path;
-                        _saveFormatToJson(outputFile);
-                        _exportCSV();
-                        setState(() {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: const Text('Download successful !',
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold)), ////此处需要秤回复
-                              backgroundColor: Colors.green.shade900));
+                      onPressed: () async {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return MyBarCodeDialog();
+                          },
+                        ).then((value) {
+                          if (value != null) {
+                            setState(() {
+                              // rowDataList = value;
+                            });
+                          }
                         });
                       },
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  SizedBox(
+                    width: 150,
+                    child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green.shade900, // 设置按钮的背景色
+                        backgroundColor: Colors.white, // 设置按钮的背景色
                         elevation: 10, // 设置按钮的阴影
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
                         ),
                       ),
-                      child: const Text('Download',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ))),
+                      child: Text(
+                        'Qrcode Edit',
+                        style: TextStyle(
+                            color: Colors.blue.shade900,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      onPressed: () async {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return const MyQrcodeDialog();
+                          },
+                        ).then((value) {
+                          if (value != null) {
+                            setState(() {
+                              // rowDataList = value;
+                            });
+                          }
+                        });
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              Column(
+                children: [
                   const SizedBox(
                     height: 10,
                   ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white, // 设置按钮的背景色
-                      elevation: 10, // 设置按钮的阴影
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
+                  SizedBox(
+                    width: 150,
+                    child: ElevatedButton(
+                        onPressed: downloadStatus
+                            ? () async {
+                                final directory = Directory.current.path;
+                                String dataTime = getDateTime();
+                                String outputFile;
+                                final filePath =
+                                    Directory('$directory\\download');
+                                final file = File(
+                                    '$directory\\download\\$dataTime.json');
+                                outputFile = file.path;
+                                if (!await filePath.exists()) {
+                                  await filePath.create(recursive: true);
+                                }
+                                _saveFormatToJson(outputFile);
+                                _exportCSV();
+                                setState(() {
+                                  downloadStatus = false;
+                                });
+                              }
+                            : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: downloadStatus
+                              ? Colors.green.shade900
+                              : Colors.white, // 设置按钮的背景色
+                          elevation: 10, // 设置按钮的阴影
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
+                          ),
+                        ),
+                        child: Text('Download',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color:
+                                  downloadStatus ? Colors.white : Colors.black,
+                            ))),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  SizedBox(
+                    width: 150,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white, // 设置按钮的背景色
+                        elevation: 10, // 设置按钮的阴影
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
+                        ),
                       ),
+                      child: Text(
+                        'Exit',
+                        style: TextStyle(
+                            color: Colors.blue.shade900,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
                     ),
-                    child: Text(
-                      'Exit',
-                      style: TextStyle(
-                          color: Colors.blue.shade900,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
                   ),
                 ],
               ),

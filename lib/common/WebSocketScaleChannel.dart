@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:t_max/data/downloadresponse.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:flutter/material.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -149,6 +150,10 @@ class WebSocketScaleChannel {
         Map<String, dynamic> map = json.decode(data);
         dynamic mobj = ReqWeightCountine.fromJson(map);
         eventBus.fire(EventReqWeightCountine(mobj));
+      } else if (jsonData['MsgType'] == 13) {
+        Map<String, dynamic> map = json.decode(data);
+        dynamic mobj = DownloadResponse.fromJson(map);
+        eventBus.fire(EventReqWeightCountine(myDownloadResponse));
       }
       // else if (jsonData['MsgType'] == 6) {
       //   Map<String, dynamic> map = json.decode(data);
@@ -167,7 +172,7 @@ class WebSocketScaleChannel {
 
 
 
-
+ //{"MsgType":13,"MsgBody":"no response, time out","ScaleId":1}  下载后秤收到的消息
 
 
 
