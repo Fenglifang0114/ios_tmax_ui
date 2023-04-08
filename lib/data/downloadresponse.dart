@@ -10,16 +10,15 @@ class DownloadResponse {
     this.scaleId,
   );
   DownloadResponse.fromJson(Map<String, dynamic> json)
-      : msgType = json['name'],
-        msgBody = json['type'],
-        scaleId = json['device'];
+      : msgType = json['MsgType'],
+        msgBody = json['MsgBody'],
+        scaleId = json['ScaleId'];
 
   Map<String, dynamic> toJson() {
     return {
-      'name': msgType,
-      'type': msgBody,
-      'device': scaleId,
-      'num': num,
+      'MsgType': msgType,
+      'MsgBody': msgBody,
+      'ScaleId': scaleId,
     };
   }
 }

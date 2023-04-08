@@ -112,7 +112,6 @@ class TextItemState extends State<TextItem> {
               myTextData.qrcodeType = widget.qrcodeType;
               myTextData.fontBold = widget.fontBold;
               myTextData.fontReverse = widget.fontReverse;
-
               eventBus.fire(EventText(myTextData));
             });
           },
@@ -139,6 +138,7 @@ class TextItemState extends State<TextItem> {
               // color: Colors.grey.shade200,
               child: Text(widget.content,
                   style: TextStyle(
+                      fontFamily: "simsunb",
                       fontSize: (widget.fontSize > 0)
                           ? (widget.fontSize).toDouble()
                           : 19,

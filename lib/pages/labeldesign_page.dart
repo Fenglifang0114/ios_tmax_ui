@@ -59,7 +59,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   int yPos = 0;
   int width = 0;
   int height = 50;
-  int fontSize = 19;
+  int fontSize = 23;
   int fontWidthRatio = 1;
   int fontHeightRatio = 1;
   int style = 0;
@@ -122,6 +122,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   String _selectFontBold = 'false';
   String _selectFontReverse = 'false';
   bool downloadStatus = true;
+  String _selectFontsize = '23';
 
   final List<String> _printers = [
     'EPM205',
@@ -169,6 +170,18 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     '50*40',
     '55*50',
   ];
+  final List<String> _fontSizes = [
+    '20', //1 1 1
+    '23', //4 1 1
+    '39', //1 2 2
+    '46', //4 2 2
+    '69', //3 3 3
+    '95', //4 4 4
+    '115', //4 5 5
+    '137', //4 6 6
+    '165', //4 7 7
+    '170', //4 8 8
+  ];
 
   @override
   void initState() {
@@ -191,6 +204,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           _selectedRotation = myTextData.rotation.toString();
           _selectedBarcode = myTextData.barcodeName;
           _selectedQrcode = myTextData.qrcodeName;
+          _selectFontsize = myTextData.fontSize.toString();
           _selectedQr = int.parse(myTextData.qrWidth.toString()).toString();
           if (myTextData.alignment == 0) {
             _selectedAlignment = 'Left';
@@ -306,8 +320,8 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                           fontSize: 20,
                           fontWeight: FontWeight.bold)), ////此处需要秤回复
                   backgroundColor: (myDownloadResponse.msgBody.contains('ok'))
-                      ? Colors.red.shade900
-                      : Colors.green.shade900));
+                      ? Colors.green.shade900
+                      : Colors.red.shade900));
             });
           }
         });
@@ -956,6 +970,48 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     }
   }
 
+  List getFontSize(int sFont) {
+    int fontsize = 4;
+    int width = 1;
+    int height = 1;
+    if (sFont == 23) {
+      fontsize = 4;
+    } else if (sFont == 20) {
+      fontsize = 1;
+    } else if (sFont == 39) {
+      fontsize = 1;
+      width = 2;
+      height = 2;
+    } else if (sFont == 46) {
+      fontsize = 4;
+      width = 2;
+      height = 2;
+    } else if (sFont == 69) {
+      fontsize = 4;
+      width = 3;
+      height = 3;
+    } else if (sFont == 95) {
+      width = 4;
+      height = 4;
+    } else if (sFont == 115) {
+      fontsize = 4;
+      width = 5;
+      height = 5;
+    } else if (sFont == 137) {
+      width = 6;
+      height = 6;
+    } else if (sFont == 165) {
+      width = 7;
+      height = 7;
+    } else if (sFont == 170) {
+      width = 8;
+      height = 8;
+    }
+
+    return [fontsize, width, height];
+  }
+  //  List vals = getFontSize(); print("${vals[0]} ${vals[1]} ${vals[2]}");
+
   void _exportCSV() async {
     // var path = 'C:\\Users\\Test-Team\\Desktop\\text1111';
     List<List<dynamic>> csvData = <List<dynamic>>[];
@@ -985,15 +1041,16 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
 
     for (var i = 0; i < textItemList.length; i++) {
       if (textItemList[i].type == 'TEXT') {
+        List fontlist = getFontSize(textItemList[i].fontSize);
         csvData.add([
           'TB',
           textItemList[i].xPos,
           textItemList[i].yPos,
           textItemList[i].width,
           textItemList[i].height,
-          textItemList[i].fontSize,
-          textItemList[i].fontWidthRatio,
-          textItemList[i].fontHeightRatio,
+          fontlist[0],
+          fontlist[1],
+          fontlist[2],
           _getstyle(textItemList[i].fontBold, textItemList[i].fontReverse),
           _getRotation(textItemList[i].rotation),
           textItemList[i].type,
@@ -1001,15 +1058,16 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           textItemList[i].index,
         ]);
       } else if (textItemList[i].type == 'DATA') {
+        List fontlist = getFontSize(textItemList[i].fontSize);
         csvData.add([
           'TB',
           textItemList[i].xPos,
           textItemList[i].yPos,
           textItemList[i].width,
           textItemList[i].height,
-          textItemList[i].fontSize,
-          textItemList[i].fontWidthRatio,
-          textItemList[i].fontHeightRatio,
+          fontlist[0],
+          fontlist[1],
+          fontlist[2],
           _getstyle(textItemList[i].fontBold, textItemList[i].fontReverse),
           _getRotation(textItemList[i].rotation),
           textItemList[i].type,
@@ -2159,6 +2217,14 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     });
   }
 
+  //下拉字体加粗
+  void _handleFontSizeSelected(String value) {
+    setState(() {
+      _selectFontsize = value;
+      _onSubmit(_selectFontsize, 1);
+    });
+  }
+
   _textproperties() {
     return [
       const SizedBox(height: 20),
@@ -2228,6 +2294,16 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       ),
       buildTextField(
           textvariable, "Text Content", myTextData.content.toString(), 0),
+      const Text(
+        'Select FontSize:      ',
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      ),
+      buildDropdownButton(
+        value: _selectFontsize,
+        items: _fontSizes,
+        hintText: 'FontSize',
+        onSelect: _handleFontSizeSelected,
+      ),
       const Text(
         'Select Rotation:      ',
         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),

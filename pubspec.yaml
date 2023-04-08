@@ -116,6 +116,10 @@ flutter:
     - family: STSONG
       fonts:    
         - asset: fonts/STSONG.TTF
+    - family: simsunb
+      fonts:    
+        - asset: fonts/simsunb.TTF
+        
 
   # To add assets to your application, add an assets section, like this:
   # assets:
