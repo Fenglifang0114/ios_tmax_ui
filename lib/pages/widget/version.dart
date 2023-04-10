@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
 
 version() {
-  return Text("T_MAX V1.0.2");
+  return const Text("T-Max V1.0.8");
 }

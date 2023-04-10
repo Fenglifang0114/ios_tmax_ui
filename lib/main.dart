@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     webchannel = WebSocketChannel('ws://127.0.0.1:7878/tmax?scaleid=0');
-    // webchannel = WebSocketChannel('ws://10.5.100.80:7878/tmax?scaleid=0');
+    // webchannel = WebSocketChannel('ws://10.5.100.89:7878/tmax?scaleid=0');
     webchannel.connect();
 
     return MaterialApp(

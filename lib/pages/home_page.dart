@@ -171,7 +171,7 @@ class _HomePageState extends State<HomePage> {
                           child: Column(
                         children: [
                           const SizedBox(height: 100),
-                          const Text("T-MAX management system",
+                          const Text("t_max management system",
                               style:
                                   TextStyle(color: Colors.blue, fontSize: 50)),
                           const SizedBox(height: 100),
@@ -183,11 +183,11 @@ class _HomePageState extends State<HomePage> {
                                               BorderRadius.circular(20)))),
                               // const BorderRadius.all(Radius.circular(8)),
                               onPressed: () {
-                                getPortList();
+                                // getPortList();
                                 getScaleList();
-                                getProductList();
+                                // getProductList();
                                 getUIConf();
-                                getUserList();
+                                // getUserList();
                                 Navigator.push(context,
                                     MaterialPageRoute(builder: (context) {
                                   return const AddDevicePage();

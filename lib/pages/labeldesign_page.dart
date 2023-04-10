@@ -171,11 +171,11 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     '55*50',
   ];
   final List<String> _fontSizes = [
-    '20', //1 1 1
+    // '20', //1 1 1
     '23', //4 1 1
-    '39', //1 2 2
+    // '39', //1 2 2
     '46', //4 2 2
-    '69', //3 3 3
+    '69', //4 3 3
     '95', //4 4 4
     '115', //4 5 5
     '137', //4 6 6
@@ -319,6 +319,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                       style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold)), ////此处需要秤回复
+                  duration: const Duration(seconds: 1),
                   backgroundColor: (myDownloadResponse.msgBody.contains('ok'))
                       ? Colors.green.shade900
                       : Colors.red.shade900));
@@ -1191,6 +1192,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
             content: const Text('Save successful !',
                 style: TextStyle(
                     fontSize: 20, fontWeight: FontWeight.bold)), ////此处需要秤回复
+            duration: const Duration(seconds: 1),
             backgroundColor: Colors.green.shade900));
       });
     } catch (e) {
@@ -1835,26 +1837,24 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     } else if (indexTemp == 12) {
       //条码类型   barcode
       List<dynamic> tempcontent = [];
+      var tempQrcodeName = s;
       setState(() {
         if (s != '--') {
-          var tempQrcodeName = s;
-          var tempContent = '';
-          for (var i = 0; i < myBarCodeListList.barCodeListList.length; i++) {
-            if (myBarCodeListList.barCodeListList[i].barCodeName ==
-                tempQrcodeName) {
-              myTextData.qrcodeType =
-                  myBarCodeListList.barCodeListList[i].barCodeType;
-              myTextData.qrcodeName =
-                  myBarCodeListList.barCodeListList[i].barCodeName;
-
-              for (var j = 0;
-                  j <
-                      myBarCodeListList
-                          .barCodeListList[i].barCodeRowDataList.length;
-                  j++) {
-                tempcontent.add(
-                    myBarCodeListList.barCodeListList[i].barCodeRowDataList[j]);
-              }
+          int qrcodeIndex = _findVarcontent(tempQrcodeName, myTextData.type);
+          if (qrcodeIndex != -1) {
+            // myTextData.varcontent.clear();
+            myTextData.style = 0;
+            myTextData.qrcodeType =
+                myBarCodeListList.barCodeListList[qrcodeIndex].barCodeType;
+            myTextData.qrcodeName =
+                myBarCodeListList.barCodeListList[qrcodeIndex].barCodeName;
+            for (var j = 0;
+                j <
+                    myBarCodeListList
+                        .barCodeListList[qrcodeIndex].barCodeRowDataList.length;
+                j++) {
+              tempcontent.add(myBarCodeListList
+                  .barCodeListList[qrcodeIndex].barCodeRowDataList[j]);
             }
           }
           myTextData.varcontent = tempcontent;
@@ -1863,6 +1863,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
               textItemList[i].qrcodeName = myTextData.qrcodeName;
               textItemList[i].qrcodeType = myTextData.qrcodeType;
               textItemList[i].varcontent = myTextData.varcontent;
+              textItemList[i].style = myTextData.style;
               eventBus.fire(EventText(myTextData));
               _onUpdate(i);
             }
@@ -2210,7 +2211,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     setState(() {
       _selectedBarcode = value;
       if (_selectedBarcode == '--') {
-        _onSubmit(_selectedBarcode, 6);
+        // _onSubmit(_selectedBarcode, 6);
       } else {
         _onSubmit(_selectedBarcode, 6);
       }
@@ -2314,8 +2315,8 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         hintText: 'Rotation',
         onSelect: _handleRotationSelected,
       ),
-      buildTextField(
-          fontsizevar, "Font Size", myTextData.fontSize.toString(), 1),
+      // buildTextField(
+      //     fontsizevar, "Font Size", myTextData.fontSize.toString(), 1),
       const Text(
         'Font Bold:      ',
         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -2473,8 +2474,18 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         hintText: 'Rotation',
         onSelect: _handleRotationSelected,
       ),
-      buildTextField(
-          fontsizevar, "Font Size", myTextData.fontSize.toString(), 1),
+      const Text(
+        'Select FontSize:      ',
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      ),
+      buildDropdownButton(
+        value: _selectFontsize,
+        items: _fontSizes,
+        hintText: 'FontSize',
+        onSelect: _handleFontSizeSelected,
+      ),
+      // buildTextField(
+      //     fontsizevar, "Font Size", myTextData.fontSize.toString(), 1),
       const Text(
         'Font Bold:      ',
         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),

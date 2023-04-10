@@ -36,8 +36,8 @@ class _AddDevicePageState extends State<AddDevicePage> {
 
   late ScrollController _pageScrollerController;
 
-  String scaleUrl = 'ws://127.0.0.1:7878/tmax?scaleid=';
-  // String scaleUrl = 'ws://10.5.100.80:7878/tmax?scaleid=';
+  String scaleUrl = 'ws://127.0.0.1:7878/tmax?scaleid=1';
+  // String scaleUrl = 'ws://10.5.100.89:7878/tmax?scaleid=';
 
   var _eventbus1;
   var _eventbus2;
@@ -45,12 +45,13 @@ class _AddDevicePageState extends State<AddDevicePage> {
   var _eventbus4;
   var _eventbus5;
   var _eventbus6;
+  var _eventbus7;
 
   @override
   void initState() {
     super.initState();
     webchannel1 = WebSocketScaleChannel(scaleUrl);
-    getPortList();
+    // getPortList();
     initScaleList();
     _pageScrollerController = ScrollController();
     _eventbus1 = eventBus.on<EventDeviceName>().listen((event) {
@@ -100,6 +101,15 @@ class _AddDevicePageState extends State<AddDevicePage> {
 
           reconnectScale();
           initScaleList();
+        });
+      }
+    });
+    _eventbus7 = eventBus.on<EventDeviceName>().listen((event) {
+      if (mounted) {
+        setState(() {
+          myDevicedata = event.obj;
+          // getWeight();
+          // getRecords();
         });
       }
     });
@@ -307,7 +317,8 @@ class _AddDevicePageState extends State<AddDevicePage> {
     if (webchannel1.heartStatus == false) {
       if (myComScaleList.comScaleList.isNotEmpty) {
         scaleId = myComScaleList.comScaleList[0].scaleId.toString();
-        webchannel1 = WebSocketScaleChannel(scaleUrl + scaleId);
+        // webchannel1 = WebSocketScaleChannel(scaleUrl + scaleId);
+        webchannel1 = WebSocketScaleChannel(scaleUrl);
         webchannel1.connect();
       }
     }
