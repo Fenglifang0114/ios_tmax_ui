@@ -16,13 +16,13 @@ class AddUserInfo {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
 
-    data['Id'] = this.id;
-    data['Name'] = this.name;
-    data['IsFemale'] = this.isFemale;
-    data['Phone'] = this.phone;
-    data['Remarks'] = this.remarks;
+    data['Id'] = id;
+    data['Name'] = name;
+    data['IsFemale'] = isFemale;
+    data['Phone'] = phone;
+    data['Remarks'] = remarks;
     return data;
   }
 }
@@ -65,13 +65,13 @@ class UserInfo {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['RecId'] = this.recId;
-    data['Id'] = this.id;
-    data['Name'] = this.name;
-    data['IsFemale'] = this.isFemale;
-    data['Phone'] = this.phone;
-    data['Remarks'] = this.remarks;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['RecId'] = recId;
+    data['Id'] = id;
+    data['Name'] = name;
+    data['IsFemale'] = isFemale;
+    data['Phone'] = phone;
+    data['Remarks'] = remarks;
     return data;
   }
 }

@@ -10,9 +10,9 @@ class ModifyScale {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['ScaleId'] = this.scaleId;
-    data['MediaConf'] = this.mediaConf;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['ScaleId'] = scaleId;
+    data['MediaConf'] = mediaConf;
     return data;
   }
 }
@@ -31,9 +31,9 @@ class MediaConf {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['Type'] = this.type;
-    data['MediaInfoJson'] = this.mediaInfoJson;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['Type'] = type;
+    data['MediaInfoJson'] = mediaInfoJson;
     return data;
   }
 }

@@ -17,13 +17,13 @@ accountDialog(BuildContext context) {
             title: Container(
                 color: Colors.blue.shade900,
                 child: Row(
-                  children: [
+                  children: const [
                     Icon(
                       Icons.lock_outline,
                       color: Colors.white,
                     ),
-                    const SizedBox(width: 10),
-                    const Text("账号密码", style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 10),
+                    Text("账号密码", style: TextStyle(color: Colors.white)),
                   ],
                 )),
             content: Container(
@@ -41,7 +41,7 @@ accountDialog(BuildContext context) {
                               ispasswordChecked = value!;
                             });
                           }),
-                      Text("登录时需要密码验证")
+                      const Text("登录时需要密码验证")
                     ],
                   ),
                   Row(
@@ -53,7 +53,7 @@ accountDialog(BuildContext context) {
                               ischangepassword = value!;
                             });
                           }),
-                      Text("修改密码")
+                      const Text("修改密码")
                     ],
                   ),
                   const SizedBox(height: 15),
@@ -146,7 +146,7 @@ accountDialog(BuildContext context) {
                         accountWarnDialog(context).then((onValue) {});
                       },
                       child: const Text("确定")),
-                  SizedBox(width: 20),
+                  const SizedBox(width: 20),
                   OutlinedButton(
                       child: const Text("取消"),
                       onPressed: () {

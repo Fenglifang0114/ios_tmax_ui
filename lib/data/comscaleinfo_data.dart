@@ -1,5 +1,3 @@
-import 'package:t_max/data/scalelist_data.dart';
-
 class ComScaleInfoList {
   int scaleId;
   int tMedia;
@@ -38,15 +36,15 @@ class ComScaleInfoList {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['ScaleId'] = this.scaleId;
-    data['TMedia'] = this.tMedia;
-    data['IsOnline'] = this.isOnline;
-    data['BaudRate'] = this.baudRate;
-    data['DataBits'] = this.dataBits;
-    data['Parity'] = this.parity;
-    data['StopBits'] = this.stopBits;
-    data['ScaleModel'] = this.scaleModel;
-    data['scaleSn'] = this.scaleSn;
+    data['ScaleId'] = scaleId;
+    data['TMedia'] = tMedia;
+    data['IsOnline'] = isOnline;
+    data['BaudRate'] = baudRate;
+    data['DataBits'] = dataBits;
+    data['Parity'] = parity;
+    data['StopBits'] = stopBits;
+    data['ScaleModel'] = scaleModel;
+    data['scaleSn'] = scaleSn;
 
     return data;
   }

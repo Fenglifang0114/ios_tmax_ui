@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/data/currentport_data.dart';
@@ -129,7 +130,9 @@ settingDialog(BuildContext context) {
                                           errorText.text = "";
                                         }
                                       }
-                                      print(value);
+                                      if (kDebugMode) {
+                                        print(value);
+                                      }
                                     },
                                   ),
                                 ),
@@ -208,9 +211,7 @@ settingDialog(BuildContext context) {
                                       // hintText: "请输入机种类型，如：ztp",
                                       // border: OutlineInputBorder(),
                                     ),
-                                    onChanged: (value) {
-                                      print(value);
-                                    },
+                                    onChanged: (value) {},
                                   ),
                                 ),
                               ],
@@ -236,9 +237,7 @@ settingDialog(BuildContext context) {
                                   Colors.red, // hintText: "请输入机种类型，如：ztp",
                               // border: OutlineInputBorder(),
                             ),
-                            onChanged: (value) {
-                              print(value);
-                            },
+                            onChanged: (value) {},
                           ),
                         ),
                       ],
@@ -283,7 +282,6 @@ settingDialog(BuildContext context) {
 void sendModifyInfo(String modifyString) {
   myScaleCmd.cmdMode = "modify_scale";
   myScaleCmd.cmdData = modifyString;
-  print(jsonEncode(myScaleCmd));
   MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
 }
 

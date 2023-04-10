@@ -12,7 +12,6 @@ import 'package:t_max/data/settingparam_data.dart';
 import 'package:t_max/data/userinfo_data.dart';
 import 'package:t_max/pages/dialog/modifyComPort_dialog.dart';
 import 'package:web_socket_channel/io.dart';
-import 'package:flutter/material.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '../data/reqweightdata_data.dart';
@@ -72,7 +71,9 @@ class WebSocketChannel {
   // 接受数据，数据json字符串，然后转成Map
   void onData(event) {
     if (event != null) {
-      print('0收到消息:' + event);
+      if (kDebugMode) {
+        print('0收到消息:' + event);
+      }
       paster(event);
     }
   }
@@ -99,11 +100,9 @@ class WebSocketChannel {
     heartStatus = false;
   }
 
-  /**
-   * @desc WebSocket心跳包
-   * @author Marinda
-   * @date 2022/9/26
-   */
+  /// @desc WebSocket心跳包
+  /// @author Marinda
+  /// @date 2022/9/26
   void heartPacket() {
     if (heartStatus) {
       // hearTimer = Timer(const Duration(seconds: 100), () async {

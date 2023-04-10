@@ -1,11 +1,8 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import '../data/login_data.dart';
 import '../../pages/widget/themeColor.dart';
-import '../main.dart';
-import 'dialog/enterRegister_dialog.dart';
 import 'dialog/register_dialog.dart';
 import 'home_page.dart';
 import 'widget/boxGradient.dart';
@@ -19,8 +16,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  TextEditingController _userName = TextEditingController();
-  TextEditingController _password = TextEditingController();
+  final TextEditingController _userName = TextEditingController();
+  final TextEditingController _password = TextEditingController();
   bool ischangepassword = true;
   late Timer timer;
   @override
@@ -59,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Container(
+                    SizedBox(
                         width: 400,
                         child: Card(
                           shadowColor: Colors.grey,
@@ -76,7 +73,7 @@ class _LoginPageState extends State<LoginPage> {
                                 style: TextStyle(fontSize: 40),
                               ),
                               const SizedBox(height: 30),
-                              Container(
+                              SizedBox(
                                   width: 300,
                                   child: TextField(
                                     //绑定控制器
@@ -91,7 +88,7 @@ class _LoginPageState extends State<LoginPage> {
                                     autofocus: false,
                                   )),
                               const SizedBox(height: 30),
-                              Container(
+                              SizedBox(
                                   width: 300,
                                   child: TextField(
                                     obscureText: true,
@@ -159,7 +156,7 @@ class _LoginPageState extends State<LoginPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Container(
+                        SizedBox(
                             width: 250,
                             child: Image.asset('images/tscale.png')),
                         const SizedBox(width: 100)

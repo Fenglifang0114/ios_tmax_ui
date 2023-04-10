@@ -93,12 +93,12 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   TextEditingController barcodeHeight = TextEditingController();
 
   var count = 0;
-  var _eventbus1;
-  var _eventbus2;
-  var _eventbus3;
-  var _eventbus4;
-  var _eventbus5;
-  var _eventbus6;
+  dynamic _eventbus1;
+  dynamic _eventbus2;
+  dynamic _eventbus3;
+  dynamic _eventbus4;
+  dynamic _eventbus5;
+  dynamic _eventbus6;
   final FocusNode _focusNodeContent = FocusNode();
   final FocusNode _focusNodeFontSize = FocusNode();
   final FocusNode _focusNodexPos = FocusNode();
@@ -646,7 +646,17 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                               filePath = result.files.single.path!;
                             }
                           } catch (e) {
-                            print(e);
+                            setState(() {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: const Text('Open fail',
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight:
+                                                  FontWeight.bold)), ////此处需要秤回复
+                                      duration: const Duration(seconds: 1),
+                                      backgroundColor: Colors.red.shade900));
+                            });
                           }
                           if (filePath != '') {
                             deleteAllItem();
@@ -698,7 +708,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
-                            return MyBarCodeDialog();
+                            return const MyBarCodeDialog();
                           },
                         ).then((value) {
                           if (value != null) {
@@ -944,7 +954,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     myScaleCmd.cmdData = modifyString;
     webchannel1.sendMessage(jsonEncode(myScaleCmd));
     // MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
-    print(jsonEncode(myScaleCmd));
   }
 
   int _getRotation(int rotation) {
@@ -1138,7 +1147,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       textDelimiter: '',
     ).convert(csvData);
     // String csv = const ListToCsvConverter().convert(csvData);
-    print(csv);
     // final directory = await Directory.systemTemp.createTemp();
     // final file = File('${path}/data.csv');
     // await file.writeAsString(csv);
@@ -1182,7 +1190,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         final file = File(p.join(path));
         // 将字符串写入文件中
         file.writeAsStringSync(formatjson);
-        print(formatjson);
 
         // await loadData();   此处已经写好了如何捞回来条码信息
       }
@@ -1233,7 +1240,12 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         redrawInterface(textInfoList);
       }
     } catch (e) {
-      print(e);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(e.toString(),
+              style: const TextStyle(
+                  fontSize: 20, fontWeight: FontWeight.bold)), ////此处需要秤回复
+          duration: const Duration(seconds: 1),
+          backgroundColor: Colors.red.shade900));
     }
     return textInfoList;
   }
@@ -1340,11 +1352,11 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     _saveFormatDataToJson(formatDataList, path);
   }
 
-  void _saveFormatToCsv(String csv) async {
-    final directory = Directory.current.path;
-    final file = File('$directory\\data.csv');
-    await file.writeAsString(csv);
-  }
+  // void _saveFormatToCsv(String csv) async {
+  //   final directory = Directory.current.path;
+  //   final file = File('$directory\\data.csv');
+  //   await file.writeAsString(csv);
+  // }
 
   void _openJsonFile(String path) {
     readTextInfoListFromFile(path);
@@ -1359,52 +1371,16 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   //   });
   // }
 
-  Future _loadCsvData() async {
-    List<List<dynamic>> _data = [];
-    String csvFilePath = "G:\\Labeldesign\\t_label\\data.csv";
-    try {
-      // 获取文件夹路径
-      Directory appDocDir = await getApplicationDocumentsDirectory(); // 加载文件内容
-      File csvFile = File(csvFilePath);
-      String csvString = await csvFile.readAsString(); // 解析 CSV 文件内容并提取数据
-      _data = const CsvToListConverter().convert(csvString);
-      print(_data);
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  // String _barcodeContent(List<dynamic> con) {
-  //   var barcodedata = '';
-  //   if (con.isNotEmpty) {
-  //     for (var i = 0; i < con.length; i++) {
-  //       var varalignment = 1;
-  //       if (con[i].type == 'TEXT') {
-  //         if (barcodedata.isEmpty) {
-  //           barcodedata = '${con[i].type},${con[i].content}';
-  //         } else {
-  //           barcodedata = '$barcodedata,${con[i].type},${con[i].content}';
-  //         }
-  //       } else {
-  //         if (con[i].alignment == 'Left') {
-  //           varalignment = 1;
-  //         } else if (con[i].alignment == 'Center') {
-  //           varalignment = 2;
-  //         } else {
-  //           varalignment = 3;
-  //         }
-  //         if (barcodedata.isEmpty) {
-  //           barcodedata =
-  //               'DATA,${con[i].type},${con[i].defaultvalue},$varalignment,${con[i].maxlength}';
-  //         } else {
-  //           barcodedata =
-  //               '$barcodedata,DATA,${con[i].type},${con[i].defaultvalue},$varalignment,${con[i].maxlength}';
-  //         }
-  //       }
-  //     }
-  //   }
-
-  //   return barcodedata;
+  // Future _loadCsvData() async {
+  //   List<List<dynamic>> _data = [];
+  //   String csvFilePath = "G:\\Labeldesign\\t_label\\data.csv";
+  //   try {
+  //     // 获取文件夹路径
+  //     Directory appDocDir = await getApplicationDocumentsDirectory(); // 加载文件内容
+  //     File csvFile = File(csvFilePath);
+  //     String csvString = await csvFile.readAsString(); // 解析 CSV 文件内容并提取数据
+  //     _data = const CsvToListConverter().convert(csvString);
+  //   } catch (e) {}
   // }
 
   String _barcodeContent(List<dynamic> con) {
@@ -1434,60 +1410,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     return barcodedata.toString();
   }
 
-  // String _barcodeContent(List<dynamic> con) {
-  //   final barcodedata = StringBuffer();
-
-  //   for (final item in con) {
-  //     final type = item['type'];
-  //     if (type == 'TEXT') {
-  //       barcodedata.write('$type,${item['content']}');
-  //     } else {
-  //       final alignment = item['alignment'];
-  //       final varalignment =
-  //           alignment == 'Center' ? 2 : (alignment == 'Right' ? 3 : 1);
-  //       barcodedata.write(
-  //           'DATA,${item['type']},${item['defaultvalue']},$varalignment,${item['maxlength']}');
-  //     }
-  //     if (item != con.last) {
-  //       barcodedata.write(',');
-  //     }
-  //   }
-
-  //   return barcodedata.toString();
-  // }
-//此处解析条码内容，本地不一定有此条码格式。都按没有此条码格式处理
-  // String _barcodeContent1(List<dynamic> con) {
-  //   var barcodedata = '';
-  //   if (con.isNotEmpty) {
-  //     for (var i = 0; i < con.length; i++) {
-  //       var varalignment = 1;
-  //       if (con[i]['type'] == 'TEXT') {
-  //         if (barcodedata.isEmpty) {
-  //           barcodedata = '${con[i]['type']},${con[i]['content']}';
-  //         } else {
-  //           barcodedata = '$barcodedata,${con[i]['type']},${con[i]['content']}';
-  //         }
-  //       } else {
-  //         if (con[i]['alignment'] == 'Left') {
-  //           varalignment = 1;
-  //         } else if (con[i]['alignment'] == 'Center') {
-  //           varalignment = 2;
-  //         } else {
-  //           varalignment = 3;
-  //         }
-  //         if (barcodedata.isEmpty) {
-  //           barcodedata =
-  //               'DATA,${con[i]['type']},${con[i]['defaultvalue']},$varalignment,${con[i]['maxlength']}';
-  //         } else {
-  //           barcodedata =
-  //               '$barcodedata,DATA,${con[i]['type']},${con[i]['defaultvalue']},$varalignment,${con[i]['maxlength']}';
-  //         }
-  //       }
-  //     }
-  //   }
-
-  //   return barcodedata;
-  // }
 //此处解析条码内容，本地不一定有此条码格式。都按没有此条码格式处理
   String _barcodeContent1(List<dynamic> con) {
     final barcodedata = StringBuffer(); // 使用 StringBuffer 来构建字符串
@@ -1553,7 +1475,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
               count++;
               num.add(count);
               myTextData.tabOrder = count;
-              print(myTextData.tabOrder);
               addfloatbutton(name);
             },
             child: Text(
@@ -1632,7 +1553,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         for (var i = 0; i < textItemList.length; i++) {
           if (textItemList[i].index == myTextData.tabOrder) {
             textItemList[i].content = myTextData.content;
-            print("i的值为：$i");
 
             eventBus.fire(EventText(myTextData));
             //修改可拖拽控件的信息
@@ -1651,7 +1571,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           for (var i = 0; i < textItemList.length; i++) {
             if (textItemList[i].index == myTextData.tabOrder) {
               textItemList[i].fontSize = myTextData.fontSize;
-              print("i的值为：$i");
               eventBus.fire(EventText(myTextData));
               _onUpdate(i);
             }
@@ -1667,7 +1586,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         for (var i = 0; i < textItemList.length; i++) {
           if (textItemList[i].index == myTextData.tabOrder) {
             textItemList[i].xPos = myTextData.xPos;
-            print("i的值为：$i");
             eventBus.fire(EventText(myTextData));
             _onUpdate(i);
           }
@@ -1682,7 +1600,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         for (var i = 0; i < textItemList.length; i++) {
           if (textItemList[i].index == myTextData.tabOrder) {
             textItemList[i].yPos = myTextData.yPos;
-            print("i的值为：$i");
             eventBus.fire(EventText(myTextData));
             _onUpdate(i);
           }
@@ -1697,7 +1614,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           for (var i = 0; i < textItemList.length; i++) {
             if (textItemList[i].index == myTextData.tabOrder) {
               textItemList[i].maxLength = myTextData.maxLength;
-              print("i的值为：$i");
               eventBus.fire(EventText(myTextData));
               _onUpdate(i);
             }
@@ -1724,7 +1640,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         return;
       }
       var tempBacodeName = s;
-      var tempContent = '';
+
       List<dynamic> tempcontent = [];
 
       setState(() {
@@ -1771,7 +1687,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           for (var i = 0; i < textItemList.length; i++) {
             if (textItemList[i].index == myTextData.tabOrder) {
               textItemList[i].height = myTextData.height;
-              print("i的值为：$i");
               eventBus.fire(EventText(myTextData));
               _onUpdate(i);
             }
@@ -1786,7 +1701,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         for (var i = 0; i < textItemList.length; i++) {
           if (textItemList[i].index == myTextData.tabOrder) {
             textItemList[i].rotation = myTextData.rotation;
-            print("i的值为：$i");
             eventBus.fire(EventText(myTextData));
             _onUpdate(i);
           }
@@ -1813,7 +1727,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         for (var i = 0; i < textItemList.length; i++) {
           if (textItemList[i].index == myTextData.tabOrder) {
             textItemList[i].x2Pos = myTextData.x2Pos;
-            print("i的值为：$i");
             eventBus.fire(EventText(myTextData));
             _onUpdate(i);
           }
@@ -1828,7 +1741,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         for (var i = 0; i < textItemList.length; i++) {
           if (textItemList[i].index == myTextData.tabOrder) {
             textItemList[i].y2Pos = myTextData.y2Pos;
-            print("i的值为：$i");
             eventBus.fire(EventText(myTextData));
             _onUpdate(i);
           }
@@ -1877,7 +1789,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         for (var i = 0; i < textItemList.length; i++) {
           if (textItemList[i].index == myTextData.tabOrder) {
             textItemList[i].qrWidth = myTextData.qrWidth;
-            print("i的值为：$i");
             eventBus.fire(EventText(myTextData));
             _onUpdate(i);
           }
@@ -1890,7 +1801,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         for (var i = 0; i < textItemList.length; i++) {
           if (textItemList[i].index == myTextData.tabOrder) {
             textItemList[i].fontBold = myTextData.fontBold;
-            print("i的值为：$i");
             eventBus.fire(EventText(myTextData));
             _onUpdate(i);
           }
@@ -1903,7 +1813,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         for (var i = 0; i < textItemList.length; i++) {
           if (textItemList[i].index == myTextData.tabOrder) {
             textItemList[i].fontReverse = myTextData.fontReverse;
-            print("i的值为：$i");
             eventBus.fire(EventText(myTextData));
             _onUpdate(i);
           }

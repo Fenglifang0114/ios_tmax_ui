@@ -107,13 +107,13 @@ showAddNetworkDialog(BuildContext context) {
                                 ),
                                 const SizedBox(height: 20),
                                 const Text("设备序列号："),
-                                SizedBox(
+                                const SizedBox(
                                   width: 200,
                                   height: 30,
                                   child: TextField(
                                     // controller: deviceName,
                                     textAlignVertical: TextAlignVertical.top,
-                                    decoration: const InputDecoration(
+                                    decoration: InputDecoration(
                                       // hintText: "请输入机种类型，如：ztp",
                                       border: OutlineInputBorder(),
                                     ),

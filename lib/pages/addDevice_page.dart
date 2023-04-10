@@ -39,13 +39,13 @@ class _AddDevicePageState extends State<AddDevicePage> {
   String scaleUrl = 'ws://127.0.0.1:7878/tmax?scaleid=1';
   // String scaleUrl = 'ws://10.5.100.89:7878/tmax?scaleid=';
 
-  var _eventbus1;
-  var _eventbus2;
-  var _eventbus3;
-  var _eventbus4;
-  var _eventbus5;
-  var _eventbus6;
-  var _eventbus7;
+  dynamic _eventbus1;
+  dynamic _eventbus2;
+  dynamic _eventbus3;
+  dynamic _eventbus4;
+  dynamic _eventbus5;
+  dynamic _eventbus6;
+  dynamic _eventbus7;
 
   @override
   void initState() {
@@ -123,6 +123,7 @@ class _AddDevicePageState extends State<AddDevicePage> {
     _eventbus4.cancel();
     _eventbus5.cancel();
     _eventbus6.cancel();
+    _eventbus7.cancel();
     _pageScrollerController.dispose();
     super.dispose();
   }

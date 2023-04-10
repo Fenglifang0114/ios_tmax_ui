@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/data/userinfo_data.dart';
@@ -355,7 +356,9 @@ void editUser() {
       myScaleCmd.cmdMode = "modify_user";
       myScaleCmd.cmdData = jsonEncode(myCurrUserInfo);
       MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
-      print(jsonEncode(myScaleCmd));
+      if (kDebugMode) {
+        print(jsonEncode(myScaleCmd));
+      }
       errorText.text = "Success!";
       userId.text = "";
       userName.text = "";

@@ -1,5 +1,4 @@
 import 'package:event_bus/event_bus.dart';
-import 'package:t_max/data/record_data.dart';
 
 EventBus eventBus = EventBus();
 

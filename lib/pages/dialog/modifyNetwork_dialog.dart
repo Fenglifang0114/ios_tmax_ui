@@ -19,7 +19,7 @@ modifyAddNetworkDialog(BuildContext context) {
             title: Container(
                 color: Colors.blue.shade900,
                 child: Row(
-                  children: [
+                  children: const [
                     Icon(Icons.wifi, color: Colors.white),
                     Text("设备信息修改", style: TextStyle(color: Colors.white))
                   ],
@@ -30,12 +30,12 @@ modifyAddNetworkDialog(BuildContext context) {
                   color: Color.fromARGB(255, 233, 232, 232)),
               child: Column(
                 children: [
-                  SizedBox(height: 2),
+                  const SizedBox(height: 2),
                   Container(
                     decoration: const BoxDecoration(color: Colors.white),
                     child: Column(
                       children: [
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Row(
                           children: const [
                             Text("基本信息设置"),
@@ -110,13 +110,13 @@ modifyAddNetworkDialog(BuildContext context) {
                                 ),
                                 const SizedBox(height: 20),
                                 const Text("设备序列号："),
-                                SizedBox(
+                                const SizedBox(
                                   width: 200,
                                   height: 30,
                                   child: TextField(
                                     // controller: deviceName,
                                     textAlignVertical: TextAlignVertical.top,
-                                    decoration: const InputDecoration(
+                                    decoration: InputDecoration(
                                       // hintText: "请输入机种类型，如：ztp",
                                       border: OutlineInputBorder(),
                                     ),

@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import '../../pages/dialog/registerWarn_dialog.dart';
 import '../home_page.dart';

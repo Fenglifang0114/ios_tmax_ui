@@ -3,19 +3,15 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:t_max/data/comscaleinfo_data.dart';
 import 'package:t_max/data/currentport_data.dart';
 import 'package:t_max/data/modifyscale_data.dart';
-import 'package:t_max/pages/dialog/showComPort_dialog.dart';
 import '../../data/comport_data.dart';
 import '../../data/device_data.dart';
-import '../../data/dialog_data.dart';
 import '../../data/scalecmd_data.dart';
 import '../../eventbus/eventbus.dart';
 import '../../main.dart';
 import '../widget/comdropdown.dart';
 import '../widget/comportdorpdown.dart';
-import '../widget/dropdown.dart';
 
 List<String> comLists = [];
 String comPort = "";
@@ -100,7 +96,9 @@ modifyAddComPortDialog(BuildContext context) {
                                       border: OutlineInputBorder(),
                                     ),
                                     onChanged: (value) {
-                                      print(value);
+                                      if (kDebugMode) {
+                                        print(value);
+                                      }
                                     },
                                   ),
                                 ),
@@ -141,7 +139,9 @@ modifyAddComPortDialog(BuildContext context) {
                                       border: OutlineInputBorder(),
                                     ),
                                     onChanged: (value) {
-                                      print(value);
+                                      if (kDebugMode) {
+                                        print(value);
+                                      }
                                     },
                                   ),
                                 ),
@@ -168,7 +168,9 @@ modifyAddComPortDialog(BuildContext context) {
                                       border: OutlineInputBorder(),
                                     ),
                                     onChanged: (value) {
-                                      print(value);
+                                      if (kDebugMode) {
+                                        print(value);
+                                      }
                                     },
                                   ),
                                 ),
@@ -272,7 +274,9 @@ modifyAddComPortDialog(BuildContext context) {
 void sendModifyInfo(String modifyString) {
   myScaleCmd.cmdMode = "modify_scale";
   myScaleCmd.cmdData = modifyString;
-  print(jsonEncode(myScaleCmd));
+  if (kDebugMode) {
+    print(jsonEncode(myScaleCmd));
+  }
   MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
 }
 

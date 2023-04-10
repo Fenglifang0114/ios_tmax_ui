@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -80,7 +81,9 @@ class _DraggableFloatingActionButtonState
         // eventBus.fire(EventOffset(myOffsetData));
       });
     } catch (e) {
-      print('catch: $e');
+      if (kDebugMode) {
+        print('catch: $e');
+      }
     }
   }
 
@@ -127,7 +130,6 @@ class _DraggableFloatingActionButtonState
       top: (_offset.dy.toInt() - (_offset.dy % 10).toInt()).roundToDouble(),
       child: Listener(
         onPointerMove: (PointerMoveEvent pointerMoveEvent) {
-          print('moveing    ${widget.index}');
           _updatePosition(pointerMoveEvent);
           setState(() {
             _isDragging = true;
@@ -141,13 +143,10 @@ class _DraggableFloatingActionButtonState
           myOffsetData.key = widget.key!;
           // myOffsetDataList.offsetDataList.add(myOffsetData);
           eventBus.fire(EventOffset(myOffsetData));
-          print(myTextData);
           myTextData.xPos = myOffsetData.x.toInt();
           myTextData.yPos = myOffsetData.y.toInt();
           eventBus.fire(EventText(myTextData));
-          var currentContext;
 
-          print(_offset.dx);
           if (_isDragging) {
             setState(() {
               _isDragging = false;

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:path/path.dart' as p;
@@ -9,7 +10,7 @@ import '../../eventbus/eventbus.dart';
 import '../widget/rowdatawidget.dart';
 
 class MyBarCodeDialog extends StatefulWidget {
-  MyBarCodeDialog({
+  const MyBarCodeDialog({
     Key? key,
   }) : super(key: key);
   @override
@@ -17,7 +18,7 @@ class MyBarCodeDialog extends StatefulWidget {
 }
 
 class MyBarCodeDialogState extends State<MyBarCodeDialog> {
-  var _eventbus1;
+  dynamic _eventbus1;
   late TextEditingController _errorController;
   late TextEditingController _barCodeNameController;
   late String _selectBarcode;
@@ -375,7 +376,9 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
   _saveDataToJson() async {
     if (myBarCodeListList.barCodeListList.isNotEmpty) {
       String json = jsonEncode(myBarCodeListList.barCodeListList);
-      print(json);
+      if (kDebugMode) {
+        print(json);
+      }
       final file = await _localFile;
       // 将字符串写入文件中
       file.writeAsStringSync(json);
@@ -431,10 +434,6 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
       _errorController.text =
           'The barcode name is invalid. Please enter a valid name.';
     }
-  }
-
-  void _errorClean() {
-    _errorController.text = '';
   }
 
   bool _judgeData() {

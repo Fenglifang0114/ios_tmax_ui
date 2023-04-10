@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
 
         //去掉右上角debug图标
         debugShowCheckedModeBanner: false,
-        home: TrialPage());
+        home: const TrialPage());
   }
 }
 

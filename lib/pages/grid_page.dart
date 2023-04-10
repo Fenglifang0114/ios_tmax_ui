@@ -167,7 +167,7 @@ class _GridPageState extends State<GridPage> {
             //设置列数
             crossAxisCount: 3,
             //设置内边距
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             //设置横向间距
             crossAxisSpacing: 10,
             //设置主轴间距

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/comscaleinfo_data.dart';
 import 'package:t_max/data/currentport_data.dart';
@@ -163,9 +164,13 @@ class _ReusableListItemState extends State<ReusableListItem> {
                           ? MaterialButton(
                               onPressed: () {
                                 if (index == myDevicedata.index) {
-                                  print("OK");
+                                  if (kDebugMode) {
+                                    print("OK");
+                                  }
                                 } else {
-                                  print("false");
+                                  if (kDebugMode) {
+                                    print("false");
+                                  }
                                 }
                               },
                               child: (index == myDevicedata.index)

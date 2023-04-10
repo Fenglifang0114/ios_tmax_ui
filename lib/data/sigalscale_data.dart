@@ -14,10 +14,10 @@ class RevScaleData {
         msgBody = json['MsgBody'];
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['ScaleId'] = this.scaleId;
-    data['MsgType'] = this.msgType;
-    data['MsgBody'] = this.msgBody;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['ScaleId'] = scaleId;
+    data['MsgType'] = msgType;
+    data['MsgBody'] = msgBody;
     return data;
   }
 }

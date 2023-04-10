@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:t_max/data/cominfoslist_data.dart';
-import 'package:t_max/data/comport_data.dart';
 import 'package:t_max/data/currentport_data.dart';
 import '../../data/dialog_data.dart';
 import '../../eventbus/eventbus.dart';
@@ -16,10 +15,10 @@ class ComDropdown extends StatefulWidget {
 }
 
 class DropdownState extends State<ComDropdown> {
-  var dropDownList;
+  late List<dynamic> dropDownList;
   DropdownState({Key? key}) : super();
 
-  var _eventbus1;
+  dynamic _eventbus1;
   @override
   void initState() {
     super.initState();
@@ -49,7 +48,7 @@ class DropdownState extends State<ComDropdown> {
     return Container(
       height: 53,
       width: 200,
-      padding: EdgeInsets.all(0),
+      padding: const EdgeInsets.all(0),
       child: DropdownButtonFormField<String>(
         isExpanded: true,
         // decoration: const InputDecoration(border: OutlineInputBorder()),
@@ -61,7 +60,6 @@ class DropdownState extends State<ComDropdown> {
           checkPortList();
           comPort = newPosition.toString();
           tempCurrentPort.devPath = comPort;
-          print(myDialogData.msg);
           setState(() {
             checkPortList();
             eventBus.fire(EventDialogData(myDialogData));

@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:t_max/data/cominfoslist_data.dart';
 import 'package:t_max/data/currentport_data.dart';
 import '../../data/dialog_data.dart';
-import '../../eventbus/eventbus.dart';
-import '../dialog/showComPort_dialog.dart';
 
 // ignore: must_be_immutable
 class ComPortDropdown extends StatefulWidget {
@@ -26,7 +23,7 @@ class DropdownState extends State<ComPortDropdown> {
     return Container(
       height: 53,
       width: 200,
-      padding: EdgeInsets.all(0),
+      padding: const EdgeInsets.all(0),
       child: DropdownButtonFormField<String>(
         isExpanded: true,
         // decoration: const InputDecoration(border: OutlineInputBorder()),

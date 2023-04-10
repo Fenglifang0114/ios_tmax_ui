@@ -21,13 +21,13 @@ fieldModifyDialog(BuildContext context) {
             title: Container(
                 color: Colors.blue.shade900,
                 child: Row(
-                  children: [
+                  children: const [
                     Icon(
                       Icons.language,
                       color: Colors.white,
                     ),
-                    const SizedBox(width: 10),
-                    const Text("报表字段修改", style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 10),
+                    Text("报表字段修改", style: TextStyle(color: Colors.white)),
                   ],
                 )),
             content: Container(
@@ -38,56 +38,56 @@ fieldModifyDialog(BuildContext context) {
                   const SizedBox(height: 15),
                   Row(
                     children: [
-                      Text("第一个字段："),
-                      SizedBox(width: 20),
+                      const Text("第一个字段："),
+                      const SizedBox(width: 20),
                       Dropdown(firstField),
-                      SizedBox(width: 50),
-                      Text("第二个字段："),
-                      SizedBox(width: 20),
+                      const SizedBox(width: 50),
+                      const Text("第二个字段："),
+                      const SizedBox(width: 20),
                       Dropdown(secondField)
                     ],
                   ),
                   Row(
                     children: [
-                      Text("第三个字段："),
-                      SizedBox(width: 20),
+                      const Text("第三个字段："),
+                      const SizedBox(width: 20),
                       Dropdown(thirdField),
-                      SizedBox(width: 50),
-                      Text("第四个字段："),
-                      SizedBox(width: 20),
+                      const SizedBox(width: 50),
+                      const Text("第四个字段："),
+                      const SizedBox(width: 20),
                       Dropdown(fourthField)
                     ],
                   ),
                   Row(
                     children: [
-                      Text("第五个字段："),
-                      SizedBox(width: 20),
+                      const Text("第五个字段："),
+                      const SizedBox(width: 20),
                       Dropdown(fifthField),
-                      SizedBox(width: 50),
-                      Text("第六个字段："),
-                      SizedBox(width: 20),
+                      const SizedBox(width: 50),
+                      const Text("第六个字段："),
+                      const SizedBox(width: 20),
                       Dropdown(sixthField)
                     ],
                   ),
                   Row(
                     children: [
-                      Text("第七个字段："),
-                      SizedBox(width: 20),
+                      const Text("第七个字段："),
+                      const SizedBox(width: 20),
                       Dropdown(seventhField),
-                      SizedBox(width: 50),
-                      Text("第八个字段："),
-                      SizedBox(width: 20),
+                      const SizedBox(width: 50),
+                      const Text("第八个字段："),
+                      const SizedBox(width: 20),
                       Dropdown(eighthField)
                     ],
                   ),
                   Row(
                     children: [
-                      Text("第九个字段："),
-                      SizedBox(width: 20),
+                      const Text("第九个字段："),
+                      const SizedBox(width: 20),
                       Dropdown(ninthField),
-                      SizedBox(width: 50),
-                      Text("第十个字段："),
-                      SizedBox(width: 20),
+                      const SizedBox(width: 50),
+                      const Text("第十个字段："),
+                      const SizedBox(width: 20),
                       Dropdown(tenthField)
                     ],
                   ),
@@ -103,7 +103,7 @@ fieldModifyDialog(BuildContext context) {
                         Navigator.of(context).pop();
                       },
                       child: const Text("确定")),
-                  SizedBox(width: 20),
+                  const SizedBox(width: 20),
                   OutlinedButton(
                       child: const Text("取消"),
                       onPressed: () {

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../generated/l10n.dart';
 import '../widget/dropdown.dart';
 
 List<String> launguage = ['简体中文', '繁体中文', 'English'];

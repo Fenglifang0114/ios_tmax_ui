@@ -12,7 +12,7 @@ leftMenu(BuildContext context) {
               onPressed: () {},
               child: Column(
                 children: [
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   IconButton(
                       onPressed: () {
                         //跳转页面
@@ -20,22 +20,23 @@ leftMenu(BuildContext context) {
                             //没有传值
                             builder: (context) => const HomePage()));
                       },
-                      icon: Icon(Icons.home, color: Colors.white)),
+                      icon: const Icon(Icons.home, color: Colors.white)),
                   IconButton(
                       onPressed: () {
                         registerDialog(context).then((onValue) {});
                       },
-                      icon: Icon(Icons.app_registration, color: Colors.white)),
+                      icon: const Icon(Icons.app_registration,
+                          color: Colors.white)),
                   IconButton(
                       onPressed: () {
                         accountDialog(context).then((onValue) {});
                       },
-                      icon: Icon(Icons.account_box, color: Colors.white)),
+                      icon: const Icon(Icons.account_box, color: Colors.white)),
                   IconButton(
                       onPressed: () {
                         launguageDialog(context).then((onValue) {});
                       },
-                      icon: Icon(Icons.language, color: Colors.white)),
+                      icon: const Icon(Icons.language, color: Colors.white)),
                 ],
               )))
     ],

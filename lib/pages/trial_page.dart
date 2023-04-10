@@ -133,7 +133,7 @@ class _TrialPageState extends State<TrialPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Container(
+                        SizedBox(
                             width: 250,
                             child: Image.asset('images/tscale.png')),
                         const SizedBox(width: 100)

@@ -42,14 +42,14 @@ class ProductRecInfo {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['RecId'] = this.recId;
-    data['Id'] = this.id;
-    data['Product'] = this.product;
-    data['WithPretare'] = this.withPretare;
-    data['Pretare'] = this.pretare;
-    data['Remarks'] = this.remarks;
-    data['CreatedAt'] = this.createdAt;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['RecId'] = recId;
+    data['Id'] = id;
+    data['Product'] = product;
+    data['WithPretare'] = withPretare;
+    data['Pretare'] = pretare;
+    data['Remarks'] = remarks;
+    data['CreatedAt'] = createdAt;
     return data;
   }
 }

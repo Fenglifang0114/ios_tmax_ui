@@ -1,22 +1,16 @@
 import 'dart:convert';
 
-import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/dialog_data.dart';
-import 'package:t_max/data/respdata_data.dart';
 import 'package:t_max/data/scalecmd_data.dart';
-import 'package:t_max/data/scalelist_data.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/main.dart';
-import 'package:t_max/pages/dialog/adduser_dialog.dart';
 import 'package:t_max/pages/dialog/showComPort_dialog.dart';
 import 'package:t_max/pages/widget/TimerWidget.dart';
-import 'package:t_max/pages/widget/boxGradient.dart';
 import '../data/device_data.dart';
 import '../data/login_data.dart';
 import '../generated/l10n.dart';
 import 'addDevice_page.dart';
-import 'login_page.dart';
 import 'widget/leftSidebar.dart';
 import 'widget/version.dart';
 
@@ -36,8 +30,8 @@ class _HomePageState extends State<HomePage> {
   List<DataRow> dataRows = [];
 
   late ScrollController _pageScrollerController;
-  var _eventbus1;
-  var _eventbus2;
+  dynamic _eventbus1;
+  dynamic _eventbus2;
   String groupValue = 'zh';
   DateTime now = DateTime.now();
 
@@ -112,13 +106,13 @@ class _HomePageState extends State<HomePage> {
                           value: "zh",
                           child: Text(
                             "简体中文",
-                            style: Theme.of(context).textTheme.bodyText2,
+                            style: Theme.of(context).textTheme.bodyMedium,
                           )),
                       PopupMenuItem(
                           value: "en",
                           child: Text(
                             "English",
-                            style: Theme.of(context).textTheme.bodyText2,
+                            style: Theme.of(context).textTheme.bodyMedium,
                           )),
                     ],
                   ),

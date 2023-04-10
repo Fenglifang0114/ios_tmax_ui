@@ -16,7 +16,7 @@ showAddBluetoothDialog(BuildContext context) {
             title: Container(
                 color: Colors.blue.shade900,
                 child: Row(
-                  children: [
+                  children: const [
                     Icon(Icons.bluetooth, color: Colors.white),
                     Text("蓝牙连接", style: TextStyle(color: Colors.white))
                   ],
@@ -27,12 +27,12 @@ showAddBluetoothDialog(BuildContext context) {
                   color: Color.fromARGB(255, 233, 232, 232)),
               child: Column(
                 children: [
-                  SizedBox(height: 2),
+                  const SizedBox(height: 2),
                   Container(
                     decoration: const BoxDecoration(color: Colors.white),
                     child: Column(
                       children: [
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Row(
                           children: const [
                             Text("基本信息设置"),

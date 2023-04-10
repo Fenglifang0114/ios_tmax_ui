@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 
@@ -17,7 +18,7 @@ class MyQrcodeDialog extends StatefulWidget {
 }
 
 class MyQrcodeDialogState extends State<MyQrcodeDialog> {
-  var _eventbus1;
+  dynamic _eventbus1;
   late TextEditingController _errorController;
   late TextEditingController _barCodeNameController;
   String _selectedQrcodeName = '--';
@@ -291,7 +292,9 @@ class MyQrcodeDialogState extends State<MyQrcodeDialog> {
   _saveDataToJson() async {
     if (myBarCodeListList.barCodeListList.isNotEmpty) {
       String json = jsonEncode(myBarCodeListList.barCodeListList);
-      print(json);
+      if (kDebugMode) {
+        print(json);
+      }
       final file = await _localFile;
       // 将字符串写入文件中
       file.writeAsStringSync(json);

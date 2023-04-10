@@ -14,11 +14,11 @@ class WeightData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['IsStable'] = this.isStable;
-    data['IsNet'] = this.isNet;
-    data['WeightVal'] = this.weightVal;
-    data['WeightUnit'] = this.weightUnit;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['IsStable'] = isStable;
+    data['IsNet'] = isNet;
+    data['WeightVal'] = weightVal;
+    data['WeightUnit'] = weightUnit;
     return data;
   }
 }

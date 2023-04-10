@@ -1,25 +1,15 @@
 import 'dart:convert';
 
-import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:protobuf/meta.dart';
-import 'package:t_max/data/comInfo_data.dart';
 import 'package:t_max/data/conninfo_data.dart';
 import 'package:t_max/data/conninfosport_data.dart';
-import 'package:t_max/data/ports.dart';
 import 'package:t_max/data/scalecmd_data.dart';
-import 'package:t_max/data/serialinfo_data.dart';
 import 'package:t_max/main.dart';
-import 'package:t_max/pages/dialog/modifyComPort_dialog.dart';
 import '../../data/cominfoslist_data.dart';
 import '../../data/comport_data.dart';
 import '../../data/dialog_data.dart';
-import '../../data/sportinfolist_data.dart';
 import '../../eventbus/eventbus.dart';
-import '../widget/dropdown.dart';
 
 List<String> comLists = [];
 String comPort = "";
@@ -133,7 +123,6 @@ showAddComPortDialog(BuildContext context) {
                                       getPortList();
                                       checkPortList();
                                       comPort = newPosition.toString();
-                                      print(myComportdata.modelName);
                                       setState(() {
                                         checkPortList();
 
@@ -157,7 +146,7 @@ showAddComPortDialog(BuildContext context) {
                                   ),
                                   height: 53,
                                   width: 200,
-                                  padding: EdgeInsets.all(0),
+                                  padding: const EdgeInsets.all(0),
                                 ),
 
                                 const SizedBox(height: 15),
@@ -171,7 +160,6 @@ showAddComPortDialog(BuildContext context) {
                                     // 选择回调
                                     onChanged: (String? newPosition) {
                                       dataBits = newPosition.toString();
-                                      print(myComportdata.dataBits);
                                       setState(() {});
                                     },
                                     // 传入可选的数组
@@ -184,7 +172,7 @@ showAddComPortDialog(BuildContext context) {
                                   ),
                                   height: 53,
                                   width: 200,
-                                  padding: EdgeInsets.all(0),
+                                  padding: const EdgeInsets.all(0),
                                 ),
                                 // Dropdown(comPortList),
                                 // const SizedBox(height: 15),
@@ -202,7 +190,6 @@ showAddComPortDialog(BuildContext context) {
                                     onChanged: (String? newPosition) {
                                       stopBits = newPosition.toString();
 
-                                      print(myComportdata.dataBits);
                                       setState(() {
                                         // eventBus.fire(
                                         //     EventComportdata(myComportdata)
@@ -267,7 +254,6 @@ showAddComPortDialog(BuildContext context) {
                                     // 选择回调
                                     onChanged: (String? newPosition) {
                                       baud = newPosition.toString();
-                                      print(myComportdata.baud);
                                       setState(() {
                                         eventBus.fire(
                                             EventComportdata(myComportdata));
@@ -283,7 +269,7 @@ showAddComPortDialog(BuildContext context) {
                                   ),
                                   height: 53,
                                   width: 200,
-                                  padding: EdgeInsets.all(0),
+                                  padding: const EdgeInsets.all(0),
                                 ),
                                 const SizedBox(height: 15),
                                 const Text("校验："),
@@ -298,7 +284,6 @@ showAddComPortDialog(BuildContext context) {
                                     onChanged: (String? newPosition) {
                                       myComportdata.parity =
                                           newPosition.toString();
-                                      print(myComportdata.parity);
                                       setState(() {
                                         // eventBus.fire(
                                         //     EventComportdata(myComportdata));
@@ -314,7 +299,7 @@ showAddComPortDialog(BuildContext context) {
                                   ),
                                   height: 53,
                                   width: 200,
-                                  padding: EdgeInsets.all(0),
+                                  padding: const EdgeInsets.all(0),
                                 ),
                                 const SizedBox(height: 15),
                                 const Text("协议："),
@@ -347,7 +332,7 @@ showAddComPortDialog(BuildContext context) {
                                   ),
                                   height: 53,
                                   width: 200,
-                                  padding: EdgeInsets.all(0),
+                                  padding: const EdgeInsets.all(0),
                                 ),
 
                                 const SizedBox(height: 15),
@@ -390,12 +375,10 @@ showAddComPortDialog(BuildContext context) {
                         myConnInfo.description = deviceName.text.toString();
                         myConnInfo.modelName = model.text.toString();
                         myConnInfo.mediaType = 1;
-                        print(myConnInfoSport);
 
                         // MyApp.sock.send('conninfo', jsonEncode(myConnInfo));
                         eventBus.fire(EventComportdata(myComportdata));
                         myDialogData.type = dialogtype;
-                        print(myDialogData.type);
                         connectionType =
                             deviceName.text.toString() + ",Icons.usb";
                         Navigator.of(context).pop(
@@ -421,7 +404,6 @@ Future<void> _refresh() async {
     if (myComInfoList.msgBody!.isEmpty == true) {
       comLists = ["请刷新端口"];
     } else {
-      print(comLists);
       comLists = myComInfoList.msgBody!.toList();
     }
   });

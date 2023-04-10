@@ -10,16 +10,16 @@ accountWarnDialog(BuildContext context) {
             title: Container(
                 color: Colors.blue.shade900,
                 child: Row(
-                  children: [
+                  children: const [
                     Icon(
                       Icons.message,
                       color: Colors.white,
                     ),
-                    const SizedBox(width: 10),
-                    const Text("提示信息！", style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 10),
+                    Text("提示信息！", style: TextStyle(color: Colors.white)),
                   ],
                 )),
-            content: Text("对不起，您输入的密码不正确，\n请重新输入！"),
+            content: const Text("对不起，您输入的密码不正确，\n请重新输入！"),
             actions: <Widget>[
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,

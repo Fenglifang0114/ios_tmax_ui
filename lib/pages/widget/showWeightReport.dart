@@ -26,7 +26,6 @@ import '../dialog/setting_dialog.dart';
 import '../dialog/showComPort_dialog.dart';
 import 'package:path/path.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import 'package:path_provider/path_provider.dart';
 
 class ShowWeightReport extends StatefulWidget {
   const ShowWeightReport({Key? key}) : super(key: key);

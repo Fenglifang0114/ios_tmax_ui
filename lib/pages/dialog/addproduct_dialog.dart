@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/data/productrec.dart';
@@ -150,7 +151,9 @@ addProductDialog(BuildContext context) {
                                       // border: OutlineInputBorder(),
                                     ),
                                     onChanged: (value) {
-                                      print(value);
+                                      if (kDebugMode) {
+                                        print(value);
+                                      }
                                     },
                                   ),
                                 ),
@@ -312,7 +315,9 @@ void addProductRec() {
     myScaleCmd.cmdMode = "add_product";
     myScaleCmd.cmdData = jsonEncode(myProductRec);
     MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
-    print(jsonEncode(myScaleCmd));
+    if (kDebugMode) {
+      print(jsonEncode(myScaleCmd));
+    }
     errorText.text = "Success!";
 
     productID.text = '';
@@ -359,7 +364,9 @@ void editProductRec() {
       myScaleCmd.cmdMode = "modify_product";
       myScaleCmd.cmdData = jsonEncode(myProductRecEdit);
       MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
-      print(jsonEncode(myScaleCmd));
+      if (kDebugMode) {
+        print(jsonEncode(myScaleCmd));
+      }
       errorText.text = "Success!";
     } else {
       errorText.text = "Record was not found";
@@ -394,7 +401,9 @@ void delProductRec() {
       myScaleCmd.cmdMode = "del_product";
       myScaleCmd.cmdData = jsonEncode(myProductRecDel);
       MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
-      print(jsonEncode(myScaleCmd));
+      if (kDebugMode) {
+        print(jsonEncode(myScaleCmd));
+      }
       if (recid == myProductRecInfo.recId) {
         myProductRecInfo.id = "";
         myProductRecInfo.product = "";

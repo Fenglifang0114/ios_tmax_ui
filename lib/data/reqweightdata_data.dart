@@ -9,15 +9,15 @@ class ReqWeightCountine {
     scaleId = json['ScaleId'];
     msgType = json['MsgType'];
     msgBody =
-        json['MsgBody'] != null ? new MsgBody.fromJson(json['MsgBody']) : null;
+        json['MsgBody'] != null ? MsgBody.fromJson(json['MsgBody']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['ScaleId'] = this.scaleId;
-    data['MsgType'] = this.msgType;
-    if (this.msgBody != null) {
-      data['MsgBody'] = this.msgBody!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['ScaleId'] = scaleId;
+    data['MsgType'] = msgType;
+    if (msgBody != null) {
+      data['MsgBody'] = msgBody!.toJson();
     }
     return data;
   }
@@ -37,11 +37,11 @@ class MsgBody {
         weightUnit = json['WeightUnit'];
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['IsStable'] = this.isStable;
-    data['IsNet'] = this.isNet;
-    data['WeightVal'] = this.weightVal;
-    data['WeightUnit'] = this.weightUnit;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['IsStable'] = isStable;
+    data['IsNet'] = isNet;
+    data['WeightVal'] = weightVal;
+    data['WeightUnit'] = weightUnit;
     return data;
   }
 }

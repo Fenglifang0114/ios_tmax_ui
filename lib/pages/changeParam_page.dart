@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/weightparam_data.dart';
 import '../data/date_data.dart';
@@ -20,7 +21,7 @@ class ChangeParamPage extends StatefulWidget {
 class _ChangeParamPageState extends State<ChangeParamPage> {
   List<String> items = [];
   List<DataRow> dataRows = [];
-  TextEditingController _gravitycontroller =
+  final TextEditingController _gravitycontroller =
       TextEditingController(text: "9.79640");
 
   late ScrollController _pageScrollerController;
@@ -62,9 +63,9 @@ class _ChangeParamPageState extends State<ChangeParamPage> {
 
   int _part = 1;
 
-  var _eventbus1;
-  var _eventbus2;
-  var _eventbus3;
+  dynamic _eventbus1;
+  dynamic _eventbus2;
+  dynamic _eventbus3;
 
   @override
   void initState() {
@@ -209,7 +210,9 @@ class _ChangeParamPageState extends State<ChangeParamPage> {
                             onChanged: (value) {
                               setState(() {
                                 isRangeChecked = value!;
-                                print(isRangeChecked);
+                                if (kDebugMode) {
+                                  print(isRangeChecked);
+                                }
                               });
                             }),
                         const Text("量程"),
