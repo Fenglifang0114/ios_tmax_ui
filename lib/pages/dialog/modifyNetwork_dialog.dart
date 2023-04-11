@@ -21,7 +21,8 @@ modifyAddNetworkDialog(BuildContext context) {
                 child: Row(
                   children: const [
                     Icon(Icons.wifi, color: Colors.white),
-                    Text("设备信息修改", style: TextStyle(color: Colors.white))
+                    Text("Device information modification",
+                        style: TextStyle(color: Colors.white))
                   ],
                 )),
             content: Container(
@@ -38,7 +39,7 @@ modifyAddNetworkDialog(BuildContext context) {
                         const SizedBox(height: 10),
                         Row(
                           children: const [
-                            Text("基本信息设置"),
+                            Text("Basic Information Settings"),
                           ],
                         ),
                         const SizedBox(height: 20),
@@ -48,7 +49,7 @@ modifyAddNetworkDialog(BuildContext context) {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text("连接名称："),
+                                const Text("Connection name:"),
                                 SizedBox(
                                   width: 200,
                                   height: 30,
@@ -62,7 +63,7 @@ modifyAddNetworkDialog(BuildContext context) {
                                   ),
                                 ),
                                 const SizedBox(height: 20),
-                                const Text("IP地址："),
+                                const Text("IP:"),
                                 SizedBox(
                                   width: 200,
                                   height: 30,
@@ -76,7 +77,7 @@ modifyAddNetworkDialog(BuildContext context) {
                                   ),
                                 ),
                                 const SizedBox(height: 20),
-                                const Text("机种类型："),
+                                const Text("Device Type:"),
                                 SizedBox(
                                   width: 200,
                                   height: 30,
@@ -142,7 +143,7 @@ modifyAddNetworkDialog(BuildContext context) {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   OutlinedButton(
-                      child: const Text("确定"),
+                      child: const Text("Ok"),
                       onPressed: () {
                         connectionType =
                             deviceName.text.toString() + ",Icons.wifi";
@@ -151,7 +152,7 @@ modifyAddNetworkDialog(BuildContext context) {
                       }),
                   const SizedBox(width: 20),
                   OutlinedButton(
-                      child: const Text("取消"),
+                      child: const Text("Cancel"),
                       onPressed: () {
                         Navigator.of(context)
                             .pop(); // to go back to screen after submitting

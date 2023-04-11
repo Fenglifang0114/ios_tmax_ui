@@ -35,7 +35,7 @@ showAddBluetoothDialog(BuildContext context) {
                         const SizedBox(height: 10),
                         Row(
                           children: const [
-                            Text("基本信息设置"),
+                            Text("Basic Information Settings"),
                           ],
                         ),
                         const SizedBox(height: 15),
@@ -45,7 +45,7 @@ showAddBluetoothDialog(BuildContext context) {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text("连接名称："),
+                                const Text("Connection name:"),
                                 SizedBox(
                                   width: 200,
                                   height: 30,
@@ -59,10 +59,10 @@ showAddBluetoothDialog(BuildContext context) {
                                   ),
                                 ),
                                 const SizedBox(height: 20),
-                                const Text("可用设备："),
+                                const Text("Available Devices:"),
                                 Dropdown(deviceList),
                                 const SizedBox(height: 20),
-                                const Text("设备编号："),
+                                const Text("Device ID:"),
                                 const SizedBox(
                                   width: 200,
                                   height: 30,

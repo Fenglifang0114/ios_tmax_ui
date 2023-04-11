@@ -165,7 +165,7 @@ class _HomePageState extends State<HomePage> {
                           child: Column(
                         children: [
                           const SizedBox(height: 100),
-                          const Text("t_max management system",
+                          const Text("T-Max management system",
                               style:
                                   TextStyle(color: Colors.blue, fontSize: 50)),
                           const SizedBox(height: 100),

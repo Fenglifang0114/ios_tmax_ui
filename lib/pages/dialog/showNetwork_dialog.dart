@@ -35,7 +35,7 @@ showAddNetworkDialog(BuildContext context) {
                         const SizedBox(height: 10),
                         Row(
                           children: const [
-                            Text("基本信息设置"),
+                            Text("Basic Information Settings"),
                           ],
                         ),
                         const SizedBox(height: 20),
@@ -45,7 +45,7 @@ showAddNetworkDialog(BuildContext context) {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text("连接名称："),
+                                const Text("Connection name:"),
                                 SizedBox(
                                   width: 200,
                                   height: 30,

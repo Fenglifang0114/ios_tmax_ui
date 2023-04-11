@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/data/currentport_data.dart';
 import 'package:t_max/data/modifyscale_data.dart';
+import 'package:t_max/pages/dialog/showComPort_dialog.dart';
 import '../../data/comport_data.dart';
 import '../../data/device_data.dart';
 import '../../data/scalecmd_data.dart';
@@ -39,6 +40,7 @@ TextEditingController model = TextEditingController();
 TextEditingController description = TextEditingController();
 
 modifyAddComPortDialog(BuildContext context) {
+  getPortList();
   tempCurrentPort = myCurrentPort;
   return showDialog(
       barrierDismissible: false, //设置为false，点击空白处弹窗不关闭
@@ -51,7 +53,8 @@ modifyAddComPortDialog(BuildContext context) {
                 child: Row(
                   children: const [
                     Icon(Icons.usb, color: Colors.white),
-                    Text("设备信息修改", style: TextStyle(color: Colors.white))
+                    Text("Device information modification",
+                        style: TextStyle(color: Colors.white))
                   ],
                 )),
             content: Container(
@@ -65,21 +68,15 @@ modifyAddComPortDialog(BuildContext context) {
                     decoration: const BoxDecoration(color: Colors.white),
                     child: Column(
                       children: [
-                        const SizedBox(height: 10),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: const [
-                            Text("基本信息设置"),
-                          ],
-                        ),
-                        const SizedBox(height: 15),
+                        // const SizedBox(height: 10),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text("连接名称："),
+                                const SizedBox(height: 15),
+                                const Text("Connection name:"),
                                 SizedBox(
                                   width: 200,
                                   height: 30,
@@ -103,14 +100,14 @@ modifyAddComPortDialog(BuildContext context) {
                                   ),
                                 ),
                                 const SizedBox(height: 15),
-                                const Text("串口："),
+                                const Text("Serial port:"),
                                 ComDropdown(),
                                 const SizedBox(height: 15),
-                                const Text("数据位："),
+                                const Text("Data bits:"),
                                 ComPortDropdown(1, dataBitsList,
                                     myCurrentPort.dataBits.toString()),
                                 const SizedBox(height: 15),
-                                const Text("停止位："),
+                                const Text("Stop bits:"),
                                 ComPortDropdown(
                                     2,
                                     stopBitsList,
@@ -121,37 +118,15 @@ modifyAddComPortDialog(BuildContext context) {
                                             : (myCurrentPort.stopBits == 2)
                                                 ? (stopBitsList[2])
                                                 : stopBitsList[0]),
-                                const SizedBox(height: 15),
-                                const Text("设备编号："),
-                                SizedBox(
-                                  width: 200,
-                                  height: 30,
-                                  child: TextField(
-                                    controller: deviceNum,
-                                    maxLength: 20,
-                                    maxLengthEnforcement:
-                                        MaxLengthEnforcement.enforced,
-                                    maxLines: 1,
-                                    textAlignVertical: TextAlignVertical.top,
-                                    decoration: const InputDecoration(
-                                      counterText: "",
-                                      // hintText: "请输入机种类型，如：ztp",
-                                      border: OutlineInputBorder(),
-                                    ),
-                                    onChanged: (value) {
-                                      if (kDebugMode) {
-                                        print(value);
-                                      }
-                                    },
-                                  ),
-                                ),
+                                // const SizedBox(height: 15),
                               ],
                             ),
                             const SizedBox(width: 60),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text("机种类型："),
+                                const SizedBox(height: 15),
+                                const Text("Device Type:"),
                                 SizedBox(
                                   width: 200,
                                   height: 30,
@@ -175,11 +150,11 @@ modifyAddComPortDialog(BuildContext context) {
                                   ),
                                 ),
                                 const SizedBox(height: 15),
-                                const Text("波特率："),
+                                const Text("Baud rate:"),
                                 ComPortDropdown(3, baudRateList,
                                     myCurrentPort.baud.toString()),
                                 const SizedBox(height: 15),
-                                const Text("校验："),
+                                const Text("Parity"),
                                 ComPortDropdown(
                                     4,
                                     checkBitsList,
@@ -192,7 +167,7 @@ modifyAddComPortDialog(BuildContext context) {
                                                 : checkBitsList[0]),
                                 // Dropdown(checkBitsList),
                                 const SizedBox(height: 15),
-                                const Text("协议："),
+                                const Text("Flow control:"),
                                 // Dropdown(protocolList),
                                 Container(
                                   child: DropdownButtonFormField<String>(
@@ -226,15 +201,38 @@ modifyAddComPortDialog(BuildContext context) {
                                   width: 200,
                                   padding: const EdgeInsets.all(0),
                                 ),
-                                const SizedBox(height: 15),
-                                const Text(""),
+                                // const SizedBox(height: 15),
+                                // const Text(""),
                                 // ElevatedButton(
                                 //     onPressed: () {}, child: const Text("测试连接"))
                               ],
                             ),
                           ],
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 15),
+                        const Text("Device Id:"),
+                        SizedBox(
+                          width: 465,
+                          height: 30,
+                          child: TextField(
+                            controller: deviceNum,
+                            maxLength: 20,
+                            maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                            maxLines: 1,
+                            textAlignVertical: TextAlignVertical.top,
+                            decoration: const InputDecoration(
+                              counterText: "",
+                              // hintText: "请输入机种类型，如：ztp",
+                              border: OutlineInputBorder(),
+                            ),
+                            onChanged: (value) {
+                              if (kDebugMode) {
+                                print(value);
+                              }
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 59),
                       ],
                     ),
                   )
@@ -246,7 +244,7 @@ modifyAddComPortDialog(BuildContext context) {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   OutlinedButton(
-                      child: const Text("确定"),
+                      child: const Text("Ok"),
                       onPressed: () {
                         modifyComInfo();
                         // myDialogData.type = dialogtype;
@@ -258,7 +256,7 @@ modifyAddComPortDialog(BuildContext context) {
                       }),
                   const SizedBox(width: 20),
                   OutlinedButton(
-                      child: const Text("取消"),
+                      child: const Text("Cancel"),
                       onPressed: () {
                         Navigator.of(context)
                             .pop(); // to go back to screen after submitting

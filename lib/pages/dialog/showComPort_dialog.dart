@@ -72,7 +72,7 @@ showAddComPortDialog(BuildContext context) {
                         const SizedBox(height: 10),
                         Row(
                           children: const [
-                            Text("基本信息设置"),
+                            Text("Basic Information Settings"),
                           ],
                         ),
                         const SizedBox(height: 15),
@@ -82,7 +82,7 @@ showAddComPortDialog(BuildContext context) {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text("连接名称："),
+                                const Text("Connection name:"),
                                 SizedBox(
                                   width: 200,
                                   height: 30,
@@ -150,7 +150,7 @@ showAddComPortDialog(BuildContext context) {
                                 ),
 
                                 const SizedBox(height: 15),
-                                const Text("数据位："),
+                                const Text("Data bits"),
                                 Container(
                                   child: DropdownButtonFormField<String>(
                                     isExpanded: true,
@@ -179,7 +179,7 @@ showAddComPortDialog(BuildContext context) {
                                 // const Text("数据位："),
                                 // Dropdown(dataBitsList),
                                 const SizedBox(height: 15),
-                                const Text("停止位："),
+                                const Text("Stop bits:"),
                                 Container(
                                   child: DropdownButtonFormField<String>(
                                     isExpanded: true,
@@ -210,7 +210,7 @@ showAddComPortDialog(BuildContext context) {
                                 ),
                                 // Dropdown(stopBitsList),
                                 const SizedBox(height: 15),
-                                const Text("设备编号："),
+                                const Text("Device ID:"),
                                 SizedBox(
                                   width: 200,
                                   height: 30,
@@ -218,7 +218,8 @@ showAddComPortDialog(BuildContext context) {
                                     controller: deviceNum,
                                     textAlignVertical: TextAlignVertical.bottom,
                                     decoration: const InputDecoration(
-                                      hintText: "序列号刷新后自动获取",
+                                      hintText:
+                                          "Automatically retrieve serial number after refresh",
                                       border: OutlineInputBorder(),
                                     ),
                                   ),
@@ -302,7 +303,7 @@ showAddComPortDialog(BuildContext context) {
                                   padding: const EdgeInsets.all(0),
                                 ),
                                 const SizedBox(height: 15),
-                                const Text("协议："),
+                                const Text("Flow control:"),
                                 // Dropdown(protocolList),
                                 Container(
                                   child: DropdownButtonFormField<String>(
@@ -344,7 +345,7 @@ showAddComPortDialog(BuildContext context) {
                                         checkPortList();
                                       });
                                     },
-                                    child: const Text("刷新串口"))
+                                    child: const Text("Refresh port"))
                               ],
                             ),
                           ],
@@ -361,7 +362,7 @@ showAddComPortDialog(BuildContext context) {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   OutlinedButton(
-                      child: const Text("确定"),
+                      child: const Text("Ok"),
                       onPressed: () {
                         FocusScope.of(context).unfocus();
 
@@ -386,7 +387,7 @@ showAddComPortDialog(BuildContext context) {
                       }),
                   const SizedBox(width: 20),
                   OutlinedButton(
-                      child: const Text("取消"),
+                      child: const Text("Cancel"),
                       onPressed: () {
                         Navigator.of(context)
                             .pop(); // to go back to screen after submitting
@@ -402,7 +403,7 @@ showAddComPortDialog(BuildContext context) {
 Future<void> _refresh() async {
   await Future.delayed(const Duration(seconds: 1), () {
     if (myComInfoList.msgBody!.isEmpty == true) {
-      comLists = ["请刷新端口"];
+      comLists = ["Refresh port"];
     } else {
       comLists = myComInfoList.msgBody!.toList();
     }
@@ -417,8 +418,8 @@ void getPortList() {
 
 void checkPortList() {
   if (myComInfoList.msgBody!.isEmpty == true) {
-    comLists = ["请刷新端口"];
-    comPort = "请刷新端口";
+    comLists = ["Refresh port"];
+    comPort = "Refresh port";
   } else {
     comLists = myComInfoList.msgBody!.toList();
     if (!comLists.contains(comPort)) {

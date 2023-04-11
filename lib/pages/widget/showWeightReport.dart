@@ -9,6 +9,7 @@ import 'package:t_max/data/currentport_data.dart';
 import 'package:t_max/data/productlist_data.dart';
 import 'package:t_max/data/userinfo_data.dart';
 import 'package:t_max/pages/dialog/addproduct_dialog.dart';
+import '../../data/downloadresponse.dart';
 import '../../data/report_data.dart';
 import '../../data/reqweightdata_data.dart';
 import '../../data/scalecmd_data.dart';

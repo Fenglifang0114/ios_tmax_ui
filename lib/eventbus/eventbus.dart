@@ -196,3 +196,13 @@ class EventDownloadResponse {
   dynamic obj;
   EventDownloadResponse(this.obj);
 }
+
+class EventSerialPortResponse {
+  dynamic obj;
+  EventSerialPortResponse(this.obj);
+}
+
+class EventSerialPortStatus {
+  dynamic obj;
+  EventSerialPortStatus(this.obj);
+}

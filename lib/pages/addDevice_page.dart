@@ -8,6 +8,7 @@ import 'package:t_max/data/report_data.dart';
 import 'package:t_max/data/respdata_data.dart';
 import '../common/WebSocketScaleChannel.dart';
 import '../data/device_data.dart';
+import '../data/downloadresponse.dart';
 import '../eventbus/eventbus.dart';
 import '../pages/widget/themeColor.dart';
 import 'dialog/showComPort_dialog.dart';
@@ -46,6 +47,7 @@ class _AddDevicePageState extends State<AddDevicePage> {
   dynamic _eventbus5;
   dynamic _eventbus6;
   dynamic _eventbus7;
+  dynamic _eventbus8;
 
   @override
   void initState() {
@@ -113,6 +115,25 @@ class _AddDevicePageState extends State<AddDevicePage> {
         });
       }
     });
+
+    _eventbus8 = eventBus.on<EventSerialPortResponse>().listen((event) {
+      if (mounted) {
+        setState(() {
+          mySerialPortResponse = event.obj;
+          if (mySerialPortResponse.msgBody.isNotEmpty) {
+            setState(() {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(mySerialPortResponse.msgBody,
+                      style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold)), ////此处需要秤回复
+                  duration: const Duration(seconds: 10),
+                  backgroundColor: Colors.red.shade900));
+            });
+          }
+        });
+      }
+    });
   }
 
   @override
@@ -124,6 +145,7 @@ class _AddDevicePageState extends State<AddDevicePage> {
     _eventbus5.cancel();
     _eventbus6.cancel();
     _eventbus7.cancel();
+    _eventbus8.cancel();
     _pageScrollerController.dispose();
     super.dispose();
   }

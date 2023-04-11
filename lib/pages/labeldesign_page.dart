@@ -11,7 +11,6 @@ import '../data/scalecmd_data.dart';
 import '../data/text.dart';
 import '../eventbus/eventbus.dart';
 import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'addDevice_page.dart';
 import 'dialog/barcodeedit_dialog.dart';
@@ -99,6 +98,8 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   dynamic _eventbus4;
   dynamic _eventbus5;
   dynamic _eventbus6;
+  dynamic _eventbus7;
+  dynamic _eventbus8;
   final FocusNode _focusNodeContent = FocusNode();
   final FocusNode _focusNodeFontSize = FocusNode();
   final FocusNode _focusNodexPos = FocusNode();
@@ -315,16 +316,42 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           if (myDownloadResponse.msgBody.isNotEmpty) {
             setState(() {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(myDownloadResponse.msgBody,
+                  content: Text(
+                      (myDownloadResponse.msgBody.contains('ok'))
+                          ? 'Download successful!'
+                          : myDownloadResponse.msgBody,
                       style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold)), ////此处需要秤回复
-                  duration: const Duration(seconds: 1),
+                  duration: const Duration(seconds: 3),
                   backgroundColor: (myDownloadResponse.msgBody.contains('ok'))
                       ? Colors.green.shade900
                       : Colors.red.shade900));
             });
           }
+        });
+      }
+    });
+    _eventbus7 = eventBus.on<EventSerialPortResponse>().listen((event) {
+      if (mounted) {
+        setState(() {
+          mySerialPortResponse = event.obj;
+          if (mySerialPortResponse.msgBody.isNotEmpty &&
+              mySerialPortStatus.serialPortStatus) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(mySerialPortResponse.msgBody,
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.bold)), ////此处需要秤回复
+                duration: const Duration(seconds: 10),
+                backgroundColor: Colors.red.shade900));
+          }
+        });
+      }
+    });
+    _eventbus8 = eventBus.on<EventSerialPortStatus>().listen((event) {
+      if (mounted) {
+        setState(() {
+          mySerialPortStatus = event.obj;
         });
       }
     });
@@ -381,6 +408,8 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     _eventbus4.cancel();
     _eventbus5.cancel();
     _eventbus6.cancel();
+    _eventbus7.cancel();
+    _eventbus8.cancel();
     super.dispose();
   }
 
@@ -970,13 +999,13 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
 
   String _getstyle(String fontBold, String fontReverse) {
     if (fontBold == 'true' && fontReverse == 'false') {
-      return 'B';
+      return '2';
     } else if (fontBold == 'true' && fontReverse == 'true') {
-      return 'BW';
+      return '3';
     } else if (fontBold == 'false' && fontReverse == 'true') {
-      return 'W';
+      return '1';
     } else {
-      return 'N';
+      return '0';
     }
   }
 
@@ -2064,11 +2093,11 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       _selectedAlignment = value;
     });
     if (_selectedAlignment == 'Left') {
-      _onSubmit('0', 5);
-    } else if (_selectedAlignment == 'Center') {
       _onSubmit('1', 5);
-    } else if (_selectedAlignment == 'Right') {
+    } else if (_selectedAlignment == 'Center') {
       _onSubmit('2', 5);
+    } else if (_selectedAlignment == 'Right') {
+      _onSubmit('3', 5);
     }
   }
 

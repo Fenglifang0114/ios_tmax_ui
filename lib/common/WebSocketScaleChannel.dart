@@ -152,6 +152,10 @@ class WebSocketScaleChannel {
         Map<String, dynamic> map = json.decode(data);
         dynamic mobj = DownloadResponse.fromJson(map);
         eventBus.fire(EventDownloadResponse(mobj));
+      } else if (jsonData['MsgType'] == 14) {
+        Map<String, dynamic> map = json.decode(data);
+        dynamic mobj = DownloadResponse.fromJson(map);
+        eventBus.fire(EventDownloadResponse(mobj));
       }
       // else if (jsonData['MsgType'] == 6) {
       //   Map<String, dynamic> map = json.decode(data);
