@@ -13,6 +13,7 @@ import '../generated/l10n.dart';
 import 'addDevice_page.dart';
 import 'widget/leftSidebar.dart';
 import 'widget/version.dart';
+import 'scalehome_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -184,7 +185,7 @@ class _HomePageState extends State<HomePage> {
                                 // getUserList();
                                 Navigator.push(context,
                                     MaterialPageRoute(builder: (context) {
-                                  return const AddDevicePage();
+                                  return const ScaleHomePage(); //AddDevicePage();
                                 }));
                               },
                               child: const Text("Click to start",

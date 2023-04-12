@@ -48,6 +48,7 @@ class _AddDevicePageState extends State<AddDevicePage> {
   dynamic _eventbus6;
   dynamic _eventbus7;
   dynamic _eventbus8;
+  dynamic _eventbus9;
 
   @override
   void initState() {
@@ -120,17 +121,25 @@ class _AddDevicePageState extends State<AddDevicePage> {
       if (mounted) {
         setState(() {
           mySerialPortResponse = event.obj;
-          if (mySerialPortResponse.msgBody.isNotEmpty) {
-            setState(() {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(mySerialPortResponse.msgBody,
-                      style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold)), ////此处需要秤回复
-                  duration: const Duration(seconds: 10),
-                  backgroundColor: Colors.red.shade900));
-            });
+          if (mySerialPortResponse.msgBody.isNotEmpty &&
+              mySerialPortStatus.serialPortStatus) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(mySerialPortResponse.msgBody,
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.bold)), ////此处需要秤回复
+                duration: const Duration(seconds: 10),
+                backgroundColor: Colors.red.shade900));
           }
+          mySerialPortStatus.serialPortStatus = false;
+          eventBus.fire(EventSerialPortStatus(mySerialPortStatus));
+        });
+      }
+    });
+
+    _eventbus9 = eventBus.on<EventSerialPortStatus>().listen((event) {
+      if (mounted) {
+        setState(() {
+          mySerialPortStatus = event.obj;
         });
       }
     });
@@ -146,192 +155,194 @@ class _AddDevicePageState extends State<AddDevicePage> {
     _eventbus6.cancel();
     _eventbus7.cancel();
     _eventbus8.cancel();
+    _eventbus9.cancel();
     _pageScrollerController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: themeColor(),
-      home: Scaffold(
-        drawer: leftSidebar(context),
-        // AppBar：相当于iOS 的导航栏
-        appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(30),
-            child: AppBar(
-              title: version(),
-              actions: [AppbarMsg(context)],
-            )),
-        body: ListView(
-          // 水平拉伸
-          scrollDirection: Axis.horizontal,
+    return
+        // MaterialApp(
+        //   debugShowCheckedModeBanner: false,
+        //   theme: themeColor(),
+        //   home:
+        Scaffold(
+      drawer: leftSidebar(context),
+      // AppBar：相当于iOS 的导航栏
+      appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(30),
+          child: AppBar(
+            title: version(),
+            actions: [AppbarMsg(context)],
+          )),
+      body: ListView(
+        // 水平拉伸
+        scrollDirection: Axis.horizontal,
 
-          children: [
-            Container(
-              width: 20,
-              color: Colors.blue.shade900,
-            ),
-            Row(
-              children: [
-                //左侧添加设备
-                Container(
-                  width: 200,
-                  decoration: const BoxDecoration(
-                      border: Border(
-                          right: BorderSide(width: 0.5, color: Colors.black))),
-                  child: Column(
-                    children: <Widget>[
-                      //添加设备
-                      // Row(
-                      //   children: const [
-                      //     Icon(Icons.add),
-                      //     Text("添加设备："),
-                      //     SizedBox(width: 20),
-                      //   ],
-                      // ),
-                      // Row(
-                      //   children: [
-                      //     TextButton(
-                      //         onPressed: () {
-                      //           showAddNetworkDialog(context).then((onValue) {
-                      //             // print(onValue);
-                      //             setState(() {
-                      //               items.add(onValue.toString());
-                      //             });
-                      //           });
-                      //         },
-                      //         child: const Text("网络")),
-                      //     TextButton(
-                      //       onPressed: () {
-                      //         if (kDebugMode) {
-                      //           print(jsonEncode(myScaleCmd));
-                      //         }
-                      //         checkPortList();
+        children: [
+          Container(
+            width: 20,
+            color: Colors.blue.shade900,
+          ),
+          Row(
+            children: [
+              //左侧添加设备
+              Container(
+                width: 200,
+                decoration: const BoxDecoration(
+                    border: Border(
+                        right: BorderSide(width: 0.5, color: Colors.black))),
+                child: Column(
+                  children: <Widget>[
+                    //添加设备
+                    // Row(
+                    //   children: const [
+                    //     Icon(Icons.add),
+                    //     Text("添加设备："),
+                    //     SizedBox(width: 20),
+                    //   ],
+                    // ),
+                    // Row(
+                    //   children: [
+                    //     TextButton(
+                    //         onPressed: () {
+                    //           showAddNetworkDialog(context).then((onValue) {
+                    //             // print(onValue);
+                    //             setState(() {
+                    //               items.add(onValue.toString());
+                    //             });
+                    //           });
+                    //         },
+                    //         child: const Text("网络")),
+                    //     TextButton(
+                    //       onPressed: () {
+                    //         if (kDebugMode) {
+                    //           print(jsonEncode(myScaleCmd));
+                    //         }
+                    //         checkPortList();
 
-                      //         showAddComPortDialog(context).then((onValue) {
-                      //           if (kDebugMode) {
-                      //             print(onValue);
-                      //           }
-                      //           setState(() {
-                      //             items.add(onValue.toString());
-                      //           });
-                      //         });
-                      //       },
-                      //       child: const Text("串口"),
-                      //     ),
-                      //     TextButton(
-                      //       onPressed: () {
-                      //         showAddBluetoothDialog(context).then((onValue) {
-                      //           print(onValue);
-                      //           setState(() {
-                      //             items.add(onValue.toString());
-                      //           });
-                      //         });
-                      //       },
-                      //       child: const Text("蓝牙"),
-                      //     ),
-                      //   ],
-                      // ),
-                      const Divider(
-                        height: 1.0,
-                        color: Color(0xFF004a98),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.only(
-                            left: 20, top: 5, right: 20), //设置 child 居中
-                        alignment: const Alignment(0, 0),
-                        height: 40,
-                        width: 200, //边框设置
-                        decoration: new BoxDecoration(
-                            //背景
-                            color: Colors.yellow.shade900,
-                            //设置四周圆角 角度
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(20)),
-                            //设置四周边框
-                            // border: new Border.all(width: 1, color: Colors.red),
-                            boxShadow: const [
-                              BoxShadow(
-                                  color: Colors.blue,
-                                  offset: Offset(0.0, 2.0),
-                                  blurRadius: 1.0,
-                                  spreadRadius: 1.0),
-                            ]),
-                        child: TextButton(
-                          onPressed: () {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
-                              return const LabelDesignPage();
-                            }));
-                          },
-                          child: const Text(
-                            "Print Format Design",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      Container(
-                        margin: const EdgeInsets.only(
-                            left: 20, top: 5, right: 20), //设置 child 居中
-                        alignment: const Alignment(0, 0),
-                        height: 40,
-                        width: 200, //边框设置
-                        decoration: new BoxDecoration(
-                            //背景
-                            color: Colors.white,
-                            //设置四周圆角 角度
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(20)),
-                            //设置四周边框
-                            // border: new Border.all(width: 1, color: Colors.red),
-                            boxShadow: [
-                              BoxShadow(
-                                  color: Colors.blue.shade900,
-                                  offset: const Offset(0.0, 2.0),
-                                  blurRadius: 1.0,
-                                  spreadRadius: 1.0),
-                            ]),
+                    //         showAddComPortDialog(context).then((onValue) {
+                    //           if (kDebugMode) {
+                    //             print(onValue);
+                    //           }
+                    //           setState(() {
+                    //             items.add(onValue.toString());
+                    //           });
+                    //         });
+                    //       },
+                    //       child: const Text("串口"),
+                    //     ),
+                    //     TextButton(
+                    //       onPressed: () {
+                    //         showAddBluetoothDialog(context).then((onValue) {
+                    //           print(onValue);
+                    //           setState(() {
+                    //             items.add(onValue.toString());
+                    //           });
+                    //         });
+                    //       },
+                    //       child: const Text("蓝牙"),
+                    //     ),
+                    //   ],
+                    // ),
+                    const Divider(
+                      height: 1.0,
+                      color: Color(0xFF004a98),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(
+                          left: 20, top: 5, right: 20), //设置 child 居中
+                      alignment: const Alignment(0, 0),
+                      height: 40,
+                      width: 220, //边框设置
+                      decoration: new BoxDecoration(
+                          //背景
+                          color: Colors.yellow.shade900,
+                          //设置四周圆角 角度
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(20)),
+                          //设置四周边框
+                          // border: new Border.all(width: 1, color: Colors.red),
+                          boxShadow: const [
+                            BoxShadow(
+                                color: Colors.blue,
+                                offset: Offset(0.0, 2.0),
+                                blurRadius: 1.0,
+                                spreadRadius: 1.0),
+                          ]),
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return const LabelDesignPage();
+                          }));
+                        },
                         child: const Text(
-                          "My device",
+                          "Print Format Design",
                           style: TextStyle(
-                              color: Color.fromARGB(255, 13, 73, 161),
-                              fontWeight: FontWeight.bold),
+                              color: Colors.white, fontWeight: FontWeight.bold),
                         ),
                       ),
-                      const SizedBox(
-                        height: 15,
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(
+                          left: 20, top: 5, right: 20), //设置 child 居中
+                      alignment: const Alignment(0, 0),
+                      height: 40,
+                      width: 220, //边框设置
+                      decoration: new BoxDecoration(
+                          //背景
+                          color: Colors.white,
+                          //设置四周圆角 角度
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(20)),
+                          //设置四周边框
+                          // border: new Border.all(width: 1, color: Colors.red),
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.blue.shade900,
+                                offset: const Offset(0.0, 2.0),
+                                blurRadius: 1.0,
+                                spreadRadius: 1.0),
+                          ]),
+                      child: const Text(
+                        "My device",
+                        style: TextStyle(
+                            color: Color.fromARGB(255, 13, 73, 161),
+                            fontWeight: FontWeight.bold),
                       ),
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
 
-                      Expanded(
-                        child: ListView.builder(
-                          controller: _pageScrollerController,
-                          itemBuilder: (context, index) {
-                            String idContextIcon = (index + 1).toString() +
-                                "," +
-                                items[index].toString();
-                            return ReusableListItem(idContextIcon);
-                          },
-                          itemCount: items.length,
-                        ),
+                    Expanded(
+                      child: ListView.builder(
+                        controller: _pageScrollerController,
+                        itemBuilder: (context, index) {
+                          String idContextIcon = (index + 1).toString() +
+                              "," +
+                              items[index].toString();
+                          return ReusableListItem(idContextIcon);
+                        },
+                        itemCount: items.length,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                // GridPage()
-                //右侧重量显示
-                const ShowWeightReport(),
-              ],
-            )
-          ],
-        ),
+              ),
+              // GridPage()
+              //右侧重量显示
+              const ShowWeightReport(),
+            ],
+          )
+        ],
       ),
+      // ),
     );
   }
 

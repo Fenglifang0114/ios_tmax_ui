@@ -8,6 +8,7 @@ import 'package:t_max/data/modifyscale_data.dart';
 import 'package:t_max/pages/dialog/showComPort_dialog.dart';
 import '../../data/comport_data.dart';
 import '../../data/device_data.dart';
+import '../../data/downloadresponse.dart';
 import '../../data/scalecmd_data.dart';
 import '../../eventbus/eventbus.dart';
 import '../../main.dart';
@@ -246,7 +247,13 @@ modifyAddComPortDialog(BuildContext context) {
                   OutlinedButton(
                       child: const Text("Ok"),
                       onPressed: () {
-                        modifyComInfo();
+                        mySerialPortStatus.serialPortStatus = true;
+                        eventBus
+                            .fire(EventSerialPortStatus(mySerialPortStatus));
+                        if (myCurrentPort.devPath != '') {
+                          modifyComInfo();
+                        }
+
                         // myDialogData.type = dialogtype;
                         // print(myDialogData.type);
                         // connectionType =

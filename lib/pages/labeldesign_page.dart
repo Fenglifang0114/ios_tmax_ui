@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:csv/csv.dart';
+import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/downloadresponse.dart';
 import '../data/barcoderowdata.dart';
@@ -98,8 +99,8 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   dynamic _eventbus4;
   dynamic _eventbus5;
   dynamic _eventbus6;
-  dynamic _eventbus7;
-  dynamic _eventbus8;
+  // dynamic _eventbus7;
+  // dynamic _eventbus8;
   final FocusNode _focusNodeContent = FocusNode();
   final FocusNode _focusNodeFontSize = FocusNode();
   final FocusNode _focusNodexPos = FocusNode();
@@ -332,29 +333,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         });
       }
     });
-    _eventbus7 = eventBus.on<EventSerialPortResponse>().listen((event) {
-      if (mounted) {
-        setState(() {
-          mySerialPortResponse = event.obj;
-          if (mySerialPortResponse.msgBody.isNotEmpty &&
-              mySerialPortStatus.serialPortStatus) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text(mySerialPortResponse.msgBody,
-                    style: const TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.bold)), ////此处需要秤回复
-                duration: const Duration(seconds: 10),
-                backgroundColor: Colors.red.shade900));
-          }
-        });
-      }
-    });
-    _eventbus8 = eventBus.on<EventSerialPortStatus>().listen((event) {
-      if (mounted) {
-        setState(() {
-          mySerialPortStatus = event.obj;
-        });
-      }
-    });
 
     _focusNodeContent.addListener(() {
       if (!_focusNodeContent.hasFocus) {
@@ -408,8 +386,8 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     _eventbus4.cancel();
     _eventbus5.cancel();
     _eventbus6.cancel();
-    _eventbus7.cancel();
-    _eventbus8.cancel();
+    // _eventbus7.cancel();
+    // _eventbus8.cancel();
     super.dispose();
   }
 
@@ -424,15 +402,13 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           width: screenSize.width - 10,
           color: Colors.blue.shade900,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Row(
                     children: [
-                      const SizedBox(
-                        width: 10,
-                      ),
                       SizedBox(
                         height: 40,
                         child: Row(
@@ -481,9 +457,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                   ),
                   Row(
                     children: [
-                      const SizedBox(
-                        width: 10,
-                      ),
                       SizedBox(
                         height: 40,
                         child: Row(
@@ -533,6 +506,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                 ],
               ),
               Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   SizedBox(
                     height: 40,
@@ -544,9 +518,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                               color: Colors.white,
                               fontSize: 20,
                               fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(
-                          width: 10,
                         ),
                         DropdownButton<String>(
                           dropdownColor: Colors.grey[400],
@@ -586,9 +557,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                     height: 40,
                     child: Row(
                       children: [
-                        const SizedBox(
-                          height: 10,
-                        ),
                         SizedBox(
                           width: 150,
                           child: ElevatedButton(
@@ -616,14 +584,10 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                   )
                 ],
               ),
-              const SizedBox(
-                width: 10,
-              ),
+
               Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  const SizedBox(
-                    height: 10,
-                  ),
                   SizedBox(
                     width: 150,
                     child: ElevatedButton(
@@ -654,9 +618,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                             ))),
-                  ),
-                  const SizedBox(
-                    height: 10,
                   ),
                   SizedBox(
                     width: 150,
@@ -708,14 +669,10 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                   ),
                 ],
               ),
-              const SizedBox(
-                width: 10,
-              ),
+
               Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  const SizedBox(
-                    height: 10,
-                  ),
                   SizedBox(
                     width: 150,
                     child: ElevatedButton(
@@ -748,9 +705,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                         });
                       },
                     ),
-                  ),
-                  const SizedBox(
-                    height: 10,
                   ),
                   SizedBox(
                     width: 150,
@@ -787,81 +741,84 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                   ),
                 ],
               ),
-              const SizedBox(
-                width: 10,
-              ),
-              Column(
-                children: [
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  SizedBox(
-                    width: 150,
-                    child: ElevatedButton(
-                        onPressed: downloadStatus
-                            ? () async {
-                                final directory = Directory.current.path;
-                                String dataTime = getDateTime();
-                                String outputFile;
-                                final filePath =
-                                    Directory('$directory\\download');
-                                final file = File(
-                                    '$directory\\download\\$dataTime.json');
-                                outputFile = file.path;
-                                if (!await filePath.exists()) {
-                                  await filePath.create(recursive: true);
-                                }
-                                _saveFormatToJson(outputFile);
-                                _exportCSV();
-                                setState(() {
-                                  downloadStatus = false;
-                                });
-                              }
-                            : null,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: downloadStatus
-                              ? Colors.green.shade900
-                              : Colors.white, // 设置按钮的背景色
-                          elevation: 10, // 设置按钮的阴影
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
-                          ),
-                        ),
-                        child: Text('Download',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color:
-                                  downloadStatus ? Colors.white : Colors.black,
-                            ))),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  SizedBox(
-                    width: 150,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white, // 设置按钮的背景色
-                        elevation: 10, // 设置按钮的阴影
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
-                        ),
+
+              SizedBox(
+                width: 150,
+                height: 50,
+                child: ElevatedButton(
+                    onPressed: downloadStatus
+                        ? () async {
+                            final directory = Directory.current.path;
+                            String dataTime = getDateTime();
+                            String outputFile;
+                            final filePath = Directory('$directory\\download');
+                            final file =
+                                File('$directory\\download\\$dataTime.json');
+                            outputFile = file.path;
+                            if (!await filePath.exists()) {
+                              await filePath.create(recursive: true);
+                            }
+                            _saveFormatToJson(outputFile);
+                            _exportCSV();
+                            setState(() {
+                              downloadStatus = false;
+                            });
+                          }
+                        : null,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: downloadStatus
+                          ? Colors.green.shade900
+                          : Colors.white, // 设置按钮的背景色
+                      elevation: 10, // 设置按钮的阴影
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
                       ),
-                      child: Text(
-                        'Exit',
+                    ),
+                    child: Text('Download',
                         style: TextStyle(
-                            color: Colors.blue.shade900,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: downloadStatus ? Colors.white : Colors.black,
+                        ))),
+              ),
+
+              SizedBox(
+                width: 150,
+                height: 50,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white, // 设置按钮的背景色
+                    elevation: 10, // 设置按钮的阴影
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
                     ),
                   ),
-                ],
+                  child: Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Icon(
+                          Icons.home,
+                          color: Colors.blue.shade900,
+                        ),
+                        Text(
+                          'Home',
+                          style: TextStyle(
+                              color: Colors.blue.shade900,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
               ),
+
+              //   ],
+              // ),
             ],
           ),
         ),

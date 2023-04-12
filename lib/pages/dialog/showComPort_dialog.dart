@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/conninfo_data.dart';
 import 'package:t_max/data/conninfosport_data.dart';
+import 'package:t_max/data/currentport_data.dart';
 import 'package:t_max/data/scalecmd_data.dart';
 import 'package:t_max/main.dart';
 import '../../data/cominfoslist_data.dart';
@@ -420,10 +421,12 @@ void checkPortList() {
   if (myComInfoList.msgBody!.isEmpty == true) {
     comLists = ["Refresh port"];
     comPort = "Refresh port";
+    tempCurrentPort.devPath = '';
   } else {
     comLists = myComInfoList.msgBody!.toList();
     if (!comLists.contains(comPort)) {
       comPort = comLists[0];
+      myCurrentPort.devPath = comPort; //20230411@F
     }
   }
   // getPortList();

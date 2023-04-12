@@ -17,12 +17,12 @@ class CurrentPort {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['DevPath'] = this.devPath;
-    data['Baud'] = this.baud;
-    data['DataBits'] = this.dataBits;
-    data['StopBits'] = this.stopBits;
-    data['Parity'] = this.parity;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['DevPath'] = devPath;
+    data['Baud'] = baud;
+    data['DataBits'] = dataBits;
+    data['StopBits'] = stopBits;
+    data['Parity'] = parity;
     return data;
   }
 }

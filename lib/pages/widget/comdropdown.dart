@@ -59,11 +59,16 @@ class DropdownState extends State<ComDropdown> {
           getPortList();
           checkPortList();
           comPort = newPosition.toString();
-          tempCurrentPort.devPath = comPort;
-          setState(() {
-            checkPortList();
-            eventBus.fire(EventDialogData(myDialogData));
-          });
+          if (comPort != 'Refresh port') {
+            tempCurrentPort.devPath = comPort;
+          } else {
+            tempCurrentPort.devPath = '';
+          }
+
+          // setState(() {
+          //   checkPortList();
+          //   // eventBus.fire(EventDialogData(myDialogData));
+          // });
         },
         // 传入可选的数组
         items: comLists.map<DropdownMenuItem<String>>((String value) {
