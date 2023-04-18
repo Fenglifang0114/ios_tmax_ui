@@ -156,20 +156,17 @@ class _DraggableFloatingActionButtonState
           }
         },
         onPointerHover: (PointerHoverEvent pointerHoverEvent) {},
-
         child: Stack(
           key: _key,
           children: [...widget.children],
         ),
-
-        // child: Stack(
-        //   key: _key,
-        //   children: [...widget.children],
-        // ),
       ),
     );
   }
 }
+
+
+
 
 
 

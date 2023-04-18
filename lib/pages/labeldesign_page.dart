@@ -31,7 +31,7 @@ const citys = {
   "Free Text": ["Text,TEXT"],
   "BarCode": ["BarCode,BarCode"],
   "Qrcode": ["Qrcode,Qrcode"],
-  // "形状": ["方形,rectangle", "圆形,round", "直线,Line"],
+  "Shape": ["Rectangle,Rectangle", "Circle,Circle", "Line,Line"],
   "Variable": [
     "Gross,DATA",
     "Tare,DATA",
@@ -1127,6 +1127,17 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           tempContent,
           textItemList[i].index,
         ]);
+      } else if (textItemList[i].type == 'Line') {
+        csvData.add([
+          'L',
+          textItemList[i].xPos,
+          textItemList[i].yPos,
+          textItemList[i].x2Pos,
+          textItemList[i].y2Pos,
+          textItemList[i].lineWidth,
+          0, //线类型
+          textItemList[i].index,
+        ]);
       }
     }
     String csv = const ListToCsvConverter(
@@ -1137,6 +1148,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     // final file = File('${path}/data.csv');
     // await file.writeAsString(csv);
     sendFormatToScale(csv); //发送数据
+    print(csv);
     // _saveFormatToCsv(csv);  //////////保存数据到csv
 
     // if (await file.exists()) {

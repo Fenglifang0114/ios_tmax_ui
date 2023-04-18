@@ -1,9 +1,10 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:t_max/pages/widget/rectanglepainter.dart';
 import '../../data/text.dart';
 import '../../eventbus/eventbus.dart';
 import 'linepainter.dart';
 import 'package:barcode_widget/barcode_widget.dart';
+import 'dart:math';
 
 class TextItem extends StatefulWidget {
   // ignore: prefer_const_constructors_in_immutables
@@ -161,7 +162,9 @@ class TextItemState extends State<TextItem> {
           ),
         );
       } else if (widget.type == 'Line') {
-        return buildSizedbox();
+        return buildLine();
+      } else if (widget.type == 'Rectangle') {
+        return buildRectangle();
       } else {
         // 对于其他情况直接返回空容器
         return Container();
@@ -223,7 +226,39 @@ class TextItemState extends State<TextItem> {
     }
   }
 
-  Widget buildSizedbox() {
+  Widget buildLine() {
+    double dx = double.parse(widget.x2Pos.toString()) -
+        double.parse(widget.xPos.toString());
+    double dy = double.parse(widget.y2Pos.toString()) -
+        double.parse(widget.yPos.toString());
+    double radians = atan2(dy, dx);
+    double degrees = radians * 180 / pi;
+    final lineLength = sqrt(pow(dx, 2) + pow(dy, 2));
+
+    double widthLength = dx.abs();
+
+    double heightLength = dy.abs();
+    return Transform.rotate(
+        angle: 0, //degrees.abs(), //旋转角度  pi/2  90度
+        child: Container(
+          decoration: _getBorderStyle(),
+          width: widthLength + 5, // 宽度等于线条长度
+          height: heightLength + 5, // 高度等于线条宽度
+          child: CustomPaint(
+            painter: LinePainter(
+              startPoint: Offset(0, double.parse(widget.yPos.toString())),
+              endPoint: Offset(double.parse(widget.x2Pos.toString()),
+                  double.parse(widget.y2Pos.toString())),
+              // startPoint: Offset(30, 70),
+              // endPoint: Offset(100, 100),
+              lineColor: Colors.black,
+              lineWidth: widget.lineWidth,
+            ),
+          ),
+        ));
+  }
+
+  Widget buildRectangle() {
     // final lineLength = sqrt(pow(
     //         double.parse(widget.x2Pos.toString()) -
     //             double.parse(widget.xPos.toString()),
@@ -233,20 +268,29 @@ class TextItemState extends State<TextItem> {
     //             double.parse(widget.yPos.toString()),
     //         2));
     return Container(
-      decoration: _getBorderStyle(),
-      // width: lineLength, // 宽度等于线条长度
-      // height: widget.lineWidth, // 高度等于线条宽度
-      child: CustomPaint(
-        painter: LinePainter(
-          startPoint: Offset(double.parse(widget.xPos.toString()),
-              double.parse(widget.yPos.toString())),
-          endPoint: Offset(double.parse(widget.x2Pos.toString()),
-              double.parse(widget.y2Pos.toString())),
-          lineColor: Colors.black,
-          lineWidth: widget.lineWidth,
-        ),
-      ),
-    );
+        decoration: _getBorderStyle(),
+        // width: lineLength, // 宽度等于线条长度
+        // height: widget.lineWidth, // 高度等于线条宽度
+        child: SizedBox(
+            width: 100,
+            height: 200,
+            child: CustomPaint(
+              painter: RectanglePainter(
+                startPoint: Offset(0, 0),
+                endPoint: Offset(100, 200),
+              ),
+              // size: Size.infinite,
+            ))
+
+        // CustomPaint(
+        //   painter: LinePainter(
+        //       startPoint: Offset(10, 100),
+        //       endPoint: Offset(10, 200),
+        //       lineColor: Colors.black,
+        //       lineWidth: 100 //widget.lineWidth,
+        //       ),
+        // ),
+        );
   }
 
   // 获取边框样式

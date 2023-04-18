@@ -4,9 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:t_max/data/downloadresponse.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-
 import '../data/reqweightdata_data.dart';
-
 import '../eventbus/eventbus.dart';
 
 class WebSocketScaleChannel {
@@ -18,12 +16,12 @@ class WebSocketScaleChannel {
   // late Timer hearTimer;
   late List<int> totalChannel = [];
 
-  void channelAdd() {
-    if (!totalChannel.contains(scaleId)) {
-      connect();
-      totalChannel.add(scaleId);
-    }
-  }
+  // void channelAdd() {
+  //   if (!totalChannel.contains(scaleId)) {
+  //     connect();
+  //     totalChannel.add(scaleId);
+  //   }
+  // }
 
   // 开始进行链接
   void connect() async {
@@ -43,8 +41,9 @@ class WebSocketScaleChannel {
   // 断连，然后执行重连
   void onDone() {
     debugPrint("Socket1 onDone");
+    reconnectSocket();
     // reconnectSocket();
-    heartStatus = false;
+    // heartStatus = false;
     // debugPrint("Socket is closed");
     // channel = IOWebSocketChannel.connect(url);
     // heartStatus = true;
@@ -80,22 +79,6 @@ class WebSocketScaleChannel {
     }
   }
 
-  // } else if (jsonData['MgrMsgType'] == "scales_list") {
-  //   if (jsonData['MsgBody'] != "") {
-  //     Map<String, dynamic> map = json.decode(data);
-  //     dynamic mobj = ScaleList.fromJson(map);
-  //     eventBus.fire(EventScaleList(mobj));
-  //     // if (jsonData['MsgBody'].tolist().lenth > 0 && count == 0) {
-  //     //   WebSocketChannel webchannel9999 =
-  //     //       WebSocketChannel('ws://10.5.52.202:8443/v9999');
-  //     //   webchannel9999.connect();
-
-  //     //   mobj.toString().length;
-  //     // }
-  //     print(map.values);
-  //   }
-  // }
-
   /// 销毁心跳包
   void destoryHeart() {
     //为心跳包则直接
@@ -107,16 +90,16 @@ class WebSocketScaleChannel {
 
   /// 重新连接socket
   void reconnectSocket() {
-    // dispose();
-    // destoryHeart();
-    // connect();
+    dispose();
+    destoryHeart();
+    connect();
   }
 
   void dispose() {
-    if (heartStatus) {
-      // hearTimer.cancel();
-    }
-    channel.sink.close();
+    // if (heartStatus) {
+    //   // hearTimer.cancel();
+    // }
+    // channel.sink.close();
     heartStatus = false;
   }
 
