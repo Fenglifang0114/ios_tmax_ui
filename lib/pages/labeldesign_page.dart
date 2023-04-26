@@ -4,6 +4,7 @@ import 'package:csv/csv.dart';
 import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/downloadresponse.dart';
+import 'package:t_max/pages/widget/linepainter.dart';
 import '../data/barcoderowdata.dart';
 import '../data/formatdata.dart';
 import '../data/offset.dart';
@@ -125,6 +126,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   String _selectFontReverse = 'false';
   bool downloadStatus = true;
   String _selectFontsize = '23';
+  final _lineList = [];
 
   final List<String> _printers = [
     'EPM205',
@@ -851,7 +853,10 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                         border: Border.all(width: 0.5, color: Colors.black)),
                     child: Stack(
                       key: _parentKey,
-                      children: [...floatButtonList],
+                      children: [
+                        ...floatButtonList,
+                        _buildLines(),
+                      ],
                     ),
                   )
                 ],
@@ -879,6 +884,69 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         ],
       ),
     );
+  }
+
+  Widget _buildLines() {
+    return Stack(
+      children: [
+        for (var i = 0; i < _lineList.length; i++)
+          _buildLine(i, _lineList[i].start, _lineList[i].end),
+      ],
+    );
+  }
+
+  Widget _buildLine(int index, Offset start, Offset end) {
+    return Stack(
+      children: [
+        Positioned(
+          top: 0, //math.min(start.dy, end.dy),
+          left: 0, //math.min(start.dx, end.dx),
+          width: (start - end).distance,
+          height: 5.0,
+          child: Transform.rotate(
+            angle: 0, //math.atan2(end.dy - start.dy, end.dx - start.dx),
+            child: GestureDetector(
+              onPanUpdate: (details) => _onLineDragged(index, details),
+              child: CustomPaint(
+                painter: LinePainter(startPoint: start, endPoint: end),
+              ),
+            ),
+          ),
+        ),
+        Circle(
+          index: index,
+          position: start,
+          onPositionChanged: (position) =>
+              _onCircleDragged(index, start, position, 0),
+        ),
+        Circle(
+          index: index,
+          position: end,
+          onPositionChanged: (position) =>
+              _onCircleDragged(index, end, position, 1),
+        ),
+      ],
+    );
+  }
+
+  void _onLineDragged(int index, DragUpdateDetails details) {
+    setState(() {
+      final line = _lineList[index];
+      _lineList[index] =
+          Line(line.start + details.delta, line.end + details.delta);
+    });
+  }
+
+  void _onCircleDragged(
+      int index, Offset oldPosition, Offset newPosition, int circleIndex) {
+    setState(() {
+      final line = _lineList[index];
+      if (circleIndex == 1) {
+        _lineList[index] = Line(line.start, newPosition);
+      } else {
+        _lineList[index] = Line(newPosition, line.end);
+      }
+    });
   }
 
   String pad0(int num) {
@@ -1470,10 +1538,14 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           alignment: Alignment.center,
           child: TextButton(
             onPressed: () {
-              count++;
-              num.add(count);
-              myTextData.tabOrder = count;
-              addfloatbutton(name);
+              if (name != 'Line,Line') {
+                count++;
+                num.add(count);
+                myTextData.tabOrder = count;
+                addfloatbutton(name);
+              } else {
+                _createLine();
+              }
             },
             child: Text(
               //左侧按钮文本的颜色
@@ -1484,6 +1556,14 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
             ),
           )),
     );
+  }
+
+  void _createLine() {
+    final start = Offset(0, 0);
+    final end = Offset(100, 0);
+    setState(() {
+      _lineList.add(Line(start, end));
+    });
   }
 
   void _onUpdate(int i) {
@@ -2704,3 +2784,42 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
 // setState(() {
 //   // value = result;
 // });
+
+class Circle extends StatelessWidget {
+  final int index;
+  final Offset position;
+  final ValueChanged onPositionChanged;
+  const Circle({
+    required this.index,
+    required this.position,
+    required this.onPositionChanged,
+  });
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      left: position.dx - 3,
+      top: position.dy - 3,
+      child: GestureDetector(
+        onPanUpdate: (details) => onPositionChanged(position + details.delta),
+        child: Container(
+          width: 6,
+          height: 6,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(
+              color: Colors.black,
+              width: 2.0,
+            ),
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class Line {
+  final Offset start;
+  final Offset end;
+  Line(this.start, this.end);
+}
