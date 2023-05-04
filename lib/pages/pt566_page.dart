@@ -56,8 +56,8 @@ class _PT566PageState extends State<PT566Page> {
   dynamic name = "Text,TEXT";
   String text = "";
   String type = '';
-  int xPos = 0;
-  int yPos = 0;
+  int xPos = 10;
+  int yPos = 22;
   int width = 0;
   int height = 50;
   int fontSize = 23;
@@ -1988,7 +1988,7 @@ class _PT566PageState extends State<PT566Page> {
       floatButtonList.add(DraggableFloatingActionButton(
           index: (num.length - 1),
           key: ObjectKey(myTextData.tabOrder),
-          initialOffset: const Offset(0, 0),
+          initialOffset: const Offset(10, 22),
           parentKey: _parentKey,
           onPressed: () {},
           children: [textItemList[num.length - 1]]));

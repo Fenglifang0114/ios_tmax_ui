@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:t_max/data/printer.dart';
+import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/pages/pt566_page.dart';
 import '../labeldesign_page.dart';
 
@@ -78,6 +80,8 @@ printerDialog(BuildContext context) {
                 children: [
                   ElevatedButton(
                       onPressed: () {
+                        myPrinter.printer = _seletctPrinter;
+                        eventBus.fire(EventPrinter(myPrinter));
                         if (_seletctPrinter == 'EPM205') {
                           Navigator.of(context).pop();
                           Navigator.push(context,

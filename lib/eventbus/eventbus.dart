@@ -211,3 +211,8 @@ class EventLicenseData {
   dynamic obj;
   EventLicenseData(this.obj);
 }
+
+class EventPrinter {
+  dynamic obj;
+  EventPrinter(this.obj);
+}

@@ -118,7 +118,7 @@ class TextData {
 TextData myTextData = TextData(
     'TEXT',
     0,
-    0,
+    22,
     50,
     30,
     23,

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:t_max/data/printer.dart';
 
 import '../../data/offset.dart';
 import '../../data/pagesize.dart';
@@ -37,6 +38,7 @@ class _DraggableFloatingActionButtonState
   late Offset _minOffset;
   late Offset _maxOffset;
   late Offset _location;
+  late Offset _originOffset;
 
   @override
   void initState() {
@@ -49,6 +51,13 @@ class _DraggableFloatingActionButtonState
         setState(() {
           myPageSize = event.obj;
           WidgetsBinding.instance.addPostFrameCallback(_setBoundary);
+        });
+      }
+    });
+    eventBus.on<EventPrinter>().listen((event) {
+      if (mounted) {
+        setState(() {
+          myPrinter = event.obj;
         });
       }
     });
@@ -71,13 +80,19 @@ class _DraggableFloatingActionButtonState
 
       setState(() {
         //_minOffset 原点
-        _minOffset = const Offset(0, 0);
+        if (myPrinter.printer == 'PT566') {
+          _minOffset = const Offset(10, 22);
+          _originOffset = const Offset(10, 10);
+        } else {
+          _minOffset = const Offset(0, 0);
+          _originOffset = const Offset(0, 0);
+        }
 
         myOffsetData.width = size.width;
         myOffsetData.height = size.height;
         //_maxOffset X/Y轴最大坐标
-        _maxOffset = Offset(
-            parentSize.width - size.width, parentSize.height - size.height);
+        _maxOffset = Offset(parentSize.width - size.width - _originOffset.dx,
+            parentSize.height - size.height - _originOffset.dy);
         // eventBus.fire(EventOffset(myOffsetData));
       });
     } catch (e) {
@@ -97,6 +112,7 @@ class _DraggableFloatingActionButtonState
   void _updatePosition(PointerMoveEvent pointerMoveEvent) {
     //pointerMoveEvent.delta.dx（y）  X/Y轴偏移量
     //newOffsetX（y） 移动后的位置坐标
+    WidgetsBinding.instance.addPostFrameCallback(_setBoundary);
     double newOffsetX = _offset.dx + pointerMoveEvent.delta.dx;
     double newOffsetY = _offset.dy + pointerMoveEvent.delta.dy;
 
@@ -125,9 +141,9 @@ class _DraggableFloatingActionButtonState
 
     return Positioned(
       //移动后的X轴坐标
-      left: (_offset.dx.toInt() - (_offset.dx % 10).toInt()).roundToDouble(),
+      left: (_offset.dx.toInt()).roundToDouble(),
       //移动后的Y轴坐标
-      top: (_offset.dy.toInt() - (_offset.dy % 10).toInt()).roundToDouble(),
+      top: (_offset.dy.toInt()).roundToDouble(),
       child: Listener(
         onPointerMove: (PointerMoveEvent pointerMoveEvent) {
           _updatePosition(pointerMoveEvent);
@@ -136,10 +152,8 @@ class _DraggableFloatingActionButtonState
           });
         },
         onPointerUp: (PointerUpEvent pointerUpEvent) {
-          myOffsetData.x =
-              (_offset.dx.toInt() - (_offset.dx % 10).toInt()).roundToDouble();
-          myOffsetData.y =
-              (_offset.dy.toInt() - (_offset.dy % 10).toInt()).roundToDouble();
+          myOffsetData.x = (_offset.dx.toInt()).roundToDouble();
+          myOffsetData.y = (_offset.dy.toInt()).roundToDouble();
           myOffsetData.key = widget.key!;
           // myOffsetDataList.offsetDataList.add(myOffsetData);
           eventBus.fire(EventOffset(myOffsetData));
