@@ -21,11 +21,11 @@ import 'widget/draggablefliating.dart';
 import 'widget/dropdown copy.dart';
 import 'widget/textlistItem.dart';
 
-class LabelDesignPage extends StatefulWidget {
-  const LabelDesignPage({Key? key}) : super(key: key);
+class PT566Page extends StatefulWidget {
+  const PT566Page({Key? key}) : super(key: key);
 
   @override
-  State<LabelDesignPage> createState() => _LabelDesignPageState();
+  State<PT566Page> createState() => _PT566PageState();
 }
 
 const citys = {
@@ -48,7 +48,7 @@ const citys = {
   ],
 };
 
-class _LabelDesignPageState extends State<LabelDesignPage> {
+class _PT566PageState extends State<PT566Page> {
   List<TextItem> textItemList = [];
   List<DraggableFloatingActionButton> floatButtonList = [];
   GlobalKey _parentKey = GlobalKey();
@@ -111,8 +111,8 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   final FocusNode _focusNodex2Pos = FocusNode();
   final FocusNode _focusNodey2Pos = FocusNode();
 
-  String _selectedPrinterName = 'EPM205';
-  String _selectedPageSize = '55*50';
+  String _selectedPrinterName = 'PT566';
+  String _selectedPageSize = '58*75';
   String _selectedAlignment = 'Left';
   String _selectedBarcode = '--';
   String _selectedQrcode = '--';
@@ -125,11 +125,11 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   String _selectFontBold = 'false';
   String _selectFontReverse = 'false';
   bool downloadStatus = true;
-  String _selectFontsize = '23';
+  String _selectFontsize = '25';
   final _lineList = [];
 
   final List<String> _printers = [
-    'EPM205',
+    'PT566',
   ];
   final List<String> _printDirections = [
     'Forward',
@@ -176,19 +176,20 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     '58*75',
   ];
   final List<String> _fontSizes = [
-    // '20', //1 1 1   中文不支持
-
     '20',
     '21',
-    '23', //4 1 1
-    // '39', //1 2 2   中文不支持
-    '46', //4 2 2
-    '69', //4 3 3
-    '95', //4 4 4
-    '115', //4 5 5
-    '137', //4 6 6
-    '165', //4 7 7
-    '170', //4 8 8
+    '22',
+    '23',
+    '24',
+    '25',
+    '26',
+    '27',
+    '28',
+    '29',
+    '30',
+    '31',
+    '32',
+    '33',
   ];
 
   @override

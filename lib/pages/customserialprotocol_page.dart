@@ -31,6 +31,15 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       TextEditingController(text: mySerialProtocolText.default1);
   TextEditingController myDefault2 =
       TextEditingController(text: mySerialProtocolText.default2);
+  final List<String> _buttonLabels = [
+    'Text',
+    'Net',
+    'Gross',
+    'Tare',
+    'WeightUnit',
+    'IsStable',
+    'IsTare',
+  ];
 
   @override
   void initState() {
@@ -71,13 +80,13 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Icon(
-                          Icons.download,
-                          color: Colors.green.shade900,
+                          Icons.home,
+                          color: Colors.blue.shade900,
                         ),
                         Text(
-                          'Download',
+                          'Home',
                           style: TextStyle(
-                              color: Colors.green.shade900,
+                              color: Colors.blue.shade900,
                               fontSize: 18,
                               fontWeight: FontWeight.bold),
                         ),
@@ -85,7 +94,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                     ),
                   ),
                   onPressed: () {
-                    _sendToScale();
+                    Navigator.of(context).pop();
                   },
                 ),
               ),
@@ -105,13 +114,13 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Icon(
-                          Icons.home,
-                          color: Colors.blue.shade900,
+                          Icons.download,
+                          color: Colors.green.shade900,
                         ),
                         Text(
-                          'Home',
+                          'Download',
                           style: TextStyle(
-                              color: Colors.blue.shade900,
+                              color: Colors.green.shade900,
                               fontSize: 18,
                               fontWeight: FontWeight.bold),
                         ),
@@ -119,7 +128,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                     ),
                   ),
                   onPressed: () {
-                    Navigator.of(context).pop();
+                    _sendToScale();
                   },
                 ),
               ),
@@ -132,73 +141,34 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         children: [
           Expanded(
             flex: 2,
-            child: ListView(
-              children: [
-                TextButton(
+            child: ListView.builder(
+              itemCount: _buttonLabels.length + 1, // +1是为了添加"Enter"按钮
+              itemBuilder: (context, index) {
+                if (index == _buttonLabels.length) {
+                  // 最后一个是"Enter"按钮
+                  return TextButton(
+                    onPressed: () {
+                      setState(() {
+                        _addEnter();
+                      });
+                    },
+                    child: const Text('Enter'),
+                  );
+                }
+                final label = _buttonLabels[index];
+                return TextButton(
                   onPressed: () {
                     setState(() {
-                      _addTextData();
+                      if (label == 'Text') {
+                        _addTextData();
+                      } else {
+                        _addVarData(label);
+                      }
                     });
                   },
-                  child: const Text('Text'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      _addVarData('Net');
-                    });
-                  },
-                  child: const Text('Net'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      _addVarData('Gross');
-                    });
-                  },
-                  child: const Text('Gross'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      _addVarData('Tare');
-                    });
-                  },
-                  child: const Text('Tare'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      _addVarData('WeightUnit');
-                    });
-                  },
-                  child: const Text('WeightUnit'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      _addVarData('IsStable');
-                    });
-                  },
-                  child: const Text('IsStable'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      _addVarData('IsTare');
-                    });
-                  },
-                  child: const Text('IsTare'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      _addEnter();
-                    });
-                  },
-                  child: const Text('Enter'),
-                ),
-              ],
+                  child: Text(label),
+                );
+              },
             ),
           ),
           Expanded(

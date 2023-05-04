@@ -1,11 +1,17 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:t_max/data/device_data.dart';
+import 'package:t_max/data/license_data.dart';
+import 'package:t_max/eventbus/eventbus.dart';
+import 'package:t_max/main.dart';
 
 import '../../pages/widget/themeColor.dart';
 
+import '../data/scalecmd_data.dart';
 import 'dialog/register_dialog.dart';
 import 'home_page.dart';
 import 'widget/boxGradient.dart';
@@ -20,10 +26,28 @@ class TrialPage extends StatefulWidget {
 
 class _TrialPageState extends State<TrialPage> {
   bool ischangepassword = true;
+  bool isPass = false;
+  String pId = '';
   late Timer timer;
+  var _eventbus1;
   @override
   void initState() {
     super.initState();
+
+    _eventbus1 = eventBus.on<EventLicenseData>().listen((event) {
+      if (mounted) {
+        setState(() {
+          myLicenseData = event.obj;
+          if (myLicenseData.data.isNotEmpty) {
+            List<String> strList = myLicenseData.data.split(',');
+            pId = strList[1]; // id
+            if (strList[0] == 'true') {
+              isPass = true;
+            }
+          }
+        });
+      }
+    });
     //初始化
     // WebsocketManager.init();
   }
@@ -80,52 +104,65 @@ class _TrialPageState extends State<TrialPage> {
                                 style: TextStyle(fontSize: 40),
                               ),
                               const SizedBox(height: 30),
-                              const Text(
-                                  "You can try this product for 7 days, \n remaining days: 5 days.",
+                              Text("Your PID is $pId",
                                   style: TextStyle(fontSize: 20)),
+                              const SizedBox(height: 20),
+                              Text(
+                                  (isPass)
+                                      ? 'Authentication passed.\r\nWelcome!'
+                                      : " No authentication. \r\n Please send the PID to us.\r\n Email:tscale.www.com.cn",
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      color: (isPass)
+                                          ? Colors.green.shade900
+                                          : Colors.red.shade900)),
                               const SizedBox(height: 30),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  TextButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          registerDialog(context)
-                                              .then((onValue) {});
-                                        });
-                                      },
-                                      child:
-                                          const Text("License this software")),
-                                  const SizedBox(width: 40),
+                                  // TextButton(
+                                  //     onPressed: () {
+                                  //       setState(() {
+                                  //         registerDialog(context)
+                                  //             .then((onValue) {});
+                                  //       });
+                                  //     },
+                                  //     child:
+                                  //         const Text("License this software")),
+                                  // const SizedBox(width: 40),
                                   ElevatedButton(
                                       onPressed: () {
                                         // MyApp.getSock().send('uicmd', "test");
                                         setState(() {
                                           setState(() {
                                             //跳转页面
-                                            Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                    //没有传值
-                                                    builder: (context) =>
-                                                        const HomePage()));
+                                            if (isPass) {
+                                              Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                      //没有传值
+                                                      builder: (context) =>
+                                                          const HomePage()));
+                                            } else {
+                                              exit(0);
+                                            }
                                           });
                                         });
                                       },
-                                      child: const Text("Start trial")),
+                                      child: Text((isPass) ? "Start" : 'Exit')),
                                 ],
                               ),
                               const SizedBox(height: 30),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const SizedBox(width: 40),
-                                  TextButton(
-                                      onPressed: () {
-                                        exit(0);
-                                      },
-                                      child: const Text("Exit"))
-                                ],
-                              ),
+                              // Row(
+                              //   mainAxisAlignment: MainAxisAlignment.center,
+                              //   children: [
+                              //     const SizedBox(width: 40),
+                              //     TextButton(
+                              //         onPressed: () {
+                              //           exit(0);
+                              //         },
+                              //         child: const Text("Exit"))
+                              //   ],
+                              // ),
                             ],
                           ),
                         )),

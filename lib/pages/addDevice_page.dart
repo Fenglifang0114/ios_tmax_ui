@@ -12,6 +12,7 @@ import '../data/device_data.dart';
 import '../data/downloadresponse.dart';
 import '../eventbus/eventbus.dart';
 import '../pages/widget/themeColor.dart';
+import 'dialog/printer_dialog.dart';
 import 'dialog/showComPort_dialog.dart';
 import 'labeldesign_page.dart';
 import 'widget/reusableListItem.dart';
@@ -273,10 +274,7 @@ class _AddDevicePageState extends State<AddDevicePage> {
                           ]),
                       child: TextButton(
                         onPressed: () {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) {
-                            return const LabelDesignPage();
-                          }));
+                          printerDialog(context);
                         },
                         child: const Text(
                           "Print Format Design",
@@ -317,7 +315,7 @@ class _AddDevicePageState extends State<AddDevicePage> {
                           }));
                         },
                         child: const Text(
-                          "Custom serial protocol",
+                          "Serial protocol",
                           style: TextStyle(
                               color: Colors.white, fontWeight: FontWeight.bold),
                         ),
@@ -357,7 +355,6 @@ class _AddDevicePageState extends State<AddDevicePage> {
                     const SizedBox(
                       height: 15,
                     ),
-
                     Expanded(
                       child: ListView.builder(
                         controller: _pageScrollerController,

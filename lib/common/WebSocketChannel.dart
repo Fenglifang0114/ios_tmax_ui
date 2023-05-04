@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:t_max/data/cominfoslist_data.dart';
 import 'package:t_max/data/comscaleinfo_data.dart';
+import 'package:t_max/data/license_data.dart';
 import 'package:t_max/data/modifyresult_data.dart';
 import 'package:t_max/data/productlist_data.dart';
 
@@ -197,12 +198,19 @@ class WebSocketChannel {
         pasterSettingParam(jsonData['MsgBody']);
       } else if (jsonData['MsgType'] == "resp_user_list") {
         pasterUserList(jsonData['MsgBody']);
+      } else if (jsonData['MsgType'] == "resp_check_license") {
+        pasterLicense(jsonData['MsgBody']);
       }
     } catch (e) {
       if (kDebugMode) {
         print(e);
       }
     }
+  }
+
+  void pasterLicense(String jsonDataString) {
+    myLicenseData.data = jsonDataString;
+    eventBus.fire(EventLicenseData(myLicenseData));
   }
 
   Future pasterProductList(String jsonDataString) async {

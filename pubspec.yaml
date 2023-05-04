@@ -76,6 +76,7 @@ dependencies:
   syncfusion_flutter_datagrid: ^20.4.52
   barcode_widget: ^2.0.3
   csv: ^5.0.1
+  fluent_ui: ^4.5.0
   
 
 

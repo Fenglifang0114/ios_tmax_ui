@@ -206,3 +206,8 @@ class EventSerialPortStatus {
   dynamic obj;
   EventSerialPortStatus(this.obj);
 }
+
+class EventLicenseData {
+  dynamic obj;
+  EventLicenseData(this.obj);
+}
