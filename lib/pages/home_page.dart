@@ -200,7 +200,7 @@ class _HomePageState extends State<HomePage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: const [
-                              Text("Contact us: https://www.t-scale.com/CN",
+                              Text("Contact us: Email:sales@taiwanscale.com",
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 15)),
                             ],

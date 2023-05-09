@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:path/path.dart' as p;
+import 'package:t_max/data/barcodetype.dart';
 import '../../data/barcoderowdata.dart';
 import '../../eventbus/eventbus.dart';
 import '../widget/rowdatawidget.dart';
@@ -26,10 +27,12 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
 
   final List<String> _barCodeTypes = [
     'Code128',
-    // 'Code39',
-    // 'EAN13',
-    // 'EAN8',
-    // 'Code93',
+    'Code39',
+    'EAN13',
+    'EAN8',
+    'UPC-A',
+    'UPC-E',
+    'TTF',
   ];
   @override
   void initState() {
@@ -91,6 +94,9 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
                         onChanged: (String? newValue) {
                           setState(() {
                             _selectBarcode = newValue!;
+                            myBarcodetypedata.barcodetype = _selectBarcode;
+                            eventBus
+                                .fire(EventBarcodetypedata(myBarcodetypedata));
                           });
                         },
                         items: _barCodeTypes.map((String value) {
@@ -438,6 +444,7 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
 
   bool _judgeData() {
     bool res = true;
+
     if (_barCodeNameController.text.isNotEmpty &&
         myBarCodeRowDataList.barCodeRowDataList.isNotEmpty) {
       for (var i = 0; i < myBarCodeRowDataList.barCodeRowDataList.length; i++) {
@@ -463,11 +470,339 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
     return res;
   }
 
+// 'Code128',
+  // 'Code39',
+  // 'EAN13',
+  // 'EAN8',
+  // 'UPC-A',
+  // 'UPC-E',
+  // 'TTF',
+  bool _barcodeTypeVerification() {
+    bool res = false;
+
+    switch (_selectBarcode) {
+      case 'Code128':
+        res = _code128Verification();
+        break;
+      case 'Code39':
+        res = _code139Verification();
+        break;
+      case 'EAN13':
+        res = _ean13Verification();
+        break;
+      case 'EAN8':
+        res = _ean8Verification();
+        break;
+      case 'UPC-A':
+        res = _upcaVerification();
+        break;
+      case 'UPC-E':
+        res = _upceVerification();
+        break;
+      case 'TTF':
+        break;
+      default:
+    }
+    return res;
+  }
+
+  bool _code128Verification() {
+    bool res = true;
+    int count = 0;
+    bool isLegal = false;
+    RegExp regex = RegExp(r'^[\x00-\x7F\xC8-\xDD]+$');
+
+    for (var i = 0; i < myBarCodeRowDataList.barCodeRowDataList.length; i++) {
+      if (myBarCodeRowDataList.barCodeRowDataList[i].type == 'TEXT') {
+        count = myBarCodeRowDataList.barCodeRowDataList[i].content.length;
+        isLegal =
+            regex.hasMatch(myBarCodeRowDataList.barCodeRowDataList[i].content);
+        if (!isLegal) {
+          _errorController.text =
+              'The content does not meet barcode requirements!';
+          res = false;
+          break;
+        }
+      } else {
+        count += myBarCodeRowDataList.barCodeRowDataList[i].maxlength;
+        if (myBarCodeRowDataList
+            .barCodeRowDataList[i].defaultvalue.isNotEmpty) {
+          isLegal = regex.hasMatch(
+              myBarCodeRowDataList.barCodeRowDataList[i].defaultvalue);
+          if (!isLegal) {
+            _errorController.text =
+                'The default value does not meet barcode requirements!';
+            res = false;
+            break;
+          }
+        } else {
+          for (var j = 0;
+              j < myBarCodeRowDataList.barCodeRowDataList[i].maxlength;
+              j++) {
+            myBarCodeRowDataList.barCodeRowDataList[i].defaultvalue =
+                myBarCodeRowDataList.barCodeRowDataList[i].defaultvalue +
+                    j.toString();
+          }
+        }
+      }
+    }
+    if (count > 128) {
+      res = false;
+      _errorController.text = 'The barcode lenth max lenth!';
+    }
+
+    return res;
+  }
+
+  bool _code139Verification() {
+    bool res = true;
+    int count = 0;
+    bool isLegal = false;
+    RegExp regex = RegExp(r'^[\x00-\x7F\xC8-\xDD]+$');
+
+    for (var i = 0; i < myBarCodeRowDataList.barCodeRowDataList.length; i++) {
+      if (myBarCodeRowDataList.barCodeRowDataList[i].type == 'TEXT') {
+        count = myBarCodeRowDataList.barCodeRowDataList[i].content.length;
+        isLegal =
+            regex.hasMatch(myBarCodeRowDataList.barCodeRowDataList[i].content);
+        if (!isLegal) {
+          _errorController.text =
+              'The content does not meet barcode requirements!';
+          res = false;
+          break;
+        }
+      } else {
+        count += myBarCodeRowDataList.barCodeRowDataList[i].maxlength;
+        if (myBarCodeRowDataList
+            .barCodeRowDataList[i].defaultvalue.isNotEmpty) {
+          isLegal = regex.hasMatch(
+              myBarCodeRowDataList.barCodeRowDataList[i].defaultvalue);
+          if (!isLegal) {
+            _errorController.text =
+                'The default value does not meet barcode requirements!';
+            res = false;
+            break;
+          }
+        } else {
+          for (var j = 0;
+              j < myBarCodeRowDataList.barCodeRowDataList[i].maxlength;
+              j++) {
+            myBarCodeRowDataList.barCodeRowDataList[i].defaultvalue =
+                myBarCodeRowDataList.barCodeRowDataList[i].defaultvalue +
+                    j.toString();
+          }
+        }
+      }
+    }
+    if (count > 39) {
+      res = false;
+      _errorController.text = 'The barcode lenth max lenth!';
+    }
+
+    return res;
+  }
+
+  bool _ean13Verification() {
+    bool res = true;
+    int count = 0;
+    bool isLegal = false;
+    RegExp regex = RegExp(r'\d{0,12}');
+
+    for (var i = 0; i < myBarCodeRowDataList.barCodeRowDataList.length; i++) {
+      if (myBarCodeRowDataList.barCodeRowDataList[i].type == 'TEXT') {
+        count = myBarCodeRowDataList.barCodeRowDataList[i].content.length;
+        isLegal =
+            regex.hasMatch(myBarCodeRowDataList.barCodeRowDataList[i].content);
+        if (!isLegal) {
+          _errorController.text =
+              'The content does not meet barcode requirements!';
+          res = false;
+          break;
+        }
+      } else {
+        count += myBarCodeRowDataList.barCodeRowDataList[i].maxlength;
+        if (myBarCodeRowDataList
+            .barCodeRowDataList[i].defaultvalue.isNotEmpty) {
+          isLegal = regex.hasMatch(
+              myBarCodeRowDataList.barCodeRowDataList[i].defaultvalue);
+          if (!isLegal) {
+            _errorController.text =
+                'The default value does not meet barcode requirements!';
+            res = false;
+            break;
+          }
+        } else {
+          for (var j = 0;
+              j < myBarCodeRowDataList.barCodeRowDataList[i].maxlength;
+              j++) {
+            myBarCodeRowDataList.barCodeRowDataList[i].defaultvalue =
+                myBarCodeRowDataList.barCodeRowDataList[i].defaultvalue +
+                    j.toString();
+          }
+        }
+      }
+    }
+    if (count != 12) {
+      res = false;
+      _errorController.text = 'The length of the barcode should be 12.!';
+    }
+
+    return res;
+  }
+
+  bool _ean8Verification() {
+    bool res = true;
+    int count = 0;
+    bool isLegal = false;
+    RegExp regex = RegExp(r'\d{0,7}');
+
+    for (var i = 0; i < myBarCodeRowDataList.barCodeRowDataList.length; i++) {
+      if (myBarCodeRowDataList.barCodeRowDataList[i].type == 'TEXT') {
+        count = myBarCodeRowDataList.barCodeRowDataList[i].content.length;
+        isLegal =
+            regex.hasMatch(myBarCodeRowDataList.barCodeRowDataList[i].content);
+        if (!isLegal) {
+          _errorController.text =
+              'The content does not meet barcode requirements!';
+          res = false;
+          break;
+        }
+      } else {
+        count += myBarCodeRowDataList.barCodeRowDataList[i].maxlength;
+        if (myBarCodeRowDataList
+            .barCodeRowDataList[i].defaultvalue.isNotEmpty) {
+          isLegal = regex.hasMatch(
+              myBarCodeRowDataList.barCodeRowDataList[i].defaultvalue);
+          if (!isLegal) {
+            _errorController.text =
+                'The default value does not meet barcode requirements!';
+            res = false;
+            break;
+          }
+        } else {
+          for (var j = 0;
+              j < myBarCodeRowDataList.barCodeRowDataList[i].maxlength;
+              j++) {
+            myBarCodeRowDataList.barCodeRowDataList[i].defaultvalue =
+                myBarCodeRowDataList.barCodeRowDataList[i].defaultvalue +
+                    j.toString();
+          }
+        }
+      }
+    }
+    if (count != 7) {
+      res = false;
+      _errorController.text = 'The length of the barcode should be 7!';
+    }
+
+    return res;
+  }
+
+  bool _upceVerification() {
+    bool res = true;
+    int count = 0;
+    bool isLegal = false;
+    RegExp regex = RegExp(r'\d{0,6}');
+
+    for (var i = 0; i < myBarCodeRowDataList.barCodeRowDataList.length; i++) {
+      if (myBarCodeRowDataList.barCodeRowDataList[i].type == 'TEXT') {
+        count = myBarCodeRowDataList.barCodeRowDataList[i].content.length;
+        isLegal =
+            regex.hasMatch(myBarCodeRowDataList.barCodeRowDataList[i].content);
+        if (!isLegal) {
+          _errorController.text =
+              'The content does not meet barcode requirements!';
+          res = false;
+          break;
+        }
+      } else {
+        count += myBarCodeRowDataList.barCodeRowDataList[i].maxlength;
+        if (myBarCodeRowDataList
+            .barCodeRowDataList[i].defaultvalue.isNotEmpty) {
+          isLegal = regex.hasMatch(
+              myBarCodeRowDataList.barCodeRowDataList[i].defaultvalue);
+          if (!isLegal) {
+            _errorController.text =
+                'The default value does not meet barcode requirements!';
+            res = false;
+            break;
+          }
+        } else {
+          for (var j = 0;
+              j < myBarCodeRowDataList.barCodeRowDataList[i].maxlength;
+              j++) {
+            myBarCodeRowDataList.barCodeRowDataList[i].defaultvalue =
+                myBarCodeRowDataList.barCodeRowDataList[i].defaultvalue +
+                    j.toString();
+          }
+        }
+      }
+    }
+    if (count != 6) {
+      res = false;
+      _errorController.text = 'The length of the barcode should be 6!';
+    }
+
+    return res;
+  }
+
+  bool _upcaVerification() {
+    bool res = true;
+    int count = 0;
+    bool isLegal = false;
+    RegExp regex = RegExp(r'\d{0,11}');
+
+    for (var i = 0; i < myBarCodeRowDataList.barCodeRowDataList.length; i++) {
+      if (myBarCodeRowDataList.barCodeRowDataList[i].type == 'TEXT') {
+        count = myBarCodeRowDataList.barCodeRowDataList[i].content.length;
+        isLegal =
+            regex.hasMatch(myBarCodeRowDataList.barCodeRowDataList[i].content);
+        if (!isLegal) {
+          _errorController.text =
+              'The content does not meet barcode requirements!';
+          res = false;
+          break;
+        }
+      } else {
+        count += myBarCodeRowDataList.barCodeRowDataList[i].maxlength;
+        if (myBarCodeRowDataList
+            .barCodeRowDataList[i].defaultvalue.isNotEmpty) {
+          isLegal = regex.hasMatch(
+              myBarCodeRowDataList.barCodeRowDataList[i].defaultvalue);
+          if (!isLegal) {
+            _errorController.text =
+                'The default value does not meet barcode requirements!';
+            res = false;
+            break;
+          }
+        } else {
+          for (var j = 0;
+              j < myBarCodeRowDataList.barCodeRowDataList[i].maxlength;
+              j++) {
+            myBarCodeRowDataList.barCodeRowDataList[i].defaultvalue =
+                myBarCodeRowDataList.barCodeRowDataList[i].defaultvalue +
+                    j.toString();
+          }
+        }
+      }
+    }
+    if (count != 11) {
+      res = false;
+      _errorController.text = 'The length of the barcode should be 6!';
+    }
+
+    return res;
+  }
+
   void _saveRowData() {
     setState(() {
       if (!_judgeData()) {
         return;
       }
+      if (!_barcodeTypeVerification()) {
+        return;
+      }
+
       bool result = true;
       myBarCodeRowDataList.barCodeName = _barCodeNameController.text;
       myBarCodeRowDataList.barCodeType = _selectBarcode;

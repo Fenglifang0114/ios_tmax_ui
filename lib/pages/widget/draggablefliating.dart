@@ -81,8 +81,8 @@ class _DraggableFloatingActionButtonState
       setState(() {
         //_minOffset 原点
         if (myPrinter.printer == 'PT566') {
-          _minOffset = const Offset(10, 22);
-          _originOffset = const Offset(10, 10);
+          _minOffset = const Offset(10, 16);
+          _originOffset = const Offset(10, 0);
         } else {
           _minOffset = const Offset(0, 0);
           _originOffset = const Offset(0, 0);

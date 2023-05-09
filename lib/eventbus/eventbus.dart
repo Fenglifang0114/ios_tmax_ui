@@ -216,3 +216,8 @@ class EventPrinter {
   dynamic obj;
   EventPrinter(this.obj);
 }
+
+class EventBarcodetypedata {
+  dynamic obj;
+  EventBarcodetypedata(this.obj);
+}

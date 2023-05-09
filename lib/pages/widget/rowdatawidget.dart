@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:t_max/data/barcodetype.dart';
 
 import '../../data/barcoderowdata.dart';
 import '../../eventbus/eventbus.dart';
@@ -50,6 +51,14 @@ class RowDataWidgetState extends State<RowDataWidget> {
         TextEditingController(text: widget.rowData.defaultvalue);
     _maxLengthController =
         TextEditingController(text: widget.rowData.maxlength.toString());
+
+    eventBus.on<EventBarcodetypedata>().listen((event) {
+      if (mounted) {
+        setState(() {
+          myBarcodetypedata = event.obj;
+        });
+      }
+    });
   }
 
   @override

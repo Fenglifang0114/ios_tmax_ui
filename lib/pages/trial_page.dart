@@ -110,7 +110,7 @@ class _TrialPageState extends State<TrialPage> {
                               Text(
                                   (isPass)
                                       ? 'Authentication passed.\r\nWelcome!'
-                                      : " No authentication. \r\n Please send the PID to us.\r\n Email:tscale.www.com.cn",
+                                      : " No authentication. \r\n Please send the PID to us.\r\nEmail:sales@taiwanscale.com",
                                   style: TextStyle(
                                       fontSize: 20,
                                       color: (isPass)

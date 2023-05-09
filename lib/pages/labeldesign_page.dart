@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/downloadresponse.dart';
-import 'package:t_max/pages/pt566_page.dart';
 import 'package:t_max/pages/widget/linepainter.dart';
 import '../data/barcoderowdata.dart';
 import '../data/formatdata.dart';
@@ -1162,6 +1161,16 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         String hrAlignment;
         if (textItemList[i].barcodeType == 'Code128') {
           barcodeType = '1';
+        } else if (textItemList[i].barcodeType == 'Code39') {
+          barcodeType = 'CODE39';
+        } else if (textItemList[i].barcodeType == 'EAN8') {
+          barcodeType = 'EAN8';
+        } else if (textItemList[i].barcodeType == 'EAN13') {
+          barcodeType = 'EAN13';
+        } else if (textItemList[i].barcodeType == 'UPC-A') {
+          barcodeType = 'UPCA';
+        } else if (textItemList[i].barcodeType == 'UPC-E') {
+          barcodeType = 'UPCE';
         }
         if (textItemList[i].hralignment == 'Top') {
           hrAlignment = 'TC';
@@ -1728,6 +1737,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         return;
       }
       var tempBacodeName = s;
+      String totalcontent = '';
       List<dynamic> tempcontent = [];
       setState(() {
         if (s != '--') {
@@ -1746,10 +1756,25 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                 j++) {
               tempcontent.add(myBarCodeListList
                   .barCodeListList[barcodeIndex].barCodeRowDataList[j]);
+              if (myBarCodeListList.barCodeListList[barcodeIndex]
+                      .barCodeRowDataList[j].type ==
+                  'TEXT') {
+                totalcontent = totalcontent +
+                    myBarCodeListList.barCodeListList[barcodeIndex]
+                        .barCodeRowDataList[j].content
+                        .toString();
+              } else {
+                totalcontent = totalcontent +
+                    myBarCodeListList.barCodeListList[barcodeIndex]
+                        .barCodeRowDataList[j].defaultvalue
+                        .toString();
+              }
             }
           }
 
           myTextData.varcontent = tempcontent;
+          myTextData.content = totalcontent;
+          textItemList[objectIndex].content = myTextData.content;
           textItemList[objectIndex].barcodeName = myTextData.barcodeName;
           textItemList[objectIndex].barcodeType = myTextData.barcodeType;
           textItemList[objectIndex].varcontent = myTextData.varcontent;

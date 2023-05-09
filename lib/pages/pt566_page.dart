@@ -57,7 +57,7 @@ class _PT566PageState extends State<PT566Page> {
   String text = "";
   String type = '';
   int xPos = 10;
-  int yPos = 22;
+  int yPos = 16;
   int width = 0;
   int height = 50;
   int fontSize = 23;
@@ -176,10 +176,12 @@ class _PT566PageState extends State<PT566Page> {
     '58*75',
   ];
   final List<String> _fontSizes = [
+    '18', //0号 字体 只支持英文字体
+    '19',
     '20',
     '21',
     '22',
-    '23',
+    '23', //1号 字体
     '24',
     '25',
     '26',
@@ -190,6 +192,10 @@ class _PT566PageState extends State<PT566Page> {
     '31',
     '32',
     '33',
+    '34',
+    '35',
+    '36',
+    '37', //放大2倍的字体
   ];
 
   @override
@@ -1729,6 +1735,7 @@ class _PT566PageState extends State<PT566Page> {
         return;
       }
       var tempBacodeName = s;
+      String totalcontent = '';
       List<dynamic> tempcontent = [];
       setState(() {
         if (s != '--') {
@@ -1747,10 +1754,25 @@ class _PT566PageState extends State<PT566Page> {
                 j++) {
               tempcontent.add(myBarCodeListList
                   .barCodeListList[barcodeIndex].barCodeRowDataList[j]);
+              if (myBarCodeListList.barCodeListList[barcodeIndex]
+                      .barCodeRowDataList[j].type ==
+                  'TEXT') {
+                totalcontent = totalcontent +
+                    myBarCodeListList.barCodeListList[barcodeIndex]
+                        .barCodeRowDataList[j].content
+                        .toString();
+              } else {
+                totalcontent = totalcontent +
+                    myBarCodeListList.barCodeListList[barcodeIndex]
+                        .barCodeRowDataList[j].defaultvalue
+                        .toString();
+              }
             }
           }
 
           myTextData.varcontent = tempcontent;
+          myTextData.content = totalcontent;
+          textItemList[objectIndex].content = myTextData.content;
           textItemList[objectIndex].barcodeName = myTextData.barcodeName;
           textItemList[objectIndex].barcodeType = myTextData.barcodeType;
           textItemList[objectIndex].varcontent = myTextData.varcontent;
@@ -1988,7 +2010,7 @@ class _PT566PageState extends State<PT566Page> {
       floatButtonList.add(DraggableFloatingActionButton(
           index: (num.length - 1),
           key: ObjectKey(myTextData.tabOrder),
-          initialOffset: const Offset(10, 22),
+          initialOffset: const Offset(10, 16),
           parentKey: _parentKey,
           onPressed: () {},
           children: [textItemList[num.length - 1]]));

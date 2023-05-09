@@ -189,6 +189,13 @@ class TextItemState extends State<TextItem> {
         );
       } else if (widget.hralignment.toString() == 'Top') {
         // 条码文字在上方的情况
+        // 'Code128',
+        // 'Code39',
+        // 'EAN13',
+        // 'EAN8',
+        // 'UPC-A',
+        // 'UPC-E',
+        // 'TTF',
         return Transform.rotate(
             angle: _getRotation(), //旋转角度  pi/2  90度
             child: Column(
@@ -208,7 +215,11 @@ class TextItemState extends State<TextItem> {
                                     ? Barcode.code93()
                                     : (widget.barcodeType == 'Code39')
                                         ? Barcode.code39()
-                                        : Barcode.code128(),
+                                        : (widget.barcodeType == 'UPC-A')
+                                            ? Barcode.upcA()
+                                            : (widget.barcodeType == 'UPC-E')
+                                                ? Barcode.upcE()
+                                                : Barcode.code128(),
                     data: widget.content,
                     drawText: (widget.hralignment == 'Bottom') ? true : false,
                     height: (widget.height > 0)
@@ -330,7 +341,11 @@ class TextItemState extends State<TextItem> {
                         ? Barcode.code93()
                         : (widget.barcodeType == 'Code39')
                             ? Barcode.code39()
-                            : Barcode.code128(),
+                            : (widget.barcodeType == 'UPC-A')
+                                ? Barcode.upcA()
+                                : (widget.barcodeType == 'UPC-E')
+                                    ? Barcode.upcE()
+                                    : Barcode.code128(),
         data: widget.content,
         drawText: (widget.hralignment == 'Bottom') ? true : false,
         height:
