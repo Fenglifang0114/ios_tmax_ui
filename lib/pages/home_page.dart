@@ -77,6 +77,7 @@ class _HomePageState extends State<HomePage> {
           preferredSize: const Size.fromHeight(30),
           child: AppBar(
             title: version(),
+            leading: const Text(''),
             actions: [
               Row(
                 children: [
@@ -97,32 +98,33 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   const SizedBox(width: 30),
-                  PopupMenuButton(
-                    offset: const Offset(0, 40),
-                    onSelected: (value) {
-                      _changed(value);
-                    },
-                    itemBuilder: (BuildContext context) => [
-                      PopupMenuItem(
-                          value: "zh",
-                          child: Text(
-                            "简体中文",
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          )),
-                      PopupMenuItem(
-                          value: "en",
-                          child: Text(
-                            "English",
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          )),
-                    ],
-                  ),
+                  // PopupMenuButton(
+                  //   offset: const Offset(0, 40),
+                  //   onSelected: (value) {
+                  //     _changed(value);
+                  //   },
+                  //   itemBuilder: (BuildContext context) => [
+                  //     PopupMenuItem(
+                  //         value: "zh",
+                  //         child: Text(
+                  //           "简体中文",
+                  //           style: Theme.of(context).textTheme.bodyMedium,
+                  //         )),
+                  //     PopupMenuItem(
+                  //         value: "en",
+                  //         child: Text(
+                  //           "English",
+                  //           style: Theme.of(context).textTheme.bodyMedium,
+                  //         )),
+                  //   ],
+                  // ),
                 ],
               )
             ],
           )),
       //左侧边栏
-      drawer: leftSidebar(context),
+      // drawer: leftSidebar(context),
+
       body: ListView(
         // 水平拉伸
         scrollDirection: Axis.horizontal,
@@ -134,28 +136,28 @@ class _HomePageState extends State<HomePage> {
           Row(
             children: [
               //左侧添加设备
-              Container(
-                width: 200,
-                decoration: const BoxDecoration(
-                    border: Border(
-                        right: BorderSide(width: 0.5, color: Colors.black))),
-                child: Column(
-                  children: <Widget>[
-                    Row(
-                      children: [
-                        const Icon(Icons.device_hub),
-                        Text(S.of(context).operation_tips),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    Expanded(child: Row()),
-                    Container(
-                      height: 20,
-                      color: Colors.blue.shade900,
-                    ),
-                  ],
-                ),
-              ),
+              // Container(
+              //   width: 200,
+              //   decoration: const BoxDecoration(
+              //       border: Border(
+              //           right: BorderSide(width: 0.5, color: Colors.black))),
+              //   child: Column(
+              //     children: <Widget>[
+              //       // Row(
+              //       //   children: [
+              //       //     const Icon(Icons.device_hub),
+              //       //     Text(S.of(context).operation_tips),
+              //       //   ],
+              //       // ),
+              //       const SizedBox(height: 10),
+              //       Expanded(child: Row()),
+              //       Container(
+              //         height: 20,
+              //         color: Colors.blue.shade900,
+              //       ),
+              //     ],
+              //   ),
+              // ),
               // const Flexible(flex: 1, child: GridPage())
               //右侧重量显示
               SizedBox(
@@ -226,16 +228,16 @@ class _HomePageState extends State<HomePage> {
     MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
   }
 
-  void _changed(value) {
-    if (value != null) {
-      //SpUtil.putString(SpConstant.LANGUAGE, value);
-      setState(() {
-        groupValue = value;
-        if (value == "zh") S.load(const Locale('zh', 'CN'));
-        if (value == "en") S.load(const Locale('en', 'US'));
-      });
-    }
-  }
+  // void _changed(value) {
+  //   if (value != null) {
+  //     //SpUtil.putString(SpConstant.LANGUAGE, value);
+  //     setState(() {
+  //       groupValue = value;
+  //       if (value == "zh") S.load(const Locale('zh', 'CN'));
+  //       if (value == "en") S.load(const Locale('en', 'US'));
+  //     });
+  //   }
+  // }
 }
 
 

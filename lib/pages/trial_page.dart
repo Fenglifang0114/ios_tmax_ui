@@ -28,6 +28,7 @@ class _TrialPageState extends State<TrialPage> {
   bool ischangepassword = true;
   bool isPass = false;
   String pId = '';
+  String dueDate = '';
   late Timer timer;
   var _eventbus1;
   @override
@@ -41,6 +42,7 @@ class _TrialPageState extends State<TrialPage> {
           if (myLicenseData.data.isNotEmpty) {
             List<String> strList = myLicenseData.data.split(',');
             pId = strList[1]; // id
+            dueDate = strList[2];
             if (strList[0] == 'true') {
               isPass = true;
             }
@@ -105,12 +107,21 @@ class _TrialPageState extends State<TrialPage> {
                               ),
                               const SizedBox(height: 30),
                               Text("Your PID is $pId",
-                                  style: TextStyle(fontSize: 20)),
+                                  style: const TextStyle(fontSize: 20)),
                               const SizedBox(height: 20),
                               Text(
                                   (isPass)
-                                      ? 'Authentication passed.\r\nWelcome!'
+                                      ? 'Authentication passed.\r\n'
                                       : " No authentication. \r\n Please send the PID to us.\r\nEmail:sales@taiwanscale.com",
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      color: (isPass)
+                                          ? Colors.green.shade900
+                                          : Colors.red.shade900)),
+                              Text(
+                                  (dueDate.isEmpty)
+                                      ? ''
+                                      : "Expiration date: $dueDate",
                                   style: TextStyle(
                                       fontSize: 20,
                                       color: (isPass)

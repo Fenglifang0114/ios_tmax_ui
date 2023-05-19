@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/downloadresponse.dart';
@@ -125,7 +126,7 @@ class _PT566PageState extends State<PT566Page> {
   String _selectFontBold = 'false';
   String _selectFontReverse = 'false';
   bool downloadStatus = true;
-  String _selectFontsize = '25';
+  String _selectFontsize = '23';
   final _lineList = [];
 
   final List<String> _printers = [
@@ -176,26 +177,28 @@ class _PT566PageState extends State<PT566Page> {
     '58*75',
   ];
   final List<String> _fontSizes = [
-    '18', //0号 字体 只支持英文字体
+    // '18', //1号 字体 只支持英文字体
     '19',
     '20',
     '21',
     '22',
-    '23', //1号 字体
+    '23', //0号 字体
     '24',
     '25',
-    '26',
-    '27',
-    '28',
-    '29',
-    '30',
-    '31',
-    '32',
-    '33',
-    '34',
-    '35',
-    '36',
-    '37', //放大2倍的字体
+    // '38', //01 1 1
+    '50', //00 1 1
+    // '56', //01 2 2
+    '72', //00 2 2
+    // '74', //01 3 3
+    // '93', //01 4 4
+    '97', //00 3 3
+    // '111', //01 5 5
+    // '128', //01 6 6
+    '140', //00 4 4
+    '146', //00 5 5
+    // '148', //01 7 7
+    '169', //00 6 6
+    '186', //00 7 7
   ];
 
   @override
@@ -909,15 +912,15 @@ class _PT566PageState extends State<PT566Page> {
     return Stack(
       children: [
         Positioned(
-          // top: start.dy, //math.min(start.dy, end.dy),
-          // left: start.dx, //math.min(start.dx, end.dx),
+          top: start.dy, //min(start.dy, end.dy),
+          left: start.dx, // min(start.dx, end.dx),
           // right: end.dy,
           // bottom: end.dx,
           width: (start - end).distance,
-          height: 5.0,
-          child: Transform.translate(
-            offset: start,
-            // angle: 0, //math.atan2(end.dy - start.dy, end.dx - start.dx),
+          height: 50.0,
+          child: Transform.rotate(
+            // offset: start,
+            angle: atan2(end.dy - start.dy, end.dx - start.dx) - atan2(0, 1),
             child: GestureDetector(
               onPanUpdate: (details) => _onLineDragged(index, details),
               child: CustomPaint(
@@ -1119,13 +1122,20 @@ class _PT566PageState extends State<PT566Page> {
     }
     // csvData.add(['R', '147', '124', '247', '184', '2', '0', '0']);
     // csvData.add(['L', '147', '124', '247', '184', '2', '0', '0']);
+    var xpos = 0;
 
     for (var i = 0; i < textItemList.length; i++) {
+      if (textItemList[i].xPos >= 10) {
+        xpos = textItemList[i].xPos - 10; //Prt打印机打印不到边界，去掉了10dpi
+      } else {
+        xpos = textItemList[i].xPos;
+      }
       if (textItemList[i].type == 'TEXT') {
         List fontlist = getFontSize(textItemList[i].fontSize);
+
         csvData.add([
           'TB',
-          textItemList[i].xPos,
+          xpos,
           textItemList[i].yPos,
           textItemList[i].width,
           textItemList[i].height,
@@ -1142,7 +1152,7 @@ class _PT566PageState extends State<PT566Page> {
         List fontlist = getFontSize(textItemList[i].fontSize);
         csvData.add([
           'TB',
-          textItemList[i].xPos,
+          xpos,
           textItemList[i].yPos,
           textItemList[i].width,
           textItemList[i].height,
@@ -1179,7 +1189,7 @@ class _PT566PageState extends State<PT566Page> {
         }
         csvData.add([
           'B',
-          textItemList[i].xPos,
+          xpos,
           textItemList[i].yPos,
           textItemList[i].width,
           textItemList[i].height,
@@ -1203,7 +1213,7 @@ class _PT566PageState extends State<PT566Page> {
 
         csvData.add([
           'QR',
-          textItemList[i].xPos,
+          xpos,
           textItemList[i].yPos,
           version,
           textItemList[i].qrWidth.toString(),
@@ -1215,7 +1225,7 @@ class _PT566PageState extends State<PT566Page> {
       } else if (textItemList[i].type == 'Line') {
         csvData.add([
           'L',
-          textItemList[i].xPos,
+          xpos,
           textItemList[i].yPos,
           textItemList[i].x2Pos,
           textItemList[i].y2Pos,

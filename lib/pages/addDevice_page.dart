@@ -170,7 +170,7 @@ class _AddDevicePageState extends State<AddDevicePage> {
         //   theme: themeColor(),
         //   home:
         Scaffold(
-      drawer: leftSidebar(context),
+      // drawer: leftSidebar(context),
       // AppBar：相当于iOS 的导航栏
       appBar: PreferredSize(
           preferredSize: const Size.fromHeight(30),

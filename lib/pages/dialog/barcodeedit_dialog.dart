@@ -32,7 +32,7 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
     'EAN8',
     'UPC-A',
     'UPC-E',
-    'TTF',
+    // 'TTF',
   ];
   @override
   void initState() {

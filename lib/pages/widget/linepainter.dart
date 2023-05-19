@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class LinePainter extends CustomPainter {
   final Paint linePaint;
   final Offset startPoint;
-  final Offset endPoint;
+  late final Offset endPoint;
   final StrokeCap strokeType;
   final double lineWidth;
 
@@ -21,7 +22,13 @@ class LinePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    canvas.drawLine(startPoint, endPoint, linePaint);
+    // canvas.drawLine(startPoint, endPoint, linePaint);
+
+    canvas.drawLine(
+      Offset(startPoint.dx, startPoint.dy),
+      Offset(endPoint.dx, startPoint.dy),
+      linePaint,
+    );
   }
 
   @override
