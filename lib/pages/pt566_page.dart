@@ -224,11 +224,11 @@ class _PT566PageState extends State<PT566Page> {
           _selectedQrcode = myTextData.qrcodeName;
           _selectFontsize = myTextData.fontSize.toString();
           _selectedQr = int.parse(myTextData.qrWidth.toString()).toString();
-          if (myTextData.alignment == 0) {
+          if (myTextData.alignment == 1) {
             _selectedAlignment = 'Left';
-          } else if (myTextData.alignment == 1) {
-            _selectedAlignment = 'Center';
           } else if (myTextData.alignment == 2) {
+            _selectedAlignment = 'Center';
+          } else if (myTextData.alignment == 3) {
             _selectedAlignment = 'Right';
           }
           _selectFontBold = myTextData.fontBold;

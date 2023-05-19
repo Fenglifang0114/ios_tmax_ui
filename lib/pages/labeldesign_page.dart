@@ -173,6 +173,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     '50*40',
     '55*50',
     '58*75',
+    '50*55',
   ];
   final List<String> _fontSizes = [
     // '20', //1 1 1   中文不支持
@@ -213,11 +214,11 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           _selectedQrcode = myTextData.qrcodeName;
           _selectFontsize = myTextData.fontSize.toString();
           _selectedQr = int.parse(myTextData.qrWidth.toString()).toString();
-          if (myTextData.alignment == 0) {
+          if (myTextData.alignment == 1) {
             _selectedAlignment = 'Left';
-          } else if (myTextData.alignment == 1) {
-            _selectedAlignment = 'Center';
           } else if (myTextData.alignment == 2) {
+            _selectedAlignment = 'Center';
+          } else if (myTextData.alignment == 3) {
             _selectedAlignment = 'Right';
           }
           _selectFontBold = myTextData.fontBold;
@@ -987,6 +988,8 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       return 384;
     } else if (_selectedPageSize == _pageSizes[6]) {
       return 464;
+    } else if (_selectedPageSize == _pageSizes[7]) {
+      return 390;
     } else {
       return 300;
     }
@@ -1007,6 +1010,8 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       return 400;
     } else if (_selectedPageSize == _pageSizes[6]) {
       return 600;
+    } else if (_selectedPageSize == _pageSizes[7]) {
+      return 440;
     } else {
       return 300;
     }
@@ -1108,6 +1113,8 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       csvData.add(['P', 400, 320]);
     } else if (_selectedPageSize == '55*50') {
       csvData.add(['P', 384, 400]);
+    } else if (_selectedPageSize == '50*55') {
+      csvData.add(['P', 390, 440]);
     }
     // csvData.add(['R', '147', '124', '247', '184', '2', '0', '0']);
     // csvData.add(['L', '147', '124', '247', '184', '2', '0', '0']);
