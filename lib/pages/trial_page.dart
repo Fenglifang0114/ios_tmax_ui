@@ -1,18 +1,9 @@
 import 'dart:async';
-import 'dart:convert';
-
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:t_max/data/device_data.dart';
 import 'package:t_max/data/license_data.dart';
 import 'package:t_max/eventbus/eventbus.dart';
-import 'package:t_max/main.dart';
-
 import '../../pages/widget/themeColor.dart';
-
-import '../data/scalecmd_data.dart';
-import 'dialog/register_dialog.dart';
 import 'home_page.dart';
 import 'widget/boxGradient.dart';
 import 'widget/version.dart';

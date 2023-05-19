@@ -11,13 +11,10 @@ import '../common/WebSocketScaleChannel.dart';
 import '../data/device_data.dart';
 import '../data/downloadresponse.dart';
 import '../eventbus/eventbus.dart';
-import '../pages/widget/themeColor.dart';
 import 'dialog/printer_dialog.dart';
 import 'dialog/showComPort_dialog.dart';
-import 'labeldesign_page.dart';
-import 'widget/reusableListItem.dart';
+import 'widget/reusable_list_item.dart';
 import 'widget/showWeightReport.dart';
-import 'widget/leftSidebar.dart';
 import 'widget/appbarMsg.dart';
 import 'widget/version.dart';
 

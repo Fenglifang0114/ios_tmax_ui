@@ -157,12 +157,6 @@ class WebSocketScaleChannel {
 
 
 
- //{"MsgType":13,"MsgBody":"no response, time out","ScaleId":1}  下载后秤收到的消息
-
-
-
-
-
 
 
 // import 'dart:async';
