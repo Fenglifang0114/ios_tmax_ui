@@ -35,6 +35,7 @@ const citys = {
   "Qrcode": ["Qrcode,Qrcode"],
   // "Shape": ["Rectangle,Rectangle", "Circle,Circle", "Line,Line"],
   "Variable": [
+    "NO.,DATA",
     "Gross,DATA",
     "Tare,DATA",
     "Net,DATA",
@@ -178,13 +179,13 @@ class _PT566PageState extends State<PT566Page> {
   ];
   final List<String> _fontSizes = [
     // '18', //1号 字体 只支持英文字体
-    '19',
-    '20',
-    '21',
-    '22',
+    // '19',
+    // '20',
+    // '21',
+    // '22',
     '23', //0号 字体
-    '24',
-    '25',
+    // '24',
+    // '25',
     // '38', //01 1 1
     '50', //00 1 1
     // '56', //01 2 2
@@ -1054,44 +1055,51 @@ class _PT566PageState extends State<PT566Page> {
     }
   }
 
+/*
+  // '18', //1号 字体 只支持英文字体   
+    '23', //0号 字体
+    // '38', //01 1 1
+    '50', //00 1 1
+    // '56', //01 2 2
+    '72', //00 2 2
+    // '74', //01 3 3
+    // '93', //01 4 4
+    '97', //00 3 3
+    // '111', //01 5 5
+    // '128', //01 6 6
+    '140', //00 4 4
+    '146', //00 5 5
+    // '148', //01 7 7
+    '169', //00 6 6
+    '186', //00 7 7
+*/
   List getFontSize(int sFont) {
-    int fontsize = 4;
-    int width = 1;
-    int height = 1;
+    int fontsize = 0;
+    int width = 0;
+    int height = 0;
     if (sFont == 23) {
-      fontsize = 4;
-    } else if (sFont == 20) {
-      fontsize = 1;
-    } else if (sFont == 39) {
-      fontsize = 1;
+    } else if (sFont == 50) {
+      width = 1;
+      height = 1;
+    } else if (sFont == 72) {
       width = 2;
       height = 2;
-    } else if (sFont == 46) {
-      fontsize = 4;
-      width = 2;
-      height = 2;
-    } else if (sFont == 69) {
-      fontsize = 4;
+    } else if (sFont == 97) {
       width = 3;
       height = 3;
-    } else if (sFont == 95) {
+    } else if (sFont == 140) {
       width = 4;
       height = 4;
-    } else if (sFont == 115) {
-      fontsize = 4;
+    } else if (sFont == 146) {
       width = 5;
       height = 5;
-    } else if (sFont == 137) {
+    } else if (sFont == 169) {
       width = 6;
       height = 6;
-    } else if (sFont == 165) {
+    } else if (sFont == 186) {
       width = 7;
       height = 7;
-    } else if (sFont == 170) {
-      width = 8;
-      height = 8;
     }
-
     return [fontsize, width, height];
   }
   //  List vals = getFontSize(); print("${vals[0]} ${vals[1]} ${vals[2]}");
@@ -1119,6 +1127,8 @@ class _PT566PageState extends State<PT566Page> {
       csvData.add(['P', 400, 320]);
     } else if (_selectedPageSize == '55*50') {
       csvData.add(['P', 384, 400]);
+    } else if (_selectedPageSize == '58*75') {
+      csvData.add(['P', 464, 600]);
     }
     // csvData.add(['R', '147', '124', '247', '184', '2', '0', '0']);
     // csvData.add(['L', '147', '124', '247', '184', '2', '0', '0']);

@@ -6,7 +6,7 @@ import '../labeldesign_page.dart';
 
 final List<String> _printers = [
   'EPM205',
-  // 'PT566',
+  'PT566',
 ];
 
 String _seletctPrinter = 'EPM205';

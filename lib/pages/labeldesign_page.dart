@@ -33,6 +33,7 @@ const citys = {
   "Qrcode": ["Qrcode,Qrcode"],
   // "Shape": ["Rectangle,Rectangle", "Circle,Circle", "Line,Line"],
   "Variable": [
+    "NO.,DATA",
     "Gross,DATA",
     "Tare,DATA",
     "Net,DATA",
@@ -174,6 +175,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     '55*50',
     '58*75',
     '50*55',
+    '50*110',
   ];
   final List<String> _fontSizes = [
     // '20', //1 1 1   中文不支持
@@ -990,6 +992,8 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       return 464;
     } else if (_selectedPageSize == _pageSizes[7]) {
       return 390;
+    } else if (_selectedPageSize == _pageSizes[8]) {
+      return 390;
     } else {
       return 300;
     }
@@ -1012,6 +1016,8 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       return 600;
     } else if (_selectedPageSize == _pageSizes[7]) {
       return 440;
+    } else if (_selectedPageSize == _pageSizes[8]) {
+      return 880;
     } else {
       return 300;
     }
@@ -1115,6 +1121,8 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       csvData.add(['P', 384, 400]);
     } else if (_selectedPageSize == '50*55') {
       csvData.add(['P', 390, 440]);
+    } else if (_selectedPageSize == '50*120') {
+      csvData.add(['P', 390, 880]);
     }
     // csvData.add(['R', '147', '124', '247', '184', '2', '0', '0']);
     // csvData.add(['L', '147', '124', '247', '184', '2', '0', '0']);
