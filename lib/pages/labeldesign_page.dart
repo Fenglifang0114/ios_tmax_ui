@@ -1121,7 +1121,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       csvData.add(['P', 384, 400]);
     } else if (_selectedPageSize == '50*55') {
       csvData.add(['P', 390, 440]);
-    } else if (_selectedPageSize == '50*120') {
+    } else if (_selectedPageSize == '50*110') {
       csvData.add(['P', 390, 880]);
     }
     // csvData.add(['R', '147', '124', '247', '184', '2', '0', '0']);
@@ -1989,40 +1989,77 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       myTextData.type = type;
       myTextData.xPos = xPos;
 
+      if (text == "WeightUnit") {
+        var contentStr = "Unit";
+        textItemList.add(TextItem(
+          key: ObjectKey(myTextData.tabOrder),
+          index: count,
+          content: contentStr,
+          type: type,
+          xPos: xPos,
+          yPos: yPos,
+          width: width,
+          height: height,
+          fontSize: fontSize,
+          fontWidthRatio: fontWidthRatio,
+          fontHeightRatio: fontHeightRatio,
+          style: style,
+          rotation: rotation,
+          defaultValue: defaultValue,
+          alignment: alignment,
+          maxLength: maxLength,
+          tabOrder: tabOrder,
+          varName: text,
+          varcontent: varcontent,
+          barcodeName: barcodeName,
+          barcodeType: barcodeType,
+          hralignment: hralignment,
+          x2Pos: x2Pos,
+          y2Pos: y2Pos,
+          lineWidth: lineWidth,
+          qrWidth: qrWidth,
+          qrcodeName: qrcodename,
+          qrcodeType: qrcodeType,
+          fontBold: fontBold,
+          fontReverse: fontReverse,
+        ));
+      } else {
+        textItemList.add(TextItem(
+          key: ObjectKey(myTextData.tabOrder),
+          index: count,
+          content: text,
+          type: type,
+          xPos: xPos,
+          yPos: yPos,
+          width: width,
+          height: height,
+          fontSize: fontSize,
+          fontWidthRatio: fontWidthRatio,
+          fontHeightRatio: fontHeightRatio,
+          style: style,
+          rotation: rotation,
+          defaultValue: defaultValue,
+          alignment: alignment,
+          maxLength: maxLength,
+          tabOrder: tabOrder,
+          varName: text,
+          varcontent: varcontent,
+          barcodeName: barcodeName,
+          barcodeType: barcodeType,
+          hralignment: hralignment,
+          x2Pos: x2Pos,
+          y2Pos: y2Pos,
+          lineWidth: lineWidth,
+          qrWidth: qrWidth,
+          qrcodeName: qrcodename,
+          qrcodeType: qrcodeType,
+          fontBold: fontBold,
+          fontReverse: fontReverse,
+        ));
+      }
+
       //添加可拖拽控件的信息
 
-      textItemList.add(TextItem(
-        key: ObjectKey(myTextData.tabOrder),
-        index: count,
-        content: text,
-        type: type,
-        xPos: xPos,
-        yPos: yPos,
-        width: width,
-        height: height,
-        fontSize: fontSize,
-        fontWidthRatio: fontWidthRatio,
-        fontHeightRatio: fontHeightRatio,
-        style: style,
-        rotation: rotation,
-        defaultValue: defaultValue,
-        alignment: alignment,
-        maxLength: maxLength,
-        tabOrder: tabOrder,
-        varName: text,
-        varcontent: varcontent,
-        barcodeName: barcodeName,
-        barcodeType: barcodeType,
-        hralignment: hralignment,
-        x2Pos: x2Pos,
-        y2Pos: y2Pos,
-        lineWidth: lineWidth,
-        qrWidth: qrWidth,
-        qrcodeName: qrcodename,
-        qrcodeType: qrcodeType,
-        fontBold: fontBold,
-        fontReverse: fontReverse,
-      ));
       //中间页面添加最新的可拖拽控件
       floatButtonList.add(DraggableFloatingActionButton(
           index: (num.length - 1),
