@@ -10,13 +10,13 @@ Widget buildDropdownButton({
     value: value,
     style: const TextStyle(
       color: Colors.black,
-      fontSize: 18,
+      fontSize: 14,
       fontWeight: FontWeight.normal,
     ),
     hint: Text(
       hintText,
       style: const TextStyle(
-        fontSize: 16,
+        fontSize: 14,
         fontWeight: FontWeight.bold,
       ),
     ),

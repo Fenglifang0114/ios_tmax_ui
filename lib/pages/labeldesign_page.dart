@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:csv/csv.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:gbk_codec/gbk_codec.dart';
 import 'package:t_max/data/downloadresponse.dart';
 import 'package:t_max/pages/widget/linepainter.dart';
 import '../data/barcoderowdata.dart';
@@ -9,6 +11,7 @@ import '../data/formatdata.dart';
 import '../data/offset.dart';
 import '../data/pagesize.dart';
 import '../data/scalecmd_data.dart';
+import '../data/selectedcontrol.dart';
 import '../data/text.dart';
 import '../eventbus/eventbus.dart';
 import 'package:path/path.dart' as p;
@@ -270,6 +273,11 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                 myTextData.qrcodeType = textItemList[i].qrcodeType;
                 myTextData.fontBold = textItemList[i].fontBold;
                 myTextData.fontReverse = textItemList[i].fontReverse;
+
+                mySelectedControl.selectid = myTextData.tabOrder;
+                mySelectedControl.isSelect = true;
+                eventBus.fire(EventSelectedControl(mySelectedControl));
+                eventBus.fire(EventText(myTextData));
                 break;
               }
             }
@@ -404,432 +412,611 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     final Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(80),
-        child: Container(
-          height: 80,
-          width: screenSize.width - 10,
-          color: Colors.blue.shade900,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              SizedBox(
-                width: 150,
-                height: 50,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white, // 设置按钮的背景色
-                    elevation: 10, // 设置按钮的阴影
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
+          preferredSize: const Size.fromHeight(92),
+          child: Column(
+            children: [
+              Container(
+                height: 10,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              Container(
+                height: 80,
+                width: screenSize.width - 10,
+                color: Colors.white,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    SizedBox(
+                      width: 120,
+                      height: 50,
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(
+                            width: 1,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          foregroundColor: Colors.blue,
+                          backgroundColor: Colors.white, // 设置按钮的背景色
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
+                          ),
+                        ),
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Icon(
+                                Icons.home,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              Text(
+                                'Home',
+                                style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
                     ),
-                  ),
-                  child: Center(
-                    child: Row(
+                    Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Icon(
-                          Icons.home,
-                          color: Colors.blue.shade900,
+                        Row(
+                          children: [
+                            SizedBox(
+                              height: 40,
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    width: 80,
+                                    child: Text(
+                                      'Printer:',
+                                      textAlign: TextAlign.right,
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.normal),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  SizedBox(
+                                    width: 100, // 设置固定宽度
+                                    child: DropdownButton<String>(
+                                      alignment:
+                                          AlignmentDirectional.centerStart,
+                                      dropdownColor: Colors.grey[400],
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.normal),
+                                      hint: Text(
+                                        'Printer',
+                                        style: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.normal),
+                                      ),
+                                      value: _selectedPrinterName,
+                                      items: _printers
+                                          .map((String value) =>
+                                              DropdownMenuItem<String>(
+                                                value: value,
+                                                child: Text(value),
+                                              ))
+                                          .toList(),
+                                      onChanged: (String? newValue) {
+                                        setState(() {
+                                          _selectedPrinterName = newValue!;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
                         ),
-                        Text(
-                          'Home',
-                          style: TextStyle(
-                              color: Colors.blue.shade900,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold),
+                        Row(
+                          children: [
+                            SizedBox(
+                              height: 40,
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    width: 80,
+                                    child: Text(
+                                      'Direction:',
+                                      textAlign: TextAlign.right,
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.normal),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  SizedBox(
+                                    width: 100, // 设置固定宽度
+                                    child: DropdownButton<String>(
+                                      dropdownColor: Colors.grey[400],
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.normal),
+                                      hint: Text(
+                                        'Direction',
+                                        style: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.normal),
+                                      ),
+                                      value: _selectedPrintDirection,
+                                      items: _printDirections
+                                          .map((String value) =>
+                                              DropdownMenuItem<String>(
+                                                value: value,
+                                                child: Text(value),
+                                              ))
+                                          .toList(),
+                                      onChanged: (String? newValue) {
+                                        setState(() {
+                                          _selectedPrintDirection = newValue!;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
                         ),
                       ],
                     ),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Row(
-                    children: [
-                      SizedBox(
-                        height: 40,
-                        child: Row(
-                          children: [
-                            const Text(
-                              'Printer:',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            DropdownButton<String>(
-                              dropdownColor: Colors.grey[400],
-                              style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.normal),
-                              hint: const Text(
-                                'Printer',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              value: _selectedPrinterName,
-                              items: _printers
-                                  .map((String value) =>
-                                      DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Text(value),
-                                      ))
-                                  .toList(),
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  _selectedPrinterName = newValue!;
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      SizedBox(
-                        height: 40,
-                        child: Row(
-                          children: [
-                            const Text(
-                              'Direction:',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            DropdownButton<String>(
-                              dropdownColor: Colors.grey[400],
-                              style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.normal),
-                              hint: const Text(
-                                'Direction',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              value: _selectedPrintDirection,
-                              items: _printDirections
-                                  .map((String value) =>
-                                      DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Text(value),
-                                      ))
-                                  .toList(),
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  _selectedPrintDirection = newValue!;
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ],
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  SizedBox(
-                    height: 40,
-                    child: Row(
-                      children: [
-                        const Text(
-                          'Page:',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        DropdownButton<String>(
-                          dropdownColor: Colors.grey[400],
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.normal),
-                          // hint: const Text(
-                          //   'Select Page Size',
-                          //   style: TextStyle(
-                          //       color: Color.fromARGB(255, 13, 71, 161),
-                          //       fontSize: 20,
-                          //       fontWeight: FontWeight.bold),
-                          // ),
-                          value: _selectedPageSize,
-                          items: _pageSizes
-                              .map((String value) => DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value,
-                                        style: const TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.normal)),
-                                  ))
-                              .toList(),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              _selectedPageSize = newValue!;
-                              myPageSize.size = _selectedPageSize;
-                              eventBus.fire(EventPageSize(myPageSize));
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 40,
-                    child: Row(
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         SizedBox(
-                          width: 150,
-                          child: ElevatedButton(
+                          height: 40,
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 60,
+                                child: Text(
+                                  'Page:',
+                                  textAlign: TextAlign.right,
+                                  style: TextStyle(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.normal),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              SizedBox(
+                                width: 100,
+                                child: DropdownButton<String>(
+                                  dropdownColor: Colors.grey[400],
+                                  style: TextStyle(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.normal),
+                                  // hint: const Text(
+                                  //   'Select Page Size',
+                                  //   style: TextStyle(
+                                  //       color: Color.fromARGB(255, 13, 71, 161),
+                                  //       fontSize: 20,
+                                  //       fontWeight: FontWeight.bold),
+                                  // ),
+                                  value: _selectedPageSize,
+                                  items: _pageSizes
+                                      .map((String value) =>
+                                          DropdownMenuItem<String>(
+                                            value: value,
+                                            child: Text(value,
+                                                style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.normal)),
+                                          ))
+                                      .toList(),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _selectedPageSize = newValue!;
+                                      myPageSize.size = _selectedPageSize;
+                                      eventBus.fire(EventPageSize(myPageSize));
+                                    });
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        SizedBox(
+                          width: 120,
+                          child: OutlinedButton(
+                              onPressed: () async {
+                                String executablePath =
+                                    Platform.resolvedExecutable;
+                                var directory = p.dirname(executablePath);
+
+                                final formatfilePath =
+                                    Directory('$directory\\format');
+                                if (!await formatfilePath.exists()) {
+                                  await formatfilePath.create(recursive: true);
+                                }
+                                directory = formatfilePath.path;
+                                String dataTime = getDateTime();
+                                String? outputFile =
+                                    (await FilePicker.platform.saveFile(
+                                  initialDirectory: directory,
+                                  dialogTitle: 'Output file:',
+                                  type: FileType.custom,
+                                  allowedExtensions: ['json'],
+                                  fileName: 'format$dataTime.json',
+                                ));
+                                if (outputFile != null) {
+                                  _saveFormatToJson(outputFile);
+                                }
+                              },
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide(
+                                  width: 1,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                                foregroundColor:
+                                    Theme.of(context).colorScheme.secondary,
+                                backgroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .primary, // 设置按钮的背景色
+                                shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(4), // 设置按钮的圆角
+                                ),
+                              ),
+                              child: const Text(
+                                'Save File',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.normal),
+                              )),
+                        ),
+                        SizedBox(
+                          width: 120,
+                          child: OutlinedButton(
+                              onPressed: () async {
+                                String filePath = '';
+                                try {
+                                  String executablePath =
+                                      Platform.resolvedExecutable;
+                                  var directory = p.dirname(executablePath);
+
+                                  final formatfilePath =
+                                      Directory('$directory\\format');
+                                  if (!await formatfilePath.exists()) {
+                                    await formatfilePath.create(
+                                        recursive: true);
+                                  }
+                                  directory = formatfilePath.path;
+
+                                  FilePickerResult? result =
+                                      await FilePicker.platform.pickFiles(
+                                    initialDirectory: directory,
+                                    type: FileType.custom,
+                                    allowedExtensions: ['json'],
+                                  );
+                                  if (result != null &&
+                                      result.files.isNotEmpty) {
+                                    filePath = result.files.single.path!;
+                                  }
+                                } catch (e) {
+                                  setState(() {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                            content: const Text('Open fail',
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight
+                                                        .bold)), ////此处需要秤回复
+                                            duration:
+                                                const Duration(seconds: 1),
+                                            backgroundColor:
+                                                Colors.red.shade900));
+                                  });
+                                }
+                                if (filePath != '') {
+                                  deleteAllItem();
+                                  _openJsonFile(filePath);
+                                }
+                              },
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide(
+                                  width: 1,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                                foregroundColor: Colors.blue,
+                                backgroundColor: Colors.white, // 设置按钮的背景色
+                                shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(4), // 设置按钮的圆角
+                                ),
+                              ),
+                              child: Text(
+                                'Open File',
+                                style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.normal),
+                              )),
+                        ),
+                      ],
+                    ),
+
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        SizedBox(
+                          width: 120,
+                          child: OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(
+                                width: 1,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              foregroundColor: Colors.blue,
+                              backgroundColor: Colors.white, // 设置按钮的背景色
+                              shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.circular(4), // 设置按钮的圆角
+                              ),
+                            ),
+                            child: Text(
+                              'BarCode Edit',
+                              style: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.normal),
+                            ),
+                            onPressed: () async {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return const MyBarCodeDialog();
+                                },
+                              ).then((value) {
+                                if (value != null) {
+                                  setState(() {
+                                    // rowDataList = value;
+                                  });
+                                }
+                              });
+                            },
+                          ),
+                        ),
+                        SizedBox(
+                          width: 120,
+                          child: OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(
+                                width: 1,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              foregroundColor: Colors.blue,
+                              backgroundColor: Colors.white, // 设置按钮的背景色
+                              shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.circular(4), // 设置按钮的圆角
+                              ),
+                            ),
+                            child: Text(
+                              'Qrcode Edit',
+                              style: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.normal),
+                            ),
+                            onPressed: () async {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return const MyQrcodeDialog();
+                                },
+                              ).then((value) {
+                                if (value != null) {
+                                  setState(() {
+                                    // rowDataList = value;
+                                  });
+                                }
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        SizedBox(
+                          width: 120,
+                          child: OutlinedButton(
                               onPressed: () {
                                 deleteAllItem();
                               },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    Colors.yellow.shade900, // 设置按钮的背景色
-                                elevation: 10, // 设置按钮的阴影
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide(
+                                  width: 1,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                                foregroundColor: Colors.blue,
+                                backgroundColor: Colors.white, // 设置按钮的背景色
                                 shape: RoundedRectangleBorder(
                                   borderRadius:
-                                      BorderRadius.circular(8), // 设置按钮的圆角
+                                      BorderRadius.circular(4), // 设置按钮的圆角
                                 ),
                               ),
-                              child: const Text('New Format',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ))),
+                              child: Text(
+                                'New Format',
+                                style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.normal),
+                              )),
+                        ),
+                        SizedBox(
+                          width: 120,
+                          child: OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(
+                                width: 1,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              foregroundColor: Colors.blue,
+                              backgroundColor: Colors.white, // 设置按钮的背景色
+                              shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.circular(4), // 设置按钮的圆角
+                              ),
+                            ),
+                            child: Text(
+                              'Save csv',
+                              style: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.normal),
+                            ),
+                            onPressed: () async {
+                              String executablePath =
+                                  Platform.resolvedExecutable;
+                              var directory = p.dirname(executablePath);
+                              final formatfilePath =
+                                  Directory('$directory\\format');
+                              if (!await formatfilePath.exists()) {
+                                await formatfilePath.create(recursive: true);
+                              }
+                              directory = formatfilePath.path;
+
+                              String? outputFile =
+                                  (await FilePicker.platform.saveFile(
+                                initialDirectory: directory,
+                                dialogTitle: 'Output file:',
+                                type: FileType.custom,
+                                allowedExtensions: ['fmt'],
+                                fileName: 'format.fmt',
+                              ));
+                              if (outputFile != null) {
+                                _exportCSV();
+                                _saveFormatToCsv(
+                                    csv, outputFile); //////////保存数据到csv
+                                // _saveFormatToJson(outputFile);
+                              }
+                              ////添加实现
+                            },
+                          ),
                         ),
                       ],
                     ),
-                  )
-                ],
-              ),
-
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  SizedBox(
-                    width: 150,
-                    child: ElevatedButton(
-                        onPressed: () async {
-                          final directory = Directory.current.path;
-                          String? outputFile =
-                              (await FilePicker.platform.saveFile(
-                            initialDirectory: directory,
-                            dialogTitle: 'Output file:',
-                            type: FileType.custom,
-                            allowedExtensions: ['json'],
-                            fileName: 'formatdata1.json',
-                          ));
-                          if (outputFile != null) {
-                            _saveFormatToJson(outputFile);
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.yellow.shade900, // 设置按钮的背景色
-                          elevation: 10, // 设置按钮的阴影
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
+                    SizedBox(
+                      width: 125,
+                      height: 50,
+                      child: ElevatedButton(
+                          onPressed: downloadStatus
+                              ? () async {
+                                  String executablePath =
+                                      Platform.resolvedExecutable;
+                                  final directory = p.dirname(executablePath);
+                                  String dataTime = getDateTime();
+                                  String outputFile;
+                                  final filePath =
+                                      Directory('$directory\\backup');
+                                  final file = File(
+                                      '$directory\\backup\\$dataTime.json');
+                                  outputFile = file.path;
+                                  if (!await filePath.exists()) {
+                                    await filePath.create(recursive: true);
+                                  }
+                                  _saveFormatToJson(outputFile);
+                                  _exportCSV();
+                                  sendFormatToScale(csv); //发送数据
+                                  if (kDebugMode) {
+                                    print(csv);
+                                  }
+                                  setState(() {
+                                    downloadStatus = false;
+                                  });
+                                }
+                              : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: downloadStatus
+                                ? Theme.of(context).colorScheme.primary
+                                : Colors.white, // 设置按钮的背景色
+                            elevation: 10, // 设置按钮的阴影
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
+                            ),
                           ),
-                        ),
-                        child: const Text('Save File',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ))),
-                  ),
-                  SizedBox(
-                    width: 150,
-                    child: ElevatedButton(
-                        onPressed: () async {
-                          String filePath = '';
-                          try {
-                            final directory = Directory.current.path;
-                            FilePickerResult? result =
-                                await FilePicker.platform.pickFiles(
-                              initialDirectory: directory,
-                              type: FileType.custom,
-                              allowedExtensions: ['json'],
-                            );
-                            if (result != null && result.files.isNotEmpty) {
-                              filePath = result.files.single.path!;
-                            }
-                          } catch (e) {
-                            setState(() {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content: const Text('Open fail',
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight:
-                                                  FontWeight.bold)), ////此处需要秤回复
-                                      duration: const Duration(seconds: 1),
-                                      backgroundColor: Colors.red.shade900));
-                            });
-                          }
-                          if (filePath != '') {
-                            deleteAllItem();
-                            _openJsonFile(filePath);
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.yellow.shade900, // 设置按钮的背景色
-                          elevation: 10, // 设置按钮的阴影
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
-                          ),
-                        ),
-                        child: const Text('Open File',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ))),
-                  ),
-                ],
-              ),
-
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  SizedBox(
-                    width: 150,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white, // 设置按钮的背景色
-                        elevation: 10, // 设置按钮的阴影
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
-                        ),
-                      ),
-                      child: Text(
-                        'BarCode Edit',
-                        style: TextStyle(
-                            color: Colors.blue.shade900,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      onPressed: () async {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return const MyBarCodeDialog();
-                          },
-                        ).then((value) {
-                          if (value != null) {
-                            setState(() {
-                              // rowDataList = value;
-                            });
-                          }
-                        });
-                      },
+                          child: Row(
+                            children: [
+                              const Icon(Icons.download),
+                              Text('Download',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: downloadStatus
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ))
+                            ],
+                          )),
                     ),
-                  ),
-                  SizedBox(
-                    width: 150,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white, // 设置按钮的背景色
-                        elevation: 10, // 设置按钮的阴影
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
-                        ),
-                      ),
-                      child: Text(
-                        'Qrcode Edit',
-                        style: TextStyle(
-                            color: Colors.blue.shade900,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      onPressed: () async {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return const MyQrcodeDialog();
-                          },
-                        ).then((value) {
-                          if (value != null) {
-                            setState(() {
-                              // rowDataList = value;
-                            });
-                          }
-                        });
-                      },
+                    Divider(
+                      height: 2,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
-                  ),
-                ],
-              ),
 
-              SizedBox(
-                width: 150,
-                height: 50,
-                child: ElevatedButton(
-                    onPressed: downloadStatus
-                        ? () async {
-                            final directory = Directory.current.path;
-                            String dataTime = getDateTime();
-                            String outputFile;
-                            final filePath = Directory('$directory\\download');
-                            final file =
-                                File('$directory\\download\\$dataTime.json');
-                            outputFile = file.path;
-                            if (!await filePath.exists()) {
-                              await filePath.create(recursive: true);
-                            }
-                            _saveFormatToJson(outputFile);
-                            _exportCSV();
-                            setState(() {
-                              downloadStatus = false;
-                            });
-                          }
-                        : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: downloadStatus
-                          ? Colors.green.shade900
-                          : Colors.white, // 设置按钮的背景色
-                      elevation: 10, // 设置按钮的阴影
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
-                      ),
-                    ),
-                    child: Text('Download',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: downloadStatus ? Colors.white : Colors.black,
-                        ))),
+                    //   ],
+                    // ),
+                  ],
+                ),
               ),
-
-              //   ],
-              // ),
+              Container(
+                height: 2,
+                color: Theme.of(context).colorScheme.primary,
+              ),
             ],
-          ),
-        ),
-      ),
+          )),
       body: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -870,20 +1057,29 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           ),
           Expanded(
               flex: 3,
-              child: ListView(
-                children: (myTextData.tabOrder == 9999)
-                    ? _selectItem()
-                    : (myTextData.type == 'TEXT')
-                        ? _textproperties()
-                        : (myTextData.type == 'DATA')
-                            ? _varproperties()
-                            : (myTextData.type == 'BarCode')
-                                ? _barCodeproperties()
-                                : (myTextData.type == 'Line')
-                                    ? _lineproperties()
-                                    : (myTextData.type == 'Qrcode')
-                                        ? _qrcodeproperties()
-                                        : _textproperties(),
+              child: Row(
+                children: [
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  Expanded(
+                    child: ListView(
+                      children: (myTextData.tabOrder == 9999)
+                          ? _selectItem()
+                          : (myTextData.type == 'TEXT')
+                              ? _textproperties()
+                              : (myTextData.type == 'DATA')
+                                  ? _varproperties()
+                                  : (myTextData.type == 'BarCode')
+                                      ? _barCodeproperties()
+                                      : (myTextData.type == 'Line')
+                                          ? _lineproperties()
+                                          : (myTextData.type == 'Qrcode')
+                                              ? _qrcodeproperties()
+                                              : _textproperties(),
+                    ),
+                  )
+                ],
               )),
           const SizedBox(width: 10)
         ],
@@ -1094,8 +1290,9 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
 
     return [fontsize, width, height];
   }
-  //  List vals = getFontSize(); print("${vals[0]} ${vals[1]} ${vals[2]}");
 
+  //  List vals = getFontSize(); print("${vals[0]} ${vals[1]} ${vals[2]}");
+  String csv = "";
   void _exportCSV() async {
     // var path = 'C:\\Users\\Test-Team\\Desktop\\text1111';
     List<List<dynamic>> csvData = <List<dynamic>>[];
@@ -1242,15 +1439,14 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         ]);
       }
     }
-    String csv = const ListToCsvConverter(
+    csv = const ListToCsvConverter(
       textDelimiter: '',
     ).convert(csvData);
     // String csv = const ListToCsvConverter().convert(csvData);
     // final directory = await Directory.systemTemp.createTemp();
     // final file = File('${path}/data.csv');
     // await file.writeAsString(csv);
-    sendFormatToScale(csv); //发送数据
-    print(csv);
+
     // _saveFormatToCsv(csv);  //////////保存数据到csv
 
     // if (await file.exists()) {
@@ -1293,15 +1489,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
 
         // await loadData();   此处已经写好了如何捞回来条码信息
       }
-
-      setState(() {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: const Text('Save successful !',
-                style: TextStyle(
-                    fontSize: 20, fontWeight: FontWeight.bold)), ////此处需要秤回复
-            duration: const Duration(seconds: 1),
-            backgroundColor: Colors.green.shade900));
-      });
     } catch (e) {
       setState(() {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -1329,7 +1516,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           _selectedPrintDirection = fromatContent.rotation;
         }
       });
-
       // String jsonItemString = jsonDecode(fromatContent.content);
       List jsonList = jsonDecode(fromatContent.content);
       for (var json in jsonList) {
@@ -1452,11 +1638,53 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     _saveFormatDataToJson(formatDataList, path);
   }
 
-  // void _saveFormatToCsv(String csv) async {
-  //   final directory = Directory.current.path;
-  //   final file = File('$directory\\data.csv');
-  //   await file.writeAsString(csv);
-  // }
+  void _saveFormatToCsv(String csv, String path) {
+    final file = File(path);
+    var gb2312Bytes = stringToGb2312Bytes(csv);
+    var resultList = convertList(gb2312Bytes);
+    file.writeAsBytesSync(resultList, mode: FileMode.write);
+  }
+
+  List<int> stringToGb2312Bytes(String str) {
+    var encoder = gbk.encode(str);
+    return encoder.toList();
+  }
+
+  List<int> convertList(List<int> inputList) {
+    var resultList = <int>[];
+    for (var i = 0; i < inputList.length; i++) {
+      var value = (inputList[i] >> 8) & 0xFF;
+      if (value != 0) {
+        resultList.add(value);
+      }
+      value = (inputList[i] & 0xFF);
+      resultList.add(value);
+    }
+    return resultList;
+  }
+
+// 在GBK编码数据开头添加BOM标记
+  List<int> addGbkBom(List<int> gbkData) {
+    final bom = [0xEF, 0xBB, 0xBF];
+    return bom + gbkData;
+  }
+
+//   void _saveFormatToCsv(String csv, String path) {
+//     // isGb2312Compliant(csv);
+//     // List<int> utf8Bytes = utf8.encode(csv);
+
+//     // 将 UTF-8 编码的字节流转换为 GB2312 编码的字节流
+
+//     // List<int> gb18030Bytes = gbk.encode(utf8.decode(utf8Bytes));
+//     // List<int> gb2312Bytes = gbk.encode(utf8.decode(utf8Bytes));
+//     final file = File(path);
+//     // List<int> gb2312Bytes = gbk.encode(csv);
+//     // String gb2312String = gbk.decode(Uint8List.fromList(gb18030Bytes));
+//     // print(gb2312String);
+//     // File(path).writeAsBytesSync(gb18030Bytes);
+//     file.writeAsStringSync(utf8ToGb2312(csv), mode: FileMode.writeOnly);
+//     // await file.writeAsString(utf8ToGb2312(csv), encoding: gbk);
+//   }
 
   void _openJsonFile(String path) {
     readTextInfoListFromFile(path);
@@ -1551,7 +1779,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   Widget _generateExpansionTileWidget(tittle, List<String>? names) {
     return ExpansionTile(
       title: Text(tittle,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
       children: names!.map((name) => _generateWidget(name)).toList(),
     );
   }
@@ -1585,8 +1813,9 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
               //左侧按钮文本的颜色
               text,
               style: const TextStyle(
-                  color: Color.fromARGB(255, 15, 71, 161),
-                  fontWeight: FontWeight.bold),
+                fontSize: 14,
+                color: Color.fromARGB(255, 15, 71, 161),
+              ),
             ),
           )),
     );
@@ -2058,8 +2287,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         ));
       }
 
-      //添加可拖拽控件的信息
-
       //中间页面添加最新的可拖拽控件
       floatButtonList.add(DraggableFloatingActionButton(
           index: (num.length - 1),
@@ -2145,11 +2372,11 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       Container(
         height: 50,
         color: const Color.fromARGB(255, 240, 247, 252),
-        child: const Text(
+        child: Text(
           "You haven't selected any element.",
           style: TextStyle(
               fontSize: 20,
-              color: Color.fromARGB(255, 245, 127, 23),
+              color: Colors.red.shade900,
               fontWeight: FontWeight.bold),
         ),
       ),
@@ -2182,11 +2409,13 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
 
   TextField buildTextField(TextEditingController controller, String labelText,
       String hintText, int num) {
+    controller.text = hintText;
+
     return TextField(
       controller: controller,
       decoration: InputDecoration(
-        labelStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        hintStyle: const TextStyle(fontSize: 20),
+        labelStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+        hintStyle: const TextStyle(fontSize: 14),
         labelText: labelText,
         hintText: hintText,
       ),
@@ -2300,76 +2529,166 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
 
   _textproperties() {
     return [
-      const SizedBox(height: 20),
+      const SizedBox(height: 10),
       Container(
         height: 30,
         color: const Color.fromARGB(255, 240, 247, 252),
-        child: const Text(
-          "------------------Attribute------------------",
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        child: Column(
+          children: [
+            Text(
+              "Attribute",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary),
+            ),
+            Divider(
+              height: 2,
+              color: Theme.of(context).colorScheme.primary,
+            )
+          ],
         ),
       ),
       Row(
         children: [
-          const SizedBox(width: 10),
-          const Text("Tab order:",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(
+            height: 5,
+          ),
+          const SizedBox(
+            width: 100,
+            child: Text("Tab order:",
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontSize: 14,
+                )),
+          ),
+          const SizedBox(
+            height: 5,
+          ),
           Text(
             myTextData.tabOrder.toString(),
-            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontSize: 14, color: Theme.of(context).colorScheme.primary),
           )
+        ],
+      ),
+      const SizedBox(height: 10),
+      Row(
+        children: [
+          const SizedBox(
+            width: 100,
+            child: Text("Type:",
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontSize: 14,
+                )),
+          ),
+          Text(myTextData.type,
+              style: TextStyle(
+                  fontSize: 14, color: Theme.of(context).colorScheme.primary))
+        ],
+      ),
+      const SizedBox(
+        height: 5,
+      ),
+      Container(
+        height: 20,
+        color: const Color.fromARGB(255, 240, 247, 252),
+        child: Text("Position",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 14,
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.bold)),
+      ),
+      Row(
+        children: [
+          const SizedBox(
+            width: 100,
+            child: Text("X:",
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontSize: 14,
+                )),
+          ),
+          Expanded(
+            child: TextField(
+              enabled: false,
+              controller: xPosvar,
+              decoration: InputDecoration(
+                hintText: myTextData.content.toString(),
+                hintStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold),
+              ),
+              onEditingComplete: () {
+                _onSubmit(xPosvar.text, 2);
+              }, // 点击“完成”按钮后，调用失去焦点方法
+              focusNode: _focusNodexPos, // 将FocusNode对象绑定到TextField
+            ),
+          ),
         ],
       ),
       Row(
         children: [
-          const SizedBox(width: 10),
-          const Text("Type:",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          Text(myTextData.type,
-              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold))
+          const SizedBox(
+            width: 100,
+            child: Text("Y:",
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontSize: 14,
+                )),
+          ),
+          Expanded(
+            child: TextField(
+              enabled: false,
+              controller: yPosvar,
+              decoration: InputDecoration(
+                  labelStyle: const TextStyle(
+                      color: Color.fromARGB(255, 0, 74, 152),
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold), // 设置label字体大小为20
+                  hintText: myTextData.yPos.toString()),
+              onEditingComplete: () {
+                _onSubmit(yPosvar.text, 3);
+              }, // 点击“完成”按钮后，调用失去焦点方法
+              focusNode: _focusNodeyPos, // 将FocusNode对象绑定到TextField
+            ),
+          ),
         ],
       ),
+      const SizedBox(
+        height: 5,
+      ),
+
       Container(
-        height: 30,
+        height: 20,
         color: const Color.fromARGB(255, 240, 247, 252),
-        child: const Text("----------Position--------------",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        child: Text("Editor",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 14,
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.bold)),
       ),
-      TextField(
-        enabled: false,
-        controller: xPosvar,
-        decoration: InputDecoration(
-            labelText: "x:", hintText: myTextData.content.toString()),
-        onEditingComplete: () {
-          _onSubmit(xPosvar.text, 2);
-        }, // 点击“完成”按钮后，调用失去焦点方法
-        focusNode: _focusNodexPos, // 将FocusNode对象绑定到TextField
+
+      const SizedBox(
+        width: 100,
+        child: Text("Text Content:",
+            textAlign: TextAlign.left,
+            style: TextStyle(
+              fontSize: 14,
+            )),
       ),
-      TextField(
-        enabled: false,
-        controller: yPosvar,
-        decoration: InputDecoration(
-            labelStyle: const TextStyle(
-                fontSize: 20, fontWeight: FontWeight.bold), // 设置label字体大小为20
-            hintStyle: const TextStyle(fontSize: 20),
-            labelText: "y:",
-            hintText: myTextData.yPos.toString()),
-        onEditingComplete: () {
-          _onSubmit(yPosvar.text, 3);
-        }, // 点击“完成”按钮后，调用失去焦点方法
-        focusNode: _focusNodeyPos, // 将FocusNode对象绑定到TextField
-      ),
-      Container(
-        height: 30,
-        color: const Color.fromARGB(255, 240, 247, 252),
-        child: const Text("----------Editor-----------------",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-      ),
-      buildTextField(
-          textvariable, "Text Content", myTextData.content.toString(), 0),
+
+      buildTextField(textvariable, "", myTextData.content.toString(), 0),
       const Text(
         'Select FontSize:      ',
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        style: TextStyle(
+          fontSize: 14,
+        ),
       ),
       buildDropdownButton(
         value: _selectFontsize,
@@ -2379,7 +2698,9 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       ),
       const Text(
         'Select Rotation:      ',
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        style: TextStyle(
+          fontSize: 14,
+        ),
       ),
       buildDropdownButton(
         value: _selectedRotation,
@@ -2391,7 +2712,9 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       //     fontsizevar, "Font Size", myTextData.fontSize.toString(), 1),
       const Text(
         'Font Bold:      ',
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        style: TextStyle(
+          fontSize: 14,
+        ),
       ),
       buildDropdownButton(
         value: _selectFontBold,
@@ -2401,7 +2724,9 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       ),
       const Text(
         'Font Reverse:      ',
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        style: TextStyle(
+          fontSize: 14,
+        ),
       ),
       buildDropdownButton(
         value: _selectFontReverse,
@@ -2410,13 +2735,27 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         onSelect: _handleFontReverseSelected,
       ),
       ElevatedButton(
+          style: OutlinedButton.styleFrom(
+            side: BorderSide(
+              width: 1,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            foregroundColor: Theme.of(context).colorScheme.secondary,
+            backgroundColor: Theme.of(context).colorScheme.primary, // 设置按钮的背景色
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
+            ),
+          ),
           onPressed: () {
             setState(() {
               _deleteTextItem(myTextData.tabOrder);
             });
           },
-          child: const Text("Delete",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)))
+          child: Text("Delete",
+              style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onPrimary)))
     ];
   }
 
@@ -2460,74 +2799,150 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
 
   _varproperties() {
     return [
-      const SizedBox(height: 20),
+      const SizedBox(height: 10),
       Container(
         height: 30,
         color: const Color.fromARGB(255, 240, 247, 252),
-        child: const Text(
-          "------------------Attribute------------------",
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        child: Column(
+          children: [
+            Text(
+              "Attribute",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary),
+            ),
+            Divider(
+              height: 2,
+              color: Theme.of(context).colorScheme.primary,
+            )
+          ],
         ),
       ),
       Row(
         children: [
-          const SizedBox(width: 10),
-          const Text("Tab order:",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(
+            height: 5,
+          ),
+          const SizedBox(
+            width: 100,
+            child: Text("Tab order:",
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontSize: 14,
+                )),
+          ),
+          const SizedBox(
+            height: 5,
+          ),
           Text(
             myTextData.tabOrder.toString(),
-            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontSize: 14, color: Theme.of(context).colorScheme.primary),
           )
         ],
       ),
       const SizedBox(height: 10),
       Row(
         children: [
-          const SizedBox(width: 10),
-          const Text("Type:",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(
+            width: 100,
+            child: Text("Type:",
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontSize: 14,
+                )),
+          ),
           Text(myTextData.type,
-              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold))
+              style: TextStyle(
+                  fontSize: 14, color: Theme.of(context).colorScheme.primary))
+        ],
+      ),
+      const SizedBox(
+        height: 5,
+      ),
+      Container(
+        height: 20,
+        color: const Color.fromARGB(255, 240, 247, 252),
+        child: Text("Position",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 14,
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.bold)),
+      ),
+      Row(
+        children: [
+          const SizedBox(
+            width: 100,
+            child: Text("X:",
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontSize: 14,
+                )),
+          ),
+          Expanded(
+            child: TextField(
+              enabled: false,
+              controller: xPosvar,
+              decoration: InputDecoration(
+                hintText: myTextData.content.toString(),
+                hintStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold),
+              ),
+              onEditingComplete: () {
+                _onSubmit(xPosvar.text, 2);
+              }, // 点击“完成”按钮后，调用失去焦点方法
+              focusNode: _focusNodexPos, // 将FocusNode对象绑定到TextField
+            ),
+          ),
+        ],
+      ),
+      Row(
+        children: [
+          const SizedBox(
+            width: 100,
+            child: Text("Y:",
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontSize: 14,
+                )),
+          ),
+          Expanded(
+            child: TextField(
+              enabled: false,
+              controller: yPosvar,
+              decoration: InputDecoration(
+                  labelStyle: const TextStyle(
+                      color: Color.fromARGB(255, 0, 74, 152),
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold), // 设置label字体大小为20
+                  hintText: myTextData.yPos.toString()),
+              onEditingComplete: () {
+                _onSubmit(yPosvar.text, 3);
+              }, // 点击“完成”按钮后，调用失去焦点方法
+              focusNode: _focusNodeyPos, // 将FocusNode对象绑定到TextField
+            ),
+          ),
         ],
       ),
       const SizedBox(height: 20),
-      Container(
-        height: 30,
-        color: const Color.fromARGB(255, 240, 247, 252),
-        child: const Text("----------Position--------------",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+      const SizedBox(
+        width: 100,
+        child: Text("Max Length:",
+            textAlign: TextAlign.left,
+            style: TextStyle(
+              fontSize: 14,
+            )),
       ),
-      TextField(
-        enabled: false,
-        controller: xPosvar,
-        decoration: InputDecoration(
-            labelText: "x:", hintText: myTextData.content.toString()),
-        onEditingComplete: () {
-          _onSubmit(xPosvar.text, 2);
-        }, // 点击“完成”按钮后，调用失去焦点方法
-        focusNode: _focusNodexPos, // 将FocusNode对象绑定到TextField
-      ),
-      TextField(
-        enabled: false,
-        controller: yPosvar,
-        decoration: InputDecoration(
-            labelStyle: const TextStyle(
-                fontSize: 20, fontWeight: FontWeight.bold), // 设置label字体大小为20
-            hintStyle: const TextStyle(fontSize: 20),
-            labelText: "y:",
-            hintText: myTextData.content.toString()),
-        onEditingComplete: () {
-          _onSubmit(yPosvar.text, 3);
-        }, // 点击“完成”按钮后，调用失去焦点方法
-        focusNode: _focusNodeyPos, // 将FocusNode对象绑定到TextField
-      ),
-      const SizedBox(height: 20),
-      buildTextField(
-          maxLenthvar, "Max Length", myTextData.maxLength.toString(), 4),
+      buildTextField(maxLenthvar, "", myTextData.maxLength.toString(), 4),
       const SizedBox(width: 10),
       const Text(
         'Alignment:      ',
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
       ),
       buildDropdownButton(
         value: _selectedAlignment,
@@ -2535,10 +2950,10 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         hintText: 'Alignment',
         onSelect: _handleAlignmentSelected,
       ),
-      const SizedBox(height: 20),
+
       const Text(
         'Select Rotation:      ',
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
       ),
       buildDropdownButton(
         value: _selectedRotation,
@@ -2548,7 +2963,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       ),
       const Text(
         'Select FontSize:      ',
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
       ),
       buildDropdownButton(
         value: _selectFontsize,
@@ -2560,7 +2975,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       //     fontsizevar, "Font Size", myTextData.fontSize.toString(), 1),
       const Text(
         'Font Bold:      ',
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
       ),
       buildDropdownButton(
         value: _selectFontBold,
@@ -2570,7 +2985,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       ),
       const Text(
         'Font Reverse: ',
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
       ),
       buildDropdownButton(
         value: _selectFontReverse,
@@ -2578,56 +2993,95 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         hintText: 'Font Reverse',
         onSelect: _handleFontReverseSelected,
       ),
-      const SizedBox(height: 20),
+      const SizedBox(height: 5),
       ElevatedButton(
           onPressed: () {
             setState(() {
               _deleteTextItem(myTextData.tabOrder);
             });
           },
-          child: const Text("Delete",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)))
+          child: Text("Delete",
+              style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onPrimary)))
     ];
   }
 
   _lineproperties() {
     return [
-      const SizedBox(height: 20),
+      const SizedBox(height: 10),
       Container(
         height: 30,
         color: const Color.fromARGB(255, 240, 247, 252),
-        child: const Text(
-          "------------------Attribute------------------",
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        child: Column(
+          children: [
+            Text(
+              "Attribute",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary),
+            ),
+            Divider(
+              height: 2,
+              color: Theme.of(context).colorScheme.primary,
+            )
+          ],
         ),
       ),
       Row(
         children: [
-          const SizedBox(width: 10),
-          const Text("Tab order:",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(
+            height: 5,
+          ),
+          const SizedBox(
+            width: 100,
+            child: Text("Tab order:",
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontSize: 14,
+                )),
+          ),
+          const SizedBox(
+            height: 5,
+          ),
           Text(
             myTextData.tabOrder.toString(),
-            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontSize: 14, color: Theme.of(context).colorScheme.primary),
           )
         ],
       ),
       const SizedBox(height: 10),
       Row(
         children: [
-          const SizedBox(width: 10),
-          const Text("Type:",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(
+            width: 100,
+            child: Text("Type:",
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontSize: 14,
+                )),
+          ),
           Text(myTextData.type,
-              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold))
+              style: TextStyle(
+                  fontSize: 14, color: Theme.of(context).colorScheme.primary))
         ],
       ),
-      const SizedBox(height: 20),
+      const SizedBox(
+        height: 5,
+      ),
       Container(
-        height: 30,
+        height: 20,
         color: const Color.fromARGB(255, 240, 247, 252),
-        child: const Text("----------Position--------------",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        child: Text("Position",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 14,
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.bold)),
       ),
       buildTextField(xPosvar, "X1", myTextData.xPos.toString(), 2),
       buildTextField(yPosvar, "Y1", myTextData.xPos.toString(), 3),
@@ -2640,78 +3094,150 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
               _deleteTextItem(myTextData.tabOrder);
             });
           },
-          child: const Text("Delete",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)))
+          child: Text("Delete",
+              style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onPrimary)))
     ];
   }
 
   _barCodeproperties() {
     return [
-      const SizedBox(height: 20),
+      const SizedBox(height: 10),
       Container(
         height: 30,
         color: const Color.fromARGB(255, 240, 247, 252),
-        child: const Text(
-          "------------------Attribute------------------",
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        child: Column(
+          children: [
+            Text(
+              "Attribute",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary),
+            ),
+            Divider(
+              height: 2,
+              color: Theme.of(context).colorScheme.primary,
+            )
+          ],
         ),
       ),
       Row(
         children: [
-          const SizedBox(width: 10),
-          const Text("Tab order:",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(
+            height: 5,
+          ),
+          const SizedBox(
+            width: 100,
+            child: Text("Tab order:",
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontSize: 14,
+                )),
+          ),
+          const SizedBox(
+            height: 5,
+          ),
           Text(
             myTextData.tabOrder.toString(),
-            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontSize: 14, color: Theme.of(context).colorScheme.primary),
           )
         ],
       ),
       const SizedBox(height: 10),
       Row(
         children: [
-          const SizedBox(width: 10),
-          const Text("Type:",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(
+            width: 100,
+            child: Text("Type:",
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontSize: 14,
+                )),
+          ),
           Text(myTextData.type,
-              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold))
+              style: TextStyle(
+                  fontSize: 14, color: Theme.of(context).colorScheme.primary))
         ],
       ),
-      const SizedBox(height: 20),
+      const SizedBox(
+        height: 5,
+      ),
       Container(
-        height: 30,
+        height: 20,
         color: const Color.fromARGB(255, 240, 247, 252),
-        child: const Text("----------Position--------------",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        child: Text("Position",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 14,
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.bold)),
       ),
-      TextField(
-        enabled: false,
-        controller: xPosvar,
-        decoration: InputDecoration(
-            labelText: "x:", hintText: myTextData.content.toString()),
-        onEditingComplete: () {
-          _onSubmit(xPosvar.text, 2);
-        }, // 点击“完成”按钮后，调用失去焦点方法
-        focusNode: _focusNodexPos, // 将FocusNode对象绑定到TextField
+      Row(
+        children: [
+          const SizedBox(
+            width: 100,
+            child: Text("X:",
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontSize: 14,
+                )),
+          ),
+          Expanded(
+            child: TextField(
+              enabled: false,
+              controller: xPosvar,
+              decoration: InputDecoration(
+                hintText: myTextData.content.toString(),
+                hintStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold),
+              ),
+              onEditingComplete: () {
+                _onSubmit(xPosvar.text, 2);
+              }, // 点击“完成”按钮后，调用失去焦点方法
+              focusNode: _focusNodexPos, // 将FocusNode对象绑定到TextField
+            ),
+          ),
+        ],
       ),
-      TextField(
-        enabled: false,
-        controller: yPosvar,
-        decoration: InputDecoration(
-            labelStyle: const TextStyle(
-                fontSize: 20, fontWeight: FontWeight.bold), // 设置label字体大小为20
-            hintStyle: const TextStyle(fontSize: 20),
-            labelText: "y:",
-            hintText: myTextData.content.toString()),
-        onEditingComplete: () {
-          _onSubmit(yPosvar.text, 3);
-        }, // 点击“完成”按钮后，调用失去焦点方法
-        focusNode: _focusNodeyPos, // 将FocusNode对象绑定到TextField
+      Row(
+        children: [
+          const SizedBox(
+            width: 100,
+            child: Text("Y:",
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontSize: 14,
+                )),
+          ),
+          Expanded(
+            child: TextField(
+              enabled: false,
+              controller: yPosvar,
+              decoration: InputDecoration(
+                  labelStyle: const TextStyle(
+                      color: Color.fromARGB(255, 0, 74, 152),
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold), // 设置label字体大小为20
+                  hintText: myTextData.yPos.toString()),
+              onEditingComplete: () {
+                _onSubmit(yPosvar.text, 3);
+              }, // 点击“完成”按钮后，调用失去焦点方法
+              focusNode: _focusNodeyPos, // 将FocusNode对象绑定到TextField
+            ),
+          ),
+        ],
       ),
       const SizedBox(height: 20),
       const Text(
         'Select barcode:      ',
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
       ),
       buildDropdownButton(
         value: _selectedBarcode,
@@ -2719,12 +3245,15 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         hintText: 'Barcode',
         onSelect: _handleBarcodeSelected,
       ),
-      buildTextField(
-          barcodeHeight, "BarCode Height", myTextData.height.toString(), 7),
+      const Text(
+        'BarCode Height:',
+        style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+      ),
+      buildTextField(barcodeHeight, "", myTextData.height.toString(), 7),
       const SizedBox(height: 20),
       const Text(
         'Select HR Alignment:      ',
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
       ),
       buildDropdownButton(
         value: _selectedHRAlignment,
@@ -2734,7 +3263,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       ),
       const Text(
         'Select Rotation:      ',
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
       ),
       buildDropdownButton(
         value: _selectedRotation,
@@ -2742,85 +3271,157 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         hintText: 'Rotation',
         onSelect: _handleRotationSelected,
       ),
-      const SizedBox(height: 20),
+      const SizedBox(height: 5),
       ElevatedButton(
           onPressed: () {
             setState(() {
               _deleteTextItem(myTextData.tabOrder);
             });
           },
-          child: const Text("Delete",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)))
+          child: Text("Delete",
+              style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onPrimary)))
     ];
   }
 
   _qrcodeproperties() {
     return [
-      const SizedBox(height: 20),
+      const SizedBox(height: 10),
       Container(
         height: 30,
         color: const Color.fromARGB(255, 240, 247, 252),
-        child: const Text(
-          "------------------Attribute------------------",
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        child: Column(
+          children: [
+            Text(
+              "Attribute",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary),
+            ),
+            Divider(
+              height: 2,
+              color: Theme.of(context).colorScheme.primary,
+            )
+          ],
         ),
       ),
       Row(
         children: [
-          const SizedBox(width: 10),
-          const Text("Tab order:",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(
+            height: 5,
+          ),
+          const SizedBox(
+            width: 100,
+            child: Text("Tab order:",
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontSize: 14,
+                )),
+          ),
+          const SizedBox(
+            height: 5,
+          ),
           Text(
             myTextData.tabOrder.toString(),
-            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontSize: 14, color: Theme.of(context).colorScheme.primary),
           )
         ],
       ),
       const SizedBox(height: 10),
       Row(
         children: [
-          const SizedBox(width: 10),
-          const Text("Type:",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(
+            width: 100,
+            child: Text("Type:",
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontSize: 14,
+                )),
+          ),
           Text(myTextData.type,
-              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold))
+              style: TextStyle(
+                  fontSize: 14, color: Theme.of(context).colorScheme.primary))
         ],
       ),
-      const SizedBox(height: 20),
+      const SizedBox(
+        height: 5,
+      ),
       Container(
-        height: 30,
+        height: 20,
         color: const Color.fromARGB(255, 240, 247, 252),
-        child: const Text("----------Position--------------",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        child: Text("Position",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 14,
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.bold)),
       ),
-      TextField(
-        enabled: false,
-        controller: xPosvar,
-        decoration: InputDecoration(
-            labelText: "x:", hintText: myTextData.content.toString()),
-        onEditingComplete: () {
-          _onSubmit(xPosvar.text, 2);
-        }, // 点击“完成”按钮后，调用失去焦点方法
-        focusNode: _focusNodexPos, // 将FocusNode对象绑定到TextField
+      Row(
+        children: [
+          const SizedBox(
+            width: 100,
+            child: Text("X:",
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontSize: 14,
+                )),
+          ),
+          Expanded(
+            child: TextField(
+              enabled: false,
+              controller: xPosvar,
+              decoration: InputDecoration(
+                hintText: myTextData.content.toString(),
+                hintStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold),
+              ),
+              onEditingComplete: () {
+                _onSubmit(xPosvar.text, 2);
+              }, // 点击“完成”按钮后，调用失去焦点方法
+              focusNode: _focusNodexPos, // 将FocusNode对象绑定到TextField
+            ),
+          ),
+        ],
       ),
-      TextField(
-        enabled: false,
-        controller: yPosvar,
-        decoration: InputDecoration(
-            labelStyle: const TextStyle(
-                fontSize: 20, fontWeight: FontWeight.bold), // 设置label字体大小为20
-            hintStyle: const TextStyle(fontSize: 20),
-            labelText: "y:",
-            hintText: myTextData.content.toString()),
-        onEditingComplete: () {
-          _onSubmit(yPosvar.text, 3);
-        }, // 点击“完成”按钮后，调用失去焦点方法
-        focusNode: _focusNodeyPos, // 将FocusNode对象绑定到TextField
+      Row(
+        children: [
+          const SizedBox(
+            width: 100,
+            child: Text("Y:",
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontSize: 14,
+                )),
+          ),
+          Expanded(
+            child: TextField(
+              enabled: false,
+              controller: yPosvar,
+              decoration: InputDecoration(
+                  labelStyle: const TextStyle(
+                      color: Color.fromARGB(255, 0, 74, 152),
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold), // 设置label字体大小为20
+                  hintText: myTextData.yPos.toString()),
+              onEditingComplete: () {
+                _onSubmit(yPosvar.text, 3);
+              }, // 点击“完成”按钮后，调用失去焦点方法
+              focusNode: _focusNodeyPos, // 将FocusNode对象绑定到TextField
+            ),
+          ),
+        ],
       ),
       const SizedBox(height: 20),
       const Text(
         'Select QRcode:      ',
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
       ),
       buildDropdownButton(
         value: _selectedQrcode,
@@ -2831,7 +3432,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       const SizedBox(height: 20),
       const Text(
         'Select Qrcode Width:      ',
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
       ),
       buildDropdownButton(
         value: _selectedQr,
@@ -2839,15 +3440,18 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         hintText: 'Qrcode Width',
         onSelect: _handleQrWidthSelected,
       ),
-      const SizedBox(height: 20),
+      const SizedBox(height: 5),
       ElevatedButton(
           onPressed: () {
             setState(() {
               _deleteTextItem(myTextData.tabOrder);
             });
           },
-          child: const Text("Delete",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)))
+          child: Text("Delete",
+              style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onPrimary)))
     ];
   }
 }

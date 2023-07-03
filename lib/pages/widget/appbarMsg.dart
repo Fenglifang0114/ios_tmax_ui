@@ -19,9 +19,9 @@ AppbarMsg(context) {
             // Text(
             //     "当前时间：${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')} ${(now.hour.toString().padLeft(2, '0'))}:${(now.minute.toString().padLeft(2, '0'))}:${(now.second.toString().padLeft(2, '0'))}"),
             const SizedBox(width: 30),
-            Text("Current device:" + myDevicedata.name + "  "),
-            const SizedBox(width: 30),
-            Text("Current user:" + myUserData.userName + "  "),
+            // Text("Current device:" + myDevicedata.name + "  "),
+            // const SizedBox(width: 30),
+            // Text("Current user:" + myUserData.userName + "  "),
           ],
         ),
       ),

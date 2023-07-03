@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:t_max/pages/widget/rectanglepainter.dart';
+import '../../data/selectedcontrol.dart';
 import '../../data/text.dart';
 import '../../eventbus/eventbus.dart';
 import 'linepainter.dart';
@@ -77,6 +78,19 @@ class TextItem extends StatefulWidget {
 
 class TextItemState extends State<TextItem> {
   TextItemState({Key? key}) : super();
+  var _eventbus1;
+  @override
+  void initState() {
+    super.initState();
+
+    _eventbus1 = eventBus.on<EventSelectedControl>().listen((event) {
+      if (mounted) {
+        setState(() {
+          mySelectedControl = event.obj;
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -133,7 +147,11 @@ class TextItemState extends State<TextItem> {
                 color: (widget.fontReverse == 'true')
                     ? Colors.black
                     : Colors.white,
-                border: Border.all(color: Colors.blue.shade900),
+                border: Border.all(
+                    color: (widget.index == mySelectedControl.selectid &&
+                            mySelectedControl.isSelect)
+                        ? Colors.blue.shade900
+                        : Colors.black),
                 borderRadius: const BorderRadius.all(Radius.circular(1)),
               ),
               // color: Colors.grey.shade200,
@@ -307,7 +325,11 @@ class TextItemState extends State<TextItem> {
   // 获取边框样式
   BoxDecoration _getBorderStyle() {
     return BoxDecoration(
-      border: Border.all(color: Colors.blue.shade900),
+      border: Border.all(
+          color: (widget.index == mySelectedControl.selectid &&
+                  mySelectedControl.isSelect)
+              ? Colors.blue.shade900
+              : Colors.black),
       borderRadius: const BorderRadius.all(Radius.circular(1)),
     );
   }

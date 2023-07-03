@@ -9,6 +9,7 @@ import 'package:t_max/data/currentport_data.dart';
 import 'package:t_max/data/productlist_data.dart';
 import 'package:t_max/data/userinfo_data.dart';
 import 'package:t_max/pages/dialog/addproduct_dialog.dart';
+import 'package:t_max/pages/widget/themeColor.dart';
 import '../../data/downloadresponse.dart';
 import '../../data/report_data.dart';
 import '../../data/reqweightdata_data.dart';
@@ -63,6 +64,7 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
   late WeightReportDataSource _weightReportDataSource;
   List<WeightReportData> _weightReportDatas = <WeightReportData>[];
   List<WeightReportData> myWeightReportData = [];
+  DataGridController _dataGridController = DataGridController();
 
   _saveWeight(
     bool isStable,
@@ -292,7 +294,7 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                           borderRadius: BorderRadius.circular(0),
                           boxShadow: [
                             BoxShadow(
-                                color: Colors.blue.shade900,
+                                color: Theme.of(context).colorScheme.primary,
                                 offset: const Offset(0.0, 2.0),
                                 blurStyle: BlurStyle.solid,
                                 blurRadius: 1.0,
@@ -346,8 +348,9 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
               height: 100,
               color: Colors.white,
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const SizedBox(width: 20),
+                  // const SizedBox(width: 20),
                   Column(
                     children: [
                       const SizedBox(height: 10),
@@ -355,7 +358,10 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                         children: [
                           const SizedBox(
                             width: 50,
-                            child: Text("Stable"),
+                            child: Text(
+                              "Stable:",
+                              textAlign: TextAlign.right,
+                            ),
                           ),
                           const SizedBox(width: 10),
                           Image.asset(
@@ -375,7 +381,10 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                         children: [
                           const SizedBox(
                             width: 50,
-                            child: Text("Net"),
+                            child: Text(
+                              "Net:",
+                              textAlign: TextAlign.right,
+                            ),
                           ),
                           const SizedBox(width: 10),
                           Image.asset(
@@ -394,7 +403,10 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                         children: [
                           const SizedBox(
                             width: 50,
-                            child: Text("Zero"),
+                            child: Text(
+                              "Zero:",
+                              textAlign: TextAlign.right,
+                            ),
                           ),
                           const SizedBox(width: 10),
                           Image.asset(
@@ -428,99 +440,104 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                       ),
                     ],
                   ),
-                  const SizedBox(width: 10),
-                  Container(
-                      width: 300,
-                      height: 70,
-                      color: (myReqWeightCountine.msgBody == null)
-                          ? (Colors.blue.shade900)
-                          : (myReqWeightCountine.msgBody!.isStable == true)
-                              ? (Colors.green.shade900)
-                              : (Colors.red.shade900),
-                      // alignment: Alignment.bottomRight, //设置控件内容的位置
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              textAlign: TextAlign.right,
-                              (myReqWeightCountine.msgBody == null)
-                                  ? ("0.000")
-                                  : myReqWeightCountine.msgBody!.weightVal,
-                              style: const TextStyle(
-                                  color: Colors.white, fontSize: 55),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          const SizedBox(width: 10)
-                        ],
-                      )),
-                  const SizedBox(width: 10),
-                  Container(
-                    width: 100,
-                    height: 70,
-                    color: (myReqWeightCountine.msgBody == null)
-                        ? (Colors.blue.shade900)
-                        : (myReqWeightCountine.msgBody!.isStable == true)
-                            ? (Colors.green.shade900)
-                            : (Colors.red.shade900),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                            child: Text(
-                          textAlign: TextAlign.center,
-                          (myReqWeightCountine.msgBody == null)
-                              ? ("kg")
-                              : myReqWeightCountine.msgBody!.weightUnit,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 30,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        )),
-                      ],
-                    ),
-                    //设置控件内容的位置
-                  ),
-
-                  const SizedBox(width: 10),
+                  // const SizedBox(width: 10),
                   Row(
                     children: [
-                      IconButton(
-                        //开始按钮
-                        icon: const Icon(Icons.play_arrow),
-                        iconSize: 30,
-                        color:
-                            (isStart) ? (Colors.grey) : (Colors.blue.shade900),
-                        onPressed: () {
-                          setState(() {
-                            if (!isStart) {
-                              if (webchannel1.heartStatus == true) {
-                                isStart = true;
-                                getWeight();
-                              }
-                            }
-                          });
-                        },
+                      Container(
+                          width: 300,
+                          height: 70,
+                          color: Theme.of(context).colorScheme.primary,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  textAlign: TextAlign.right,
+                                  (myReqWeightCountine.msgBody == null)
+                                      ? ("0.000")
+                                      : myReqWeightCountine.msgBody!.weightVal,
+                                  style: const TextStyle(
+                                      color: Colors.white, fontSize: 55),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              const SizedBox(width: 10)
+                            ],
+                          )),
+                      const SizedBox(width: 5),
+                      Container(
+                        width: 100,
+                        height: 70,
+                        color: Theme.of(context).colorScheme.primary,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Expanded(
+                                child: Text(
+                              textAlign: TextAlign.center,
+                              (myReqWeightCountine.msgBody == null)
+                                  ? ("kg")
+                                  : myReqWeightCountine.msgBody!.weightUnit,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 30,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            )),
+                          ],
+                        ),
+                        //设置控件内容的位置
                       ),
-                      IconButton(
-                        onPressed: () {
-                          if (isStart) {
+                    ],
+                  ),
+
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 20,
+                        child: IconButton(
+                          //开始按钮
+                          icon: const Icon(Icons.play_arrow),
+                          iconSize: 30,
+                          color: (isStart)
+                              ? (Colors.grey)
+                              : (Theme.of(context).colorScheme.primary),
+                          onPressed: () {
                             setState(() {
-                              if (webchannel1.heartStatus == true) {
-                                isStart = false;
-                                stopWeight();
+                              if (!isStart) {
+                                if (webchannel1.heartStatus == true) {
+                                  isStart = true;
+                                  getWeight();
+                                }
                               }
                             });
-                          }
-                        },
-                        icon: const Icon(Icons.pause),
-                        iconSize: 30,
-                        color:
-                            (!isStart) ? (Colors.grey) : (Colors.blue.shade900),
+                          },
+                        ),
                       ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      SizedBox(
+                        width: 20,
+                        child: IconButton(
+                          onPressed: () {
+                            if (isStart) {
+                              setState(() {
+                                if (webchannel1.heartStatus == true) {
+                                  isStart = false;
+                                  stopWeight();
+                                }
+                              });
+                            }
+                          },
+                          icon: const Icon(Icons.pause),
+                          iconSize: 30,
+                          color: (!isStart)
+                              ? (Colors.grey)
+                              : (Theme.of(context).colorScheme.primary),
+                        ),
+                      )
                     ],
                   ),
                   const SizedBox(width: 5),
@@ -542,7 +559,7 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                           child: const Text("Zero")),
                     ],
                   ),
-                  const SizedBox(width: 10),
+                  // const SizedBox(width: 10),
                   Column(
                     children: [
                       const SizedBox(height: 15),
@@ -563,7 +580,7 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                           child: const Text("Setting")),
                     ],
                   ),
-                  const SizedBox(width: 10),
+                  // const SizedBox(width: 10),
                   Column(
                     children: [
                       const SizedBox(height: 15),
@@ -626,7 +643,7 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                       onChanged: (value) {},
                     ),
                   ),
-                  const SizedBox(width: 20),
+                  // const SizedBox(width: 20),
                   // OutlinedButton(
                   //     onPressed: () {
                   //       fieldModifyDialog(context).then((onValue) {});
@@ -679,7 +696,7 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                   ),
                   const SizedBox(width: 10),
                   MaterialButton(
-                      color: Colors.blue.shade900,
+                      color: Theme.of(context).colorScheme.primary,
                       textColor: Colors.white,
                       elevation: 5.0,
                       child: const Text("PLU Edit"),
@@ -726,9 +743,9 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                     width: 200,
                     padding: const EdgeInsets.all(0),
                   ),
-                  const SizedBox(width: 10),
+                  // const SizedBox(width: 10),
                   MaterialButton(
-                      color: Colors.blue.shade900,
+                      color: Theme.of(context).colorScheme.primary,
                       textColor: Colors.white,
                       elevation: 5.0,
                       child: const Text("User Edit"),
@@ -766,19 +783,8 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                 source: _weightReportDataSource,
                 columns: getColumns,
                 columnWidthMode: ColumnWidthMode.fill,
-                // onCellTap: ((details) {
-                //   if (details.rowColumnIndex.rowIndex != 0) {
-                //     int selectedRowIndex =
-                //         details.rowColumnIndex.rowIndex - 1;
-                //     var row = _employeeDataSource.effectiveRows
-                //         .elementAt(selectedRowIndex);
-                //     Navigator.push(
-                //         context,
-                //         MaterialPageRoute(
-                //             builder: (context) =>
-                //                 DetailsPage(dataGridRow: row)));
-                //   }
-                // }),
+                frozenRowsCount: 0,
+                controller: _dataGridController,
               ),
             )
           ],
@@ -1073,6 +1079,11 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
     ));
     setState(() {
       _weightReportDataSource = WeightReportDataSource(_weightReportDatas);
+      Future.delayed(Duration(milliseconds: 100), () {
+        _dataGridController
+            .scrollToRow(_weightReportDataSource.rows.length - 0);
+      });
+      // _dataGridController.scrollToRow(_weightReportDataSource.rows.length - 1);
     });
   }
 

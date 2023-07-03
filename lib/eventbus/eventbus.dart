@@ -221,3 +221,8 @@ class EventBarcodetypedata {
   dynamic obj;
   EventBarcodetypedata(this.obj);
 }
+
+class EventSelectedControl {
+  dynamic obj;
+  EventSelectedControl(this.obj);
+}

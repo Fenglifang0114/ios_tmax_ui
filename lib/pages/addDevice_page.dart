@@ -248,37 +248,52 @@ class _AddDevicePageState extends State<AddDevicePage> {
                       height: 1.0,
                       color: Color(0xFF004a98),
                     ),
-                    Container(
-                      margin: const EdgeInsets.only(
-                          left: 20, top: 5, right: 20), //设置 child 居中
-                      alignment: const Alignment(0, 0),
-                      height: 40,
-                      width: 220, //边框设置
-                      decoration: new BoxDecoration(
-                          //背景
-                          color: Colors.yellow.shade900,
-                          //设置四周圆角 角度
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(20)),
-                          //设置四周边框
-                          // border: new Border.all(width: 1, color: Colors.red),
-                          boxShadow: const [
-                            BoxShadow(
-                                color: Colors.blue,
-                                offset: Offset(0.0, 2.0),
-                                blurRadius: 1.0,
-                                spreadRadius: 1.0),
-                          ]),
-                      child: TextButton(
-                        onPressed: () {
-                          printerDialog(context);
-                        },
-                        child: const Text(
-                          "Print Format Design",
-                          style: TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.bold),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        printerDialog(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: Size(180, 40),
+                        side: BorderSide(width: 2, color: Colors.blue.shade900),
+                        foregroundColor: Colors.blue.shade900,
+                        backgroundColor: Colors.white, //体颜色
+                        textStyle: const TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.bold), // 字体样式
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8), // 圆角
                         ),
+                        elevation: 5, // 阴影
                       ),
+                      child: const Text("Print Format Design"),
+                    ),
+
+                    const SizedBox(
+                      height: 15,
+                    ),
+
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return const CustomSerialProtocol();
+                        }));
+                      },
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: Size(180, 40),
+                        side: BorderSide(width: 2, color: Colors.blue.shade900),
+                        foregroundColor: Colors.blue.shade900,
+                        backgroundColor: Colors.white, //体颜色
+                        textStyle: const TextStyle(
+                            fontWeight: FontWeight.bold), // 字体样式
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8), // 圆角
+                        ),
+                        elevation: 5, // 阴影
+                      ),
+                      child: const Text("Serial protocol"),
                     ),
                     const SizedBox(
                       height: 15,
@@ -289,65 +304,31 @@ class _AddDevicePageState extends State<AddDevicePage> {
                       alignment: const Alignment(0, 0),
                       height: 40,
                       width: 220, //边框设置
-                      decoration: new BoxDecoration(
-                          //背景
-                          color: Colors.yellow.shade900,
-                          //设置四周圆角 角度
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(20)),
-                          //设置四周边框
-                          // border: new Border.all(width: 1, color: Colors.red),
-                          boxShadow: const [
-                            BoxShadow(
-                                color: Colors.blue,
-                                offset: Offset(0.0, 2.0),
-                                blurRadius: 1.0,
-                                spreadRadius: 1.0),
-                          ]),
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) {
-                            return const CustomSerialProtocol();
-                          }));
-                        },
-                        child: const Text(
-                          "Serial protocol",
-                          style: TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(
-                          left: 20, top: 5, right: 20), //设置 child 居中
-                      alignment: const Alignment(0, 0),
-                      height: 40,
-                      width: 220, //边框设置
-                      decoration: new BoxDecoration(
-                          //背景
-                          color: Colors.white,
-                          //设置四周圆角 角度
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(20)),
-                          //设置四周边框
-                          // border: new Border.all(width: 1, color: Colors.red),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.blue.shade900,
-                                offset: const Offset(0.0, 2.0),
-                                blurRadius: 1.0,
-                                spreadRadius: 1.0),
-                          ]),
+                      // decoration: new BoxDecoration(
+                      //     //背景
+                      //     color: Colors.white,
+                      //     //设置四周圆角 角度
+                      //     borderRadius:
+                      //         const BorderRadius.all(Radius.circular(20)),
+                      //     //设置四周边框
+                      //     // border: new Border.all(width: 1, color: Colors.red),
+                      //     boxShadow: [
+                      //       BoxShadow(
+                      //           color: Colors.blue.shade900,
+                      //           offset: const Offset(0.0, 2.0),
+                      //           blurRadius: 1.0,
+                      //           spreadRadius: 1.0),
+                      //     ]),
                       child: const Text(
                         "My device",
                         style: TextStyle(
                             color: Color.fromARGB(255, 13, 73, 161),
                             fontWeight: FontWeight.bold),
                       ),
+                    ),
+                    Divider(
+                      height: 1,
+                      color: Colors.blue.shade900,
                     ),
                     const SizedBox(
                       height: 15,

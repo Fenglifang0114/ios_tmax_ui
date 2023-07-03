@@ -165,7 +165,7 @@ addUserDialog(BuildContext context) {
                                   ),
                                 ),
                                 const SizedBox(height: 5),
-                                const Text("Remark:"),
+                                const Text("UserRemarks:"),
                                 SizedBox(
                                   width: 400,
                                   height: 88,
@@ -228,7 +228,7 @@ addUserDialog(BuildContext context) {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   OutlinedButton(
-                      child: const Text("添加"),
+                      child: const Text("Add"),
                       onPressed: () {
                         errorText.text = '';
                         getUserList();
@@ -238,7 +238,7 @@ addUserDialog(BuildContext context) {
                       }),
                   const SizedBox(width: 20),
                   OutlinedButton(
-                      child: const Text("修改"),
+                      child: const Text("Edit"),
                       onPressed: () {
                         errorText.text = '';
                         getUserList();
@@ -249,7 +249,7 @@ addUserDialog(BuildContext context) {
                       }),
                   const SizedBox(width: 20),
                   OutlinedButton(
-                      child: const Text("删除"),
+                      child: const Text("Delete"),
                       onPressed: () {
                         if (userId.text.isNotEmpty ||
                             userName.text.isNotEmpty) {
@@ -266,7 +266,7 @@ addUserDialog(BuildContext context) {
                       }),
                   const SizedBox(width: 20),
                   OutlinedButton(
-                      child: const Text("退出"),
+                      child: const Text("Exit"),
                       onPressed: () {
                         getUserList();
                         Navigator.of(context)

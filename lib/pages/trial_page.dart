@@ -1,10 +1,15 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/license_data.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import '../../pages/widget/themeColor.dart';
+import '../data/scalecmd_data copy.dart';
+import '../main.dart';
+import 'dialog/showComPort_dialog.dart';
 import 'home_page.dart';
+import 'scalehome_page.dart';
 import 'widget/boxGradient.dart';
 import 'widget/version.dart';
 
@@ -22,6 +27,7 @@ class _TrialPageState extends State<TrialPage> {
   String dueDate = '';
   late Timer timer;
   var _eventbus1;
+
   @override
   void initState() {
     super.initState();
@@ -49,6 +55,7 @@ class _TrialPageState extends State<TrialPage> {
   void dispose() {
     //注销
     // WebsocketManager().dispose();
+    _eventbus1.dispose();
     super.dispose();
   }
 
@@ -80,7 +87,7 @@ class _TrialPageState extends State<TrialPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Container(
+                    SizedBox(
                         width: 400,
                         child: Card(
                           shadowColor: Colors.grey,
@@ -122,49 +129,28 @@ class _TrialPageState extends State<TrialPage> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  // TextButton(
-                                  //     onPressed: () {
-                                  //       setState(() {
-                                  //         registerDialog(context)
-                                  //             .then((onValue) {});
-                                  //       });
-                                  //     },
-                                  //     child:
-                                  //         const Text("License this software")),
-                                  // const SizedBox(width: 40),
                                   ElevatedButton(
                                       onPressed: () {
                                         // MyApp.getSock().send('uicmd', "test");
                                         setState(() {
-                                          setState(() {
-                                            //跳转页面
-                                            if (isPass) {
-                                              Navigator.of(context).push(
-                                                  MaterialPageRoute(
-                                                      //没有传值
-                                                      builder: (context) =>
-                                                          const HomePage()));
-                                            } else {
-                                              exit(0);
-                                            }
-                                          });
+                                          //跳转页面
+                                          if (isPass) {
+                                            getScaleList();
+                                            getUIConf();
+                                            Navigator.push(context,
+                                                MaterialPageRoute(
+                                                    builder: (context) {
+                                              return const ScaleHomePage(); //AddDevicePage();
+                                            }));
+                                          } else {
+                                            exit(0);
+                                          }
                                         });
                                       },
                                       child: Text((isPass) ? "Start" : 'Exit')),
                                 ],
                               ),
                               const SizedBox(height: 30),
-                              // Row(
-                              //   mainAxisAlignment: MainAxisAlignment.center,
-                              //   children: [
-                              //     const SizedBox(width: 40),
-                              //     TextButton(
-                              //         onPressed: () {
-                              //           exit(0);
-                              //         },
-                              //         child: const Text("Exit"))
-                              //   ],
-                              // ),
                             ],
                           ),
                         )),
@@ -184,5 +170,17 @@ class _TrialPageState extends State<TrialPage> {
             ],
           )),
     );
+  }
+
+  void getScaleList() {
+    myScaleCmd.cmdMode = "get_scale_list";
+    myScaleCmd.cmdData = "";
+    MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  void getProductList() {
+    myScaleCmd.cmdMode = "get_product_list";
+    myScaleCmd.cmdData = "";
+    MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
   }
 }

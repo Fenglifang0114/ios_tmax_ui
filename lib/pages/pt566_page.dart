@@ -58,11 +58,11 @@ class _PT566PageState extends State<PT566Page> {
   dynamic name = "Text,TEXT";
   String text = "";
   String type = '';
-  int xPos = 10;
-  int yPos = 16;
+  int xPos = 0;
+  int yPos = 0;
   int width = 0;
   int height = 50;
-  int fontSize = 23;
+  int fontSize = 24;
   int fontWidthRatio = 1;
   int fontHeightRatio = 1;
   int style = 0;
@@ -127,7 +127,7 @@ class _PT566PageState extends State<PT566Page> {
   String _selectFontBold = 'false';
   String _selectFontReverse = 'false';
   bool downloadStatus = true;
-  String _selectFontsize = '23';
+  String _selectFontsize = '24';
   final _lineList = [];
 
   final List<String> _printers = [
@@ -183,23 +183,30 @@ class _PT566PageState extends State<PT566Page> {
     // '20',
     // '21',
     // '22',
-    '23', //0号 字体
-    // '24',
+    // '23',
+    // '25', //0号 字体
+    '24',
     // '25',
     // '38', //01 1 1
-    '50', //00 1 1
+    '49',
+    // '50',
+    // '51', //00 1 1
     // '56', //01 2 2
-    '72', //00 2 2
+    '72',
     // '74', //01 3 3
     // '93', //01 4 4
     '97', //00 3 3
     // '111', //01 5 5
-    // '128', //01 6 6
-    '140', //00 4 4
-    '146', //00 5 5
+    // '128', //01 6 6、
+
+    '123', //00 4 4
+
+    '142',
+    //00 5 5
     // '148', //01 7 7
     '169', //00 6 6
-    '186', //00 7 7
+
+    '200', //00 7 7
   ];
 
   @override
@@ -208,7 +215,13 @@ class _PT566PageState extends State<PT566Page> {
     textItemList;
     textvariable.text = myTextData.content;
     xPosvar.text = myTextData.xPos.toString();
-    yPosvar.text = myTextData.yPos.toString();
+    if (myTextData.type == "TEXT") {
+      yPosvar.text = (myTextData.yPos + 26).toString();
+    } else if (myTextData.type == "BarCode") {
+      yPosvar.text = (myTextData.yPos + 52).toString();
+    } else if (myTextData.type == "Qrcode") {
+      yPosvar.text = (myTextData.yPos + 65).toString();
+    }
     x2Posvar.text = myTextData.x2Pos.toString();
     y2Posvar.text = myTextData.y2Pos.toString();
     barcodeDataReload();
@@ -243,7 +256,7 @@ class _PT566PageState extends State<PT566Page> {
         setState(() {
           myOffsetData = event.obj;
           xPosvar.text = myOffsetData.x.toString();
-          yPosvar.text = myOffsetData.y.toString();
+          yPosvar.text = (myOffsetData.y + myOffsetData.height).toString();
           // _onSubmit(xPosvar.text.toString(), 2);
           // _onSubmit(yPosvar.text.toString(), 3);
           if (textItemList.isNotEmpty) {
@@ -251,6 +264,8 @@ class _PT566PageState extends State<PT566Page> {
               if (textItemList[i].key == myOffsetData.key) {
                 textItemList[i].xPos = myOffsetData.x.toInt();
                 textItemList[i].yPos = myOffsetData.y.toInt();
+                textItemList[i].height = myOffsetData.height.toInt();
+                textItemList[i].width = myOffsetData.width.toInt();
                 myTextData.tabOrder = textItemList[i].index;
                 myTextData.type = textItemList[i].type;
                 myTextData.xPos = textItemList[i].xPos;
@@ -986,7 +1001,7 @@ class _PT566PageState extends State<PT566Page> {
 
   double _getPageWidth() {
     if (_selectedPageSize == _pageSizes[0]) {
-      return 480;
+      return 447;
     } else if (_selectedPageSize == _pageSizes[1]) {
       return 400;
     } else if (_selectedPageSize == _pageSizes[2]) {
@@ -1006,7 +1021,7 @@ class _PT566PageState extends State<PT566Page> {
 
   double _getPageHeight() {
     if (_selectedPageSize == _pageSizes[0]) {
-      return 480;
+      return 470;
     } else if (_selectedPageSize == _pageSizes[1]) {
       return 480;
     } else if (_selectedPageSize == _pageSizes[2]) {
@@ -1077,26 +1092,38 @@ class _PT566PageState extends State<PT566Page> {
     int fontsize = 0;
     int width = 0;
     int height = 0;
-    if (sFont == 23) {
-    } else if (sFont == 50) {
+    if (sFont == 24 ||
+        sFont == 23 ||
+        sFont == 22 ||
+        sFont == 21 ||
+        sFont == 20 ||
+        sFont == 19 ||
+        sFont == 18) {
+    } else if (sFont == 51 || sFont == 50 || sFont == 49) {
       width = 1;
       height = 1;
-    } else if (sFont == 72) {
+    } else if (sFont == 75 ||
+        sFont == 76 ||
+        sFont == 74 ||
+        sFont == 73 ||
+        sFont == 72 ||
+        sFont == 71 ||
+        sFont == 70) {
       width = 2;
       height = 2;
-    } else if (sFont == 97) {
+    } else if (sFont < 100 && sFont > 80) {
       width = 3;
       height = 3;
-    } else if (sFont == 140) {
+    } else if (sFont < 128 && sFont > 100) {
       width = 4;
       height = 4;
-    } else if (sFont == 146) {
+    } else if (sFont < 146) {
       width = 5;
       height = 5;
-    } else if (sFont == 169) {
+    } else if (sFont <= 180) {
       width = 6;
       height = 6;
-    } else if (sFont == 186) {
+    } else if (sFont <= 200) {
       width = 7;
       height = 7;
     }
@@ -1133,20 +1160,19 @@ class _PT566PageState extends State<PT566Page> {
     // csvData.add(['R', '147', '124', '247', '184', '2', '0', '0']);
     // csvData.add(['L', '147', '124', '247', '184', '2', '0', '0']);
     var xpos = 0;
+    var ypos = 0;
 
     for (var i = 0; i < textItemList.length; i++) {
-      if (textItemList[i].xPos >= 10) {
-        xpos = textItemList[i].xPos - 10; //Prt打印机打印不到边界，去掉了10dpi
-      } else {
-        xpos = textItemList[i].xPos;
-      }
+      ypos = textItemList[i].yPos;
+      xpos = textItemList[i].xPos;
+      ypos = textItemList[i].yPos + textItemList[i].height;
       if (textItemList[i].type == 'TEXT') {
         List fontlist = getFontSize(textItemList[i].fontSize);
 
         csvData.add([
           'TB',
           xpos,
-          textItemList[i].yPos,
+          ypos,
           textItemList[i].width,
           textItemList[i].height,
           fontlist[0],
@@ -1163,7 +1189,7 @@ class _PT566PageState extends State<PT566Page> {
         csvData.add([
           'TB',
           xpos,
-          textItemList[i].yPos,
+          ypos,
           textItemList[i].width,
           textItemList[i].height,
           fontlist[0],
@@ -1200,7 +1226,7 @@ class _PT566PageState extends State<PT566Page> {
         csvData.add([
           'B',
           xpos,
-          textItemList[i].yPos,
+          ypos,
           textItemList[i].width,
           textItemList[i].height,
           '2',
@@ -1224,7 +1250,7 @@ class _PT566PageState extends State<PT566Page> {
         csvData.add([
           'QR',
           xpos,
-          textItemList[i].yPos,
+          ypos,
           version,
           textItemList[i].qrWidth.toString(),
           errorlevel,
@@ -1236,7 +1262,7 @@ class _PT566PageState extends State<PT566Page> {
         csvData.add([
           'L',
           xpos,
-          textItemList[i].yPos,
+          ypos,
           textItemList[i].x2Pos,
           textItemList[i].y2Pos,
           textItemList[i].lineWidth,
@@ -1297,22 +1323,22 @@ class _PT566PageState extends State<PT566Page> {
         // await loadData();   此处已经写好了如何捞回来条码信息
       }
 
-      setState(() {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: const Text('Save successful !',
-                style: TextStyle(
-                    fontSize: 20, fontWeight: FontWeight.bold)), ////此处需要秤回复
-            duration: const Duration(seconds: 1),
-            backgroundColor: Colors.green.shade900));
-      });
+      // setState(() {
+      //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      //       content: const Text('Save successful !',
+      //           style: TextStyle(
+      //               fontSize: 20, fontWeight: FontWeight.bold)), ////此处需要秤回复
+      //       duration: const Duration(seconds: 1),
+      //       backgroundColor: Colors.green.shade900));
+      // });
     } catch (e) {
-      setState(() {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('$e Save fail'),
-          ),
-        );
-      });
+      // setState(() {
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     SnackBar(
+      //       content: Text('$e Save fail'),
+      //     ),
+      //   );
+      // });
     }
   }
 
@@ -2030,7 +2056,7 @@ class _PT566PageState extends State<PT566Page> {
       floatButtonList.add(DraggableFloatingActionButton(
           index: (num.length - 1),
           key: ObjectKey(myTextData.tabOrder),
-          initialOffset: const Offset(10, 16),
+          initialOffset: const Offset(0, 0),
           parentKey: _parentKey,
           onPressed: () {},
           children: [textItemList[num.length - 1]]));
@@ -2319,7 +2345,7 @@ class _PT566PageState extends State<PT566Page> {
                 fontSize: 20, fontWeight: FontWeight.bold), // 设置label字体大小为20
             hintStyle: const TextStyle(fontSize: 20),
             labelText: "y:",
-            hintText: myTextData.yPos.toString()),
+            hintText: (myTextData.yPos + myTextData.height).toString()),
         onEditingComplete: () {
           _onSubmit(yPosvar.text, 3);
         }, // 点击“完成”按钮后，调用失去焦点方法
@@ -2596,7 +2622,7 @@ class _PT566PageState extends State<PT566Page> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
       ),
       buildTextField(xPosvar, "X1", myTextData.xPos.toString(), 2),
-      buildTextField(yPosvar, "Y1", myTextData.xPos.toString(), 3),
+      buildTextField(yPosvar, "Y1", myTextData.yPos.toString(), 3),
       buildTextField(x2Posvar, "X2", myTextData.x2Pos.toString(), 9),
       buildTextField(y2Posvar, "Y2", myTextData.y2Pos.toString(), 10),
       const SizedBox(height: 20),

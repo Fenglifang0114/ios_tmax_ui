@@ -1,5 +1,5 @@
 // class UiCmd {
-//   String tare;
+//   String ;
 //   String zero;
 //   String msg;
 //   UiCmd(this.tare, this.zero, this.msg);

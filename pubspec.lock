@@ -241,6 +241,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "3.0.2"
+  csslib:
+    dependency: transitive
+    description:
+      name: csslib
+      sha256: "831883fb353c8bdc1d71979e5b342c7d88acfbc643113c14ae51e2442ea0f20f"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.17.3"
   csv:
     dependency: "direct main"
     description:
@@ -501,6 +509,22 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "3.1.0"
+  gbk2utf8:
+    dependency: "direct main"
+    description:
+      name: gbk2utf8
+      sha256: "83a255e974b970d20538c1661bd5b7ee9120e106fbb10478cffcd515ba480e34"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.0.1"
+  gbk_codec:
+    dependency: "direct main"
+    description:
+      name: gbk_codec
+      sha256: "3af5311fc9393115e3650ae6023862adf998051a804a08fb804f042724999f61"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.4.0"
   get:
     dependency: "direct main"
     description:
@@ -541,6 +565,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "3.1.0"
+  html:
+    dependency: transitive
+    description:
+      name: html
+      sha256: "58e3491f7bf0b6a4ea5110c0c688877460d1a6366731155c4a4580e7ded773e8"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.15.3"
   http:
     dependency: transitive
     description:

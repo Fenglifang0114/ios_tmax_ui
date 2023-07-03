@@ -3,6 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/data/printer.dart';
+import 'package:t_max/data/selectedcontrol.dart';
 
 import '../../data/offset.dart';
 import '../../data/pagesize.dart';
@@ -80,19 +81,25 @@ class _DraggableFloatingActionButtonState
 
       setState(() {
         //_minOffset 原点
-        if (myPrinter.printer == 'PT566') {
-          _minOffset = const Offset(10, 16);
-          _originOffset = const Offset(10, 0);
-        } else {
-          _minOffset = const Offset(0, 0);
-          _originOffset = const Offset(0, 0);
-        }
-
+        // if (myPrinter.printer == 'PT566') {
+        //   _minOffset = const Offset(10, 20);
+        //   _originOffset = const Offset(10, 0);
+        // } else {
+        //   _minOffset = const Offset(0, 0);
+        //   _originOffset = const Offset(0, 0);
+        // }
+        _minOffset = const Offset(0, 0);
+        _originOffset = const Offset(0, 0);
         myOffsetData.width = size.width;
         myOffsetData.height = size.height;
         //_maxOffset X/Y轴最大坐标
-        _maxOffset = Offset(parentSize.width - size.width - _originOffset.dx,
-            parentSize.height - size.height - _originOffset.dy);
+        if (myPrinter.printer == 'PT566') {
+          _maxOffset = Offset(parentSize.width - size.width - _originOffset.dx,
+              parentSize.height - size.height - _originOffset.dy);
+        } else {
+          _maxOffset = Offset(parentSize.width - size.width - _originOffset.dx,
+              parentSize.height - size.height - _originOffset.dy);
+        }
         // eventBus.fire(EventOffset(myOffsetData));
       });
     } catch (e) {
@@ -115,6 +122,9 @@ class _DraggableFloatingActionButtonState
     WidgetsBinding.instance.addPostFrameCallback(_setBoundary);
     double newOffsetX = _offset.dx + pointerMoveEvent.delta.dx;
     double newOffsetY = _offset.dy + pointerMoveEvent.delta.dy;
+    // if (myPrinter.printer == 'PT566') {
+    //   newOffsetY = _offset.dy + pointerMoveEvent.delta.dy + myOffsetData.height;
+    // }
 
     if (newOffsetX < _minOffset.dx) {
       newOffsetX = _minOffset.dx;
@@ -138,6 +148,11 @@ class _DraggableFloatingActionButtonState
   @override
   Widget build(BuildContext context) {
     // _key = GlobalKey();
+    myOffsetData.x = (_offset.dx.toInt()).roundToDouble();
+    myOffsetData.y = ((_offset.dy).toInt()).roundToDouble();
+    myOffsetData.key = widget.key!;
+    // myOffsetDataList.offsetDataList.add(myOffsetData);
+    eventBus.fire(EventOffset(myOffsetData));
 
     return Positioned(
       //移动后的X轴坐标
@@ -152,15 +167,17 @@ class _DraggableFloatingActionButtonState
           });
         },
         onPointerUp: (PointerUpEvent pointerUpEvent) {
+          // if (myPrinter.printer != 'PT566') {
+          //   myOffsetData.height = 0;
+          // }
           myOffsetData.x = (_offset.dx.toInt()).roundToDouble();
-          myOffsetData.y = (_offset.dy.toInt()).roundToDouble();
+          myOffsetData.y = ((_offset.dy).toInt()).roundToDouble();
           myOffsetData.key = widget.key!;
           // myOffsetDataList.offsetDataList.add(myOffsetData);
           eventBus.fire(EventOffset(myOffsetData));
           myTextData.xPos = myOffsetData.x.toInt();
           myTextData.yPos = myOffsetData.y.toInt();
           eventBus.fire(EventText(myTextData));
-
           if (_isDragging) {
             setState(() {
               _isDragging = false;

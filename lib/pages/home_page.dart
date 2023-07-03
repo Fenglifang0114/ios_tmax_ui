@@ -7,11 +7,6 @@ import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/main.dart';
 import 'package:t_max/pages/dialog/showComPort_dialog.dart';
 import 'package:t_max/pages/widget/TimerWidget.dart';
-import '../data/device_data.dart';
-import '../data/login_data.dart';
-import '../generated/l10n.dart';
-import 'addDevice_page.dart';
-import 'widget/leftSidebar.dart';
 import 'widget/version.dart';
 import 'scalehome_page.dart';
 
@@ -88,12 +83,7 @@ class _HomePageState extends State<HomePage> {
                         SizedBox(
                           child: TimerWidget(),
                         ),
-                        // Text(
-                        //     "当前时间：${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')} ${(now.hour.toString().padLeft(2, '0'))}:${(now.minute.toString().padLeft(2, '0'))}:${(now.second.toString().padLeft(2, '0'))}"),
                         const SizedBox(width: 30),
-                        Text("Current Device: " + myDevicedata.name + "  "),
-                        const SizedBox(width: 30),
-                        Text("Current User: " + myUserData.userName + "  "),
                       ],
                     ),
                   ),

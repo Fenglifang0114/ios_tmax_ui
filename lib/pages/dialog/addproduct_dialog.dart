@@ -67,7 +67,7 @@ addProductDialog(BuildContext context) {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text("Product Id:"),
+                                const Text("PLU:"),
                                 SizedBox(
                                   width: 200,
                                   height: 30,
@@ -89,7 +89,7 @@ addProductDialog(BuildContext context) {
                                   ),
                                 ),
                                 const SizedBox(height: 5),
-                                const Text("Product Name:"),
+                                const Text("PLU Name:"),
                                 SizedBox(
                                   width: 400,
                                   height: 30,
@@ -158,7 +158,7 @@ addProductDialog(BuildContext context) {
                                   ),
                                 ),
                                 const SizedBox(height: 5),
-                                const Text("Product description:"),
+                                const Text("PLu Remarks:"),
                                 SizedBox(
                                   width: 400,
                                   height: 120,

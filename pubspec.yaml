@@ -77,6 +77,11 @@ dependencies:
   barcode_widget: ^2.0.3
   csv: ^5.0.1
   fluent_ui: ^4.5.0
+  gbk_codec: ^0.4.0
+  gbk2utf8: ^1.0.1
+  
+
+
   
 
 

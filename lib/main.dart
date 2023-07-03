@@ -14,7 +14,7 @@ void main() {
   // if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
   //   setWindowMinSize(const Size(1320, 720));
   // }
-  setWindowMinSize(const Size(1366, 768));
+  setWindowMinSize(const Size(1366, 900));
   runApp(const MyApp());
 }
 
