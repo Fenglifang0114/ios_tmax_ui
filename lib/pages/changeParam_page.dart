@@ -552,8 +552,8 @@ class _ChangeParamPageState extends State<ChangeParamPage> {
                                           lastDate: DateTime(2050, 12), // 结束日期
                                           textDirection:
                                               TextDirection.ltr, // 文字方向
-                                          cancelText: "取消", // 取消按钮文案
-                                          confirmText: "确定", // 确认按钮文案
+                                          cancelText: "Cancel", // 取消按钮文案
+                                          confirmText: "Ok", // 确认按钮文案
                                         ).then((value) {
                                           _date(value);
                                         });

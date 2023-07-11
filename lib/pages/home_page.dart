@@ -5,9 +5,12 @@ import 'package:t_max/data/dialog_data.dart';
 import 'package:t_max/data/scalecmd_data.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/main.dart';
-import 'package:t_max/pages/dialog/showComPort_dialog.dart';
-import 'package:t_max/pages/widget/TimerWidget.dart';
-import 'widget/version.dart';
+import 'package:t_max/pages/labeldesign_page.dart';
+import 'package:t_max/pages/wifisetting_page.dart';
+import 'dialog/modifyBluetooth_dialog.dart';
+import 'widget/bluetoothsetting.dart';
+import 'widget/boxGradient.dart';
+import 'widget/customcard.dart';
 import 'scalehome_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -30,6 +33,37 @@ class _HomePageState extends State<HomePage> {
   dynamic _eventbus2;
   String groupValue = 'zh';
   DateTime now = DateTime.now();
+
+  List<Color> cardColors = List.generate(6, (index) => Colors.white);
+  List<Color> textColors = List.generate(6, (index) => Colors.blue.shade900);
+  List<Widget> targetPages = [
+    const ScaleHomePage(), // 第一个Card对应的目标界面
+    const LabelDesignPage(), // 第二个Card对应的目标界面
+    const WifiSettingPage(), // 第三个Card对应的目标界面
+    const LabelDesignPage(), // 第一个Card对应的目标界面
+    const LabelDesignPage(), // 第二个Card对应的目标界面
+    const LabelDesignPage(), // 第三个Card对应的目标界面
+    // ...
+  ];
+
+  List<String> imagePaths = [
+    'images/11.png',
+    'images/12.png',
+    'images/13.png',
+    'images/14.png',
+    'images/15.png',
+    'images/16.png',
+  ];
+
+  List<String> titleNames = [
+    'Scale Data',
+    'Label Design',
+    'Wifi Setting',
+    'Bluetooth Setting',
+    'title5',
+    'title6',
+  ];
+  // 初始文字颜色
 
   @override
   void initState() {
@@ -66,144 +100,198 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final _width = MediaQuery.of(context).size.width;
+    final _height = MediaQuery.of(context).size.height;
     // final _height = MediaQuery.of(context).size.height;
     return Scaffold(
-      appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(30),
-          child: AppBar(
-            title: version(),
-            leading: const Text(''),
-            actions: [
-              Row(
-                children: [
-                  SizedBox(
-                    height: 20,
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          child: TimerWidget(),
-                        ),
-                        const SizedBox(width: 30),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 30),
-                  // PopupMenuButton(
-                  //   offset: const Offset(0, 40),
-                  //   onSelected: (value) {
-                  //     _changed(value);
-                  //   },
-                  //   itemBuilder: (BuildContext context) => [
-                  //     PopupMenuItem(
-                  //         value: "zh",
-                  //         child: Text(
-                  //           "简体中文",
-                  //           style: Theme.of(context).textTheme.bodyMedium,
-                  //         )),
-                  //     PopupMenuItem(
-                  //         value: "en",
-                  //         child: Text(
-                  //           "English",
-                  //           style: Theme.of(context).textTheme.bodyMedium,
-                  //         )),
-                  //   ],
-                  // ),
-                ],
-              )
-            ],
-          )),
-      //左侧边栏
-      // drawer: leftSidebar(context),
+        // appBar: PreferredSize(
+        //     preferredSize: const Size.fromHeight(30),
+        //     child: AppBar(
+        //       title: version(),
+        //       leading: const Text(''),
+        //       actions: [
+        //         Row(
+        //           children: [
+        //             SizedBox(
+        //               height: 20,
+        //               child: Row(
+        //                 children: [
+        //                   SizedBox(
+        //                     child: TimerWidget(),
+        //                   ),
+        //                   const SizedBox(width: 30),
+        //                 ],
+        //               ),
+        //             ),
+        //             const SizedBox(width: 30),
+        //             // PopupMenuButton(
+        //             //   offset: const Offset(0, 40),
+        //             //   onSelected: (value) {
+        //             //     _changed(value);
+        //             //   },
+        //             //   itemBuilder: (BuildContext context) => [
+        //             //     PopupMenuItem(
+        //             //         value: "zh",
+        //             //         child: Text(
+        //             //           "简体中文",
+        //             //           style: Theme.of(context).textTheme.bodyMedium,
+        //             //         )),
+        //             //     PopupMenuItem(
+        //             //         value: "en",
+        //             //         child: Text(
+        //             //           "English",
+        //             //           style: Theme.of(context).textTheme.bodyMedium,
+        //             //         )),
+        //             //   ],
+        //             // ),
+        //           ],
+        //         )
+        //       ],
+        //     )),
+        //左侧边栏
+        // drawer: leftSidebar(context),
 
-      body: ListView(
+        body: Container(
+      height: _height,
+      width: _width,
+      decoration: BoxDecoration(gradient: boxGradient()),
+      child: ListView(
         // 水平拉伸
         scrollDirection: Axis.horizontal,
         children: [
           Container(
-            width: 20,
-            color: Colors.blue.shade900,
+            height: _height,
+            width: _width,
+            decoration: BoxDecoration(gradient: boxGradient()),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                    child: Column(
+                  children: [
+                    const SizedBox(height: 100),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        CustomCard(
+                          onTap: () {
+                            setState(() {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => targetPages[0]),
+                              );
+                            });
+                          },
+                          title: titleNames[0],
+                          cardColor: cardColors[0],
+                          textColor: textColors[0],
+                          image: imagePaths[0],
+                        ),
+                        CustomCard(
+                          onTap: () {
+                            setState(() {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => targetPages[1]),
+                              );
+                            });
+                          },
+                          title: titleNames[1],
+                          cardColor: cardColors[1],
+                          textColor: textColors[1],
+                          image: imagePaths[1],
+                        ),
+                        CustomCard(
+                          onTap: () {
+                            setState(() {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => targetPages[2]),
+                              );
+                            });
+                          },
+                          title: titleNames[2],
+                          cardColor: cardColors[2],
+                          textColor: textColors[2],
+                          image: imagePaths[2],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 50,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        CustomCard(
+                          onTap: () {
+                            setState(() {
+                              setBlueToothDialog(context).then((onValue) {});
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //       builder: (context) => targetPages[3]),
+                              // );
+                            });
+                          },
+                          title: titleNames[3],
+                          cardColor: cardColors[3],
+                          textColor: textColors[3],
+                          image: imagePaths[3],
+                        ),
+                        CustomCard(
+                          onTap: () {
+                            setState(() {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => targetPages[4]),
+                              );
+                            });
+                          },
+                          title: titleNames[4],
+                          cardColor: cardColors[4],
+                          textColor: textColors[4],
+                          image: imagePaths[4],
+                        ),
+                        CustomCard(
+                          onTap: () {
+                            setState(() {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => targetPages[5]),
+                              );
+                            });
+                          },
+                          title: titleNames[5],
+                          cardColor: cardColors[5],
+                          textColor: textColors[5],
+                          image: imagePaths[5],
+                        ),
+                      ],
+                    ),
+                  ],
+                )),
+                Container(
+                    height: 20,
+                    color: Colors.blue.shade900,
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("Contact us: Email:sales@taiwanscale.com",
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 15)),
+                      ],
+                    )),
+              ],
+            ),
           ),
-          Row(
-            children: [
-              //左侧添加设备
-              // Container(
-              //   width: 200,
-              //   decoration: const BoxDecoration(
-              //       border: Border(
-              //           right: BorderSide(width: 0.5, color: Colors.black))),
-              //   child: Column(
-              //     children: <Widget>[
-              //       // Row(
-              //       //   children: [
-              //       //     const Icon(Icons.device_hub),
-              //       //     Text(S.of(context).operation_tips),
-              //       //   ],
-              //       // ),
-              //       const SizedBox(height: 10),
-              //       Expanded(child: Row()),
-              //       Container(
-              //         height: 20,
-              //         color: Colors.blue.shade900,
-              //       ),
-              //     ],
-              //   ),
-              // ),
-              // const Flexible(flex: 1, child: GridPage())
-              //右侧重量显示
-              SizedBox(
-                  width: _width - 200,
-                  child: Column(
-                    children: [
-                      Expanded(
-                          child: Column(
-                        children: [
-                          const SizedBox(height: 100),
-                          const Text("T-Max management system",
-                              style:
-                                  TextStyle(color: Colors.blue, fontSize: 50)),
-                          const SizedBox(height: 100),
-                          ElevatedButton(
-                              style: ButtonStyle(
-                                  shape: MaterialStateProperty.all(
-                                      RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20)))),
-                              // const BorderRadius.all(Radius.circular(8)),
-                              onPressed: () {
-                                // getPortList();
-                                getScaleList();
-                                // getProductList();
-                                getUIConf();
-                                // getUserList();
-                                Navigator.push(context,
-                                    MaterialPageRoute(builder: (context) {
-                                  return const ScaleHomePage(); //AddDevicePage();
-                                }));
-                              },
-                              child: const Text("Click to start",
-                                  style: TextStyle(
-                                      fontSize: 40,
-                                      fontWeight: FontWeight.normal))),
-                        ],
-                      )),
-                      Container(
-                          height: 20,
-                          color: Colors.blue.shade900,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              Text("Contact us: Email:sales@taiwanscale.com",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 15)),
-                            ],
-                          )),
-                    ],
-                  ))
-            ],
-          )
         ],
       ),
-    );
+    ));
   }
 
   void getScaleList() {

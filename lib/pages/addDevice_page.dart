@@ -7,6 +7,7 @@ import 'package:t_max/data/conninfolist_data.dart';
 import 'package:t_max/data/report_data.dart';
 import 'package:t_max/data/respdata_data.dart';
 import 'package:t_max/pages/customserialprotocol_page.dart';
+import 'package:t_max/pages/home_page.dart';
 import '../common/WebSocketScaleChannel.dart';
 import '../data/device_data.dart';
 import '../data/downloadresponse.dart';
@@ -181,7 +182,7 @@ class _AddDevicePageState extends State<AddDevicePage> {
         children: [
           Container(
             width: 20,
-            color: Colors.blue.shade900,
+            color: Theme.of(context).colorScheme.primary,
           ),
           Row(
             children: [
@@ -251,50 +252,61 @@ class _AddDevicePageState extends State<AddDevicePage> {
                     const SizedBox(
                       height: 15,
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                        printerDialog(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        fixedSize: Size(180, 40),
-                        side: BorderSide(width: 2, color: Colors.blue.shade900),
-                        foregroundColor: Colors.blue.shade900,
-                        backgroundColor: Colors.white, //体颜色
-                        textStyle: const TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.bold), // 字体样式
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8), // 圆角
-                        ),
-                        elevation: 5, // 阴影
-                      ),
-                      child: const Text("Print Format Design"),
-                    ),
+                    // ElevatedButton(
+                    //   onPressed: () {
+                    //     printerDialog(context);
+                    //   },
+                    //   style: ElevatedButton.styleFrom(
+                    //     fixedSize: Size(180, 40),
+                    //     side: BorderSide(
+                    //         width: 2,
+                    //         color: Theme.of(context).colorScheme.primary),
+                    //     foregroundColor: Theme.of(context).colorScheme.primary,
+                    //     backgroundColor: Colors.white, //体颜色
+                    //     textStyle: const TextStyle(
+                    //         fontSize: 14, fontWeight: FontWeight.bold), // 字体样式
+                    //     shape: RoundedRectangleBorder(
+                    //       borderRadius: BorderRadius.circular(8), // 圆角
+                    //     ),
+                    //     elevation: 5, // 阴影
+                    //   ),
+                    //   child: const Text("Print Format Design"),
+                    // ),
 
                     const SizedBox(
                       height: 15,
                     ),
 
                     ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                          return const CustomSerialProtocol();
-                        }));
-                      },
-                      style: ElevatedButton.styleFrom(
-                        fixedSize: Size(180, 40),
-                        side: BorderSide(width: 2, color: Colors.blue.shade900),
-                        foregroundColor: Colors.blue.shade900,
-                        backgroundColor: Colors.white, //体颜色
-                        textStyle: const TextStyle(
-                            fontWeight: FontWeight.bold), // 字体样式
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8), // 圆角
+                        onPressed: () {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return const HomePage();
+                          }));
+                        },
+                        style: ElevatedButton.styleFrom(
+                          fixedSize: const Size(180, 40),
+                          side: BorderSide(
+                              width: 2,
+                              color: Theme.of(context).colorScheme.primary),
+                          foregroundColor:
+                              Theme.of(context).colorScheme.primary,
+                          backgroundColor: Colors.white, //体颜色
+                          textStyle: const TextStyle(
+                              fontWeight: FontWeight.bold), // 字体样式
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8), // 圆角
+                          ),
+                          elevation: 5, // 阴影
                         ),
-                        elevation: 5, // 阴影
-                      ),
-                      child: const Text("Serial protocol"),
-                    ),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Icon(Icons.home),
+                            Text("Home"),
+                          ],
+                        )),
                     const SizedBox(
                       height: 15,
                     ),
@@ -314,21 +326,21 @@ class _AddDevicePageState extends State<AddDevicePage> {
                       //     // border: new Border.all(width: 1, color: Colors.red),
                       //     boxShadow: [
                       //       BoxShadow(
-                      //           color: Colors.blue.shade900,
+                      //           color: Theme.of(context).colorScheme.primary,
                       //           offset: const Offset(0.0, 2.0),
                       //           blurRadius: 1.0,
                       //           spreadRadius: 1.0),
                       //     ]),
-                      child: const Text(
+                      child: Text(
                         "My device",
                         style: TextStyle(
-                            color: Color.fromARGB(255, 13, 73, 161),
+                            color: Theme.of(context).colorScheme.primary,
                             fontWeight: FontWeight.bold),
                       ),
                     ),
                     Divider(
                       height: 1,
-                      color: Colors.blue.shade900,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                     const SizedBox(
                       height: 15,

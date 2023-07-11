@@ -44,10 +44,11 @@ settingDialog(BuildContext context) {
           return AlertDialog(
             title: Container(
                 color: Colors.blue.shade900,
-                child: Row(
-                  children: const [
+                child: const Row(
+                  children: [
                     Icon(Icons.usb, color: Colors.white),
-                    Text("参数设置", style: TextStyle(color: Colors.white))
+                    Text("Parameter settings",
+                        style: TextStyle(color: Colors.white))
                   ],
                 )),
             content: Container(
@@ -125,7 +126,8 @@ settingDialog(BuildContext context) {
                                         if (int.parse(
                                                 stableTime.text.toString()) >
                                             20) {
-                                          errorText.text = "Stable Time不能大于20秒";
+                                          errorText.text =
+                                              "Stable Time can not be greater than 20 seconds";
                                         } else {
                                           errorText.text = "";
                                         }
@@ -253,7 +255,7 @@ settingDialog(BuildContext context) {
                   MaterialButton(
                       textColor: Colors.white,
                       color: Colors.blue.shade900,
-                      child: const Text("确定"),
+                      child: const Text("Ok"),
                       onPressed: () {
                         updateUIConf();
                         getUIConf();
@@ -266,7 +268,7 @@ settingDialog(BuildContext context) {
                       }),
                   const SizedBox(width: 20),
                   OutlinedButton(
-                      child: const Text("取消"),
+                      child: const Text("Cancel"),
                       onPressed: () {
                         Navigator.of(context)
                             .pop(); // to go back to screen after submitting

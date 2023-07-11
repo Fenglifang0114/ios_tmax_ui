@@ -39,6 +39,7 @@ class RowDataWidgetState extends State<RowDataWidget> {
   late TextEditingController _textEditingController;
   late TextEditingController _defaultvalueController;
   late TextEditingController _maxLengthController;
+  late TextEditingController _textMaxLengthController;
 
   @override
   void initState() {
@@ -51,6 +52,7 @@ class RowDataWidgetState extends State<RowDataWidget> {
         TextEditingController(text: widget.rowData.defaultvalue);
     _maxLengthController =
         TextEditingController(text: widget.rowData.maxlength.toString());
+    _textMaxLengthController = TextEditingController(text: '-');
 
     eventBus.on<EventBarcodetypedata>().listen((event) {
       if (mounted) {
@@ -96,7 +98,10 @@ class RowDataWidgetState extends State<RowDataWidget> {
             items: _types.map((String value) {
               return DropdownMenuItem<String>(
                 value: value,
-                child: Text(value),
+                child: Text(
+                  value,
+                  style: TextStyle(fontSize: 14),
+                ),
               );
             }).toList(),
           ),
@@ -161,7 +166,9 @@ class RowDataWidgetState extends State<RowDataWidget> {
           child: TextField(
             enabled: (_selectedType == 'TEXT') ? false : true,
             keyboardType: TextInputType.number,
-            controller: _maxLengthController,
+            controller: (_selectedType == 'TEXT')
+                ? _textMaxLengthController
+                : _maxLengthController,
             decoration: const InputDecoration(hintText: 'Enter max length'),
             textAlign: TextAlign.center,
             onChanged: (value) {

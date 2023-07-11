@@ -3,7 +3,7 @@ import '../../data/device_data.dart';
 import '../widget/dropdown.dart';
 
 String connectionType = "";
-List<String> deviceList = ['设备1', '设备2', '设备3'];
+List<String> deviceList = ['Device1', 'Device2', 'Device3'];
 TextEditingController deviceNum = TextEditingController();
 TextEditingController deviceName =
     TextEditingController(text: myDevicedata.name);
@@ -117,7 +117,7 @@ modifyAddBluetoothDialog(BuildContext context) {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   OutlinedButton(
-                      child: const Text("确定"),
+                      child: const Text("OK"),
                       onPressed: () {
                         connectionType =
                             deviceName.text.toString() + ",Icons.bluetooth";
@@ -126,7 +126,7 @@ modifyAddBluetoothDialog(BuildContext context) {
                       }),
                   const SizedBox(width: 20),
                   OutlinedButton(
-                      child: const Text("取消"),
+                      child: const Text("Cancel"),
                       onPressed: () {
                         Navigator.of(context)
                             .pop(); // to go back to screen after submitting

@@ -3,7 +3,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/data/printer.dart';
-import 'package:t_max/data/selectedcontrol.dart';
 
 import '../../data/offset.dart';
 import '../../data/pagesize.dart';

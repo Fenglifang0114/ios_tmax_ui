@@ -11,10 +11,12 @@ import 'package:t_max/data/productlist_data.dart';
 import 'package:t_max/data/scalelist_data.dart';
 import 'package:t_max/data/settingparam_data.dart';
 import 'package:t_max/data/userinfo_data.dart';
+import 'package:t_max/data/wifi_list_info.dart';
 import 'package:t_max/pages/dialog/modifycomport_dialog.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
+import '../data/ipinfodata.dart';
 import '../data/reqweightdata_data.dart';
 
 import '../eventbus/eventbus.dart';
@@ -167,6 +169,24 @@ class WebSocketChannel {
     eventBus.fire(EventSettingParam(mySettingParam));
   }
 
+  Future pasterWifiList(String jsonDataString) async {
+    String jsonStrings = jsonDataString;
+    final jsonResponse = json.decode(jsonStrings);
+    myWifiListInfo = WifiListInfo.fromJson(jsonResponse);
+
+    if (myWifiListInfo.wifidatalist!.isNotEmpty) {
+      eventBus.fire(EventWiFiListInfo(myWifiListInfo));
+    }
+  }
+
+  Future pasterIpInfo(String jsonDataString) async {
+    String jsonStrings = jsonDataString;
+    final jsonResponse = json.decode(jsonStrings);
+    myIpInfoData = IpInfoData.fromJson(jsonResponse);
+
+    eventBus.fire(EventIpInfoData(myIpInfoData));
+  }
+
   Future<void> paster(dynamic data) async {
     var jsonData = json.decode(data);
     try {
@@ -200,6 +220,20 @@ class WebSocketChannel {
         pasterUserList(jsonData['MsgBody']);
       } else if (jsonData['MsgType'] == "resp_check_license") {
         pasterLicense(jsonData['MsgBody']);
+      } else if (jsonData['MsgType'] == "resp_get_ap_list") {
+        pasterWifiList(jsonData['MsgBody']);
+      } else if (jsonData['MsgType'] == "resp_get_ip_info") {
+        pasterIpInfo(jsonData['MsgBody']);
+      } else if (jsonData['MsgType'] == "resp_check_license") {
+        xxxxx(jsonData['MsgBody']);
+      } else if (jsonData['MsgType'] == "resp_check_license") {
+        xxxxx(jsonData['MsgBody']);
+      } else if (jsonData['MsgType'] == "resp_check_license") {
+        xxxxx(jsonData['MsgBody']);
+      } else if (jsonData['MsgType'] == "resp_check_license") {
+        xxxxx(jsonData['MsgBody']);
+      } else if (jsonData['MsgType'] == "resp_check_license") {
+        xxxxx(jsonData['MsgBody']);
       }
     } catch (e) {
       if (kDebugMode) {

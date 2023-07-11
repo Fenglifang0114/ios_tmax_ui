@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:window_size/window_size.dart';
 import 'package:flutter/material.dart';
@@ -11,10 +12,10 @@ import 'pages/widget/themeColor.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  // if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-  //   setWindowMinSize(const Size(1320, 720));
-  // }
-  setWindowMinSize(const Size(1366, 900));
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    setWindowMinSize(const Size(1320, 720));
+  }
+  // setWindowMinSize(const Size(1366, 900));
   runApp(const MyApp());
 }
 
@@ -56,30 +57,6 @@ class MyApp extends StatelessWidget {
     MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 //备份 20230116
 

@@ -49,8 +49,8 @@ class MyQrcodeDialogState extends State<MyQrcodeDialog> {
     return AlertDialog(
       title: Container(
           color: Colors.blue.shade900,
-          child: Row(
-            children: const [
+          child: const Row(
+            children: [
               Icon(Icons.qr_code, color: Colors.white),
               Text("Qrcode Edit", style: TextStyle(color: Colors.white))
             ],

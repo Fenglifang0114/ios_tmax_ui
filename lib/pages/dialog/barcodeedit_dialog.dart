@@ -61,8 +61,8 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
     return AlertDialog(
       title: Container(
           color: Colors.blue.shade900,
-          child: Row(
-            children: const [
+          child: const Row(
+            children: [
               Icon(Icons.qr_code, color: Colors.white),
               Text("BarCode Edit", style: TextStyle(color: Colors.white))
             ],
@@ -83,7 +83,7 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
                       const Text(
                         'Barcode Type:',
                         style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
+                            fontSize: 14, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(
                         width: 20,
@@ -113,92 +113,18 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
                   ),
                   const Text(
                     'Barcode Name:',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                   ),
-
                   SizedBox(
                     width: 200,
                     // padding: const EdgeInsets.all(20),
                     child: TypeAheadFormField(
-                      textFieldConfiguration: TextFieldConfiguration(
-                        controller: _barCodeNameController,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue.shade900,
-                          fontSize: 20,
-                        ),
-                        decoration: const InputDecoration(
-                          border: UnderlineInputBorder(),
-                        ),
-                      ),
-                      suggestionsCallback: (pattern) {
-                        return mySavedBarcodeName.savedBarcodeName.where(
-                            (option) => option
-                                .toLowerCase()
-                                .contains(pattern.toLowerCase()));
-                      },
-                      itemBuilder: (context, String suggestion) {
-                        return ListTile(
-                          title: Text(suggestion),
-                        );
-                      },
-                      onSuggestionSelected: (String suggestion) {
-                        setState(() {
-                          _errorController.text = '';
-                          _selectedBarcodeName = suggestion;
-                          _barCodeNameController.text = suggestion;
-                          if (suggestion != '--') {
-                            for (var i = 0;
-                                i < myBarCodeListList.barCodeListList.length;
-                                i++) {
-                              if (myBarCodeListList
-                                          .barCodeListList[i].barCodeName ==
-                                      _selectedBarcodeName &&
-                                  myBarCodeListList
-                                          .barCodeListList[i].barCodeType !=
-                                      'Qrcode') {
-                                _saveDataList(i);
-                                eventBus.fire(EventCurrentBarCodeRowDataList(
-                                    myBarCodeRowDataList));
-                                break;
-                              }
-                            }
-                          } else {
-                            myBarCodeRowDataList.barCodeRowDataList.clear();
-                            myBarCodeListList;
-                          }
-                        });
-                      },
+                      textFieldConfiguration: _getTextFieldConfiguration(),
+                      suggestionsCallback: _getSuggestions,
+                      itemBuilder: _buildSuggestionItem,
+                      onSuggestionSelected: _onSuggestionSelected,
                     ),
                   ),
-                  // Row(
-                  //   children: [
-                  //     const SizedBox(
-                  //       width: 20,
-                  //     ),
-                  //     const Text(
-                  //       'Barcode Name:',
-                  //       style: TextStyle(
-                  //           fontSize: 20, fontWeight: FontWeight.bold),
-                  //     ),
-                  //     SizedBox(
-                  //       width: 150,
-                  //       child: TextField(
-                  //         controller: _barCodeNameController,
-                  //         decoration: const InputDecoration(
-                  //             hintText: 'Enter barcode name'),
-                  //         textAlign: TextAlign.center,
-                  //         onChanged: (value) {
-                  //           setState(() {
-                  //             _errorClean();
-                  //           });
-
-                  //           // widget.rowData.content = value;
-                  //         },
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
                 ],
               ),
             ),
@@ -216,16 +142,12 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
                   const SizedBox(
                     width: 30,
                   ),
-                  ElevatedButton(
+                  OutlinedButton(
                     onPressed: _addRowData,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue.shade900, // 设置按钮的背景色
-                      elevation: 10, // 设置按钮的阴影
-                    ),
                     child: const Text(
                       'Add',
                       style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                     ),
                   ),
                   const SizedBox(
@@ -233,14 +155,15 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green.shade900, // 设置按钮的背景色
+                      backgroundColor:
+                          Theme.of(context).colorScheme.primary, // 设置按钮的背景色
                       elevation: 10, // 设置按钮的阴影
                     ),
                     onPressed: _saveRowData,
                     child: const Text(
                       'Save',
                       style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                     ),
                   ),
                   const SizedBox(
@@ -249,9 +172,9 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
                   OutlinedButton(
                     onPressed: _deleteRowData,
                     child: const Text(
-                      'Delete',
+                      'Delete All',
                       style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ],
@@ -267,33 +190,33 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
                   Text("DATA TYPE",
                       style: TextStyle(
                           color: Colors.blue.shade900,
-                          fontSize: 20,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold)),
                   Text("Content",
                       style: TextStyle(
                           color: Colors.blue.shade900,
-                          fontSize: 20,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold)),
                   Text("Default Value",
                       style: TextStyle(
                         color: Colors.blue.shade900,
-                        fontSize: 20,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                       )),
                   Text("Alignment",
                       style: TextStyle(
                           color: Colors.blue.shade900,
-                          fontSize: 20,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold)),
                   Text("Max Length",
                       style: TextStyle(
                           color: Colors.blue.shade900,
-                          fontSize: 20,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold)),
                   Text("Delete",
                       style: TextStyle(
                           color: Colors.blue.shade900,
-                          fontSize: 20,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold)),
                 ]),
             Expanded(
@@ -319,7 +242,7 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
                 color: (_errorController.text.contains("successfully"))
                     ? Colors.green.shade900
                     : Colors.red.shade900,
-                fontSize: 20,
+                fontSize: 14,
                 fontWeight: FontWeight.bold),
             decoration: const InputDecoration(
                 border: OutlineInputBorder(
@@ -341,11 +264,82 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
           },
           child: const Text(
             'Exit',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           ),
         ),
       ],
     );
+  }
+
+// 获取 TextField 的配置
+  TextFieldConfiguration _getTextFieldConfiguration() {
+    return TextFieldConfiguration(
+      controller: _barCodeNameController,
+      style: TextStyle(
+        fontWeight: FontWeight.bold,
+        color: Colors.blue.shade900,
+        fontSize: 14,
+      ),
+      decoration: const InputDecoration(
+        border: UnderlineInputBorder(),
+      ),
+    );
+  }
+
+  List<String> _getTempBarcodeName() {
+    List<String> tempList = [];
+    tempList.add('--');
+    for (var i = 0; i < myBarCodeListList.barCodeListList.length; i++) {
+      if (myBarCodeListList.barCodeListList[i].barCodeType == _selectBarcode) {
+        tempList.add(myBarCodeListList.barCodeListList[i].barCodeName);
+      }
+    }
+    return tempList;
+  }
+
+// 获取建议列表
+  List<String> _getSuggestions(String pattern) {
+    List<String> tempBarcodeName = _getTempBarcodeName();
+
+    return mySavedBarcodeName.savedBarcodeName
+        .where((option) => option.toLowerCase().contains(pattern.toLowerCase()))
+        .where((option) => tempBarcodeName.contains(option))
+        .toList();
+    // return mySavedBarcodeName.savedBarcodeName
+    //     .where((option) => option.toLowerCase().contains(pattern.toLowerCase()))
+    //     .toList();
+  }
+
+// 创建建议项
+  Widget _buildSuggestionItem(BuildContext context, String suggestion) {
+    return ListTile(
+      title: Text(suggestion),
+    );
+  }
+
+// 选择建议项时的处理
+  void _onSuggestionSelected(String suggestion) {
+    setState(() {
+      _errorController.text = '';
+      _selectedBarcodeName = suggestion;
+      _barCodeNameController.text = suggestion;
+
+      if (suggestion != '--') {
+        for (var i = 0; i < myBarCodeListList.barCodeListList.length; i++) {
+          var barcode = myBarCodeListList.barCodeListList[i];
+
+          if (barcode.barCodeName == _selectedBarcodeName &&
+              barcode.barCodeType != 'Qrcode' &&
+              barcode.barCodeType == _selectBarcode) {
+            _saveDataList(i);
+            eventBus.fire(EventCurrentBarCodeRowDataList(myBarCodeRowDataList));
+            break;
+          }
+        }
+      } else {
+        myBarCodeRowDataList.barCodeRowDataList.clear();
+      }
+    });
   }
 
   Future<File> get _localFile async {

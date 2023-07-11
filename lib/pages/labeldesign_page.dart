@@ -1439,6 +1439,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         ]);
       }
     }
+    csvData.add(['']);
     csv = const ListToCsvConverter(
       textDelimiter: '',
     ).convert(csvData);

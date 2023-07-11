@@ -157,36 +157,36 @@ class _ReusableListItemState extends State<ReusableListItem> {
                   //   width: 5,
                   //   height: 30,
                   // ),
-                  SizedBox(
-                      width: 35,
-                      height: 50,
-                      child: (index == myDevicedata.index)
-                          ? MaterialButton(
-                              onPressed: () {
-                                if (index == myDevicedata.index) {
-                                  if (kDebugMode) {
-                                    print("OK");
-                                  }
-                                } else {
-                                  if (kDebugMode) {
-                                    print("false");
-                                  }
-                                }
-                              },
-                              child: (index == myDevicedata.index)
-                                  ? const Icon(Icons.clear,
-                                      color: Color(0xff004a98))
-                                  : const Icon(Icons.clear, color: Colors.grey),
-                              padding: const EdgeInsets.all(5),
-                            )
-                          : const Text(
-                              " ",
-                              style: TextStyle(
-                                fontSize: 18,
-                                // color: Colors.white, //字体颜色
-                                fontWeight: FontWeight.bold, //字体粗细
-                              ),
-                            )),
+                  // SizedBox(
+                  //     width: 35,
+                  //     height: 50,
+                  //     child: (index == myDevicedata.index)
+                  //         ? MaterialButton(
+                  //             onPressed: () {
+                  //               if (index == myDevicedata.index) {
+                  //                 if (kDebugMode) {
+                  //                   print("OK");
+                  //                 }
+                  //               } else {
+                  //                 if (kDebugMode) {
+                  //                   print("false");
+                  //                 }
+                  //               }
+                  //             },
+                  //             child: (index == myDevicedata.index)
+                  //                 ? const Icon(Icons.clear,
+                  //                     color: Color(0xff004a98))
+                  //                 : const Icon(Icons.clear, color: Colors.grey),
+                  //             padding: const EdgeInsets.all(5),
+                  //           )
+                  //         : const Text(
+                  //             " ",
+                  //             style: TextStyle(
+                  //               fontSize: 18,
+                  //               // color: Colors.white, //字体颜色
+                  //               fontWeight: FontWeight.bold, //字体粗细
+                  //             ),
+                  //           )),
                   // const SizedBox(
                   //   width: 5,
                   //   height: 30,

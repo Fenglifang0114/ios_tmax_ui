@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/downloadresponse.dart';
-import 'package:t_max/pages/pt566_page.dart';
 import 'package:t_max/pages/widget/linepainter.dart';
 import '../data/barcoderowdata.dart';
 import '../data/formatdata.dart';
