@@ -183,7 +183,6 @@ class WebSocketChannel {
     String jsonStrings = jsonDataString;
     final jsonResponse = json.decode(jsonStrings);
     myIpInfoData = IpInfoData.fromJson(jsonResponse);
-
     eventBus.fire(EventIpInfoData(myIpInfoData));
   }
 
@@ -208,7 +207,7 @@ class WebSocketChannel {
         }
       } else if (jsonData['MsgType'] == "resp_scale_modify") {
         await pasterModifyAck(jsonData['MsgBody']);
-      } else if (jsonData['MsgType'] == 0) {
+      } else if (jsonData['MsgType'] == 'weight_data') {
         Map<String, dynamic> map = json.decode(data);
         dynamic mobj = ReqWeightCountine.fromJson(map);
         eventBus.fire(EventReqWeightCountine(mobj));
@@ -224,16 +223,6 @@ class WebSocketChannel {
         pasterWifiList(jsonData['MsgBody']);
       } else if (jsonData['MsgType'] == "resp_get_ip_info") {
         pasterIpInfo(jsonData['MsgBody']);
-      } else if (jsonData['MsgType'] == "resp_check_license") {
-        xxxxx(jsonData['MsgBody']);
-      } else if (jsonData['MsgType'] == "resp_check_license") {
-        xxxxx(jsonData['MsgBody']);
-      } else if (jsonData['MsgType'] == "resp_check_license") {
-        xxxxx(jsonData['MsgBody']);
-      } else if (jsonData['MsgType'] == "resp_check_license") {
-        xxxxx(jsonData['MsgBody']);
-      } else if (jsonData['MsgType'] == "resp_check_license") {
-        xxxxx(jsonData['MsgBody']);
       }
     } catch (e) {
       if (kDebugMode) {

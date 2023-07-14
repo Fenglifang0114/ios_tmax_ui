@@ -6,13 +6,11 @@ import 'package:t_max/data/comscaleinfo_data.dart';
 import 'package:t_max/data/conninfolist_data.dart';
 import 'package:t_max/data/report_data.dart';
 import 'package:t_max/data/respdata_data.dart';
-import 'package:t_max/pages/customserialprotocol_page.dart';
 import 'package:t_max/pages/home_page.dart';
 import '../common/WebSocketScaleChannel.dart';
 import '../data/device_data.dart';
 import '../data/downloadresponse.dart';
 import '../eventbus/eventbus.dart';
-import 'dialog/printer_dialog.dart';
 import 'dialog/showComPort_dialog.dart';
 import 'widget/reusable_list_item.dart';
 import 'widget/showWeightReport.dart';
@@ -37,8 +35,10 @@ class _AddDevicePageState extends State<AddDevicePage> {
 
   late ScrollController _pageScrollerController;
 
+  // String scaleUrl = 'ws://127.0.0.1:56567/tmax?scaleid=1';
+
   String scaleUrl = 'ws://127.0.0.1:7878/tmax?scaleid=1';
-  // String scaleUrl = 'ws://10.5.100.89:7878/tmax?scaleid=';
+  // String scaleUrl = 'ws://10.5.52.65:7878/tmax?scaleid=1';
 
   dynamic _eventbus1;
   dynamic _eventbus2;
@@ -101,9 +101,8 @@ class _AddDevicePageState extends State<AddDevicePage> {
       if (mounted) {
         setState(() {
           myComScaleList = event.obj;
-
           reconnectScale();
-          initScaleList();
+          // initScaleList();
         });
       }
     });
@@ -252,26 +251,6 @@ class _AddDevicePageState extends State<AddDevicePage> {
                     const SizedBox(
                       height: 15,
                     ),
-                    // ElevatedButton(
-                    //   onPressed: () {
-                    //     printerDialog(context);
-                    //   },
-                    //   style: ElevatedButton.styleFrom(
-                    //     fixedSize: Size(180, 40),
-                    //     side: BorderSide(
-                    //         width: 2,
-                    //         color: Theme.of(context).colorScheme.primary),
-                    //     foregroundColor: Theme.of(context).colorScheme.primary,
-                    //     backgroundColor: Colors.white, //体颜色
-                    //     textStyle: const TextStyle(
-                    //         fontSize: 14, fontWeight: FontWeight.bold), // 字体样式
-                    //     shape: RoundedRectangleBorder(
-                    //       borderRadius: BorderRadius.circular(8), // 圆角
-                    //     ),
-                    //     elevation: 5, // 阴影
-                    //   ),
-                    //   child: const Text("Print Format Design"),
-                    // ),
 
                     const SizedBox(
                       height: 15,

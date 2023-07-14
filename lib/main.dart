@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:t_max/pages/home_page.dart';
 import 'package:window_size/window_size.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -27,8 +28,9 @@ class MyApp extends StatelessWidget {
   // 重写build 方法，build 方法返回值为Widget类型，返回内容为屏幕上显示内容。
   @override
   Widget build(BuildContext context) {
+    // webchannel = WebSocketChannel('ws://127.0.0.1:56566/tmax?scaleid=0');
     webchannel = WebSocketChannel('ws://127.0.0.1:7878/tmax?scaleid=0');
-    // webchannel = WebSocketChannel('ws://10.5.100.89:7878/tmax?scaleid=0');
+    // webchannel = WebSocketChannel('ws://10.5.52.65:7878/tmax?scaleid=0');
     webchannel.connect();
     getLicense();
 
@@ -48,7 +50,7 @@ class MyApp extends StatelessWidget {
 
         //去掉右上角debug图标
         debugShowCheckedModeBanner: false,
-        home: const TrialPage());
+        home: const TrialPage()); //HomePage()); //
   }
 
   void getLicense() {

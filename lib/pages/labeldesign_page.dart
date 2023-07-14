@@ -331,20 +331,17 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           downloadStatus = true;
           myDownloadResponse = event.obj;
           if (myDownloadResponse.msgBody.isNotEmpty) {
-            setState(() {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(
-                      (myDownloadResponse.msgBody.contains('ok'))
-                          ? 'Download successful!'
-                          : myDownloadResponse.msgBody,
-                      style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold)), ////此处需要秤回复
-                  duration: const Duration(seconds: 3),
-                  backgroundColor: (myDownloadResponse.msgBody.contains('ok'))
-                      ? Colors.green.shade900
-                      : Colors.red.shade900));
-            });
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(
+                    (myDownloadResponse.msgBody.contains('ok'))
+                        ? 'Download successful!'
+                        : myDownloadResponse.msgBody,
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.bold)), ////此处需要秤回复
+                duration: const Duration(seconds: 3),
+                backgroundColor: (myDownloadResponse.msgBody.contains('ok'))
+                    ? Colors.green.shade900
+                    : Colors.red.shade900));
           }
         });
       }

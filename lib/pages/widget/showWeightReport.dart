@@ -597,7 +597,7 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                                     : (myDevicedata.type == "Icons.wifi")
                                         ? modifyAddNetworkDialog(context)
                                             .then((onValue) {})
-                                        : modifyAddBluetoothDialog(context)
+                                        : modifyAddComPortDialog(context)
                                             .then((onValue) {});
                           }),
                       const SizedBox(height: 15),

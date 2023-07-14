@@ -1,16 +1,16 @@
 class IpInfoData {
-  List<Addresses>? addresses;
+  List<Addresses>? address;
   String? gateway;
   List<String>? dns;
   String? mac;
 
-  IpInfoData({this.addresses, this.gateway, this.dns, this.mac});
+  IpInfoData({this.address, this.gateway, this.dns, this.mac});
 
   IpInfoData.fromJson(Map<String, dynamic> json) {
-    if (json['addresses'] != null) {
-      addresses = <Addresses>[];
-      json['addresses'].forEach((v) {
-        addresses!.add(Addresses.fromJson(v));
+    if (json['address'] != null) {
+      address = <Addresses>[];
+      json['address'].forEach((v) {
+        address!.add(Addresses.fromJson(v));
       });
     }
     gateway = json['gateway'];
@@ -20,8 +20,8 @@ class IpInfoData {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    if (addresses != null) {
-      data['addresses'] = addresses!.map((v) => v.toJson()).toList();
+    if (address != null) {
+      data['address'] = address!.map((v) => v.toJson()).toList();
     }
     data['gateway'] = gateway;
     data['dns'] = dns;
@@ -29,6 +29,8 @@ class IpInfoData {
     return data;
   }
 }
+
+IpInfoData myIpInfoData = IpInfoData();
 
 class Addresses {
   String? address;
@@ -56,51 +58,53 @@ class Addresses {
 }
 
 class DynamicIpInfo {
-  String? id;
+  int? seqno;
   String? ssid;
   String? password;
 
-  DynamicIpInfo({this.id, this.ssid, this.password});
+  DynamicIpInfo({this.seqno, this.ssid, this.password});
 
   DynamicIpInfo.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    seqno = json['seqno'];
     ssid = json['ssid'];
     password = json['password'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
+    data['seqno'] = seqno;
     data['ssid'] = ssid;
     data['password'] = password;
     return data;
   }
 }
 
+DynamicIpInfo myDynamicIpInfo = DynamicIpInfo();
+
 class StaticIpInfo {
-  String? id;
+  int? seqno;
   String? ssid;
   String? password;
-  List<StaticAddresses>? staticAddresses;
+  List<StaticAddresses>? addresses;
   String? gateway;
   String? dns;
 
   StaticIpInfo(
-      {this.id,
+      {this.seqno,
       this.ssid,
       this.password,
-      this.staticAddresses,
+      this.addresses,
       this.gateway,
       this.dns});
 
   StaticIpInfo.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    seqno = json['seqno'];
     ssid = json['ssid'];
     password = json['password'];
     if (json['addresses'] != null) {
-      staticAddresses = <StaticAddresses>[];
+      addresses = <StaticAddresses>[];
       json['addresses'].forEach((v) {
-        staticAddresses!.add(StaticAddresses.fromJson(v));
+        addresses!.add(StaticAddresses.fromJson(v));
       });
     }
     gateway = json['gateway'];
@@ -109,11 +113,11 @@ class StaticIpInfo {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
+    data['seqno'] = seqno;
     data['ssid'] = ssid;
     data['password'] = password;
-    if (staticAddresses != null) {
-      data['addresses'] = staticAddresses!.map((v) => v.toJson()).toList();
+    if (addresses != null) {
+      data['addresses'] = addresses!.map((v) => v.toJson()).toList();
     }
     data['gateway'] = gateway;
     data['dns'] = dns;
@@ -142,3 +146,6 @@ class StaticAddresses {
     return data;
   }
 }
+
+StaticAddresses myStaticAddresses = StaticAddresses();
+StaticIpInfo myStaticIpInfo = StaticIpInfo();

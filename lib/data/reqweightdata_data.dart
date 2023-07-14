@@ -1,6 +1,6 @@
 class ReqWeightCountine {
   int? scaleId;
-  int? msgType;
+  String? msgType;
   MsgBody? msgBody;
 
   ReqWeightCountine({this.scaleId, this.msgType, this.msgBody});

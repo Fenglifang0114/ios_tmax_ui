@@ -430,3 +430,11 @@
 //     }
 //    }"
 
+// To configure BT's name in scale
+// ws://127.0.0.1:7878/tmax?scaleid=1
+
+// 1. To modify BT's name in scale
+//     {"Req":"modify_bt_name", "ReqData":"my bt name"}
+
+//     response
+//     { "scaleId": 1, "MsgType": "resp_modify_bt_name", "MsgBody": "ok" }

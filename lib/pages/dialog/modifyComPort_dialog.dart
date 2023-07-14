@@ -51,15 +51,15 @@ modifyAddComPortDialog(BuildContext context) {
           return AlertDialog(
             title: Container(
                 color: Colors.blue.shade900,
-                child: Row(
-                  children: const [
+                child: const Row(
+                  children: [
                     Icon(Icons.usb, color: Colors.white),
                     Text("Device information modification",
                         style: TextStyle(color: Colors.white))
                   ],
                 )),
             content: Container(
-              height: 465,
+              height: 350,
               decoration: const BoxDecoration(
                   color: Color.fromARGB(255, 233, 232, 232)),
               child: Column(
@@ -168,36 +168,36 @@ modifyAddComPortDialog(BuildContext context) {
                                                 : checkBitsList[0]),
                                 // Dropdown(checkBitsList),
                                 const SizedBox(height: 15),
-                                const Text("Flow control:"),
+                                const Text(""),
                                 // Dropdown(protocolList),
                                 Container(
-                                  child: DropdownButtonFormField<String>(
-                                    isExpanded: true,
+                                  // child: DropdownButtonFormField<String>(
+                                  //   isExpanded: true,
 
-                                    // decoration: const InputDecoration(border: OutlineInputBorder()),
-                                    // 设置默认值
-                                    // value: protocolList[0],
+                                  //   // decoration: const InputDecoration(border: OutlineInputBorder()),
+                                  //   // 设置默认值
+                                  //   // value: protocolList[0],
 
-                                    // 选择回调
-                                    onChanged: (String? newPosition) {
-                                      myComportdata.parity =
-                                          newPosition.toString();
-                                      if (kDebugMode) {
-                                        print(myComportdata.parity);
-                                      }
-                                      setState(() {
-                                        eventBus.fire(
-                                            EventComportdata(myComportdata));
-                                      });
-                                    },
-                                    // 传入可选的数组
-                                    items: protocolList
-                                        .map<DropdownMenuItem<String>>(
-                                            (String value) {
-                                      return DropdownMenuItem(
-                                          value: value, child: Text(value));
-                                    }).toList(),
-                                  ),
+                                  //   // 选择回调
+                                  //   onChanged: (String? newPosition) {
+                                  //     myComportdata.parity =
+                                  //         newPosition.toString();
+                                  //     if (kDebugMode) {
+                                  //       print(myComportdata.parity);
+                                  //     }
+                                  //     setState(() {
+                                  //       eventBus.fire(
+                                  //           EventComportdata(myComportdata));
+                                  //     });
+                                  //   },
+                                  //   // 传入可选的数组
+                                  //   items: protocolList
+                                  //       .map<DropdownMenuItem<String>>(
+                                  //           (String value) {
+                                  //     return DropdownMenuItem(
+                                  //         value: value, child: Text(value));
+                                  //   }).toList(),
+                                  // ),
                                   height: 53,
                                   width: 200,
                                   padding: const EdgeInsets.all(0),
@@ -210,30 +210,30 @@ modifyAddComPortDialog(BuildContext context) {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 15),
-                        const Text("Device Id:"),
-                        SizedBox(
-                          width: 465,
-                          height: 30,
-                          child: TextField(
-                            controller: deviceNum,
-                            maxLength: 20,
-                            maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                            maxLines: 1,
-                            textAlignVertical: TextAlignVertical.top,
-                            decoration: const InputDecoration(
-                              counterText: "",
-                              // hintText: "请输入机种类型，如：ztp",
-                              border: OutlineInputBorder(),
-                            ),
-                            onChanged: (value) {
-                              if (kDebugMode) {
-                                print(value);
-                              }
-                            },
-                          ),
-                        ),
-                        const SizedBox(height: 59),
+                        // const SizedBox(height: 15),
+                        // const Text("Device Id:"),
+                        // SizedBox(
+                        //   width: 465,
+                        //   height: 30,
+                        //   child: TextField(
+                        //     controller: deviceNum,
+                        //     maxLength: 20,
+                        //     maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                        //     maxLines: 1,
+                        //     textAlignVertical: TextAlignVertical.top,
+                        //     decoration: const InputDecoration(
+                        //       counterText: "",
+                        //       // hintText: "请输入机种类型，如：ztp",
+                        //       border: OutlineInputBorder(),
+                        //     ),
+                        //     onChanged: (value) {
+                        //       if (kDebugMode) {
+                        //         print(value);
+                        //       }
+                        //     },
+                        //   ),
+                        // ),
+                        const SizedBox(height: 10),
                       ],
                     ),
                   )

@@ -226,3 +226,28 @@ class EventSelectedControl {
   dynamic obj;
   EventSelectedControl(this.obj);
 }
+
+class EventWiFiListInfo {
+  dynamic obj;
+  EventWiFiListInfo(this.obj);
+}
+
+class EventIpInfoData {
+  dynamic obj;
+  EventIpInfoData(this.obj);
+}
+
+class EventConnectDynamicIp {
+  dynamic obj;
+  EventConnectDynamicIp(this.obj);
+}
+
+class EventConnectStaticIp {
+  dynamic obj;
+  EventConnectStaticIp(this.obj);
+}
+
+class EventIpInfo {
+  dynamic obj;
+  EventIpInfo(this.obj);
+}

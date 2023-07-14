@@ -7,7 +7,7 @@ import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/main.dart';
 import 'package:t_max/pages/labeldesign_page.dart';
 import 'package:t_max/pages/wifisetting_page.dart';
-import 'dialog/modifyBluetooth_dialog.dart';
+import 'addDevice_page.dart';
 import 'widget/bluetoothsetting.dart';
 import 'widget/boxGradient.dart';
 import 'widget/customcard.dart';
@@ -60,8 +60,8 @@ class _HomePageState extends State<HomePage> {
     'Label Design',
     'Wifi Setting',
     'Bluetooth Setting',
-    'title5',
-    'title6',
+    'Update FW',
+    'Scale Records',
   ];
   // 初始文字颜色
 
@@ -175,6 +175,7 @@ class _HomePageState extends State<HomePage> {
                         CustomCard(
                           onTap: () {
                             setState(() {
+                              getScaleList();
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -205,6 +206,7 @@ class _HomePageState extends State<HomePage> {
                         CustomCard(
                           onTap: () {
                             setState(() {
+                              getWifiList();
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -304,6 +306,13 @@ class _HomePageState extends State<HomePage> {
     myScaleCmd.cmdMode = "get_product_list";
     myScaleCmd.cmdData = "";
     MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  void getWifiList() {
+    myScaleCmd.cmdMode = 'get_ap_list';
+    myScaleCmd.cmdData = '';
+    webchannel1.sendMessage(jsonEncode(myScaleCmd));
+    print(jsonEncode(myScaleCmd));
   }
 
   // void _changed(value) {

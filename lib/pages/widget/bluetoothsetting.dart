@@ -1,10 +1,13 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:t_max/data/scalecmd_data%20copy.dart';
+import 'package:t_max/main.dart';
 import '../../data/device_data.dart';
-import '../widget/dropdown.dart';
+import '../addDevice_page.dart';
 
 String connectionType = "";
-List<String> deviceList = ['Device1', 'Device2', 'Device3'];
+
 TextEditingController deviceNum = TextEditingController();
 TextEditingController deviceName =
     TextEditingController(text: myDevicedata.name);
@@ -43,8 +46,8 @@ setBlueToothDialog(BuildContext context) {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text("Connection name:"),
-                                SizedBox(
+                                const Text("Device name:"),
+                                const SizedBox(
                                   height: 10,
                                 ),
                                 SizedBox(
@@ -84,10 +87,7 @@ setBlueToothDialog(BuildContext context) {
                   OutlinedButton(
                       child: const Text("Set"),
                       onPressed: () {
-                        connectionType =
-                            deviceName.text.toString() + ",Icons.bluetooth";
-                        Navigator.of(context).pop(
-                            connectionType); // to go back to screen after submitting
+                        sendBlueToothName();
                       }),
                   const SizedBox(width: 20),
                   OutlinedButton(
@@ -102,4 +102,12 @@ setBlueToothDialog(BuildContext context) {
           );
         }));
       });
+}
+
+void sendBlueToothName() {
+  myScaleCmd.cmdMode = 'modify_bt_name';
+  if (deviceName.text.isNotEmpty) {
+    myScaleCmd.cmdData = deviceName.text;
+    webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
 }
