@@ -1,13 +1,17 @@
 import 'dart:async';
-import 'dart:convert';
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/license_data.dart';
 import 'package:t_max/eventbus/eventbus.dart';
+
 import '../../pages/widget/themeColor.dart';
-import '../data/scalecmd_data copy.dart';
-import '../main.dart';
-import 'dialog/showComPort_dialog.dart';
+
+import '../data/comscaleinfo_data.dart';
+import '../data/currentport_data.dart';
+import '../data/device_data.dart';
+import '../functions/methods.dart';
+
 import 'home_page.dart';
 import 'widget/version.dart';
 
@@ -15,22 +19,23 @@ class TrialPage extends StatefulWidget {
   const TrialPage({Key? key}) : super(key: key);
 
   @override
-  State<TrialPage> createState() => _TrialPageState();
+  State<TrialPage> createState() => TrialPageState();
 }
 
-class _TrialPageState extends State<TrialPage> {
+class TrialPageState extends State<TrialPage> {
   bool ischangepassword = true;
   bool isPass = false;
   String pId = '';
   String dueDate = '';
   late Timer timer;
-  var _eventbus1;
+  dynamic _eventbus1;
+  dynamic _eventbus2;
   TextEditingController pidController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    pidController.text = 'Your PID is ';
+    pidController.text = 'System Unique ID ';
 
     _eventbus1 = eventBus.on<EventLicenseData>().listen((event) {
       if (mounted) {
@@ -43,9 +48,34 @@ class _TrialPageState extends State<TrialPage> {
             if (strList[0] == 'true') {
               isPass = true;
             }
-            setState(() {
-              pidController.text = 'Your PID is $pId';
-            });
+            pidController.text = 'System Unique ID: $pId';
+          }
+          if (isPass) {
+            PublicFunctions.getScaleList();
+            PublicFunctions.getUIConf();
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return const HomePage(); //AddDevicePage();
+            }));
+          }
+        });
+      }
+    });
+    _eventbus2 = eventBus.on<EventComScaleList>().listen((event) {
+      if (mounted) {
+        setState(() {
+          myComScaleList = event.obj;
+          if (myComScaleList.comScaleList.isNotEmpty) {
+            myDevicedata.name = myComScaleList.comScaleList[0].scaleModel;
+            myDevicedata.type = 'icons.usb';
+            myDevicedata.scaleID =
+                myComScaleList.comScaleList[0].scaleId.toString();
+            myCurrentPort.baud = myComScaleList.comScaleList[0].baudRate;
+            myCurrentPort.dataBits = myComScaleList.comScaleList[0].dataBits;
+            myCurrentPort.devPath = myComScaleList.comScaleList[0].portName;
+            myCurrentPort.parity = myComScaleList.comScaleList[0].parity;
+            myCurrentPort.stopBits = myComScaleList.comScaleList[0].stopBits;
+            myDevicedata.mediaType = myComScaleList.comScaleList[0].tMedia;
+            myDevicedata.scaleSn = myComScaleList.comScaleList[0].scaleSn;
           }
         });
       }
@@ -58,7 +88,8 @@ class _TrialPageState extends State<TrialPage> {
   void dispose() {
     //注销
     // WebsocketManager().dispose();
-    _eventbus1.dispose();
+    _eventbus1.cancel();
+    _eventbus2.cancel();
     super.dispose();
   }
 
@@ -87,27 +118,29 @@ class _TrialPageState extends State<TrialPage> {
                   children: [
                     Positioned.fill(
                       child: Container(
-                        decoration: const BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage('images/background_image.jpg'),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
+                        color: Theme.of(context).colorScheme.background,
+                        // decoration: BoxDecoration(
+                        //   gradient: boxGradient(),
+                        //   // image: DecorationImage(
+                        //   //   image: AssetImage('images/background_image.jpg'),
+                        //   //   fit: BoxFit.cover,
+                        //   // ),
+                        // ),
                       ),
                     ),
                     Container(
                       height: _height,
                       width: _width,
-                      decoration: BoxDecoration(
-                        color: Colors.blue.shade900.withOpacity(0.2),
-                      ),
+                      // decoration: BoxDecoration(
+                      //   color: Colors.blue.shade900.withOpacity(0.2),
+                      // ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           SizedBox(
                               width: 400,
                               child: Card(
-                                shadowColor: Colors.grey,
+                                shadowColor: Color.fromARGB(255, 196, 201, 207),
                                 elevation: 40,
                                 margin: const EdgeInsets.all(10),
                                 shape: const RoundedRectangleBorder(
@@ -116,16 +149,25 @@ class _TrialPageState extends State<TrialPage> {
                                 child: Column(
                                   children: [
                                     const SizedBox(height: 20),
-                                    const Text(
+                                    Text(
                                       "Welcome",
-                                      style: TextStyle(fontSize: 40),
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                      ),
                                     ),
                                     const SizedBox(height: 30),
                                     TextField(
                                       controller: pidController,
                                       readOnly: true,
                                       textAlign: TextAlign.center,
-                                      style: TextStyle(fontSize: 20),
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary),
                                     ),
                                     // Text("Your PID is $pId",
                                     //     style: const TextStyle(fontSize: 20)),
@@ -133,18 +175,20 @@ class _TrialPageState extends State<TrialPage> {
                                     Text(
                                         (isPass)
                                             ? 'Authentication passed.\r\n'
-                                            : " No authentication. \r\n Please send the PID to us.\r\nEmail:sales@taiwanscale.com",
+                                            : " No authentication. \r\n Please send the PID to us.\r\n\r\nEmail:sales@taiwanscale.com",
                                         style: TextStyle(
-                                            fontSize: 20,
+                                            fontSize: 16,
                                             color: (isPass)
-                                                ? Colors.green.shade900
+                                                ? Theme.of(context)
+                                                    .colorScheme
+                                                    .primary
                                                 : Colors.red.shade900)),
                                     Text(
                                         (dueDate.isEmpty)
                                             ? ''
                                             : "Expiration date: $dueDate",
                                         style: TextStyle(
-                                            fontSize: 20,
+                                            fontSize: 16,
                                             color: (isPass)
                                                 ? Colors.green.shade900
                                                 : Colors.red.shade900)),
@@ -153,14 +197,15 @@ class _TrialPageState extends State<TrialPage> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        ElevatedButton(
+                                        OutlinedButton(
                                             onPressed: () {
                                               // MyApp.getSock().send('uicmd', "test");
                                               setState(() {
                                                 //跳转页面
                                                 if (isPass) {
-                                                  getScaleList();
-                                                  getUIConf();
+                                                  PublicFunctions
+                                                      .getScaleList();
+                                                  PublicFunctions.getUIConf();
                                                   Navigator.push(context,
                                                       MaterialPageRoute(
                                                           builder: (context) {
@@ -196,17 +241,5 @@ class _TrialPageState extends State<TrialPage> {
                 )
               ],
             )));
-  }
-
-  void getScaleList() {
-    myScaleCmd.cmdMode = "get_scale_list";
-    myScaleCmd.cmdData = "";
-    MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
-  }
-
-  void getProductList() {
-    myScaleCmd.cmdMode = "get_product_list";
-    myScaleCmd.cmdData = "";
-    MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
   }
 }

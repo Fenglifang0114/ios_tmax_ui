@@ -15,24 +15,14 @@ class WebSocketScaleChannel {
   late IOWebSocketChannel channel = IOWebSocketChannel.connect(url);
   WebSocketScaleChannel(this.url);
   bool heartStatus = false;
-  // late Timer hearTimer;
   late List<int> totalChannel = [];
-
-  // void channelAdd() {
-  //   if (!totalChannel.contains(scaleId)) {
-  //     connect();
-  //     totalChannel.add(scaleId);
-  //   }
-  // }
 
   // 开始进行链接
   void connect() async {
-    // url = url + scaleId.toString();
     heartStatus = true;
     channel = IOWebSocketChannel.connect(url);
     channel.stream.listen(onData, onError: onError, onDone: onDone);
-
-    // heartPacket();
+    print(heartStatus);
   }
 
   // 发送消息
@@ -44,13 +34,6 @@ class WebSocketScaleChannel {
   void onDone() {
     debugPrint("Socket1 onDone");
     reconnectSocket();
-    // reconnectSocket();
-    // heartStatus = false;
-    // debugPrint("Socket is closed");
-    // channel = IOWebSocketChannel.connect(url);
-    // heartStatus = true;
-    // channel.stream.listen(this.onData, onError: onError, onDone: onDone);
-    // (() async {});
   }
 
   /// 发送心跳包
@@ -119,13 +102,6 @@ class WebSocketScaleChannel {
     }
   }
 
-  // Future pasterRecsList(String jsonDataString) async {
-  //   String jsonStrings = jsonDataString;
-  //   final jsonResponse = json.decode(jsonStrings);
-  //   myGetScaleRecords = GetScaleRecords.fromJson(jsonResponse);
-  //   eventBus.fire(EventGetScaleRecords(myGetScaleRecords));
-  // }
-
   Future<void> paster(dynamic data) async {
     try {
       var jsonData = json.decode(data);
@@ -153,16 +129,11 @@ class WebSocketScaleChannel {
         eventBus.fire(EventConnectStaticIp(mobj));
       } else if (jsonData['MsgType'] == "resp_get_ip_info") {
         pasterIpInfo(jsonData['MsgBody']);
+      } else if (jsonData['MsgType'] == "resp_modify_bt_name") {
+        Map<String, dynamic> map = json.decode(data);
+        dynamic mobj = ChannelResponse.fromJson(map);
+        eventBus.fire(EventConnectBTResponse(mobj));
       }
-
-      // else if (jsonData['MsgType'] == 6) {
-      //   Map<String, dynamic> map = json.decode(data);
-      //   dynamic mobj = RevScaleData.fromJson(map);
-      //   myRevScaleData = mobj;
-      //   if (myRevScaleData.msgBody.isNotEmpty) {
-      //     pasterRecsList(myRevScaleData.msgBody);
-      //   }
-      // }
     } catch (e) {
       print(e);
     }
@@ -182,237 +153,3 @@ class WebSocketScaleChannel {
     eventBus.fire(EventIpInfo(myIpInfoData));
   }
 }
-
-
-
-
-
-
-// import 'dart:async';
-
-// import 'package:web_socket_channel/io.dart';
-// import 'package:web_socket_channel/web_socket_channel.dart';
-
-// enum StatusEnum{
-//   connect,connecting,close,closing
-// }
-// class WebsocketManager{
-//   static WebsocketManager _singleton;
-
-//   WebSocketChannel channel;
-//   factory WebsocketManager() {
-//     return _singleton;
-//   }
-//    StreamController<StatusEnum> socketStatusController = StreamController<StatusEnum>();
-//   WebsocketManager._();
-//   static void init() async {
-//     if (_singleton == null) {
-//       _singleton = WebsocketManager._();
-//     }
-//   }
-//   StatusEnum isConnect=StatusEnum.close ;  //默认为未连接
-//   String _url="ws://echo.websocket.org";
-
-
-//   Future connect() async{
-//     if(isConnect==StatusEnum.close){
-//       isConnect=StatusEnum.connecting;
-//       socketStatusController.add(StatusEnum.connecting);
-//       channel=await IOWebSocketChannel.connect(Uri.parse(_url));
-//       isConnect=StatusEnum.connect;
-//       socketStatusController.add(StatusEnum.connect);
-//        return true;
-//     }
-
-//   }
-
-//   Future disconnect() async{
-//     if(isConnect==StatusEnum.connect){
-//       isConnect=StatusEnum.closing;
-//       socketStatusController.add(StatusEnum.closing);
-//       await channel.sink.close(3000,"主动关闭");
-//       isConnect=StatusEnum.close;
-//       socketStatusController.add(StatusEnum.close);
-
-//     }
-
-//   }
-
-//   bool send(String text){
-//     if(isConnect==StatusEnum.connect) {
-//       channel.sink.add(text);
-//       return true;
-//     }
-//     return false;
-//   }
-
-//   void printStatus(){
-//     if(isConnect==StatusEnum.connect){
-//       print("websocket 已连接");
-//     }else if(isConnect==StatusEnum.connecting){
-//       print("websocket 连接中");
-//     }else if(isConnect==StatusEnum.close){
-//       print("websocket 已关闭");
-//     }else if(isConnect==StatusEnum.closing){
-//       print("websocket 关闭中");
-//     }
-//   }
-
-//   void dispose(){
-//     socketStatusController.close();
-//     socketStatusController=null;
-//   }
-
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import 'dart:async';
-// import 'package:dio/dio.dart';
-// import 'package:web_socket_channel/io.dart';
-// import 'package:web_socket_channel/web_socket_channel.dart';
-// import 'State.dart';
-// import 'dart:convert';
-
-// import 'Result.dart';
-// /**
-//  * @date 2022/9/26
-//  * @author Marinda
-//  * @desc websocket的实现
-//  */
-// class WebSocketHandle {
-//   static WebSocketState state = WebSocketState();
-//   static late Timer hearTimer;
-//   WebSocketHandle();
-
-//    static void connectSocket() async {
-//        await closeSocket();
-//        String socketUrl = state.socketUrl;
-//        LoggerUtil.logger.i("发起WebSocket请求，地址为：${socketUrl}");
-//        state.webSocket = IOWebSocketChannel.connect(socketUrl);
-
-//        state.socketStatus = true;
-//        initConnectSocket();
-//   }
-
-//   static void initConnectSocket(){
-//     WebSocketHandle.onMessageListener();
-//     heartPacket();
-//   }
-
-//   /**
-//    * @desc 校验连接配置是否重复
-//    * @author Marinda
-//    * @date 2022/9/27
-//    */
-//   static bool validConnection(String ip,int port){
-//      return state.ip == ip && state.port == port ? true : false;
-//   }
-//   /**
-//    * @desc WebSocket消息监听器
-//    * @author Marinda
-//    * @date 2022/9/26
-//    */
-//   static void onMessageListener(){
-
-//      WebSocketResult webSocketResult = WebSocketResult();
-//      state.webSocket?.stream.listen((data){
-//       var jsonData = json.decode(data);
-//       if(jsonData is Map<String,dynamic>){
-//         //检测到心跳包
-//         if(jsonData['code'] == 9999){
-//         //  不处理
-//         }else{
-//           Map<String,dynamic> mapData = jsonData['data'];
-//           webSocketResult = WebSocketResult.fromJson(mapData);
-//             state.webSocketResult = webSocketResult;
-//             LoggerUtil.logger.i("监听到服务端Socket返回数据：                   ${state.webSocketResult.toString()}");   
-// },onError: (e){
-//       state.socketStatus = false;
-//       state.isError = true;
-//     },onDone: (){
-//       state.socketStatus = false;
-//     });
-//   }
-
-//   /**
-//    * 销毁心跳包
-//    */
-//   static void destoryHeart(){
-//      //为心跳包则直接
-//      if(state.heartStatus){
-//         hearTimer?.cancel();
-//         state.heartStatus = false;
-//      }
-//   }
-
-//   /**
-//    * 发送心跳包
-//    */
-//   static void sendHeartPacket(){
-//     Map<String,dynamic> data = {
-//       "code": 9999,
-//       "msg": "心跳包",
-//     };
-//     var jsonData = json.encode(data);
-//     state.webSocket?.sink.add(jsonData);
-//     state.heartStatus = true;
-//   }
-
-//   /**
-//    * @desc WebSocket心跳包
-//    * @author Marinda
-//    * @date 2022/9/26
-//    */
-  // static void heartPacket(){
-  //    if(state.socketStatus){
-  //      hearTimer = Timer(Duration(seconds: state.socketClienTime),() async{
-  //      //  重新连接
-  //        reconnectSocket();
-  //      });
-  //      sendHeartPacket();
-  //    }
-  // }
-
-//   /**
-//    * 重新连接socket
-//    */
-//   static void reconnectSocket(){
-//      destoryHeart();
-//      connectSocket();
-//   }
-
-//   /**
-//    * @desc 关闭WebSocket
-//    * @author Marinda
-//    * @date 2022/9/26
-//    */
-//   static Future closeSocket() async{
-//      if(state.webSocket != null){
-//        state.webSocket?.sink.close();
-//        state.webSocket = null;
-//        state.socketStatus = false;
-//      }
-//   }
-
-// }

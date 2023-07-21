@@ -14,6 +14,7 @@ import '../data/text.dart';
 import '../eventbus/eventbus.dart';
 import 'package:path/path.dart' as p;
 import 'package:file_picker/file_picker.dart';
+import '../main.dart';
 import 'addDevice_page.dart';
 import 'dialog/barcodeedit_dialog.dart';
 import 'dialog/qrcodeedit_dialog.dart';
@@ -1041,7 +1042,7 @@ class _PT566PageState extends State<PT566Page> {
   void sendFormatToScale(String modifyString) {
     myScaleCmd.cmdMode = "down_print_format_to_scale";
     myScaleCmd.cmdData = modifyString;
-    webchannel1.sendMessage(jsonEncode(myScaleCmd));
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
     // MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
   }
 

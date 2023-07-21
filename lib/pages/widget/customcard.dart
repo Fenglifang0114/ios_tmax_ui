@@ -6,7 +6,7 @@ class CustomCard extends StatefulWidget {
   final Color cardColor;
   final Color textColor;
   final String title;
-  final String image;
+  // final String image;
 
   const CustomCard({
     Key? key,
@@ -14,7 +14,7 @@ class CustomCard extends StatefulWidget {
     required this.cardColor,
     required this.textColor,
     required this.title,
-    required this.image,
+    // required this.image,
   }) : super(key: key);
 
   @override
@@ -30,7 +30,7 @@ class _CustomCardState extends State<CustomCard> {
       height: 150,
       width: 200,
       child: InkWell(
-        splashColor: Colors.blue.withAlpha(30),
+        splashColor: Theme.of(context).colorScheme.primary,
         onTap: widget.onTap,
         onHover: (value) {
           setState(() {
@@ -40,27 +40,34 @@ class _CustomCardState extends State<CustomCard> {
         child: Card(
           elevation: 50,
           shape: RoundedRectangleBorder(
+            side: BorderSide(
+              color: Theme.of(context).colorScheme.primary,
+              width: 1.0,
+              style: BorderStyle.solid,
+            ),
             borderRadius: BorderRadius.circular(20), // 设置圆角半径
           ),
-          color:
-              isHovered ? Color.fromARGB(255, 105, 187, 255) : widget.cardColor,
+          color: isHovered
+              ? Theme.of(context).colorScheme.primary
+              : widget.cardColor,
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(height: 20),
-              Container(
-                width: 64,
-                height: 64,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20), // 设置圆角半径
-                  color: Theme.of(context).colorScheme.onPrimary, // 设置背景颜色
-                ),
-                child: Image.asset(widget.image),
-              ),
-              const SizedBox(height: 10),
+              // const SizedBox(height: 20),
+              // Container(
+              //   width: 64,
+              //   height: 64,
+              //   decoration: BoxDecoration(
+              //     borderRadius: BorderRadius.circular(20), // 设置圆角半径
+              //     color: Theme.of(context).colorScheme.onPrimary, // 设置背景颜色
+              //   ),
+              //   child: Image.asset(widget.image),
+              // ),
+              // const SizedBox(height: 10),
               Text(
                 widget.title,
                 style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 14,
                     fontWeight: FontWeight.normal,
                     color: isHovered
                         ? Theme.of(context).colorScheme.onPrimary

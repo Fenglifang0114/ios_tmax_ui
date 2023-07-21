@@ -16,7 +16,7 @@ import '../data/text.dart';
 import '../eventbus/eventbus.dart';
 import 'package:path/path.dart' as p;
 import 'package:file_picker/file_picker.dart';
-import 'addDevice_page.dart';
+import '../main.dart';
 import 'dialog/barcodeedit_dialog.dart';
 import 'dialog/qrcodeedit_dialog.dart';
 import 'widget/draggablefliating.dart';
@@ -1219,7 +1219,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   void sendFormatToScale(String modifyString) {
     myScaleCmd.cmdMode = "down_print_format_to_scale";
     myScaleCmd.cmdData = modifyString;
-    webchannel1.sendMessage(jsonEncode(myScaleCmd));
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
     // MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
   }
 

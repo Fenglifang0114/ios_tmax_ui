@@ -3,18 +3,19 @@ import 'package:flutter/material.dart';
 themeColor() {
   return ThemeData(
       fontFamily: "msyh",
-      colorScheme: const ColorScheme(
-          primary: Color.fromARGB(255, 0, 74, 152), //上方标题栏颜色
-          secondary: Color.fromARGB(255, 0, 160, 233),
-          background: Color.fromARGB(255, 236, 234, 235),
-          error: Color.fromARGB(255, 199, 0, 38),
-          brightness: Brightness.light,
-          onBackground: Color.fromARGB(255, 236, 234, 235),
-          onError: Color.fromARGB(255, 240, 133, 0),
-          onPrimary: Colors.white, //字体颜色
-          onSecondary: Colors.white,
-          onSurface: Colors.black,
-          surface: Colors.redAccent
-          // all fields should have a value
-          ));
+      colorScheme: ColorScheme(
+        primary: const Color.fromARGB(255, 0, 74, 152), //上方标题栏颜色
+        secondary: const Color.fromARGB(255, 0, 160, 233),
+        background: const Color.fromARGB(255, 196, 201, 207),
+        error: const Color.fromARGB(255, 199, 0, 38),
+        brightness: Brightness.light,
+        onBackground: Colors.black,
+        onError: Colors.white,
+        onPrimary: Colors.white, //字体颜色
+        onSecondary: Colors.white,
+        onSurface: Colors.black,
+        surface: const Color.fromARGB(255, 181, 181, 182),
+        outline: Colors.green.shade900,
+        // all fields should have a value
+      ));
 }

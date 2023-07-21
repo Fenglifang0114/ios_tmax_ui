@@ -1,17 +1,17 @@
 // import 'package:flutter/material.dart';
-// import 'package:t_max/pages/addDevice_page.dart';
 
+// import 'device_management.dart';
 // import 'widget/themeColor.dart';
 
-// class ScaleHomePage extends StatelessWidget {
-//   const ScaleHomePage({super.key});
+// class ScaleManagementPage extends StatelessWidget {
+//   const ScaleManagementPage({super.key});
 
 //   @override
 //   Widget build(BuildContext context) {
 //     return MaterialApp(
 //       debugShowCheckedModeBanner: false,
 //       theme: themeColor(),
-//       home: const AddDevicePage(),
+//       home: const DeviceManagementPage(),
 //     );
 //   }
 // }

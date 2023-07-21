@@ -1,17 +1,17 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:t_max/data/dialog_data.dart';
-import 'package:t_max/data/scalecmd_data.dart';
 import 'package:t_max/eventbus/eventbus.dart';
-import 'package:t_max/main.dart';
 import 'package:t_max/pages/labeldesign_page.dart';
+import 'package:t_max/pages/widget/license_info.dart';
 import 'package:t_max/pages/wifisetting_page.dart';
-import 'addDevice_page.dart';
+import '../data/comscaleinfo_data.dart';
+import '../data/currentport_data.dart';
+import '../data/device_data.dart';
+import '../functions/methods.dart';
+import 'dialog/waitingbuildtips.dart';
+import 'modify_com_port_page.dart';
 import 'widget/bluetoothsetting.dart';
-import 'widget/boxGradient.dart';
 import 'widget/customcard.dart';
-import 'scalehome_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -19,8 +19,6 @@ class HomePage extends StatefulWidget {
   @override
   State<HomePage> createState() => _HomePageState();
 }
-
-// late int connectionType;
 
 class _HomePageState extends State<HomePage> {
   List<String> items = [];
@@ -31,13 +29,14 @@ class _HomePageState extends State<HomePage> {
   late ScrollController _pageScrollerController;
   dynamic _eventbus1;
   dynamic _eventbus2;
+
   String groupValue = 'zh';
   DateTime now = DateTime.now();
 
-  List<Color> cardColors = List.generate(6, (index) => Colors.white);
-  List<Color> textColors = List.generate(6, (index) => Colors.blue.shade900);
+  List<Color> cardColors = List.generate(7, (index) => Colors.white);
+  List<Color> textColors = List.generate(7, (index) => Colors.blue.shade900);
   List<Widget> targetPages = [
-    const ScaleHomePage(), // 第一个Card对应的目标界面
+    const ModifyComPortPage(), // 第一个Card对应的目标界面
     const LabelDesignPage(), // 第二个Card对应的目标界面
     const WifiSettingPage(), // 第三个Card对应的目标界面
     const LabelDesignPage(), // 第一个Card对应的目标界面
@@ -56,18 +55,20 @@ class _HomePageState extends State<HomePage> {
   ];
 
   List<String> titleNames = [
-    'Scale Data',
+    'Serial port connection',
     'Label Design',
     'Wifi Setting',
     'Bluetooth Setting',
     'Update FW',
     'Scale Records',
+    'License Information',
   ];
   // 初始文字颜色
 
   @override
   void initState() {
     super.initState();
+
     _pageScrollerController = ScrollController();
     _eventbus1 = eventBus.on<EventDialogData>().listen((event) {
       if (mounted) {
@@ -79,11 +80,24 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       now = DateTime.now();
     });
-    _eventbus2 = eventBus.on<EventScaleList>().listen((event) {
+    _eventbus2 = eventBus.on<EventComScaleList>().listen((event) {
       if (mounted) {
         setState(() {
-          // myScaleList = event.obj;
-          // print(myScaleList.msgBody![0].scaleModel.toString());
+          myComScaleList = event.obj;
+          if (myComScaleList.comScaleList.isNotEmpty) {
+            myDevicedata.name = myComScaleList.comScaleList[0].scaleModel;
+            myDevicedata.type = 'icons.usb';
+            myComScaleList.comScaleList[0].scaleId.toString();
+            myDevicedata.scaleID =
+                myComScaleList.comScaleList[0].scaleId.toString();
+            myCurrentPort.baud = myComScaleList.comScaleList[0].baudRate;
+            myCurrentPort.dataBits = myComScaleList.comScaleList[0].dataBits;
+            myCurrentPort.devPath = myComScaleList.comScaleList[0].portName;
+            myCurrentPort.parity = myComScaleList.comScaleList[0].parity;
+            myCurrentPort.stopBits = myComScaleList.comScaleList[0].stopBits;
+            myDevicedata.mediaType = myComScaleList.comScaleList[0].tMedia;
+            myDevicedata.scaleSn = myComScaleList.comScaleList[0].scaleSn;
+          }
         });
       }
     });
@@ -153,7 +167,7 @@ class _HomePageState extends State<HomePage> {
         body: Container(
       height: _height,
       width: _width,
-      decoration: BoxDecoration(gradient: boxGradient()),
+      // decoration: BoxDecoration(gradient: boxGradient()),
       child: ListView(
         // 水平拉伸
         scrollDirection: Axis.horizontal,
@@ -161,32 +175,29 @@ class _HomePageState extends State<HomePage> {
           Container(
             height: _height,
             width: _width,
-            decoration: BoxDecoration(gradient: boxGradient()),
+            // decoration: BoxDecoration(gradient: boxGradient()),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Expanded(
                     child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    const SizedBox(height: 100),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         CustomCard(
                           onTap: () {
                             setState(() {
-                              getScaleList();
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => targetPages[0]),
-                              );
+                              PublicFunctions.getProductList();
+                              PublicFunctions.getPortList();
+                              showComPortDialog(context);
                             });
                           },
                           title: titleNames[0],
                           cardColor: cardColors[0],
                           textColor: textColors[0],
-                          image: imagePaths[0],
+                          // image: imagePaths[0],
                         ),
                         CustomCard(
                           onTap: () {
@@ -201,12 +212,12 @@ class _HomePageState extends State<HomePage> {
                           title: titleNames[1],
                           cardColor: cardColors[1],
                           textColor: textColors[1],
-                          image: imagePaths[1],
+                          // image: imagePaths[1],
                         ),
                         CustomCard(
                           onTap: () {
                             setState(() {
-                              getWifiList();
+                              PublicFunctions.getWifiList();
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -217,12 +228,9 @@ class _HomePageState extends State<HomePage> {
                           title: titleNames[2],
                           cardColor: cardColors[2],
                           textColor: textColors[2],
-                          image: imagePaths[2],
+                          // image: imagePaths[2],
                         ),
                       ],
-                    ),
-                    const SizedBox(
-                      height: 50,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -230,48 +238,64 @@ class _HomePageState extends State<HomePage> {
                         CustomCard(
                           onTap: () {
                             setState(() {
-                              setBlueToothDialog(context).then((onValue) {});
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //       builder: (context) => targetPages[3]),
-                              // );
+                              showBluetoothDialog(context);
                             });
                           },
                           title: titleNames[3],
                           cardColor: cardColors[3],
                           textColor: textColors[3],
-                          image: imagePaths[3],
+                          // image: imagePaths[3],
                         ),
                         CustomCard(
                           onTap: () {
                             setState(() {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => targetPages[4]),
-                              );
+                              waitingBuildDialog(context);
                             });
                           },
                           title: titleNames[4],
                           cardColor: cardColors[4],
                           textColor: textColors[4],
-                          image: imagePaths[4],
+                          // image: imagePaths[4],
                         ),
                         CustomCard(
                           onTap: () {
                             setState(() {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => targetPages[5]),
-                              );
+                              waitingBuildDialog(context);
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //       builder: (context) => targetPages[5]),
+                              // );
                             });
                           },
                           title: titleNames[5],
                           cardColor: cardColors[5],
                           textColor: textColors[5],
-                          image: imagePaths[5],
+                          // image: imagePaths[5],
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        CustomCard(
+                          onTap: () {
+                            setState(() {
+                              showLicenseDialog(context);
+                            });
+                          },
+                          title: titleNames[6],
+                          cardColor: cardColors[6],
+                          textColor: textColors[6],
+                          // image: imagePaths[3],
+                        ),
+                        const SizedBox(
+                          height: 150,
+                          width: 200,
+                        ),
+                        const SizedBox(
+                          height: 150,
+                          width: 200,
                         ),
                       ],
                     ),
@@ -283,7 +307,7 @@ class _HomePageState extends State<HomePage> {
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text("Contact us: Email:sales@taiwanscale.com",
+                        Text("Contact us:sales@taiwanscale.com",
                             style:
                                 TextStyle(color: Colors.white, fontSize: 15)),
                       ],
@@ -296,23 +320,34 @@ class _HomePageState extends State<HomePage> {
     ));
   }
 
-  void getScaleList() {
-    myScaleCmd.cmdMode = "get_scale_list";
-    myScaleCmd.cmdData = "";
-    MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
+  void showBluetoothDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 允许点击空白处关闭对话框
+      builder: (context) {
+        return const BluetoothDialog();
+      },
+    );
   }
 
-  void getProductList() {
-    myScaleCmd.cmdMode = "get_product_list";
-    myScaleCmd.cmdData = "";
-    MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
+  void showComPortDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 允许点击空白处关闭对话框
+      builder: (context) {
+        return const ModifyComPortPage();
+      },
+    );
   }
 
-  void getWifiList() {
-    myScaleCmd.cmdMode = 'get_ap_list';
-    myScaleCmd.cmdData = '';
-    webchannel1.sendMessage(jsonEncode(myScaleCmd));
-    print(jsonEncode(myScaleCmd));
+  void showLicenseDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 允许点击空白处关闭对话框
+      builder: (context) {
+        return const LicenseInfoDialog();
+      },
+    );
   }
 
   // void _changed(value) {
@@ -326,160 +361,3 @@ class _HomePageState extends State<HomePage> {
   //   }
   // }
 }
-
-
-
-
-
-
-
-
-/*//////导航栏模式
-///
-///
-/// final List<Widget> _mainContents = [
-    // Content for Home tab
-    Container(
-      // width: _width - 200,
-      child: const AddDevicePage(),
-      // Navigator.push(context,
-      //     MaterialPageRoute(builder: (context) {
-      //   return const AddDevicePage();
-      // }));
-    ),
-    // Content for Feed tab
-    Container(
-      color: Colors.purple.shade100,
-      alignment: Alignment.center,
-      child: const Text(
-        'Feed',
-        style: TextStyle(fontSize: 40),
-      ),
-    ),
-    // Content for Favorites tab
-    Container(
-      color: Colors.red.shade100,
-      alignment: Alignment.center,
-      child: const Text(
-        'Favorites',
-        style: TextStyle(fontSize: 40),
-      ),
-    ),
-    // Content for Settings tab
-    Container(
-      color: Colors.pink.shade300,
-      alignment: Alignment.center,
-      child: const Text(
-        'Settings',
-        style: TextStyle(fontSize: 40),
-      ),
-    )
-  ];
-
-  // The index of the selected tab
-  // In the beginning, the Home tab is selected
-  int _selectedIndex = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    final _width = MediaQuery.of(context).size.width;
-
-    return Scaffold(
-        appBar: PreferredSize(
-            preferredSize: Size.fromHeight(30),
-            child: AppBar(
-              title: version(),
-            )),
-        // appBar: AppBar(
-        //   title: const Text('大前端之旅'),
-        // ),
-        body: ListView(
-            // 水平拉伸
-            scrollDirection: Axis.horizontal,
-            children: [
-              Container(
-                  child: Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  NavigationRail(
-                    backgroundColor: const Color.fromARGB(235, 235, 235, 235),
-                    minWidth: 44.0,
-                    selectedIndex: _selectedIndex,
-                    // Called when one tab is selected
-                    onDestinationSelected: (int index) {
-                      setState(() {
-                        _selectedIndex = index;
-                      });
-                    },
-                    labelType: NavigationRailLabelType.all,
-                    selectedLabelTextStyle: const TextStyle(
-                      color: Color.fromARGB(255, 13, 71, 161),
-                    ),
-                    leading: Column(
-                      children: const [
-                        SizedBox(
-                          height: 8,
-                        ),
-                        CircleAvatar(
-                          radius: 18,
-                          backgroundColor: Color.fromARGB(255, 13, 71, 161),
-                          child: Icon(
-                            Icons.person,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                    unselectedLabelTextStyle:
-                        const TextStyle(color: Color.fromARGB(255, 86, 86, 86)),
-                    // navigation rail items
-                    destinations: const [
-                      NavigationRailDestination(
-                          icon: Icon(Icons.home), label: Text('Home')),
-                      NavigationRailDestination(
-                          icon: Icon(Icons.design_services),
-                          label: Text('Design')),
-                      NavigationRailDestination(
-                          icon: Icon(Icons.receipt_rounded),
-                          label: Text('Report')),
-                      NavigationRailDestination(
-                          icon: Icon(Icons.settings), label: Text('Setting')),
-                    ],
-                  ),
-
-                  // Main content
-                  // This part is always shown
-                  // You will see it on both small and wide screen
-                  SizedBox(
-                      width: _width,
-                      child: Column(
-                        children: [
-                          Expanded(
-                            child: _mainContents[_selectedIndex],
-                          ),
-                          Container(
-                              height: 20,
-                              color: Colors.blue.shade900,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
-                                  Text("联系我们：http://www.xxxxxxxxxxx",
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 15)),
-                                ],
-                              )),
-                        ],
-                      ))
-                ],
-              )),
-            ]));
-  }
-}
-
-
-*/////
-
-
-
-
-

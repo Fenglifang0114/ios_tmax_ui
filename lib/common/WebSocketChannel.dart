@@ -12,14 +12,16 @@ import 'package:t_max/data/scalelist_data.dart';
 import 'package:t_max/data/settingparam_data.dart';
 import 'package:t_max/data/userinfo_data.dart';
 import 'package:t_max/data/wifi_list_info.dart';
-import 'package:t_max/pages/dialog/modifycomport_dialog.dart';
+
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '../data/ipinfodata.dart';
 import '../data/reqweightdata_data.dart';
 
+import '../data/scalecmd_data copy.dart';
 import '../eventbus/eventbus.dart';
+import '../main.dart';
 
 class WebSocketChannel {
   late String url;
@@ -73,7 +75,7 @@ class WebSocketChannel {
 
   // 接受数据，数据json字符串，然后转成Map
   void onData(event) {
-    if (event != null) {
+    if (event != Null) {
       if (kDebugMode) {
         print('0收到消息:' + event);
       }
@@ -267,6 +269,12 @@ class WebSocketChannel {
     if (myModifyAck.isAck == true) {
       getScaleList();
     }
+  }
+
+  void getScaleList() {
+    myScaleCmd.cmdMode = "get_scale_list";
+    myScaleCmd.cmdData = "";
+    MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
   }
 
   // void getWeight() {

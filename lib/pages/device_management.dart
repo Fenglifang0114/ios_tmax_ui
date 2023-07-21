@@ -11,6 +11,7 @@
 // import '../eventbus/eventbus.dart';
 // import '../main.dart';
 // import 'dialog/showComPort_dialog.dart';
+// import 'widget/connect_scale_ways.dart';
 // import 'widget/reusable_list_item.dart';
 // import 'widget/showWeightReport.dart';
 // import 'widget/appbarMsg.dart';
@@ -18,14 +19,14 @@
 
 // // late WebSocketScaleChannel MyApp.webchannel1;
 
-// class AddDevicePage extends StatefulWidget {
-//   const AddDevicePage({Key? key}) : super(key: key);
+// class DeviceManagementPage extends StatefulWidget {
+//   const DeviceManagementPage({Key? key}) : super(key: key);
 
 //   @override
-//   State<AddDevicePage> createState() => _AddDevicePageState();
+//   State<DeviceManagementPage> createState() => _DeviceManagementPageState();
 // }
 
-// class _AddDevicePageState extends State<AddDevicePage> {
+// class _DeviceManagementPageState extends State<DeviceManagementPage> {
 //   List<String> items = [];
 //   List<String> comPortList = [];
 //   TextEditingController weightController = TextEditingController();
@@ -179,10 +180,6 @@
 //         // 水平拉伸
 //         scrollDirection: Axis.horizontal,
 //         children: [
-//           Container(
-//             width: 20,
-//             color: Theme.of(context).colorScheme.primary,
-//           ),
 //           Row(
 //             children: [
 //               //左侧添加设备
@@ -242,21 +239,7 @@
 //                       alignment: const Alignment(0, 0),
 //                       height: 40,
 //                       width: 220, //边框设置
-//                       // decoration: new BoxDecoration(
-//                       //     //背景
-//                       //     color: Colors.white,
-//                       //     //设置四周圆角 角度
-//                       //     borderRadius:
-//                       //         const BorderRadius.all(Radius.circular(20)),
-//                       //     //设置四周边框
-//                       //     // border: new Border.all(width: 1, color: Colors.red),
-//                       //     boxShadow: [
-//                       //       BoxShadow(
-//                       //           color: Theme.of(context).colorScheme.primary,
-//                       //           offset: const Offset(0.0, 2.0),
-//                       //           blurRadius: 1.0,
-//                       //           spreadRadius: 1.0),
-//                       //     ]),
+
 //                       child: Text(
 //                         "My device",
 //                         style: TextStyle(
@@ -289,7 +272,7 @@
 //               ),
 //               // GridPage()
 //               //右侧重量显示
-//               const ShowWeightReport(),
+//               const ConnectScaleWays(),
 //             ],
 //           )
 //         ],

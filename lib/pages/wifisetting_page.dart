@@ -1,15 +1,14 @@
 import 'dart:convert';
-
+import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/data/scalecmd_data%20copy.dart';
 import 'package:t_max/data/wifi_list_info.dart';
 import 'package:t_max/main.dart';
-import '../../pages/widget/themeColor.dart';
 import '../data/downloadresponse.dart';
 import '../data/ipinfodata.dart';
 import '../eventbus/eventbus.dart';
-import 'addDevice_page.dart';
+import '../functions/methods.dart';
 import 'home_page.dart';
 import 'widget/wifitextfeild.dart';
 
@@ -17,10 +16,10 @@ class WifiSettingPage extends StatefulWidget {
   const WifiSettingPage({Key? key}) : super(key: key);
 
   @override
-  State<WifiSettingPage> createState() => _WifiSettingPageState();
+  State<WifiSettingPage> createState() => WifiSettingPageState();
 }
 
-class _WifiSettingPageState extends State<WifiSettingPage> {
+class WifiSettingPageState extends State<WifiSettingPage> {
   List<String> wifiItems = [];
   List<String> displayedItems = [];
   List<int> wifiRssiList = [];
@@ -39,11 +38,11 @@ class _WifiSettingPageState extends State<WifiSettingPage> {
   bool _isValidDns = true;
   bool _isStatic = false;
   int _ssidNo = -1;
-
-  var _eventbus1;
-  var _eventbus2;
-  var _eventbus3;
-  var _eventbus4;
+  dynamic _eventbus1;
+  dynamic _eventbus2;
+  dynamic _eventbus3;
+  dynamic _eventbus4;
+  // dynamic _eventbus2 = EventBus();
 
   TextEditingController controller = TextEditingController();
   RegExp ipaddressRegex = RegExp(r'[0-9.]');
@@ -65,9 +64,31 @@ class _WifiSettingPageState extends State<WifiSettingPage> {
     return tempValid;
   }
 
+  void _handleEventConnectDynamicIp(EventConnectDynamicIp event) {
+    if (mounted) {
+      setState(() {
+        myConnectDynamicIpResponse = event.obj;
+        if (myConnectDynamicIpResponse.msgBody.isNotEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(
+                  (myConnectDynamicIpResponse.msgBody.contains('ok'))
+                      ? 'Set wifi successful!'
+                      : myConnectDynamicIpResponse.msgBody,
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold)), ////此处需要秤回复
+              duration: const Duration(seconds: 3),
+              backgroundColor:
+                  (myConnectDynamicIpResponse.msgBody.contains('ok'))
+                      ? Colors.green.shade900
+                      : Colors.red.shade900));
+        }
+      });
+    }
+  }
+
   @override
   void initState() {
-    super.initState();
+    // super.initState();
     if (myWifiListInfo.wifidatalist!.isNotEmpty) {
       for (var i = 0; i < myWifiListInfo.wifidatalist!.length; i++) {
         if (myWifiListInfo.wifidatalist![i].ssid!.isNotEmpty) {
@@ -81,7 +102,8 @@ class _WifiSettingPageState extends State<WifiSettingPage> {
     }
     displayedItems = List.from(wifiItems);
     ssidController.text = "";
-    getWifiList();
+    PublicFunctions.getWifiList();
+    // _eventbus2.on<EventConnectDynamicIp>().listen(_handleEventConnectDynamicIp);
     _eventbus1 = eventBus.on<EventWiFiListInfo>().listen((event) {
       if (mounted) {
         setState(() {
@@ -167,14 +189,15 @@ class _WifiSettingPageState extends State<WifiSettingPage> {
         });
       }
     });
+    super.initState();
   }
 
   @override
   void dispose() {
-    _eventbus1.dispose();
-    _eventbus2.dispose();
-    _eventbus3.dispose();
-    _eventbus4.dispose();
+    _eventbus3.cancel();
+    _eventbus1.cancel();
+    _eventbus2.cancel();
+    _eventbus4.cancel();
     super.dispose();
   }
 
@@ -193,8 +216,8 @@ class _WifiSettingPageState extends State<WifiSettingPage> {
             mainAxisSize: MainAxisSize.max,
             children: [
               Container(
-                  height: 60,
-                  color: Theme.of(context).colorScheme.primary,
+                  height: 100,
+                  // color: Theme.of(context).colorScheme.primary,
                   child: Column(
                     children: [
                       const Divider(
@@ -204,6 +227,36 @@ class _WifiSettingPageState extends State<WifiSettingPage> {
                       const SizedBox(
                         height: 5,
                       ),
+                      ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            fixedSize: const Size(180, 40),
+                            side: BorderSide(
+                                width: 2,
+                                color: Theme.of(context).colorScheme.primary),
+                            foregroundColor:
+                                Theme.of(context).colorScheme.primary,
+                            backgroundColor: Colors.white, //体颜色
+                            textStyle: const TextStyle(
+                                fontWeight: FontWeight.bold), // 字体样式
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8), // 圆角
+                            ),
+                            elevation: 5, // 阴影
+                          ),
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Icon(Icons.home),
+                              Text("Home"),
+                            ],
+                          )),
+                      const SizedBox(
+                        height: 10,
+                      ),
                       Expanded(
                           child: Container(
                         // height: 48,
@@ -212,31 +265,11 @@ class _WifiSettingPageState extends State<WifiSettingPage> {
                           SizedBox(
                             width: 40, // 为Container指定一个固定的宽度
                             child: Tooltip(
-                              message: 'Home',
-                              child: IconButton(
-                                splashRadius: 20,
-                                onPressed: () {
-                                  Navigator.push(context,
-                                      MaterialPageRoute(builder: (context) {
-                                    return const HomePage();
-                                  }));
-                                },
-                                icon: Icon(
-                                  Icons.home,
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary,
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 40, // 为Container指定一个固定的宽度
-                            child: Tooltip(
                               message: 'Refresh',
                               child: IconButton(
                                 splashRadius: 20,
                                 onPressed: () {
-                                  reScanApList();
+                                  PublicFunctions.reScanApList();
                                 },
                                 icon: Icon(
                                   Icons.refresh,
@@ -540,7 +573,9 @@ class _WifiSettingPageState extends State<WifiSettingPage> {
                                                     Radius.circular(30)),
                                               ),
                                             ),
-                                            onChanged: (value) {},
+                                            onChanged: (value) {
+                                              isValidData();
+                                            },
                                           ),
                                         )
                                       ],
@@ -652,6 +687,14 @@ class _WifiSettingPageState extends State<WifiSettingPage> {
                                               ? () {
                                                   setState(() {
                                                     _isStatic = false;
+                                                    dnsController.clear();
+                                                    netMaskController.clear();
+                                                    ipController.clear();
+                                                    gateWayController.clear();
+                                                    _isValidDns = true;
+                                                    _isValidGateway = true;
+                                                    _isValidIP = true;
+                                                    _isValidMask = true;
                                                   });
                                                 }
                                               : null,
@@ -687,27 +730,16 @@ class _WifiSettingPageState extends State<WifiSettingPage> {
                                               ),
                                             ),
                                           ),
-                                          onPressed: () {
-                                            if (_isStatic) {
-                                              sendStaticIpInfo();
-                                            } else {
-                                              sendDynamicIpInfo();
-                                            }
-
-                                            var text = ssidController.text;
-                                            print('ssid:($text)');
-                                            text = passwordController.text;
-                                            print('password:($text)');
-                                            text = netMaskController.text;
-                                            print('netMask:($text)');
-                                            text = ipController.text;
-                                            print('ip:($text)');
-                                            text = dnsController.text;
-                                            print('dns:($text)');
-                                            text = gateWayController.text;
-                                            print('gateWay:($text)');
-                                            getIpInfo();
-                                          },
+                                          onPressed: isValidData()
+                                              ? () {
+                                                  if (_isStatic) {
+                                                    sendStaticIpInfo();
+                                                  } else {
+                                                    sendDynamicIpInfo();
+                                                  }
+                                                  PublicFunctions.getIpInfo();
+                                                }
+                                              : null,
                                         ),
                                       ],
                                     ),
@@ -729,6 +761,36 @@ class _WifiSettingPageState extends State<WifiSettingPage> {
     ]));
   }
 
+  bool isValidData() {
+    bool res = false;
+    // setState(() {
+    if (_isStatic) {
+      if (ssidController.text.isNotEmpty &&
+          passwordController.text.isNotEmpty &&
+          ipController.text.isNotEmpty &&
+          gateWayController.text.isNotEmpty &&
+          dnsController.text.isNotEmpty &&
+          netMaskController.text.isNotEmpty &&
+          _isValidDns &&
+          _isValidGateway &&
+          _isValidMask &&
+          _isValidIP) {
+        res = true;
+      }
+    } else {
+      if (ssidController.text.isNotEmpty &&
+          passwordController.text.isNotEmpty) {
+        res = true;
+      }
+    }
+    // });
+    setState(() {
+      res;
+    });
+
+    return res;
+  }
+
   void sendDynamicIpInfo() {
     myScaleCmd.cmdMode = 'connect_ap_dynamic_ip';
     if (ssidController.text.isEmpty || passwordController.text.isEmpty) {
@@ -741,8 +803,7 @@ class _WifiSettingPageState extends State<WifiSettingPage> {
       myDynamicIpInfo.password = passwordController.text;
       myDynamicIpInfo.seqno = _ssidNo; //手动输入的如何处理？id写-1
       myScaleCmd.cmdData = jsonEncode(myDynamicIpInfo).toString();
-      webchannel1.sendMessage(jsonEncode(myScaleCmd));
-      print(jsonEncode(myScaleCmd));
+      MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
     }
   }
 
@@ -766,7 +827,7 @@ class _WifiSettingPageState extends State<WifiSettingPage> {
       myStaticIpInfo.addresses?.add(myStaticAddresses);
 
       myScaleCmd.cmdData = jsonEncode(myStaticIpInfo).toString();
-      webchannel1.sendMessage(jsonEncode(myScaleCmd));
+      MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
       print(jsonEncode(myScaleCmd));
     }
   }
@@ -821,48 +882,5 @@ class _WifiSettingPageState extends State<WifiSettingPage> {
     setState(() {
       _isValidDns = isValid;
     });
-  }
-
-  int inputLength = 0;
-  void _splitPhoneNumber(String text) {
-    if (text.length > inputLength) {
-      //输入
-      if (text.length == 4 || text.length == 8 || text.length == 12) {
-        text = text.substring(0, text.length - 1) +
-            "." +
-            text.substring(text.length - 1, text.length);
-        controller.text = text;
-        controller.selection = TextSelection.fromPosition(TextPosition(
-            affinity: TextAffinity.downstream, offset: text.length)); //光标移到最后
-      }
-    } else {
-      //删除
-      if (text.length == 4 || text.length == 8 || text.length == 12) {
-        text = text.substring(0, text.length - 1);
-        controller.text = text;
-        controller.selection = TextSelection.fromPosition(TextPosition(
-            affinity: TextAffinity.downstream, offset: text.length)); //光标移到最后
-      }
-    }
-    inputLength = text.length;
-  }
-
-  void getWifiList() {
-    myScaleCmd.cmdMode = 'resp_get_ap_list';
-    myScaleCmd.cmdData = '';
-
-    webchannel1.sendMessage(jsonEncode(myScaleCmd));
-  }
-
-  void getIpInfo() {
-    myScaleCmd.cmdMode = 'get_ip_info';
-    myScaleCmd.cmdData = '';
-    webchannel1.sendMessage(jsonEncode(myScaleCmd));
-  }
-
-  void reScanApList() {
-    myScaleCmd.cmdMode = 'rescan_ap_list';
-    myScaleCmd.cmdData = '';
-    webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
 }

@@ -42,8 +42,8 @@ addProductDialog(BuildContext context) {
           return AlertDialog(
             title: Container(
                 color: Colors.blue.shade900,
-                child: Row(
-                  children: const [
+                child: const Row(
+                  children: [
                     Icon(Icons.feed, color: Colors.white),
                     Text("Product Information",
                         style: TextStyle(color: Colors.white))

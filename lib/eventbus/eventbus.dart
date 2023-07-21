@@ -251,3 +251,8 @@ class EventIpInfo {
   dynamic obj;
   EventIpInfo(this.obj);
 }
+
+class EventConnectBTResponse {
+  dynamic obj;
+  EventConnectBTResponse(this.obj);
+}

@@ -1,5 +1,3 @@
-// //备份20230305 15:23
-
 // import 'dart:async';
 // import 'dart:convert';
 // import 'dart:io';
@@ -16,26 +14,24 @@
 // import '../../data/scalecmd_data.dart';
 // import '../../data/settingparam_data.dart';
 // import '../../main.dart';
-// import '../addDevice_page.dart';
+
 // import '../dialog/adduser_dialog.dart';
-// import '../dialog/modifyBluetooth_dialog.dart';
 // import '../../data/weight_data.dart';
 // import '../../data/device_data.dart';
 // import '../../eventbus/eventbus.dart';
 // import '../dialog/modifycomport_dialog.dart';
 // import '../dialog/modifynetwork_dialog.dart';
-// import '../dialog/setting_dialog.dart';
 // import '../dialog/showComPort_dialog.dart';
 // import 'package:path/path.dart';
 // import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
-// class ShowWeightReport extends StatefulWidget {
-//   const ShowWeightReport({Key? key}) : super(key: key);
+// class ConnectScaleWays extends StatefulWidget {
+//   const ConnectScaleWays({Key? key}) : super(key: key);
 //   @override
-//   State<ShowWeightReport> createState() => _ShowWeightReportState();
+//   State<ConnectScaleWays> createState() => _ConnectScaleWaysState();
 // }
 
-// class _ShowWeightReportState extends State<ShowWeightReport> {
+// class _ConnectScaleWaysState extends State<ConnectScaleWays> {
 //   String dialogString = " ";
 //   List<String> items = [];
 //   List<DataRow> dataRows = [];
@@ -53,7 +49,6 @@
 //   late int weightMode; //0,手动保存，1，连续保存，2，稳定保存
 //   late int dateformat;
 //   late double zeroRange;
-//   late bool _isSaveButtonDisabled;
 //   late Timer _saveTimer;
 //   late bool _isStableStatusJudge;
 //   int _stableSaveTime = 0;
@@ -64,6 +59,7 @@
 //   late WeightReportDataSource _weightReportDataSource;
 //   List<WeightReportData> _weightReportDatas = <WeightReportData>[];
 //   List<WeightReportData> myWeightReportData = [];
+//   DataGridController _dataGridController = DataGridController();
 
 //   _saveWeight(
 //     bool isStable,
@@ -92,13 +88,6 @@
 //     }
 //   }
 
-//   _changeSaveButton() {
-//     setState(() {
-//       _isSaveButtonDisabled = false;
-//       _addWeightToReport();
-//     });
-//   }
-
 //   @override
 //   void initState() {
 //     super.initState();
@@ -108,7 +97,7 @@
 //     lastWeight = "*";
 //     dateformat = 1;
 //     zeroRange = 0;
-//     _isSaveButtonDisabled = false;
+
 //     _isStableStatusJudge = false;
 //     checkProductList();
 //     _weightReportDatas = getWeightReportData();
@@ -218,29 +207,6 @@
 //       }
 //     });
 
-//     eventBus.on<EventSettingParam>().listen((event) {
-//       if (mounted) {
-//         setState(() {
-//           mySettingParam = event.obj;
-//           weightMode = (mySettingParam.recMode == "manual")
-//               ? 1
-//               : (mySettingParam.recMode == "auto")
-//                   ? 2
-//                   : 1;
-//           dateformat = int.parse(mySettingParam.dateFormat);
-//           zeroRange = double.tryParse(mySettingParam.zeroRange)!;
-//           String timeString = (mySettingParam.stableTimeToRec == "")
-//               ? "0"
-//               : mySettingParam.stableTimeToRec.toString();
-//           _stableSaveTime = int.parse(timeString);
-//           if (weightMode == 1) {
-//             _isSaveButtonDisabled = false;
-//           } else {
-//             _isSaveButtonDisabled = true;
-//           }
-//         });
-//       }
-//     });
 //     eventBus.on<EventUserInfoList>().listen((event) {
 //       if (mounted) {
 //         setState(() {
@@ -273,11 +239,13 @@
 //     final _width = MediaQuery.of(context).size.width;
 
 //     return Container(
-//         width: _width,
+//         width: _width - 220,
 //         decoration: BoxDecoration(color: Colors.grey.shade200),
 //         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.start,
+//           // mainAxisSize: MainAxisSize.max,
+//           crossAxisAlignment: CrossAxisAlignment.start,
 //           children: [
-//             const SizedBox(height: 0),
 //             Container(
 //               color: Colors.white,
 //               child: Row(
@@ -291,7 +259,7 @@
 //                           borderRadius: BorderRadius.circular(0),
 //                           boxShadow: [
 //                             BoxShadow(
-//                                 color: Colors.blue.shade900,
+//                                 color: Theme.of(context).colorScheme.primary,
 //                                 offset: const Offset(0.0, 2.0),
 //                                 blurStyle: BlurStyle.solid,
 //                                 blurRadius: 1.0,
@@ -339,224 +307,14 @@
 //                 ],
 //               ),
 //             ),
+//             //////////////////////////////////
 //             const SizedBox(height: 5),
 //             Container(
 //               height: 100,
 //               color: Colors.white,
 //               child: Row(
+//                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
 //                 children: [
-//                   const SizedBox(width: 20),
-//                   Column(
-//                     children: [
-//                       const SizedBox(height: 10),
-//                       Row(
-//                         children: [
-//                           const SizedBox(
-//                             width: 50,
-//                             child: Text("Stable"),
-//                           ),
-//                           const SizedBox(width: 20),
-//                           Image.asset(
-//                             (myReqWeightCountine.msgBody == null)
-//                                 ? ("images/gray.png")
-//                                 : (myReqWeightCountine.msgBody!.isStable ==
-//                                         true)
-//                                     ? ("images/green.png")
-//                                     : ("images/red.png"),
-//                             width: 25,
-//                             height: 25,
-//                           )
-//                         ],
-//                       ),
-//                       const SizedBox(height: 5),
-//                       Row(
-//                         children: [
-//                           const SizedBox(
-//                             width: 50,
-//                             child: Text("Net"),
-//                           ),
-//                           const SizedBox(width: 20),
-//                           Image.asset(
-//                             (myReqWeightCountine.msgBody == null)
-//                                 ? ("images/gray.png")
-//                                 : (myReqWeightCountine.msgBody!.isNet == true)
-//                                     ? ("images/green.png")
-//                                     : ("images/red.png"),
-//                             width: 25,
-//                             height: 25,
-//                           )
-//                         ],
-//                       ),
-//                       const SizedBox(height: 5),
-//                       Row(
-//                         children: [
-//                           const SizedBox(
-//                             width: 50,
-//                             child: Text("Zero"),
-//                           ),
-//                           const SizedBox(width: 20),
-//                           Image.asset(
-//                             (myReqWeightCountine.msgBody == null)
-//                                 ? ("images/gray.png")
-//                                 : (((myReqWeightCountine.msgBody!.isStable ==
-//                                                 true) &&
-//                                             (double.tryParse(myReqWeightCountine
-//                                                     .msgBody!.weightVal) ==
-//                                                 0)) ||
-//                                         ((myReqWeightCountine
-//                                                     .msgBody!.isStable ==
-//                                                 true) &&
-//                                             (((double.tryParse(
-//                                                             myReqWeightCountine
-//                                                                 .msgBody!
-//                                                                 .weightVal) ==
-//                                                         null)
-//                                                     ? 0
-//                                                     : double.tryParse(
-//                                                         myReqWeightCountine
-//                                                             .msgBody!
-//                                                             .weightVal))! <=
-//                                                 zeroRange)))
-//                                     ? ("images/green.png")
-//                                     : ("images/red.png"),
-//                             width: 25,
-//                             height: 25,
-//                           )
-//                         ],
-//                       ),
-//                     ],
-//                   ),
-//                   const SizedBox(width: 20),
-//                   Container(
-//                       width: 360,
-//                       height: 70,
-//                       color: (myReqWeightCountine.msgBody == null)
-//                           ? (Colors.blue.shade900)
-//                           : (myReqWeightCountine.msgBody!.isStable == true)
-//                               ? (Colors.green.shade900)
-//                               : (Colors.red.shade900),
-//                       // alignment: Alignment.bottomRight, //设置控件内容的位置
-//                       child: Row(
-//                         mainAxisAlignment: MainAxisAlignment.end,
-//                         children: [
-//                           Expanded(
-//                             child: Text(
-//                               textAlign: TextAlign.right,
-//                               (myReqWeightCountine.msgBody == null)
-//                                   ? ("0.000")
-//                                   : myReqWeightCountine.msgBody!.weightVal,
-//                               style: const TextStyle(
-//                                   color: Colors.white, fontSize: 55),
-//                               overflow: TextOverflow.ellipsis,
-//                             ),
-//                           ),
-//                           const SizedBox(width: 20)
-//                         ],
-//                       )),
-//                   const SizedBox(width: 20),
-
-//                   Container(
-//                     width: 120,
-//                     height: 70,
-//                     color: (myReqWeightCountine.msgBody == null)
-//                         ? (Colors.blue.shade900)
-//                         : (myReqWeightCountine.msgBody!.isStable == true)
-//                             ? (Colors.green.shade900)
-//                             : (Colors.red.shade900),
-//                     alignment: Alignment.center, //设置控件内容的位置
-//                     child: Expanded(
-//                         child: Text(
-//                       // textAlign: TextAlign.right,
-//                       (myReqWeightCountine.msgBody == null)
-//                           ? ("kg")
-//                           : myReqWeightCountine.msgBody!.weightUnit,
-//                       style: const TextStyle(
-//                         color: Colors.white,
-//                         fontSize: 50,
-//                       ),
-//                       maxLines: 1,
-//                       overflow: TextOverflow.ellipsis,
-//                     )),
-//                   ),
-//                   const SizedBox(width: 20),
-//                   Row(
-//                     children: [
-//                       IconButton(
-//                         //开始按钮
-//                         icon: const Icon(Icons.play_arrow),
-//                         iconSize: 30,
-//                         color:
-//                             (isStart) ? (Colors.grey) : (Colors.blue.shade900),
-//                         onPressed: () {
-//                           setState(() {
-//                             if (!isStart) {
-//                               if (MyApp.webchannel1.heartStatus == true) {
-//                                 isStart = true;
-//                                 getWeight();
-//                               }
-//                             }
-//                           });
-//                         },
-//                       ),
-//                       IconButton(
-//                         onPressed: () {
-//                           if (isStart) {
-//                             setState(() {
-//                               if (MyApp.webchannel1.heartStatus == true) {
-//                                 isStart = false;
-//                                 stopWeight();
-//                               }
-//                             });
-//                           }
-//                         },
-//                         icon: const Icon(Icons.pause),
-//                         iconSize: 30,
-//                         color:
-//                             (!isStart) ? (Colors.grey) : (Colors.blue.shade900),
-//                       ),
-//                     ],
-//                   ),
-//                   const SizedBox(width: 5),
-//                   Column(
-//                     children: [
-//                       const SizedBox(height: 15),
-//                       ElevatedButton(
-//                           onPressed: () {
-//                             performTare();
-//                             // MyApp.getSock().send('uicmd', jsonEncode(myUiCmd.tare));
-//                           },
-//                           child: const Text(" T ")),
-//                       const SizedBox(height: 15),
-//                       ElevatedButton(
-//                           onPressed: () {
-//                             performZero();
-//                             // MyApp.getSock().send('uicmd', jsonEncode(myUiCmd.zero));
-//                           },
-//                           child: const Text(" 0 ")),
-//                     ],
-//                   ),
-//                   const SizedBox(width: 20),
-//                   Column(
-//                     children: [
-//                       const SizedBox(height: 15),
-//                       ElevatedButton(
-//                           onPressed:
-//                               _isSaveButtonDisabled ? null : _changeSaveButton,
-//                           child: const Text("Save")),
-//                       const SizedBox(height: 15),
-//                       OutlinedButton(
-//                           onPressed: () {
-//                             //跳转页面
-//                             settingDialog(context).then((onvalue) {});
-
-//                             // Navigator.of(context).push(MaterialPageRoute(
-//                             //     //没有传值
-//                             //     builder: (context) => const ChangeParamPage()));
-//                           },
-//                           child: const Text("Setting")),
-//                     ],
-//                   ),
-//                   const SizedBox(width: 20),
 //                   Column(
 //                     children: [
 //                       const SizedBox(height: 15),
@@ -573,29 +331,13 @@
 //                                     : (myDevicedata.type == "Icons.wifi")
 //                                         ? modifyAddNetworkDialog(context)
 //                                             .then((onValue) {})
-//                                         : modifyAddBluetoothDialog(context)
+//                                         : modifyAddComPortDialog(context)
 //                                             .then((onValue) {});
-//                           }),
-//                       const SizedBox(height: 15),
-//                       OutlinedButton(
-//                           // elevation: 5.0,
-//                           child: const Text("Export report"),
-//                           onPressed: () async {
-//                             String? outputFile =
-//                                 (await FilePicker.platform.saveFile(
-//                               dialogTitle: 'Output file:',
-//                               allowedExtensions: ["xlsx"],
-//                               fileName: 'report.xlsx',
-//                             ));
-//                             _creatFile(outputFile!);
-//                             setState(() {
-//                               _errorText.text = "success";
-//                             });
 //                           }),
 //                     ],
 //                   ),
 //                   SizedBox(
-//                     width: 100,
+//                     width: 10,
 //                     height: 30,
 //                     child: TextField(
 //                       enabled: false,
@@ -613,7 +355,7 @@
 //                       onChanged: (value) {},
 //                     ),
 //                   ),
-//                   const SizedBox(width: 20),
+//                   // const SizedBox(width: 20),
 //                   // OutlinedButton(
 //                   //     onPressed: () {
 //                   //       fieldModifyDialog(context).then((onValue) {});
@@ -622,156 +364,18 @@
 //                 ],
 //               ),
 //             ),
+//             //////////////
 //             const SizedBox(height: 5),
-//             Container(
-//               height: 40,
-//               color: Colors.white,
-//               child: Row(
-//                 children: [
-//                   TextButton(
-//                       onPressed: () {}, child: const Text("Product Name:")),
-//                   Container(
-//                     child: DropdownButtonFormField<String>(
-//                       itemHeight: 50.0,
-//                       isExpanded: true,
-//                       // decoration: const InputDecoration(border: OutlineInputBorder()),
-//                       value: productNameValue,
-//                       onChanged: (String? newPosition) {
-//                         setState(() {
-//                           myProductRecInfo.product = newPosition.toString();
-//                           for (var i = 0;
-//                               i < myProductRecList.productRecInfo!.length;
-//                               i++) {
-//                             if (myProductRecInfo.product ==
-//                                 myProductRecList.productRecInfo![i].product) {
-//                               myProductRecInfo =
-//                                   myProductRecList.productRecInfo![i];
-//                               eventBus
-//                                   .fire(EventProductRecInfo(myProductRecInfo));
-//                             }
-//                           }
-//                         });
-//                       },
 
-//                       items: productNameList
-//                           .map<DropdownMenuItem<String>>((String value) {
-//                         return DropdownMenuItem(
-//                             value: value, child: Text(value));
-//                       }).toList(),
-//                     ),
-//                     height: 53,
-//                     width: 200,
-//                     padding: const EdgeInsets.all(0),
-//                   ),
-//                   const SizedBox(width: 10),
-//                   MaterialButton(
-//                       color: Colors.blue.shade900,
-//                       textColor: Colors.white,
-//                       elevation: 5.0,
-//                       child: const Text("PLU Edit"),
-//                       onPressed: () {
-//                         getProductList();
-//                         addProductDialog(context).then((onvalue) {
-//                           if (!productNameList.contains(productNameValue)) {
-//                             myProductRecInfo.product = "";
-//                             productNameValue = "";
-//                             myProductRecInfo.id = "";
-//                             myProductRecInfo.withPretare = false;
-//                             myProductRecInfo.remarks = "";
-//                           }
-//                         });
-//                       }),
-//                   TextButton(onPressed: () {}, child: const Text("User Name:")),
-//                   Container(
-//                     child: DropdownButtonFormField<String>(
-//                       itemHeight: 50.0,
-//                       isExpanded: true,
-//                       // decoration: const InputDecoration(border: OutlineInputBorder()),
-//                       value: userNameValue,
-//                       onChanged: (String? newPosition) {
-//                         setState(() {
-//                           myUserInfo.name = newPosition.toString();
-//                           for (var i = 0;
-//                               i < myUserInfoList.userInfo!.length;
-//                               i++) {
-//                             if (myUserInfo.name ==
-//                                 myUserInfoList.userInfo![i].name) {
-//                               myUserInfo = myUserInfoList.userInfo![i];
-//                               eventBus.fire(EventUserInfo(myUserInfo));
-//                             }
-//                           }
-//                         });
-//                       },
-//                       items: userNameList
-//                           .map<DropdownMenuItem<String>>((String value) {
-//                         return DropdownMenuItem(
-//                             value: value, child: Text(value));
-//                       }).toList(),
-//                     ),
-//                     height: 53,
-//                     width: 200,
-//                     padding: const EdgeInsets.all(0),
-//                   ),
-//                   const SizedBox(width: 10),
-//                   MaterialButton(
-//                       color: Colors.blue.shade900,
-//                       textColor: Colors.white,
-//                       elevation: 5.0,
-//                       child: const Text("User Edit"),
-//                       onPressed: () {
-//                         getUserList();
-//                         checkUserList();
-//                         if (!userNameList.contains(userNameValue)) {
-//                           myUserInfo.name = "";
-//                           userNameValue = "";
-//                           myUserInfo.id = "";
-//                           myUserInfo.isFemale = true;
-//                           myUserInfo.phone = "";
-//                           myUserInfo.remarks = "";
-//                         }
-//                         addUserDialog(context).then((onvalue) {
-//                           setState(() {
-//                             getUserList();
-//                             checkUserList();
-//                             if (!userNameList.contains(userNameValue)) {
-//                               myUserInfo.name = "";
-//                               userNameValue = "";
-//                               myUserInfo.id = "";
-//                               myUserInfo.isFemale = true;
-//                               myUserInfo.phone = "";
-//                               myUserInfo.remarks = "";
-//                             }
-//                           });
-//                         });
-//                       }),
-//                 ],
-//               ),
-//             ),
-//             Row(
-//               mainAxisAlignment: MainAxisAlignment.start,
-//               // mainAxisSize: MainAxisSize.max,
-//               crossAxisAlignment: CrossAxisAlignment.start,
-//               children: [
-//                 SfDataGrid(
-//                   source: _weightReportDataSource,
-//                   columns: getColumns,
-//                   columnWidthMode: ColumnWidthMode.fill,
-//                   // onCellTap: ((details) {
-//                   //   if (details.rowColumnIndex.rowIndex != 0) {
-//                   //     int selectedRowIndex =
-//                   //         details.rowColumnIndex.rowIndex - 1;
-//                   //     var row = _employeeDataSource.effectiveRows
-//                   //         .elementAt(selectedRowIndex);
-//                   //     Navigator.push(
-//                   //         context,
-//                   //         MaterialPageRoute(
-//                   //             builder: (context) =>
-//                   //                 DetailsPage(dataGridRow: row)));
-//                   //   }
-//                   // }),
-//                 ),
-//               ],
-//             ),
+//             // Expanded(
+//             //   child: SfDataGrid(
+//             //     source: _weightReportDataSource,
+//             //     columns: getColumns,
+//             //     columnWidthMode: ColumnWidthMode.fill,
+//             //     frozenRowsCount: 0,
+//             //     controller: _dataGridController,
+//             //   ),
+//             // )
 //           ],
 //         ));
 //   }
@@ -932,9 +536,9 @@
 //       'PLU Name',
 //       'PLU Remarks',
 //       'Pretare',
-//       'ScaleName',
 //       'User Name',
 //       'User Remarks',
+//       'ScaleName',
 //     ];
 
 //     Excel excel = Excel.createExcel();
@@ -943,15 +547,84 @@
 //       sh.cell(CellIndex.indexByColumnRow(rowIndex: 0, columnIndex: i)).value =
 //           title[i];
 //     }
-//     for (int row = 1; row <= dataRows.length; row++) {
-//       for (int col = 0; col < 10; col++) {
-//         String colString = dataRows[row - 1].cells[col].child.toString();
-//         sh
-//             .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-//             .value = colString.substring(6, colString.length - 2);
+
+//     for (int row = 1; row <= myWeightReportData.length; row++) {
+//       for (int col = 0; col < 11; col++) {
+//         switch (col) {
+//           case 0:
+//             sh
+//                 .cell(
+//                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+//                 .value = myWeightReportData[row - 1].id;
+//             break;
+//           case 1:
+//             sh
+//                 .cell(
+//                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+//                 .value = myWeightReportData[row - 1].dateTime;
+//             break;
+//           case 2:
+//             sh
+//                 .cell(
+//                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+//                 .value = myWeightReportData[row - 1].weight;
+//             break;
+//           case 3:
+//             sh
+//                 .cell(
+//                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+//                 .value = myWeightReportData[row - 1].weightUnit;
+//             break;
+//           case 4:
+//             sh
+//                 .cell(
+//                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+//                 .value = myWeightReportData[row - 1].pLU;
+//             break;
+//           case 5:
+//             sh
+//                 .cell(
+//                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+//                 .value = myWeightReportData[row - 1].pluName;
+//             break;
+//           case 6:
+//             sh
+//                 .cell(
+//                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+//                 .value = myWeightReportData[row - 1].pluRemarks;
+//             break;
+//           case 7:
+//             sh
+//                 .cell(
+//                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+//                 .value = myWeightReportData[row - 1].pretare;
+//             break;
+//           case 8:
+//             sh
+//                 .cell(
+//                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+//                 .value = myWeightReportData[row - 1].userName;
+//             break;
+//           case 9:
+//             sh
+//                 .cell(
+//                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+//                 .value = myWeightReportData[row - 1].userRemarks;
+//             break;
+//           case 10:
+//             sh
+//                 .cell(
+//                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+//                 .value = myWeightReportData[row - 1].scaleName;
+//             break;
+
+//           default:
+//         }
+
 //         //'value ${row}_$col';
 //       }
 //     }
+
 //     try {
 //       var onValue = excel.encode();
 //       File(join(path))
@@ -995,6 +668,11 @@
 //     ));
 //     setState(() {
 //       _weightReportDataSource = WeightReportDataSource(_weightReportDatas);
+//       Future.delayed(Duration(milliseconds: 100), () {
+//         _dataGridController
+//             .scrollToRow(_weightReportDataSource.rows.length - 0);
+//       });
+//       // _dataGridController.scrollToRow(_weightReportDataSource.rows.length - 1);
 //     });
 //   }
 
