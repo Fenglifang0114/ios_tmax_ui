@@ -22,7 +22,6 @@ class WebSocketScaleChannel {
     heartStatus = true;
     channel = IOWebSocketChannel.connect(url);
     channel.stream.listen(onData, onError: onError, onDone: onDone);
-    print(heartStatus);
   }
 
   // 发送消息
@@ -135,7 +134,9 @@ class WebSocketScaleChannel {
         eventBus.fire(EventConnectBTResponse(mobj));
       }
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     }
   }
 

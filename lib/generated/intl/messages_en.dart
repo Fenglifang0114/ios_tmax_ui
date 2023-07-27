@@ -22,73 +22,116 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-        "cancel": MessageLookupByLibrary.simpleMessage("cancel"),
-        "cancel_confirm":
-            MessageLookupByLibrary.simpleMessage("confirm cancellation? "),
-        "clean": MessageLookupByLibrary.simpleMessage("clean"),
-        "communication": MessageLookupByLibrary.simpleMessage("Communication"),
-        "coordinate": MessageLookupByLibrary.simpleMessage("Coordinate: "),
-        "detailed_communication":
-            MessageLookupByLibrary.simpleMessage("details"),
+        "Parity": MessageLookupByLibrary.simpleMessage("Parity:"),
+        "alignment": MessageLookupByLibrary.simpleMessage("Alignment:"),
+        "attribute": MessageLookupByLibrary.simpleMessage("Attribute"),
+        "barcode_edit": MessageLookupByLibrary.simpleMessage("BarCode Edit"),
+        "barcode_height":
+            MessageLookupByLibrary.simpleMessage("BarCode Height:"),
+        "baud_rate": MessageLookupByLibrary.simpleMessage("Baud rate:"),
+        "bluetooth_modification": MessageLookupByLibrary.simpleMessage(
+            "Bluetooth information modification"),
+        "bluetooth_modify_error": MessageLookupByLibrary.simpleMessage(
+            "Modify bluetooth name error."),
+        "bluetooth_modify_ok": MessageLookupByLibrary.simpleMessage(
+            "Modify bluetooth name successful."),
+        "button_cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+        "button_delete": MessageLookupByLibrary.simpleMessage("Delete"),
+        "button_dynamic": MessageLookupByLibrary.simpleMessage("Dynamic"),
+        "button_exit": MessageLookupByLibrary.simpleMessage("Exit"),
+        "button_home": MessageLookupByLibrary.simpleMessage("Home"),
+        "button_net": MessageLookupByLibrary.simpleMessage("Net:"),
+        "button_ok": MessageLookupByLibrary.simpleMessage("OK"),
+        "button_set": MessageLookupByLibrary.simpleMessage("Set"),
+        "button_stable": MessageLookupByLibrary.simpleMessage("Stable:"),
+        "button_start": MessageLookupByLibrary.simpleMessage("Start"),
+        "button_static": MessageLookupByLibrary.simpleMessage("Static"),
+        "button_tare": MessageLookupByLibrary.simpleMessage("Tare:"),
+        "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+        "com_port": MessageLookupByLibrary.simpleMessage("Serial port"),
+        "contact_us": MessageLookupByLibrary.simpleMessage(
+            "Contact us:sales@taiwanscale.com"),
+        "data_bits": MessageLookupByLibrary.simpleMessage("Data bits:"),
+        "device_name": MessageLookupByLibrary.simpleMessage("Device name:"),
+        "download": MessageLookupByLibrary.simpleMessage("Download"),
+        "editor": MessageLookupByLibrary.simpleMessage("Editor"),
+        "element_type": MessageLookupByLibrary.simpleMessage("Type:"),
         "en": MessageLookupByLibrary.simpleMessage("English"),
-        "errcode0":
-            MessageLookupByLibrary.simpleMessage("Weight machine error"),
-        "errcode1": MessageLookupByLibrary.simpleMessage(
-            "Can\'t read scale information"),
-        "errcode2":
-            MessageLookupByLibrary.simpleMessage("Scale reply timed out"),
-        "errcode3": MessageLookupByLibrary.simpleMessage(
-            "Scale replies wrong information"),
-        "errcode4":
-            MessageLookupByLibrary.simpleMessage("Missing configuration file"),
-        "error": MessageLookupByLibrary.simpleMessage("Error Message:"),
-        "init": MessageLookupByLibrary.simpleMessage("init"),
-        "innercode": MessageLookupByLibrary.simpleMessage("Innercode: "),
-        "ismoving": MessageLookupByLibrary.simpleMessage("isMoving: "),
-        "issafegate": MessageLookupByLibrary.simpleMessage("safetyLight"),
-        "isxfail": MessageLookupByLibrary.simpleMessage("xFailure"),
-        "isxleftlimit": MessageLookupByLibrary.simpleMessage("xLeftLimit"),
-        "isxrightlimit": MessageLookupByLibrary.simpleMessage("xRightLimit"),
-        "isybacklimit": MessageLookupByLibrary.simpleMessage("yBackLimit"),
-        "isyfail": MessageLookupByLibrary.simpleMessage("yFailure"),
-        "isyfrontlimit": MessageLookupByLibrary.simpleMessage("yFrontLimit"),
-        "iszdownlimit": MessageLookupByLibrary.simpleMessage("zDownLimit"),
-        "iszfail": MessageLookupByLibrary.simpleMessage("zFailure"),
-        "iszuplimit": MessageLookupByLibrary.simpleMessage("zUpLimit"),
+        "expiration_date":
+            MessageLookupByLibrary.simpleMessage("Expiration date:"),
+        "find_ssid": MessageLookupByLibrary.simpleMessage("Find SSID"),
+        "font_bold": MessageLookupByLibrary.simpleMessage("Font Bold:"),
+        "font_reverse": MessageLookupByLibrary.simpleMessage("Font Reverse:"),
+        "gatway": MessageLookupByLibrary.simpleMessage("Gatway:"),
+        "home_page_title1":
+            MessageLookupByLibrary.simpleMessage("Serial port connection"),
+        "home_page_title2":
+            MessageLookupByLibrary.simpleMessage("Label Design"),
+        "home_page_title3":
+            MessageLookupByLibrary.simpleMessage("Wifi Setting"),
+        "home_page_title4":
+            MessageLookupByLibrary.simpleMessage("Bluetooth Setting"),
+        "home_page_title5": MessageLookupByLibrary.simpleMessage("Update FW"),
+        "home_page_title6":
+            MessageLookupByLibrary.simpleMessage("Scale Records"),
+        "home_page_title7":
+            MessageLookupByLibrary.simpleMessage("License Information"),
+        "home_page_title8":
+            MessageLookupByLibrary.simpleMessage("Serial port connection"),
+        "home_page_title9":
+            MessageLookupByLibrary.simpleMessage("Serial port connection"),
+        "hr_alignment": MessageLookupByLibrary.simpleMessage("HR Alignment:"),
+        "ip_address": MessageLookupByLibrary.simpleMessage("IPv4:"),
         "language": MessageLookupByLibrary.simpleMessage("Language"),
-        "loading_msg": MessageLookupByLibrary.simpleMessage(
-            "Please load the scale after the platform has moved, then enter the serial number!"),
-        "model": MessageLookupByLibrary.simpleMessage("Model: "),
-        "mydevice": MessageLookupByLibrary.simpleMessage("MyDevice"),
-        "net": MessageLookupByLibrary.simpleMessage("Net: "),
-        "operation_tips":
-            MessageLookupByLibrary.simpleMessage("Operation Tips:"),
-        "perform_tasks":
-            MessageLookupByLibrary.simpleMessage("Perform Tasks: "),
-        "result": MessageLookupByLibrary.simpleMessage("Result: "),
-        "scale": MessageLookupByLibrary.simpleMessage("scale:"),
-        "scale_information": MessageLookupByLibrary.simpleMessage("Scale: "),
-        "sn": MessageLookupByLibrary.simpleMessage("SN: "),
-        "stable": MessageLookupByLibrary.simpleMessage("Stable"),
-        "start": MessageLookupByLibrary.simpleMessage("start"),
-        "sure": MessageLookupByLibrary.simpleMessage("OK"),
-        "tare": MessageLookupByLibrary.simpleMessage("Tare: "),
-        "tare_s": MessageLookupByLibrary.simpleMessage("Tare"),
-        "title": MessageLookupByLibrary.simpleMessage(
-            "Automatic weight tool V1.0.2"),
-        "warn": MessageLookupByLibrary.simpleMessage("warn: "),
-        "weights_number": MessageLookupByLibrary.simpleMessage("weights: "),
-        "wt": MessageLookupByLibrary.simpleMessage("WeightMachine: "),
-        "wt_detailed_communication":
-            MessageLookupByLibrary.simpleMessage("WeightMachineCommunication"),
-        "x_coordinate": MessageLookupByLibrary.simpleMessage(" X : "),
-        "x_speed": MessageLookupByLibrary.simpleMessage("xSpeed: "),
-        "y_coordinate": MessageLookupByLibrary.simpleMessage(" Y : "),
-        "y_speed": MessageLookupByLibrary.simpleMessage("ySpeed: "),
-        "z_coordinate": MessageLookupByLibrary.simpleMessage(" Z : "),
-        "z_speed": MessageLookupByLibrary.simpleMessage("zSpeed: "),
-        "z_zero_coordinate":
-            MessageLookupByLibrary.simpleMessage("scaleZZero: "),
+        "license_title":
+            MessageLookupByLibrary.simpleMessage("License information"),
+        "max_length": MessageLookupByLibrary.simpleMessage("Max Length:"),
+        "netmask": MessageLookupByLibrary.simpleMessage("NetMask:"),
+        "network_setting":
+            MessageLookupByLibrary.simpleMessage("Wireless network settings"),
+        "new_format": MessageLookupByLibrary.simpleMessage("New Format"),
+        "no_element": MessageLookupByLibrary.simpleMessage(
+            "You haven\'t selected any element."),
+        "open_file": MessageLookupByLibrary.simpleMessage("Open File"),
+        "operation_steps":
+            MessageLookupByLibrary.simpleMessage("Operation Steps:"),
+        "passed_fail_message": MessageLookupByLibrary.simpleMessage(
+            "No authentication.\r\nPlease send the ID to us.\r\n\r\nEmail:sales@taiwanscale.com"),
+        "passed_message":
+            MessageLookupByLibrary.simpleMessage("Authentication passed.\r\n"),
+        "password": MessageLookupByLibrary.simpleMessage("Password:"),
+        "position": MessageLookupByLibrary.simpleMessage("Position"),
+        "print_direction": MessageLookupByLibrary.simpleMessage("Direction:"),
+        "print_page": MessageLookupByLibrary.simpleMessage("Page:"),
+        "printer": MessageLookupByLibrary.simpleMessage("Printer:"),
+        "qrcode_edit": MessageLookupByLibrary.simpleMessage("Qrcode Edit"),
+        "refresh_port": MessageLookupByLibrary.simpleMessage("Refresh port"),
+        "refresh_tip": MessageLookupByLibrary.simpleMessage("Refresh"),
+        "save_csv": MessageLookupByLibrary.simpleMessage("Save csv"),
+        "save_file": MessageLookupByLibrary.simpleMessage("Save File"),
+        "select_barcode": MessageLookupByLibrary.simpleMessage("BarCode:"),
+        "select_fontsize": MessageLookupByLibrary.simpleMessage("FontSize:"),
+        "select_qrcode": MessageLookupByLibrary.simpleMessage("QRcode:"),
+        "select_qrcode_width":
+            MessageLookupByLibrary.simpleMessage("Qrcode Width:"),
+        "select_rotation": MessageLookupByLibrary.simpleMessage("Rotation:"),
+        "serial_error": MessageLookupByLibrary.simpleMessage(
+            "Serial port connection lost. Check the settings."),
+        "serial_modify_title": MessageLookupByLibrary.simpleMessage(
+            "Serial port information modification"),
+        "serial_port": MessageLookupByLibrary.simpleMessage("Serial port:"),
+        "set_wifi_success":
+            MessageLookupByLibrary.simpleMessage("Set wifi successful!"),
+        "step1": MessageLookupByLibrary.simpleMessage(
+            "1. Please click on one or more elements on the left side;"),
+        "step2": MessageLookupByLibrary.simpleMessage(
+            "2. The selected elements will be displayed in the center of the page, and you can edit their attributes here. "),
+        "stop_bits": MessageLookupByLibrary.simpleMessage("Stop bits:"),
+        "system_id":
+            MessageLookupByLibrary.simpleMessage("System Unique ID:  "),
+        "tab_order": MessageLookupByLibrary.simpleMessage("Tab order:"),
+        "text_content": MessageLookupByLibrary.simpleMessage("Text Content:"),
+        "welcome": MessageLookupByLibrary.simpleMessage("Welcome"),
         "zh_cn": MessageLookupByLibrary.simpleMessage("Chinese")
       };
 }

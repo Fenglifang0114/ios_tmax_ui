@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:t_max/data/license_data.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 
-import '../../pages/widget/themeColor.dart';
+import '../generated/l10n.dart';
+import 'widget/theme_color.dart';
 
 import '../data/comscaleinfo_data.dart';
 import '../data/currentport_data.dart';
@@ -31,11 +32,12 @@ class TrialPageState extends State<TrialPage> {
   dynamic _eventbus1;
   dynamic _eventbus2;
   TextEditingController pidController = TextEditingController();
+  String system_id = '';
 
   @override
   void initState() {
     super.initState();
-    pidController.text = 'System Unique ID ';
+    pidController.text = system_id;
 
     _eventbus1 = eventBus.on<EventLicenseData>().listen((event) {
       if (mounted) {
@@ -48,7 +50,7 @@ class TrialPageState extends State<TrialPage> {
             if (strList[0] == 'true') {
               isPass = true;
             }
-            pidController.text = 'System Unique ID: $pId';
+            pidController.text = system_id + pId;
           }
           if (isPass) {
             PublicFunctions.getScaleList();
@@ -97,6 +99,8 @@ class TrialPageState extends State<TrialPage> {
   Widget build(BuildContext context) {
     final _width = MediaQuery.of(context).size.width;
     final _height = MediaQuery.of(context).size.height;
+    var localizedStrings = S.of(context);
+    system_id = localizedStrings.system_id;
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: themeColor(),
@@ -128,7 +132,7 @@ class TrialPageState extends State<TrialPage> {
                         // ),
                       ),
                     ),
-                    Container(
+                    SizedBox(
                       height: _height,
                       width: _width,
                       // decoration: BoxDecoration(
@@ -140,7 +144,8 @@ class TrialPageState extends State<TrialPage> {
                           SizedBox(
                               width: 400,
                               child: Card(
-                                shadowColor: Color.fromARGB(255, 196, 201, 207),
+                                shadowColor:
+                                    const Color.fromARGB(255, 196, 201, 207),
                                 elevation: 40,
                                 margin: const EdgeInsets.all(10),
                                 shape: const RoundedRectangleBorder(
@@ -150,7 +155,7 @@ class TrialPageState extends State<TrialPage> {
                                   children: [
                                     const SizedBox(height: 20),
                                     Text(
-                                      "Welcome",
+                                      localizedStrings.welcome,
                                       style: TextStyle(
                                         fontSize: 20,
                                         color: Theme.of(context)
@@ -174,8 +179,9 @@ class TrialPageState extends State<TrialPage> {
                                     const SizedBox(height: 20),
                                     Text(
                                         (isPass)
-                                            ? 'Authentication passed.\r\n'
-                                            : " No authentication. \r\n Please send the PID to us.\r\n\r\nEmail:sales@taiwanscale.com",
+                                            ? localizedStrings.passed_message
+                                            : localizedStrings
+                                                .passed_fail_message,
                                         style: TextStyle(
                                             fontSize: 16,
                                             color: (isPass)
@@ -186,7 +192,8 @@ class TrialPageState extends State<TrialPage> {
                                     Text(
                                         (dueDate.isEmpty)
                                             ? ''
-                                            : "Expiration date: $dueDate",
+                                            : localizedStrings.expiration_date +
+                                                dueDate,
                                         style: TextStyle(
                                             fontSize: 16,
                                             color: (isPass)
@@ -216,8 +223,10 @@ class TrialPageState extends State<TrialPage> {
                                                 }
                                               });
                                             },
-                                            child: Text(
-                                                (isPass) ? "Start" : 'Exit')),
+                                            child: Text((isPass)
+                                                ? localizedStrings.button_start
+                                                : localizedStrings
+                                                    .button_exit)),
                                       ],
                                     ),
                                     const SizedBox(height: 30),

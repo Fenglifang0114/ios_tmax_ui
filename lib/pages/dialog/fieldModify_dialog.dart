@@ -20,8 +20,8 @@ fieldModifyDialog(BuildContext context) {
           return AlertDialog(
             title: Container(
                 color: Colors.blue.shade900,
-                child: Row(
-                  children: const [
+                child: const Row(
+                  children: [
                     Icon(
                       Icons.language,
                       color: Colors.white,

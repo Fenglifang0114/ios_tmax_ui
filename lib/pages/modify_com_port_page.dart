@@ -1,8 +1,7 @@
 import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:t_max/data/currentport_data.dart';
 import 'package:t_max/data/modifyscale_data.dart';
 import '../../data/device_data.dart';
@@ -13,6 +12,7 @@ import '../../main.dart';
 import '../data/cominfoslist_data.dart';
 import '../data/comscaleinfo_data.dart';
 import '../functions/methods.dart';
+import '../generated/l10n.dart';
 import 'widget/comportdorpdown.dart';
 
 class ModifyComPortPage extends StatefulWidget {
@@ -47,13 +47,21 @@ class _ModifyComPortPageState extends State<ModifyComPortPage> {
   TextEditingController model = TextEditingController();
   TextEditingController description = TextEditingController();
 
-  String _errorMessage = '';
   bool isSetting = false;
-  var _eventbus1;
-  var _eventbus2;
-  var _eventbus3;
-  var _eventbus4;
-  var _eventbus5;
+  dynamic _eventbus1;
+  dynamic _eventbus2;
+  dynamic _eventbus3;
+  dynamic _eventbus4;
+  dynamic _eventbus5;
+  var localizedStrings;
+  String refresh = " ";
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    localizedStrings = S.of(context);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -65,9 +73,7 @@ class _ModifyComPortPageState extends State<ModifyComPortPage> {
         setState(() {
           myConnectBTResponse = event.obj;
           isSetting = false;
-          if (myConnectBTResponse.msgBody.isNotEmpty) {
-            _errorMessage = myConnectBTResponse.msgBody;
-          }
+          if (myConnectBTResponse.msgBody.isNotEmpty) {}
         });
       }
     });
@@ -103,8 +109,6 @@ class _ModifyComPortPageState extends State<ModifyComPortPage> {
       if (mounted) {
         setState(() {
           myDevicedata = event.obj;
-          // getWeight();
-          // getRecords();
         });
       }
     });
@@ -120,21 +124,27 @@ class _ModifyComPortPageState extends State<ModifyComPortPage> {
   @override
   void dispose() {
     _deviceNameController.dispose();
+    _eventbus1.cancel();
+    _eventbus2.cancel();
+    _eventbus3.cancel();
+    _eventbus4.cancel();
+    _eventbus5.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // getPortList();
     tempCurrentPort = myCurrentPort;
+    // localizedStrings = S.of(context);
+    refresh = localizedStrings.refresh_port;
     return AlertDialog(
       title: Container(
           color: Colors.blue.shade900,
-          child: const Row(
+          child: Row(
             children: [
-              Icon(Icons.usb, color: Colors.white),
-              Text("Device information modification",
-                  style: TextStyle(color: Colors.white))
+              const Icon(Icons.usb, color: Colors.white),
+              Text(localizedStrings.serial_modify_title,
+                  style: const TextStyle(color: Colors.white))
             ],
           )),
       content: Container(
@@ -156,7 +166,7 @@ class _ModifyComPortPageState extends State<ModifyComPortPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const SizedBox(height: 15),
-                          const Text("Serial port:"),
+                          Text(localizedStrings.serial_port),
                           Container(
                             height: 53,
                             width: 200,
@@ -171,7 +181,7 @@ class _ModifyComPortPageState extends State<ModifyComPortPage> {
                                 PublicFunctions.getPortList();
                                 checkPortList();
                                 comPort = newPosition.toString();
-                                if (comPort != 'Refresh port') {
+                                if (comPort != localizedStrings.refresh_port) {
                                   tempCurrentPort.devPath = comPort;
                                 } else {
                                   tempCurrentPort.devPath = '';
@@ -191,11 +201,11 @@ class _ModifyComPortPageState extends State<ModifyComPortPage> {
                             ),
                           ),
                           const SizedBox(height: 15),
-                          const Text("Data bits:"),
+                          Text(localizedStrings.data_bits),
                           ComPortDropdown(1, dataBitsList,
                               myCurrentPort.dataBits.toString()),
                           const SizedBox(height: 15),
-                          const Text("Stop bits:"),
+                          Text(localizedStrings.stop_bits),
                           ComPortDropdown(
                               2,
                               stopBitsList,
@@ -213,11 +223,11 @@ class _ModifyComPortPageState extends State<ModifyComPortPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const SizedBox(height: 15),
-                          const Text("Baud rate:"),
+                          Text(localizedStrings.baud_rate),
                           ComPortDropdown(
                               3, baudRateList, myCurrentPort.baud.toString()),
                           const SizedBox(height: 15),
-                          const Text("Parity"),
+                          Text(localizedStrings.Parity),
                           ComPortDropdown(
                               4,
                               checkBitsList,
@@ -253,7 +263,7 @@ class _ModifyComPortPageState extends State<ModifyComPortPage> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             OutlinedButton(
-                child: const Text("Ok"),
+                child: Text(localizedStrings.button_ok),
                 onPressed: () {
                   mySerialPortStatus.serialPortStatus = true;
                   eventBus.fire(EventSerialPortStatus(mySerialPortStatus));
@@ -264,7 +274,7 @@ class _ModifyComPortPageState extends State<ModifyComPortPage> {
                 }),
             const SizedBox(width: 20),
             OutlinedButton(
-                child: const Text("Cancel"),
+                child: Text(localizedStrings.button_cancel),
                 onPressed: () {
                   Navigator.of(context)
                       .pop(); // to go back to screen after submitting
@@ -296,8 +306,8 @@ class _ModifyComPortPageState extends State<ModifyComPortPage> {
 
   void checkPortList() {
     if (myComInfoList.msgBody!.isEmpty == true) {
-      comLists = ["Refresh port"];
-      comPort = "Refresh port";
+      comLists = [refresh];
+      comPort = refresh;
       tempCurrentPort.devPath = '';
     } else {
       comLists = myComInfoList.msgBody!.toList();

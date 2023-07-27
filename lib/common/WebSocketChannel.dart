@@ -19,7 +19,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import '../data/ipinfodata.dart';
 import '../data/reqweightdata_data.dart';
 
-import '../data/scalecmd_data copy.dart';
+import '../data/scalecmd_data.dart';
 import '../eventbus/eventbus.dart';
 import '../main.dart';
 

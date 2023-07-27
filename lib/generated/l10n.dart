@@ -50,16 +50,6 @@ class S {
     return Localizations.of<S>(context, S);
   }
 
-  /// `Automatic weight tool V1.0.2`
-  String get title {
-    return Intl.message(
-      'Automatic weight tool V1.0.2',
-      name: 'title',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Language`
   String get language {
     return Intl.message(
@@ -90,511 +80,811 @@ class S {
     );
   }
 
-  /// `Scale: `
-  String get scale_information {
-    return Intl.message(
-      'Scale: ',
-      name: 'scale_information',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Operation Tips:`
-  String get operation_tips {
-    return Intl.message(
-      'Operation Tips:',
-      name: 'operation_tips',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Model: `
-  String get model {
-    return Intl.message(
-      'Model: ',
-      name: 'model',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `SN: `
-  String get sn {
-    return Intl.message(
-      'SN: ',
-      name: 'sn',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `clean`
-  String get clean {
-    return Intl.message(
-      'clean',
-      name: 'clean',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `start`
-  String get start {
-    return Intl.message(
-      'start',
-      name: 'start',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `cancel`
+  /// `Cancel`
   String get cancel {
     return Intl.message(
-      'cancel',
+      'Cancel',
       name: 'cancel',
       desc: '',
       args: [],
     );
   }
 
+  /// `Tare:`
+  String get button_tare {
+    return Intl.message(
+      'Tare:',
+      name: 'button_tare',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Net:`
+  String get button_net {
+    return Intl.message(
+      'Net:',
+      name: 'button_net',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Stable:`
+  String get button_stable {
+    return Intl.message(
+      'Stable:',
+      name: 'button_stable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Serial port`
+  String get com_port {
+    return Intl.message(
+      'Serial port',
+      name: 'com_port',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Contact us:sales@taiwanscale.com`
+  String get contact_us {
+    return Intl.message(
+      'Contact us:sales@taiwanscale.com',
+      name: 'contact_us',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Serial port connection`
+  String get home_page_title1 {
+    return Intl.message(
+      'Serial port connection',
+      name: 'home_page_title1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Label Design`
+  String get home_page_title2 {
+    return Intl.message(
+      'Label Design',
+      name: 'home_page_title2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Wifi Setting`
+  String get home_page_title3 {
+    return Intl.message(
+      'Wifi Setting',
+      name: 'home_page_title3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Bluetooth Setting`
+  String get home_page_title4 {
+    return Intl.message(
+      'Bluetooth Setting',
+      name: 'home_page_title4',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Update FW`
+  String get home_page_title5 {
+    return Intl.message(
+      'Update FW',
+      name: 'home_page_title5',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Scale Records`
+  String get home_page_title6 {
+    return Intl.message(
+      'Scale Records',
+      name: 'home_page_title6',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `License Information`
+  String get home_page_title7 {
+    return Intl.message(
+      'License Information',
+      name: 'home_page_title7',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Serial port connection`
+  String get home_page_title8 {
+    return Intl.message(
+      'Serial port connection',
+      name: 'home_page_title8',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Serial port connection`
+  String get home_page_title9 {
+    return Intl.message(
+      'Serial port connection',
+      name: 'home_page_title9',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Welcome`
+  String get welcome {
+    return Intl.message(
+      'Welcome',
+      name: 'welcome',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Authentication passed.\r\n`
+  String get passed_message {
+    return Intl.message(
+      'Authentication passed.\r\n',
+      name: 'passed_message',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No authentication.\r\nPlease send the ID to us.\r\n\r\nEmail:sales@taiwanscale.com`
+  String get passed_fail_message {
+    return Intl.message(
+      'No authentication.\r\nPlease send the ID to us.\r\n\r\nEmail:sales@taiwanscale.com',
+      name: 'passed_fail_message',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start`
+  String get button_start {
+    return Intl.message(
+      'Start',
+      name: 'button_start',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Exit`
+  String get button_exit {
+    return Intl.message(
+      'Exit',
+      name: 'button_exit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `System Unique ID:  `
+  String get system_id {
+    return Intl.message(
+      'System Unique ID:  ',
+      name: 'system_id',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Expiration date:`
+  String get expiration_date {
+    return Intl.message(
+      'Expiration date:',
+      name: 'expiration_date',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Serial port information modification`
+  String get serial_modify_title {
+    return Intl.message(
+      'Serial port information modification',
+      name: 'serial_modify_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Serial port:`
+  String get serial_port {
+    return Intl.message(
+      'Serial port:',
+      name: 'serial_port',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Refresh port`
+  String get refresh_port {
+    return Intl.message(
+      'Refresh port',
+      name: 'refresh_port',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Data bits:`
+  String get data_bits {
+    return Intl.message(
+      'Data bits:',
+      name: 'data_bits',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Baud rate:`
+  String get baud_rate {
+    return Intl.message(
+      'Baud rate:',
+      name: 'baud_rate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Parity:`
+  String get Parity {
+    return Intl.message(
+      'Parity:',
+      name: 'Parity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Stop bits:`
+  String get stop_bits {
+    return Intl.message(
+      'Stop bits:',
+      name: 'stop_bits',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `OK`
-  String get sure {
+  String get button_ok {
     return Intl.message(
       'OK',
-      name: 'sure',
+      name: 'button_ok',
       desc: '',
       args: [],
     );
   }
 
-  /// `confirm cancellation? `
-  String get cancel_confirm {
+  /// `Cancel`
+  String get button_cancel {
     return Intl.message(
-      'confirm cancellation? ',
-      name: 'cancel_confirm',
+      'Cancel',
+      name: 'button_cancel',
       desc: '',
       args: [],
     );
   }
 
-  /// `Please load the scale after the platform has moved, then enter the serial number!`
-  String get loading_msg {
+  /// `Set wifi successful!`
+  String get set_wifi_success {
     return Intl.message(
-      'Please load the scale after the platform has moved, then enter the serial number!',
-      name: 'loading_msg',
+      'Set wifi successful!',
+      name: 'set_wifi_success',
       desc: '',
       args: [],
     );
   }
 
-  /// `WeightMachine: `
-  String get wt {
+  /// `Home`
+  String get button_home {
     return Intl.message(
-      'WeightMachine: ',
-      name: 'wt',
+      'Home',
+      name: 'button_home',
       desc: '',
       args: [],
     );
   }
 
-  /// `xSpeed: `
-  String get x_speed {
+  /// `Refresh`
+  String get refresh_tip {
     return Intl.message(
-      'xSpeed: ',
-      name: 'x_speed',
+      'Refresh',
+      name: 'refresh_tip',
       desc: '',
       args: [],
     );
   }
 
-  /// `ySpeed: `
-  String get y_speed {
+  /// `Find SSID`
+  String get find_ssid {
     return Intl.message(
-      'ySpeed: ',
-      name: 'y_speed',
+      'Find SSID',
+      name: 'find_ssid',
       desc: '',
       args: [],
     );
   }
 
-  /// `zSpeed: `
-  String get z_speed {
+  /// `Wireless network settings`
+  String get network_setting {
     return Intl.message(
-      'zSpeed: ',
-      name: 'z_speed',
+      'Wireless network settings',
+      name: 'network_setting',
       desc: '',
       args: [],
     );
   }
 
-  /// `warn: `
-  String get warn {
+  /// `Password:`
+  String get password {
     return Intl.message(
-      'warn: ',
-      name: 'warn',
+      'Password:',
+      name: 'password',
       desc: '',
       args: [],
     );
   }
 
-  /// `xFailure`
-  String get isxfail {
+  /// `IPv4:`
+  String get ip_address {
     return Intl.message(
-      'xFailure',
-      name: 'isxfail',
+      'IPv4:',
+      name: 'ip_address',
       desc: '',
       args: [],
     );
   }
 
-  /// `yFailure`
-  String get isyfail {
+  /// `NetMask:`
+  String get netmask {
     return Intl.message(
-      'yFailure',
-      name: 'isyfail',
+      'NetMask:',
+      name: 'netmask',
       desc: '',
       args: [],
     );
   }
 
-  /// `zFailure`
-  String get iszfail {
+  /// `Gatway:`
+  String get gatway {
     return Intl.message(
-      'zFailure',
-      name: 'iszfail',
+      'Gatway:',
+      name: 'gatway',
       desc: '',
       args: [],
     );
   }
 
-  /// `xRightLimit`
-  String get isxrightlimit {
+  /// `Static`
+  String get button_static {
     return Intl.message(
-      'xRightLimit',
-      name: 'isxrightlimit',
+      'Static',
+      name: 'button_static',
       desc: '',
       args: [],
     );
   }
 
-  /// `xLeftLimit`
-  String get isxleftlimit {
+  /// `Dynamic`
+  String get button_dynamic {
     return Intl.message(
-      'xLeftLimit',
-      name: 'isxleftlimit',
+      'Dynamic',
+      name: 'button_dynamic',
       desc: '',
       args: [],
     );
   }
 
-  /// `yFrontLimit`
-  String get isyfrontlimit {
+  /// `Set`
+  String get button_set {
     return Intl.message(
-      'yFrontLimit',
-      name: 'isyfrontlimit',
+      'Set',
+      name: 'button_set',
       desc: '',
       args: [],
     );
   }
 
-  /// `yBackLimit`
-  String get isybacklimit {
+  /// `Bluetooth information modification`
+  String get bluetooth_modification {
     return Intl.message(
-      'yBackLimit',
-      name: 'isybacklimit',
+      'Bluetooth information modification',
+      name: 'bluetooth_modification',
       desc: '',
       args: [],
     );
   }
 
-  /// `zUpLimit`
-  String get iszuplimit {
+  /// `Device name:`
+  String get device_name {
     return Intl.message(
-      'zUpLimit',
-      name: 'iszuplimit',
+      'Device name:',
+      name: 'device_name',
       desc: '',
       args: [],
     );
   }
 
-  /// `zDownLimit`
-  String get iszdownlimit {
+  /// `Serial port connection lost. Check the settings.`
+  String get serial_error {
     return Intl.message(
-      'zDownLimit',
-      name: 'iszdownlimit',
+      'Serial port connection lost. Check the settings.',
+      name: 'serial_error',
       desc: '',
       args: [],
     );
   }
 
-  /// `safetyLight`
-  String get issafegate {
+  /// `Modify bluetooth name error.`
+  String get bluetooth_modify_error {
     return Intl.message(
-      'safetyLight',
-      name: 'issafegate',
+      'Modify bluetooth name error.',
+      name: 'bluetooth_modify_error',
       desc: '',
       args: [],
     );
   }
 
-  /// `Perform Tasks: `
-  String get perform_tasks {
+  /// `Modify bluetooth name successful.`
+  String get bluetooth_modify_ok {
     return Intl.message(
-      'Perform Tasks: ',
-      name: 'perform_tasks',
+      'Modify bluetooth name successful.',
+      name: 'bluetooth_modify_ok',
       desc: '',
       args: [],
     );
   }
 
-  /// `Result: `
-  String get result {
+  /// `License information`
+  String get license_title {
     return Intl.message(
-      'Result: ',
-      name: 'result',
+      'License information',
+      name: 'license_title',
       desc: '',
       args: [],
     );
   }
 
-  /// `Tare: `
-  String get tare {
+  /// `Printer:`
+  String get printer {
     return Intl.message(
-      'Tare: ',
-      name: 'tare',
+      'Printer:',
+      name: 'printer',
       desc: '',
       args: [],
     );
   }
 
-  /// `Net: `
-  String get net {
+  /// `Direction:`
+  String get print_direction {
     return Intl.message(
-      'Net: ',
-      name: 'net',
+      'Direction:',
+      name: 'print_direction',
       desc: '',
       args: [],
     );
   }
 
-  /// `Innercode: `
-  String get innercode {
+  /// `Page:`
+  String get print_page {
     return Intl.message(
-      'Innercode: ',
-      name: 'innercode',
+      'Page:',
+      name: 'print_page',
       desc: '',
       args: [],
     );
   }
 
-  /// `Tare`
-  String get tare_s {
+  /// `Save File`
+  String get save_file {
     return Intl.message(
-      'Tare',
-      name: 'tare_s',
+      'Save File',
+      name: 'save_file',
       desc: '',
       args: [],
     );
   }
 
-  /// `Stable`
-  String get stable {
+  /// `Open File`
+  String get open_file {
     return Intl.message(
-      'Stable',
-      name: 'stable',
+      'Open File',
+      name: 'open_file',
       desc: '',
       args: [],
     );
   }
 
-  /// `Coordinate: `
-  String get coordinate {
+  /// `BarCode Edit`
+  String get barcode_edit {
     return Intl.message(
-      'Coordinate: ',
-      name: 'coordinate',
+      'BarCode Edit',
+      name: 'barcode_edit',
       desc: '',
       args: [],
     );
   }
 
-  /// ` X : `
-  String get x_coordinate {
+  /// `Qrcode Edit`
+  String get qrcode_edit {
     return Intl.message(
-      ' X : ',
-      name: 'x_coordinate',
+      'Qrcode Edit',
+      name: 'qrcode_edit',
       desc: '',
       args: [],
     );
   }
 
-  /// ` Y : `
-  String get y_coordinate {
+  /// `New Format`
+  String get new_format {
     return Intl.message(
-      ' Y : ',
-      name: 'y_coordinate',
+      'New Format',
+      name: 'new_format',
       desc: '',
       args: [],
     );
   }
 
-  /// ` Z : `
-  String get z_coordinate {
+  /// `Save csv`
+  String get save_csv {
     return Intl.message(
-      ' Z : ',
-      name: 'z_coordinate',
+      'Save csv',
+      name: 'save_csv',
       desc: '',
       args: [],
     );
   }
 
-  /// `isMoving: `
-  String get ismoving {
+  /// `Download`
+  String get download {
     return Intl.message(
-      'isMoving: ',
-      name: 'ismoving',
+      'Download',
+      name: 'download',
       desc: '',
       args: [],
     );
   }
 
-  /// `scaleZZero: `
-  String get z_zero_coordinate {
+  /// `Attribute`
+  String get attribute {
     return Intl.message(
-      'scaleZZero: ',
-      name: 'z_zero_coordinate',
+      'Attribute',
+      name: 'attribute',
       desc: '',
       args: [],
     );
   }
 
-  /// `weights: `
-  String get weights_number {
+  /// `Tab order:`
+  String get tab_order {
     return Intl.message(
-      'weights: ',
-      name: 'weights_number',
+      'Tab order:',
+      name: 'tab_order',
       desc: '',
       args: [],
     );
   }
 
-  /// `scale:`
-  String get scale {
+  /// `You haven't selected any element.`
+  String get no_element {
     return Intl.message(
-      'scale:',
-      name: 'scale',
+      'You haven\'t selected any element.',
+      name: 'no_element',
       desc: '',
       args: [],
     );
   }
 
-  /// `init`
-  String get init {
+  /// `Operation Steps:`
+  String get operation_steps {
     return Intl.message(
-      'init',
-      name: 'init',
+      'Operation Steps:',
+      name: 'operation_steps',
       desc: '',
       args: [],
     );
   }
 
-  /// `details`
-  String get detailed_communication {
+  /// `1. Please click on one or more elements on the left side;`
+  String get step1 {
     return Intl.message(
-      'details',
-      name: 'detailed_communication',
+      '1. Please click on one or more elements on the left side;',
+      name: 'step1',
       desc: '',
       args: [],
     );
   }
 
-  /// `Communication`
-  String get communication {
+  /// `2. The selected elements will be displayed in the center of the page, and you can edit their attributes here. `
+  String get step2 {
     return Intl.message(
-      'Communication',
-      name: 'communication',
+      '2. The selected elements will be displayed in the center of the page, and you can edit their attributes here. ',
+      name: 'step2',
       desc: '',
       args: [],
     );
   }
 
-  /// `WeightMachineCommunication`
-  String get wt_detailed_communication {
+  /// `Editor`
+  String get editor {
     return Intl.message(
-      'WeightMachineCommunication',
-      name: 'wt_detailed_communication',
+      'Editor',
+      name: 'editor',
       desc: '',
       args: [],
     );
   }
 
-  /// `Error Message:`
-  String get error {
+  /// `Text Content:`
+  String get text_content {
     return Intl.message(
-      'Error Message:',
-      name: 'error',
+      'Text Content:',
+      name: 'text_content',
       desc: '',
       args: [],
     );
   }
 
-  /// `Weight machine error`
-  String get errcode0 {
+  /// `FontSize:`
+  String get select_fontsize {
     return Intl.message(
-      'Weight machine error',
-      name: 'errcode0',
+      'FontSize:',
+      name: 'select_fontsize',
       desc: '',
       args: [],
     );
   }
 
-  /// `Can't read scale information`
-  String get errcode1 {
+  /// `Rotation:`
+  String get select_rotation {
     return Intl.message(
-      'Can\'t read scale information',
-      name: 'errcode1',
+      'Rotation:',
+      name: 'select_rotation',
       desc: '',
       args: [],
     );
   }
 
-  /// `Scale reply timed out`
-  String get errcode2 {
+  /// `Font Reverse:`
+  String get font_reverse {
     return Intl.message(
-      'Scale reply timed out',
-      name: 'errcode2',
+      'Font Reverse:',
+      name: 'font_reverse',
       desc: '',
       args: [],
     );
   }
 
-  /// `Scale replies wrong information`
-  String get errcode3 {
+  /// `HR Alignment:`
+  String get hr_alignment {
     return Intl.message(
-      'Scale replies wrong information',
-      name: 'errcode3',
+      'HR Alignment:',
+      name: 'hr_alignment',
       desc: '',
       args: [],
     );
   }
 
-  /// `Missing configuration file`
-  String get errcode4 {
+  /// `Delete`
+  String get button_delete {
     return Intl.message(
-      'Missing configuration file',
-      name: 'errcode4',
+      'Delete',
+      name: 'button_delete',
       desc: '',
       args: [],
     );
   }
 
-  /// `MyDevice`
-  String get mydevice {
+  /// `QRcode:`
+  String get select_qrcode {
     return Intl.message(
-      'MyDevice',
-      name: 'mydevice',
+      'QRcode:',
+      name: 'select_qrcode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Qrcode Width:`
+  String get select_qrcode_width {
+    return Intl.message(
+      'Qrcode Width:',
+      name: 'select_qrcode_width',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Position`
+  String get position {
+    return Intl.message(
+      'Position',
+      name: 'position',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Font Bold:`
+  String get font_bold {
+    return Intl.message(
+      'Font Bold:',
+      name: 'font_bold',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Alignment:`
+  String get alignment {
+    return Intl.message(
+      'Alignment:',
+      name: 'alignment',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Max Length:`
+  String get max_length {
+    return Intl.message(
+      'Max Length:',
+      name: 'max_length',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Type:`
+  String get element_type {
+    return Intl.message(
+      'Type:',
+      name: 'element_type',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `BarCode:`
+  String get select_barcode {
+    return Intl.message(
+      'BarCode:',
+      name: 'select_barcode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `BarCode Height:`
+  String get barcode_height {
+    return Intl.message(
+      'BarCode Height:',
+      name: 'barcode_height',
       desc: '',
       args: [],
     );

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../pages/login_page.dart';
 import '../dialog/account_dialog.dart';
-import '../dialog/enterRegister_dialog.dart';
+import '../dialog/enter_register_dialog.dart';
 import '../dialog/launguage_dialog.dart';
 import '../dialog/register_dialog.dart';
 

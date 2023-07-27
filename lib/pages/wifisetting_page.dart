@@ -1,15 +1,14 @@
 import 'dart:convert';
-import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:t_max/data/scalecmd_data%20copy.dart';
+import 'package:t_max/data/scalecmd_data.dart';
 import 'package:t_max/data/wifi_list_info.dart';
 import 'package:t_max/main.dart';
 import '../data/downloadresponse.dart';
 import '../data/ipinfodata.dart';
 import '../eventbus/eventbus.dart';
 import '../functions/methods.dart';
-import 'home_page.dart';
+import '../generated/l10n.dart';
 import 'widget/wifitextfeild.dart';
 
 class WifiSettingPage extends StatefulWidget {
@@ -59,31 +58,16 @@ class WifiSettingPageState extends State<WifiSettingPage> {
       if (parts.any((part) => part == null || part > 255)) {
         tempValid = false;
       }
-      print('$tempValid');
     }
     return tempValid;
   }
 
-  void _handleEventConnectDynamicIp(EventConnectDynamicIp event) {
-    if (mounted) {
-      setState(() {
-        myConnectDynamicIpResponse = event.obj;
-        if (myConnectDynamicIpResponse.msgBody.isNotEmpty) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(
-                  (myConnectDynamicIpResponse.msgBody.contains('ok'))
-                      ? 'Set wifi successful!'
-                      : myConnectDynamicIpResponse.msgBody,
-                  style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.bold)), ////此处需要秤回复
-              duration: const Duration(seconds: 3),
-              backgroundColor:
-                  (myConnectDynamicIpResponse.msgBody.contains('ok'))
-                      ? Colors.green.shade900
-                      : Colors.red.shade900));
-        }
-      });
-    }
+  var localizedStrings;
+  String set_message = '';
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    localizedStrings = S.of(context);
   }
 
   @override
@@ -103,7 +87,6 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     displayedItems = List.from(wifiItems);
     ssidController.text = "";
     PublicFunctions.getWifiList();
-    // _eventbus2.on<EventConnectDynamicIp>().listen(_handleEventConnectDynamicIp);
     _eventbus1 = eventBus.on<EventWiFiListInfo>().listen((event) {
       if (mounted) {
         setState(() {
@@ -132,7 +115,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text(
                     (myConnectDynamicIpResponse.msgBody.contains('ok'))
-                        ? 'Set wifi successful!'
+                        ? set_message
                         : myConnectDynamicIpResponse.msgBody,
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.bold)), ////此处需要秤回复
@@ -153,7 +136,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text(
                     (myConnectStaticIpResponse.msgBody.contains('ok'))
-                        ? 'Set wifi successful!'
+                        ? localizedStrings.set_wifi_success
                         : myConnectStaticIpResponse.msgBody,
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.bold)), ////此处需要秤回复
@@ -203,9 +186,10 @@ class WifiSettingPageState extends State<WifiSettingPage> {
 
   @override
   Widget build(BuildContext context) {
+    localizedStrings = S.of(context);
+    set_message = localizedStrings.set_wifi_success;
     // final _width = MediaQuery.of(context).size.width;
     // final _height = MediaQuery.of(context).size.height;
-
     return Scaffold(
         body: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Expanded(
@@ -215,7 +199,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
-              Container(
+              SizedBox(
                   height: 100,
                   // color: Theme.of(context).colorScheme.primary,
                   child: Column(
@@ -246,12 +230,12 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                             ),
                             elevation: 5, // 阴影
                           ),
-                          child: const Row(
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Icon(Icons.home),
-                              Text("Home"),
+                              const Icon(Icons.home),
+                              Text(localizedStrings.button_home),
                             ],
                           )),
                       const SizedBox(
@@ -265,7 +249,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                           SizedBox(
                             width: 40, // 为Container指定一个固定的宽度
                             child: Tooltip(
-                              message: 'Refresh',
+                              message: localizedStrings.refresh_tip,
                               child: IconButton(
                                 splashRadius: 20,
                                 onPressed: () {
@@ -303,7 +287,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                   Icons.search,
                                   color: Theme.of(context).colorScheme.primary,
                                 ),
-                                labelText: 'Find SSID',
+                                labelText: localizedStrings.find_ssid,
                                 floatingLabelBehavior:
                                     FloatingLabelBehavior.never,
                                 border: const OutlineInputBorder(
@@ -341,7 +325,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                 child: ListView.builder(
                   itemCount: displayedItems.length,
                   itemBuilder: (context, index) {
-                    return Container(
+                    return SizedBox(
                         height: 50,
                         child: Column(
                           children: [
@@ -418,7 +402,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                           ],
                         ),
                         Expanded(
-                          child: Container(
+                          child: SizedBox(
                             width: double.infinity,
                             child: Align(
                               alignment: Alignment.center,
@@ -430,7 +414,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                     ),
                                     Center(
                                       child: Text(
-                                        'Wireless network settings',
+                                        localizedStrings.network_setting,
                                         style: TextStyle(
                                           fontSize: 40,
                                           color: Theme.of(context)
@@ -519,15 +503,15 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                         const SizedBox(
                                           width: 20,
                                         ),
-                                        const SizedBox(
+                                        SizedBox(
                                           height: 60,
                                           width: 100,
                                           child: Align(
                                             alignment: Alignment.centerRight,
                                             child: Text(
-                                              "Password:",
+                                              localizedStrings.password,
                                               textAlign: TextAlign.right,
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                 fontSize: 20,
                                               ),
                                             ),
@@ -584,7 +568,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                       height: 20,
                                     ),
                                     buildCommonRow(
-                                      "IPv4:",
+                                      localizedStrings.ip_address,
                                       15,
                                       ipaddressRegex,
                                       _isValidIP,
@@ -594,7 +578,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                       _isStatic,
                                     ),
                                     buildCommonRow(
-                                      "NetMask:",
+                                      localizedStrings.netmask,
                                       15,
                                       ipaddressRegex,
                                       _isValidMask,
@@ -604,7 +588,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                       _isStatic,
                                     ),
                                     buildCommonRow(
-                                      "Gateway:",
+                                      localizedStrings.gatway,
                                       15,
                                       ipaddressRegex,
                                       _isValidGateway,
@@ -639,15 +623,15 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                                         .colorScheme
                                                         .primary)),
                                           ),
-                                          child: const SizedBox(
+                                          child: SizedBox(
                                             width: 100,
                                             height: 40,
                                             child: Center(
                                               child: Text(
-                                                "Static",
+                                                localizedStrings.button_static,
                                                 textAlign: TextAlign.center,
-                                                style:
-                                                    TextStyle(fontSize: 20.0),
+                                                style: const TextStyle(
+                                                    fontSize: 20.0),
                                               ),
                                             ),
                                           ),
@@ -671,15 +655,15 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                                         .colorScheme
                                                         .primary)),
                                           ),
-                                          child: const SizedBox(
+                                          child: SizedBox(
                                             width: 100,
                                             height: 40,
                                             child: Center(
                                               child: Text(
-                                                "Dynamic",
+                                                localizedStrings.button_dynamic,
                                                 textAlign: TextAlign.center,
-                                                style:
-                                                    TextStyle(fontSize: 20.0),
+                                                style: const TextStyle(
+                                                    fontSize: 20.0),
                                               ),
                                             ),
                                           ),
@@ -719,7 +703,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                             height: 40,
                                             child: Center(
                                               child: Text(
-                                                'Connect',
+                                                localizedStrings.button_set,
                                                 style: TextStyle(
                                                     color: Theme.of(context)
                                                         .colorScheme
@@ -828,7 +812,6 @@ class WifiSettingPageState extends State<WifiSettingPage> {
 
       myScaleCmd.cmdData = jsonEncode(myStaticIpInfo).toString();
       MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
-      print(jsonEncode(myScaleCmd));
     }
   }
 

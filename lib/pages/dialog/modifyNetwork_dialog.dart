@@ -18,8 +18,8 @@ modifyAddNetworkDialog(BuildContext context) {
           return AlertDialog(
             title: Container(
                 color: Colors.blue.shade900,
-                child: Row(
-                  children: const [
+                child: const Row(
+                  children: [
                     Icon(Icons.wifi, color: Colors.white),
                     Text("Device information modification",
                         style: TextStyle(color: Colors.white))
@@ -37,8 +37,8 @@ modifyAddNetworkDialog(BuildContext context) {
                     child: Column(
                       children: [
                         const SizedBox(height: 10),
-                        Row(
-                          children: const [
+                        const Row(
+                          children: [
                             Text("Basic Information Settings"),
                           ],
                         ),

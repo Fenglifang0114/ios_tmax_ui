@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:t_max/data/license_data.dart';
 
+import '../../generated/l10n.dart';
+
 class LicenseInfoDialog extends StatefulWidget {
   const LicenseInfoDialog({super.key});
 
@@ -15,20 +17,18 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
   String dueDate = '';
   bool isPass = false;
 
+  dynamic localizedStrings;
+  String systemId = '';
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    localizedStrings = S.of(context);
+  }
+
   @override
   void initState() {
     super.initState();
-    pidController.text = '';
-
-    if (myLicenseData.data.isNotEmpty) {
-      List<String> strList = myLicenseData.data.split(',');
-      pId = strList[1]; // id
-      dueDate = strList[2];
-      if (strList[0] == 'true') {
-        isPass = true;
-      }
-      pidController.text = 'System Unique ID: $pId';
-    }
+    pidController.text = systemId;
   }
 
   @override
@@ -40,15 +40,26 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
 
   @override
   Widget build(BuildContext context) {
+    localizedStrings = S.of(context);
+    systemId = localizedStrings.system_id;
+    if (myLicenseData.data.isNotEmpty) {
+      List<String> strList = myLicenseData.data.split(',');
+      pId = strList[1]; // id
+      dueDate = strList[2];
+      if (strList[0] == 'true') {
+        isPass = true;
+      }
+      pidController.text = systemId + pId;
+    }
     return AlertDialog(
       title: Container(
         color: Colors.blue.shade900,
-        child: const Row(
+        child: Row(
           children: [
-            Icon(Icons.info_outline, color: Colors.white),
+            const Icon(Icons.info_outline, color: Colors.white),
             Text(
-              "License information",
-              style: TextStyle(color: Colors.white),
+              localizedStrings.license_title,
+              style: const TextStyle(color: Colors.white),
             )
           ],
         ),
@@ -82,8 +93,8 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
                         height: 100,
                         child: Text(
                             (isPass)
-                                ? ''
-                                : " No authentication. \r\n\r\n  Please send the system unique ID to us.\r\n\r\nEmail:sales@taiwanscale.com",
+                                ? localizedStrings.passed_message
+                                : localizedStrings.passed_fail_message,
                             style: TextStyle(
                                 fontSize: 16,
                                 color: (isPass)
@@ -93,7 +104,10 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
                       const SizedBox(
                         height: 50,
                       ),
-                      Text((dueDate.isEmpty) ? '' : "Expiration date: $dueDate",
+                      Text(
+                          (dueDate.isEmpty)
+                              ? ''
+                              : localizedStrings.expiration_date + dueDate,
                           style: TextStyle(
                               fontSize: 16,
                               color: (isPass)
@@ -116,7 +130,7 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
           children: [
             const SizedBox(width: 20),
             OutlinedButton(
-              child: const Text("OK"),
+              child: Text(localizedStrings.button_ok),
               onPressed: () {
                 Navigator.of(context).pop();
               },

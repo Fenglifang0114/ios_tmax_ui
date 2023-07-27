@@ -378,10 +378,6 @@ class MyQrcodeDialogState extends State<MyQrcodeDialog> {
     }
   }
 
-  void _errorClean() {
-    _errorController.text = '';
-  }
-
   bool _judgeData() {
     bool res = true;
     if (_barCodeNameController.text.isNotEmpty &&

@@ -15,8 +15,8 @@ showAddNetworkDialog(BuildContext context) {
           return AlertDialog(
             title: Container(
                 color: Colors.blue.shade900,
-                child: Row(
-                  children: const [
+                child: const Row(
+                  children: [
                     Icon(Icons.wifi, color: Colors.white),
                     Text("网络连接", style: TextStyle(color: Colors.white))
                   ],
@@ -33,8 +33,8 @@ showAddNetworkDialog(BuildContext context) {
                     child: Column(
                       children: [
                         const SizedBox(height: 10),
-                        Row(
-                          children: const [
+                        const Row(
+                          children: [
                             Text("Basic Information Settings"),
                           ],
                         ),

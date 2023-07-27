@@ -46,6 +46,47 @@ class PublicFunctions {
     myScaleCmd.cmdMode = 'get_ap_list';
     myScaleCmd.cmdData = '';
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
-    print(jsonEncode(myScaleCmd));
+  }
+
+  static void sendModifyInfo(String modifyString) {
+    myScaleCmd.cmdMode = "modify_scale";
+    myScaleCmd.cmdData = modifyString;
+    MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  static void getWeight() {
+    myScaleCmd.cmdMode = "reg_weight_data";
+    myScaleCmd.cmdData = "";
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  static void stopWeight() {
+    myScaleCmd.cmdMode = "unreg_weight_data";
+    myScaleCmd.cmdData = "";
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  static void getUserList() {
+    myScaleCmd.cmdMode = "get_user_list";
+    myScaleCmd.cmdData = "";
+    MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  static void performZero() {
+    myScaleCmd.cmdMode = "zero";
+    myScaleCmd.cmdData = "";
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  static void performTare() {
+    myScaleCmd.cmdMode = "tare";
+    myScaleCmd.cmdData = "";
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  static void getRecords() {
+    myScaleCmd.cmdMode = "get_recs";
+    myScaleCmd.cmdData = "";
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
 }

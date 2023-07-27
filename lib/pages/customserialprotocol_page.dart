@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,7 +12,7 @@ class CustomSerialProtocol extends StatefulWidget {
 }
 
 class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
-  List<SerialProtocolText> _textList = [];
+  final List<SerialProtocolText> _textList = [];
   final textController = TextEditingController();
   final RegExp englishRegExp = RegExp(r'^[\x00-\x7F]*$');
 
@@ -281,23 +280,9 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
   void _sendToScale() {
     String json = jsonEncode(_textList);
 
-    print(json);
-
-    // final buffer = StringBuffer('SO');
-    // for (final text in _textList) {
-    //   if (text.type == 'TEXT') {
-    //     buffer.write(',TEXT,${text.content}');
-    //   } else if (text.type == 'VARIABLE') {
-    //     final temp =
-    //         '${text.varName},${text.default1},${text.default2},${text.default3},${text.default4},${text.default5},';
-    //     buffer.write(
-    //         ',VAR,$temp${text.alignment == 'Left' ? '1' : '3'},${text.maxLength}');
-    //   }
-    // }
-    // final sendData = buffer.toString();
-    // if (kDebugMode) {
-    //   print(sendData);
-    // }
+    if (kDebugMode) {
+      print(json);
+    }
   }
 
   String _getOutputData() {

@@ -3,11 +3,13 @@ import 'package:t_max/data/dialog_data.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/pages/labeldesign_page.dart';
 import 'package:t_max/pages/widget/license_info.dart';
+import 'package:t_max/pages/widget/show_weight_report.dart';
 import 'package:t_max/pages/wifisetting_page.dart';
 import '../data/comscaleinfo_data.dart';
 import '../data/currentport_data.dart';
 import '../data/device_data.dart';
 import '../functions/methods.dart';
+import '../generated/l10n.dart';
 import 'dialog/waitingbuildtips.dart';
 import 'modify_com_port_page.dart';
 import 'widget/bluetoothsetting.dart';
@@ -33,15 +35,15 @@ class _HomePageState extends State<HomePage> {
   String groupValue = 'zh';
   DateTime now = DateTime.now();
 
-  List<Color> cardColors = List.generate(7, (index) => Colors.white);
-  List<Color> textColors = List.generate(7, (index) => Colors.blue.shade900);
+  List<Color> cardColors = List.generate(9, (index) => Colors.white);
+  List<Color> textColors = List.generate(9, (index) => Colors.blue.shade900);
   List<Widget> targetPages = [
     const ModifyComPortPage(), // 第一个Card对应的目标界面
     const LabelDesignPage(), // 第二个Card对应的目标界面
     const WifiSettingPage(), // 第三个Card对应的目标界面
     const LabelDesignPage(), // 第一个Card对应的目标界面
     const LabelDesignPage(), // 第二个Card对应的目标界面
-    const LabelDesignPage(), // 第三个Card对应的目标界面
+    const ShowWeightReport(), // 第三个Card对应的目标界面
     // ...
   ];
 
@@ -54,15 +56,6 @@ class _HomePageState extends State<HomePage> {
     'images/16.png',
   ];
 
-  List<String> titleNames = [
-    'Serial port connection',
-    'Label Design',
-    'Wifi Setting',
-    'Bluetooth Setting',
-    'Update FW',
-    'Scale Records',
-    'License Information',
-  ];
   // 初始文字颜色
 
   @override
@@ -113,6 +106,18 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    var localizedStrings = S.of(context);
+    List<String> titleNames = [
+      localizedStrings.home_page_title1,
+      localizedStrings.home_page_title2,
+      localizedStrings.home_page_title3,
+      localizedStrings.home_page_title4,
+      localizedStrings.home_page_title5,
+      localizedStrings.home_page_title6,
+      localizedStrings.home_page_title7,
+      localizedStrings.home_page_title8,
+      localizedStrings.home_page_title9,
+    ];
     final _width = MediaQuery.of(context).size.width;
     final _height = MediaQuery.of(context).size.height;
     // final _height = MediaQuery.of(context).size.height;
@@ -164,7 +169,7 @@ class _HomePageState extends State<HomePage> {
         //左侧边栏
         // drawer: leftSidebar(context),
 
-        body: Container(
+        body: SizedBox(
       height: _height,
       width: _width,
       // decoration: BoxDecoration(gradient: boxGradient()),
@@ -172,7 +177,7 @@ class _HomePageState extends State<HomePage> {
         // 水平拉伸
         scrollDirection: Axis.horizontal,
         children: [
-          Container(
+          SizedBox(
             height: _height,
             width: _width,
             // decoration: BoxDecoration(gradient: boxGradient()),
@@ -289,9 +294,21 @@ class _HomePageState extends State<HomePage> {
                           textColor: textColors[6],
                           // image: imagePaths[3],
                         ),
-                        const SizedBox(
-                          height: 150,
-                          width: 200,
+                        CustomCard(
+                          onTap: () {
+                            setState(() {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ShowWeightReport()),
+                              );
+                            });
+                          },
+                          title: titleNames[7],
+                          cardColor: cardColors[7],
+                          textColor: textColors[7],
+                          // image: imagePaths[3],
                         ),
                         const SizedBox(
                           height: 150,
@@ -304,12 +321,12 @@ class _HomePageState extends State<HomePage> {
                 Container(
                     height: 20,
                     color: Colors.blue.shade900,
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text("Contact us:sales@taiwanscale.com",
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 15)),
+                        Text(S.of(context).contact_us,
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 15)),
                       ],
                     )),
               ],

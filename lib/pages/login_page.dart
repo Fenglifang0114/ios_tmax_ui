@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import '../data/login_data.dart';
-import '../../pages/widget/themeColor.dart';
+import 'widget/theme_color.dart';
 import 'dialog/register_dialog.dart';
 import 'home_page.dart';
-import 'widget/boxGradient.dart';
+import 'widget/box_gradient.dart';
 import 'widget/version.dart';
 
 class LoginPage extends StatefulWidget {

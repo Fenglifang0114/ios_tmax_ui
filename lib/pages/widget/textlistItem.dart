@@ -78,7 +78,7 @@ class TextItem extends StatefulWidget {
 
 class TextItemState extends State<TextItem> {
   TextItemState({Key? key}) : super();
-  var _eventbus1;
+  dynamic _eventbus1;
   @override
   void initState() {
     super.initState();
@@ -90,6 +90,13 @@ class TextItemState extends State<TextItem> {
         });
       }
     });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _eventbus1.cancel();
+    super.dispose();
   }
 
   @override

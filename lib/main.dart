@@ -8,7 +8,7 @@ import 'common/WebSocketScaleChannel.dart';
 import 'data/scalecmd_data.dart';
 import 'generated/l10n.dart';
 import 'pages/trial_page.dart';
-import 'pages/widget/themeColor.dart';
+import 'pages/widget/theme_color.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -51,6 +51,7 @@ class MyApp extends StatelessWidget {
         ],
         // 应用支持的语言列表
         supportedLocales: S.delegate.supportedLocales,
+        locale: const Locale('zh', "CN"),
 
         //去掉右上角debug图标
         debugShowCheckedModeBanner: false,

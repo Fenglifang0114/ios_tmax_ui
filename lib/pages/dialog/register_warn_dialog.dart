@@ -20,9 +20,9 @@ registerWarnDialog(BuildContext context) {
                 ),
                 width: 200,
                 alignment: Alignment.centerRight,
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.start,
-                  children: const [
+                  children: [
                     SizedBox(width: 5),
                     Icon(
                       Icons.message,

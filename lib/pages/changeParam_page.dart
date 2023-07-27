@@ -5,10 +5,10 @@ import '../data/date_data.dart';
 import '../data/device_data.dart';
 import '../data/time_data.dart';
 import '../eventbus/eventbus.dart';
-import '../pages/widget/themeColor.dart';
+import 'widget/theme_color.dart';
 import 'widget/dropdown.dart';
-import 'widget/leftSidebar.dart';
-import 'widget/appbarMsg.dart';
+import 'widget/left_side_bar.dart';
+import 'widget/appbar_msg.dart';
 import 'widget/version.dart';
 
 class ChangeParamPage extends StatefulWidget {
@@ -118,7 +118,7 @@ class _ChangeParamPageState extends State<ChangeParamPage> {
             preferredSize: const Size.fromHeight(30),
             child: AppBar(
               title: version(),
-              actions: [AppbarMsg(context)],
+              actions: [appbarMsg(context)],
             )),
         body: ListView(
           // 水平拉伸

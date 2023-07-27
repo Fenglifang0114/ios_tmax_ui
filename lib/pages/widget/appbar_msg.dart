@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../data/login_data.dart';
 
-import '../../data/device_data.dart';
 import 'TimerWidget.dart';
 
-AppbarMsg(context) {
+appbarMsg(context) {
   DateTime now = DateTime.now();
   return Row(
     children: [
@@ -16,8 +14,8 @@ AppbarMsg(context) {
               child: TimerWidget(),
             ),
 
-            // Text(
-            //     "当前时间：${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')} ${(now.hour.toString().padLeft(2, '0'))}:${(now.minute.toString().padLeft(2, '0'))}:${(now.second.toString().padLeft(2, '0'))}"),
+            Text(
+                "当前时间：${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')} ${(now.hour.toString().padLeft(2, '0'))}:${(now.minute.toString().padLeft(2, '0'))}:${(now.second.toString().padLeft(2, '0'))}"),
             const SizedBox(width: 30),
             // Text("Current device:" + myDevicedata.name + "  "),
             // const SizedBox(width: 30),

@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:t_max/data/downloadresponse.dart';
 import '../../data/scalecmd_data.dart';
 import '../../eventbus/eventbus.dart';
+import '../../generated/l10n.dart';
 import '../../main.dart';
 
 class BluetoothDialog extends StatefulWidget {
@@ -36,6 +37,14 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
     });
   }
 
+  var localizedStrings;
+  String set_message = '';
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    localizedStrings = S.of(context);
+  }
+
   @override
   void dispose() {
     _deviceNameController.dispose();
@@ -45,15 +54,16 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
 
   @override
   Widget build(BuildContext context) {
+    localizedStrings = S.of(context);
     return AlertDialog(
       title: Container(
         color: Colors.blue.shade900,
-        child: const Row(
+        child: Row(
           children: [
-            Icon(Icons.bluetooth, color: Colors.white),
+            const Icon(Icons.bluetooth, color: Colors.white),
             Text(
-              "Device information modification",
-              style: TextStyle(color: Colors.white),
+              localizedStrings.bluetooth_modification,
+              style: const TextStyle(color: Colors.white),
             )
           ],
         ),
@@ -76,7 +86,7 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text("Device name:"),
+                          Text(localizedStrings.device_name),
                           const SizedBox(height: 10),
                           SizedBox(
                             width: 400,
@@ -103,7 +113,11 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
                           ),
                           const SizedBox(height: 150),
                           Text(
-                            _errorMessage,
+                            (_errorMessage.contains('ok'))
+                                ? localizedStrings.bluetooth_modify_ok
+                                : (_errorMessage.contains('error'))
+                                    ? localizedStrings.bluetooth_modify_error
+                                    : '',
                             style: TextStyle(
                                 color:
                                     (myConnectBTResponse.msgBody.contains('ok'))
@@ -143,7 +157,7 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             ElevatedButton(
-              child: const Text("Set"),
+              child: Text(localizedStrings.button_set),
               onPressed: isSetting
                   ? null
                   : () {
@@ -153,21 +167,19 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
                           if (MyApp.webchannel1.heartStatus) {
                             sendBluetoothName();
                           } else {
-                            _errorMessage =
-                                'Serial port connection lost. Check the settings. ';
+                            _errorMessage = localizedStrings.serial_error;
                           }
                         });
                       } catch (e) {
                         setState(() {
-                          _errorMessage =
-                              'Serial port connection lost. Check the settings. ';
+                          _errorMessage = localizedStrings.serial_error;
                         });
                       }
                     },
             ),
             const SizedBox(width: 20),
             OutlinedButton(
-              child: const Text("Cancel"),
+              child: Text(localizedStrings.button_cancel),
               onPressed: () {
                 Navigator.of(context).pop();
               },

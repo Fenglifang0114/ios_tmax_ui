@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../pages/dialog/registerWarn_dialog.dart';
+import 'register_warn_dialog.dart';
 import '../home_page.dart';
 
 TextEditingController computerid = TextEditingController();
@@ -16,8 +16,8 @@ registerDialog(BuildContext context) {
           return AlertDialog(
             title: Container(
                 color: Colors.blue.shade900,
-                child: Row(
-                  children: const [
+                child: const Row(
+                  children: [
                     Icon(
                       Icons.lock_outline,
                       color: Colors.white,

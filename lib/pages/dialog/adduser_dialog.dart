@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:t_max/data/userinfo_data.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import '../../data/scalecmd_data.dart';
+import '../../functions/methods.dart';
 import '../../main.dart';
 
 TextEditingController userName = TextEditingController(
@@ -40,8 +41,8 @@ addUserDialog(BuildContext context) {
           return AlertDialog(
             title: Container(
                 color: Colors.blue.shade900,
-                child: Row(
-                  children: const [
+                child: const Row(
+                  children: [
                     Icon(Icons.verified_user, color: Colors.white),
                     Text("UserInfo", style: TextStyle(color: Colors.white))
                   ],
@@ -231,9 +232,9 @@ addUserDialog(BuildContext context) {
                       child: const Text("Add"),
                       onPressed: () {
                         errorText.text = '';
-                        getUserList();
+                        PublicFunctions.getUserList();
                         addUser();
-                        getUserList();
+                        PublicFunctions.getUserList();
                         // Navigator.of(context).pop(connectionType);
                       }),
                   const SizedBox(width: 20),
@@ -241,10 +242,10 @@ addUserDialog(BuildContext context) {
                       child: const Text("Edit"),
                       onPressed: () {
                         errorText.text = '';
-                        getUserList();
-                        getUserList();
+                        PublicFunctions.getUserList();
+                        PublicFunctions.getUserList();
                         editUser();
-                        getUserList();
+                        PublicFunctions.getUserList();
                         // Navigator.of(context).pop(connectionType);
                       }),
                   const SizedBox(width: 20),
@@ -254,10 +255,10 @@ addUserDialog(BuildContext context) {
                         if (userId.text.isNotEmpty ||
                             userName.text.isNotEmpty) {
                           errorText.text = '';
-                          getUserList();
-                          getUserList();
+                          PublicFunctions.getUserList();
+                          PublicFunctions.getUserList();
                           delUser();
-                          getUserList();
+                          PublicFunctions.getUserList();
                         } else {
                           errorText.text =
                               'The user id and user name can not be null !';
@@ -268,7 +269,7 @@ addUserDialog(BuildContext context) {
                   OutlinedButton(
                       child: const Text("Exit"),
                       onPressed: () {
-                        getUserList();
+                        PublicFunctions.getUserList();
                         Navigator.of(context)
                             .pop(); // to go back to screen after submitting
                       })
@@ -278,12 +279,6 @@ addUserDialog(BuildContext context) {
           );
         }));
       });
-}
-
-void getUserList() {
-  myScaleCmd.cmdMode = "get_user_list";
-  myScaleCmd.cmdData = "";
-  MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
 }
 
 void addUser() {
@@ -399,7 +394,7 @@ void delUser() {
       myScaleCmd.cmdMode = "del_user";
       myScaleCmd.cmdData = jsonEncode(myUserRecDel);
       MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
-      print(jsonEncode(myScaleCmd));
+
       if (recid == myUserInfo.recId) {
         myUserInfo.id = "";
         myUserInfo.name = "";

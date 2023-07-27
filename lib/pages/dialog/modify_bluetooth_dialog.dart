@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import '../../data/device_data.dart';
 import '../widget/dropdown.dart';
 
 String connectionType = "";
-List<String> deviceList = ['设备1', '设备2', '设备3'];
+List<String> deviceList = ['Device1', 'Device2', 'Device3'];
 TextEditingController deviceNum = TextEditingController();
-TextEditingController deviceName = TextEditingController();
+TextEditingController deviceName =
+    TextEditingController(text: myDevicedata.name);
 
-showAddBluetoothDialog(BuildContext context) {
+modifyAddBluetoothDialog(BuildContext context) {
   return showDialog(
       barrierDismissible: false, //设置为false，点击空白处弹窗不关闭
       context: context,
@@ -15,10 +17,11 @@ showAddBluetoothDialog(BuildContext context) {
           return AlertDialog(
             title: Container(
                 color: Colors.blue.shade900,
-                child: Row(
-                  children: const [
+                child: const Row(
+                  children: [
                     Icon(Icons.bluetooth, color: Colors.white),
-                    Text("蓝牙连接", style: TextStyle(color: Colors.white))
+                    Text("Device information modification",
+                        style: TextStyle(color: Colors.white))
                   ],
                 )),
             content: Container(
@@ -33,8 +36,8 @@ showAddBluetoothDialog(BuildContext context) {
                     child: Column(
                       children: [
                         const SizedBox(height: 10),
-                        Row(
-                          children: const [
+                        const Row(
+                          children: [
                             Text("Basic Information Settings"),
                           ],
                         ),
@@ -81,7 +84,7 @@ showAddBluetoothDialog(BuildContext context) {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text("机种类型："),
+                                const Text("Device Type:"),
                                 SizedBox(
                                   width: 200,
                                   height: 30,
@@ -114,7 +117,7 @@ showAddBluetoothDialog(BuildContext context) {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   OutlinedButton(
-                      child: const Text("确定"),
+                      child: const Text("OK"),
                       onPressed: () {
                         connectionType =
                             deviceName.text.toString() + ",Icons.bluetooth";
@@ -123,7 +126,7 @@ showAddBluetoothDialog(BuildContext context) {
                       }),
                   const SizedBox(width: 20),
                   OutlinedButton(
-                      child: const Text("取消"),
+                      child: const Text("Cancel"),
                       onPressed: () {
                         Navigator.of(context)
                             .pop(); // to go back to screen after submitting

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'package:csv/csv.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/downloadresponse.dart';
 import 'package:t_max/pages/widget/linepainter.dart';
@@ -15,7 +16,6 @@ import '../eventbus/eventbus.dart';
 import 'package:path/path.dart' as p;
 import 'package:file_picker/file_picker.dart';
 import '../main.dart';
-import 'addDevice_page.dart';
 import 'dialog/barcodeedit_dialog.dart';
 import 'dialog/qrcodeedit_dialog.dart';
 import 'widget/draggablefliating.dart';
@@ -1279,27 +1279,9 @@ class _PT566PageState extends State<PT566Page> {
     // final file = File('${path}/data.csv');
     // await file.writeAsString(csv);
     sendFormatToScale(csv); //发送数据
-    print(csv);
-    // _saveFormatToCsv(csv);  //////////保存数据到csv
-
-    // if (await file.exists()) {
-    // Scaffold.of(context).showSnackBar(
-    //   SnackBar(
-    //     content: Text('${file.path} created successfully'),
-    //   ),
-    // );
-    // } else {
-    //   Scaffold.of(context).showSnackBar(
-    //     SnackBar(
-    //       content: Text('Failed to create ${file.path}'),
-    //     ),
-    //   );
-    // }
-  }
-
-  Future<File> get _localFilepath async {
-    final directory = p.dirname(Platform.script.toFilePath());
-    return File(p.join(directory, 'fromatdata.json'));
+    if (kDebugMode) {
+      print(csv);
+    }
   }
 
   _saveFormatDataToJson(List list, String path) async {
@@ -1319,26 +1301,12 @@ class _PT566PageState extends State<PT566Page> {
         final file = File(p.join(path));
         // 将字符串写入文件中
         file.writeAsStringSync(formatjson);
-
         // await loadData();   此处已经写好了如何捞回来条码信息
       }
-
-      // setState(() {
-      //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      //       content: const Text('Save successful !',
-      //           style: TextStyle(
-      //               fontSize: 20, fontWeight: FontWeight.bold)), ////此处需要秤回复
-      //       duration: const Duration(seconds: 1),
-      //       backgroundColor: Colors.green.shade900));
-      // });
     } catch (e) {
-      // setState(() {
-      //   ScaffoldMessenger.of(context).showSnackBar(
-      //     SnackBar(
-      //       content: Text('$e Save fail'),
-      //     ),
-      //   );
-      // });
+      if (kDebugMode) {
+        print(e);
+      }
     }
   }
 
@@ -2867,6 +2835,7 @@ class Circle extends StatelessWidget {
   final Offset position;
   final ValueChanged onPositionChanged;
   const Circle({
+    super.key,
     required this.index,
     required this.position,
     required this.onPositionChanged,
