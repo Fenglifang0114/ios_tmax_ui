@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:t_max/data/currentport_data.dart';
 import 'package:t_max/data/modifyscale_data.dart';
 import '../../data/device_data.dart';

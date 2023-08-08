@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:t_max/data/respdata_data.dart';
 import 'package:t_max/data/scalecmd_data.dart';
 import 'package:t_max/data/wifi_list_info.dart';
 import 'package:t_max/main.dart';
@@ -36,11 +37,13 @@ class WifiSettingPageState extends State<WifiSettingPage> {
   bool _isValidGateway = true;
   bool _isValidDns = true;
   bool _isStatic = false;
-  int _ssidNo = -1;
+  String bssId = '';
   dynamic _eventbus1;
   dynamic _eventbus2;
   dynamic _eventbus3;
   dynamic _eventbus4;
+  dynamic _eventbus5;
+  dynamic _eventbus6;
   // dynamic _eventbus2 = EventBus();
 
   TextEditingController controller = TextEditingController();
@@ -62,8 +65,9 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     return tempValid;
   }
 
+  var errorMessage = '';
   var localizedStrings;
-  String set_message = '';
+  String setMessage = '';
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -86,7 +90,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     }
     displayedItems = List.from(wifiItems);
     ssidController.text = "";
-    PublicFunctions.getWifiList();
+    // PublicFunctions.getWifiList();
     _eventbus1 = eventBus.on<EventWiFiListInfo>().listen((event) {
       if (mounted) {
         setState(() {
@@ -115,7 +119,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text(
                     (myConnectDynamicIpResponse.msgBody.contains('ok'))
-                        ? set_message
+                        ? setMessage
                         : myConnectDynamicIpResponse.msgBody,
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.bold)), ////此处需要秤回复
@@ -154,24 +158,44 @@ class WifiSettingPageState extends State<WifiSettingPage> {
       if (mounted) {
         setState(() {
           myIpInfoData = event.obj;
-          if (myIpInfoData.dns != null) {
-            dnsController.text = myIpInfoData.dns![0];
-          }
+
           gateWayController.text = myIpInfoData.gateway!;
-          if (myIpInfoData.address != null) {
-            ipController.text = myIpInfoData.address![0].address!;
-            if (myIpInfoData.address![0].proto == 'manual') {
-              _isStatic = true;
-            } else {
-              _isStatic = false;
-            }
-            if (myIpInfoData.address![0].mask == 24) {
-              netMaskController.text = '255.255.255.0';
-            }
+          if (myIpInfoData.iP != null) {
+            ipController.text = myIpInfoData.iP!;
+            _isStatic = false;
+            errorMessage = '';
+          }
+          if (myIpInfoData.gateway!.isNotEmpty) {
+            gateWayController.text = myIpInfoData.gateway!;
+          }
+          if (myIpInfoData.netmask!.isNotEmpty) {
+            netMaskController.text = myIpInfoData.netmask!;
           }
         });
       }
     });
+
+    _eventbus5 = eventBus.on<EventMessageError>().listen((event) {
+      if (mounted) {
+        setState(() {
+          myMessageError = event.obj;
+          errorMessage = myMessageError.messagedata!;
+          if (errorMessage.contains('ok')) {
+            PublicFunctions.getIpInfo();
+          }
+        });
+      }
+    });
+
+    _eventbus6 = eventBus.on<EventGetIpError>().listen((event) {
+      if (mounted) {
+        setState(() {
+          myGetIpError = event.obj;
+          errorMessage = myGetIpError.messagedata!;
+        });
+      }
+    });
+
     super.initState();
   }
 
@@ -181,15 +205,18 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     _eventbus1.cancel();
     _eventbus2.cancel();
     _eventbus4.cancel();
+    _eventbus5.cancel();
+    _eventbus6.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     localizedStrings = S.of(context);
-    set_message = localizedStrings.set_wifi_success;
+    setMessage = localizedStrings.set_wifi_success;
     // final _width = MediaQuery.of(context).size.width;
     // final _height = MediaQuery.of(context).size.height;
+
     return Scaffold(
         body: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Expanded(
@@ -366,6 +393,11 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                   selectedIndex = index;
                                   // 更新文本框中的值
                                   ssidController.text = displayedItems[index];
+                                  if (index <
+                                      myWifiListInfo.wifidatalist!.length) {
+                                    bssId = myWifiListInfo
+                                        .wifidatalist![index].mac!;
+                                  }
                                 });
                               },
                             )
@@ -535,7 +567,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                                   28),
                                               FilteringTextInputFormatter.allow(
                                                   RegExp(
-                                                      r'[\x00-\xF]+$')), // 允许输入数字和点
+                                                      r'^[ -~]+$')), // 允许输入数字和点
                                             ],
                                             decoration: InputDecoration(
                                               suffixIcon: IconButton(
@@ -606,6 +638,37 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                       (value) => validateDns(value),
                                       dnsController,
                                       _isStatic,
+                                    ),
+                                    Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            (errorMessage.contains('ok') ||
+                                                    errorMessage.contains('OK'))
+                                                ? 'OK'
+                                                : (errorMessage.contains(
+                                                            'error') ||
+                                                        errorMessage
+                                                            .contains('fail') ||
+                                                        errorMessage.contains(
+                                                            'Time out') ||
+                                                        errorMessage
+                                                            .contains('ERROR'))
+                                                    ? errorMessage
+                                                    : '',
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                color: (errorMessage
+                                                            .contains('ok') ||
+                                                        errorMessage
+                                                            .contains('OK'))
+                                                    ? Colors.green.shade900
+                                                    : Colors.red.shade900),
+                                          ),
+                                        ]),
+                                    const SizedBox(
+                                      width: 20,
                                     ),
                                     const SizedBox(
                                       height: 20,
@@ -716,12 +779,17 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                           ),
                                           onPressed: isValidData()
                                               ? () {
-                                                  if (_isStatic) {
-                                                    sendStaticIpInfo();
-                                                  } else {
-                                                    sendDynamicIpInfo();
-                                                  }
-                                                  PublicFunctions.getIpInfo();
+                                                  errorMessage = '';
+                                                  ipController.clear();
+                                                  netMaskController.clear();
+                                                  dnsController.clear();
+                                                  gateWayController.clear();
+                                                  connectAp();
+                                                  // if (_isStatic) {
+                                                  //   sendStaticIpInfo();
+                                                  // } else {
+                                                  //   sendDynamicIpInfo();
+                                                  // }
                                                 }
                                               : null,
                                         ),
@@ -775,6 +843,22 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     return res;
   }
 
+  void connectAp() {
+    myScaleCmd.cmdMode = 'connect_ap';
+    if (ssidController.text.isEmpty || passwordController.text.isEmpty) {
+    } else if (ssidController.text.isEmpty) {
+      // var e
+    } else if (passwordController.text.isEmpty) {
+      // var e
+    } else {
+      myConnectApInfo.ssid = ssidController.text;
+      myConnectApInfo.password = passwordController.text;
+      myConnectApInfo.bssid = bssId; //手动输入的如何处理？id写-1
+      myScaleCmd.cmdData = jsonEncode(myConnectApInfo).toString();
+      MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+    }
+  }
+
   void sendDynamicIpInfo() {
     myScaleCmd.cmdMode = 'connect_ap_dynamic_ip';
     if (ssidController.text.isEmpty || passwordController.text.isEmpty) {
@@ -785,7 +869,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     } else {
       myDynamicIpInfo.ssid = ssidController.text;
       myDynamicIpInfo.password = passwordController.text;
-      myDynamicIpInfo.seqno = _ssidNo; //手动输入的如何处理？id写-1
+      // myDynamicIpInfo.seqno = bssId; //手动输入的如何处理？id写-1
       myScaleCmd.cmdData = jsonEncode(myDynamicIpInfo).toString();
       MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
     }
@@ -801,7 +885,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     } else {
       myStaticIpInfo.ssid = ssidController.text;
       myStaticIpInfo.password = passwordController.text;
-      myStaticIpInfo.seqno = _ssidNo; //手动输入的如何处理？id写-1
+      // myStaticIpInfo.seqno = _ssidNo; //手动输入的如何处理？id写-1
       myStaticIpInfo.gateway = gateWayController.text;
       myStaticIpInfo.dns = dnsController.text;
       myStaticAddresses.address = ipController.text;

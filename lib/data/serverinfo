@@ -359,33 +359,29 @@
 // 1. To get APs list
 //     {"Req":"get_ap_list", "ReqData":""}
 //     response:
-// 	{ "ScaleId":1, "MsgType":15,"MsgBody":"[{\"ssid\":\"T-Scale\",\"rssi\":1,\"mac\":\"11:22:33:44:55:66\",\"enccryptType\":\"WEP\"},
-// 										   {\"ssid\":\"guest1\",\"rssi\":2,\"mac\":\"11:22:33:44:55:77\",\"enccryptType\":\"WPA\"}],
-// 										   {\"ssid\":\"guest2\",\"rssi\":2,\"mac\":\"11:22:33:44:55:78\",\"enccryptType\":\"WPA2-PSK\"},
-// 										   {\"ssid\":\"guest3\",\"rssi\":3,\"mac\":\"11:22:33:44:55:79\",\"enccryptType\":\"WPA-WPA2-PSK\"},
-// 				 					       {''\"ssid\":\"test\",\"rssi\":4,\"mac\":\"11:22:33:44:55:88\",\"enccryptType\":\"WPA\"}
+// 	{ "ScaleId":1, "MsgType":"get_ap_list_resp","MsgBody":"[{\"ssid\":\"T-Scale\",\"rssi\":1,\"mac\":\"11:22:33:44:55:66\",\"enccryptType\":\"WEP\"},
+// 										   {\"ssid\":\"guest1\",\"rssi\":2,\"mac\":\"11:22:33:44:55:77\",\"encryptType\":\"WPA\"}],
+// 										   {\"ssid\":\"guest2\",\"rssi\":2,\"mac\":\"11:22:33:44:55:78\",\"encryptType\":\"WPA2-PSK\"},
+// 										   {\"ssid\":\"guest3\",\"rssi\":3,\"mac\":\"11:22:33:44:55:79\",\"encryptType\":\"WPA-WPA2-PSK\"},
+// 				 					       {''\"ssid\":\"test\",\"rssi\":4,\"mac\":\"11:22:33:44:55:88\",\"encryptType\":\"WPA\"}
 // 										   ]"
 // 	}
 // 2. Rescan APs
 //    {"Req":"rescan_ap_list", "ReqData":""}
 //     response:
 // 	{ "ScaleId":1, "MsgType":16, "MsgBody":""}
-// 3. Connect to Specific wifi AP with dynamic IP
-//     {"Req":"connect_ap_dynmic_ip", "ReqData":"{
-// 		"id": "3",
+// 3. Connect to Specific wifi AP
+//     {"Req":"connect_ap", "ReqData":"{
 //         "ssid": "test",
 //         "password": "mypassword",
-// 	}
+// 		"bssid": "11:22:33:44:55:66",}
 // 	}
 
 // 	response:
-// 	{ "ScaleId":1, "MsgType":17, "MsgBody":"ok"}
+// 	{ "ScaleId":1, "MsgType":"resp_connect_ap", "MsgBody":"ok"}
 
-// 4. Connect to Specific wifi AP with static IP
-//     {"Req":"connect_ap_static_ip", "ReqData":"{
-// 		"id": "3",
-//         "ssid": "test",
-//         "password": "mypassword",
+// 4.1 Set wifi with static IP
+//     {"Req":"set_wifi_static_ip", "ReqData":"{
 //         "addresses": [
 //             {
 //                 "address": "192.168.1.22",
@@ -404,12 +400,18 @@
 // 	}
 
 // 	response:
-// 	{ "ScaleId":1, "MsgType":18, "MsgBody":"ok"}
+// 	{ "ScaleId":1, "MsgType":"resp_set_wifi_static_ip, "MsgBody":"ok"}
+// 4.2 Set wifi with dynamic IP
+//    {"Req":"set_wifi_dynamic_ip", "ReqData":""}
+
+//    response:
+//    	{ "ScaleId":1, "MsgType":"resp_set_wifi_dynamic_ip, "MsgBody":"ok"}
+
 // 5. GetIpInfo
 //    {"Req":"get_ip_info", "ReqData":""}
 
 //    response
-//    { "ScaleId":1, "MsgType":19, "MsgBody":"{
+//    { "ScaleId":1, "MsgType": "resp_get_ip_info", "MsgBody":"{
 //         "addresses": [
 //             {
 //                 "address": "192.168.1.22",
@@ -430,11 +432,16 @@
 //     }
 //    }"
 
-// To configure BT's name in scale
+// To configure scale's BT configuration
 // ws://127.0.0.1:7878/tmax?scaleid=1
 
-// 1. To modify BT's name in scale
-//     {"Req":"modify_bt_name", "ReqData":"my bt name"}
+// 1. ModifyBTName
+//    {"Req":"modify_bt_name", "ReqData":"Test"}
+//     response:
+//     	{ "ScaleId":1, "MsgType":"resp_modify_bt_name", "MsgBody":"ok"}
 
-//     response
-//     { "scaleId": 1, "MsgType": "resp_modify_bt_name", "MsgBody": "ok" }
+// 2. Send command to BT on scale
+//    {"Req":"send_data_to_bt", "ReqData":"cmd"}
+//     response:
+//     	{ "ScaleId":1, "MsgType":"resp_send_data_to_bt", "MsgBody":"response from BT"}
+

@@ -256,3 +256,18 @@ class EventConnectBTResponse {
   dynamic obj;
   EventConnectBTResponse(this.obj);
 }
+
+class EventBTResponse {
+  dynamic obj;
+  EventBTResponse(this.obj);
+}
+
+class EventMessageError {
+  dynamic obj;
+  EventMessageError(this.obj);
+}
+
+class EventGetIpError {
+  dynamic obj;
+  EventGetIpError(this.obj);
+}

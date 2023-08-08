@@ -90,31 +90,31 @@ class S {
     );
   }
 
-  /// `Tare:`
+  /// `Tare`
   String get button_tare {
     return Intl.message(
-      'Tare:',
+      'Tare',
       name: 'button_tare',
       desc: '',
       args: [],
     );
   }
 
-  /// `Net:`
+  /// `Net`
   String get button_net {
     return Intl.message(
-      'Net:',
+      'Net',
       name: 'button_net',
       desc: '',
       args: [],
     );
   }
 
-  /// `Stable:`
-  String get button_stable {
+  /// `Save`
+  String get button_save {
     return Intl.message(
-      'Stable:',
-      name: 'button_stable',
+      'Save',
+      name: 'button_save',
       desc: '',
       args: [],
     );
@@ -210,20 +210,20 @@ class S {
     );
   }
 
-  /// `Serial port connection`
+  /// `Real-time Weight Data`
   String get home_page_title8 {
     return Intl.message(
-      'Serial port connection',
+      'Real-time Weight Data',
       name: 'home_page_title8',
       desc: '',
       args: [],
     );
   }
 
-  /// `Serial port connection`
+  /// `Language Setting`
   String get home_page_title9 {
     return Intl.message(
-      'Serial port connection',
+      'Language Setting',
       name: 'home_page_title9',
       desc: '',
       args: [],
@@ -885,6 +885,356 @@ class S {
     return Intl.message(
       'BarCode Height:',
       name: 'barcode_height',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Zero`
+  String get button_zero {
+    return Intl.message(
+      'Zero',
+      name: 'button_zero',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Zero:`
+  String get zero {
+    return Intl.message(
+      'Zero:',
+      name: 'zero',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tare:`
+  String get tare {
+    return Intl.message(
+      'Tare:',
+      name: 'tare',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Net:`
+  String get net {
+    return Intl.message(
+      'Net:',
+      name: 'net',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Stable:`
+  String get stable {
+    return Intl.message(
+      'Stable:',
+      name: 'stable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Setting`
+  String get button_setting {
+    return Intl.message(
+      'Setting',
+      name: 'button_setting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Export report`
+  String get button_export_report {
+    return Intl.message(
+      'Export report',
+      name: 'button_export_report',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `PLU Name:`
+  String get plu_name {
+    return Intl.message(
+      'PLU Name:',
+      name: 'plu_name',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `PLU Edit`
+  String get plu_edit {
+    return Intl.message(
+      'PLU Edit',
+      name: 'plu_edit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `User Name:`
+  String get user_name {
+    return Intl.message(
+      'User Name:',
+      name: 'user_name',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `User Edit`
+  String get user_edit {
+    return Intl.message(
+      'User Edit',
+      name: 'user_edit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Parameter settings`
+  String get parameter_settings_title {
+    return Intl.message(
+      'Parameter settings',
+      name: 'parameter_settings_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save Mode:`
+  String get save_mode {
+    return Intl.message(
+      'Save Mode:',
+      name: 'save_mode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Manual`
+  String get manual {
+    return Intl.message(
+      'Manual',
+      name: 'manual',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Auto`
+  String get auto {
+    return Intl.message(
+      'Auto',
+      name: 'auto',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Stable Time`
+  String get stable_time {
+    return Intl.message(
+      'Stable Time',
+      name: 'stable_time',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The stable time cannot exceed 20 seconds.`
+  String get stable_time_error_tip {
+    return Intl.message(
+      'The stable time cannot exceed 20 seconds.',
+      name: 'stable_time_error_tip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Date Format:`
+  String get date_format {
+    return Intl.message(
+      'Date Format:',
+      name: 'date_format',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Zero Range:`
+  String get zero_range {
+    return Intl.message(
+      'Zero Range:',
+      name: 'zero_range',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Product Information`
+  String get product_information {
+    return Intl.message(
+      'Product Information',
+      name: 'product_information',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pretare:`
+  String get pretare {
+    return Intl.message(
+      'Pretare:',
+      name: 'pretare',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `PLu Remarks:`
+  String get plu_remarks {
+    return Intl.message(
+      'PLu Remarks:',
+      name: 'plu_remarks',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add`
+  String get button_add {
+    return Intl.message(
+      'Add',
+      name: 'button_add',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit`
+  String get button_edit {
+    return Intl.message(
+      'Edit',
+      name: 'button_edit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `PLU ID or PLU name cannot be empty.`
+  String get plu_error_message1 {
+    return Intl.message(
+      'PLU ID or PLU name cannot be empty.',
+      name: 'plu_error_message1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `PLU ID or PLU name already exists.`
+  String get plu_error_message2 {
+    return Intl.message(
+      'PLU ID or PLU name already exists.',
+      name: 'plu_error_message2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `User Info`
+  String get user_info {
+    return Intl.message(
+      'User Info',
+      name: 'user_info',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `User ID:`
+  String get user_id {
+    return Intl.message(
+      'User ID:',
+      name: 'user_id',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sex:`
+  String get user_sex {
+    return Intl.message(
+      'Sex:',
+      name: 'user_sex',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Phone:`
+  String get user_phone {
+    return Intl.message(
+      'Phone:',
+      name: 'user_phone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `User Remarks:`
+  String get user_remarks {
+    return Intl.message(
+      'User Remarks:',
+      name: 'user_remarks',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The user id and user name can not be null !`
+  String get user_error_message1 {
+    return Intl.message(
+      'The user id and user name can not be null !',
+      name: 'user_error_message1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `User ID or user name can not be repeated !`
+  String get user_error_message2 {
+    return Intl.message(
+      'User ID or user name can not be repeated !',
+      name: 'user_error_message2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The user record was not found !`
+  String get user_error_message3 {
+    return Intl.message(
+      'The user record was not found !',
+      name: 'user_error_message3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Language Setting`
+  String get language_setting_title {
+    return Intl.message(
+      'Language Setting',
+      name: 'language_setting_title',
       desc: '',
       args: [],
     );

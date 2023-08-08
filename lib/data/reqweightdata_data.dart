@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class ReqWeightCountine {
   int? scaleId;
   String? msgType;
@@ -8,8 +10,14 @@ class ReqWeightCountine {
   ReqWeightCountine.fromJson(Map<String, dynamic> json) {
     scaleId = json['ScaleId'];
     msgType = json['MsgType'];
-    msgBody =
-        json['MsgBody'] != null ? MsgBody.fromJson(json['MsgBody']) : null;
+    if (json['MsgBody'] is String) {
+      msgBody = MsgBody.fromJson(jsonDecode(json['MsgBody']));
+    } else {
+      msgBody =
+          json['MsgBody'] != null ? MsgBody.fromJson(json['MsgBody']) : null;
+    }
+    // msgBody =
+    //     json['MsgBody'] != null ? MsgBody.fromJson(json['MsgBody']) : null;
   }
 
   Map<String, dynamic> toJson() {

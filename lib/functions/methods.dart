@@ -89,4 +89,28 @@ class PublicFunctions {
     myScaleCmd.cmdData = "";
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
+
+  static void modifyBtEmissionPower3() {
+    myScaleCmd.cmdMode = "send_data_to_bt";
+    myScaleCmd.cmdData = "TTM:TPL-(+10)";
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  static void modifyBtEmissionPower2() {
+    myScaleCmd.cmdMode = "send_data_to_bt";
+    myScaleCmd.cmdData = "TTM:TPL-(+6)";
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  static void modifyBtEmissionPower1() {
+    myScaleCmd.cmdMode = "send_data_to_bt";
+    myScaleCmd.cmdData = "TTM:TPL-(0)";
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  static void getBtName() {
+    myScaleCmd.cmdMode = "send_data_to_bt";
+    myScaleCmd.cmdData = "TTM:NAM-?";
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
 }

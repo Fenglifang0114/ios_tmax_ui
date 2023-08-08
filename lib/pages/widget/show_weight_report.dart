@@ -1,24 +1,27 @@
 import 'dart:async';
 import 'dart:io';
+
 import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:t_max/data/currentport_data.dart';
-import 'package:t_max/data/productlist_data.dart';
-import 'package:t_max/data/userinfo_data.dart';
-import 'package:t_max/pages/dialog/addproduct_dialog.dart';
+import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+
+import '../../data/currentport_data.dart';
+import '../../data/device_data.dart';
+import '../../data/productlist_data.dart';
 import '../../data/report_data.dart';
 import '../../data/reqweightdata_data.dart';
 import '../../data/settingparam_data.dart';
-import '../../functions/methods.dart';
-import '../../main.dart';
-import '../dialog/adduser_dialog.dart';
+import '../../data/userinfo_data.dart';
 import '../../data/weight_data.dart';
-import '../../data/device_data.dart';
 import '../../eventbus/eventbus.dart';
-import 'package:path/path.dart';
-import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+import '../../functions/methods.dart';
+import '../../generated/l10n.dart';
+import '../../main.dart';
+import '../dialog/addproduct_dialog.dart';
+import '../dialog/adduser_dialog.dart';
 import '../dialog/setting_dialog.dart';
+import 'package:path/path.dart';
 
 class ShowWeightReport extends StatefulWidget {
   const ShowWeightReport({Key? key}) : super(key: key);
@@ -35,7 +38,6 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
   bool isStart = false;
   String productNameValue = "";
   String userNameValue = "";
-  // String userNameValue = "";
   List<String> productNameList = [];
   List<String> userNameList = [];
 
@@ -91,6 +93,16 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
     });
   }
 
+  dynamic eventBus1;
+  dynamic eventBus2;
+  dynamic eventBus3;
+  dynamic eventBus4;
+  dynamic eventBus5;
+  dynamic eventBus6;
+  dynamic eventBus7;
+  dynamic eventBus8;
+  dynamic eventBus9;
+
   @override
   void initState() {
     super.initState();
@@ -102,7 +114,7 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
     zeroRange = 0;
     _isSaveButtonDisabled = false;
     _isStableStatusJudge = false;
-    checkProductList();
+    getProductNameList();
     _weightReportDatas = getWeightReportData();
     _weightReportDataSource = WeightReportDataSource(_weightReportDatas);
 
@@ -113,7 +125,7 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
     //   // getRecords();
     // }
 
-    eventBus.on<EventDeviceName>().listen((event) {
+    eventBus1 = eventBus.on<EventDeviceName>().listen((event) {
       if (mounted) {
         setState(() {
           myDevicedata = event.obj;
@@ -122,7 +134,7 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
         });
       }
     });
-    eventBus.on<EventProductRecList>().listen((event) {
+    eventBus2 = eventBus.on<EventProductRecList>().listen((event) {
       if (mounted) {
         setState(() {
           myProductRecList = event.obj;
@@ -133,7 +145,7 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
       }
     });
 
-    eventBus.on<EventReqWeightCountine>().listen((event) {
+    eventBus3 = eventBus.on<EventReqWeightCountine>().listen((event) {
       if (mounted) {
         setState(() {
           myReqWeightCountine = event.obj;
@@ -174,37 +186,37 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
       }
     });
 
-    eventBus.on<EventCurrentPort>().listen((event) {
+    eventBus4 = eventBus.on<EventCurrentPort>().listen((event) {
       if (mounted) {
         setState(() {
           myCurrentPort = event.obj;
         });
       }
     });
-    eventBus.on<EventWtData>().listen((event) {
+    eventBus5 = eventBus.on<EventWtData>().listen((event) {
       if (mounted) {
         setState(() {
           myWtData = event.obj;
         });
       }
     });
-    eventBus.on<EventReportData>().listen((event) {
+    eventBus6 = eventBus.on<EventReportData>().listen((event) {
       if (mounted) {
         setState(() {
           myReportData = event.obj;
         });
       }
     });
-    eventBus.on<EventProductRecInfo>().listen((event) {
+    eventBus7 = eventBus.on<EventProductRecInfo>().listen((event) {
       if (mounted) {
         setState(() {
           myProductRecInfo = event.obj;
-          checkProductList();
+          // checkProductList();
         });
       }
     });
 
-    eventBus.on<EventSettingParam>().listen((event) {
+    eventBus8 = eventBus.on<EventSettingParam>().listen((event) {
       if (mounted) {
         setState(() {
           mySettingParam = event.obj;
@@ -227,11 +239,11 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
         });
       }
     });
-    eventBus.on<EventUserInfoList>().listen((event) {
+    eventBus9 = eventBus.on<EventUserInfoList>().listen((event) {
       if (mounted) {
         setState(() {
           myUserInfoList = event.obj;
-          checkUserList();
+          getUserNameList();
         });
       }
     });
@@ -240,24 +252,29 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
   @override
   void dispose() {
     _reportScrollerController.dispose();
+    eventBus1.cancel();
+    eventBus2.cancel();
+    eventBus3.cancel();
+    eventBus4.cancel();
+    eventBus5.cancel();
+    eventBus6.cancel();
+    eventBus7.cancel();
+    eventBus8.cancel();
+    eventBus9.cancel();
+
     super.dispose();
+  }
+
+  dynamic localizedStrings;
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
-    AlertDialog dialog = AlertDialog(
-      content: Text(
-        (dialogString.isEmpty) ? "" : dialogString,
-        style: TextStyle(
-            fontSize: 18.0,
-            color: (dialogString == "Success!")
-                ? Colors.green.shade900
-                : Colors.red.shade900),
-      ),
-    );
-
+    localizedStrings = S.of(context);
     final _width = MediaQuery.of(context).size.width;
-
     return Scaffold(
       body: Container(
           width: _width,
@@ -268,43 +285,92 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
+                width: _width,
+                height: 10,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              Container(
                 color: Colors.white,
                 child: Row(
                   children: [
                     Container(
-                        // width: 250,
+                        // width: _width,
                         height: 40,
                         margin: const EdgeInsets.only(left: 5, top: 2),
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(0),
-                            boxShadow: [
-                              BoxShadow(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  offset: const Offset(0.0, 2.0),
-                                  blurStyle: BlurStyle.solid,
-                                  blurRadius: 1.0,
-                                  spreadRadius: 0.0),
-                            ]),
+                        // decoration: BoxDecoration(
+                        //     color: Colors.white,
+                        //     borderRadius: BorderRadius.circular(0),
+                        //     boxShadow: [
+                        //       BoxShadow(
+                        //           color: Theme.of(context).colorScheme.primary,
+                        //           offset: const Offset(0.0, 2.0),
+                        //           blurStyle: BlurStyle.solid,
+                        //           blurRadius: 1.0,
+                        //           spreadRadius: 0.0),
+                        //     ]),
                         alignment: Alignment.center, //设置控件内容的位置
                         child: Row(
                           children: [
                             SizedBox(
-                              width: 200,
-                              child: Text(myDevicedata.name,
-                                  maxLines: 1,
-                                  textWidthBasis: TextWidthBasis.longestLine,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                      color: Color(0xFF004a98),
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold)),
+                              width: 120,
+                              height: 40,
+                              child: OutlinedButton(
+                                style: OutlinedButton.styleFrom(
+                                  side: BorderSide(
+                                    width: 1,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                  ),
+                                  foregroundColor: Colors.blue,
+                                  backgroundColor: Colors.white, // 设置按钮的背景色
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.circular(4), // 设置按钮的圆角
+                                  ),
+                                ),
+                                child: Center(
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Icon(
+                                        Icons.home,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                      ),
+                                      Text(
+                                        localizedStrings.button_home,
+                                        style: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.normal),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                onPressed: () {
+                                  PublicFunctions.stopWeight();
+                                  Navigator.of(context).pop();
+                                },
+                              ),
                             ),
-                            // Text(myDevicedata.name,
-                            //     style: const TextStyle(
-                            //         color: Color(0xFF004a98),
-                            //         fontSize: 18,
-                            //         fontWeight: FontWeight.bold)),
+                            // SizedBox(
+                            //   width: 50,
+                            // ),
+                            // SizedBox(
+                            //   width: 200,
+                            //   child: Text(myDevicedata.name,
+                            //       maxLines: 1,
+                            //       textWidthBasis: TextWidthBasis.longestLine,
+                            //       overflow: TextOverflow.ellipsis,
+                            //       style: const TextStyle(
+                            //           color: Color(0xFF004a98),
+                            //           fontSize: 16,
+                            //           fontWeight: FontWeight.normal)),
+                            // ),
                           ],
                         )),
                   ],
@@ -324,10 +390,10 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                         const SizedBox(height: 10),
                         Row(
                           children: [
-                            const SizedBox(
+                            SizedBox(
                               width: 50,
                               child: Text(
-                                "Stable:",
+                                localizedStrings.stable,
                                 textAlign: TextAlign.right,
                               ),
                             ),
@@ -347,10 +413,10 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                         const SizedBox(height: 5),
                         Row(
                           children: [
-                            const SizedBox(
+                            SizedBox(
                               width: 50,
                               child: Text(
-                                "Net:",
+                                localizedStrings.net,
                                 textAlign: TextAlign.right,
                               ),
                             ),
@@ -369,10 +435,10 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                         const SizedBox(height: 5),
                         Row(
                           children: [
-                            const SizedBox(
+                            SizedBox(
                               width: 50,
                               child: Text(
-                                "Zero:",
+                                localizedStrings.zero,
                                 textAlign: TextAlign.right,
                               ),
                             ),
@@ -466,7 +532,7 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                     Row(
                       children: [
                         SizedBox(
-                          width: 20,
+                          width: 50,
                           child: IconButton(
                             //开始按钮
                             icon: const Icon(Icons.play_arrow),
@@ -490,7 +556,7 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                           width: 5,
                         ),
                         SizedBox(
-                          width: 20,
+                          width: 50,
                           child: IconButton(
                             onPressed: () {
                               if (isStart) {
@@ -518,16 +584,20 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                         ElevatedButton(
                             onPressed: () {
                               PublicFunctions.performTare();
-                              // MyApp.getSock().send('uicmd', jsonEncode(myUiCmd.tare));
                             },
-                            child: const Text("Tare")),
+                            child: Text(localizedStrings.button_tare,
+                                style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.normal))),
                         const SizedBox(height: 15),
                         ElevatedButton(
                             onPressed: () {
                               PublicFunctions.performZero();
-                              // MyApp.getSock().send('uicmd', jsonEncode(myUiCmd.zero));
                             },
-                            child: const Text("Zero")),
+                            child: Text(localizedStrings.button_zero,
+                                style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.normal))),
                       ],
                     ),
                     // const SizedBox(width: 10),
@@ -538,18 +608,20 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                             onPressed: _isSaveButtonDisabled
                                 ? null
                                 : _changeSaveButton,
-                            child: const Text("Save")),
+                            child: Text(localizedStrings.button_save,
+                                style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.normal))),
                         const SizedBox(height: 15),
                         OutlinedButton(
                             onPressed: () {
                               //跳转页面
-                              settingDialog(context).then((onvalue) {});
-
-                              // Navigator.of(context).push(MaterialPageRoute(
-                              //     //没有传值
-                              //     builder: (context) => const ChangeParamPage()));
+                              paramSettingDialog(context);
                             },
-                            child: const Text("Setting")),
+                            child: Text(localizedStrings.button_setting,
+                                style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.normal))),
                       ],
                     ),
                     // const SizedBox(width: 10),
@@ -558,7 +630,10 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                         const SizedBox(height: 15),
                         OutlinedButton(
                             // elevation: 5.0,
-                            child: const Text("Export report"),
+                            child: Text(localizedStrings.button_export_report,
+                                style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.normal)),
                             onPressed: () async {
                               final directory = Directory.current.path;
                               String? outputFile =
@@ -615,8 +690,7 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                 color: Colors.white,
                 child: Row(
                   children: [
-                    TextButton(
-                        onPressed: () {}, child: const Text("Product Name:")),
+                    Text(localizedStrings.plu_name),
                     Container(
                       child: DropdownButtonFormField<String>(
                         itemHeight: 50.0,
@@ -625,11 +699,11 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                         value: productNameValue,
                         onChanged: (String? newPosition) {
                           setState(() {
-                            myProductRecInfo.product = newPosition.toString();
+                            productNameValue = newPosition.toString();
                             for (var i = 0;
                                 i < myProductRecList.productRecInfo!.length;
                                 i++) {
-                              if (myProductRecInfo.product ==
+                              if (productNameValue ==
                                   myProductRecList.productRecInfo![i].product) {
                                 myProductRecInfo =
                                     myProductRecList.productRecInfo![i];
@@ -643,7 +717,9 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                         items: productNameList
                             .map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem(
-                              value: value, child: Text(value));
+                              value: value,
+                              child:
+                                  Text(value, overflow: TextOverflow.ellipsis));
                         }).toList(),
                       ),
                       height: 53,
@@ -655,7 +731,9 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                         color: Theme.of(context).colorScheme.primary,
                         textColor: Colors.white,
                         elevation: 5.0,
-                        child: const Text("PLU Edit"),
+                        child: Text(localizedStrings.plu_edit,
+                            style: const TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.normal)),
                         onPressed: () {
                           getProductList();
                           addProductDialog(context).then((onvalue) {
@@ -668,8 +746,12 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                             }
                           });
                         }),
+                    const SizedBox(width: 50),
                     TextButton(
-                        onPressed: () {}, child: const Text("User Name:")),
+                        onPressed: () {},
+                        child: Text(localizedStrings.user_name,
+                            style: const TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.normal))),
                     Container(
                       child: DropdownButtonFormField<String>(
                         itemHeight: 50.0,
@@ -693,7 +775,9 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                         items: userNameList
                             .map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem(
-                              value: value, child: Text(value));
+                              value: value,
+                              child:
+                                  Text(value, overflow: TextOverflow.ellipsis));
                         }).toList(),
                       ),
                       height: 53,
@@ -705,10 +789,12 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                         color: Theme.of(context).colorScheme.primary,
                         textColor: Colors.white,
                         elevation: 5.0,
-                        child: const Text("User Edit"),
+                        child: Text(localizedStrings.user_edit,
+                            style: const TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.normal)),
                         onPressed: () {
                           PublicFunctions.getUserList();
-                          checkUserList();
+                          getUserNameList();
                           if (!userNameList.contains(userNameValue)) {
                             myUserInfo.name = "";
                             userNameValue = "";
@@ -720,7 +806,7 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                           addUserDialog(context).then((onvalue) {
                             setState(() {
                               PublicFunctions.getUserList();
-                              checkUserList();
+                              getUserNameList();
                               if (!userNameList.contains(userNameValue)) {
                                 myUserInfo.name = "";
                                 userNameValue = "";
@@ -749,12 +835,28 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
     );
   }
 
+  void paramSettingDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 允许点击空白处关闭对话框
+      builder: (context) {
+        return const ParamSettingDialog();
+      },
+    );
+  }
+
   void getProductNameList() {
-    if (myProductRecList.productRecInfo!.isNotEmpty) {
+    if (myProductRecList.productRecInfo == null ||
+        myProductRecList.productRecInfo!.isEmpty) {
+      productNameList.clear();
+      productNameValue = '';
+      productNameList.add("Please select Plu");
+      productNameValue = "Please select Plu";
+      myProductRecInfo = ProductRecInfo();
+    } else if (myProductRecList.productRecInfo!.isNotEmpty) {
       String? name;
       String? id;
       productNameList.clear();
-
       for (var i = 0; i < myProductRecList.productRecInfo!.length; i++) {
         name = myProductRecList.productRecInfo![i].product;
         id = myProductRecList.productRecInfo![i].id;
@@ -764,6 +866,9 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
       }
       if (!productNameList.contains(productNameValue)) {
         productNameValue = productNameList[0];
+        myProductRecInfo = myProductRecList.productRecInfo![0];
+        eventBus.fire(EventProductRecInfo(myProductRecInfo));
+      } else {
         for (var i = 0; i < myProductRecList.productRecInfo!.length; i++) {
           if (productNameValue == myProductRecList.productRecInfo![i].product) {
             myProductRecInfo = myProductRecList.productRecInfo![i];
@@ -771,16 +876,16 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
           }
         }
       }
-    } else {
-      productNameList.clear();
-      productNameValue = '';
     }
   }
 
   void getUserNameList() {
-    if (myUserInfoList.userInfo == null) {
+    if (myUserInfoList.userInfo == null || myUserInfoList.userInfo!.isEmpty) {
       userNameList.clear();
       userNameValue = "";
+      userNameList.add("Please select User");
+      userNameValue = "Please select User";
+      myUserInfo = UserInfo();
     } else if (myUserInfoList.userInfo!.isNotEmpty) {
       String? name;
       userNameList.clear();
@@ -791,6 +896,10 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
       }
       if (!userNameList.contains(userNameValue)) {
         userNameValue = userNameList[0];
+
+        myUserInfo = myUserInfoList.userInfo![0];
+        eventBus.fire(EventUserInfo(myUserInfo));
+      } else {
         for (var i = 0; i < myUserInfoList.userInfo!.length; i++) {
           if (userNameValue == myUserInfoList.userInfo![i].name) {
             myUserInfo = myUserInfoList.userInfo![i];
@@ -804,33 +913,19 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
     }
   }
 
-  void checkProductList() {
-    if ((myProductRecList.productRecInfo == null)) {
-      productNameList.add("Please select Plu");
-      productNameValue = "Please select Plu";
-    } else {
-      getProductNameList();
-      if (!productNameList.contains(productNameValue)) {
-        productNameList.add("Please select Plu");
-        productNameValue = productNameList[0];
-      }
-    }
-    // getPortList();
-  }
-
-  void checkUserList() {
-    if ((myUserInfoList.userInfo == null)) {
-      userNameList.add("Please select User");
-      userNameValue = "Please select User";
-    } else {
-      getUserNameList();
-      if (!userNameList.contains(userNameValue)) {
-        userNameList.add("Please select User");
-        userNameValue = userNameList[0];
-      }
-    }
-    // getPortList();
-  }
+  // void checkProductList() {
+  //   if ((myProductRecList.productRecInfo == null)) {
+  //     productNameList.add("Please select Plu");
+  //     productNameValue = "Please select Plu";
+  //   } else {
+  //     getProductNameList();
+  //     if (!productNameList.contains(productNameValue)) {
+  //       productNameList.add("Please select Plu");
+  //       productNameValue = productNameList[0];
+  //     }
+  //   }
+  //   // getPortList();
+  // }
 
   String pad0(int num) {
     if (num < 10) {
@@ -998,7 +1093,7 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
     ));
     setState(() {
       _weightReportDataSource = WeightReportDataSource(_weightReportDatas);
-      Future.delayed(Duration(milliseconds: 100), () {
+      Future.delayed(const Duration(milliseconds: 100), () {
         _dataGridController
             .scrollToRow(_weightReportDataSource.rows.length - 0);
       });

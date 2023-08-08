@@ -10,6 +10,7 @@ import '../data/currentport_data.dart';
 import '../data/device_data.dart';
 import '../functions/methods.dart';
 import '../generated/l10n.dart';
+import 'dialog/language_setting.dart';
 import 'dialog/waitingbuildtips.dart';
 import 'modify_com_port_page.dart';
 import 'widget/bluetoothsetting.dart';
@@ -104,9 +105,15 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
+  dynamic localizedStrings;
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    localizedStrings = S.of(context);
+  }
+
   @override
   Widget build(BuildContext context) {
-    var localizedStrings = S.of(context);
     List<String> titleNames = [
       localizedStrings.home_page_title1,
       localizedStrings.home_page_title2,
@@ -122,53 +129,6 @@ class _HomePageState extends State<HomePage> {
     final _height = MediaQuery.of(context).size.height;
     // final _height = MediaQuery.of(context).size.height;
     return Scaffold(
-        // appBar: PreferredSize(
-        //     preferredSize: const Size.fromHeight(30),
-        //     child: AppBar(
-        //       title: version(),
-        //       leading: const Text(''),
-        //       actions: [
-        //         Row(
-        //           children: [
-        //             SizedBox(
-        //               height: 20,
-        //               child: Row(
-        //                 children: [
-        //                   SizedBox(
-        //                     child: TimerWidget(),
-        //                   ),
-        //                   const SizedBox(width: 30),
-        //                 ],
-        //               ),
-        //             ),
-        //             const SizedBox(width: 30),
-        //             // PopupMenuButton(
-        //             //   offset: const Offset(0, 40),
-        //             //   onSelected: (value) {
-        //             //     _changed(value);
-        //             //   },
-        //             //   itemBuilder: (BuildContext context) => [
-        //             //     PopupMenuItem(
-        //             //         value: "zh",
-        //             //         child: Text(
-        //             //           "简体中文",
-        //             //           style: Theme.of(context).textTheme.bodyMedium,
-        //             //         )),
-        //             //     PopupMenuItem(
-        //             //         value: "en",
-        //             //         child: Text(
-        //             //           "English",
-        //             //           style: Theme.of(context).textTheme.bodyMedium,
-        //             //         )),
-        //             //   ],
-        //             // ),
-        //           ],
-        //         )
-        //       ],
-        //     )),
-        //左侧边栏
-        // drawer: leftSidebar(context),
-
         body: SizedBox(
       height: _height,
       width: _width,
@@ -310,9 +270,16 @@ class _HomePageState extends State<HomePage> {
                           textColor: textColors[7],
                           // image: imagePaths[3],
                         ),
-                        const SizedBox(
-                          height: 150,
-                          width: 200,
+                        CustomCard(
+                          onTap: () {
+                            setState(() {
+                              setLanguageDialog(context);
+                            });
+                          },
+                          title: titleNames[8],
+                          cardColor: cardColors[7],
+                          textColor: textColors[7],
+                          // image: imagePaths[3],
                         ),
                       ],
                     ),
@@ -367,14 +334,13 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // void _changed(value) {
-  //   if (value != null) {
-  //     //SpUtil.putString(SpConstant.LANGUAGE, value);
-  //     setState(() {
-  //       groupValue = value;
-  //       if (value == "zh") S.load(const Locale('zh', 'CN'));
-  //       if (value == "en") S.load(const Locale('en', 'US'));
-  //     });
-  //   }
-  // }
+  void setLanguageDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 允许点击空白处关闭对话框
+      builder: (context) {
+        return const LanguageSettingPage();
+      },
+    );
+  }
 }

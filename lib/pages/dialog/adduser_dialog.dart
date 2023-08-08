@@ -6,6 +6,7 @@ import 'package:t_max/data/userinfo_data.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import '../../data/scalecmd_data.dart';
 import '../../functions/methods.dart';
+import '../../generated/l10n.dart';
 import '../../main.dart';
 
 TextEditingController userName = TextEditingController(
@@ -20,6 +21,7 @@ TextEditingController userRemark = TextEditingController(
     text: ((myUserInfo.remarks == null) ? "" : myUserInfo.remarks));
 TextEditingController errorText = TextEditingController();
 int _checkFemale = 1;
+dynamic localizedStrings;
 
 addUserDialog(BuildContext context) {
   userName.text = ((myUserInfo.name == null) ? "" : myUserInfo.name)!;
@@ -32,6 +34,7 @@ addUserDialog(BuildContext context) {
           ? 1
           : 2);
   errorText.text = "";
+  localizedStrings = S.of(context);
 
   return showDialog(
       barrierDismissible: false, //设置为false，点击空白处弹窗不关闭
@@ -41,10 +44,11 @@ addUserDialog(BuildContext context) {
           return AlertDialog(
             title: Container(
                 color: Colors.blue.shade900,
-                child: const Row(
+                child: Row(
                   children: [
-                    Icon(Icons.verified_user, color: Colors.white),
-                    Text("UserInfo", style: TextStyle(color: Colors.white))
+                    const Icon(Icons.person, color: Colors.white),
+                    Text(localizedStrings.user_info,
+                        style: const TextStyle(color: Colors.white))
                   ],
                 )),
             content: Container(
@@ -65,7 +69,7 @@ addUserDialog(BuildContext context) {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text("User ID:"),
+                                Text(localizedStrings.user_id),
                                 SizedBox(
                                   width: 200,
                                   height: 30,
@@ -87,7 +91,7 @@ addUserDialog(BuildContext context) {
                                   ),
                                 ),
                                 const SizedBox(height: 5),
-                                const Text("User Name:"),
+                                Text(localizedStrings.user_name),
                                 SizedBox(
                                   width: 400,
                                   height: 30,
@@ -111,8 +115,9 @@ addUserDialog(BuildContext context) {
                                 const SizedBox(height: 5),
                                 Row(
                                   children: [
-                                    const SizedBox(
-                                        width: 100, child: Text("Sex:")),
+                                    SizedBox(
+                                        width: 100,
+                                        child: Text(localizedStrings.user_sex)),
                                     Radio(
                                         value: 1,
                                         groupValue: _checkFemale,
@@ -123,7 +128,7 @@ addUserDialog(BuildContext context) {
                                             _checkFemale = 1;
                                           });
                                         }),
-                                    const Text("Female"),
+                                    const Text("Woman"),
                                     const SizedBox(width: 50),
                                     Radio(
                                         value: 2,
@@ -135,12 +140,12 @@ addUserDialog(BuildContext context) {
                                             _checkFemale = 2;
                                           });
                                         }),
-                                    const Text("Male"),
+                                    const Text("Men"),
                                   ],
                                 ),
                                 const SizedBox(height: 5),
                                 const SizedBox(height: 5),
-                                const Text("Phone:"),
+                                Text(localizedStrings.user_phone),
                                 SizedBox(
                                   width: 400,
                                   height: 30,
@@ -166,7 +171,7 @@ addUserDialog(BuildContext context) {
                                   ),
                                 ),
                                 const SizedBox(height: 5),
-                                const Text("UserRemarks:"),
+                                Text(localizedStrings.user_remarks),
                                 SizedBox(
                                   width: 400,
                                   height: 88,
@@ -229,7 +234,7 @@ addUserDialog(BuildContext context) {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   OutlinedButton(
-                      child: const Text("Add"),
+                      child: Text(localizedStrings.button_add),
                       onPressed: () {
                         errorText.text = '';
                         PublicFunctions.getUserList();
@@ -239,7 +244,7 @@ addUserDialog(BuildContext context) {
                       }),
                   const SizedBox(width: 20),
                   OutlinedButton(
-                      child: const Text("Edit"),
+                      child: Text(localizedStrings.button_edit),
                       onPressed: () {
                         errorText.text = '';
                         PublicFunctions.getUserList();
@@ -250,7 +255,7 @@ addUserDialog(BuildContext context) {
                       }),
                   const SizedBox(width: 20),
                   OutlinedButton(
-                      child: const Text("Delete"),
+                      child: Text(localizedStrings.button_delete),
                       onPressed: () {
                         if (userId.text.isNotEmpty ||
                             userName.text.isNotEmpty) {
@@ -260,14 +265,13 @@ addUserDialog(BuildContext context) {
                           delUser();
                           PublicFunctions.getUserList();
                         } else {
-                          errorText.text =
-                              'The user id and user name can not be null !';
+                          errorText.text = localizedStrings.user_error_message1;
                         }
                         // Navigator.of(context).pop(connectionType);
                       }),
                   const SizedBox(width: 20),
                   OutlinedButton(
-                      child: const Text("Exit"),
+                      child: Text(localizedStrings.button_exit),
                       onPressed: () {
                         PublicFunctions.getUserList();
                         Navigator.of(context)
@@ -284,7 +288,7 @@ addUserDialog(BuildContext context) {
 void addUser() {
   bool result = true;
   if (userId.text.isEmpty || userName.text.isEmpty) {
-    errorText.text = "User ID and user Name can not be null";
+    errorText.text = localizedStrings.user_error_message;
     return;
   }
   if (myUserInfoList.userInfo != null) {
@@ -296,7 +300,7 @@ void addUser() {
       name ??= "";
       id ??= "";
       if (name == userName.text || id == userId.text) {
-        errorText.text = "User ID or user name can not be repeated";
+        errorText.text = localizedStrings.user_error_message2;
         return;
       }
     }
@@ -321,7 +325,7 @@ void addUser() {
 
 void editUser() {
   if (userId.text.isEmpty || userName.text.isEmpty) {
-    errorText.text = "UserId and User Name could not null";
+    errorText.text = localizedStrings.user_error_message1;
     return;
   }
 
@@ -362,14 +366,14 @@ void editUser() {
       phone.text = '';
       userRemark.text = '';
     } else {
-      errorText.text = "The user record was not found !";
+      errorText.text = localizedStrings.user_error_message3;
     }
   }
 }
 
 void delUser() {
   if (userId.text.isEmpty || userName.text.isEmpty) {
-    errorText.text = "产品ID 或者产品名字不能为空";
+    errorText.text = localizedStrings.user_error_message1;
     return;
   }
   if (myUserInfoList.userInfo != null) {
@@ -410,7 +414,7 @@ void delUser() {
       phone.text = '';
       userRemark.text = '';
     } else {
-      errorText.text = "没有找到记录";
+      errorText.text = localizedStrings.user_error_message3;
     }
   }
 }

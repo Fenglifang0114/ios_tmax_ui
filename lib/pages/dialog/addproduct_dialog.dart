@@ -6,6 +6,7 @@ import 'package:t_max/data/productrec.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import '../../data/productlist_data.dart';
 import '../../data/scalecmd_data.dart';
+import '../../generated/l10n.dart';
 import '../../main.dart';
 
 TextEditingController productName = TextEditingController(
@@ -21,7 +22,7 @@ TextEditingController productRemark = TextEditingController(
 TextEditingController errorText = TextEditingController();
 
 bool? isPresetTare = ((myProductRecInfo.withPretare == null) ? false : true);
-
+dynamic localizedStrings;
 addProductDialog(BuildContext context) {
   productName.text =
       ((myProductRecInfo.product == null) ? "" : myProductRecInfo.product)!;
@@ -33,6 +34,7 @@ addProductDialog(BuildContext context) {
   isPresetTare = ((myProductRecInfo.withPretare == null)
       ? false
       : myProductRecInfo.withPretare);
+  localizedStrings = S.of(context);
 
   return showDialog(
       barrierDismissible: false, //设置为false，点击空白处弹窗不关闭
@@ -42,11 +44,11 @@ addProductDialog(BuildContext context) {
           return AlertDialog(
             title: Container(
                 color: Colors.blue.shade900,
-                child: const Row(
+                child: Row(
                   children: [
-                    Icon(Icons.feed, color: Colors.white),
-                    Text("Product Information",
-                        style: TextStyle(color: Colors.white))
+                    const Icon(Icons.feed, color: Colors.white),
+                    Text(localizedStrings.product_information,
+                        style: const TextStyle(color: Colors.white))
                   ],
                 )),
             content: Container(
@@ -89,7 +91,7 @@ addProductDialog(BuildContext context) {
                                   ),
                                 ),
                                 const SizedBox(height: 5),
-                                const Text("PLU Name:"),
+                                Text(localizedStrings.plu_name),
                                 SizedBox(
                                   width: 400,
                                   height: 30,
@@ -126,7 +128,7 @@ addProductDialog(BuildContext context) {
                                             }
                                           });
                                         }),
-                                    const Text("PreTare:"),
+                                    Text(localizedStrings.pretare),
                                   ],
                                 ),
                                 SizedBox(
@@ -158,7 +160,7 @@ addProductDialog(BuildContext context) {
                                   ),
                                 ),
                                 const SizedBox(height: 5),
-                                const Text("PLu Remarks:"),
+                                Text(localizedStrings.plu_remarks),
                                 SizedBox(
                                   width: 400,
                                   height: 120,
@@ -221,7 +223,7 @@ addProductDialog(BuildContext context) {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   OutlinedButton(
-                      child: const Text("Add"),
+                      child: Text(localizedStrings.button_add),
                       onPressed: () {
                         errorText.text = '';
                         getProductList();
@@ -231,7 +233,7 @@ addProductDialog(BuildContext context) {
                       }),
                   const SizedBox(width: 20),
                   OutlinedButton(
-                      child: const Text("Edit"),
+                      child: Text(localizedStrings.button_edit),
                       onPressed: () {
                         errorText.text = '';
                         getProductList();
@@ -242,7 +244,7 @@ addProductDialog(BuildContext context) {
                       }),
                   const SizedBox(width: 20),
                   OutlinedButton(
-                      child: const Text("Delete"),
+                      child: Text(localizedStrings.button_delete),
                       onPressed: () {
                         if (productID.text.isNotEmpty ||
                             productName.text.isNotEmpty) {
@@ -252,15 +254,14 @@ addProductDialog(BuildContext context) {
                           delProductRec();
                           getProductList();
                         } else {
-                          errorText.text =
-                              'Product ID or product name cannot be empty';
+                          errorText.text = localizedStrings.plu_error_message;
                         }
 
                         // Navigator.of(context).pop(connectionType);
                       }),
                   const SizedBox(width: 20),
                   OutlinedButton(
-                      child: const Text("Exit"),
+                      child: Text(localizedStrings.button_exit),
                       onPressed: () {
                         getProductList();
                         Navigator.of(context)
@@ -283,12 +284,12 @@ void getProductList() {
 void addProductRec() {
   bool result = true;
   if (productID.text.isEmpty || productName.text.isEmpty) {
-    errorText.text = "Product ID or product name cannot be empty";
+    errorText.text = localizedStrings.plu_error_message;
     return;
   }
   if (isPresetTare!) {
     if (preTare.text.isEmpty) {
-      errorText.text = "Product ID or product name cannot be empty";
+      errorText.text = localizedStrings.plu_error_message;
       return;
     }
   }
@@ -301,7 +302,7 @@ void addProductRec() {
       name ??= "";
       id ??= "";
       if (name == productName.text || id == productID.text) {
-        errorText.text = "Product ID or product name already exists";
+        errorText.text = localizedStrings.plu_error_message2;
         return;
       }
     }
@@ -319,7 +320,6 @@ void addProductRec() {
       print(jsonEncode(myScaleCmd));
     }
     errorText.text = "Success!";
-
     productID.text = '';
     productName.text = '';
     productRemark.text = '';
@@ -329,12 +329,12 @@ void addProductRec() {
 
 void editProductRec() {
   if (productID.text.isEmpty || productName.text.isEmpty) {
-    errorText.text = "Product ID or product name cannot be empty";
+    errorText.text = localizedStrings.plu_error_message1;
     return;
   }
   if (isPresetTare!) {
     if (preTare.text.isEmpty) {
-      errorText.text = "Product ID or product name cannot be empty";
+      errorText.text = localizedStrings.plu_error_message1;
       return;
     }
   }
@@ -376,7 +376,7 @@ void editProductRec() {
 
 void delProductRec() {
   if (productID.text.isEmpty || productName.text.isEmpty) {
-    errorText.text = "Product ID or product name cannot be empty";
+    errorText.text = localizedStrings.plu_error_message1;
     return;
   }
   if (myProductRecList.productRecInfo!.isNotEmpty) {

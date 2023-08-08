@@ -86,6 +86,7 @@ class TrialPageState extends State<TrialPage> {
     // WebsocketManager.init();
   }
 
+  dynamic localizedStrings;
   @override
   void dispose() {
     //注销
@@ -96,10 +97,15 @@ class TrialPageState extends State<TrialPage> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    localizedStrings = S.of(context);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final _width = MediaQuery.of(context).size.width;
     final _height = MediaQuery.of(context).size.height;
-    var localizedStrings = S.of(context);
     system_id = localizedStrings.system_id;
     return MaterialApp(
         debugShowCheckedModeBanner: false,

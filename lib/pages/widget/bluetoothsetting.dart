@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/data/downloadresponse.dart';
+import 'package:t_max/functions/methods.dart';
 import '../../data/scalecmd_data.dart';
 import '../../eventbus/eventbus.dart';
 import '../../generated/l10n.dart';
@@ -16,14 +18,19 @@ class BluetoothDialog extends StatefulWidget {
 
 class _BluetoothDialogState extends State<BluetoothDialog> {
   final TextEditingController _deviceNameController = TextEditingController();
+  List<String> emissionPowerList = ['Strong', 'Normal', 'Weak'];
+  String emissionPowerVale = '';
+  Timer? _timer;
 
   String _errorMessage = '';
   bool isSetting = false;
   dynamic _eventbus1;
+  dynamic _eventbus2;
   @override
   void initState() {
     super.initState();
     _deviceNameController.text = '';
+    emissionPowerVale = 'Strong';
     _eventbus1 = eventBus.on<EventConnectBTResponse>().listen((event) {
       if (mounted) {
         setState(() {
@@ -32,13 +39,36 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
           if (myConnectBTResponse.msgBody.isNotEmpty) {
             _errorMessage = myConnectBTResponse.msgBody;
           }
+          _stopTimer();
+        });
+      }
+    });
+    _eventbus2 = eventBus.on<EventBTResponse>().listen((event) {
+      if (mounted) {
+        setState(() {
+          myRespBTData = event.obj;
+          isSetting = false;
+          if (myRespBTData.msgBody.isNotEmpty) {
+            if (myRespBTData.msgBody.contains("TTM:NAM")) {
+              _deviceNameController.text = getBtName(myRespBTData.msgBody);
+            }
+            _errorMessage = myRespBTData.msgBody;
+          }
+          _stopTimer();
         });
       }
     });
   }
 
-  var localizedStrings;
-  String set_message = '';
+  String getBtName(String data) {
+    int start = data.indexOf('TTM:NAM-') + 'TTM:NAM-'.length;
+    int end = data.indexOf('\r\n\u0000');
+
+    String result = data.substring(start, end);
+    return result;
+  }
+
+  dynamic localizedStrings;
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -49,6 +79,7 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
   void dispose() {
     _deviceNameController.dispose();
     _eventbus1.cancel();
+    _eventbus2.cancel();
     super.dispose();
   }
 
@@ -111,24 +142,116 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 150),
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              OutlinedButton(
+                                  child: const Text('get name'),
+                                  onPressed: isSetting
+                                      ? null
+                                      : () {
+                                          setState(() {
+                                            _errorMessage = '';
+                                            _deviceNameController.clear();
+                                          });
+                                          PublicFunctions.getBtName();
+                                          _startTimer(15);
+                                        }),
+                              const SizedBox(width: 50),
+                              OutlinedButton(
+                                child: const Text('modify name'),
+                                onPressed: isSetting
+                                    ? null
+                                    : () {
+                                        try {
+                                          setState(() {
+                                            _errorMessage = '';
+                                            if (MyApp.webchannel1.heartStatus) {
+                                              sendBluetoothName();
+                                            } else {
+                                              _errorMessage =
+                                                  localizedStrings.serial_error;
+                                            }
+                                          });
+                                        } catch (e) {
+                                          setState(() {
+                                            _errorMessage =
+                                                localizedStrings.serial_error;
+                                          });
+                                        }
+                                      },
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          const Text('Emission Power:'),
+                          const SizedBox(height: 10),
+                          SizedBox(
+                            width: 400,
+                            child: DropdownButtonFormField<String>(
+                              // isExpanded: true,
+                              // decoration: const InputDecoration(border: OutlineInputBorder()),
+                              // 设置默认值
+                              value: emissionPowerVale,
+                              // 选择回调
+                              onChanged: (String? newPosition) {
+                                emissionPowerVale = newPosition.toString();
+                                setState(() {
+                                  _errorMessage = '';
+                                });
+                              },
+                              // 传入可选的数组
+                              items: emissionPowerList
+                                  .map<DropdownMenuItem<String>>(
+                                      (String value) {
+                                return DropdownMenuItem(
+                                    value: value, child: Text(value));
+                              }).toList(),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          OutlinedButton(
+                              child: const Text('modify emission power'),
+                              onPressed: isSetting
+                                  ? null
+                                  : () {
+                                      setState(() {
+                                        _errorMessage = '';
+                                      });
+                                      if (emissionPowerVale == 'Strong') {
+                                        PublicFunctions
+                                            .modifyBtEmissionPower3();
+                                      } else if (emissionPowerVale ==
+                                          'Normal') {
+                                        PublicFunctions
+                                            .modifyBtEmissionPower2();
+                                      } else {
+                                        PublicFunctions
+                                            .modifyBtEmissionPower1();
+                                      }
+                                      _startTimer(15);
+                                    }),
+                          const SizedBox(height: 10),
                           Text(
-                            (_errorMessage.contains('ok'))
-                                ? localizedStrings.bluetooth_modify_ok
-                                : (_errorMessage.contains('error'))
-                                    ? localizedStrings.bluetooth_modify_error
+                            (_errorMessage.contains('ok') ||
+                                    _errorMessage.contains('OK'))
+                                ? 'OK'
+                                : (_errorMessage.contains('error') ||
+                                        _errorMessage.contains('Time out') ||
+                                        _errorMessage.contains('ERROR'))
+                                    ? _errorMessage
                                     : '',
                             style: TextStyle(
-                                color:
-                                    (myConnectBTResponse.msgBody.contains('ok'))
-                                        ? Colors.green.shade900
-                                        : Colors.red.shade900),
+                                color: (_errorMessage.contains('ok') ||
+                                        _errorMessage.contains('OK'))
+                                    ? Colors.green.shade900
+                                    : Colors.red.shade900),
                           ),
                         ],
                       ),
                     ],
                   ),
-                  const SizedBox(height: 40),
                   SizedBox(
                     height: 2,
                     width: 400,
@@ -156,30 +279,8 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            ElevatedButton(
-              child: Text(localizedStrings.button_set),
-              onPressed: isSetting
-                  ? null
-                  : () {
-                      try {
-                        setState(() {
-                          _errorMessage = '';
-                          if (MyApp.webchannel1.heartStatus) {
-                            sendBluetoothName();
-                          } else {
-                            _errorMessage = localizedStrings.serial_error;
-                          }
-                        });
-                      } catch (e) {
-                        setState(() {
-                          _errorMessage = localizedStrings.serial_error;
-                        });
-                      }
-                    },
-            ),
-            const SizedBox(width: 20),
             OutlinedButton(
-              child: Text(localizedStrings.button_cancel),
+              child: Text(localizedStrings.button_exit),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -196,8 +297,32 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
       myScaleCmd.cmdData = _deviceNameController.text;
       MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
       isSetting = true;
+      _startTimer(15);
     } else {
-      _errorMessage = 'Device name can not be empty!';
+      setState(() {
+        _errorMessage = 'Device name can not be empty! error';
+      });
     }
+  }
+
+  void _startTimer(int time) {
+    setState(() {
+      isSetting = true;
+      print(time);
+    });
+
+    _timer = Timer(Duration(seconds: time), () {
+      setState(() {
+        isSetting = false;
+        _errorMessage = 'Time out!';
+      });
+    });
+  }
+
+  void _stopTimer() {
+    setState(() {
+      isSetting = false;
+    });
+    _timer?.cancel(); // 停止计时器
   }
 }

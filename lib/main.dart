@@ -33,8 +33,8 @@ class MyApp extends StatelessWidget {
     webchannel = WebSocketChannel('ws://127.0.0.1:7878/tmax?scaleid=0');
 
     // webchannel = WebSocketChannel('ws://10.5.52.65:7878/tmax?scaleid=0');
-    webchannel1.connect();
     webchannel.connect();
+    webchannel1.connect();
 
     getLicense();
 
@@ -51,7 +51,7 @@ class MyApp extends StatelessWidget {
         ],
         // 应用支持的语言列表
         supportedLocales: S.delegate.supportedLocales,
-        locale: const Locale('zh', "CN"),
+        locale: const Locale('en', "US"),
 
         //去掉右上角debug图标
         debugShowCheckedModeBanner: false,

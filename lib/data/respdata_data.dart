@@ -49,7 +49,6 @@ class RespData {
 
 RespData myRespData = RespData(0, {});
 
-
 // var hostData = Data.fromJson(json.decode("json字符串"));
 // if (hostData.code == 0) {
 //   var data = hostData.data as user;
@@ -57,5 +56,22 @@ RespData myRespData = RespData(0, {});
 //   var data = hostData.data as String;
 // }
 
+class MessageError {
+  String? messagedata;
 
+  MessageError(this.messagedata);
 
+  MessageError.fromJson(Map<String, dynamic> json) {
+    messagedata = json['MsgBody'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['MsgBody'] = messagedata;
+
+    return data;
+  }
+}
+
+MessageError myMessageError = MessageError('');
+MessageError myGetIpError = MessageError('');

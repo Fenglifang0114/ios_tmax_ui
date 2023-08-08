@@ -182,7 +182,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   ];
   final List<String> _fontSizes = [
     // '20', //1 1 1   中文不支持
-
     '20',
     '21',
     '23', //4 1 1
@@ -344,7 +343,8 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                         ? 'Download successful!'
                         : myDownloadResponse.msgBody,
                     style: const TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.bold)), ////此处需要秤回复
+                        fontSize: 20,
+                        fontWeight: FontWeight.normal)), ////此处需要秤回复
                 duration: const Duration(seconds: 3),
                 backgroundColor: (myDownloadResponse.msgBody.contains('ok'))
                     ? Colors.green.shade900
@@ -458,7 +458,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                                     color:
                                         Theme.of(context).colorScheme.primary,
                                     fontSize: 14,
-                                    fontWeight: FontWeight.bold),
+                                    fontWeight: FontWeight.normal),
                               ),
                             ],
                           ),
@@ -986,7 +986,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                               Text(localizedStrings.download,
                                   style: TextStyle(
                                     fontSize: 14,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.normal,
                                     color: downloadStatus
                                         ? Colors.white
                                         : Colors.black,
@@ -1520,7 +1520,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(e.toString(),
               style: const TextStyle(
-                  fontSize: 20, fontWeight: FontWeight.bold)), ////此处需要秤回复
+                  fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
           duration: const Duration(seconds: 1),
           backgroundColor: Colors.red.shade900));
     }
@@ -1770,7 +1770,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   Widget _generateExpansionTileWidget(tittle, List<String>? names) {
     return ExpansionTile(
       title: Text(tittle,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+          style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 14)),
       children: names!.map((name) => _generateWidget(name)).toList(),
     );
   }
@@ -2368,7 +2368,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           style: TextStyle(
               fontSize: 20,
               color: Colors.red.shade900,
-              fontWeight: FontWeight.bold),
+              fontWeight: FontWeight.normal),
         ),
       ),
       Container(
@@ -2376,7 +2376,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         color: const Color.fromARGB(255, 240, 247, 252),
         child: Text(
           localizedStrings.operation_steps,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
         ),
       ),
       Container(
@@ -2384,7 +2384,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         color: const Color.fromARGB(255, 240, 247, 252),
         child: Text(
           localizedStrings.step1,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
         ),
       ),
       Container(
@@ -2392,7 +2392,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         color: const Color.fromARGB(255, 240, 247, 252),
         child: Text(
           localizedStrings.step2,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
         ),
       ),
     ];
@@ -2405,7 +2405,8 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     return TextField(
       controller: controller,
       decoration: InputDecoration(
-        labelStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+        labelStyle:
+            const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
         hintStyle: const TextStyle(fontSize: 14),
         labelText: labelText,
         hintText: hintText,
@@ -2531,7 +2532,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: 20,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.normal,
                   color: Theme.of(context).colorScheme.primary),
             ),
             Divider(
@@ -2591,7 +2592,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
             style: TextStyle(
                 fontSize: 14,
                 color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.bold)),
+                fontWeight: FontWeight.normal)),
       ),
       Row(
         children: [
@@ -2612,7 +2613,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                 hintStyle: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
                     fontSize: 14,
-                    fontWeight: FontWeight.bold),
+                    fontWeight: FontWeight.normal),
               ),
               onEditingComplete: () {
                 _onSubmit(xPosvar.text, 2);
@@ -2640,7 +2641,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                   labelStyle: const TextStyle(
                       color: Color.fromARGB(255, 0, 74, 152),
                       fontSize: 14,
-                      fontWeight: FontWeight.bold), // 设置label字体大小为20
+                      fontWeight: FontWeight.normal), // 设置label字体大小为20
                   hintText: myTextData.yPos.toString()),
               onEditingComplete: () {
                 _onSubmit(yPosvar.text, 3);
@@ -2662,7 +2663,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
             style: TextStyle(
                 fontSize: 14,
                 color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.bold)),
+                fontWeight: FontWeight.normal)),
       ),
 
       SizedBox(
@@ -2701,28 +2702,28 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       ),
       // buildTextField(
       //     fontsizevar, "Font Size", myTextData.fontSize.toString(), 1),
-      const Text(
-        'Font Bold:      ',
-        style: TextStyle(
+      Text(
+        localizedStrings.font_bold,
+        style: const TextStyle(
           fontSize: 14,
         ),
       ),
       buildDropdownButton(
         value: _selectFontBold,
         items: _fontBoldReverse,
-        hintText: 'Font bold',
+        hintText: localizedStrings.font_bold,
         onSelect: _handleFontBoldSelected,
       ),
-      const Text(
-        'Font Reverse:      ',
-        style: TextStyle(
+      Text(
+        localizedStrings.font_reverse,
+        style: const TextStyle(
           fontSize: 14,
         ),
       ),
       buildDropdownButton(
         value: _selectFontReverse,
         items: _fontBoldReverse,
-        hintText: 'Font Reverse',
+        hintText: localizedStrings.font_reverse,
         onSelect: _handleFontReverseSelected,
       ),
       ElevatedButton(
@@ -2745,7 +2746,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           child: Text(localizedStrings.button_delete,
               style: TextStyle(
                   fontSize: 14,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.normal,
                   color: Theme.of(context).colorScheme.onPrimary)))
     ];
   }
@@ -2801,7 +2802,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: 20,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.normal,
                   color: Theme.of(context).colorScheme.primary),
             ),
             Divider(
@@ -2861,7 +2862,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
             style: TextStyle(
                 fontSize: 14,
                 color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.bold)),
+                fontWeight: FontWeight.normal)),
       ),
       Row(
         children: [
@@ -2882,7 +2883,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                 hintStyle: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
                     fontSize: 14,
-                    fontWeight: FontWeight.bold),
+                    fontWeight: FontWeight.normal),
               ),
               onEditingComplete: () {
                 _onSubmit(xPosvar.text, 2);
@@ -2910,7 +2911,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                   labelStyle: const TextStyle(
                       color: Color.fromARGB(255, 0, 74, 152),
                       fontSize: 14,
-                      fontWeight: FontWeight.bold), // 设置label字体大小为20
+                      fontWeight: FontWeight.normal), // 设置label字体大小为20
                   hintText: myTextData.yPos.toString()),
               onEditingComplete: () {
                 _onSubmit(yPosvar.text, 3);
@@ -2994,7 +2995,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           child: Text(localizedStrings.button_delete,
               style: TextStyle(
                   fontSize: 14,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.normal,
                   color: Theme.of(context).colorScheme.onPrimary)))
     ];
   }
@@ -3012,7 +3013,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: 20,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.normal,
                   color: Theme.of(context).colorScheme.primary),
             ),
             Divider(
@@ -3072,7 +3073,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
             style: TextStyle(
                 fontSize: 14,
                 color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.bold)),
+                fontWeight: FontWeight.normal)),
       ),
       buildTextField(xPosvar, "X1", myTextData.xPos.toString(), 2),
       buildTextField(yPosvar, "Y1", myTextData.xPos.toString(), 3),
@@ -3088,7 +3089,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           child: Text(localizedStrings.button_delete,
               style: TextStyle(
                   fontSize: 14,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.normal,
                   color: Theme.of(context).colorScheme.onPrimary)))
     ];
   }
@@ -3106,7 +3107,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: 20,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.normal,
                   color: Theme.of(context).colorScheme.primary),
             ),
             Divider(
@@ -3166,7 +3167,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
             style: TextStyle(
                 fontSize: 14,
                 color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.bold)),
+                fontWeight: FontWeight.normal)),
       ),
       Row(
         children: [
@@ -3187,7 +3188,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                 hintStyle: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
                     fontSize: 14,
-                    fontWeight: FontWeight.bold),
+                    fontWeight: FontWeight.normal),
               ),
               onEditingComplete: () {
                 _onSubmit(xPosvar.text, 2);
@@ -3215,7 +3216,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                   labelStyle: const TextStyle(
                       color: Color.fromARGB(255, 0, 74, 152),
                       fontSize: 14,
-                      fontWeight: FontWeight.bold), // 设置label字体大小为20
+                      fontWeight: FontWeight.normal), // 设置label字体大小为20
                   hintText: myTextData.yPos.toString()),
               onEditingComplete: () {
                 _onSubmit(yPosvar.text, 3);
@@ -3233,7 +3234,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       buildDropdownButton(
         value: _selectedBarcode,
         items: _savedBarCodeNames,
-        hintText: 'Barcode',
+        hintText: localizedStrings.select_barcode,
         onSelect: _handleBarcodeSelected,
       ),
       Text(
@@ -3259,7 +3260,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       buildDropdownButton(
         value: _selectedRotation,
         items: _rotations,
-        hintText: 'Rotation',
+        hintText: localizedStrings.select_rotation,
         onSelect: _handleRotationSelected,
       ),
       const SizedBox(height: 5),
@@ -3272,7 +3273,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           child: Text(localizedStrings.button_delete,
               style: TextStyle(
                   fontSize: 14,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.normal,
                   color: Theme.of(context).colorScheme.onPrimary)))
     ];
   }
@@ -3290,7 +3291,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: 20,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.normal,
                   color: Theme.of(context).colorScheme.primary),
             ),
             Divider(
@@ -3350,7 +3351,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
             style: TextStyle(
                 fontSize: 14,
                 color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.bold)),
+                fontWeight: FontWeight.normal)),
       ),
       Row(
         children: [
@@ -3371,7 +3372,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                 hintStyle: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
                     fontSize: 14,
-                    fontWeight: FontWeight.bold),
+                    fontWeight: FontWeight.normal),
               ),
               onEditingComplete: () {
                 _onSubmit(xPosvar.text, 2);
@@ -3399,7 +3400,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                   labelStyle: const TextStyle(
                       color: Color.fromARGB(255, 0, 74, 152),
                       fontSize: 14,
-                      fontWeight: FontWeight.bold), // 设置label字体大小为20
+                      fontWeight: FontWeight.normal), // 设置label字体大小为20
                   hintText: myTextData.yPos.toString()),
               onEditingComplete: () {
                 _onSubmit(yPosvar.text, 3);
@@ -3441,7 +3442,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           child: Text(localizedStrings.button_delete,
               style: TextStyle(
                   fontSize: 14,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.normal,
                   color: Theme.of(context).colorScheme.onPrimary)))
     ];
   }

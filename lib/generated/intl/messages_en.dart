@@ -25,6 +25,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "Parity": MessageLookupByLibrary.simpleMessage("Parity:"),
         "alignment": MessageLookupByLibrary.simpleMessage("Alignment:"),
         "attribute": MessageLookupByLibrary.simpleMessage("Attribute"),
+        "auto": MessageLookupByLibrary.simpleMessage("Auto"),
         "barcode_edit": MessageLookupByLibrary.simpleMessage("BarCode Edit"),
         "barcode_height":
             MessageLookupByLibrary.simpleMessage("BarCode Height:"),
@@ -35,23 +36,30 @@ class MessageLookup extends MessageLookupByLibrary {
             "Modify bluetooth name error."),
         "bluetooth_modify_ok": MessageLookupByLibrary.simpleMessage(
             "Modify bluetooth name successful."),
+        "button_add": MessageLookupByLibrary.simpleMessage("Add"),
         "button_cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
         "button_delete": MessageLookupByLibrary.simpleMessage("Delete"),
         "button_dynamic": MessageLookupByLibrary.simpleMessage("Dynamic"),
+        "button_edit": MessageLookupByLibrary.simpleMessage("Edit"),
         "button_exit": MessageLookupByLibrary.simpleMessage("Exit"),
+        "button_export_report":
+            MessageLookupByLibrary.simpleMessage("Export report"),
         "button_home": MessageLookupByLibrary.simpleMessage("Home"),
-        "button_net": MessageLookupByLibrary.simpleMessage("Net:"),
+        "button_net": MessageLookupByLibrary.simpleMessage("Net"),
         "button_ok": MessageLookupByLibrary.simpleMessage("OK"),
+        "button_save": MessageLookupByLibrary.simpleMessage("Save"),
         "button_set": MessageLookupByLibrary.simpleMessage("Set"),
-        "button_stable": MessageLookupByLibrary.simpleMessage("Stable:"),
+        "button_setting": MessageLookupByLibrary.simpleMessage("Setting"),
         "button_start": MessageLookupByLibrary.simpleMessage("Start"),
         "button_static": MessageLookupByLibrary.simpleMessage("Static"),
-        "button_tare": MessageLookupByLibrary.simpleMessage("Tare:"),
+        "button_tare": MessageLookupByLibrary.simpleMessage("Tare"),
+        "button_zero": MessageLookupByLibrary.simpleMessage("Zero"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
         "com_port": MessageLookupByLibrary.simpleMessage("Serial port"),
         "contact_us": MessageLookupByLibrary.simpleMessage(
             "Contact us:sales@taiwanscale.com"),
         "data_bits": MessageLookupByLibrary.simpleMessage("Data bits:"),
+        "date_format": MessageLookupByLibrary.simpleMessage("Date Format:"),
         "device_name": MessageLookupByLibrary.simpleMessage("Device name:"),
         "download": MessageLookupByLibrary.simpleMessage("Download"),
         "editor": MessageLookupByLibrary.simpleMessage("Editor"),
@@ -77,15 +85,19 @@ class MessageLookup extends MessageLookupByLibrary {
         "home_page_title7":
             MessageLookupByLibrary.simpleMessage("License Information"),
         "home_page_title8":
-            MessageLookupByLibrary.simpleMessage("Serial port connection"),
+            MessageLookupByLibrary.simpleMessage("Real-time Weight Data"),
         "home_page_title9":
-            MessageLookupByLibrary.simpleMessage("Serial port connection"),
+            MessageLookupByLibrary.simpleMessage("Language Setting"),
         "hr_alignment": MessageLookupByLibrary.simpleMessage("HR Alignment:"),
         "ip_address": MessageLookupByLibrary.simpleMessage("IPv4:"),
         "language": MessageLookupByLibrary.simpleMessage("Language"),
+        "language_setting_title":
+            MessageLookupByLibrary.simpleMessage("Language Setting"),
         "license_title":
             MessageLookupByLibrary.simpleMessage("License information"),
+        "manual": MessageLookupByLibrary.simpleMessage("Manual"),
         "max_length": MessageLookupByLibrary.simpleMessage("Max Length:"),
+        "net": MessageLookupByLibrary.simpleMessage("Net:"),
         "netmask": MessageLookupByLibrary.simpleMessage("NetMask:"),
         "network_setting":
             MessageLookupByLibrary.simpleMessage("Wireless network settings"),
@@ -95,20 +107,33 @@ class MessageLookup extends MessageLookupByLibrary {
         "open_file": MessageLookupByLibrary.simpleMessage("Open File"),
         "operation_steps":
             MessageLookupByLibrary.simpleMessage("Operation Steps:"),
+        "parameter_settings_title":
+            MessageLookupByLibrary.simpleMessage("Parameter settings"),
         "passed_fail_message": MessageLookupByLibrary.simpleMessage(
             "No authentication.\r\nPlease send the ID to us.\r\n\r\nEmail:sales@taiwanscale.com"),
         "passed_message":
             MessageLookupByLibrary.simpleMessage("Authentication passed.\r\n"),
         "password": MessageLookupByLibrary.simpleMessage("Password:"),
+        "plu_edit": MessageLookupByLibrary.simpleMessage("PLU Edit"),
+        "plu_error_message1": MessageLookupByLibrary.simpleMessage(
+            "PLU ID or PLU name cannot be empty."),
+        "plu_error_message2": MessageLookupByLibrary.simpleMessage(
+            "PLU ID or PLU name already exists."),
+        "plu_name": MessageLookupByLibrary.simpleMessage("PLU Name:"),
+        "plu_remarks": MessageLookupByLibrary.simpleMessage("PLu Remarks:"),
         "position": MessageLookupByLibrary.simpleMessage("Position"),
+        "pretare": MessageLookupByLibrary.simpleMessage("Pretare:"),
         "print_direction": MessageLookupByLibrary.simpleMessage("Direction:"),
         "print_page": MessageLookupByLibrary.simpleMessage("Page:"),
         "printer": MessageLookupByLibrary.simpleMessage("Printer:"),
+        "product_information":
+            MessageLookupByLibrary.simpleMessage("Product Information"),
         "qrcode_edit": MessageLookupByLibrary.simpleMessage("Qrcode Edit"),
         "refresh_port": MessageLookupByLibrary.simpleMessage("Refresh port"),
         "refresh_tip": MessageLookupByLibrary.simpleMessage("Refresh"),
         "save_csv": MessageLookupByLibrary.simpleMessage("Save csv"),
         "save_file": MessageLookupByLibrary.simpleMessage("Save File"),
+        "save_mode": MessageLookupByLibrary.simpleMessage("Save Mode:"),
         "select_barcode": MessageLookupByLibrary.simpleMessage("BarCode:"),
         "select_fontsize": MessageLookupByLibrary.simpleMessage("FontSize:"),
         "select_qrcode": MessageLookupByLibrary.simpleMessage("QRcode:"),
@@ -122,6 +147,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "serial_port": MessageLookupByLibrary.simpleMessage("Serial port:"),
         "set_wifi_success":
             MessageLookupByLibrary.simpleMessage("Set wifi successful!"),
+        "stable": MessageLookupByLibrary.simpleMessage("Stable:"),
+        "stable_time": MessageLookupByLibrary.simpleMessage("Stable Time"),
+        "stable_time_error_tip": MessageLookupByLibrary.simpleMessage(
+            "The stable time cannot exceed 20 seconds."),
         "step1": MessageLookupByLibrary.simpleMessage(
             "1. Please click on one or more elements on the left side;"),
         "step2": MessageLookupByLibrary.simpleMessage(
@@ -130,8 +159,24 @@ class MessageLookup extends MessageLookupByLibrary {
         "system_id":
             MessageLookupByLibrary.simpleMessage("System Unique ID:  "),
         "tab_order": MessageLookupByLibrary.simpleMessage("Tab order:"),
+        "tare": MessageLookupByLibrary.simpleMessage("Tare:"),
         "text_content": MessageLookupByLibrary.simpleMessage("Text Content:"),
+        "user_edit": MessageLookupByLibrary.simpleMessage("User Edit"),
+        "user_error_message1": MessageLookupByLibrary.simpleMessage(
+            "The user id and user name can not be null !"),
+        "user_error_message2": MessageLookupByLibrary.simpleMessage(
+            "User ID or user name can not be repeated !"),
+        "user_error_message3": MessageLookupByLibrary.simpleMessage(
+            "The user record was not found !"),
+        "user_id": MessageLookupByLibrary.simpleMessage("User ID:"),
+        "user_info": MessageLookupByLibrary.simpleMessage("User Info"),
+        "user_name": MessageLookupByLibrary.simpleMessage("User Name:"),
+        "user_phone": MessageLookupByLibrary.simpleMessage("Phone:"),
+        "user_remarks": MessageLookupByLibrary.simpleMessage("User Remarks:"),
+        "user_sex": MessageLookupByLibrary.simpleMessage("Sex:"),
         "welcome": MessageLookupByLibrary.simpleMessage("Welcome"),
+        "zero": MessageLookupByLibrary.simpleMessage("Zero:"),
+        "zero_range": MessageLookupByLibrary.simpleMessage("Zero Range:"),
         "zh_cn": MessageLookupByLibrary.simpleMessage("Chinese")
       };
 }

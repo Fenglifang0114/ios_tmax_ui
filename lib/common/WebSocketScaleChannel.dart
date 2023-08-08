@@ -6,6 +6,7 @@ import 'package:t_max/data/ipinfodata.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import '../data/reqweightdata_data.dart';
+import '../data/respdata_data.dart';
 import '../data/wifi_list_info.dart';
 import '../eventbus/eventbus.dart';
 
@@ -132,6 +133,12 @@ class WebSocketScaleChannel {
         Map<String, dynamic> map = json.decode(data);
         dynamic mobj = ChannelResponse.fromJson(map);
         eventBus.fire(EventConnectBTResponse(mobj));
+      } else if (jsonData['MsgType'] == "resp_send_data_to_bt") {
+        Map<String, dynamic> map = json.decode(data);
+        dynamic mobj = ChannelResponse.fromJson(map);
+        eventBus.fire(EventBTResponse(mobj));
+      } else if (jsonData['MsgType'] == "resp_connect_ap") {
+        pasterConnectApInfo(jsonData['MsgBody']);
       }
     } catch (e) {
       if (kDebugMode) {
@@ -142,6 +149,11 @@ class WebSocketScaleChannel {
 
   Future pasterWifiList(String jsonDataString) async {
     String jsonStrings = jsonDataString;
+    if (jsonStrings.contains('error') || jsonStrings.contains('fail')) {
+      myMessageError.messagedata = jsonStrings;
+      eventBus.fire(EventMessageError(myMessageError));
+      return;
+    }
     final jsonResponse = json.decode(jsonStrings);
     myWifiListInfo = WifiListInfo.fromJson(jsonResponse);
     eventBus.fire(EventWiFiListInfo(myWifiListInfo));
@@ -149,8 +161,20 @@ class WebSocketScaleChannel {
 
   Future pasterIpInfo(String jsonDataString) async {
     String jsonStrings = jsonDataString;
+    if (jsonStrings.contains('error') || jsonStrings.contains('fail')) {
+      myGetIpError.messagedata = jsonStrings;
+      eventBus.fire(EventGetIpError(myGetIpError));
+      return;
+    }
     final jsonResponse = json.decode(jsonStrings);
     myIpInfoData = IpInfoData.fromJson(jsonResponse);
     eventBus.fire(EventIpInfo(myIpInfoData));
   }
+}
+
+Future pasterConnectApInfo(String jsonDataString) async {
+  String jsonStrings = jsonDataString;
+
+  myMessageError.messagedata = jsonStrings;
+  eventBus.fire(EventMessageError(myMessageError));
 }
