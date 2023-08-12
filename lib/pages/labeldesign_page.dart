@@ -8,6 +8,7 @@ import 'package:t_max/data/downloadresponse.dart';
 import 'package:t_max/pages/widget/linepainter.dart';
 import '../data/barcoderowdata.dart';
 import '../data/formatdata.dart';
+import '../data/item_key_list.dart';
 import '../data/offset.dart';
 import '../data/pagesize.dart';
 import '../data/scalecmd_data.dart';
@@ -464,6 +465,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                           ),
                         ),
                         onPressed: () {
+                          myItemKey.keyList.clear();
                           Navigator.of(context).pop();
                         },
                       ),
@@ -1530,6 +1532,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   void deleteAllItem() {
     setState(() {
       textItemList.clear();
+      myItemKey.keyList.clear();
       num.clear();
       count = 0;
       floatButtonList.clear();
@@ -2277,6 +2280,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           fontReverse: fontReverse,
         ));
       }
+      myItemKey.keyList.add(ObjectKey(myTextData.tabOrder));
 
       //中间页面添加最新的可拖拽控件
       floatButtonList.add(DraggableFloatingActionButton(
@@ -2767,6 +2771,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       }
 
       textItemList.clear();
+      myItemKey.keyList.clear();
       num.removeAt(indexToRemove);
       // count = 0;
       floatButtonList.clear();
@@ -2775,6 +2780,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       for (var i = 0; i < temptextItemList.length; i++) {
         // temptextItemList[i].index = i;
         textItemList.add(temptextItemList[i]);
+        myItemKey.keyList.add(ObjectKey(textItemList[i].index));
 
         floatButtonList.add(DraggableFloatingActionButton(
             index: (textItemList[i].index),

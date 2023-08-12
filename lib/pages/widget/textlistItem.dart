@@ -312,8 +312,8 @@ class TextItemState extends State<TextItem> {
             height: 200,
             child: CustomPaint(
               painter: RectanglePainter(
-                startPoint: Offset(0, 0),
-                endPoint: Offset(100, 200),
+                startPoint: const Offset(0, 0),
+                endPoint: const Offset(100, 200),
               ),
               // size: Size.infinite,
             ))
