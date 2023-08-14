@@ -24,10 +24,14 @@ class LinePainter extends CustomPainter {
     // canvas.drawLine(startPoint, endPoint, linePaint);
 
     canvas.drawLine(
-      Offset(startPoint.dx, startPoint.dy),
-      Offset(endPoint.dx, startPoint.dy),
+      Offset(0, 0),
+      Offset(endPoint.dx - startPoint.dx, endPoint.dy - startPoint.dy),
       linePaint,
     );
+    print('startPoint.dx  ' + startPoint.dx.toString());
+    print('startPoint.dy  ' + startPoint.dy.toString());
+    print('endPoint.dx  ' + endPoint.dx.toString());
+    print('endPoint.dy  ' + endPoint.dy.toString());
   }
 
   @override

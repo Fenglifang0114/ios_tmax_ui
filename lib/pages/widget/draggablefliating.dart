@@ -42,12 +42,11 @@ class _DraggableFloatingActionButtonState
   late Offset _offset;
   late Offset _minOffset;
   late Offset _maxOffset;
-  late Offset _location;
   late Offset _originOffset;
-  double _currentX = 0;
-  double _currentY = 0;
-  double _currentX1 = 0;
-  double _currentY1 = 0;
+  final double _currentX = 0;
+  final double _currentY = 0;
+  final double _currentX1 = 0;
+  final double _currentY1 = 0;
   double _minYvalue = 0;
   double _maxYvalue = 0;
   double _minXvalue = 0;

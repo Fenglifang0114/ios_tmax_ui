@@ -36,7 +36,7 @@ const citys = {
   "Free Text": ["Text,TEXT"],
   "BarCode": ["BarCode,BarCode"],
   "Qrcode": ["Qrcode,Qrcode"],
-  // "Shape": ["Rectangle,Rectangle", "Circle,Circle", "Line,Line"],
+  "Shape": ["Rectangle,Rectangle", "Circle,Circle", "Line,Line"],
   "Variable": [
     "NO.,DATA",
     "Gross,DATA",
@@ -1092,12 +1092,12 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     return Stack(
       children: [
         Positioned(
-          // top: start.dy, //math.min(start.dy, end.dy),
-          // left: start.dx, //math.min(start.dx, end.dx),
+          top: 0, // start.dy, //math.min(start.dy, end.dy),
+          left: 0, //start.dx, //math.min(start.dx, end.dx),
           // right: end.dy,
           // bottom: end.dx,
           width: (start - end).distance,
-          height: 5.0,
+          height: 20.0,
           child: Transform.translate(
             offset: start,
             // angle: 0, //math.atan2(end.dy - start.dy, end.dx - start.dx),
@@ -1816,8 +1816,8 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   }
 
   void _createLine() {
-    final start = const Offset(0, 0);
-    final end = const Offset(100, 0);
+    final start = const Offset(10, 100);
+    final end = const Offset(100, 100);
     setState(() {
       _lineList.add(Line(start, end));
     });
@@ -3484,13 +3484,13 @@ class Circle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      left: position.dx - 3,
-      top: position.dy - 3,
+      left: position.dx - 5,
+      top: position.dy - 5,
       child: GestureDetector(
         onPanUpdate: (details) => onPositionChanged(position + details.delta),
         child: Container(
-          width: 6,
-          height: 6,
+          width: 10,
+          height: 10,
           decoration: BoxDecoration(
             color: Colors.white,
             border: Border.all(
