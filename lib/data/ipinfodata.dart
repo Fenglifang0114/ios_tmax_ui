@@ -12,7 +12,7 @@ class IpInfoData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['IP'] = iP;
     data['Gateway'] = gateway;
     data['Netmask'] = netmask;
@@ -188,10 +188,10 @@ class ConnectApInfo {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['ssid'] = this.ssid;
-    data['password'] = this.password;
-    data['bssid'] = this.bssid;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['ssid'] = ssid;
+    data['password'] = password;
+    data['bssid'] = bssid;
     return data;
   }
 }

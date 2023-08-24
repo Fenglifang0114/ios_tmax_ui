@@ -304,13 +304,11 @@ class _DraggableFloatingActionButtonState
           myOffsetData.y = ((_offset.dy).toInt()).roundToDouble();
           myOffsetData.key = widget.key!;
           // myOffsetDataList.offsetDataList.add(myOffsetData);
-
           eventBus.fire(EventOffset(myOffsetData));
           myTextData.xPos = myOffsetData.x.toInt();
           myTextData.yPos = myOffsetData.y.toInt();
           eventBus.fire(EventText(myTextData));
           checkPosition();
-
           if (_isDragging) {
             setState(() {
               _isDragging = false;

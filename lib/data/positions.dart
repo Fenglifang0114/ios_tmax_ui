@@ -9,7 +9,7 @@ class Positions {
   Positions(this.x, this.y, this.x1, this.y1, this.key);
 }
 
-Positions myPositions = Positions(0.0, 0.0, 0.0, 0.0, Key(''));
+Positions myPositions = Positions(0.0, 0.0, 0.0, 0.0, const Key(''));
 
 class PositionsList {
   List<Positions> positionsList;

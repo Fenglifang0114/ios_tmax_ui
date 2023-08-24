@@ -193,14 +193,12 @@ class RowDataWidgetState extends State<RowDataWidget> {
           onPressed: widget.rowData.canDelete
               ? () {
                   setState(() {
-                    if (widget.rowDataList != null) {
-                      widget.rowDataList
-                          .removeWhere((rowData) => rowData == widget.rowData);
-                      myBarCodeRowDataList.barCodeRowDataList =
-                          widget.rowDataList;
-                      eventBus.fire(
-                          EventCurrentBarCodeRowDataList(myBarCodeRowDataList));
-                    }
+                    widget.rowDataList
+                        .removeWhere((rowData) => rowData == widget.rowData);
+                    myBarCodeRowDataList.barCodeRowDataList =
+                        widget.rowDataList;
+                    eventBus.fire(
+                        EventCurrentBarCodeRowDataList(myBarCodeRowDataList));
                     // widget.rowData.canDelete = false;
                     // widget.rowData.canDelete = false;
                   });

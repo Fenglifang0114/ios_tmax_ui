@@ -12,7 +12,7 @@ class LinePainter extends CustomPainter {
     required this.endPoint,
     Color lineColor = Colors.black,
     this.strokeType = StrokeCap.butt,
-    this.lineWidth = 2,
+    this.lineWidth = 0.5,
   }) : linePaint = Paint()
           ..color = lineColor
           ..strokeCap = strokeType
@@ -23,9 +23,14 @@ class LinePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     // canvas.drawLine(startPoint, endPoint, linePaint);
 
+    // if (endPoint.dx == startPoint.dx || endPoint.dy == startPoint.dy) {
+    //   linePaint.color = Colors.red;
+    // } else {
+    //   linePaint.color = Colors.black;
+    // }
     canvas.drawLine(
-      Offset(0, 0),
-      Offset(endPoint.dx - startPoint.dx, endPoint.dy - startPoint.dy),
+      startPoint,
+      endPoint,
       linePaint,
     );
     print('startPoint.dx  ' + startPoint.dx.toString());

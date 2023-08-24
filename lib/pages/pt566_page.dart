@@ -1590,8 +1590,8 @@ class _PT566PageState extends State<PT566Page> {
   }
 
   void _createLine() {
-    final start = Offset(0, 0);
-    final end = Offset(100, 0);
+    const start = Offset(0, 0);
+    const end = Offset(100, 0);
     setState(() {
       _lineList.add(Line(start, end));
     });

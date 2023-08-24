@@ -81,13 +81,15 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   String hralignment = 'Bottom';
   int x2Pos = 100;
   int y2Pos = 0;
-  double lineWidth = 10;
+  double lineWidth = 2;
   String qrWidth = '3';
   String qrcodename = '--';
   String qrcodeType = 'Qrcode';
   String fontBold = 'false';
   String fontReverse = 'false';
   List<dynamic> varcontent = [];
+  Offset _offset = Offset(0, 0);
+  bool _isDragging = false;
 
   TextEditingController textvariable = TextEditingController();
   TextEditingController fontsizevar = TextEditingController();
@@ -97,6 +99,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   TextEditingController y2Posvar = TextEditingController();
   TextEditingController maxLenthvar = TextEditingController();
   TextEditingController barcodeHeight = TextEditingController();
+  TextEditingController lineWidthVar = TextEditingController();
 
   var count = 0;
   dynamic _eventbus1;
@@ -114,6 +117,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   final FocusNode _focusbarcodeHeght = FocusNode();
   final FocusNode _focusNodex2Pos = FocusNode();
   final FocusNode _focusNodey2Pos = FocusNode();
+  final FocusNode _focusNodelineWidth = FocusNode();
 
   String _selectedPrinterName = 'EPM205';
   String _selectedPageSize = '55*50';
@@ -376,12 +380,12 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       }
     });
     _focusNodex2Pos.addListener(() {
-      if (!_focusNodexPos.hasFocus) {
+      if (!_focusNodex2Pos.hasFocus) {
         _onSubmit(x2Posvar.text, 9);
       }
     });
     _focusNodey2Pos.addListener(() {
-      if (!_focusNodeyPos.hasFocus) {
+      if (!_focusNodey2Pos.hasFocus) {
         _onSubmit(y2Posvar.text, 10);
       }
     });
@@ -1088,48 +1092,86 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     );
   }
 
+  void _updatePosition(PointerMoveEvent pointerMoveEvent) {
+    double newOffsetX = _offset.dx + pointerMoveEvent.delta.dx;
+    double newOffsetY = _offset.dy + pointerMoveEvent.delta.dy;
+
+    setState(() {
+      _offset = Offset(newOffsetX, newOffsetY);
+    });
+  }
+
   Widget _buildLine(int index, Offset start, Offset end) {
-    return Stack(
-      children: [
-        Positioned(
-          top: 0, // start.dy, //math.min(start.dy, end.dy),
-          left: 0, //start.dx, //math.min(start.dx, end.dx),
-          // right: end.dy,
-          // bottom: end.dx,
-          width: (start - end).distance,
-          height: 20.0,
-          child: Transform.translate(
-            offset: start,
-            // angle: 0, //math.atan2(end.dy - start.dy, end.dx - start.dx),
-            child: GestureDetector(
-              onPanUpdate: (details) => _onLineDragged(index, details),
-              child: CustomPaint(
-                painter: LinePainter(startPoint: start, endPoint: end),
-              ),
-            ),
+    _offset = start;
+    print('start     ');
+    print(start);
+    print('end     ');
+    print(end);
+
+    return Stack(children: [
+      Positioned(
+        left: _offset.dy,
+        top: _offset.dx, // start.dy, //math.min(start.dy, end.dy),
+        //start.dx, //math.min(start.dx, end.dx),
+        // right: end.dy,
+        // bottom: end.dx,
+        width: (start - end).distance,
+        height: 50.0,
+        child: Listener(
+          onPointerMove: (PointerMoveEvent pointerMoveEvent) {
+            _updatePosition(pointerMoveEvent);
+            print(_offset);
+            setState(() {
+              _isDragging = true;
+            });
+          },
+          onPointerUp: (PointerUpEvent pointerUpEvent) {
+            var dx = (pointerUpEvent.delta.dx.toInt()).roundToDouble();
+            var dy = ((pointerUpEvent.delta.dy).toInt()).roundToDouble();
+            final line = _lineList[index];
+            setState(() {
+              _lineList[index] = Line(_offset, line.end + Offset(dx, dy));
+              print('_offset   ');
+              print(_offset);
+              print('_offset  end   ');
+              print(line.end + Offset(dx, dy));
+            });
+
+            if (_isDragging) {
+              setState(() {
+                _isDragging = false;
+              });
+            } else {}
+          },
+          child: CustomPaint(
+            painter: LinePainter(
+                startPoint: _lineList[index].start,
+                endPoint: _lineList[index].end),
           ),
         ),
-        Circle(
-          index: index,
-          position: start,
-          onPositionChanged: (position) =>
-              _onCircleDragged(index, start, position, 0),
-        ),
-        Circle(
-          index: index,
-          position: end,
-          onPositionChanged: (position) =>
-              _onCircleDragged(index, end, position, 1),
-        ),
-      ],
-    );
+      ),
+
+      // angle: 0, //math.atan2(end.dy - start.dy, end.dx - start.dx),
+    ]);
   }
 
   void _onLineDragged(int index, DragUpdateDetails details) {
     setState(() {
       final line = _lineList[index];
-      _lineList[index] =
-          Line(line.start + details.delta, line.end + details.delta);
+      if ((_getPageWidth() < (line.start.dx + details.delta.dx)) ||
+          _getPageHeight() - 10 < (line.end.dy + details.delta.dy) ||
+          _getPageWidth() < (line.end.dx + details.delta.dx) ||
+          _getPageHeight() - 10 < (line.start.dy + details.delta.dy) ||
+          (0 > (line.start.dx + details.delta.dx)) ||
+          0 > (line.end.dy + details.delta.dy) ||
+          0 > (line.end.dx + details.delta.dx) ||
+          0 > (line.start.dy + details.delta.dy)) {
+        return;
+      }
+      var _tmpOffsetDx = ((details.delta.dx).toInt()).roundToDouble();
+      var _tmpOffsetDy = ((details.delta.dy).toInt()).roundToDouble();
+      Offset tmpOffset = Offset(_tmpOffsetDx, _tmpOffsetDy);
+      _lineList[index] = Line(line.start + tmpOffset, line.end + tmpOffset);
     });
   }
 
@@ -1137,10 +1179,20 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       int index, Offset oldPosition, Offset newPosition, int circleIndex) {
     setState(() {
       final line = _lineList[index];
+      if ((_getPageWidth() < (newPosition.dx)) ||
+          _getPageHeight() - 10 < (newPosition.dy) ||
+          (0 > (newPosition.dx)) ||
+          0 > (newPosition.dy)) {
+        return;
+      }
+      var _tmpOffsetDx = ((newPosition.dx).toInt()).roundToDouble();
+      var _tmpOffsetDy = ((newPosition.dy).toInt()).roundToDouble();
+      Offset tmpOffset = Offset(_tmpOffsetDx, _tmpOffsetDy);
+
       if (circleIndex == 1) {
-        _lineList[index] = Line(line.start, newPosition);
+        _lineList[index] = Line(line.start, tmpOffset);
       } else {
-        _lineList[index] = Line(newPosition, line.end);
+        _lineList[index] = Line(tmpOffset, line.end);
       }
     });
   }
@@ -1419,16 +1471,29 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           textItemList[i].index,
         ]);
       } else if (textItemList[i].type == 'Line') {
-        csvData.add([
-          'L',
-          textItemList[i].xPos,
-          textItemList[i].yPos,
-          textItemList[i].x2Pos,
-          textItemList[i].y2Pos,
-          textItemList[i].lineWidth,
-          0, //线类型
-          textItemList[i].index,
-        ]);
+        if (textItemList[i].lineWidth <= textItemList[i].x2Pos) {
+          csvData.add([
+            'L',
+            textItemList[i].xPos,
+            textItemList[i].yPos,
+            (textItemList[i].x2Pos + textItemList[i].xPos).toInt(),
+            textItemList[i].yPos,
+            textItemList[i].lineWidth.toInt(),
+            0, //线类型
+            textItemList[i].index,
+          ]);
+        } else {
+          csvData.add([
+            'L',
+            textItemList[i].xPos,
+            textItemList[i].yPos,
+            textItemList[i].xPos,
+            (textItemList[i].lineWidth + textItemList[i].yPos).toInt(),
+            textItemList[i].x2Pos.toInt(),
+            0, //线类型
+            textItemList[i].index,
+          ]);
+        }
       }
     }
     csvData.add(['']);
@@ -1794,14 +1859,20 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           alignment: Alignment.center,
           child: TextButton(
             onPressed: () {
-              if (name != 'Line,Line') {
-                count++;
-                num.add(count);
-                myTextData.tabOrder = count;
-                addfloatbutton(name);
-              } else {
-                _createLine();
-              }
+              count++;
+              num.add(count);
+              myTextData.tabOrder = count;
+              addfloatbutton(name);
+
+              //原代码20230818
+              // if (name != 'Line,Line') {
+              //   count++;
+              //   num.add(count);
+              //   myTextData.tabOrder = count;
+              //   addfloatbutton(name);
+              // } else {
+              //   _createLine();
+              // }
             },
             child: Text(
               //左侧按钮文本的颜色
@@ -1816,8 +1887,8 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   }
 
   void _createLine() {
-    final start = const Offset(10, 100);
-    final end = const Offset(100, 100);
+    const start = Offset(10, 100);
+    const end = Offset(100, 100);
     setState(() {
       _lineList.add(Line(start, end));
     });
@@ -2167,6 +2238,30 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           }
         }
       });
+    } else if (indexTemp == 16) {
+      //Font reverse
+      setState(() {
+        myTextData.lineWidth = double.parse(s);
+        for (var i = 0; i < textItemList.length; i++) {
+          if (textItemList[i].index == myTextData.tabOrder) {
+            textItemList[i].lineWidth = myTextData.lineWidth;
+            eventBus.fire(EventText(myTextData));
+            _onUpdate(i);
+          }
+        }
+      });
+    } else if (indexTemp == 17) {
+      //Font reverse
+      setState(() {
+        myTextData.x2Pos = int.parse(s);
+        for (var i = 0; i < textItemList.length; i++) {
+          if (textItemList[i].index == myTextData.tabOrder) {
+            textItemList[i].x2Pos = myTextData.x2Pos;
+            eventBus.fire(EventText(myTextData));
+            _onUpdate(i);
+          }
+        }
+      });
     }
   }
 
@@ -2405,7 +2500,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   TextField buildTextField(TextEditingController controller, String labelText,
       String hintText, int num) {
     controller.text = hintText;
-
     return TextField(
       controller: controller,
       decoration: InputDecoration(
@@ -2430,11 +2524,13 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                           ? _focusNodemaxLenth
                           : (num == 7)
                               ? _focusbarcodeHeght
-                              : (num == 9)
+                              : (num == 17)
                                   ? _focusNodex2Pos
                                   : (num == 10)
                                       ? _focusNodey2Pos
-                                      : _focusNodeContent,
+                                      : (num == 16)
+                                          ? _focusNodelineWidth
+                                          : _focusNodeContent,
     );
   }
 
@@ -3082,9 +3178,10 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                 fontWeight: FontWeight.normal)),
       ),
       buildTextField(xPosvar, "X1", myTextData.xPos.toString(), 2),
-      buildTextField(yPosvar, "Y1", myTextData.xPos.toString(), 3),
-      buildTextField(x2Posvar, "X2", myTextData.x2Pos.toString(), 9),
-      buildTextField(y2Posvar, "Y2", myTextData.y2Pos.toString(), 10),
+      buildTextField(yPosvar, "Y1", myTextData.yPos.toString(), 3),
+      buildTextField(x2Posvar, "Line Lenth", myTextData.x2Pos.toString(), 17),
+      buildTextField(
+          lineWidthVar, "Line Width", myTextData.lineWidth.toString(), 16),
       const SizedBox(height: 20),
       ElevatedButton(
           onPressed: () {
@@ -3418,7 +3515,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       ),
       const SizedBox(height: 20),
       Text(
-        localizedStrings.button_ok,
+        localizedStrings.select_qrcode,
         style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
       ),
       buildDropdownButton(
@@ -3477,6 +3574,7 @@ class Circle extends StatelessWidget {
   final Offset position;
   final ValueChanged onPositionChanged;
   const Circle({
+    super.key,
     required this.index,
     required this.position,
     required this.onPositionChanged,

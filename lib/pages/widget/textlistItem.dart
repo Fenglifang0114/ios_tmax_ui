@@ -270,21 +270,28 @@ class TextItemState extends State<TextItem> {
     double radians = atan2(dy, dx);
     double degrees = radians * 180 / pi;
     final lineLength = sqrt(pow(dx, 2) + pow(dy, 2));
+    print('widget.x2Pos.toString()  ' + widget.x2Pos.toString());
+    print('widget.xPos.toString()  ' + widget.xPos.toString());
 
-    double widthLength = dx.abs();
+    double widthValue = dx.abs();
 
-    double heightLength = dy.abs();
+    double heightValue = dy.abs();
     return Transform.rotate(
         angle: 0, //degrees.abs(), //旋转角度  pi/2  90度
         child: Container(
           decoration: _getBorderStyle(),
-          width: widthLength + 5, // 宽度等于线条长度
-          height: heightLength + 5, // 高度等于线条宽度
+          width: widget.x2Pos + 0, // 宽度等于线条长度
+          height: widget.lineWidth + 5, // 高度等于线条宽度
           child: CustomPaint(
             painter: LinePainter(
-              startPoint: Offset(0, double.parse(widget.yPos.toString())),
-              endPoint: Offset(double.parse(widget.x2Pos.toString()),
-                  double.parse(widget.y2Pos.toString())),
+              startPoint: Offset(
+                  0,
+                  widget.lineWidth / 2 +
+                      1), //double.parse(widget.yPos.toString())),
+              endPoint: Offset(
+                  widget.x2Pos.toDouble(),
+                  widget.lineWidth / 2 +
+                      1), //Offset(double.parse(widget.x2Pos.toString()),                  double.parse((widget.y2Pos).toString())),
               // startPoint: Offset(30, 70),
               // endPoint: Offset(100, 100),
               lineColor: Colors.black,
