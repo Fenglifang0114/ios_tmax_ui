@@ -2,11 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import '../data/login_data.dart';
-import 'widget/theme_color.dart';
-import 'dialog/register_dialog.dart';
+
+import '../dialog/register_dialog.dart';
+import '../widget/box_gradient.dart';
+import '../widget/theme_color.dart';
+import '../widget/version.dart';
 import 'home_page.dart';
-import 'widget/box_gradient.dart';
-import 'widget/version.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);

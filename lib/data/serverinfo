@@ -284,7 +284,7 @@
 // 	ScaleModel string
 // 	ScaleSn    string
 
-// 3. modify scale configuration => {"Req":"modify_scale","ReqData":"{\"ScaleId\":1,\"MediaConf\":{\"Type\":0,\"MediaInfoJson\":\"{\\\"DevPath\\\":\\\"COM6\\\",\\\"Baud\\\":9600,\\\"DataBits\\\":8,\\\"StopBits\\\":0,\\\"Parity\\\":0}\"}}"}
+// 3. modify scale configuration => {"Req":"modify_scale","ReqData":"{\"ScaleId\":1,\"ScaleModel\":\"T2200P\",\"MediaConf\":{\"Type\":0,\"MediaInfoJson\":\"{\\\"DevPath\\\":\\\"COM6\\\",\\\"Baud\\\":9600,\\\"DataBits\\\":8,\\\"StopBits\\\":0,\\\"Parity\\\":0}\"}}"}
 //     response: {"MgrMsgType":"scale_modify","MsgBody":"{\"IsAck\":true,\"AckData\":\"\"}"}
 
 // 4. get product list => {"Req": "get_product_list", "ReqData": ""}
@@ -306,8 +306,9 @@
 // 14. update ui configuration => {"Req": "update_ui_conf", "ReqData": "{\"RecMode\":\"auto\",\"DateFormat\":\"1\",\"ZeroRange\":\"5\", \"StableTimeToRec\":\"3\"}"}
 //     response:
 // 	{"MsgType":"resp_update_ui_config","MsgBody":""}
-// 15. check if license is valid => {"Req ": "check_license","ReqData":""}
-//     response:  {"MsgType":"resp_check_license","MsgBody":"true,e4e13e78c5"}
+
+// 15. check if license is valid => {"Req": "check_license","ReqData":""}
+//     response: 	{"MsgType":"resp_check_license","MsgBody":"true,e4e13e78c5,2023-11-17"}
 
 // To connect to TMax scale with scaleId websocket
 // ws://127.0.0.1:7878/tmax?scaleid=1
@@ -318,7 +319,7 @@
 //      {"ScaleId":1,"MsgType":0,"MsgBody":{"IsStable":true,"IsNet":true,"WeightVal":"5.123","WeightUnit":"kg"}}
 // {"ScaleId":1,"MsgType":3,"MsgBody":"{\"IsStable\":true,\"IsNet\":true,\"WeightVal\":\"5.123\",\"WeightUnit\":\"kg\"}"}
 // 2. To perform Zero
-//      {"Req":"zero","ReqData":""}
+// {"Req":"zero","ReqData":""}
 //    response:
 //      {"ScaleId":1,"MsgType":1,"MsgBody":""}
 // 3. To perform Tare
@@ -352,9 +353,14 @@
 // 	response:
 // 	{"MsgType":8,"MsgBody":"ok","ScaleId":1}
 
-// 9. {"MsgType":13,"MsgBody":"no response, time out","ScaleId":1}  下载后秤反馈的消息
+// 9. download printer format to scale =>{
+// 	"Req": "down_print_format_to_scale",
+// 	"ReqData": "{ \"ScaleModel\": \"t2200\", \"PrinterModel\": \"lp50\", \"FilePaths\": [\"./1.fmt\", \"./2.fmt\", \"./3.fmt\", \"./4.fmt\"]}"
+// }
+// 	response: {"MsgType":"resp_down_prn_fmt","MsgBody":"ok", "ScaleId":1}
 
-// 10.{"MsgType":14,"MsgBody":"serial port error","ScaleId":1}  串口报错后的反馈
+// To configure scale's wifi to connect to specific AP
+// ws://127.0.0.1:7878/tmax?scaleid=1
 
 // 1. To get APs list
 //     {"Req":"get_ap_list", "ReqData":""}
@@ -372,9 +378,9 @@
 // 	{ "ScaleId":1, "MsgType":16, "MsgBody":""}
 // 3. Connect to Specific wifi AP
 //     {"Req":"connect_ap", "ReqData":"{
-//         "ssid": "test",
-//         "password": "mypassword",
-// 		"bssid": "11:22:33:44:55:66",}
+//         \"ssid\": \"T-Scale\",
+//         \"password\": \"TL@8888!\",
+// 		\"bssid\": \"54:75:95:2d:2e:0d\"}"
 // 	}
 
 // 	response:
@@ -382,22 +388,10 @@
 
 // 4.1 Set wifi with static IP
 //     {"Req":"set_wifi_static_ip", "ReqData":"{
-//         "addresses": [
-//             {
-//                 "address": "192.168.1.22",
-//                 "mask": 24,
-//                 "family": "ipv4"
-//             },
-//             {
-//                 "address": "192.168.110.22",
-//                 "mask": 16,
-//                 "family": "ipv4"
-//             }
-//         ],
-//         "gateway": "192.168.1.1",
-//         "dns": "8.8.8.8"
-//       }
-// 	}
+//         \"ip\": \"192.168.1.22\",
+//         \"gateway\": \"192.168.1.1\",
+//         \"netmask\": \"255.255.255.0\"
+//     }"}
 
 // 	response:
 // 	{ "ScaleId":1, "MsgType":"resp_set_wifi_static_ip, "MsgBody":"ok"}
@@ -411,26 +405,29 @@
 //    {"Req":"get_ip_info", "ReqData":""}
 
 //    response
-//    { "ScaleId":1, "MsgType": "resp_get_ip_info", "MsgBody":"{
-//         "addresses": [
-//             {
-//                 "address": "192.168.1.22",
-//                 "mask": 24,
-//                 "proto": "manual",
-//                 "family": "ipv4"
-//             },
-//             {
-//                 "address": "192.168.1.22",
-//                 "mask": 24,
-//                 "proto": "manual",
-//                 "family": "ipv4"
-//             }
-//         ],
-//         "gateway": "192.168.1.1",
-//         "dns": ["114.114.114.114", "8.8.8.8"]，
-//         "mac": "11:22:33:44:55:FF"
-//     }
-//    }"
+//    {"MsgType":"resp_get_ip_info","MsgBody":"{\"IP\":\"10.5.100.98\",\"Gateway\":\"10.5.100.1\",\"Netmask\":\"255.255.255.0\"}","ScaleId":1}
+
+// 6. send commnad to wifi on scale with passthrough mode
+//    {"Req":"send_data_to_wifi", "ReqData":"cmd"}
+//     response:
+//     	{ "ScaleId":1, "MsgType":"resp_send_data_to_wifi", "MsgBody":"response from wifi"}
+
+// 7. GetIpMode
+//    {"Req":"get_ip_mode", "ReqData":""}
+
+//    response
+//    {"MsgType":"resp_get_ip_mode","MsgBody":"{\"IPMode\":\"dynamic\"}","ScaleId":1}
+// or   {"MsgType":"resp_get_ip_mode","MsgBody":"{\"IPMode\":\"static\"}","ScaleId":1}
+
+// 8. GetWifiInfo
+//    {"Req":"get_wifi_info", "ReqData":""}
+
+// {"MsgType":"resp_get_wifi_ap_info","MsgBody":"{\"Ssid\":\"T-Scale\\\"\",\"Bssid\":\"\\\"0c:4b:54:61:fd:db\\\"\",\"Channel\":\"1\",\"Rssi\":\"-63\"}","ScaleId":1}
+
+//    response
+//    {"MsgType":"resp_get_wifi_info","MsgBody":"{\"ssid\":\"guest1\",\"rssi\":2,\"bssid\":\"11:22:33:44:55:66\"}","ScaleId":1}
+
+// 9. SetWifiInfo
 
 // To configure scale's BT configuration
 // ws://127.0.0.1:7878/tmax?scaleid=1
@@ -440,8 +437,8 @@
 //     response:
 //     	{ "ScaleId":1, "MsgType":"resp_modify_bt_name", "MsgBody":"ok"}
 
-// 2. Send command to BT on scale
+// 2. Send command to BT on scale with passthrough mode
 //    {"Req":"send_data_to_bt", "ReqData":"cmd"}
 //     response:
 //     	{ "ScaleId":1, "MsgType":"resp_send_data_to_bt", "MsgBody":"response from BT"}
-
+// 

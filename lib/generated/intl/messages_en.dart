@@ -37,6 +37,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "bluetooth_modify_ok": MessageLookupByLibrary.simpleMessage(
             "Modify bluetooth name successful."),
         "button_add": MessageLookupByLibrary.simpleMessage("Add"),
+        "button_back": MessageLookupByLibrary.simpleMessage("Back"),
         "button_cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
         "button_delete": MessageLookupByLibrary.simpleMessage("Delete"),
         "button_dynamic": MessageLookupByLibrary.simpleMessage("Dynamic"),
@@ -44,11 +45,14 @@ class MessageLookup extends MessageLookupByLibrary {
         "button_exit": MessageLookupByLibrary.simpleMessage("Exit"),
         "button_export_report":
             MessageLookupByLibrary.simpleMessage("Export report"),
+        "button_get_ip": MessageLookupByLibrary.simpleMessage("Get Ip"),
         "button_home": MessageLookupByLibrary.simpleMessage("Home"),
         "button_net": MessageLookupByLibrary.simpleMessage("Net"),
         "button_ok": MessageLookupByLibrary.simpleMessage("OK"),
         "button_save": MessageLookupByLibrary.simpleMessage("Save"),
-        "button_set": MessageLookupByLibrary.simpleMessage("Set"),
+        "button_select_format":
+            MessageLookupByLibrary.simpleMessage("Select Print Format"),
+        "button_set": MessageLookupByLibrary.simpleMessage("Connect"),
         "button_setting": MessageLookupByLibrary.simpleMessage("Setting"),
         "button_start": MessageLookupByLibrary.simpleMessage("Start"),
         "button_static": MessageLookupByLibrary.simpleMessage("Static"),
@@ -68,6 +72,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "expiration_date":
             MessageLookupByLibrary.simpleMessage("Expiration date:"),
         "find_ssid": MessageLookupByLibrary.simpleMessage("Find SSID"),
+        "firmwart_update":
+            MessageLookupByLibrary.simpleMessage("Update Firmware"),
         "font_bold": MessageLookupByLibrary.simpleMessage("Font Bold:"),
         "font_reverse": MessageLookupByLibrary.simpleMessage("Font Reverse:"),
         "gatway": MessageLookupByLibrary.simpleMessage("Gatway:"),
@@ -104,7 +110,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "new_format": MessageLookupByLibrary.simpleMessage("New Format"),
         "no_element": MessageLookupByLibrary.simpleMessage(
             "You haven\'t selected any element."),
-        "open_file": MessageLookupByLibrary.simpleMessage("Open File"),
+        "open_file": MessageLookupByLibrary.simpleMessage("Open File(json)"),
         "operation_steps":
             MessageLookupByLibrary.simpleMessage("Operation Steps:"),
         "parameter_settings_title":
@@ -132,8 +138,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "refresh_port": MessageLookupByLibrary.simpleMessage("Refresh port"),
         "refresh_tip": MessageLookupByLibrary.simpleMessage("Refresh"),
         "save_csv": MessageLookupByLibrary.simpleMessage("Save csv"),
-        "save_file": MessageLookupByLibrary.simpleMessage("Save File"),
+        "save_file": MessageLookupByLibrary.simpleMessage("Save File(json)"),
         "save_mode": MessageLookupByLibrary.simpleMessage("Save Mode:"),
+        "scale_model": MessageLookupByLibrary.simpleMessage("Scale Model"),
         "select_barcode": MessageLookupByLibrary.simpleMessage("BarCode:"),
         "select_fontsize": MessageLookupByLibrary.simpleMessage("FontSize:"),
         "select_qrcode": MessageLookupByLibrary.simpleMessage("QRcode:"),

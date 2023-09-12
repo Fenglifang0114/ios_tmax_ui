@@ -500,10 +500,10 @@ class S {
     );
   }
 
-  /// `Set`
+  /// `Connect`
   String get button_set {
     return Intl.message(
-      'Set',
+      'Connect',
       name: 'button_set',
       desc: '',
       args: [],
@@ -600,20 +600,20 @@ class S {
     );
   }
 
-  /// `Save File`
+  /// `Save File(json)`
   String get save_file {
     return Intl.message(
-      'Save File',
+      'Save File(json)',
       name: 'save_file',
       desc: '',
       args: [],
     );
   }
 
-  /// `Open File`
+  /// `Open File(json)`
   String get open_file {
     return Intl.message(
-      'Open File',
+      'Open File(json)',
       name: 'open_file',
       desc: '',
       args: [],
@@ -1235,6 +1235,56 @@ class S {
     return Intl.message(
       'Language Setting',
       name: 'language_setting_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Back`
+  String get button_back {
+    return Intl.message(
+      'Back',
+      name: 'button_back',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select Print Format`
+  String get button_select_format {
+    return Intl.message(
+      'Select Print Format',
+      name: 'button_select_format',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Scale Model`
+  String get scale_model {
+    return Intl.message(
+      'Scale Model',
+      name: 'scale_model',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Get Ip`
+  String get button_get_ip {
+    return Intl.message(
+      'Get Ip',
+      name: 'button_get_ip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Update Firmware`
+  String get firmwart_update {
+    return Intl.message(
+      'Update Firmware',
+      name: 'firmwart_update',
       desc: '',
       args: [],
     );

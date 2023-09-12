@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gbk_codec/gbk_codec.dart';
 import 'package:t_max/data/downloadresponse.dart';
-import 'package:t_max/pages/widget/linepainter.dart';
+import 'package:t_max/pages/download_page.dart';
 import '../data/barcoderowdata.dart';
 import '../data/formatdata.dart';
 import '../data/item_key_list.dart';
@@ -14,16 +14,17 @@ import '../data/pagesize.dart';
 import '../data/scalecmd_data.dart';
 import '../data/selectedcontrol.dart';
 import '../data/text.dart';
+import '../dialog/barcodeedit_dialog.dart';
+import '../dialog/qrcodeedit_dialog.dart';
 import '../eventbus/eventbus.dart';
 import 'package:path/path.dart' as p;
 import 'package:file_picker/file_picker.dart';
 import '../generated/l10n.dart';
 import '../main.dart';
-import 'dialog/barcodeedit_dialog.dart';
-import 'dialog/qrcodeedit_dialog.dart';
-import 'widget/draggablefliating.dart';
-import 'widget/dropdown copy.dart';
-import 'widget/textlistItem.dart';
+import '../widget/draggablefliating.dart';
+import '../widget/dropdown copy.dart';
+import '../widget/linepainter.dart';
+import '../widget/textlistItem.dart';
 
 class LabelDesignPage extends StatefulWidget {
   const LabelDesignPage({Key? key}) : super(key: key);
@@ -36,7 +37,8 @@ const citys = {
   "Free Text": ["Text,TEXT"],
   "BarCode": ["BarCode,BarCode"],
   "Qrcode": ["Qrcode,Qrcode"],
-  "Shape": ["Rectangle,Rectangle", "Circle,Circle", "Line,Line"],
+  "Shape": ["Line,Line"],
+  // "Shape": ["Rectangle,Rectangle", "Circle,Circle", "Line,Line"],
   "Variable": [
     "NO.,DATA",
     "Gross,DATA",
@@ -88,7 +90,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   String fontBold = 'false';
   String fontReverse = 'false';
   List<dynamic> varcontent = [];
-  Offset _offset = Offset(0, 0);
+  Offset _offset = const Offset(0, 0);
   bool _isDragging = false;
 
   TextEditingController textvariable = TextEditingController();
@@ -135,6 +137,9 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   bool downloadStatus = true;
   String _selectFontsize = '23';
   final _lineList = [];
+
+  List<String> paths = [];
+  List<DataRow> dataRows = [];
 
   final List<String> _printers = [
     'EPM205',
@@ -664,7 +669,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         SizedBox(
-                          width: 120,
+                          width: 135,
                           child: OutlinedButton(
                               onPressed: () async {
                                 String executablePath =
@@ -714,7 +719,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                               )),
                         ),
                         SizedBox(
-                          width: 120,
+                          width: 135,
                           child: OutlinedButton(
                               onPressed: () async {
                                 String filePath = '';
@@ -937,9 +942,12 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                               ));
                               if (outputFile != null) {
                                 _exportCSV();
-                                _saveFormatToCsv(
-                                    csv, outputFile); //////////保存数据到csv
-                                // _saveFormatToJson(outputFile);
+                                _saveFormatToCsv(csv, outputFile);
+
+                                ///保存数据到csv
+                                String jsonFilePath =
+                                    outputFile.replaceAll('.fmt', '.json');
+                                _saveFormatToJson(jsonFilePath); //同时保存一份到json
                               }
                               ////添加实现
                             },
@@ -952,29 +960,31 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                       height: 50,
                       child: ElevatedButton(
                           onPressed: downloadStatus
-                              ? () async {
-                                  String executablePath =
-                                      Platform.resolvedExecutable;
-                                  final directory = p.dirname(executablePath);
-                                  String dataTime = getDateTime();
-                                  String outputFile;
-                                  final filePath =
-                                      Directory('$directory\\backup');
-                                  final file = File(
-                                      '$directory\\backup\\$dataTime.json');
-                                  outputFile = file.path;
-                                  if (!await filePath.exists()) {
-                                    await filePath.create(recursive: true);
-                                  }
-                                  _saveFormatToJson(outputFile);
-                                  _exportCSV();
-                                  sendFormatToScale(csv); //发送数据
-                                  if (kDebugMode) {
-                                    print(csv);
-                                  }
-                                  setState(() {
-                                    downloadStatus = false;
-                                  });
+                              ? () {
+                                  _showConfirmationDialog(context);
+
+                                  // String executablePath =
+                                  //     Platform.resolvedExecutable;
+                                  // final directory = p.dirname(executablePath);
+                                  // String dataTime = getDateTime();
+                                  // String outputFile;
+                                  // final filePath =
+                                  //     Directory('$directory\\backup');
+                                  // final file = File(
+                                  //     '$directory\\backup\\$dataTime.json');
+                                  // outputFile = file.path;
+                                  // if (!await filePath.exists()) {
+                                  //   await filePath.create(recursive: true);
+                                  // }
+                                  // _saveFormatToJson(outputFile);
+                                  // _exportCSV();
+                                  // sendFormatToScale(csv); //发送数据
+                                  // if (kDebugMode) {
+                                  //   print(csv);
+                                  // }
+                                  // setState(() {
+                                  //   downloadStatus = false;
+                                  // });
                                 }
                               : null,
                           style: ElevatedButton.styleFrom(
@@ -1081,6 +1091,78 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         ],
       ),
     );
+  }
+
+  void _showConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          title: const Text(
+            'Confirmation',
+            style: TextStyle(color: Color.fromARGB(255, 15, 71, 161)),
+          ),
+          content: const Text('Please confirm the format is saved as CSV?'),
+          actions: <Widget>[
+            OutlinedButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop(false); // 不跳转
+              },
+            ),
+            OutlinedButton(
+              child: const Text('Confirm'),
+              onPressed: () {
+                Navigator.of(context).pop(true); // 跳转
+              },
+            ),
+          ],
+        );
+      },
+    ).then((confirmed) {
+      if (confirmed) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => DownloadPage()),
+        );
+      }
+    });
+  }
+
+  Future pickFiles() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+      type: FileType.custom,
+      allowedExtensions: ['fmt'],
+    );
+
+    if (kDebugMode) {
+      print(result);
+    }
+    if (result != null) {
+      paths = result.files.map((e) => e.path!).toList();
+      setState(() {
+        dataRows = [];
+        for (var i = 0; i < paths.length; i++) {
+          dataRows.add(
+            DataRow(
+              cells: [
+                DataCell(
+                  Text(
+                    "File${i + 1}",
+                  ),
+                ),
+                DataCell(
+                  Text(
+                    paths[i].toString(),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+      });
+    }
   }
 
   Widget _buildLines() {

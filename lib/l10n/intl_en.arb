@@ -44,7 +44,7 @@
   "gatway":"Gatway:",
   "button_static":"Static",
   "button_dynamic":"Dynamic",
-  "button_set":"Set",
+  "button_set":"Connect",
   "bluetooth_modification":"Bluetooth information modification",
   "device_name":"Device name:",
   "serial_error":"Serial port connection lost. Check the settings.",
@@ -54,8 +54,8 @@
   "printer":"Printer:",
   "print_direction":"Direction:",
   "print_page":"Page:",
-  "save_file":"Save File",
-  "open_file":"Open File",
+  "save_file":"Save File(json)",
+  "open_file":"Open File(json)",
   "barcode_edit":"BarCode Edit",
   "qrcode_edit":"Qrcode Edit",
   "new_format":"New Format",
@@ -117,6 +117,13 @@
   "user_error_message1": "The user id and user name can not be null !",
   "user_error_message2": "User ID or user name can not be repeated !",
   "user_error_message3": "The user record was not found !",
-  "language_setting_title": "Language Setting" 
+  "language_setting_title": "Language Setting" ,
+  "button_back": "Back",
+  "button_select_format": "Select Print Format",
+  "scale_model": "Scale Model",
+  "button_get_ip": "Get Ip",
+  "firmwart_update":"Update Firmware"
+  
+  
   
 }

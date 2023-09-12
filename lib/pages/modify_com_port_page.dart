@@ -12,7 +12,7 @@ import '../data/cominfoslist_data.dart';
 import '../data/comscaleinfo_data.dart';
 import '../functions/methods.dart';
 import '../generated/l10n.dart';
-import 'widget/comportdorpdown.dart';
+import '../widget/comportdorpdown.dart';
 
 class ModifyComPortPage extends StatefulWidget {
   const ModifyComPortPage({super.key});
@@ -25,7 +25,6 @@ class _ModifyComPortPageState extends State<ModifyComPortPage> {
   final TextEditingController _deviceNameController = TextEditingController();
   List<String> comLists = [];
   String comPort = "";
-// List<String> comPortList = ['COM1', 'COM2', 'COM3'];
   List<String> baudRateList = [
     '115200',
     '57600',
@@ -35,6 +34,8 @@ class _ModifyComPortPageState extends State<ModifyComPortPage> {
     '4800',
     '2400'
   ];
+  List<String> scaleModelList = ['TMax'];
+  String scaleModel = myModifyScale.scaleModel.toString();
   List<String> dataBitsList = ['8', '7', '6', '5'];
   List<String> stopBitsList = ['1', '1.5', '2'];
   List<String> checkBitsList = ['None', 'Odd', 'Even'];
@@ -164,6 +165,48 @@ class _ModifyComPortPageState extends State<ModifyComPortPage> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // Text(localizedStrings.scale_model),
+                          // ComPortDropdown(
+                          //     3, scale_model, myCurrentPort.baud.toString()),
+                          const SizedBox(height: 15),
+                          Text(localizedStrings.scale_model),
+                          Container(
+                            height: 53,
+                            width: 200,
+                            padding: const EdgeInsets.all(0),
+                            child: DropdownButtonFormField<String>(
+                              isExpanded: true,
+                              // decoration: const InputDecoration(border: OutlineInputBorder()),
+                              // 设置默认值
+                              value: scaleModel,
+                              // 选择回调
+                              onChanged: (String? newPosition) {
+                                scaleModel = newPosition.toString();
+                              },
+                              // 传入可选的数组
+                              items: scaleModelList
+                                  .map<DropdownMenuItem<String>>(
+                                      (String value) {
+                                return DropdownMenuItem(
+                                    value: value, child: Text(value));
+                              }).toList(),
+                            ),
+                          ),
+                          const SizedBox(height: 15),
+
+                          Text(localizedStrings.baud_rate),
+                          ComPortDropdown(
+                              3, baudRateList, myCurrentPort.baud.toString()),
+                          const SizedBox(height: 15),
+                          Text(localizedStrings.data_bits),
+                          ComPortDropdown(1, dataBitsList,
+                              myCurrentPort.dataBits.toString()),
+                        ],
+                      ),
+                      const SizedBox(width: 60),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
                           const SizedBox(height: 15),
                           Text(localizedStrings.serial_port),
                           Container(
@@ -200,9 +243,17 @@ class _ModifyComPortPageState extends State<ModifyComPortPage> {
                             ),
                           ),
                           const SizedBox(height: 15),
-                          Text(localizedStrings.data_bits),
-                          ComPortDropdown(1, dataBitsList,
-                              myCurrentPort.dataBits.toString()),
+                          Text(localizedStrings.Parity),
+                          ComPortDropdown(
+                              4,
+                              checkBitsList,
+                              (myCurrentPort.parity == 0)
+                                  ? (checkBitsList[0])
+                                  : (myCurrentPort.parity == 1)
+                                      ? (checkBitsList[1])
+                                      : (myCurrentPort.parity == 2)
+                                          ? (checkBitsList[2])
+                                          : checkBitsList[0]),
                           const SizedBox(height: 15),
                           Text(localizedStrings.stop_bits),
                           ComPortDropdown(
@@ -215,37 +266,6 @@ class _ModifyComPortPageState extends State<ModifyComPortPage> {
                                       : (myCurrentPort.stopBits == 2)
                                           ? (stopBitsList[2])
                                           : stopBitsList[0]),
-                        ],
-                      ),
-                      const SizedBox(width: 60),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 15),
-                          Text(localizedStrings.baud_rate),
-                          ComPortDropdown(
-                              3, baudRateList, myCurrentPort.baud.toString()),
-                          const SizedBox(height: 15),
-                          Text(localizedStrings.Parity),
-                          ComPortDropdown(
-                              4,
-                              checkBitsList,
-                              (myCurrentPort.parity == 0)
-                                  ? (checkBitsList[0])
-                                  : (myCurrentPort.parity == 1)
-                                      ? (checkBitsList[1])
-                                      : (myCurrentPort.parity == 2)
-                                          ? (checkBitsList[2])
-                                          : checkBitsList[0]),
-                          // Dropdown(checkBitsList),
-                          const SizedBox(height: 15),
-                          const Text(""),
-                          // Dropdown(protocolList),
-                          Container(
-                            height: 53,
-                            width: 200,
-                            padding: const EdgeInsets.all(0),
-                          ),
                         ],
                       ),
                     ],
@@ -298,6 +318,7 @@ class _ModifyComPortPageState extends State<ModifyComPortPage> {
     myMediaConf.mediaInfoJson = infoString;
     myMediaConf.type = myDevicedata.mediaType;
     myModifyScale.scaleId = int.parse(myDevicedata.scaleID);
+    myModifyScale.scaleModel = scaleModel;
     myModifyScale.mediaConf = myMediaConf;
     String modifyInfoString = jsonEncode(myModifyScale);
     sendModifyInfo(modifyInfoString);

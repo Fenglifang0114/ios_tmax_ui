@@ -5,22 +5,22 @@ import 'package:csv/csv.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/downloadresponse.dart';
-import 'package:t_max/pages/widget/linepainter.dart';
 import '../data/barcoderowdata.dart';
 import '../data/formatdata.dart';
 import '../data/offset.dart';
 import '../data/pagesize.dart';
 import '../data/scalecmd_data.dart';
 import '../data/text.dart';
+import '../dialog/barcodeedit_dialog.dart';
+import '../dialog/qrcodeedit_dialog.dart';
 import '../eventbus/eventbus.dart';
 import 'package:path/path.dart' as p;
 import 'package:file_picker/file_picker.dart';
 import '../main.dart';
-import 'dialog/barcodeedit_dialog.dart';
-import 'dialog/qrcodeedit_dialog.dart';
-import 'widget/draggablefliating.dart';
-import 'widget/dropdown copy.dart';
-import 'widget/textlistItem.dart';
+import '../widget/draggablefliating.dart';
+import '../widget/dropdown copy.dart';
+import '../widget/linepainter.dart';
+import '../widget/textlistItem.dart';
 
 class PT566Page extends StatefulWidget {
   const PT566Page({Key? key}) : super(key: key);

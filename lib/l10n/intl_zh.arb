@@ -44,7 +44,7 @@
     "gatway":"网关:",
     "button_static":"静态",
     "button_dynamic":"动态",
-    "button_set":"设置",
+    "button_set":"连接",
     "bluetooth_modification":"蓝牙信息修改",
     "device_name":"设备名称：",
     "serial_error":"串口失去连接，请检查设置。",
@@ -54,8 +54,8 @@
     "printer":"打印机：",
     "print_direction":"打印方向：",
     "print_page":"纸张大小：",
-    "save_file":"保存文件",
-    "open_file":"打开文件",
+    "save_file":"保存文件(json)",
+    "open_file":"打开文件(json)",
     "barcode_edit":"条码编辑",
     "qrcode_edit":"二维码编辑",
     "new_format":"新建格式",
@@ -117,7 +117,12 @@
     "user_error_message1": "用户ID和用户名字不能为空!",
     "user_error_message2": "用户ID或者用户名称不能重复 !",
     "user_error_message3": "用户记录没有找到 !",
-    "language_setting_title": "语言设置"
+    "language_setting_title": "语言设置",
+    "button_back": "返回",
+    "button_select_format": "选择打印格式",
+    "scale_model": "机种",
+    "button_get_ip": "获取IP",
+    "firmwart_update":"更新固件"
   
     
   }

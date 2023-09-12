@@ -25,15 +25,12 @@ class ChannelResponse {
 }
 
 ChannelResponse myDownloadResponse = ChannelResponse('', '', 0);
-
 ChannelResponse mySerialPortResponse = ChannelResponse('', '', 0);
-
 ChannelResponse myConnectDynamicIpResponse = ChannelResponse('', '', 0);
-
 ChannelResponse myConnectStaticIpResponse = ChannelResponse('', '', 0);
-
 ChannelResponse myConnectBTResponse = ChannelResponse('', '', 0);
 ChannelResponse myRespBTData = ChannelResponse('', '', 0);
+ChannelResponse myRespUpdateFirmware = ChannelResponse('', '', 0);
 
 class SerialPortStatus {
   bool serialPortStatus;

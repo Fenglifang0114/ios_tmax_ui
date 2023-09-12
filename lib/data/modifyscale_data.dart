@@ -1,23 +1,26 @@
 class ModifyScale {
   int? scaleId;
+  String? scaleModel;
   MediaConf? mediaConf;
 
-  ModifyScale({this.scaleId, this.mediaConf});
+  ModifyScale({this.scaleId, this.scaleModel, this.mediaConf});
 
   ModifyScale.fromJson(Map<String, dynamic> json) {
     scaleId = json['ScaleId'];
+    scaleModel = json['ScaleModel'];
     mediaConf = json['MediaConf'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['ScaleId'] = scaleId;
+    data['ScaleModel'] = scaleModel;
     data['MediaConf'] = mediaConf;
     return data;
   }
 }
 
-ModifyScale myModifyScale = ModifyScale();
+ModifyScale myModifyScale = ModifyScale(scaleModel: 'TMax');
 
 class MediaConf {
   int? type;

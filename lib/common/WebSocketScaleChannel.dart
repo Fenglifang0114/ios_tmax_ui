@@ -7,6 +7,7 @@ import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import '../data/reqweightdata_data.dart';
 import '../data/respdata_data.dart';
+import '../data/wifi_ap_info.dart';
 import '../data/wifi_list_info.dart';
 import '../eventbus/eventbus.dart';
 
@@ -119,26 +120,34 @@ class WebSocketScaleChannel {
         eventBus.fire(EventSerialPortResponse(mobj));
       } else if (jsonData['MsgType'] == "resp_get_ap_list") {
         pasterWifiList(jsonData['MsgBody']);
-      } else if (jsonData['MsgType'] == "resp_connect_ap_dynamic_ip") {
-        Map<String, dynamic> map = json.decode(data);
-        dynamic mobj = ChannelResponse.fromJson(map);
-        eventBus.fire(EventConnectDynamicIp(mobj));
-      } else if (jsonData['MsgType'] == "resp_connect_ap_static_ip") {
-        Map<String, dynamic> map = json.decode(data);
-        dynamic mobj = ChannelResponse.fromJson(map);
-        eventBus.fire(EventConnectStaticIp(mobj));
       } else if (jsonData['MsgType'] == "resp_get_ip_info") {
         pasterIpInfo(jsonData['MsgBody']);
       } else if (jsonData['MsgType'] == "resp_modify_bt_name") {
         Map<String, dynamic> map = json.decode(data);
         dynamic mobj = ChannelResponse.fromJson(map);
         eventBus.fire(EventConnectBTResponse(mobj));
-      } else if (jsonData['MsgType'] == "resp_send_data_to_bt") {
+      } else if (jsonData['MsgType'] == "resp_bt_passth_data") {
         Map<String, dynamic> map = json.decode(data);
         dynamic mobj = ChannelResponse.fromJson(map);
         eventBus.fire(EventBTResponse(mobj));
       } else if (jsonData['MsgType'] == "resp_connect_ap") {
         pasterConnectApInfo(jsonData['MsgBody']);
+      } else if (jsonData['MsgType'] == "resp_set_wifi_dynamic_ip") {
+        Map<String, dynamic> map = json.decode(data);
+        dynamic mobj = ChannelResponse.fromJson(map);
+        eventBus.fire(EventConnectDynamicIp(mobj));
+      } else if (jsonData['MsgType'] == "resp_set_wifi_static_ip") {
+        Map<String, dynamic> map = json.decode(data);
+        dynamic mobj = ChannelResponse.fromJson(map);
+        eventBus.fire(EventConnectStaticIp(mobj));
+      } else if (jsonData['MsgType'] == "resp_get_ip_mode") {
+        pasterGetIpMode(jsonData['MsgBody']);
+      } else if (jsonData['MsgType'] == "resp_get_wifi_ap_info") {
+        pasterWifiApInfo(jsonData['MsgBody']);
+      } else if (jsonData['MsgType'] == "resp_update_firmware") {
+        Map<String, dynamic> map = json.decode(data);
+        dynamic mobj = ChannelResponse.fromJson(map);
+        eventBus.fire(EventRespUpdateFirmware(mobj));
       }
     } catch (e) {
       if (kDebugMode) {
@@ -149,9 +158,11 @@ class WebSocketScaleChannel {
 
   Future pasterWifiList(String jsonDataString) async {
     String jsonStrings = jsonDataString;
-    if (jsonStrings.contains('error') || jsonStrings.contains('fail')) {
-      myMessageError.messagedata = jsonStrings;
-      eventBus.fire(EventMessageError(myMessageError));
+    if (jsonStrings.contains('error') ||
+        jsonStrings.contains('fail') ||
+        jsonStrings.contains('done')) {
+      myGetWifiListError.messagedata = jsonStrings;
+      eventBus.fire(EventGetWifiListError(myGetWifiListError));
       return;
     }
     final jsonResponse = json.decode(jsonStrings);
@@ -170,11 +181,29 @@ class WebSocketScaleChannel {
     myIpInfoData = IpInfoData.fromJson(jsonResponse);
     eventBus.fire(EventIpInfo(myIpInfoData));
   }
+
+// TODO:
+  Future pasterWifiApInfo(String jsonDataString) async {
+    String jsonStrings = jsonDataString;
+    if (jsonStrings.contains('error') || jsonStrings.contains('fail')) {
+      myMessageError.messagedata = jsonStrings;
+      eventBus.fire(EventMessageError(myMessageError));
+      return;
+    }
+    final jsonResponse = json.decode(jsonStrings);
+    myWiFiAPInfo = WiFiAPInfo.fromJson(jsonResponse);
+    eventBus.fire(EventGetWifiApInfo(myWiFiAPInfo));
+  }
 }
 
 Future pasterConnectApInfo(String jsonDataString) async {
   String jsonStrings = jsonDataString;
+  myConnectDynamicIpResponse.msgBody = jsonStrings;
+  eventBus.fire(EventConnectDynamicIp(myConnectDynamicIpResponse));
+}
 
-  myMessageError.messagedata = jsonStrings;
-  eventBus.fire(EventMessageError(myMessageError));
+Future pasterGetIpMode(String jsonDataString) async {
+  String jsonStrings = jsonDataString;
+  myRespGetIpMode.messagedata = jsonStrings;
+  eventBus.fire(EventRespGetIpMode(myRespGetIpMode));
 }

@@ -75,3 +75,7 @@ class MessageError {
 
 MessageError myMessageError = MessageError('');
 MessageError myGetIpError = MessageError('');
+MessageError myGetApInfoError = MessageError('');
+
+MessageError myRespGetIpMode = MessageError('');
+MessageError myGetWifiListError = MessageError('');

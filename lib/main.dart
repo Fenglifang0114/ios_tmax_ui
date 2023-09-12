@@ -8,7 +8,7 @@ import 'common/WebSocketScaleChannel.dart';
 import 'data/scalecmd_data.dart';
 import 'generated/l10n.dart';
 import 'pages/trial_page.dart';
-import 'pages/widget/theme_color.dart';
+import 'widget/theme_color.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,6 +31,9 @@ class MyApp extends StatelessWidget {
     // webchannel = WebSocketChannel('ws://127.0.0.1:56566/tmax?scaleid=0');
     webchannel1 = WebSocketScaleChannel('ws://127.0.0.1:7878/tmax?scaleid=1');
     webchannel = WebSocketChannel('ws://127.0.0.1:7878/tmax?scaleid=0');
+    // webchannel1 =
+    //     WebSocketScaleChannel('ws://10.5.100.101:7878/tmax?scaleid=1');
+    // webchannel = WebSocketChannel('ws://10.5.100.101:7878/tmax?scaleid=0');
 
     // webchannel = WebSocketChannel('ws://10.5.52.65:7878/tmax?scaleid=0');
     webchannel.connect();

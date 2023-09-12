@@ -30,6 +30,12 @@ class PublicFunctions {
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
 
+  static void getApInfo() {
+    myScaleCmd.cmdMode = 'get_wifi_info';
+    myScaleCmd.cmdData = '';
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
+
   static void reScanApList() {
     myScaleCmd.cmdMode = 'rescan_ap_list';
     myScaleCmd.cmdData = '';
@@ -40,6 +46,12 @@ class PublicFunctions {
     myScaleCmd.cmdMode = "get_port_list";
     myScaleCmd.cmdData = "";
     MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  static void getIpMode() {
+    myScaleCmd.cmdMode = "get_ip_mode";
+    myScaleCmd.cmdData = "";
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
 
   static void getWifiList() {

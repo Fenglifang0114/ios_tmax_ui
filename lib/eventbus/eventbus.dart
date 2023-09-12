@@ -247,6 +247,11 @@ class EventConnectStaticIp {
   EventConnectStaticIp(this.obj);
 }
 
+class EventRespUpdateFirmware {
+  dynamic obj;
+  EventRespUpdateFirmware(this.obj);
+}
+
 class EventIpInfo {
   dynamic obj;
   EventIpInfo(this.obj);
@@ -267,7 +272,27 @@ class EventMessageError {
   EventMessageError(this.obj);
 }
 
+class EventGetWifiListError {
+  dynamic obj;
+  EventGetWifiListError(this.obj);
+}
+
 class EventGetIpError {
   dynamic obj;
   EventGetIpError(this.obj);
+}
+
+class EventGetWifiApInfo {
+  dynamic obj;
+  EventGetWifiApInfo(this.obj);
+}
+
+class EventRespSetWifiStaticIp {
+  dynamic obj;
+  EventRespSetWifiStaticIp(this.obj);
+}
+
+class EventRespGetIpMode {
+  dynamic obj;
+  EventRespGetIpMode(this.obj);
 }

@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/data/respdata_data.dart';
 import 'package:t_max/data/scalecmd_data.dart';
+import 'package:t_max/data/wifi_ap_info.dart';
 import 'package:t_max/data/wifi_list_info.dart';
 import 'package:t_max/main.dart';
 import '../data/downloadresponse.dart';
@@ -10,7 +12,7 @@ import '../data/ipinfodata.dart';
 import '../eventbus/eventbus.dart';
 import '../functions/methods.dart';
 import '../generated/l10n.dart';
-import 'widget/wifitextfeild.dart';
+import '../widget/wifitextfeild.dart';
 
 class WifiSettingPage extends StatefulWidget {
   const WifiSettingPage({Key? key}) : super(key: key);
@@ -23,12 +25,13 @@ class WifiSettingPageState extends State<WifiSettingPage> {
   List<String> wifiItems = [];
   List<String> displayedItems = [];
   List<int> wifiRssiList = [];
+  List<String> bssidList = [];
   TextEditingController ssidController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController netMaskController = TextEditingController();
   TextEditingController ipController = TextEditingController();
   TextEditingController gateWayController = TextEditingController();
-  TextEditingController dnsController = TextEditingController();
+  // TextEditingController dnsController = TextEditingController();
   final TextEditingController _findWifiText = TextEditingController();
   int selectedIndex = -1;
   bool passwordLock = true;
@@ -37,13 +40,23 @@ class WifiSettingPageState extends State<WifiSettingPage> {
   bool _isValidGateway = true;
   bool _isValidDns = true;
   bool _isStatic = false;
+  bool _enableRefresh = false;
   String bssId = '';
+  String connectedSsid = '';
+  String connectedMac = '';
+  bool isConnecting = false;
+  bool alreadyConnected = false;
+  Timer? _timer;
+
   dynamic _eventbus1;
   dynamic _eventbus2;
   dynamic _eventbus3;
   dynamic _eventbus4;
   dynamic _eventbus5;
   dynamic _eventbus6;
+  dynamic _eventbus7;
+  dynamic _eventbus8;
+  dynamic _eventbus9;
   // dynamic _eventbus2 = EventBus();
 
   TextEditingController controller = TextEditingController();
@@ -81,12 +94,14 @@ class WifiSettingPageState extends State<WifiSettingPage> {
       for (var i = 0; i < myWifiListInfo.wifidatalist!.length; i++) {
         if (myWifiListInfo.wifidatalist![i].ssid!.isNotEmpty) {
           wifiItems.add(myWifiListInfo.wifidatalist![i].ssid!);
+          bssidList.add(myWifiListInfo.wifidatalist![i].mac!);
           wifiRssiList.add(myWifiListInfo.wifidatalist![i].rssi!);
         }
       }
     } else {
       wifiItems = [];
       wifiRssiList = [];
+      bssidList = [];
     }
     displayedItems = List.from(wifiItems);
     ssidController.text = "";
@@ -98,16 +113,20 @@ class WifiSettingPageState extends State<WifiSettingPage> {
           _findWifiText.text = '';
           wifiRssiList.clear();
           wifiItems.clear();
+          bssidList.clear();
           displayedItems.clear();
           if (myWifiListInfo.wifidatalist!.isNotEmpty) {
             for (var i = 0; i < myWifiListInfo.wifidatalist!.length; i++) {
               if (myWifiListInfo.wifidatalist![i].ssid!.isNotEmpty) {
                 wifiItems.add(myWifiListInfo.wifidatalist![i].ssid!);
+                bssidList.add(myWifiListInfo.wifidatalist![i].mac!);
                 wifiRssiList.add(myWifiListInfo.wifidatalist![i].rssi!);
               }
             }
+            PublicFunctions.getApInfo();
           }
           displayedItems = List.from(wifiItems);
+          _enableRefresh = true;
         });
       }
     });
@@ -116,18 +135,14 @@ class WifiSettingPageState extends State<WifiSettingPage> {
         setState(() {
           myConnectDynamicIpResponse = event.obj;
           if (myConnectDynamicIpResponse.msgBody.isNotEmpty) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text(
-                    (myConnectDynamicIpResponse.msgBody.contains('ok'))
-                        ? setMessage
-                        : myConnectDynamicIpResponse.msgBody,
-                    style: const TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.bold)), ////此处需要秤回复
-                duration: const Duration(seconds: 3),
-                backgroundColor:
-                    (myConnectDynamicIpResponse.msgBody.contains('ok'))
-                        ? Colors.green.shade900
-                        : Colors.red.shade900));
+            if (myConnectStaticIpResponse.msgBody.contains('ok')) {
+              isConnecting = false;
+              PublicFunctions.getApInfo();
+            } else {
+              isConnecting = false;
+              errorMessage = myConnectDynamicIpResponse.msgBody;
+              PublicFunctions.getApInfo();
+            }
           }
         });
       }
@@ -137,18 +152,15 @@ class WifiSettingPageState extends State<WifiSettingPage> {
         setState(() {
           myConnectStaticIpResponse = event.obj;
           if (myConnectStaticIpResponse.msgBody.isNotEmpty) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text(
-                    (myConnectStaticIpResponse.msgBody.contains('ok'))
-                        ? localizedStrings.set_wifi_success
-                        : myConnectStaticIpResponse.msgBody,
-                    style: const TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.bold)), ////此处需要秤回复
-                duration: const Duration(seconds: 3),
-                backgroundColor:
-                    (myConnectStaticIpResponse.msgBody.contains('ok'))
-                        ? Colors.green.shade900
-                        : Colors.red.shade900));
+            errorMessage = myConnectStaticIpResponse.msgBody;
+            if (myConnectStaticIpResponse.msgBody.contains('ok')) {
+              isConnecting = false;
+              if (alreadyConnected) {
+                PublicFunctions.getApInfo();
+              } else {
+                connectAp();
+              }
+            }
           }
         });
       }
@@ -158,18 +170,18 @@ class WifiSettingPageState extends State<WifiSettingPage> {
       if (mounted) {
         setState(() {
           myIpInfoData = event.obj;
+          isConnecting = false;
 
-          gateWayController.text = myIpInfoData.gateway!;
           if (myIpInfoData.iP != null) {
-            ipController.text = myIpInfoData.iP!;
-            _isStatic = false;
-            errorMessage = '';
-          }
-          if (myIpInfoData.gateway!.isNotEmpty) {
-            gateWayController.text = myIpInfoData.gateway!;
-          }
-          if (myIpInfoData.netmask!.isNotEmpty) {
-            netMaskController.text = myIpInfoData.netmask!;
+            if (myIpInfoData.iP != '0.0.0.0') {
+              ipController.text = myIpInfoData.iP!;
+              gateWayController.text = myIpInfoData.gateway!;
+              netMaskController.text = myIpInfoData.netmask!;
+              errorMessage = 'Get Ip OK !';
+            } else {
+              errorMessage = 'Get ip fail !';
+            }
+            PublicFunctions.getIpMode();
           }
         });
       }
@@ -179,9 +191,9 @@ class WifiSettingPageState extends State<WifiSettingPage> {
       if (mounted) {
         setState(() {
           myMessageError = event.obj;
-          errorMessage = myMessageError.messagedata!;
-          if (errorMessage.contains('ok')) {
-            PublicFunctions.getIpInfo();
+
+          if (!errorMessage.contains('ok')) {
+            errorMessage = myMessageError.messagedata!;
           }
         });
       }
@@ -192,6 +204,50 @@ class WifiSettingPageState extends State<WifiSettingPage> {
         setState(() {
           myGetIpError = event.obj;
           errorMessage = myGetIpError.messagedata!;
+          isConnecting = false;
+        });
+      }
+    });
+    _eventbus7 = eventBus.on<EventRespGetIpMode>().listen((event) {
+      if (mounted) {
+        setState(() {
+          myRespGetIpMode = event.obj;
+          if (myRespGetIpMode.messagedata!.isNotEmpty) {
+            if (myRespGetIpMode.messagedata == 'dhcp') {
+              _isStatic = false;
+            } else if (myRespGetIpMode.messagedata == 'static') {
+              _isStatic = true;
+            }
+          }
+        });
+      }
+    });
+
+    _eventbus8 = eventBus.on<EventGetWifiListError>().listen((event) {
+      if (mounted) {
+        setState(() {
+          myGetWifiListError = event.obj;
+          errorMessage = myGetWifiListError.messagedata!;
+          _enableRefresh = true;
+        });
+      }
+    });
+
+    _eventbus9 = eventBus.on<EventGetWifiApInfo>().listen((event) {
+      if (mounted) {
+        setState(() {
+          myWiFiAPInfo = event.obj;
+          if (myWiFiAPInfo.ssid!.isNotEmpty) {
+            connectedSsid = myWiFiAPInfo.ssid!;
+            connectedMac = myWiFiAPInfo.bssid!;
+            PublicFunctions.getIpInfo();
+          } else {
+            connectedSsid = "";
+            connectedMac = "";
+            ipController.clear();
+            gateWayController.clear();
+            netMaskController.clear();
+          }
         });
       }
     });
@@ -207,6 +263,10 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     _eventbus4.cancel();
     _eventbus5.cancel();
     _eventbus6.cancel();
+    _eventbus7.cancel();
+    _eventbus8.cancel();
+    _eventbus9.cancel();
+
     super.dispose();
   }
 
@@ -279,13 +339,22 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                               message: localizedStrings.refresh_tip,
                               child: IconButton(
                                 splashRadius: 20,
-                                onPressed: () {
-                                  PublicFunctions.reScanApList();
-                                },
+                                onPressed: _enableRefresh
+                                    ? () {
+                                        setState(() {
+                                          _enableRefresh = false;
+                                          errorMessage = '';
+                                        });
+                                        PublicFunctions.getWifiList();
+                                      }
+                                    : null,
                                 icon: Icon(
                                   Icons.refresh,
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary,
+                                  color: _enableRefresh
+                                      ? Theme.of(context).colorScheme.onPrimary
+                                      : Theme.of(context)
+                                          .colorScheme
+                                          .background,
                                 ),
                               ),
                             ),
@@ -353,56 +422,62 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                   itemCount: displayedItems.length,
                   itemBuilder: (context, index) {
                     return SizedBox(
-                        height: 50,
-                        child: Column(
-                          children: [
-                            Divider(
-                              height: 2,
-                              color: Theme.of(context).colorScheme.background,
-                            ),
-                            ListTile(
-                              title: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      displayedItems[index],
-
-                                      maxLines: 1, // 设置文本最大行数为1
-                                      style: const TextStyle(
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
+                      child: Column(
+                        children: [
+                          Divider(
+                            height: 2,
+                            color: Theme.of(context).colorScheme.background,
+                          ),
+                          ListTile(
+                            dense: true,
+                            title: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  displayedItems[index],
+                                  maxLines: 1, // 设置文本最大行数为1
+                                  style: const TextStyle(
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                  Icon((wifiRssiList[index] == 4)
-                                      ? Icons.wifi
-                                      : (wifiRssiList[index] == 3)
-                                          ? Icons.wifi_2_bar
-                                          : (wifiRssiList[index] == 2 ||
-                                                  wifiRssiList[index] == 1)
-                                              ? Icons.wifi_1_bar
-                                              : Icons.wifi)
-                                ],
+                                )
+                              ],
+                            ),
+                            subtitle: Text(
+                              bssidList[index],
+                              maxLines: 1, // 设置文本最大行数为1
+                              style: const TextStyle(
+                                fontSize: 12,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              tileColor: selectedIndex == index
-                                  ? const Color.fromARGB(255, 167, 215, 255)
-                                  : null,
-                              onTap: () {
-                                setState(() {
-                                  selectedIndex = index;
-                                  // 更新文本框中的值
-                                  ssidController.text = displayedItems[index];
-                                  if (index <
-                                      myWifiListInfo.wifidatalist!.length) {
-                                    bssId = myWifiListInfo
-                                        .wifidatalist![index].mac!;
-                                  }
-                                });
-                              },
-                            )
-                          ],
-                        ));
+                            ),
+                            trailing: Icon((wifiRssiList[index] == 4)
+                                ? Icons.wifi
+                                : (wifiRssiList[index] == 3)
+                                    ? Icons.wifi_2_bar
+                                    : (wifiRssiList[index] == 2 ||
+                                            wifiRssiList[index] == 1)
+                                        ? Icons.wifi_1_bar
+                                        : Icons.wifi),
+                            tileColor: selectedIndex == index
+                                ? const Color.fromARGB(255, 167, 215, 255)
+                                : null,
+                            onTap: () {
+                              setState(() {
+                                selectedIndex = index;
+                                // 更新文本框中的值
+                                ssidController.text = displayedItems[index];
+                                if (index <
+                                    myWifiListInfo.wifidatalist!.length) {
+                                  bssId =
+                                      myWifiListInfo.wifidatalist![index].mac!;
+                                }
+                              });
+                            },
+                          )
+                        ],
+                      ),
+                    );
                   },
                 ),
               ),
@@ -455,6 +530,77 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                         ),
                                       ),
                                     ),
+                                    const SizedBox(
+                                      height: 20,
+                                    ),
+                                    Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          const SizedBox(
+                                            width: 20,
+                                          ),
+                                          SizedBox(
+                                            height: 40,
+                                            width: 200,
+                                            child: Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                "Connected AP Info:",
+                                                textAlign: TextAlign.right,
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .primary,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Column(
+                                            children: [
+                                              SizedBox(
+                                                height: 30,
+                                                width: 200,
+                                                child: Align(
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: Text(
+                                                    connectedSsid,
+                                                    textAlign: TextAlign.right,
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .primary,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                width: 20,
+                                              ),
+                                              SizedBox(
+                                                height: 30,
+                                                width: 200,
+                                                child: Align(
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: Text(
+                                                    connectedMac,
+                                                    textAlign: TextAlign.right,
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .primary,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        ]),
                                     const SizedBox(
                                       height: 20,
                                     ),
@@ -564,10 +710,10 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                             maxLines: 1,
                                             inputFormatters: [
                                               LengthLimitingTextInputFormatter(
-                                                  28),
+                                                  20),
                                               FilteringTextInputFormatter.allow(
                                                   RegExp(
-                                                      r'^[ -~]+$')), // 允许输入数字和点
+                                                      r'^[ -~!@#$%^&*()_+<>?:"{},.\/;]+$')), // 允许输入数字和点
                                             ],
                                             decoration: InputDecoration(
                                               suffixIcon: IconButton(
@@ -591,6 +737,9 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                             ),
                                             onChanged: (value) {
                                               isValidData();
+                                              setState(() {
+                                                errorMessage = '';
+                                              });
                                             },
                                           ),
                                         )
@@ -629,34 +778,37 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                       gateWayController,
                                       _isStatic,
                                     ),
-                                    buildCommonRow(
-                                      "DNS:",
-                                      15,
-                                      ipaddressRegex,
-                                      _isValidDns,
-                                      'Incorrect DNS! e.g. 8.8.8.8',
-                                      (value) => validateDns(value),
-                                      dnsController,
-                                      _isStatic,
-                                    ),
+                                    // buildCommonRow(
+                                    //   "DNS:",
+                                    //   15,
+                                    //   ipaddressRegex,
+                                    //   _isValidDns,
+                                    //   'Incorrect DNS! e.g. 8.8.8.8',
+                                    //   (value) => validateDns(value),
+                                    //   dnsController,
+                                    //   _isStatic,
+                                    // ),
                                     Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
                                           Text(
-                                            (errorMessage.contains('ok') ||
-                                                    errorMessage.contains('OK'))
-                                                ? 'OK'
-                                                : (errorMessage.contains(
-                                                            'error') ||
-                                                        errorMessage
-                                                            .contains('fail') ||
-                                                        errorMessage.contains(
-                                                            'Time out') ||
-                                                        errorMessage
-                                                            .contains('ERROR'))
-                                                    ? errorMessage
-                                                    : '',
+                                            errorMessage,
+                                            // (errorMessage
+                                            // .contains('ok') ||
+                                            //         errorMessage.contains('OK'))
+                                            //     ? 'OK'
+                                            //     : (errorMessage.contains(
+                                            //                 'error') ||
+                                            //             errorMessage
+                                            //                 .contains('fail') ||
+                                            //             errorMessage.contains(
+                                            //                 'Time out') ||
+                                            //             errorMessage
+                                            //                 .contains('ERROR'))
+                                            //         ? errorMessage
+                                            //         : ''
+                                            //         ,
                                             style: TextStyle(
                                                 fontSize: 20,
                                                 color: (errorMessage
@@ -691,6 +843,40 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                             height: 40,
                                             child: Center(
                                               child: Text(
+                                                localizedStrings.button_get_ip,
+                                                textAlign: TextAlign.center,
+                                                style: const TextStyle(
+                                                    fontSize: 20.0),
+                                              ),
+                                            ),
+                                          ),
+                                          onPressed: isConnecting
+                                              ? null
+                                              : () {
+                                                  setState(() {
+                                                    errorMessage = '';
+                                                  });
+
+                                                  PublicFunctions.getIpInfo();
+                                                },
+                                        ),
+                                        const SizedBox(
+                                          width: 20,
+                                        ),
+                                        OutlinedButton(
+                                          style: ButtonStyle(
+                                            side: MaterialStateProperty.all(
+                                                BorderSide(
+                                                    width: 2,
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .primary)),
+                                          ),
+                                          child: SizedBox(
+                                            width: 100,
+                                            height: 40,
+                                            child: Center(
+                                              child: Text(
                                                 localizedStrings.button_static,
                                                 textAlign: TextAlign.center,
                                                 style: const TextStyle(
@@ -698,12 +884,15 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                               ),
                                             ),
                                           ),
-                                          onPressed: _isStatic
+                                          onPressed: (_isStatic || isConnecting)
                                               ? null
                                               : () {
                                                   setState(() {
                                                     _isStatic = true;
+                                                    errorMessage = '';
                                                   });
+
+                                                  // sendDataToWifi();
                                                 },
                                         ),
                                         const SizedBox(
@@ -730,21 +919,24 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                               ),
                                             ),
                                           ),
-                                          onPressed: _isStatic
-                                              ? () {
-                                                  setState(() {
-                                                    _isStatic = false;
-                                                    dnsController.clear();
-                                                    netMaskController.clear();
-                                                    ipController.clear();
-                                                    gateWayController.clear();
-                                                    _isValidDns = true;
-                                                    _isValidGateway = true;
-                                                    _isValidIP = true;
-                                                    _isValidMask = true;
-                                                  });
-                                                }
-                                              : null,
+                                          onPressed:
+                                              (_isStatic && !isConnecting)
+                                                  ? () {
+                                                      setState(() {
+                                                        _isStatic = false;
+                                                        errorMessage = '';
+                                                        // dnsController.clear();
+                                                        // netMaskController.clear();
+                                                        // ipController.clear();
+                                                        // gateWayController.clear();
+                                                        // _isValidDns = true;
+                                                        // _isValidGateway = true;
+                                                        // _isValidIP = true;
+                                                        // _isValidMask = true;
+                                                      });
+                                                      setModeToDynamic();
+                                                    }
+                                                  : null,
                                         ),
                                         const SizedBox(
                                           width: 20,
@@ -777,21 +969,27 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                               ),
                                             ),
                                           ),
-                                          onPressed: isValidData()
-                                              ? () {
-                                                  errorMessage = '';
-                                                  ipController.clear();
-                                                  netMaskController.clear();
-                                                  dnsController.clear();
-                                                  gateWayController.clear();
-                                                  connectAp();
-                                                  // if (_isStatic) {
-                                                  //   sendStaticIpInfo();
-                                                  // } else {
-                                                  //   sendDynamicIpInfo();
-                                                  // }
-                                                }
-                                              : null,
+                                          onPressed:
+                                              (isValidData() && !isConnecting)
+                                                  ? () {
+                                                      setState(() {
+                                                        errorMessage =
+                                                            'Connecting...';
+                                                      });
+                                                      isConnecting = true;
+
+                                                      if (_isStatic) {
+                                                        connectStaticIp();
+                                                      } else {
+                                                        connectDynamicIp();
+                                                      }
+
+                                                      // ipController.clear();
+                                                      // netMaskController.clear();
+                                                      // dnsController.clear();
+                                                      // gateWayController.clear();
+                                                    }
+                                                  : null,
                                         ),
                                       ],
                                     ),
@@ -821,9 +1019,9 @@ class WifiSettingPageState extends State<WifiSettingPage> {
           passwordController.text.isNotEmpty &&
           ipController.text.isNotEmpty &&
           gateWayController.text.isNotEmpty &&
-          dnsController.text.isNotEmpty &&
+          // dnsController.text.isNotEmpty &&
           netMaskController.text.isNotEmpty &&
-          _isValidDns &&
+          // _isValidDns &&
           _isValidGateway &&
           _isValidMask &&
           _isValidIP) {
@@ -843,67 +1041,104 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     return res;
   }
 
+  // void sendDataToWifi() {
+  //   myScaleCmd.cmdMode = 'send_data_to_wifi';
+  //   myScaleCmd.cmdData = 'AT+CWMODE?\r\n';
+  //   MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  // }
+
+  void _startTimer(int time) {
+    setState(() {
+      isConnecting = true;
+    });
+
+    _timer = Timer(Duration(seconds: time), () {
+      setState(() {
+        isConnecting = false;
+        errorMessage = 'Time out!';
+      });
+    });
+  }
+
+  void _stopTimer() {
+    setState(() {
+      isConnecting = false;
+    });
+    _timer?.cancel(); // 停止计时器
+  }
+
   void connectAp() {
     myScaleCmd.cmdMode = 'connect_ap';
-    if (ssidController.text.isEmpty || passwordController.text.isEmpty) {
-    } else if (ssidController.text.isEmpty) {
-      // var e
-    } else if (passwordController.text.isEmpty) {
-      // var e
+    myConnectApInfo.ssid = ssidController.text;
+    myConnectApInfo.password = passwordController.text;
+    myConnectApInfo.bssid = bssId; //手动输入的如何处理？id写-1
+    myScaleCmd.cmdData = jsonEncode(myConnectApInfo).toString();
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  void setModeToDynamic() {
+    setDynamicMode();
+  }
+
+  void setDynamicMode() {
+    myScaleCmd.cmdMode = 'set_wifi_dynamic_ip';
+    myScaleCmd.cmdData = '';
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  void connectDynamicIp() {
+    if (myWiFiAPInfo != null &&
+        myWiFiAPInfo.ssid == ssidController.text &&
+        myWiFiAPInfo.bssid == bssId) {
+      isConnecting = false;
+      errorMessage = 'You are already connected!';
     } else {
-      myConnectApInfo.ssid = ssidController.text;
-      myConnectApInfo.password = passwordController.text;
-      myConnectApInfo.bssid = bssId; //手动输入的如何处理？id写-1
-      myScaleCmd.cmdData = jsonEncode(myConnectApInfo).toString();
-      MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+      myConnectDynamicIpResponse.msgBody = '';
+      connectAp();
+      _timer = Timer(const Duration(seconds: 5), () {
+        // PublicFunctions.getIpInfo();
+      });
     }
   }
 
-  void sendDynamicIpInfo() {
-    myScaleCmd.cmdMode = 'connect_ap_dynamic_ip';
-    if (ssidController.text.isEmpty || passwordController.text.isEmpty) {
-    } else if (ssidController.text.isEmpty) {
-      // var e
-    } else if (passwordController.text.isEmpty) {
-      // var e
+  void connectStaticIp() {
+    String inputGateway = gateWayController.text;
+    String inputIp = ipController.text;
+    String inputNetmask = netMaskController.text;
+
+    if (myWiFiAPInfo != null &&
+        myWiFiAPInfo.ssid == ssidController.text &&
+        myWiFiAPInfo.bssid == bssId) {
+      alreadyConnected = true;
+      sendStaticIpInfo(inputIp, inputGateway, inputNetmask);
     } else {
-      myDynamicIpInfo.ssid = ssidController.text;
-      myDynamicIpInfo.password = passwordController.text;
-      // myDynamicIpInfo.seqno = bssId; //手动输入的如何处理？id写-1
-      myScaleCmd.cmdData = jsonEncode(myDynamicIpInfo).toString();
-      MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+      alreadyConnected = false;
+      sendStaticIpInfo(inputIp, inputGateway, inputNetmask);
     }
   }
 
-  void sendStaticIpInfo() {
-    myScaleCmd.cmdMode = 'connect_ap_static_ip';
-    if (ssidController.text.isEmpty || passwordController.text.isEmpty) {
-    } else if (ssidController.text.isEmpty) {
-      // var e
-    } else if (passwordController.text.isEmpty) {
-      // var e
-    } else {
-      myStaticIpInfo.ssid = ssidController.text;
-      myStaticIpInfo.password = passwordController.text;
-      // myStaticIpInfo.seqno = _ssidNo; //手动输入的如何处理？id写-1
-      myStaticIpInfo.gateway = gateWayController.text;
-      myStaticIpInfo.dns = dnsController.text;
-      myStaticAddresses.address = ipController.text;
-      myStaticAddresses.family = 'ipv4';
-      myStaticAddresses.mask = 24;
-      myStaticIpInfo.addresses ??= [];
-      myStaticIpInfo.addresses?.add(myStaticAddresses);
-
-      myScaleCmd.cmdData = jsonEncode(myStaticIpInfo).toString();
-      MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
-    }
+  void sendStaticIpInfo(String ip, String gateway, String netmask) {
+    myScaleCmd.cmdMode = 'set_wifi_static_ip';
+    myStaticIpInfo.gateway = gateway;
+    myStaticIpInfo.ip = ip;
+    myStaticIpInfo.netmask = netmask;
+    myScaleCmd.cmdData = jsonEncode(myStaticIpInfo).toString();
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+    print(jsonEncode(myScaleCmd));
   }
+
+  //     {"Req":"set_wifi_static_ip", "ReqData":"{
+//         \"ip\": \"192.168.1.22\",
+//         \"gateway\": \"192.168.1.1\",
+//         \"netmask\": \"255.255.255.0\"
+//     }"}
 
   void validateNetMask(String value) {
     bool isValid = false;
     _isValidMask = false;
     setState(() {
       _isValidMask = isValid;
+      errorMessage = '';
     });
     isValid = ipRegex.hasMatch(value);
     isValid = _isValidIpAddress(isValid, value);
@@ -917,6 +1152,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     _isValidGateway = false;
     setState(() {
       _isValidGateway = isValid;
+      errorMessage = '';
     });
     isValid = ipRegex.hasMatch(value);
     isValid = _isValidIpAddress(isValid, value);
@@ -930,6 +1166,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     _isValidIP = false;
     setState(() {
       _isValidIP = isValid;
+      errorMessage = '';
     });
     isValid = ipRegex.hasMatch(value);
     isValid = _isValidIpAddress(isValid, value);
@@ -938,16 +1175,17 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     });
   }
 
-  void validateDns(String value) {
-    bool isValid = false;
-    _isValidDns = false;
-    setState(() {
-      _isValidDns = isValid;
-    });
-    isValid = ipRegex.hasMatch(value);
-    isValid = _isValidIpAddress(isValid, value);
-    setState(() {
-      _isValidDns = isValid;
-    });
-  }
+  // void validateDns(String value) {
+  //   bool isValid = false;
+  //   _isValidDns = false;
+  //   setState(() {
+  //     _isValidDns = isValid;
+  //     errorMessage = '';
+  //   });
+  //   isValid = ipRegex.hasMatch(value);
+  //   isValid = _isValidIpAddress(isValid, value);
+  //   setState(() {
+  //     _isValidDns = isValid;
+  //   });
+  // }
 }

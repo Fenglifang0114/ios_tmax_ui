@@ -6,15 +6,15 @@ import 'package:t_max/data/license_data.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 
 import '../generated/l10n.dart';
-import 'widget/theme_color.dart';
 
 import '../data/comscaleinfo_data.dart';
 import '../data/currentport_data.dart';
 import '../data/device_data.dart';
 import '../functions/methods.dart';
 
+import '../widget/theme_color.dart';
+import '../widget/version.dart';
 import 'home_page.dart';
-import 'widget/version.dart';
 
 class TrialPage extends StatefulWidget {
   const TrialPage({Key? key}) : super(key: key);

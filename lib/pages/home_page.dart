@@ -2,19 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:t_max/data/dialog_data.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/pages/labeldesign_page.dart';
-import 'package:t_max/pages/widget/license_info.dart';
-import 'package:t_max/pages/widget/show_weight_report.dart';
+
 import 'package:t_max/pages/wifisetting_page.dart';
 import '../data/comscaleinfo_data.dart';
 import '../data/currentport_data.dart';
 import '../data/device_data.dart';
+import '../dialog/language_setting.dart';
+import '../dialog/waitingbuildtips.dart';
 import '../functions/methods.dart';
 import '../generated/l10n.dart';
-import 'dialog/language_setting.dart';
-import 'dialog/waitingbuildtips.dart';
+import '../widget/bluetoothsetting.dart';
+import '../widget/customcard.dart';
+import '../widget/license_info.dart';
+import '../widget/show_weight_report.dart';
+import '../widget/update_firmware.dart';
+
 import 'modify_com_port_page.dart';
-import 'widget/bluetoothsetting.dart';
-import 'widget/customcard.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -214,7 +217,7 @@ class _HomePageState extends State<HomePage> {
                         CustomCard(
                           onTap: () {
                             setState(() {
-                              waitingBuildDialog(context);
+                              showUpdateFirmWareDialog(context);
                             });
                           },
                           title: titleNames[4],
@@ -310,6 +313,16 @@ class _HomePageState extends State<HomePage> {
       barrierDismissible: false, // 允许点击空白处关闭对话框
       builder: (context) {
         return const BluetoothDialog();
+      },
+    );
+  }
+
+  void showUpdateFirmWareDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 允许点击空白处关闭对话框
+      builder: (context) {
+        return const UpdateFirmWareDialog();
       },
     );
   }
