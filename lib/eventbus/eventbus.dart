@@ -242,6 +242,11 @@ class EventConnectDynamicIp {
   EventConnectDynamicIp(this.obj);
 }
 
+class EventConnectAp {
+  dynamic obj;
+  EventConnectAp(this.obj);
+}
+
 class EventConnectStaticIp {
   dynamic obj;
   EventConnectStaticIp(this.obj);
@@ -250,6 +255,11 @@ class EventConnectStaticIp {
 class EventRespUpdateFirmware {
   dynamic obj;
   EventRespUpdateFirmware(this.obj);
+}
+
+class EventRespUpdateFirmwareProcess {
+  dynamic obj;
+  EventRespUpdateFirmwareProcess(this.obj);
 }
 
 class EventIpInfo {

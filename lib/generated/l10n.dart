@@ -1130,6 +1130,16 @@ class S {
     );
   }
 
+  /// `PLU pretare cannot be empty .`
+  String get plu_error_message {
+    return Intl.message(
+      'PLU pretare cannot be empty .',
+      name: 'plu_error_message',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `PLU ID or PLU name cannot be empty.`
   String get plu_error_message1 {
     return Intl.message(

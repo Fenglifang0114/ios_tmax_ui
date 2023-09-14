@@ -1779,13 +1779,21 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     _saveFormatDataToJson(formatDataList, path);
   }
 
-  void _saveFormatToCsv(String csv, String path) {
+  void _saveFormatToCsv(String csv, String path) async {
     final file = File(path);
-    var gb2312Bytes = stringToGb2312Bytes(csv);
-    var resultList = convertList(gb2312Bytes);
-    file.writeAsBytesSync(resultList, mode: FileMode.write);
+    //后台做了转GB2312的操作，此处不做转换。
+    // var gb2312Bytes = stringToGb2312Bytes(csv);
+    // var resultList = convertList(gb2312Bytes);
+    // file.writeAsBytesSync(resultList, mode: FileMode.write);
+    await file.writeAsString(csv, mode: FileMode.write, encoding: utf8);
   }
 
+  // void _saveFormatToCsv(String csv) async {
+  //   final directory = Directory.current.path;
+  //   final file = File('$directory\\data.csv');
+  //   await file.writeAsString(csv);
+  // }
+//utf8字符串转GB2312编码
   List<int> stringToGb2312Bytes(String str) {
     var encoder = gbk.encode(str);
     return encoder.toList();
@@ -1809,23 +1817,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     final bom = [0xEF, 0xBB, 0xBF];
     return bom + gbkData;
   }
-
-//   void _saveFormatToCsv(String csv, String path) {
-//     // isGb2312Compliant(csv);
-//     // List<int> utf8Bytes = utf8.encode(csv);
-
-//     // 将 UTF-8 编码的字节流转换为 GB2312 编码的字节流
-
-//     // List<int> gb18030Bytes = gbk.encode(utf8.decode(utf8Bytes));
-//     // List<int> gb2312Bytes = gbk.encode(utf8.decode(utf8Bytes));
-//     final file = File(path);
-//     // List<int> gb2312Bytes = gbk.encode(csv);
-//     // String gb2312String = gbk.decode(Uint8List.fromList(gb18030Bytes));
-//     // print(gb2312String);
-//     // File(path).writeAsBytesSync(gb18030Bytes);
-//     file.writeAsStringSync(utf8ToGb2312(csv), mode: FileMode.writeOnly);
-//     // await file.writeAsString(utf8ToGb2312(csv), encoding: gbk);
-//   }
 
   void _openJsonFile(String path) {
     readTextInfoListFromFile(path);

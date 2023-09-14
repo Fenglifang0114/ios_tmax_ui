@@ -101,6 +101,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "passed_message": MessageLookupByLibrary.simpleMessage("认证通过.\r\n"),
         "password": MessageLookupByLibrary.simpleMessage("密码:"),
         "plu_edit": MessageLookupByLibrary.simpleMessage("PLU 编辑"),
+        "plu_error_message": MessageLookupByLibrary.simpleMessage("预扣重不能为空."),
         "plu_error_message1":
             MessageLookupByLibrary.simpleMessage("PLU序号或PLU名称不能为空."),
         "plu_error_message2":

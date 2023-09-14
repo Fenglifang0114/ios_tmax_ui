@@ -121,6 +121,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Authentication passed.\r\n"),
         "password": MessageLookupByLibrary.simpleMessage("Password:"),
         "plu_edit": MessageLookupByLibrary.simpleMessage("PLU Edit"),
+        "plu_error_message": MessageLookupByLibrary.simpleMessage(
+            "PLU pretare cannot be empty ."),
         "plu_error_message1": MessageLookupByLibrary.simpleMessage(
             "PLU ID or PLU name cannot be empty."),
         "plu_error_message2": MessageLookupByLibrary.simpleMessage(

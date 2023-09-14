@@ -107,6 +107,7 @@
   "plu_remarks": "PLu Remarks:",
   "button_add": "Add",
   "button_edit": "Edit",
+  "plu_error_message": "PLU pretare cannot be empty .",
   "plu_error_message1": "PLU ID or PLU name cannot be empty.",
   "plu_error_message2": "PLU ID or PLU name already exists.",
   "user_info": "User Info",

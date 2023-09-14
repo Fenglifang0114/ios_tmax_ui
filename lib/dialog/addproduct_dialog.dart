@@ -282,9 +282,10 @@ void getProductList() {
 }
 
 void addProductRec() {
+  getProductList();
   bool result = true;
   if (productID.text.isEmpty || productName.text.isEmpty) {
-    errorText.text = localizedStrings.plu_error_message;
+    errorText.text = localizedStrings.plu_error_message1;
     return;
   }
   if (isPresetTare!) {

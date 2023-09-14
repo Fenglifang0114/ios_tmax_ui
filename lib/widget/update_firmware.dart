@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/downloadresponse.dart';
@@ -21,6 +22,9 @@ class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
   String _errorMessage = '';
   bool isSetting = false;
   dynamic _eventbus1;
+  dynamic _eventbus2;
+  double _progress = 0.0;
+
   @override
   void initState() {
     super.initState();
@@ -33,6 +37,28 @@ class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
           _errorMessage = myRespUpdateFirmware.msgBody;
           isSetting = false;
         });
+      }
+    });
+    _eventbus2 = eventBus.on<EventRespUpdateFirmwareProcess>().listen((event) {
+      if (mounted) {
+        myRespUpdateFirmware = event.obj;
+        if (myRespUpdateFirmware.msgBody.contains('ok') ||
+            myRespUpdateFirmware.msgBody.contains('fail')) {
+          isSetting = false;
+          setState(() {
+            _errorMessage = myRespUpdateFirmware.msgBody;
+          });
+        } else {
+          if (int.tryParse(myRespUpdateFirmware.msgBody) != null) {
+            // 字符串全是数字
+            int numericValue = int.parse(myRespUpdateFirmware.msgBody);
+            updateProgress(numericValue);
+          } else {
+            setState(() {
+              _errorMessage = myRespUpdateFirmware.msgBody;
+            });
+          }
+        }
       }
     });
   }
@@ -48,6 +74,7 @@ class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
   void dispose() {
     _filePathController.dispose();
     _eventbus1.cancel();
+    _eventbus2.cancel();
     super.dispose();
   }
 
@@ -118,6 +145,7 @@ class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
                             (isSetting || _filePathController.text.isEmpty)
                                 ? null
                                 : () {
+                                    _progress = 0.0;
                                     _showConfirmationDialog(context);
                                   },
                       ),
@@ -131,30 +159,27 @@ class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
                       : _errorMessage,
                   style: TextStyle(
                       color: (_errorMessage.contains('ok') ||
-                              _errorMessage.contains('OK'))
+                              _errorMessage.contains('OK') ||
+                              _errorMessage.contains('started'))
                           ? Colors.green.shade900
                           : Colors.red.shade900),
                 ),
                 const SizedBox(
-                  height: 20,
+                  height: 10,
                 ),
                 SizedBox(
-                  height: 2,
+                  height: 10,
                   width: 400,
-                  child: isSetting
+                  child: (isSetting)
                       ? LinearProgressIndicator(
-                          value: null,
+                          value: _progress > 0 ? _progress : null,
                           backgroundColor:
                               Theme.of(context).colorScheme.background,
                           valueColor: AlwaysStoppedAnimation<Color>(
                               Theme.of(context).colorScheme.primary),
                         )
-                      // const CircularProgressIndicator(
-                      //     strokeWidth: 3,
-                      //   )
                       : const Text(''),
                 ),
-                const SizedBox(height: 10),
               ],
             ),
           )),
@@ -174,6 +199,12 @@ class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
         )
       ],
     );
+  }
+
+  void updateProgress(int value) {
+    setState(() {
+      _progress = value.toDouble() / 100;
+    });
   }
 
   void _showConfirmationDialog(BuildContext context) {
@@ -207,8 +238,15 @@ class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
       if (confirmed) {
         sendFormatToScale(_filePathController.text);
         setState(() {
-          _errorMessage = 'Please restart your device and waiting...';
+          _errorMessage = 'Please wait...';
           isSetting = true;
+        });
+        Timer(const Duration(seconds: 5), () {
+          if (!(_progress > 0)) {
+            setState(() {
+              _errorMessage = 'Please reboot the device and waiting...';
+            });
+          }
         });
       }
     });

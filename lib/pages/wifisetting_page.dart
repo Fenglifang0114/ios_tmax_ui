@@ -57,7 +57,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
   dynamic _eventbus7;
   dynamic _eventbus8;
   dynamic _eventbus9;
-  // dynamic _eventbus2 = EventBus();
+  dynamic _eventbus10;
 
   TextEditingController controller = TextEditingController();
   RegExp ipaddressRegex = RegExp(r'[0-9.]');
@@ -78,7 +78,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     return tempValid;
   }
 
-  var errorMessage = '';
+  var errorMessage = 'Obtaining AP list and Ip info,please wait...';
   var localizedStrings;
   String setMessage = '';
   @override
@@ -135,9 +135,12 @@ class WifiSettingPageState extends State<WifiSettingPage> {
         setState(() {
           myConnectDynamicIpResponse = event.obj;
           if (myConnectDynamicIpResponse.msgBody.isNotEmpty) {
-            if (myConnectStaticIpResponse.msgBody.contains('ok')) {
+            if (myConnectDynamicIpResponse.msgBody.contains('ok')) {
               isConnecting = false;
-              PublicFunctions.getApInfo();
+              errorMessage = 'Obtaining IP, please wait...';
+              _timer = Timer(const Duration(seconds: 2), () {
+                PublicFunctions.getApInfo();
+              });
             } else {
               isConnecting = false;
               errorMessage = myConnectDynamicIpResponse.msgBody;
@@ -152,14 +155,16 @@ class WifiSettingPageState extends State<WifiSettingPage> {
         setState(() {
           myConnectStaticIpResponse = event.obj;
           if (myConnectStaticIpResponse.msgBody.isNotEmpty) {
-            errorMessage = myConnectStaticIpResponse.msgBody;
             if (myConnectStaticIpResponse.msgBody.contains('ok')) {
               isConnecting = false;
               if (alreadyConnected) {
+                errorMessage = 'Obtaining IP, please wait...';
                 PublicFunctions.getApInfo();
               } else {
                 connectAp();
               }
+            } else {
+              errorMessage = myConnectStaticIpResponse.msgBody;
             }
           }
         });
@@ -191,7 +196,6 @@ class WifiSettingPageState extends State<WifiSettingPage> {
       if (mounted) {
         setState(() {
           myMessageError = event.obj;
-
           if (!errorMessage.contains('ok')) {
             errorMessage = myMessageError.messagedata!;
           }
@@ -203,7 +207,10 @@ class WifiSettingPageState extends State<WifiSettingPage> {
       if (mounted) {
         setState(() {
           myGetIpError = event.obj;
-          errorMessage = myGetIpError.messagedata!;
+          if (!myGetIpError.messagedata!.contains('ok')) {
+            errorMessage = myGetIpError.messagedata!;
+          }
+
           isConnecting = false;
         });
       }
@@ -252,6 +259,27 @@ class WifiSettingPageState extends State<WifiSettingPage> {
       }
     });
 
+    _eventbus10 = eventBus.on<EventConnectAp>().listen((event) {
+      if (mounted) {
+        setState(() {
+          myConnectApResponse = event.obj;
+          if (myConnectApResponse.msgBody.isNotEmpty) {
+            if (myConnectApResponse.msgBody.contains('ok')) {
+              isConnecting = false;
+              errorMessage = 'Obtaining IP, please wait...';
+              _timer = Timer(const Duration(seconds: 2), () {
+                PublicFunctions.getApInfo();
+              });
+            } else {
+              isConnecting = false;
+              errorMessage = myConnectApResponse.msgBody;
+              PublicFunctions.getApInfo();
+            }
+          }
+        });
+      }
+    });
+
     super.initState();
   }
 
@@ -266,6 +294,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     _eventbus7.cancel();
     _eventbus8.cancel();
     _eventbus9.cancel();
+    _eventbus10.cancel();
 
     super.dispose();
   }
@@ -889,7 +918,8 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                               : () {
                                                   setState(() {
                                                     _isStatic = true;
-                                                    errorMessage = '';
+                                                    errorMessage =
+                                                        'Enter IP information and click the connect button!';
                                                   });
 
                                                   // sendDataToWifi();
@@ -934,7 +964,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                                         // _isValidIP = true;
                                                         // _isValidMask = true;
                                                       });
-                                                      setModeToDynamic();
+                                                      setDynamicMode();
                                                     }
                                                   : null,
                                         ),
@@ -1076,10 +1106,6 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
 
-  void setModeToDynamic() {
-    setDynamicMode();
-  }
-
   void setDynamicMode() {
     myScaleCmd.cmdMode = 'set_wifi_dynamic_ip';
     myScaleCmd.cmdData = '';
@@ -1095,9 +1121,6 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     } else {
       myConnectDynamicIpResponse.msgBody = '';
       connectAp();
-      _timer = Timer(const Duration(seconds: 5), () {
-        // PublicFunctions.getIpInfo();
-      });
     }
   }
 

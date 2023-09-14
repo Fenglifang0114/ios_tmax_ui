@@ -148,6 +148,10 @@ class WebSocketScaleChannel {
         Map<String, dynamic> map = json.decode(data);
         dynamic mobj = ChannelResponse.fromJson(map);
         eventBus.fire(EventRespUpdateFirmware(mobj));
+      } else if (jsonData['MsgType'] == "resp_update_firmware_progress") {
+        Map<String, dynamic> map = json.decode(data);
+        dynamic mobj = ChannelResponse.fromJson(map);
+        eventBus.fire(EventRespUpdateFirmwareProcess(mobj));
       }
     } catch (e) {
       if (kDebugMode) {
@@ -198,8 +202,8 @@ class WebSocketScaleChannel {
 
 Future pasterConnectApInfo(String jsonDataString) async {
   String jsonStrings = jsonDataString;
-  myConnectDynamicIpResponse.msgBody = jsonStrings;
-  eventBus.fire(EventConnectDynamicIp(myConnectDynamicIpResponse));
+  myConnectApResponse.msgBody = jsonStrings;
+  eventBus.fire(EventConnectAp(myConnectApResponse));
 }
 
 Future pasterGetIpMode(String jsonDataString) async {
