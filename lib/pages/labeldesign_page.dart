@@ -9,6 +9,7 @@ import 'package:t_max/pages/download_page.dart';
 import '../data/barcoderowdata.dart';
 import '../data/formatdata.dart';
 import '../data/item_key_list.dart';
+import '../data/license_data.dart';
 import '../data/offset.dart';
 import '../data/pagesize.dart';
 import '../data/scalecmd_data.dart';
@@ -474,6 +475,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                           ),
                         ),
                         onPressed: () {
+                          myCheckSerialPortOnOFF.isCheck = true;
                           myItemKey.keyList.clear();
                           Navigator.of(context).pop();
                         },
@@ -671,53 +673,107 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                         SizedBox(
                           width: 135,
                           child: OutlinedButton(
-                              onPressed: () async {
-                                String executablePath =
-                                    Platform.resolvedExecutable;
-                                var directory = p.dirname(executablePath);
-
-                                final formatfilePath =
-                                    Directory('$directory\\format');
-                                if (!await formatfilePath.exists()) {
-                                  await formatfilePath.create(recursive: true);
-                                }
-                                directory = formatfilePath.path;
-                                String dataTime = getDateTime();
-                                String? outputFile =
-                                    (await FilePicker.platform.saveFile(
-                                  initialDirectory: directory,
-                                  dialogTitle: 'Output file:',
-                                  type: FileType.custom,
-                                  allowedExtensions: ['json'],
-                                  fileName: 'format$dataTime.json',
-                                ));
-                                if (outputFile != null) {
-                                  _saveFormatToJson(outputFile);
-                                }
-                              },
-                              style: OutlinedButton.styleFrom(
-                                side: BorderSide(
-                                  width: 1,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                                foregroundColor:
-                                    Theme.of(context).colorScheme.secondary,
-                                backgroundColor: Theme.of(context)
-                                    .colorScheme
-                                    .primary, // 设置按钮的背景色
-                                shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.circular(4), // 设置按钮的圆角
-                                ),
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(
+                                width: 1,
+                                color: Theme.of(context).colorScheme.primary,
                               ),
-                              child: Text(
-                                localizedStrings.save_file,
-                                style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal),
-                              )),
+                              foregroundColor: Colors.blue,
+                              backgroundColor: Colors.white, // 设置按钮的背景色
+                              shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.circular(4), // 设置按钮的圆角
+                              ),
+                            ),
+                            child: Text(
+                              localizedStrings.save_csv,
+                              style: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.normal),
+                            ),
+                            onPressed: () async {
+                              String executablePath =
+                                  Platform.resolvedExecutable;
+                              var directory = p.dirname(executablePath);
+                              final formatfilePath =
+                                  Directory('$directory\\format');
+                              if (!await formatfilePath.exists()) {
+                                await formatfilePath.create(recursive: true);
+                              }
+                              directory = formatfilePath.path;
+
+                              String? outputFile =
+                                  (await FilePicker.platform.saveFile(
+                                initialDirectory: directory,
+                                dialogTitle: 'Output file:',
+                                type: FileType.custom,
+                                allowedExtensions: ['fmt'],
+                                fileName: 'format.fmt',
+                              ));
+                              if (outputFile != null) {
+                                _exportCSV();
+                                _saveFormatToCsv(csv, outputFile);
+
+                                ///保存数据到csv
+                                String jsonFilePath =
+                                    outputFile.replaceAll('.fmt', '.json');
+                                _saveFormatToJson(jsonFilePath); //同时保存一份到json
+                              }
+                              ////添加实现
+                            },
+                          ),
                         ),
+                        // SizedBox(
+                        //   width: 135,
+                        //   child: OutlinedButton(
+                        //       onPressed: () async {
+                        //         String executablePath =
+                        //             Platform.resolvedExecutable;
+                        //         var directory = p.dirname(executablePath);
+
+                        //         final formatfilePath =
+                        //             Directory('$directory\\format');
+                        //         if (!await formatfilePath.exists()) {
+                        //           await formatfilePath.create(recursive: true);
+                        //         }
+                        //         directory = formatfilePath.path;
+                        //         String dataTime = getDateTime();
+                        //         String? outputFile =
+                        //             (await FilePicker.platform.saveFile(
+                        //           initialDirectory: directory,
+                        //           dialogTitle: 'Output file:',
+                        //           type: FileType.custom,
+                        //           allowedExtensions: ['json'],
+                        //           fileName: 'format$dataTime.json',
+                        //         ));
+                        //         if (outputFile != null) {
+                        //           _saveFormatToJson(outputFile);
+                        //         }
+                        //       },
+                        //       style: OutlinedButton.styleFrom(
+                        //         side: BorderSide(
+                        //           width: 1,
+                        //           color: Theme.of(context).colorScheme.primary,
+                        //         ),
+                        //         foregroundColor:
+                        //             Theme.of(context).colorScheme.secondary,
+                        //         backgroundColor: Theme.of(context)
+                        //             .colorScheme
+                        //             .primary, // 设置按钮的背景色
+                        //         shape: RoundedRectangleBorder(
+                        //           borderRadius:
+                        //               BorderRadius.circular(4), // 设置按钮的圆角
+                        //         ),
+                        //       ),
+                        //       child: Text(
+                        //         localizedStrings.save_file,
+                        //         style: const TextStyle(
+                        //             color: Colors.white,
+                        //             fontSize: 14,
+                        //             fontWeight: FontWeight.normal),
+                        //       )),
+                        // ),
                         SizedBox(
                           width: 135,
                           child: OutlinedButton(
@@ -899,117 +955,63 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                                     fontWeight: FontWeight.normal),
                               )),
                         ),
-                        SizedBox(
-                          width: 120,
-                          child: OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                              side: BorderSide(
-                                width: 1,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                              foregroundColor: Colors.blue,
-                              backgroundColor: Colors.white, // 设置按钮的背景色
-                              shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(4), // 设置按钮的圆角
-                              ),
-                            ),
-                            child: Text(
-                              localizedStrings.save_csv,
-                              style: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.normal),
-                            ),
-                            onPressed: () async {
-                              String executablePath =
-                                  Platform.resolvedExecutable;
-                              var directory = p.dirname(executablePath);
-                              final formatfilePath =
-                                  Directory('$directory\\format');
-                              if (!await formatfilePath.exists()) {
-                                await formatfilePath.create(recursive: true);
-                              }
-                              directory = formatfilePath.path;
-
-                              String? outputFile =
-                                  (await FilePicker.platform.saveFile(
-                                initialDirectory: directory,
-                                dialogTitle: 'Output file:',
-                                type: FileType.custom,
-                                allowedExtensions: ['fmt'],
-                                fileName: 'format.fmt',
-                              ));
-                              if (outputFile != null) {
-                                _exportCSV();
-                                _saveFormatToCsv(csv, outputFile);
-
-                                ///保存数据到csv
-                                String jsonFilePath =
-                                    outputFile.replaceAll('.fmt', '.json');
-                                _saveFormatToJson(jsonFilePath); //同时保存一份到json
-                              }
-                              ////添加实现
-                            },
-                          ),
-                        ),
                       ],
                     ),
-                    SizedBox(
-                      width: 125,
-                      height: 50,
-                      child: ElevatedButton(
-                          onPressed: downloadStatus
-                              ? () {
-                                  _showConfirmationDialog(context);
+                    // SizedBox(
+                    //   width: 125,
+                    //   height: 50,
+                    //   child: ElevatedButton(
+                    //       onPressed: downloadStatus
+                    //           ? () {
+                    //               _showConfirmationDialog(context);
 
-                                  // String executablePath =
-                                  //     Platform.resolvedExecutable;
-                                  // final directory = p.dirname(executablePath);
-                                  // String dataTime = getDateTime();
-                                  // String outputFile;
-                                  // final filePath =
-                                  //     Directory('$directory\\backup');
-                                  // final file = File(
-                                  //     '$directory\\backup\\$dataTime.json');
-                                  // outputFile = file.path;
-                                  // if (!await filePath.exists()) {
-                                  //   await filePath.create(recursive: true);
-                                  // }
-                                  // _saveFormatToJson(outputFile);
-                                  // _exportCSV();
-                                  // sendFormatToScale(csv); //发送数据
-                                  // if (kDebugMode) {
-                                  //   print(csv);
-                                  // }
-                                  // setState(() {
-                                  //   downloadStatus = false;
-                                  // });
-                                }
-                              : null,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: downloadStatus
-                                ? Theme.of(context).colorScheme.primary
-                                : Colors.white, // 设置按钮的背景色
-                            elevation: 10, // 设置按钮的阴影
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.download),
-                              Text(localizedStrings.download,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal,
-                                    color: downloadStatus
-                                        ? Colors.white
-                                        : Colors.black,
-                                  ))
-                            ],
-                          )),
-                    ),
+                    //               // String executablePath =
+                    //               //     Platform.resolvedExecutable;
+                    //               // final directory = p.dirname(executablePath);
+                    //               // String dataTime = getDateTime();
+                    //               // String outputFile;
+                    //               // final filePath =
+                    //               //     Directory('$directory\\backup');
+                    //               // final file = File(
+                    //               //     '$directory\\backup\\$dataTime.json');
+                    //               // outputFile = file.path;
+                    //               // if (!await filePath.exists()) {
+                    //               //   await filePath.create(recursive: true);
+                    //               // }
+                    //               // _saveFormatToJson(outputFile);
+                    //               // _exportCSV();
+                    //               // sendFormatToScale(csv); //发送数据
+                    //               // if (kDebugMode) {
+                    //               //   print(csv);
+                    //               // }
+                    //               // setState(() {
+                    //               //   downloadStatus = false;
+                    //               // });
+                    //             }
+                    //           : null,
+                    //       style: ElevatedButton.styleFrom(
+                    //         backgroundColor: downloadStatus
+                    //             ? Theme.of(context).colorScheme.primary
+                    //             : Colors.white, // 设置按钮的背景色
+                    //         elevation: 10, // 设置按钮的阴影
+                    //         shape: RoundedRectangleBorder(
+                    //           borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
+                    //         ),
+                    //       ),
+                    //       child: Row(
+                    //         children: [
+                    //           const Icon(Icons.download),
+                    //           Text(localizedStrings.download,
+                    //               style: TextStyle(
+                    //                 fontSize: 14,
+                    //                 fontWeight: FontWeight.normal,
+                    //                 color: downloadStatus
+                    //                     ? Colors.white
+                    //                     : Colors.black,
+                    //               ))
+                    //         ],
+                    //       )),
+                    // ),
                     Divider(
                       height: 2,
                       color: Theme.of(context).colorScheme.primary,

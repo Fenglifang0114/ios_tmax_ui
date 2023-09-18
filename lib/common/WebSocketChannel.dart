@@ -221,11 +221,13 @@ class WebSocketChannel {
         pasterUserList(jsonData['MsgBody']);
       } else if (jsonData['MsgType'] == "resp_check_license") {
         pasterLicense(jsonData['MsgBody']);
+      } else if (jsonData['MsgType'] == "resp_check_license_key") {
+        pasterLicenseKey(jsonData['MsgBody']);
       } else if (jsonData['MsgType'] == "resp_get_ap_list") {
         pasterWifiList(jsonData['MsgBody']);
       } else if (jsonData['MsgType'] == "resp_get_ip_info") {
         pasterIpInfo(jsonData['MsgBody']);
-      }
+      } else {}
     } catch (e) {
       if (kDebugMode) {
         print(e);
@@ -236,6 +238,11 @@ class WebSocketChannel {
   void pasterLicense(String jsonDataString) {
     myLicenseData.data = jsonDataString;
     eventBus.fire(EventLicenseData(myLicenseData));
+  }
+
+  void pasterLicenseKey(String jsonDataString) {
+    myLicenseData.data = jsonDataString;
+    eventBus.fire(EventCheckLicenseKey(myLicenseData));
   }
 
   Future pasterProductList(String jsonDataString) async {
@@ -266,15 +273,17 @@ class WebSocketChannel {
     String jsonStrings = jsonDataString;
     final jsonResponse = json.decode(jsonStrings);
     myModifyAck = ModifyAck.fromJson(jsonResponse);
-    if (myModifyAck.isAck == true) {
-      getScaleList();
-    }
-  }
 
-  void getScaleList() {
-    myScaleCmd.cmdMode = "get_scale_list";
-    myScaleCmd.cmdData = "";
-    MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
+    eventBus.fire(EventRespScaleModify(myModifyAck));
+    //   if (myModifyAck.isAck == true) {
+    //     getScaleList();
+    //   }
+    // }
+
+    // void getScaleList() {
+    //   myScaleCmd.cmdMode = "get_scale_list";
+    //   myScaleCmd.cmdData = "";
+    //   MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
   }
 
   // void getWeight() {

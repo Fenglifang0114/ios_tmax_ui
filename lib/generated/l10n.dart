@@ -90,6 +90,16 @@ class S {
     );
   }
 
+  /// `Modify`
+  String get button_modify {
+    return Intl.message(
+      'Modify',
+      name: 'button_modify',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Tare`
   String get button_tare {
     return Intl.message(
@@ -190,10 +200,10 @@ class S {
     );
   }
 
-  /// `Scale Records`
+  /// `DownLoad Print Format`
   String get home_page_title6 {
     return Intl.message(
-      'Scale Records',
+      'DownLoad Print Format',
       name: 'home_page_title6',
       desc: '',
       args: [],
@@ -250,11 +260,21 @@ class S {
     );
   }
 
-  /// `No authentication.\r\nPlease send the ID to us.\r\n\r\nEmail:sales@taiwanscale.com`
+  /// `No authentication. Please send the ID to us.`
   String get passed_fail_message {
     return Intl.message(
-      'No authentication.\r\nPlease send the ID to us.\r\n\r\nEmail:sales@taiwanscale.com',
+      'No authentication. Please send the ID to us.',
       name: 'passed_fail_message',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Email:sales@taiwanscale.com`
+  String get text_email {
+    return Intl.message(
+      'Email:sales@taiwanscale.com',
+      name: 'text_email',
       desc: '',
       args: [],
     );
@@ -265,6 +285,16 @@ class S {
     return Intl.message(
       'Start',
       name: 'button_start',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Free Trial`
+  String get button_trial {
+    return Intl.message(
+      'Free Trial',
+      name: 'button_trial',
       desc: '',
       args: [],
     );
@@ -1295,6 +1325,26 @@ class S {
     return Intl.message(
       'Update Firmware',
       name: 'firmwart_update',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add License`
+  String get button_add_license {
+    return Intl.message(
+      'Add License',
+      name: 'button_add_license',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `New License:`
+  String get new_license_text {
+    return Intl.message(
+      'New License:',
+      name: 'new_license_text',
       desc: '',
       args: [],
     );

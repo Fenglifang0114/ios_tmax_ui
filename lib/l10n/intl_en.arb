@@ -3,6 +3,7 @@
   "zh_cn": "Chinese",
   "en": "English",    
   "cancel": "Cancel",   
+  "button_modify": "Modify",
   "button_tare": "Tare",
   "button_net":"Net",
   "button_save": "Save",   
@@ -13,14 +14,16 @@
   "home_page_title3":"Wifi Setting",  
   "home_page_title4":"Bluetooth Setting",  
   "home_page_title5":"Update FW",  
-  "home_page_title6":"Scale Records", 
+  "home_page_title6":"DownLoad Print Format", 
   "home_page_title7":"License Information",
   "home_page_title8":"Real-time Weight Data", 
   "home_page_title9":"Language Setting",  
   "welcome":"Welcome",
   "passed_message":"Authentication passed.\r\n",
-  "passed_fail_message":"No authentication.\r\nPlease send the ID to us.\r\n\r\nEmail:sales@taiwanscale.com",
+  "passed_fail_message":"No authentication. Please send the ID to us.",
+  "text_email":"Email:sales@taiwanscale.com",
   "button_start":"Start",
+  "button_trial":"Free Trial",
   "button_exit":"Exit",
   "system_id":"System Unique ID:  ",
   "expiration_date":"Expiration date:",
@@ -123,7 +126,10 @@
   "button_select_format": "Select Print Format",
   "scale_model": "Scale Model",
   "button_get_ip": "Get Ip",
-  "firmwart_update":"Update Firmware"
+  "firmwart_update":"Update Firmware",
+  "button_add_license":"Add License",
+  "new_license_text":"New License:"
+  
   
   
   

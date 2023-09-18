@@ -8,6 +8,7 @@ import '../../data/scalecmd_data.dart';
 import '../../eventbus/eventbus.dart';
 import '../../generated/l10n.dart';
 import '../../main.dart';
+import '../data/license_data.dart';
 
 class UpdateFirmWareDialog extends StatefulWidget {
   const UpdateFirmWareDialog({super.key});
@@ -192,6 +193,7 @@ class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
               onPressed: isSetting
                   ? null
                   : () {
+                      myCheckSerialPortOnOFF.isCheck = true;
                       Navigator.of(context).pop();
                     },
             ),

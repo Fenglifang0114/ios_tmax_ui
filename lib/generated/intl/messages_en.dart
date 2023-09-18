@@ -37,6 +37,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "bluetooth_modify_ok": MessageLookupByLibrary.simpleMessage(
             "Modify bluetooth name successful."),
         "button_add": MessageLookupByLibrary.simpleMessage("Add"),
+        "button_add_license":
+            MessageLookupByLibrary.simpleMessage("Add License"),
         "button_back": MessageLookupByLibrary.simpleMessage("Back"),
         "button_cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
         "button_delete": MessageLookupByLibrary.simpleMessage("Delete"),
@@ -47,6 +49,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Export report"),
         "button_get_ip": MessageLookupByLibrary.simpleMessage("Get Ip"),
         "button_home": MessageLookupByLibrary.simpleMessage("Home"),
+        "button_modify": MessageLookupByLibrary.simpleMessage("Modify"),
         "button_net": MessageLookupByLibrary.simpleMessage("Net"),
         "button_ok": MessageLookupByLibrary.simpleMessage("OK"),
         "button_save": MessageLookupByLibrary.simpleMessage("Save"),
@@ -57,6 +60,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "button_start": MessageLookupByLibrary.simpleMessage("Start"),
         "button_static": MessageLookupByLibrary.simpleMessage("Static"),
         "button_tare": MessageLookupByLibrary.simpleMessage("Tare"),
+        "button_trial": MessageLookupByLibrary.simpleMessage("Free Trial"),
         "button_zero": MessageLookupByLibrary.simpleMessage("Zero"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
         "com_port": MessageLookupByLibrary.simpleMessage("Serial port"),
@@ -87,7 +91,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Bluetooth Setting"),
         "home_page_title5": MessageLookupByLibrary.simpleMessage("Update FW"),
         "home_page_title6":
-            MessageLookupByLibrary.simpleMessage("Scale Records"),
+            MessageLookupByLibrary.simpleMessage("DownLoad Print Format"),
         "home_page_title7":
             MessageLookupByLibrary.simpleMessage("License Information"),
         "home_page_title8":
@@ -108,6 +112,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "network_setting":
             MessageLookupByLibrary.simpleMessage("Wireless network settings"),
         "new_format": MessageLookupByLibrary.simpleMessage("New Format"),
+        "new_license_text":
+            MessageLookupByLibrary.simpleMessage("New License:"),
         "no_element": MessageLookupByLibrary.simpleMessage(
             "You haven\'t selected any element."),
         "open_file": MessageLookupByLibrary.simpleMessage("Open File(json)"),
@@ -116,7 +122,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "parameter_settings_title":
             MessageLookupByLibrary.simpleMessage("Parameter settings"),
         "passed_fail_message": MessageLookupByLibrary.simpleMessage(
-            "No authentication.\r\nPlease send the ID to us.\r\n\r\nEmail:sales@taiwanscale.com"),
+            "No authentication. Please send the ID to us."),
         "passed_message":
             MessageLookupByLibrary.simpleMessage("Authentication passed.\r\n"),
         "password": MessageLookupByLibrary.simpleMessage("Password:"),
@@ -170,6 +176,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "tab_order": MessageLookupByLibrary.simpleMessage("Tab order:"),
         "tare": MessageLookupByLibrary.simpleMessage("Tare:"),
         "text_content": MessageLookupByLibrary.simpleMessage("Text Content:"),
+        "text_email":
+            MessageLookupByLibrary.simpleMessage("Email:sales@taiwanscale.com"),
         "user_edit": MessageLookupByLibrary.simpleMessage("User Edit"),
         "user_error_message1": MessageLookupByLibrary.simpleMessage(
             "The user id and user name can not be null !"),

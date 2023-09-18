@@ -125,4 +125,28 @@ class PublicFunctions {
     myScaleCmd.cmdData = "TTM:NAM-?";
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
+
+  static void updateLicense(String license) {
+    myScaleCmd.cmdMode = "update_license";
+    myScaleCmd.cmdData = license;
+    MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  static void checkLicenseKey(String license) {
+    myScaleCmd.cmdMode = "check_license_key";
+    myScaleCmd.cmdData = license;
+    MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  static void checkLicense() {
+    myScaleCmd.cmdMode = "check_license";
+    myScaleCmd.cmdData = '';
+    MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  static void checkSerialPort() {
+    myScaleCmd.cmdMode = "check_serial_port";
+    myScaleCmd.cmdData = '';
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
 }

@@ -35,6 +35,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("修改蓝牙名称失败"),
         "bluetooth_modify_ok": MessageLookupByLibrary.simpleMessage("修改蓝牙名称成功"),
         "button_add": MessageLookupByLibrary.simpleMessage("增加"),
+        "button_add_license": MessageLookupByLibrary.simpleMessage("添加授权"),
         "button_back": MessageLookupByLibrary.simpleMessage("返回"),
         "button_cancel": MessageLookupByLibrary.simpleMessage("取消"),
         "button_delete": MessageLookupByLibrary.simpleMessage("删除"),
@@ -44,6 +45,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "button_export_report": MessageLookupByLibrary.simpleMessage("导出报表"),
         "button_get_ip": MessageLookupByLibrary.simpleMessage("获取IP"),
         "button_home": MessageLookupByLibrary.simpleMessage("主页"),
+        "button_modify": MessageLookupByLibrary.simpleMessage("修改"),
         "button_net": MessageLookupByLibrary.simpleMessage("净重"),
         "button_ok": MessageLookupByLibrary.simpleMessage("确定"),
         "button_save": MessageLookupByLibrary.simpleMessage("保存"),
@@ -53,6 +55,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "button_start": MessageLookupByLibrary.simpleMessage("开始"),
         "button_static": MessageLookupByLibrary.simpleMessage("静态"),
         "button_tare": MessageLookupByLibrary.simpleMessage("扣重"),
+        "button_trial": MessageLookupByLibrary.simpleMessage("免费试用"),
         "button_zero": MessageLookupByLibrary.simpleMessage("归零"),
         "cancel": MessageLookupByLibrary.simpleMessage("取消"),
         "com_port": MessageLookupByLibrary.simpleMessage("串口"),
@@ -76,7 +79,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "home_page_title3": MessageLookupByLibrary.simpleMessage("网络设置"),
         "home_page_title4": MessageLookupByLibrary.simpleMessage("蓝牙设置"),
         "home_page_title5": MessageLookupByLibrary.simpleMessage("更新软件"),
-        "home_page_title6": MessageLookupByLibrary.simpleMessage("称重记录"),
+        "home_page_title6": MessageLookupByLibrary.simpleMessage("下载打印格式"),
         "home_page_title7": MessageLookupByLibrary.simpleMessage("授权信息"),
         "home_page_title8": MessageLookupByLibrary.simpleMessage("实时称重数据"),
         "home_page_title9": MessageLookupByLibrary.simpleMessage("语言设置"),
@@ -91,13 +94,14 @@ class MessageLookup extends MessageLookupByLibrary {
         "netmask": MessageLookupByLibrary.simpleMessage("子网掩码:"),
         "network_setting": MessageLookupByLibrary.simpleMessage("无线网络设置"),
         "new_format": MessageLookupByLibrary.simpleMessage("新建格式"),
+        "new_license_text": MessageLookupByLibrary.simpleMessage("新授权码:"),
         "no_element": MessageLookupByLibrary.simpleMessage("没有选择任何元素"),
         "open_file": MessageLookupByLibrary.simpleMessage("打开文件(json)"),
         "operation_steps": MessageLookupByLibrary.simpleMessage("操作步骤："),
         "parameter_settings_title":
             MessageLookupByLibrary.simpleMessage("参数设置"),
-        "passed_fail_message": MessageLookupByLibrary.simpleMessage(
-            "没有认证。 \r\n请发送上方的ID给我们。\r\n\r\nEmail:sales@taiwanscale.com"),
+        "passed_fail_message":
+            MessageLookupByLibrary.simpleMessage("没有认证。请发送上方的ID给我们。"),
         "passed_message": MessageLookupByLibrary.simpleMessage("认证通过.\r\n"),
         "password": MessageLookupByLibrary.simpleMessage("密码:"),
         "plu_edit": MessageLookupByLibrary.simpleMessage("PLU 编辑"),
@@ -142,6 +146,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "tab_order": MessageLookupByLibrary.simpleMessage("序号："),
         "tare": MessageLookupByLibrary.simpleMessage("扣重："),
         "text_content": MessageLookupByLibrary.simpleMessage("文本内容："),
+        "text_email":
+            MessageLookupByLibrary.simpleMessage("邮箱:sales@taiwanscale.com"),
         "user_edit": MessageLookupByLibrary.simpleMessage("用户编辑"),
         "user_error_message1":
             MessageLookupByLibrary.simpleMessage("用户ID和用户名字不能为空!"),

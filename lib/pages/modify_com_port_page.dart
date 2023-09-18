@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/currentport_data.dart';
@@ -10,6 +11,8 @@ import '../../eventbus/eventbus.dart';
 import '../../main.dart';
 import '../data/cominfoslist_data.dart';
 import '../data/comscaleinfo_data.dart';
+import '../data/license_data.dart';
+import '../data/modifyresult_data.dart';
 import '../functions/methods.dart';
 import '../generated/l10n.dart';
 import '../widget/comportdorpdown.dart';
@@ -18,10 +21,10 @@ class ModifyComPortPage extends StatefulWidget {
   const ModifyComPortPage({super.key});
 
   @override
-  _ModifyComPortPageState createState() => _ModifyComPortPageState();
+  ModifyComPortPageState createState() => ModifyComPortPageState();
 }
 
-class _ModifyComPortPageState extends State<ModifyComPortPage> {
+class ModifyComPortPageState extends State<ModifyComPortPage> {
   final TextEditingController _deviceNameController = TextEditingController();
   List<String> comLists = [];
   String comPort = "";
@@ -53,13 +56,22 @@ class _ModifyComPortPageState extends State<ModifyComPortPage> {
   dynamic _eventbus3;
   dynamic _eventbus4;
   dynamic _eventbus5;
+  dynamic _eventbus6;
+
   var localizedStrings;
   String refresh = " ";
+  String serialPortConnect = " ";
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     localizedStrings = S.of(context);
+  }
+
+  void getScaleList() {
+    myScaleCmd.cmdMode = "get_scale_list";
+    myScaleCmd.cmdData = "";
+    MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
   }
 
   @override
@@ -68,15 +80,19 @@ class _ModifyComPortPageState extends State<ModifyComPortPage> {
     PublicFunctions.getPortList();
     checkPortList();
     _deviceNameController.text = '';
-    _eventbus1 = eventBus.on<EventConnectBTResponse>().listen((event) {
+    _eventbus1 = eventBus.on<EventRespScaleModify>().listen((event) {
       if (mounted) {
-        setState(() {
-          myConnectBTResponse = event.obj;
-          isSetting = false;
-          if (myConnectBTResponse.msgBody.isNotEmpty) {}
-        });
+        myModifyAck = event.obj;
+
+        if (myModifyAck.isAck == true) {
+          // getScaleList();
+          setState(() {
+            serialPortConnect = 'Modify OK';
+          });
+        }
       }
     });
+
     _eventbus2 = eventBus.on<EventComInfoList>().listen((event) {
       if (mounted) {
         setState(() {
@@ -119,6 +135,19 @@ class _ModifyComPortPageState extends State<ModifyComPortPage> {
         });
       }
     });
+
+    _eventbus6 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
+      if (mounted) {
+        setState(() {
+          myRespCheckSerialPort = event.obj;
+          if (myRespCheckSerialPort.msgBody == 'ok') {
+            serialPortConnect = 'Serial Port Connected';
+          } else {
+            serialPortConnect = 'Serial Port Connect fail';
+          }
+        });
+      }
+    });
   }
 
   @override
@@ -129,6 +158,7 @@ class _ModifyComPortPageState extends State<ModifyComPortPage> {
     _eventbus3.cancel();
     _eventbus4.cancel();
     _eventbus5.cancel();
+    _eventbus6.cancel();
     super.dispose();
   }
 
@@ -149,130 +179,135 @@ class _ModifyComPortPageState extends State<ModifyComPortPage> {
           )),
       content: Container(
         height: 356,
-        decoration:
-            const BoxDecoration(color: Color.fromARGB(255, 233, 232, 232)),
+        decoration: const BoxDecoration(color: Colors.white),
         child: Column(
           children: [
-            const SizedBox(height: 2),
-            Container(
-              decoration: const BoxDecoration(color: Colors.white),
-              child: Column(
-                children: [
-                  // const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Text(localizedStrings.scale_model),
-                          // ComPortDropdown(
-                          //     3, scale_model, myCurrentPort.baud.toString()),
-                          const SizedBox(height: 15),
-                          Text(localizedStrings.scale_model),
-                          Container(
-                            height: 53,
-                            width: 200,
-                            padding: const EdgeInsets.all(0),
-                            child: DropdownButtonFormField<String>(
-                              isExpanded: true,
-                              // decoration: const InputDecoration(border: OutlineInputBorder()),
-                              // 设置默认值
-                              value: scaleModel,
-                              // 选择回调
-                              onChanged: (String? newPosition) {
-                                scaleModel = newPosition.toString();
-                              },
-                              // 传入可选的数组
-                              items: scaleModelList
-                                  .map<DropdownMenuItem<String>>(
-                                      (String value) {
-                                return DropdownMenuItem(
-                                    value: value, child: Text(value));
-                              }).toList(),
-                            ),
-                          ),
-                          const SizedBox(height: 15),
-
-                          Text(localizedStrings.baud_rate),
-                          ComPortDropdown(
-                              3, baudRateList, myCurrentPort.baud.toString()),
-                          const SizedBox(height: 15),
-                          Text(localizedStrings.data_bits),
-                          ComPortDropdown(1, dataBitsList,
-                              myCurrentPort.dataBits.toString()),
-                        ],
+            // const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Text(localizedStrings.scale_model),
+                    // ComPortDropdown(
+                    //     3, scale_model, myCurrentPort.baud.toString()),
+                    const SizedBox(height: 15),
+                    Text(localizedStrings.scale_model),
+                    Container(
+                      height: 53,
+                      width: 200,
+                      padding: const EdgeInsets.all(0),
+                      child: DropdownButtonFormField<String>(
+                        isExpanded: true,
+                        // decoration: const InputDecoration(border: OutlineInputBorder()),
+                        // 设置默认值
+                        value: scaleModel,
+                        // 选择回调
+                        onChanged: (String? newPosition) {
+                          scaleModel = newPosition.toString();
+                        },
+                        // 传入可选的数组
+                        items: scaleModelList
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem(
+                              value: value, child: Text(value));
+                        }).toList(),
                       ),
-                      const SizedBox(width: 60),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 15),
-                          Text(localizedStrings.serial_port),
-                          Container(
-                            height: 53,
-                            width: 200,
-                            padding: const EdgeInsets.all(0),
-                            child: DropdownButtonFormField<String>(
-                              isExpanded: true,
-                              // decoration: const InputDecoration(border: OutlineInputBorder()),
-                              // 设置默认值
-                              value: comPort,
-                              // 选择回调
-                              onChanged: (String? newPosition) {
-                                PublicFunctions.getPortList();
-                                checkPortList();
-                                comPort = newPosition.toString();
-                                if (comPort != localizedStrings.refresh_port) {
-                                  tempCurrentPort.devPath = comPort;
-                                } else {
-                                  tempCurrentPort.devPath = '';
-                                }
+                    ),
+                    const SizedBox(height: 15),
 
-                                // setState(() {
-                                //   checkPortList();
-                                //   // eventBus.fire(EventDialogData(myDialogData));
-                                // });
-                              },
-                              // 传入可选的数组
-                              items: comLists.map<DropdownMenuItem<String>>(
-                                  (String value) {
-                                return DropdownMenuItem(
-                                    value: value, child: Text(value));
-                              }).toList(),
-                            ),
-                          ),
-                          const SizedBox(height: 15),
-                          Text(localizedStrings.Parity),
-                          ComPortDropdown(
-                              4,
-                              checkBitsList,
-                              (myCurrentPort.parity == 0)
-                                  ? (checkBitsList[0])
-                                  : (myCurrentPort.parity == 1)
-                                      ? (checkBitsList[1])
-                                      : (myCurrentPort.parity == 2)
-                                          ? (checkBitsList[2])
-                                          : checkBitsList[0]),
-                          const SizedBox(height: 15),
-                          Text(localizedStrings.stop_bits),
-                          ComPortDropdown(
-                              2,
-                              stopBitsList,
-                              (myCurrentPort.stopBits == 0)
-                                  ? (stopBitsList[0])
-                                  : (myCurrentPort.stopBits == 1)
-                                      ? (stopBitsList[1])
-                                      : (myCurrentPort.stopBits == 2)
-                                          ? (stopBitsList[2])
-                                          : stopBitsList[0]),
-                        ],
+                    Text(localizedStrings.baud_rate),
+                    ComPortDropdown(
+                        3, baudRateList, myCurrentPort.baud.toString()),
+                    const SizedBox(height: 15),
+                    Text(localizedStrings.data_bits),
+                    ComPortDropdown(
+                        1, dataBitsList, myCurrentPort.dataBits.toString()),
+                  ],
+                ),
+                const SizedBox(width: 60),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 15),
+                    Text(localizedStrings.serial_port),
+                    Container(
+                      height: 53,
+                      width: 200,
+                      padding: const EdgeInsets.all(0),
+                      child: DropdownButtonFormField<String>(
+                        isExpanded: true,
+                        // decoration: const InputDecoration(border: OutlineInputBorder()),
+                        // 设置默认值
+                        value: comPort,
+                        // 选择回调
+                        onChanged: (String? newPosition) {
+                          PublicFunctions.getPortList();
+                          checkPortList();
+                          comPort = newPosition.toString();
+                          if (comPort != localizedStrings.refresh_port) {
+                            tempCurrentPort.devPath = comPort;
+                          } else {
+                            tempCurrentPort.devPath = '';
+                          }
+
+                          // setState(() {
+                          //   checkPortList();
+                          //   // eventBus.fire(EventDialogData(myDialogData));
+                          // });
+                        },
+                        // 传入可选的数组
+                        items: comLists
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem(
+                              value: value, child: Text(value));
+                        }).toList(),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 75),
-                ],
-              ),
+                    ),
+                    const SizedBox(height: 15),
+                    Text(localizedStrings.Parity),
+                    ComPortDropdown(
+                        4,
+                        checkBitsList,
+                        (myCurrentPort.parity == 0)
+                            ? (checkBitsList[0])
+                            : (myCurrentPort.parity == 1)
+                                ? (checkBitsList[1])
+                                : (myCurrentPort.parity == 2)
+                                    ? (checkBitsList[2])
+                                    : checkBitsList[0]),
+                    const SizedBox(height: 15),
+                    Text(localizedStrings.stop_bits),
+                    ComPortDropdown(
+                        2,
+                        stopBitsList,
+                        (myCurrentPort.stopBits == 0)
+                            ? (stopBitsList[0])
+                            : (myCurrentPort.stopBits == 1)
+                                ? (stopBitsList[1])
+                                : (myCurrentPort.stopBits == 2)
+                                    ? (stopBitsList[2])
+                                    : stopBitsList[0]),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  serialPortConnect,
+                  style: TextStyle(
+                      fontSize: 20,
+                      color: (serialPortConnect.contains('fail'))
+                          ? Colors.red.shade900
+                          : Colors.green.shade900),
+                )
+              ],
             )
           ],
         ),
@@ -282,19 +317,35 @@ class _ModifyComPortPageState extends State<ModifyComPortPage> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             OutlinedButton(
-                child: Text(localizedStrings.button_ok),
+                child: const Text('Test Connection'),
+                onPressed: () {
+                  if (myCurrentPort.devPath != '') {
+                    setState(() {
+                      serialPortConnect = '';
+                    });
+
+                    checkSerialPort();
+                  }
+                }),
+            const SizedBox(width: 20),
+            OutlinedButton(
+                child: Text(localizedStrings.button_modify),
                 onPressed: () {
                   mySerialPortStatus.serialPortStatus = true;
                   eventBus.fire(EventSerialPortStatus(mySerialPortStatus));
                   if (myCurrentPort.devPath != '') {
+                    setState(() {
+                      serialPortConnect = '';
+                    });
                     modifyComInfo();
                   }
-                  Navigator.of(context).pop(connectionType);
+                  // Navigator.of(context).pop(connectionType);
                 }),
             const SizedBox(width: 20),
             OutlinedButton(
-                child: Text(localizedStrings.button_cancel),
+                child: Text(localizedStrings.button_exit),
                 onPressed: () {
+                  myCheckSerialPortOnOFF.isCheck = true;
                   Navigator.of(context)
                       .pop(); // to go back to screen after submitting
                 })
@@ -302,6 +353,15 @@ class _ModifyComPortPageState extends State<ModifyComPortPage> {
         )
       ],
     );
+  }
+
+  void checkSerialPort() {
+    myScaleCmd.cmdMode = "check_serial_port";
+    myScaleCmd.cmdData = '';
+    if (kDebugMode) {
+      print(jsonEncode(myScaleCmd));
+    }
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
 
   void sendModifyInfo(String modifyString) {

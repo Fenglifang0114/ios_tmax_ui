@@ -147,6 +147,11 @@ class EventUserInfoList {
   EventUserInfoList(this.obj);
 }
 
+class EventRespScaleModify {
+  dynamic obj;
+  EventRespScaleModify(this.obj);
+}
+
 class EventUserInfo {
   dynamic obj;
   EventUserInfo(this.obj);
@@ -212,6 +217,11 @@ class EventLicenseData {
   EventLicenseData(this.obj);
 }
 
+class EventCheckLicenseKey {
+  dynamic obj;
+  EventCheckLicenseKey(this.obj);
+}
+
 class EventPrinter {
   dynamic obj;
   EventPrinter(this.obj);
@@ -255,6 +265,11 @@ class EventConnectStaticIp {
 class EventRespUpdateFirmware {
   dynamic obj;
   EventRespUpdateFirmware(this.obj);
+}
+
+class EventRespCheckSerialPort {
+  dynamic obj;
+  EventRespCheckSerialPort(this.obj);
 }
 
 class EventRespUpdateFirmwareProcess {

@@ -7,9 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 
 import '../data/download_prt_fmt.dart';
+import '../data/downloadresponse.dart';
+import '../data/license_data.dart';
 import '../data/scalecmd_data.dart';
+import '../eventbus/eventbus.dart';
 import '../generated/l10n.dart';
 import '../main.dart';
+import 'home_page.dart';
 
 var aasd = "nihao";
 
@@ -38,11 +42,33 @@ class _DownloadPageState extends State<DownloadPage> {
 
   late ScrollController _fileScrollerController;
   var currentPath = Directory.current.path;
+  dynamic _eventbus1;
 
   @override
   void initState() {
     super.initState();
     _fileScrollerController = ScrollController();
+    _eventbus1 = eventBus.on<EventDownloadResponse>().listen((event) {
+      if (mounted) {
+        setState(() {
+          myDownloadResponse = event.obj;
+          if (myDownloadResponse.msgBody.isNotEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(
+                    (myDownloadResponse.msgBody.contains('ok'))
+                        ? 'Download successful!'
+                        : myDownloadResponse.msgBody,
+                    style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.normal)), ////此处需要秤回复
+                duration: const Duration(seconds: 3),
+                backgroundColor: (myDownloadResponse.msgBody.contains('ok'))
+                    ? Colors.green.shade900
+                    : Colors.red.shade900));
+          }
+        });
+      }
+    });
   }
 
   dynamic localizedStrings;
@@ -56,6 +82,7 @@ class _DownloadPageState extends State<DownloadPage> {
   @override
   void dispose() {
     _fileScrollerController.dispose();
+    _eventbus1.cancel;
     super.dispose();
   }
 
@@ -158,11 +185,11 @@ For example: 1Weight.fmt     2ACC.fmt      3PCS.fmt      4PCT.fmt
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Icon(
-                    Icons.arrow_back,
+                    Icons.home,
                     color: Theme.of(context).colorScheme.primary,
                   ),
                   Text(
-                    localizedStrings.button_back,
+                    localizedStrings.button_home,
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
                         fontSize: 14,
@@ -172,10 +199,50 @@ For example: 1Weight.fmt     2ACC.fmt      3PCS.fmt      4PCT.fmt
               ),
             ),
             onPressed: () {
+              myCheckSerialPortOnOFF.isCheck = true;
               Navigator.of(context).pop();
             },
           ),
         ),
+        // SizedBox(
+        //   width: 120,
+        //   height: 50,
+        //   child: OutlinedButton(
+        //     style: OutlinedButton.styleFrom(
+        //       side: BorderSide(
+        //         width: 1,
+        //         color: Theme.of(context).colorScheme.primary,
+        //       ),
+        //       foregroundColor: Colors.blue,
+        //       backgroundColor: Colors.white, // 设置按钮的背景色
+        //       shape: RoundedRectangleBorder(
+        //         borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
+        //       ),
+        //     ),
+        //     child: Center(
+        //       child: Row(
+        //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        //         children: [
+        //           Icon(
+        //             Icons.arrow_back,
+        //             color: Theme.of(context).colorScheme.primary,
+        //           ),
+        //           Text(
+        //             localizedStrings.button_back,
+        //             style: TextStyle(
+        //                 color: Theme.of(context).colorScheme.primary,
+        //                 fontSize: 14,
+        //                 fontWeight: FontWeight.normal),
+        //           ),
+        //         ],
+        //       ),
+        //     ),
+        //     onPressed: () {
+        //       myCheckSerialPortOnOFF.isCheck = true;
+        //       Navigator.of(context).pop();
+        //     },
+        //   ),
+        // ),
         SizedBox(
           width: 120,
           height: 50,

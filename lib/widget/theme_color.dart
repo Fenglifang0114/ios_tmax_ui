@@ -6,7 +6,7 @@ themeColor() {
       colorScheme: ColorScheme(
         primary: const Color.fromARGB(255, 0, 74, 152), //上方标题栏颜色
         secondary: const Color.fromARGB(255, 0, 160, 233),
-        background: const Color.fromARGB(255, 196, 201, 207),
+        background: Color.fromARGB(255, 211, 213, 217),
         error: const Color.fromARGB(255, 199, 0, 38),
         brightness: Brightness.light,
         onBackground: Colors.black,

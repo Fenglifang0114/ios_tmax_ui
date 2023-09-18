@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:t_max/data/license_data.dart';
 import 'package:t_max/data/respdata_data.dart';
 import 'package:t_max/data/scalecmd_data.dart';
 import 'package:t_max/data/wifi_ap_info.dart';
@@ -127,6 +128,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
           }
           displayedItems = List.from(wifiItems);
           _enableRefresh = true;
+          errorMessage = "";
         });
       }
     });
@@ -329,6 +331,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                       ),
                       ElevatedButton(
                           onPressed: () {
+                            myCheckSerialPortOnOFF.isCheck = true;
                             Navigator.of(context).pop();
                           },
                           style: ElevatedButton.styleFrom(
@@ -823,21 +826,6 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                         children: [
                                           Text(
                                             errorMessage,
-                                            // (errorMessage
-                                            // .contains('ok') ||
-                                            //         errorMessage.contains('OK'))
-                                            //     ? 'OK'
-                                            //     : (errorMessage.contains(
-                                            //                 'error') ||
-                                            //             errorMessage
-                                            //                 .contains('fail') ||
-                                            //             errorMessage.contains(
-                                            //                 'Time out') ||
-                                            //             errorMessage
-                                            //                 .contains('ERROR'))
-                                            //         ? errorMessage
-                                            //         : ''
-                                            //         ,
                                             style: TextStyle(
                                                 fontSize: 20,
                                                 color: (errorMessage

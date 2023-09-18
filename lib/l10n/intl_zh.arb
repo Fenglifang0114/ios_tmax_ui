@@ -3,6 +3,7 @@
     "zh_cn": "中文",
     "en": "英文",    
     "cancel": "取消", 
+    "button_modify": "修改",
     "button_tare": "扣重",
     "button_net":"净重",
     "button_save": "保存",   
@@ -13,14 +14,16 @@
     "home_page_title3":"网络设置",  
     "home_page_title4":"蓝牙设置",  
     "home_page_title5":"更新软件",  
-    "home_page_title6":"称重记录", 
+    "home_page_title6":"下载打印格式", 
     "home_page_title7":"授权信息",
     "home_page_title8":"实时称重数据", 
     "home_page_title9":"语言设置",
     "welcome":"欢迎",
     "passed_message":"认证通过.\r\n",
-    "passed_fail_message":"没有认证。 \r\n请发送上方的ID给我们。\r\n\r\nEmail:sales@taiwanscale.com",
+    "passed_fail_message":"没有认证。请发送上方的ID给我们。",
+    "text_email":"邮箱:sales@taiwanscale.com",
     "button_start":"开始",
+    "button_trial":"免费试用",    
     "button_exit":"退出",
     "system_id":"系统唯一ID:  ",
     "expiration_date":"有效期：",
@@ -123,7 +126,9 @@
     "button_select_format": "选择打印格式",
     "scale_model": "机种",
     "button_get_ip": "获取IP",
-    "firmwart_update":"更新固件"
+    "firmwart_update":"更新固件",
+    "button_add_license":"添加授权",
+    "new_license_text":"新授权码:"
   
     
   }

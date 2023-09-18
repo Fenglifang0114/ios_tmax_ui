@@ -8,6 +8,7 @@ import '../../data/scalecmd_data.dart';
 import '../../eventbus/eventbus.dart';
 import '../../generated/l10n.dart';
 import '../../main.dart';
+import '../data/license_data.dart';
 
 class BluetoothDialog extends StatefulWidget {
   const BluetoothDialog({super.key});
@@ -282,6 +283,7 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
             OutlinedButton(
               child: Text(localizedStrings.button_exit),
               onPressed: () {
+                myCheckSerialPortOnOFF.isCheck = true;
                 Navigator.of(context).pop();
               },
             ),

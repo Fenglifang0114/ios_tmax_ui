@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:t_max/pages/home_page.dart';
 import '../../generated/l10n.dart';
+import '../data/license_data.dart';
 
 class LanguageSettingPage extends StatefulWidget {
   const LanguageSettingPage({super.key});
@@ -94,20 +95,21 @@ class _LanguageSettingPageState extends State<LanguageSettingPage> {
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            OutlinedButton(
-                child: Text(localizedStrings.button_ok),
-                onPressed: () {
-                  setState(() {});
-                  // Navigator.of(context).pop();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const HomePage()),
-                  );
-                }),
+            // OutlinedButton(
+            //     child: Text(localizedStrings.button_ok),
+            //     onPressed: () {
+            //       setState(() {});
+            //       // Navigator.of(context).pop();
+            //       Navigator.push(
+            //         context,
+            //         MaterialPageRoute(builder: (context) => const HomePage()),
+            //       );
+            //     }),
             const SizedBox(width: 20),
             OutlinedButton(
-                child: Text(localizedStrings.button_cancel),
+                child: Text(localizedStrings.button_exit),
                 onPressed: () {
+                  myCheckSerialPortOnOFF.isCheck = true;
                   Navigator.of(context)
                       .pop(); // to go back to screen after submitting
                 })

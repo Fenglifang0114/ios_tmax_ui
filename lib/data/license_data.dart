@@ -14,3 +14,23 @@ class LicenseData {
 LicenseData myLicenseData = LicenseData(
   "",
 );
+
+class LicenseInfo {
+  bool isValid;
+  String pId;
+  String liceseDate;
+  LicenseInfo(this.isValid, this.pId, this.liceseDate);
+}
+
+LicenseInfo myLicenseInfo = LicenseInfo(
+  false,
+  '',
+  '',
+);
+
+class CheckSerialPortOnOFF {
+  bool isCheck;
+  CheckSerialPortOnOFF(this.isCheck);
+}
+
+CheckSerialPortOnOFF myCheckSerialPortOnOFF = CheckSerialPortOnOFF(true);
