@@ -223,6 +223,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     x2Posvar.text = myTextData.x2Pos.toString();
     y2Posvar.text = myTextData.y2Pos.toString();
     barcodeDataReload();
+    openTemplateJson();
 
     _eventbus1 = eventBus.on<EventText>().listen((event) {
       if (mounted) {
@@ -785,7 +786,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                                   var directory = p.dirname(executablePath);
 
                                   final formatfilePath =
-                                      Directory('$directory\\format');
+                                      Directory('$directory\\template');
                                   if (!await formatfilePath.exists()) {
                                     await formatfilePath.create(
                                         recursive: true);
@@ -1093,6 +1094,24 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         ],
       ),
     );
+  }
+
+  void openTemplateJson() async {
+    String executablePath = Platform.resolvedExecutable;
+    var directory = p.dirname(executablePath);
+
+    final formatfilePath = Directory('$directory\\template');
+    if (!await formatfilePath.exists()) {
+      return;
+    }
+    File file = File(p.join(formatfilePath.path, '1weight.json'));
+    bool fileExists = file.existsSync();
+    if (fileExists) {
+      deleteAllItem();
+      _openJsonFile(file.path);
+    } else {
+      return;
+    }
   }
 
   void _showConfirmationDialog(BuildContext context) {
@@ -1670,8 +1689,8 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(e.toString(),
-              style: const TextStyle(
-                  fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
+              style:
+                  const TextStyle(fontSize: 20, fontWeight: FontWeight.normal)),
           duration: const Duration(seconds: 1),
           backgroundColor: Colors.red.shade900));
     }
@@ -1740,6 +1759,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
             children: [textItemList[i]]));
       }
     });
+    reconstructItem();
   }
 
   void _saveFormatToJson(String path) {
@@ -2964,6 +2984,33 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       }
       myTextData.tabOrder = 9999;
     }
+  }
+
+  void reconstructItem() {
+    List<TextItem> temptextItemList = [];
+    for (var i = 0; i < textItemList.length; i++) {
+      temptextItemList.add(textItemList[i]);
+    }
+    textItemList.clear();
+    myItemKey.keyList.clear();
+    floatButtonList.clear();
+    _parentKey = GlobalKey();
+
+    for (var i = 0; i < temptextItemList.length; i++) {
+      // temptextItemList[i].index = i;
+      textItemList.add(temptextItemList[i]);
+      myItemKey.keyList.add(ObjectKey(textItemList[i].index));
+
+      floatButtonList.add(DraggableFloatingActionButton(
+          index: (textItemList[i].index),
+          key: ObjectKey(textItemList[i].index),
+          initialOffset: Offset(
+              textItemList[i].xPos.toDouble(), textItemList[i].yPos.toDouble()),
+          parentKey: _parentKey,
+          onPressed: () {},
+          children: [textItemList[i]]));
+    }
+    myTextData.tabOrder = 9999;
   }
 
   _varproperties() {

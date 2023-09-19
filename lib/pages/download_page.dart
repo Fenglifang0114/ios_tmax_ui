@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:path/path.dart' as p;
 
 import '../data/download_prt_fmt.dart';
 import '../data/downloadresponse.dart';
@@ -333,7 +334,17 @@ For example: 1Weight.fmt     2ACC.fmt      3PCS.fmt      4PCT.fmt
   }
 
   Future pickFiles() async {
+    String executablePath = Platform.resolvedExecutable;
+    var directory = p.dirname(executablePath);
+
+    final formatfilePath = Directory('$directory\\format');
+    if (!await formatfilePath.exists()) {
+      await formatfilePath.create(recursive: true);
+    }
+    directory = formatfilePath.path;
+
     FilePickerResult? result = await FilePicker.platform.pickFiles(
+      initialDirectory: directory,
       allowMultiple: true,
       type: FileType.custom,
       allowedExtensions: ['fmt'],
