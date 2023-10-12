@@ -89,7 +89,7 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
     localizedStrings = S.of(context);
     return AlertDialog(
       title: Container(
-        color: Colors.blue.shade900,
+        color: Theme.of(context).colorScheme.primary,
         child: Row(
           children: [
             const Icon(Icons.bluetooth, color: Colors.white),

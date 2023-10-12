@@ -108,7 +108,7 @@ class _GridPageState extends State<GridPage> {
                               const Text("稳定"),
                               const SizedBox(width: 20),
                               Image.asset(
-                                "images/gray.png",
+                                "assets/images/gray.png",
                                 width: 20,
                                 height: 20,
                               )
@@ -120,7 +120,7 @@ class _GridPageState extends State<GridPage> {
                               const Text("净重"),
                               const SizedBox(width: 20),
                               Image.asset(
-                                "images/gray.png",
+                                "assets/images/gray.png",
                                 width: 20,
                                 height: 20,
                               )

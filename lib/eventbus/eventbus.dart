@@ -321,3 +321,8 @@ class EventRespGetIpMode {
   dynamic obj;
   EventRespGetIpMode(this.obj);
 }
+
+class EventGetBuildInfo {
+  dynamic obj;
+  EventGetBuildInfo(this.obj);
+}

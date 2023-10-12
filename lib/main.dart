@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_size/window_size.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -10,19 +11,23 @@ import 'generated/l10n.dart';
 import 'pages/trial_page.dart';
 import 'widget/theme_color.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String savedLanguage = prefs.getString('language') ?? 'en_US';
+
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     setWindowMinSize(const Size(1320, 720));
     setWindowTitle('');
   }
+
   // setWindowMinSize(const Size(1366, 900));
-  runApp(const MyApp());
+  runApp(MyApp(savedLanguage));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
+  const MyApp(this.savedLanguage, {Key? key}) : super(key: key);
+  final String savedLanguage;
   static late WebSocketChannel webchannel;
   static late WebSocketScaleChannel webchannel1;
 
@@ -46,6 +51,7 @@ class MyApp extends StatelessWidget {
         //自定义主题
         theme: themeColor(),
         // 国际化
+
         localizationsDelegates: const [
           // 本地化的代理类
           GlobalMaterialLocalizations.delegate, //为使material组件支持多语言
@@ -55,7 +61,9 @@ class MyApp extends StatelessWidget {
         ],
         // 应用支持的语言列表
         supportedLocales: S.delegate.supportedLocales,
-        locale: const Locale('en', "US"),
+        // locale: const Locale('en', "US"),
+        locale:
+            Locale(savedLanguage.split('_')[0], savedLanguage.split('_')[1]),
 
         //去掉右上角debug图标
         debugShowCheckedModeBanner: false,

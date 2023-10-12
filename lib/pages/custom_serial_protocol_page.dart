@@ -59,7 +59,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         child: Container(
           height: 50,
           width: screenSize.width - 10,
-          color: Colors.blue.shade900,
+          color: Theme.of(context).colorScheme.primary,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -68,7 +68,8 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                 height: 40,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white, // 设置按钮的背景色
+                    backgroundColor:
+                        Theme.of(context).colorScheme.onPrimary, // 设置按钮的背景色
                     elevation: 10, // 设置按钮的阴影
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
@@ -80,12 +81,12 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                       children: [
                         Icon(
                           Icons.home,
-                          color: Colors.blue.shade900,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                         Text(
                           'Home',
                           style: TextStyle(
-                              color: Colors.blue.shade900,
+                              color: Theme.of(context).colorScheme.primary,
                               fontSize: 18,
                               fontWeight: FontWeight.bold),
                         ),
@@ -102,7 +103,8 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                 height: 40,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white, // 设置按钮的背景色
+                    backgroundColor:
+                        Theme.of(context).colorScheme.onPrimary, // 设置按钮的背景色
                     elevation: 10, // 设置按钮的阴影
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
@@ -114,12 +116,12 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                       children: [
                         Icon(
                           Icons.download,
-                          color: Colors.green.shade900,
+                          color: Theme.of(context).colorScheme.outline,
                         ),
                         Text(
                           'Download',
                           style: TextStyle(
-                              color: Colors.green.shade900,
+                              color: Theme.of(context).colorScheme.outline,
                               fontSize: 18,
                               fontWeight: FontWeight.bold),
                         ),
@@ -175,7 +177,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
             child: Container(
               height: 1200,
               decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.onPrimary,
                   border: Border.all(width: 0.2, color: Colors.black)),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -192,7 +194,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                               style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.blue.shade900),
+                                  color: Theme.of(context).colorScheme.primary),
                             ),
                           ),
                         ),
@@ -202,7 +204,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                   ),
                   Divider(
                     height: 2,
-                    color: Colors.blue.shade900,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                   Expanded(
                     flex: 4,
@@ -211,20 +213,21 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                         children: [
                           Container(
                             height: 30,
-                            child: const Center(
+                            child: Center(
                               child: Text(
                                 'Serial port output preview',
                                 style: TextStyle(
-                                    color: Colors.white,
+                                    color:
+                                        Theme.of(context).colorScheme.onPrimary,
                                     fontWeight: FontWeight.bold),
                               ),
                             ),
-                            color: Colors.blue.shade900,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                           Expanded(
                             child: Container(
                               width: double.infinity,
-                              color: const Color.fromARGB(255, 223, 223, 223),
+                              color: Theme.of(context).colorScheme.tertiary,
                               child: SingleChildScrollView(
                                 child: Text(
                                   _getOutputData(),
@@ -308,14 +311,14 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     return [
       Container(
         height: 40,
-        color: Colors.yellow.shade900,
-        child: const Center(
+        color: Theme.of(context).colorScheme.tertiary,
+        child: Center(
           child: Text(
             'Text Property',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20,
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
         ),
@@ -325,7 +328,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       ),
       Text(
         'Type:    ${mySerialProtocolText.type}',
-        style: TextStyle(color: Colors.blue.shade900),
+        style: TextStyle(color: Theme.of(context).colorScheme.primary),
       ),
       const SizedBox(
         height: 20,
@@ -334,7 +337,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         (mySerialProtocolText.varName == 'IsStable')
             ? 'Stable Text:'
             : 'Gross Text',
-        style: TextStyle(color: Colors.blue.shade900),
+        style: TextStyle(color: Theme.of(context).colorScheme.primary),
       ),
       TextField(
         controller: myDefault1,
@@ -356,7 +359,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         (mySerialProtocolText.varName == 'IsStable')
             ? 'Unstable Text:'
             : 'Net Text',
-        style: TextStyle(color: Colors.blue.shade900),
+        style: TextStyle(color: Theme.of(context).colorScheme.primary),
       ),
       TextField(
         controller: myDefault2,
@@ -384,7 +387,9 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                 });
               },
               icon: Icon(
-                  size: 40, Icons.arrow_back, color: Colors.blue.shade900)),
+                  size: 40,
+                  Icons.arrow_back,
+                  color: Theme.of(context).colorScheme.primary)),
           const SizedBox(
             width: 50,
           ),
@@ -395,7 +400,9 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                 });
               },
               icon: Icon(
-                  size: 40, Icons.arrow_forward, color: Colors.blue.shade900)),
+                  size: 40,
+                  Icons.arrow_forward,
+                  color: Theme.of(context).colorScheme.primary)),
           const SizedBox(
             width: 50,
           ),
@@ -411,7 +418,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
             });
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blue.shade900, // 设置按钮的背景色
+            backgroundColor: Theme.of(context).colorScheme.primary, // 设置按钮的背景色
             elevation: 10, // 设置按钮的阴影
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
@@ -450,14 +457,14 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     return [
       Container(
         height: 40,
-        color: Colors.yellow.shade900,
-        child: const Center(
+        color: Theme.of(context).colorScheme.tertiary,
+        child: Center(
           child: Text(
             'Enter Property',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20,
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
         ),
@@ -467,14 +474,14 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       ),
       Text(
         'Type:    ${mySerialProtocolText.type}',
-        style: TextStyle(color: Colors.blue.shade900),
+        style: TextStyle(color: Theme.of(context).colorScheme.primary),
       ),
       const SizedBox(
         height: 20,
       ),
       Text(
         'Content:    \\r\\n',
-        style: TextStyle(color: Colors.blue.shade900),
+        style: TextStyle(color: Theme.of(context).colorScheme.primary),
       ),
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -489,7 +496,9 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                 });
               },
               icon: Icon(
-                  size: 40, Icons.arrow_back, color: Colors.blue.shade900)),
+                  size: 40,
+                  Icons.arrow_back,
+                  color: Theme.of(context).colorScheme.primary)),
           const SizedBox(
             width: 50,
           ),
@@ -500,7 +509,9 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                 });
               },
               icon: Icon(
-                  size: 40, Icons.arrow_forward, color: Colors.blue.shade900)),
+                  size: 40,
+                  Icons.arrow_forward,
+                  color: Theme.of(context).colorScheme.primary)),
           const SizedBox(
             width: 50,
           ),
@@ -516,7 +527,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
             });
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blue.shade900, // 设置按钮的背景色
+            backgroundColor: Theme.of(context).colorScheme.primary, // 设置按钮的背景色
             elevation: 10, // 设置按钮的阴影
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
@@ -535,14 +546,14 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     return [
       Container(
         height: 40,
-        color: Colors.yellow.shade900,
-        child: const Center(
+        color: Theme.of(context).colorScheme.tertiary,
+        child: Center(
           child: Text(
             'Text Property',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20,
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
         ),
@@ -552,14 +563,14 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       ),
       Text(
         'Type:    ${mySerialProtocolText.type}',
-        style: TextStyle(color: Colors.blue.shade900),
+        style: TextStyle(color: Theme.of(context).colorScheme.primary),
       ),
       const SizedBox(
         height: 20,
       ),
       Text(
         'Content:',
-        style: TextStyle(color: Colors.blue.shade900),
+        style: TextStyle(color: Theme.of(context).colorScheme.primary),
       ),
       TextField(
         controller: myContent,
@@ -587,7 +598,9 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                 });
               },
               icon: Icon(
-                  size: 40, Icons.arrow_back, color: Colors.blue.shade900)),
+                  size: 40,
+                  Icons.arrow_back,
+                  color: Theme.of(context).colorScheme.primary)),
           const SizedBox(
             width: 50,
           ),
@@ -598,7 +611,9 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                 });
               },
               icon: Icon(
-                  size: 40, Icons.arrow_forward, color: Colors.blue.shade900)),
+                  size: 40,
+                  Icons.arrow_forward,
+                  color: Theme.of(context).colorScheme.primary)),
           const SizedBox(
             width: 50,
           ),
@@ -614,7 +629,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
             });
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blue.shade900, // 设置按钮的背景色
+            backgroundColor: Theme.of(context).colorScheme.primary, // 设置按钮的背景色
             elevation: 10, // 设置按钮的阴影
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
@@ -726,14 +741,14 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     return [
       Container(
         height: 40,
-        color: Colors.yellow.shade900,
-        child: const Center(
+        color: Theme.of(context).colorScheme.tertiary,
+        child: Center(
           child: Text(
             'Variable Property',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20,
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
         ),
@@ -743,14 +758,14 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       ),
       Text(
         'Type:    ${mySerialProtocolText.type}',
-        style: TextStyle(color: Colors.blue.shade900),
+        style: TextStyle(color: Theme.of(context).colorScheme.primary),
       ),
       const SizedBox(
         height: 20,
       ),
       Text(
         'Alignment:',
-        style: TextStyle(color: Colors.blue.shade900),
+        style: TextStyle(color: Theme.of(context).colorScheme.primary),
       ),
       DropdownButton<String>(
         dropdownColor: Colors.grey[400],
@@ -778,7 +793,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       ),
       Text(
         'Max Length:',
-        style: TextStyle(color: Colors.blue.shade900),
+        style: TextStyle(color: Theme.of(context).colorScheme.primary),
       ),
       TextField(
         controller: myMaxLen,
@@ -798,7 +813,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       ),
       Text(
         'Default Value:',
-        style: TextStyle(color: Colors.blue.shade900),
+        style: TextStyle(color: Theme.of(context).colorScheme.primary),
       ),
       TextField(
         readOnly: true,
@@ -827,7 +842,9 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                 });
               },
               icon: Icon(
-                  size: 40, Icons.arrow_back, color: Colors.blue.shade900)),
+                  size: 40,
+                  Icons.arrow_back,
+                  color: Theme.of(context).colorScheme.primary)),
           const SizedBox(
             width: 50,
           ),
@@ -838,7 +855,9 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                 });
               },
               icon: Icon(
-                  size: 40, Icons.arrow_forward, color: Colors.blue.shade900)),
+                  size: 40,
+                  Icons.arrow_forward,
+                  color: Theme.of(context).colorScheme.primary)),
           const SizedBox(
             width: 50,
           ),
@@ -854,7 +873,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
             });
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blue.shade900, // 设置按钮的背景色
+            backgroundColor: Theme.of(context).colorScheme.primary, // 设置按钮的背景色
             elevation: 10, // 设置按钮的阴影
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
@@ -976,12 +995,14 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       height: 30,
       width: 100,
       decoration: BoxDecoration(
-        border: Border.all(width: 1, color: Colors.blue.shade900),
+        border:
+            Border.all(width: 1, color: Theme.of(context).colorScheme.primary),
       ),
       child: TextButton(
         style: ButtonStyle(
             backgroundColor: (textData.isSelect)
-                ? MaterialStateProperty.all(Colors.blue.shade900)
+                ? MaterialStateProperty.all(
+                    Theme.of(context).colorScheme.primary)
                 : null),
         onPressed: () {
           setState(() {
@@ -1003,7 +1024,9 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
           (textData.type == 'VARIABLE') ? textData.varName : textData.content,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
-              color: (textData.isSelect) ? Colors.white : Colors.blue.shade900),
+              color: (textData.isSelect)
+                  ? Colors.white
+                  : Theme.of(context).colorScheme.primary),
         ),
       ),
     );

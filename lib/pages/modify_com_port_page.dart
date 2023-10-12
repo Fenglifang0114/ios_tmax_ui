@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/currentport_data.dart';
@@ -85,9 +84,10 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
         myModifyAck = event.obj;
 
         if (myModifyAck.isAck == true) {
-          // getScaleList();
+          checkSerialPort();
+        } else {
           setState(() {
-            serialPortConnect = 'Modify OK';
+            serialPortConnect = myModifyAck.ackData!;
           });
         }
       }
@@ -141,9 +141,9 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
         setState(() {
           myRespCheckSerialPort = event.obj;
           if (myRespCheckSerialPort.msgBody == 'ok') {
-            serialPortConnect = 'Serial Port Connected';
+            serialPortConnect = localizedStrings.txt_serial_port_connected;
           } else {
-            serialPortConnect = 'Serial Port Connect fail';
+            serialPortConnect = localizedStrings.txt_serial_port_connected_fail;
           }
         });
       }
@@ -169,17 +169,19 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
     refresh = localizedStrings.refresh_port;
     return AlertDialog(
       title: Container(
-          color: Colors.blue.shade900,
+          color: Theme.of(context).colorScheme.primary,
           child: Row(
             children: [
-              const Icon(Icons.usb, color: Colors.white),
+              Icon(Icons.usb, color: Theme.of(context).colorScheme.onPrimary),
               Text(localizedStrings.serial_modify_title,
-                  style: const TextStyle(color: Colors.white))
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.onPrimary))
             ],
           )),
       content: Container(
         height: 356,
-        decoration: const BoxDecoration(color: Colors.white),
+        decoration:
+            BoxDecoration(color: Theme.of(context).colorScheme.onPrimary),
         child: Column(
           children: [
             // const SizedBox(height: 10),
@@ -304,8 +306,8 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
                   style: TextStyle(
                       fontSize: 20,
                       color: (serialPortConnect.contains('fail'))
-                          ? Colors.red.shade900
-                          : Colors.green.shade900),
+                          ? Theme.of(context).colorScheme.error
+                          : Theme.of(context).colorScheme.outline),
                 )
               ],
             )
@@ -316,20 +318,20 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            OutlinedButton(
-                child: const Text('Test Connection'),
-                onPressed: () {
-                  if (myCurrentPort.devPath != '') {
-                    setState(() {
-                      serialPortConnect = '';
-                    });
+            // OutlinedButton(
+            //     child: const Text('Test Connection'),
+            //     onPressed: () {
+            //       if (myCurrentPort.devPath != '') {
+            //         setState(() {
+            //           serialPortConnect = '';
+            //         });
 
-                    checkSerialPort();
-                  }
-                }),
-            const SizedBox(width: 20),
+            //         checkSerialPort();
+            //       }
+            //     }),
+            // const SizedBox(width: 20),
             OutlinedButton(
-                child: Text(localizedStrings.button_modify),
+                child: Text(localizedStrings.button_connect),
                 onPressed: () {
                   mySerialPortStatus.serialPortStatus = true;
                   eventBus.fire(EventSerialPortStatus(mySerialPortStatus));

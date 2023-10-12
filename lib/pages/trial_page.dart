@@ -359,7 +359,8 @@ class TrialPageState extends State<TrialPage> {
                             children: [
                               SizedBox(
                                   width: 250,
-                                  child: Image.asset('images/tscale.png')),
+                                  child:
+                                      Image.asset('assets/images/tscale.png')),
                               const SizedBox(width: 100)
                             ],
                           )

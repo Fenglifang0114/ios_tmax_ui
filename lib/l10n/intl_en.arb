@@ -3,18 +3,18 @@
   "zh_cn": "Chinese",
   "en": "English",    
   "cancel": "Cancel",   
-  "button_modify": "Modify",
+  "button_connect": "Connect",
   "button_tare": "Tare",
   "button_net":"Net",
   "button_save": "Save",   
   "com_port":"Serial port",
   "contact_us":"Contact us:sales@taiwanscale.com",
-  "home_page_title1":"Serial port connection",  
+  "title_serial_port_connection":"Serial Port Connection",  
   "home_page_title2":"Label Design",
   "home_page_title3":"Wifi Setting",  
   "home_page_title4":"Bluetooth Setting",  
-  "home_page_title5":"Update FW",  
-  "home_page_title6":"DownLoad Print Format", 
+  "home_page_title5":"Update Firmware",  
+  "home_page_title6":"Download Print Format", 
   "home_page_title7":"License Information",
   "home_page_title8":"Real-time Weight Data", 
   "home_page_title9":"Language Setting",  
@@ -44,7 +44,7 @@
   "password":"Password:",
   "ip_address":"IPv4:",
   "netmask":"NetMask:",
-  "gatway":"Gatway:",
+  "gateway":"Gateway:",
   "button_static":"Static",
   "button_dynamic":"Dynamic",
   "button_set":"Connect",
@@ -123,14 +123,15 @@
   "user_error_message3": "The user record was not found !",
   "language_setting_title": "Language Setting" ,
   "button_back": "Back",
-  "button_select_format": "Select Print Format",
+  "button_select_format": "Select Format",
   "scale_model": "Scale Model",
   "button_get_ip": "Get Ip",
   "firmwart_update":"Update Firmware",
   "button_add_license":"Add License",
-  "new_license_text":"New License:"
-  
-  
+  "new_license_text":"New License:",
+  "txt_serial_port_connected":"Serial port connected",
+  "txt_serial_port_connected_fail":"Serial port connected fail",
+  "get_build_info": "Software Info" 
   
   
 }

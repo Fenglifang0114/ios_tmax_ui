@@ -38,6 +38,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "button_add_license": MessageLookupByLibrary.simpleMessage("添加授权"),
         "button_back": MessageLookupByLibrary.simpleMessage("返回"),
         "button_cancel": MessageLookupByLibrary.simpleMessage("取消"),
+        "button_connect": MessageLookupByLibrary.simpleMessage("连接"),
         "button_delete": MessageLookupByLibrary.simpleMessage("删除"),
         "button_dynamic": MessageLookupByLibrary.simpleMessage("动态"),
         "button_edit": MessageLookupByLibrary.simpleMessage("编辑"),
@@ -45,7 +46,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "button_export_report": MessageLookupByLibrary.simpleMessage("导出报表"),
         "button_get_ip": MessageLookupByLibrary.simpleMessage("获取IP"),
         "button_home": MessageLookupByLibrary.simpleMessage("主页"),
-        "button_modify": MessageLookupByLibrary.simpleMessage("修改"),
         "button_net": MessageLookupByLibrary.simpleMessage("净重"),
         "button_ok": MessageLookupByLibrary.simpleMessage("确定"),
         "button_save": MessageLookupByLibrary.simpleMessage("保存"),
@@ -73,8 +73,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "firmwart_update": MessageLookupByLibrary.simpleMessage("更新固件"),
         "font_bold": MessageLookupByLibrary.simpleMessage("字体加粗："),
         "font_reverse": MessageLookupByLibrary.simpleMessage("字体反显:"),
-        "gatway": MessageLookupByLibrary.simpleMessage("网关:"),
-        "home_page_title1": MessageLookupByLibrary.simpleMessage("串口连接"),
+        "gateway": MessageLookupByLibrary.simpleMessage("网关:"),
+        "get_build_info": MessageLookupByLibrary.simpleMessage("软件信息"),
         "home_page_title2": MessageLookupByLibrary.simpleMessage("标签设计"),
         "home_page_title3": MessageLookupByLibrary.simpleMessage("网络设置"),
         "home_page_title4": MessageLookupByLibrary.simpleMessage("蓝牙设置"),
@@ -148,6 +148,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "text_content": MessageLookupByLibrary.simpleMessage("文本内容："),
         "text_email":
             MessageLookupByLibrary.simpleMessage("邮箱:sales@taiwanscale.com"),
+        "title_serial_port_connection":
+            MessageLookupByLibrary.simpleMessage("串口连接"),
+        "txt_serial_port_connected":
+            MessageLookupByLibrary.simpleMessage("串口已连接"),
+        "txt_serial_port_connected_fail":
+            MessageLookupByLibrary.simpleMessage("串口连接失败"),
         "user_edit": MessageLookupByLibrary.simpleMessage("用户编辑"),
         "user_error_message1":
             MessageLookupByLibrary.simpleMessage("用户ID和用户名字不能为空!"),

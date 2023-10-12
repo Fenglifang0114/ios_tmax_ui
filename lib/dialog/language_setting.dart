@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:t_max/pages/home_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../generated/l10n.dart';
 import '../data/license_data.dart';
 
@@ -26,6 +26,11 @@ class _LanguageSettingPageState extends State<LanguageSettingPage> {
     }
   }
 
+  void saveLanguageSetting(String language) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('language', language);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -44,7 +49,7 @@ class _LanguageSettingPageState extends State<LanguageSettingPage> {
           color: Colors.blue.shade900,
           child: Row(
             children: [
-              const Icon(Icons.usb, color: Colors.white),
+              const Icon(Icons.language, color: Colors.white),
               Text(localizedStrings.language_setting_title,
                   style: const TextStyle(color: Colors.white))
             ],
@@ -110,6 +115,7 @@ class _LanguageSettingPageState extends State<LanguageSettingPage> {
                 child: Text(localizedStrings.button_exit),
                 onPressed: () {
                   myCheckSerialPortOnOFF.isCheck = true;
+                  setState(() {});
                   Navigator.of(context)
                       .pop(); // to go back to screen after submitting
                 })
@@ -123,8 +129,13 @@ class _LanguageSettingPageState extends State<LanguageSettingPage> {
     if (value != null) {
       //SpUtil.putString(SpConstant.LANGUAGE, value);
       setState(() {
-        if (value == "中文") S.load(const Locale('zh', 'CN'));
-        if (value == "English") S.load(const Locale('en', 'US'));
+        if (value == "中文") {
+          S.load(const Locale('zh', 'CN'));
+          saveLanguageSetting('zh_CN');
+        } else if (value == "English") {
+          S.load(const Locale('en', 'US'));
+          saveLanguageSetting('en_US');
+        }
       });
     }
   }

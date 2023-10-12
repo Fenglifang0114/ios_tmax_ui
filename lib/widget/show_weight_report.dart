@@ -402,11 +402,11 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                             const SizedBox(width: 10),
                             Image.asset(
                               (myReqWeightCountine.msgBody == null)
-                                  ? ("images/gray.png")
+                                  ? ("assets/images/gray.png")
                                   : (myReqWeightCountine.msgBody!.isStable ==
                                           true)
-                                      ? ("images/green.png")
-                                      : ("images/red.png"),
+                                      ? ("assets/images/green.png")
+                                      : ("assets/images/red.png"),
                               width: 25,
                               height: 25,
                             )
@@ -425,10 +425,10 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                             const SizedBox(width: 10),
                             Image.asset(
                               (myReqWeightCountine.msgBody == null)
-                                  ? ("images/gray.png")
+                                  ? ("assets/images/gray.png")
                                   : (myReqWeightCountine.msgBody!.isNet == true)
-                                      ? ("images/green.png")
-                                      : ("images/red.png"),
+                                      ? ("assets/images/green.png")
+                                      : ("assets/images/red.png"),
                               width: 25,
                               height: 25,
                             )
@@ -447,7 +447,7 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                             const SizedBox(width: 10),
                             Image.asset(
                               (myReqWeightCountine.msgBody == null)
-                                  ? ("images/gray.png")
+                                  ? ("assets/images/gray.png")
                                   : (((myReqWeightCountine.msgBody!.isStable ==
                                                   true) &&
                                               (double.tryParse(
@@ -469,8 +469,8 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                                                               .msgBody!
                                                               .weightVal))! <=
                                                   zeroRange)))
-                                      ? ("images/green.png")
-                                      : ("images/red.png"),
+                                      ? ("assets/images/green.png")
+                                      : ("assets/images/red.png"),
                               width: 25,
                               height: 25,
                             )

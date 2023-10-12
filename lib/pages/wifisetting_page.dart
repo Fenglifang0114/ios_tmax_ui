@@ -801,7 +801,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                       _isStatic,
                                     ),
                                     buildCommonRow(
-                                      localizedStrings.gatway,
+                                      localizedStrings.gateway,
                                       15,
                                       ipaddressRegex,
                                       _isValidGateway,

@@ -156,6 +156,10 @@ class WebSocketScaleChannel {
         Map<String, dynamic> map = json.decode(data);
         dynamic mobj = ChannelResponse.fromJson(map);
         eventBus.fire(EventRespCheckSerialPort(mobj));
+      } else if (jsonData['MsgType'] == "resp_get_build_info") {
+        Map<String, dynamic> map = json.decode(data);
+        dynamic mobj = ChannelResponse.fromJson(map);
+        eventBus.fire(EventGetBuildInfo(mobj));
       }
     } catch (e) {
       if (kDebugMode) {

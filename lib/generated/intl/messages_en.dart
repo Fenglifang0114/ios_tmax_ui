@@ -41,6 +41,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Add License"),
         "button_back": MessageLookupByLibrary.simpleMessage("Back"),
         "button_cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+        "button_connect": MessageLookupByLibrary.simpleMessage("Connect"),
         "button_delete": MessageLookupByLibrary.simpleMessage("Delete"),
         "button_dynamic": MessageLookupByLibrary.simpleMessage("Dynamic"),
         "button_edit": MessageLookupByLibrary.simpleMessage("Edit"),
@@ -49,12 +50,11 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Export report"),
         "button_get_ip": MessageLookupByLibrary.simpleMessage("Get Ip"),
         "button_home": MessageLookupByLibrary.simpleMessage("Home"),
-        "button_modify": MessageLookupByLibrary.simpleMessage("Modify"),
         "button_net": MessageLookupByLibrary.simpleMessage("Net"),
         "button_ok": MessageLookupByLibrary.simpleMessage("OK"),
         "button_save": MessageLookupByLibrary.simpleMessage("Save"),
         "button_select_format":
-            MessageLookupByLibrary.simpleMessage("Select Print Format"),
+            MessageLookupByLibrary.simpleMessage("Select Format"),
         "button_set": MessageLookupByLibrary.simpleMessage("Connect"),
         "button_setting": MessageLookupByLibrary.simpleMessage("Setting"),
         "button_start": MessageLookupByLibrary.simpleMessage("Start"),
@@ -80,18 +80,18 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Update Firmware"),
         "font_bold": MessageLookupByLibrary.simpleMessage("Font Bold:"),
         "font_reverse": MessageLookupByLibrary.simpleMessage("Font Reverse:"),
-        "gatway": MessageLookupByLibrary.simpleMessage("Gatway:"),
-        "home_page_title1":
-            MessageLookupByLibrary.simpleMessage("Serial port connection"),
+        "gateway": MessageLookupByLibrary.simpleMessage("Gateway:"),
+        "get_build_info": MessageLookupByLibrary.simpleMessage("Software Info"),
         "home_page_title2":
             MessageLookupByLibrary.simpleMessage("Label Design"),
         "home_page_title3":
             MessageLookupByLibrary.simpleMessage("Wifi Setting"),
         "home_page_title4":
             MessageLookupByLibrary.simpleMessage("Bluetooth Setting"),
-        "home_page_title5": MessageLookupByLibrary.simpleMessage("Update FW"),
+        "home_page_title5":
+            MessageLookupByLibrary.simpleMessage("Update Firmware"),
         "home_page_title6":
-            MessageLookupByLibrary.simpleMessage("DownLoad Print Format"),
+            MessageLookupByLibrary.simpleMessage("Download Print Format"),
         "home_page_title7":
             MessageLookupByLibrary.simpleMessage("License Information"),
         "home_page_title8":
@@ -178,6 +178,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "text_content": MessageLookupByLibrary.simpleMessage("Text Content:"),
         "text_email":
             MessageLookupByLibrary.simpleMessage("Email:sales@taiwanscale.com"),
+        "title_serial_port_connection":
+            MessageLookupByLibrary.simpleMessage("Serial Port Connection"),
+        "txt_serial_port_connected":
+            MessageLookupByLibrary.simpleMessage("Serial port connected"),
+        "txt_serial_port_connected_fail":
+            MessageLookupByLibrary.simpleMessage("Serial port connected fail"),
         "user_edit": MessageLookupByLibrary.simpleMessage("User Edit"),
         "user_error_message1": MessageLookupByLibrary.simpleMessage(
             "The user id and user name can not be null !"),

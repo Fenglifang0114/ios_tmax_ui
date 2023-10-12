@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 boxGradient() {
   return const LinearGradient(
-      begin: Alignment.bottomRight,
-      end: Alignment.topLeft,
+      begin: Alignment.topLeft,
+      end: Alignment.bottomLeft,
       colors: <Color>[
-        Color.fromARGB(255, 236, 234, 235),
-        Color.fromARGB(255, 186, 225, 245),
-        Color.fromARGB(255, 0, 74, 152),
+        Color.fromARGB(255, 26, 166, 254),
+        Color.fromARGB(255, 17, 145, 255),
+        Color.fromARGB(255, 10, 124, 255),
       ]);
 }

@@ -90,11 +90,11 @@ class S {
     );
   }
 
-  /// `Modify`
-  String get button_modify {
+  /// `Connect`
+  String get button_connect {
     return Intl.message(
-      'Modify',
-      name: 'button_modify',
+      'Connect',
+      name: 'button_connect',
       desc: '',
       args: [],
     );
@@ -150,11 +150,11 @@ class S {
     );
   }
 
-  /// `Serial port connection`
-  String get home_page_title1 {
+  /// `Serial Port Connection`
+  String get title_serial_port_connection {
     return Intl.message(
-      'Serial port connection',
-      name: 'home_page_title1',
+      'Serial Port Connection',
+      name: 'title_serial_port_connection',
       desc: '',
       args: [],
     );
@@ -190,20 +190,20 @@ class S {
     );
   }
 
-  /// `Update FW`
+  /// `Update Firmware`
   String get home_page_title5 {
     return Intl.message(
-      'Update FW',
+      'Update Firmware',
       name: 'home_page_title5',
       desc: '',
       args: [],
     );
   }
 
-  /// `DownLoad Print Format`
+  /// `Download Print Format`
   String get home_page_title6 {
     return Intl.message(
-      'DownLoad Print Format',
+      'Download Print Format',
       name: 'home_page_title6',
       desc: '',
       args: [],
@@ -500,11 +500,11 @@ class S {
     );
   }
 
-  /// `Gatway:`
-  String get gatway {
+  /// `Gateway:`
+  String get gateway {
     return Intl.message(
-      'Gatway:',
-      name: 'gatway',
+      'Gateway:',
+      name: 'gateway',
       desc: '',
       args: [],
     );
@@ -1290,10 +1290,10 @@ class S {
     );
   }
 
-  /// `Select Print Format`
+  /// `Select Format`
   String get button_select_format {
     return Intl.message(
-      'Select Print Format',
+      'Select Format',
       name: 'button_select_format',
       desc: '',
       args: [],
@@ -1345,6 +1345,36 @@ class S {
     return Intl.message(
       'New License:',
       name: 'new_license_text',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Serial port connected`
+  String get txt_serial_port_connected {
+    return Intl.message(
+      'Serial port connected',
+      name: 'txt_serial_port_connected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Serial port connected fail`
+  String get txt_serial_port_connected_fail {
+    return Intl.message(
+      'Serial port connected fail',
+      name: 'txt_serial_port_connected_fail',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Software Info`
+  String get get_build_info {
+    return Intl.message(
+      'Software Info',
+      name: 'get_build_info',
       desc: '',
       args: [],
     );

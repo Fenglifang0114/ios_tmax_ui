@@ -149,4 +149,10 @@ class PublicFunctions {
     myScaleCmd.cmdData = '';
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
+
+  static void getBuildInfo() {
+    myScaleCmd.cmdMode = "get_build_info";
+    myScaleCmd.cmdData = '';
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
 }

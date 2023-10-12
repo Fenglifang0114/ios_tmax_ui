@@ -1603,26 +1603,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     csv = const ListToCsvConverter(
       textDelimiter: '',
     ).convert(csvData);
-    // String csv = const ListToCsvConverter().convert(csvData);
-    // final directory = await Directory.systemTemp.createTemp();
-    // final file = File('${path}/data.csv');
-    // await file.writeAsString(csv);
-
-    // _saveFormatToCsv(csv);  //////////保存数据到csv
-
-    // if (await file.exists()) {
-    // Scaffold.of(context).showSnackBar(
-    //   SnackBar(
-    //     content: Text('${file.path} created successfully'),
-    //   ),
-    // );
-    // } else {
-    //   Scaffold.of(context).showSnackBar(
-    //     SnackBar(
-    //       content: Text('Failed to create ${file.path}'),
-    //     ),
-    //   );
-    // }
   }
 
   Future<File> get _localFilepath async {

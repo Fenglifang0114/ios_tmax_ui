@@ -3,13 +3,13 @@
     "zh_cn": "中文",
     "en": "英文",    
     "cancel": "取消", 
-    "button_modify": "修改",
+    "button_connect": "连接",
     "button_tare": "扣重",
     "button_net":"净重",
     "button_save": "保存",   
     "com_port":"串口",
     "contact_us":"联系我们:sales@taiwanscale.com",
-    "home_page_title1":"串口连接",  
+    "title_serial_port_connection":"串口连接",  
     "home_page_title2":"标签设计",
     "home_page_title3":"网络设置",  
     "home_page_title4":"蓝牙设置",  
@@ -44,7 +44,7 @@
     "password":"密码:",
     "ip_address":"IP地址:",
     "netmask":"子网掩码:",
-    "gatway":"网关:",
+    "gateway":"网关:",
     "button_static":"静态",
     "button_dynamic":"动态",
     "button_set":"连接",
@@ -128,7 +128,10 @@
     "button_get_ip": "获取IP",
     "firmwart_update":"更新固件",
     "button_add_license":"添加授权",
-    "new_license_text":"新授权码:"
+    "new_license_text":"新授权码:",
+    "txt_serial_port_connected":"串口已连接", 
+    "txt_serial_port_connected_fail":"串口连接失败",
+    "get_build_info": "软件信息" 
   
     
   }
