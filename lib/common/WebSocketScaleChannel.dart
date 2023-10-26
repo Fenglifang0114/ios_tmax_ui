@@ -160,6 +160,14 @@ class WebSocketScaleChannel {
         Map<String, dynamic> map = json.decode(data);
         dynamic mobj = ChannelResponse.fromJson(map);
         eventBus.fire(EventGetBuildInfo(mobj));
+      } else if (jsonData['MsgType'] == "resp_set_output_fmt") {
+        Map<String, dynamic> map = json.decode(data);
+        dynamic mobj = ChannelResponse.fromJson(map);
+        eventBus.fire(EventSerialOutputResp(mobj));
+      } else if (jsonData['MsgType'] == "scale_passth_data") {
+        Map<String, dynamic> map = json.decode(data);
+        dynamic mobj = ChannelResponse.fromJson(map);
+        eventBus.fire(EventScalePassthData(mobj));
       }
     } catch (e) {
       if (kDebugMode) {

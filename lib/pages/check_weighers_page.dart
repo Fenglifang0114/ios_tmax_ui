@@ -5,6 +5,7 @@ import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+import 'package:t_max/data/high_low_weight.dart';
 
 import '../../data/currentport_data.dart';
 import '../../data/device_data.dart';
@@ -19,18 +20,22 @@ import '../../functions/methods.dart';
 import '../../generated/l10n.dart';
 import '../../main.dart';
 import '../data/license_data.dart';
+import '../data/weight_report_data.dart';
 import '../dialog/addproduct_dialog.dart';
 import '../dialog/adduser_dialog.dart';
+import '../dialog/high_low_setting.dart';
 import '../dialog/setting_dialog.dart';
 import 'package:path/path.dart';
 
-class ShowWeightReport extends StatefulWidget {
-  const ShowWeightReport({Key? key}) : super(key: key);
+import '../dialog/weight_report_feilds_setting.dart';
+
+class CheckWeighersPage extends StatefulWidget {
+  const CheckWeighersPage({Key? key}) : super(key: key);
   @override
-  State<ShowWeightReport> createState() => _ShowWeightReportState();
+  State<CheckWeighersPage> createState() => _CheckWeighersPageState();
 }
 
-class _ShowWeightReportState extends State<ShowWeightReport> {
+class _CheckWeighersPageState extends State<CheckWeighersPage> {
   String dialogString = " ";
   List<String> items = [];
   List<DataRow> dataRows = [];
@@ -55,6 +60,9 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
   bool _isTiming = false;
   bool _isZero = false;
   bool _isPassZero = false;
+  bool _isLow = false;
+  bool _isOK = false;
+  bool _isHigh = false;
   late WeightReportDataSource _weightReportDataSource;
   List<WeightReportData> _weightReportDatas = <WeightReportData>[];
   List<WeightReportData> myWeightReportData = [];
@@ -153,6 +161,37 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
           //  getWeight();
           switch (weightMode) {
             case 1:
+              if (myReqWeightCountine.msgBody!.weightVal == "0" ||
+                  myReqWeightCountine.msgBody!.weightVal == "0.0" ||
+                  myReqWeightCountine.msgBody!.weightVal == "0.00" ||
+                  myReqWeightCountine.msgBody!.weightVal == "0.000" ||
+                  myReqWeightCountine.msgBody!.weightVal == "0.0000" ||
+                  myReqWeightCountine.msgBody!.weightVal == "0.00000") {
+                _isZero = true;
+                _isPassZero = true;
+              } else {
+                _isZero = false;
+              }
+              _isLow = false;
+              _isOK = false;
+              _isHigh = false;
+              if (!_isZero) {
+                var weight =
+                    double.tryParse(myReqWeightCountine.msgBody!.weightVal);
+                if (weight != null) {
+                  if (weight > 0) {
+                    if (weight < myHighLowWeight.lowValue) {
+                      _isLow = true;
+                    } else if (weight >= myHighLowWeight.lowValue &&
+                        weight <= myHighLowWeight.highValue) {
+                      _isOK = true;
+                    } else if (weight > myHighLowWeight.highValue) {
+                      _isHigh = true;
+                    }
+                  }
+                }
+              }
+
               break;
             case 2:
               if (myReqWeightCountine.msgBody!.weightVal == "0" ||
@@ -180,6 +219,26 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                 }
                 lastWeight = myReqWeightCountine.msgBody!.weightVal;
               }
+              _isLow = false;
+              _isOK = false;
+              _isHigh = false;
+              if (!_isZero) {
+                var weight =
+                    double.tryParse(myReqWeightCountine.msgBody!.weightVal);
+                if (weight != null) {
+                  if (weight > 0) {
+                    if (weight < myHighLowWeight.lowValue) {
+                      _isLow = true;
+                    } else if (weight >= myHighLowWeight.lowValue &&
+                        weight <= myHighLowWeight.highValue) {
+                      _isOK = true;
+                    } else if (weight > myHighLowWeight.highValue) {
+                      _isHigh = true;
+                    }
+                  }
+                }
+              }
+
               break;
             default:
           }
@@ -403,8 +462,8 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                             Image.asset(
                               (myReqWeightCountine.msgBody == null)
                                   ? ("assets/images/gray.png")
-                                  : (myReqWeightCountine.msgBody!.isStable ==
-                                          true)
+                                  : (myReqWeightCountine.msgBody!.isStable &&
+                                          isStart)
                                       ? ("assets/images/blue.png")
                                       : ("assets/images/gray.png"),
                               width: 25,
@@ -426,7 +485,8 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                             Image.asset(
                               (myReqWeightCountine.msgBody == null)
                                   ? ("assets/images/gray.png")
-                                  : (myReqWeightCountine.msgBody!.isNet == true)
+                                  : (myReqWeightCountine.msgBody!.isNet &&
+                                          isStart)
                                       ? ("assets/images/blue.png")
                                       : ("assets/images/gray.png"),
                               width: 25,
@@ -448,16 +508,16 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                             Image.asset(
                               (myReqWeightCountine.msgBody == null)
                                   ? ("assets/images/gray.png")
-                                  : (((myReqWeightCountine.msgBody!.isStable ==
-                                                  true) &&
+                                  : (((myReqWeightCountine.msgBody!.isStable &&
+                                                  isStart) &&
                                               (double.tryParse(
                                                       myReqWeightCountine
                                                           .msgBody!
                                                           .weightVal) ==
                                                   0)) ||
                                           ((myReqWeightCountine
-                                                      .msgBody!.isStable ==
-                                                  true) &&
+                                                      .msgBody!.isStable &&
+                                                  isStart) &&
                                               (((double.tryParse(
                                                               myReqWeightCountine
                                                                   .msgBody!
@@ -478,7 +538,7 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                         ),
                       ],
                     ),
-                    // const SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     Row(
                       children: [
                         Container(
@@ -530,8 +590,8 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                         ),
                       ],
                     ),
-
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         SizedBox(
                           width: 50,
@@ -554,9 +614,6 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                             },
                           ),
                         ),
-                        const SizedBox(
-                          width: 5,
-                        ),
                         SizedBox(
                           width: 50,
                           child: IconButton(
@@ -576,84 +633,153 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                                 ? (Colors.grey)
                                 : (Theme.of(context).colorScheme.primary),
                           ),
-                        )
+                        ),
                       ],
                     ),
-                    const SizedBox(width: 5),
-                    Column(
-                      children: [
-                        const SizedBox(height: 15),
-                        ElevatedButton(
-                            onPressed: () {
-                              PublicFunctions.performTare();
-                            },
-                            child: Text(localizedStrings.button_tare,
-                                style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal))),
-                        const SizedBox(height: 15),
-                        ElevatedButton(
-                            onPressed: () {
-                              PublicFunctions.performZero();
-                            },
-                            child: Text(localizedStrings.button_zero,
-                                style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal))),
-                      ],
-                    ),
-                    // const SizedBox(width: 10),
-                    Column(
-                      children: [
-                        const SizedBox(height: 15),
-                        ElevatedButton(
-                            onPressed: _isSaveButtonDisabled
-                                ? null
-                                : _changeSaveButton,
-                            child: Text(localizedStrings.button_save,
-                                style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal))),
-                        const SizedBox(height: 15),
-                        OutlinedButton(
-                            onPressed: () {
-                              //跳转页面
-                              paramSettingDialog(context);
-                            },
-                            child: Text(localizedStrings.button_setting,
-                                style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal))),
-                      ],
-                    ),
-                    // const SizedBox(width: 10),
-                    Column(
-                      children: [
-                        const SizedBox(height: 15),
-                        OutlinedButton(
-                            // elevation: 5.0,
-                            child: Text(localizedStrings.button_export_report,
-                                style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal)),
-                            onPressed: () async {
-                              final directory = Directory.current.path;
-                              String? outputFile =
-                                  (await FilePicker.platform.saveFile(
-                                initialDirectory: directory,
-                                type: FileType.custom,
-                                dialogTitle: 'Output file:',
-                                allowedExtensions: ["xlsx"],
-                                fileName: 'report.xlsx',
-                              ));
-                              if (outputFile != null) {
-                                _creatFile(outputFile);
-                              }
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              SizedBox(
+                                width: 80,
+                                child: ElevatedButton(
+                                    onPressed: () {
+                                      PublicFunctions.performTare();
+                                    },
+                                    child: Text(localizedStrings.button_tare,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.normal))),
+                              ),
+                              SizedBox(
+                                width: 80,
+                                child: ElevatedButton(
+                                    onPressed: () {
+                                      PublicFunctions.performZero();
+                                    },
+                                    child: Text(localizedStrings.button_zero,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.normal))),
+                              ),
+                              SizedBox(
+                                width: 80,
+                                child: ElevatedButton(
+                                    onPressed: _isSaveButtonDisabled
+                                        ? null
+                                        : _changeSaveButton,
+                                    child: Text(localizedStrings.button_save,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.normal))),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              SizedBox(
+                                width: 80,
+                                child: ElevatedButton(
+                                    onPressed: () {
+                                      highLowSettingDialog(context);
+                                    },
+                                    child: const Text('Edit',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.normal))),
+                              ),
+                              SizedBox(
+                                width: 80,
+                                child: ElevatedButton(
+                                    onPressed: () {
+                                      //跳转页面
+                                      paramSettingDialog(context);
+                                    },
+                                    child: Text(localizedStrings.button_setting,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.normal))),
+                              ),
+                              SizedBox(
+                                width: 80,
+                                child: ElevatedButton(
+                                    // elevation: 5.0,
+                                    child: Text(
+                                        localizedStrings.button_export_report,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.normal)),
+                                    onPressed: () async {
+                                      final directory = Directory.current.path;
+                                      String? outputFile =
+                                          (await FilePicker.platform.saveFile(
+                                        initialDirectory: directory,
+                                        type: FileType.custom,
+                                        dialogTitle: 'Output file:',
+                                        allowedExtensions: ["xlsx"],
+                                        fileName: 'report.xlsx',
+                                      ));
+                                      if (outputFile != null) {
+                                        _creatFile(outputFile);
+                                      }
 
-                              setState(() {
-                                _errorText.text = "success";
-                              });
-                            }),
+                                      setState(() {
+                                        _errorText.text = "success";
+                                      });
+                                    }),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                    // const SizedBox(width: 10),
+                    Column(
+                      children: [
+                        const SizedBox(height: 15),
+                        Row(
+                          children: [
+                            Image.asset(
+                              ((myHighLowWeight.lowValue == 0) || (_isLow))
+                                  ? "assets/images/yellow.png"
+                                  : "assets/images/grey_circle.png",
+                              width: 60,
+                              height: 60,
+                            ),
+                            Image.asset(
+                              (((myHighLowWeight.lowValue == 0) &&
+                                          (myHighLowWeight.highValue == 0)) ||
+                                      (_isOK))
+                                  ? "assets/images/green.png"
+                                  : "assets/images/grey_circle.png",
+                              width: 60,
+                              height: 60,
+                            ),
+                            Image.asset(
+                              ((myHighLowWeight.highValue == 0) || (_isHigh))
+                                  ? "assets/images/red.png"
+                                  : "assets/images/grey_circle.png",
+                              width: 60,
+                              height: 60,
+                            )
+                          ],
+                        ),
                       ],
                     ),
                     SizedBox(
@@ -820,6 +946,17 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                             });
                           });
                         }),
+                    const SizedBox(width: 50),
+                    MaterialButton(
+                        color: Theme.of(context).colorScheme.primary,
+                        textColor: Colors.white,
+                        elevation: 5.0,
+                        child: const Text('Report Setting',
+                            style: TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.normal)),
+                        onPressed: () {
+                          reportFieldsSettingDialog(context);
+                        }),
                   ],
                 ),
               ),
@@ -843,6 +980,26 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
       barrierDismissible: false, // 允许点击空白处关闭对话框
       builder: (context) {
         return const ParamSettingDialog();
+      },
+    );
+  }
+
+  void highLowSettingDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 允许点击空白处关闭对话框
+      builder: (context) {
+        return const HighLowSettingDialog();
+      },
+    );
+  }
+
+  void reportFieldsSettingDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 允许点击空白处关闭对话框
+      builder: (context) {
+        return const ReportFeildsSettingDialog();
       },
     );
   }
@@ -936,19 +1093,19 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
     return num.toString();
   }
 
-  String getDateTime() {
+  String getDateTime(String dateSeparator) {
     // 1 yymmdd   2 ddmmyy 3 mmddyy
     var currTime = DateTime.now();
     String format = '';
     if (dateformat == 1) {
       format =
-          "${currTime.year}-${pad0(currTime.month)}-${pad0(currTime.day)} ${pad0(currTime.hour)}:${pad0(currTime.minute)}:${pad0(currTime.second)}";
+          "${currTime.year}$dateSeparator${pad0(currTime.month)}$dateSeparator${pad0(currTime.day)} ${pad0(currTime.hour)}:${pad0(currTime.minute)}:${pad0(currTime.second)}";
     } else if (dateformat == 2) {
       format =
-          "${pad0(currTime.day)}-${pad0(currTime.month)}-${currTime.year} ${pad0(currTime.hour)}:${pad0(currTime.minute)}:${pad0(currTime.second)}";
+          "${pad0(currTime.day)}$dateSeparator${pad0(currTime.month)}$dateSeparator${currTime.year} ${pad0(currTime.hour)}:${pad0(currTime.minute)}:${pad0(currTime.second)}";
     } else if (dateformat == 3) {
       format =
-          "${pad0(currTime.month)}-${pad0(currTime.day)}-${currTime.year} ${pad0(currTime.hour)}:${pad0(currTime.minute)}:${pad0(currTime.second)}";
+          "${pad0(currTime.month)}$dateSeparator${pad0(currTime.day)}$dateSeparator${currTime.year} ${pad0(currTime.hour)}:${pad0(currTime.minute)}:${pad0(currTime.second)}";
     }
     return format;
   }
@@ -959,7 +1116,7 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
       'DateTime',
       'Weight',
       'Weight Unit',
-      'PLU',
+      'PLU No.',
       'PLU Name',
       'PLU Remarks',
       'Pretare',
@@ -1066,7 +1223,7 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
   _addWeightToReport() {
     myWeightReportData.add(WeightReportData(
       (myWeightReportData.length + 1).toString(),
-      getDateTime(),
+      getDateTime(mySettingParam.dateSeparator),
       (myReqWeightCountine.msgBody?.weightVal == null)
           ? (" ")
           : (myReqWeightCountine.msgBody!.weightVal),
@@ -1224,31 +1381,4 @@ class WeightReportDataSource extends DataGridSource {
       );
     }).toList());
   }
-}
-
-class WeightReportData {
-  WeightReportData(
-    this.id,
-    this.dateTime,
-    this.weight,
-    this.weightUnit,
-    this.pLU,
-    this.pluName,
-    this.pluRemarks,
-    this.pretare,
-    this.userName,
-    this.userRemarks,
-    this.scaleName,
-  );
-  final String id;
-  final String dateTime;
-  final String weight;
-  final String weightUnit;
-  final String pLU;
-  final String pluName;
-  final String pluRemarks;
-  final String pretare;
-  final String scaleName;
-  final String userName;
-  final String userRemarks;
 }

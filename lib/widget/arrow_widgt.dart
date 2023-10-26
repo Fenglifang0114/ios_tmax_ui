@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:t_max/pages/system_setting_page.dart';
 
-class CustomSettingButton extends StatefulWidget {
-  const CustomSettingButton({super.key});
+class ArrowButton extends StatefulWidget {
+  const ArrowButton({super.key});
 
   @override
-  _CustomSettingButtonState createState() => _CustomSettingButtonState();
+  _ArrowButtonState createState() => _ArrowButtonState();
 }
 
-class _CustomSettingButtonState extends State<CustomSettingButton> {
+class _ArrowButtonState extends State<ArrowButton> {
   bool isHovered = false;
   bool isPressed = false;
 

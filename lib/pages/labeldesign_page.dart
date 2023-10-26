@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gbk_codec/gbk_codec.dart';
 import 'package:t_max/data/downloadresponse.dart';
-import 'package:t_max/pages/download_page.dart';
+import 'package:t_max/pages/dow_prn_fmt_page.dart';
 import '../data/barcoderowdata.dart';
 import '../data/formatdata.dart';
 import '../data/item_key_list.dart';

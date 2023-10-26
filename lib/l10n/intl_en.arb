@@ -92,7 +92,7 @@
   "net":"Net:",
   "stable": "Stable:",
   "button_setting":"Setting",
-  "button_export_report":"Export report",
+  "button_export_report":"Export",
   "plu_name": "PLU Name:",
   "plu_edit": "PLU Edit",
   "user_name": "User Name:",
@@ -114,7 +114,7 @@
   "plu_error_message1": "PLU ID or PLU name cannot be empty.",
   "plu_error_message2": "PLU ID or PLU name already exists.",
   "user_info": "User Info",
-  "user_id": "User ID:",
+  "user_id": "User NO.:",
   "user_sex": "Sex:",
   "user_phone": "Phone:",
   "user_remarks": "User Remarks:",
@@ -131,7 +131,14 @@
   "new_license_text":"New License:",
   "txt_serial_port_connected":"Serial port connected",
   "txt_serial_port_connected_fail":"Serial port connected fail",
-  "get_build_info": "Software Info" 
+  "get_build_info": "Software Info",
+  "serial_page_ol": "OL mode",
+  "serial_page_ul": "UL mode",
+  "serial_page_weight": "Weight mode",
+  "serial_page_pcs": "Pcs mode",
+  "serial_page_price": "Price mode",
+  "serial_page_percent": "Percent mode"
+  
   
   
 }

@@ -104,7 +104,7 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
     pidController.text = systemId + pId;
     return AlertDialog(
       title: Container(
-        color: Colors.blue.shade900,
+        color: Theme.of(context).colorScheme.primary,
         child: Row(
           children: [
             const Icon(Icons.info_outline, color: Colors.white),
@@ -146,7 +146,7 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
                       fontSize: 16,
                       color: (isPass)
                           ? Theme.of(context).colorScheme.primary
-                          : Colors.red.shade900)),
+                          : Theme.of(context).colorScheme.error)),
             ),
             Row(
               children: [

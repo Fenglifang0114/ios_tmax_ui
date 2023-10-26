@@ -131,7 +131,13 @@
     "new_license_text":"新授权码:",
     "txt_serial_port_connected":"串口已连接", 
     "txt_serial_port_connected_fail":"串口连接失败",
-    "get_build_info": "软件信息" 
+    "get_build_info": "软件信息",
+    "serial_page_ol": "OL 模式",
+  "serial_page_ul": "UL 模式",
+  "serial_page_weight": "重量模式",
+  "serial_page_pcs": "计数模式",
+  "serial_page_price": "计价模式",
+  "serial_page_percent": "百分比模式"
   
     
   }

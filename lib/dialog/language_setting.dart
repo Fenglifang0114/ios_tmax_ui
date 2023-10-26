@@ -46,7 +46,7 @@ class _LanguageSettingPageState extends State<LanguageSettingPage> {
     return AlertDialog(
       title: Container(
           width: 400,
-          color: Colors.blue.shade900,
+          color: Theme.of(context).colorScheme.primary,
           child: Row(
             children: [
               const Icon(Icons.language, color: Colors.white),

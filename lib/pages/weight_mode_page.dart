@@ -24,13 +24,13 @@ import '../dialog/adduser_dialog.dart';
 import '../dialog/setting_dialog.dart';
 import 'package:path/path.dart';
 
-class ShowWeightReport extends StatefulWidget {
-  const ShowWeightReport({Key? key}) : super(key: key);
+class WeightModePage extends StatefulWidget {
+  const WeightModePage({Key? key}) : super(key: key);
   @override
-  State<ShowWeightReport> createState() => _ShowWeightReportState();
+  State<WeightModePage> createState() => _WeightModePageState();
 }
 
-class _ShowWeightReportState extends State<ShowWeightReport> {
+class _WeightModePageState extends State<WeightModePage> {
   String dialogString = " ";
   List<String> items = [];
   List<DataRow> dataRows = [];
@@ -959,7 +959,7 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
       'DateTime',
       'Weight',
       'Weight Unit',
-      'PLU',
+      'PLU No.',
       'PLU Name',
       'PLU Remarks',
       'Pretare',

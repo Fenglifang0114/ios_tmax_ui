@@ -980,10 +980,10 @@ class S {
     );
   }
 
-  /// `Export report`
+  /// `Export`
   String get button_export_report {
     return Intl.message(
-      'Export report',
+      'Export',
       name: 'button_export_report',
       desc: '',
       args: [],
@@ -1200,10 +1200,10 @@ class S {
     );
   }
 
-  /// `User ID:`
+  /// `User NO.:`
   String get user_id {
     return Intl.message(
-      'User ID:',
+      'User NO.:',
       name: 'user_id',
       desc: '',
       args: [],
@@ -1375,6 +1375,66 @@ class S {
     return Intl.message(
       'Software Info',
       name: 'get_build_info',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `OL mode`
+  String get serial_page_ol {
+    return Intl.message(
+      'OL mode',
+      name: 'serial_page_ol',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `UL mode`
+  String get serial_page_ul {
+    return Intl.message(
+      'UL mode',
+      name: 'serial_page_ul',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Weight mode`
+  String get serial_page_weight {
+    return Intl.message(
+      'Weight mode',
+      name: 'serial_page_weight',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pcs mode`
+  String get serial_page_pcs {
+    return Intl.message(
+      'Pcs mode',
+      name: 'serial_page_pcs',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Price mode`
+  String get serial_page_price {
+    return Intl.message(
+      'Price mode',
+      name: 'serial_page_price',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Percent mode`
+  String get serial_page_percent {
+    return Intl.message(
+      'Percent mode',
+      name: 'serial_page_percent',
       desc: '',
       args: [],
     );

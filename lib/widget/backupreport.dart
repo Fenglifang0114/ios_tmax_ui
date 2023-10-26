@@ -361,8 +361,8 @@
 //                                 ? ("images/gray.png")
 //                                 : (myReqWeightCountine.msgBody!.isStable ==
 //                                         true)
-//                                     ? ("images/green.png")
-//                                     : ("images/red.png"),
+//                                     ? ("images/blue.png")
+//                                     : ("images/gray.png"),
 //                             width: 25,
 //                             height: 25,
 //                           )
@@ -380,8 +380,8 @@
 //                             (myReqWeightCountine.msgBody == null)
 //                                 ? ("images/gray.png")
 //                                 : (myReqWeightCountine.msgBody!.isNet == true)
-//                                     ? ("images/green.png")
-//                                     : ("images/red.png"),
+//                                     ? ("images/blue.png")
+//                                     : ("images/gray.png"),
 //                             width: 25,
 //                             height: 25,
 //                           )
@@ -417,8 +417,8 @@
 //                                                             .msgBody!
 //                                                             .weightVal))! <=
 //                                                 zeroRange)))
-//                                     ? ("images/green.png")
-//                                     : ("images/red.png"),
+//                                     ? ("images/blue.png")
+//                                     : ("images/gray.png"),
 //                             width: 25,
 //                             height: 25,
 //                           )

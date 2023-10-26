@@ -3,13 +3,18 @@ class SettingParam {
   String zeroRange;
   String stableTimeToRec;
   String dateFormat;
-  SettingParam(
-      this.recMode, this.zeroRange, this.stableTimeToRec, this.dateFormat);
+  String dateSeparator;
+  String scaleMode;
+
+  SettingParam(this.recMode, this.zeroRange, this.stableTimeToRec,
+      this.dateFormat, this.dateSeparator, this.scaleMode);
   SettingParam.fromJson(Map<String, dynamic> json)
       : recMode = json['RecMode'],
         zeroRange = json['ZeroRange'],
         stableTimeToRec = json['StableTimeToRec'],
-        dateFormat = json['DateFormat'];
+        dateFormat = json['DateFormat'],
+        dateSeparator = json['DateSeparator'],
+        scaleMode = json['ScaleMode'];
 
   Map<String, dynamic> toJson() {
     return {
@@ -17,8 +22,10 @@ class SettingParam {
       'ZeroRange': zeroRange,
       'StableTimeToRec': stableTimeToRec,
       'DateFormat': dateFormat,
+      'DateSeparator': dateSeparator,
+      'ScaleMode': scaleMode,
     };
   }
 }
 
-SettingParam mySettingParam = SettingParam("", "", "", "");
+SettingParam mySettingParam = SettingParam("", "", "", "", "", "");

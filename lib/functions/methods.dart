@@ -155,4 +155,27 @@ class PublicFunctions {
     myScaleCmd.cmdData = '';
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
+
+  static void openScalePassth() {
+    myScaleCmd.cmdMode = "open_scale_passthrough";
+    myScaleCmd.cmdData = 'string';
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  static void changeScalePassth(bool isHex) {
+    myScaleCmd.cmdMode = "change_scale_passth_mode";
+    if (isHex) {
+      myScaleCmd.cmdData = 'hex';
+    } else {
+      myScaleCmd.cmdData = 'string';
+    }
+
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  static void closeScalePassth() {
+    myScaleCmd.cmdMode = "close_scale_passthrough";
+    myScaleCmd.cmdData = '';
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
 }

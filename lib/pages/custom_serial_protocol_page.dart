@@ -1,8 +1,16 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:t_max/functions/methods.dart';
+import 'package:t_max/main.dart';
 import '../data/customserialprotocoltext_dart.dart';
+import '../data/download_prt_fmt.dart';
+import '../data/downloadresponse.dart';
+import '../data/scalecmd_data.dart';
+import '../eventbus/eventbus.dart';
+import '../generated/l10n.dart';
+import 'package:path/path.dart' as p;
 
 class CustomSerialProtocol extends StatefulWidget {
   const CustomSerialProtocol({Key? key}) : super(key: key);
@@ -12,125 +20,177 @@ class CustomSerialProtocol extends StatefulWidget {
 }
 
 class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
-  final List<SerialProtocolText> _textList = [];
+  final List<SerialProtocolText> _textListOl = [];
+  final List<SerialProtocolText> _textListUl = [];
+  final List<SerialProtocolText> _textListWeight = [];
+  final List<SerialProtocolText> _textListPcs = [];
+  final List<SerialProtocolText> _textListPrice = [];
+  final List<SerialProtocolText> _textListPercent = [];
   final textController = TextEditingController();
   final RegExp englishRegExp = RegExp(r'^[\x00-\x7F]*$');
+  late final TextEditingController _serialOutputData = TextEditingController();
 
-  String _selectedAlignment = 'Right';
-  List<String> alignments = ['Left', 'Right'];
+  String _selectedAlignment = 'left';
+  String _selectedFilling = 'space';
+  int _selectedDecimal = 3;
+  List<String> alignments = ['left', 'right', 'center'];
+  List<String> fillings = ['0', 'space'];
+  List<int> decimals = [0, 1, 2, 3, 4];
+  Map<String, int> pageMap = {
+    "OL": 1,
+    "UL": 2,
+    "Weight": 3,
+    "Pcs": 4,
+    "Price": 5,
+    "Percent": 6,
+  };
 
   int count = 0;
+  List<String> jsonFilesList = [];
+  late int _currentPageIndex;
+  String pageTitle = '';
+  late ColorScheme colorScheme;
+  bool isArrowBackHovered = false;
+  bool isArrowForwardHovered = false;
+  bool serialPreview = false;
+  bool _isHexDisplay = false;
 
   TextEditingController myContent =
       TextEditingController(text: mySerialProtocolText.content);
   TextEditingController myMaxLen =
       TextEditingController(text: mySerialProtocolText.maxLength.toString());
-
-  TextEditingController myDefault1 =
-      TextEditingController(text: mySerialProtocolText.default1);
-  TextEditingController myDefault2 =
-      TextEditingController(text: mySerialProtocolText.default2);
+  TextEditingController myBoolTypeTrue =
+      TextEditingController(text: mySerialProtocolText.isTrue);
+  TextEditingController myBoolTypeFalse =
+      TextEditingController(text: mySerialProtocolText.isFalse);
   final List<String> _buttonLabels = [
     'Text',
     'Net',
     'Gross',
     'Tare',
     'WeightUnit',
-    'IsStable',
-    'IsTare',
+    'isstable',
+    'istare',
   ];
+
+  dynamic _eventbus1;
+  dynamic _eventbus2;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
+    _currentPageIndex = 1;
     super.initState();
+    _serialOutputData.addListener(scrollToBottom); // 监听文本变化
+    _eventbus1 = eventBus.on<EventSerialOutputResp>().listen((event) {
+      if (mounted) {
+        setState(() {
+          mySetSerialOutputResp = event.obj;
+          if (mySetSerialOutputResp.msgBody.isNotEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(
+                    (mySetSerialOutputResp.msgBody.contains('ok'))
+                        ? 'Download successful!'
+                        : mySetSerialOutputResp.msgBody,
+                    style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.normal)), ////此处需要秤回复
+                duration: const Duration(seconds: 3),
+                backgroundColor: (mySetSerialOutputResp.msgBody.contains('ok'))
+                    ? Colors.green.shade900
+                    : Colors.red.shade900));
+          }
+        });
+      }
+    });
+    _eventbus2 = eventBus.on<EventScalePassthData>().listen((event) {
+      if (mounted) {
+        if (serialPreview) {
+          setState(() {
+            myScalePassthData = event.obj;
+            _serialOutputData.text =
+                _serialOutputData.text + myScalePassthData.msgBody;
+            if (_serialOutputData.text.length > 10000) {
+              _serialOutputData.text = '';
+            }
+          });
+        }
+      }
+    });
+
+    ChannelResponse myRespGetBuildInfo = ChannelResponse('', '', 0);
+  }
+
+  dynamic localizedStrings;
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    localizedStrings = S.of(context);
+  }
+
+  String convertHexToAsciiString(String hexString) {
+    final bytes = hexString
+        .replaceAll(" ", "")
+        .split('')
+        .map((e) => int.parse(e, radix: 16))
+        .toList();
+
+    final codePoints = List<int>.generate(
+        bytes.length ~/ 2, (i) => bytes[i * 2] * 16 + bytes[i * 2 + 1]);
+    final asciiCharacters =
+        codePoints.map((codePoint) => String.fromCharCode(codePoint)).toList();
+    return asciiCharacters.join('');
+  }
+
+  void scrollToBottom() {
+    // 滚动到底部
+    _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
   }
 
   @override
   void dispose() {
+    _serialOutputData.removeListener(scrollToBottom); // 移除监听
+    _scrollController.dispose();
+    _serialOutputData.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;
+    colorScheme = Theme.of(context).colorScheme;
+    pageTitle = getTitleName(_currentPageIndex);
+
+    Color buttonColor =
+        !serialPreview ? colorScheme.primary : colorScheme.secondaryContainer;
+    Color borderColor = colorScheme.primary;
+    ButtonStyle buttonStyle = ElevatedButton.styleFrom(
+      backgroundColor: buttonColor,
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(4),
+        side: BorderSide(width: 1, color: borderColor),
+      ),
+    );
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(80),
         child: Container(
           height: 50,
           width: screenSize.width - 10,
-          color: Theme.of(context).colorScheme.primary,
+          color: colorScheme.primary,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              SizedBox(
-                width: 150,
-                height: 40,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Theme.of(context).colorScheme.onPrimary, // 设置按钮的背景色
-                    elevation: 10, // 设置按钮的阴影
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
-                    ),
+              Center(
+                child: SizedBox(
+                  width: 240,
+                  child: Text(
+                    "Custom serial protocol",
+                    style:
+                        TextStyle(fontSize: 20, color: colorScheme.onPrimary),
+                    textAlign: TextAlign.center,
                   ),
-                  child: Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Icon(
-                          Icons.home,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        Text(
-                          'Home',
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.primary,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ),
-              SizedBox(
-                width: 150,
-                height: 40,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Theme.of(context).colorScheme.onPrimary, // 设置按钮的背景色
-                    elevation: 10, // 设置按钮的阴影
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
-                    ),
-                  ),
-                  child: Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Icon(
-                          Icons.download,
-                          color: Theme.of(context).colorScheme.outline,
-                        ),
-                        Text(
-                          'Download',
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.outline,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                  ),
-                  onPressed: () {
-                    _sendToScale();
-                  },
                 ),
               ),
             ],
@@ -141,43 +201,108 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-            flex: 2,
-            child: ListView.builder(
-              itemCount: _buttonLabels.length + 1, // +1是为了添加"Enter"按钮
-              itemBuilder: (context, index) {
-                if (index == _buttonLabels.length) {
-                  // 最后一个是"Enter"按钮
-                  return TextButton(
-                    onPressed: () {
-                      setState(() {
-                        _addEnter();
-                      });
-                    },
-                    child: const Text('Enter'),
-                  );
-                }
-                final label = _buttonLabels[index];
-                return TextButton(
-                  onPressed: () {
-                    setState(() {
-                      if (label == 'Text') {
-                        _addTextData();
-                      } else {
-                        _addVarData(label);
-                      }
-                    });
-                  },
-                  child: Text(label),
-                );
-              },
-            ),
-          ),
+              flex: 2,
+              child: Column(
+                children: <Widget>[
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Expanded(
+                      flex: 1, // 设置子部件占用空间的比例
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            width: 120,
+                            height: 50,
+                            child: OutlinedButton(
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide(
+                                  width: 1,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                                foregroundColor:
+                                    Theme.of(context).colorScheme.primary,
+                                backgroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .onPrimary, // 设置按钮的背景色
+                                shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(4), // 设置按钮的圆角
+                                ),
+                              ),
+                              child: Center(
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Icon(
+                                      Icons.home,
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                    ),
+                                    Text(
+                                      localizedStrings.button_home,
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.normal),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              onPressed: () {
+                                PublicFunctions.closeScalePassth();
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ),
+                        ],
+                      )),
+                  Divider(
+                    height: 2,
+                    color: colorScheme.primary,
+                  ),
+                  Expanded(
+                    flex: 6, // 设置子部件占用空间的比例
+                    child: ListView.builder(
+                      itemCount: _buttonLabels.length + 1, // +1是为了添加"Enter"按钮
+                      itemBuilder: (context, index) {
+                        if (index == _buttonLabels.length) {
+                          // 最后一个是"Enter"按钮
+                          return TextButton(
+                            onPressed: () {
+                              setState(() {
+                                _addEnter(_currentPageIndex);
+                              });
+                            },
+                            child: const Text('Enter'),
+                          );
+                        }
+                        final label = _buttonLabels[index];
+                        return TextButton(
+                          onPressed: () {
+                            setState(() {
+                              if (label == 'Text') {
+                                _addTextData(_currentPageIndex);
+                              } else {
+                                _addVarData(label, _currentPageIndex);
+                              }
+                            });
+                          },
+                          child: Text(label),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              )),
           Expanded(
             flex: 7,
             child: Container(
-              height: 1200,
               decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.onPrimary,
+                  color: colorScheme.onPrimary,
                   border: Border.all(width: 0.2, color: Colors.black)),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -186,139 +311,495 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                     flex: 5,
                     child: ListView(
                       children: [
+                        Row(
+                          children: [
+                            pageTitleWidget(1),
+                            pageTitleWidget(2),
+                            pageTitleWidget(3),
+                            pageTitleWidget(4),
+                            pageTitleWidget(5),
+                            pageTitleWidget(6),
+                          ],
+                        ),
+                        Divider(
+                          height: 10,
+                          thickness: 10,
+                          color: colorScheme.scrim,
+                        ),
                         SizedBox(
-                          height: 50,
+                          height: 40,
                           child: Center(
                             child: Text(
-                              'Custom serial protocol:',
+                              pageTitle,
                               style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).colorScheme.primary),
+                                  color: colorScheme.primary),
                             ),
                           ),
                         ),
-                        _buildTexts(),
+                        _buildTexts(_currentPageIndex),
                       ],
                     ),
                   ),
                   Divider(
                     height: 2,
-                    color: Theme.of(context).colorScheme.primary,
+                    color: colorScheme.primary,
                   ),
                   Expanded(
                     flex: 4,
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Container(
-                            height: 30,
-                            child: Center(
-                              child: Text(
-                                'Serial port output preview',
-                                style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.onPrimary,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                          Expanded(
-                            child: Container(
-                              width: double.infinity,
-                              color: Theme.of(context).colorScheme.tertiary,
-                              child: SingleChildScrollView(
-                                child: Text(
-                                  _getOutputData(),
-                                  style:
-                                      const TextStyle(fontSize: 16), // 设置文本样式
-                                ),
-                              ),
-                            ),
-                          ),
-                        ]),
+                    child: secondPageBuild(_currentPageIndex),
                   ),
                 ],
               ),
             ),
           ),
           Expanded(
-            flex: 3,
-            child: ListView(
-              children: (_textList.isNotEmpty &&
-                      mySerialProtocolText.type == 'VARIABLE' &&
-                      mySerialProtocolText.tabOrder != 9999 &&
-                      (mySerialProtocolText.varName == 'IsStable' ||
-                          mySerialProtocolText.varName == 'IsTare'))
-                  ? _isStableTare()
-                  : (_textList.isNotEmpty &&
-                          mySerialProtocolText.type == 'TEXT' &&
-                          mySerialProtocolText.tabOrder != 9999)
-                      ? _textProperty()
-                      : (_textList.isNotEmpty &&
-                              mySerialProtocolText.type == 'VARIABLE' &&
-                              mySerialProtocolText.tabOrder != 9999)
-                          ? _varProperty()
-                          : (_textList.isNotEmpty &&
-                                  mySerialProtocolText.type == 'Enter')
-                              ? _enterProperty()
-                              : [],
-            ),
-          )
+              flex: 5,
+              child: Column(
+                children: [
+                  // const SizedBox(
+                  //   height: 20,
+                  // ),
+                  Expanded(
+                    flex: 1, // 设置子部件占用空间的比例
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        SizedBox(
+                          width: 120,
+                          height: 50,
+                          child: OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(
+                                width: 1,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              foregroundColor:
+                                  Theme.of(context).colorScheme.onPrimary,
+                              backgroundColor: Theme.of(context)
+                                  .colorScheme
+                                  .primary, // 设置按钮的背景色
+                              shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.circular(4), // 设置按钮的圆角
+                              ),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'Download',
+                                maxLines: 2,
+                                textAlign: TextAlign.center,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                              ),
+                            ),
+                            onPressed: () async {
+                              jsonFilesList.clear();
+                              for (var i = 1; i < 7; i++) {
+                                await generateJson(i);
+                              }
+                              if (jsonFilesList.isNotEmpty) {
+                                _sendToScale(jsonFilesList);
+                              }
+                            },
+                          ),
+                        ),
+                        SizedBox(
+                          width: 120,
+                          height: 50,
+                          child: ElevatedButton(
+                            style: buttonStyle,
+                            onPressed:
+                                !serialPreview ? handleButtonPress : null,
+                            child: Center(
+                              child: Text(
+                                'open preview',
+                                maxLines: 2,
+                                textAlign: TextAlign.center,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: !serialPreview
+                                      ? Theme.of(context).colorScheme.onPrimary
+                                      : Theme.of(context).colorScheme.primary,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 120,
+                          height: 50,
+                          child: OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(
+                                width: 1,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              foregroundColor:
+                                  Theme.of(context).colorScheme.onPrimary,
+                              backgroundColor: Theme.of(context)
+                                  .colorScheme
+                                  .primary, // 设置按钮的背景色
+                              shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.circular(4), // 设置按钮的圆角
+                              ),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'close preview',
+                                maxLines: 2,
+                                textAlign: TextAlign.center,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                              ),
+                            ),
+                            onPressed: () async {
+                              setState(() {
+                                serialPreview = false;
+                                _serialOutputData.text = '';
+                              });
+                              PublicFunctions.closeScalePassth();
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Divider(
+                    height: 2,
+                    color: colorScheme.primary,
+                  ),
+                  !serialPreview
+                      ? Expanded(
+                          flex: 6, // 设置子部件占用空间的比例
+                          child: ListView(
+                            children: (getListName(_currentPageIndex)
+                                        .isNotEmpty &&
+                                    mySerialProtocolText.type == 'Bool' &&
+                                    mySerialProtocolText.tabOrder != 9999 &&
+                                    (mySerialProtocolText.varName ==
+                                            'isstable' ||
+                                        mySerialProtocolText.varName ==
+                                            'istare'))
+                                ? _boolProperty()
+                                : (getListName(_currentPageIndex).isNotEmpty &&
+                                        mySerialProtocolText.type == 'TEXT' &&
+                                        mySerialProtocolText.tabOrder != 9999)
+                                    ? _textProperty()
+                                    : (getListName(_currentPageIndex)
+                                                .isNotEmpty &&
+                                            mySerialProtocolText.type ==
+                                                'String' &&
+                                            mySerialProtocolText.tabOrder !=
+                                                9999)
+                                        ? _stringProperty()
+                                        : (getListName(_currentPageIndex)
+                                                    .isNotEmpty &&
+                                                mySerialProtocolText.type ==
+                                                    'Enter')
+                                            ? _enterProperty()
+                                            : (getListName(
+                                                            _currentPageIndex)
+                                                        .isNotEmpty &&
+                                                    mySerialProtocolText.type ==
+                                                        'Float' &&
+                                                    mySerialProtocolText
+                                                            .tabOrder !=
+                                                        9999)
+                                                ? _floatProperty()
+                                                : [],
+                          ),
+                        )
+                      : Expanded(
+                          flex: 6,
+                          child: Column(
+                            children: [
+                              Expanded(
+                                  flex: 1,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      OutlinedButton(
+                                          style: ButtonStyle(
+                                            side: MaterialStateProperty
+                                                .resolveWith<BorderSide>(
+                                              (Set<MaterialState> states) {
+                                                return BorderSide(
+                                                  color: colorScheme
+                                                      .scrim, // 设置边框颜色为红色
+                                                  width: 2, // 设置边框宽度
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            setState(() {
+                                              _serialOutputData.text = '';
+                                              // pageTitle = localizedStrings.serial_page_ol;
+                                            });
+                                          },
+                                          child: Text(
+                                            'clear',
+                                            overflow: TextOverflow.ellipsis,
+                                          )),
+                                      OutlinedButton(
+                                          style: ButtonStyle(
+                                            backgroundColor: _isHexDisplay
+                                                ? MaterialStateProperty.all(
+                                                    colorScheme.primary)
+                                                : MaterialStateProperty.all(
+                                                    colorScheme.onPrimary),
+                                            side: MaterialStateProperty
+                                                .resolveWith<BorderSide>(
+                                              (Set<MaterialState> states) {
+                                                return BorderSide(
+                                                  color: colorScheme
+                                                      .scrim, // 设置边框颜色为红色
+                                                  width: 2, // 设置边框宽度
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            setState(() {
+                                              _isHexDisplay = !_isHexDisplay;
+                                            });
+                                            PublicFunctions.changeScalePassth(
+                                                _isHexDisplay);
+                                          },
+                                          child: Text(
+                                            'HEX',
+                                            style: TextStyle(
+                                              color: _isHexDisplay
+                                                  ? colorScheme.onPrimary
+                                                  : colorScheme.primary,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ))
+                                    ],
+                                  )),
+                              Expanded(
+                                flex: 6,
+                                child: TextField(
+                                  onChanged: (value) {
+                                    setState(() {
+                                      // 在这里将要追加的数据添加到_serialOutputData的text属性中
+                                      _serialOutputData.text += value;
+                                    });
+                                    scrollToBottom();
+                                  },
+                                  style: const TextStyle(
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  readOnly: true,
+                                  maxLines: null,
+                                  controller: _serialOutputData,
+                                  textAlignVertical: TextAlignVertical.top,
+                                  scrollController: _scrollController,
+                                  decoration: const InputDecoration(
+                                    border: OutlineInputBorder(),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ))
+                ],
+              ))
         ],
       ),
     );
   }
 
-  void _addEnter() {
-    _textList.add(SerialProtocolText(
-        'Enter', '\\r\\n', '', 'Right', 0, ++count, '', '', '', '', '', false));
+  void handleButtonPress() async {
     setState(() {
-      mySerialProtocolText = _textList[_textList.length - 1];
-      _changeSelect(_textList.length - 1);
+      serialPreview = true;
+      _isHexDisplay = false;
+      _serialOutputData.text = '';
+    });
+    PublicFunctions.openScalePassth();
+  }
+
+  String getTitleName(int pageId) {
+    String titleName = '';
+    switch (pageId) {
+      case 1:
+        titleName = localizedStrings.serial_page_ol;
+        break;
+      case 2:
+        titleName = localizedStrings.serial_page_ul;
+        break;
+      case 3:
+        titleName = localizedStrings.serial_page_weight;
+        break;
+      case 4:
+        titleName = localizedStrings.serial_page_pcs;
+        break;
+      case 5:
+        titleName = localizedStrings.serial_page_price;
+        break;
+      case 6:
+        titleName = localizedStrings.serial_page_percent;
+        break;
+      default:
+        titleName = ""; // 如果没有匹配的pageId，设置一个默认值
+        break;
+    }
+    return titleName;
+  }
+
+  Flexible pageTitleWidget(int pageId) {
+    return Flexible(
+      flex: 1,
+      child: Container(
+          color: (_currentPageIndex == pageId)
+              ? colorScheme.scrim
+              : colorScheme.onPrimary,
+          child: OutlinedButton(
+              style: ButtonStyle(
+                side: MaterialStateProperty.resolveWith<BorderSide>(
+                  (Set<MaterialState> states) {
+                    return BorderSide(
+                      color: colorScheme.scrim, // 设置边框颜色为红色
+                      width: 2, // 设置边框宽度
+                    );
+                  },
+                ),
+              ),
+              onPressed: () {
+                setState(() {
+                  _currentPageIndex = pageId;
+                  // pageTitle = localizedStrings.serial_page_ol;
+                });
+              },
+              child: Text(
+                getTitleName(pageId),
+                overflow: TextOverflow.ellipsis,
+              ))),
+    );
+  }
+
+  SizedBox secondPageBuild(int pageId) {
+    return SizedBox(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Container(
+            height: 30,
+            child: Center(
+              child: Text(
+                'Serial port output preview',
+                style: TextStyle(
+                  color: colorScheme.onPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            color: colorScheme.primary,
+          ),
+          Expanded(
+            child: Container(
+              width: double.infinity,
+              color: colorScheme.tertiary,
+              child: SingleChildScrollView(
+                child: Text(
+                  _getOutputData(pageId),
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _addEnter(int pageId) {
+    List<SerialProtocolText> list = getListName(pageId);
+
+    list.add(SerialProtocolText(
+        'Enter', '\\r\\n', '', 'left', 0, ++count, '', '', '', 0, '', false));
+    setState(() {
+      mySerialProtocolText = list[list.length - 1];
+      _changeSelect(list.length - 1, list);
     });
   }
 
-  void _sendToScale() {
-    String json = jsonEncode(_textList);
-
-    if (kDebugMode) {
-      print(json);
-    }
+  void _sendToScale(List<String> list) {
+    myDownLoadSetOutputFmt.filePath = list;
+    String json = jsonEncode(myDownLoadSetOutputFmt);
+    myScaleCmd.cmdMode = "set_output_format";
+    myScaleCmd.cmdData = json;
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
 
-  String _getOutputData() {
+  List<SerialProtocolText> getListName(int pageId) {
+    if (pageId == pageMap["OL"]) {
+      return _textListOl;
+    } else if (pageId == pageMap["UL"]) {
+      return _textListUl;
+    } else if (pageId == pageMap["Weight"]) {
+      return _textListWeight;
+    } else if (pageId == pageMap["Pcs"]) {
+      return _textListPcs;
+    } else if (pageId == pageMap["Price"]) {
+      return _textListPrice;
+    } else if (pageId == pageMap["Percent"]) {
+      return _textListPercent;
+    }
+    return _textListWeight;
+  }
+
+  String _getOutputData(int pageId) {
     String res = '';
-    for (var i = 0; i < _textList.length; i++) {
-      if (_textList[i].type == 'TEXT') {
-        res = res + _textList[i].content;
-      } else if (_textList[i].type == 'VARIABLE') {
-        if (_textList[i].varName == 'IsStable' ||
-            _textList[i].varName == 'IsTare') {
-          res = res + _textList[i].default1;
-        } else {
-          res = res + _textList[i].content;
+    res = outPutData(getListName(pageId));
+    return res;
+  }
+
+  String outPutData(List<SerialProtocolText> list) {
+    String res = '';
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].type == 'TEXT') {
+        res = res + list[i].content;
+      } else if (list[i].type == 'Bool') {
+        if (list[i].varName == 'isstable' || list[i].varName == 'istare') {
+          res = res + list[i].isTrue;
         }
-      } else if (_textList[i].type == 'Enter') {
+      } else if (list[i].type == 'Enter') {
         res = res + '\r\n';
+      } else {
+        res = res + list[i].content;
       }
     }
     return res;
   }
 
-  _isStableTare() {
+  _boolProperty() {
     return [
       Container(
         height: 40,
-        color: Theme.of(context).colorScheme.tertiary,
+        color: colorScheme.tertiary,
         child: Center(
           child: Text(
             'Text Property',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20,
-              color: Theme.of(context).colorScheme.primary,
+              color: colorScheme.primary,
             ),
           ),
         ),
@@ -328,97 +809,67 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       ),
       Text(
         'Type:    ${mySerialProtocolText.type}',
-        style: TextStyle(color: Theme.of(context).colorScheme.primary),
+        style: TextStyle(color: colorScheme.primary),
       ),
       const SizedBox(
         height: 20,
       ),
       Text(
-        (mySerialProtocolText.varName == 'IsStable')
+        (mySerialProtocolText.varName == 'isstable')
             ? 'Stable Text:'
             : 'Gross Text',
-        style: TextStyle(color: Theme.of(context).colorScheme.primary),
+        style: TextStyle(color: colorScheme.primary),
       ),
       TextField(
-        controller: myDefault1,
+        controller: myBoolTypeTrue,
         onChanged: (value) {
           setState(() {
             _changedDefault(mySerialProtocolText.tabOrder, value, 1);
           });
         },
         textAlignVertical: TextAlignVertical.top,
-        inputFormatters: [
-          FilteringTextInputFormatter.allow(englishRegExp), // 传入正则表达式
-        ],
+        // inputFormatters: [
+        //   FilteringTextInputFormatter.allow(englishRegExp), // 传入正则表达式
+        // ],
         decoration: const InputDecoration(),
       ),
       const SizedBox(
         height: 20,
       ),
       Text(
-        (mySerialProtocolText.varName == 'IsStable')
+        (mySerialProtocolText.varName == 'isstable')
             ? 'Unstable Text:'
             : 'Net Text',
-        style: TextStyle(color: Theme.of(context).colorScheme.primary),
+        style: TextStyle(color: colorScheme.primary),
       ),
       TextField(
-        controller: myDefault2,
+        controller: myBoolTypeFalse,
         onChanged: (value) {
           setState(() {
             _changedDefault(mySerialProtocolText.tabOrder, value, 2);
           });
         },
         textAlignVertical: TextAlignVertical.top,
-        inputFormatters: [
-          FilteringTextInputFormatter.allow(englishRegExp), // 传入正则表达式
-        ],
+        // inputFormatters: [
+        //   FilteringTextInputFormatter.allow(englishRegExp), // 传入正则表达式
+        // ],
         decoration: const InputDecoration(),
       ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const SizedBox(
-            width: 50,
-          ),
-          IconButton(
-              onPressed: () {
-                setState(() {
-                  _itemBack(mySerialProtocolText.tabOrder);
-                });
-              },
-              icon: Icon(
-                  size: 40,
-                  Icons.arrow_back,
-                  color: Theme.of(context).colorScheme.primary)),
-          const SizedBox(
-            width: 50,
-          ),
-          IconButton(
-              onPressed: () {
-                setState(() {
-                  _itemForward(mySerialProtocolText.tabOrder);
-                });
-              },
-              icon: Icon(
-                  size: 40,
-                  Icons.arrow_forward,
-                  color: Theme.of(context).colorScheme.primary)),
-          const SizedBox(
-            width: 50,
-          ),
-        ],
+      const SizedBox(
+        height: 15,
       ),
+      arrowWidget(),
       const SizedBox(
         height: 15,
       ),
       ElevatedButton(
           onPressed: () {
             setState(() {
-              _deleteItem();
+              _deleteItem(_currentPageIndex);
             });
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: Theme.of(context).colorScheme.primary, // 设置按钮的背景色
+            backgroundColor: colorScheme.primary, // 设置按钮的背景色
             elevation: 10, // 设置按钮的阴影
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
@@ -440,12 +891,12 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
   }
 
   void _changedDefault(int index, String data, int defaultIndex) {
-    for (var i = 0; i < _textList.length; i++) {
-      if (_textList[i].tabOrder == index) {
+    for (var i = 0; i < _textListWeight.length; i++) {
+      if (_textListWeight[i].tabOrder == index) {
         if (defaultIndex == 1) {
-          _textList[i].default1 = data;
+          _textListWeight[i].isTrue = data;
         } else {
-          _textList[i].default2 = data;
+          _textListWeight[i].isFalse = data;
         }
 
         break;
@@ -457,14 +908,14 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     return [
       Container(
         height: 40,
-        color: Theme.of(context).colorScheme.tertiary,
+        color: colorScheme.tertiary,
         child: Center(
           child: Text(
             'Enter Property',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20,
-              color: Theme.of(context).colorScheme.primary,
+              color: colorScheme.primary,
             ),
           ),
         ),
@@ -474,86 +925,186 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       ),
       Text(
         'Type:    ${mySerialProtocolText.type}',
-        style: TextStyle(color: Theme.of(context).colorScheme.primary),
+        style: TextStyle(color: colorScheme.primary),
       ),
       const SizedBox(
         height: 20,
       ),
       Text(
         'Content:    \\r\\n',
-        style: TextStyle(color: Theme.of(context).colorScheme.primary),
+        style: TextStyle(color: colorScheme.primary),
       ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const SizedBox(
-            width: 50,
-          ),
-          IconButton(
-              onPressed: () {
-                setState(() {
-                  _itemBack(mySerialProtocolText.tabOrder);
-                });
-              },
-              icon: Icon(
-                  size: 40,
-                  Icons.arrow_back,
-                  color: Theme.of(context).colorScheme.primary)),
-          const SizedBox(
-            width: 50,
-          ),
-          IconButton(
-              onPressed: () {
-                setState(() {
-                  _itemForward(mySerialProtocolText.tabOrder);
-                });
-              },
-              icon: Icon(
-                  size: 40,
-                  Icons.arrow_forward,
-                  color: Theme.of(context).colorScheme.primary)),
-          const SizedBox(
-            width: 50,
-          ),
-        ],
+      const SizedBox(
+        height: 15,
       ),
+      arrowWidget(),
       const SizedBox(
         height: 15,
       ),
       ElevatedButton(
           onPressed: () {
             setState(() {
-              _deleteItem();
+              _deleteItem(_currentPageIndex);
             });
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: Theme.of(context).colorScheme.primary, // 设置按钮的背景色
+            backgroundColor: colorScheme.primary, // 设置按钮的背景色
             elevation: 10, // 设置按钮的阴影
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
             ),
           ),
-          child: const Text('Delete',
+          child: Text('Delete',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: colorScheme.onPrimary,
               ))),
     ];
   }
 
+  _changedContent(String data, int pageId) {
+    List<SerialProtocolText> list = getListName(pageId);
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].tabOrder == mySerialProtocolText.tabOrder) {
+        list[i].content = data;
+        break;
+      }
+    }
+  }
+
+  _changedAlignment(String data, int pageId) {
+    List<SerialProtocolText> list = getListName(pageId);
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].tabOrder == mySerialProtocolText.tabOrder) {
+        list[i].alignment = data;
+        if (list[i].varName == 'WeightUnit') {
+          if (list[i].maxLength == 0) {
+            list[i].content = 'kg';
+          } else {
+            list[i].content = '';
+            String space = ' ';
+
+            for (var j = 1; j <= list[i].maxLength; j++) {
+              if (j == 1) {
+                list[i].content = 'g';
+              } else if (j == 2) {
+                list[i].content = 'kg';
+              } else {
+                if (list[i].alignment == 'Left') {
+                  list[i].content = list[i].content + space;
+                } else {
+                  list[i].content = space + list[i].content;
+                }
+              }
+            }
+          }
+        }
+        break;
+      }
+    }
+  }
+
+  _changedFilling(String data, int pageId) {
+    List<SerialProtocolText> list = getListName(pageId);
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].tabOrder == mySerialProtocolText.tabOrder) {
+        list[i].filling = data;
+        break;
+      }
+    }
+  }
+
+  _changedDecimal(int data, int pageId) {
+    List<SerialProtocolText> list = getListName(pageId);
+    if (data > 0) {
+      if (mySerialProtocolText.maxLength < data + 2) {
+        mySerialProtocolText.maxLength = data + 2;
+        myMaxLen.text = mySerialProtocolText.maxLength.toString();
+      }
+    }
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].tabOrder == mySerialProtocolText.tabOrder) {
+        list[i].decimal = data;
+        list[i].maxLength = mySerialProtocolText.maxLength;
+
+        break;
+      }
+    }
+  }
+
+  _changedMaxLength(String data, int pageId) {
+    List<SerialProtocolText> list = getListName(pageId);
+    if (data == '') {
+      data = '0';
+    }
+    if (mySerialProtocolText.decimal != 0 &&
+        mySerialProtocolText.type == "Float") {
+      if (int.parse(data) < mySerialProtocolText.decimal + 2) {
+        data = (mySerialProtocolText.decimal + 2).toString();
+        myMaxLen.text = data;
+      }
+    }
+
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].tabOrder == mySerialProtocolText.tabOrder) {
+        list[i].maxLength = int.parse(data);
+        if (list[i].maxLength == 0) {
+          if (list[i].varName == 'WeightUnit') {
+            list[i].content = 'kg';
+          } else {
+            list[i].content = '000.000';
+          }
+          myContent.text = list[i].content;
+        } else {
+          list[i].content = '';
+          String space = ' ';
+          if (list[i].varName == 'WeightUnit') {
+            for (var j = 1; j <= list[i].maxLength; j++) {
+              if (j == 1) {
+                list[i].content = 'g';
+              } else if (j == 2) {
+                list[i].content = 'kg';
+              } else {
+                if (list[i].alignment == 'Left') {
+                  list[i].content = list[i].content + space;
+                } else {
+                  list[i].content = space + list[i].content;
+                }
+              }
+            }
+          } else {
+            for (var j = 0; j < list[i].maxLength; j++) {
+              if (j < 10) {
+                list[i].content = list[i].content + j.toString();
+              } else if (j < 20) {
+                list[i].content = list[i].content + (j - 10).toString();
+              } else {
+                list[i].content = list[i].content + (j - 20).toString();
+              }
+            }
+          }
+
+          myContent.text = list[i].content;
+        }
+        break;
+      }
+    }
+  }
+
+//文本编辑属性
   _textProperty() {
     return [
       Container(
         height: 40,
-        color: Theme.of(context).colorScheme.tertiary,
+        color: colorScheme.tertiary,
         child: Center(
           child: Text(
             'Text Property',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20,
-              color: Theme.of(context).colorScheme.primary,
+              color: colorScheme.primary,
             ),
           ),
         ),
@@ -563,192 +1114,52 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       ),
       Text(
         'Type:    ${mySerialProtocolText.type}',
-        style: TextStyle(color: Theme.of(context).colorScheme.primary),
+        style: TextStyle(color: colorScheme.primary),
       ),
       const SizedBox(
         height: 20,
       ),
       Text(
         'Content:',
-        style: TextStyle(color: Theme.of(context).colorScheme.primary),
+        style: TextStyle(color: colorScheme.primary),
       ),
       TextField(
         controller: myContent,
         onChanged: (value) {
           setState(() {
-            _changedContent(value);
+            _changedContent(value, _currentPageIndex);
           });
         },
         textAlignVertical: TextAlignVertical.top,
-        inputFormatters: [
-          FilteringTextInputFormatter.allow(englishRegExp), // 传入正则表达式
-        ],
+        // inputFormatters: [
+        //   FilteringTextInputFormatter.allow(englishRegExp), // 传入正则表达式
+        // ],
         decoration: const InputDecoration(),
-      ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const SizedBox(
-            width: 50,
-          ),
-          IconButton(
-              onPressed: () {
-                setState(() {
-                  _itemBack(mySerialProtocolText.tabOrder);
-                });
-              },
-              icon: Icon(
-                  size: 40,
-                  Icons.arrow_back,
-                  color: Theme.of(context).colorScheme.primary)),
-          const SizedBox(
-            width: 50,
-          ),
-          IconButton(
-              onPressed: () {
-                setState(() {
-                  _itemForward(mySerialProtocolText.tabOrder);
-                });
-              },
-              icon: Icon(
-                  size: 40,
-                  Icons.arrow_forward,
-                  color: Theme.of(context).colorScheme.primary)),
-          const SizedBox(
-            width: 50,
-          ),
-        ],
       ),
       const SizedBox(
         height: 15,
       ),
-      ElevatedButton(
-          onPressed: () {
-            setState(() {
-              _deleteItem();
-            });
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Theme.of(context).colorScheme.primary, // 设置按钮的背景色
-            elevation: 10, // 设置按钮的阴影
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
-            ),
-          ),
-          child: const Text('Delete',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ))),
+      arrowWidget(),
+      const SizedBox(
+        height: 15,
+      ),
+      deleteButton(),
     ];
   }
 
-  _changedContent(String data) {
-    for (var i = 0; i < _textList.length; i++) {
-      if (_textList[i].tabOrder == mySerialProtocolText.tabOrder) {
-        _textList[i].content = data;
-        break;
-      }
-    }
-  }
-
-  _changedAlignment(String data) {
-    for (var i = 0; i < _textList.length; i++) {
-      if (_textList[i].tabOrder == mySerialProtocolText.tabOrder) {
-        _textList[i].alignment = data;
-        if (_textList[i].varName == 'WeightUnit') {
-          if (_textList[i].maxLength == 0) {
-            _textList[i].content = 'kg';
-          } else {
-            _textList[i].content = '';
-            String space = ' ';
-
-            for (var j = 1; j <= _textList[i].maxLength; j++) {
-              if (j == 1) {
-                _textList[i].content = 'g';
-              } else if (j == 2) {
-                _textList[i].content = 'kg';
-              } else {
-                if (_textList[i].alignment == 'Left') {
-                  _textList[i].content = _textList[i].content + space;
-                } else {
-                  _textList[i].content = space + _textList[i].content;
-                }
-              }
-            }
-          }
-        }
-        break;
-      }
-    }
-  }
-
-  _changedMaxLength(String data) {
-    if (data == '') {
-      data = '0';
-    }
-    for (var i = 0; i < _textList.length; i++) {
-      if (_textList[i].tabOrder == mySerialProtocolText.tabOrder) {
-        _textList[i].maxLength = int.parse(data);
-        if (_textList[i].maxLength == 0) {
-          if (_textList[i].varName == 'WeightUnit') {
-            _textList[i].content = 'kg';
-          } else {
-            _textList[i].content = '000.000';
-          }
-
-          myContent.text = _textList[i].content;
-        } else {
-          _textList[i].content = '';
-          String space = ' ';
-          if (_textList[i].varName == 'WeightUnit') {
-            for (var j = 1; j <= _textList[i].maxLength; j++) {
-              if (j == 1) {
-                _textList[i].content = 'g';
-              } else if (j == 2) {
-                _textList[i].content = 'kg';
-              } else {
-                if (_textList[i].alignment == 'Left') {
-                  _textList[i].content = _textList[i].content + space;
-                } else {
-                  _textList[i].content = space + _textList[i].content;
-                }
-              }
-            }
-          } else {
-            for (var j = 0; j < _textList[i].maxLength; j++) {
-              if (j < 10) {
-                _textList[i].content = _textList[i].content + j.toString();
-              } else if (j < 20) {
-                _textList[i].content =
-                    _textList[i].content + (j - 10).toString();
-              } else {
-                _textList[i].content =
-                    _textList[i].content + (j - 20).toString();
-              }
-            }
-          }
-
-          myContent.text = _textList[i].content;
-        }
-        break;
-      }
-    }
-  }
-
-  _varProperty() {
+//变量编辑属性
+  _stringProperty() {
     return [
       Container(
         height: 40,
-        color: Theme.of(context).colorScheme.tertiary,
+        color: colorScheme.tertiary,
         child: Center(
           child: Text(
-            'Variable Property',
+            'String Property',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20,
-              color: Theme.of(context).colorScheme.primary,
+              color: colorScheme.primary,
             ),
           ),
         ),
@@ -758,133 +1169,52 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       ),
       Text(
         'Type:    ${mySerialProtocolText.type}',
-        style: TextStyle(color: Theme.of(context).colorScheme.primary),
+        style: TextStyle(color: colorScheme.primary),
       ),
       const SizedBox(
         height: 20,
       ),
       Text(
         'Alignment:',
-        style: TextStyle(color: Theme.of(context).colorScheme.primary),
+        style: TextStyle(color: colorScheme.primary),
       ),
-      DropdownButton<String>(
-        dropdownColor: Colors.grey[400],
-        style: const TextStyle(
-            color: Colors.black, fontSize: 20, fontWeight: FontWeight.normal),
-        hint: const Text(
-          'Alignment:',
-          style: TextStyle(
-              color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        value: _selectedAlignment,
-        items: alignments
-            .map((String value) => DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                ))
-            .toList(),
-        onChanged: (String? newValue) {
-          setState(() {
-            _selectedAlignment = newValue!;
-            _changedAlignment(_selectedAlignment);
-            myContent.text = mySerialProtocolText.content;
-          });
-        },
+      _alignmentDropdownButton(_currentPageIndex),
+      Text(
+        'Filling:',
+        style: TextStyle(color: colorScheme.primary),
       ),
+      _fillingDropdownButton(_currentPageIndex),
       Text(
         'Max Length:',
-        style: TextStyle(color: Theme.of(context).colorScheme.primary),
+        style: TextStyle(color: colorScheme.primary),
       ),
-      TextField(
-        controller: myMaxLen,
-        onChanged: (value) {
-          setState(() {
-            _changedMaxLength(value);
-          });
-        },
-        textAlignVertical: TextAlignVertical.top,
-        keyboardType: TextInputType.number,
-        inputFormatters: [
-          FilteringTextInputFormatter.allow(
-            RegExp(r'^([0-9]|1[0-9]|20)$'),
-          ), // 传入正则表达式
-        ],
-        decoration: const InputDecoration(),
-      ),
+      maxLenWidget(),
       Text(
         'Default Value:',
-        style: TextStyle(color: Theme.of(context).colorScheme.primary),
+        style: TextStyle(color: colorScheme.primary),
       ),
       TextField(
         readOnly: true,
         controller: myContent,
         onChanged: (value) {
           setState(() {
-            _changedContent(value);
+            _changedContent(value, _currentPageIndex);
           });
         },
         textAlignVertical: TextAlignVertical.top,
-        inputFormatters: [
-          FilteringTextInputFormatter.allow(englishRegExp), // 传入正则表达式
-        ],
+        // inputFormatters: [
+        //   FilteringTextInputFormatter.allow(englishRegExp), // 传入正则表达式
+        // ],
         decoration: const InputDecoration(),
-      ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const SizedBox(
-            width: 50,
-          ),
-          IconButton(
-              onPressed: () {
-                setState(() {
-                  _itemBack(mySerialProtocolText.tabOrder);
-                });
-              },
-              icon: Icon(
-                  size: 40,
-                  Icons.arrow_back,
-                  color: Theme.of(context).colorScheme.primary)),
-          const SizedBox(
-            width: 50,
-          ),
-          IconButton(
-              onPressed: () {
-                setState(() {
-                  _itemForward(mySerialProtocolText.tabOrder);
-                });
-              },
-              icon: Icon(
-                  size: 40,
-                  Icons.arrow_forward,
-                  color: Theme.of(context).colorScheme.primary)),
-          const SizedBox(
-            width: 50,
-          ),
-        ],
       ),
       const SizedBox(
         height: 15,
       ),
-      ElevatedButton(
-          onPressed: () {
-            setState(() {
-              _deleteItem();
-            });
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Theme.of(context).colorScheme.primary, // 设置按钮的背景色
-            elevation: 10, // 设置按钮的阴影
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
-            ),
-          ),
-          child: const Text('Delete',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ))),
+      arrowWidget(),
+      const SizedBox(
+        height: 15,
+      ),
+      deleteButton(),
       const SizedBox(
         height: 50,
       ),
@@ -894,115 +1224,429 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     ];
   }
 
-  void _itemBack(int index) {
-    SerialProtocolText tempData = SerialProtocolText('TEXT', 'Text', '',
-        'Right', 0, _textList.length, '', '', '', '', '', false);
+  DropdownButton _decimalDropdownButton(int pageId) {
+    return DropdownButton<String>(
+      dropdownColor: colorScheme.background,
+      style: TextStyle(
+          color: colorScheme.onBackground,
+          fontSize: 20,
+          fontWeight: FontWeight.normal),
+      hint: Text(
+        'Decimal:',
+        style: TextStyle(
+            color: colorScheme.onPrimary,
+            fontSize: 20,
+            fontWeight: FontWeight.bold),
+      ),
+      value: _selectedDecimal.toString(),
+      items: decimals
+          .map((int value) => DropdownMenuItem<String>(
+                value: value.toString(),
+                child: Text(value.toString()),
+              ))
+          .toList(),
+      onChanged: (String? newValue) {
+        setState(() {
+          _selectedDecimal = int.parse(newValue!);
+          _changedDecimal(_selectedDecimal, pageId);
+          myContent.text = mySerialProtocolText.content;
+        });
+      },
+    );
+  }
 
-    for (var i = 0; i < _textList.length; i++) {
-      if (_textList[i].tabOrder == index) {
-        tempData = _textList[i];
+  DropdownButton _fillingDropdownButton(int pageId) {
+    return DropdownButton<String>(
+      dropdownColor: colorScheme.background,
+      style: TextStyle(
+          color: colorScheme.onBackground,
+          fontSize: 20,
+          fontWeight: FontWeight.normal),
+      hint: Text(
+        'Filling:',
+        style: TextStyle(
+            color: colorScheme.onPrimary,
+            fontSize: 20,
+            fontWeight: FontWeight.bold),
+      ),
+      value: _selectedFilling,
+      items: fillings
+          .map((String value) => DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              ))
+          .toList(),
+      onChanged: (String? newValue) {
+        setState(() {
+          _selectedFilling = newValue!;
+          _changedFilling(_selectedFilling, pageId);
+          myContent.text = mySerialProtocolText.content;
+        });
+      },
+    );
+  }
+
+  DropdownButton _alignmentDropdownButton(int pageId) {
+    return DropdownButton<String>(
+      dropdownColor: colorScheme.background,
+      style: TextStyle(
+          color: colorScheme.onBackground,
+          fontSize: 20,
+          fontWeight: FontWeight.normal),
+      hint: Text(
+        'Alignment:',
+        style: TextStyle(
+            color: colorScheme.onPrimary,
+            fontSize: 20,
+            fontWeight: FontWeight.bold),
+      ),
+      value: _selectedAlignment,
+      items: alignments
+          .map((String value) => DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              ))
+          .toList(),
+      onChanged: (String? newValue) {
+        setState(() {
+          _selectedAlignment = newValue!;
+          _changedAlignment(_selectedAlignment, pageId);
+          myContent.text = mySerialProtocolText.content;
+        });
+      },
+    );
+  }
+
+  //float类型的属性编辑
+
+  _floatProperty() {
+    return [
+      Container(
+        height: 40,
+        color: colorScheme.tertiary,
+        child: Center(
+          child: Text(
+            'Float Property',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              color: colorScheme.primary,
+            ),
+          ),
+        ),
+      ),
+      const SizedBox(
+        height: 20,
+      ),
+      Text(
+        'Type:    ${mySerialProtocolText.type}',
+        style: TextStyle(color: colorScheme.primary),
+      ),
+      const SizedBox(
+        height: 20,
+      ),
+      Text(
+        'Alignment:',
+        style: TextStyle(color: colorScheme.primary),
+      ),
+      _alignmentDropdownButton(_currentPageIndex),
+      Text(
+        'Filling:',
+        style: TextStyle(color: colorScheme.primary),
+      ),
+      _fillingDropdownButton(_currentPageIndex),
+      Text(
+        'Decimal:',
+        style: TextStyle(color: colorScheme.primary),
+      ),
+      _decimalDropdownButton(_currentPageIndex),
+      Text(
+        'Max Length:',
+        style: TextStyle(color: colorScheme.primary),
+      ),
+      maxLenWidget(),
+      Text(
+        'Default Value:',
+        style: TextStyle(color: colorScheme.primary),
+      ),
+      TextField(
+        readOnly: true,
+        controller: myContent,
+        onChanged: (value) {
+          setState(() {
+            _changedContent(value, _currentPageIndex);
+          });
+        },
+        textAlignVertical: TextAlignVertical.top,
+        // inputFormatters: [
+        //   FilteringTextInputFormatter.allow(englishRegExp), // 传入正则表达式
+        // ],
+        decoration: const InputDecoration(),
+      ),
+      const SizedBox(
+        height: 15,
+      ),
+      arrowWidget(),
+      const SizedBox(
+        height: 15,
+      ),
+      deleteButton(),
+      const SizedBox(
+        height: 50,
+      ),
+      const SizedBox(
+        height: 50,
+      ),
+    ];
+  }
+
+  Widget deleteButton() {
+    return ElevatedButton(
+        onPressed: () {
+          setState(() {
+            _deleteItem(_currentPageIndex);
+          });
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: colorScheme.primary, // 设置按钮的背景色
+          elevation: 10, // 设置按钮的阴影
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
+          ),
+        ),
+        child: const Text('Delete',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            )));
+  }
+
+  Widget arrowWidget() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const SizedBox(
+          width: 50,
+        ),
+        InkWell(
+          onTap: () {
+            setState(() {
+              _itemBack(mySerialProtocolText.tabOrder, _currentPageIndex);
+            });
+            // 处理按钮点击事件
+          },
+          onHover: (value) {
+            setState(() {
+              isArrowBackHovered = value;
+            });
+          },
+          child: Container(
+            height: 30.0,
+            width: 30.0,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: colorScheme.primary,
+                width: 1.0,
+              ),
+              color:
+                  !isArrowBackHovered ? Colors.white : colorScheme.background,
+            ),
+            child: Icon(
+              Icons.arrow_back,
+              color: colorScheme.primary,
+              size: 24.0,
+            ),
+          ),
+        ),
+        const SizedBox(
+          width: 50,
+        ),
+        InkWell(
+          onTap: () {
+            setState(() {
+              _itemForward(mySerialProtocolText.tabOrder, _currentPageIndex);
+            });
+            // 处理按钮点击事件
+          },
+          onHover: (value) {
+            setState(() {
+              isArrowForwardHovered = value;
+            });
+          },
+          child: Container(
+            height: 30.0,
+            width: 30.0,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: colorScheme.primary,
+                width: 1.0,
+              ),
+              color: !isArrowForwardHovered
+                  ? Colors.white
+                  : colorScheme.background,
+            ),
+            child: Icon(
+              Icons.arrow_forward,
+              color: colorScheme.primary,
+              size: 24.0,
+            ),
+          ),
+        ),
+        const SizedBox(
+          width: 50,
+        ),
+      ],
+    );
+  }
+
+  TextField maxLenWidget() {
+    return TextField(
+      controller: myMaxLen,
+      onChanged: (value) {
+        setState(() {
+          _changedMaxLength(value, _currentPageIndex);
+        });
+      },
+      textAlignVertical: TextAlignVertical.top,
+      keyboardType: TextInputType.number,
+      inputFormatters: [
+        FilteringTextInputFormatter.allow(
+          RegExp(r'^([0-9]|1[0-9]|20)$'),
+        ), // 传入正则表达式
+      ],
+      decoration: const InputDecoration(),
+    );
+  }
+
+  void _itemBack(int index, int pageId) {
+    List<SerialProtocolText> list = getListName(pageId);
+    SerialProtocolText tempData = SerialProtocolText(
+        'TEXT', 'Text', '', 'left', 0, list.length, '', '', '0', 0, '', false);
+
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].tabOrder == index) {
+        tempData = list[i];
         if (i != 0) {
-          _textList[i] = _textList[i - 1];
-          _textList[i - 1] = tempData;
+          list[i] = list[i - 1];
+          list[i - 1] = tempData;
         }
         break;
       }
     }
   }
 
-  void _itemForward(int index) {
-    SerialProtocolText tempData = SerialProtocolText('TEXT', 'Text', '',
-        'Right', 0, _textList.length, '', '', '', '', '', false);
+  void _itemForward(int index, int pageId) {
+    List<SerialProtocolText> list = getListName(pageId);
+    SerialProtocolText tempData = SerialProtocolText(
+        'TEXT', 'Text', '', 'left', 0, list.length, '', '', '0', 0, '', false);
 
-    for (var i = 0; i < _textList.length; i++) {
-      if (_textList[i].tabOrder == index) {
-        tempData = _textList[i];
-        if (i + 1 < _textList.length) {
-          _textList[i] = _textList[i + 1];
-          _textList[i + 1] = tempData;
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].tabOrder == index) {
+        tempData = list[i];
+        if (i + 1 < list.length) {
+          list[i] = list[i + 1];
+          list[i + 1] = tempData;
         }
         break;
       }
     }
   }
 
-  Widget _buildTexts() {
+  Widget _buildTexts(int pageId) {
+    List<SerialProtocolText> list = getListName(pageId);
     return Wrap(
       alignment: WrapAlignment.start,
       runAlignment: WrapAlignment.start,
       crossAxisAlignment: WrapCrossAlignment.start,
       children: [
-        for (var i = 0; i < _textList.length; i++)
-          _buildTextContent(_textList[i]),
+        for (var i = 0; i < list.length; i++)
+          _buildTextContent(list[i], pageId),
       ],
     );
   }
 
-  void _deleteItem() {
-    for (var i = 0; i < _textList.length; i++) {
-      if (_textList[i].tabOrder == mySerialProtocolText.tabOrder) {
-        _textList.removeAt(i);
+  void _deleteItem(int pageId) {
+    List<SerialProtocolText> list = getListName(pageId);
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].tabOrder == mySerialProtocolText.tabOrder) {
+        list.removeAt(i);
         mySerialProtocolText.tabOrder = 9999;
         break;
       }
     }
   }
 
-  void _addTextData() {
-    _textList.add(SerialProtocolText(
-        'TEXT', 'Text', '', 'Right', 0, ++count, '', '', '', '', '', false));
+  void _addTextData(int pageId) {
+    List<SerialProtocolText> list = getListName(pageId);
+    list.add(SerialProtocolText(
+        'TEXT', 'Text', '', 'left', 0, ++count, '', '', '0', 0, '', false));
     setState(() {
-      mySerialProtocolText = _textList[_textList.length - 1];
+      mySerialProtocolText = list[list.length - 1];
       myContent.text = mySerialProtocolText.content;
-      _changeSelect(_textList.length - 1);
+      _changeSelect(list.length - 1, list);
     });
   }
 
-  _changeSelect(int index) {
-    for (var i = 0; i < _textList.length; i++) {
-      _textList[i].isSelect = false;
+  void _changeSelect(int index, List<SerialProtocolText> list) {
+    for (var i = 0; i < list.length; i++) {
+      list[i].isSelect = false;
     }
-    _textList[index].isSelect = true;
+    list[index].isSelect = true;
   }
 
-  void _addVarData(String varname) {
+//找居中的位置取整函数
+  int integerDivision(int num) {
+    if (num > 1) {
+      return num ~/ 2;
+    }
+    return 0;
+  }
+
+  void _addVarData(String varname, int pageId) {
+    List<SerialProtocolText> list = getListName(pageId);
     if (varname == 'WeightUnit') {
-      _textList.add(SerialProtocolText('VARIABLE', ' kg', varname, 'Right', 3,
-          ++count, '', '', '', '', '', false));
-    } else if (varname == 'IsStable') {
-      _textList.add(SerialProtocolText('VARIABLE', ' kg', varname, 'Right', 3,
-          ++count, 'US', 'ST', '', '', '', false));
-    } else if (varname == 'IsTare') {
-      _textList.add(SerialProtocolText('VARIABLE', ' kg', varname, 'Right', 3,
-          ++count, 'GS', 'NT', '', '', '', false));
-    } else {
-      _textList.add(SerialProtocolText('VARIABLE', '0123456', varname, 'Right',
-          7, ++count, '', '', '', '', '', false));
+      list.add(SerialProtocolText('String', ' kg', varname, 'left', 3, ++count,
+          '', '', '0', 0, '', false));
+    } else if (varname == 'isstable') {
+      list.add(SerialProtocolText('Bool', ' kg', varname, 'left', 3, ++count,
+          'ST', 'US', '0', 0, '', false));
+    } else if (varname == 'istare') {
+      list.add(SerialProtocolText('Bool', ' kg', varname, 'left', 3, ++count,
+          'NT', 'GS', '0', 0, '', false));
+    } else if (varname == 'isiero') {
+      list.add(SerialProtocolText('Bool', ' kg', varname, 'left', 3, ++count,
+          'Z', 'NZ', '0', 0, '', false));
+    } else if (varname == 'Gross' || varname == 'Tare' || varname == 'Net') {
+      list.add(SerialProtocolText('Float', '0123456', varname, 'left', 7,
+          ++count, '', '', '0', 3, '', false));
     }
     setState(() {
-      mySerialProtocolText = _textList[_textList.length - 1];
+      mySerialProtocolText = list[list.length - 1];
       myContent.text = mySerialProtocolText.content;
       myMaxLen.text = mySerialProtocolText.maxLength.toString();
-      myDefault1.text = mySerialProtocolText.default1;
-      myDefault2.text = mySerialProtocolText.default2;
+      myBoolTypeTrue.text = mySerialProtocolText.isTrue;
+      myBoolTypeFalse.text = mySerialProtocolText.isFalse;
 
-      _changeSelect(_textList.length - 1);
+      _changeSelect(list.length - 1, list);
     });
   }
 
-  Widget _buildTextContent(SerialProtocolText textData) {
+  //创建中间区域的Button
+  Widget _buildTextContent(SerialProtocolText textData, int pageId) {
+    List<SerialProtocolText> list = getListName(pageId);
     return Container(
       height: 30,
       width: 100,
       decoration: BoxDecoration(
-        border:
-            Border.all(width: 1, color: Theme.of(context).colorScheme.primary),
+        border: Border.all(width: 1, color: colorScheme.primary),
       ),
       child: TextButton(
         style: ButtonStyle(
             backgroundColor: (textData.isSelect)
-                ? MaterialStateProperty.all(
-                    Theme.of(context).colorScheme.primary)
+                ? MaterialStateProperty.all(colorScheme.primary)
                 : null),
         onPressed: () {
           setState(() {
@@ -1010,25 +1654,158 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
             myContent.text = mySerialProtocolText.content;
             myMaxLen.text = mySerialProtocolText.maxLength.toString();
             _selectedAlignment = mySerialProtocolText.alignment;
-            myDefault1.text = mySerialProtocolText.default1;
-            myDefault2.text = mySerialProtocolText.default2;
-            for (var i = 0; i < _textList.length; i++) {
-              if (_textList[i].tabOrder == textData.tabOrder) {
-                _changeSelect(i);
+            myBoolTypeTrue.text = mySerialProtocolText.isTrue;
+            myBoolTypeFalse.text = mySerialProtocolText.isFalse;
+            _selectedFilling = mySerialProtocolText.filling;
+            _selectedDecimal = mySerialProtocolText.decimal;
+            for (var i = 0; i < list.length; i++) {
+              if (list[i].tabOrder == textData.tabOrder) {
+                _changeSelect(i, list);
                 break;
               }
             }
           });
         },
+        //根据类型显示button的名字
         child: Text(
-          (textData.type == 'VARIABLE') ? textData.varName : textData.content,
+          (textData.type == 'Float' ||
+                  textData.type == 'Integer' ||
+                  textData.type == 'Bool' ||
+                  textData.type == 'String')
+              ? textData.varName
+              : textData.content,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
-              color: (textData.isSelect)
-                  ? Colors.white
-                  : Theme.of(context).colorScheme.primary),
+              color: (textData.isSelect) ? Colors.white : colorScheme.primary),
         ),
       ),
     );
+  }
+
+  Future<bool> generateJson(int pageId) async {
+    List<Map<String, dynamic>> functionList = [];
+    List<Map<String, dynamic>> dataList = [];
+    List<SerialProtocolText> list = getListName(pageId);
+    if (list.isEmpty) {
+      return false;
+    }
+    int functionId = 0;
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].type == 'TEXT') {
+        dataList.add({"isvar": false, "value": list[i].content});
+      } else if (list[i].type == 'Enter') {
+        dataList.add({"isvar": false, "value": '\r\n'});
+      } else if (list[i].type == 'String') {
+        String fillingValue = ' ';
+        if (list[i].filling == '0') {
+          fillingValue = '0';
+        }
+        functionList.add({
+          "id": functionId,
+          "type": "string",
+          "alignment": list[i].alignment,
+          "filling": fillingValue,
+          "description": ""
+        });
+        dataList.add({
+          "isvar": true,
+          "varname": list[i].varName,
+          "functionid": functionId,
+          "length": list[i].maxLength,
+        });
+        functionId++;
+      } else if (list[i].type == 'Float') {
+        String fillingValue = ' ';
+        if (list[i].filling == '0') {
+          fillingValue = '0';
+        }
+        functionList.add({
+          "id": functionId,
+          "type": "float",
+          "decimal": list[i].decimal,
+          "alignment": list[i].alignment,
+          "filling": fillingValue,
+          "description": ""
+        });
+        dataList.add({
+          "isvar": true,
+          "varname": list[i].varName,
+          "functionid": functionId,
+          "length": list[i].maxLength,
+        });
+        functionId++;
+      } else if (list[i].type == 'Bool') {
+        functionList.add({
+          "id": functionId,
+          "type": "bool",
+          "istrue": list[i].isTrue,
+          "isfalse": list[i].isFalse,
+          "description": ""
+        });
+        dataList.add({
+          "isvar": true,
+          "varname": list[i].varName,
+          "functionid": functionId,
+          "length": list[i].maxLength,
+        });
+        functionId++;
+      } else if (list[i].type == 'Interge') {
+        String fillingValue = ' ';
+        if (list[i].filling == '0') {
+          fillingValue = '0';
+        }
+        functionList.add({
+          "id": functionId,
+          "type": "string",
+          "alignment": list[i].alignment,
+          "filling": fillingValue,
+          "description": ""
+        });
+        dataList.add({
+          "isvar": true,
+          "varname": list[i].varName,
+          "functionid": functionId,
+          "length": list[i].maxLength,
+        });
+        functionId++;
+      }
+    }
+
+    Map<String, dynamic> jsonData = {
+      "function": functionList,
+      "data": dataList
+    };
+    String jsonString = jsonEncode(jsonData);
+    await writeJsonToFile(jsonString, pageId);
+    return true;
+  }
+
+  Future<void> writeJsonToFile(String jsonString, int pageId) async {
+    String executablePath = Platform.resolvedExecutable;
+    var directory = p.dirname(executablePath);
+
+    final formatfilePath = Directory('$directory\\output');
+    if (!await formatfilePath.exists()) {
+      await formatfilePath.create(recursive: true);
+    }
+    directory = formatfilePath.path;
+    String filePath = '';
+    if (pageId == 1) {
+      filePath = '$directory\\OL.json';
+    } else if (pageId == 2) {
+      filePath = '$directory\\UL.json';
+    } else if (pageId == 3) {
+      filePath = '$directory\\Weight.json';
+    } else if (pageId == 4) {
+      filePath = '$directory\\Pcs.json';
+    } else if (pageId == 5) {
+      filePath = '$directory\\Price.json';
+    } else if (pageId == 6) {
+      filePath = '$directory\\Percent.json';
+    }
+    // 创建文件并写入JSON字符串
+    File file = File(filePath);
+    file.writeAsString(jsonString);
+    jsonFilesList.add(pageId.toString() + filePath);
   }
 }

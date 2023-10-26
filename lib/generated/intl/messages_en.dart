@@ -46,8 +46,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "button_dynamic": MessageLookupByLibrary.simpleMessage("Dynamic"),
         "button_edit": MessageLookupByLibrary.simpleMessage("Edit"),
         "button_exit": MessageLookupByLibrary.simpleMessage("Exit"),
-        "button_export_report":
-            MessageLookupByLibrary.simpleMessage("Export report"),
+        "button_export_report": MessageLookupByLibrary.simpleMessage("Export"),
         "button_get_ip": MessageLookupByLibrary.simpleMessage("Get Ip"),
         "button_home": MessageLookupByLibrary.simpleMessage("Home"),
         "button_net": MessageLookupByLibrary.simpleMessage("Net"),
@@ -159,6 +158,14 @@ class MessageLookup extends MessageLookupByLibrary {
             "Serial port connection lost. Check the settings."),
         "serial_modify_title": MessageLookupByLibrary.simpleMessage(
             "Serial port information modification"),
+        "serial_page_ol": MessageLookupByLibrary.simpleMessage("OL mode"),
+        "serial_page_pcs": MessageLookupByLibrary.simpleMessage("Pcs mode"),
+        "serial_page_percent":
+            MessageLookupByLibrary.simpleMessage("Percent mode"),
+        "serial_page_price": MessageLookupByLibrary.simpleMessage("Price mode"),
+        "serial_page_ul": MessageLookupByLibrary.simpleMessage("UL mode"),
+        "serial_page_weight":
+            MessageLookupByLibrary.simpleMessage("Weight mode"),
         "serial_port": MessageLookupByLibrary.simpleMessage("Serial port:"),
         "set_wifi_success":
             MessageLookupByLibrary.simpleMessage("Set wifi successful!"),
@@ -191,7 +198,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "User ID or user name can not be repeated !"),
         "user_error_message3": MessageLookupByLibrary.simpleMessage(
             "The user record was not found !"),
-        "user_id": MessageLookupByLibrary.simpleMessage("User ID:"),
+        "user_id": MessageLookupByLibrary.simpleMessage("User NO.:"),
         "user_info": MessageLookupByLibrary.simpleMessage("User Info"),
         "user_name": MessageLookupByLibrary.simpleMessage("User Name:"),
         "user_phone": MessageLookupByLibrary.simpleMessage("Phone:"),

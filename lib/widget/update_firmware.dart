@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/downloadresponse.dart';
@@ -84,13 +83,13 @@ class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
     localizedStrings = S.of(context);
     return AlertDialog(
       title: Container(
-        color: Colors.blue.shade900,
+        color: Theme.of(context).colorScheme.primary,
         child: Row(
           children: [
-            const Icon(Icons.system_update_alt, color: Colors.white),
+            Icon(Icons.update, color: Theme.of(context).colorScheme.onPrimary),
             Text(
               localizedStrings.firmwart_update,
-              style: const TextStyle(color: Colors.white),
+              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
             )
           ],
         ),
@@ -101,7 +100,8 @@ class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
           decoration:
               const BoxDecoration(color: Color.fromARGB(255, 233, 232, 232)),
           child: Container(
-            decoration: const BoxDecoration(color: Colors.white),
+            decoration:
+                BoxDecoration(color: Theme.of(context).colorScheme.onPrimary),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -147,7 +147,8 @@ class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
                                 ? null
                                 : () {
                                     _progress = 0.0;
-                                    _showConfirmationDialog(context);
+                                    _showConfirmationDialog(context,
+                                        Theme.of(context).colorScheme.primary);
                                   },
                       ),
                     ],
@@ -162,8 +163,8 @@ class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
                       color: (_errorMessage.contains('ok') ||
                               _errorMessage.contains('OK') ||
                               _errorMessage.contains('started'))
-                          ? Colors.green.shade900
-                          : Colors.red.shade900),
+                          ? Theme.of(context).colorScheme.outline
+                          : Theme.of(context).colorScheme.error),
                 ),
                 const SizedBox(
                   height: 10,
@@ -209,14 +210,14 @@ class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
     });
   }
 
-  void _showConfirmationDialog(BuildContext context) {
+  void _showConfirmationDialog(BuildContext context, Color colorName) {
     showDialog(
       context: context,
       builder: (BuildContext ctx) {
         return AlertDialog(
-          title: const Text(
+          title: Text(
             'Confirmation',
-            style: TextStyle(color: Color.fromARGB(255, 15, 71, 161)),
+            style: TextStyle(color: colorName),
           ),
           content: const Text(
               'The update process can not be canceled.\r\nPlease make sure the update?'),

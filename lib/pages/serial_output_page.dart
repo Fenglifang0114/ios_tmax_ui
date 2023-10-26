@@ -5,7 +5,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 
-import '../data/download_prt_fmt.dart';
 import '../data/downloadresponse.dart';
 import '../data/license_data.dart';
 import '../data/scalecmd_data.dart';
@@ -31,7 +30,7 @@ class _SerialOutputPageState extends State<SerialOutputPage> {
   String errorMessage = ''; //错误信息显示
   String? curruntPickFile = '';
   bool hasDuplicates = false; //判断文件有没有重复序号
-  TextEditingController pluFileController = TextEditingController();
+  TextEditingController outputFileController = TextEditingController();
 
   late ScrollController _fileScrollerController;
   var currentPath = Directory.current.path;
@@ -42,21 +41,21 @@ class _SerialOutputPageState extends State<SerialOutputPage> {
     super.initState();
     _fileScrollerController = ScrollController();
 
-    _eventbus1 = eventBus.on<EventDownloadResponse>().listen((event) {
+    _eventbus1 = eventBus.on<EventSerialOutputResp>().listen((event) {
       if (mounted) {
         setState(() {
-          myDownloadResponse = event.obj;
-          if (myDownloadResponse.msgBody.isNotEmpty) {
+          mySetSerialOutputResp = event.obj;
+          if (mySetSerialOutputResp.msgBody.isNotEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text(
-                    (myDownloadResponse.msgBody.contains('ok'))
+                    (mySetSerialOutputResp.msgBody.contains('ok'))
                         ? 'Download successful!'
-                        : myDownloadResponse.msgBody,
+                        : mySetSerialOutputResp.msgBody,
                     style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.normal)), ////此处需要秤回复
                 duration: const Duration(seconds: 3),
-                backgroundColor: (myDownloadResponse.msgBody.contains('ok'))
+                backgroundColor: (mySetSerialOutputResp.msgBody.contains('ok'))
                     ? Colors.green.shade900
                     : Colors.red.shade900));
           }
@@ -120,7 +119,7 @@ class _SerialOutputPageState extends State<SerialOutputPage> {
                         width: 400,
                         // height: 40,
                         child: TextField(
-                          controller: pluFileController,
+                          controller: outputFileController,
                           readOnly: true,
                           maxLines: 2,
                           minLines: 1,
@@ -147,8 +146,8 @@ class _SerialOutputPageState extends State<SerialOutputPage> {
                             ),
                           ),
                           onPressed: () async {
-                            pluFileController.text = '';
-                            pickFiles(pluFileController);
+                            outputFileController.text = '';
+                            pickFiles(outputFileController);
                           },
                           // TODO:翻译
                           child: Text('选择json'),
@@ -223,9 +222,7 @@ class _SerialOutputPageState extends State<SerialOutputPage> {
               ),
             ),
             onPressed: () {
-              if (!hasDuplicates && paths.isNotEmpty) {
-                _showConfirmationDialog(context);
-              }
+              _showConfirmationDialog(context);
             },
             child: const Text(
               "Download",
@@ -272,13 +269,9 @@ class _SerialOutputPageState extends State<SerialOutputPage> {
   }
 
   void sendFormatToScale(List<String> fmtSequence, List<String> fmtPaths) {
-    myScaleCmd.cmdMode = "down_print_format_to_scale";
-    if (fmtSequence.length == fmtPaths.length) {
-      myDownLoadPrtFmt.scaleModel = 'TMax';
-      myDownLoadPrtFmt.printerModel = 'EPM205';
-      myDownLoadPrtFmt.filePaths = fmtPaths;
-
-      myScaleCmd.cmdData = json.encode(myDownLoadPrtFmt);
+    myScaleCmd.cmdMode = "set_output_format";
+    if (outputFileController.text.isNotEmpty) {
+      myScaleCmd.cmdData = outputFileController.text;
       MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
     }
   }

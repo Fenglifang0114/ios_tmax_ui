@@ -21,3 +21,21 @@ class DownLoadPrtFmt {
 }
 
 DownLoadPrtFmt myDownLoadPrtFmt = DownLoadPrtFmt();
+
+class DownLoadSetOutputFmt {
+  List<String>? filePath;
+
+  DownLoadSetOutputFmt({this.filePath});
+
+  DownLoadSetOutputFmt.fromJson(Map<String, dynamic> json) {
+    filePath = json['FilePath'].cast<String>();
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['FilePath'] = filePath;
+    return data;
+  }
+}
+
+DownLoadSetOutputFmt myDownLoadSetOutputFmt = DownLoadSetOutputFmt();

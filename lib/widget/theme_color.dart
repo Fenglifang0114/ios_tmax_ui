@@ -18,6 +18,8 @@ themeColor() {
         outline: Colors.green.shade900,
         tertiary: const Color.fromARGB(255, 248, 249, 253),
         onTertiary: Colors.black,
+        scrim: Color.fromARGB(255, 204, 224, 239),
+        secondaryContainer: Color.fromARGB(171, 191, 191, 191),
         // all fields should have a value
       ));
 }

@@ -1,10 +1,10 @@
 class SerialProtocolText {
   String type;
   String varName;
-  String default1;
-  String default2;
-  String default3;
-  String default4;
+  String isTrue;
+  String isFalse;
+  String filling;
+  int decimal;
   String default5;
   String alignment;
   int maxLength;
@@ -19,10 +19,10 @@ class SerialProtocolText {
     this.alignment,
     this.maxLength,
     this.tabOrder,
-    this.default1,
-    this.default2,
-    this.default3,
-    this.default4,
+    this.isTrue,
+    this.isFalse,
+    this.filling,
+    this.decimal,
     this.default5,
     this.isSelect,
   );
@@ -30,10 +30,10 @@ class SerialProtocolText {
       : type = json['Type'],
         alignment = json['Alignment'],
         content = json['Content'],
-        default1 = json['Default1'],
-        default2 = json['Default2'],
-        default3 = json['Default3'],
-        default4 = json['Default4'],
+        isTrue = json['isTrue'],
+        isFalse = json['isFalse'],
+        filling = json['Default3'],
+        decimal = json['decimal'],
         default5 = json['Default5'],
         maxLength = json['MaxLength'],
         tabOrder = json['TabOrder'],
@@ -45,10 +45,10 @@ class SerialProtocolText {
       'VarName': varName,
       'TabOrder': tabOrder,
       'MaxLength': maxLength,
-      'Default1': default1,
-      'Default2': default2,
-      'Default3': default3,
-      'Default4': default4,
+      'isTrue': isTrue,
+      'isFalse': isFalse,
+      'Default3': filling,
+      'Default4': decimal,
       'Default5': default5,
       'Content': content,
       'Alignment': alignment,
@@ -59,4 +59,4 @@ class SerialProtocolText {
 }
 
 SerialProtocolText mySerialProtocolText =
-    SerialProtocolText('TEXT', '', '', '', 7, 0, '', '', '', '', '', false);
+    SerialProtocolText('TEXT', '', '', '', 7, 0, '', '', '', 0, '', false);
