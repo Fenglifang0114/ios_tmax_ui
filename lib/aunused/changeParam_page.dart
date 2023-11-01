@@ -117,7 +117,7 @@ class _ChangeParamPageState extends State<ChangeParamPage> {
         appBar: PreferredSize(
             preferredSize: const Size.fromHeight(30),
             child: AppBar(
-              title: version(),
+              title: version(Theme.of(context).colorScheme.primary),
               actions: [appbarMsg(context)],
             )),
         body: ListView(

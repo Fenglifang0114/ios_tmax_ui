@@ -157,7 +157,7 @@ class TrialPageState extends State<TrialPage> {
             appBar: PreferredSize(
                 preferredSize: const Size.fromHeight(40),
                 child: AppBar(
-                  title: version(),
+                  title: version(Theme.of(context).colorScheme.onPrimary),
                   //设置状态栏颜色渐变
                   flexibleSpace: Container(
                       decoration: BoxDecoration(gradient: boxGradient())),

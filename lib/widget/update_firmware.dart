@@ -194,7 +194,6 @@ class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
               onPressed: isSetting
                   ? null
                   : () {
-                      myCheckSerialPortOnOFF.isCheck = true;
                       Navigator.of(context).pop();
                     },
             ),

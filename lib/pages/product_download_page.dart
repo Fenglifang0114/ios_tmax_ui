@@ -216,7 +216,6 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
               ),
             ),
             onPressed: () {
-              myCheckSerialPortOnOFF.isCheck = true;
               Navigator.of(context).pop();
             },
           ),

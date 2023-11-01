@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../generated/l10n.dart';
-import '../data/license_data.dart';
 
 class LanguageSettingPage extends StatefulWidget {
   const LanguageSettingPage({super.key});
@@ -114,7 +113,6 @@ class _LanguageSettingPageState extends State<LanguageSettingPage> {
             OutlinedButton(
                 child: Text(localizedStrings.button_exit),
                 onPressed: () {
-                  myCheckSerialPortOnOFF.isCheck = true;
                   setState(() {});
                   Navigator.of(context)
                       .pop(); // to go back to screen after submitting

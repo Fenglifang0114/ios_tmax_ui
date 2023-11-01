@@ -1,22 +1,17 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:path/path.dart' as p;
-
 import '../data/download_prt_fmt.dart';
 import '../data/downloadresponse.dart';
-import '../data/license_data.dart';
 import '../data/scalecmd_data.dart';
 import '../eventbus/eventbus.dart';
 import '../generated/l10n.dart';
 import '../main.dart';
 import '../widget/box_gradient.dart';
-
-var filePath = "";
-var pathFlag = false;
 
 class DownloadPage extends StatefulWidget {
   const DownloadPage({super.key});
@@ -34,7 +29,7 @@ class _DownloadPageState extends State<DownloadPage> {
   List<DataRow> dataRows = [];
   String errorMessage = ''; //错误信息显示
   String? curruntPickFile = '';
-
+  bool isDownloadClicked = false;
   bool hasDuplicates = false; //判断文件有没有重复序号
 
   TextEditingController weightController = TextEditingController();
@@ -47,6 +42,7 @@ class _DownloadPageState extends State<DownloadPage> {
   late ScrollController _fileScrollerController;
   var currentPath = Directory.current.path;
   dynamic _eventbus1;
+  Timer? _downloadTimer;
 
   @override
   void initState() {
@@ -60,6 +56,8 @@ class _DownloadPageState extends State<DownloadPage> {
       if (mounted) {
         setState(() {
           myDownloadResponse = event.obj;
+          isDownloadClicked = false;
+          _stopTimer();
           if (myDownloadResponse.msgBody.isNotEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text(
@@ -91,253 +89,260 @@ class _DownloadPageState extends State<DownloadPage> {
   void dispose() {
     _fileScrollerController.dispose();
     _eventbus1.cancel;
+    _stopTimer();
     super.dispose();
   }
 
   Widget _buildMainContent() {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width,
-      child: Column(
-        children: [
-          SizedBox(
-            height: 20,
-            child: Text(
-              '',
-              style: TextStyle(color: Theme.of(context).colorScheme.primary),
-            ),
-          ),
-          _buildButtonRow(),
-          Expanded(
-            child: SingleChildScrollView(
-              controller: _fileScrollerController,
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center, // 设置主轴对齐方式为居中
-                    children: [
-                      const SizedBox(
-                        width: 150,
-                        child: Text(
-                          'Weight mode format:',
-                          textAlign: TextAlign.right,
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      SizedBox(
-                        width: 400,
-                        // height: 40,
-                        child: TextField(
-                          controller: weightModeController,
-                          readOnly: true,
-                          maxLines: 2,
-                          minLines: 1,
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(20)),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 50,
-                      ),
-                      SizedBox(
-                        width: 150,
-                        height: 40,
-                        child: OutlinedButton(
-                          style: ButtonStyle(
-                            shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                            ),
-                          ),
-                          onPressed: () async {
-                            weightModeController.text = '';
-                            pickFiles(weightModeController);
-                          },
-                          child: Text(localizedStrings.button_select_format),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center, // 设置主轴对齐方式为居中
-                    children: [
-                      const SizedBox(
-                        width: 150,
-                        child: Text(
-                          'Acc mode format:',
-                          textAlign: TextAlign.right,
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      SizedBox(
-                        width: 400,
-                        child: TextField(
-                          controller: accModeController,
-                          readOnly: true,
-                          maxLines: 2,
-                          minLines: 1,
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(20)),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 50,
-                      ),
-                      SizedBox(
-                        width: 150,
-                        height: 40,
-                        child: OutlinedButton(
-                          style: ButtonStyle(
-                            shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                            ),
-                          ),
-                          onPressed: () async {
-                            accModeController.text = '';
-                            pickFiles(accModeController);
-                          },
-                          child: Text(localizedStrings.button_select_format),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center, // 设置主轴对齐方式为居中
-                    children: [
-                      const SizedBox(
-                        width: 150,
-                        child: Text(
-                          'Pcs mode format:',
-                          textAlign: TextAlign.right,
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      SizedBox(
-                        width: 400,
-                        child: TextField(
-                          controller: pcsModeController,
-                          readOnly: true,
-                          maxLines: 2,
-                          minLines: 1,
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(20)),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 50,
-                      ),
-                      SizedBox(
-                        width: 150,
-                        height: 40,
-                        child: OutlinedButton(
-                          style: ButtonStyle(
-                            shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                            ),
-                          ),
-                          onPressed: () async {
-                            pcsModeController.text = '';
-                            pickFiles(pcsModeController);
-                          },
-                          child: Text(localizedStrings.button_select_format),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center, // 设置主轴对齐方式为居中
-                    children: [
-                      const SizedBox(
-                        width: 150,
-                        child: Text(
-                          'Porcent mode format:',
-                          textAlign: TextAlign.right,
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      SizedBox(
-                        width: 400,
-                        child: TextField(
-                          controller: pctModeController,
-                          readOnly: true,
-                          maxLines: 2,
-                          minLines: 1,
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(20)),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 50,
-                      ),
-                      SizedBox(
-                        width: 150,
-                        height: 40,
-                        child: OutlinedButton(
-                          style: ButtonStyle(
-                            shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                            ),
-                          ),
-                          onPressed: () async {
-                            pctModeController.text = '';
-                            pickFiles(pctModeController);
-                          },
-                          child: Text(localizedStrings.button_select_format),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+    return Stack(children: [
+      SizedBox(
+        width: MediaQuery.of(context).size.width,
+        child: Column(
+          children: [
+            SizedBox(
+              height: 20,
+              child: Text(
+                '',
+                style: TextStyle(color: Theme.of(context).colorScheme.primary),
               ),
             ),
-          ),
-        ],
+            _buildButtonRow(),
+            Expanded(
+              child: SingleChildScrollView(
+                controller: _fileScrollerController,
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    Row(
+                      mainAxisAlignment:
+                          MainAxisAlignment.center, // 设置主轴对齐方式为居中
+                      children: [
+                        SizedBox(
+                          width: 150,
+                          child: Text(
+                            localizedStrings.weight_mode_format,
+                            textAlign: TextAlign.right,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        SizedBox(
+                          width: 400,
+                          // height: 40,
+                          child: TextField(
+                            controller: weightModeController,
+                            readOnly: true,
+                            maxLines: 2,
+                            minLines: 1,
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20)),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 50,
+                        ),
+                        SizedBox(
+                          width: 150,
+                          height: 40,
+                          child: OutlinedButton(
+                            style: ButtonStyle(
+                              shape: MaterialStateProperty.all(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                              ),
+                            ),
+                            onPressed: () async {
+                              weightModeController.text = '';
+                              pickFiles(weightModeController);
+                            },
+                            child: Text(localizedStrings.button_select_format),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    Row(
+                      mainAxisAlignment:
+                          MainAxisAlignment.center, // 设置主轴对齐方式为居中
+                      children: [
+                        SizedBox(
+                          width: 150,
+                          child: Text(
+                            localizedStrings.acc_mode_format,
+                            textAlign: TextAlign.right,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        SizedBox(
+                          width: 400,
+                          child: TextField(
+                            controller: accModeController,
+                            readOnly: true,
+                            maxLines: 2,
+                            minLines: 1,
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20)),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 50,
+                        ),
+                        SizedBox(
+                          width: 150,
+                          height: 40,
+                          child: OutlinedButton(
+                            style: ButtonStyle(
+                              shape: MaterialStateProperty.all(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                              ),
+                            ),
+                            onPressed: () async {
+                              accModeController.text = '';
+                              pickFiles(accModeController);
+                            },
+                            child: Text(localizedStrings.button_select_format),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    Row(
+                      mainAxisAlignment:
+                          MainAxisAlignment.center, // 设置主轴对齐方式为居中
+                      children: [
+                        SizedBox(
+                          width: 150,
+                          child: Text(
+                            localizedStrings.pcs_mode_format,
+                            textAlign: TextAlign.right,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        SizedBox(
+                          width: 400,
+                          child: TextField(
+                            controller: pcsModeController,
+                            readOnly: true,
+                            maxLines: 2,
+                            minLines: 1,
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20)),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 50,
+                        ),
+                        SizedBox(
+                          width: 150,
+                          height: 40,
+                          child: OutlinedButton(
+                            style: ButtonStyle(
+                              shape: MaterialStateProperty.all(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                              ),
+                            ),
+                            onPressed: () async {
+                              pcsModeController.text = '';
+                              pickFiles(pcsModeController);
+                            },
+                            child: Text(localizedStrings.button_select_format),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    Row(
+                      mainAxisAlignment:
+                          MainAxisAlignment.center, // 设置主轴对齐方式为居中
+                      children: [
+                        SizedBox(
+                          width: 150,
+                          child: Text(
+                            localizedStrings.pct_mode_format,
+                            textAlign: TextAlign.right,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        SizedBox(
+                          width: 400,
+                          child: TextField(
+                            controller: pctModeController,
+                            readOnly: true,
+                            maxLines: 2,
+                            minLines: 1,
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20)),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 50,
+                        ),
+                        SizedBox(
+                          width: 150,
+                          height: 40,
+                          child: OutlinedButton(
+                            style: ButtonStyle(
+                              shape: MaterialStateProperty.all(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                              ),
+                            ),
+                            onPressed: () async {
+                              pctModeController.text = '';
+                              pickFiles(pctModeController);
+                            },
+                            child: Text(localizedStrings.button_select_format),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
-    );
+    ]);
   }
 
   Widget _buildButtonRow() {
@@ -378,11 +383,19 @@ class _DownloadPageState extends State<DownloadPage> {
               ),
             ),
             onPressed: () {
-              myCheckSerialPortOnOFF.isCheck = true;
               Navigator.of(context).pop();
             },
           ),
         ),
+        isDownloadClicked
+            ? Center(
+                child: CircularProgressIndicator(
+                  backgroundColor: Colors.transparent,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                      Theme.of(context).colorScheme.primary),
+                ),
+              )
+            : SizedBox(),
         SizedBox(
           width: 120,
           height: 50,
@@ -394,18 +407,43 @@ class _DownloadPageState extends State<DownloadPage> {
                 ),
               ),
             ),
-            onPressed: () {
-              if (!hasDuplicates && paths.isNotEmpty) {
-                _showConfirmationDialog(context);
-              }
-            },
-            child: const Text(
-              "Download",
+            onPressed: (!isDownloadClicked) &&
+                    (weightModeController.text.isNotEmpty ||
+                        accModeController.text.isNotEmpty ||
+                        pcsModeController.text.isNotEmpty ||
+                        pctModeController.text.isNotEmpty)
+                ? () {
+                    if (weightModeController.text.isNotEmpty ||
+                        accModeController.text.isNotEmpty ||
+                        pcsModeController.text.isNotEmpty ||
+                        pctModeController.text.isNotEmpty) {
+                      _showConfirmationDialog(context);
+                    }
+                  }
+                : null,
+            child: Text(
+              localizedStrings.download,
             ),
           ),
         ),
       ],
     );
+  }
+
+  void _startTimer(int time) {
+    _downloadTimer = Timer(Duration(seconds: time), () {
+      isDownloadClicked = false;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: const Text('Download fail !',
+              style: TextStyle(
+                  fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
+          duration: const Duration(seconds: 3),
+          backgroundColor: Colors.red.shade900));
+    });
+  }
+
+  void _stopTimer() {
+    _downloadTimer?.cancel(); // 停止计时器
   }
 
   void _showConfirmationDialog(BuildContext context) {
@@ -438,17 +476,35 @@ class _DownloadPageState extends State<DownloadPage> {
       },
     ).then((confirmed) {
       if (confirmed) {
-        sendFormatToScale(printFormatSequence, paths);
+        sendFormatToScale(printFormatSequence);
+        setState(() {
+          isDownloadClicked = true;
+        });
+        _startTimer(30);
       }
     });
   }
 
-  void sendFormatToScale(List<String> fmtSequence, List<String> fmtPaths) {
+  void sendFormatToScale(List<String> fmtSequence) {
     myScaleCmd.cmdMode = "down_print_format_to_scale";
-    if (fmtSequence.length == fmtPaths.length) {
+    paths.clear();
+
+    if (weightModeController.text.isNotEmpty) {
+      paths.add('1' + weightModeController.text);
+    }
+    if (accModeController.text.isNotEmpty) {
+      paths.add('2' + accModeController.text);
+    }
+    if (pcsModeController.text.isNotEmpty) {
+      paths.add('3' + pcsModeController.text);
+    }
+    if (pctModeController.text.isNotEmpty) {
+      paths.add('4' + pctModeController.text);
+    }
+    if (paths.isNotEmpty) {
       myDownLoadPrtFmt.scaleModel = 'TMax';
       myDownLoadPrtFmt.printerModel = 'EPM205';
-      myDownLoadPrtFmt.filePaths = fmtPaths;
+      myDownLoadPrtFmt.filePaths = paths;
 
       myScaleCmd.cmdData = json.encode(myDownLoadPrtFmt);
       MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
@@ -456,23 +512,28 @@ class _DownloadPageState extends State<DownloadPage> {
   }
 
   Future pickFiles(TextEditingController showFilePath) async {
-    String executablePath = Platform.resolvedExecutable;
-    var directory = p.dirname(executablePath);
-
-    final formatfilePath = Directory('$directory\\format');
-    if (!await formatfilePath.exists()) {
-      await formatfilePath.create(recursive: true);
-    }
-    directory = formatfilePath.path;
+    // String executablePath = Platform.resolvedExecutable;
+    // var directory = p.dirname(executablePath);
+    // final formatfilePath = Directory('$directory\\format');
+    // if (!await formatfilePath.exists()) {
+    //   await formatfilePath.create(recursive: true);
+    // }
+    // directory = formatfilePath.path;
 
     FilePickerResult? result = await FilePicker.platform.pickFiles(
-      initialDirectory: directory,
+      // initialDirectory: directory,
       allowMultiple: false,
       type: FileType.custom,
       allowedExtensions: ['fmt'],
     );
     if (result != null) {
-      showFilePath.text = result.files.single.path!;
+      setState(() {
+        showFilePath.text = result.files.single.path!;
+      });
+    } else {
+      setState(() {
+        showFilePath.text = '';
+      });
     }
   }
 
@@ -480,13 +541,13 @@ class _DownloadPageState extends State<DownloadPage> {
   Widget build(BuildContext context) {
     // final width = MediaQuery.of(context).size.width;
     // final _height = MediaQuery.of(context).size.height;
-    if (!pathFlag) {
-      currentPath = Directory.current.path;
-      if (kDebugMode) {
-        print(currentPath);
-      }
-      pathFlag = true;
-    }
+    // if (!pathFlag) {
+    //   currentPath = Directory.current.path;
+    //   if (kDebugMode) {
+    //     print(currentPath);
+    //   }
+    //   pathFlag = true;
+    // }
 
     return Scaffold(
       appBar: PreferredSize(

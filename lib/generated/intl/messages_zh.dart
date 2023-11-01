@@ -23,6 +23,7 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "Parity": MessageLookupByLibrary.simpleMessage("校验位："),
+        "acc_mode_format": MessageLookupByLibrary.simpleMessage("累加模式打印格式:"),
         "alignment": MessageLookupByLibrary.simpleMessage("对齐方式："),
         "attribute": MessageLookupByLibrary.simpleMessage("属性"),
         "auto": MessageLookupByLibrary.simpleMessage("自动"),
@@ -34,6 +35,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "bluetooth_modify_error":
             MessageLookupByLibrary.simpleMessage("修改蓝牙名称失败"),
         "bluetooth_modify_ok": MessageLookupByLibrary.simpleMessage("修改蓝牙名称成功"),
+        "bt_setting_title": MessageLookupByLibrary.simpleMessage("蓝牙设置"),
         "button_add": MessageLookupByLibrary.simpleMessage("增加"),
         "button_add_license": MessageLookupByLibrary.simpleMessage("添加授权"),
         "button_back": MessageLookupByLibrary.simpleMessage("返回"),
@@ -58,12 +60,18 @@ class MessageLookup extends MessageLookupByLibrary {
         "button_trial": MessageLookupByLibrary.simpleMessage("免费试用"),
         "button_zero": MessageLookupByLibrary.simpleMessage("归零"),
         "cancel": MessageLookupByLibrary.simpleMessage("取消"),
+        "clear_btn": MessageLookupByLibrary.simpleMessage("清空"),
+        "close_preview": MessageLookupByLibrary.simpleMessage("关闭预览"),
         "com_port": MessageLookupByLibrary.simpleMessage("串口"),
         "contact_us":
             MessageLookupByLibrary.simpleMessage("联系我们:sales@taiwanscale.com"),
+        "customization_setting_title":
+            MessageLookupByLibrary.simpleMessage("自定义设置"),
         "data_bits": MessageLookupByLibrary.simpleMessage("数据位："),
         "date_format": MessageLookupByLibrary.simpleMessage("日期格式"),
+        "device_connection_title": MessageLookupByLibrary.simpleMessage("设备连接"),
         "device_name": MessageLookupByLibrary.simpleMessage("设备名称："),
+        "device_setting_title": MessageLookupByLibrary.simpleMessage("设备设置"),
         "download": MessageLookupByLibrary.simpleMessage("下载"),
         "editor": MessageLookupByLibrary.simpleMessage("编辑器"),
         "element_type": MessageLookupByLibrary.simpleMessage("类型："),
@@ -85,8 +93,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "home_page_title9": MessageLookupByLibrary.simpleMessage("语言设置"),
         "hr_alignment": MessageLookupByLibrary.simpleMessage("文字对齐方式"),
         "ip_address": MessageLookupByLibrary.simpleMessage("IP地址:"),
+        "label_design_title": MessageLookupByLibrary.simpleMessage("标签设置"),
         "language": MessageLookupByLibrary.simpleMessage("语言"),
         "language_setting_title": MessageLookupByLibrary.simpleMessage("语言设置"),
+        "license_info_title": MessageLookupByLibrary.simpleMessage("授权信息"),
         "license_title": MessageLookupByLibrary.simpleMessage("认证信息"),
         "manual": MessageLookupByLibrary.simpleMessage("手动"),
         "max_length": MessageLookupByLibrary.simpleMessage("最大长度："),
@@ -97,6 +107,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "new_license_text": MessageLookupByLibrary.simpleMessage("新授权码:"),
         "no_element": MessageLookupByLibrary.simpleMessage("没有选择任何元素"),
         "open_file": MessageLookupByLibrary.simpleMessage("打开文件(json)"),
+        "open_preview": MessageLookupByLibrary.simpleMessage("打开预览"),
         "operation_steps": MessageLookupByLibrary.simpleMessage("操作步骤："),
         "parameter_settings_title":
             MessageLookupByLibrary.simpleMessage("参数设置"),
@@ -104,6 +115,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("没有认证。请发送上方的ID给我们。"),
         "passed_message": MessageLookupByLibrary.simpleMessage("认证通过.\r\n"),
         "password": MessageLookupByLibrary.simpleMessage("密码:"),
+        "pcs_mode_format": MessageLookupByLibrary.simpleMessage("计数模式打印格式:"),
+        "pct_mode_format": MessageLookupByLibrary.simpleMessage("百分比模式打印格式:"),
         "plu_edit": MessageLookupByLibrary.simpleMessage("PLU 编辑"),
         "plu_error_message": MessageLookupByLibrary.simpleMessage("预扣重不能为空."),
         "plu_error_message1":
@@ -115,6 +128,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "position": MessageLookupByLibrary.simpleMessage("位置"),
         "pretare": MessageLookupByLibrary.simpleMessage("预扣重"),
         "print_direction": MessageLookupByLibrary.simpleMessage("打印方向："),
+        "print_format_download": MessageLookupByLibrary.simpleMessage("打印格式下发"),
         "print_page": MessageLookupByLibrary.simpleMessage("纸张大小："),
         "printer": MessageLookupByLibrary.simpleMessage("打印机："),
         "product_information": MessageLookupByLibrary.simpleMessage("产品信息"),
@@ -132,6 +146,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "select_rotation": MessageLookupByLibrary.simpleMessage("旋转角度："),
         "serial_error": MessageLookupByLibrary.simpleMessage("串口失去连接，请检查设置。"),
         "serial_modify_title": MessageLookupByLibrary.simpleMessage("串口信息修改"),
+        "serial_output": MessageLookupByLibrary.simpleMessage("自定义串口输出"),
         "serial_page_ol": MessageLookupByLibrary.simpleMessage("OL 模式"),
         "serial_page_pcs": MessageLookupByLibrary.simpleMessage("计数模式"),
         "serial_page_percent": MessageLookupByLibrary.simpleMessage("百分比模式"),
@@ -139,6 +154,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "serial_page_ul": MessageLookupByLibrary.simpleMessage("UL 模式"),
         "serial_page_weight": MessageLookupByLibrary.simpleMessage("重量模式"),
         "serial_port": MessageLookupByLibrary.simpleMessage("串口："),
+        "serial_port_output_preview":
+            MessageLookupByLibrary.simpleMessage("串口输出预览"),
+        "serial_port_status": MessageLookupByLibrary.simpleMessage("串口连接状态:"),
+        "set_language_title": MessageLookupByLibrary.simpleMessage("设置语言"),
         "set_wifi_success": MessageLookupByLibrary.simpleMessage("设置Wifi成功!"),
         "stable": MessageLookupByLibrary.simpleMessage("稳定："),
         "stable_time": MessageLookupByLibrary.simpleMessage("稳定时间"),
@@ -149,6 +168,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "2. 选择的元素会显示在画面上，可以在这里编辑他们的属性。 "),
         "stop_bits": MessageLookupByLibrary.simpleMessage("停止位："),
         "system_id": MessageLookupByLibrary.simpleMessage("系统唯一ID:  "),
+        "system_setting_title": MessageLookupByLibrary.simpleMessage("系统设置"),
         "tab_order": MessageLookupByLibrary.simpleMessage("序号："),
         "tare": MessageLookupByLibrary.simpleMessage("扣重："),
         "text_content": MessageLookupByLibrary.simpleMessage("文本内容："),
@@ -160,6 +180,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("串口已连接"),
         "txt_serial_port_connected_fail":
             MessageLookupByLibrary.simpleMessage("串口连接失败"),
+        "update_firmware": MessageLookupByLibrary.simpleMessage("更新固件"),
         "user_edit": MessageLookupByLibrary.simpleMessage("用户编辑"),
         "user_error_message1":
             MessageLookupByLibrary.simpleMessage("用户ID和用户名字不能为空!"),
@@ -173,7 +194,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "user_phone": MessageLookupByLibrary.simpleMessage("电话:"),
         "user_remarks": MessageLookupByLibrary.simpleMessage("用户备注："),
         "user_sex": MessageLookupByLibrary.simpleMessage("性别："),
+        "weight_mode_format": MessageLookupByLibrary.simpleMessage("重量模式打印格式:"),
         "welcome": MessageLookupByLibrary.simpleMessage("欢迎"),
+        "wifi_setting_title": MessageLookupByLibrary.simpleMessage("Wi-Fi 设置"),
         "zero": MessageLookupByLibrary.simpleMessage("零点："),
         "zero_range": MessageLookupByLibrary.simpleMessage("零点范围"),
         "zh_cn": MessageLookupByLibrary.simpleMessage("中文")

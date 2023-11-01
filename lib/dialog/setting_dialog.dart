@@ -75,24 +75,27 @@ class _ParamSettingDialogState extends State<ParamSettingDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Container(
-          color: Colors.blue.shade900,
+          color: Theme.of(context).colorScheme.primary,
           child: Row(
             children: [
-              const Icon(Icons.settings, color: Colors.white),
+              Icon(Icons.settings,
+                  color: Theme.of(context).colorScheme.onPrimary),
               Text(localizedStrings.parameter_settings_title,
-                  style: const TextStyle(color: Colors.white))
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.onPrimary))
             ],
           )),
       content: Container(
           height: 350,
           decoration:
-              const BoxDecoration(color: Color.fromARGB(255, 233, 232, 232)),
+              BoxDecoration(color: Theme.of(context).colorScheme.background),
           child: SingleChildScrollView(
             child: Column(
               children: [
                 const SizedBox(height: 2),
                 Container(
-                  decoration: const BoxDecoration(color: Colors.white),
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.onPrimary),
                   child: Column(
                     children: [
                       const SizedBox(height: 15),
@@ -215,12 +218,13 @@ class _ParamSettingDialogState extends State<ParamSettingDialog> {
                           maxLengthEnforcement: MaxLengthEnforcement.enforced,
                           maxLines: 1,
                           textAlignVertical: TextAlignVertical.bottom,
-                          decoration: const InputDecoration(
-                            border:
-                                OutlineInputBorder(borderSide: BorderSide.none),
+                          decoration: InputDecoration(
+                            border: const OutlineInputBorder(
+                                borderSide: BorderSide.none),
                             counterText: "",
-                            focusColor:
-                                Colors.red, // hintText: "请输入机种类型，如：ztp",
+                            focusColor: Theme.of(context)
+                                .colorScheme
+                                .error, // hintText: "请输入机种类型，如：ztp",
                             // border: OutlineInputBorder(),
                           ),
                           onChanged: (value) {},
@@ -237,8 +241,8 @@ class _ParamSettingDialogState extends State<ParamSettingDialog> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             MaterialButton(
-                textColor: Colors.white,
-                color: Colors.blue.shade900,
+                textColor: Theme.of(context).colorScheme.onPrimary,
+                color: Theme.of(context).colorScheme.primary,
                 child: Text(localizedStrings.button_ok),
                 onPressed: () {
                   updateUIConf();

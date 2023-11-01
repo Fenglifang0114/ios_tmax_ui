@@ -12,16 +12,11 @@ import 'package:t_max/data/scalelist_data.dart';
 import 'package:t_max/data/settingparam_data.dart';
 import 'package:t_max/data/userinfo_data.dart';
 import 'package:t_max/data/wifi_list_info.dart';
-
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-
 import '../data/ipinfodata.dart';
 import '../data/reqweightdata_data.dart';
-
-import '../data/scalecmd_data.dart';
 import '../eventbus/eventbus.dart';
-import '../main.dart';
 
 class WebSocketChannel {
   late String url;

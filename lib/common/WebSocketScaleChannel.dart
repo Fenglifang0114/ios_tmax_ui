@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:t_max/data/downloadresponse.dart';
 import 'package:t_max/data/ipinfodata.dart';
+import 'package:t_max/data/record_data.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import '../data/reqweightdata_data.dart';
@@ -168,6 +169,24 @@ class WebSocketScaleChannel {
         Map<String, dynamic> map = json.decode(data);
         dynamic mobj = ChannelResponse.fromJson(map);
         eventBus.fire(EventScalePassthData(mobj));
+      } else if (jsonData['MsgType'] == "resp_get_recs") {
+        pasterGetRecords(jsonData['MsgBody']);
+      } else if (jsonData['MsgType'] == "resp_open_scale_passthrough") {
+        Map<String, dynamic> map = json.decode(data);
+        dynamic mobj = ChannelResponse.fromJson(map);
+        eventBus.fire(EventOpenScalePassthResp(mobj));
+      } else if (jsonData['MsgType'] == "resp_close_scale_passthrough") {
+        Map<String, dynamic> map = json.decode(data);
+        dynamic mobj = ChannelResponse.fromJson(map);
+        eventBus.fire(EventCloseScalePassthResp(mobj));
+      } else if (jsonData['MsgType'] == "resp_reg_weight") {
+        Map<String, dynamic> map = json.decode(data);
+        dynamic mobj = ChannelResponse.fromJson(map);
+        eventBus.fire(EventRegWeightResp(mobj));
+      } else if (jsonData['MsgType'] == "resp_unreg_weight") {
+        Map<String, dynamic> map = json.decode(data);
+        dynamic mobj = ChannelResponse.fromJson(map);
+        eventBus.fire(EventUnregWeightResp(mobj));
       }
     } catch (e) {
       if (kDebugMode) {
@@ -226,4 +245,16 @@ Future pasterGetIpMode(String jsonDataString) async {
   String jsonStrings = jsonDataString;
   myRespGetIpMode.messagedata = jsonStrings;
   eventBus.fire(EventRespGetIpMode(myRespGetIpMode));
+}
+
+Future pasterGetRecords(String jsonDataString) async {
+  if (jsonDataString.isNotEmpty) {
+    myGetScaleRecords = GetScaleRecords.fromJson(json.decode(jsonDataString));
+  } else {
+    if (myGetScaleRecords.weightRecords != null) {
+      myGetScaleRecords.weightRecords!.clear();
+    }
+  }
+  await Future.delayed(Duration.zero);
+  eventBus.fire(EventGetScaleRecords(myGetScaleRecords));
 }

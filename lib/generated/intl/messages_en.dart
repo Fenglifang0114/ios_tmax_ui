@@ -23,6 +23,8 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "Parity": MessageLookupByLibrary.simpleMessage("Parity:"),
+        "acc_mode_format":
+            MessageLookupByLibrary.simpleMessage("Acc mode format:"),
         "alignment": MessageLookupByLibrary.simpleMessage("Alignment:"),
         "attribute": MessageLookupByLibrary.simpleMessage("Attribute"),
         "auto": MessageLookupByLibrary.simpleMessage("Auto"),
@@ -36,6 +38,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Modify bluetooth name error."),
         "bluetooth_modify_ok": MessageLookupByLibrary.simpleMessage(
             "Modify bluetooth name successful."),
+        "bt_setting_title":
+            MessageLookupByLibrary.simpleMessage("Bluetooth Setting"),
         "button_add": MessageLookupByLibrary.simpleMessage("Add"),
         "button_add_license":
             MessageLookupByLibrary.simpleMessage("Add License"),
@@ -62,12 +66,20 @@ class MessageLookup extends MessageLookupByLibrary {
         "button_trial": MessageLookupByLibrary.simpleMessage("Free Trial"),
         "button_zero": MessageLookupByLibrary.simpleMessage("Zero"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+        "clear_btn": MessageLookupByLibrary.simpleMessage("Clear"),
+        "close_preview": MessageLookupByLibrary.simpleMessage("Close preview"),
         "com_port": MessageLookupByLibrary.simpleMessage("Serial port"),
         "contact_us": MessageLookupByLibrary.simpleMessage(
             "Contact us:sales@taiwanscale.com"),
+        "customization_setting_title":
+            MessageLookupByLibrary.simpleMessage("Customization Setting"),
         "data_bits": MessageLookupByLibrary.simpleMessage("Data bits:"),
         "date_format": MessageLookupByLibrary.simpleMessage("Date Format:"),
+        "device_connection_title":
+            MessageLookupByLibrary.simpleMessage("Device Connection"),
         "device_name": MessageLookupByLibrary.simpleMessage("Device name:"),
+        "device_setting_title":
+            MessageLookupByLibrary.simpleMessage("Device Setting"),
         "download": MessageLookupByLibrary.simpleMessage("Download"),
         "editor": MessageLookupByLibrary.simpleMessage("Editor"),
         "element_type": MessageLookupByLibrary.simpleMessage("Type:"),
@@ -99,9 +111,13 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Language Setting"),
         "hr_alignment": MessageLookupByLibrary.simpleMessage("HR Alignment:"),
         "ip_address": MessageLookupByLibrary.simpleMessage("IPv4:"),
+        "label_design_title":
+            MessageLookupByLibrary.simpleMessage("Label Design"),
         "language": MessageLookupByLibrary.simpleMessage("Language"),
         "language_setting_title":
             MessageLookupByLibrary.simpleMessage("Language Setting"),
+        "license_info_title":
+            MessageLookupByLibrary.simpleMessage("License Info"),
         "license_title":
             MessageLookupByLibrary.simpleMessage("License information"),
         "manual": MessageLookupByLibrary.simpleMessage("Manual"),
@@ -116,6 +132,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "no_element": MessageLookupByLibrary.simpleMessage(
             "You haven\'t selected any element."),
         "open_file": MessageLookupByLibrary.simpleMessage("Open File(json)"),
+        "open_preview": MessageLookupByLibrary.simpleMessage("Open preview"),
         "operation_steps":
             MessageLookupByLibrary.simpleMessage("Operation Steps:"),
         "parameter_settings_title":
@@ -125,6 +142,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "passed_message":
             MessageLookupByLibrary.simpleMessage("Authentication passed.\r\n"),
         "password": MessageLookupByLibrary.simpleMessage("Password:"),
+        "pcs_mode_format":
+            MessageLookupByLibrary.simpleMessage("Pcs mode format:"),
+        "pct_mode_format":
+            MessageLookupByLibrary.simpleMessage("Percent mode format:"),
         "plu_edit": MessageLookupByLibrary.simpleMessage("PLU Edit"),
         "plu_error_message": MessageLookupByLibrary.simpleMessage(
             "PLU pretare cannot be empty ."),
@@ -137,6 +158,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "position": MessageLookupByLibrary.simpleMessage("Position"),
         "pretare": MessageLookupByLibrary.simpleMessage("Pretare:"),
         "print_direction": MessageLookupByLibrary.simpleMessage("Direction:"),
+        "print_format_download":
+            MessageLookupByLibrary.simpleMessage("Print Format Download"),
         "print_page": MessageLookupByLibrary.simpleMessage("Page:"),
         "printer": MessageLookupByLibrary.simpleMessage("Printer:"),
         "product_information":
@@ -158,6 +181,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Serial port connection lost. Check the settings."),
         "serial_modify_title": MessageLookupByLibrary.simpleMessage(
             "Serial port information modification"),
+        "serial_output": MessageLookupByLibrary.simpleMessage("Serial Output"),
         "serial_page_ol": MessageLookupByLibrary.simpleMessage("OL mode"),
         "serial_page_pcs": MessageLookupByLibrary.simpleMessage("Pcs mode"),
         "serial_page_percent":
@@ -167,6 +191,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "serial_page_weight":
             MessageLookupByLibrary.simpleMessage("Weight mode"),
         "serial_port": MessageLookupByLibrary.simpleMessage("Serial port:"),
+        "serial_port_output_preview":
+            MessageLookupByLibrary.simpleMessage("Serial port output preview"),
+        "serial_port_status":
+            MessageLookupByLibrary.simpleMessage("Serial port status:"),
+        "set_language_title":
+            MessageLookupByLibrary.simpleMessage("Set Language"),
         "set_wifi_success":
             MessageLookupByLibrary.simpleMessage("Set wifi successful!"),
         "stable": MessageLookupByLibrary.simpleMessage("Stable:"),
@@ -180,6 +210,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "stop_bits": MessageLookupByLibrary.simpleMessage("Stop bits:"),
         "system_id":
             MessageLookupByLibrary.simpleMessage("System Unique ID:  "),
+        "system_setting_title":
+            MessageLookupByLibrary.simpleMessage("System Setting"),
         "tab_order": MessageLookupByLibrary.simpleMessage("Tab order:"),
         "tare": MessageLookupByLibrary.simpleMessage("Tare:"),
         "text_content": MessageLookupByLibrary.simpleMessage("Text Content:"),
@@ -191,6 +223,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Serial port connected"),
         "txt_serial_port_connected_fail":
             MessageLookupByLibrary.simpleMessage("Serial port connected fail"),
+        "update_firmware":
+            MessageLookupByLibrary.simpleMessage("Update Firmware"),
         "user_edit": MessageLookupByLibrary.simpleMessage("User Edit"),
         "user_error_message1": MessageLookupByLibrary.simpleMessage(
             "The user id and user name can not be null !"),
@@ -204,7 +238,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "user_phone": MessageLookupByLibrary.simpleMessage("Phone:"),
         "user_remarks": MessageLookupByLibrary.simpleMessage("User Remarks:"),
         "user_sex": MessageLookupByLibrary.simpleMessage("Sex:"),
+        "weight_mode_format":
+            MessageLookupByLibrary.simpleMessage("Weight mode format:"),
         "welcome": MessageLookupByLibrary.simpleMessage("Welcome"),
+        "wifi_setting_title":
+            MessageLookupByLibrary.simpleMessage("Wi-Fi Setting"),
         "zero": MessageLookupByLibrary.simpleMessage("Zero:"),
         "zero_range": MessageLookupByLibrary.simpleMessage("Zero Range:"),
         "zh_cn": MessageLookupByLibrary.simpleMessage("Chinese")

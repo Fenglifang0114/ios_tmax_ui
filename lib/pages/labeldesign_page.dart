@@ -476,7 +476,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                           ),
                         ),
                         onPressed: () {
-                          myCheckSerialPortOnOFF.isCheck = true;
                           myItemKey.keyList.clear();
                           Navigator.of(context).pop();
                         },

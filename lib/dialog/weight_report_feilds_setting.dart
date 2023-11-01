@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:t_max/data/high_low_weight.dart';
 import '../../generated/l10n.dart';
+import '../data/weight_report_data.dart';
 
 class ReportFeildsSettingDialog extends StatefulWidget {
   const ReportFeildsSettingDialog({super.key});
@@ -10,24 +10,41 @@ class ReportFeildsSettingDialog extends StatefulWidget {
       _ReportFeildsSettingDialogState();
 }
 
+List<String> allFieldSList = [
+  'Date Time',
+  'PLU NO.',
+  'PLU Name',
+  'PLU Remarks',
+  'Weight',
+  'Weight Unit',
+  'Pretare',
+  'User NO.',
+  'User Name',
+  'User Remarks',
+  'Scale Name'
+];
+
 class _ReportFeildsSettingDialogState extends State<ReportFeildsSettingDialog> {
-  late bool? _isPluNoChecked = true;
-  late bool? _isPluNameChecked = true;
-  late bool? _isPluRemarksChecked = true;
-  late bool? _isPretareChecked = true;
-  late bool? _isDateTimeChecked = true;
-  late bool? _isWeightChecked = true;
-  late bool? _isWeightUnitChecked = true;
-  late bool? _isUserNoChecked = true;
-  late bool? _isUserNameChecked = true;
-  late bool? _isUserRemarksChecked = true;
-  late bool? _isScaleNameChecked = true;
+  List<bool?> checkboxList = [
+    false, // _isDateTimeChecked
+    false, // _isPluNoChecked
+    false, // _isPluNameChecked
+    false, // _isPluRemarksChecked
+    false, // _isWeightChecked
+    false, // _isWeightUnitChecked
+    false, // _isPretareChecked
+    false, // _isUserNoChecked
+    false, // _isUserNameChecked
+    false, //  _isUserRemarksChecked
+    false, // _isScaleNameChecked
+  ];
 
   TextEditingController errorText = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    fieldsInit();
   }
 
   var localizedStrings;
@@ -65,65 +82,17 @@ class _ReportFeildsSettingDialogState extends State<ReportFeildsSettingDialog> {
                   decoration: const BoxDecoration(color: Colors.white),
                   child: Column(
                     children: [
-                      checkBoxSetting('PLU NO.', _isPluNoChecked, (value) {
-                        setState(() {
-                          _isPluNoChecked = value!;
-                        });
-                      }),
-                      checkBoxSetting('PLU Name', _isPluNameChecked, (value) {
-                        setState(() {
-                          _isPluNameChecked = value!;
-                        });
-                      }),
-                      checkBoxSetting('PLU Remarks.', _isPluRemarksChecked,
-                          (value) {
-                        setState(() {
-                          _isPluRemarksChecked = value!;
-                        });
-                      }),
-                      checkBoxSetting('User NO.', _isUserNameChecked, (value) {
-                        setState(() {
-                          _isUserNameChecked = value!;
-                        });
-                      }),
-                      checkBoxSetting('User Name', _isUserNoChecked, (value) {
-                        setState(() {
-                          _isUserNoChecked = value!;
-                        });
-                      }),
-                      checkBoxSetting('User Remarks', _isUserRemarksChecked,
-                          (value) {
-                        setState(() {
-                          _isUserRemarksChecked = value!;
-                        });
-                      }),
-                      checkBoxSetting('DateTime', _isDateTimeChecked, (value) {
-                        setState(() {
-                          _isDateTimeChecked = value!;
-                        });
-                      }),
-                      checkBoxSetting('Weight', _isWeightChecked, (value) {
-                        setState(() {
-                          _isWeightChecked = value!;
-                        });
-                      }),
-                      checkBoxSetting('Weight Unit', _isWeightUnitChecked,
-                          (value) {
-                        setState(() {
-                          _isWeightUnitChecked = value!;
-                        });
-                      }),
-                      checkBoxSetting('Pretare', _isPretareChecked, (value) {
-                        setState(() {
-                          _isPretareChecked = value!;
-                        });
-                      }),
-                      checkBoxSetting('Scale Name', _isScaleNameChecked,
-                          (value) {
-                        setState(() {
-                          _isScaleNameChecked = value!;
-                        });
-                      }),
+                      buildCheckBox(0),
+                      buildCheckBox(1),
+                      buildCheckBox(2),
+                      buildCheckBox(3),
+                      buildCheckBox(4),
+                      buildCheckBox(5),
+                      buildCheckBox(6),
+                      buildCheckBox(7),
+                      buildCheckBox(8),
+                      buildCheckBox(9),
+                      buildCheckBox(10),
                       SizedBox(
                         width: 400,
                         height: 36,
@@ -163,18 +132,44 @@ class _ReportFeildsSettingDialogState extends State<ReportFeildsSettingDialog> {
                 color: Theme.of(context).colorScheme.primary,
                 child: Text(localizedStrings.button_ok),
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  creatFieldList();
+                  Navigator.of(context).pop(true);
                 }),
             const SizedBox(width: 20),
             OutlinedButton(
                 child: Text(localizedStrings.button_cancel),
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  Navigator.of(context).pop(false);
                 })
           ],
         )
       ],
     );
+  }
+
+  Widget buildCheckBox(int i) {
+    return checkBoxSetting(allFieldSList[i], checkboxList[i], (value) {
+      setState(() {
+        checkboxList[i] = value!;
+      });
+    });
+  }
+
+  void fieldsInit() {
+    for (int i = 0; i < 11; i++) {
+      if (myReportFields.filedsList.contains(allFieldSList[i])) {
+        checkboxList[i] = true;
+      }
+    }
+  }
+
+  void creatFieldList() {
+    myReportFields.filedsList.clear();
+    for (int i = 0; i < 11; i++) {
+      if (checkboxList[i]!) {
+        myReportFields.filedsList.add(allFieldSList[i]);
+      }
+    }
   }
 
   Widget checkBoxSetting(
@@ -191,7 +186,7 @@ class _ReportFeildsSettingDialogState extends State<ReportFeildsSettingDialog> {
             textAlign: TextAlign.right,
           ),
         ),
-        SizedBox(
+        const SizedBox(
           width: 50,
         ),
         Checkbox(

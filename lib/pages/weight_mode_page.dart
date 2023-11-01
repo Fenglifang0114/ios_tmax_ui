@@ -353,7 +353,6 @@ class _WeightModePageState extends State<WeightModePage> {
                                   ),
                                 ),
                                 onPressed: () {
-                                  myCheckSerialPortOnOFF.isCheck = true;
                                   PublicFunctions.stopWeight();
                                   Navigator.of(context).pop();
                                 },

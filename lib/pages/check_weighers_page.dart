@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:excel/excel.dart';
@@ -20,6 +21,8 @@ import '../../functions/methods.dart';
 import '../../generated/l10n.dart';
 import '../../main.dart';
 import '../data/license_data.dart';
+import '../data/record_data.dart';
+import '../data/scalecmd_data.dart';
 import '../data/weight_report_data.dart';
 import '../dialog/addproduct_dialog.dart';
 import '../dialog/adduser_dialog.dart';
@@ -68,6 +71,10 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
   List<WeightReportData> myWeightReportData = [];
   final DataGridController _dataGridController = DataGridController();
 
+  void updateTableData(List<WeightReportData> newReportData) {
+    _weightReportDataSource.updateData(newReportData);
+  }
+
   _saveWeight(
     bool isStable,
   ) {
@@ -99,6 +106,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     setState(() {
       _isSaveButtonDisabled = false;
       _addWeightToReport();
+      sendReportDataToDB();
     });
   }
 
@@ -111,29 +119,32 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
   dynamic eventBus7;
   dynamic eventBus8;
   dynamic eventBus9;
+  dynamic eventBus10;
 
   @override
   void initState() {
     super.initState();
     _reportScrollerController = ScrollController();
     dataRows.clear();
-    weightMode = 2;
     lastWeight = "*";
     dateformat = 1;
     zeroRange = 0;
-    _isSaveButtonDisabled = false;
+    if (mySettingParam.recMode == "manual") {
+      weightMode = 1;
+      _isSaveButtonDisabled = false;
+    } else {
+      _isSaveButtonDisabled = true;
+      weightMode = 2;
+    }
     _isStableStatusJudge = false;
     getProductNameList();
     _weightReportDatas = getWeightReportData();
     _weightReportDataSource = WeightReportDataSource(_weightReportDatas);
-
     PublicFunctions.getUserList();
     PublicFunctions.getProductList();
-
-    // if (myDevicedata.index == "1") {
-    //   // getRecords();
-    // }
-
+    if (myDevicedata.scaleID == "1") {
+      PublicFunctions.getRecords();
+    }
     eventBus1 = eventBus.on<EventDeviceName>().listen((event) {
       if (mounted) {
         setState(() {
@@ -216,6 +227,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                   _isTiming = false;
                   _isStableStatusJudge = false;
                   _addWeightToReport();
+                  sendReportDataToDB();
                 }
                 lastWeight = myReqWeightCountine.msgBody!.weightVal;
               }
@@ -304,6 +316,13 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
         setState(() {
           myUserInfoList = event.obj;
           getUserNameList();
+        });
+      }
+    });
+    eventBus10 = eventBus.on<EventGetScaleRecords>().listen((event) {
+      if (mounted) {
+        setState(() {
+          myGetScaleRecords = event.obj;
         });
       }
     });
@@ -412,7 +431,6 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                                   ),
                                 ),
                                 onPressed: () {
-                                  myCheckSerialPortOnOFF.isCheck = true;
                                   PublicFunctions.stopWeight();
                                   Navigator.of(context).pop();
                                 },
@@ -963,7 +981,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
               Expanded(
                 child: SfDataGrid(
                   source: _weightReportDataSource,
-                  columns: getColumns,
+                  columns: getColumns(),
                   columnWidthMode: ColumnWidthMode.fill,
                   frozenRowsCount: 0,
                   controller: _dataGridController,
@@ -1001,7 +1019,13 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
       builder: (context) {
         return const ReportFeildsSettingDialog();
       },
-    );
+    ).then((value) {
+      if (value) {
+        setState(() {
+          updateTableData(_weightReportDataSource.weightReportData);
+        });
+      }
+    });
   }
 
   void getProductNameList() {
@@ -1163,7 +1187,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].pLU;
+                .value = myWeightReportData[row - 1].plu;
             break;
           case 5:
             sh
@@ -1220,7 +1244,20 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     }
   }
 
-  _addWeightToReport() {
+// "ReqData":"{\"ScaleId\": 2, \"Product\": \"Apple\", \"Weight\": \"1.230\", \"Price\": \"3.25\"}"}
+  void sendReportDataToDB() {
+    myScaleCmd.cmdMode = "add_rec";
+    myAddScaleRecord.scaleId = 1;
+    myAddScaleRecord.price = '0.0';
+    myAddScaleRecord.product =
+        myWeightReportData[myWeightReportData.length - 1].pluName;
+    myAddScaleRecord.weight =
+        myWeightReportData[myWeightReportData.length - 1].weight.toString();
+    myScaleCmd.cmdData = jsonEncode(myAddScaleRecord);
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  void _addWeightToReport() {
     myWeightReportData.add(WeightReportData(
       (myWeightReportData.length + 1).toString(),
       getDateTime(mySettingParam.dateSeparator),
@@ -1247,6 +1284,11 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
           : (myUserInfo.name.toString().contains("Please")
               ? ""
               : myUserInfo.name.toString()),
+      (myUserInfo.id == null)
+          ? ""
+          : (myUserInfo.id.toString().contains("Please")
+              ? ""
+              : myUserInfo.id.toString()),
       (myUserInfo.remarks == null) ? "" : myUserInfo.remarks.toString(),
       myDevicedata.name,
     ));
@@ -1265,111 +1307,100 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
   }
 }
 
-List<GridColumn> get getColumns {
-  return [
-    GridColumn(
-        columnName: 'id',
+List<GridColumn> getColumns() {
+  List<GridColumn> columns = [];
+  List<String> columnNames = myReportFields.filedsList;
+  columns.add(GridColumn(
+      columnName: 'NO',
+      label: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          alignment: Alignment.center,
+          child: const Text(
+            'NO',
+            overflow: TextOverflow.ellipsis,
+          ))));
+
+  for (String columnName in columnNames) {
+    columns.add(
+      GridColumn(
+        columnName: columnName,
         label: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            alignment: Alignment.center,
-            child: const Text(
-              'ID',
-              overflow: TextOverflow.ellipsis,
-            ))),
-    GridColumn(
-        columnName: 'dateTime',
-        label: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            alignment: Alignment.center,
-            child: const Text('DateTime', overflow: TextOverflow.ellipsis))),
-    GridColumn(
-        columnName: 'weight',
-        label: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            alignment: Alignment.center,
-            child: const Text('Weight', overflow: TextOverflow.ellipsis))),
-    GridColumn(
-        columnName: 'weightUnit',
-        label: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            alignment: Alignment.center,
-            child: const Text('WeightUnit', overflow: TextOverflow.ellipsis))),
-    GridColumn(
-        columnName: 'pLU',
-        label: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            alignment: Alignment.center,
-            child: const Text('PLU', overflow: TextOverflow.ellipsis))),
-    GridColumn(
-        columnName: 'pluName',
-        label: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            alignment: Alignment.center,
-            child: const Text('PluName', overflow: TextOverflow.ellipsis))),
-    GridColumn(
-        columnName: 'pluRemarks',
-        label: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            alignment: Alignment.center,
-            child: const Text('PluRemarks', overflow: TextOverflow.ellipsis))),
-    GridColumn(
-        columnName: 'pretare',
-        label: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            alignment: Alignment.center,
-            child: const Text('Pretare', overflow: TextOverflow.ellipsis))),
-    GridColumn(
-        columnName: 'userName',
-        label: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            alignment: Alignment.center,
-            child: const Text('UserName', overflow: TextOverflow.ellipsis))),
-    GridColumn(
-        columnName: 'userRemarks',
-        label: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            alignment: Alignment.center,
-            child: const Text('UserRemarks', overflow: TextOverflow.ellipsis))),
-    GridColumn(
-        columnName: 'scaleName',
-        label: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            alignment: Alignment.center,
-            child: const Text('ScaleName', overflow: TextOverflow.ellipsis))),
-  ];
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          alignment: Alignment.center,
+          child: Text(
+            columnName,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ),
+    );
+  }
+  return columns;
 }
 
 class WeightReportDataSource extends DataGridSource {
-  WeightReportDataSource(List<WeightReportData> weightReportDatas) {
-    buildDataGridRow(weightReportDatas);
+  List<WeightReportData> weightReportData;
+  WeightReportDataSource(this.weightReportData) {
+    buildDataGridRow();
   }
-  void buildDataGridRow(List<WeightReportData> weightReportData) {
-    dataGridRow = weightReportData.map<DataGridRow>((reportData) {
-      return DataGridRow(cells: [
-        DataGridCell<String>(columnName: 'id', value: reportData.id),
-        DataGridCell<String>(
-            columnName: 'dateTime', value: reportData.dateTime),
-        DataGridCell<String>(columnName: 'weight', value: reportData.weight),
-        DataGridCell<String>(
-            columnName: 'weightUnit', value: reportData.weightUnit),
-        DataGridCell<String>(columnName: 'pLU', value: reportData.pLU),
-        DataGridCell<String>(columnName: 'pluName', value: reportData.pluName),
-        DataGridCell<String>(
-            columnName: 'pluRemarks', value: reportData.pluRemarks),
-        DataGridCell<String>(columnName: 'pretare', value: reportData.pretare),
-        DataGridCell<String>(
-            columnName: 'userName', value: reportData.userName),
-        DataGridCell<String>(
-            columnName: 'userRemarks', value: reportData.userRemarks),
-        DataGridCell<String>(
-            columnName: 'scaleName', value: reportData.scaleName),
-      ]);
-    }).toList();
+  void updateData(List<WeightReportData> newReportData) {
+    weightReportData = newReportData;
+    buildDataGridRow();
+    notifyListeners();
   }
 
   List<DataGridRow> dataGridRow = <DataGridRow>[];
+  void buildDataGridRow() {
+    List<GridColumn> columns = getColumns();
+    dataGridRow = weightReportData.map<DataGridRow>((reportData) {
+      List<DataGridCell<dynamic>> cells = [];
+      for (GridColumn column in columns) {
+        String columnName = column.columnName;
+        cells.add(DataGridCell<String>(
+          columnName: columnName,
+          value: getValueForColumn(reportData, columnName),
+        ));
+      }
+      return DataGridRow(cells: cells);
+    }).toList();
+  }
+
+  // 根据列名获取对应的数据
+  dynamic getValueForColumn(WeightReportData reportData, String columnName) {
+    switch (columnName) {
+      case 'NO':
+        return reportData.id;
+      case 'Date Time':
+        return reportData.dateTime;
+      case 'Weight':
+        return reportData.weight;
+      case 'Weight Unit':
+        return reportData.weightUnit;
+      case 'PLU NO.':
+        return reportData.plu;
+      case 'PLU Name':
+        return reportData.pluName;
+      case 'PLU Remarks':
+        return reportData.pluRemarks;
+      case 'Pretare':
+        return reportData.pretare;
+      case 'User NO.':
+        return reportData.userNo;
+      case 'User Name':
+        return reportData.userName;
+      case 'User Remarks':
+        return reportData.userRemarks;
+      case 'Scale Name':
+        return reportData.scaleName;
+      // 其他属性的处理类似
+      default:
+        return '';
+    }
+  }
+
   @override
   List<DataGridRow> get rows => dataGridRow.isEmpty ? [] : dataGridRow;
+
   @override
   DataGridRowAdapter? buildRow(DataGridRow row) {
     return DataGridRowAdapter(

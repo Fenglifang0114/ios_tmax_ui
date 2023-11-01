@@ -1439,6 +1439,216 @@ class S {
       args: [],
     );
   }
+
+  /// `Serial port status:`
+  String get serial_port_status {
+    return Intl.message(
+      'Serial port status:',
+      name: 'serial_port_status',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Device Connection`
+  String get device_connection_title {
+    return Intl.message(
+      'Device Connection',
+      name: 'device_connection_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Device Setting`
+  String get device_setting_title {
+    return Intl.message(
+      'Device Setting',
+      name: 'device_setting_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Bluetooth Setting`
+  String get bt_setting_title {
+    return Intl.message(
+      'Bluetooth Setting',
+      name: 'bt_setting_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Wi-Fi Setting`
+  String get wifi_setting_title {
+    return Intl.message(
+      'Wi-Fi Setting',
+      name: 'wifi_setting_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Customization Setting`
+  String get customization_setting_title {
+    return Intl.message(
+      'Customization Setting',
+      name: 'customization_setting_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Label Design`
+  String get label_design_title {
+    return Intl.message(
+      'Label Design',
+      name: 'label_design_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Print Format Download`
+  String get print_format_download {
+    return Intl.message(
+      'Print Format Download',
+      name: 'print_format_download',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Serial Output`
+  String get serial_output {
+    return Intl.message(
+      'Serial Output',
+      name: 'serial_output',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Update Firmware`
+  String get update_firmware {
+    return Intl.message(
+      'Update Firmware',
+      name: 'update_firmware',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `System Setting`
+  String get system_setting_title {
+    return Intl.message(
+      'System Setting',
+      name: 'system_setting_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Set Language`
+  String get set_language_title {
+    return Intl.message(
+      'Set Language',
+      name: 'set_language_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `License Info`
+  String get license_info_title {
+    return Intl.message(
+      'License Info',
+      name: 'license_info_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Open preview`
+  String get open_preview {
+    return Intl.message(
+      'Open preview',
+      name: 'open_preview',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Close preview`
+  String get close_preview {
+    return Intl.message(
+      'Close preview',
+      name: 'close_preview',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Clear`
+  String get clear_btn {
+    return Intl.message(
+      'Clear',
+      name: 'clear_btn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Serial port output preview`
+  String get serial_port_output_preview {
+    return Intl.message(
+      'Serial port output preview',
+      name: 'serial_port_output_preview',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Weight mode format:`
+  String get weight_mode_format {
+    return Intl.message(
+      'Weight mode format:',
+      name: 'weight_mode_format',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Acc mode format:`
+  String get acc_mode_format {
+    return Intl.message(
+      'Acc mode format:',
+      name: 'acc_mode_format',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pcs mode format:`
+  String get pcs_mode_format {
+    return Intl.message(
+      'Pcs mode format:',
+      name: 'pcs_mode_format',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Percent mode format:`
+  String get pct_mode_format {
+    return Intl.message(
+      'Percent mode format:',
+      name: 'pct_mode_format',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

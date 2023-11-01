@@ -205,7 +205,6 @@ class _SerialOutputPageState extends State<SerialOutputPage> {
               ),
             ),
             onPressed: () {
-              myCheckSerialPortOnOFF.isCheck = true;
               Navigator.of(context).pop();
             },
           ),

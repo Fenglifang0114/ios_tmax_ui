@@ -36,6 +36,10 @@ ChannelResponse myConnectApResponse = ChannelResponse('', '', 0);
 ChannelResponse myRespCheckSerialPort = ChannelResponse('', '', 0);
 ChannelResponse myRespGetBuildInfo = ChannelResponse('', '', 0);
 ChannelResponse myScalePassthData = ChannelResponse('', '', 0);
+ChannelResponse myOpenScalePassthData = ChannelResponse('', '', 0);
+ChannelResponse myCloseScalePassthData = ChannelResponse('', '', 0);
+ChannelResponse myRegWeightResp = ChannelResponse('', '', 0);
+ChannelResponse myUnregWeightResp = ChannelResponse('', '', 0);
 
 class SerialPortStatus {
   bool serialPortStatus;

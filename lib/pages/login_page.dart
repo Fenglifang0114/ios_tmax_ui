@@ -43,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
           appBar: PreferredSize(
               preferredSize: const Size.fromHeight(30),
               child: AppBar(
-                title: version(),
+                title: version(Theme.of(context).colorScheme.onPrimary),
                 //设置状态栏颜色渐变
                 flexibleSpace: Container(
                     decoration: BoxDecoration(gradient: boxGradient())),

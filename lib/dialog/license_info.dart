@@ -254,7 +254,6 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
             OutlinedButton(
               child: Text(localizedStrings.button_exit),
               onPressed: () {
-                myCheckSerialPortOnOFF.isCheck = true;
                 Navigator.of(context).pop();
               },
             ),

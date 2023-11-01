@@ -212,6 +212,26 @@ class EventScalePassthData {
   EventScalePassthData(this.obj);
 }
 
+class EventOpenScalePassthResp {
+  dynamic obj;
+  EventOpenScalePassthResp(this.obj);
+}
+
+class EventCloseScalePassthResp {
+  dynamic obj;
+  EventCloseScalePassthResp(this.obj);
+}
+
+class EventRegWeightResp {
+  dynamic obj;
+  EventRegWeightResp(this.obj);
+}
+
+class EventUnregWeightResp {
+  dynamic obj;
+  EventUnregWeightResp(this.obj);
+}
+
 class EventSerialPortResponse {
   dynamic obj;
   EventSerialPortResponse(this.obj);

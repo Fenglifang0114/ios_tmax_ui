@@ -353,7 +353,6 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                                   ),
                                 ),
                                 onPressed: () {
-                                  myCheckSerialPortOnOFF.isCheck = true;
                                   PublicFunctions.stopWeight();
                                   Navigator.of(context).pop();
                                 },

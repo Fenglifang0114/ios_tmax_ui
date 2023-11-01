@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:t_max/data/conninfo_data.dart';
 import 'package:t_max/data/dialog_data.dart';
 import 'package:t_max/data/license_data.dart';
 import 'package:t_max/eventbus/eventbus.dart';
@@ -11,6 +12,7 @@ import '../data/comscaleinfo_data.dart';
 import '../data/currentport_data.dart';
 import '../data/device_data.dart';
 import '../data/downloadresponse.dart';
+import '../dialog/get_build_info_dialog.dart';
 import '../dialog/language_setting.dart';
 import '../functions/methods.dart';
 import '../generated/l10n.dart';
@@ -19,14 +21,10 @@ import '../widget/box_gradient.dart';
 import '../widget/custom_circle_icon.dart';
 import '../widget/custom_setting.dart';
 import '../dialog/license_info.dart';
-import '../widget/show_weight_report.dart';
 import '../widget/update_firmware.dart';
 import '../widget/version.dart';
-import 'check_weighers_page.dart';
 import 'custom_serial_protocol_page.dart';
 import 'modify_com_port_page.dart';
-import 'product_download_page.dart';
-import 'weight_mode_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -54,16 +52,6 @@ class _HomePageState extends State<HomePage> {
 
   List<Color> cardColors = List.generate(9, (index) => Colors.white);
   List<Color> textColors = List.generate(9, (index) => Colors.blue.shade900);
-  List<Widget> targetPages = [
-    const ModifyComPortPage(), // 第一个Card对应的目标界面
-    const LabelDesignPage(), // 第二个Card对应的目标界面
-    const WifiSettingPage(), // 第三个Card对应的目标界面
-    const LabelDesignPage(), // 第一个Card对应的目标界面
-    const LabelDesignPage(), // 第二个Card对应的目标界面
-    const ShowWeightReport(), // 第三个Card对应的目标界面
-    // ...
-  ];
-
   List<String> imagePaths = [
     'assets/images/11.png',
     'assets/images/12.png',
@@ -141,6 +129,7 @@ class _HomePageState extends State<HomePage> {
     _eventbus2.cancel();
     _eventbus3.cancel();
     _pageScrollerController.dispose();
+    _stopTimer();
     super.dispose();
   }
 
@@ -153,109 +142,102 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final _width = MediaQuery.of(context).size.width;
-    final _height = MediaQuery.of(context).size.height;
+    // final _width = MediaQuery.of(context).size.width;
     // final _height = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(100),
+          preferredSize: const Size.fromHeight(50),
           child: Container(
-            color: Theme.of(context).colorScheme.onPrimary,
-            // foregroundColor: Theme.of(context).colorScheme.primary,
-            child: Column(
-              children: [
-                Container(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(
-                        width: 200,
-                        child: Row(
-                          children: [
-                            const SizedBox(
-                              width: 50,
-                            ),
-                            Image.asset(
-                              'assets/images/4.png',
-                              width: 30.0,
-                              height: 30.0,
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            version(),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 100,
-                        height: 50,
-                        child: Row(
-                          children: [
-                            CustomSettingButton(),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Container(
-                  decoration: BoxDecoration(gradient: boxGradient()),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Center(
-                        child: SizedBox(
-                          width: 240,
-                          child: Text(
-                            "T-CONFIG",
-                            style: TextStyle(
-                                fontSize: 20,
-                                color: Theme.of(context).colorScheme.onPrimary),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 240,
-                        height: 50,
-                        child: Row(
-                          children: [
-                            Text('Serial port status:',
+              color: Theme.of(context).colorScheme.onPrimary,
+              // foregroundColor: Theme.of(context).colorScheme.primary,
+              child: Container(
+                decoration: BoxDecoration(gradient: boxGradient()),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Center(
+                      child: SizedBox(
+                          width: 360,
+                          child: Row(
+                            children: [
+                              const SizedBox(
+                                width: 20,
+                              ),
+                              Image.asset(
+                                'assets/images/4.png',
+                                width: 30.0,
+                                height: 30.0,
+                              ),
+                              const SizedBox(
+                                width: 20,
+                              ),
+                              Text(
+                                "T-CONFIG",
                                 style: TextStyle(
                                     fontSize: 20,
                                     color: Theme.of(context)
                                         .colorScheme
-                                        .onPrimary)),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            (isComConnected)
-                                ? const CustomCircleIcon(
-                                    outerColor: Colors.blue,
-                                    innerColor: Colors.white,
-                                    icon: Icons.check_circle,
-                                    size: 24.0,
-                                  )
-                                : const CustomCircleIcon(
-                                    outerColor: Colors.red,
-                                    innerColor: Colors.white,
-                                    icon: Icons.cancel,
-                                    size: 24.0,
-                                  )
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                )
-              ],
-            ),
-            //设置状态栏颜色渐变
-            // flexibleSpace:
-            //     Container(decoration: BoxDecoration(gradient: boxGradient())),
-          )),
+                                        .onPrimary),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(
+                                width: 20,
+                              ),
+                              version(Theme.of(context).colorScheme.onPrimary),
+                              Text(
+                                  myLicenseInfo.isValid
+                                      ? '(Ultimate)'
+                                      : '(Community)',
+                                  style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.onPrimary,
+                                    fontSize: 16,
+                                  ),
+                                  textAlign: TextAlign.center),
+                            ],
+                          )),
+                    ),
+                    SizedBox(
+                      width: 280,
+                      height: 50,
+                      child: Row(
+                        children: [
+                          const CustomSettingButton(),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          Text(localizedStrings.serial_port_status,
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary)),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          (isComConnected)
+                              ? const CustomCircleIcon(
+                                  outerColor: Colors.blue,
+                                  innerColor: Colors.white,
+                                  icon: Icons.check_circle,
+                                  size: 24.0,
+                                )
+                              : const CustomCircleIcon(
+                                  outerColor: Colors.red,
+                                  innerColor: Colors.white,
+                                  icon: Icons.cancel,
+                                  size: 24.0,
+                                )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              )
+
+              //设置状态栏颜色渐变
+              // flexibleSpace:
+              //     Container(decoration: BoxDecoration(gradient: boxGradient())),
+              )),
       body: Container(
         color: Theme.of(context).colorScheme.surface,
         padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 30.0),
@@ -315,12 +297,14 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget customFunctionCard(
-      String titleName, String iconImage, IconData iconInfo) {
+      String titleName, String iconImage, IconData iconInfo, bool isValid) {
     return Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
         ),
-        color: Theme.of(context).colorScheme.onPrimary,
+        color: isValid
+            ? Theme.of(context).colorScheme.onPrimary
+            : Theme.of(context).colorScheme.background,
         child: SizedBox(
             height: 80,
             child: Row(
@@ -367,7 +351,8 @@ class _HomePageState extends State<HomePage> {
               Container(
                 padding: const EdgeInsets.symmetric(
                     vertical: 10.0, horizontal: 20.0),
-                child: functionTitle('Device Connection', Icons.link),
+                child: functionTitle(
+                    localizedStrings.device_connection_title, Icons.link),
               ),
               Expanded(
                 child: ListView(children: [
@@ -385,7 +370,8 @@ class _HomePageState extends State<HomePage> {
                       child: customFunctionCard(
                           localizedStrings.title_serial_port_connection,
                           "assets/images/line.png",
-                          Icons.cable),
+                          Icons.cable,
+                          true),
                     ),
                   ),
                 ]),
@@ -409,7 +395,8 @@ class _HomePageState extends State<HomePage> {
               Container(
                 padding: const EdgeInsets.symmetric(
                     vertical: 10.0, horizontal: 20.0),
-                child: functionTitle('Device Setting', Icons.settings),
+                child: functionTitle(
+                    localizedStrings.device_setting_title, Icons.settings),
               ),
               Expanded(
                 child: ListView(
@@ -420,33 +407,41 @@ class _HomePageState extends State<HomePage> {
                         cursor: SystemMouseCursors.click, // 设置光标为手的形状
                         child: GestureDetector(
                           onTap: () {
-                            //TODO:蓝牙页面
+                            //蓝牙页面
                             setState(() {
                               stopCheckSerialPort();
                               showBluetoothDialog(context);
                             });
                           },
-                          child: customFunctionCard("Bluetooth Setting",
-                              "assets/images/line.png", Icons.bluetooth),
+                          child: customFunctionCard(
+                              localizedStrings.bt_setting_title,
+                              "assets/images/line.png",
+                              Icons.bluetooth,
+                              true),
                         ),
                       ),
                       MouseRegion(
                           cursor: SystemMouseCursors.click, // 设置光标为手的形状
                           child: GestureDetector(
                             onTap: () {
-                              //TODO:wifi页面
+                              //wifi页面
                               setState(() {
                                 stopCheckSerialPort();
                                 PublicFunctions.getWifiList();
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => targetPages[2]),
-                                ).then((value) => setState(() {}));
+                                    builder: (context) =>
+                                        const WifiSettingPage(),
+                                  ),
+                                ).then((value) => _startTimer(5));
                               });
                             },
-                            child: customFunctionCard("Wi-Fi Setting",
-                                "assets/images/line.png", Icons.wifi),
+                            child: customFunctionCard(
+                                localizedStrings.wifi_setting_title,
+                                "assets/images/line.png",
+                                Icons.wifi,
+                                true),
                           )),
                     ]),
               ),
@@ -468,8 +463,8 @@ class _HomePageState extends State<HomePage> {
             Container(
               padding:
                   const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-              child:
-                  functionTitle('Customization Setting', Icons.design_services),
+              child: functionTitle(localizedStrings.customization_setting_title,
+                  Icons.design_services),
             ),
             Expanded(
               child: ListView(
@@ -479,12 +474,17 @@ class _HomePageState extends State<HomePage> {
                     MouseRegion(
                       cursor: SystemMouseCursors.click, // 设置光标为手的形状
                       child: GestureDetector(
-                        onTap: () {
-                          //TODO:  标签设计
-                          showLabelDesign(myLicenseInfo.isValid);
-                        },
-                        child: customFunctionCard("Label Design",
-                            "assets/images/line.png", Icons.sell),
+                        onTap: myLicenseInfo.isValid
+                            ? () {
+                                //TODO:  标签设计
+                                showLabelDesign(myLicenseInfo.isValid);
+                              }
+                            : null,
+                        child: customFunctionCard(
+                            localizedStrings.label_design_title,
+                            "assets/images/line.png",
+                            Icons.sell,
+                            myLicenseInfo.isValid),
                       ),
                     ),
                     MouseRegion(
@@ -497,65 +497,45 @@ class _HomePageState extends State<HomePage> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => const DownloadPage()),
-                          ).then((value) => setState(() {
-                                isCardClicked = false;
-                              }));
+                          ).then((value) => _startTimer(5));
                         },
                         child: customFunctionCard(
-                            "Print Format Download",
+                            localizedStrings.print_format_download,
                             "assets/images/line.png",
-                            Icons.receipt_long_outlined),
+                            Icons.receipt_long_outlined,
+                            true),
                       ),
                     ),
                     MouseRegion(
                       cursor: SystemMouseCursors.click, // 设置光标为手的形状
                       child: GestureDetector(
-                        onTap: () {
-                          //TODO:  串口输出
-                          stopCheckSerialPort();
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const CustomSerialProtocol()),
-                          ).then((value) => setState(() {
-                                isCardClicked = false;
-                                _startTimer(5);
-                              }));
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //       builder: (context) => const SerialOutputPage()),
-                          // ).then((value) => setState(() {
-                          //       isCardClicked = false;
-                          //     }));
-                        },
-                        child: customFunctionCard("Serial Output",
-                            "assets/images/line.png", Icons.usb_sharp),
+                        onTap: myLicenseInfo.isValid
+                            ? () {
+                                //TODO:  串口输出
+                                stopCheckSerialPort();
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const CustomSerialProtocol()),
+                                ).then((value) => _startTimer(5));
+                                // Navigator.push(
+                                //   context,
+                                //   MaterialPageRoute(
+                                //       builder: (context) => const SerialOutputPage()),
+                                // ).then((value) => setState(() {
+                                //       isCardClicked = false;
+                                //     }));
+                              }
+                            : null,
+                        child: customFunctionCard(
+                            localizedStrings.serial_output,
+                            "assets/images/line.png",
+                            Icons.usb_sharp,
+                            myLicenseInfo.isValid),
                       ),
                     ),
-                    MouseRegion(
-                      cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                      child: GestureDetector(
-                        onTap: () {
-                          //TODO:  PLU下载
-                          setState(() {
-                            stopCheckSerialPort();
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const ProductDownloadPage()),
-                            ).then((value) => setState(() {
-                                  isCardClicked = false;
-                                  _startTimer(5);
-                                }));
-                          });
-                        },
-                        child: customFunctionCard("Plu Download",
-                            "assets/images/line.png", Icons.shopping_bag),
-                      ),
-                    ),
+
                     MouseRegion(
                       cursor: SystemMouseCursors.click, // 设置光标为手的形状
                       child: GestureDetector(
@@ -566,65 +546,109 @@ class _HomePageState extends State<HomePage> {
                             showUpdateFirmWareDialog(context);
                           });
                         },
-                        child: customFunctionCard("Update FirmWare",
-                            "assets/images/line.png", Icons.update),
+                        child: customFunctionCard(
+                            localizedStrings.update_firmware,
+                            "assets/images/line.png",
+                            Icons.update,
+                            true),
                       ),
                     ),
                     MouseRegion(
                       cursor: SystemMouseCursors.click, // 设置光标为手的形状
                       child: GestureDetector(
                         onTap: () {
-                          //TODO:  DC500
+                          //TODO:  buildInfo
                           setState(() {
-                            stopCheckSerialPort();
-                            setState(() {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const WeightModePage()),
-                              ).then((value) => setState(() {
-                                    isCardClicked = false;
-                                    // _startTimer(5);
-                                  }));
-                            });
+                            showBuildInfo();
                           });
                         },
                         child: customFunctionCard(
-                            "DC 500",
+                            localizedStrings.get_build_info,
                             "assets/images/line.png",
-                            Icons.monitor_weight_outlined),
+                            Icons.info,
+                            true),
                       ),
                     ),
-                    MouseRegion(
-                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                        child: GestureDetector(
-                          onTap: () {
-                            //TODO:  DC500
-                            setState(() {
-                              stopCheckSerialPort();
-                              setState(() {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const CheckWeighersPage()),
-                                ).then((value) => setState(() {
-                                      isCardClicked = false;
-                                      // _startTimer(5);
-                                    }));
-                              });
-                            });
-                          },
-                          child: customFunctionCard("Checkweighers",
-                              "assets/images/line.png", Icons.scale),
-                        )),
+                    // MouseRegion(
+                    //   cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                    //   child: GestureDetector(
+                    //     onTap: () {
+                    //       //TODO:  PLU下载
+                    //       setState(() {
+                    //         stopCheckSerialPort();
+                    //         Navigator.push(
+                    //           context,
+                    //           MaterialPageRoute(
+                    //               builder: (context) =>
+                    //                   const ProductDownloadPage()),
+                    //         ).then((value) => _startTimer(5));
+                    //       });
+                    //     },
+                    //     child: customFunctionCard("Plu Download",
+                    //         "assets/images/line.png", Icons.shopping_bag, true),
+                    //   ),
+                    // ),
+                    // MouseRegion(
+                    //   cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                    //   child: GestureDetector(
+                    //     onTap: () {
+                    //       //TODO:  DC500
+                    //       setState(() {
+                    //         stopCheckSerialPort();
+                    //         setState(() {
+                    //           Navigator.push(
+                    //             context,
+                    //             MaterialPageRoute(
+                    //                 builder: (context) =>
+                    //                     const WeightModePage()),
+                    //           ).then((value) => _startTimer(5));
+                    //         });
+                    //       });
+                    //     },
+                    //     child: customFunctionCard(
+                    //         "DC 500",
+                    //         "assets/images/line.png",
+                    //         Icons.monitor_weight_outlined,
+                    //         true),
+                    //   ),
+                    // ),
+                    // MouseRegion(
+                    //     cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                    //     child: GestureDetector(
+                    //       onTap: () {
+                    //         //TODO:  DC500
+                    //         setState(() {
+                    //           stopCheckSerialPort();
+                    //           setState(() {
+                    //             Navigator.push(
+                    //               context,
+                    //               MaterialPageRoute(
+                    //                   builder: (context) =>
+                    //                       const CheckWeighersPage()),
+                    //             ).then((value) => _startTimer(5));
+                    //           });
+                    //         });
+                    //       },
+                    //       child: customFunctionCard("Checkweighers",
+                    //           "assets/images/line.png", Icons.scale, true),
+                    //     )),
                   ]),
             ),
           ],
         ),
       ),
     );
+  }
+
+  void showBuildInfo() {
+    stopCheckSerialPort();
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 允许点击空白处关闭对话框
+      builder: (context) {
+        return const GetBuildInfoPage();
+      },
+    ).then((value) => _startTimer(5));
   }
 
   void showLabelDesign(bool isValid) {
@@ -634,214 +658,9 @@ class _HomePageState extends State<HomePage> {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const LabelDesignPage()),
-      ).then((value) => setState(() {
-            isCardClicked = false;
-          }));
+      ).then((value) => _startTimer(5));
     }
   }
-
-  // SizedBox(
-  //         height: _height,
-  //         width: _width,
-  //         // decoration: BoxDecoration(gradient: boxGradient()),
-  //         child: ListView(
-  //           // 水平拉伸
-  //           scrollDirection: Axis.horizontal,
-  //           children: [
-  //             SizedBox(
-  //               height: _height,
-  //               width: _width,
-  //               // decoration: BoxDecoration(gradient: boxGradient()),
-  //               child: Column(
-  //                 mainAxisAlignment: MainAxisAlignment.center,
-  //                 children: [
-  //                   Expanded(
-  //                       child: Column(
-  //                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  //                     children: [
-  //                       Row(
-  //                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  //                         children: [
-  //                           CustomCard(
-  //                             //修改串口
-  //                             onTap: () {
-  //                               stopCheckSerialPort();
-  //                               setState(() {
-  //                                 PublicFunctions.getProductList();
-  //                                 PublicFunctions.getPortList();
-  //                                 showComPortDialog(context);
-  //                               });
-  //                             },
-  //                             title: titleNames[0],
-  //                             cardColor: cardColors[0],
-  //                             textColor: textColors[0],
-  //                             // image: imagePaths[0],
-  //                           ),
-  //                           CustomCard(
-  //                             //设计打印格式
-  //                             onTap: myLicenseInfo.isValid
-  //                                 ? () {
-  //                                     stopCheckSerialPort();
-  //                                     setState(() {
-  //                                       Navigator.push(
-  //                                         context,
-  //                                         MaterialPageRoute(
-  //                                             builder: (context) =>
-  //                                                 targetPages[1]),
-  //                                       );
-  //                                     });
-  //                                   }
-  //                                 : () {},
-  //                             title: titleNames[1],
-  //                             cardColor: myLicenseInfo.isValid
-  //                                 ? cardColors[1]
-  //                                 : Theme.of(context).colorScheme.background,
-  //                             textColor: textColors[1],
-  //                             // image: imagePaths[1],
-  //                           ),
-  //                           CustomCard(
-  //                             //WIFI
-  //                             onTap: () {
-  //                               setState(() {
-  //                                 stopCheckSerialPort();
-  //                                 PublicFunctions.getWifiList();
-  //                                 Navigator.push(
-  //                                   context,
-  //                                   MaterialPageRoute(
-  //                                       builder: (context) => targetPages[2]),
-  //                                 );
-  //                               });
-  //                             },
-  //                             title: titleNames[2],
-  //                             cardColor: cardColors[2],
-  //                             textColor: textColors[2],
-  //                             // image: imagePaths[2],
-  //                           ),
-  //                         ],
-  //                       ),
-  //                       Row(
-  //                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  //                         children: [
-  //                           CustomCard(
-  //                             //蓝牙
-  //                             onTap: () {
-  //                               setState(() {
-  //                                 stopCheckSerialPort();
-  //                                 showBluetoothDialog(context);
-  //                               });
-  //                             },
-  //                             title: titleNames[3],
-  //                             cardColor: cardColors[3],
-  //                             textColor: textColors[3],
-  //                             // image: imagePaths[3],
-  //                           ),
-  //                           CustomCard(
-  //                             //更新软件
-  //                             onTap: () {
-  //                               setState(() {
-  //                                 stopCheckSerialPort();
-  //                                 showUpdateFirmWareDialog(context);
-  //                               });
-  //                             },
-  //                             title: titleNames[4],
-  //                             cardColor: cardColors[4],
-  //                             textColor: textColors[4],
-  //                             // image: imagePaths[4],
-  //                           ),
-  //                           CustomCard(
-  //                             //开发中
-  //                             onTap: () {
-  //                               setState(() {
-  //                                 // waitingBuildDialog(context);
-  //                                 // Navigator.push(
-  //                                 //   context,
-  //                                 //   MaterialPageRoute(
-  //                                 //       builder: (context) => targetPages[5]),
-  //                                 // );
-  //                                 stopCheckSerialPort();
-  //                                 Navigator.push(
-  //                                   context,
-  //                                   MaterialPageRoute(
-  //                                       builder: (context) =>
-  //                                           const DownloadPage()),
-  //                                 );
-  //                               });
-  //                             },
-  //                             title: titleNames[5],
-  //                             cardColor: cardColors[5],
-  //                             textColor: textColors[5],
-  //                             // image: imagePaths[5],
-  //                           ),
-  //                         ],
-  //                       ),
-  //                       Row(
-  //                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  //                         children: [
-  //                           CustomCard(
-  //                             //license
-  //                             onTap: () {
-  //                               /////////////////////////////////////////////////////////////
-  //                               stopCheckSerialPort();
-  //                               setState(() {
-  //                                 stopCheckSerialPort();
-  //                                 showLicenseDialog(context);
-  //                               });
-  //                             },
-  //                             title: titleNames[6],
-  //                             cardColor: cardColors[6],
-  //                             textColor: textColors[6],
-  //                             // image: imagePaths[3],
-  //                           ),
-  //                           CustomCard(
-  //                             //重量
-  //                             onTap: myLicenseInfo.isValid
-  //                                 ? () {
-  //                                     setState(() {
-  //                                       stopCheckSerialPort();
-  //                                       Navigator.push(
-  //                                         context,
-  //                                         MaterialPageRoute(
-  //                                             builder: (context) =>
-  //                                                 const ShowWeightReport()),
-  //                                       );
-  //                                     });
-  //                                   }
-  //                                 : () {},
-  //                             title: titleNames[7],
-  //                             cardColor: myLicenseInfo.isValid
-  //                                 ? cardColors[7]
-  //                                 : Theme.of(context).colorScheme.background,
-  //                             textColor: textColors[7],
-  //                             // image: imagePaths[3],
-  //                           ),
-  //                           CustomCard(
-  //                             onTap: () {
-  //                               setState(() {
-  //                                 stopCheckSerialPort();
-  //                                 // Navigator.push(
-  //                                 //   context,
-  //                                 //   MaterialPageRoute(
-  //                                 //       builder: (context) =>
-  //                                 //           const CustomSerialProtocol()),
-  //                                 // );
-  //                                 setLanguageDialog(context);
-  //                               });
-  //                             },
-  //                             title: titleNames[8],
-  //                             cardColor: cardColors[7],
-  //                             textColor: textColors[7],
-  //                             // image: imagePaths[3],
-  //                           ),
-  //                         ],
-  //                       ),
-  //                     ],
-  //                   )),
-  //                 ],
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       )
 
   void showBluetoothDialog(BuildContext context) {
     showDialog(
@@ -850,7 +669,7 @@ class _HomePageState extends State<HomePage> {
       builder: (context) {
         return const BluetoothDialog();
       },
-    ).then((value) => setState(() {}));
+    ).then((value) => _startTimer(5));
   }
 
   void showUpdateFirmWareDialog(BuildContext context) {
@@ -860,7 +679,7 @@ class _HomePageState extends State<HomePage> {
       builder: (context) {
         return const UpdateFirmWareDialog();
       },
-    ).then((value) => setState(() {}));
+    ).then((value) => _startTimer(5));
   }
 
   void showComPortDialog(BuildContext context) {
@@ -870,7 +689,7 @@ class _HomePageState extends State<HomePage> {
       builder: (context) {
         return const ModifyComPortPage();
       },
-    ).then((value) => setState(() {}));
+    ).then((value) => _startTimer(5));
     ;
   }
 
@@ -881,7 +700,7 @@ class _HomePageState extends State<HomePage> {
       builder: (context) {
         return const LicenseInfoDialog();
       },
-    ).then((value) => setState(() {}));
+    ).then((value) => _startTimer(5));
   }
 
   void setLanguageDialog(BuildContext context) {
@@ -891,7 +710,7 @@ class _HomePageState extends State<HomePage> {
       builder: (context) {
         return const LanguageSettingPage();
       },
-    ).then((value) => setState(() {}));
+    ).then((value) => _startTimer(5));
   }
 
   void _startTimer(int time) {
@@ -905,7 +724,6 @@ class _HomePageState extends State<HomePage> {
   void _stopTimer() {
     _timer?.cancel(); // 停止计时器
     isTiming = false;
-    myCheckSerialPortOnOFF.isCheck = false;
   }
 
   void stopCheckSerialPort() {

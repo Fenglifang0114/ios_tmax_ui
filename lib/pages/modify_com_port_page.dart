@@ -347,7 +347,6 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
             OutlinedButton(
                 child: Text(localizedStrings.button_exit),
                 onPressed: () {
-                  myCheckSerialPortOnOFF.isCheck = true;
                   Navigator.of(context)
                       .pop(); // to go back to screen after submitting
                 })

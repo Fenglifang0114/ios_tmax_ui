@@ -27,10 +27,3 @@ LicenseInfo myLicenseInfo = LicenseInfo(
   '',
   '',
 );
-
-class CheckSerialPortOnOFF {
-  bool isCheck;
-  CheckSerialPortOnOFF(this.isCheck);
-}
-
-CheckSerialPortOnOFF myCheckSerialPortOnOFF = CheckSerialPortOnOFF(true);

@@ -43,190 +43,200 @@ addUserDialog(BuildContext context) {
         return StatefulBuilder(builder: ((context, setState) {
           return AlertDialog(
             title: Container(
-                color: Colors.blue.shade900,
+                color: Theme.of(context).colorScheme.primary,
                 child: Row(
                   children: [
-                    const Icon(Icons.person, color: Colors.white),
+                    Icon(Icons.person,
+                        color: Theme.of(context).colorScheme.onPrimary),
                     Text(localizedStrings.user_info,
-                        style: const TextStyle(color: Colors.white))
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary))
                   ],
                 )),
             content: Container(
-              height: 400,
-              decoration: const BoxDecoration(
-                  color: Color.fromARGB(255, 233, 232, 232)),
-              child: Column(
-                children: [
-                  const SizedBox(height: 2),
-                  Container(
-                    decoration: const BoxDecoration(color: Colors.white),
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 15),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(localizedStrings.user_id),
-                                SizedBox(
-                                  width: 200,
-                                  height: 30,
-                                  child: TextField(
-                                    controller: userId,
-                                    maxLength: 20,
-                                    maxLengthEnforcement:
-                                        MaxLengthEnforcement.enforced,
-                                    maxLines: 1,
-                                    textAlignVertical: TextAlignVertical.bottom,
-                                    decoration: const InputDecoration(
-                                      counterText: "",
-                                      // hintText: "请输入机种类型，如：ztp",
-                                      // border: OutlineInputBorder(),
+              height: 350,
+              decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.background),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const SizedBox(height: 2),
+                    Container(
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.onPrimary),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 15),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(localizedStrings.user_id),
+                                  SizedBox(
+                                    width: 200,
+                                    height: 30,
+                                    child: TextField(
+                                      controller: userId,
+                                      maxLength: 20,
+                                      maxLengthEnforcement:
+                                          MaxLengthEnforcement.enforced,
+                                      maxLines: 1,
+                                      textAlignVertical:
+                                          TextAlignVertical.bottom,
+                                      decoration: const InputDecoration(
+                                        counterText: "",
+                                        // hintText: "请输入机种类型，如：ztp",
+                                        // border: OutlineInputBorder(),
+                                      ),
+                                      onChanged: (value) {
+                                        errorText.text = "";
+                                      },
                                     ),
-                                    onChanged: (value) {
-                                      errorText.text = "";
-                                    },
                                   ),
-                                ),
-                                const SizedBox(height: 5),
-                                Text(localizedStrings.user_name),
-                                SizedBox(
-                                  width: 400,
-                                  height: 30,
-                                  child: TextField(
-                                    controller: userName,
-                                    maxLength: 100,
-                                    maxLengthEnforcement:
-                                        MaxLengthEnforcement.enforced,
-                                    maxLines: 1,
-                                    textAlignVertical: TextAlignVertical.bottom,
-                                    decoration: const InputDecoration(
-                                      counterText: "",
-                                      // hintText: "请输入机种类型，如：ztp",
-                                      // border: OutlineInputBorder(),
+                                  const SizedBox(height: 5),
+                                  Text(localizedStrings.user_name),
+                                  SizedBox(
+                                    width: 400,
+                                    height: 30,
+                                    child: TextField(
+                                      controller: userName,
+                                      maxLength: 100,
+                                      maxLengthEnforcement:
+                                          MaxLengthEnforcement.enforced,
+                                      maxLines: 1,
+                                      textAlignVertical:
+                                          TextAlignVertical.bottom,
+                                      decoration: const InputDecoration(
+                                        counterText: "",
+                                        // hintText: "请输入机种类型，如：ztp",
+                                        // border: OutlineInputBorder(),
+                                      ),
+                                      onChanged: (value) {
+                                        errorText.text = "";
+                                      },
                                     ),
-                                    onChanged: (value) {
-                                      errorText.text = "";
-                                    },
                                   ),
-                                ),
-                                const SizedBox(height: 5),
-                                Row(
-                                  children: [
-                                    SizedBox(
-                                        width: 100,
-                                        child: Text(localizedStrings.user_sex)),
-                                    Radio(
-                                        value: 1,
-                                        groupValue: _checkFemale,
-                                        onChanged: (value) {
-                                          debugPrint(value.toString());
-                                          setState(() {
-                                            errorText.text = "";
-                                            _checkFemale = 1;
-                                          });
-                                        }),
-                                    const Text("Woman"),
-                                    const SizedBox(width: 50),
-                                    Radio(
-                                        value: 2,
-                                        groupValue: _checkFemale,
-                                        onChanged: (value) {
-                                          debugPrint(value.toString());
-                                          setState(() {
-                                            errorText.text = "";
-                                            _checkFemale = 2;
-                                          });
-                                        }),
-                                    const Text("Men"),
-                                  ],
-                                ),
-                                const SizedBox(height: 5),
-                                const SizedBox(height: 5),
-                                Text(localizedStrings.user_phone),
-                                SizedBox(
-                                  width: 400,
-                                  height: 30,
-                                  child: TextField(
-                                    controller: phone,
-                                    maxLength: 11,
-                                    maxLengthEnforcement:
-                                        MaxLengthEnforcement.enforced,
-                                    maxLines: 1,
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.allow(
-                                          RegExp("[0-9.]"))
-                                    ], //数字包括小数,
-                                    textAlignVertical: TextAlignVertical.bottom,
-                                    decoration: const InputDecoration(
-                                      counterText: "",
-                                      // hintText: "请输入机种类型，如：ztp",
-                                      // border: OutlineInputBorder(),
+                                  const SizedBox(height: 5),
+                                  Row(
+                                    children: [
+                                      SizedBox(
+                                          width: 100,
+                                          child:
+                                              Text(localizedStrings.user_sex)),
+                                      Radio(
+                                          value: 1,
+                                          groupValue: _checkFemale,
+                                          onChanged: (value) {
+                                            debugPrint(value.toString());
+                                            setState(() {
+                                              errorText.text = "";
+                                              _checkFemale = 1;
+                                            });
+                                          }),
+                                      const Text("Woman"),
+                                      const SizedBox(width: 50),
+                                      Radio(
+                                          value: 2,
+                                          groupValue: _checkFemale,
+                                          onChanged: (value) {
+                                            debugPrint(value.toString());
+                                            setState(() {
+                                              errorText.text = "";
+                                              _checkFemale = 2;
+                                            });
+                                          }),
+                                      const Text("Men"),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 5),
+                                  const SizedBox(height: 5),
+                                  Text(localizedStrings.user_phone),
+                                  SizedBox(
+                                    width: 400,
+                                    height: 30,
+                                    child: TextField(
+                                      controller: phone,
+                                      maxLength: 11,
+                                      maxLengthEnforcement:
+                                          MaxLengthEnforcement.enforced,
+                                      maxLines: 1,
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.allow(
+                                            RegExp("[0-9.]"))
+                                      ], //数字包括小数,
+                                      textAlignVertical:
+                                          TextAlignVertical.bottom,
+                                      decoration: const InputDecoration(
+                                        counterText: "",
+                                        // hintText: "请输入机种类型，如：ztp",
+                                        // border: OutlineInputBorder(),
+                                      ),
+                                      onChanged: (value) {
+                                        errorText.text = "";
+                                      },
                                     ),
-                                    onChanged: (value) {
-                                      errorText.text = "";
-                                    },
                                   ),
-                                ),
-                                const SizedBox(height: 5),
-                                Text(localizedStrings.user_remarks),
-                                SizedBox(
-                                  width: 400,
-                                  height: 88,
-                                  child: TextField(
-                                    controller: userRemark,
-                                    maxLength: 100,
-                                    maxLengthEnforcement:
-                                        MaxLengthEnforcement.enforced,
-                                    maxLines: 5,
-                                    textAlignVertical: TextAlignVertical.top,
-                                    decoration: const InputDecoration(
-                                      counterText: "",
-                                      // hintText: "请输入机种类型，如：ztp",
-                                      border: OutlineInputBorder(),
+                                  const SizedBox(height: 5),
+                                  Text(localizedStrings.user_remarks),
+                                  SizedBox(
+                                    width: 400,
+                                    height: 88,
+                                    child: TextField(
+                                      controller: userRemark,
+                                      maxLength: 100,
+                                      maxLengthEnforcement:
+                                          MaxLengthEnforcement.enforced,
+                                      maxLines: 5,
+                                      textAlignVertical: TextAlignVertical.top,
+                                      decoration: const InputDecoration(
+                                        counterText: "",
+                                        // hintText: "请输入机种类型，如：ztp",
+                                        border: OutlineInputBorder(),
+                                      ),
+                                      onChanged: (value) {
+                                        errorText.text = "";
+                                      },
                                     ),
-                                    onChanged: (value) {
-                                      errorText.text = "";
-                                    },
                                   ),
-                                ),
-                                const SizedBox(height: 20),
-                                SizedBox(
-                                  width: 400,
-                                  height: 30,
-                                  child: TextField(
-                                    enabled: false,
-                                    controller: errorText,
-                                    maxLength: 100,
-                                    style: const TextStyle(color: Colors.red),
-                                    maxLengthEnforcement:
-                                        MaxLengthEnforcement.enforced,
-                                    maxLines: 1,
-                                    textAlignVertical: TextAlignVertical.bottom,
-                                    decoration: const InputDecoration(
-                                      border: OutlineInputBorder(
-                                          borderSide: BorderSide.none),
-                                      counterText: "",
-                                      focusColor: Colors
-                                          .red, // hintText: "请输入机种类型，如：ztp",
-                                      // border: OutlineInputBorder(),
+                                  const SizedBox(height: 20),
+                                  SizedBox(
+                                    width: 400,
+                                    height: 30,
+                                    child: TextField(
+                                      enabled: false,
+                                      controller: errorText,
+                                      maxLength: 100,
+                                      style: const TextStyle(color: Colors.red),
+                                      maxLengthEnforcement:
+                                          MaxLengthEnforcement.enforced,
+                                      maxLines: 1,
+                                      textAlignVertical:
+                                          TextAlignVertical.bottom,
+                                      decoration: const InputDecoration(
+                                        border: OutlineInputBorder(
+                                            borderSide: BorderSide.none),
+                                        counterText: "",
+                                        focusColor: Colors
+                                            .red, // hintText: "请输入机种类型，如：ztp",
+                                        // border: OutlineInputBorder(),
+                                      ),
+                                      onChanged: (value) {
+                                        errorText.text = "";
+                                      },
                                     ),
-                                    onChanged: (value) {
-                                      errorText.text = "";
-                                    },
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                      ],
+                                ],
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                        ],
+                      ),
                     ),
-                  )
-                ],
+                  ],
+                ),
               ),
             ),
             actions: <Widget>[

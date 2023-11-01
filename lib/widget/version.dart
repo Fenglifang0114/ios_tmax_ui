@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
-version() {
-  return const Text("V1.18", textAlign: TextAlign.center);
+version(Color? color) {
+  return Text("V1.18",
+      style: TextStyle(
+        color: color,
+        fontSize: 20,
+      ),
+      textAlign: TextAlign.center);
 }

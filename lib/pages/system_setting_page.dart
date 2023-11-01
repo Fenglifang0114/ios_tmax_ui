@@ -213,26 +213,33 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
             padding:
                 const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
             children: [
-              functionTitle('System Setting', Icons.settings),
+              functionTitle(
+                  localizedStrings.system_setting_title, Icons.settings),
               const SizedBox(
                 height: 10,
               ),
-              GestureDetector(
-                onTap: () {
-                  setLanguageDialog(context);
-                },
-                child: customFunctionCard(
-                    "Set Language", "assets/images/line.png", Icons.language),
+              MouseRegion(
+                cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                child: GestureDetector(
+                  onTap: () {
+                    setLanguageDialog(context);
+                  },
+                  child: customFunctionCard(localizedStrings.set_language_title,
+                      "assets/images/line.png", Icons.language),
+                ),
               ),
               const SizedBox(
                 height: 10,
               ),
-              GestureDetector(
-                onTap: () {
-                  showLicenseDialog(context);
-                },
-                child: customFunctionCard(
-                    "License Info", "assets/images/line.png", Icons.info),
+              MouseRegion(
+                cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                child: GestureDetector(
+                  onTap: () {
+                    showLicenseDialog(context);
+                  },
+                  child: customFunctionCard(localizedStrings.license_info_title,
+                      "assets/images/line.png", Icons.info),
+                ),
               ),
             ]),
       ),

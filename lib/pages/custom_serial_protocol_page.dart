@@ -28,12 +28,13 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
   final List<SerialProtocolText> _textListPercent = [];
   final textController = TextEditingController();
   final RegExp englishRegExp = RegExp(r'^[\x00-\x7F]*$');
-  late final TextEditingController _serialOutputData = TextEditingController();
+
+  List<String> outputData = [];
 
   String _selectedAlignment = 'left';
   String _selectedFilling = 'space';
   int _selectedDecimal = 3;
-  List<String> alignments = ['left', 'right', 'center'];
+  List<String> alignments = ['left', 'right'];
   List<String> fillings = ['0', 'space'];
   List<int> decimals = [0, 1, 2, 3, 4];
   Map<String, int> pageMap = {
@@ -55,13 +56,13 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
   bool serialPreview = false;
   bool _isHexDisplay = false;
 
-  TextEditingController myContent =
+  TextEditingController myContentCtl =
       TextEditingController(text: mySerialProtocolText.content);
-  TextEditingController myMaxLen =
+  TextEditingController myMaxLenCtl =
       TextEditingController(text: mySerialProtocolText.maxLength.toString());
-  TextEditingController myBoolTypeTrue =
+  TextEditingController myBoolTypeTrueCtl =
       TextEditingController(text: mySerialProtocolText.isTrue);
-  TextEditingController myBoolTypeFalse =
+  TextEditingController myBoolTypeFalseCtl =
       TextEditingController(text: mySerialProtocolText.isFalse);
   final List<String> _buttonLabels = [
     'Text',
@@ -71,17 +72,33 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     'WeightUnit',
     'isstable',
     'istare',
+    'PCS',
   ];
 
   dynamic _eventbus1;
   dynamic _eventbus2;
+  dynamic _eventbus3;
+  dynamic _eventbus4;
+  dynamic _eventbus5;
   final ScrollController _scrollController = ScrollController();
+
+  bool isListEmpty() {
+    if (_textListOl.isNotEmpty ||
+        _textListPcs.isNotEmpty ||
+        _textListPercent.isNotEmpty ||
+        _textListPrice.isNotEmpty ||
+        _textListUl.isNotEmpty ||
+        _textListWeight.isNotEmpty) {
+      return true;
+    }
+    return false;
+  }
 
   @override
   void initState() {
-    _currentPageIndex = 1;
+    _currentPageIndex = 3;
     super.initState();
-    _serialOutputData.addListener(scrollToBottom); // 监听文本变化
+    // _serialOutputDataCtl.addListener(scrollToBottom); // 监听文本变化
     _eventbus1 = eventBus.on<EventSerialOutputResp>().listen((event) {
       if (mounted) {
         setState(() {
@@ -108,13 +125,37 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         if (serialPreview) {
           setState(() {
             myScalePassthData = event.obj;
-            _serialOutputData.text =
-                _serialOutputData.text + myScalePassthData.msgBody;
-            if (_serialOutputData.text.length > 10000) {
-              _serialOutputData.text = '';
+            outputData.add(myScalePassthData.msgBody);
+            if (outputData.length > 1000) {
+              outputData.clear();
             }
           });
+          scrollToBottom();
         }
+      }
+    });
+
+    _eventbus3 = eventBus.on<EventOpenScalePassthResp>().listen((event) {
+      if (mounted) {
+        myOpenScalePassthData = event.obj;
+        setState(() {});
+      }
+    });
+
+    _eventbus4 = eventBus.on<EventCloseScalePassthResp>().listen((event) {
+      if (mounted) {
+        myCloseScalePassthData = event.obj;
+        if (myCloseScalePassthData.msgBody.contains('ok')) {
+          PublicFunctions.stopWeight();
+        }
+      }
+    });
+
+    _eventbus5 = eventBus.on<EventRegWeightResp>().listen((event) {
+      if (mounted) {
+        myRegWeightResp = event.obj;
+
+        PublicFunctions.openScalePassth();
       }
     });
 
@@ -149,9 +190,13 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
 
   @override
   void dispose() {
-    _serialOutputData.removeListener(scrollToBottom); // 移除监听
+    _scrollController.removeListener(scrollToBottom); // 移除监听
     _scrollController.dispose();
-    _serialOutputData.dispose();
+    _eventbus1.cancel();
+    _eventbus2.cancel();
+    _eventbus3.cancel();
+    _eventbus4.cancel();
+    _eventbus5.cancel();
     super.dispose();
   }
 
@@ -166,7 +211,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     Color borderColor = colorScheme.primary;
     ButtonStyle buttonStyle = ElevatedButton.styleFrom(
       backgroundColor: buttonColor,
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(4),
         side: BorderSide(width: 1, color: borderColor),
@@ -186,7 +231,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                 child: SizedBox(
                   width: 240,
                   child: Text(
-                    "Custom serial protocol",
+                    localizedStrings.serial_output,
                     style:
                         TextStyle(fontSize: 20, color: colorScheme.onPrimary),
                     textAlign: TextAlign.center,
@@ -313,9 +358,9 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                       children: [
                         Row(
                           children: [
+                            pageTitleWidget(3),
                             pageTitleWidget(1),
                             pageTitleWidget(2),
-                            pageTitleWidget(3),
                             pageTitleWidget(4),
                             pageTitleWidget(5),
                             pageTitleWidget(6),
@@ -377,9 +422,11 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                               ),
                               foregroundColor:
                                   Theme.of(context).colorScheme.onPrimary,
-                              backgroundColor: Theme.of(context)
-                                  .colorScheme
-                                  .primary, // 设置按钮的背景色
+                              backgroundColor: (!serialPreview && isListEmpty())
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context)
+                                      .colorScheme
+                                      .background, // 设置按钮的背景色
                               shape: RoundedRectangleBorder(
                                 borderRadius:
                                     BorderRadius.circular(4), // 设置按钮的圆角
@@ -387,7 +434,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                             ),
                             child: Center(
                               child: Text(
-                                'Download',
+                                localizedStrings.download,
                                 maxLines: 2,
                                 textAlign: TextAlign.center,
                                 overflow: TextOverflow.ellipsis,
@@ -399,39 +446,56 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                                 ),
                               ),
                             ),
-                            onPressed: () async {
-                              jsonFilesList.clear();
-                              for (var i = 1; i < 7; i++) {
-                                await generateJson(i);
-                              }
-                              if (jsonFilesList.isNotEmpty) {
-                                _sendToScale(jsonFilesList);
-                              }
-                            },
+                            onPressed: (!serialPreview && isListEmpty())
+                                ? () async {
+                                    jsonFilesList.clear();
+                                    for (var i = 1; i < 7; i++) {
+                                      await generateJson(i);
+                                    }
+                                    if (jsonFilesList.isNotEmpty) {
+                                      _sendToScale(jsonFilesList);
+                                    }
+                                  }
+                                : null,
                           ),
                         ),
                         SizedBox(
                           width: 120,
                           height: 50,
-                          child: ElevatedButton(
-                            style: buttonStyle,
-                            onPressed:
-                                !serialPreview ? handleButtonPress : null,
+                          child: OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(
+                                width: 1,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              foregroundColor:
+                                  Theme.of(context).colorScheme.onPrimary,
+                              backgroundColor: !serialPreview
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context)
+                                      .colorScheme
+                                      .background, // 设置按钮的背景色
+                              shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.circular(4), // 设置按钮的圆角
+                              ),
+                            ),
                             child: Center(
                               child: Text(
-                                'open preview',
+                                localizedStrings.open_preview,
                                 maxLines: 2,
                                 textAlign: TextAlign.center,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
-                                  color: !serialPreview
-                                      ? Theme.of(context).colorScheme.onPrimary
-                                      : Theme.of(context).colorScheme.primary,
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
                                   fontSize: 14,
                                   fontWeight: FontWeight.normal,
                                 ),
                               ),
                             ),
+                            onPressed:
+                                !serialPreview ? handleButtonPress : null,
                           ),
                         ),
                         SizedBox(
@@ -455,7 +519,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                             ),
                             child: Center(
                               child: Text(
-                                'close preview',
+                                localizedStrings.close_preview,
                                 maxLines: 2,
                                 textAlign: TextAlign.center,
                                 overflow: TextOverflow.ellipsis,
@@ -470,9 +534,10 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                             onPressed: () async {
                               setState(() {
                                 serialPreview = false;
-                                _serialOutputData.text = '';
+                                outputData.clear();
                               });
                               PublicFunctions.closeScalePassth();
+                              // PublicFunctions.stopWeight();
                             },
                           ),
                         ),
@@ -487,41 +552,54 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                       ? Expanded(
                           flex: 6, // 设置子部件占用空间的比例
                           child: ListView(
-                            children: (getListName(_currentPageIndex)
-                                        .isNotEmpty &&
-                                    mySerialProtocolText.type == 'Bool' &&
-                                    mySerialProtocolText.tabOrder != 9999 &&
-                                    (mySerialProtocolText.varName ==
-                                            'isstable' ||
-                                        mySerialProtocolText.varName ==
-                                            'istare'))
-                                ? _boolProperty()
-                                : (getListName(_currentPageIndex).isNotEmpty &&
-                                        mySerialProtocolText.type == 'TEXT' &&
-                                        mySerialProtocolText.tabOrder != 9999)
-                                    ? _textProperty()
+                            children:
+                                (getListName(_currentPageIndex).isNotEmpty &&
+                                        mySerialProtocolText.type == 'Bool' &&
+                                        mySerialProtocolText.tabOrder != 9999 &&
+                                        (mySerialProtocolText.varName ==
+                                                'isstable' ||
+                                            mySerialProtocolText.varName ==
+                                                'istare'))
+                                    ? _boolProperty()
                                     : (getListName(_currentPageIndex)
                                                 .isNotEmpty &&
                                             mySerialProtocolText.type ==
-                                                'String' &&
+                                                'TEXT' &&
                                             mySerialProtocolText.tabOrder !=
                                                 9999)
-                                        ? _stringProperty()
+                                        ? _textProperty()
                                         : (getListName(_currentPageIndex)
                                                     .isNotEmpty &&
                                                 mySerialProtocolText.type ==
-                                                    'Enter')
-                                            ? _enterProperty()
-                                            : (getListName(
-                                                            _currentPageIndex)
+                                                    'String' &&
+                                                mySerialProtocolText.tabOrder !=
+                                                    9999)
+                                            ? _stringProperty()
+                                            : (getListName(_currentPageIndex)
                                                         .isNotEmpty &&
-                                                    mySerialProtocolText.type ==
-                                                        'Float' &&
                                                     mySerialProtocolText
-                                                            .tabOrder !=
-                                                        9999)
-                                                ? _floatProperty()
-                                                : [],
+                                                            .type ==
+                                                        'Enter')
+                                                ? _enterProperty()
+                                                : (getListName(_currentPageIndex)
+                                                            .isNotEmpty &&
+                                                        mySerialProtocolText
+                                                                .type ==
+                                                            'Float' &&
+                                                        mySerialProtocolText
+                                                                .tabOrder !=
+                                                            9999)
+                                                    ? _floatProperty()
+                                                    : (getListName(_currentPageIndex)
+                                                                .isNotEmpty &&
+                                                            mySerialProtocolText
+                                                                    .type ==
+                                                                'Integer' &&
+                                                            mySerialProtocolText
+                                                                    .tabOrder !=
+                                                                9999)
+                                                        ? _intProperty()
+                                                        : [],
                           ),
                         )
                       : Expanded(
@@ -549,12 +627,11 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                                           ),
                                           onPressed: () {
                                             setState(() {
-                                              _serialOutputData.text = '';
-                                              // pageTitle = localizedStrings.serial_page_ol;
+                                              outputData.clear();
                                             });
                                           },
                                           child: Text(
-                                            'clear',
+                                            localizedStrings.clear_btn,
                                             overflow: TextOverflow.ellipsis,
                                           )),
                                       OutlinedButton(
@@ -595,24 +672,24 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                                   )),
                               Expanded(
                                 flex: 6,
-                                child: TextField(
-                                  onChanged: (value) {
-                                    setState(() {
-                                      // 在这里将要追加的数据添加到_serialOutputData的text属性中
-                                      _serialOutputData.text += value;
-                                    });
-                                    scrollToBottom();
-                                  },
-                                  style: const TextStyle(
-                                    overflow: TextOverflow.ellipsis,
+                                child: Container(
+                                  margin: const EdgeInsets.all(10.0),
+                                  padding: const EdgeInsets.all(10.0),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Colors.blue, // 边框颜色
+                                      width: 2.0, // 边框宽度
+                                    ),
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(10.0)), // 边框圆角
                                   ),
-                                  readOnly: true,
-                                  maxLines: null,
-                                  controller: _serialOutputData,
-                                  textAlignVertical: TextAlignVertical.top,
-                                  scrollController: _scrollController,
-                                  decoration: const InputDecoration(
-                                    border: OutlineInputBorder(),
+                                  child: ListView.builder(
+                                    padding: const EdgeInsets.all(10.0), // 添加边距
+                                    itemCount: outputData.length,
+                                    itemBuilder: (context, index) {
+                                      return Text(outputData[index]);
+                                    },
+                                    controller: _scrollController,
                                   ),
                                 ),
                               ),
@@ -629,9 +706,9 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     setState(() {
       serialPreview = true;
       _isHexDisplay = false;
-      _serialOutputData.text = '';
+      outputData.clear();
     });
-    PublicFunctions.openScalePassth();
+    PublicFunctions.getWeight();
   }
 
   String getTitleName(int pageId) {
@@ -702,7 +779,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
             height: 30,
             child: Center(
               child: Text(
-                'Serial port output preview',
+                localizedStrings.serial_port_output_preview,
                 style: TextStyle(
                   color: colorScheme.onPrimary,
                   fontWeight: FontWeight.bold,
@@ -821,7 +898,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         style: TextStyle(color: colorScheme.primary),
       ),
       TextField(
-        controller: myBoolTypeTrue,
+        controller: myBoolTypeTrueCtl,
         onChanged: (value) {
           setState(() {
             _changedDefault(mySerialProtocolText.tabOrder, value, 1);
@@ -843,7 +920,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         style: TextStyle(color: colorScheme.primary),
       ),
       TextField(
-        controller: myBoolTypeFalse,
+        controller: myBoolTypeFalseCtl,
         onChanged: (value) {
           setState(() {
             _changedDefault(mySerialProtocolText.tabOrder, value, 2);
@@ -1020,7 +1097,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     if (data > 0) {
       if (mySerialProtocolText.maxLength < data + 2) {
         mySerialProtocolText.maxLength = data + 2;
-        myMaxLen.text = mySerialProtocolText.maxLength.toString();
+        myMaxLenCtl.text = mySerialProtocolText.maxLength.toString();
       }
     }
     for (var i = 0; i < list.length; i++) {
@@ -1033,63 +1110,58 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     }
   }
 
-  _changedMaxLength(String data, int pageId) {
+  void _changedMaxLength(String data, int pageId) {
     List<SerialProtocolText> list = getListName(pageId);
-    if (data == '') {
+    if (data.isEmpty) {
       data = '0';
     }
-    if (mySerialProtocolText.decimal != 0 &&
-        mySerialProtocolText.type == "Float") {
-      if (int.parse(data) < mySerialProtocolText.decimal + 2) {
-        data = (mySerialProtocolText.decimal + 2).toString();
-        myMaxLen.text = data;
-      }
-    }
-
-    for (var i = 0; i < list.length; i++) {
-      if (list[i].tabOrder == mySerialProtocolText.tabOrder) {
-        list[i].maxLength = int.parse(data);
-        if (list[i].maxLength == 0) {
-          if (list[i].varName == 'WeightUnit') {
-            list[i].content = 'kg';
+    int listLength = list.length;
+    for (var item in list) {
+      if (item.tabOrder == mySerialProtocolText.tabOrder) {
+        item.maxLength = int.parse(data);
+        if (item.maxLength == 0) {
+          if (item.varName == 'WeightUnit') {
+            item.content = 'kg';
           } else {
-            list[i].content = '000.000';
+            item.content = '000.000';
           }
-          myContent.text = list[i].content;
+          myContentCtl.text = item.content;
         } else {
-          list[i].content = '';
+          item.content = '';
           String space = ' ';
-          if (list[i].varName == 'WeightUnit') {
-            for (var j = 1; j <= list[i].maxLength; j++) {
+          if (item.varName == 'WeightUnit') {
+            for (var j = 1; j <= item.maxLength; j++) {
               if (j == 1) {
-                list[i].content = 'g';
+                item.content = 'g';
               } else if (j == 2) {
-                list[i].content = 'kg';
+                item.content = 'kg';
               } else {
-                if (list[i].alignment == 'Left') {
-                  list[i].content = list[i].content + space;
+                if (item.alignment == 'Left') {
+                  item.content += space;
                 } else {
-                  list[i].content = space + list[i].content;
+                  item.content = space + item.content;
                 }
               }
             }
           } else {
-            for (var j = 0; j < list[i].maxLength; j++) {
+            StringBuffer contentBuffer = StringBuffer();
+            for (var j = 0; j < item.maxLength; j++) {
               if (j < 10) {
-                list[i].content = list[i].content + j.toString();
+                contentBuffer.write(j);
               } else if (j < 20) {
-                list[i].content = list[i].content + (j - 10).toString();
+                contentBuffer.write(j - 10);
               } else {
-                list[i].content = list[i].content + (j - 20).toString();
+                contentBuffer.write(j - 20);
               }
             }
+            item.content = contentBuffer.toString();
           }
-
-          myContent.text = list[i].content;
+          myContentCtl.text = item.content;
         }
         break;
       }
     }
+    setState(() {});
   }
 
 //文本编辑属性
@@ -1124,7 +1196,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         style: TextStyle(color: colorScheme.primary),
       ),
       TextField(
-        controller: myContent,
+        controller: myContentCtl,
         onChanged: (value) {
           setState(() {
             _changedContent(value, _currentPageIndex);
@@ -1195,7 +1267,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       ),
       TextField(
         readOnly: true,
-        controller: myContent,
+        controller: myContentCtl,
         onChanged: (value) {
           setState(() {
             _changedContent(value, _currentPageIndex);
@@ -1249,7 +1321,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         setState(() {
           _selectedDecimal = int.parse(newValue!);
           _changedDecimal(_selectedDecimal, pageId);
-          myContent.text = mySerialProtocolText.content;
+          myContentCtl.text = mySerialProtocolText.content;
         });
       },
     );
@@ -1280,7 +1352,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         setState(() {
           _selectedFilling = newValue!;
           _changedFilling(_selectedFilling, pageId);
-          myContent.text = mySerialProtocolText.content;
+          myContentCtl.text = mySerialProtocolText.content;
         });
       },
     );
@@ -1311,7 +1383,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         setState(() {
           _selectedAlignment = newValue!;
           _changedAlignment(_selectedAlignment, pageId);
-          myContent.text = mySerialProtocolText.content;
+          myContentCtl.text = mySerialProtocolText.content;
         });
       },
     );
@@ -1371,7 +1443,83 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       ),
       TextField(
         readOnly: true,
-        controller: myContent,
+        controller: myContentCtl,
+        onChanged: (value) {
+          setState(() {
+            _changedContent(value, _currentPageIndex);
+          });
+        },
+        textAlignVertical: TextAlignVertical.top,
+        // inputFormatters: [
+        //   FilteringTextInputFormatter.allow(englishRegExp), // 传入正则表达式
+        // ],
+        decoration: const InputDecoration(),
+      ),
+      const SizedBox(
+        height: 15,
+      ),
+      arrowWidget(),
+      const SizedBox(
+        height: 15,
+      ),
+      deleteButton(),
+      const SizedBox(
+        height: 50,
+      ),
+      const SizedBox(
+        height: 50,
+      ),
+    ];
+  }
+
+  _intProperty() {
+    return [
+      Container(
+        height: 40,
+        color: colorScheme.tertiary,
+        child: Center(
+          child: Text(
+            'Integer Property',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              color: colorScheme.primary,
+            ),
+          ),
+        ),
+      ),
+      const SizedBox(
+        height: 20,
+      ),
+      Text(
+        'Type:    ${mySerialProtocolText.type}',
+        style: TextStyle(color: colorScheme.primary),
+      ),
+      const SizedBox(
+        height: 20,
+      ),
+      Text(
+        'Alignment:',
+        style: TextStyle(color: colorScheme.primary),
+      ),
+      _alignmentDropdownButton(_currentPageIndex),
+      Text(
+        'Filling:',
+        style: TextStyle(color: colorScheme.primary),
+      ),
+      _fillingDropdownButton(_currentPageIndex),
+      Text(
+        'Max Length:',
+        style: TextStyle(color: colorScheme.primary),
+      ),
+      maxLenWidget(),
+      Text(
+        'Default Value:',
+        style: TextStyle(color: colorScheme.primary),
+      ),
+      TextField(
+        readOnly: true,
+        controller: myContentCtl,
         onChanged: (value) {
           setState(() {
             _changedContent(value, _currentPageIndex);
@@ -1504,18 +1652,28 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
 
   TextField maxLenWidget() {
     return TextField(
-      controller: myMaxLen,
+      controller: myMaxLenCtl,
       onChanged: (value) {
-        setState(() {
+        if (value.isNotEmpty) {
+          if (mySerialProtocolText.decimal != 0 &&
+              mySerialProtocolText.type == "Float") {
+            if (int.parse(value) < mySerialProtocolText.decimal + 2) {
+              mySerialProtocolText.maxLength = mySerialProtocolText.decimal + 2;
+              value = mySerialProtocolText.maxLength.toString();
+              myMaxLenCtl.text = value;
+              myMaxLenCtl.selection = TextSelection.fromPosition(
+                  TextPosition(offset: value.length));
+            }
+          }
           _changedMaxLength(value, _currentPageIndex);
-        });
+        }
       },
       textAlignVertical: TextAlignVertical.top,
       keyboardType: TextInputType.number,
       inputFormatters: [
         FilteringTextInputFormatter.allow(
           RegExp(r'^([0-9]|1[0-9]|20)$'),
-        ), // 传入正则表达式
+        ),
       ],
       decoration: const InputDecoration(),
     );
@@ -1582,10 +1740,10 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
   void _addTextData(int pageId) {
     List<SerialProtocolText> list = getListName(pageId);
     list.add(SerialProtocolText(
-        'TEXT', 'Text', '', 'left', 0, ++count, '', '', '0', 0, '', false));
+        'TEXT', 'Text', '', 'right', 0, ++count, '', '', '0', 0, '', false));
     setState(() {
       mySerialProtocolText = list[list.length - 1];
-      myContent.text = mySerialProtocolText.content;
+      myContentCtl.text = mySerialProtocolText.content;
       _changeSelect(list.length - 1, list);
     });
   }
@@ -1608,27 +1766,33 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
   void _addVarData(String varname, int pageId) {
     List<SerialProtocolText> list = getListName(pageId);
     if (varname == 'WeightUnit') {
-      list.add(SerialProtocolText('String', ' kg', varname, 'left', 3, ++count,
-          '', '', '0', 0, '', false));
+      list.add(SerialProtocolText('String', ' kg', varname, 'right', 3, ++count,
+          '', '', 'space', 0, '', false));
     } else if (varname == 'isstable') {
-      list.add(SerialProtocolText('Bool', ' kg', varname, 'left', 3, ++count,
-          'ST', 'US', '0', 0, '', false));
+      list.add(SerialProtocolText('Bool', ' kg', varname, 'right', 3, ++count,
+          'ST', 'US', 'space', 0, '', false));
     } else if (varname == 'istare') {
-      list.add(SerialProtocolText('Bool', ' kg', varname, 'left', 3, ++count,
-          'NT', 'GS', '0', 0, '', false));
+      list.add(SerialProtocolText('Bool', ' kg', varname, 'right', 3, ++count,
+          'NT', 'GS', 'space', 0, '', false));
     } else if (varname == 'isiero') {
-      list.add(SerialProtocolText('Bool', ' kg', varname, 'left', 3, ++count,
-          'Z', 'NZ', '0', 0, '', false));
+      list.add(SerialProtocolText('Bool', ' kg', varname, 'right', 3, ++count,
+          'Z', 'NZ', 'space', 0, '', false));
     } else if (varname == 'Gross' || varname == 'Tare' || varname == 'Net') {
-      list.add(SerialProtocolText('Float', '0123456', varname, 'left', 7,
-          ++count, '', '', '0', 3, '', false));
+      list.add(SerialProtocolText('Float', '0123456', varname, 'right', 7,
+          ++count, '', '', 'space', 3, '', false));
+    } else if (varname == 'PCS') {
+      list.add(SerialProtocolText('Integer', '01', varname, 'right', 2, ++count,
+          '', '', 'space', 0, '', false));
     }
     setState(() {
       mySerialProtocolText = list[list.length - 1];
-      myContent.text = mySerialProtocolText.content;
-      myMaxLen.text = mySerialProtocolText.maxLength.toString();
-      myBoolTypeTrue.text = mySerialProtocolText.isTrue;
-      myBoolTypeFalse.text = mySerialProtocolText.isFalse;
+      myContentCtl.text = mySerialProtocolText.content;
+      myMaxLenCtl.text = mySerialProtocolText.maxLength.toString();
+      myBoolTypeTrueCtl.text = mySerialProtocolText.isTrue;
+      myBoolTypeFalseCtl.text = mySerialProtocolText.isFalse;
+      _selectedAlignment = mySerialProtocolText.alignment;
+      _selectedFilling = mySerialProtocolText.filling; //FLF
+      _selectedDecimal = mySerialProtocolText.decimal;
 
       _changeSelect(list.length - 1, list);
     });
@@ -1651,11 +1815,11 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         onPressed: () {
           setState(() {
             mySerialProtocolText = textData;
-            myContent.text = mySerialProtocolText.content;
-            myMaxLen.text = mySerialProtocolText.maxLength.toString();
+            myContentCtl.text = mySerialProtocolText.content;
+            myMaxLenCtl.text = mySerialProtocolText.maxLength.toString();
             _selectedAlignment = mySerialProtocolText.alignment;
-            myBoolTypeTrue.text = mySerialProtocolText.isTrue;
-            myBoolTypeFalse.text = mySerialProtocolText.isFalse;
+            myBoolTypeTrueCtl.text = mySerialProtocolText.isTrue;
+            myBoolTypeFalseCtl.text = mySerialProtocolText.isFalse;
             _selectedFilling = mySerialProtocolText.filling;
             _selectedDecimal = mySerialProtocolText.decimal;
             for (var i = 0; i < list.length; i++) {
@@ -1749,14 +1913,14 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
           "length": list[i].maxLength,
         });
         functionId++;
-      } else if (list[i].type == 'Interge') {
+      } else if (list[i].type == 'Integer') {
         String fillingValue = ' ';
         if (list[i].filling == '0') {
           fillingValue = '0';
         }
         functionList.add({
           "id": functionId,
-          "type": "string",
+          "type": "integer",
           "alignment": list[i].alignment,
           "filling": fillingValue,
           "description": ""

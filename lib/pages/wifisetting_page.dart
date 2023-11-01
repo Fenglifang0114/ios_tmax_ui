@@ -331,7 +331,6 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                       ),
                       ElevatedButton(
                           onPressed: () {
-                            myCheckSerialPortOnOFF.isCheck = true;
                             Navigator.of(context).pop();
                           },
                           style: ElevatedButton.styleFrom(

@@ -133,12 +133,32 @@
     "txt_serial_port_connected_fail":"串口连接失败",
     "get_build_info": "软件信息",
     "serial_page_ol": "OL 模式",
-  "serial_page_ul": "UL 模式",
-  "serial_page_weight": "重量模式",
-  "serial_page_pcs": "计数模式",
-  "serial_page_price": "计价模式",
-  "serial_page_percent": "百分比模式"
-  
+    "serial_page_ul": "UL 模式",
+    "serial_page_weight": "重量模式",
+    "serial_page_pcs": "计数模式",
+    "serial_page_price": "计价模式",
+    "serial_page_percent": "百分比模式",
+    "serial_port_status": "串口连接状态:",
+    "device_connection_title": "设备连接",
+    "device_setting_title": "设备设置",
+    "bt_setting_title": "蓝牙设置",
+    "wifi_setting_title": "Wi-Fi 设置",
+    "customization_setting_title": "自定义设置",
+    "label_design_title": "标签设置",
+    "print_format_download": "打印格式下发",
+    "serial_output": "自定义串口输出",
+    "update_firmware": "更新固件",
+    "system_setting_title": "系统设置",
+    "set_language_title": "设置语言",
+    "license_info_title": "授权信息",
+    "open_preview": "打开预览",
+    "close_preview": "关闭预览",
+    "clear_btn": "清空",
+    "serial_port_output_preview": "串口输出预览",
+    "weight_mode_format": "重量模式打印格式:",
+    "acc_mode_format": "累加模式打印格式:",
+    "pcs_mode_format": "计数模式打印格式:",
+    "pct_mode_format": "百分比模式打印格式:"  
     
   }
   

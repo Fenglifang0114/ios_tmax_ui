@@ -137,7 +137,28 @@
   "serial_page_weight": "Weight mode",
   "serial_page_pcs": "Pcs mode",
   "serial_page_price": "Price mode",
-  "serial_page_percent": "Percent mode"
+  "serial_page_percent": "Percent mode",
+  "serial_port_status": "Serial port status:",
+  "device_connection_title": "Device Connection",
+  "device_setting_title": "Device Setting",
+  "bt_setting_title": "Bluetooth Setting",
+  "wifi_setting_title": "Wi-Fi Setting",
+  "customization_setting_title": "Customization Setting",
+  "label_design_title": "Label Design",
+  "print_format_download": "Print Format Download",
+  "serial_output": "Serial Output",
+  "update_firmware": "Update Firmware",
+  "system_setting_title": "System Setting",
+  "set_language_title": "Set Language",
+  "license_info_title": "License Info",
+  "open_preview": "Open preview",
+  "close_preview": "Close preview",
+  "clear_btn": "Clear",
+  "serial_port_output_preview": "Serial port output preview",
+  "weight_mode_format": "Weight mode format:",
+  "acc_mode_format": "Acc mode format:",
+  "pcs_mode_format": "Pcs mode format:",
+  "pct_mode_format": "Percent mode format:"
   
   
   

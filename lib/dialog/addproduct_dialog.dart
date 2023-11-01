@@ -43,179 +43,197 @@ addProductDialog(BuildContext context) {
         return StatefulBuilder(builder: ((context, setState) {
           return AlertDialog(
             title: Container(
-                color: Colors.blue.shade900,
+                color: Theme.of(context).colorScheme.primary,
                 child: Row(
                   children: [
-                    const Icon(Icons.feed, color: Colors.white),
+                    Icon(Icons.feed,
+                        color: Theme.of(context).colorScheme.onPrimary),
                     Text(localizedStrings.product_information,
-                        style: const TextStyle(color: Colors.white))
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary))
                   ],
                 )),
             content: Container(
-              height: 400,
-              decoration: const BoxDecoration(
-                  color: Color.fromARGB(255, 233, 232, 232)),
-              child: Column(
-                children: [
-                  const SizedBox(height: 2),
-                  Container(
-                    decoration: const BoxDecoration(color: Colors.white),
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 15),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text("PLU NO.:"),
-                                SizedBox(
-                                  width: 200,
-                                  height: 30,
-                                  child: TextField(
-                                    controller: productID,
-                                    maxLength: 20,
-                                    maxLengthEnforcement:
-                                        MaxLengthEnforcement.enforced,
-                                    maxLines: 1,
-                                    textAlignVertical: TextAlignVertical.bottom,
-                                    decoration: const InputDecoration(
-                                      counterText: "",
-                                      // hintText: "请输入机种类型，如：ztp",
-                                      // border: OutlineInputBorder(),
+              height: 350,
+              decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.background),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const SizedBox(height: 2),
+                    Container(
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.onPrimary),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 15),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text("PLU NO.:"),
+                                  SizedBox(
+                                    width: 200,
+                                    height: 30,
+                                    child: TextField(
+                                      controller: productID,
+                                      maxLength: 20,
+                                      maxLengthEnforcement:
+                                          MaxLengthEnforcement.enforced,
+                                      maxLines: 1,
+                                      textAlignVertical:
+                                          TextAlignVertical.bottom,
+                                      decoration: const InputDecoration(
+                                        counterText: "",
+                                        // hintText: "请输入机种类型，如：ztp",
+                                        // border: OutlineInputBorder(),
+                                      ),
+                                      onChanged: (value) {
+                                        errorText.text = '';
+                                      },
                                     ),
-                                    onChanged: (value) {
-                                      errorText.text = '';
-                                    },
                                   ),
-                                ),
-                                const SizedBox(height: 5),
-                                Text(localizedStrings.plu_name),
-                                SizedBox(
-                                  width: 400,
-                                  height: 30,
-                                  child: TextField(
-                                    controller: productName,
-                                    maxLength: 100,
-                                    maxLengthEnforcement:
-                                        MaxLengthEnforcement.enforced,
-                                    maxLines: 1,
-                                    textAlignVertical: TextAlignVertical.bottom,
-                                    decoration: const InputDecoration(
-                                      counterText: "",
-                                      // hintText: "请输入机种类型，如：ztp",
-                                      // border: OutlineInputBorder(),
+                                  const SizedBox(height: 5),
+                                  Text(localizedStrings.plu_name),
+                                  SizedBox(
+                                    width: 400,
+                                    height: 30,
+                                    child: TextField(
+                                      controller: productName,
+                                      maxLength: 100,
+                                      maxLengthEnforcement:
+                                          MaxLengthEnforcement.enforced,
+                                      maxLines: 1,
+                                      textAlignVertical:
+                                          TextAlignVertical.bottom,
+                                      decoration: const InputDecoration(
+                                        counterText: "",
+                                        // hintText: "请输入机种类型，如：ztp",
+                                        // border: OutlineInputBorder(),
+                                      ),
+                                      onChanged: (value) {
+                                        errorText.text = '';
+                                      },
                                     ),
-                                    onChanged: (value) {
-                                      errorText.text = '';
-                                    },
                                   ),
-                                ),
-                                const SizedBox(height: 5),
-                                Row(
-                                  children: [
-                                    Checkbox(
-                                        checkColor: Colors.white,
-                                        activeColor: Colors.blue.shade900,
-                                        value: isPresetTare,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            errorText.text = '';
-                                            isPresetTare = value!;
-                                            if (!isPresetTare!) {
-                                              preTare.text = "";
-                                            }
-                                          });
-                                        }),
-                                    Text(localizedStrings.pretare),
-                                  ],
-                                ),
-                                SizedBox(
-                                  width: 400,
-                                  height: 30,
-                                  child: TextField(
-                                    enabled:
-                                        (isPresetTare == false) ? false : true,
-                                    controller: preTare,
-                                    maxLength: 20,
-                                    maxLengthEnforcement:
-                                        MaxLengthEnforcement.enforced,
-                                    maxLines: 1,
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.allow(
-                                          RegExp("[0-9.]"))
-                                    ], //数字包括小数,
-                                    textAlignVertical: TextAlignVertical.bottom,
-                                    decoration: const InputDecoration(
-                                      counterText: "",
-                                      // hintText: "请输入机种类型，如：ztp",
-                                      // border: OutlineInputBorder(),
+                                  const SizedBox(height: 5),
+                                  Row(
+                                    children: [
+                                      Checkbox(
+                                          checkColor: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary,
+                                          activeColor: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                          value: isPresetTare,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              errorText.text = '';
+                                              isPresetTare = value!;
+                                              if (!isPresetTare!) {
+                                                preTare.text = "";
+                                              }
+                                            });
+                                          }),
+                                      Text(localizedStrings.pretare),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    width: 400,
+                                    height: 30,
+                                    child: TextField(
+                                      enabled: (isPresetTare == false)
+                                          ? false
+                                          : true,
+                                      controller: preTare,
+                                      maxLength: 20,
+                                      maxLengthEnforcement:
+                                          MaxLengthEnforcement.enforced,
+                                      maxLines: 1,
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.allow(
+                                            RegExp("[0-9.]"))
+                                      ], //数字包括小数,
+                                      textAlignVertical:
+                                          TextAlignVertical.bottom,
+                                      decoration: const InputDecoration(
+                                        counterText: "",
+                                        // hintText: "请输入机种类型，如：ztp",
+                                        // border: OutlineInputBorder(),
+                                      ),
+                                      onChanged: (value) {
+                                        if (kDebugMode) {
+                                          print(value);
+                                        }
+                                      },
                                     ),
-                                    onChanged: (value) {
-                                      if (kDebugMode) {
-                                        print(value);
-                                      }
-                                    },
                                   ),
-                                ),
-                                const SizedBox(height: 5),
-                                Text(localizedStrings.plu_remarks),
-                                SizedBox(
-                                  width: 400,
-                                  height: 120,
-                                  child: TextField(
-                                    controller: productRemark,
-                                    maxLength: 300,
-                                    maxLengthEnforcement:
-                                        MaxLengthEnforcement.enforced,
-                                    maxLines: 10,
-                                    textAlignVertical: TextAlignVertical.top,
-                                    decoration: const InputDecoration(
-                                      counterText: "",
-                                      // hintText: "请输入机种类型，如：ztp",
-                                      border: OutlineInputBorder(),
+                                  const SizedBox(height: 5),
+                                  Text(localizedStrings.plu_remarks),
+                                  SizedBox(
+                                    width: 400,
+                                    height: 120,
+                                    child: TextField(
+                                      controller: productRemark,
+                                      maxLength: 300,
+                                      maxLengthEnforcement:
+                                          MaxLengthEnforcement.enforced,
+                                      maxLines: 10,
+                                      textAlignVertical: TextAlignVertical.top,
+                                      decoration: const InputDecoration(
+                                        counterText: "",
+                                        // hintText: "请输入机种类型，如：ztp",
+                                        border: OutlineInputBorder(),
+                                      ),
+                                      onChanged: (value) {
+                                        errorText.text = '';
+                                      },
                                     ),
-                                    onChanged: (value) {
-                                      errorText.text = '';
-                                    },
                                   ),
-                                ),
-                                const SizedBox(height: 20),
-                                SizedBox(
-                                  width: 400,
-                                  height: 30,
-                                  child: TextField(
-                                    enabled: false,
-                                    controller: errorText,
-                                    maxLength: 100,
-                                    style: const TextStyle(color: Colors.red),
-                                    maxLengthEnforcement:
-                                        MaxLengthEnforcement.enforced,
-                                    maxLines: 1,
-                                    textAlignVertical: TextAlignVertical.bottom,
-                                    decoration: const InputDecoration(
-                                      border: OutlineInputBorder(
-                                          borderSide: BorderSide.none),
-                                      counterText: "",
-                                      focusColor: Colors
-                                          .red, // hintText: "请输入机种类型，如：ztp",
-                                      // border: OutlineInputBorder(),
+                                  const SizedBox(height: 20),
+                                  SizedBox(
+                                    width: 400,
+                                    height: 30,
+                                    child: TextField(
+                                      enabled: false,
+                                      controller: errorText,
+                                      maxLength: 100,
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .error),
+                                      maxLengthEnforcement:
+                                          MaxLengthEnforcement.enforced,
+                                      maxLines: 1,
+                                      textAlignVertical:
+                                          TextAlignVertical.bottom,
+                                      decoration: InputDecoration(
+                                        border: const OutlineInputBorder(
+                                            borderSide: BorderSide.none),
+                                        counterText: "",
+                                        focusColor: Theme.of(context)
+                                            .colorScheme
+                                            .error, // hintText: "请输入机种类型，如：ztp",
+                                        // border: OutlineInputBorder(),
+                                      ),
+                                      onChanged: (value) {
+                                        errorText.text = '';
+                                      },
                                     ),
-                                    onChanged: (value) {
-                                      errorText.text = '';
-                                    },
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                      ],
-                    ),
-                  )
-                ],
+                                ],
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
             actions: <Widget>[
