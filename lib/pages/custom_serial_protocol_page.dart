@@ -158,8 +158,6 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         PublicFunctions.openScalePassth();
       }
     });
-
-    ChannelResponse myRespGetBuildInfo = ChannelResponse('', '', 0);
   }
 
   dynamic localizedStrings;
