@@ -5,9 +5,7 @@ import 'package:t_max/data/dialog_data.dart';
 import 'package:t_max/data/license_data.dart';
 import 'package:t_max/data/scale_info_from_scale.dart';
 import 'package:t_max/eventbus/eventbus.dart';
-import 'package:t_max/pages/dow_prn_fmt_page.dart';
 import 'package:t_max/pages/labeldesign_page.dart';
-import 'package:t_max/pages/wifisetting_page.dart';
 import '../data/comscaleinfo_data.dart';
 import '../data/currentport_data.dart';
 import '../data/device_data.dart';
@@ -24,17 +22,22 @@ import '../widget/custom_setting.dart';
 import '../dialog/license_info.dart';
 import '../widget/update_firmware.dart';
 import '../widget/version.dart';
-import 'custom_serial_protocol_page.dart';
+import 'check_weighers_page.dart';
 import 'modify_com_port_page.dart';
+import 'product_download_page.dart';
+import 'take_in_page.dart';
+import 'take_out_page.dart';
+import 'weighing.dart';
+import 'weight_mode_page.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class IndustryHomePage extends StatefulWidget {
+  const IndustryHomePage({Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<IndustryHomePage> createState() => IndustryHomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class IndustryHomePageState extends State<IndustryHomePage> {
   List<String> items = [];
   TextEditingController weightController = TextEditingController();
   TextEditingController repsController = TextEditingController();
@@ -52,17 +55,6 @@ class _HomePageState extends State<HomePage> {
 
   String groupValue = 'zh';
   DateTime now = DateTime.now();
-
-  List<Color> cardColors = List.generate(9, (index) => Colors.white);
-  List<Color> textColors = List.generate(9, (index) => Colors.blue.shade900);
-  List<String> imagePaths = [
-    'assets/images/11.png',
-    'assets/images/12.png',
-    'assets/images/13.png',
-    'assets/images/14.png',
-    'assets/images/15.png',
-    'assets/images/16.png',
-  ];
   bool isCardHovered = false;
   bool isCardClicked = false;
 
@@ -73,13 +65,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   // 初始文字颜色
-
   @override
   void initState() {
     super.initState();
     _pageScrollerController = ScrollController();
     _startTimer(5);
-    // _checkTimerFuc(5);
     _eventbus1 = eventBus.on<EventDialogData>().listen((event) {
       if (mounted) {
         setState(() {
@@ -162,7 +152,6 @@ class _HomePageState extends State<HomePage> {
           preferredSize: const Size.fromHeight(50),
           child: Container(
               color: Theme.of(context).colorScheme.onPrimary,
-              // foregroundColor: Theme.of(context).colorScheme.primary,
               child: Container(
                 decoration: BoxDecoration(gradient: boxGradient()),
                 child: Row(
@@ -170,7 +159,7 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Center(
                       child: SizedBox(
-                          width: 360,
+                          width: 400,
                           child: Row(
                             children: [
                               const SizedBox(
@@ -255,7 +244,6 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
               )
-
               //设置状态栏颜色渐变
               // flexibleSpace:
               //     Container(decoration: BoxDecoration(gradient: boxGradient())),
@@ -523,42 +511,24 @@ class _HomePageState extends State<HomePage> {
                         cursor: SystemMouseCursors.click, // 设置光标为手的形状
                         child: GestureDetector(
                           onTap: () {
-                            //蓝牙页面
+                            //TODO:  PLU下载
                             setState(() {
                               stopCheckSerialPort();
-                              showBluetoothDialog(context);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ProductDownloadPage()),
+                              ).then((value) => _startTimer(5));
                             });
                           },
                           child: customFunctionCard(
-                              localizedStrings.bt_setting_title,
+                              "PLU Download",
                               "assets/images/line.png",
-                              Icons.bluetooth,
+                              Icons.shopping_bag,
                               true),
                         ),
                       ),
-                      MouseRegion(
-                          cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                          child: GestureDetector(
-                            onTap: () {
-                              //wifi页面
-                              setState(() {
-                                stopCheckSerialPort();
-                                PublicFunctions.getWifiList();
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const WifiSettingPage(),
-                                  ),
-                                ).then((value) => _startTimer(5));
-                              });
-                            },
-                            child: customFunctionCard(
-                                localizedStrings.wifi_setting_title,
-                                "assets/images/line.png",
-                                Icons.wifi,
-                                true),
-                          )),
                       MouseRegion(
                         cursor: SystemMouseCursors.click, // 设置光标为手的形状
                         child: GestureDetector(
@@ -623,131 +593,107 @@ class _HomePageState extends State<HomePage> {
                     MouseRegion(
                       cursor: SystemMouseCursors.click, // 设置光标为手的形状
                       child: GestureDetector(
-                        onTap: myLicenseInfo.isValid
-                            ? () {
-                                //TODO:  标签设计
-                                showLabelDesign(myLicenseInfo.isValid);
-                              }
-                            : null,
-                        child: customFunctionCard(
-                            localizedStrings.label_design_title,
-                            "assets/images/line.png",
-                            Icons.sell,
-                            myLicenseInfo.isValid),
-                      ),
-                    ),
-                    MouseRegion(
-                      cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                      child: GestureDetector(
                         onTap: () {
-                          //TODO:  打印格式下载
-                          stopCheckSerialPort();
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const DownloadPage()),
-                          ).then((value) => _startTimer(5));
+                          //TODO:  DC500
+                          setState(() {
+                            stopCheckSerialPort();
+                            setState(() {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const WeightModePage()),
+                              ).then((value) => _startTimer(5));
+                            });
+                          });
                         },
                         child: customFunctionCard(
-                            localizedStrings.print_format_download,
+                            "Weighing",
                             "assets/images/line.png",
-                            Icons.receipt_long_outlined,
+                            Icons.monitor_weight_outlined,
                             true),
                       ),
                     ),
                     MouseRegion(
                       cursor: SystemMouseCursors.click, // 设置光标为手的形状
                       child: GestureDetector(
-                        onTap: myLicenseInfo.isValid
-                            ? () {
-                                //TODO:  串口输出
-                                stopCheckSerialPort();
+                        onTap: () {
+                          //TODO:  DC500
+                          setState(() {
+                            stopCheckSerialPort();
+                            setState(() {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const WeightDataCollectionPage()),
+                              ).then((value) => _startTimer(5));
+                            });
+                          });
+                        },
+                        child: customFunctionCard("Weight Data Collection",
+                            "assets/images/line.png", Icons.save_as, true),
+                      ),
+                    ),
+                    MouseRegion(
+                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                        child: GestureDetector(
+                          onTap: () {
+                            //TODO:  DC500
+                            setState(() {
+                              stopCheckSerialPort();
+                              setState(() {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
-                                          const CustomSerialProtocol()),
+                                          const CheckWeighersPage()),
                                 ).then((value) => _startTimer(5));
-                                // Navigator.push(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //       builder: (context) => const SerialOutputPage()),
-                                // ).then((value) => setState(() {
-                                //       isCardClicked = false;
-                                //     }));
-                              }
-                            : null,
-                        child: customFunctionCard(
-                            localizedStrings.serial_output,
-                            "assets/images/line.png",
-                            Icons.usb_sharp,
-                            myLicenseInfo.isValid),
-                      ),
-                    ),
-
-                    // MouseRegion(
-                    //   cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                    //   child: GestureDetector(
-                    //     onTap: () {
-                    //       //TODO:  PLU下载
-                    //       setState(() {
-                    //         stopCheckSerialPort();
-                    //         Navigator.push(
-                    //           context,
-                    //           MaterialPageRoute(
-                    //               builder: (context) =>
-                    //                   const ProductDownloadPage()),
-                    //         ).then((value) => _startTimer(5));
-                    //       });
-                    //     },
-                    //     child: customFunctionCard("Plu Download",
-                    //         "assets/images/line.png", Icons.shopping_bag, true),
-                    //   ),
-                    // ),
-                    // MouseRegion(
-                    //   cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                    //   child: GestureDetector(
-                    //     onTap: () {
-                    //       //TODO:  DC500
-                    //       setState(() {
-                    //         stopCheckSerialPort();
-                    //         setState(() {
-                    //           Navigator.push(
-                    //             context,
-                    //             MaterialPageRoute(
-                    //                 builder: (context) =>
-                    //                     const WeightModePage()),
-                    //           ).then((value) => _startTimer(5));
-                    //         });
-                    //       });
-                    //     },
-                    //     child: customFunctionCard(
-                    //         "DC 500",
-                    //         "assets/images/line.png",
-                    //         Icons.monitor_weight_outlined,
-                    //         true),
-                    //   ),
-                    // ),
-                    // MouseRegion(
-                    //     cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                    //     child: GestureDetector(
-                    //       onTap: () {
-                    //         //TODO:  DC500
-                    //         setState(() {
-                    //           stopCheckSerialPort();
-                    //           setState(() {
-                    //             Navigator.push(
-                    //               context,
-                    //               MaterialPageRoute(
-                    //                   builder: (context) =>
-                    //                       const CheckWeighersPage()),
-                    //             ).then((value) => _startTimer(5));
-                    //           });
-                    //         });
-                    //       },
-                    //       child: customFunctionCard("Checkweighers",
-                    //           "assets/images/line.png", Icons.scale, true),
-                    //     )),
+                              });
+                            });
+                          },
+                          child: customFunctionCard("Checkweigher",
+                              "assets/images/line.png", Icons.scale, true),
+                        )),
+                    MouseRegion(
+                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                        child: GestureDetector(
+                          onTap: () {
+                            //TODO:  TakeIn
+                            setState(() {
+                              stopCheckSerialPort();
+                              setState(() {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const TakeInPage()),
+                                ).then((value) => _startTimer(5));
+                              });
+                            });
+                          },
+                          child: customFunctionCard("Take In Scale",
+                              "assets/images/line.png", Icons.add, true),
+                        )),
+                    MouseRegion(
+                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                        child: GestureDetector(
+                          onTap: () {
+                            //TODO:  TakeIn
+                            setState(() {
+                              stopCheckSerialPort();
+                              setState(() {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const TakeOutPage()),
+                                ).then((value) => _startTimer(5));
+                              });
+                            });
+                          },
+                          child: customFunctionCard("Take Out Scale",
+                              "assets/images/line.png", Icons.remove, true),
+                        )),
                   ]),
             ),
           ],

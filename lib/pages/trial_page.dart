@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:t_max/data/license_data.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 
+import '../data/setting_version_info.dart';
 import '../generated/l10n.dart';
 
 import '../data/comscaleinfo_data.dart';
@@ -18,6 +19,7 @@ import '../widget/box_gradient.dart';
 import '../widget/theme_color.dart';
 import '../widget/version.dart';
 import 'home_page.dart';
+import 'home_page_industry.dart';
 
 class TrialPage extends StatefulWidget {
   const TrialPage({Key? key}) : super(key: key);
@@ -68,7 +70,9 @@ class TrialPageState extends State<TrialPage> {
             PublicFunctions.getUIConf();
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) {
-              return const HomePage();
+              return mySystemVersionInfo.getHomePage(mySystemVersion);
+              // return const HomePage();
+              // return const IndustryHomePage();
             }));
           }
         });
@@ -169,21 +173,11 @@ class TrialPageState extends State<TrialPage> {
                     Positioned.fill(
                       child: Container(
                         color: Theme.of(context).colorScheme.background,
-                        // decoration: BoxDecoration(
-                        //   gradient: boxGradient(),
-                        //   // image: DecorationImage(
-                        //   //   image: AssetImage('images/background_image.jpg'),
-                        //   //   fit: BoxFit.cover,
-                        //   // ),
-                        // ),
                       ),
                     ),
                     SizedBox(
                       height: _height,
                       width: _width,
-                      // decoration: BoxDecoration(
-                      //   color: Colors.blue.shade900.withOpacity(0.2),
-                      // ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
@@ -199,9 +193,11 @@ class TrialPageState extends State<TrialPage> {
                                         Radius.circular(20.0))),
                                 child: Column(
                                   children: [
-                                    const SizedBox(height: 20),
+                                    const SizedBox(height: 10),
                                     Text(
                                       localizedStrings.welcome,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
                                         fontSize: 20,
                                         color: Theme.of(context)
@@ -209,7 +205,7 @@ class TrialPageState extends State<TrialPage> {
                                             .primary,
                                       ),
                                     ),
-                                    const SizedBox(height: 30),
+                                    const SizedBox(height: 20),
                                     TextField(
                                       controller: pidController,
                                       readOnly: true,
@@ -220,8 +216,6 @@ class TrialPageState extends State<TrialPage> {
                                               .colorScheme
                                               .primary),
                                     ),
-                                    // Text("Your PID is $pId",
-                                    //     style: const TextStyle(fontSize: 20)),
                                     const SizedBox(height: 20),
                                     SizedBox(
                                       width: 400,
@@ -259,9 +253,12 @@ class TrialPageState extends State<TrialPage> {
                                                     licenseController.text);
                                               }
                                             : null,
-                                        child: Text(localizedStrings
-                                            .button_add_license)),
-                                    const SizedBox(height: 20),
+                                        child: Text(
+                                          localizedStrings.button_add_license,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        )),
+                                    const SizedBox(height: 10),
                                     !liceseKey && errMessage.isNotEmpty
                                         ? SizedBox(
                                             height: 40,
@@ -273,12 +270,13 @@ class TrialPageState extends State<TrialPage> {
                                                         .error)),
                                           )
                                         : Text(''),
-
                                     Text(
                                         (liceseKey)
                                             ? localizedStrings.passed_message
                                             : localizedStrings
                                                 .passed_fail_message,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
                                             fontSize: 16,
                                             color: (liceseKey)
@@ -293,6 +291,8 @@ class TrialPageState extends State<TrialPage> {
                                             ? ''
                                             : localizedStrings.expiration_date +
                                                 dueDate,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
                                             fontSize: 16,
                                             color: (liceseKey)
@@ -302,7 +302,7 @@ class TrialPageState extends State<TrialPage> {
                                                 : Theme.of(context)
                                                     .colorScheme
                                                     .error)),
-                                    const SizedBox(height: 30),
+                                    const SizedBox(height: 10),
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
@@ -316,40 +316,54 @@ class TrialPageState extends State<TrialPage> {
                                                 Navigator.pushReplacement(
                                                     context, MaterialPageRoute(
                                                         builder: (context) {
-                                                  return const HomePage();
+                                                  // return const HomePage();
+                                                  return mySystemVersionInfo
+                                                      .getHomePage(
+                                                          mySystemVersion);
                                                 }));
                                               });
                                             },
-                                            child: Text(liceseKey
-                                                    ? localizedStrings
-                                                        .button_start
-                                                    : localizedStrings
-                                                        .button_trial
-                                                // : localizedStrings
-                                                //     .button_exit
-                                                )),
+                                            child: Text(
+                                              liceseKey
+                                                  ? localizedStrings
+                                                      .button_start
+                                                  : localizedStrings
+                                                      .button_trial,
+                                              // : localizedStrings
+                                              //     .button_exit
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            )),
                                         const SizedBox(
                                           width: 20,
                                         ),
                                         OutlinedButton(
-                                            onPressed: () {
-                                              setState(() {
-                                                //跳转页面
-                                                exit(0);
-                                              });
-                                            },
-                                            child: Text(
-                                                localizedStrings.button_exit)),
+                                          onPressed: () {
+                                            setState(() {
+                                              //跳转页面
+                                              exit(0);
+                                            });
+                                          },
+                                          child: Text(
+                                            localizedStrings.button_exit,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
                                       ],
                                     ),
                                     const SizedBox(height: 10),
-                                    Text(localizedStrings.text_email,
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primary)),
-                                    const SizedBox(height: 20),
+                                    Text(
+                                      localizedStrings.text_email,
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(height: 10),
                                   ],
                                 ),
                               )),

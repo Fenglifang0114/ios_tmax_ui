@@ -66,48 +66,55 @@ addUserDialog(BuildContext context) {
                           color: Theme.of(context).colorScheme.onPrimary),
                       child: Column(
                         children: [
-                          const SizedBox(height: 15),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(localizedStrings.user_id),
-                                  SizedBox(
-                                    width: 200,
-                                    height: 30,
-                                    child: TextField(
-                                      controller: userId,
-                                      maxLength: 20,
-                                      maxLengthEnforcement:
-                                          MaxLengthEnforcement.enforced,
-                                      maxLines: 1,
-                                      textAlignVertical:
-                                          TextAlignVertical.bottom,
-                                      decoration: const InputDecoration(
-                                        counterText: "",
-                                        // hintText: "请输入机种类型，如：ztp",
-                                        // border: OutlineInputBorder(),
+                                  Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 150,
+                                        child: Text(
+                                          localizedStrings.user_id,
+                                          textAlign: TextAlign.left,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
                                       ),
-                                      onChanged: (value) {
-                                        errorText.text = "";
-                                      },
-                                    ),
+                                      SizedBox(
+                                        width: 200,
+                                        child: TextField(
+                                          controller: userId,
+                                          maxLength: 20,
+                                          maxLengthEnforcement:
+                                              MaxLengthEnforcement.enforced,
+                                          maxLines: 1,
+                                          textAlign: TextAlign.center,
+                                          decoration: const InputDecoration(
+                                            counterText: "",
+                                            // hintText: "请输入机种类型，如：ztp",
+                                            // border: OutlineInputBorder(),
+                                          ),
+                                          onChanged: (value) {
+                                            errorText.text = "";
+                                          },
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                   const SizedBox(height: 5),
                                   Text(localizedStrings.user_name),
                                   SizedBox(
                                     width: 400,
-                                    height: 30,
                                     child: TextField(
                                       controller: userName,
                                       maxLength: 100,
                                       maxLengthEnforcement:
                                           MaxLengthEnforcement.enforced,
                                       maxLines: 1,
-                                      textAlignVertical:
-                                          TextAlignVertical.bottom,
+                                      textAlignVertical: TextAlignVertical.top,
                                       decoration: const InputDecoration(
                                         counterText: "",
                                         // hintText: "请输入机种类型，如：ztp",
@@ -151,41 +158,50 @@ addUserDialog(BuildContext context) {
                                     ],
                                   ),
                                   const SizedBox(height: 5),
-                                  const SizedBox(height: 5),
-                                  Text(localizedStrings.user_phone),
-                                  SizedBox(
-                                    width: 400,
-                                    height: 30,
-                                    child: TextField(
-                                      controller: phone,
-                                      maxLength: 11,
-                                      maxLengthEnforcement:
-                                          MaxLengthEnforcement.enforced,
-                                      maxLines: 1,
-                                      inputFormatters: [
-                                        FilteringTextInputFormatter.allow(
-                                            RegExp("[0-9.]"))
-                                      ], //数字包括小数,
-                                      textAlignVertical:
-                                          TextAlignVertical.bottom,
-                                      decoration: const InputDecoration(
-                                        counterText: "",
-                                        // hintText: "请输入机种类型，如：ztp",
-                                        // border: OutlineInputBorder(),
+                                  Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 150,
+                                        child: Text(
+                                          localizedStrings.user_phone,
+                                          textAlign: TextAlign.left,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
                                       ),
-                                      onChanged: (value) {
-                                        errorText.text = "";
-                                      },
-                                    ),
+                                      SizedBox(
+                                        width: 200,
+                                        child: TextField(
+                                          controller: phone,
+                                          maxLength: 11,
+                                          maxLengthEnforcement:
+                                              MaxLengthEnforcement.enforced,
+                                          maxLines: 1,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.allow(
+                                                RegExp("[0-9.]"))
+                                          ], //数字包括小数,
+                                          textAlignVertical:
+                                              TextAlignVertical.top,
+                                          decoration: const InputDecoration(
+                                            counterText: "",
+                                            // hintText: "请输入机种类型，如：ztp",
+                                            // border: OutlineInputBorder(),
+                                          ),
+                                          onChanged: (value) {
+                                            errorText.text = "";
+                                          },
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  const SizedBox(height: 5),
                                   Text(localizedStrings.user_remarks),
                                   SizedBox(
                                     width: 400,
-                                    height: 88,
+                                    height: 80,
                                     child: TextField(
                                       controller: userRemark,
-                                      maxLength: 100,
+                                      maxLength: 200,
                                       maxLengthEnforcement:
                                           MaxLengthEnforcement.enforced,
                                       maxLines: 5,
@@ -200,7 +216,6 @@ addUserDialog(BuildContext context) {
                                       },
                                     ),
                                   ),
-                                  const SizedBox(height: 20),
                                   SizedBox(
                                     width: 400,
                                     height: 30,
@@ -231,7 +246,7 @@ addUserDialog(BuildContext context) {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 5),
                         ],
                       ),
                     ),
@@ -248,7 +263,10 @@ addUserDialog(BuildContext context) {
                       onPressed: () {
                         errorText.text = '';
                         PublicFunctions.getUserList();
-                        addUser();
+                        setState(() {
+                          addUser();
+                        });
+
                         PublicFunctions.getUserList();
                         // Navigator.of(context).pop(connectionType);
                       }),
@@ -298,7 +316,7 @@ addUserDialog(BuildContext context) {
 void addUser() {
   bool result = true;
   if (userId.text.isEmpty || userName.text.isEmpty) {
-    errorText.text = localizedStrings.user_error_message;
+    errorText.text = localizedStrings.user_error_message1;
     return;
   }
   if (myUserInfoList.userInfo != null) {

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import '../data/productrec.dart';
 import '../data/scalecmd_data.dart';
 import '../main.dart';
 
@@ -98,7 +99,25 @@ class PublicFunctions {
 
   static void getRecords() {
     myScaleCmd.cmdMode = "get_recs";
-    myScaleCmd.cmdData = "";
+    myScaleCmd.cmdData = "0";
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  static void getCheckWeigherRecords() {
+    myScaleCmd.cmdMode = "get_recs";
+    myScaleCmd.cmdData = "1";
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  static void getTakeInRecords() {
+    myScaleCmd.cmdMode = "get_recs";
+    myScaleCmd.cmdData = "2";
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  static void getTakeOutRecords() {
+    myScaleCmd.cmdMode = "get_recs";
+    myScaleCmd.cmdData = "3";
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
 
@@ -176,6 +195,36 @@ class PublicFunctions {
   static void closeScalePassth() {
     myScaleCmd.cmdMode = "close_scale_passthrough";
     myScaleCmd.cmdData = '';
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  static void getScaleInfo() {
+    myScaleCmd.cmdMode = "get_scale_info";
+    myScaleCmd.cmdData = '';
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  static void deleteAllRecords() {
+    myScaleCmd.cmdMode = "del_rec";
+    myScaleCmd.cmdData = '999999999,0';
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  static void deleteAllRecordsCheck() {
+    myScaleCmd.cmdMode = "del_rec";
+    myScaleCmd.cmdData = '999999999,1';
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  static void deleteAllRecordsTakeIn() {
+    myScaleCmd.cmdMode = "del_rec";
+    myScaleCmd.cmdData = '999999999,2';
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  static void deleteAllRecordsTakeOut() {
+    myScaleCmd.cmdMode = "del_rec";
+    myScaleCmd.cmdData = '999999999,3';
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
 }

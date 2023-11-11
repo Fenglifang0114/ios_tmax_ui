@@ -10,7 +10,6 @@ import '../../eventbus/eventbus.dart';
 import '../../main.dart';
 import '../data/cominfoslist_data.dart';
 import '../data/comscaleinfo_data.dart';
-import '../data/license_data.dart';
 import '../data/modifyresult_data.dart';
 import '../functions/methods.dart';
 import '../generated/l10n.dart';

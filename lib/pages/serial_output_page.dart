@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 
 import '../data/downloadresponse.dart';
-import '../data/license_data.dart';
 import '../data/scalecmd_data.dart';
 import '../eventbus/eventbus.dart';
 import '../generated/l10n.dart';

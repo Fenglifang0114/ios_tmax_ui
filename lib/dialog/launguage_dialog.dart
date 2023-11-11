@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widget/dropdown.dart';
 
-List<String> launguage = ['简体中文', '繁体中文', 'English'];
+List<String> launguage = ['简体中文', 'Русский', 'English'];
 
 launguageDialog(BuildContext context) {
   return showDialog(

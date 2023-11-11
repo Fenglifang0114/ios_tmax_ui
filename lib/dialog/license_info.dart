@@ -120,7 +120,7 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
         width: 400,
         decoration:
             BoxDecoration(color: Theme.of(context).colorScheme.onPrimary),
-        child: Column(
+        child: ListView(
           children: [
             SizedBox(
               width: 400,
@@ -177,9 +177,11 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  width: 100,
+                  width: 200,
                   child: Text(localizedStrings.new_license_text,
                       textAlign: TextAlign.left,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 16,
                         color: Theme.of(context).colorScheme.primary,

@@ -1,15 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import 'package:t_max/aunused/fieldModify_dialog.dart';
-import 'package:t_max/data/high_low_weight.dart';
-
 import '../../data/currentport_data.dart';
 import '../../data/device_data.dart';
 import '../../data/productlist_data.dart';
@@ -22,24 +17,24 @@ import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
 import '../../generated/l10n.dart';
 import '../../main.dart';
+import '../data/downloadresponse.dart';
 import '../data/record_data.dart';
 import '../data/scalecmd_data.dart';
 import '../data/weight_report_data.dart';
 import '../dialog/addproduct_dialog.dart';
 import '../dialog/adduser_dialog.dart';
-import '../dialog/high_low_setting.dart';
 import '../dialog/setting_dialog.dart';
 import 'package:path/path.dart';
 
 import '../dialog/weight_report_feilds_setting.dart';
 
-class CheckWeighersPage extends StatefulWidget {
-  const CheckWeighersPage({Key? key}) : super(key: key);
+class TakeOutPage extends StatefulWidget {
+  const TakeOutPage({Key? key}) : super(key: key);
   @override
-  State<CheckWeighersPage> createState() => _CheckWeighersPageState();
+  State<TakeOutPage> createState() => TakeOutPageState();
 }
 
-class _CheckWeighersPageState extends State<CheckWeighersPage> {
+class TakeOutPageState extends State<TakeOutPage> {
   String dialogString = " ";
   List<String> items = [];
   List<DataRow> dataRows = [];
@@ -64,9 +59,14 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
   bool _isTiming = false;
   bool _isZero = false;
   bool _isPassZero = false;
-  bool _isLow = false;
-  bool _isOK = false;
-  bool _isHigh = false;
+  late bool _isTakeOutStart = false;
+  double basicWeightval = 0.000; //开始加法秤的时候的基础重量
+  String showTakeOutWeight = '';
+  String diffWeightVal = '0.000'; //差值
+  List<double> weightValueList = [];
+  double lastTakeOutWeightval = 0.000;
+  String takeOutWeightValue = '0.000';
+
   late WeightReportDataSource _weightReportDataSource;
   List<WeightReportData> _weightReportDatas = <WeightReportData>[];
   List<WeightReportData> myWeightReportData = [];
@@ -76,12 +76,13 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     _weightReportDataSource.updateData(newReportData);
   }
 
-  _saveWeight(
-    bool isStable,
-  ) {
+  void _saveWeight(bool isStable) {
     if (_stableSaveTime == 0) {
       _isStableStatusJudge = true;
       _isTiming = false;
+    }
+    if (_isTakeOutStart) {
+      _isPassZero = true;
     }
     if (_isPassZero) {
       if (isStable && _isTiming) {
@@ -130,6 +131,8 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
   dynamic eventBus9;
   dynamic eventBus10;
   dynamic eventBus11;
+  dynamic eventBus12;
+  dynamic eventBus13;
 
   @override
   void initState() {
@@ -146,7 +149,15 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     } else {
       _isSaveButtonDisabled = true;
       weightMode = 2;
+      String timeString = (mySettingParam.stableTimeToRec == "")
+          ? "0"
+          : mySettingParam.stableTimeToRec.toString();
+      _stableSaveTime = int.parse(timeString);
+      if (_stableSaveTime == 0) {
+        _stableSaveTime = 1;
+      }
     }
+
     _isStableStatusJudge = false;
     getProductNameList();
     _weightReportDatas = getWeightReportData();
@@ -154,7 +165,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     PublicFunctions.getUserList();
     PublicFunctions.getProductList();
     if (myDevicedata.scaleID == "1") {
-      PublicFunctions.getCheckWeigherRecords();
+      PublicFunctions.getTakeOutRecords();
     }
     eventBus1 = eventBus.on<EventDeviceName>().listen((event) {
       if (mounted) {
@@ -180,55 +191,43 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
       if (mounted) {
         setState(() {
           myReqWeightCountine = event.obj;
+          isStart = true;
           //  getWeight();
           switch (weightMode) {
             case 1:
-              if (myReqWeightCountine.msgBody!.weightVal == "0" ||
-                  myReqWeightCountine.msgBody!.weightVal == "0.0" ||
-                  myReqWeightCountine.msgBody!.weightVal == "0.00" ||
-                  myReqWeightCountine.msgBody!.weightVal == "0.000" ||
-                  myReqWeightCountine.msgBody!.weightVal == "0.0000" ||
-                  myReqWeightCountine.msgBody!.weightVal == "0.00000") {
+              if (isZeroValue()) {
                 _isZero = true;
                 _isPassZero = true;
               } else {
                 _isZero = false;
               }
-              _isLow = false;
-              _isOK = false;
-              _isHigh = false;
-              if (!_isZero) {
-                var weight =
-                    double.tryParse(myReqWeightCountine.msgBody!.weightVal);
-                if (weight != null) {
-                  if (weight > 0) {
-                    if (weight < myHighLowWeight.lowValue) {
-                      _isLow = true;
-                    } else if (weight >= myHighLowWeight.lowValue &&
-                        weight <= myHighLowWeight.highValue) {
-                      _isOK = true;
-                    } else if (weight > myHighLowWeight.highValue) {
-                      _isHigh = true;
-                    }
-                  }
-                }
-              }
-
+              takeInModeWeight();
+              isWeightStable();
               break;
             case 2:
-              if (myReqWeightCountine.msgBody!.weightVal == "0" ||
-                  myReqWeightCountine.msgBody!.weightVal == "0.0" ||
-                  myReqWeightCountine.msgBody!.weightVal == "0.00" ||
-                  myReqWeightCountine.msgBody!.weightVal == "0.000" ||
-                  myReqWeightCountine.msgBody!.weightVal == "0.0000" ||
-                  myReqWeightCountine.msgBody!.weightVal == "0.00000") {
+              if (!myReqWeightCountine.msgBody!.isStable) {
+                _isStableStatusJudge = false;
+              }
+              if (isZeroValue()) {
                 _isZero = true;
                 _isPassZero = true;
               } else {
                 _isZero = false;
               }
               _saveWeight(myReqWeightCountine.msgBody!.isStable);
-
+              if (_isTakeOutStart && isWeightValue() && _isStableStatusJudge) {
+                double? nowWeightVal =
+                    double.tryParse(myReqWeightCountine.msgBody!.weightVal);
+                if ((basicWeightval - nowWeightVal!) - lastTakeOutWeightval >
+                    0.02) {
+                  lastTakeOutWeightval = double.parse(
+                      (basicWeightval - nowWeightVal).toStringAsFixed(3));
+                  _isPassZero = true;
+                } else {
+                  _isPassZero = false;
+                }
+                //如果是加法秤，不需要判断是否重新归零
+              }
               if (myReqWeightCountine.msgBody!.isStable == true &&
                   !_isZero &&
                   _isPassZero &&
@@ -242,27 +241,10 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                 }
                 lastWeight = myReqWeightCountine.msgBody!.weightVal;
               }
-              _isLow = false;
-              _isOK = false;
-              _isHigh = false;
-              if (!_isZero) {
-                var weight =
-                    double.tryParse(myReqWeightCountine.msgBody!.weightVal);
-                if (weight != null) {
-                  if (weight > 0) {
-                    if (weight < myHighLowWeight.lowValue) {
-                      _isLow = true;
-                    } else if (weight >= myHighLowWeight.lowValue &&
-                        weight <= myHighLowWeight.highValue) {
-                      _isOK = true;
-                    } else if (weight > myHighLowWeight.highValue) {
-                      _isHigh = true;
-                    }
-                  }
-                }
-              }
+              takeInModeWeight();
               break;
             default:
+              break;
           }
         });
       }
@@ -317,6 +299,9 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
             _isSaveButtonDisabled = false;
           } else {
             _isSaveButtonDisabled = true;
+            if (_stableSaveTime == 0) {
+              _stableSaveTime = 1;
+            }
           }
         });
       }
@@ -343,14 +328,48 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
         });
       }
     });
+    eventBus11 = eventBus.on<EventRegWeightResp>().listen((event) {
+      if (mounted) {
+        myUnregWeightResp = event.obj;
+        if (myUnregWeightResp.msgBody.contains('ok')) {
+          setState(() {
+            isStart = true;
+          });
+        }
+      }
+    });
 
-    eventBus11 = eventBus.on<EventDeleteRec>().listen((event) {
+    eventBus12 = eventBus.on<EventUnregWeightResp>().listen((event) {
+      if (mounted) {
+        myUnregWeightResp = event.obj;
+        if (myUnregWeightResp.msgBody.contains('ok')) {
+          setState(() {
+            isStart = false;
+          });
+        }
+      }
+    });
+
+    eventBus13 = eventBus.on<EventDeleteRec>().listen((event) {
       if (mounted) {
         setState(() {
-          PublicFunctions.getCheckWeigherRecords();
+          if (myDevicedata.scaleID == "1") {
+            PublicFunctions.getTakeOutRecords();
+          }
         });
       }
     });
+  }
+
+  void takeInModeWeight() {
+    if (_isTakeOutStart && myReqWeightCountine.msgBody != null) {
+      if (isWeightValue()) {
+        showDiffWeightVal();
+      } else {
+        showTakeOutWeight = myReqWeightCountine.msgBody!.weightVal;
+        takeOutWeightValue = myReqWeightCountine.msgBody!.weightVal;
+      }
+    }
   }
 
   void _addDBdataToReport() {
@@ -397,6 +416,8 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     eventBus9.cancel();
     eventBus10.cancel();
     eventBus11.cancel();
+    eventBus12.cancel();
+    eventBus13.cancel();
 
     super.dispose();
   }
@@ -418,7 +439,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     );
   }
 
-  Widget firstLayout(BuildContext context, double _width) {
+  Widget firstLayout(context, _width) {
     return Container(
         width: _width,
         decoration: BoxDecoration(color: Colors.grey.shade200),
@@ -493,7 +514,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                           SizedBox(
                             width: 400,
                             child: Text(
-                              'Checkweigher',
+                              'Take Out Scale',
                               maxLines: 1,
                               style: TextStyle(
                                   fontSize: 20,
@@ -599,9 +620,12 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                               buildTextWithWeight(
                                   280,
                                   70,
-                                  (myReqWeightCountine.msgBody == null)
-                                      ? ("0.000")
-                                      : myReqWeightCountine.msgBody!.weightVal,
+                                  _isTakeOutStart
+                                      ? showTakeOutWeight
+                                      : (myReqWeightCountine.msgBody == null)
+                                          ? ("0.000")
+                                          : myReqWeightCountine
+                                              .msgBody!.weightVal,
                                   55,
                                   constraints,
                                   Theme.of(context).colorScheme.primary),
@@ -636,6 +660,50 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
               ),
             ),
             Expanded(
+              flex: 3,
+              child: Container(
+                color: Colors.white,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // const SizedBox(width: 20),
+                    const Expanded(flex: 3, child: SizedBox()),
+                    Expanded(
+                        flex: 5,
+                        child: LayoutBuilder(builder:
+                            (BuildContext context, BoxConstraints constraints) {
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              _isTakeOutStart
+                                  ? buildTextWithWeight(
+                                      280,
+                                      70,
+                                      (takeOutWeightValue == '-0.000')
+                                          ? '0.000'
+                                          : takeOutWeightValue,
+                                      55,
+                                      constraints,
+                                      Theme.of(context).colorScheme.primary)
+                                  : SizedBox(),
+                              buildTextWithNOUnit(
+                                  100,
+                                  70,
+                                  (myReqWeightCountine.msgBody == null)
+                                      ? ("kg")
+                                      : myReqWeightCountine.msgBody!.weightUnit,
+                                  30,
+                                  constraints,
+                                  Theme.of(context).colorScheme.primary)
+                            ],
+                          );
+                        })),
+                    const Expanded(flex: 2, child: SizedBox()),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
               flex: 2,
               child: LayoutBuilder(
                   builder: (BuildContext context, BoxConstraints constraints) {
@@ -647,30 +715,30 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                       buttonText: localizedStrings.button_tare,
                       onPressed: PublicFunctions.performTare,
                       constraints: constraints,
-                      isTrue: true,
+                      isTrue: isStart,
                     ),
                     _buildFlexibleButtonAndText(
                       width: 80,
                       buttonText: localizedStrings.button_zero,
                       onPressed: PublicFunctions.performZero,
                       constraints: constraints,
-                      isTrue: true,
+                      isTrue: isStart,
                     ),
                     _buildFlexibleButtonAndText(
                       width: 80,
                       buttonText: localizedStrings.button_save,
                       onPressed: _changeSaveButton,
                       constraints: constraints,
-                      isTrue: !_isSaveButtonDisabled,
+                      isTrue: (!_isSaveButtonDisabled && isStart),
                     ),
-                    _buildFlexibleButtonAndText(
+                    _buildStartButton(
                       width: 80,
-                      buttonText: 'Edit',
-                      onPressed: () {
-                        highLowSettingDialog(context);
-                      },
+                      buttonText: (myReqWeightCountine.msgBody == null)
+                          ? 'Start'
+                          : (_isTakeOutStart)
+                              ? 'End'
+                              : 'Start',
                       constraints: constraints,
-                      isTrue: true,
                     ),
                     _buildFlexibleButtonAndText(
                       width: 80,
@@ -810,170 +878,18 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                               Theme.of(context).colorScheme.primary,
                               'Delete All',
                               constraints,
-                              PublicFunctions.deleteAllRecordsCheck),
+                              PublicFunctions.deleteAllRecordsTakeOut),
                         ]),
                   );
                 })),
             Expanded(
-              flex: 4,
+              flex: 1,
               child: Container(
                 color: Theme.of(context).colorScheme.onPrimary,
-                child: Row(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.stretch, // 让Row内部的widget充满父容器的高度
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: Image.asset(
-                        ((myHighLowWeight.lowValue == 0) || (_isLow))
-                            ? "assets/images/yellow.png"
-                            : "assets/images/grey_circle.png",
-                        fit: BoxFit.contain, // 根据需要调整填充方式
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Image.asset(
-                        (((myHighLowWeight.lowValue == 0) &&
-                                    (myHighLowWeight.highValue == 0)) ||
-                                (_isOK))
-                            ? "assets/images/green.png"
-                            : "assets/images/grey_circle.png",
-                        fit: BoxFit.contain, // 根据需要调整填充方式
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Image.asset(
-                        ((myHighLowWeight.highValue == 0) || (_isHigh))
-                            ? "assets/images/red.png"
-                            : "assets/images/grey_circle.png",
-                        fit: BoxFit.contain, // 根据需要调整填充方式
-                      ),
-                    ),
-                  ],
-                ),
               ),
-            )
+            ),
           ],
         ));
-  }
-
-  Widget buildTextString(
-      String text, BoxConstraints constraints, BuildContext context) {
-    var fontSize = 14 * constraints.maxHeight / 60;
-    var width = constraints.maxWidth / 10;
-    return SizedBox(
-        width: width,
-        child: Text(text,
-            style:
-                TextStyle(fontSize: fontSize, fontWeight: FontWeight.normal)));
-  }
-
-  Widget buildPluEditButton(Color? color, String text,
-      BoxConstraints constraints, BuildContext context) {
-    var fontSize = 14 * constraints.maxHeight / 60;
-    var width = constraints.maxWidth / 10;
-    return SizedBox(
-        width: width,
-        child: MaterialButton(
-            color: color,
-            textColor: Colors.white,
-            elevation: 5.0,
-            child: Text(text,
-                style: TextStyle(
-                    fontSize: fontSize, fontWeight: FontWeight.normal)),
-            onPressed: () {
-              getProductList();
-              addProductDialog(context).then((onvalue) {
-                if (!productNameList.contains(productNameValue)) {
-                  myProductRecInfo.product = "";
-                  productNameValue = "";
-                  myProductRecInfo.id = "";
-                  myProductRecInfo.withPretare = false;
-                  myProductRecInfo.remarks = "";
-                }
-              });
-            }));
-  }
-
-  Widget buildUserEditButton(Color? color, String text,
-      BoxConstraints constraints, BuildContext context) {
-    var fontSize = 14 * constraints.maxHeight / 60;
-    var width = constraints.maxWidth / 10;
-    return SizedBox(
-        width: width,
-        child: MaterialButton(
-            color: Theme.of(context).colorScheme.primary,
-            textColor: Colors.white,
-            elevation: 5.0,
-            child: Text(text,
-                style: TextStyle(
-                    fontSize: fontSize, fontWeight: FontWeight.normal)),
-            onPressed: () {
-              PublicFunctions.getUserList();
-              getUserNameList();
-              if (!userNameList.contains(userNameValue)) {
-                myUserInfo.name = "";
-                userNameValue = "";
-                myUserInfo.id = "";
-                myUserInfo.isFemale = true;
-                myUserInfo.phone = "";
-                myUserInfo.remarks = "";
-              }
-              addUserDialog(context).then((onvalue) {
-                setState(() {
-                  PublicFunctions.getUserList();
-                  getUserNameList();
-                  if (!userNameList.contains(userNameValue)) {
-                    myUserInfo.name = "";
-                    userNameValue = "";
-                    myUserInfo.id = "";
-                    myUserInfo.isFemale = true;
-                    myUserInfo.phone = "";
-                    myUserInfo.remarks = "";
-                  }
-                });
-              });
-            }));
-  }
-
-  Widget buildSetReportButton(Color? color, String text,
-      BoxConstraints constraints, BuildContext context) {
-    var fontSize = 14 * constraints.maxHeight / 60;
-    var width = constraints.maxWidth / 10;
-    return SizedBox(
-      width: width,
-      child: MaterialButton(
-          color: color,
-          textColor: Colors.white,
-          elevation: 5.0,
-          child: Text(text,
-              style:
-                  TextStyle(fontSize: fontSize, fontWeight: FontWeight.normal)),
-          onPressed: () {
-            reportFieldsSettingDialog(context);
-          }),
-    );
-  }
-
-  Widget buildButton(Color? color, String text, BoxConstraints constraints,
-      VoidCallback onPressed) {
-    var fontSize = 14 * constraints.maxHeight / 60;
-    var width = constraints.maxWidth / 10;
-
-    return SizedBox(
-        width: width,
-        child: MaterialButton(
-            color: color,
-            textColor: Colors.white,
-            elevation: 5.0,
-            child: Text(text,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                    fontSize: fontSize, fontWeight: FontWeight.normal)),
-            onPressed: onPressed));
   }
 
   Widget buildStartIcon(double width, double? iconSize,
@@ -1056,6 +972,16 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     );
   }
 
+  Widget buildTextWithNOUnit(double width, double height, String text,
+      double? fontSize, BoxConstraints constraints, Color? color) {
+    width = width * constraints.maxWidth / 400;
+    height = height * constraints.maxHeight / 80;
+    return SizedBox(
+      width: width,
+      height: height,
+    );
+  }
+
   Widget buildTextWithUnit(double width, double height, String text,
       double? fontSize, BoxConstraints constraints, Color? color) {
     width = width * constraints.maxWidth / 400;
@@ -1112,6 +1038,170 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     );
   }
 
+  Widget buildButton(Color? color, String text, BoxConstraints constraints,
+      VoidCallback onPressed) {
+    var fontSize = 14 * constraints.maxHeight / 60;
+    var width = constraints.maxWidth / 10;
+
+    return SizedBox(
+        width: width,
+        child: MaterialButton(
+            color: color,
+            textColor: Colors.white,
+            elevation: 5.0,
+            child: Text(text,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                    fontSize: fontSize, fontWeight: FontWeight.normal)),
+            onPressed: onPressed));
+  }
+
+  Widget buildSetReportButton(Color? color, String text,
+      BoxConstraints constraints, BuildContext context) {
+    var fontSize = 14 * constraints.maxHeight / 60;
+    var width = constraints.maxWidth / 10;
+    return SizedBox(
+      width: width,
+      child: MaterialButton(
+          color: color,
+          textColor: Colors.white,
+          elevation: 5.0,
+          child: Text(text,
+              style:
+                  TextStyle(fontSize: fontSize, fontWeight: FontWeight.normal)),
+          onPressed: () {
+            reportFieldsSettingDialog(context);
+          }),
+    );
+  }
+
+  Widget buildUserEditButton(Color? color, String text,
+      BoxConstraints constraints, BuildContext context) {
+    var fontSize = 14 * constraints.maxHeight / 60;
+    var width = constraints.maxWidth / 10;
+    return SizedBox(
+        width: width,
+        child: MaterialButton(
+            color: Theme.of(context).colorScheme.primary,
+            textColor: Colors.white,
+            elevation: 5.0,
+            child: Text(text,
+                style: TextStyle(
+                    fontSize: fontSize, fontWeight: FontWeight.normal)),
+            onPressed: () {
+              PublicFunctions.getUserList();
+              getUserNameList();
+              if (!userNameList.contains(userNameValue)) {
+                myUserInfo.name = "";
+                userNameValue = "";
+                myUserInfo.id = "";
+                myUserInfo.isFemale = true;
+                myUserInfo.phone = "";
+                myUserInfo.remarks = "";
+              }
+              addUserDialog(context).then((onvalue) {
+                setState(() {
+                  PublicFunctions.getUserList();
+                  getUserNameList();
+                  if (!userNameList.contains(userNameValue)) {
+                    myUserInfo.name = "";
+                    userNameValue = "";
+                    myUserInfo.id = "";
+                    myUserInfo.isFemale = true;
+                    myUserInfo.phone = "";
+                    myUserInfo.remarks = "";
+                  }
+                });
+              });
+            }));
+  }
+
+  Widget buildPluEditButton(Color? color, String text,
+      BoxConstraints constraints, BuildContext context) {
+    var fontSize = 14 * constraints.maxHeight / 60;
+    var width = constraints.maxWidth / 10;
+    return SizedBox(
+        width: width,
+        child: MaterialButton(
+            color: color,
+            textColor: Colors.white,
+            elevation: 5.0,
+            child: Text(text,
+                style: TextStyle(
+                    fontSize: fontSize, fontWeight: FontWeight.normal)),
+            onPressed: () {
+              getProductList();
+              addProductDialog(context).then((onvalue) {
+                if (!productNameList.contains(productNameValue)) {
+                  myProductRecInfo.product = "";
+                  productNameValue = "";
+                  myProductRecInfo.id = "";
+                  myProductRecInfo.withPretare = false;
+                  myProductRecInfo.remarks = "";
+                }
+              });
+            }));
+  }
+
+  Widget buildTextString(
+      String text, BoxConstraints constraints, BuildContext context) {
+    var fontSize = 14 * constraints.maxHeight / 60;
+    var width = constraints.maxWidth / 10;
+    return SizedBox(
+        width: width,
+        child: Text(text,
+            style:
+                TextStyle(fontSize: fontSize, fontWeight: FontWeight.normal)));
+  }
+
+  Widget _buildStartButton({
+    required double width,
+    required String buttonText,
+    required BoxConstraints constraints,
+  }) {
+    double buttonWidth = width * (constraints.maxWidth / 600); // 自适应按钮宽度
+    double fontSize = 14 * (constraints.maxWidth / 600); // 自适应字体大小
+
+    return SizedBox(
+      width: buttonWidth,
+      child: ElevatedButton(
+        onPressed: checkStartButton()
+            ? () {
+                if (_isTakeOutStart) {
+                  _isTakeOutStart = false;
+                  weightValueList.clear();
+                  lastTakeOutWeightval = 0.000;
+                } else {
+                  if (isWeightValue()) {
+                    basicWeightval = double.tryParse(
+                        myReqWeightCountine.msgBody!.weightVal)!;
+                  }
+                  lastTakeOutWeightval = 0.000;
+                  _isTakeOutStart = true;
+                  weightValueList.clear();
+                }
+              }
+            : (_isTakeOutStart)
+                ? () {
+                    _isTakeOutStart = false;
+                    weightValueList.clear();
+                    lastTakeOutWeightval = 0.000;
+                  }
+                : null,
+        child: Text(
+          buttonText,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontSize: fontSize,
+            fontWeight: FontWeight.normal,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildFlexibleButtonAndText({
     required double width,
     required String buttonText,
@@ -1139,7 +1229,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     );
   }
 
-  Widget secondLayout(BuildContext context, double _width) {
+  Widget secondLayout(context, _width) {
     return Container(
         width: _width,
         decoration: BoxDecoration(color: Colors.grey.shade200),
@@ -1161,17 +1251,6 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                       // width: _width,
                       height: 40,
                       margin: const EdgeInsets.only(left: 5, top: 2),
-                      // decoration: BoxDecoration(
-                      //     color: Colors.white,
-                      //     borderRadius: BorderRadius.circular(0),
-                      //     boxShadow: [
-                      //       BoxShadow(
-                      //           color: Theme.of(context).colorScheme.primary,
-                      //           offset: const Offset(0.0, 2.0),
-                      //           blurStyle: BlurStyle.solid,
-                      //           blurRadius: 1.0,
-                      //           spreadRadius: 0.0),
-                      //     ]),
                       alignment: Alignment.center, //设置控件内容的位置
                       child: Row(
                         children: [
@@ -1225,7 +1304,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                           SizedBox(
                             width: 400,
                             child: Text(
-                              'Checkweigher',
+                              'Take Out Scale',
                               maxLines: 1,
                               style: TextStyle(
                                   fontSize: 20,
@@ -1354,7 +1433,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                   Row(
                     children: [
                       Container(
-                          width: 300,
+                          width: 240,
                           height: 70,
                           color: Theme.of(context).colorScheme.primary,
                           child: Row(
@@ -1363,9 +1442,12 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                               Expanded(
                                 child: Text(
                                   textAlign: TextAlign.right,
-                                  (myReqWeightCountine.msgBody == null)
-                                      ? ("0.000")
-                                      : myReqWeightCountine.msgBody!.weightVal,
+                                  _isTakeOutStart
+                                      ? showTakeOutWeight
+                                      : (myReqWeightCountine.msgBody == null)
+                                          ? ("0.000")
+                                          : myReqWeightCountine
+                                              .msgBody!.weightVal,
                                   style: const TextStyle(
                                       color: Colors.white, fontSize: 55),
                                   overflow: TextOverflow.ellipsis,
@@ -1417,7 +1499,6 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                             setState(() {
                               if (!isStart) {
                                 if (MyApp.webchannel1.heartStatus == true) {
-                                  isStart = true;
                                   PublicFunctions.getWeight();
                                 }
                               }
@@ -1433,6 +1514,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                               setState(() {
                                 if (MyApp.webchannel1.heartStatus == true) {
                                   isStart = false;
+                                  myReqWeightCountine.msgBody = null;
                                   PublicFunctions.stopWeight();
                                 }
                               });
@@ -1447,6 +1529,36 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                       ),
                     ],
                   ),
+                  _isTakeOutStart
+                      ? Row(
+                          children: [
+                            Container(
+                                width: 240,
+                                height: 70,
+                                color: Theme.of(context).colorScheme.primary,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        textAlign: TextAlign.right,
+                                        (takeOutWeightValue == '-0.000')
+                                            ? '0.000'
+                                            : takeOutWeightValue,
+                                        style: const TextStyle(
+                                            color: Colors.white, fontSize: 55),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10)
+                                  ],
+                                )),
+                          ],
+                        )
+                      : SizedBox(
+                          width: 240,
+                        ),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -1457,9 +1569,11 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                             SizedBox(
                               width: 80,
                               child: ElevatedButton(
-                                  onPressed: () {
-                                    PublicFunctions.performTare();
-                                  },
+                                  onPressed: isStart
+                                      ? () {
+                                          PublicFunctions.performTare();
+                                        }
+                                      : null,
                                   child: Text(localizedStrings.button_tare,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
@@ -1470,9 +1584,11 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                             SizedBox(
                               width: 80,
                               child: ElevatedButton(
-                                  onPressed: () {
-                                    PublicFunctions.performZero();
-                                  },
+                                  onPressed: isStart
+                                      ? () {
+                                          PublicFunctions.performZero();
+                                        }
+                                      : null,
                                   child: Text(localizedStrings.button_zero,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
@@ -1483,9 +1599,9 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                             SizedBox(
                               width: 80,
                               child: ElevatedButton(
-                                  onPressed: _isSaveButtonDisabled
-                                      ? null
-                                      : _changeSaveButton,
+                                  onPressed: (!_isSaveButtonDisabled && isStart)
+                                      ? _changeSaveButton
+                                      : null,
                                   child: Text(localizedStrings.button_save,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
@@ -1501,13 +1617,39 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                             SizedBox(
                               width: 80,
                               child: ElevatedButton(
-                                  onPressed: () {
-                                    highLowSettingDialog(context);
-                                  },
-                                  child: const Text('Edit',
+                                  onPressed: checkStartButton()
+                                      ? () {
+                                          if (_isTakeOutStart) {
+                                            _isTakeOutStart = false;
+                                            weightValueList.clear();
+                                            lastTakeOutWeightval = 0.000;
+                                          } else {
+                                            if (isWeightValue()) {
+                                              basicWeightval = double.tryParse(
+                                                  myReqWeightCountine
+                                                      .msgBody!.weightVal)!;
+                                            }
+                                            lastTakeOutWeightval = 0.000;
+                                            _isTakeOutStart = true;
+                                            weightValueList.clear();
+                                          }
+                                        }
+                                      // : (_isTakeOutStart)
+                                      //     ? () {
+                                      //         _isTakeOutStart = false;
+                                      //         weightValueList.clear();
+                                      //         lastTakeOutWeightval = 0.000;
+                                      //       }
+                                      : null,
+                                  child: Text(
+                                      (myReqWeightCountine.msgBody == null)
+                                          ? 'Start'
+                                          : (_isTakeOutStart)
+                                              ? 'End'
+                                              : 'Start',
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.normal))),
                             ),
@@ -1556,231 +1698,225 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                       ],
                     ),
                   ),
-                  // const SizedBox(width: 10),
-                  Column(
-                    children: [
-                      const SizedBox(height: 15),
-                      Row(
-                        children: [
-                          Image.asset(
-                            ((myHighLowWeight.lowValue == 0) || (_isLow))
-                                ? "assets/images/yellow.png"
-                                : "assets/images/grey_circle.png",
-                            width: 60,
-                            height: 60,
-                          ),
-                          Image.asset(
-                            (((myHighLowWeight.lowValue == 0) &&
-                                        (myHighLowWeight.highValue == 0)) ||
-                                    (_isOK))
-                                ? "assets/images/green.png"
-                                : "assets/images/grey_circle.png",
-                            width: 60,
-                            height: 60,
-                          ),
-                          Image.asset(
-                            ((myHighLowWeight.highValue == 0) || (_isHigh))
-                                ? "assets/images/red.png"
-                                : "assets/images/grey_circle.png",
-                            width: 60,
-                            height: 60,
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
-
-                  // const SizedBox(width: 20),
-                  // OutlinedButton(
-                  //     onPressed: () {
-                  //       fieldModifyDialog(context).then((onValue) {});
-                  //     },
-                  //     child: const Text("设置报表字段")),
                 ],
               ),
             ),
-            //////////////
             const SizedBox(height: 5),
-            Container(
-              height: 40,
-              color: Colors.white,
-              child: Row(
-                children: [
-                  Text(localizedStrings.plu_name),
-                  Container(
-                    child: DropdownButtonFormField<String>(
-                      itemHeight: 50.0,
-                      isExpanded: true,
-                      // decoration: const InputDecoration(border: OutlineInputBorder()),
-                      value: productNameValue,
-                      onChanged: (String? newPosition) {
-                        setState(() {
-                          productNameValue = newPosition.toString();
-                          for (var i = 0;
-                              i < myProductRecList.productRecInfo!.length;
-                              i++) {
-                            if (productNameValue ==
-                                myProductRecList.productRecInfo![i].product) {
-                              myProductRecInfo =
-                                  myProductRecList.productRecInfo![i];
-                              eventBus
-                                  .fire(EventProductRecInfo(myProductRecInfo));
-                            }
-                          }
-                        });
-                      },
-
-                      items: productNameList
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem(
-                            value: value,
-                            child:
-                                Text(value, overflow: TextOverflow.ellipsis));
-                      }).toList(),
-                    ),
-                    height: 53,
-                    width: 150,
-                    padding: const EdgeInsets.all(0),
-                  ),
-                  const SizedBox(width: 10),
-                  MaterialButton(
-                      color: Theme.of(context).colorScheme.primary,
-                      textColor: Colors.white,
-                      elevation: 5.0,
-                      child: Text(localizedStrings.plu_edit,
-                          style: const TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.normal)),
-                      onPressed: () {
-                        getProductList();
-                        addProductDialog(context).then((onvalue) {
-                          if (!productNameList.contains(productNameValue)) {
-                            myProductRecInfo.product = "";
-                            productNameValue = "";
-                            myProductRecInfo.id = "";
-                            myProductRecInfo.withPretare = false;
-                            myProductRecInfo.remarks = "";
-                          }
-                        });
-                      }),
-                  const SizedBox(width: 50),
-                  TextButton(
-                      onPressed: () {},
-                      child: Text(localizedStrings.user_name,
-                          style: const TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.normal))),
-                  Container(
-                    child: DropdownButtonFormField<String>(
-                      itemHeight: 50.0,
-                      isExpanded: true,
-                      // decoration: const InputDecoration(border: OutlineInputBorder()),
-                      value: userNameValue,
-                      onChanged: (String? newPosition) {
-                        setState(() {
-                          myUserInfo.name = newPosition.toString();
-                          for (var i = 0;
-                              i < myUserInfoList.userInfo!.length;
-                              i++) {
-                            if (myUserInfo.name ==
-                                myUserInfoList.userInfo![i].name) {
-                              myUserInfo = myUserInfoList.userInfo![i];
-                              eventBus.fire(EventUserInfo(myUserInfo));
-                            }
-                          }
-                        });
-                      },
-                      items: userNameList
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem(
-                            value: value,
-                            child:
-                                Text(value, overflow: TextOverflow.ellipsis));
-                      }).toList(),
-                    ),
-                    height: 53,
-                    width: 150,
-                    padding: const EdgeInsets.all(0),
-                  ),
-                  // const SizedBox(width: 10),
-                  MaterialButton(
-                      color: Theme.of(context).colorScheme.primary,
-                      textColor: Colors.white,
-                      elevation: 5.0,
-                      child: Text(localizedStrings.user_edit,
-                          style: const TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.normal)),
-                      onPressed: () {
-                        PublicFunctions.getUserList();
-                        getUserNameList();
-                        if (!userNameList.contains(userNameValue)) {
-                          myUserInfo.name = "";
-                          userNameValue = "";
-                          myUserInfo.id = "";
-                          myUserInfo.isFemale = true;
-                          myUserInfo.phone = "";
-                          myUserInfo.remarks = "";
-                        }
-                        addUserDialog(context).then((onvalue) {
-                          setState(() {
-                            PublicFunctions.getUserList();
-                            getUserNameList();
-                            if (!userNameList.contains(userNameValue)) {
-                              myUserInfo.name = "";
-                              userNameValue = "";
-                              myUserInfo.id = "";
-                              myUserInfo.isFemale = true;
-                              myUserInfo.phone = "";
-                              myUserInfo.remarks = "";
-                            }
-                          });
-                        });
-                      }),
-                  const SizedBox(width: 10),
-                  MaterialButton(
-                      color: Theme.of(context).colorScheme.primary,
-                      textColor: Colors.white,
-                      elevation: 5.0,
-                      child: const Text('Report Setting',
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.normal)),
-                      onPressed: () {
-                        reportFieldsSettingDialog(context);
-                      }),
-                  const SizedBox(width: 10),
-                  MaterialButton(
-                      color: Theme.of(context).colorScheme.primary,
-                      textColor: Colors.white,
-                      elevation: 5.0,
-                      child: const Text('Hide Report',
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.normal)),
-                      onPressed: () {
-                        _toggleLayout();
-                      }),
-                  const SizedBox(width: 10),
-                  MaterialButton(
-                      color: Theme.of(context).colorScheme.primary,
-                      textColor: Colors.white,
-                      elevation: 5.0,
-                      child: const Text('Delete All',
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.normal)),
-                      onPressed: () {
-                        PublicFunctions.deleteAllRecordsCheck();
-                      }),
-                ],
-              ),
-            ),
-            Expanded(
-              child: SfDataGrid(
-                source: _weightReportDataSource,
-                columns: getColumns(),
-                columnWidthMode: ColumnWidthMode.fill,
-                frozenRowsCount: 0,
-                controller: _dataGridController,
-              ),
-            )
+            buttonRow(context),
+            displayGrid(),
           ],
         ));
+  }
+
+  bool checkStartButton() {
+    var res = false;
+    if (!isStart || myReqWeightCountine.msgBody == null) {
+      if (_isTakeOutStart) {
+        _isTakeOutStart = false;
+        weightValueList.clear();
+        lastTakeOutWeightval = 0.000;
+      }
+      res = false;
+    } else if ((myReqWeightCountine.msgBody != null) &&
+        (myReqWeightCountine.msgBody!.isStable) &&
+        isWeightValue()) {
+      double nowWeightVal = double.parse(
+          ((double.tryParse(myReqWeightCountine.msgBody!.weightVal)))!
+              .toStringAsFixed(3));
+      if (nowWeightVal > 0.02) {
+        res = true;
+      }
+    }
+
+    return res;
+  }
+
+  void isWeightStable() {
+    bool res = false;
+    if (myReqWeightCountine.msgBody == null) {
+      res = false;
+    } else if (myReqWeightCountine.msgBody!.isStable) {
+      res = true;
+    }
+    setState(() {
+      _isSaveButtonDisabled = !res;
+    });
+  }
+
+  Widget buttonRow(BuildContext context) {
+    return Container(
+      height: 40,
+      color: Colors.white,
+      child: Row(
+        children: [
+          Text(localizedStrings.plu_name),
+          Container(
+            child: DropdownButtonFormField<String>(
+              itemHeight: 50.0,
+              isExpanded: true,
+              // decoration: const InputDecoration(border: OutlineInputBorder()),
+              value: productNameValue,
+              onChanged: (String? newPosition) {
+                setState(() {
+                  productNameValue = newPosition.toString();
+                  for (var i = 0;
+                      i < myProductRecList.productRecInfo!.length;
+                      i++) {
+                    if (productNameValue ==
+                        myProductRecList.productRecInfo![i].product) {
+                      myProductRecInfo = myProductRecList.productRecInfo![i];
+                      eventBus.fire(EventProductRecInfo(myProductRecInfo));
+                    }
+                  }
+                });
+              },
+
+              items:
+                  productNameList.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem(
+                    value: value,
+                    child: Text(value, overflow: TextOverflow.ellipsis));
+              }).toList(),
+            ),
+            height: 53,
+            width: 150,
+            padding: const EdgeInsets.all(0),
+          ),
+          const SizedBox(width: 10),
+          MaterialButton(
+              color: Theme.of(context).colorScheme.primary,
+              textColor: Colors.white,
+              elevation: 5.0,
+              child: Text(localizedStrings.plu_edit,
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.normal)),
+              onPressed: () {
+                getProductList();
+                addProductDialog(context).then((onvalue) {
+                  if (!productNameList.contains(productNameValue)) {
+                    myProductRecInfo.product = "";
+                    productNameValue = "";
+                    myProductRecInfo.id = "";
+                    myProductRecInfo.withPretare = false;
+                    myProductRecInfo.remarks = "";
+                  }
+                });
+              }),
+          const SizedBox(width: 50),
+          TextButton(
+              onPressed: () {},
+              child: Text(localizedStrings.user_name,
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.normal))),
+          Container(
+            child: DropdownButtonFormField<String>(
+              itemHeight: 50.0,
+              isExpanded: true,
+              // decoration: const InputDecoration(border: OutlineInputBorder()),
+              value: userNameValue,
+              onChanged: (String? newPosition) {
+                setState(() {
+                  myUserInfo.name = newPosition.toString();
+                  for (var i = 0; i < myUserInfoList.userInfo!.length; i++) {
+                    if (myUserInfo.name == myUserInfoList.userInfo![i].name) {
+                      myUserInfo = myUserInfoList.userInfo![i];
+                      eventBus.fire(EventUserInfo(myUserInfo));
+                    }
+                  }
+                });
+              },
+              items: userNameList.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem(
+                    value: value,
+                    child: Text(value, overflow: TextOverflow.ellipsis));
+              }).toList(),
+            ),
+            height: 53,
+            width: 150,
+            padding: const EdgeInsets.all(0),
+          ),
+          // const SizedBox(width: 10),
+          MaterialButton(
+              color: Theme.of(context).colorScheme.primary,
+              textColor: Colors.white,
+              elevation: 5.0,
+              child: Text(localizedStrings.user_edit,
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.normal)),
+              onPressed: () {
+                PublicFunctions.getUserList();
+                getUserNameList();
+                if (!userNameList.contains(userNameValue)) {
+                  myUserInfo.name = "";
+                  userNameValue = "";
+                  myUserInfo.id = "";
+                  myUserInfo.isFemale = true;
+                  myUserInfo.phone = "";
+                  myUserInfo.remarks = "";
+                }
+                addUserDialog(context).then((onvalue) {
+                  setState(() {
+                    PublicFunctions.getUserList();
+                    getUserNameList();
+                    if (!userNameList.contains(userNameValue)) {
+                      myUserInfo.name = "";
+                      userNameValue = "";
+                      myUserInfo.id = "";
+                      myUserInfo.isFemale = true;
+                      myUserInfo.phone = "";
+                      myUserInfo.remarks = "";
+                    }
+                  });
+                });
+              }),
+          const SizedBox(width: 10),
+          MaterialButton(
+              color: Theme.of(context).colorScheme.primary,
+              textColor: Colors.white,
+              elevation: 5.0,
+              child: const Text('Report Setting',
+                  style:
+                      TextStyle(fontSize: 14, fontWeight: FontWeight.normal)),
+              onPressed: () {
+                reportFieldsSettingDialog(context);
+              }),
+          const SizedBox(width: 10),
+          MaterialButton(
+              color: Theme.of(context).colorScheme.primary,
+              textColor: Colors.white,
+              elevation: 5.0,
+              child: const Text('Hide Report',
+                  style:
+                      TextStyle(fontSize: 14, fontWeight: FontWeight.normal)),
+              onPressed: () {
+                _toggleLayout();
+              }),
+          const SizedBox(width: 10),
+          MaterialButton(
+              color: Theme.of(context).colorScheme.primary,
+              textColor: Colors.white,
+              elevation: 5.0,
+              child: const Text('Delete All',
+                  style:
+                      TextStyle(fontSize: 14, fontWeight: FontWeight.normal)),
+              onPressed: () {
+                PublicFunctions.deleteAllRecordsTakeOut();
+              }),
+        ],
+      ),
+    );
+  }
+
+  Widget displayGrid() {
+    return Expanded(
+      child: SfDataGrid(
+        source: _weightReportDataSource,
+        columns: getColumns(),
+        columnWidthMode: ColumnWidthMode.fill,
+        frozenRowsCount: 0,
+        controller: _dataGridController,
+      ),
+    );
   }
 
   void paramSettingDialog(BuildContext context) {
@@ -1789,16 +1925,6 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
       barrierDismissible: false, // 允许点击空白处关闭对话框
       builder: (context) {
         return const ParamSettingDialog();
-      },
-    );
-  }
-
-  void highLowSettingDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: false, // 允许点击空白处关闭对话框
-      builder: (context) {
-        return const HighLowSettingDialog();
       },
     );
   }
@@ -2072,7 +2198,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     myScaleCmd.cmdMode = "add_rec";
     myAddScaleRecord.scaleId = 1;
     myAddScaleRecord.price = '0.0';
-    myAddScaleRecord.scaleMode = '1';
+    myAddScaleRecord.scaleMode = '3';
     myAddScaleRecord.product = currentData.pluName;
     myAddScaleRecord.weight = currentData.weight.toString();
     myAddScaleRecord.pluNo = currentData.plu;
@@ -2086,13 +2212,94 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
 
+  bool isWeightValue() {
+    if (myReqWeightCountine.msgBody == null) {
+      return false;
+    }
+    if (!(myReqWeightCountine.msgBody!.weightVal.contains('--')) &&
+        !(myReqWeightCountine.msgBody!.weightVal.contains('E')) &&
+        !(myReqWeightCountine.msgBody!.weightVal.contains('UL')) &&
+        !(myReqWeightCountine.msgBody!.weightVal.contains('OL'))) {
+      return true;
+    }
+    return false;
+  }
+
+  bool isZeroValue() {
+    if (myReqWeightCountine.msgBody != null) {
+      return false;
+    }
+    if (myReqWeightCountine.msgBody!.weightVal == "0" ||
+        myReqWeightCountine.msgBody!.weightVal == "0.0" ||
+        myReqWeightCountine.msgBody!.weightVal == "0.00" ||
+        myReqWeightCountine.msgBody!.weightVal == "0.000" ||
+        myReqWeightCountine.msgBody!.weightVal == "0.0000" ||
+        myReqWeightCountine.msgBody!.weightVal == "0.00000") {
+      return true;
+    }
+    return false;
+  }
+
+  void showDiffWeightVal() {
+    double? nowWeightVal =
+        double.tryParse(myReqWeightCountine.msgBody!.weightVal);
+    nowWeightVal =
+        double.parse((basicWeightval - nowWeightVal!).toStringAsFixed(3));
+    if (weightValueList.isNotEmpty) {
+      double tempDouble = nowWeightVal;
+      for (var i = 0; i < weightValueList.length; i++) {
+        tempDouble = tempDouble - weightValueList[i];
+      }
+      takeOutWeightValue = tempDouble.toStringAsFixed(3);
+    } else {
+      takeOutWeightValue = nowWeightVal.toStringAsFixed(3);
+    }
+    showTakeOutWeight = nowWeightVal.toStringAsFixed(3);
+  }
+
   void _addWeightToReport() {
+    diffWeightVal = '0.000';
+    if (_isTakeOutStart) {
+      if (isWeightValue()) {
+        double? nowWeightVal =
+            double.tryParse(myReqWeightCountine.msgBody!.weightVal);
+        nowWeightVal =
+            double.parse((basicWeightval - nowWeightVal!).toStringAsFixed(3));
+        if (weightValueList.isNotEmpty) {
+          double tempDouble = nowWeightVal;
+          for (var i = 0; i < weightValueList.length; i++) {
+            tempDouble = tempDouble - weightValueList[i];
+          }
+          diffWeightVal = tempDouble.toStringAsFixed(3);
+          if (tempDouble > 0.02) {
+            weightValueList.add(double.parse(tempDouble.toStringAsFixed(3)));
+          }
+        } else {
+          diffWeightVal = nowWeightVal.toStringAsFixed(3);
+          if (nowWeightVal > 0.02) {
+            weightValueList.add(double.parse(nowWeightVal.toStringAsFixed(3)));
+          }
+        }
+        showTakeOutWeight = nowWeightVal.toStringAsFixed(3);
+        performAddToReport();
+        takeOutWeightValue = "0.000";
+      } else {
+        showTakeOutWeight = myReqWeightCountine.msgBody!.weightVal;
+      }
+    } else {
+      performAddToReport();
+    }
+  }
+
+  void performAddToReport() {
     myWeightReportData.add(WeightReportData(
       (myWeightReportData.length + 1).toString(),
       getDateTime(mySettingParam.dateSeparator),
-      (myReqWeightCountine.msgBody?.weightVal == null)
-          ? (" ")
-          : (myReqWeightCountine.msgBody!.weightVal),
+      (_isTakeOutStart)
+          ? diffWeightVal.toString()
+          : (myReqWeightCountine.msgBody?.weightVal == null)
+              ? (" ")
+              : (myReqWeightCountine.msgBody!.weightVal),
       (myReqWeightCountine.msgBody?.weightUnit == null)
           ? (" ")
           : (myReqWeightCountine.msgBody!.weightUnit),

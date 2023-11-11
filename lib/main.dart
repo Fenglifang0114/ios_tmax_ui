@@ -44,14 +44,11 @@ class MyApp extends StatelessWidget {
     // webchannel = WebSocketChannel('ws://10.5.52.65:7878/tmax?scaleid=0');
     webchannel.connect();
     webchannel1.connect();
-
     getLicense();
-
     return MaterialApp(
         //自定义主题
         theme: themeColor(),
         // 国际化
-
         localizationsDelegates: const [
           // 本地化的代理类
           GlobalMaterialLocalizations.delegate, //为使material组件支持多语言
@@ -61,10 +58,8 @@ class MyApp extends StatelessWidget {
         ],
         // 应用支持的语言列表
         supportedLocales: S.delegate.supportedLocales,
-        // locale: const Locale('en', "US"),
         locale:
             Locale(savedLanguage.split('_')[0], savedLanguage.split('_')[1]),
-
         //去掉右上角debug图标
         debugShowCheckedModeBanner: false,
         home: const TrialPage()); //HomePage()); //

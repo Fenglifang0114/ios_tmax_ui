@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../data/setting_version_info.dart';
 import '../dialog/language_setting.dart';
 import '../generated/l10n.dart';
 import '../widget/box_gradient.dart';
@@ -62,8 +63,8 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
 
   @override
   Widget build(BuildContext context) {
-    final _width = MediaQuery.of(context).size.width;
-    final _height = MediaQuery.of(context).size.height;
+    // final _width = MediaQuery.of(context).size.width;
+    // final _height = MediaQuery.of(context).size.height;
     // final _height = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: PreferredSize(
@@ -78,9 +79,9 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
                 children: [
                   Center(
                     child: SizedBox(
-                      width: 240,
+                      width: 300,
                       child: Text(
-                        "T-CONFIG",
+                        mySystemVersionInfo.getTitle(mySystemVersion),
                         style: TextStyle(
                             fontSize: 20,
                             color: Theme.of(context).colorScheme.onPrimary),

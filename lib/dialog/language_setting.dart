@@ -10,7 +10,7 @@ class LanguageSettingPage extends StatefulWidget {
 }
 
 class _LanguageSettingPageState extends State<LanguageSettingPage> {
-  List<String> languageList = ['中文', 'English'];
+  List<String> languageList = ['中文', 'English', 'Русский'];
   dynamic localizedStrings;
   String language = '';
 
@@ -20,6 +20,8 @@ class _LanguageSettingPageState extends State<LanguageSettingPage> {
     localizedStrings = S.of(context);
     if (localizedStrings.zh_cn == 'Chinese') {
       language = 'English';
+    } else if ((localizedStrings.zh_cn == 'Китайский')) {
+      language = 'Русский';
     } else {
       language = '中文';
     }
@@ -133,6 +135,9 @@ class _LanguageSettingPageState extends State<LanguageSettingPage> {
         } else if (value == "English") {
           S.load(const Locale('en', 'US'));
           saveLanguageSetting('en_US');
+        } else if (value == "Русский") {
+          S.load(const Locale('ru', 'RU'));
+          saveLanguageSetting('ru_RU');
         }
       });
     }

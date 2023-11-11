@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import '../data/download_prt_fmt.dart';
@@ -432,7 +430,11 @@ class _DownloadPageState extends State<DownloadPage> {
 
   void _startTimer(int time) {
     _downloadTimer = Timer(Duration(seconds: time), () {
-      isDownloadClicked = false;
+      setState(() {
+        isDownloadClicked = false;
+      });
+      _stopTimer();
+
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: const Text('Download fail !',
               style: TextStyle(

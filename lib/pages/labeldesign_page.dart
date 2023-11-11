@@ -9,7 +9,6 @@ import 'package:t_max/pages/dow_prn_fmt_page.dart';
 import '../data/barcoderowdata.dart';
 import '../data/formatdata.dart';
 import '../data/item_key_list.dart';
-import '../data/license_data.dart';
 import '../data/offset.dart';
 import '../data/pagesize.dart';
 import '../data/scalecmd_data.dart';

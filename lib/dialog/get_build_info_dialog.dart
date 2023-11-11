@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:t_max/functions/methods.dart';
 import '../../generated/l10n.dart';
 import '../data/downloadresponse.dart';
-import '../data/license_data.dart';
 import '../eventbus/eventbus.dart';
 
 class GetBuildInfoPage extends StatefulWidget {

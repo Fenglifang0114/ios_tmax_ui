@@ -4,9 +4,11 @@ import 'package:flutter/foundation.dart';
 import 'package:t_max/data/downloadresponse.dart';
 import 'package:t_max/data/ipinfodata.dart';
 import 'package:t_max/data/record_data.dart';
+import 'package:t_max/data/scale_info_from_scale.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import '../data/reqweightdata_data.dart';
+import '../data/resp_type_data.dart';
 import '../data/respdata_data.dart';
 import '../data/wifi_ap_info.dart';
 import '../data/wifi_list_info.dart';
@@ -105,92 +107,117 @@ class WebSocketScaleChannel {
   }
 
   Future<void> paster(dynamic data) async {
-    try {
-      var jsonData = json.decode(data);
-      if (jsonData['MsgType'] == 'weight_data') {
-        Map<String, dynamic> map = json.decode(data);
-        dynamic mobj = ReqWeightCountine.fromJson(map);
-        eventBus.fire(EventReqWeightCountine(mobj));
-      } else if (jsonData['MsgType'] == 'resp_down_prn_fmt') {
-        Map<String, dynamic> map = json.decode(data);
-        dynamic mobj = ChannelResponse.fromJson(map);
-        eventBus.fire(EventDownloadResponse(mobj));
-      } else if (jsonData['MsgType'] == 'resp_err_serial') {
-        Map<String, dynamic> map = json.decode(data);
-        dynamic mobj = ChannelResponse.fromJson(map);
-        eventBus.fire(EventSerialPortResponse(mobj));
-      } else if (jsonData['MsgType'] == "resp_get_ap_list") {
-        pasterWifiList(jsonData['MsgBody']);
-      } else if (jsonData['MsgType'] == "resp_get_ip_info") {
-        pasterIpInfo(jsonData['MsgBody']);
-      } else if (jsonData['MsgType'] == "resp_modify_bt_name") {
-        Map<String, dynamic> map = json.decode(data);
-        dynamic mobj = ChannelResponse.fromJson(map);
-        eventBus.fire(EventConnectBTResponse(mobj));
-      } else if (jsonData['MsgType'] == "resp_bt_passth_data") {
-        Map<String, dynamic> map = json.decode(data);
-        dynamic mobj = ChannelResponse.fromJson(map);
-        eventBus.fire(EventBTResponse(mobj));
-      } else if (jsonData['MsgType'] == "resp_connect_ap") {
-        pasterConnectApInfo(jsonData['MsgBody']);
-      } else if (jsonData['MsgType'] == "resp_set_wifi_dynamic_ip") {
-        Map<String, dynamic> map = json.decode(data);
-        dynamic mobj = ChannelResponse.fromJson(map);
-        eventBus.fire(EventConnectDynamicIp(mobj));
-      } else if (jsonData['MsgType'] == "resp_set_wifi_static_ip") {
-        Map<String, dynamic> map = json.decode(data);
-        dynamic mobj = ChannelResponse.fromJson(map);
-        eventBus.fire(EventConnectStaticIp(mobj));
-      } else if (jsonData['MsgType'] == "resp_get_ip_mode") {
-        pasterGetIpMode(jsonData['MsgBody']);
-      } else if (jsonData['MsgType'] == "resp_get_wifi_ap_info") {
-        pasterWifiApInfo(jsonData['MsgBody']);
-      } else if (jsonData['MsgType'] == "resp_update_firmware") {
-        Map<String, dynamic> map = json.decode(data);
-        dynamic mobj = ChannelResponse.fromJson(map);
-        eventBus.fire(EventRespUpdateFirmware(mobj));
-      } else if (jsonData['MsgType'] == "resp_update_firmware_progress") {
-        Map<String, dynamic> map = json.decode(data);
-        dynamic mobj = ChannelResponse.fromJson(map);
-        eventBus.fire(EventRespUpdateFirmwareProcess(mobj));
-      } else if (jsonData['MsgType'] == "resp_check_serial_port") {
-        Map<String, dynamic> map = json.decode(data);
-        dynamic mobj = ChannelResponse.fromJson(map);
-        eventBus.fire(EventRespCheckSerialPort(mobj));
-      } else if (jsonData['MsgType'] == "resp_get_build_info") {
-        Map<String, dynamic> map = json.decode(data);
-        dynamic mobj = ChannelResponse.fromJson(map);
-        eventBus.fire(EventGetBuildInfo(mobj));
-      } else if (jsonData['MsgType'] == "resp_set_output_fmt") {
-        Map<String, dynamic> map = json.decode(data);
-        dynamic mobj = ChannelResponse.fromJson(map);
-        eventBus.fire(EventSerialOutputResp(mobj));
-      } else if (jsonData['MsgType'] == "scale_passth_data") {
-        Map<String, dynamic> map = json.decode(data);
-        dynamic mobj = ChannelResponse.fromJson(map);
-        eventBus.fire(EventScalePassthData(mobj));
-      } else if (jsonData['MsgType'] == "resp_get_recs") {
-        pasterGetRecords(jsonData['MsgBody']);
-      } else if (jsonData['MsgType'] == "resp_open_scale_passthrough") {
-        Map<String, dynamic> map = json.decode(data);
-        dynamic mobj = ChannelResponse.fromJson(map);
-        eventBus.fire(EventOpenScalePassthResp(mobj));
-      } else if (jsonData['MsgType'] == "resp_close_scale_passthrough") {
-        Map<String, dynamic> map = json.decode(data);
-        dynamic mobj = ChannelResponse.fromJson(map);
-        eventBus.fire(EventCloseScalePassthResp(mobj));
-      } else if (jsonData['MsgType'] == "resp_reg_weight") {
-        Map<String, dynamic> map = json.decode(data);
-        dynamic mobj = ChannelResponse.fromJson(map);
-        eventBus.fire(EventRegWeightResp(mobj));
-      } else if (jsonData['MsgType'] == "resp_unreg_weight") {
-        Map<String, dynamic> map = json.decode(data);
-        dynamic mobj = ChannelResponse.fromJson(map);
-        eventBus.fire(EventUnregWeightResp(mobj));
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print(e);
+    if (data != null) {
+      try {
+        var jsonData = json.decode(data);
+        Map<String, dynamic> map = jsonData;
+        dynamic mobj;
+        switch (jsonData['MsgType']) {
+          case RespMsgType.weightData:
+            mobj = ReqWeightCountine.fromJson(map);
+            eventBus.fire(EventReqWeightCountine(mobj));
+            break;
+          case RespMsgType.respDownPrnFmt:
+            mobj = ChannelResponse.fromJson(map);
+            eventBus.fire(EventDownloadResponse(mobj));
+            break;
+          case RespMsgType.respErrSerial:
+            mobj = ChannelResponse.fromJson(map);
+            eventBus.fire(EventSerialPortResponse(mobj));
+            break;
+          case RespMsgType.respGetApList:
+            pasterWifiList(jsonData['MsgBody']);
+            break;
+          case RespMsgType.respGetIpInfo:
+            pasterIpInfo(jsonData['MsgBody']);
+            break;
+          case RespMsgType.respModifyBTName:
+            mobj = ChannelResponse.fromJson(map);
+            eventBus.fire(EventConnectBTResponse(mobj));
+            break;
+          case RespMsgType.respBTPassthData:
+            mobj = ChannelResponse.fromJson(map);
+            eventBus.fire(EventBTResponse(mobj));
+            break;
+          case RespMsgType.respConnectAp:
+            pasterConnectApInfo(jsonData['MsgBody']);
+            break;
+          case RespMsgType.respSetWifiDynamicIp:
+            mobj = ChannelResponse.fromJson(map);
+            eventBus.fire(EventConnectDynamicIp(mobj));
+            break;
+          case RespMsgType.respSetWifiStaticIp:
+            mobj = ChannelResponse.fromJson(map);
+            eventBus.fire(EventConnectStaticIp(mobj));
+            break;
+          case RespMsgType.respGetIpMode:
+            pasterGetIpMode(jsonData['MsgBody']);
+            break;
+          case RespMsgType.respGetWifiApInfo:
+            pasterWifiApInfo(jsonData['MsgBody']);
+            break;
+          case RespMsgType.respUpdateFirmware:
+            mobj = ChannelResponse.fromJson(map);
+            eventBus.fire(EventRespUpdateFirmware(mobj));
+            break;
+          case RespMsgType.respUpdateFirmwareProgress:
+            mobj = ChannelResponse.fromJson(map);
+            eventBus.fire(EventRespUpdateFirmwareProcess(mobj));
+            break;
+          case RespMsgType.respCheckSerialPort:
+            mobj = ChannelResponse.fromJson(map);
+            eventBus.fire(EventRespCheckSerialPort(mobj));
+            break;
+          case RespMsgType.respGetBuildInfo:
+            mobj = ChannelResponse.fromJson(map);
+            eventBus.fire(EventGetBuildInfo(mobj));
+            break;
+          case RespMsgType.respSetOutputFmt:
+            mobj = ChannelResponse.fromJson(map);
+            eventBus.fire(EventSerialOutputResp(mobj));
+            break;
+          case RespMsgType.scalePassthData:
+            mobj = ChannelResponse.fromJson(map);
+            eventBus.fire(EventScalePassthData(mobj));
+            break;
+          case RespMsgType.respGetRecs:
+            pasterGetRecords(jsonData['MsgBody']);
+            break;
+          case RespMsgType.respOpenScalePassthrough:
+            mobj = ChannelResponse.fromJson(map);
+            eventBus.fire(EventOpenScalePassthResp(mobj));
+            break;
+          case RespMsgType.respCloseScalePassthrough:
+            mobj = ChannelResponse.fromJson(map);
+            eventBus.fire(EventCloseScalePassthResp(mobj));
+            break;
+          case RespMsgType.respRegWeight:
+            mobj = ChannelResponse.fromJson(map);
+            eventBus.fire(EventRegWeightResp(mobj));
+            break;
+          case RespMsgType.respUnregWeight:
+            mobj = ChannelResponse.fromJson(map);
+            eventBus.fire(EventUnregWeightResp(mobj));
+            break;
+          case RespMsgType.respGetScaleInfo:
+            if (!jsonData['MsgBody'].contains('fail')) {
+              mobj =
+                  ScaleInfoFromScale.fromJson(json.decode(jsonData['MsgBody']));
+            } else {
+              mobj = ScaleInfoFromScale();
+            }
+            eventBus.fire(EventGetScaleInfo(mobj));
+            break;
+          case RespMsgType.respDelRec:
+            eventBus.fire(EventDeleteRec(mobj));
+            break;
+          default:
+            break;
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          print(e);
+        }
       }
     }
   }
@@ -248,7 +275,11 @@ Future pasterGetIpMode(String jsonDataString) async {
 }
 
 Future pasterGetRecords(String jsonDataString) async {
-  if (jsonDataString.isNotEmpty) {
+  if (jsonDataString == '[]') {
+    if (myGetScaleRecords.weightRecords != null) {
+      myGetScaleRecords.weightRecords!.clear();
+    }
+  } else if (jsonDataString.isNotEmpty) {
     myGetScaleRecords = GetScaleRecords.fromJson(json.decode(jsonDataString));
   } else {
     if (myGetScaleRecords.weightRecords != null) {

@@ -356,3 +356,13 @@ class EventGetBuildInfo {
   dynamic obj;
   EventGetBuildInfo(this.obj);
 }
+
+class EventGetScaleInfo {
+  dynamic obj;
+  EventGetScaleInfo(this.obj);
+}
+
+class EventDeleteRec {
+  dynamic obj;
+  EventDeleteRec(this.obj);
+}
