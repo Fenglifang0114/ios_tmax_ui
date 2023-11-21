@@ -290,20 +290,6 @@ class _RetailHomePageState extends State<RetailHomePage> {
                     width: 100, child: Image.asset('assets/images/tscale.png')),
               ],
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: 100,
-                  child: Text(
-                    'T-Connect',
-                    style:
-                        TextStyle(color: Theme.of(context).colorScheme.primary),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ],
-            )
           ],
         ),
       ),
@@ -403,15 +389,15 @@ class _RetailHomePageState extends State<RetailHomePage> {
                           height: 80,
                           child: Column(
                             children: [
-                              const Row(
+                              Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 30,
                                   ),
                                   Flexible(
                                     child: Text(
-                                      'Scale Name:',
+                                      localizedStrings.scale_name,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -435,15 +421,15 @@ class _RetailHomePageState extends State<RetailHomePage> {
                                       ),
                                     ),
                                   ]),
-                              const Row(
+                              Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 30,
                                   ),
                                   Flexible(
                                     child: Text(
-                                      'SN:',
+                                      localizedStrings.scale_sn,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -470,7 +456,7 @@ class _RetailHomePageState extends State<RetailHomePage> {
                             ],
                           ),
                         )
-                      : SizedBox(),
+                      : const SizedBox(),
                   MouseRegion(
                     cursor: SystemMouseCursors.click, // 设置光标为手的形状
                     child: GestureDetector(

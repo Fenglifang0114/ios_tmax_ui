@@ -1,27 +1,13 @@
-import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
-import 'package:excel/excel.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import '../../data/currentport_data.dart';
 import '../../data/device_data.dart';
-import '../../data/productlist_data.dart';
-import '../../data/report_data.dart';
 import '../../data/reqweightdata_data.dart';
-import '../../data/settingparam_data.dart';
-import '../../data/userinfo_data.dart';
 import '../../data/weight_data.dart';
 import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
 import '../../generated/l10n.dart';
 import '../../main.dart';
 import '../data/downloadresponse.dart';
-
-import '../data/weight_report_data.dart';
-import '../dialog/addproduct_dialog.dart';
-import '../dialog/adduser_dialog.dart';
 
 class WeightModePage extends StatefulWidget {
   const WeightModePage({Key? key}) : super(key: key);

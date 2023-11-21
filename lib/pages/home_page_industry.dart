@@ -15,7 +15,6 @@ import '../dialog/get_build_info_dialog.dart';
 import '../dialog/language_setting.dart';
 import '../functions/methods.dart';
 import '../generated/l10n.dart';
-import '../widget/bluetoothsetting.dart';
 import '../widget/box_gradient.dart';
 import '../widget/custom_circle_icon.dart';
 import '../widget/custom_setting.dart';
@@ -279,20 +278,6 @@ class IndustryHomePageState extends State<IndustryHomePage> {
                     width: 100, child: Image.asset('assets/images/tscale.png')),
               ],
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: 100,
-                  child: Text(
-                    'T-Connect',
-                    style:
-                        TextStyle(color: Theme.of(context).colorScheme.primary),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ],
-            )
           ],
         ),
       ),

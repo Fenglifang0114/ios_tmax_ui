@@ -128,7 +128,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "plu_error_message2":
             MessageLookupByLibrary.simpleMessage("PLU序号或PLU名称已经存在."),
         "plu_name": MessageLookupByLibrary.simpleMessage("PLU 名称："),
-        "plu_remarks": MessageLookupByLibrary.simpleMessage("PLu 备注"),
+        "plu_remarks": MessageLookupByLibrary.simpleMessage("PLU 备注"),
         "position": MessageLookupByLibrary.simpleMessage("位置"),
         "pretare": MessageLookupByLibrary.simpleMessage("预扣重"),
         "print_direction": MessageLookupByLibrary.simpleMessage("打印方向："),

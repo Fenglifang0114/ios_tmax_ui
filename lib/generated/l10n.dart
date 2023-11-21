@@ -130,10 +130,10 @@ class S {
     );
   }
 
-  /// `Contact us:sales@taiwanscale.com`
+  /// `Contact us: sales@taiwanscale.com`
   String get contact_us {
     return Intl.message(
-      'Contact us:sales@taiwanscale.com',
+      'Contact us: sales@taiwanscale.com',
       name: 'contact_us',
       desc: '',
       args: [],
@@ -170,10 +170,10 @@ class S {
     );
   }
 
-  /// `No authentication. Please send the ID to us.`
+  /// `Not authenticed. Please send the ID to us.`
   String get passed_fail_message {
     return Intl.message(
-      'No authentication. Please send the ID to us.',
+      'Not authenticed. Please send the ID to us.',
       name: 'passed_fail_message',
       desc: '',
       args: [],
@@ -310,10 +310,10 @@ class S {
     );
   }
 
-  /// `OK`
+  /// `Confirm`
   String get button_ok {
     return Intl.message(
-      'OK',
+      'Confirm',
       name: 'button_ok',
       desc: '',
       args: [],
@@ -330,10 +330,10 @@ class S {
     );
   }
 
-  /// `Set wifi successful!`
+  /// `Wi-Fi configured successfully!`
   String get set_wifi_success {
     return Intl.message(
-      'Set wifi successful!',
+      'Wi-Fi configured successfully!',
       name: 'set_wifi_success',
       desc: '',
       args: [],
@@ -360,10 +360,10 @@ class S {
     );
   }
 
-  /// `Find SSID`
+  /// `Discover SSID`
   String get find_ssid {
     return Intl.message(
-      'Find SSID',
+      'Discover SSID',
       name: 'find_ssid',
       desc: '',
       args: [],
@@ -450,10 +450,10 @@ class S {
     );
   }
 
-  /// `Bluetooth information modification`
+  /// `Bluetooth Configurations`
   String get bluetooth_modification {
     return Intl.message(
-      'Bluetooth information modification',
+      'Bluetooth Configurations',
       name: 'bluetooth_modification',
       desc: '',
       args: [],
@@ -470,30 +470,30 @@ class S {
     );
   }
 
-  /// `Serial port connection lost. Check the settings.`
+  /// `Serial port has been disconnected. Please check the settings.`
   String get serial_error {
     return Intl.message(
-      'Serial port connection lost. Check the settings.',
+      'Serial port has been disconnected. Please check the settings.',
       name: 'serial_error',
       desc: '',
       args: [],
     );
   }
 
-  /// `Modify bluetooth name error.`
+  /// `Error: Cannot modify  bluetooth name .`
   String get bluetooth_modify_error {
     return Intl.message(
-      'Modify bluetooth name error.',
+      'Error: Cannot modify  bluetooth name .',
       name: 'bluetooth_modify_error',
       desc: '',
       args: [],
     );
   }
 
-  /// `Modify bluetooth name successful.`
+  /// `Bluetooth name modified.`
   String get bluetooth_modify_ok {
     return Intl.message(
-      'Modify bluetooth name successful.',
+      'Bluetooth name modified.',
       name: 'bluetooth_modify_ok',
       desc: '',
       args: [],
@@ -540,20 +540,20 @@ class S {
     );
   }
 
-  /// `Save File(json)`
+  /// `Save File (json)`
   String get save_file {
     return Intl.message(
-      'Save File(json)',
+      'Save File (json)',
       name: 'save_file',
       desc: '',
       args: [],
     );
   }
 
-  /// `Open File(json)`
+  /// `Open File (json)`
   String get open_file {
     return Intl.message(
-      'Open File(json)',
+      'Open File (json)',
       name: 'open_file',
       desc: '',
       args: [],
@@ -590,10 +590,10 @@ class S {
     );
   }
 
-  /// `Save csv`
+  /// `Save as CSV`
   String get save_csv {
     return Intl.message(
-      'Save csv',
+      'Save as CSV',
       name: 'save_csv',
       desc: '',
       args: [],
@@ -620,20 +620,20 @@ class S {
     );
   }
 
-  /// `Tab order:`
+  /// `Layer order:`
   String get tab_order {
     return Intl.message(
-      'Tab order:',
+      'Layer order:',
       name: 'tab_order',
       desc: '',
       args: [],
     );
   }
 
-  /// `You haven't selected any element.`
+  /// `No element selected.`
   String get no_element {
     return Intl.message(
-      'You haven\'t selected any element.',
+      'No element selected.',
       name: 'no_element',
       desc: '',
       args: [],
@@ -650,10 +650,10 @@ class S {
     );
   }
 
-  /// `1. Please click on one or more elements on the left side;`
+  /// `1. Please click on one or more elements on the left panel;`
   String get step1 {
     return Intl.message(
-      '1. Please click on one or more elements on the left side;',
+      '1. Please click on one or more elements on the left panel;',
       name: 'step1',
       desc: '',
       args: [],
@@ -690,10 +690,10 @@ class S {
     );
   }
 
-  /// `FontSize:`
+  /// `Font Size:`
   String get select_fontsize {
     return Intl.message(
-      'FontSize:',
+      'Font Size:',
       name: 'select_fontsize',
       desc: '',
       args: [],
@@ -710,20 +710,20 @@ class S {
     );
   }
 
-  /// `Font Reverse:`
+  /// `Reverse Contrast:`
   String get font_reverse {
     return Intl.message(
-      'Font Reverse:',
+      'Reverse Contrast:',
       name: 'font_reverse',
       desc: '',
       args: [],
     );
   }
 
-  /// `HR Alignment:`
+  /// `HRI Alignment:`
   String get hr_alignment {
     return Intl.message(
-      'HR Alignment:',
+      'HRI Alignment:',
       name: 'hr_alignment',
       desc: '',
       args: [],
@@ -770,10 +770,10 @@ class S {
     );
   }
 
-  /// `Font Bold:`
+  /// `Bold:`
   String get font_bold {
     return Intl.message(
-      'Font Bold:',
+      'Bold:',
       name: 'font_bold',
       desc: '',
       args: [],
@@ -990,10 +990,10 @@ class S {
     );
   }
 
-  /// `The stable time cannot exceed 20 seconds.`
+  /// `The value must be under 20 seconds.`
   String get stable_time_error_tip {
     return Intl.message(
-      'The stable time cannot exceed 20 seconds.',
+      'The value must be under 20 seconds.',
       name: 'stable_time_error_tip',
       desc: '',
       args: [],
@@ -1110,20 +1110,20 @@ class S {
     );
   }
 
-  /// `User NO.:`
+  /// `User ID:`
   String get user_id {
     return Intl.message(
-      'User NO.:',
+      'User ID:',
       name: 'user_id',
       desc: '',
       args: [],
     );
   }
 
-  /// `Sex:`
+  /// `Gender:`
   String get user_sex {
     return Intl.message(
-      'Sex:',
+      'Gender:',
       name: 'user_sex',
       desc: '',
       args: [],
@@ -1140,40 +1140,40 @@ class S {
     );
   }
 
-  /// `User Remarks:`
+  /// `User Notes:`
   String get user_remarks {
     return Intl.message(
-      'User Remarks:',
+      'User Notes:',
       name: 'user_remarks',
       desc: '',
       args: [],
     );
   }
 
-  /// `The user id and user name can not be null !`
+  /// `The User Id and Username cannot be empty!`
   String get user_error_message1 {
     return Intl.message(
-      'The user id and user name can not be null !',
+      'The User Id and Username cannot be empty!',
       name: 'user_error_message1',
       desc: '',
       args: [],
     );
   }
 
-  /// `User ID or user name can not be repeated !`
+  /// `User ID or Username cannot be the same!`
   String get user_error_message2 {
     return Intl.message(
-      'User ID or user name can not be repeated !',
+      'User ID or Username cannot be the same!',
       name: 'user_error_message2',
       desc: '',
       args: [],
     );
   }
 
-  /// `The user record was not found !`
+  /// `The User is not found!`
   String get user_error_message3 {
     return Intl.message(
-      'The user record was not found !',
+      'The User is not found!',
       name: 'user_error_message3',
       desc: '',
       args: [],
@@ -1210,20 +1210,20 @@ class S {
     );
   }
 
-  /// `Scale Model`
+  /// `Model Name`
   String get scale_model {
     return Intl.message(
-      'Scale Model',
+      'Model Name',
       name: 'scale_model',
       desc: '',
       args: [],
     );
   }
 
-  /// `Get Ip`
+  /// `Get IP Address`
   String get button_get_ip {
     return Intl.message(
-      'Get Ip',
+      'Get IP Address',
       name: 'button_get_ip',
       desc: '',
       args: [],
@@ -1270,20 +1270,20 @@ class S {
     );
   }
 
-  /// `Serial port connected fail`
+  /// `Unable to connect`
   String get txt_serial_port_connected_fail {
     return Intl.message(
-      'Serial port connected fail',
+      'Unable to connect',
       name: 'txt_serial_port_connected_fail',
       desc: '',
       args: [],
     );
   }
 
-  /// `Software Info`
+  /// `Software Information`
   String get get_build_info {
     return Intl.message(
-      'Software Info',
+      'Software Information',
       name: 'get_build_info',
       desc: '',
       args: [],
@@ -1320,20 +1320,20 @@ class S {
     );
   }
 
-  /// `Pcs mode`
+  /// `Counting mode`
   String get serial_page_pcs {
     return Intl.message(
-      'Pcs mode',
+      'Counting mode',
       name: 'serial_page_pcs',
       desc: '',
       args: [],
     );
   }
 
-  /// `Price mode`
+  /// `Price Computing mode`
   String get serial_page_price {
     return Intl.message(
-      'Price mode',
+      'Price Computing mode',
       name: 'serial_page_price',
       desc: '',
       args: [],
@@ -1520,30 +1520,30 @@ class S {
     );
   }
 
-  /// `Weight mode format:`
+  /// `Weighing mode format:`
   String get weight_mode_format {
     return Intl.message(
-      'Weight mode format:',
+      'Weighing mode format:',
       name: 'weight_mode_format',
       desc: '',
       args: [],
     );
   }
 
-  /// `Acc mode format:`
+  /// `Accumulation mode format:`
   String get acc_mode_format {
     return Intl.message(
-      'Acc mode format:',
+      'Accumulation mode format:',
       name: 'acc_mode_format',
       desc: '',
       args: [],
     );
   }
 
-  /// `Pcs mode format:`
+  /// `Counting mode format:`
   String get pcs_mode_format {
     return Intl.message(
-      'Pcs mode format:',
+      'Counting mode format:',
       name: 'pcs_mode_format',
       desc: '',
       args: [],
@@ -1570,10 +1570,10 @@ class S {
     );
   }
 
-  /// `SN:`
+  /// `SN#:`
   String get scale_sn {
     return Intl.message(
-      'SN:',
+      'SN#:',
       name: 'scale_sn',
       desc: '',
       args: [],
@@ -1610,20 +1610,20 @@ class S {
     );
   }
 
-  /// `Checkweigher`
+  /// `Check Weighing`
   String get checkweigher_title {
     return Intl.message(
-      'Checkweigher',
+      'Check Weighing',
       name: 'checkweigher_title',
       desc: '',
       args: [],
     );
   }
 
-  /// `Take In Scale`
+  /// `Increment Weighing`
   String get take_in_title {
     return Intl.message(
-      'Take In Scale',
+      'Increment Weighing',
       name: 'take_in_title',
       desc: '',
       args: [],
@@ -1640,20 +1640,20 @@ class S {
     );
   }
 
-  /// `get name`
+  /// `Get name`
   String get get_bt_name {
     return Intl.message(
-      'get name',
+      'Get name',
       name: 'get_bt_name',
       desc: '',
       args: [],
     );
   }
 
-  /// `modify name`
+  /// `Modify name`
   String get modify_bt_name {
     return Intl.message(
-      'modify name',
+      'Modify name',
       name: 'modify_bt_name',
       desc: '',
       args: [],
@@ -1670,10 +1670,10 @@ class S {
     );
   }
 
-  /// `modify emission power`
+  /// `Modify emission power`
   String get bt_modify_emission {
     return Intl.message(
-      'modify emission power',
+      'Modify emission power',
       name: 'bt_modify_emission',
       desc: '',
       args: [],
@@ -1700,30 +1700,30 @@ class S {
     );
   }
 
-  /// `Please confirm the order of the printing format.`
+  /// `Please confirm the order of the printing formats.`
   String get confirm_info {
     return Intl.message(
-      'Please confirm the order of the printing format.',
+      'Please confirm the order of the printing formats.',
       name: 'confirm_info',
       desc: '',
       args: [],
     );
   }
 
-  /// `Download successful!`
+  /// `Download is successful!`
   String get download_result_ok {
     return Intl.message(
-      'Download successful!',
+      'Download is successful!',
       name: 'download_result_ok',
       desc: '',
       args: [],
     );
   }
 
-  /// `Download fail!`
+  /// `Download failed!`
   String get download_result_fail {
     return Intl.message(
-      'Download fail!',
+      'Download failed!',
       name: 'download_result_fail',
       desc: '',
       args: [],
@@ -1740,10 +1740,10 @@ class S {
     );
   }
 
-  /// `The update process can not be canceled.\r\nPlease make sure the update.`
+  /// `The update process can not be canceled.\r\nPress confirm to continue.`
   String get update_firmware_info {
     return Intl.message(
-      'The update process can not be canceled.\r\nPlease make sure the update.',
+      'The update process can not be canceled.\r\nPress confirm to continue.',
       name: 'update_firmware_info',
       desc: '',
       args: [],
@@ -1760,10 +1760,10 @@ class S {
     );
   }
 
-  /// `Please reboot the device and waiting...`
+  /// `Please reboot the device to begin update...`
   String get update_firmware_reboot {
     return Intl.message(
-      'Please reboot the device and waiting...',
+      'Please reboot the device to begin update...',
       name: 'update_firmware_reboot',
       desc: '',
       args: [],
@@ -1780,10 +1780,10 @@ class S {
     );
   }
 
-  /// `Show Report`
+  /// `Show Reports`
   String get report_show_btn {
     return Intl.message(
-      'Show Report',
+      'Show Reports',
       name: 'report_show_btn',
       desc: '',
       args: [],
