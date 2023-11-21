@@ -80,16 +80,6 @@ class S {
     );
   }
 
-  /// `Cancel`
-  String get cancel {
-    return Intl.message(
-      'Cancel',
-      name: 'cancel',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Connect`
   String get button_connect {
     return Intl.message(
@@ -155,86 +145,6 @@ class S {
     return Intl.message(
       'Serial Port Connection',
       name: 'title_serial_port_connection',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Label Design`
-  String get home_page_title2 {
-    return Intl.message(
-      'Label Design',
-      name: 'home_page_title2',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Wifi Setting`
-  String get home_page_title3 {
-    return Intl.message(
-      'Wifi Setting',
-      name: 'home_page_title3',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Bluetooth Setting`
-  String get home_page_title4 {
-    return Intl.message(
-      'Bluetooth Setting',
-      name: 'home_page_title4',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Update Firmware`
-  String get home_page_title5 {
-    return Intl.message(
-      'Update Firmware',
-      name: 'home_page_title5',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Download Print Format`
-  String get home_page_title6 {
-    return Intl.message(
-      'Download Print Format',
-      name: 'home_page_title6',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `License Information`
-  String get home_page_title7 {
-    return Intl.message(
-      'License Information',
-      name: 'home_page_title7',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Real-time Weight Data`
-  String get home_page_title8 {
-    return Intl.message(
-      'Real-time Weight Data',
-      name: 'home_page_title8',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Language Setting`
-  String get home_page_title9 {
-    return Intl.message(
-      'Language Setting',
-      name: 'home_page_title9',
       desc: '',
       args: [],
     );
@@ -1645,6 +1555,296 @@ class S {
     return Intl.message(
       'Percent mode format:',
       name: 'pct_mode_format',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Scale Name:`
+  String get scale_name {
+    return Intl.message(
+      'Scale Name:',
+      name: 'scale_name',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `SN:`
+  String get scale_sn {
+    return Intl.message(
+      'SN:',
+      name: 'scale_sn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `PLU Download`
+  String get plu_download_title {
+    return Intl.message(
+      'PLU Download',
+      name: 'plu_download_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Weighing`
+  String get weighing_title {
+    return Intl.message(
+      'Weighing',
+      name: 'weighing_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Weight Data Collection`
+  String get weight_collection_title {
+    return Intl.message(
+      'Weight Data Collection',
+      name: 'weight_collection_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Checkweigher`
+  String get checkweigher_title {
+    return Intl.message(
+      'Checkweigher',
+      name: 'checkweigher_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Take In Scale`
+  String get take_in_title {
+    return Intl.message(
+      'Take In Scale',
+      name: 'take_in_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Take Out Scale`
+  String get take_out_title {
+    return Intl.message(
+      'Take Out Scale',
+      name: 'take_out_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `get name`
+  String get get_bt_name {
+    return Intl.message(
+      'get name',
+      name: 'get_bt_name',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `modify name`
+  String get modify_bt_name {
+    return Intl.message(
+      'modify name',
+      name: 'modify_bt_name',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Emission Power:`
+  String get bt_emission_power {
+    return Intl.message(
+      'Emission Power:',
+      name: 'bt_emission_power',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `modify emission power`
+  String get bt_modify_emission {
+    return Intl.message(
+      'modify emission power',
+      name: 'bt_modify_emission',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirm`
+  String get confirm_btn {
+    return Intl.message(
+      'Confirm',
+      name: 'confirm_btn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirmation`
+  String get confirm_title {
+    return Intl.message(
+      'Confirmation',
+      name: 'confirm_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please confirm the order of the printing format.`
+  String get confirm_info {
+    return Intl.message(
+      'Please confirm the order of the printing format.',
+      name: 'confirm_info',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Download successful!`
+  String get download_result_ok {
+    return Intl.message(
+      'Download successful!',
+      name: 'download_result_ok',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Download fail!`
+  String get download_result_fail {
+    return Intl.message(
+      'Download fail!',
+      name: 'download_result_fail',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select Firmware`
+  String get select_firmware_btn {
+    return Intl.message(
+      'Select Firmware',
+      name: 'select_firmware_btn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The update process can not be canceled.\r\nPlease make sure the update.`
+  String get update_firmware_info {
+    return Intl.message(
+      'The update process can not be canceled.\r\nPlease make sure the update.',
+      name: 'update_firmware_info',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please wait...`
+  String get update_firmware_wait {
+    return Intl.message(
+      'Please wait...',
+      name: 'update_firmware_wait',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please reboot the device and waiting...`
+  String get update_firmware_reboot {
+    return Intl.message(
+      'Please reboot the device and waiting...',
+      name: 'update_firmware_reboot',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Report Setting`
+  String get report_set_btn {
+    return Intl.message(
+      'Report Setting',
+      name: 'report_set_btn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Show Report`
+  String get report_show_btn {
+    return Intl.message(
+      'Show Report',
+      name: 'report_show_btn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete All`
+  String get report_delete_btn {
+    return Intl.message(
+      'Delete All',
+      name: 'report_delete_btn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Hide Report`
+  String get report_hide_btn {
+    return Intl.message(
+      'Hide Report',
+      name: 'report_hide_btn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Whether to delete all data?`
+  String get data_delete_confirm {
+    return Intl.message(
+      'Whether to delete all data?',
+      name: 'data_delete_confirm',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Current weight:`
+  String get show_current_weight {
+    return Intl.message(
+      'Current weight:',
+      name: 'show_current_weight',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Increment weight:`
+  String get show_increment_weight {
+    return Intl.message(
+      'Increment weight:',
+      name: 'show_increment_weight',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reduced weight:`
+  String get show_reduced_weight {
+    return Intl.message(
+      'Reduced weight:',
+      name: 'show_reduced_weight',
       desc: '',
       args: [],
     );

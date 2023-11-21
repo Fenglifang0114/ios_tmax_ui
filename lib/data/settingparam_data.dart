@@ -1,31 +1,56 @@
 class SettingParam {
+  int id;
   String recMode;
   String zeroRange;
-  String stableTimeToRec;
+  String stableTime;
   String dateFormat;
   String dateSeparator;
-  String scaleMode;
+  int scaleMode;
+  String scaleSn;
+  String saveMode;
 
-  SettingParam(this.recMode, this.zeroRange, this.stableTimeToRec,
-      this.dateFormat, this.dateSeparator, this.scaleMode);
+  SettingParam(
+      this.id,
+      this.recMode,
+      this.zeroRange,
+      this.stableTime,
+      this.dateFormat,
+      this.dateSeparator,
+      this.scaleMode,
+      this.scaleSn,
+      this.saveMode);
   SettingParam.fromJson(Map<String, dynamic> json)
-      : recMode = json['RecMode'],
+      : id = json['Id'],
+        recMode = json['RecMode'],
         zeroRange = json['ZeroRange'],
-        stableTimeToRec = json['StableTimeToRec'],
+        stableTime = json['StableTime'],
         dateFormat = json['DateFormat'],
         dateSeparator = json['DateSeparator'],
-        scaleMode = json['ScaleMode'];
+        scaleMode = json['ScaleMode'],
+        scaleSn = json['ScaleSn'],
+        saveMode = json['SaveMode'];
 
   Map<String, dynamic> toJson() {
     return {
+      'Id': id,
       'RecMode': recMode,
       'ZeroRange': zeroRange,
-      'StableTimeToRec': stableTimeToRec,
+      'StableTime': stableTime,
       'DateFormat': dateFormat,
       'DateSeparator': dateSeparator,
       'ScaleMode': scaleMode,
+      'ScaleSn': scaleSn,
+      'SaveMode': saveMode,
     };
   }
 }
 
-SettingParam mySettingParam = SettingParam("", "", "", "", "", "");
+SettingParam mySettingParam = SettingParam(0, "", "", "", "", "", 0, "", "");
+SettingParam myModeSettingNormal =
+    SettingParam(0, "", "", "", "", "", 0, "", "");
+SettingParam myModeSettingCheck =
+    SettingParam(0, "", "", "", "", "", 0, "", "");
+SettingParam myModeSettingTakeIn =
+    SettingParam(0, "", "", "", "", "", 0, "", "");
+SettingParam myModeSettingTakeOut =
+    SettingParam(0, "", "", "", "", "", 0, "", "");

@@ -32,20 +32,24 @@ class ReqWeightCountine {
 }
 
 class MsgBody {
+  bool isZero;
   bool isStable;
   bool isNet;
   String weightVal;
   String weightUnit;
 
-  MsgBody(this.isStable, this.isNet, this.weightVal, this.weightUnit);
+  MsgBody(
+      this.isZero, this.isStable, this.isNet, this.weightVal, this.weightUnit);
   MsgBody.fromJson(Map<String, dynamic> json)
-      : isStable = json['IsStable'],
+      : isZero = json['IsZero'],
+        isStable = json['IsStable'],
         isNet = json['IsNet'],
         weightVal = json['WeightVal'],
         weightUnit = json['WeightUnit'];
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
+    data['IsZero'] = isZero;
     data['IsStable'] = isStable;
     data['IsNet'] = isNet;
     data['WeightVal'] = weightVal;

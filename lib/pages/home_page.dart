@@ -291,20 +291,6 @@ class _HomePageState extends State<HomePage> {
                     width: 100, child: Image.asset('assets/images/tscale.png')),
               ],
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: 100,
-                  child: Text(
-                    'T-Connect',
-                    style:
-                        TextStyle(color: Theme.of(context).colorScheme.primary),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ],
-            )
           ],
         ),
       ),
@@ -404,15 +390,15 @@ class _HomePageState extends State<HomePage> {
                           height: 80,
                           child: Column(
                             children: [
-                              const Row(
+                              Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 30,
                                   ),
                                   Flexible(
                                     child: Text(
-                                      'Scale Name:',
+                                      localizedStrings.scale_name,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -436,15 +422,15 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                     ),
                                   ]),
-                              const Row(
+                              Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 30,
                                   ),
                                   Flexible(
                                     child: Text(
-                                      'SN:',
+                                      localizedStrings.scale_sn,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -471,7 +457,7 @@ class _HomePageState extends State<HomePage> {
                             ],
                           ),
                         )
-                      : SizedBox(),
+                      : const SizedBox(),
                   MouseRegion(
                     cursor: SystemMouseCursors.click, // 设置光标为手的形状
                     child: GestureDetector(
@@ -543,7 +529,7 @@ class _HomePageState extends State<HomePage> {
                               //wifi页面
                               setState(() {
                                 stopCheckSerialPort();
-                                PublicFunctions.getWifiList();
+                                PublicFunctions.changeWifiMode();
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -684,70 +670,6 @@ class _HomePageState extends State<HomePage> {
                             myLicenseInfo.isValid),
                       ),
                     ),
-
-                    // MouseRegion(
-                    //   cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                    //   child: GestureDetector(
-                    //     onTap: () {
-                    //       //TODO:  PLU下载
-                    //       setState(() {
-                    //         stopCheckSerialPort();
-                    //         Navigator.push(
-                    //           context,
-                    //           MaterialPageRoute(
-                    //               builder: (context) =>
-                    //                   const ProductDownloadPage()),
-                    //         ).then((value) => _startTimer(5));
-                    //       });
-                    //     },
-                    //     child: customFunctionCard("Plu Download",
-                    //         "assets/images/line.png", Icons.shopping_bag, true),
-                    //   ),
-                    // ),
-                    // MouseRegion(
-                    //   cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                    //   child: GestureDetector(
-                    //     onTap: () {
-                    //       //TODO:  DC500
-                    //       setState(() {
-                    //         stopCheckSerialPort();
-                    //         setState(() {
-                    //           Navigator.push(
-                    //             context,
-                    //             MaterialPageRoute(
-                    //                 builder: (context) =>
-                    //                     const WeightModePage()),
-                    //           ).then((value) => _startTimer(5));
-                    //         });
-                    //       });
-                    //     },
-                    //     child: customFunctionCard(
-                    //         "DC 500",
-                    //         "assets/images/line.png",
-                    //         Icons.monitor_weight_outlined,
-                    //         true),
-                    //   ),
-                    // ),
-                    // MouseRegion(
-                    //     cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                    //     child: GestureDetector(
-                    //       onTap: () {
-                    //         //TODO:  DC500
-                    //         setState(() {
-                    //           stopCheckSerialPort();
-                    //           setState(() {
-                    //             Navigator.push(
-                    //               context,
-                    //               MaterialPageRoute(
-                    //                   builder: (context) =>
-                    //                       const CheckWeighersPage()),
-                    //             ).then((value) => _startTimer(5));
-                    //           });
-                    //         });
-                    //       },
-                    //       child: customFunctionCard("Checkweighers",
-                    //           "assets/images/line.png", Icons.scale, true),
-                    //     )),
                   ]),
             ),
           ],

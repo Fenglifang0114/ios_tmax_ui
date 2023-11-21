@@ -11,9 +11,9 @@ int mySystemVersion = tConfig;
 
 class SystemVersionInfo {
   Widget getHomePage(int mySystemVersion) {
-    if (mySystemVersion == 1) {
+    if (mySystemVersion == tConfig) {
       return const HomePage();
-    } else if (mySystemVersion == 2) {
+    } else if (mySystemVersion == tIndustry) {
       return const IndustryHomePage();
     } else {
       return const RetailHomePage();
@@ -21,9 +21,9 @@ class SystemVersionInfo {
   }
 
   String getTitle(int mySystemVersion) {
-    if (mySystemVersion == 1) {
+    if (mySystemVersion == tConfig) {
       return "T-CONFIG";
-    } else if (mySystemVersion == 2) {
+    } else if (mySystemVersion == tIndustry) {
       return "T-INDUSTRY";
     } else {
       return "T-RETAIL";

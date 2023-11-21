@@ -26,7 +26,9 @@ import '../dialog/adduser_dialog.dart';
 import '../dialog/setting_dialog.dart';
 import 'package:path/path.dart';
 
+import '../dialog/showWarning.dart';
 import '../dialog/weight_report_feilds_setting.dart';
+import 'package:flutter/widgets.dart';
 
 class TakeInPage extends StatefulWidget {
   const TakeInPage({Key? key}) : super(key: key);
@@ -35,42 +37,49 @@ class TakeInPage extends StatefulWidget {
 }
 
 class TakeInPageState extends State<TakeInPage> {
-  String dialogString = " ";
   List<String> items = [];
   List<DataRow> dataRows = [];
-  late ScrollController _reportScrollerController;
-  late String lastWeight;
-  bool isStart = false;
-  String productNameValue = "";
-  String userNameValue = "";
   List<String> productNameList = [];
   List<String> userNameList = [];
+  List<WeightReportData> _weightReportDatas = <WeightReportData>[];
+  List<WeightReportData> myWeightReportData = [];
+  List<double> weightValueList = [];
 
-  ///创建文本控制器实例
+  final DataGridController _dataGridController = DataGridController();
   final TextEditingController _errorText = TextEditingController();
+
+  late ScrollController _reportScrollerController;
+  late String lastWeight;
   late int weightMode; //0,手动保存，1，连续保存，2，稳定保存
   late int dateformat;
   late double zeroRange;
-  late bool _isSaveButtonDisabled;
   late Timer _saveTimer;
   late bool _isStableStatusJudge;
-  int _stableSaveTime = 0;
+  late bool _isTakeInStart = false;
+  late bool _isSaveButtonDisabled;
+  late WeightReportDataSource _weightReportDataSource;
+
+  bool isStart = false;
   bool lastStableStatus = false;
   bool _isTiming = false;
   bool _isZero = false;
   bool _isPassZero = false;
-  late bool _isTakeInStart = false;
+  bool _isFirstLayout = true;
+  bool showDialogFlag = false;
+  bool _isShowing = false;
+
+  int _stableSaveTime = 0;
+
   double basicWeightval = 0.000; //开始加法秤的时候的基础重量
+  double lastTakeInWeightval = 0.000;
+
   String showTakeInWeight = '';
   String diffWeightVal = '0.000'; //差值
-  List<double> weightValueList = [];
-  double lastTakeInWeightval = 0.000;
   String takeInWeightValue = '0.000';
-
-  late WeightReportDataSource _weightReportDataSource;
-  List<WeightReportData> _weightReportDatas = <WeightReportData>[];
-  List<WeightReportData> myWeightReportData = [];
-  final DataGridController _dataGridController = DataGridController();
+  String dialogString = " ";
+  String productNameValue = "";
+  String userNameValue = "";
+  String startWeightUnit = "";
 
   void updateTableData(List<WeightReportData> newReportData) {
     _weightReportDataSource.updateData(newReportData);
@@ -112,8 +121,6 @@ class TakeInPageState extends State<TakeInPage> {
     });
   }
 
-  bool _isFirstLayout = true;
-
   void _toggleLayout() {
     setState(() {
       _isFirstLayout = !_isFirstLayout;
@@ -133,6 +140,7 @@ class TakeInPageState extends State<TakeInPage> {
   dynamic eventBus11;
   dynamic eventBus12;
   dynamic eventBus13;
+  dynamic eventBus14;
 
   @override
   void initState() {
@@ -143,11 +151,11 @@ class TakeInPageState extends State<TakeInPage> {
     dateformat = 1;
     zeroRange = 0;
     _errorText.text = '';
-    String timeString = (mySettingParam.stableTimeToRec == "")
+    String timeString = (myModeSettingTakeIn.stableTime == "")
         ? "0"
-        : mySettingParam.stableTimeToRec.toString();
+        : myModeSettingTakeIn.stableTime.toString();
     _stableSaveTime = int.parse(timeString);
-    if (mySettingParam.recMode == "manual") {
+    if (myModeSettingTakeIn.recMode == "manual") {
       weightMode = 1;
       _isSaveButtonDisabled = false;
     } else {
@@ -171,8 +179,6 @@ class TakeInPageState extends State<TakeInPage> {
       if (mounted) {
         setState(() {
           myDevicedata = event.obj;
-          // getWeight();
-          // getRecords();
         });
       }
     });
@@ -181,8 +187,6 @@ class TakeInPageState extends State<TakeInPage> {
         setState(() {
           myProductRecList = event.obj;
           getProductNameList();
-          // getWeight();
-          // getRecords();
         });
       }
     });
@@ -192,59 +196,11 @@ class TakeInPageState extends State<TakeInPage> {
         setState(() {
           myReqWeightCountine = event.obj;
           isStart = true;
-          //  getWeight();
-          switch (weightMode) {
-            case 1:
-              if (isZeroValue()) {
-                _isZero = true;
-                _isPassZero = true;
-              } else {
-                _isZero = false;
-              }
-              takeInModeWeight();
-              isWeightStable();
-              break;
-            case 2:
-              if (!myReqWeightCountine.msgBody!.isStable) {
-                _isStableStatusJudge = false;
-              }
-              if (isZeroValue()) {
-                _isZero = true;
-                _isPassZero = true;
-              } else {
-                _isZero = false;
-              }
-              _saveWeight(myReqWeightCountine.msgBody!.isStable);
-              if (_isTakeInStart && isWeightValue() && _isStableStatusJudge) {
-                double? nowWeightVal =
-                    double.tryParse(myReqWeightCountine.msgBody!.weightVal);
-                if ((nowWeightVal! - basicWeightval) - lastTakeInWeightval >
-                    0.02) {
-                  lastTakeInWeightval = double.parse(
-                      (nowWeightVal - basicWeightval).toStringAsFixed(3));
-                  _isPassZero = true;
-                } else {
-                  _isPassZero = false;
-                }
-                //如果是加法秤，不需要判断是否重新归零
-              }
-              if (myReqWeightCountine.msgBody!.isStable == true &&
-                  !_isZero &&
-                  _isPassZero &&
-                  _isStableStatusJudge) {
-                {
-                  _isPassZero = false;
-                  _isTiming = false;
-                  _isStableStatusJudge = false;
-                  _addWeightToReport();
-                  sendReportDataToDB();
-                }
-                lastWeight = myReqWeightCountine.msgBody!.weightVal;
-              }
-              takeInModeWeight();
-              break;
-            default:
-              break;
+          if (_isTakeInStart && !isSameUnit()) {
+            showDialogFlag = true;
+          } else {
+            showDialogFlag = false;
+            checkWeight();
           }
         });
       }
@@ -275,7 +231,6 @@ class TakeInPageState extends State<TakeInPage> {
       if (mounted) {
         setState(() {
           myProductRecInfo = event.obj;
-          // checkProductList();
         });
       }
     });
@@ -283,17 +238,17 @@ class TakeInPageState extends State<TakeInPage> {
     eventBus8 = eventBus.on<EventSettingParam>().listen((event) {
       if (mounted) {
         setState(() {
-          mySettingParam = event.obj;
-          weightMode = (mySettingParam.recMode == "manual")
+          myModeSettingTakeIn = event.obj;
+          weightMode = (myModeSettingTakeIn.recMode == "manual")
               ? 1
-              : (mySettingParam.recMode == "auto")
+              : (myModeSettingTakeIn.recMode == "auto")
                   ? 2
                   : 1;
-          dateformat = int.parse(mySettingParam.dateFormat);
-          zeroRange = double.tryParse(mySettingParam.zeroRange)!;
-          String timeString = (mySettingParam.stableTimeToRec == "")
+          dateformat = int.parse(myModeSettingTakeIn.dateFormat);
+          zeroRange = double.tryParse(myModeSettingTakeIn.zeroRange)!;
+          String timeString = (myModeSettingTakeIn.stableTime == "")
               ? "0"
-              : mySettingParam.stableTimeToRec.toString();
+              : myModeSettingTakeIn.stableTime.toString();
           _stableSaveTime = int.parse(timeString);
           if (weightMode == 1) {
             _isSaveButtonDisabled = false;
@@ -358,6 +313,13 @@ class TakeInPageState extends State<TakeInPage> {
         });
       }
     });
+    eventBus14 = eventBus.on<EventUpdateSettingParam>().listen((event) {
+      if (mounted) {
+        setState(() {
+          PublicFunctions.getUIConfTakeIn();
+        });
+      }
+    });
   }
 
   void takeInModeWeight() {
@@ -371,12 +333,74 @@ class TakeInPageState extends State<TakeInPage> {
     }
   }
 
+  void checkWeight() {
+    switch (weightMode) {
+      case 1:
+        if (isZeroValue()) {
+          _isZero = true;
+          _isPassZero = true;
+        } else {
+          _isZero = false;
+        }
+        takeInModeWeight();
+        isWeightStable();
+        break;
+      case 2:
+        if (!myReqWeightCountine.msgBody!.isStable) {
+          _isStableStatusJudge = false;
+        }
+        if (isZeroValue()) {
+          _isZero = true;
+          _isPassZero = true;
+        } else {
+          _isZero = false;
+        }
+        _saveWeight(myReqWeightCountine.msgBody!.isStable);
+        if (_isTakeInStart && isWeightValue() && _isStableStatusJudge) {
+          double? nowWeightVal =
+              double.tryParse(myReqWeightCountine.msgBody!.weightVal);
+          if ((nowWeightVal! - basicWeightval) - lastTakeInWeightval > 0.02) {
+            if (myReqWeightCountine.msgBody!.weightUnit == 'PCS') {
+              lastTakeInWeightval = double.parse(
+                  (nowWeightVal - basicWeightval).toStringAsFixed(0));
+            } else {
+              lastTakeInWeightval = double.parse(
+                  (nowWeightVal - basicWeightval).toStringAsFixed(3));
+            }
+
+            _isPassZero = true;
+          } else {
+            _isPassZero = false;
+          }
+          //如果是加法秤，不需要判断是否重新归零
+        }
+        if (myReqWeightCountine.msgBody!.isStable == true &&
+            !_isZero &&
+            _isPassZero &&
+            _isStableStatusJudge) {
+          {
+            _isPassZero = false;
+            _isTiming = false;
+            _isStableStatusJudge = false;
+            _addWeightToReport();
+            sendReportDataToDB();
+          }
+          lastWeight = myReqWeightCountine.msgBody!.weightVal;
+        }
+        takeInModeWeight();
+        break;
+      default:
+        break;
+    }
+  }
+
   void _addDBdataToReport() {
     List<WeightRecords>? dbRecs = myGetScaleRecords.weightRecords;
     for (var i = 0; i < dbRecs!.length; i++) {
       myWeightReportData.add(WeightReportData(
         (dbRecs[i].recId).toString(),
-        convertDateTime(dbRecs[i].createdAt!, mySettingParam.dateSeparator),
+        convertDateTime(
+            dbRecs[i].createdAt!, myModeSettingTakeIn.dateSeparator),
         (dbRecs[i].weight == null) ? '' : dbRecs[i].weight!,
         (dbRecs[i].weightUnit == null) ? '' : dbRecs[i].weightUnit!, //重量单位
         (myProductRecInfo.id == null) ? "" : myProductRecInfo.id.toString(),
@@ -417,6 +441,7 @@ class TakeInPageState extends State<TakeInPage> {
     eventBus11.cancel();
     eventBus12.cancel();
     eventBus13.cancel();
+    eventBus14.cancel();
 
     super.dispose();
   }
@@ -438,7 +463,18 @@ class TakeInPageState extends State<TakeInPage> {
     );
   }
 
+  void handleOKPressed(bool isOKPressed) {
+    // 根据用户点击 OK 的结果更新 _isShowing 值
+    _isShowing = !isOKPressed;
+  }
+
   Widget firstLayout(context, _width) {
+    if (showDialogFlag) {
+      if (!_isShowing) {
+        _isShowing = true;
+        showWarningDialog(context, handleOKPressed);
+      }
+    }
     return Container(
         width: _width,
         decoration: BoxDecoration(color: Colors.grey.shade200),
@@ -513,7 +549,7 @@ class TakeInPageState extends State<TakeInPage> {
                           SizedBox(
                             width: 400,
                             child: Text(
-                              'Take In Scale',
+                              localizedStrings.take_in_title,
                               maxLines: 1,
                               style: TextStyle(
                                   fontSize: 20,
@@ -549,7 +585,7 @@ class TakeInPageState extends State<TakeInPage> {
                   children: [
                     // const SizedBox(width: 20),
                     Expanded(
-                      flex: 3,
+                      flex: 2,
                       child: LayoutBuilder(builder:
                           (BuildContext context, BoxConstraints constraints) {
                         return Column(
@@ -581,33 +617,23 @@ class TakeInPageState extends State<TakeInPage> {
                                   localizedStrings.zero,
                                   (myReqWeightCountine.msgBody == null)
                                       ? ("assets/images/gray.png")
-                                      : (((myReqWeightCountine
-                                                          .msgBody!.isStable &&
-                                                      isStart) &&
-                                                  (double.tryParse(
-                                                          myReqWeightCountine
-                                                              .msgBody!
-                                                              .weightVal) ==
-                                                      0)) ||
-                                              ((myReqWeightCountine
-                                                          .msgBody!.isStable &&
-                                                      isStart) &&
-                                                  (((double.tryParse(myReqWeightCountine
-                                                                  .msgBody!
-                                                                  .weightVal) ==
-                                                              null)
-                                                          ? 0
-                                                          : double.tryParse(
-                                                              myReqWeightCountine
-                                                                  .msgBody!
-                                                                  .weightVal))! <=
-                                                      zeroRange)))
+                                      : (myReqWeightCountine.msgBody!.isZero &&
+                                              isStart)
                                           ? ("assets/images/blue.png")
                                           : ("assets/images/gray.png"),
                                   constraints),
                             ]);
                       }),
                     ),
+                    Expanded(
+                        flex: 1,
+                        child: LayoutBuilder(builder:
+                            (BuildContext context, BoxConstraints constraints) {
+                          return buildWeightNameText(
+                              50,
+                              localizedStrings.show_current_weight,
+                              constraints);
+                        })),
 
                     Expanded(
                         flex: 5,
@@ -663,7 +689,23 @@ class TakeInPageState extends State<TakeInPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     // const SizedBox(width: 20),
-                    const Expanded(flex: 3, child: SizedBox()),
+                    Expanded(
+                        flex: 3,
+                        child: LayoutBuilder(builder:
+                            (BuildContext context, BoxConstraints constraints) {
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              buildWeightNameText(
+                                  400,
+                                  _isTakeInStart
+                                      ? localizedStrings.show_increment_weight
+                                      : '',
+                                  constraints)
+                            ],
+                          );
+                        })),
+
                     Expanded(
                         flex: 5,
                         child: LayoutBuilder(builder:
@@ -677,11 +719,11 @@ class TakeInPageState extends State<TakeInPage> {
                                       70,
                                       (takeInWeightValue == '-0.000')
                                           ? '0.000'
-                                          : takeInWeightValue,
+                                          : isPcsTakeInVal(),
                                       55,
                                       constraints,
                                       Theme.of(context).colorScheme.primary)
-                                  : SizedBox(),
+                                  : const SizedBox(),
                               buildTextWithNOUnit(
                                   100,
                                   70,
@@ -711,14 +753,14 @@ class TakeInPageState extends State<TakeInPage> {
                       buttonText: localizedStrings.button_tare,
                       onPressed: PublicFunctions.performTare,
                       constraints: constraints,
-                      isTrue: isStart,
+                      isTrue: isStart && !_isTakeInStart,
                     ),
                     _buildFlexibleButtonAndText(
                       width: 80,
                       buttonText: localizedStrings.button_zero,
                       onPressed: PublicFunctions.performZero,
                       constraints: constraints,
-                      isTrue: isStart,
+                      isTrue: isStart && !_isTakeInStart,
                     ),
                     _buildFlexibleButtonAndText(
                       width: 80,
@@ -744,6 +786,8 @@ class TakeInPageState extends State<TakeInPage> {
                           if (isWeightValue()) {
                             basicWeightval = double.tryParse(
                                 myReqWeightCountine.msgBody!.weightVal)!;
+                            startWeightUnit =
+                                myReqWeightCountine.msgBody!.weightUnit;
                           }
                           lastTakeInWeightval = 0.000;
                           _isTakeInStart = true;
@@ -757,6 +801,7 @@ class TakeInPageState extends State<TakeInPage> {
                       width: 80,
                       buttonText: localizedStrings.button_setting,
                       onPressed: () {
+                        mySettingParam = myModeSettingTakeIn;
                         paramSettingDialog(context);
                       },
                       constraints: constraints,
@@ -882,16 +927,19 @@ class TakeInPageState extends State<TakeInPage> {
                               context),
                           buildSetReportButton(
                               Theme.of(context).colorScheme.primary,
-                              'Report Setting',
+                              localizedStrings.report_set_btn,
                               constraints,
                               context),
-                          buildButton(Theme.of(context).colorScheme.primary,
-                              'Show Report', constraints, _toggleLayout),
                           buildButton(
                               Theme.of(context).colorScheme.primary,
-                              'Delete All',
+                              localizedStrings.report_show_btn,
                               constraints,
-                              PublicFunctions.deleteAllRecordsTakeIn),
+                              _toggleLayout),
+                          buildButton(
+                              Theme.of(context).colorScheme.primary,
+                              localizedStrings.report_delete_btn,
+                              constraints,
+                              () => _showConfirmationDialog(context)),
                         ]),
                   );
                 })),
@@ -903,6 +951,35 @@ class TakeInPageState extends State<TakeInPage> {
             ),
           ],
         ));
+  }
+
+  String isPcsTakeInVal() {
+    var takeInValue = '0.000';
+    if (myReqWeightCountine.msgBody == null) {
+      takeInValue = '0.000';
+    } else if (myReqWeightCountine.msgBody!.weightUnit == 'PCS') {
+      double? result = double.tryParse(takeInWeightValue);
+
+      if (result != null) {
+        takeInValue = result.toStringAsFixed(0);
+      } else {
+        takeInValue = '0';
+      }
+    } else {
+      takeInValue = takeInWeightValue;
+    }
+    return takeInValue;
+  }
+
+  bool isSameUnit() {
+    if (!isWeightValue()) {
+      return true;
+    }
+    if (startWeightUnit != myReqWeightCountine.msgBody!.weightUnit &&
+        _isTakeInStart) {
+      return false;
+    }
+    return true;
   }
 
   Widget buildStartIcon(double width, double? iconSize,
@@ -1011,7 +1088,7 @@ class TakeInPageState extends State<TakeInPage> {
       child: Column(
         // 将 Row 改为 Column
         mainAxisAlignment: MainAxisAlignment.center, // 垂直方向居中对齐
-        crossAxisAlignment: CrossAxisAlignment.start, // 水平方向居右对齐
+        crossAxisAlignment: CrossAxisAlignment.center, // 水平方向居右对齐
         children: [
           Text(
             text,
@@ -1020,6 +1097,22 @@ class TakeInPageState extends State<TakeInPage> {
             overflow: TextOverflow.ellipsis,
           ),
         ],
+      ),
+    );
+  }
+
+  Widget buildWeightNameText(
+      double width, String text, BoxConstraints constraints) {
+    width = 25 * constraints.maxHeight / 30;
+    var fontSize = 16 * constraints.maxHeight / 150;
+    return SizedBox(
+      width: width,
+      child: Text(
+        text,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+        textAlign: TextAlign.right,
+        style: TextStyle(fontSize: fontSize),
       ),
     );
   }
@@ -1173,7 +1266,8 @@ class TakeInPageState extends State<TakeInPage> {
       return false;
     }
     if ((myReqWeightCountine.msgBody != null) &&
-        (myReqWeightCountine.msgBody!.isStable)) {
+        (myReqWeightCountine.msgBody!.isStable) &&
+        (myReqWeightCountine.msgBody!.weightUnit != 'lb:oz')) {
       return true;
     }
 
@@ -1210,6 +1304,13 @@ class TakeInPageState extends State<TakeInPage> {
   //TODO:
 
   Widget secondLayout(context, _width) {
+    if (showDialogFlag) {
+      if (!_isShowing) {
+        _isShowing = true;
+        showWarningDialog(context, handleOKPressed);
+      }
+    }
+
     return Container(
         width: _width,
         decoration: BoxDecoration(color: Colors.grey.shade200),
@@ -1284,7 +1385,7 @@ class TakeInPageState extends State<TakeInPage> {
                           SizedBox(
                             width: 400,
                             child: Text(
-                              'Take In Scale',
+                              localizedStrings.take_in_title,
                               maxLines: 1,
                               style: TextStyle(
                                   fontSize: 20,
@@ -1313,7 +1414,7 @@ class TakeInPageState extends State<TakeInPage> {
             //////////////////////////////////
             const SizedBox(height: 5),
             Container(
-              height: 100,
+              height: 120,
               color: Colors.white,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1381,25 +1482,8 @@ class TakeInPageState extends State<TakeInPage> {
                           Image.asset(
                             (myReqWeightCountine.msgBody == null)
                                 ? ("assets/images/gray.png")
-                                : (((myReqWeightCountine.msgBody!.isStable &&
-                                                isStart) &&
-                                            (double.tryParse(myReqWeightCountine
-                                                    .msgBody!.weightVal) ==
-                                                0)) ||
-                                        ((myReqWeightCountine
-                                                    .msgBody!.isStable &&
-                                                isStart) &&
-                                            (((double.tryParse(
-                                                            myReqWeightCountine
-                                                                .msgBody!
-                                                                .weightVal) ==
-                                                        null)
-                                                    ? 0
-                                                    : double.tryParse(
-                                                        myReqWeightCountine
-                                                            .msgBody!
-                                                            .weightVal))! <=
-                                                zeroRange)))
+                                : (myReqWeightCountine.msgBody!.isZero &&
+                                        isStart)
                                     ? ("assets/images/blue.png")
                                     : ("assets/images/gray.png"),
                             width: 25,
@@ -1422,12 +1506,9 @@ class TakeInPageState extends State<TakeInPage> {
                               Expanded(
                                 child: Text(
                                   textAlign: TextAlign.right,
-                                  _isTakeInStart
-                                      ? showTakeInWeight
-                                      : (myReqWeightCountine.msgBody == null)
-                                          ? ("0.000")
-                                          : myReqWeightCountine
-                                              .msgBody!.weightVal,
+                                  (myReqWeightCountine.msgBody == null)
+                                      ? ("0.000")
+                                      : myReqWeightCountine.msgBody!.weightVal,
                                   style: const TextStyle(
                                       color: Colors.white, fontSize: 55),
                                   overflow: TextOverflow.ellipsis,
@@ -1524,7 +1605,7 @@ class TakeInPageState extends State<TakeInPage> {
                                         textAlign: TextAlign.right,
                                         (takeInWeightValue == '-0.000')
                                             ? '0.000'
-                                            : takeInWeightValue,
+                                            : isPcsTakeInVal(),
                                         style: const TextStyle(
                                             color: Colors.white, fontSize: 55),
                                         overflow: TextOverflow.ellipsis,
@@ -1535,7 +1616,7 @@ class TakeInPageState extends State<TakeInPage> {
                                 )),
                           ],
                         )
-                      : SizedBox(
+                      : const SizedBox(
                           width: 240,
                         ),
                   const SizedBox(width: 10),
@@ -1543,141 +1624,157 @@ class TakeInPageState extends State<TakeInPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            SizedBox(
-                              width: 80,
-                              child: ElevatedButton(
-                                  onPressed: isStart
-                                      ? () {
-                                          PublicFunctions.performTare();
-                                        }
-                                      : null,
-                                  child: Text(localizedStrings.button_tare,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal))),
-                            ),
-                            SizedBox(
-                              width: 80,
-                              child: ElevatedButton(
-                                  onPressed: isStart
-                                      ? () {
-                                          PublicFunctions.performZero();
-                                        }
-                                      : null,
-                                  child: Text(localizedStrings.button_zero,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal))),
-                            ),
-                            SizedBox(
-                              width: 80,
-                              child: ElevatedButton(
-                                  onPressed: (!_isSaveButtonDisabled && isStart)
-                                      ? _changeSaveButton
-                                      : null,
-                                  child: Text(localizedStrings.button_save,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal))),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            SizedBox(
-                              width: 80,
-                              child: ElevatedButton(
-                                  onPressed: (!isStart ||
-                                          myReqWeightCountine.msgBody == null)
-                                      ? null
-                                      : (myReqWeightCountine.msgBody != null) &&
-                                              (myReqWeightCountine
-                                                  .msgBody!.isStable)
-                                          ? () {
-                                              if (_isTakeInStart) {
-                                                _isTakeInStart = false;
-                                                weightValueList.clear();
-                                                lastTakeInWeightval = 0.000;
-                                              } else {
-                                                if (isWeightValue()) {
-                                                  basicWeightval =
-                                                      double.tryParse(
-                                                          myReqWeightCountine
-                                                              .msgBody!
-                                                              .weightVal)!;
+                        LayoutBuilder(builder:
+                            (BuildContext context, BoxConstraints constraints) {
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              SizedBox(
+                                width: constraints.maxWidth / 3.5,
+                                child: ElevatedButton(
+                                    onPressed: (isStart && !_isTakeInStart)
+                                        ? () {
+                                            PublicFunctions.performTare();
+                                          }
+                                        : null,
+                                    child: Text(localizedStrings.button_tare,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.normal))),
+                              ),
+                              SizedBox(
+                                width: constraints.maxWidth / 3.5,
+                                child: ElevatedButton(
+                                    onPressed: (isStart && !_isTakeInStart)
+                                        ? () {
+                                            PublicFunctions.performZero();
+                                          }
+                                        : null,
+                                    child: Text(localizedStrings.button_zero,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.normal))),
+                              ),
+                              SizedBox(
+                                width: constraints.maxWidth / 3.5,
+                                child: ElevatedButton(
+                                    onPressed:
+                                        (!_isSaveButtonDisabled && isStart)
+                                            ? _changeSaveButton
+                                            : null,
+                                    child: Text(localizedStrings.button_save,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.normal))),
+                              ),
+                            ],
+                          );
+                        }),
+                        LayoutBuilder(builder:
+                            (BuildContext context, BoxConstraints constraints) {
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              SizedBox(
+                                width: constraints.maxWidth / 3.5,
+                                child: ElevatedButton(
+                                    onPressed: (!isStart ||
+                                            myReqWeightCountine.msgBody == null)
+                                        ? null
+                                        : ((myReqWeightCountine.msgBody !=
+                                                    null) &&
+                                                (myReqWeightCountine
+                                                    .msgBody!.isStable) &&
+                                                (myReqWeightCountine
+                                                        .msgBody!.weightUnit !=
+                                                    'lb:oz'))
+                                            ? () {
+                                                if (_isTakeInStart) {
+                                                  _isTakeInStart = false;
+                                                  weightValueList.clear();
+                                                  lastTakeInWeightval = 0.000;
+                                                } else {
+                                                  if (isWeightValue()) {
+                                                    basicWeightval =
+                                                        double.tryParse(
+                                                            myReqWeightCountine
+                                                                .msgBody!
+                                                                .weightVal)!;
+                                                    startWeightUnit =
+                                                        myReqWeightCountine
+                                                            .msgBody!
+                                                            .weightUnit;
+                                                  }
+                                                  lastTakeInWeightval = 0.000;
+                                                  _isTakeInStart = true;
+                                                  weightValueList.clear();
                                                 }
-                                                lastTakeInWeightval = 0.000;
-                                                _isTakeInStart = true;
-                                                weightValueList.clear();
                                               }
-                                            }
-                                          : null,
-                                  child: Text(
-                                      (myReqWeightCountine.msgBody == null)
-                                          ? 'Start'
-                                          : (myReqWeightCountine
-                                                      .msgBody!.isStable &&
-                                                  _isTakeInStart)
-                                              ? 'End'
-                                              : 'Start',
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal))),
-                            ),
-                            SizedBox(
-                              width: 80,
-                              child: ElevatedButton(
-                                  onPressed: () {
-                                    //跳转页面
-                                    paramSettingDialog(context);
-                                  },
-                                  child: Text(localizedStrings.button_setting,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal))),
-                            ),
-                            SizedBox(
-                              width: 80,
-                              child: ElevatedButton(
-                                  // elevation: 5.0,
-                                  child: Text(
-                                      localizedStrings.button_export_report,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal)),
-                                  onPressed: () async {
-                                    final directory = Directory.current.path;
-                                    String? outputFile =
-                                        (await FilePicker.platform.saveFile(
-                                      initialDirectory: directory,
-                                      type: FileType.custom,
-                                      dialogTitle: 'Output file:',
-                                      allowedExtensions: ["xlsx"],
-                                      fileName: 'report.xlsx',
-                                    ));
-                                    if (outputFile != null) {
-                                      _creatFile(outputFile);
-                                    }
-                                  }),
-                            ),
-                          ],
-                        )
+                                            : null,
+                                    child: Text(
+                                        (myReqWeightCountine.msgBody == null)
+                                            ? 'Start'
+                                            : (myReqWeightCountine
+                                                        .msgBody!.isStable &&
+                                                    _isTakeInStart)
+                                                ? 'End'
+                                                : 'Start',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.normal))),
+                              ),
+                              SizedBox(
+                                width: constraints.maxWidth / 3.5,
+                                child: ElevatedButton(
+                                    onPressed: () {
+                                      //跳转页面
+                                      mySettingParam = myModeSettingTakeIn;
+                                      paramSettingDialog(context);
+                                    },
+                                    child: Text(localizedStrings.button_setting,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.normal))),
+                              ),
+                              SizedBox(
+                                width: constraints.maxWidth / 3.5,
+                                child: ElevatedButton(
+                                    // elevation: 5.0,
+                                    child: Text(
+                                        localizedStrings.button_export_report,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.normal)),
+                                    onPressed: () async {
+                                      final directory = Directory.current.path;
+                                      String? outputFile =
+                                          (await FilePicker.platform.saveFile(
+                                        initialDirectory: directory,
+                                        type: FileType.custom,
+                                        dialogTitle: 'Output file:',
+                                        allowedExtensions: ["xlsx"],
+                                        fileName: 'report.xlsx',
+                                      ));
+                                      if (outputFile != null) {
+                                        _creatFile(outputFile);
+                                      }
+                                    }),
+                              ),
+                            ],
+                          );
+                        }),
                       ],
                     ),
                   ),
@@ -1707,115 +1804,125 @@ class TakeInPageState extends State<TakeInPage> {
     return Container(
       height: 40,
       color: Colors.white,
-      child: Row(
-        children: [
-          Text(localizedStrings.plu_name),
-          Container(
-            child: DropdownButtonFormField<String>(
-              itemHeight: 50.0,
-              isExpanded: true,
-              // decoration: const InputDecoration(border: OutlineInputBorder()),
-              value: productNameValue,
-              onChanged: (String? newPosition) {
-                setState(() {
-                  productNameValue = newPosition.toString();
-                  for (var i = 0;
-                      i < myProductRecList.productRecInfo!.length;
-                      i++) {
-                    if (productNameValue ==
-                        myProductRecList.productRecInfo![i].product) {
-                      myProductRecInfo = myProductRecList.productRecInfo![i];
-                      eventBus.fire(EventProductRecInfo(myProductRecInfo));
-                    }
-                  }
-                });
-              },
-
-              items:
-                  productNameList.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem(
-                    value: value,
-                    child: Text(value, overflow: TextOverflow.ellipsis));
-              }).toList(),
+      child: LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            SizedBox(
+              width: constraints.maxWidth / 10,
+              child: Text(
+                localizedStrings.plu_name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
-            height: 53,
-            width: 150,
-            padding: const EdgeInsets.all(0),
-          ),
-          const SizedBox(width: 10),
-          MaterialButton(
-              color: Theme.of(context).colorScheme.primary,
-              textColor: Colors.white,
-              elevation: 5.0,
-              child: Text(localizedStrings.plu_edit,
-                  style: const TextStyle(
-                      fontSize: 14, fontWeight: FontWeight.normal)),
-              onPressed: () {
-                getProductList();
-                addProductDialog(context).then((onvalue) {
-                  if (!productNameList.contains(productNameValue)) {
-                    myProductRecInfo.product = "";
-                    productNameValue = "";
-                    myProductRecInfo.id = "";
-                    myProductRecInfo.withPretare = false;
-                    myProductRecInfo.remarks = "";
-                  }
-                });
-              }),
-          const SizedBox(width: 50),
-          TextButton(
-              onPressed: () {},
-              child: Text(localizedStrings.user_name,
-                  style: const TextStyle(
-                      fontSize: 14, fontWeight: FontWeight.normal))),
-          Container(
-            child: DropdownButtonFormField<String>(
-              itemHeight: 50.0,
-              isExpanded: true,
-              // decoration: const InputDecoration(border: OutlineInputBorder()),
-              value: userNameValue,
-              onChanged: (String? newPosition) {
-                setState(() {
-                  myUserInfo.name = newPosition.toString();
-                  for (var i = 0; i < myUserInfoList.userInfo!.length; i++) {
-                    if (myUserInfo.name == myUserInfoList.userInfo![i].name) {
-                      myUserInfo = myUserInfoList.userInfo![i];
-                      eventBus.fire(EventUserInfo(myUserInfo));
-                    }
-                  }
-                });
-              },
-              items: userNameList.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem(
-                    value: value,
-                    child: Text(value, overflow: TextOverflow.ellipsis));
-              }).toList(),
-            ),
-            height: 53,
-            width: 150,
-            padding: const EdgeInsets.all(0),
-          ),
-          // const SizedBox(width: 10),
-          MaterialButton(
-              color: Theme.of(context).colorScheme.primary,
-              textColor: Colors.white,
-              elevation: 5.0,
-              child: Text(localizedStrings.user_edit,
-                  style: const TextStyle(
-                      fontSize: 14, fontWeight: FontWeight.normal)),
-              onPressed: () {
-                PublicFunctions.getUserList();
-                getUserNameList();
-                if (!userNameList.contains(userNameValue)) {
-                  myUserInfo.name = "";
-                  userNameValue = "";
-                  myUserInfo.id = "";
-                  myUserInfo.isFemale = true;
-                  myUserInfo.phone = "";
-                  myUserInfo.remarks = "";
-                }
-                addUserDialog(context).then((onvalue) {
+            Container(
+              child: DropdownButtonFormField<String>(
+                itemHeight: 50.0,
+                isExpanded: true,
+                // decoration: const InputDecoration(border: OutlineInputBorder()),
+                value: productNameValue,
+                onChanged: (String? newPosition) {
                   setState(() {
+                    productNameValue = newPosition.toString();
+                    for (var i = 0;
+                        i < myProductRecList.productRecInfo!.length;
+                        i++) {
+                      if (productNameValue ==
+                          myProductRecList.productRecInfo![i].product) {
+                        myProductRecInfo = myProductRecList.productRecInfo![i];
+                        eventBus.fire(EventProductRecInfo(myProductRecInfo));
+                      }
+                    }
+                  });
+                },
+
+                items: productNameList
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem(
+                      value: value,
+                      child: Text(value, overflow: TextOverflow.ellipsis));
+                }).toList(),
+              ),
+              height: 53,
+              width: constraints.maxWidth / 10,
+              padding: const EdgeInsets.all(0),
+            ),
+            SizedBox(
+              width: constraints.maxWidth / 10,
+              child: MaterialButton(
+                  color: Theme.of(context).colorScheme.primary,
+                  textColor: Colors.white,
+                  elevation: 5.0,
+                  child: Text(localizedStrings.plu_edit,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.normal)),
+                  onPressed: () {
+                    getProductList();
+                    addProductDialog(context).then((onvalue) {
+                      if (!productNameList.contains(productNameValue)) {
+                        myProductRecInfo.product = "";
+                        productNameValue = "";
+                        myProductRecInfo.id = "";
+                        myProductRecInfo.withPretare = false;
+                        myProductRecInfo.remarks = "";
+                      }
+                    });
+                  }),
+            ),
+            SizedBox(
+              width: constraints.maxWidth / 10,
+              child: TextButton(
+                  onPressed: () {},
+                  child: Text(localizedStrings.user_name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.normal))),
+            ),
+            Container(
+              child: DropdownButtonFormField<String>(
+                itemHeight: 50.0,
+                isExpanded: true,
+                // decoration: const InputDecoration(border: OutlineInputBorder()),
+                value: userNameValue,
+                onChanged: (String? newPosition) {
+                  setState(() {
+                    myUserInfo.name = newPosition.toString();
+                    for (var i = 0; i < myUserInfoList.userInfo!.length; i++) {
+                      if (myUserInfo.name == myUserInfoList.userInfo![i].name) {
+                        myUserInfo = myUserInfoList.userInfo![i];
+                        eventBus.fire(EventUserInfo(myUserInfo));
+                      }
+                    }
+                  });
+                },
+                items:
+                    userNameList.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem(
+                      value: value,
+                      child: Text(value, overflow: TextOverflow.ellipsis));
+                }).toList(),
+              ),
+              height: 53,
+              width: constraints.maxWidth / 10,
+              padding: const EdgeInsets.all(0),
+            ),
+            SizedBox(
+              width: constraints.maxWidth / 10,
+              child: MaterialButton(
+                  color: Theme.of(context).colorScheme.primary,
+                  textColor: Colors.white,
+                  elevation: 5.0,
+                  child: Text(localizedStrings.user_edit,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.normal)),
+                  onPressed: () {
                     PublicFunctions.getUserList();
                     getUserNameList();
                     if (!userNameList.contains(userNameValue)) {
@@ -1826,44 +1933,70 @@ class TakeInPageState extends State<TakeInPage> {
                       myUserInfo.phone = "";
                       myUserInfo.remarks = "";
                     }
-                  });
-                });
-              }),
-          const SizedBox(width: 10),
-          MaterialButton(
-              color: Theme.of(context).colorScheme.primary,
-              textColor: Colors.white,
-              elevation: 5.0,
-              child: const Text('Report Setting',
-                  style:
-                      TextStyle(fontSize: 14, fontWeight: FontWeight.normal)),
-              onPressed: () {
-                reportFieldsSettingDialog(context);
-              }),
-          const SizedBox(width: 10),
-          MaterialButton(
-              color: Theme.of(context).colorScheme.primary,
-              textColor: Colors.white,
-              elevation: 5.0,
-              child: const Text('Hide Report',
-                  style:
-                      TextStyle(fontSize: 14, fontWeight: FontWeight.normal)),
-              onPressed: () {
-                _toggleLayout();
-              }),
-          const SizedBox(width: 10),
-          MaterialButton(
-              color: Theme.of(context).colorScheme.primary,
-              textColor: Colors.white,
-              elevation: 5.0,
-              child: const Text('Delete All',
-                  style:
-                      TextStyle(fontSize: 14, fontWeight: FontWeight.normal)),
-              onPressed: () {
-                PublicFunctions.deleteAllRecordsTakeIn();
-              }),
-        ],
-      ),
+                    addUserDialog(context).then((onvalue) {
+                      setState(() {
+                        PublicFunctions.getUserList();
+                        getUserNameList();
+                        if (!userNameList.contains(userNameValue)) {
+                          myUserInfo.name = "";
+                          userNameValue = "";
+                          myUserInfo.id = "";
+                          myUserInfo.isFemale = true;
+                          myUserInfo.phone = "";
+                          myUserInfo.remarks = "";
+                        }
+                      });
+                    });
+                  }),
+            ),
+            SizedBox(
+              width: constraints.maxWidth / 10,
+              child: MaterialButton(
+                  color: Theme.of(context).colorScheme.primary,
+                  textColor: Colors.white,
+                  elevation: 5.0,
+                  child: Text(localizedStrings.report_set_btn,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.normal)),
+                  onPressed: () {
+                    reportFieldsSettingDialog(context);
+                  }),
+            ),
+            SizedBox(
+              width: constraints.maxWidth / 10,
+              child: MaterialButton(
+                  color: Theme.of(context).colorScheme.primary,
+                  textColor: Colors.white,
+                  elevation: 5.0,
+                  child: Text(localizedStrings.report_hide_btn,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.normal)),
+                  onPressed: () {
+                    _toggleLayout();
+                  }),
+            ),
+            SizedBox(
+              width: constraints.maxWidth / 10,
+              child: MaterialButton(
+                  color: Theme.of(context).colorScheme.primary,
+                  textColor: Colors.white,
+                  elevation: 5.0,
+                  child: Text(localizedStrings.report_delete_btn,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.normal)),
+                  onPressed: () {
+                    _showConfirmationDialog(context);
+                  }),
+            ),
+          ],
+        );
+      }),
     );
   }
 
@@ -1875,8 +2008,42 @@ class TakeInPageState extends State<TakeInPage> {
         columnWidthMode: ColumnWidthMode.fill,
         frozenRowsCount: 0,
         controller: _dataGridController,
+        allowSorting: true,
       ),
     );
+  }
+
+  _showConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          title: Text(
+            localizedStrings.confirm_title,
+            style: const TextStyle(color: Color.fromARGB(255, 15, 71, 161)),
+          ),
+          content: Text(localizedStrings.data_delete_confirm),
+          actions: <Widget>[
+            OutlinedButton(
+              child: Text(localizedStrings.button_cancel),
+              onPressed: () {
+                Navigator.of(context).pop(false); // 不跳转
+              },
+            ),
+            OutlinedButton(
+              child: Text(localizedStrings.confirm_btn),
+              onPressed: () {
+                Navigator.of(context).pop(true); // 跳转
+              },
+            ),
+          ],
+        );
+      },
+    ).then((confirmed) {
+      if (confirmed) {
+        PublicFunctions.deleteAllRecordsTakeIn();
+      }
+    });
   }
 
   void paramSettingDialog(BuildContext context) {
@@ -1972,20 +2139,6 @@ class TakeInPageState extends State<TakeInPage> {
       userNameValue = "";
     }
   }
-
-  // void checkProductList() {
-  //   if ((myProductRecList.productRecInfo == null)) {
-  //     productNameList.add("Please select Plu");
-  //     productNameValue = "Please select Plu";
-  //   } else {
-  //     getProductNameList();
-  //     if (!productNameList.contains(productNameValue)) {
-  //       productNameList.add("Please select Plu");
-  //       productNameValue = productNameList[0];
-  //     }
-  //   }
-  //   // getPortList();
-  // }
 
   String pad0(int num) {
     if (num < 10) {
@@ -2179,22 +2332,18 @@ class TakeInPageState extends State<TakeInPage> {
     if (!(myReqWeightCountine.msgBody!.weightVal.contains('--')) &&
         !(myReqWeightCountine.msgBody!.weightVal.contains('E')) &&
         !(myReqWeightCountine.msgBody!.weightVal.contains('UL')) &&
-        !(myReqWeightCountine.msgBody!.weightVal.contains('OL'))) {
+        !(myReqWeightCountine.msgBody!.weightVal.contains('OL')) &&
+        !(myReqWeightCountine.msgBody!.weightVal.contains(':'))) {
       return true;
     }
     return false;
   }
 
   bool isZeroValue() {
-    if (myReqWeightCountine.msgBody != null) {
+    if (myReqWeightCountine.msgBody == null) {
       return false;
     }
-    if (myReqWeightCountine.msgBody!.weightVal == "0" ||
-        myReqWeightCountine.msgBody!.weightVal == "0.0" ||
-        myReqWeightCountine.msgBody!.weightVal == "0.00" ||
-        myReqWeightCountine.msgBody!.weightVal == "0.000" ||
-        myReqWeightCountine.msgBody!.weightVal == "0.0000" ||
-        myReqWeightCountine.msgBody!.weightVal == "0.00000") {
+    if (myReqWeightCountine.msgBody!.isZero) {
       return true;
     }
     return false;
@@ -2210,6 +2359,7 @@ class TakeInPageState extends State<TakeInPage> {
       for (var i = 0; i < weightValueList.length; i++) {
         tempDouble = tempDouble - weightValueList[i];
       }
+
       takeInWeightValue = tempDouble.toStringAsFixed(3);
     } else {
       takeInWeightValue = nowWeightVal.toStringAsFixed(3);
@@ -2230,19 +2380,29 @@ class TakeInPageState extends State<TakeInPage> {
           for (var i = 0; i < weightValueList.length; i++) {
             tempDouble = tempDouble - weightValueList[i];
           }
-          diffWeightVal = tempDouble.toStringAsFixed(3);
+          if (myReqWeightCountine.msgBody!.weightUnit == 'PCS') {
+            diffWeightVal = tempDouble.toStringAsFixed(0);
+          } else {
+            diffWeightVal = tempDouble.toStringAsFixed(3);
+          }
+
           if (tempDouble > 0.02) {
             weightValueList.add(double.parse(tempDouble.toStringAsFixed(3)));
           }
         } else {
-          diffWeightVal = nowWeightVal.toStringAsFixed(3);
+          if (myReqWeightCountine.msgBody!.weightUnit == 'PCS') {
+            diffWeightVal = nowWeightVal.toStringAsFixed(0);
+          } else {
+            diffWeightVal = nowWeightVal.toStringAsFixed(3);
+          }
+
           if (nowWeightVal > 0.02) {
             weightValueList.add(double.parse(nowWeightVal.toStringAsFixed(3)));
           }
         }
         showTakeInWeight = nowWeightVal.toStringAsFixed(3);
         performAddToReport();
-        takeInWeightValue = "0.000";
+        takeInWeightValue = '0.000';
       } else {
         showTakeInWeight = myReqWeightCountine.msgBody!.weightVal;
       }
@@ -2254,7 +2414,7 @@ class TakeInPageState extends State<TakeInPage> {
   void performAddToReport() {
     myWeightReportData.add(WeightReportData(
       (myWeightReportData.length + 1).toString(),
-      getDateTime(mySettingParam.dateSeparator),
+      getDateTime(myModeSettingTakeIn.dateSeparator),
       (_isTakeInStart)
           ? diffWeightVal.toString()
           : (myReqWeightCountine.msgBody?.weightVal == null)
@@ -2288,13 +2448,25 @@ class TakeInPageState extends State<TakeInPage> {
       (myUserInfo.remarks == null) ? "" : myUserInfo.remarks.toString(),
       myDevicedata.name,
     ));
+
     setState(() {
+      String sortColName = 'Date Time';
+      DataGridSortDirection sortDirec = DataGridSortDirection.descending;
+      if (_weightReportDataSource.sortedColumns.isNotEmpty) {
+        sortColName = _weightReportDataSource.sortedColumns[0].name;
+        sortDirec = _weightReportDataSource.sortedColumns[0].sortDirection;
+      }
       _weightReportDataSource = WeightReportDataSource(_weightReportDatas);
+      _weightReportDataSource.sortedColumns
+          .add(SortColumnDetails(name: sortColName, sortDirection: sortDirec));
       Future.delayed(const Duration(milliseconds: 100), () {
-        _dataGridController
-            .scrollToRow(_weightReportDataSource.rows.length - 0);
+        if (sortDirec == DataGridSortDirection.descending) {
+          _dataGridController.scrollToRow(0);
+        } else {
+          _dataGridController
+              .scrollToRow(_weightReportDataSource.rows.length - 0);
+        }
       });
-      // _dataGridController.scrollToRow(_weightReportDataSource.rows.length - 1);
     });
   }
 

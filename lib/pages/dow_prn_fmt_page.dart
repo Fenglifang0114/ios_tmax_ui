@@ -60,7 +60,7 @@ class _DownloadPageState extends State<DownloadPage> {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text(
                     (myDownloadResponse.msgBody.contains('ok'))
-                        ? 'Download successful!'
+                        ? localizedStrings.download_result_ok
                         : myDownloadResponse.msgBody,
                     style: const TextStyle(
                         fontSize: 20,
@@ -393,7 +393,7 @@ class _DownloadPageState extends State<DownloadPage> {
                       Theme.of(context).colorScheme.primary),
                 ),
               )
-            : SizedBox(),
+            : const SizedBox(),
         SizedBox(
           width: 120,
           height: 50,
@@ -436,8 +436,8 @@ class _DownloadPageState extends State<DownloadPage> {
       _stopTimer();
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: const Text('Download fail !',
-              style: TextStyle(
+          content: Text(localizedStrings.download_result_fail,
+              style: const TextStyle(
                   fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
           duration: const Duration(seconds: 3),
           backgroundColor: Colors.red.shade900));
@@ -453,22 +453,20 @@ class _DownloadPageState extends State<DownloadPage> {
       context: context,
       builder: (BuildContext ctx) {
         return AlertDialog(
-          title: const Text(
-            'Confirmation',
-            style: TextStyle(color: Color.fromARGB(255, 15, 71, 161)),
+          title: Text(
+            localizedStrings.confirm_title,
+            style: const TextStyle(color: Color.fromARGB(255, 15, 71, 161)),
           ),
-          content: const Text(
-              '''Please confirm the order of the printing format.     
-            '''),
+          content: Text(localizedStrings.confirm_info),
           actions: <Widget>[
             OutlinedButton(
-              child: const Text('Cancel'),
+              child: Text(localizedStrings.button_cancel),
               onPressed: () {
                 Navigator.of(context).pop(false); // 不跳转
               },
             ),
             OutlinedButton(
-              child: const Text('Confirm'),
+              child: Text(localizedStrings.confirm_btn),
               onPressed: () {
                 Navigator.of(context).pop(true); // 跳转
               },
@@ -514,14 +512,6 @@ class _DownloadPageState extends State<DownloadPage> {
   }
 
   Future pickFiles(TextEditingController showFilePath) async {
-    // String executablePath = Platform.resolvedExecutable;
-    // var directory = p.dirname(executablePath);
-    // final formatfilePath = Directory('$directory\\format');
-    // if (!await formatfilePath.exists()) {
-    //   await formatfilePath.create(recursive: true);
-    // }
-    // directory = formatfilePath.path;
-
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       // initialDirectory: directory,
       allowMultiple: false,
@@ -558,14 +548,14 @@ class _DownloadPageState extends State<DownloadPage> {
           decoration: BoxDecoration(gradient: boxGradient()),
           child: Row(
             children: [
-              SizedBox(
+              const SizedBox(
                 width: 50,
               ),
               Center(
                 child: SizedBox(
                   width: 300,
                   child: Text(
-                    "Print Format Download",
+                    localizedStrings.print_format_download,
                     style: TextStyle(
                         fontSize: 20,
                         color: Theme.of(context).colorScheme.onPrimary),

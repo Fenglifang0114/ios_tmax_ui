@@ -10,6 +10,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import '../data/reqweightdata_data.dart';
 import '../data/resp_type_data.dart';
 import '../data/respdata_data.dart';
+import '../data/settingparam_data.dart';
 import '../data/wifi_ap_info.dart';
 import '../data/wifi_list_info.dart';
 import '../eventbus/eventbus.dart';
@@ -106,6 +107,22 @@ class WebSocketScaleChannel {
     }
   }
 
+  void pasterSettingParam(String jsonDataString) async {
+    String jsonStrings = jsonDataString;
+    final jsonResponse = json.decode(jsonStrings);
+    mySettingParam = SettingParam.fromJson(jsonResponse);
+    if (mySettingParam.scaleMode == 0) {
+      myModeSettingNormal = mySettingParam;
+    } else if (mySettingParam.scaleMode == 1) {
+      myModeSettingCheck = mySettingParam;
+    } else if (mySettingParam.scaleMode == 2) {
+      myModeSettingTakeIn = mySettingParam;
+    } else if (mySettingParam.scaleMode == 3) {
+      myModeSettingTakeOut = mySettingParam;
+    }
+    eventBus.fire(EventSettingParam(mySettingParam));
+  }
+
   Future<void> paster(dynamic data) async {
     if (data != null) {
       try {
@@ -113,6 +130,9 @@ class WebSocketScaleChannel {
         Map<String, dynamic> map = jsonData;
         dynamic mobj;
         switch (jsonData['MsgType']) {
+          case RespMsgType.respGetUIConf:
+            pasterSettingParam(jsonData['MsgBody']);
+            break;
           case RespMsgType.weightData:
             mobj = ReqWeightCountine.fromJson(map);
             eventBus.fire(EventReqWeightCountine(mobj));
@@ -209,7 +229,20 @@ class WebSocketScaleChannel {
             eventBus.fire(EventGetScaleInfo(mobj));
             break;
           case RespMsgType.respDelRec:
+            mobj = ChannelResponse.fromJson(map);
             eventBus.fire(EventDeleteRec(mobj));
+            break;
+          case RespMsgType.respDownPlu:
+            mobj = ChannelResponse.fromJson(map);
+            eventBus.fire(EventRespDownPlu(mobj));
+            break;
+          case RespMsgType.respUpdateUIConf:
+            mobj = ChannelResponse.fromJson(map);
+            eventBus.fire(EventUpdateSettingParam(mobj));
+            break;
+          case RespMsgType.respChangeWifiMode:
+            mobj = ChannelResponse.fromJson(map);
+            eventBus.fire(EventRespChangeWiFiMode(mobj));
             break;
           default:
             break;

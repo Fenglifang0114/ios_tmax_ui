@@ -142,6 +142,11 @@ class EventSettingParam {
   EventSettingParam(this.obj);
 }
 
+class EventUpdateSettingParam {
+  dynamic obj;
+  EventUpdateSettingParam(this.obj);
+}
+
 class EventUserInfoList {
   dynamic obj;
   EventUserInfoList(this.obj);
@@ -365,4 +370,14 @@ class EventGetScaleInfo {
 class EventDeleteRec {
   dynamic obj;
   EventDeleteRec(this.obj);
+}
+
+class EventRespDownPlu {
+  dynamic obj;
+  EventRespDownPlu(this.obj);
+}
+
+class EventRespChangeWiFiMode {
+  dynamic obj;
+  EventRespChangeWiFiMode(this.obj);
 }

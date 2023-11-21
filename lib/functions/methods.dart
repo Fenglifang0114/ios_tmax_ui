@@ -1,16 +1,33 @@
 import 'dart:convert';
-
-import '../data/productrec.dart';
 import '../data/scalecmd_data.dart';
+import '../data/settingparam_data.dart';
 import '../main.dart';
 
 class PublicFunctions {
   static void function1() {}
 
-  static void getUIConf() {
+  static void getUIConfNormal() {
     myScaleCmd.cmdMode = "get_ui_conf";
-    myScaleCmd.cmdData = "";
-    MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
+    myScaleCmd.cmdData = "0";
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  static void getUIConfCheck() {
+    myScaleCmd.cmdMode = "get_ui_conf";
+    myScaleCmd.cmdData = "1";
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  static void getUIConfTakeIn() {
+    myScaleCmd.cmdMode = "get_ui_conf";
+    myScaleCmd.cmdData = "2";
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  static void getUIConfTakeOut() {
+    myScaleCmd.cmdMode = "get_ui_conf";
+    myScaleCmd.cmdData = "3";
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
 
   static void getScaleList() {
@@ -33,6 +50,12 @@ class PublicFunctions {
 
   static void getApInfo() {
     myScaleCmd.cmdMode = 'get_wifi_info';
+    myScaleCmd.cmdData = '';
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  static void changeWifiMode() {
+    myScaleCmd.cmdMode = 'change_wifi_mode';
     myScaleCmd.cmdData = '';
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
@@ -226,5 +249,17 @@ class PublicFunctions {
     myScaleCmd.cmdMode = "del_rec";
     myScaleCmd.cmdData = '999999999,3';
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  static void getNewUiConf() {
+    if (mySettingParam.scaleMode == 0) {
+      PublicFunctions.getUIConfNormal();
+    } else if (mySettingParam.scaleMode == 1) {
+      PublicFunctions.getUIConfCheck();
+    } else if (mySettingParam.scaleMode == 2) {
+      PublicFunctions.getUIConfTakeIn();
+    } else if (mySettingParam.scaleMode == 3) {
+      PublicFunctions.getUIConfTakeOut();
+    }
   }
 }

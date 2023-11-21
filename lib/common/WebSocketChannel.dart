@@ -159,13 +159,6 @@ class WebSocketChannel {
     eventBus.fire(EventComScaleList(myComScaleList));
   }
 
-  void pasterSettingParam(String jsonDataString) async {
-    String jsonStrings = jsonDataString;
-    final jsonResponse = json.decode(jsonStrings);
-    mySettingParam = SettingParam.fromJson(jsonResponse);
-    eventBus.fire(EventSettingParam(mySettingParam));
-  }
-
   Future pasterWifiList(String jsonDataString) async {
     String jsonStrings = jsonDataString;
     final jsonResponse = json.decode(jsonStrings);
@@ -210,8 +203,6 @@ class WebSocketChannel {
         eventBus.fire(EventReqWeightCountine(mobj));
       } else if (jsonData['MsgType'] == "resp_product_list") {
         pasterProductList(jsonData['MsgBody']);
-      } else if (jsonData['MsgType'] == "resp_get_ui_config") {
-        pasterSettingParam(jsonData['MsgBody']);
       } else if (jsonData['MsgType'] == "resp_user_list") {
         pasterUserList(jsonData['MsgBody']);
       } else if (jsonData['MsgType'] == "resp_check_license") {

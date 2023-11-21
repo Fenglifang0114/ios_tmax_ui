@@ -227,9 +227,9 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                   : 1;
           dateformat = int.parse(mySettingParam.dateFormat);
           zeroRange = double.tryParse(mySettingParam.zeroRange)!;
-          String timeString = (mySettingParam.stableTimeToRec == "")
+          String timeString = (mySettingParam.stableTime == "")
               ? "0"
-              : mySettingParam.stableTimeToRec.toString();
+              : mySettingParam.stableTime.toString();
           _stableSaveTime = int.parse(timeString);
           if (weightMode == 1) {
             _isSaveButtonDisabled = false;
@@ -616,6 +616,7 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                         OutlinedButton(
                             onPressed: () {
                               //跳转页面
+                              mySettingParam = myModeSettingNormal;
                               paramSettingDialog(context);
                             },
                             child: Text(localizedStrings.button_setting,

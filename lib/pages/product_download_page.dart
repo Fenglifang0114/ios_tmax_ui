@@ -24,48 +24,41 @@ class ProductDownloadPage extends StatefulWidget {
 
 class _ProductDownloadPageState extends State<ProductDownloadPage> {
   List<String> items = [];
-  List<String> paths = [];
-  List<String> printFormatSequence = [];
+  String filePath = '';
   List<DataRow> dataRows = [];
   String errorMessage = ''; //错误信息显示
   String? curruntPickFile = '';
 
-  bool hasDuplicates = false; //判断文件有没有重复序号
-
-  TextEditingController weightController = TextEditingController();
   TextEditingController repsController = TextEditingController();
   TextEditingController pluFileController = TextEditingController();
-  TextEditingController accModeController = TextEditingController();
-  TextEditingController pcsModeController = TextEditingController();
-  TextEditingController pctModeController = TextEditingController();
 
   late ScrollController _fileScrollerController;
   var currentPath = Directory.current.path;
   dynamic _eventbus1;
+  bool _isShowDownload = true;
 
   @override
   void initState() {
     super.initState();
     _fileScrollerController = ScrollController();
     pluFileController.text = '';
-    accModeController.text = '';
-    pcsModeController.text = '';
-    pctModeController.text = '';
-    _eventbus1 = eventBus.on<EventDownloadResponse>().listen((event) {
+
+    _eventbus1 = eventBus.on<EventRespDownPlu>().listen((event) {
       if (mounted) {
         setState(() {
-          myDownloadResponse = event.obj;
-          if (myDownloadResponse.msgBody.isNotEmpty) {
+          myDownPluResp = event.obj;
+          if (myDownPluResp.msgBody.isNotEmpty) {
+            _isShowDownload = true;
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text(
-                    (myDownloadResponse.msgBody.contains('ok'))
+                    (myDownPluResp.msgBody.contains('ok'))
                         ? 'Download successful!'
-                        : myDownloadResponse.msgBody,
+                        : myDownPluResp.msgBody,
                     style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.normal)), ////此处需要秤回复
                 duration: const Duration(seconds: 3),
-                backgroundColor: (myDownloadResponse.msgBody.contains('ok'))
+                backgroundColor: (myDownPluResp.msgBody.contains('ok'))
                     ? Colors.green.shade900
                     : Colors.red.shade900));
           }
@@ -168,6 +161,15 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                   const SizedBox(
                     height: 30,
                   ),
+                  !_isShowDownload
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            backgroundColor: Colors.transparent,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                Theme.of(context).colorScheme.primary),
+                          ),
+                        )
+                      : const SizedBox()
                 ],
               ),
             ),
@@ -249,11 +251,13 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                 ),
               ),
             ),
-            onPressed: () {
-              if (!hasDuplicates && paths.isNotEmpty) {
-                _showConfirmationDialog(context);
-              }
-            },
+            onPressed: _isShowDownload
+                ? () {
+                    if (filePath.isNotEmpty) {
+                      _showConfirmationDialog(context);
+                    }
+                  }
+                : null,
             child: const Text(
               "Download",
             ),
@@ -272,9 +276,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
             'Confirmation',
             style: TextStyle(color: Color.fromARGB(255, 15, 71, 161)),
           ),
-          content: const Text(
-              '''Please confirm the order of the printing format.     
-            '''),
+          content: const Text('Please confirm the PLU file.'),
           actions: <Widget>[
             OutlinedButton(
               child: const Text('Cancel'),
@@ -293,41 +295,41 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
       },
     ).then((confirmed) {
       if (confirmed) {
-        sendFormatToScale(printFormatSequence, paths);
+        sendFormatToScale(filePath);
+        setState(() {
+          _isShowDownload = false;
+        });
       }
     });
   }
 
-  void sendFormatToScale(List<String> fmtSequence, List<String> fmtPaths) {
-    myScaleCmd.cmdMode = "down_print_format_to_scale";
-    if (fmtSequence.length == fmtPaths.length) {
-      myDownLoadPrtFmt.scaleModel = 'TMax';
-      myDownLoadPrtFmt.printerModel = 'EPM205';
-      myDownLoadPrtFmt.filePaths = fmtPaths;
-
-      myScaleCmd.cmdData = json.encode(myDownLoadPrtFmt);
+  void sendFormatToScale(String fmtPath) {
+    myScaleCmd.cmdMode = "down_plu_to_scale";
+    if (fmtPath.isNotEmpty) {
+      myDownLoadPluFile.scaleModel = 'TMax';
+      myDownLoadPluFile.filePath = fmtPath;
+      myScaleCmd.cmdData = json.encode(myDownLoadPluFile);
       MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
     }
   }
 
   Future pickFiles(TextEditingController showFilePath) async {
-    String executablePath = Platform.resolvedExecutable;
-    var directory = p.dirname(executablePath);
-
-    final formatfilePath = Directory(directory);
-    if (!await formatfilePath.exists()) {
-      await formatfilePath.create(recursive: true);
-    }
-    directory = formatfilePath.path;
-
     FilePickerResult? result = await FilePicker.platform.pickFiles(
-      initialDirectory: directory,
+      // initialDirectory: directory,
       allowMultiple: false,
       type: FileType.custom,
       allowedExtensions: ['xlsx'],
     );
     if (result != null) {
-      showFilePath.text = result.files.single.path!;
+      setState(() {
+        showFilePath.text = result.files.single.path!;
+        filePath = showFilePath.text;
+      });
+    } else {
+      setState(() {
+        showFilePath.text = '';
+        filePath = '';
+      });
     }
   }
 

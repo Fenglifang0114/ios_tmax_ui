@@ -18,8 +18,6 @@ import '../functions/methods.dart';
 import '../widget/box_gradient.dart';
 import '../widget/theme_color.dart';
 import '../widget/version.dart';
-import 'home_page.dart';
-import 'home_page_industry.dart';
 
 class TrialPage extends StatefulWidget {
   const TrialPage({Key? key}) : super(key: key);
@@ -67,7 +65,10 @@ class TrialPageState extends State<TrialPage> {
           }
           if (isPass) {
             PublicFunctions.getScaleList();
-            PublicFunctions.getUIConf();
+            PublicFunctions.getUIConfNormal();
+            PublicFunctions.getUIConfCheck();
+            PublicFunctions.getUIConfTakeIn();
+            PublicFunctions.getUIConfTakeOut();
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) {
               return mySystemVersionInfo.getHomePage(mySystemVersion);
@@ -312,7 +313,14 @@ class TrialPageState extends State<TrialPage> {
                                               setState(() {
                                                 //跳转页面
                                                 PublicFunctions.getScaleList();
-                                                PublicFunctions.getUIConf();
+                                                PublicFunctions
+                                                    .getUIConfNormal();
+                                                PublicFunctions
+                                                    .getUIConfCheck();
+                                                PublicFunctions
+                                                    .getUIConfTakeIn();
+                                                PublicFunctions
+                                                    .getUIConfTakeOut();
                                                 Navigator.pushReplacement(
                                                     context, MaterialPageRoute(
                                                         builder: (context) {

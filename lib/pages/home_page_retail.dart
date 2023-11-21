@@ -1,13 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:t_max/data/dialog_data.dart';
 import 'package:t_max/data/license_data.dart';
 import 'package:t_max/data/scale_info_from_scale.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/pages/dow_prn_fmt_page.dart';
 import 'package:t_max/pages/labeldesign_page.dart';
-import 'package:t_max/pages/wifisetting_page.dart';
 import '../data/comscaleinfo_data.dart';
 import '../data/currentport_data.dart';
 import '../data/device_data.dart';
@@ -623,7 +621,6 @@ class _RetailHomePageState extends State<RetailHomePage> {
                       cursor: SystemMouseCursors.click, // 设置光标为手的形状
                       child: GestureDetector(
                         onTap: () {
-                          //TODO:  打印格式下载
                           stopCheckSerialPort();
                           Navigator.push(
                             context,
@@ -639,7 +636,6 @@ class _RetailHomePageState extends State<RetailHomePage> {
                       cursor: SystemMouseCursors.click, // 设置光标为手的形状
                       child: GestureDetector(
                         onTap: () {
-                          //TODO:  打印格式下载
                           stopCheckSerialPort();
                           Navigator.push(
                             context,
@@ -659,7 +655,6 @@ class _RetailHomePageState extends State<RetailHomePage> {
                       child: GestureDetector(
                         onTap: myLicenseInfo.isValid
                             ? () {
-                                //TODO:  串口输出
                                 stopCheckSerialPort();
                                 Navigator.push(
                                   context,

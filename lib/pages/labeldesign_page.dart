@@ -956,61 +956,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                         ),
                       ],
                     ),
-                    // SizedBox(
-                    //   width: 125,
-                    //   height: 50,
-                    //   child: ElevatedButton(
-                    //       onPressed: downloadStatus
-                    //           ? () {
-                    //               _showConfirmationDialog(context);
-
-                    //               // String executablePath =
-                    //               //     Platform.resolvedExecutable;
-                    //               // final directory = p.dirname(executablePath);
-                    //               // String dataTime = getDateTime();
-                    //               // String outputFile;
-                    //               // final filePath =
-                    //               //     Directory('$directory\\backup');
-                    //               // final file = File(
-                    //               //     '$directory\\backup\\$dataTime.json');
-                    //               // outputFile = file.path;
-                    //               // if (!await filePath.exists()) {
-                    //               //   await filePath.create(recursive: true);
-                    //               // }
-                    //               // _saveFormatToJson(outputFile);
-                    //               // _exportCSV();
-                    //               // sendFormatToScale(csv); //发送数据
-                    //               // if (kDebugMode) {
-                    //               //   print(csv);
-                    //               // }
-                    //               // setState(() {
-                    //               //   downloadStatus = false;
-                    //               // });
-                    //             }
-                    //           : null,
-                    //       style: ElevatedButton.styleFrom(
-                    //         backgroundColor: downloadStatus
-                    //             ? Theme.of(context).colorScheme.primary
-                    //             : Colors.white, // 设置按钮的背景色
-                    //         elevation: 10, // 设置按钮的阴影
-                    //         shape: RoundedRectangleBorder(
-                    //           borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
-                    //         ),
-                    //       ),
-                    //       child: Row(
-                    //         children: [
-                    //           const Icon(Icons.download),
-                    //           Text(localizedStrings.download,
-                    //               style: TextStyle(
-                    //                 fontSize: 14,
-                    //                 fontWeight: FontWeight.normal,
-                    //                 color: downloadStatus
-                    //                     ? Colors.white
-                    //                     : Colors.black,
-                    //               ))
-                    //         ],
-                    //       )),
-                    // ),
                     Divider(
                       height: 2,
                       color: Theme.of(context).colorScheme.primary,

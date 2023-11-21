@@ -117,6 +117,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
   dynamic eventBus9;
   dynamic eventBus10;
   dynamic eventBus11;
+  dynamic eventBus12;
 
   @override
   void initState() {
@@ -127,7 +128,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     dateformat = 1;
     zeroRange = 0;
     _errorText.text = '';
-    if (mySettingParam.recMode == "manual") {
+    if (myModeSettingNormal.recMode == "manual") {
       weightMode = 1;
       _isSaveButtonDisabled = false;
     } else {
@@ -260,17 +261,17 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     eventBus8 = eventBus.on<EventSettingParam>().listen((event) {
       if (mounted) {
         setState(() {
-          mySettingParam = event.obj;
-          weightMode = (mySettingParam.recMode == "manual")
+          myModeSettingNormal = event.obj;
+          weightMode = (myModeSettingNormal.recMode == "manual")
               ? 1
-              : (mySettingParam.recMode == "auto")
+              : (myModeSettingNormal.recMode == "auto")
                   ? 2
                   : 1;
-          dateformat = int.parse(mySettingParam.dateFormat);
-          zeroRange = double.tryParse(mySettingParam.zeroRange)!;
-          String timeString = (mySettingParam.stableTimeToRec == "")
+          dateformat = int.parse(myModeSettingNormal.dateFormat);
+          zeroRange = double.tryParse(myModeSettingNormal.zeroRange)!;
+          String timeString = (myModeSettingNormal.stableTime == "")
               ? "0"
-              : mySettingParam.stableTimeToRec.toString();
+              : myModeSettingNormal.stableTime.toString();
           _stableSaveTime = int.parse(timeString);
           if (weightMode == 1) {
             _isSaveButtonDisabled = false;
@@ -311,6 +312,14 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
         });
       }
     });
+
+    eventBus12 = eventBus.on<EventUpdateSettingParam>().listen((event) {
+      if (mounted) {
+        setState(() {
+          PublicFunctions.getUIConfTakeOut();
+        });
+      }
+    });
   }
 
   void _addDBdataToReport() {
@@ -318,7 +327,8 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     for (var i = 0; i < dbRecs!.length; i++) {
       myWeightReportData.add(WeightReportData(
         (dbRecs[i].recId).toString(),
-        convertDateTime(dbRecs[i].createdAt!, mySettingParam.dateSeparator),
+        convertDateTime(
+            dbRecs[i].createdAt!, myModeSettingNormal.dateSeparator),
         (dbRecs[i].weight == null) ? '' : dbRecs[i].weight!,
         (dbRecs[i].weightUnit == null) ? '' : dbRecs[i].weightUnit!, //重量单位
         (myProductRecInfo.id == null) ? "" : myProductRecInfo.id.toString(),
@@ -357,6 +367,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     eventBus9.cancel();
     eventBus10.cancel();
     eventBus11.cancel();
+    eventBus12.cancel();
 
     super.dispose();
   }
@@ -395,103 +406,92 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
               child: Row(
                 children: [
                   Container(
-                      // width: _width,
-                      height: 40,
-                      margin: const EdgeInsets.only(left: 5, top: 2),
-                      // decoration: BoxDecoration(
-                      //     color: Colors.white,
-                      //     borderRadius: BorderRadius.circular(0),
-                      //     boxShadow: [
-                      //       BoxShadow(
-                      //           color: Theme.of(context).colorScheme.primary,
-                      //           offset: const Offset(0.0, 2.0),
-                      //           blurStyle: BlurStyle.solid,
-                      //           blurRadius: 1.0,
-                      //           spreadRadius: 0.0),
-                      //     ]),
-                      alignment: Alignment.center, //设置控件内容的位置
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            width: 120,
-                            height: 40,
-                            child: OutlinedButton(
-                              style: OutlinedButton.styleFrom(
-                                side: BorderSide(
-                                  width: 1,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                                foregroundColor: Colors.blue,
-                                backgroundColor: Colors.white, // 设置按钮的背景色
-                                shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.circular(4), // 设置按钮的圆角
-                                ),
+                    height: 40,
+                    margin: const EdgeInsets.only(left: 5, top: 2),
+                    alignment: Alignment.center, //设置控件内容的位置
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 120,
+                          height: 40,
+                          child: OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(
+                                width: 1,
+                                color: Theme.of(context).colorScheme.primary,
                               ),
-                              child: Center(
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Icon(
-                                      Icons.home,
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                    ),
-                                    Text(
-                                      localizedStrings.button_home,
-                                      style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal),
-                                    ),
-                                  ],
-                                ),
+                              foregroundColor: Colors.blue,
+                              backgroundColor: Colors.white, // 设置按钮的背景色
+                              shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.circular(4), // 设置按钮的圆角
                               ),
-                              onPressed: () {
-                                PublicFunctions.stopWeight();
-                                Navigator.of(context).pop();
-                              },
                             ),
+                            child: Center(
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Icon(
+                                    Icons.home,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                  ),
+                                  Text(
+                                    localizedStrings.button_home,
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.normal),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            onPressed: () {
+                              PublicFunctions.stopWeight();
+                              Navigator.of(context).pop();
+                            },
                           ),
-                          const SizedBox(
-                            width: 20,
+                        ),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        SizedBox(
+                          width: 400,
+                          child: Text(
+                            localizedStrings.weight_collection_title,
+                            maxLines: 1,
+                            style: TextStyle(
+                                fontSize: 20,
+                                color: Theme.of(context).colorScheme.primary),
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          SizedBox(
-                            width: 400,
-                            child: Text(
-                              'Weight Data Collection',
-                              maxLines: 1,
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  color: Theme.of(context).colorScheme.primary),
+                        ),
+                        SizedBox(
+                          width: 200,
+                          child: Text(
+                            _errorText.text, //报错信息
+                            maxLines: 1,
+                            style: TextStyle(
+                              color: (_errorText.text).contains('succeed')
+                                  ? Theme.of(context).colorScheme.outline
+                                  : Theme.of(context).colorScheme.error,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          SizedBox(
-                            width: 200,
-                            child: Text(
-                              _errorText.text, //报错信息
-                              maxLines: 1,
-                              style: TextStyle(
-                                color: (_errorText.text).contains('succeed')
-                                    ? Theme.of(context).colorScheme.outline
-                                    : Theme.of(context).colorScheme.error,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ),
-                        ],
-                      )),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
             //////////////////////////////////
             const SizedBox(height: 5),
             Container(
-              height: 100,
+              height: 120,
               color: Colors.white,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -506,6 +506,8 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                             width: 50,
                             child: Text(
                               localizedStrings.stable,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.right,
                             ),
                           ),
@@ -529,6 +531,8 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                             width: 50,
                             child: Text(
                               localizedStrings.net,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.right,
                             ),
                           ),
@@ -552,6 +556,8 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                             width: 50,
                             child: Text(
                               localizedStrings.zero,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.right,
                             ),
                           ),
@@ -559,25 +565,8 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                           Image.asset(
                             (myReqWeightCountine.msgBody == null)
                                 ? ("assets/images/gray.png")
-                                : (((myReqWeightCountine.msgBody!.isStable &&
-                                                isStart) &&
-                                            (double.tryParse(myReqWeightCountine
-                                                    .msgBody!.weightVal) ==
-                                                0)) ||
-                                        ((myReqWeightCountine
-                                                    .msgBody!.isStable &&
-                                                isStart) &&
-                                            (((double.tryParse(
-                                                            myReqWeightCountine
-                                                                .msgBody!
-                                                                .weightVal) ==
-                                                        null)
-                                                    ? 0
-                                                    : double.tryParse(
-                                                        myReqWeightCountine
-                                                            .msgBody!
-                                                            .weightVal))! <=
-                                                zeroRange)))
+                                : (myReqWeightCountine.msgBody!.isZero &&
+                                        isStart)
                                     ? ("assets/images/blue.png")
                                     : ("assets/images/gray.png"),
                             width: 25,
@@ -740,6 +729,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                               child: ElevatedButton(
                                   onPressed: () {
                                     //跳转页面
+                                    mySettingParam = myModeSettingNormal;
                                     paramSettingDialog(context);
                                   },
                                   child: Text(localizedStrings.button_setting,
@@ -789,163 +779,192 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
             //////////////
             const SizedBox(height: 5),
             Container(
-              height: 40,
-              color: Colors.white,
-              child: Row(
-                children: [
-                  Text(localizedStrings.plu_name),
-                  Container(
-                    child: DropdownButtonFormField<String>(
-                      itemHeight: 50.0,
-                      isExpanded: true,
-                      // decoration: const InputDecoration(border: OutlineInputBorder()),
-                      value: productNameValue,
-                      onChanged: (String? newPosition) {
-                        setState(() {
-                          productNameValue = newPosition.toString();
-                          for (var i = 0;
-                              i < myProductRecList.productRecInfo!.length;
-                              i++) {
-                            if (productNameValue ==
-                                myProductRecList.productRecInfo![i].product) {
-                              myProductRecInfo =
-                                  myProductRecList.productRecInfo![i];
-                              eventBus
-                                  .fire(EventProductRecInfo(myProductRecInfo));
-                            }
-                          }
-                        });
-                      },
+                height: 40,
+                color: Colors.white,
+                child: LayoutBuilder(builder:
+                    (BuildContext context, BoxConstraints constraints) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      SizedBox(
+                        width: constraints.maxWidth / 10,
+                        child: Text(
+                          localizedStrings.plu_name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      Container(
+                        child: DropdownButtonFormField<String>(
+                          itemHeight: 50.0,
+                          isExpanded: true,
+                          // decoration: const InputDecoration(border: OutlineInputBorder()),
+                          value: productNameValue,
+                          onChanged: (String? newPosition) {
+                            setState(() {
+                              productNameValue = newPosition.toString();
+                              for (var i = 0;
+                                  i < myProductRecList.productRecInfo!.length;
+                                  i++) {
+                                if (productNameValue ==
+                                    myProductRecList
+                                        .productRecInfo![i].product) {
+                                  myProductRecInfo =
+                                      myProductRecList.productRecInfo![i];
+                                  eventBus.fire(
+                                      EventProductRecInfo(myProductRecInfo));
+                                }
+                              }
+                            });
+                          },
 
-                      items: productNameList
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem(
-                            value: value,
-                            child:
-                                Text(value, overflow: TextOverflow.ellipsis));
-                      }).toList(),
-                    ),
-                    height: 53,
-                    width: 100,
-                    padding: const EdgeInsets.all(0),
-                  ),
-                  const SizedBox(width: 10),
-                  MaterialButton(
-                      color: Theme.of(context).colorScheme.primary,
-                      textColor: Colors.white,
-                      elevation: 5.0,
-                      child: Text(localizedStrings.plu_edit,
-                          style: const TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.normal)),
-                      onPressed: () {
-                        getProductList();
-                        addProductDialog(context).then((onvalue) {
-                          if (!productNameList.contains(productNameValue)) {
-                            myProductRecInfo.product = "";
-                            productNameValue = "";
-                            myProductRecInfo.id = "";
-                            myProductRecInfo.withPretare = false;
-                            myProductRecInfo.remarks = "";
-                          }
-                        });
-                      }),
-                  const SizedBox(width: 50),
-                  TextButton(
-                      onPressed: () {},
-                      child: Text(localizedStrings.user_name,
-                          style: const TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.normal))),
-                  Container(
-                    child: DropdownButtonFormField<String>(
-                      itemHeight: 50.0,
-                      isExpanded: true,
-                      // decoration: const InputDecoration(border: OutlineInputBorder()),
-                      value: userNameValue,
-                      onChanged: (String? newPosition) {
-                        setState(() {
-                          myUserInfo.name = newPosition.toString();
-                          for (var i = 0;
-                              i < myUserInfoList.userInfo!.length;
-                              i++) {
-                            if (myUserInfo.name ==
-                                myUserInfoList.userInfo![i].name) {
-                              myUserInfo = myUserInfoList.userInfo![i];
-                              eventBus.fire(EventUserInfo(myUserInfo));
-                            }
-                          }
-                        });
-                      },
-                      items: userNameList
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem(
-                            value: value,
-                            child:
-                                Text(value, overflow: TextOverflow.ellipsis));
-                      }).toList(),
-                    ),
-                    height: 53,
-                    width: 100,
-                    padding: const EdgeInsets.all(0),
-                  ),
-                  // const SizedBox(width: 10),
-                  MaterialButton(
-                      color: Theme.of(context).colorScheme.primary,
-                      textColor: Colors.white,
-                      elevation: 5.0,
-                      child: Text(localizedStrings.user_edit,
-                          style: const TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.normal)),
-                      onPressed: () {
-                        PublicFunctions.getUserList();
-                        getUserNameList();
-                        if (!userNameList.contains(userNameValue)) {
-                          myUserInfo.name = "";
-                          userNameValue = "";
-                          myUserInfo.id = "";
-                          myUserInfo.isFemale = true;
-                          myUserInfo.phone = "";
-                          myUserInfo.remarks = "";
-                        }
-                        addUserDialog(context).then((onvalue) {
-                          setState(() {
-                            PublicFunctions.getUserList();
-                            getUserNameList();
-                            if (!userNameList.contains(userNameValue)) {
-                              myUserInfo.name = "";
-                              userNameValue = "";
-                              myUserInfo.id = "";
-                              myUserInfo.isFemale = true;
-                              myUserInfo.phone = "";
-                              myUserInfo.remarks = "";
-                            }
-                          });
-                        });
-                      }),
-                  const SizedBox(width: 10),
-                  MaterialButton(
-                      color: Theme.of(context).colorScheme.primary,
-                      textColor: Colors.white,
-                      elevation: 5.0,
-                      child: const Text('Report Setting',
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.normal)),
-                      onPressed: () {
-                        reportFieldsSettingDialog(context);
-                      }),
-                  const SizedBox(width: 10),
-                  MaterialButton(
-                      color: Theme.of(context).colorScheme.primary,
-                      textColor: Colors.white,
-                      elevation: 5.0,
-                      child: const Text('Delete All',
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.normal)),
-                      onPressed: () {
-                        PublicFunctions.deleteAllRecords();
-                      }),
-                ],
-              ),
-            ),
+                          items: productNameList
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem(
+                                value: value,
+                                child: Text(value,
+                                    overflow: TextOverflow.ellipsis));
+                          }).toList(),
+                        ),
+                        height: 53,
+                        width: constraints.maxWidth / 10,
+                        padding: const EdgeInsets.all(0),
+                      ),
+                      SizedBox(
+                        width: constraints.maxWidth / 10,
+                        child: MaterialButton(
+                            color: Theme.of(context).colorScheme.primary,
+                            textColor: Colors.white,
+                            elevation: 5.0,
+                            child: Text(localizedStrings.plu_edit,
+                                style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.normal)),
+                            onPressed: () {
+                              getProductList();
+                              addProductDialog(context).then((onvalue) {
+                                if (!productNameList
+                                    .contains(productNameValue)) {
+                                  myProductRecInfo.product = "";
+                                  productNameValue = "";
+                                  myProductRecInfo.id = "";
+                                  myProductRecInfo.withPretare = false;
+                                  myProductRecInfo.remarks = "";
+                                }
+                              });
+                            }),
+                      ),
+                      SizedBox(
+                        width: constraints.maxWidth / 10,
+                        child: TextButton(
+                            onPressed: () {},
+                            child: Text(localizedStrings.user_name,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.normal))),
+                      ),
+                      Container(
+                        child: DropdownButtonFormField<String>(
+                          itemHeight: 50.0,
+                          isExpanded: true,
+                          // decoration: const InputDecoration(border: OutlineInputBorder()),
+                          value: userNameValue,
+                          onChanged: (String? newPosition) {
+                            setState(() {
+                              myUserInfo.name = newPosition.toString();
+                              for (var i = 0;
+                                  i < myUserInfoList.userInfo!.length;
+                                  i++) {
+                                if (myUserInfo.name ==
+                                    myUserInfoList.userInfo![i].name) {
+                                  myUserInfo = myUserInfoList.userInfo![i];
+                                  eventBus.fire(EventUserInfo(myUserInfo));
+                                }
+                              }
+                            });
+                          },
+                          items: userNameList
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem(
+                                value: value,
+                                child: Text(value,
+                                    overflow: TextOverflow.ellipsis));
+                          }).toList(),
+                        ),
+                        height: 53,
+                        width: constraints.maxWidth / 10,
+                        padding: const EdgeInsets.all(0),
+                      ),
+                      SizedBox(
+                        width: constraints.maxWidth / 10,
+                        child: MaterialButton(
+                            color: Theme.of(context).colorScheme.primary,
+                            textColor: Colors.white,
+                            elevation: 5.0,
+                            child: Text(localizedStrings.user_edit,
+                                style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.normal)),
+                            onPressed: () {
+                              PublicFunctions.getUserList();
+                              getUserNameList();
+                              if (!userNameList.contains(userNameValue)) {
+                                myUserInfo.name = "";
+                                userNameValue = "";
+                                myUserInfo.id = "";
+                                myUserInfo.isFemale = true;
+                                myUserInfo.phone = "";
+                                myUserInfo.remarks = "";
+                              }
+                              addUserDialog(context).then((onvalue) {
+                                setState(() {
+                                  PublicFunctions.getUserList();
+                                  getUserNameList();
+                                  if (!userNameList.contains(userNameValue)) {
+                                    myUserInfo.name = "";
+                                    userNameValue = "";
+                                    myUserInfo.id = "";
+                                    myUserInfo.isFemale = true;
+                                    myUserInfo.phone = "";
+                                    myUserInfo.remarks = "";
+                                  }
+                                });
+                              });
+                            }),
+                      ),
+                      SizedBox(
+                        width: constraints.maxWidth / 10,
+                        child: MaterialButton(
+                            color: Theme.of(context).colorScheme.primary,
+                            textColor: Colors.white,
+                            elevation: 5.0,
+                            child: Text(localizedStrings.report_set_btn,
+                                style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.normal)),
+                            onPressed: () {
+                              reportFieldsSettingDialog(context);
+                            }),
+                      ),
+                      SizedBox(
+                        width: constraints.maxWidth / 10,
+                        child: MaterialButton(
+                            color: Theme.of(context).colorScheme.primary,
+                            textColor: Colors.white,
+                            elevation: 5.0,
+                            child: Text(localizedStrings.report_delete_btn,
+                                style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.normal)),
+                            onPressed: () {
+                              _showConfirmationDialog(context);
+                            }),
+                      ),
+                    ],
+                  );
+                })),
             Expanded(
               child: SfDataGrid(
                 source: _weightReportDataSource,
@@ -953,10 +972,44 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                 columnWidthMode: ColumnWidthMode.fill,
                 frozenRowsCount: 0,
                 controller: _dataGridController,
+                allowSorting: true,
               ),
             )
           ],
         ));
+  }
+
+  _showConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          title: Text(
+            localizedStrings.confirm_title,
+            style: const TextStyle(color: Color.fromARGB(255, 15, 71, 161)),
+          ),
+          content: Text(localizedStrings.data_delete_confirm),
+          actions: <Widget>[
+            OutlinedButton(
+              child: Text(localizedStrings.button_cancel),
+              onPressed: () {
+                Navigator.of(context).pop(false); // 不跳转
+              },
+            ),
+            OutlinedButton(
+              child: Text(localizedStrings.confirm_btn),
+              onPressed: () {
+                Navigator.of(context).pop(true); // 跳转
+              },
+            ),
+          ],
+        );
+      },
+    ).then((confirmed) {
+      if (confirmed) {
+        PublicFunctions.deleteAllRecords();
+      }
+    });
   }
 
   void paramSettingDialog(BuildContext context) {
@@ -1241,7 +1294,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
   void _addWeightToReport() {
     myWeightReportData.add(WeightReportData(
       (myWeightReportData.length + 1).toString(),
-      getDateTime(mySettingParam.dateSeparator),
+      getDateTime(myModeSettingNormal.dateSeparator),
       (myReqWeightCountine.msgBody?.weightVal == null)
           ? (" ")
           : (myReqWeightCountine.msgBody!.weightVal),
@@ -1274,12 +1327,23 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
       myDevicedata.name,
     ));
     setState(() {
+      String sortColName = 'Date Time';
+      DataGridSortDirection sortDirec = DataGridSortDirection.descending;
+      if (_weightReportDataSource.sortedColumns.isNotEmpty) {
+        sortColName = _weightReportDataSource.sortedColumns[0].name;
+        sortDirec = _weightReportDataSource.sortedColumns[0].sortDirection;
+      }
       _weightReportDataSource = WeightReportDataSource(_weightReportDatas);
+      _weightReportDataSource.sortedColumns
+          .add(SortColumnDetails(name: sortColName, sortDirection: sortDirec));
       Future.delayed(const Duration(milliseconds: 100), () {
-        _dataGridController
-            .scrollToRow(_weightReportDataSource.rows.length - 0);
+        if (sortDirec == DataGridSortDirection.descending) {
+          _dataGridController.scrollToRow(0);
+        } else {
+          _dataGridController
+              .scrollToRow(_weightReportDataSource.rows.length - 0);
+        }
       });
-      // _dataGridController.scrollToRow(_weightReportDataSource.rows.length - 1);
     });
   }
 

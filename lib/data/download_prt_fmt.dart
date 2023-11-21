@@ -39,3 +39,24 @@ class DownLoadSetOutputFmt {
 }
 
 DownLoadSetOutputFmt myDownLoadSetOutputFmt = DownLoadSetOutputFmt();
+
+class DownLoadPluFile {
+  String? scaleModel;
+  String? filePath;
+
+  DownLoadPluFile({this.scaleModel, this.filePath});
+
+  DownLoadPluFile.fromJson(Map<String, dynamic> json) {
+    scaleModel = json['ScaleModel'];
+    filePath = json['FilePath'].cast<String>();
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['ScaleModel'] = scaleModel;
+    data['FilePath'] = filePath;
+    return data;
+  }
+}
+
+DownLoadPluFile myDownLoadPluFile = DownLoadPluFile();

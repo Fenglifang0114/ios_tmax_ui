@@ -80,6 +80,7 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
     _deviceNameController.dispose();
     _eventbus1.cancel();
     _eventbus2.cancel();
+    _stopTimer();
     super.dispose();
   }
 
@@ -147,7 +148,7 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               OutlinedButton(
-                                  child: const Text('get name'),
+                                  child: Text(localizedStrings.get_bt_name),
                                   onPressed: isSetting
                                       ? null
                                       : () {
@@ -160,7 +161,7 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
                                         }),
                               const SizedBox(width: 50),
                               OutlinedButton(
-                                child: const Text('modify name'),
+                                child: Text(localizedStrings.modify_bt_name),
                                 onPressed: isSetting
                                     ? null
                                     : () {
@@ -185,7 +186,7 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
                             ],
                           ),
                           const SizedBox(height: 10),
-                          const Text('Emission Power:'),
+                          Text(localizedStrings.bt_emission_power),
                           const SizedBox(height: 10),
                           SizedBox(
                             width: 400,
@@ -212,7 +213,7 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
                           ),
                           const SizedBox(height: 10),
                           OutlinedButton(
-                              child: const Text('modify emission power'),
+                              child: Text(localizedStrings.bt_modify_emission),
                               onPressed: isSetting
                                   ? null
                                   : () {
@@ -320,9 +321,7 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
   }
 
   void _stopTimer() {
-    setState(() {
-      isSetting = false;
-    });
+    isSetting = false;
     _timer?.cancel(); // 停止计时器
   }
 }

@@ -26,6 +26,7 @@ import '../dialog/adduser_dialog.dart';
 import '../dialog/setting_dialog.dart';
 import 'package:path/path.dart';
 
+import '../dialog/showWarning.dart';
 import '../dialog/weight_report_feilds_setting.dart';
 
 class TakeOutPage extends StatefulWidget {
@@ -43,6 +44,7 @@ class TakeOutPageState extends State<TakeOutPage> {
   bool isStart = false;
   String productNameValue = "";
   String userNameValue = "";
+  String startWeightUnit = "";
   List<String> productNameList = [];
   List<String> userNameList = [];
 
@@ -59,6 +61,9 @@ class TakeOutPageState extends State<TakeOutPage> {
   bool _isTiming = false;
   bool _isZero = false;
   bool _isPassZero = false;
+  bool showDialogFlag = false;
+  bool _isShowing = false;
+
   late bool _isTakeOutStart = false;
   double basicWeightval = 0.000; //开始加法秤的时候的基础重量
   String showTakeOutWeight = '';
@@ -133,6 +138,7 @@ class TakeOutPageState extends State<TakeOutPage> {
   dynamic eventBus11;
   dynamic eventBus12;
   dynamic eventBus13;
+  dynamic eventBus14;
 
   @override
   void initState() {
@@ -143,15 +149,15 @@ class TakeOutPageState extends State<TakeOutPage> {
     dateformat = 1;
     zeroRange = 0;
     _errorText.text = '';
-    if (mySettingParam.recMode == "manual") {
+    if (myModeSettingTakeOut.recMode == "manual") {
       weightMode = 1;
       _isSaveButtonDisabled = false;
     } else {
       _isSaveButtonDisabled = true;
       weightMode = 2;
-      String timeString = (mySettingParam.stableTimeToRec == "")
+      String timeString = (myModeSettingTakeOut.stableTime == "")
           ? "0"
-          : mySettingParam.stableTimeToRec.toString();
+          : myModeSettingTakeOut.stableTime.toString();
       _stableSaveTime = int.parse(timeString);
       if (_stableSaveTime == 0) {
         _stableSaveTime = 1;
@@ -192,59 +198,11 @@ class TakeOutPageState extends State<TakeOutPage> {
         setState(() {
           myReqWeightCountine = event.obj;
           isStart = true;
-          //  getWeight();
-          switch (weightMode) {
-            case 1:
-              if (isZeroValue()) {
-                _isZero = true;
-                _isPassZero = true;
-              } else {
-                _isZero = false;
-              }
-              takeInModeWeight();
-              isWeightStable();
-              break;
-            case 2:
-              if (!myReqWeightCountine.msgBody!.isStable) {
-                _isStableStatusJudge = false;
-              }
-              if (isZeroValue()) {
-                _isZero = true;
-                _isPassZero = true;
-              } else {
-                _isZero = false;
-              }
-              _saveWeight(myReqWeightCountine.msgBody!.isStable);
-              if (_isTakeOutStart && isWeightValue() && _isStableStatusJudge) {
-                double? nowWeightVal =
-                    double.tryParse(myReqWeightCountine.msgBody!.weightVal);
-                if ((basicWeightval - nowWeightVal!) - lastTakeOutWeightval >
-                    0.02) {
-                  lastTakeOutWeightval = double.parse(
-                      (basicWeightval - nowWeightVal).toStringAsFixed(3));
-                  _isPassZero = true;
-                } else {
-                  _isPassZero = false;
-                }
-                //如果是加法秤，不需要判断是否重新归零
-              }
-              if (myReqWeightCountine.msgBody!.isStable == true &&
-                  !_isZero &&
-                  _isPassZero &&
-                  _isStableStatusJudge) {
-                {
-                  _isPassZero = false;
-                  _isTiming = false;
-                  _isStableStatusJudge = false;
-                  _addWeightToReport();
-                  sendReportDataToDB();
-                }
-                lastWeight = myReqWeightCountine.msgBody!.weightVal;
-              }
-              takeInModeWeight();
-              break;
-            default:
-              break;
+          if (_isTakeOutStart && !isSameUnit()) {
+            showDialogFlag = true;
+          } else {
+            showDialogFlag = false;
+            checkWeight();
           }
         });
       }
@@ -283,17 +241,17 @@ class TakeOutPageState extends State<TakeOutPage> {
     eventBus8 = eventBus.on<EventSettingParam>().listen((event) {
       if (mounted) {
         setState(() {
-          mySettingParam = event.obj;
-          weightMode = (mySettingParam.recMode == "manual")
+          myModeSettingTakeOut = event.obj;
+          weightMode = (myModeSettingTakeOut.recMode == "manual")
               ? 1
-              : (mySettingParam.recMode == "auto")
+              : (myModeSettingTakeOut.recMode == "auto")
                   ? 2
                   : 1;
-          dateformat = int.parse(mySettingParam.dateFormat);
-          zeroRange = double.tryParse(mySettingParam.zeroRange)!;
-          String timeString = (mySettingParam.stableTimeToRec == "")
+          dateformat = int.parse(myModeSettingTakeOut.dateFormat);
+          zeroRange = double.tryParse(myModeSettingTakeOut.zeroRange)!;
+          String timeString = (myModeSettingTakeOut.stableTime == "")
               ? "0"
-              : mySettingParam.stableTimeToRec.toString();
+              : myModeSettingTakeOut.stableTime.toString();
           _stableSaveTime = int.parse(timeString);
           if (weightMode == 1) {
             _isSaveButtonDisabled = false;
@@ -359,9 +317,17 @@ class TakeOutPageState extends State<TakeOutPage> {
         });
       }
     });
+
+    eventBus14 = eventBus.on<EventUpdateSettingParam>().listen((event) {
+      if (mounted) {
+        setState(() {
+          PublicFunctions.getUIConfTakeOut();
+        });
+      }
+    });
   }
 
-  void takeInModeWeight() {
+  void takeOutModeWeight() {
     if (_isTakeOutStart && myReqWeightCountine.msgBody != null) {
       if (isWeightValue()) {
         showDiffWeightVal();
@@ -372,12 +338,79 @@ class TakeOutPageState extends State<TakeOutPage> {
     }
   }
 
+  bool isSameUnit() {
+    if (!isWeightValue()) {
+      return true;
+    }
+    if (startWeightUnit != myReqWeightCountine.msgBody!.weightUnit &&
+        _isTakeOutStart) {
+      return false;
+    }
+    return true;
+  }
+
+  void checkWeight() {
+    switch (weightMode) {
+      case 1:
+        if (isZeroValue()) {
+          _isZero = true;
+          _isPassZero = true;
+        } else {
+          _isZero = false;
+        }
+        takeOutModeWeight();
+        isWeightStable();
+        break;
+      case 2:
+        if (!myReqWeightCountine.msgBody!.isStable) {
+          _isStableStatusJudge = false;
+        }
+        if (isZeroValue()) {
+          _isZero = true;
+          _isPassZero = true;
+        } else {
+          _isZero = false;
+        }
+        _saveWeight(myReqWeightCountine.msgBody!.isStable);
+        if (_isTakeOutStart && isWeightValue() && _isStableStatusJudge) {
+          double? nowWeightVal =
+              double.tryParse(myReqWeightCountine.msgBody!.weightVal);
+          if ((basicWeightval - nowWeightVal!) - lastTakeOutWeightval > 0.02) {
+            lastTakeOutWeightval = double.parse(
+                (basicWeightval - nowWeightVal).toStringAsFixed(3));
+            _isPassZero = true;
+          } else {
+            _isPassZero = false;
+          }
+          //如果是加法秤，不需要判断是否重新归零
+        }
+        if (myReqWeightCountine.msgBody!.isStable == true &&
+            !_isZero &&
+            _isPassZero &&
+            _isStableStatusJudge) {
+          {
+            _isPassZero = false;
+            _isTiming = false;
+            _isStableStatusJudge = false;
+            _addWeightToReport();
+            sendReportDataToDB();
+          }
+          lastWeight = myReqWeightCountine.msgBody!.weightVal;
+        }
+        takeOutModeWeight();
+        break;
+      default:
+        break;
+    }
+  }
+
   void _addDBdataToReport() {
     List<WeightRecords>? dbRecs = myGetScaleRecords.weightRecords;
     for (var i = 0; i < dbRecs!.length; i++) {
       myWeightReportData.add(WeightReportData(
         (dbRecs[i].recId).toString(),
-        convertDateTime(dbRecs[i].createdAt!, mySettingParam.dateSeparator),
+        convertDateTime(
+            dbRecs[i].createdAt!, myModeSettingTakeOut.dateSeparator),
         (dbRecs[i].weight == null) ? '' : dbRecs[i].weight!,
         (dbRecs[i].weightUnit == null) ? '' : dbRecs[i].weightUnit!, //重量单位
         (myProductRecInfo.id == null) ? "" : myProductRecInfo.id.toString(),
@@ -418,6 +451,7 @@ class TakeOutPageState extends State<TakeOutPage> {
     eventBus11.cancel();
     eventBus12.cancel();
     eventBus13.cancel();
+    eventBus14.cancel();
 
     super.dispose();
   }
@@ -439,7 +473,18 @@ class TakeOutPageState extends State<TakeOutPage> {
     );
   }
 
+  void handleOKPressed(bool isOKPressed) {
+    // 根据用户点击 OK 的结果更新 _isShowing 值
+    _isShowing = !isOKPressed;
+  }
+
   Widget firstLayout(context, _width) {
+    if (showDialogFlag) {
+      if (!_isShowing) {
+        _isShowing = true;
+        showWarningDialog(context, handleOKPressed);
+      }
+    }
     return Container(
         width: _width,
         decoration: BoxDecoration(color: Colors.grey.shade200),
@@ -514,7 +559,7 @@ class TakeOutPageState extends State<TakeOutPage> {
                           SizedBox(
                             width: 400,
                             child: Text(
-                              'Take Out Scale',
+                              localizedStrings.take_out_title,
                               maxLines: 1,
                               style: TextStyle(
                                   fontSize: 20,
@@ -550,7 +595,7 @@ class TakeOutPageState extends State<TakeOutPage> {
                   children: [
                     // const SizedBox(width: 20),
                     Expanded(
-                      flex: 3,
+                      flex: 2,
                       child: LayoutBuilder(builder:
                           (BuildContext context, BoxConstraints constraints) {
                         return Column(
@@ -582,33 +627,23 @@ class TakeOutPageState extends State<TakeOutPage> {
                                   localizedStrings.zero,
                                   (myReqWeightCountine.msgBody == null)
                                       ? ("assets/images/gray.png")
-                                      : (((myReqWeightCountine
-                                                          .msgBody!.isStable &&
-                                                      isStart) &&
-                                                  (double.tryParse(
-                                                          myReqWeightCountine
-                                                              .msgBody!
-                                                              .weightVal) ==
-                                                      0)) ||
-                                              ((myReqWeightCountine
-                                                          .msgBody!.isStable &&
-                                                      isStart) &&
-                                                  (((double.tryParse(myReqWeightCountine
-                                                                  .msgBody!
-                                                                  .weightVal) ==
-                                                              null)
-                                                          ? 0
-                                                          : double.tryParse(
-                                                              myReqWeightCountine
-                                                                  .msgBody!
-                                                                  .weightVal))! <=
-                                                      zeroRange)))
+                                      : (myReqWeightCountine.msgBody!.isZero &&
+                                              isStart)
                                           ? ("assets/images/blue.png")
                                           : ("assets/images/gray.png"),
                                   constraints),
                             ]);
                       }),
                     ),
+                    Expanded(
+                        flex: 1,
+                        child: LayoutBuilder(builder:
+                            (BuildContext context, BoxConstraints constraints) {
+                          return buildWeightNameText(
+                              50,
+                              localizedStrings.show_current_weight,
+                              constraints);
+                        })),
 
                     Expanded(
                         flex: 5,
@@ -620,12 +655,9 @@ class TakeOutPageState extends State<TakeOutPage> {
                               buildTextWithWeight(
                                   280,
                                   70,
-                                  _isTakeOutStart
-                                      ? showTakeOutWeight
-                                      : (myReqWeightCountine.msgBody == null)
-                                          ? ("0.000")
-                                          : myReqWeightCountine
-                                              .msgBody!.weightVal,
+                                  (myReqWeightCountine.msgBody == null)
+                                      ? ("0.000")
+                                      : myReqWeightCountine.msgBody!.weightVal,
                                   55,
                                   constraints,
                                   Theme.of(context).colorScheme.primary),
@@ -667,7 +699,22 @@ class TakeOutPageState extends State<TakeOutPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     // const SizedBox(width: 20),
-                    const Expanded(flex: 3, child: SizedBox()),
+                    Expanded(
+                        flex: 3,
+                        child: LayoutBuilder(builder:
+                            (BuildContext context, BoxConstraints constraints) {
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              buildWeightNameText(
+                                  400,
+                                  _isTakeOutStart
+                                      ? localizedStrings.show_reduced_weight
+                                      : '',
+                                  constraints)
+                            ],
+                          );
+                        })),
                     Expanded(
                         flex: 5,
                         child: LayoutBuilder(builder:
@@ -681,11 +728,11 @@ class TakeOutPageState extends State<TakeOutPage> {
                                       70,
                                       (takeOutWeightValue == '-0.000')
                                           ? '0.000'
-                                          : takeOutWeightValue,
+                                          : isPcsTakeOutVal(),
                                       55,
                                       constraints,
                                       Theme.of(context).colorScheme.primary)
-                                  : SizedBox(),
+                                  : const SizedBox(),
                               buildTextWithNOUnit(
                                   100,
                                   70,
@@ -715,14 +762,14 @@ class TakeOutPageState extends State<TakeOutPage> {
                       buttonText: localizedStrings.button_tare,
                       onPressed: PublicFunctions.performTare,
                       constraints: constraints,
-                      isTrue: isStart,
+                      isTrue: (isStart && !_isTakeOutStart),
                     ),
                     _buildFlexibleButtonAndText(
                       width: 80,
                       buttonText: localizedStrings.button_zero,
                       onPressed: PublicFunctions.performZero,
                       constraints: constraints,
-                      isTrue: isStart,
+                      isTrue: (isStart && !_isTakeOutStart),
                     ),
                     _buildFlexibleButtonAndText(
                       width: 80,
@@ -744,6 +791,7 @@ class TakeOutPageState extends State<TakeOutPage> {
                       width: 80,
                       buttonText: localizedStrings.button_setting,
                       onPressed: () {
+                        mySettingParam = myModeSettingTakeOut;
                         paramSettingDialog(context);
                       },
                       constraints: constraints,
@@ -869,16 +917,19 @@ class TakeOutPageState extends State<TakeOutPage> {
                               context),
                           buildSetReportButton(
                               Theme.of(context).colorScheme.primary,
-                              'Report Setting',
+                              localizedStrings.report_set_btn,
                               constraints,
                               context),
-                          buildButton(Theme.of(context).colorScheme.primary,
-                              'Show Report', constraints, _toggleLayout),
                           buildButton(
                               Theme.of(context).colorScheme.primary,
-                              'Delete All',
+                              localizedStrings.report_show_btn,
                               constraints,
-                              PublicFunctions.deleteAllRecordsTakeOut),
+                              _toggleLayout),
+                          buildButton(
+                              Theme.of(context).colorScheme.primary,
+                              localizedStrings.report_delete_btn,
+                              constraints,
+                              () => _showConfirmationDialog(context)),
                         ]),
                   );
                 })),
@@ -890,6 +941,39 @@ class TakeOutPageState extends State<TakeOutPage> {
             ),
           ],
         ));
+  }
+
+  _showConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          title: Text(
+            localizedStrings.confirm_title,
+            style: const TextStyle(color: Color.fromARGB(255, 15, 71, 161)),
+          ),
+          content: Text(localizedStrings.data_delete_confirm),
+          actions: <Widget>[
+            OutlinedButton(
+              child: Text(localizedStrings.button_cancel),
+              onPressed: () {
+                Navigator.of(context).pop(false); // 不跳转
+              },
+            ),
+            OutlinedButton(
+              child: Text(localizedStrings.confirm_btn),
+              onPressed: () {
+                Navigator.of(context).pop(true); // 跳转
+              },
+            ),
+          ],
+        );
+      },
+    ).then((confirmed) {
+      if (confirmed) {
+        PublicFunctions.deleteAllRecordsTakeOut();
+      }
+    });
   }
 
   Widget buildStartIcon(double width, double? iconSize,
@@ -939,6 +1023,22 @@ class TakeOutPageState extends State<TakeOutPage> {
         icon: const Icon(Icons.pause),
         iconSize: iconSize,
         color: (!isStart) ? (Colors.grey) : color,
+      ),
+    );
+  }
+
+  Widget buildWeightNameText(
+      double width, String text, BoxConstraints constraints) {
+    width = 25 * constraints.maxHeight / 30;
+    var fontSize = 16 * constraints.maxHeight / 150;
+    return SizedBox(
+      width: width,
+      child: Text(
+        text,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+        textAlign: TextAlign.right,
+        style: TextStyle(fontSize: fontSize),
       ),
     );
   }
@@ -998,7 +1098,7 @@ class TakeOutPageState extends State<TakeOutPage> {
       child: Column(
         // 将 Row 改为 Column
         mainAxisAlignment: MainAxisAlignment.center, // 垂直方向居中对齐
-        crossAxisAlignment: CrossAxisAlignment.start, // 水平方向居右对齐
+        crossAxisAlignment: CrossAxisAlignment.center, // 水平方向居右对齐
         children: [
           Text(
             text,
@@ -1176,6 +1276,7 @@ class TakeOutPageState extends State<TakeOutPage> {
                   if (isWeightValue()) {
                     basicWeightval = double.tryParse(
                         myReqWeightCountine.msgBody!.weightVal)!;
+                    startWeightUnit = myReqWeightCountine.msgBody!.weightUnit;
                   }
                   lastTakeOutWeightval = 0.000;
                   _isTakeOutStart = true;
@@ -1230,6 +1331,12 @@ class TakeOutPageState extends State<TakeOutPage> {
   }
 
   Widget secondLayout(context, _width) {
+    if (showDialogFlag) {
+      if (!_isShowing) {
+        _isShowing = true;
+        showWarningDialog(context, handleOKPressed);
+      }
+    }
     return Container(
         width: _width,
         decoration: BoxDecoration(color: Colors.grey.shade200),
@@ -1304,7 +1411,7 @@ class TakeOutPageState extends State<TakeOutPage> {
                           SizedBox(
                             width: 400,
                             child: Text(
-                              'Take Out Scale',
+                              localizedStrings.take_out_title,
                               maxLines: 1,
                               style: TextStyle(
                                   fontSize: 20,
@@ -1333,7 +1440,7 @@ class TakeOutPageState extends State<TakeOutPage> {
             //////////////////////////////////
             const SizedBox(height: 5),
             Container(
-              height: 100,
+              height: 120,
               color: Colors.white,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1348,6 +1455,8 @@ class TakeOutPageState extends State<TakeOutPage> {
                             width: 50,
                             child: Text(
                               localizedStrings.stable,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.right,
                             ),
                           ),
@@ -1371,6 +1480,8 @@ class TakeOutPageState extends State<TakeOutPage> {
                             width: 50,
                             child: Text(
                               localizedStrings.net,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.right,
                             ),
                           ),
@@ -1394,6 +1505,8 @@ class TakeOutPageState extends State<TakeOutPage> {
                             width: 50,
                             child: Text(
                               localizedStrings.zero,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.right,
                             ),
                           ),
@@ -1401,25 +1514,8 @@ class TakeOutPageState extends State<TakeOutPage> {
                           Image.asset(
                             (myReqWeightCountine.msgBody == null)
                                 ? ("assets/images/gray.png")
-                                : (((myReqWeightCountine.msgBody!.isStable &&
-                                                isStart) &&
-                                            (double.tryParse(myReqWeightCountine
-                                                    .msgBody!.weightVal) ==
-                                                0)) ||
-                                        ((myReqWeightCountine
-                                                    .msgBody!.isStable &&
-                                                isStart) &&
-                                            (((double.tryParse(
-                                                            myReqWeightCountine
-                                                                .msgBody!
-                                                                .weightVal) ==
-                                                        null)
-                                                    ? 0
-                                                    : double.tryParse(
-                                                        myReqWeightCountine
-                                                            .msgBody!
-                                                            .weightVal))! <=
-                                                zeroRange)))
+                                : (myReqWeightCountine.msgBody!.isZero &&
+                                        isStart)
                                     ? ("assets/images/blue.png")
                                     : ("assets/images/gray.png"),
                             width: 25,
@@ -1442,12 +1538,9 @@ class TakeOutPageState extends State<TakeOutPage> {
                               Expanded(
                                 child: Text(
                                   textAlign: TextAlign.right,
-                                  _isTakeOutStart
-                                      ? showTakeOutWeight
-                                      : (myReqWeightCountine.msgBody == null)
-                                          ? ("0.000")
-                                          : myReqWeightCountine
-                                              .msgBody!.weightVal,
+                                  (myReqWeightCountine.msgBody == null)
+                                      ? ("0.000")
+                                      : myReqWeightCountine.msgBody!.weightVal,
                                   style: const TextStyle(
                                       color: Colors.white, fontSize: 55),
                                   overflow: TextOverflow.ellipsis,
@@ -1544,7 +1637,7 @@ class TakeOutPageState extends State<TakeOutPage> {
                                         textAlign: TextAlign.right,
                                         (takeOutWeightValue == '-0.000')
                                             ? '0.000'
-                                            : takeOutWeightValue,
+                                            : isPcsTakeOutVal(),
                                         style: const TextStyle(
                                             color: Colors.white, fontSize: 55),
                                         overflow: TextOverflow.ellipsis,
@@ -1555,7 +1648,7 @@ class TakeOutPageState extends State<TakeOutPage> {
                                 )),
                           ],
                         )
-                      : SizedBox(
+                      : const SizedBox(
                           width: 240,
                         ),
                   const SizedBox(width: 10),
@@ -1563,138 +1656,151 @@ class TakeOutPageState extends State<TakeOutPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            SizedBox(
-                              width: 80,
-                              child: ElevatedButton(
-                                  onPressed: isStart
-                                      ? () {
-                                          PublicFunctions.performTare();
-                                        }
-                                      : null,
-                                  child: Text(localizedStrings.button_tare,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal))),
-                            ),
-                            SizedBox(
-                              width: 80,
-                              child: ElevatedButton(
-                                  onPressed: isStart
-                                      ? () {
-                                          PublicFunctions.performZero();
-                                        }
-                                      : null,
-                                  child: Text(localizedStrings.button_zero,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal))),
-                            ),
-                            SizedBox(
-                              width: 80,
-                              child: ElevatedButton(
-                                  onPressed: (!_isSaveButtonDisabled && isStart)
-                                      ? _changeSaveButton
-                                      : null,
-                                  child: Text(localizedStrings.button_save,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal))),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            SizedBox(
-                              width: 80,
-                              child: ElevatedButton(
-                                  onPressed: checkStartButton()
-                                      ? () {
-                                          if (_isTakeOutStart) {
-                                            _isTakeOutStart = false;
-                                            weightValueList.clear();
-                                            lastTakeOutWeightval = 0.000;
-                                          } else {
-                                            if (isWeightValue()) {
-                                              basicWeightval = double.tryParse(
-                                                  myReqWeightCountine
-                                                      .msgBody!.weightVal)!;
-                                            }
-                                            lastTakeOutWeightval = 0.000;
-                                            _isTakeOutStart = true;
-                                            weightValueList.clear();
+                        LayoutBuilder(builder:
+                            (BuildContext context, BoxConstraints constraints) {
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              SizedBox(
+                                width: constraints.maxWidth / 3.5,
+                                child: ElevatedButton(
+                                    onPressed: (isStart && !_isTakeOutStart)
+                                        ? () {
+                                            PublicFunctions.performTare();
                                           }
-                                        }
-                                      // : (_isTakeOutStart)
-                                      //     ? () {
-                                      //         _isTakeOutStart = false;
-                                      //         weightValueList.clear();
-                                      //         lastTakeOutWeightval = 0.000;
-                                      //       }
-                                      : null,
-                                  child: Text(
-                                      (myReqWeightCountine.msgBody == null)
-                                          ? 'Start'
-                                          : (_isTakeOutStart)
-                                              ? 'End'
-                                              : 'Start',
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal))),
-                            ),
-                            SizedBox(
-                              width: 80,
-                              child: ElevatedButton(
-                                  onPressed: () {
-                                    //跳转页面
-                                    paramSettingDialog(context);
-                                  },
-                                  child: Text(localizedStrings.button_setting,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal))),
-                            ),
-                            SizedBox(
-                              width: 80,
-                              child: ElevatedButton(
-                                  // elevation: 5.0,
-                                  child: Text(
-                                      localizedStrings.button_export_report,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal)),
-                                  onPressed: () async {
-                                    final directory = Directory.current.path;
-                                    String? outputFile =
-                                        (await FilePicker.platform.saveFile(
-                                      initialDirectory: directory,
-                                      type: FileType.custom,
-                                      dialogTitle: 'Output file:',
-                                      allowedExtensions: ["xlsx"],
-                                      fileName: 'report.xlsx',
-                                    ));
-                                    if (outputFile != null) {
-                                      _creatFile(outputFile);
-                                    }
-                                  }),
-                            ),
-                          ],
-                        )
+                                        : null,
+                                    child: Text(localizedStrings.button_tare,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.normal))),
+                              ),
+                              SizedBox(
+                                width: constraints.maxWidth / 3.5,
+                                child: ElevatedButton(
+                                    onPressed: (isStart && !_isTakeOutStart)
+                                        ? () {
+                                            PublicFunctions.performZero();
+                                          }
+                                        : null,
+                                    child: Text(localizedStrings.button_zero,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.normal))),
+                              ),
+                              SizedBox(
+                                width: constraints.maxWidth / 3.5,
+                                child: ElevatedButton(
+                                    onPressed:
+                                        (!_isSaveButtonDisabled && isStart)
+                                            ? _changeSaveButton
+                                            : null,
+                                    child: Text(localizedStrings.button_save,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.normal))),
+                              ),
+                            ],
+                          );
+                        }),
+                        LayoutBuilder(builder:
+                            (BuildContext context, BoxConstraints constraints) {
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              SizedBox(
+                                width: constraints.maxWidth / 3.5,
+                                child: ElevatedButton(
+                                    onPressed: checkStartButton()
+                                        ? () {
+                                            if (_isTakeOutStart) {
+                                              _isTakeOutStart = false;
+                                              weightValueList.clear();
+                                              lastTakeOutWeightval = 0.000;
+                                            } else {
+                                              if (isWeightValue()) {
+                                                basicWeightval =
+                                                    double.tryParse(
+                                                        myReqWeightCountine
+                                                            .msgBody!
+                                                            .weightVal)!;
+                                                startWeightUnit =
+                                                    myReqWeightCountine
+                                                        .msgBody!.weightUnit;
+                                              }
+                                              lastTakeOutWeightval = 0.000;
+                                              _isTakeOutStart = true;
+                                              weightValueList.clear();
+                                            }
+                                          }
+                                        : (_isTakeOutStart)
+                                            ? () {
+                                                _isTakeOutStart = false;
+                                                weightValueList.clear();
+                                                lastTakeOutWeightval = 0.000;
+                                              }
+                                            : null,
+                                    child: Text(
+                                        (myReqWeightCountine.msgBody == null)
+                                            ? 'Start'
+                                            : (_isTakeOutStart)
+                                                ? 'End'
+                                                : 'Start',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.normal))),
+                              ),
+                              SizedBox(
+                                width: constraints.maxWidth / 3.5,
+                                child: ElevatedButton(
+                                    onPressed: () {
+                                      //跳转页面
+                                      mySettingParam = myModeSettingTakeOut;
+                                      paramSettingDialog(context);
+                                    },
+                                    child: Text(localizedStrings.button_setting,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.normal))),
+                              ),
+                              SizedBox(
+                                width: constraints.maxWidth / 3.5,
+                                child: ElevatedButton(
+                                    // elevation: 5.0,
+                                    child: Text(
+                                        localizedStrings.button_export_report,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.normal)),
+                                    onPressed: () async {
+                                      final directory = Directory.current.path;
+                                      String? outputFile =
+                                          (await FilePicker.platform.saveFile(
+                                        initialDirectory: directory,
+                                        type: FileType.custom,
+                                        dialogTitle: 'Output file:',
+                                        allowedExtensions: ["xlsx"],
+                                        fileName: 'report.xlsx',
+                                      ));
+                                      if (outputFile != null) {
+                                        _creatFile(outputFile);
+                                      }
+                                    }),
+                              ),
+                            ],
+                          );
+                        }),
                       ],
                     ),
                   ),
@@ -1747,115 +1853,119 @@ class TakeOutPageState extends State<TakeOutPage> {
     return Container(
       height: 40,
       color: Colors.white,
-      child: Row(
-        children: [
-          Text(localizedStrings.plu_name),
-          Container(
-            child: DropdownButtonFormField<String>(
-              itemHeight: 50.0,
-              isExpanded: true,
-              // decoration: const InputDecoration(border: OutlineInputBorder()),
-              value: productNameValue,
-              onChanged: (String? newPosition) {
-                setState(() {
-                  productNameValue = newPosition.toString();
-                  for (var i = 0;
-                      i < myProductRecList.productRecInfo!.length;
-                      i++) {
-                    if (productNameValue ==
-                        myProductRecList.productRecInfo![i].product) {
-                      myProductRecInfo = myProductRecList.productRecInfo![i];
-                      eventBus.fire(EventProductRecInfo(myProductRecInfo));
-                    }
-                  }
-                });
-              },
-
-              items:
-                  productNameList.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem(
-                    value: value,
-                    child: Text(value, overflow: TextOverflow.ellipsis));
-              }).toList(),
+      child: LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            SizedBox(
+              width: constraints.maxWidth / 10,
+              child: Text(
+                localizedStrings.plu_name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
-            height: 53,
-            width: 150,
-            padding: const EdgeInsets.all(0),
-          ),
-          const SizedBox(width: 10),
-          MaterialButton(
-              color: Theme.of(context).colorScheme.primary,
-              textColor: Colors.white,
-              elevation: 5.0,
-              child: Text(localizedStrings.plu_edit,
-                  style: const TextStyle(
-                      fontSize: 14, fontWeight: FontWeight.normal)),
-              onPressed: () {
-                getProductList();
-                addProductDialog(context).then((onvalue) {
-                  if (!productNameList.contains(productNameValue)) {
-                    myProductRecInfo.product = "";
-                    productNameValue = "";
-                    myProductRecInfo.id = "";
-                    myProductRecInfo.withPretare = false;
-                    myProductRecInfo.remarks = "";
-                  }
-                });
-              }),
-          const SizedBox(width: 50),
-          TextButton(
-              onPressed: () {},
-              child: Text(localizedStrings.user_name,
-                  style: const TextStyle(
-                      fontSize: 14, fontWeight: FontWeight.normal))),
-          Container(
-            child: DropdownButtonFormField<String>(
-              itemHeight: 50.0,
-              isExpanded: true,
-              // decoration: const InputDecoration(border: OutlineInputBorder()),
-              value: userNameValue,
-              onChanged: (String? newPosition) {
-                setState(() {
-                  myUserInfo.name = newPosition.toString();
-                  for (var i = 0; i < myUserInfoList.userInfo!.length; i++) {
-                    if (myUserInfo.name == myUserInfoList.userInfo![i].name) {
-                      myUserInfo = myUserInfoList.userInfo![i];
-                      eventBus.fire(EventUserInfo(myUserInfo));
-                    }
-                  }
-                });
-              },
-              items: userNameList.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem(
-                    value: value,
-                    child: Text(value, overflow: TextOverflow.ellipsis));
-              }).toList(),
-            ),
-            height: 53,
-            width: 150,
-            padding: const EdgeInsets.all(0),
-          ),
-          // const SizedBox(width: 10),
-          MaterialButton(
-              color: Theme.of(context).colorScheme.primary,
-              textColor: Colors.white,
-              elevation: 5.0,
-              child: Text(localizedStrings.user_edit,
-                  style: const TextStyle(
-                      fontSize: 14, fontWeight: FontWeight.normal)),
-              onPressed: () {
-                PublicFunctions.getUserList();
-                getUserNameList();
-                if (!userNameList.contains(userNameValue)) {
-                  myUserInfo.name = "";
-                  userNameValue = "";
-                  myUserInfo.id = "";
-                  myUserInfo.isFemale = true;
-                  myUserInfo.phone = "";
-                  myUserInfo.remarks = "";
-                }
-                addUserDialog(context).then((onvalue) {
+            Container(
+              child: DropdownButtonFormField<String>(
+                itemHeight: 50.0,
+                isExpanded: true,
+                // decoration: const InputDecoration(border: OutlineInputBorder()),
+                value: productNameValue,
+                onChanged: (String? newPosition) {
                   setState(() {
+                    productNameValue = newPosition.toString();
+                    for (var i = 0;
+                        i < myProductRecList.productRecInfo!.length;
+                        i++) {
+                      if (productNameValue ==
+                          myProductRecList.productRecInfo![i].product) {
+                        myProductRecInfo = myProductRecList.productRecInfo![i];
+                        eventBus.fire(EventProductRecInfo(myProductRecInfo));
+                      }
+                    }
+                  });
+                },
+
+                items: productNameList
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem(
+                      value: value,
+                      child: Text(value, overflow: TextOverflow.ellipsis));
+                }).toList(),
+              ),
+              height: 53,
+              width: constraints.maxWidth / 10,
+              padding: const EdgeInsets.all(0),
+            ),
+            SizedBox(
+              width: constraints.maxWidth / 10,
+              child: MaterialButton(
+                  color: Theme.of(context).colorScheme.primary,
+                  textColor: Colors.white,
+                  elevation: 5.0,
+                  child: Text(localizedStrings.plu_edit,
+                      style: const TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.normal)),
+                  onPressed: () {
+                    getProductList();
+                    addProductDialog(context).then((onvalue) {
+                      if (!productNameList.contains(productNameValue)) {
+                        myProductRecInfo.product = "";
+                        productNameValue = "";
+                        myProductRecInfo.id = "";
+                        myProductRecInfo.withPretare = false;
+                        myProductRecInfo.remarks = "";
+                      }
+                    });
+                  }),
+            ),
+            SizedBox(
+              width: constraints.maxWidth / 10,
+              child: TextButton(
+                  onPressed: () {},
+                  child: Text(localizedStrings.user_name,
+                      style: const TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.normal))),
+            ),
+            Container(
+              child: DropdownButtonFormField<String>(
+                itemHeight: 50.0,
+                isExpanded: true,
+                // decoration: const InputDecoration(border: OutlineInputBorder()),
+                value: userNameValue,
+                onChanged: (String? newPosition) {
+                  setState(() {
+                    myUserInfo.name = newPosition.toString();
+                    for (var i = 0; i < myUserInfoList.userInfo!.length; i++) {
+                      if (myUserInfo.name == myUserInfoList.userInfo![i].name) {
+                        myUserInfo = myUserInfoList.userInfo![i];
+                        eventBus.fire(EventUserInfo(myUserInfo));
+                      }
+                    }
+                  });
+                },
+                items:
+                    userNameList.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem(
+                      value: value,
+                      child: Text(value, overflow: TextOverflow.ellipsis));
+                }).toList(),
+              ),
+              height: 53,
+              width: constraints.maxWidth / 10,
+              padding: const EdgeInsets.all(0),
+            ),
+            SizedBox(
+              width: constraints.maxWidth / 10,
+              child: MaterialButton(
+                  color: Theme.of(context).colorScheme.primary,
+                  textColor: Colors.white,
+                  elevation: 5.0,
+                  child: Text(localizedStrings.user_edit,
+                      style: const TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.normal)),
+                  onPressed: () {
                     PublicFunctions.getUserList();
                     getUserNameList();
                     if (!userNameList.contains(userNameValue)) {
@@ -1866,44 +1976,61 @@ class TakeOutPageState extends State<TakeOutPage> {
                       myUserInfo.phone = "";
                       myUserInfo.remarks = "";
                     }
-                  });
-                });
-              }),
-          const SizedBox(width: 10),
-          MaterialButton(
-              color: Theme.of(context).colorScheme.primary,
-              textColor: Colors.white,
-              elevation: 5.0,
-              child: const Text('Report Setting',
-                  style:
-                      TextStyle(fontSize: 14, fontWeight: FontWeight.normal)),
-              onPressed: () {
-                reportFieldsSettingDialog(context);
-              }),
-          const SizedBox(width: 10),
-          MaterialButton(
-              color: Theme.of(context).colorScheme.primary,
-              textColor: Colors.white,
-              elevation: 5.0,
-              child: const Text('Hide Report',
-                  style:
-                      TextStyle(fontSize: 14, fontWeight: FontWeight.normal)),
-              onPressed: () {
-                _toggleLayout();
-              }),
-          const SizedBox(width: 10),
-          MaterialButton(
-              color: Theme.of(context).colorScheme.primary,
-              textColor: Colors.white,
-              elevation: 5.0,
-              child: const Text('Delete All',
-                  style:
-                      TextStyle(fontSize: 14, fontWeight: FontWeight.normal)),
-              onPressed: () {
-                PublicFunctions.deleteAllRecordsTakeOut();
-              }),
-        ],
-      ),
+                    addUserDialog(context).then((onvalue) {
+                      setState(() {
+                        PublicFunctions.getUserList();
+                        getUserNameList();
+                        if (!userNameList.contains(userNameValue)) {
+                          myUserInfo.name = "";
+                          userNameValue = "";
+                          myUserInfo.id = "";
+                          myUserInfo.isFemale = true;
+                          myUserInfo.phone = "";
+                          myUserInfo.remarks = "";
+                        }
+                      });
+                    });
+                  }),
+            ),
+            SizedBox(
+              width: constraints.maxWidth / 10,
+              child: MaterialButton(
+                  color: Theme.of(context).colorScheme.primary,
+                  textColor: Colors.white,
+                  elevation: 5.0,
+                  child: Text(localizedStrings.report_set_btn,
+                      style: const TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.normal)),
+                  onPressed: () {
+                    reportFieldsSettingDialog(context);
+                  }),
+            ),
+            MaterialButton(
+                color: Theme.of(context).colorScheme.primary,
+                textColor: Colors.white,
+                elevation: 5.0,
+                child: Text(localizedStrings.report_hide_btn,
+                    style: const TextStyle(
+                        fontSize: 14, fontWeight: FontWeight.normal)),
+                onPressed: () {
+                  _toggleLayout();
+                }),
+            SizedBox(
+              width: constraints.maxWidth / 10,
+              child: MaterialButton(
+                  color: Theme.of(context).colorScheme.primary,
+                  textColor: Colors.white,
+                  elevation: 5.0,
+                  child: Text(localizedStrings.report_delete_btn,
+                      style: const TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.normal)),
+                  onPressed: () {
+                    _showConfirmationDialog(context);
+                  }),
+            ),
+          ],
+        );
+      }),
     );
   }
 
@@ -1915,6 +2042,7 @@ class TakeOutPageState extends State<TakeOutPage> {
         columnWidthMode: ColumnWidthMode.fill,
         frozenRowsCount: 0,
         controller: _dataGridController,
+        allowSorting: true,
       ),
     );
   }
@@ -2219,7 +2347,8 @@ class TakeOutPageState extends State<TakeOutPage> {
     if (!(myReqWeightCountine.msgBody!.weightVal.contains('--')) &&
         !(myReqWeightCountine.msgBody!.weightVal.contains('E')) &&
         !(myReqWeightCountine.msgBody!.weightVal.contains('UL')) &&
-        !(myReqWeightCountine.msgBody!.weightVal.contains('OL'))) {
+        !(myReqWeightCountine.msgBody!.weightVal.contains('OL')) &&
+        !(myReqWeightCountine.msgBody!.weightVal.contains(':'))) {
       return true;
     }
     return false;
@@ -2257,6 +2386,24 @@ class TakeOutPageState extends State<TakeOutPage> {
     showTakeOutWeight = nowWeightVal.toStringAsFixed(3);
   }
 
+  String isPcsTakeOutVal() {
+    var takeInValue = '0.000';
+    if (myReqWeightCountine.msgBody == null) {
+      takeInValue = '0.000';
+    } else if (myReqWeightCountine.msgBody!.weightUnit == 'PCS') {
+      double? result = double.tryParse(takeOutWeightValue);
+
+      if (result != null) {
+        takeInValue = result.toStringAsFixed(0);
+      } else {
+        takeInValue = '0';
+      }
+    } else {
+      takeInValue = takeOutWeightValue;
+    }
+    return takeInValue;
+  }
+
   void _addWeightToReport() {
     diffWeightVal = '0.000';
     if (_isTakeOutStart) {
@@ -2270,12 +2417,22 @@ class TakeOutPageState extends State<TakeOutPage> {
           for (var i = 0; i < weightValueList.length; i++) {
             tempDouble = tempDouble - weightValueList[i];
           }
-          diffWeightVal = tempDouble.toStringAsFixed(3);
+
+          if (myReqWeightCountine.msgBody!.weightUnit == 'PCS') {
+            diffWeightVal = tempDouble.toStringAsFixed(0);
+          } else {
+            diffWeightVal = tempDouble.toStringAsFixed(3);
+          }
           if (tempDouble > 0.02) {
             weightValueList.add(double.parse(tempDouble.toStringAsFixed(3)));
           }
         } else {
-          diffWeightVal = nowWeightVal.toStringAsFixed(3);
+          if (myReqWeightCountine.msgBody!.weightUnit == 'PCS') {
+            diffWeightVal = nowWeightVal.toStringAsFixed(0);
+          } else {
+            diffWeightVal = nowWeightVal.toStringAsFixed(3);
+          }
+
           if (nowWeightVal > 0.02) {
             weightValueList.add(double.parse(nowWeightVal.toStringAsFixed(3)));
           }
@@ -2294,7 +2451,7 @@ class TakeOutPageState extends State<TakeOutPage> {
   void performAddToReport() {
     myWeightReportData.add(WeightReportData(
       (myWeightReportData.length + 1).toString(),
-      getDateTime(mySettingParam.dateSeparator),
+      getDateTime(myModeSettingTakeOut.dateSeparator),
       (_isTakeOutStart)
           ? diffWeightVal.toString()
           : (myReqWeightCountine.msgBody?.weightVal == null)
@@ -2328,13 +2485,25 @@ class TakeOutPageState extends State<TakeOutPage> {
       (myUserInfo.remarks == null) ? "" : myUserInfo.remarks.toString(),
       myDevicedata.name,
     ));
+
     setState(() {
+      String sortColName = 'Date Time';
+      DataGridSortDirection sortDirec = DataGridSortDirection.descending;
+      if (_weightReportDataSource.sortedColumns.isNotEmpty) {
+        sortColName = _weightReportDataSource.sortedColumns[0].name;
+        sortDirec = _weightReportDataSource.sortedColumns[0].sortDirection;
+      }
       _weightReportDataSource = WeightReportDataSource(_weightReportDatas);
+      _weightReportDataSource.sortedColumns
+          .add(SortColumnDetails(name: sortColName, sortDirection: sortDirec));
       Future.delayed(const Duration(milliseconds: 100), () {
-        _dataGridController
-            .scrollToRow(_weightReportDataSource.rows.length - 0);
+        if (sortDirec == DataGridSortDirection.descending) {
+          _dataGridController.scrollToRow(0);
+        } else {
+          _dataGridController
+              .scrollToRow(_weightReportDataSource.rows.length - 0);
+        }
       });
-      // _dataGridController.scrollToRow(_weightReportDataSource.rows.length - 1);
     });
   }
 

@@ -30,8 +30,12 @@ import '../dialog/adduser_dialog.dart';
 import '../dialog/high_low_setting.dart';
 import '../dialog/setting_dialog.dart';
 import 'package:path/path.dart';
-
 import '../dialog/weight_report_feilds_setting.dart';
+
+const String allMode = '1';
+const String hiMode = '2';
+const String okMode = '3';
+const String lowMode = '4';
 
 class CheckWeighersPage extends StatefulWidget {
   const CheckWeighersPage({Key? key}) : super(key: key);
@@ -76,7 +80,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     _weightReportDataSource.updateData(newReportData);
   }
 
-  _saveWeight(
+  void _saveWeight(
     bool isStable,
   ) {
     if (_stableSaveTime == 0) {
@@ -119,6 +123,18 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     });
   }
 
+  void isWeightStable() {
+    bool res = false;
+    if (myReqWeightCountine.msgBody == null) {
+      res = false;
+    } else if (myReqWeightCountine.msgBody!.isStable) {
+      res = true;
+    }
+    setState(() {
+      _isSaveButtonDisabled = !res;
+    });
+  }
+
   dynamic eventBus1;
   dynamic eventBus2;
   dynamic eventBus3;
@@ -130,6 +146,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
   dynamic eventBus9;
   dynamic eventBus10;
   dynamic eventBus11;
+  dynamic eventBus12;
 
   @override
   void initState() {
@@ -140,13 +157,17 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     dateformat = 1;
     zeroRange = 0;
     _errorText.text = '';
-    if (mySettingParam.recMode == "manual") {
+    if (myModeSettingCheck.recMode == "manual") {
       weightMode = 1;
       _isSaveButtonDisabled = false;
     } else {
       _isSaveButtonDisabled = true;
       weightMode = 2;
     }
+    String timeString = (myModeSettingCheck.stableTime == "")
+        ? "0"
+        : myModeSettingCheck.stableTime.toString();
+    _stableSaveTime = int.parse(timeString);
     _isStableStatusJudge = false;
     getProductNameList();
     _weightReportDatas = getWeightReportData();
@@ -194,6 +215,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
               } else {
                 _isZero = false;
               }
+              isWeightStable();
               _isLow = false;
               _isOK = false;
               _isHigh = false;
@@ -228,20 +250,6 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                 _isZero = false;
               }
               _saveWeight(myReqWeightCountine.msgBody!.isStable);
-
-              if (myReqWeightCountine.msgBody!.isStable == true &&
-                  !_isZero &&
-                  _isPassZero &&
-                  _isStableStatusJudge) {
-                {
-                  _isPassZero = false;
-                  _isTiming = false;
-                  _isStableStatusJudge = false;
-                  _addWeightToReport();
-                  sendReportDataToDB();
-                }
-                lastWeight = myReqWeightCountine.msgBody!.weightVal;
-              }
               _isLow = false;
               _isOK = false;
               _isHigh = false;
@@ -261,6 +269,41 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                   }
                 }
               }
+
+              if (myReqWeightCountine.msgBody!.isStable == true &&
+                  !_isZero &&
+                  _isPassZero &&
+                  _isStableStatusJudge) {
+                {
+                  if (myModeSettingCheck.saveMode == hiMode && _isHigh) {
+                    _isPassZero = false;
+                    _isTiming = false;
+                    _isStableStatusJudge = false;
+                    _addWeightToReport();
+                    sendReportDataToDB();
+                  } else if (myModeSettingCheck.saveMode == okMode && _isOK) {
+                    _isPassZero = false;
+                    _isTiming = false;
+                    _isStableStatusJudge = false;
+                    _addWeightToReport();
+                    sendReportDataToDB();
+                  } else if (myModeSettingCheck.saveMode == lowMode && _isLow) {
+                    _isPassZero = false;
+                    _isTiming = false;
+                    _isStableStatusJudge = false;
+                    _addWeightToReport();
+                    sendReportDataToDB();
+                  } else if (myModeSettingCheck.saveMode == allMode) {
+                    _isPassZero = false;
+                    _isTiming = false;
+                    _isStableStatusJudge = false;
+                    _addWeightToReport();
+                    sendReportDataToDB();
+                  }
+                }
+                lastWeight = myReqWeightCountine.msgBody!.weightVal;
+              }
+
               break;
             default:
           }
@@ -301,17 +344,17 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     eventBus8 = eventBus.on<EventSettingParam>().listen((event) {
       if (mounted) {
         setState(() {
-          mySettingParam = event.obj;
-          weightMode = (mySettingParam.recMode == "manual")
+          myModeSettingCheck = event.obj;
+          weightMode = (myModeSettingCheck.recMode == "manual")
               ? 1
-              : (mySettingParam.recMode == "auto")
+              : (myModeSettingCheck.recMode == "auto")
                   ? 2
                   : 1;
-          dateformat = int.parse(mySettingParam.dateFormat);
-          zeroRange = double.tryParse(mySettingParam.zeroRange)!;
-          String timeString = (mySettingParam.stableTimeToRec == "")
+          dateformat = int.parse(myModeSettingCheck.dateFormat);
+          zeroRange = double.tryParse(myModeSettingCheck.zeroRange)!;
+          String timeString = (myModeSettingCheck.stableTime == "")
               ? "0"
-              : mySettingParam.stableTimeToRec.toString();
+              : myModeSettingCheck.stableTime.toString();
           _stableSaveTime = int.parse(timeString);
           if (weightMode == 1) {
             _isSaveButtonDisabled = false;
@@ -351,6 +394,14 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
         });
       }
     });
+
+    eventBus12 = eventBus.on<EventUpdateSettingParam>().listen((event) {
+      if (mounted) {
+        setState(() {
+          PublicFunctions.getUIConfCheck();
+        });
+      }
+    });
   }
 
   void _addDBdataToReport() {
@@ -358,7 +409,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     for (var i = 0; i < dbRecs!.length; i++) {
       myWeightReportData.add(WeightReportData(
         (dbRecs[i].recId).toString(),
-        convertDateTime(dbRecs[i].createdAt!, mySettingParam.dateSeparator),
+        convertDateTime(dbRecs[i].createdAt!, myModeSettingCheck.dateSeparator),
         (dbRecs[i].weight == null) ? '' : dbRecs[i].weight!,
         (dbRecs[i].weightUnit == null) ? '' : dbRecs[i].weightUnit!, //重量单位
         (myProductRecInfo.id == null) ? "" : myProductRecInfo.id.toString(),
@@ -397,6 +448,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     eventBus9.cancel();
     eventBus10.cancel();
     eventBus11.cancel();
+    eventBus12.cancel();
 
     super.dispose();
   }
@@ -493,7 +545,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                           SizedBox(
                             width: 400,
                             child: Text(
-                              'Checkweigher',
+                              localizedStrings.checkweigher_title,
                               maxLines: 1,
                               style: TextStyle(
                                   fontSize: 20,
@@ -561,27 +613,8 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                                   localizedStrings.zero,
                                   (myReqWeightCountine.msgBody == null)
                                       ? ("assets/images/gray.png")
-                                      : (((myReqWeightCountine
-                                                          .msgBody!.isStable &&
-                                                      isStart) &&
-                                                  (double.tryParse(
-                                                          myReqWeightCountine
-                                                              .msgBody!
-                                                              .weightVal) ==
-                                                      0)) ||
-                                              ((myReqWeightCountine
-                                                          .msgBody!.isStable &&
-                                                      isStart) &&
-                                                  (((double.tryParse(myReqWeightCountine
-                                                                  .msgBody!
-                                                                  .weightVal) ==
-                                                              null)
-                                                          ? 0
-                                                          : double.tryParse(
-                                                              myReqWeightCountine
-                                                                  .msgBody!
-                                                                  .weightVal))! <=
-                                                      zeroRange)))
+                                      : (myReqWeightCountine.msgBody!.isZero &&
+                                              isStart)
                                           ? ("assets/images/blue.png")
                                           : ("assets/images/gray.png"),
                                   constraints),
@@ -661,7 +694,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                       buttonText: localizedStrings.button_save,
                       onPressed: _changeSaveButton,
                       constraints: constraints,
-                      isTrue: !_isSaveButtonDisabled,
+                      isTrue: !_isSaveButtonDisabled && isStart,
                     ),
                     _buildFlexibleButtonAndText(
                       width: 80,
@@ -676,6 +709,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                       width: 80,
                       buttonText: localizedStrings.button_setting,
                       onPressed: () {
+                        mySettingParam = myModeSettingCheck;
                         paramSettingDialog(context);
                       },
                       constraints: constraints,
@@ -801,16 +835,19 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                               context),
                           buildSetReportButton(
                               Theme.of(context).colorScheme.primary,
-                              'Report Setting',
+                              localizedStrings.report_set_btn,
                               constraints,
                               context),
-                          buildButton(Theme.of(context).colorScheme.primary,
-                              'Show Report', constraints, _toggleLayout),
                           buildButton(
                               Theme.of(context).colorScheme.primary,
-                              'Delete All',
+                              localizedStrings.report_show_btn,
                               constraints,
-                              PublicFunctions.deleteAllRecordsCheck),
+                              _toggleLayout),
+                          buildButton(
+                              Theme.of(context).colorScheme.primary,
+                              localizedStrings.report_delete_btn,
+                              constraints,
+                              () => _showConfirmationDialog(context)),
                         ]),
                   );
                 })),
@@ -868,6 +905,39 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
         child: Text(text,
             style:
                 TextStyle(fontSize: fontSize, fontWeight: FontWeight.normal)));
+  }
+
+  _showConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          title: Text(
+            localizedStrings.confirm_title,
+            style: const TextStyle(color: Color.fromARGB(255, 15, 71, 161)),
+          ),
+          content: Text(localizedStrings.data_delete_confirm),
+          actions: <Widget>[
+            OutlinedButton(
+              child: Text(localizedStrings.button_cancel),
+              onPressed: () {
+                Navigator.of(context).pop(false); // 不跳转
+              },
+            ),
+            OutlinedButton(
+              child: Text(localizedStrings.confirm_btn),
+              onPressed: () {
+                Navigator.of(context).pop(true); // 跳转
+              },
+            ),
+          ],
+        );
+      },
+    ).then((confirmed) {
+      if (confirmed) {
+        PublicFunctions.deleteAllRecordsCheck();
+      }
+    });
   }
 
   Widget buildPluEditButton(Color? color, String text,
@@ -1072,7 +1142,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
       child: Column(
         // 将 Row 改为 Column
         mainAxisAlignment: MainAxisAlignment.center, // 垂直方向居中对齐
-        crossAxisAlignment: CrossAxisAlignment.start, // 水平方向居右对齐
+        crossAxisAlignment: CrossAxisAlignment.center, // 水平方向居右对齐
         children: [
           Text(
             text,
@@ -1161,17 +1231,6 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                       // width: _width,
                       height: 40,
                       margin: const EdgeInsets.only(left: 5, top: 2),
-                      // decoration: BoxDecoration(
-                      //     color: Colors.white,
-                      //     borderRadius: BorderRadius.circular(0),
-                      //     boxShadow: [
-                      //       BoxShadow(
-                      //           color: Theme.of(context).colorScheme.primary,
-                      //           offset: const Offset(0.0, 2.0),
-                      //           blurStyle: BlurStyle.solid,
-                      //           blurRadius: 1.0,
-                      //           spreadRadius: 0.0),
-                      //     ]),
                       alignment: Alignment.center, //设置控件内容的位置
                       child: Row(
                         children: [
@@ -1225,7 +1284,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                           SizedBox(
                             width: 400,
                             child: Text(
-                              'Checkweigher',
+                              localizedStrings.checkweigher_title,
                               maxLines: 1,
                               style: TextStyle(
                                   fontSize: 20,
@@ -1254,7 +1313,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
             //////////////////////////////////
             const SizedBox(height: 5),
             Container(
-              height: 100,
+              height: 120,
               color: Colors.white,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1269,6 +1328,8 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                             width: 50,
                             child: Text(
                               localizedStrings.stable,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.right,
                             ),
                           ),
@@ -1292,6 +1353,8 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                             width: 50,
                             child: Text(
                               localizedStrings.net,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.right,
                             ),
                           ),
@@ -1315,6 +1378,8 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                             width: 50,
                             child: Text(
                               localizedStrings.zero,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.right,
                             ),
                           ),
@@ -1322,25 +1387,8 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                           Image.asset(
                             (myReqWeightCountine.msgBody == null)
                                 ? ("assets/images/gray.png")
-                                : (((myReqWeightCountine.msgBody!.isStable &&
-                                                isStart) &&
-                                            (double.tryParse(myReqWeightCountine
-                                                    .msgBody!.weightVal) ==
-                                                0)) ||
-                                        ((myReqWeightCountine
-                                                    .msgBody!.isStable &&
-                                                isStart) &&
-                                            (((double.tryParse(
-                                                            myReqWeightCountine
-                                                                .msgBody!
-                                                                .weightVal) ==
-                                                        null)
-                                                    ? 0
-                                                    : double.tryParse(
-                                                        myReqWeightCountine
-                                                            .msgBody!
-                                                            .weightVal))! <=
-                                                zeroRange)))
+                                : (myReqWeightCountine.msgBody!.isZero &&
+                                        isStart)
                                     ? ("assets/images/blue.png")
                                     : ("assets/images/gray.png"),
                             width: 25,
@@ -1451,108 +1499,116 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            SizedBox(
-                              width: 80,
-                              child: ElevatedButton(
-                                  onPressed: () {
-                                    PublicFunctions.performTare();
-                                  },
-                                  child: Text(localizedStrings.button_tare,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal))),
-                            ),
-                            SizedBox(
-                              width: 80,
-                              child: ElevatedButton(
-                                  onPressed: () {
-                                    PublicFunctions.performZero();
-                                  },
-                                  child: Text(localizedStrings.button_zero,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal))),
-                            ),
-                            SizedBox(
-                              width: 80,
-                              child: ElevatedButton(
-                                  onPressed: _isSaveButtonDisabled
-                                      ? null
-                                      : _changeSaveButton,
-                                  child: Text(localizedStrings.button_save,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal))),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            SizedBox(
-                              width: 80,
-                              child: ElevatedButton(
-                                  onPressed: () {
-                                    highLowSettingDialog(context);
-                                  },
-                                  child: const Text('Edit',
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal))),
-                            ),
-                            SizedBox(
-                              width: 80,
-                              child: ElevatedButton(
-                                  onPressed: () {
-                                    //跳转页面
-                                    paramSettingDialog(context);
-                                  },
-                                  child: Text(localizedStrings.button_setting,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal))),
-                            ),
-                            SizedBox(
-                              width: 80,
-                              child: ElevatedButton(
-                                  // elevation: 5.0,
-                                  child: Text(
-                                      localizedStrings.button_export_report,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal)),
-                                  onPressed: () async {
-                                    final directory = Directory.current.path;
-                                    String? outputFile =
-                                        (await FilePicker.platform.saveFile(
-                                      initialDirectory: directory,
-                                      type: FileType.custom,
-                                      dialogTitle: 'Output file:',
-                                      allowedExtensions: ["xlsx"],
-                                      fileName: 'report.xlsx',
-                                    ));
-                                    if (outputFile != null) {
-                                      _creatFile(outputFile);
-                                    }
-                                  }),
-                            ),
-                          ],
-                        )
+                        LayoutBuilder(builder:
+                            (BuildContext context, BoxConstraints constraints) {
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              SizedBox(
+                                width: constraints.maxWidth / 3.5,
+                                child: ElevatedButton(
+                                    onPressed: () {
+                                      PublicFunctions.performTare();
+                                    },
+                                    child: Text(localizedStrings.button_tare,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.normal))),
+                              ),
+                              SizedBox(
+                                width: constraints.maxWidth / 3.5,
+                                child: ElevatedButton(
+                                    onPressed: () {
+                                      PublicFunctions.performZero();
+                                    },
+                                    child: Text(localizedStrings.button_zero,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.normal))),
+                              ),
+                              SizedBox(
+                                width: constraints.maxWidth / 3.5,
+                                child: ElevatedButton(
+                                    onPressed:
+                                        (_isSaveButtonDisabled || !isStart)
+                                            ? null
+                                            : _changeSaveButton,
+                                    child: Text(localizedStrings.button_save,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.normal))),
+                              ),
+                            ],
+                          );
+                        }),
+                        LayoutBuilder(builder:
+                            (BuildContext context, BoxConstraints constraints) {
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              SizedBox(
+                                width: constraints.maxWidth / 3.5,
+                                child: ElevatedButton(
+                                    onPressed: () {
+                                      highLowSettingDialog(context);
+                                    },
+                                    child: const Text('Edit',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.normal))),
+                              ),
+                              SizedBox(
+                                width: constraints.maxWidth / 3.5,
+                                child: ElevatedButton(
+                                    onPressed: () {
+                                      //跳转页面
+                                      mySettingParam = myModeSettingCheck;
+                                      paramSettingDialog(context);
+                                    },
+                                    child: Text(localizedStrings.button_setting,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.normal))),
+                              ),
+                              SizedBox(
+                                width: constraints.maxWidth / 3.5,
+                                child: ElevatedButton(
+                                    // elevation: 5.0,
+                                    child: Text(
+                                        localizedStrings.button_export_report,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.normal)),
+                                    onPressed: () async {
+                                      final directory = Directory.current.path;
+                                      String? outputFile =
+                                          (await FilePicker.platform.saveFile(
+                                        initialDirectory: directory,
+                                        type: FileType.custom,
+                                        dialogTitle: 'Output file:',
+                                        allowedExtensions: ["xlsx"],
+                                        fileName: 'report.xlsx',
+                                      ));
+                                      if (outputFile != null) {
+                                        _creatFile(outputFile);
+                                      }
+                                    }),
+                              ),
+                            ],
+                          );
+                        }),
                       ],
                     ),
                   ),
@@ -1601,126 +1657,131 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
             ),
             //////////////
             const SizedBox(height: 5),
-            Container(
+            SizedBox(
               height: 40,
-              color: Colors.white,
-              child: Row(
-                children: [
-                  Text(localizedStrings.plu_name),
-                  Container(
-                    child: DropdownButtonFormField<String>(
-                      itemHeight: 50.0,
-                      isExpanded: true,
-                      // decoration: const InputDecoration(border: OutlineInputBorder()),
-                      value: productNameValue,
-                      onChanged: (String? newPosition) {
-                        setState(() {
-                          productNameValue = newPosition.toString();
-                          for (var i = 0;
-                              i < myProductRecList.productRecInfo!.length;
-                              i++) {
-                            if (productNameValue ==
-                                myProductRecList.productRecInfo![i].product) {
-                              myProductRecInfo =
-                                  myProductRecList.productRecInfo![i];
-                              eventBus
-                                  .fire(EventProductRecInfo(myProductRecInfo));
-                            }
-                          }
-                        });
-                      },
-
-                      items: productNameList
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem(
-                            value: value,
-                            child:
-                                Text(value, overflow: TextOverflow.ellipsis));
-                      }).toList(),
+              child: LayoutBuilder(
+                  builder: (BuildContext context, BoxConstraints constraints) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    SizedBox(
+                      width: constraints.maxWidth / 10,
+                      child: Text(
+                        localizedStrings.plu_name,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                    height: 53,
-                    width: 150,
-                    padding: const EdgeInsets.all(0),
-                  ),
-                  const SizedBox(width: 10),
-                  MaterialButton(
-                      color: Theme.of(context).colorScheme.primary,
-                      textColor: Colors.white,
-                      elevation: 5.0,
-                      child: Text(localizedStrings.plu_edit,
-                          style: const TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.normal)),
-                      onPressed: () {
-                        getProductList();
-                        addProductDialog(context).then((onvalue) {
-                          if (!productNameList.contains(productNameValue)) {
-                            myProductRecInfo.product = "";
-                            productNameValue = "";
-                            myProductRecInfo.id = "";
-                            myProductRecInfo.withPretare = false;
-                            myProductRecInfo.remarks = "";
-                          }
-                        });
-                      }),
-                  const SizedBox(width: 50),
-                  TextButton(
-                      onPressed: () {},
-                      child: Text(localizedStrings.user_name,
-                          style: const TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.normal))),
-                  Container(
-                    child: DropdownButtonFormField<String>(
-                      itemHeight: 50.0,
-                      isExpanded: true,
-                      // decoration: const InputDecoration(border: OutlineInputBorder()),
-                      value: userNameValue,
-                      onChanged: (String? newPosition) {
-                        setState(() {
-                          myUserInfo.name = newPosition.toString();
-                          for (var i = 0;
-                              i < myUserInfoList.userInfo!.length;
-                              i++) {
-                            if (myUserInfo.name ==
-                                myUserInfoList.userInfo![i].name) {
-                              myUserInfo = myUserInfoList.userInfo![i];
-                              eventBus.fire(EventUserInfo(myUserInfo));
-                            }
-                          }
-                        });
-                      },
-                      items: userNameList
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem(
-                            value: value,
-                            child:
-                                Text(value, overflow: TextOverflow.ellipsis));
-                      }).toList(),
-                    ),
-                    height: 53,
-                    width: 150,
-                    padding: const EdgeInsets.all(0),
-                  ),
-                  // const SizedBox(width: 10),
-                  MaterialButton(
-                      color: Theme.of(context).colorScheme.primary,
-                      textColor: Colors.white,
-                      elevation: 5.0,
-                      child: Text(localizedStrings.user_edit,
-                          style: const TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.normal)),
-                      onPressed: () {
-                        PublicFunctions.getUserList();
-                        getUserNameList();
-                        if (!userNameList.contains(userNameValue)) {
-                          myUserInfo.name = "";
-                          userNameValue = "";
-                          myUserInfo.id = "";
-                          myUserInfo.isFemale = true;
-                          myUserInfo.phone = "";
-                          myUserInfo.remarks = "";
-                        }
-                        addUserDialog(context).then((onvalue) {
+                    Container(
+                      child: DropdownButtonFormField<String>(
+                        itemHeight: 50.0,
+                        isExpanded: true,
+                        // decoration: const InputDecoration(border: OutlineInputBorder()),
+                        value: productNameValue,
+                        onChanged: (String? newPosition) {
                           setState(() {
+                            productNameValue = newPosition.toString();
+                            for (var i = 0;
+                                i < myProductRecList.productRecInfo!.length;
+                                i++) {
+                              if (productNameValue ==
+                                  myProductRecList.productRecInfo![i].product) {
+                                myProductRecInfo =
+                                    myProductRecList.productRecInfo![i];
+                                eventBus.fire(
+                                    EventProductRecInfo(myProductRecInfo));
+                              }
+                            }
+                          });
+                        },
+
+                        items: productNameList
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem(
+                              value: value,
+                              child:
+                                  Text(value, overflow: TextOverflow.ellipsis));
+                        }).toList(),
+                      ),
+                      height: 40,
+                      width: constraints.maxWidth / 10,
+                      padding: const EdgeInsets.all(0),
+                    ),
+                    SizedBox(
+                      width: constraints.maxWidth / 10,
+                      child: MaterialButton(
+                          color: Theme.of(context).colorScheme.primary,
+                          textColor: Colors.white,
+                          elevation: 5.0,
+                          child: Text(localizedStrings.plu_edit,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.normal)),
+                          onPressed: () {
+                            getProductList();
+                            addProductDialog(context).then((onvalue) {
+                              if (!productNameList.contains(productNameValue)) {
+                                myProductRecInfo.product = "";
+                                productNameValue = "";
+                                myProductRecInfo.id = "";
+                                myProductRecInfo.withPretare = false;
+                                myProductRecInfo.remarks = "";
+                              }
+                            });
+                          }),
+                    ),
+                    SizedBox(
+                      width: constraints.maxWidth / 10,
+                      child: TextButton(
+                          onPressed: () {},
+                          child: Text(localizedStrings.user_name,
+                              style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.normal))),
+                    ),
+                    Container(
+                      child: DropdownButtonFormField<String>(
+                        itemHeight: 50.0,
+                        isExpanded: true,
+                        // decoration: const InputDecoration(border: OutlineInputBorder()),
+                        value: userNameValue,
+                        onChanged: (String? newPosition) {
+                          setState(() {
+                            myUserInfo.name = newPosition.toString();
+                            for (var i = 0;
+                                i < myUserInfoList.userInfo!.length;
+                                i++) {
+                              if (myUserInfo.name ==
+                                  myUserInfoList.userInfo![i].name) {
+                                myUserInfo = myUserInfoList.userInfo![i];
+                                eventBus.fire(EventUserInfo(myUserInfo));
+                              }
+                            }
+                          });
+                        },
+                        items: userNameList
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem(
+                              value: value,
+                              child:
+                                  Text(value, overflow: TextOverflow.ellipsis));
+                        }).toList(),
+                      ),
+                      height: 53,
+                      width: constraints.maxWidth / 10,
+                      padding: const EdgeInsets.all(0),
+                    ),
+                    SizedBox(
+                      width: constraints.maxWidth / 10,
+                      child: MaterialButton(
+                          color: Theme.of(context).colorScheme.primary,
+                          textColor: Colors.white,
+                          elevation: 5.0,
+                          child: Text(localizedStrings.user_edit,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.normal)),
+                          onPressed: () {
                             PublicFunctions.getUserList();
                             getUserNameList();
                             if (!userNameList.contains(userNameValue)) {
@@ -1731,45 +1792,69 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                               myUserInfo.phone = "";
                               myUserInfo.remarks = "";
                             }
-                          });
-                        });
-                      }),
-                  const SizedBox(width: 10),
-                  MaterialButton(
-                      color: Theme.of(context).colorScheme.primary,
-                      textColor: Colors.white,
-                      elevation: 5.0,
-                      child: const Text('Report Setting',
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.normal)),
-                      onPressed: () {
-                        reportFieldsSettingDialog(context);
-                      }),
-                  const SizedBox(width: 10),
-                  MaterialButton(
-                      color: Theme.of(context).colorScheme.primary,
-                      textColor: Colors.white,
-                      elevation: 5.0,
-                      child: const Text('Hide Report',
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.normal)),
-                      onPressed: () {
-                        _toggleLayout();
-                      }),
-                  const SizedBox(width: 10),
-                  MaterialButton(
-                      color: Theme.of(context).colorScheme.primary,
-                      textColor: Colors.white,
-                      elevation: 5.0,
-                      child: const Text('Delete All',
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.normal)),
-                      onPressed: () {
-                        PublicFunctions.deleteAllRecordsCheck();
-                      }),
-                ],
-              ),
+                            addUserDialog(context).then((onvalue) {
+                              setState(() {
+                                PublicFunctions.getUserList();
+                                getUserNameList();
+                                if (!userNameList.contains(userNameValue)) {
+                                  myUserInfo.name = "";
+                                  userNameValue = "";
+                                  myUserInfo.id = "";
+                                  myUserInfo.isFemale = true;
+                                  myUserInfo.phone = "";
+                                  myUserInfo.remarks = "";
+                                }
+                              });
+                            });
+                          }),
+                    ),
+                    SizedBox(
+                      width: constraints.maxWidth / 10,
+                      child: MaterialButton(
+                          color: Theme.of(context).colorScheme.primary,
+                          textColor: Colors.white,
+                          elevation: 5.0,
+                          child: Text(localizedStrings.report_set_btn,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.normal)),
+                          onPressed: () {
+                            reportFieldsSettingDialog(context);
+                          }),
+                    ),
+                    SizedBox(
+                      width: constraints.maxWidth / 10,
+                      child: MaterialButton(
+                          color: Theme.of(context).colorScheme.primary,
+                          textColor: Colors.white,
+                          elevation: 5.0,
+                          child: Text(localizedStrings.report_hide_btn,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.normal)),
+                          onPressed: () {
+                            _toggleLayout();
+                          }),
+                    ),
+                    SizedBox(
+                      width: constraints.maxWidth / 10,
+                      child: MaterialButton(
+                          color: Theme.of(context).colorScheme.primary,
+                          textColor: Colors.white,
+                          elevation: 5.0,
+                          child: Text(localizedStrings.report_delete_btn,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.normal)),
+                          onPressed: () {
+                            _showConfirmationDialog(context);
+                          }),
+                    ),
+                  ],
+                );
+              }),
             ),
+
             Expanded(
               child: SfDataGrid(
                 source: _weightReportDataSource,
@@ -1777,6 +1862,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                 columnWidthMode: ColumnWidthMode.fill,
                 frozenRowsCount: 0,
                 controller: _dataGridController,
+                allowSorting: true,
               ),
             )
           ],
@@ -2089,7 +2175,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
   void _addWeightToReport() {
     myWeightReportData.add(WeightReportData(
       (myWeightReportData.length + 1).toString(),
-      getDateTime(mySettingParam.dateSeparator),
+      getDateTime(myModeSettingCheck.dateSeparator),
       (myReqWeightCountine.msgBody?.weightVal == null)
           ? (" ")
           : (myReqWeightCountine.msgBody!.weightVal),
@@ -2121,13 +2207,26 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
       (myUserInfo.remarks == null) ? "" : myUserInfo.remarks.toString(),
       myDevicedata.name,
     ));
+
+    _weightReportDatas = myWeightReportData;
     setState(() {
+      String sortColName = 'Date Time';
+      DataGridSortDirection sortDirec = DataGridSortDirection.descending;
+      if (_weightReportDataSource.sortedColumns.isNotEmpty) {
+        sortColName = _weightReportDataSource.sortedColumns[0].name;
+        sortDirec = _weightReportDataSource.sortedColumns[0].sortDirection;
+      }
       _weightReportDataSource = WeightReportDataSource(_weightReportDatas);
+      _weightReportDataSource.sortedColumns
+          .add(SortColumnDetails(name: sortColName, sortDirection: sortDirec));
       Future.delayed(const Duration(milliseconds: 100), () {
-        _dataGridController
-            .scrollToRow(_weightReportDataSource.rows.length - 0);
+        if (sortDirec == DataGridSortDirection.descending) {
+          _dataGridController.scrollToRow(0);
+        } else {
+          _dataGridController
+              .scrollToRow(_weightReportDataSource.rows.length - 0);
+        }
       });
-      // _dataGridController.scrollToRow(_weightReportDataSource.rows.length - 1);
     });
   }
 
@@ -2161,6 +2260,7 @@ List<GridColumn> getColumns() {
             overflow: TextOverflow.ellipsis,
           ),
         ),
+        allowSorting: true,
       ),
     );
   }
@@ -2176,6 +2276,27 @@ class WeightReportDataSource extends DataGridSource {
     weightReportData = newReportData;
     buildDataGridRow();
     notifyListeners();
+  }
+
+  void sortData(String columnName) {
+    weightReportData.sort((WeightReportData a, WeightReportData b) {
+      if (columnName == 'Date Time') {
+        return a.dateTime.compareTo(b.dateTime);
+      }
+      // 如果有其他需要比较的字段，请在这里添加适当的逻辑
+      return 0;
+    });
+  }
+
+  void sortDataGrid(String columnName, DataGridSortDirection sortDirection) {
+    sortData(columnName);
+    if (sortDirection == DataGridSortDirection.descending) {
+      reverseData();
+    }
+  }
+
+  void reverseData() {
+    weightReportData = weightReportData.reversed.toList();
   }
 
   List<DataGridRow> dataGridRow = <DataGridRow>[];

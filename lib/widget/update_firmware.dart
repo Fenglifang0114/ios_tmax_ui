@@ -105,7 +105,7 @@ class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 OutlinedButton(
-                    child: const Text('Select Firmware'),
+                    child: Text(localizedStrings.select_firmware_btn),
                     onPressed: isSetting
                         ? null
                         : () async {
@@ -140,7 +140,7 @@ class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       ElevatedButton(
-                        child: const Text('Start'),
+                        child: Text(localizedStrings.button_start),
                         onPressed:
                             (isSetting || _filePathController.text.isEmpty)
                                 ? null
@@ -214,20 +214,19 @@ class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
       builder: (BuildContext ctx) {
         return AlertDialog(
           title: Text(
-            'Confirmation',
+            localizedStrings.confirm_title,
             style: TextStyle(color: colorName),
           ),
-          content: const Text(
-              'The update process can not be canceled.\r\nPlease make sure the update?'),
+          content: Text(localizedStrings.update_firmware_info),
           actions: <Widget>[
             OutlinedButton(
-              child: const Text('Cancel'),
+              child: Text(localizedStrings.button_cancel),
               onPressed: () {
                 Navigator.of(context).pop(false); // 不跳转
               },
             ),
             OutlinedButton(
-              child: const Text('Confirm'),
+              child: Text(localizedStrings.confirm_btn),
               onPressed: () {
                 Navigator.of(context).pop(true); // 跳转
               },
@@ -239,13 +238,13 @@ class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
       if (confirmed) {
         sendFormatToScale(_filePathController.text);
         setState(() {
-          _errorMessage = 'Please wait...';
+          _errorMessage = localizedStrings.update_firmware_wait;
           isSetting = true;
         });
         Timer(const Duration(seconds: 5), () {
           if (!(_progress > 0)) {
             setState(() {
-              _errorMessage = 'Please reboot the device and waiting...';
+              _errorMessage = localizedStrings.update_firmware_reboot;
             });
           }
         });

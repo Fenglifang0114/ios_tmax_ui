@@ -25,9 +25,9 @@ class _ParamSettingDialogState extends State<ParamSettingDialog> {
           ? "0"
           : (mySettingParam.zeroRange));
   TextEditingController stableTime = TextEditingController(
-      text: (mySettingParam.stableTimeToRec.isEmpty)
+      text: (mySettingParam.stableTime.isEmpty)
           ? "0"
-          : (mySettingParam.stableTimeToRec));
+          : (mySettingParam.stableTime));
   TextEditingController errorText = TextEditingController();
   bool isSaveModeChecked = true;
   int _checkSaveMode = 1;
@@ -35,6 +35,7 @@ class _ParamSettingDialogState extends State<ParamSettingDialog> {
   int _checkScaleMode = 1;
   String dateSeparator = '-';
   int _checkDateSeparator = 1;
+  int _checkHiLow = 1;
   @override
   void initState() {
     super.initState();
@@ -52,11 +53,12 @@ class _ParamSettingDialogState extends State<ParamSettingDialog> {
             : (mySettingParam.dateSeparator == "/")
                 ? 3
                 : 1);
-    _checkScaleMode = int.parse(mySettingParam.scaleMode);
+    _checkScaleMode = mySettingParam.scaleMode;
     _checkDateMode = (mySettingParam.dateFormat.isEmpty)
         ? 1
         : int.parse(mySettingParam.dateFormat);
     tempCurrentPort = myCurrentPort;
+    _checkHiLow = int.parse(mySettingParam.saveMode);
   }
 
   var localizedStrings;
@@ -98,7 +100,7 @@ class _ParamSettingDialogState extends State<ParamSettingDialog> {
                       color: Theme.of(context).colorScheme.onPrimary),
                   child: Column(
                     children: [
-                      const SizedBox(height: 15),
+                      const SizedBox(height: 5),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -106,55 +108,70 @@ class _ParamSettingDialogState extends State<ParamSettingDialog> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               saveModeRadio(),
-                              const SizedBox(height: 15),
-                              scaleModeRadio(),
-                              const SizedBox(height: 15),
-                              Text(localizedStrings.stable_time),
-                              SizedBox(
-                                width: 400,
-                                height: 30,
-                                child: TextField(
-                                  controller: stableTime,
-                                  maxLength: 2,
-                                  maxLengthEnforcement:
-                                      MaxLengthEnforcement.enforced,
-                                  maxLines: 1,
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.allow(
-                                        RegExp("[0-9]"))
-                                  ], //数字包括小数,
-                                  textAlignVertical: TextAlignVertical.bottom,
-                                  decoration: InputDecoration(
-                                    enabled:
-                                        (_checkSaveMode == 2) ? true : false,
-                                    counterText: "",
-                                    // hintText: "请输入机种类型，如：ztp",
-                                    // border: OutlineInputBorder(),
-                                  ),
-                                  onChanged: (value) {
-                                    if (stableTime.text.toString().isNotEmpty) {
-                                      if (int.parse(
-                                              stableTime.text.toString()) >
-                                          20) {
-                                        errorText.text = localizedStrings
-                                            .stable_time_error_tip;
-                                      } else {
-                                        errorText.text = "";
-                                      }
-                                    }
-                                    if (kDebugMode) {
-                                      print(value);
-                                    }
-                                  },
-                                ),
-                              ),
-                              const SizedBox(height: 15),
+                              const SizedBox(height: 5),
                               Row(
                                 children: [
                                   SizedBox(
-                                      width: 100,
-                                      child:
-                                          Text(localizedStrings.date_format)),
+                                    width: 200,
+                                    child: Text(
+                                      localizedStrings.stable_time,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 200,
+                                    height: 40,
+                                    child: TextField(
+                                      controller: stableTime,
+                                      maxLength: 2,
+                                      maxLengthEnforcement:
+                                          MaxLengthEnforcement.enforced,
+                                      maxLines: 1,
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.allow(
+                                            RegExp("[0-9]"))
+                                      ], //数字包括小数,
+                                      textAlignVertical: TextAlignVertical.top,
+                                      decoration: InputDecoration(
+                                        enabled: (_checkSaveMode == 2)
+                                            ? true
+                                            : false,
+                                        counterText: "",
+                                        // hintText: "请输入机种类型，如：ztp",
+                                        // border: OutlineInputBorder(),
+                                      ),
+                                      onChanged: (value) {
+                                        if (stableTime.text
+                                            .toString()
+                                            .isNotEmpty) {
+                                          if (int.parse(
+                                                  stableTime.text.toString()) >
+                                              20) {
+                                            errorText.text = localizedStrings
+                                                .stable_time_error_tip;
+                                          } else {
+                                            errorText.text = "";
+                                          }
+                                        }
+                                        if (kDebugMode) {
+                                          print(value);
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 5),
+                              Row(
+                                children: [
+                                  SizedBox(
+                                      width: 200,
+                                      child: Text(
+                                        localizedStrings.date_format,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      )),
                                   Column(
                                     children: [
                                       dateFormatRadio(1, "yy-mm-dd"),
@@ -164,13 +181,19 @@ class _ParamSettingDialogState extends State<ParamSettingDialog> {
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 15),
+                              const SizedBox(height: 5),
                               Row(
                                 children: [
                                   const SizedBox(
-                                      width: 100,
-                                      child: Text("Date Separator")),
-                                  Column(
+                                      width: 200,
+                                      child: Text(
+                                        "Date Separator",
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      )),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
                                     children: [
                                       dateSeparatorRadio(1, "."),
                                       dateSeparatorRadio(2, "-"),
@@ -179,30 +202,62 @@ class _ParamSettingDialogState extends State<ParamSettingDialog> {
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 15),
-                              Text(localizedStrings.zero_range),
-                              SizedBox(
-                                width: 400,
-                                height: 30,
-                                child: TextField(
-                                  controller: zeroRange,
-                                  maxLength: 8,
-                                  maxLengthEnforcement:
-                                      MaxLengthEnforcement.enforced,
-                                  maxLines: 1,
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.allow(
-                                        RegExp(r'^\d+(\.)?[0-9]{0,7}'))
-                                  ], //数字包括小数,
-                                  textAlignVertical: TextAlignVertical.bottom,
-                                  decoration: const InputDecoration(
-                                    counterText: "",
-                                    // hintText: "请输入机种类型，如：ztp",
-                                    // border: OutlineInputBorder(),
+                              const SizedBox(height: 5),
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    width: 200,
+                                    child: Text(
+                                      localizedStrings.zero_range,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
                                   ),
-                                  onChanged: (value) {},
-                                ),
+                                  SizedBox(
+                                    width: 200,
+                                    height: 40,
+                                    child: TextField(
+                                      controller: zeroRange,
+                                      maxLength: 8,
+                                      maxLengthEnforcement:
+                                          MaxLengthEnforcement.enforced,
+                                      maxLines: 1,
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.allow(
+                                            RegExp(r'^\d+(\.)?[0-9]{0,7}'))
+                                      ], //数字包括小数,
+                                      textAlignVertical: TextAlignVertical.top,
+                                      decoration: const InputDecoration(
+                                        counterText: "",
+                                        // hintText: "请输入机种类型，如：ztp",
+                                        // border: OutlineInputBorder(),
+                                      ),
+                                      onChanged: (value) {},
+                                    ),
+                                  ),
+                                ],
                               ),
+                              const SizedBox(height: 5),
+                              (mySettingParam.scaleMode == 1)
+                                  ? Row(
+                                      children: [
+                                        const SizedBox(
+                                          width: 200,
+                                          child: Text(
+                                            'Save Mode:',
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                          ),
+                                        ),
+                                        checkHiLowRadio(1, 'All'),
+                                        checkHiLowRadio(2, 'Hi'),
+                                        checkHiLowRadio(3, 'Ok'),
+                                        checkHiLowRadio(4, 'Low'),
+                                      ],
+                                    )
+                                  : SizedBox(
+                                      height: 30,
+                                    ),
                             ],
                           ),
                         ],
@@ -246,12 +301,7 @@ class _ParamSettingDialogState extends State<ParamSettingDialog> {
                 child: Text(localizedStrings.button_ok),
                 onPressed: () {
                   updateUIConf();
-                  PublicFunctions.getUIConf();
-                  // myDialogData.type = dialogtype;
-                  // print(myDialogData.type);
-                  // connectionType =
-                  //     deviceName.text.toString() + ",Icons.usb";
-                  // 传值
+
                   Navigator.of(context).pop(connectionType);
                 }),
             const SizedBox(width: 20),
@@ -276,12 +326,14 @@ class _ParamSettingDialogState extends State<ParamSettingDialog> {
         : (_checkDateSeparator == 2)
             ? "-"
             : '/';
-    mySettingParam.scaleMode = _checkScaleMode.toString();
-    mySettingParam.stableTimeToRec = stableTime.text;
+    mySettingParam.stableTime = stableTime.text;
     mySettingParam.zeroRange = zeroRange.text;
+    if (mySettingParam.scaleMode == 1) {
+      mySettingParam.saveMode = _checkHiLow.toString();
+    }
     String updateString = jsonEncode(mySettingParam);
     myScaleCmd.cmdData = updateString;
-    MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
 
   void modifyComInfo() {
@@ -297,7 +349,13 @@ class _ParamSettingDialogState extends State<ParamSettingDialog> {
   Widget saveModeRadio() {
     return Row(
       children: [
-        SizedBox(width: 100, child: Text(localizedStrings.save_mode)),
+        SizedBox(
+            width: 200,
+            child: Text(
+              localizedStrings.save_mode,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            )),
         saveModeSingleRadio(1),
         const Text('manual'),
         const SizedBox(width: 20),
@@ -334,22 +392,6 @@ class _ParamSettingDialogState extends State<ParamSettingDialog> {
         });
   }
 
-  Widget scaleModeRadio() {
-    return Row(
-      children: [
-        const SizedBox(width: 100, child: Text("Scale Mode:")),
-        scaleModeSingleRadio(1),
-        const Text('Normal'),
-        const SizedBox(width: 20),
-        scaleModeSingleRadio(2),
-        const Text('Take-in'),
-        const SizedBox(width: 20),
-        scaleModeSingleRadio(3),
-        const Text('Take-out'),
-      ],
-    );
-  }
-
   Widget dateFormatRadio(int data, String str) {
     return Row(
       children: [
@@ -377,6 +419,23 @@ class _ParamSettingDialogState extends State<ParamSettingDialog> {
               debugPrint(value.toString());
               setState(() {
                 _checkDateSeparator = data;
+              });
+            }),
+        Text(str),
+      ],
+    );
+  }
+
+  Widget checkHiLowRadio(int data, String str) {
+    return Row(
+      children: [
+        Radio(
+            value: data,
+            groupValue: _checkHiLow,
+            onChanged: (value) {
+              debugPrint(value.toString());
+              setState(() {
+                _checkHiLow = data;
               });
             }),
         Text(str),

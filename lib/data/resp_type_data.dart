@@ -43,4 +43,8 @@ class RespMsgType {
   static const String respChangeScalePassthMode =
       'resp_change_scale_passth_mode';
   static const String respGetScaleInfo = 'resp_get_scale_info';
+  static const String respDownPlu = 'resp_down_plu';
+  static const String respGetUIConf = 'resp_get_ui_conf';
+  static const String respUpdateUIConf = 'resp_update_ui_conf';
+  static const String respChangeWifiMode = 'resp_change_wifi_mode';
 }

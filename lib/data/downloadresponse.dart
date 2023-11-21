@@ -40,6 +40,7 @@ ChannelResponse myOpenScalePassthData = ChannelResponse('', '', 0);
 ChannelResponse myCloseScalePassthData = ChannelResponse('', '', 0);
 ChannelResponse myRegWeightResp = ChannelResponse('', '', 0);
 ChannelResponse myUnregWeightResp = ChannelResponse('', '', 0);
+ChannelResponse myDownPluResp = ChannelResponse('', '', 0);
 
 class SerialPortStatus {
   bool serialPortStatus;

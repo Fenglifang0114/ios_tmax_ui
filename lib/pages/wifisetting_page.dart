@@ -58,6 +58,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
   dynamic _eventbus8;
   dynamic _eventbus9;
   dynamic _eventbus10;
+  dynamic _eventbus11;
 
   TextEditingController controller = TextEditingController();
   RegExp ipaddressRegex = RegExp(r'[0-9.]');
@@ -281,6 +282,14 @@ class WifiSettingPageState extends State<WifiSettingPage> {
       }
     });
 
+    _eventbus11 = eventBus.on<EventRespChangeWiFiMode>().listen((event) {
+      if (mounted) {
+        setState(() {
+          PublicFunctions.getWifiList();
+        });
+      }
+    });
+
     super.initState();
   }
 
@@ -296,6 +305,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     _eventbus8.cancel();
     _eventbus9.cancel();
     _eventbus10.cancel();
+    _eventbus11.cancel();
 
     super.dispose();
   }

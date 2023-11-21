@@ -46,11 +46,10 @@ class WeightModePageState extends State<WeightModePage> {
   late int weightMode; //0,手动保存，1，连续保存，2，稳定保存
   late int dateformat;
   late double zeroRange;
-  late bool _isSaveButtonDisabled;
 
   double basicWeightval = 0.000; //开始加法秤的时候的基础重量
   String showTakeInWeight = '';
-  String diffWeightVal = '0.000'; //差值
+
   List<double> weightValueList = [];
   double lastTakeInWeightval = 0.000;
   String takeInWeightValue = '0.000';
@@ -230,7 +229,7 @@ class WeightModePageState extends State<WeightModePage> {
                           SizedBox(
                             width: 400,
                             child: Text(
-                              'Weighing',
+                              localizedStrings.weighing_title,
                               maxLines: 1,
                               style: TextStyle(
                                   fontSize: 20,
@@ -298,27 +297,8 @@ class WeightModePageState extends State<WeightModePage> {
                                   localizedStrings.zero,
                                   (myReqWeightCountine.msgBody == null)
                                       ? ("assets/images/gray.png")
-                                      : (((myReqWeightCountine
-                                                          .msgBody!.isStable &&
-                                                      isStart) &&
-                                                  (double.tryParse(
-                                                          myReqWeightCountine
-                                                              .msgBody!
-                                                              .weightVal) ==
-                                                      0)) ||
-                                              ((myReqWeightCountine
-                                                          .msgBody!.isStable &&
-                                                      isStart) &&
-                                                  (((double.tryParse(myReqWeightCountine
-                                                                  .msgBody!
-                                                                  .weightVal) ==
-                                                              null)
-                                                          ? 0
-                                                          : double.tryParse(
-                                                              myReqWeightCountine
-                                                                  .msgBody!
-                                                                  .weightVal))! <=
-                                                      zeroRange)))
+                                      : (myReqWeightCountine.msgBody!.isZero &&
+                                              isStart)
                                           ? ("assets/images/blue.png")
                                           : ("assets/images/gray.png"),
                                   constraints),
@@ -354,8 +334,19 @@ class WeightModePageState extends State<WeightModePage> {
                             ],
                           );
                         })),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: LayoutBuilder(
+                  builder: (BuildContext context, BoxConstraints constraints) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
                     Expanded(
-                        flex: 2,
+                        flex: 1,
                         child: LayoutBuilder(builder:
                             (BuildContext context, BoxConstraints constraints) {
                           return Row(
@@ -368,31 +359,30 @@ class WeightModePageState extends State<WeightModePage> {
                             ],
                           );
                         })),
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 2,
-              child: LayoutBuilder(
-                  builder: (BuildContext context, BoxConstraints constraints) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildFlexibleButtonAndText(
-                      width: 80,
-                      buttonText: localizedStrings.button_tare,
-                      onPressed: PublicFunctions.performTare,
-                      constraints: constraints,
-                      isTrue: isStart,
-                    ),
-                    _buildFlexibleButtonAndText(
-                      width: 80,
-                      buttonText: localizedStrings.button_zero,
-                      onPressed: PublicFunctions.performZero,
-                      constraints: constraints,
-                      isTrue: isStart,
-                    ),
+                    Expanded(
+                        flex: 1,
+                        child: LayoutBuilder(builder:
+                            (BuildContext context, BoxConstraints constraints) {
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              _buildFlexibleButtonAndText(
+                                width: 150,
+                                buttonText: localizedStrings.button_tare,
+                                onPressed: PublicFunctions.performTare,
+                                constraints: constraints,
+                                isTrue: isStart,
+                              ),
+                              _buildFlexibleButtonAndText(
+                                width: 150,
+                                buttonText: localizedStrings.button_zero,
+                                onPressed: PublicFunctions.performZero,
+                                constraints: constraints,
+                                isTrue: isStart,
+                              ),
+                            ],
+                          );
+                        })),
                   ],
                 );
               }),
@@ -501,9 +491,9 @@ class WeightModePageState extends State<WeightModePage> {
       double? fontSize, BoxConstraints constraints, Color? color) {
     width = width * constraints.maxWidth / 400;
     height = height * constraints.maxHeight / 80;
-    fontSize = constraints.maxHeight / 3;
-    if (fontSize > constraints.maxWidth / 11) {
-      fontSize = constraints.maxWidth / 11;
+    fontSize = constraints.maxHeight / 2;
+    if (fontSize > constraints.maxWidth / 10) {
+      fontSize = constraints.maxWidth / 10;
     }
 
     return Container(
@@ -513,7 +503,7 @@ class WeightModePageState extends State<WeightModePage> {
       child: Column(
         // 将 Row 改为 Column
         mainAxisAlignment: MainAxisAlignment.center, // 垂直方向居中对齐
-        crossAxisAlignment: CrossAxisAlignment.start, // 水平方向居右对齐
+        crossAxisAlignment: CrossAxisAlignment.center, // 水平方向居右对齐
         children: [
           Text(
             text,
@@ -602,8 +592,8 @@ class WeightModePageState extends State<WeightModePage> {
     required BoxConstraints constraints,
     required bool isTrue,
   }) {
-    double buttonWidth = width * (constraints.maxWidth / 600); // 自适应按钮宽度
-    double fontSize = 14 * (constraints.maxWidth / 600); // 自适应字体大小
+    double buttonWidth = width * (constraints.maxWidth / 350); // 自适应按钮宽度
+    double fontSize = 14 * (constraints.maxWidth / 260); // 自适应字体大小
 
     return SizedBox(
       width: buttonWidth,
@@ -620,17 +610,5 @@ class WeightModePageState extends State<WeightModePage> {
         ),
       ),
     );
-  }
-
-  void isWeightStable() {
-    bool res = false;
-    if (myReqWeightCountine.msgBody == null) {
-      res = false;
-    } else if (myReqWeightCountine.msgBody!.isStable) {
-      res = true;
-    }
-    setState(() {
-      _isSaveButtonDisabled = !res;
-    });
   }
 }
