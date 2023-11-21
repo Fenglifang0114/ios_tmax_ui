@@ -293,6 +293,10 @@ class TakeOutPageState extends State<TakeOutPage> {
           setState(() {
             isStart = true;
           });
+        } else {
+          setState(() {
+            isStart = false;
+          });
         }
       }
     });
@@ -656,7 +660,7 @@ class TakeOutPageState extends State<TakeOutPage> {
                                   280,
                                   70,
                                   (myReqWeightCountine.msgBody == null)
-                                      ? ("0.000")
+                                      ? ("-----")
                                       : myReqWeightCountine.msgBody!.weightVal,
                                   55,
                                   constraints,
@@ -1539,7 +1543,7 @@ class TakeOutPageState extends State<TakeOutPage> {
                                 child: Text(
                                   textAlign: TextAlign.right,
                                   (myReqWeightCountine.msgBody == null)
-                                      ? ("0.000")
+                                      ? ("-----")
                                       : myReqWeightCountine.msgBody!.weightVal,
                                   style: const TextStyle(
                                       color: Colors.white, fontSize: 55),

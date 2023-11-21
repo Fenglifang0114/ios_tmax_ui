@@ -178,7 +178,9 @@
     "data_delete_confirm": "是否删除所有数据?",
     "show_current_weight": "当前重量:",
     "show_increment_weight": "增加重量:",
-    "show_reduced_weight": "减少重量:"
+    "show_reduced_weight": "减少重量:",
+    "general_configuration_title": "通用配置",
+    "application_title": "应用"
     
   }
   

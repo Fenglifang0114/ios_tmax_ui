@@ -33,13 +33,6 @@ class WeightModePageState extends State<WeightModePage> {
   late int dateformat;
   late double zeroRange;
 
-  double basicWeightval = 0.000; //开始加法秤的时候的基础重量
-  String showTakeInWeight = '';
-
-  List<double> weightValueList = [];
-  double lastTakeInWeightval = 0.000;
-  String takeInWeightValue = '0.000';
-
   dynamic eventBus1;
   dynamic eventBus2;
   dynamic eventBus3;
@@ -91,10 +84,14 @@ class WeightModePageState extends State<WeightModePage> {
 
     eventBus5 = eventBus.on<EventRegWeightResp>().listen((event) {
       if (mounted) {
-        myUnregWeightResp = event.obj;
-        if (myUnregWeightResp.msgBody.contains('ok')) {
+        myRegWeightResp = event.obj;
+        if (myRegWeightResp.msgBody.contains('ok')) {
           setState(() {
             isStart = true;
+          });
+        } else {
+          setState(() {
+            isStart = false;
           });
         }
       }
@@ -303,7 +300,7 @@ class WeightModePageState extends State<WeightModePage> {
                                   280,
                                   70,
                                   (myReqWeightCountine.msgBody == null)
-                                      ? ("0.000")
+                                      ? ("-----")
                                       : myReqWeightCountine.msgBody!.weightVal,
                                   55,
                                   constraints,

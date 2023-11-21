@@ -26,6 +26,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "acc_mode_format":
             MessageLookupByLibrary.simpleMessage("Формат режима акк:"),
         "alignment": MessageLookupByLibrary.simpleMessage("Выравнивание:"),
+        "application_title":
+            MessageLookupByLibrary.simpleMessage("Applications"),
         "attribute": MessageLookupByLibrary.simpleMessage("Атрибут"),
         "auto": MessageLookupByLibrary.simpleMessage("Автоматический"),
         "barcode_edit":
@@ -110,6 +112,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "font_bold": MessageLookupByLibrary.simpleMessage("Полужирный шрифт:"),
         "font_reverse": MessageLookupByLibrary.simpleMessage("Обратный шрифт:"),
         "gateway": MessageLookupByLibrary.simpleMessage("Шлюз:"),
+        "general_configuration_title":
+            MessageLookupByLibrary.simpleMessage("General Configuration"),
         "get_bt_name": MessageLookupByLibrary.simpleMessage("get name"),
         "get_build_info": MessageLookupByLibrary.simpleMessage(
             "Информация о программном обеспечении"),

@@ -485,7 +485,8 @@ class IndustryHomePageState extends State<IndustryHomePage> {
                 padding: const EdgeInsets.symmetric(
                     vertical: 10.0, horizontal: 20.0),
                 child: functionTitle(
-                    localizedStrings.device_setting_title, Icons.settings),
+                    localizedStrings.general_configuration_title,
+                    Icons.settings),
               ),
               Expanded(
                 child: ListView(
@@ -564,8 +565,8 @@ class IndustryHomePageState extends State<IndustryHomePage> {
             Container(
               padding:
                   const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-              child: functionTitle(localizedStrings.customization_setting_title,
-                  Icons.design_services),
+              child: functionTitle(
+                  localizedStrings.application_title, Icons.design_services),
             ),
             Expanded(
               child: ListView(

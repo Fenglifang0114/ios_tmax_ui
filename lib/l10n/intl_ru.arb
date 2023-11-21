@@ -178,6 +178,8 @@
     "data_delete_confirm": "Whether to delete all data?",
     "show_current_weight": "Current weight:",
     "show_increment_weight": "Increment weight:",
-    "show_reduced_weight": "Reduced weight:"
+    "show_reduced_weight": "Reduced weight:",
+    "general_configuration_title": "General Configuration",
+    "application_title": "Applications"
     
 }

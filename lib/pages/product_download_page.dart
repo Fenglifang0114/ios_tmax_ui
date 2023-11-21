@@ -52,7 +52,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text(
                     (myDownPluResp.msgBody.contains('ok'))
-                        ? 'Download successful!'
+                        ? 'Download is successful!'
                         : myDownPluResp.msgBody,
                     style: const TextStyle(
                         fontSize: 20,
@@ -153,7 +153,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                             pickFiles(pluFileController);
                           },
                           // TODO:翻译
-                          child: Text('选择Product Excel'),
+                          child: Text('Choose Product Excel'),
                         ),
                       ),
                     ],

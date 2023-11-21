@@ -1849,6 +1849,26 @@ class S {
       args: [],
     );
   }
+
+  /// `General Configuration`
+  String get general_configuration_title {
+    return Intl.message(
+      'General Configuration',
+      name: 'general_configuration_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Applications`
+  String get application_title {
+    return Intl.message(
+      'Applications',
+      name: 'application_title',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

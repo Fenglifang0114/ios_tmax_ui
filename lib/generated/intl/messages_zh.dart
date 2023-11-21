@@ -25,6 +25,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "Parity": MessageLookupByLibrary.simpleMessage("校验位："),
         "acc_mode_format": MessageLookupByLibrary.simpleMessage("累加模式打印格式:"),
         "alignment": MessageLookupByLibrary.simpleMessage("对齐方式："),
+        "application_title": MessageLookupByLibrary.simpleMessage("应用"),
         "attribute": MessageLookupByLibrary.simpleMessage("属性"),
         "auto": MessageLookupByLibrary.simpleMessage("自动"),
         "barcode_edit": MessageLookupByLibrary.simpleMessage("条码编辑"),
@@ -91,6 +92,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "font_bold": MessageLookupByLibrary.simpleMessage("字体加粗："),
         "font_reverse": MessageLookupByLibrary.simpleMessage("字体反显:"),
         "gateway": MessageLookupByLibrary.simpleMessage("网关:"),
+        "general_configuration_title":
+            MessageLookupByLibrary.simpleMessage("通用配置"),
         "get_bt_name": MessageLookupByLibrary.simpleMessage("获取名称"),
         "get_build_info": MessageLookupByLibrary.simpleMessage("软件信息"),
         "hr_alignment": MessageLookupByLibrary.simpleMessage("文字对齐方式"),

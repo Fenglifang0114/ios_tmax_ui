@@ -5,9 +5,7 @@ import 'dart:io';
 import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import 'package:t_max/aunused/fieldModify_dialog.dart';
 import 'package:t_max/data/high_low_weight.dart';
 
 import '../../data/currentport_data.dart';
@@ -22,6 +20,7 @@ import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
 import '../../generated/l10n.dart';
 import '../../main.dart';
+import '../data/downloadresponse.dart';
 import '../data/record_data.dart';
 import '../data/scalecmd_data.dart';
 import '../data/weight_report_data.dart';
@@ -147,6 +146,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
   dynamic eventBus10;
   dynamic eventBus11;
   dynamic eventBus12;
+  dynamic eventBus13;
 
   @override
   void initState() {
@@ -201,7 +201,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
       if (mounted) {
         setState(() {
           myReqWeightCountine = event.obj;
-          //  getWeight();
+          isStart = true;
           switch (weightMode) {
             case 1:
               if (myReqWeightCountine.msgBody!.weightVal == "0" ||
@@ -402,6 +402,21 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
         });
       }
     });
+
+    eventBus13 = eventBus.on<EventRegWeightResp>().listen((event) {
+      if (mounted) {
+        myRegWeightResp = event.obj;
+        if (myRegWeightResp.msgBody.contains('ok')) {
+          setState(() {
+            isStart = true;
+          });
+        } else {
+          setState(() {
+            isStart = false;
+          });
+        }
+      }
+    });
   }
 
   void _addDBdataToReport() {
@@ -449,6 +464,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     eventBus10.cancel();
     eventBus11.cancel();
     eventBus12.cancel();
+    eventBus13.cancel();
 
     super.dispose();
   }
@@ -633,7 +649,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                                   280,
                                   70,
                                   (myReqWeightCountine.msgBody == null)
-                                      ? ("0.000")
+                                      ? ("-----")
                                       : myReqWeightCountine.msgBody!.weightVal,
                                   55,
                                   constraints,
@@ -1412,7 +1428,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                                 child: Text(
                                   textAlign: TextAlign.right,
                                   (myReqWeightCountine.msgBody == null)
-                                      ? ("0.000")
+                                      ? ("-----")
                                       : myReqWeightCountine.msgBody!.weightVal,
                                   style: const TextStyle(
                                       color: Colors.white, fontSize: 55),
@@ -1972,20 +1988,6 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
       userNameValue = "";
     }
   }
-
-  // void checkProductList() {
-  //   if ((myProductRecList.productRecInfo == null)) {
-  //     productNameList.add("Please select Plu");
-  //     productNameValue = "Please select Plu";
-  //   } else {
-  //     getProductNameList();
-  //     if (!productNameList.contains(productNameValue)) {
-  //       productNameList.add("Please select Plu");
-  //       productNameValue = productNameList[0];
-  //     }
-  //   }
-  //   // getPortList();
-  // }
 
   String pad0(int num) {
     if (num < 10) {

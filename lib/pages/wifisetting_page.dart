@@ -864,12 +864,14 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                                         .primary)),
                                           ),
                                           child: SizedBox(
-                                            width: 100,
+                                            width: 150,
                                             height: 40,
                                             child: Center(
                                               child: Text(
                                                 localizedStrings.button_get_ip,
                                                 textAlign: TextAlign.center,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
                                                 style: const TextStyle(
                                                     fontSize: 20.0),
                                               ),
@@ -898,11 +900,13 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                                         .primary)),
                                           ),
                                           child: SizedBox(
-                                            width: 100,
+                                            width: 150,
                                             height: 40,
                                             child: Center(
                                               child: Text(
                                                 localizedStrings.button_static,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
                                                 textAlign: TextAlign.center,
                                                 style: const TextStyle(
                                                     fontSize: 20.0),
@@ -934,11 +938,13 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                                         .primary)),
                                           ),
                                           child: SizedBox(
-                                            width: 100,
+                                            width: 150,
                                             height: 40,
                                             child: Center(
                                               child: Text(
                                                 localizedStrings.button_dynamic,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
                                                 textAlign: TextAlign.center,
                                                 style: const TextStyle(
                                                     fontSize: 20.0),
@@ -980,11 +986,13 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                             ),
                                           ),
                                           child: SizedBox(
-                                            width: 100,
+                                            width: 150,
                                             height: 40,
                                             child: Center(
                                               child: Text(
                                                 localizedStrings.button_set,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
                                                 style: TextStyle(
                                                     color: Theme.of(context)
                                                         .colorScheme

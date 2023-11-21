@@ -26,6 +26,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "acc_mode_format":
             MessageLookupByLibrary.simpleMessage("Accumulation mode format:"),
         "alignment": MessageLookupByLibrary.simpleMessage("Alignment:"),
+        "application_title":
+            MessageLookupByLibrary.simpleMessage("Applications"),
         "attribute": MessageLookupByLibrary.simpleMessage("Attribute"),
         "auto": MessageLookupByLibrary.simpleMessage("Auto"),
         "barcode_edit": MessageLookupByLibrary.simpleMessage("BarCode Edit"),
@@ -108,6 +110,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "font_reverse":
             MessageLookupByLibrary.simpleMessage("Reverse Contrast:"),
         "gateway": MessageLookupByLibrary.simpleMessage("Gateway:"),
+        "general_configuration_title":
+            MessageLookupByLibrary.simpleMessage("General Configuration"),
         "get_bt_name": MessageLookupByLibrary.simpleMessage("Get name"),
         "get_build_info":
             MessageLookupByLibrary.simpleMessage("Software Information"),

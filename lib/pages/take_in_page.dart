@@ -290,6 +290,10 @@ class TakeInPageState extends State<TakeInPage> {
           setState(() {
             isStart = true;
           });
+        } else {
+          setState(() {
+            isStart = false;
+          });
         }
       }
     });
@@ -646,7 +650,7 @@ class TakeInPageState extends State<TakeInPage> {
                                   280,
                                   70,
                                   (myReqWeightCountine.msgBody == null)
-                                      ? ("0.000")
+                                      ? ("-----")
                                       : myReqWeightCountine.msgBody!.weightVal,
                                   55,
                                   constraints,
@@ -1507,7 +1511,7 @@ class TakeInPageState extends State<TakeInPage> {
                                 child: Text(
                                   textAlign: TextAlign.right,
                                   (myReqWeightCountine.msgBody == null)
-                                      ? ("0.000")
+                                      ? ("-----")
                                       : myReqWeightCountine.msgBody!.weightVal,
                                   style: const TextStyle(
                                       color: Colors.white, fontSize: 55),
