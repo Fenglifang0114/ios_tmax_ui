@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class OffsetData {
-  var x;
-  var y;
-  var width;
-  var height;
+  double x;
+  double y;
+  double width;
+  double height;
   Key key;
   OffsetData(this.x, this.y, this.width, this.height, this.key);
   OffsetData.fromJson(Map<String, dynamic> json)

@@ -30,6 +30,7 @@ import '../dialog/high_low_setting.dart';
 import '../dialog/setting_dialog.dart';
 import 'package:path/path.dart';
 import '../dialog/weight_report_feilds_setting.dart';
+import '../functions/weight_funcs.dart';
 
 const String allMode = '1';
 const String hiMode = '2';
@@ -43,26 +44,30 @@ class CheckWeighersPage extends StatefulWidget {
 }
 
 class _CheckWeighersPageState extends State<CheckWeighersPage> {
-  String dialogString = " ";
-  List<String> items = [];
-  List<DataRow> dataRows = [];
-  late ScrollController _reportScrollerController;
-  late String lastWeight;
-  bool isStart = false;
-  String productNameValue = "";
-  String userNameValue = "";
   List<String> productNameList = [];
   List<String> userNameList = [];
+  List<String> items = [];
+  List<DataRow> dataRows = [];
+  List<WeightReportData> _weightReportDatas = <WeightReportData>[];
+  List<WeightReportData> myWeightReportData = [];
 
-  ///创建文本控制器实例
+  late ScrollController _reportScrollerController;
   final TextEditingController _errorText = TextEditingController();
-  late int weightMode; //0,手动保存，1，连续保存，2，稳定保存
-  late int dateformat;
+  late WeightReportDataSource _weightReportDataSource;
+  final DataGridController _dataGridController = DataGridController();
+
+  late String lastWeight;
   late double zeroRange;
   late bool _isSaveButtonDisabled;
-  late Timer _saveTimer;
   late bool _isStableStatusJudge;
-  int _stableSaveTime = 0;
+  late int weightMode; //0,手动保存，1，连续保存，2，稳定保存
+  late int dateformat;
+
+  late Timer _saveTimer;
+
+  String productNameValue = "";
+  String userNameValue = "";
+  bool isStart = false;
   bool lastStableStatus = false;
   bool _isTiming = false;
   bool _isZero = false;
@@ -70,18 +75,29 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
   bool _isLow = false;
   bool _isOK = false;
   bool _isHigh = false;
-  late WeightReportDataSource _weightReportDataSource;
-  List<WeightReportData> _weightReportDatas = <WeightReportData>[];
-  List<WeightReportData> myWeightReportData = [];
-  final DataGridController _dataGridController = DataGridController();
+  bool _isFirstLayout = true;
+
+  int _stableSaveTime = 0;
+
+  dynamic eventBus1;
+  dynamic eventBus2;
+  dynamic eventBus3;
+  dynamic eventBus4;
+  dynamic eventBus5;
+  dynamic eventBus6;
+  dynamic eventBus7;
+  dynamic eventBus8;
+  dynamic eventBus9;
+  dynamic eventBus10;
+  dynamic eventBus11;
+  dynamic eventBus12;
+  dynamic eventBus13;
 
   void updateTableData(List<WeightReportData> newReportData) {
     _weightReportDataSource.updateData(newReportData);
   }
 
-  void _saveWeight(
-    bool isStable,
-  ) {
+  void _saveWeight(bool isStable) {
     if (_stableSaveTime == 0) {
       _isStableStatusJudge = true;
       _isTiming = false;
@@ -114,8 +130,6 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     });
   }
 
-  bool _isFirstLayout = true;
-
   void _toggleLayout() {
     setState(() {
       _isFirstLayout = !_isFirstLayout;
@@ -133,20 +147,6 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
       _isSaveButtonDisabled = !res;
     });
   }
-
-  dynamic eventBus1;
-  dynamic eventBus2;
-  dynamic eventBus3;
-  dynamic eventBus4;
-  dynamic eventBus5;
-  dynamic eventBus6;
-  dynamic eventBus7;
-  dynamic eventBus8;
-  dynamic eventBus9;
-  dynamic eventBus10;
-  dynamic eventBus11;
-  dynamic eventBus12;
-  dynamic eventBus13;
 
   @override
   void initState() {
@@ -181,8 +181,6 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
       if (mounted) {
         setState(() {
           myDevicedata = event.obj;
-          // getWeight();
-          // getRecords();
         });
       }
     });
@@ -191,8 +189,6 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
         setState(() {
           myProductRecList = event.obj;
           getProductNameList();
-          // getWeight();
-          // getRecords();
         });
       }
     });
@@ -204,12 +200,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
           isStart = true;
           switch (weightMode) {
             case 1:
-              if (myReqWeightCountine.msgBody!.weightVal == "0" ||
-                  myReqWeightCountine.msgBody!.weightVal == "0.0" ||
-                  myReqWeightCountine.msgBody!.weightVal == "0.00" ||
-                  myReqWeightCountine.msgBody!.weightVal == "0.000" ||
-                  myReqWeightCountine.msgBody!.weightVal == "0.0000" ||
-                  myReqWeightCountine.msgBody!.weightVal == "0.00000") {
+              if (PubWeightFuncs.weightIsZero()) {
                 _isZero = true;
                 _isPassZero = true;
               } else {
@@ -238,12 +229,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
 
               break;
             case 2:
-              if (myReqWeightCountine.msgBody!.weightVal == "0" ||
-                  myReqWeightCountine.msgBody!.weightVal == "0.0" ||
-                  myReqWeightCountine.msgBody!.weightVal == "0.00" ||
-                  myReqWeightCountine.msgBody!.weightVal == "0.000" ||
-                  myReqWeightCountine.msgBody!.weightVal == "0.0000" ||
-                  myReqWeightCountine.msgBody!.weightVal == "0.00000") {
+              if (PubWeightFuncs.weightIsZero()) {
                 _isZero = true;
                 _isPassZero = true;
               } else {
@@ -372,19 +358,21 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
         });
       }
     });
-    eventBus10 = eventBus.on<EventGetScaleRecords>().listen((event) {
-      if (mounted) {
-        setState(() {
-          myGetScaleRecords = event.obj;
-          if (myGetScaleRecords.weightRecords!.length != 0) {
-            _addDBdataToReport();
-            getWeightReportData();
-          } else {
-            myWeightReportData.clear();
-            updateTableData(getWeightReportData());
-          }
-        });
+    eventBus10.on<EventGetScaleRecords>().listen((event) {
+      if (!mounted) {
+        return;
       }
+      setState(() {
+        myGetScaleRecords = event.obj;
+        final weightRecordsLength = myGetScaleRecords.weightRecords!.length;
+        if (weightRecordsLength != 0) {
+          _addDBdataToReport();
+          getWeightReportData();
+        } else {
+          myWeightReportData.clear();
+          updateTableData(getWeightReportData());
+        }
+      });
     });
 
     eventBus11 = eventBus.on<EventDeleteRec>().listen((event) {

@@ -47,7 +47,7 @@ class _ReportFeildsSettingDialogState extends State<ReportFeildsSettingDialog> {
     fieldsInit();
   }
 
-  var localizedStrings;
+  dynamic localizedStrings;
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();

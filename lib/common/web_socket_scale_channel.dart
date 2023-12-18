@@ -139,7 +139,7 @@ class WebSocketScaleChannel {
             break;
           case RespMsgType.respDownPrnFmt:
             mobj = ChannelResponse.fromJson(map);
-            eventBus.fire(EventDownloadResponse(mobj));
+            eventBus.fire(EventDownPrnFmtResp(mobj));
             break;
           case RespMsgType.respErrSerial:
             mobj = ChannelResponse.fromJson(map);
@@ -281,7 +281,6 @@ class WebSocketScaleChannel {
     eventBus.fire(EventIpInfo(myIpInfoData));
   }
 
-// TODO:
   Future pasterWifiApInfo(String jsonDataString) async {
     String jsonStrings = jsonDataString;
     if (jsonStrings.contains('error') || jsonStrings.contains('fail')) {

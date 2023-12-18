@@ -9,7 +9,6 @@ import 'package:t_max/data/modifyresult_data.dart';
 import 'package:t_max/data/productlist_data.dart';
 
 import 'package:t_max/data/scalelist_data.dart';
-import 'package:t_max/data/settingparam_data.dart';
 import 'package:t_max/data/userinfo_data.dart';
 import 'package:t_max/data/wifi_list_info.dart';
 import 'package:web_socket_channel/io.dart';

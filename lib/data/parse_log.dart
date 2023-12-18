@@ -1,0 +1,127 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:path/path.dart' as p;
+
+const String myLogName = 'operation.log';
+const String myIpConfig = 'server_ip.config';
+const String myIpListName = 'ip_list.txt';
+
+List<Map<String, dynamic>> parseLog(String contentStr, String targetStr) {
+  RegExp regExp = RegExp(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+){(.+)}');
+
+  List<Map<String, dynamic>> jsonDataList = [];
+  Set<String> uniqueReqSet = {};
+  List<String> lines =
+      LineSplitter.split(contentStr).toList().reversed.toList();
+
+  for (String line in lines) {
+    if (jsonDataList.length == 7) {
+      return jsonDataList;
+    }
+    Match? match = regExp.firstMatch(line);
+    if (match != null) {
+      String jsonText = '{${match.group(2)}}';
+      Map<String, dynamic> jsonData = json.decode(jsonText);
+      String req = jsonData['Req'];
+
+      // 如果 jsonDataList 中已经存在相同的 "Req" 值，则跳过存储
+      if (uniqueReqSet.contains(req) ||
+          (req == 'set_wifi_static_ip' &&
+              uniqueReqSet.contains('set_wifi_dynamic_ip')) ||
+          (req == 'set_wifi_dynamic_ip' &&
+              uniqueReqSet.contains('set_wifi_static_ip'))) {
+        continue;
+      }
+
+      uniqueReqSet.add(req); // 将新的 "Req" 值添加到集合中
+      jsonDataList.add(jsonData);
+    }
+  }
+  return jsonDataList;
+}
+
+String getBtNameFromLog(List<Map<String, dynamic>> jsonDataList) {
+  for (Map<String, dynamic> jsonData in jsonDataList) {
+    String req = jsonData['Req'];
+    String reqData = jsonData['ReqData'];
+    if (req == 'modify_bt_name') {
+      return reqData;
+    }
+  }
+  return '';
+}
+
+String getWifiNameFromLog(List<Map<String, dynamic>> jsonDataList) {
+  for (Map<String, dynamic> jsonData in jsonDataList) {
+    String req = jsonData['Req'];
+    String reqData = jsonData['ReqData'];
+    if (req == 'connect_ap') {
+      try {
+        Map<String, dynamic> parsedJson = jsonDecode(reqData);
+        return parsedJson['ssid'];
+      } catch (e) {
+        return '';
+      }
+    }
+  }
+  return '';
+}
+
+String getIpAddrFromLog(List<Map<String, dynamic>> jsonDataList) {
+  for (Map<String, dynamic> jsonData in jsonDataList) {
+    String req = jsonData['Req'];
+    String reqData = jsonData['ReqData'];
+    if (req == 'set_wifi_static_ip') {
+      try {
+        Map<String, dynamic> parsedJson = jsonDecode(reqData);
+        return parsedJson['ip'];
+      } catch (e) {
+        return '';
+      }
+    }
+  }
+  return '';
+}
+
+List<String> getPrintFmtFromLog(List<Map<String, dynamic>> jsonDataList) {
+  List<String> fmtPaths = [];
+  for (Map<String, dynamic> jsonData in jsonDataList) {
+    String req = jsonData['Req'];
+    String reqData = jsonData['ReqData'];
+    if (req == 'down_print_format_to_scale') {
+      try {
+        Map<String, dynamic> parsedJson = jsonDecode(reqData);
+        fmtPaths = parsedJson['FilePaths'].cast<String>();
+        return fmtPaths;
+      } catch (e) {
+        return fmtPaths;
+      }
+    }
+  }
+  return fmtPaths;
+}
+
+List<String> getSerialOutputFromLog(List<Map<String, dynamic>> jsonDataList) {
+  List<String> outPaths = [];
+  for (Map<String, dynamic> jsonData in jsonDataList) {
+    String req = jsonData['Req'];
+    String reqData = jsonData['ReqData'];
+    if (req == 'set_output_format') {
+      try {
+        Map<String, dynamic> parsedJson = jsonDecode(reqData);
+        outPaths = parsedJson['FilePath'].cast<String>();
+        return outPaths;
+      } catch (e) {
+        return outPaths;
+      }
+    }
+  }
+  return outPaths;
+}
+
+Future<String> getAppFilePath(String fileName) async {
+  String appDirectory = Platform.resolvedExecutable;
+  var directory = p.dirname(appDirectory);
+  final formatfilePath = Directory('$directory\\$fileName');
+  return formatfilePath.path;
+}

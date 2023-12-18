@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 
 import '../data/downloadresponse.dart';
@@ -148,8 +147,7 @@ class _SerialOutputPageState extends State<SerialOutputPage> {
                             outputFileController.text = '';
                             pickFiles(outputFileController);
                           },
-                          // TODO:翻译
-                          child: Text('选择json'),
+                          child: Text(localizedStrings.choose_json_file),
                         ),
                       ),
                     ],
@@ -313,7 +311,7 @@ class _SerialOutputPageState extends State<SerialOutputPage> {
           decoration: BoxDecoration(gradient: boxGradient()),
           child: Row(
             children: [
-              SizedBox(
+              const SizedBox(
                 width: 50,
               ),
               Center(

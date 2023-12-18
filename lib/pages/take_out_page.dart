@@ -26,7 +26,7 @@ import '../dialog/adduser_dialog.dart';
 import '../dialog/setting_dialog.dart';
 import 'package:path/path.dart';
 
-import '../dialog/showWarning.dart';
+import '../dialog/show_warning.dart';
 import '../dialog/weight_report_feilds_setting.dart';
 
 class TakeOutPage extends StatefulWidget {
@@ -272,19 +272,21 @@ class TakeOutPageState extends State<TakeOutPage> {
         });
       }
     });
-    eventBus10 = eventBus.on<EventGetScaleRecords>().listen((event) {
-      if (mounted) {
-        setState(() {
-          myGetScaleRecords = event.obj;
-          if (myGetScaleRecords.weightRecords!.length != 0) {
-            _addDBdataToReport();
-            getWeightReportData();
-          } else {
-            myWeightReportData.clear();
-            updateTableData(getWeightReportData());
-          }
-        });
+    eventBus10.on<EventGetScaleRecords>().listen((event) {
+      if (!mounted) {
+        return;
       }
+      setState(() {
+        myGetScaleRecords = event.obj;
+        final weightRecordsLength = myGetScaleRecords.weightRecords!.length;
+        if (weightRecordsLength != 0) {
+          _addDBdataToReport();
+          getWeightReportData();
+        } else {
+          myWeightReportData.clear();
+          updateTableData(getWeightReportData());
+        }
+      });
     });
     eventBus11 = eventBus.on<EventRegWeightResp>().listen((event) {
       if (mounted) {

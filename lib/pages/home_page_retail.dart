@@ -15,7 +15,7 @@ import '../dialog/get_build_info_dialog.dart';
 import '../dialog/language_setting.dart';
 import '../functions/methods.dart';
 import '../generated/l10n.dart';
-import '../widget/bluetoothsetting.dart';
+import '../widget/bluetooth_setting.dart';
 import '../widget/box_gradient.dart';
 import '../widget/custom_circle_icon.dart';
 import '../widget/custom_setting.dart';
@@ -64,12 +64,6 @@ class _RetailHomePageState extends State<RetailHomePage> {
   ];
   bool isCardHovered = false;
   bool isCardClicked = false;
-
-  void _handleCardHover(bool isHovered) {
-    setState(() {
-      isCardHovered = isHovered;
-    });
-  }
 
   // 初始文字颜色
 
@@ -509,7 +503,6 @@ class _RetailHomePageState extends State<RetailHomePage> {
                         child: GestureDetector(
                           onTap: myLicenseInfo.isValid
                               ? () {
-                                  //TODO:  标签设计
                                   showLabelDesign(myLicenseInfo.isValid);
                                 }
                               : null,
@@ -524,7 +517,6 @@ class _RetailHomePageState extends State<RetailHomePage> {
                         cursor: SystemMouseCursors.click, // 设置光标为手的形状
                         child: GestureDetector(
                           onTap: () {
-                            //TODO:  PLU下载
                             setState(() {
                               stopCheckSerialPort();
                               Navigator.push(
@@ -546,7 +538,6 @@ class _RetailHomePageState extends State<RetailHomePage> {
                         cursor: SystemMouseCursors.click, // 设置光标为手的形状
                         child: GestureDetector(
                           onTap: () {
-                            //TODO:  Update FirmWare下载
                             setState(() {
                               stopCheckSerialPort();
                               showUpdateFirmWareDialog(context);
@@ -563,7 +554,6 @@ class _RetailHomePageState extends State<RetailHomePage> {
                         cursor: SystemMouseCursors.click, // 设置光标为手的形状
                         child: GestureDetector(
                           onTap: () {
-                            //TODO:  buildInfo
                             setState(() {
                               showBuildInfo();
                             });
@@ -722,7 +712,6 @@ class _RetailHomePageState extends State<RetailHomePage> {
         return const ModifyComPortPage();
       },
     ).then((value) => _startTimer(5));
-    ;
   }
 
   void showLicenseDialog(BuildContext context) {

@@ -272,7 +272,7 @@ class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
         return null;
       }
     } catch (e) {
-      print('文件选择出错：$e');
+      // print('文件选择出错：$e');
       return null;
     }
   }

@@ -34,13 +34,6 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
   ];
   bool isCardHovered = false;
   bool isCardClicked = false;
-
-  void _handleCardHover(bool isHovered) {
-    setState(() {
-      isCardHovered = isHovered;
-    });
-  }
-
   // 初始文字颜色
   @override
   void initState() {

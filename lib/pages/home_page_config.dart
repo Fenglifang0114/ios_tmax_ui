@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:t_max/data/dialog_data.dart';
 import 'package:t_max/data/license_data.dart';
 import 'package:t_max/data/scale_info_from_scale.dart';
@@ -17,13 +16,14 @@ import '../dialog/get_build_info_dialog.dart';
 import '../dialog/language_setting.dart';
 import '../functions/methods.dart';
 import '../generated/l10n.dart';
-import '../widget/bluetoothsetting.dart';
+import '../widget/bluetooth_setting.dart';
 import '../widget/box_gradient.dart';
 import '../widget/custom_circle_icon.dart';
 import '../widget/custom_setting.dart';
 import '../dialog/license_info.dart';
 import '../widget/update_firmware.dart';
 import '../widget/version.dart';
+import 'batch_delivery.dart';
 import 'custom_serial_protocol_page.dart';
 import 'modify_com_port_page.dart';
 
@@ -65,12 +65,6 @@ class _HomePageState extends State<HomePage> {
   ];
   bool isCardHovered = false;
   bool isCardClicked = false;
-
-  void _handleCardHover(bool isHovered) {
-    setState(() {
-      isCardHovered = isHovered;
-    });
-  }
 
   // 初始文字颜色
 
@@ -549,7 +543,6 @@ class _HomePageState extends State<HomePage> {
                         cursor: SystemMouseCursors.click, // 设置光标为手的形状
                         child: GestureDetector(
                           onTap: () {
-                            //TODO:  Update FirmWare下载
                             setState(() {
                               stopCheckSerialPort();
                               showUpdateFirmWareDialog(context);
@@ -566,7 +559,6 @@ class _HomePageState extends State<HomePage> {
                         cursor: SystemMouseCursors.click, // 设置光标为手的形状
                         child: GestureDetector(
                           onTap: () {
-                            //TODO:  buildInfo
                             setState(() {
                               showBuildInfo();
                             });
@@ -611,7 +603,6 @@ class _HomePageState extends State<HomePage> {
                       child: GestureDetector(
                         onTap: myLicenseInfo.isValid
                             ? () {
-                                //TODO:  标签设计
                                 showLabelDesign(myLicenseInfo.isValid);
                               }
                             : null,
@@ -626,7 +617,6 @@ class _HomePageState extends State<HomePage> {
                       cursor: SystemMouseCursors.click, // 设置光标为手的形状
                       child: GestureDetector(
                         onTap: () {
-                          //TODO:  打印格式下载
                           stopCheckSerialPort();
                           Navigator.push(
                             context,
@@ -646,7 +636,6 @@ class _HomePageState extends State<HomePage> {
                       child: GestureDetector(
                         onTap: myLicenseInfo.isValid
                             ? () {
-                                //TODO:  串口输出
                                 stopCheckSerialPort();
                                 Navigator.push(
                                   context,
@@ -667,6 +656,27 @@ class _HomePageState extends State<HomePage> {
                             localizedStrings.serial_output,
                             "assets/images/line.png",
                             Icons.usb_sharp,
+                            myLicenseInfo.isValid),
+                      ),
+                    ),
+                    MouseRegion(
+                      cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                      child: GestureDetector(
+                        onTap: myLicenseInfo.isValid
+                            ? () {
+                                stopCheckSerialPort();
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const BatchDeliveryPage()),
+                                ).then((value) => _startTimer(5));
+                              }
+                            : null,
+                        child: customFunctionCard(
+                            'Batch delivery',
+                            "assets/images/line.png",
+                            Icons.system_update_alt,
                             myLicenseInfo.isValid),
                       ),
                     ),
@@ -728,7 +738,6 @@ class _HomePageState extends State<HomePage> {
         return const ModifyComPortPage();
       },
     ).then((value) => _startTimer(5));
-    ;
   }
 
   void showLicenseDialog(BuildContext context) {

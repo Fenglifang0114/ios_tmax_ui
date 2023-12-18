@@ -23,7 +23,7 @@ class _HighLowSettingDialogState extends State<HighLowSettingDialog> {
     super.initState();
   }
 
-  var localizedStrings;
+  dynamic localizedStrings;
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();

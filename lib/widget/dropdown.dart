@@ -5,41 +5,49 @@ import '../../eventbus/eventbus.dart';
 
 // ignore: must_be_immutable
 class Dropdown extends StatefulWidget {
-  Dropdown(this.dropDownList, {Key? key}) : super(key: key);
-  late List dropDownList = [];
+  final List<String> dropDownList;
+
+  const Dropdown(this.dropDownList, {Key? key}) : super(key: key);
+
   @override
-  State<Dropdown> createState() => DropdownState(dropDownList);
+  State<Dropdown> createState() => DropdownState();
 }
 
 class DropdownState extends State<Dropdown> {
-  var dropDownList;
-  DropdownState(this.dropDownList, {Key? key}) : super();
+  late String selectedValue;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedValue = widget.dropDownList.first;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 53,
       width: 200,
-      padding: const EdgeInsets.all(0),
       child: DropdownButtonFormField<String>(
         isExpanded: true,
-        // decoration: const InputDecoration(border: OutlineInputBorder()),
-        // 设置默认值
-        value: dropDownList[0],
-        // 选择回调
-        onChanged: (String? newPosition) {
-          myDialogData.msg = newPosition.toString();
-          if (kDebugMode) {
-            print(myDialogData.msg);
-          }
+        value: selectedValue,
+        onChanged: (String? newValue) {
           setState(() {
+            selectedValue = newValue!;
+            myDialogData.msg = selectedValue;
+            if (kDebugMode) {
+              print(myDialogData.msg);
+            }
             eventBus.fire(EventDialogData(myDialogData));
           });
         },
-        // 传入可选的数组
-        items: dropDownList.map<DropdownMenuItem<String>>((String value) {
-          return DropdownMenuItem(value: value, child: Text(value));
-        }).toList(),
+        items: widget.dropDownList
+            .map<DropdownMenuItem<String>>(
+              (String value) => DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              ),
+            )
+            .toList(),
       ),
     );
   }

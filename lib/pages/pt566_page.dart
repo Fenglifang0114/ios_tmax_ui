@@ -17,10 +17,10 @@ import '../eventbus/eventbus.dart';
 import 'package:path/path.dart' as p;
 import 'package:file_picker/file_picker.dart';
 import '../main.dart';
-import '../widget/draggablefliating.dart';
-import '../widget/dropdown copy.dart';
-import '../widget/linepainter.dart';
-import '../widget/textlistItem.dart';
+import '../widget/draggable_fliating.dart';
+import '../widget/dropdown_copy.dart';
+import '../widget/line_painter.dart';
+import '../widget/textlist_item.dart';
 
 class PT566Page extends StatefulWidget {
   const PT566Page({Key? key}) : super(key: key);
@@ -341,23 +341,23 @@ class _PT566PageState extends State<PT566Page> {
         });
       }
     });
-    _eventbus6 = eventBus.on<EventDownloadResponse>().listen((event) {
+    _eventbus6 = eventBus.on<EventDownPrnFmtResp>().listen((event) {
       if (mounted) {
         setState(() {
           downloadStatus = true;
-          myDownloadResponse = event.obj;
-          if (myDownloadResponse.msgBody.isNotEmpty) {
+          myDownPrnFmtResp = event.obj;
+          if (myDownPrnFmtResp.msgBody.isNotEmpty) {
             setState(() {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text(
-                      (myDownloadResponse.msgBody.contains('ok'))
+                      (myDownPrnFmtResp.msgBody.contains('ok'))
                           ? 'Download successful!'
-                          : myDownloadResponse.msgBody,
+                          : myDownPrnFmtResp.msgBody,
                       style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold)), ////此处需要秤回复
                   duration: const Duration(seconds: 3),
-                  backgroundColor: (myDownloadResponse.msgBody.contains('ok'))
+                  backgroundColor: (myDownPrnFmtResp.msgBody.contains('ok'))
                       ? Colors.green.shade900
                       : Colors.red.shade900));
             });

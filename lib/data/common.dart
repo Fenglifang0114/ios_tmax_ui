@@ -1,5 +1,5 @@
-const CLOCK_INTERVAL = Duration(microseconds: 1000);
-const ChineseWeekDays = <int, String>{
+const clockInterval = Duration(microseconds: 1000);
+const chineseWeekDays = <int, String>{
   1: '一',
   2: '二',
   3: '三',

@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
-import 'package:path/path.dart' as p;
-
 import '../data/download_prt_fmt.dart';
 import '../data/downloadresponse.dart';
 import '../data/scalecmd_data.dart';
@@ -152,8 +150,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                             pluFileController.text = '';
                             pickFiles(pluFileController);
                           },
-                          // TODO:翻译
-                          child: Text('Choose Product Excel'),
+                          child: const Text('Choose Product Excel'),
                         ),
                       ),
                     ],
@@ -374,7 +371,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
           decoration: BoxDecoration(gradient: boxGradient()),
           child: Row(
             children: [
-              SizedBox(
+              const SizedBox(
                 width: 50,
               ),
               Center(

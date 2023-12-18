@@ -38,13 +38,13 @@ class TrialPageState extends State<TrialPage> {
   dynamic _eventbus3;
   TextEditingController pidController = TextEditingController();
   TextEditingController licenseController = TextEditingController();
-  String system_id = '';
+  String systemId = '';
   String errMessage = '';
 
   @override
   void initState() {
     super.initState();
-    pidController.text = system_id;
+    pidController.text = systemId;
     licenseController.text = '';
 
     _eventbus1 = eventBus.on<EventLicenseData>().listen((event) {
@@ -58,7 +58,7 @@ class TrialPageState extends State<TrialPage> {
             if (strList[0] == 'true') {
               isPass = true;
             }
-            pidController.text = system_id + pId;
+            pidController.text = systemId + pId;
             myLicenseInfo.isValid = isPass;
             myLicenseInfo.pId = pId;
             myLicenseInfo.liceseDate = dueDate;
@@ -110,7 +110,7 @@ class TrialPageState extends State<TrialPage> {
             if (strList[0] == 'true') {
               liceseKey = true;
             }
-            pidController.text = system_id + pId;
+            pidController.text = systemId + pId;
           }
           if (liceseKey) {
             if (myLicenseInfo.isValid) {
@@ -153,7 +153,7 @@ class TrialPageState extends State<TrialPage> {
   Widget build(BuildContext context) {
     final _width = MediaQuery.of(context).size.width;
     final _height = MediaQuery.of(context).size.height;
-    system_id = localizedStrings.system_id;
+    systemId = localizedStrings.system_id;
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: themeColor(),
@@ -270,7 +270,7 @@ class TrialPageState extends State<TrialPage> {
                                                         .colorScheme
                                                         .error)),
                                           )
-                                        : Text(''),
+                                        : const Text(''),
                                     Text(
                                         (liceseKey)
                                             ? localizedStrings.passed_message

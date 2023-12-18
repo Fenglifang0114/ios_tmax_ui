@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gbk_codec/gbk_codec.dart';
 import 'package:t_max/data/downloadresponse.dart';
-import 'package:t_max/pages/dow_prn_fmt_page.dart';
 import '../data/barcoderowdata.dart';
 import '../data/formatdata.dart';
 import '../data/item_key_list.dart';
@@ -14,6 +13,7 @@ import '../data/pagesize.dart';
 import '../data/scalecmd_data.dart';
 import '../data/selectedcontrol.dart';
 import '../data/text.dart';
+import '../data/writelog.dart';
 import '../dialog/barcodeedit_dialog.dart';
 import '../dialog/qrcodeedit_dialog.dart';
 import '../eventbus/eventbus.dart';
@@ -21,10 +21,10 @@ import 'package:path/path.dart' as p;
 import 'package:file_picker/file_picker.dart';
 import '../generated/l10n.dart';
 import '../main.dart';
-import '../widget/draggablefliating.dart';
-import '../widget/dropdown copy.dart';
-import '../widget/linepainter.dart';
-import '../widget/textlistItem.dart';
+import '../widget/draggable_fliating.dart';
+import '../widget/dropdown_copy.dart';
+import '../widget/line_painter.dart';
+import '../widget/textlist_item.dart';
 
 class LabelDesignPage extends StatefulWidget {
   const LabelDesignPage({Key? key}) : super(key: key);
@@ -342,22 +342,22 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         });
       }
     });
-    _eventbus6 = eventBus.on<EventDownloadResponse>().listen((event) {
+    _eventbus6 = eventBus.on<EventDownPrnFmtResp>().listen((event) {
       if (mounted) {
         setState(() {
           downloadStatus = true;
-          myDownloadResponse = event.obj;
-          if (myDownloadResponse.msgBody.isNotEmpty) {
+          myDownPrnFmtResp = event.obj;
+          if (myDownPrnFmtResp.msgBody.isNotEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text(
-                    (myDownloadResponse.msgBody.contains('ok'))
+                    (myDownPrnFmtResp.msgBody.contains('ok'))
                         ? 'Download successful!'
-                        : myDownloadResponse.msgBody,
+                        : myDownPrnFmtResp.msgBody,
                     style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.normal)), ////此处需要秤回复
                 duration: const Duration(seconds: 3),
-                backgroundColor: (myDownloadResponse.msgBody.contains('ok'))
+                backgroundColor: (myDownPrnFmtResp.msgBody.contains('ok'))
                     ? Colors.green.shade900
                     : Colors.red.shade900));
           }
@@ -1057,41 +1057,41 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     }
   }
 
-  void _showConfirmationDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext ctx) {
-        return AlertDialog(
-          title: const Text(
-            'Confirmation',
-            style: TextStyle(color: Color.fromARGB(255, 15, 71, 161)),
-          ),
-          content: const Text('Please confirm the format is saved as CSV?'),
-          actions: <Widget>[
-            OutlinedButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop(false); // 不跳转
-              },
-            ),
-            OutlinedButton(
-              child: const Text('Confirm'),
-              onPressed: () {
-                Navigator.of(context).pop(true); // 跳转
-              },
-            ),
-          ],
-        );
-      },
-    ).then((confirmed) {
-      if (confirmed) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => DownloadPage()),
-        );
-      }
-    });
-  }
+  // void _showConfirmationDialog(BuildContext context) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext ctx) {
+  //       return AlertDialog(
+  //         title: const Text(
+  //           'Confirmation',
+  //           style: TextStyle(color: Color.fromARGB(255, 15, 71, 161)),
+  //         ),
+  //         content: const Text('Please confirm the format is saved as CSV?'),
+  //         actions: <Widget>[
+  //           OutlinedButton(
+  //             child: const Text('Cancel'),
+  //             onPressed: () {
+  //               Navigator.of(context).pop(false); // 不跳转
+  //             },
+  //           ),
+  //           OutlinedButton(
+  //             child: const Text('Confirm'),
+  //             onPressed: () {
+  //               Navigator.of(context).pop(true); // 跳转
+  //             },
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   ).then((confirmed) {
+  //     if (confirmed) {
+  //       Navigator.push(
+  //         context,
+  //         MaterialPageRoute(builder: (context) => DownloadPage()),
+  //       );
+  //     }
+  //   });
+  // }
 
   Future pickFiles() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -1149,10 +1149,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
 
   Widget _buildLine(int index, Offset start, Offset end) {
     _offset = start;
-    print('start     ');
-    print(start);
-    print('end     ');
-    print(end);
 
     return Stack(children: [
       Positioned(
@@ -1166,7 +1162,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         child: Listener(
           onPointerMove: (PointerMoveEvent pointerMoveEvent) {
             _updatePosition(pointerMoveEvent);
-            print(_offset);
+
             setState(() {
               _isDragging = true;
             });
@@ -1177,10 +1173,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
             final line = _lineList[index];
             setState(() {
               _lineList[index] = Line(_offset, line.end + Offset(dx, dy));
-              print('_offset   ');
-              print(_offset);
-              print('_offset  end   ');
-              print(line.end + Offset(dx, dy));
             });
 
             if (_isDragging) {
@@ -1201,47 +1193,47 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     ]);
   }
 
-  void _onLineDragged(int index, DragUpdateDetails details) {
-    setState(() {
-      final line = _lineList[index];
-      if ((_getPageWidth() < (line.start.dx + details.delta.dx)) ||
-          _getPageHeight() - 10 < (line.end.dy + details.delta.dy) ||
-          _getPageWidth() < (line.end.dx + details.delta.dx) ||
-          _getPageHeight() - 10 < (line.start.dy + details.delta.dy) ||
-          (0 > (line.start.dx + details.delta.dx)) ||
-          0 > (line.end.dy + details.delta.dy) ||
-          0 > (line.end.dx + details.delta.dx) ||
-          0 > (line.start.dy + details.delta.dy)) {
-        return;
-      }
-      var _tmpOffsetDx = ((details.delta.dx).toInt()).roundToDouble();
-      var _tmpOffsetDy = ((details.delta.dy).toInt()).roundToDouble();
-      Offset tmpOffset = Offset(_tmpOffsetDx, _tmpOffsetDy);
-      _lineList[index] = Line(line.start + tmpOffset, line.end + tmpOffset);
-    });
-  }
+  // void _onLineDragged(int index, DragUpdateDetails details) {
+  //   setState(() {
+  //     final line = _lineList[index];
+  //     if ((_getPageWidth() < (line.start.dx + details.delta.dx)) ||
+  //         _getPageHeight() - 10 < (line.end.dy + details.delta.dy) ||
+  //         _getPageWidth() < (line.end.dx + details.delta.dx) ||
+  //         _getPageHeight() - 10 < (line.start.dy + details.delta.dy) ||
+  //         (0 > (line.start.dx + details.delta.dx)) ||
+  //         0 > (line.end.dy + details.delta.dy) ||
+  //         0 > (line.end.dx + details.delta.dx) ||
+  //         0 > (line.start.dy + details.delta.dy)) {
+  //       return;
+  //     }
+  //     var _tmpOffsetDx = ((details.delta.dx).toInt()).roundToDouble();
+  //     var _tmpOffsetDy = ((details.delta.dy).toInt()).roundToDouble();
+  //     Offset tmpOffset = Offset(_tmpOffsetDx, _tmpOffsetDy);
+  //     _lineList[index] = Line(line.start + tmpOffset, line.end + tmpOffset);
+  //   });
+  // }
 
-  void _onCircleDragged(
-      int index, Offset oldPosition, Offset newPosition, int circleIndex) {
-    setState(() {
-      final line = _lineList[index];
-      if ((_getPageWidth() < (newPosition.dx)) ||
-          _getPageHeight() - 10 < (newPosition.dy) ||
-          (0 > (newPosition.dx)) ||
-          0 > (newPosition.dy)) {
-        return;
-      }
-      var _tmpOffsetDx = ((newPosition.dx).toInt()).roundToDouble();
-      var _tmpOffsetDy = ((newPosition.dy).toInt()).roundToDouble();
-      Offset tmpOffset = Offset(_tmpOffsetDx, _tmpOffsetDy);
+  // void _onCircleDragged(
+  //     int index, Offset oldPosition, Offset newPosition, int circleIndex) {
+  //   setState(() {
+  //     final line = _lineList[index];
+  //     if ((_getPageWidth() < (newPosition.dx)) ||
+  //         _getPageHeight() - 10 < (newPosition.dy) ||
+  //         (0 > (newPosition.dx)) ||
+  //         0 > (newPosition.dy)) {
+  //       return;
+  //     }
+  //     var _tmpOffsetDx = ((newPosition.dx).toInt()).roundToDouble();
+  //     var _tmpOffsetDy = ((newPosition.dy).toInt()).roundToDouble();
+  //     Offset tmpOffset = Offset(_tmpOffsetDx, _tmpOffsetDy);
 
-      if (circleIndex == 1) {
-        _lineList[index] = Line(line.start, tmpOffset);
-      } else {
-        _lineList[index] = Line(tmpOffset, line.end);
-      }
-    });
-  }
+  //     if (circleIndex == 1) {
+  //       _lineList[index] = Line(line.start, tmpOffset);
+  //     } else {
+  //       _lineList[index] = Line(tmpOffset, line.end);
+  //     }
+  //   });
+  // }
 
   String pad0(int num) {
     if (num < 10) {
@@ -1309,11 +1301,11 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     }
   }
 
-  void sendFormatToScale(String modifyString) {
+  void sendFormatToScale(String modifyString) async {
     myScaleCmd.cmdMode = "down_print_format_to_scale";
     myScaleCmd.cmdData = modifyString;
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
-    // MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
+    writelog(jsonEncode(myScaleCmd));
   }
 
   int _getRotation(int rotation) {
@@ -1548,10 +1540,10 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     ).convert(csvData);
   }
 
-  Future<File> get _localFilepath async {
-    final directory = p.dirname(Platform.script.toFilePath());
-    return File(p.join(directory, 'fromatdata.json'));
-  }
+  // Future<File> get _localFilepath async {
+  //   final directory = p.dirname(Platform.script.toFilePath());
+  //   return File(p.join(directory, 'fromatdata.json'));
+  // }
 
   _saveFormatDataToJson(List list, String path) async {
     try {
@@ -1904,13 +1896,13 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     );
   }
 
-  void _createLine() {
-    const start = Offset(10, 100);
-    const end = Offset(100, 100);
-    setState(() {
-      _lineList.add(Line(start, end));
-    });
-  }
+  // void _createLine() {
+  //   const start = Offset(10, 100);
+  //   const end = Offset(100, 100);
+  //   setState(() {
+  //     _lineList.add(Line(start, end));
+  //   });
+  // }
 
   void _onUpdate(int i) {
     textItemList.fillRange(

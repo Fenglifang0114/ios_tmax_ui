@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'package:t_max/data/writelog.dart';
+
+import '../data/download_prt_fmt.dart';
 import '../data/scalecmd_data.dart';
 import '../data/settingparam_data.dart';
 import '../main.dart';
@@ -58,6 +61,7 @@ class PublicFunctions {
     myScaleCmd.cmdMode = 'change_wifi_mode';
     myScaleCmd.cmdData = '';
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+    writelog(jsonEncode(myScaleCmd));
   }
 
   static void reScanApList() {
@@ -88,6 +92,7 @@ class PublicFunctions {
     myScaleCmd.cmdMode = "modify_scale";
     myScaleCmd.cmdData = modifyString;
     MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
+    writelog(jsonEncode(myScaleCmd));
   }
 
   static void getWeight() {
@@ -112,12 +117,14 @@ class PublicFunctions {
     myScaleCmd.cmdMode = "zero";
     myScaleCmd.cmdData = "";
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+    writelog(jsonEncode(myScaleCmd));
   }
 
   static void performTare() {
     myScaleCmd.cmdMode = "tare";
     myScaleCmd.cmdData = "";
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+    writelog(jsonEncode(myScaleCmd));
   }
 
   static void getRecords() {
@@ -144,28 +151,45 @@ class PublicFunctions {
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
 
-  static void modifyBtEmissionPower3() {
+  static void modifyBtPowerStrong() {
     myScaleCmd.cmdMode = "send_data_to_bt";
     myScaleCmd.cmdData = "TTM:TPL-(+10)";
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+    writelog(jsonEncode(myScaleCmd));
   }
 
-  static void modifyBtEmissionPower2() {
+  static void modifyBtPowerNormal() {
     myScaleCmd.cmdMode = "send_data_to_bt";
     myScaleCmd.cmdData = "TTM:TPL-(+6)";
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+    writelog(jsonEncode(myScaleCmd));
   }
 
-  static void modifyBtEmissionPower1() {
+  static void modifyBtPowerWeak() {
     myScaleCmd.cmdMode = "send_data_to_bt";
     myScaleCmd.cmdData = "TTM:TPL-(0)";
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+    writelog(jsonEncode(myScaleCmd));
   }
 
   static void getBtName() {
     myScaleCmd.cmdMode = "send_data_to_bt";
     myScaleCmd.cmdData = "TTM:NAM-?";
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  static void modifyBtName(String btName) {
+    myScaleCmd.cmdMode = "modify_bt_name";
+    myScaleCmd.cmdData = "btName";
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+    writelog(jsonEncode(myScaleCmd));
+  }
+
+  static void setWifiDynamicMode() {
+    myScaleCmd.cmdMode = 'set_wifi_dynamic_ip';
+    myScaleCmd.cmdData = '';
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+    writelog(jsonEncode(myScaleCmd));
   }
 
   static void updateLicense(String license) {
@@ -261,5 +285,14 @@ class PublicFunctions {
     } else if (mySettingParam.scaleMode == 3) {
       PublicFunctions.getUIConfTakeOut();
     }
+  }
+
+  static void sendOutoutFmtToScale(List<String> list) async {
+    myDownLoadSetOutputFmt.filePath = list;
+    String json = jsonEncode(myDownLoadSetOutputFmt);
+    myScaleCmd.cmdMode = "set_output_format";
+    myScaleCmd.cmdData = json;
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+    writelog(jsonEncode(myScaleCmd));
   }
 }

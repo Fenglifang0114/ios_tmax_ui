@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../pages/home_page.dart';
+import '../pages/home_page_config.dart';
 import 'register_warn_dialog.dart';
 
 TextEditingController computerid = TextEditingController();

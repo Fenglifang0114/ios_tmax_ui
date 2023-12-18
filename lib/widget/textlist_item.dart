@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import '../../data/selectedcontrol.dart';
 import '../../data/text.dart';
 import '../../eventbus/eventbus.dart';
-import 'linepainter.dart';
+import 'line_painter.dart';
 import 'package:barcode_widget/barcode_widget.dart';
 import 'dart:math';
 
-import 'rectanglepainter.dart';
+import 'rectangle_painter.dart';
 
 class TextItem extends StatefulWidget {
   // ignore: prefer_const_constructors_in_immutables
@@ -95,7 +95,6 @@ class TextItemState extends State<TextItem> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     _eventbus1.cancel();
     super.dispose();
   }
@@ -264,19 +263,8 @@ class TextItemState extends State<TextItem> {
   }
 
   Widget buildLine() {
-    double dx = double.parse(widget.x2Pos.toString()) -
-        double.parse(widget.xPos.toString());
-    double dy = double.parse(widget.y2Pos.toString()) -
-        double.parse(widget.yPos.toString());
-    double radians = atan2(dy, dx);
-    double degrees = radians * 180 / pi;
-    final lineLength = sqrt(pow(dx, 2) + pow(dy, 2));
     // print('widget.x2Pos.toString()  ' + widget.x2Pos.toString());
     // print('widget.xPos.toString()  ' + widget.xPos.toString());
-
-    double widthValue = dx.abs();
-
-    double heightValue = dy.abs();
     return Transform.rotate(
         angle: 0, //degrees.abs(), //旋转角度  pi/2  90度
         child: Container(

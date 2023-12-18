@@ -33,10 +33,10 @@ class LinePainter extends CustomPainter {
       endPoint,
       linePaint,
     );
-    print('startPoint.dx  ' + startPoint.dx.toString());
-    print('startPoint.dy  ' + startPoint.dy.toString());
-    print('endPoint.dx  ' + endPoint.dx.toString());
-    print('endPoint.dy  ' + endPoint.dy.toString());
+    // print('startPoint.dx  ' + startPoint.dx.toString());
+    // print('startPoint.dy  ' + startPoint.dy.toString());
+    // print('endPoint.dx  ' + endPoint.dx.toString());
+    // print('endPoint.dy  ' + endPoint.dy.toString());
   }
 
   @override

@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,6 +5,7 @@ import 'package:t_max/data/respdata_data.dart';
 import 'package:t_max/data/scalecmd_data.dart';
 import 'package:t_max/data/wifi_ap_info.dart';
 import 'package:t_max/data/wifi_list_info.dart';
+import 'package:t_max/data/writelog.dart';
 import 'package:t_max/main.dart';
 import '../data/downloadresponse.dart';
 import '../data/ipinfodata.dart';
@@ -38,7 +38,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
   bool _isValidIP = true;
   bool _isValidMask = true;
   bool _isValidGateway = true;
-  bool _isValidDns = true;
+  // bool _isValidDns = true;
   bool _isStatic = false;
   bool _enableRefresh = false;
   String bssId = '';
@@ -46,7 +46,6 @@ class WifiSettingPageState extends State<WifiSettingPage> {
   String connectedMac = '';
   bool isConnecting = false;
   bool alreadyConnected = false;
-  Timer? _timer;
 
   dynamic _eventbus1;
   dynamic _eventbus2;
@@ -80,7 +79,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
   }
 
   var errorMessage = 'Obtaining AP list and Ip info,please wait...';
-  var localizedStrings;
+  dynamic localizedStrings;
   String setMessage = '';
   @override
   void didChangeDependencies() {
@@ -135,17 +134,14 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     _eventbus2 = eventBus.on<EventConnectDynamicIp>().listen((event) {
       if (mounted) {
         setState(() {
-          myConnectDynamicIpResponse = event.obj;
-          if (myConnectDynamicIpResponse.msgBody.isNotEmpty) {
-            if (myConnectDynamicIpResponse.msgBody.contains('ok')) {
+          mySetDynamicIpResp = event.obj;
+          if (mySetDynamicIpResp.msgBody.isNotEmpty) {
+            if (mySetDynamicIpResp.msgBody.contains('ok')) {
               isConnecting = false;
               errorMessage = 'Obtaining IP, please wait...';
-              _timer = Timer(const Duration(seconds: 2), () {
-                PublicFunctions.getApInfo();
-              });
             } else {
               isConnecting = false;
-              errorMessage = myConnectDynamicIpResponse.msgBody;
+              errorMessage = mySetDynamicIpResp.msgBody;
               PublicFunctions.getApInfo();
             }
           }
@@ -155,9 +151,9 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     _eventbus3 = eventBus.on<EventConnectStaticIp>().listen((event) {
       if (mounted) {
         setState(() {
-          myConnectStaticIpResponse = event.obj;
-          if (myConnectStaticIpResponse.msgBody.isNotEmpty) {
-            if (myConnectStaticIpResponse.msgBody.contains('ok')) {
+          mySetStaticIpResp = event.obj;
+          if (mySetStaticIpResp.msgBody.isNotEmpty) {
+            if (mySetStaticIpResp.msgBody.contains('ok')) {
               isConnecting = false;
               if (alreadyConnected) {
                 errorMessage = 'Obtaining IP, please wait...';
@@ -166,7 +162,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                 connectAp();
               }
             } else {
-              errorMessage = myConnectStaticIpResponse.msgBody;
+              errorMessage = mySetStaticIpResp.msgBody;
             }
           }
         });
@@ -269,9 +265,6 @@ class WifiSettingPageState extends State<WifiSettingPage> {
             if (myConnectApResponse.msgBody.contains('ok')) {
               isConnecting = false;
               errorMessage = 'Obtaining IP, please wait...';
-              _timer = Timer(const Duration(seconds: 2), () {
-                PublicFunctions.getApInfo();
-              });
             } else {
               isConnecting = false;
               errorMessage = myConnectApResponse.msgBody;
@@ -966,7 +959,8 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                                         // _isValidIP = true;
                                                         // _isValidMask = true;
                                                       });
-                                                      setDynamicMode();
+                                                      PublicFunctions
+                                                          .setWifiDynamicMode();
                                                     }
                                                   : null,
                                         ),
@@ -1081,25 +1075,25 @@ class WifiSettingPageState extends State<WifiSettingPage> {
   //   MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   // }
 
-  void _startTimer(int time) {
-    setState(() {
-      isConnecting = true;
-    });
+  // void _startTimer(int time) {
+  //   setState(() {
+  //     isConnecting = true;
+  //   });
 
-    _timer = Timer(Duration(seconds: time), () {
-      setState(() {
-        isConnecting = false;
-        errorMessage = 'Time out!';
-      });
-    });
-  }
+  //   _timer = Timer(Duration(seconds: time), () {
+  //     setState(() {
+  //       isConnecting = false;
+  //       errorMessage = 'Time out!';
+  //     });
+  //   });
+  // }
 
-  void _stopTimer() {
-    setState(() {
-      isConnecting = false;
-    });
-    _timer?.cancel(); // 停止计时器
-  }
+  // void _stopTimer() {
+  //   setState(() {
+  //     isConnecting = false;
+  //   });
+  //   _timer?.cancel(); // 停止计时器
+  // }
 
   void connectAp() {
     myScaleCmd.cmdMode = 'connect_ap';
@@ -1108,22 +1102,16 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     myConnectApInfo.bssid = bssId; //手动输入的如何处理？id写-1
     myScaleCmd.cmdData = jsonEncode(myConnectApInfo).toString();
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
-  }
-
-  void setDynamicMode() {
-    myScaleCmd.cmdMode = 'set_wifi_dynamic_ip';
-    myScaleCmd.cmdData = '';
-    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+    writelog(jsonEncode(myScaleCmd));
   }
 
   void connectDynamicIp() {
-    if (myWiFiAPInfo != null &&
-        myWiFiAPInfo.ssid == ssidController.text &&
+    if (myWiFiAPInfo.ssid == ssidController.text &&
         myWiFiAPInfo.bssid == bssId) {
       isConnecting = false;
       errorMessage = 'You are already connected!';
     } else {
-      myConnectDynamicIpResponse.msgBody = '';
+      mySetDynamicIpResp.msgBody = '';
       connectAp();
     }
   }
@@ -1133,8 +1121,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     String inputIp = ipController.text;
     String inputNetmask = netMaskController.text;
 
-    if (myWiFiAPInfo != null &&
-        myWiFiAPInfo.ssid == ssidController.text &&
+    if (myWiFiAPInfo.ssid == ssidController.text &&
         myWiFiAPInfo.bssid == bssId) {
       alreadyConnected = true;
       sendStaticIpInfo(inputIp, inputGateway, inputNetmask);
@@ -1151,14 +1138,8 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     myStaticIpInfo.netmask = netmask;
     myScaleCmd.cmdData = jsonEncode(myStaticIpInfo).toString();
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
-    print(jsonEncode(myScaleCmd));
+    writelog(jsonEncode(myScaleCmd));
   }
-
-  //     {"Req":"set_wifi_static_ip", "ReqData":"{
-//         \"ip\": \"192.168.1.22\",
-//         \"gateway\": \"192.168.1.1\",
-//         \"netmask\": \"255.255.255.0\"
-//     }"}
 
   void validateNetMask(String value) {
     bool isValid = false;

@@ -202,9 +202,9 @@ class EventSelectIndex {
   EventSelectIndex(this.obj);
 }
 
-class EventDownloadResponse {
+class EventDownPrnFmtResp {
   dynamic obj;
-  EventDownloadResponse(this.obj);
+  EventDownPrnFmtResp(this.obj);
 }
 
 class EventSerialOutputResp {

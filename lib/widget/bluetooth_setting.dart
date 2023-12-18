@@ -1,10 +1,8 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/data/downloadresponse.dart';
 import 'package:t_max/functions/methods.dart';
-import '../../data/scalecmd_data.dart';
 import '../../eventbus/eventbus.dart';
 import '../../generated/l10n.dart';
 import '../../main.dart';
@@ -221,15 +219,12 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
                                         _errorMessage = '';
                                       });
                                       if (emissionPowerVale == 'Strong') {
-                                        PublicFunctions
-                                            .modifyBtEmissionPower3();
+                                        PublicFunctions.modifyBtPowerStrong();
                                       } else if (emissionPowerVale ==
                                           'Normal') {
-                                        PublicFunctions
-                                            .modifyBtEmissionPower2();
+                                        PublicFunctions.modifyBtPowerNormal();
                                       } else {
-                                        PublicFunctions
-                                            .modifyBtEmissionPower1();
+                                        PublicFunctions.modifyBtPowerWeak();
                                       }
                                       _startTimer(15);
                                     }),
@@ -292,11 +287,9 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
     );
   }
 
-  void sendBluetoothName() {
-    myScaleCmd.cmdMode = 'modify_bt_name';
+  void sendBluetoothName() async {
     if (_deviceNameController.text.isNotEmpty) {
-      myScaleCmd.cmdData = _deviceNameController.text;
-      MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+      PublicFunctions.modifyBtName(_deviceNameController.text);
       isSetting = true;
       _startTimer(15);
     } else {
@@ -309,7 +302,7 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
   void _startTimer(int time) {
     setState(() {
       isSetting = true;
-      print(time);
+      // print(time);
     });
 
     _timer = Timer(Duration(seconds: time), () {

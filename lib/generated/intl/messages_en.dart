@@ -73,6 +73,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "button_zero": MessageLookupByLibrary.simpleMessage("Zero"),
         "checkweigher_title":
             MessageLookupByLibrary.simpleMessage("Check Weighing"),
+        "choose_json_file": MessageLookupByLibrary.simpleMessage("Choose json"),
         "clear_btn": MessageLookupByLibrary.simpleMessage("Clear"),
         "close_preview": MessageLookupByLibrary.simpleMessage("Close preview"),
         "com_port": MessageLookupByLibrary.simpleMessage("Serial port"),

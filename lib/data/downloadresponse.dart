@@ -25,10 +25,10 @@ class ChannelResponse {
 }
 
 ChannelResponse mySetSerialOutputResp = ChannelResponse('', '', 0);
-ChannelResponse myDownloadResponse = ChannelResponse('', '', 0);
+ChannelResponse myDownPrnFmtResp = ChannelResponse('', '', 0);
 ChannelResponse mySerialPortResponse = ChannelResponse('', '', 0);
-ChannelResponse myConnectDynamicIpResponse = ChannelResponse('', '', 0);
-ChannelResponse myConnectStaticIpResponse = ChannelResponse('', '', 0);
+ChannelResponse mySetDynamicIpResp = ChannelResponse('', '', 0);
+ChannelResponse mySetStaticIpResp = ChannelResponse('', '', 0);
 ChannelResponse myConnectBTResponse = ChannelResponse('', '', 0);
 ChannelResponse myRespBTData = ChannelResponse('', '', 0);
 ChannelResponse myRespUpdateFirmware = ChannelResponse('', '', 0);

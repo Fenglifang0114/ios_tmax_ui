@@ -1,30 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 import '../../data/common.dart';
 import '../../data/theme_base.dart';
 
 class TimerWidget extends StatefulWidget {
-  late String name;
-  late String title;
-
-  TimerWidget({super.key});
+  const TimerWidget({Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() {
-    var state = _TimerWidgetState();
-    state.startClock();
-    return state;
-  }
+  State<StatefulWidget> createState() => _TimerWidgetState();
 }
 
 class _TimerWidgetState extends ClockBaseState<TimerWidget> {
+  @override
+  void initState() {
+    super.initState();
+    startClock();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Text.rich(
       TextSpan(children: [
         // const TextSpan(
-        //     text: " Current time:",
+        // text: " Current time:",
         //     style: TextStyle(
         //         // height: 1.5,
         //         )),

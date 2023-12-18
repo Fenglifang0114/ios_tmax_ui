@@ -180,7 +180,9 @@
   "show_increment_weight": "Increment weight:",
   "show_reduced_weight": "Reduced weight:",
   "general_configuration_title": "General Configuration",
-  "application_title": "Applications"
+  "application_title": "Applications",
+  "choose_json_file": "Choose json"
+  
 
   
 }

@@ -1,7 +1,5 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
-
 import 'common.dart';
 
 class ClockBaseStatefulWidget extends StatefulWidget {
@@ -26,7 +24,7 @@ class ClockBaseState<T extends StatefulWidget> extends State {
   }
 
   startClock() {
-    Timer.periodic(CLOCK_INTERVAL, (Timer t) {
+    Timer.periodic(clockInterval, (Timer t) {
       if (!mounted) {
         return;
       }

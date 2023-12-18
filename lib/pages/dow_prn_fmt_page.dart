@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import '../data/download_prt_fmt.dart';
 import '../data/downloadresponse.dart';
 import '../data/scalecmd_data.dart';
+import '../data/writelog.dart';
 import '../eventbus/eventbus.dart';
 import '../generated/l10n.dart';
 import '../main.dart';
@@ -50,23 +51,23 @@ class _DownloadPageState extends State<DownloadPage> {
     accModeController.text = '';
     pcsModeController.text = '';
     pctModeController.text = '';
-    _eventbus1 = eventBus.on<EventDownloadResponse>().listen((event) {
+    _eventbus1 = eventBus.on<EventDownPrnFmtResp>().listen((event) {
       if (mounted) {
         setState(() {
-          myDownloadResponse = event.obj;
+          myDownPrnFmtResp = event.obj;
           isDownloadClicked = false;
           _stopTimer();
-          if (myDownloadResponse.msgBody.isNotEmpty) {
+          if (myDownPrnFmtResp.msgBody.isNotEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text(
-                    (myDownloadResponse.msgBody.contains('ok'))
+                    (myDownPrnFmtResp.msgBody.contains('ok'))
                         ? localizedStrings.download_result_ok
-                        : myDownloadResponse.msgBody,
+                        : myDownPrnFmtResp.msgBody,
                     style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.normal)), ////此处需要秤回复
                 duration: const Duration(seconds: 3),
-                backgroundColor: (myDownloadResponse.msgBody.contains('ok'))
+                backgroundColor: (myDownPrnFmtResp.msgBody.contains('ok'))
                     ? Colors.green.shade900
                     : Colors.red.shade900));
           }
@@ -485,7 +486,7 @@ class _DownloadPageState extends State<DownloadPage> {
     });
   }
 
-  void sendFormatToScale(List<String> fmtSequence) {
+  void sendFormatToScale(List<String> fmtSequence) async {
     myScaleCmd.cmdMode = "down_print_format_to_scale";
     paths.clear();
 
@@ -509,6 +510,7 @@ class _DownloadPageState extends State<DownloadPage> {
       myScaleCmd.cmdData = json.encode(myDownLoadPrtFmt);
       MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
     }
+    writelog(jsonEncode(myScaleCmd));
   }
 
   Future pickFiles(TextEditingController showFilePath) async {

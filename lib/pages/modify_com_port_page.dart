@@ -13,7 +13,7 @@ import '../data/comscaleinfo_data.dart';
 import '../data/modifyresult_data.dart';
 import '../functions/methods.dart';
 import '../generated/l10n.dart';
-import '../widget/comportdorpdown.dart';
+import '../widget/comport_dorpdown.dart';
 
 class ModifyComPortPage extends StatefulWidget {
   const ModifyComPortPage({super.key});
@@ -56,7 +56,7 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
   dynamic _eventbus5;
   dynamic _eventbus6;
 
-  var localizedStrings;
+  dynamic localizedStrings;
   String refresh = " ";
   String serialPortConnect = " ";
 

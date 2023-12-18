@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:t_max/data/dialog_data.dart';
 import 'package:t_max/data/license_data.dart';
 import 'package:t_max/data/scale_info_from_scale.dart';
@@ -56,12 +55,6 @@ class IndustryHomePageState extends State<IndustryHomePage> {
   DateTime now = DateTime.now();
   bool isCardHovered = false;
   bool isCardClicked = false;
-
-  void _handleCardHover(bool isHovered) {
-    setState(() {
-      isCardHovered = isHovered;
-    });
-  }
 
   // 初始文字颜色
   @override
@@ -741,7 +734,6 @@ class IndustryHomePageState extends State<IndustryHomePage> {
         return const ModifyComPortPage();
       },
     ).then((value) => _startTimer(5));
-    ;
   }
 
   void showLicenseDialog(BuildContext context) {

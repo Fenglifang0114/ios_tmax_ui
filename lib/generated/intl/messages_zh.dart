@@ -63,6 +63,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "button_trial": MessageLookupByLibrary.simpleMessage("免费试用"),
         "button_zero": MessageLookupByLibrary.simpleMessage("归零"),
         "checkweigher_title": MessageLookupByLibrary.simpleMessage("检重秤"),
+        "choose_json_file": MessageLookupByLibrary.simpleMessage("Choose json"),
         "clear_btn": MessageLookupByLibrary.simpleMessage("清空"),
         "close_preview": MessageLookupByLibrary.simpleMessage("关闭预览"),
         "com_port": MessageLookupByLibrary.simpleMessage("串口"),

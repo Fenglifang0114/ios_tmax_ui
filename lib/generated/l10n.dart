@@ -1869,6 +1869,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Choose json`
+  String get choose_json_file {
+    return Intl.message(
+      'Choose json',
+      name: 'choose_json_file',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

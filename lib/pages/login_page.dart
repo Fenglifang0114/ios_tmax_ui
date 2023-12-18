@@ -7,7 +7,7 @@ import '../dialog/register_dialog.dart';
 import '../widget/box_gradient.dart';
 import '../widget/theme_color.dart';
 import '../widget/version.dart';
-import 'home_page.dart';
+import 'home_page_config.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);

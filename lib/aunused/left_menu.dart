@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../dialog/launguage_dialog.dart';
 import '../dialog/register_dialog.dart';
-import '../pages/home_page.dart';
+import '../pages/home_page_config.dart';
 import 'account_dialog.dart';
 
 leftMenu(BuildContext context) {

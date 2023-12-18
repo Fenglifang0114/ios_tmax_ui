@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/main.dart';
-import '../data/customserialprotocoltext_dart.dart';
+import '../data/custom_serial_protocol_text_dart.dart';
 import '../data/download_prt_fmt.dart';
 import '../data/downloadresponse.dart';
 import '../data/scalecmd_data.dart';
+import '../data/writelog.dart';
 import '../eventbus/eventbus.dart';
 import '../generated/l10n.dart';
 import 'package:path/path.dart' as p;
@@ -204,17 +205,17 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     colorScheme = Theme.of(context).colorScheme;
     pageTitle = getTitleName(_currentPageIndex);
 
-    Color buttonColor =
-        !serialPreview ? colorScheme.primary : colorScheme.secondaryContainer;
-    Color borderColor = colorScheme.primary;
-    ButtonStyle buttonStyle = ElevatedButton.styleFrom(
-      backgroundColor: buttonColor,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(4),
-        side: BorderSide(width: 1, color: borderColor),
-      ),
-    );
+    // Color buttonColor =
+    //     !serialPreview ? colorScheme.primary : colorScheme.secondaryContainer;
+    // Color borderColor = colorScheme.primary;
+    // ButtonStyle buttonStyle = ElevatedButton.styleFrom(
+    //   backgroundColor: buttonColor,
+    //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    //   shape: RoundedRectangleBorder(
+    //     borderRadius: BorderRadius.circular(4),
+    //     side: BorderSide(width: 1, color: borderColor),
+    //   ),
+    // );
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(80),
@@ -450,8 +451,10 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                                     for (var i = 1; i < 7; i++) {
                                       await generateJson(i);
                                     }
+                                    await generateFileList();
                                     if (jsonFilesList.isNotEmpty) {
-                                      _sendToScale(jsonFilesList);
+                                      PublicFunctions.sendOutoutFmtToScale(
+                                          jsonFilesList);
                                     }
                                   }
                                 : null,
@@ -814,14 +817,6 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     });
   }
 
-  void _sendToScale(List<String> list) {
-    myDownLoadSetOutputFmt.filePath = list;
-    String json = jsonEncode(myDownLoadSetOutputFmt);
-    myScaleCmd.cmdMode = "set_output_format";
-    myScaleCmd.cmdData = json;
-    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
-  }
-
   List<SerialProtocolText> getListName(int pageId) {
     if (pageId == pageMap["OL"]) {
       return _textListOl;
@@ -1113,7 +1108,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     if (data.isEmpty) {
       data = '0';
     }
-    int listLength = list.length;
+
     for (var item in list) {
       if (item.tabOrder == mySerialProtocolText.tabOrder) {
         item.maxLength = int.parse(data);
@@ -1942,15 +1937,19 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     return true;
   }
 
-  Future<void> writeJsonToFile(String jsonString, int pageId) async {
+  Future<Directory> getJsonFileDir() async {
     String executablePath = Platform.resolvedExecutable;
     var directory = p.dirname(executablePath);
 
-    final formatfilePath = Directory('$directory\\output');
+    return Directory('$directory\\output');
+  }
+
+  Future<void> writeJsonToFile(String jsonString, int pageId) async {
+    final formatfilePath = await getJsonFileDir();
     if (!await formatfilePath.exists()) {
       await formatfilePath.create(recursive: true);
     }
-    directory = formatfilePath.path;
+    var directory = formatfilePath.path;
     String filePath = '';
     if (pageId == 1) {
       filePath = '$directory\\OL.json';
@@ -1968,6 +1967,25 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     // 创建文件并写入JSON字符串
     File file = File(filePath);
     file.writeAsString(jsonString);
-    jsonFilesList.add(pageId.toString() + filePath);
+  }
+
+  generateFileList() async {
+    final formatfilePath = await getJsonFileDir();
+    var directory = formatfilePath.path;
+    List<String> filePaths = [
+      '$directory\\OL.json',
+      '$directory\\UL.json',
+      '$directory\\Weight.json',
+      '$directory\\Pcs.json',
+      '$directory\\Price.json',
+      '$directory\\Percent.json',
+    ];
+    for (int i = 1; i <= 6; i++) {
+      String filePath = filePaths[i - 1];
+      File file = File(filePath);
+      if (await file.exists()) {
+        jsonFilesList.add('$i' + filePath);
+      }
+    }
   }
 }

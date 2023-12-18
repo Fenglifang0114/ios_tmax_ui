@@ -185,10 +185,10 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                 _isZero = false;
               }
 
-              if (!_isZero) {
-                var weight =
-                    double.tryParse(myReqWeightCountine.msgBody!.weightVal);
-              }
+              // if (!_isZero) {
+              //   var weight =
+              //       double.tryParse(myReqWeightCountine.msgBody!.weightVal);
+              // }
 
               break;
             case 2:
@@ -219,10 +219,10 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                 lastWeight = myReqWeightCountine.msgBody!.weightVal;
               }
 
-              if (!_isZero) {
-                var weight =
-                    double.tryParse(myReqWeightCountine.msgBody!.weightVal);
-              }
+              // if (!_isZero) {
+              //   var weight =
+              //       double.tryParse(myReqWeightCountine.msgBody!.weightVal);
+              // }
               break;
             default:
           }
@@ -295,7 +295,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
       if (mounted) {
         setState(() {
           myGetScaleRecords = event.obj;
-          if (myGetScaleRecords.weightRecords!.length != 0) {
+          if (myGetScaleRecords.weightRecords!.isNotEmpty) {
             _addDBdataToReport();
             getWeightReportData();
           } else {

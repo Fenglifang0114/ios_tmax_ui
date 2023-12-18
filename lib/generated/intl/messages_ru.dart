@@ -75,6 +75,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "button_zero": MessageLookupByLibrary.simpleMessage("Ноль"),
         "checkweigher_title":
             MessageLookupByLibrary.simpleMessage("Checkweigher"),
+        "choose_json_file": MessageLookupByLibrary.simpleMessage("Choose json"),
         "clear_btn": MessageLookupByLibrary.simpleMessage("Очистить"),
         "close_preview": MessageLookupByLibrary.simpleMessage(
             "Закрыть предварительный просмотр"),

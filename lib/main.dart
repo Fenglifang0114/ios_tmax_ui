@@ -4,8 +4,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_size/window_size.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'common/WebSocketChannel.dart';
-import 'common/WebSocketScaleChannel.dart';
+import 'common/web_socket_channel.dart';
+import 'common/web_socket_scale_channel.dart';
+import 'data/parse_log.dart';
 import 'data/scalecmd_data.dart';
 import 'generated/l10n.dart';
 import 'pages/trial_page.dart';
@@ -21,27 +22,38 @@ Future<void> main() async {
     setWindowTitle('');
   }
 
-  // setWindowMinSize(const Size(1366, 900));
-  runApp(MyApp(savedLanguage));
+  String ipAddr = await readIpAddr();
+  if (ipAddr.isEmpty) {
+    ipAddr = '127.0.0.1';
+  }
+  runApp(MyApp(savedLanguage, ipAddr));
+}
+
+Future<String> readIpAddr() async {
+  String contentStr = '';
+  String logFilePath = await getAppFilePath(myIpConfig);
+  // 检查文件是否存在
+  bool fileExists = await File(logFilePath).exists();
+  if (!fileExists) {
+    return contentStr;
+  }
+  // 追加写入日志
+  String fileContent = await File(logFilePath).readAsString();
+  return fileContent;
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp(this.savedLanguage, {Key? key}) : super(key: key);
+  const MyApp(this.savedLanguage, this.ipAddr, {Key? key}) : super(key: key);
   final String savedLanguage;
+  final String ipAddr;
   static late WebSocketChannel webchannel;
   static late WebSocketScaleChannel webchannel1;
 
   // 重写build 方法，build 方法返回值为Widget类型，返回内容为屏幕上显示内容。
   @override
   Widget build(BuildContext context) {
-    // webchannel = WebSocketChannel('ws://127.0.0.1:56566/tmax?scaleid=0');
-    webchannel1 = WebSocketScaleChannel('ws://127.0.0.1:7878/tmax?scaleid=1');
-    webchannel = WebSocketChannel('ws://127.0.0.1:7878/tmax?scaleid=0');
-    // webchannel1 =
-    //     WebSocketScaleChannel('ws://10.5.100.101:7878/tmax?scaleid=1');
-    // webchannel = WebSocketChannel('ws://10.5.100.101:7878/tmax?scaleid=0');
-
-    // webchannel = WebSocketChannel('ws://10.5.52.65:7878/tmax?scaleid=0');
+    webchannel1 = WebSocketScaleChannel('ws://$ipAddr:7878/tmax?scaleid=1');
+    webchannel = WebSocketChannel('ws://$ipAddr:7878/tmax?scaleid=0');
     webchannel.connect();
     webchannel1.connect();
     getLicense();

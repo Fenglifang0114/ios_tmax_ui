@@ -10,7 +10,7 @@ import '../../data/settingparam_data.dart';
 import '../../functions/methods.dart';
 import '../../generated/l10n.dart';
 import '../../main.dart';
-import 'modifyNetwork_dialog.dart';
+import 'modify_network_dialog.dart';
 
 class ParamSettingDialog extends StatefulWidget {
   const ParamSettingDialog({super.key});
@@ -61,7 +61,7 @@ class _ParamSettingDialogState extends State<ParamSettingDialog> {
     _checkHiLow = int.parse(mySettingParam.saveMode);
   }
 
-  var localizedStrings;
+  dynamic localizedStrings;
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -255,7 +255,7 @@ class _ParamSettingDialogState extends State<ParamSettingDialog> {
                                         checkHiLowRadio(4, 'Low'),
                                       ],
                                     )
-                                  : SizedBox(
+                                  : const SizedBox(
                                       height: 30,
                                     ),
                             ],
