@@ -181,6 +181,8 @@
     "show_reduced_weight": "Reduced weight:",
     "general_configuration_title": "General Configuration",
     "application_title": "Applications",
-    "choose_json_file": "Choose json"
+    "choose_json_file": "Choose json",
+    "abnormal_data_title":"Abnormal Data",
+    "device_time_title":"Device Time"
     
 }

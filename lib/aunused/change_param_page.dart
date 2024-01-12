@@ -20,7 +20,7 @@ class ChangeParamPage extends StatefulWidget {
 
 class _ChangeParamPageState extends State<ChangeParamPage> {
   List<String> items = [];
-  List<DataRow> dataRows = [];
+
   final TextEditingController _gravitycontroller =
       TextEditingController(text: "9.79640");
 

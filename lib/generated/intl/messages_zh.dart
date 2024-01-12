@@ -23,6 +23,7 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "Parity": MessageLookupByLibrary.simpleMessage("校验位："),
+        "abnormal_data_title": MessageLookupByLibrary.simpleMessage("异常数据"),
         "acc_mode_format": MessageLookupByLibrary.simpleMessage("累加模式打印格式:"),
         "alignment": MessageLookupByLibrary.simpleMessage("对齐方式："),
         "application_title": MessageLookupByLibrary.simpleMessage("应用"),
@@ -81,6 +82,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "device_connection_title": MessageLookupByLibrary.simpleMessage("设备连接"),
         "device_name": MessageLookupByLibrary.simpleMessage("设备名称："),
         "device_setting_title": MessageLookupByLibrary.simpleMessage("设备设置"),
+        "device_time_title": MessageLookupByLibrary.simpleMessage("设备时间"),
         "download": MessageLookupByLibrary.simpleMessage("下载"),
         "download_result_fail": MessageLookupByLibrary.simpleMessage("下发失败!"),
         "download_result_ok": MessageLookupByLibrary.simpleMessage("下发成功!"),

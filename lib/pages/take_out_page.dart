@@ -38,7 +38,6 @@ class TakeOutPage extends StatefulWidget {
 class TakeOutPageState extends State<TakeOutPage> {
   String dialogString = " ";
   List<String> items = [];
-  List<DataRow> dataRows = [];
   late ScrollController _reportScrollerController;
   late String lastWeight;
   bool isStart = false;
@@ -144,7 +143,6 @@ class TakeOutPageState extends State<TakeOutPage> {
   void initState() {
     super.initState();
     _reportScrollerController = ScrollController();
-    dataRows.clear();
     lastWeight = "*";
     dateformat = 1;
     zeroRange = 0;
@@ -272,7 +270,7 @@ class TakeOutPageState extends State<TakeOutPage> {
         });
       }
     });
-    eventBus10.on<EventGetScaleRecords>().listen((event) {
+    eventBus10 = eventBus.on<EventGetScaleRecords>().listen((event) {
       if (!mounted) {
         return;
       }

@@ -37,7 +37,6 @@ class TakeInPage extends StatefulWidget {
 
 class TakeInPageState extends State<TakeInPage> {
   List<String> items = [];
-  List<DataRow> dataRows = [];
   List<String> productNameList = [];
   List<String> userNameList = [];
   List<WeightReportData> _weightReportDatas = <WeightReportData>[];
@@ -145,7 +144,7 @@ class TakeInPageState extends State<TakeInPage> {
   void initState() {
     super.initState();
     _reportScrollerController = ScrollController();
-    dataRows.clear();
+
     lastWeight = "*";
     dateformat = 1;
     zeroRange = 0;
@@ -269,7 +268,7 @@ class TakeInPageState extends State<TakeInPage> {
       }
     });
 
-    eventBus10.on<EventGetScaleRecords>().listen((event) {
+    eventBus10 = eventBus.on<EventGetScaleRecords>().listen((event) {
       if (!mounted) {
         return;
       }

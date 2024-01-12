@@ -32,7 +32,6 @@ class ShowWeightReport extends StatefulWidget {
 class _ShowWeightReportState extends State<ShowWeightReport> {
   String dialogString = " ";
   List<String> items = [];
-  List<DataRow> dataRows = [];
   late ScrollController _reportScrollerController;
   late String lastWeight;
   bool isStart = false;
@@ -107,7 +106,6 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
   void initState() {
     super.initState();
     _reportScrollerController = ScrollController();
-    dataRows.clear();
     weightMode = 2;
     lastWeight = "*";
     dateformat = 1;

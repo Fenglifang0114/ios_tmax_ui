@@ -3,12 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/functions/methods.dart';
-import 'package:t_max/main.dart';
 import '../data/custom_serial_protocol_text_dart.dart';
-import '../data/download_prt_fmt.dart';
 import '../data/downloadresponse.dart';
-import '../data/scalecmd_data.dart';
-import '../data/writelog.dart';
 import '../eventbus/eventbus.dart';
 import '../generated/l10n.dart';
 import 'package:path/path.dart' as p;
@@ -56,6 +52,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
   bool isArrowForwardHovered = false;
   bool serialPreview = false;
   bool _isHexDisplay = false;
+  bool _downloading = false;
 
   TextEditingController myContentCtl =
       TextEditingController(text: mySerialProtocolText.content);
@@ -103,6 +100,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     _eventbus1 = eventBus.on<EventSerialOutputResp>().listen((event) {
       if (mounted) {
         setState(() {
+          _downloading = false;
           mySetSerialOutputResp = event.obj;
           if (mySetSerialOutputResp.msgBody.isNotEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -421,7 +419,9 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                               ),
                               foregroundColor:
                                   Theme.of(context).colorScheme.onPrimary,
-                              backgroundColor: (!serialPreview && isListEmpty())
+                              backgroundColor: (!serialPreview &&
+                                      isListEmpty() &&
+                                      !_downloading)
                                   ? Theme.of(context).colorScheme.primary
                                   : Theme.of(context)
                                       .colorScheme
@@ -445,7 +445,9 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                                 ),
                               ),
                             ),
-                            onPressed: (!serialPreview && isListEmpty())
+                            onPressed: (!serialPreview &&
+                                    isListEmpty() &&
+                                    !_downloading)
                                 ? () async {
                                     jsonFilesList.clear();
                                     for (var i = 1; i < 7; i++) {
@@ -456,6 +458,9 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                                       PublicFunctions.sendOutoutFmtToScale(
                                           jsonFilesList);
                                     }
+                                    setState(() {
+                                      _downloading = true;
+                                    });
                                   }
                                 : null,
                           ),

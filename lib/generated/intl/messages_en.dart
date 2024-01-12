@@ -23,6 +23,8 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "Parity": MessageLookupByLibrary.simpleMessage("Parity:"),
+        "abnormal_data_title":
+            MessageLookupByLibrary.simpleMessage("Abnormal Data"),
         "acc_mode_format":
             MessageLookupByLibrary.simpleMessage("Accumulation mode format:"),
         "alignment": MessageLookupByLibrary.simpleMessage("Alignment:"),
@@ -94,6 +96,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "device_name": MessageLookupByLibrary.simpleMessage("Device name:"),
         "device_setting_title":
             MessageLookupByLibrary.simpleMessage("Device Setting"),
+        "device_time_title":
+            MessageLookupByLibrary.simpleMessage("Device Time"),
         "download": MessageLookupByLibrary.simpleMessage("Download"),
         "download_result_fail":
             MessageLookupByLibrary.simpleMessage("Download failed!"),

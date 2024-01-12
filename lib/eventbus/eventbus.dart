@@ -362,6 +362,21 @@ class EventGetBuildInfo {
   EventGetBuildInfo(this.obj);
 }
 
+class EventGetScaleTime {
+  dynamic obj;
+  EventGetScaleTime(this.obj);
+}
+
+class EventSetScaleTime {
+  dynamic obj;
+  EventSetScaleTime(this.obj);
+}
+
+class EventGetWeightErr {
+  dynamic obj;
+  EventGetWeightErr(this.obj);
+}
+
 class EventGetScaleInfo {
   dynamic obj;
   EventGetScaleInfo(this.obj);
@@ -375,6 +390,16 @@ class EventDeleteRec {
 class EventRespDownPlu {
   dynamic obj;
   EventRespDownPlu(this.obj);
+}
+
+class EventRespInsertPlu {
+  dynamic obj;
+  EventRespInsertPlu(this.obj);
+}
+
+class EventRespDelPlu {
+  dynamic obj;
+  EventRespDelPlu(this.obj);
 }
 
 class EventRespChangeWiFiMode {

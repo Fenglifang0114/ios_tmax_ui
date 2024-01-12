@@ -1210,6 +1210,11 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
       _showErrorDialog(context, 'Please enter a Bluetooth name');
       return false;
     }
+    if (isWifiSelect && !isConnectAp) {
+      _showErrorDialog(context, 'No WiFi connection logging');
+      return false;
+    }
+
     if (isWifiSelect && !isConnectDhcp && !isConnectStaticIp) {
       _showErrorDialog(context, 'No IP address mode,DHCP or Static');
       return false;
@@ -1229,21 +1234,21 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
     }
 
     if (isPrnFmtSelect &&
-        (prnFmt1Ctl.text.isEmpty ||
-            prnFmt2Ctl.text.isEmpty ||
-            prnFmt3Ctl.text.isEmpty ||
+        (prnFmt1Ctl.text.isEmpty &&
+            prnFmt2Ctl.text.isEmpty &&
+            prnFmt3Ctl.text.isEmpty &&
             prnFmt4Ctl.text.isEmpty)) {
-      _showErrorDialog(context, 'There is no print format');
+      _showErrorDialog(context, 'No print format');
       return false;
     }
     if (isSerialOutput &&
-        (serialOutput1Ctl.text.isEmpty ||
-            serialOutput2Ctl.text.isEmpty ||
-            serialOutput3Ctl.text.isEmpty ||
-            serialOutput4Ctl.text.isEmpty ||
-            serialOutput5Ctl.text.isEmpty ||
+        (serialOutput1Ctl.text.isEmpty &&
+            serialOutput2Ctl.text.isEmpty &&
+            serialOutput3Ctl.text.isEmpty &&
+            serialOutput4Ctl.text.isEmpty &&
+            serialOutput5Ctl.text.isEmpty &&
             serialOutput6Ctl.text.isEmpty)) {
-      _showErrorDialog(context, 'There is Serial Output format');
+      _showErrorDialog(context, 'No Serial Output format');
       return false;
     }
 

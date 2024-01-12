@@ -60,3 +60,24 @@ class DownLoadPluFile {
 }
 
 DownLoadPluFile myDownLoadPluFile = DownLoadPluFile();
+
+class DelPlu {
+  String? scaleModel;
+  List<String>? pluId;
+
+  DelPlu({this.scaleModel, this.pluId});
+
+  DelPlu.fromJson(Map<String, dynamic> json) {
+    scaleModel = json['ScaleModel'];
+    pluId = json['PluId'].cast<String>();
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['ScaleModel'] = scaleModel;
+    data['PluId'] = pluId;
+    return data;
+  }
+}
+
+DelPlu myDelPlu = DelPlu();

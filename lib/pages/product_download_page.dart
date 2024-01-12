@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
@@ -23,23 +24,26 @@ class ProductDownloadPage extends StatefulWidget {
 class _ProductDownloadPageState extends State<ProductDownloadPage> {
   List<String> items = [];
   String filePath = '';
-  List<DataRow> dataRows = [];
   String errorMessage = ''; //错误信息显示
   String? curruntPickFile = '';
 
   TextEditingController repsController = TextEditingController();
-  TextEditingController pluFileController = TextEditingController();
+  TextEditingController pluAllCtl = TextEditingController();
+  TextEditingController pluPartCtl = TextEditingController();
+  TextEditingController pluDelCtl = TextEditingController();
 
   late ScrollController _fileScrollerController;
   var currentPath = Directory.current.path;
   dynamic _eventbus1;
+  dynamic _eventbus2;
+  dynamic _eventbus3;
   bool _isShowDownload = true;
 
   @override
   void initState() {
     super.initState();
     _fileScrollerController = ScrollController();
-    pluFileController.text = '';
+    pluAllCtl.text = '';
 
     _eventbus1 = eventBus.on<EventRespDownPlu>().listen((event) {
       if (mounted) {
@@ -51,6 +55,50 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                 content: Text(
                     (myDownPluResp.msgBody.contains('ok'))
                         ? 'Download is successful!'
+                        : myDownPluResp.msgBody,
+                    style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.normal)), ////此处需要秤回复
+                duration: const Duration(seconds: 3),
+                backgroundColor: (myDownPluResp.msgBody.contains('ok'))
+                    ? Colors.green.shade900
+                    : Colors.red.shade900));
+          }
+        });
+      }
+    });
+    _eventbus2 = eventBus.on<EventRespInsertPlu>().listen((event) {
+      if (mounted) {
+        setState(() {
+          myDownPluResp = event.obj;
+          if (myDownPluResp.msgBody.isNotEmpty) {
+            _isShowDownload = true;
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(
+                    (myDownPluResp.msgBody.contains('ok'))
+                        ? 'Download is successful!'
+                        : myDownPluResp.msgBody,
+                    style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.normal)), ////此处需要秤回复
+                duration: const Duration(seconds: 3),
+                backgroundColor: (myDownPluResp.msgBody.contains('ok'))
+                    ? Colors.green.shade900
+                    : Colors.red.shade900));
+          }
+        });
+      }
+    });
+    _eventbus3 = eventBus.on<EventRespDelPlu>().listen((event) {
+      if (mounted) {
+        setState(() {
+          myDownPluResp = event.obj;
+          if (myDownPluResp.msgBody.isNotEmpty) {
+            _isShowDownload = true;
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(
+                    (myDownPluResp.msgBody.contains('ok'))
+                        ? 'Delete is successful!'
                         : myDownPluResp.msgBody,
                     style: const TextStyle(
                         fontSize: 20,
@@ -77,6 +125,8 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
   void dispose() {
     _fileScrollerController.dispose();
     _eventbus1.cancel;
+    _eventbus2.cancel;
+    _eventbus3.cancel;
     super.dispose();
   }
 
@@ -109,7 +159,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                       const SizedBox(
                         width: 150,
                         child: Text(
-                          'Product File:',
+                          'All Products:',
                           textAlign: TextAlign.right,
                         ),
                       ),
@@ -120,7 +170,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                         width: 400,
                         // height: 40,
                         child: TextField(
-                          controller: pluFileController,
+                          controller: pluAllCtl,
                           readOnly: true,
                           maxLines: 2,
                           minLines: 1,
@@ -147,8 +197,118 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                             ),
                           ),
                           onPressed: () async {
-                            pluFileController.text = '';
-                            pickFiles(pluFileController);
+                            pluAllCtl.text = '';
+                            pickFiles(pluAllCtl);
+                          },
+                          child: const Text('Choose Product Excel'),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center, // 设置主轴对齐方式为居中
+                    children: [
+                      const SizedBox(
+                        width: 150,
+                        child: Text(
+                          'Partial Products:',
+                          textAlign: TextAlign.right,
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      SizedBox(
+                        width: 400,
+                        // height: 40,
+                        child: TextField(
+                          controller: pluPartCtl,
+                          readOnly: true,
+                          maxLines: 2,
+                          minLines: 1,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20)),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 50,
+                      ),
+                      SizedBox(
+                        width: 150,
+                        height: 40,
+                        child: OutlinedButton(
+                          style: ButtonStyle(
+                            shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                            ),
+                          ),
+                          onPressed: () async {
+                            pluPartCtl.text = '';
+                            pickFiles(pluPartCtl);
+                          },
+                          child: const Text('Choose Product Excel'),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center, // 设置主轴对齐方式为居中
+                    children: [
+                      const SizedBox(
+                        width: 150,
+                        child: Text(
+                          'Delete Products:',
+                          textAlign: TextAlign.right,
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      SizedBox(
+                        width: 400,
+                        // height: 40,
+                        child: TextField(
+                          controller: pluDelCtl,
+                          readOnly: true,
+                          maxLines: 2,
+                          minLines: 1,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20)),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 50,
+                      ),
+                      SizedBox(
+                        width: 150,
+                        height: 40,
+                        child: OutlinedButton(
+                          style: ButtonStyle(
+                            shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                            ),
+                          ),
+                          onPressed: () async {
+                            pluDelCtl.text = '';
+                            pickFiles(pluDelCtl);
                           },
                           child: const Text('Choose Product Excel'),
                         ),
@@ -250,9 +410,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
             ),
             onPressed: _isShowDownload
                 ? () {
-                    if (filePath.isNotEmpty) {
-                      _showConfirmationDialog(context);
-                    }
+                    _showConfirmationDialog(context);
                   }
                 : null,
             child: const Text(
@@ -273,7 +431,9 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
             'Confirmation',
             style: TextStyle(color: Color.fromARGB(255, 15, 71, 161)),
           ),
-          content: const Text('Please confirm the PLU file.'),
+          content: isOneModeDown()
+              ? const Text('Please confirm the PLU file.')
+              : const Text('Only one PLU file can be selected'),
           actions: <Widget>[
             OutlinedButton(
               child: const Text('Cancel'),
@@ -281,18 +441,20 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                 Navigator.of(context).pop(false); // 不跳转
               },
             ),
-            OutlinedButton(
-              child: const Text('Confirm'),
-              onPressed: () {
-                Navigator.of(context).pop(true); // 跳转
-              },
-            ),
+            isOneModeDown()
+                ? OutlinedButton(
+                    child: const Text('Confirm'),
+                    onPressed: () {
+                      Navigator.of(context).pop(true); // 跳转
+                    },
+                  )
+                : const SizedBox(),
           ],
         );
       },
     ).then((confirmed) {
       if (confirmed) {
-        sendFormatToScale(filePath);
+        sendFormatToScale();
         setState(() {
           _isShowDownload = false;
         });
@@ -300,14 +462,79 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
     });
   }
 
-  void sendFormatToScale(String fmtPath) {
-    myScaleCmd.cmdMode = "down_plu_to_scale";
-    if (fmtPath.isNotEmpty) {
-      myDownLoadPluFile.scaleModel = 'TMax';
-      myDownLoadPluFile.filePath = fmtPath;
-      myScaleCmd.cmdData = json.encode(myDownLoadPluFile);
-      MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  bool isOneModeDown() {
+    bool res = false;
+    if (pluAllCtl.text.isNotEmpty &&
+        pluPartCtl.text.isEmpty &&
+        pluDelCtl.text.isEmpty) {
+      res = true;
+    } else if (pluAllCtl.text.isEmpty &&
+        pluPartCtl.text.isNotEmpty &&
+        pluDelCtl.text.isEmpty) {
+      res = true;
+    } else if (pluAllCtl.text.isEmpty &&
+        pluPartCtl.text.isEmpty &&
+        pluDelCtl.text.isNotEmpty) {
+      res = true;
     }
+
+    return res;
+  }
+
+  Future<List<String>> readExcelColumn(
+      String filePath, String columnName) async {
+    var file = File(filePath);
+    var bytes = await file.readAsBytes();
+    var excel = Excel.decodeBytes(bytes);
+
+    var sheet = excel.sheets['Sheet1'];
+
+    var columnIndex = sheet!.rows.first.indexWhere((cell) {
+      return cell!.value == columnName;
+    });
+
+    if (columnIndex == -1) {
+      throw Exception('Column "$columnName" not found.');
+    }
+
+    var columnData = sheet.rows.map((row) {
+      return row[columnIndex]!.value.toString();
+    }).toList();
+
+    // Remove header row
+    columnData.removeAt(0);
+
+    return columnData;
+  }
+
+  Future<void> sendFormatToScale() async {
+    if (pluAllCtl.text.isNotEmpty) {
+      myScaleCmd.cmdMode = "down_plu_to_scale";
+      sendFileToScale(pluAllCtl.text);
+    } else if (pluPartCtl.text.isNotEmpty) {
+      myScaleCmd.cmdMode = "insert_plu_to_scale";
+
+      sendFileToScale(pluPartCtl.text);
+    } else {
+      var pluList = await readExcelColumn(pluDelCtl.text, "ProductNumber");
+      myScaleCmd.cmdMode = "del_plu_from_scale";
+      delPluListFromScale(pluList);
+    }
+  }
+
+  void sendFileToScale(String fmtPath) {
+    myDownLoadPluFile.scaleModel = 'TMax';
+    myDownLoadPluFile.filePath = fmtPath;
+    myScaleCmd.cmdData = json.encode(myDownLoadPluFile);
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  void delPluListFromScale(List<String> pluList) {
+    myScaleCmd.cmdMode = "del_plu_from_scale";
+    myDelPlu.scaleModel = 'TMax';
+    myDelPlu.pluId = pluList;
+    myScaleCmd.cmdData = json.encode(myDelPlu);
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
 
   Future pickFiles(TextEditingController showFilePath) async {

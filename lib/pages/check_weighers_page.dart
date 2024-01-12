@@ -47,7 +47,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
   List<String> productNameList = [];
   List<String> userNameList = [];
   List<String> items = [];
-  List<DataRow> dataRows = [];
+
   List<WeightReportData> _weightReportDatas = <WeightReportData>[];
   List<WeightReportData> myWeightReportData = [];
 
@@ -152,7 +152,6 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
   void initState() {
     super.initState();
     _reportScrollerController = ScrollController();
-    dataRows.clear();
     lastWeight = "*";
     dateformat = 1;
     zeroRange = 0;
@@ -358,7 +357,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
         });
       }
     });
-    eventBus10.on<EventGetScaleRecords>().listen((event) {
+    eventBus10 = eventBus.on<EventGetScaleRecords>().listen((event) {
       if (!mounted) {
         return;
       }

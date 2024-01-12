@@ -40,7 +40,6 @@ class WeightDataCollectionPage extends StatefulWidget {
 class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
   String dialogString = " ";
   List<String> items = [];
-  List<DataRow> dataRows = [];
   late ScrollController _reportScrollerController;
   late String lastWeight;
   bool isStart = false;
@@ -125,7 +124,6 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
   void initState() {
     super.initState();
     _reportScrollerController = ScrollController();
-    dataRows.clear();
     lastWeight = "*";
     dateformat = 1;
     zeroRange = 0;

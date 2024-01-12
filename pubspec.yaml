@@ -79,7 +79,10 @@ dependencies:
   fluent_ui: ^4.5.0
   gbk_codec: ^0.4.0
   encrypt: ^5.0.3
+  flutter_time_picker_spinner: ^2.0.0
   #gbk2utf8: ^1.0.1
+
+
 
 
 dev_dependencies:

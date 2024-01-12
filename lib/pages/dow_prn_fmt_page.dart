@@ -25,7 +25,6 @@ class _DownloadPageState extends State<DownloadPage> {
   List<String> items = [];
   List<String> paths = [];
   List<String> printFormatSequence = [];
-  List<DataRow> dataRows = [];
   String errorMessage = ''; //错误信息显示
   String? curruntPickFile = '';
   bool isDownloadClicked = false;

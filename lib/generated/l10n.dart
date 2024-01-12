@@ -1879,6 +1879,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Abnormal Data`
+  String get abnormal_data_title {
+    return Intl.message(
+      'Abnormal Data',
+      name: 'abnormal_data_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Device Time`
+  String get device_time_title {
+    return Intl.message(
+      'Device Time',
+      name: 'device_time_title',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

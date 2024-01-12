@@ -24,7 +24,6 @@ class _SerialOutputPageState extends State<SerialOutputPage> {
   List<String> items = [];
   List<String> paths = [];
   List<String> printFormatSequence = [];
-  List<DataRow> dataRows = [];
   String errorMessage = ''; //错误信息显示
   String? curruntPickFile = '';
   bool hasDuplicates = false; //判断文件有没有重复序号

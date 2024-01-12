@@ -39,7 +39,6 @@ class IndustryHomePageState extends State<IndustryHomePage> {
   List<String> items = [];
   TextEditingController weightController = TextEditingController();
   TextEditingController repsController = TextEditingController();
-  List<DataRow> dataRows = [];
 
   late ScrollController _pageScrollerController;
   dynamic _eventbus1;

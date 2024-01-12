@@ -1,3 +1,15 @@
+import 'dart:convert';
+import 'package:t_max/data/settingparam_data.dart';
+import '../eventbus/eventbus.dart';
+import 'downloadresponse.dart';
+import 'ipinfodata.dart';
+import 'record_data.dart';
+import 'reqweightdata_data.dart';
+import 'respdata_data.dart';
+import 'scale_info_from_scale.dart';
+import 'wifi_ap_info.dart';
+import 'wifi_list_info.dart';
+
 class RespMsgType {
   static const String weightData = 'weight_data';
   static const String respZeroCmd = 'resp_zero_cmd';
@@ -35,6 +47,7 @@ class RespMsgType {
       'resp_update_firmware_progress';
   static const String respCheckSerialPort = 'resp_check_serial_port';
   static const String respGetBuildInfo = 'resp_get_build_info';
+  static const String respGetWeightErr = 'resp_get_weight_err';
   static const String respSetOutputFmt = 'resp_set_output_fmt';
   static const String respOpenScalePassthrough = 'resp_open_scale_passthrough';
   static const String respCloseScalePassthrough =
@@ -43,8 +56,299 @@ class RespMsgType {
   static const String respChangeScalePassthMode =
       'resp_change_scale_passth_mode';
   static const String respGetScaleInfo = 'resp_get_scale_info';
+  static const String respGetScaleTime = 'resp_get_scale_time';
+  static const String respSetScaleTime = 'resp_set_scale_time';
   static const String respDownPlu = 'resp_down_plu';
+  static const String respInsertPlu = 'resp_insert_plu';
+  static const String respDelPlu = 'resp_del_plu';
   static const String respGetUIConf = 'resp_get_ui_conf';
   static const String respUpdateUIConf = 'resp_update_ui_conf';
   static const String respChangeWifiMode = 'resp_change_wifi_mode';
+
+  static final Map<String, Function> handlers = {
+    RespMsgType.respGetUIConf: handleGetUIConf,
+    RespMsgType.weightData: handleWeightData,
+    RespMsgType.respDownPrnFmt: handleRespDownPrnFmt,
+    RespMsgType.respErrSerial: handleRespErrSerial,
+    RespMsgType.respBTPassthData: handleRespBTPassthData,
+    RespMsgType.respSetWifiDynamicIp: handleRespSetWifiDynamicIp,
+    RespMsgType.respSetWifiStaticIp: handleRespSetWifiStaticIp,
+    RespMsgType.respUpdateFirmware: handleRespUpdateFirmware,
+    RespMsgType.respUpdateFirmwareProgress: handleRespUpdateFirmwareProgress,
+    RespMsgType.respCheckSerialPort: handleRespCheckSerialPort,
+    RespMsgType.respGetBuildInfo: handleRespGetBuildInfo,
+    RespMsgType.respGetScaleTime: handleRespGetScaleTime,
+    RespMsgType.respSetScaleTime: handleRespSetScaleTime,
+    RespMsgType.respGetWeightErr: handleRespGetWeightErr,
+    RespMsgType.respSetOutputFmt: handleRespSetOutputFmt,
+    RespMsgType.scalePassthData: handlescalePassthData,
+    RespMsgType.respOpenScalePassthrough: handleRespOpenScalePassthrough,
+    RespMsgType.respCloseScalePassthrough: handleRespCloseScalePassthrough,
+    RespMsgType.respUnregWeight: handleRespUnregWeight,
+    RespMsgType.respDelRec: handleRespDelRec,
+    RespMsgType.respDownPlu: handleRespDownPlu,
+    RespMsgType.respInsertPlu: handleRespInsertPlu,
+    RespMsgType.respDelPlu: handleRespDelPlu,
+    RespMsgType.respUpdateUIConf: handleRespUpdateUIConf,
+    RespMsgType.respChangeWifiMode: handleRespChangeWifiMode,
+    RespMsgType.respGetIpInfo: handleRespGetIpInfo,
+    RespMsgType.respConnectAp: handleRespConnectAp,
+    RespMsgType.respGetApList: handleRespGetApList,
+    RespMsgType.respGetIpMode: handleRespGetIpMode,
+    RespMsgType.respGetWifiApInfo: handleRespGetWifiApInfo,
+    RespMsgType.respGetRecs: handleRespGetRecs,
+    RespMsgType.respGetScaleInfo: handleRespGetScaleInfo,
+    RespMsgType.respRegWeight: handleRespRegWeight,
+    RespMsgType.respModifyBTName: handleRespModifyBTName,
+  };
+  static void handleGetUIConf(dynamic data) {
+    final jsonResponse = json.decode(data['MsgBody']);
+    mySettingParam = SettingParam.fromJson(jsonResponse);
+    if (mySettingParam.scaleMode == 0) {
+      myModeSettingNormal = mySettingParam;
+    } else if (mySettingParam.scaleMode == 1) {
+      myModeSettingCheck = mySettingParam;
+    } else if (mySettingParam.scaleMode == 2) {
+      myModeSettingTakeIn = mySettingParam;
+    } else if (mySettingParam.scaleMode == 3) {
+      myModeSettingTakeOut = mySettingParam;
+    }
+    eventBus.fire(EventSettingParam(mySettingParam));
+  }
+
+  static void handleWeightData(dynamic data) {
+    dynamic mobj = ReqWeightCountine.fromJson(data);
+    eventBus.fire(EventReqWeightCountine(mobj));
+  }
+
+  static void handleRespDownPrnFmt(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventDownPrnFmtResp(mobj));
+  }
+
+  static void handleRespErrSerial(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventSerialPortResponse(mobj));
+  }
+
+  static void handleRespModifyBTName(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventConnectBTResponse(mobj));
+  }
+
+  static void handleRespBTPassthData(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventBTResponse(mobj));
+  }
+
+  static void handleRespSetWifiDynamicIp(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventConnectDynamicIp(mobj));
+  }
+
+  static void handleRespSetWifiStaticIp(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventConnectStaticIp(mobj));
+  }
+
+  static void handleRespUpdateFirmware(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventRespUpdateFirmware(mobj));
+  }
+
+  static void handleRespUpdateFirmwareProgress(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventRespUpdateFirmwareProcess(mobj));
+  }
+
+  static void handleRespCheckSerialPort(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventRespCheckSerialPort(mobj));
+  }
+
+  static void handleRespGetBuildInfo(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventGetBuildInfo(mobj));
+  }
+
+  static void handleRespGetScaleTime(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventGetScaleTime(mobj));
+  }
+
+  static void handleRespSetScaleTime(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventSetScaleTime(mobj));
+  }
+
+  static void handleRespGetWeightErr(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventGetWeightErr(mobj));
+  }
+
+  static void handleRespSetOutputFmt(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventSerialOutputResp(mobj));
+  }
+
+  static void handlescalePassthData(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventScalePassthData(mobj));
+  }
+
+  static void handleRespOpenScalePassthrough(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventOpenScalePassthResp(mobj));
+  }
+
+  static void handleRespCloseScalePassthrough(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventCloseScalePassthResp(mobj));
+  }
+
+  static void handleRespRegWeight(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventRegWeightResp(mobj));
+  }
+
+  static void handleRespUnregWeight(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventUnregWeightResp(mobj));
+  }
+
+  static void handleRespDelRec(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventDeleteRec(mobj));
+  }
+
+  static void handleRespDownPlu(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventRespDownPlu(mobj));
+  }
+
+  static void handleRespInsertPlu(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventRespInsertPlu(mobj));
+  }
+
+  static void handleRespDelPlu(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventRespDelPlu(mobj));
+  }
+
+  static void handleRespUpdateUIConf(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventUpdateSettingParam(mobj));
+  }
+
+  static void handleRespChangeWifiMode(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventRespChangeWiFiMode(mobj));
+  }
+
+  static void handleRespGetIpInfo(dynamic data) {
+    final jsonStrings = data['MsgBody'];
+    pasterIpInfo(jsonStrings);
+  }
+
+  static void pasterIpInfo(String jsonStrings) {
+    if (jsonStrings.contains('error') || jsonStrings.contains('fail')) {
+      myGetIpError.messagedata = jsonStrings;
+      eventBus.fire(EventGetIpError(myGetIpError));
+      return;
+    }
+    final jsonResponse = json.decode(jsonStrings);
+    myIpInfoData = IpInfoData.fromJson(jsonResponse);
+    eventBus.fire(EventIpInfo(myIpInfoData));
+  }
+
+  static void handleRespConnectAp(dynamic data) {
+    final jsonStrings = data['MsgBody'];
+    pasterConnectApInfo(jsonStrings);
+  }
+
+  static void pasterConnectApInfo(String jsonDataString) {
+    String jsonStrings = jsonDataString;
+    myConnectApResponse.msgBody = jsonStrings;
+    eventBus.fire(EventConnectAp(myConnectApResponse));
+  }
+
+  static void handleRespGetApList(dynamic data) {
+    final jsonStrings = data['MsgBody'];
+    pasterWifiList(jsonStrings);
+  }
+
+  static void pasterWifiList(String jsonStrings) {
+    if (jsonStrings.contains('error') ||
+        jsonStrings.contains('fail') ||
+        jsonStrings.contains('done')) {
+      myGetWifiListError.messagedata = jsonStrings;
+      eventBus.fire(EventGetWifiListError(myGetWifiListError));
+      return;
+    }
+    final jsonResponse = json.decode(jsonStrings);
+    myWifiListInfo = WifiListInfo.fromJson(jsonResponse);
+    eventBus.fire(EventWiFiListInfo(myWifiListInfo));
+  }
+
+  static void handleRespGetIpMode(dynamic data) {
+    final jsonStrings = data['MsgBody'];
+    pasterGetIpMode(jsonStrings);
+  }
+
+  static void pasterGetIpMode(String jsonDataString) {
+    String jsonStrings = jsonDataString;
+    myRespGetIpMode.messagedata = jsonStrings;
+    eventBus.fire(EventRespGetIpMode(myRespGetIpMode));
+  }
+
+  static void handleRespGetWifiApInfo(dynamic data) {
+    final jsonStrings = data['MsgBody'];
+    pasterWifiApInfo(jsonStrings);
+  }
+
+  static void pasterWifiApInfo(String jsonStrings) {
+    if (jsonStrings.contains('error') || jsonStrings.contains('fail')) {
+      myMessageError.messagedata = jsonStrings;
+      eventBus.fire(EventMessageError(myMessageError));
+      return;
+    }
+    final jsonResponse = json.decode(jsonStrings);
+    myWiFiAPInfo = WiFiAPInfo.fromJson(jsonResponse);
+    eventBus.fire(EventGetWifiApInfo(myWiFiAPInfo));
+  }
+
+  static void handleRespGetRecs(dynamic data) {
+    final jsonStrings = data['MsgBody'];
+    pasterGetRecords(jsonStrings);
+  }
+
+  static void pasterGetRecords(String jsonDataString) {
+    if (jsonDataString == '[]') {
+      if (myGetScaleRecords.weightRecords != null) {
+        myGetScaleRecords.weightRecords!.clear();
+      }
+    } else if (jsonDataString.isNotEmpty) {
+      myGetScaleRecords = GetScaleRecords.fromJson(json.decode(jsonDataString));
+    } else {
+      if (myGetScaleRecords.weightRecords != null) {
+        myGetScaleRecords.weightRecords!.clear();
+      }
+    }
+
+    eventBus.fire(EventGetScaleRecords(myGetScaleRecords));
+  }
+
+  static void handleRespGetScaleInfo(dynamic data) {
+    final jsonStrings = data['MsgBody'];
+    dynamic mobj;
+    if (!jsonStrings.contains('fail')) {
+      mobj = ScaleInfoFromScale.fromJson(json.decode(jsonStrings));
+    } else {
+      mobj = ScaleInfoFromScale();
+    }
+    eventBus.fire(EventGetScaleInfo(mobj));
+  }
+
+  static void handleRespTareCmd(dynamic data) {}
 }

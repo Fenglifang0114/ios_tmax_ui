@@ -23,9 +23,11 @@ import '../widget/custom_setting.dart';
 import '../dialog/license_info.dart';
 import '../widget/update_firmware.dart';
 import '../widget/version.dart';
+import 'abnormal_data_page.dart';
 import 'batch_delivery.dart';
 import 'custom_serial_protocol_page.dart';
 import 'modify_com_port_page.dart';
+import 'set_system_time.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -38,7 +40,6 @@ class _HomePageState extends State<HomePage> {
   List<String> items = [];
   TextEditingController weightController = TextEditingController();
   TextEditingController repsController = TextEditingController();
-  List<DataRow> dataRows = [];
 
   late ScrollController _pageScrollerController;
   dynamic _eventbus1;
@@ -680,6 +681,54 @@ class _HomePageState extends State<HomePage> {
                             myLicenseInfo.isValid),
                       ),
                     ),
+                    MouseRegion(
+                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                        child: GestureDetector(
+                          onTap: myLicenseInfo.isValid
+                              ? () {
+                                  setState(() {
+                                    stopCheckSerialPort();
+                                    setState(() {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const AbnormalDataPage()),
+                                      ).then((value) => _startTimer(5));
+                                    });
+                                  });
+                                }
+                              : null,
+                          child: customFunctionCard(
+                              localizedStrings.abnormal_data_title,
+                              "assets/images/line.png",
+                              Icons.warning,
+                              myLicenseInfo.isValid),
+                        )),
+                    MouseRegion(
+                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                        child: GestureDetector(
+                          onTap: myLicenseInfo.isValid
+                              ? () {
+                                  setState(() {
+                                    stopCheckSerialPort();
+                                    setState(() {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const SetSystemTimePage()),
+                                      ).then((value) => _startTimer(5));
+                                    });
+                                  });
+                                }
+                              : null,
+                          child: customFunctionCard(
+                              localizedStrings.device_time_title,
+                              "assets/images/line.png",
+                              Icons.date_range,
+                              myLicenseInfo.isValid),
+                        )),
                   ]),
             ),
           ],

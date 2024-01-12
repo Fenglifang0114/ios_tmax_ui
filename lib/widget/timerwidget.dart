@@ -30,10 +30,10 @@ class _TimerWidgetState extends ClockBaseState<TimerWidget> {
             text:
                 "${now.year}-${pad0(now.month)}-${pad0(now.day)} ${pad0(now.hour)}:${pad0(now.minute)}:${pad0(now.second)}",
             style: const TextStyle(
-                // fontSize: 18.0,
-                // color: Colors.white,
-                // height: 1.5,
-                ))
+              fontSize: 30.0,
+              color: Colors.blue,
+              height: 1.5,
+            ))
       ]),
     );
   }

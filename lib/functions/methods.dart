@@ -57,6 +57,18 @@ class PublicFunctions {
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
 
+  static void getScaleTime() {
+    myScaleCmd.cmdMode = 'get_scale_time';
+    myScaleCmd.cmdData = '';
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  static void setScaleTime(String time) {
+    myScaleCmd.cmdMode = 'set_scale_time';
+    myScaleCmd.cmdData = time;
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
+
   static void changeWifiMode() {
     myScaleCmd.cmdMode = 'change_wifi_mode';
     myScaleCmd.cmdData = '';
@@ -218,6 +230,12 @@ class PublicFunctions {
 
   static void getBuildInfo() {
     myScaleCmd.cmdMode = "get_build_info";
+    myScaleCmd.cmdData = '';
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
+
+  static void getWeightErr() {
+    myScaleCmd.cmdMode = "get_weight_err";
     myScaleCmd.cmdData = '';
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
