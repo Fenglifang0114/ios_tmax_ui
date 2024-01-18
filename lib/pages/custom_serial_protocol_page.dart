@@ -2,12 +2,16 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:t_max/data/timer_manager.dart';
 import 'package:t_max/functions/methods.dart';
 import '../data/custom_serial_protocol_text_dart.dart';
 import '../data/downloadresponse.dart';
+import '../data/screen_mgr.dart';
 import '../eventbus/eventbus.dart';
 import '../generated/l10n.dart';
 import 'package:path/path.dart' as p;
+
+import '../widget/page_head.dart';
 
 class CustomSerialProtocol extends StatefulWidget {
   const CustomSerialProtocol({Key? key}) : super(key: key);
@@ -78,6 +82,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
   dynamic _eventbus3;
   dynamic _eventbus4;
   dynamic _eventbus5;
+  dynamic _eventbus6;
   final ScrollController _scrollController = ScrollController();
 
   bool isListEmpty() {
@@ -97,10 +102,14 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     _currentPageIndex = 3;
     super.initState();
     // _serialOutputDataCtl.addListener(scrollToBottom); // 监听文本变化
+    cntScaleTimerMgr.stopCntScaleTimer();
+    cntScaleTimerMgr.startCntScaleTimer(5);
     _eventbus1 = eventBus.on<EventSerialOutputResp>().listen((event) {
       if (mounted) {
         setState(() {
           _downloading = false;
+          cntScaleTimerMgr.stopCntScaleTimer();
+          cntScaleTimerMgr.startCntScaleTimer(5);
           mySetSerialOutputResp = event.obj;
           if (mySetSerialOutputResp.msgBody.isNotEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -146,6 +155,8 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         myCloseScalePassthData = event.obj;
         if (myCloseScalePassthData.msgBody.contains('ok')) {
           PublicFunctions.stopWeight();
+          cntScaleTimerMgr.stopCntScaleTimer();
+          cntScaleTimerMgr.startCntScaleTimer(5);
         }
       }
     });
@@ -155,6 +166,19 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         myRegWeightResp = event.obj;
 
         PublicFunctions.openScalePassth();
+      }
+    });
+
+    _eventbus6 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
+      if (mounted) {
+        setState(() {
+          myRespCheckSerialPort = event.obj;
+          if (myRespCheckSerialPort.msgBody == 'ok') {
+            myScreenMgr.serialPortST = true;
+          } else {
+            myScreenMgr.serialPortST = false;
+          }
+        });
       }
     });
   }
@@ -194,6 +218,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     _eventbus3.cancel();
     _eventbus4.cancel();
     _eventbus5.cancel();
+    _eventbus6.cancel();
     super.dispose();
   }
 
@@ -203,17 +228,6 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     colorScheme = Theme.of(context).colorScheme;
     pageTitle = getTitleName(_currentPageIndex);
 
-    // Color buttonColor =
-    //     !serialPreview ? colorScheme.primary : colorScheme.secondaryContainer;
-    // Color borderColor = colorScheme.primary;
-    // ButtonStyle buttonStyle = ElevatedButton.styleFrom(
-    //   backgroundColor: buttonColor,
-    //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-    //   shape: RoundedRectangleBorder(
-    //     borderRadius: BorderRadius.circular(4),
-    //     side: BorderSide(width: 1, color: borderColor),
-    //   ),
-    // );
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(80),
@@ -221,22 +235,8 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
           height: 50,
           width: screenSize.width - 10,
           color: colorScheme.primary,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Center(
-                child: SizedBox(
-                  width: 240,
-                  child: Text(
-                    localizedStrings.serial_output,
-                    style:
-                        TextStyle(fontSize: 20, color: colorScheme.onPrimary),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-            ],
-          ),
+          child: pageHead(context, localizedStrings.serial_output,
+              localizedStrings.serial_port_status),
         ),
       ),
       body: Row(
@@ -249,59 +249,6 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                   const SizedBox(
                     height: 20,
                   ),
-                  Expanded(
-                      flex: 1, // 设置子部件占用空间的比例
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            width: 120,
-                            height: 50,
-                            child: OutlinedButton(
-                              style: OutlinedButton.styleFrom(
-                                side: BorderSide(
-                                  width: 1,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                                foregroundColor:
-                                    Theme.of(context).colorScheme.primary,
-                                backgroundColor: Theme.of(context)
-                                    .colorScheme
-                                    .onPrimary, // 设置按钮的背景色
-                                shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.circular(4), // 设置按钮的圆角
-                                ),
-                              ),
-                              child: Center(
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Icon(
-                                      Icons.home,
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                    ),
-                                    Text(
-                                      localizedStrings.button_home,
-                                      style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              onPressed: () {
-                                PublicFunctions.closeScalePassth();
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          ),
-                        ],
-                      )),
                   Divider(
                     height: 2,
                     color: colorScheme.primary,
@@ -461,6 +408,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                                     setState(() {
                                       _downloading = true;
                                     });
+                                    cntScaleTimerMgr.stopCntScaleTimer();
                                   }
                                 : null,
                           ),
@@ -710,6 +658,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
 
   void handleButtonPress() async {
     setState(() {
+      cntScaleTimerMgr.stopCntScaleTimer();
       serialPreview = true;
       _isHexDisplay = false;
       outputData.clear();

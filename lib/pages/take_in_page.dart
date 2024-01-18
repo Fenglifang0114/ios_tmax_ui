@@ -20,6 +20,7 @@ import '../../main.dart';
 import '../data/downloadresponse.dart';
 import '../data/record_data.dart';
 import '../data/scalecmd_data.dart';
+import '../data/screen_mgr.dart';
 import '../data/weight_report_data.dart';
 import '../dialog/addproduct_dialog.dart';
 import '../dialog/adduser_dialog.dart';
@@ -544,6 +545,7 @@ class TakeInPageState extends State<TakeInPage> {
                               ),
                               onPressed: () {
                                 PublicFunctions.stopWeight();
+                                myScreenMgr.isMainScreen = true;
                                 Navigator.of(context).pop();
                               },
                             ),
@@ -1378,6 +1380,7 @@ class TakeInPageState extends State<TakeInPage> {
                               ),
                               onPressed: () {
                                 PublicFunctions.stopWeight();
+                                myScreenMgr.isMainScreen = true;
                                 Navigator.of(context).pop();
                               },
                             ),

@@ -8,6 +8,7 @@ import '../../functions/methods.dart';
 import '../../generated/l10n.dart';
 import '../../main.dart';
 import '../data/downloadresponse.dart';
+import '../data/screen_mgr.dart';
 
 class WeightModePage extends StatefulWidget {
   const WeightModePage({Key? key}) : super(key: key);
@@ -201,6 +202,7 @@ class WeightModePageState extends State<WeightModePage> {
                               ),
                               onPressed: () {
                                 PublicFunctions.stopWeight();
+                                myScreenMgr.isMainScreen = true;
                                 Navigator.of(context).pop();
                               },
                             ),

@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:t_max/data/license_data.dart';
 
 import '../../generated/l10n.dart';
+import '../data/screen_mgr.dart';
 import '../eventbus/eventbus.dart';
 import '../functions/methods.dart';
 
@@ -256,6 +257,7 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
             OutlinedButton(
               child: Text(localizedStrings.button_exit),
               onPressed: () {
+                myScreenMgr.isMainScreen = true;
                 Navigator.of(context).pop();
               },
             ),

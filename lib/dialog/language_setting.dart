@@ -105,7 +105,8 @@ class _LanguageSettingPageState extends State<LanguageSettingPage> {
             //     child: Text(localizedStrings.button_ok),
             //     onPressed: () {
             //       setState(() {});
-            //       // Navigator.of(context).pop();
+            //       // myScreenMgr.isMainScreen = true;
+            // Navigator.of(context).pop();
             //       Navigator.push(
             //         context,
             //         MaterialPageRoute(builder: (context) => const HomePage()),

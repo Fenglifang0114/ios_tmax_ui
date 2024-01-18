@@ -26,6 +26,7 @@ Future<void> main() async {
   if (ipAddr.isEmpty) {
     ipAddr = '127.0.0.1';
   }
+
   runApp(MyApp(savedLanguage, ipAddr));
 }
 

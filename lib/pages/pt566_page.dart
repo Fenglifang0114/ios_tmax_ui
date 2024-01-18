@@ -10,6 +10,7 @@ import '../data/formatdata.dart';
 import '../data/offset.dart';
 import '../data/pagesize.dart';
 import '../data/scalecmd_data.dart';
+import '../data/screen_mgr.dart';
 import '../data/text.dart';
 import '../dialog/barcodeedit_dialog.dart';
 import '../dialog/qrcodeedit_dialog.dart';
@@ -466,6 +467,7 @@ class _PT566PageState extends State<PT566Page> {
                     ),
                   ),
                   onPressed: () {
+                    myScreenMgr.isMainScreen = true;
                     Navigator.of(context).pop();
                   },
                 ),

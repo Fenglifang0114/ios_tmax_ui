@@ -11,6 +11,7 @@ import '../data/item_key_list.dart';
 import '../data/offset.dart';
 import '../data/pagesize.dart';
 import '../data/scalecmd_data.dart';
+import '../data/screen_mgr.dart';
 import '../data/selectedcontrol.dart';
 import '../data/text.dart';
 import '../data/writelog.dart';
@@ -476,6 +477,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                         ),
                         onPressed: () {
                           myItemKey.keyList.clear();
+                          myScreenMgr.isMainScreen = true;
                           Navigator.of(context).pop();
                         },
                       ),

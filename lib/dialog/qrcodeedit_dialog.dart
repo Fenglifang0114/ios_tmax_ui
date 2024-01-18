@@ -276,6 +276,7 @@ class MyQrcodeDialogState extends State<MyQrcodeDialog> {
         ElevatedButton(
           onPressed: () {
             myBarCodeRowDataList.barCodeRowDataList.clear();
+
             Navigator.of(context).pop();
           },
           child: const Text('Exit'),

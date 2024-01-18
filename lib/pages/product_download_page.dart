@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
 import '../data/download_prt_fmt.dart';
 import '../data/downloadresponse.dart';
 import '../data/scalecmd_data.dart';
+import '../data/screen_mgr.dart';
 import '../eventbus/eventbus.dart';
 import '../generated/l10n.dart';
 import '../main.dart';
@@ -30,7 +30,6 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
   TextEditingController repsController = TextEditingController();
   TextEditingController pluAllCtl = TextEditingController();
   TextEditingController pluPartCtl = TextEditingController();
-  TextEditingController pluDelCtl = TextEditingController();
 
   late ScrollController _fileScrollerController;
   var currentPath = Directory.current.path;
@@ -263,61 +262,6 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                   const SizedBox(
                     height: 30,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center, // 设置主轴对齐方式为居中
-                    children: [
-                      const SizedBox(
-                        width: 150,
-                        child: Text(
-                          'Delete Products:',
-                          textAlign: TextAlign.right,
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      SizedBox(
-                        width: 400,
-                        // height: 40,
-                        child: TextField(
-                          controller: pluDelCtl,
-                          readOnly: true,
-                          maxLines: 2,
-                          minLines: 1,
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(20)),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 50,
-                      ),
-                      SizedBox(
-                        width: 150,
-                        height: 40,
-                        child: OutlinedButton(
-                          style: ButtonStyle(
-                            shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                            ),
-                          ),
-                          onPressed: () async {
-                            pluDelCtl.text = '';
-                            pickFiles(pluDelCtl);
-                          },
-                          child: const Text('Choose Product Excel'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
                   !_isShowDownload
                       ? Center(
                           child: CircularProgressIndicator(
@@ -374,6 +318,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
               ),
             ),
             onPressed: () {
+              myScreenMgr.isMainScreen = true;
               Navigator.of(context).pop();
             },
           ),
@@ -464,47 +409,13 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
 
   bool isOneModeDown() {
     bool res = false;
-    if (pluAllCtl.text.isNotEmpty &&
-        pluPartCtl.text.isEmpty &&
-        pluDelCtl.text.isEmpty) {
+    if (pluAllCtl.text.isNotEmpty && pluPartCtl.text.isEmpty) {
       res = true;
-    } else if (pluAllCtl.text.isEmpty &&
-        pluPartCtl.text.isNotEmpty &&
-        pluDelCtl.text.isEmpty) {
-      res = true;
-    } else if (pluAllCtl.text.isEmpty &&
-        pluPartCtl.text.isEmpty &&
-        pluDelCtl.text.isNotEmpty) {
+    } else if (pluAllCtl.text.isEmpty && pluPartCtl.text.isNotEmpty) {
       res = true;
     }
 
     return res;
-  }
-
-  Future<List<String>> readExcelColumn(
-      String filePath, String columnName) async {
-    var file = File(filePath);
-    var bytes = await file.readAsBytes();
-    var excel = Excel.decodeBytes(bytes);
-
-    var sheet = excel.sheets['Sheet1'];
-
-    var columnIndex = sheet!.rows.first.indexWhere((cell) {
-      return cell!.value == columnName;
-    });
-
-    if (columnIndex == -1) {
-      throw Exception('Column "$columnName" not found.');
-    }
-
-    var columnData = sheet.rows.map((row) {
-      return row[columnIndex]!.value.toString();
-    }).toList();
-
-    // Remove header row
-    columnData.removeAt(0);
-
-    return columnData;
   }
 
   Future<void> sendFormatToScale() async {
@@ -515,10 +426,6 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
       myScaleCmd.cmdMode = "insert_plu_to_scale";
 
       sendFileToScale(pluPartCtl.text);
-    } else {
-      var pluList = await readExcelColumn(pluDelCtl.text, "ProductNumber");
-      myScaleCmd.cmdMode = "del_plu_from_scale";
-      delPluListFromScale(pluList);
     }
   }
 
@@ -582,15 +489,6 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
 
   @override
   Widget build(BuildContext context) {
-    // final width = MediaQuery.of(context).size.width;
-    // final _height = MediaQuery.of(context).size.height;
-    // if (!pathFlag) {
-    //   currentPath = Directory.current.path;
-    //   if (kDebugMode) {
-    //     print(currentPath);
-    //   }
-    //   pathFlag = true;
-    // }
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),

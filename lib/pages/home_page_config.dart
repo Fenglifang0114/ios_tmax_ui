@@ -11,6 +11,7 @@ import '../data/comscaleinfo_data.dart';
 import '../data/currentport_data.dart';
 import '../data/device_data.dart';
 import '../data/downloadresponse.dart';
+import '../data/screen_mgr.dart';
 import '../data/setting_version_info.dart';
 import '../dialog/get_build_info_dialog.dart';
 import '../dialog/language_setting.dart';
@@ -47,7 +48,6 @@ class _HomePageState extends State<HomePage> {
   dynamic _eventbus3;
   dynamic _eventbus4;
 
-  bool isComConnected = false;
   Timer? _timer;
   bool isTiming = false;
 
@@ -109,15 +109,17 @@ class _HomePageState extends State<HomePage> {
 
     _eventbus3 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
       if (mounted) {
-        setState(() {
-          myRespCheckSerialPort = event.obj;
-          if (myRespCheckSerialPort.msgBody == 'ok') {
-            isComConnected = true;
-            PublicFunctions.getScaleInfo();
-          } else {
-            isComConnected = false;
-          }
-        });
+        if (myScreenMgr.isMainScreen) {
+          setState(() {
+            myRespCheckSerialPort = event.obj;
+            if (myRespCheckSerialPort.msgBody == 'ok') {
+              myScreenMgr.serialPortST = true;
+              PublicFunctions.getScaleInfo();
+            } else {
+              myScreenMgr.serialPortST = false;
+            }
+          });
+        }
       }
     });
 
@@ -228,7 +230,7 @@ class _HomePageState extends State<HomePage> {
                           const SizedBox(
                             width: 20,
                           ),
-                          (isComConnected)
+                          (myScreenMgr.serialPortST)
                               ? const CustomCircleIcon(
                                   outerColor: Colors.blue,
                                   innerColor: Colors.white,
@@ -644,13 +646,6 @@ class _HomePageState extends State<HomePage> {
                                       builder: (context) =>
                                           const CustomSerialProtocol()),
                                 ).then((value) => _startTimer(5));
-                                // Navigator.push(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //       builder: (context) => const SerialOutputPage()),
-                                // ).then((value) => setState(() {
-                                //       isCardClicked = false;
-                                //     }));
                               }
                             : null,
                         child: customFunctionCard(
@@ -823,6 +818,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void stopCheckSerialPort() {
+    myScreenMgr.isMainScreen = false;
     _stopTimer();
   }
 }

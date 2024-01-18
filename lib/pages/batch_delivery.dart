@@ -3,13 +3,16 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:t_max/data/timer_manager.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/main.dart';
 import '../data/downloadresponse.dart';
 import '../data/parse_log.dart';
+import '../data/screen_mgr.dart';
 import '../data/writelog.dart';
 import '../eventbus/eventbus.dart';
 import '../generated/l10n.dart';
+import '../widget/page_head.dart';
 
 class BatchDeliveryPage extends StatefulWidget {
   const BatchDeliveryPage({Key? key}) : super(key: key);
@@ -72,9 +75,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
   dynamic _eventbus5;
   dynamic _eventbus6;
   dynamic _eventbus7;
-
-  late OverlayEntry _overlayEntry;
-  bool _showProgressBar = false;
+  dynamic _eventbus8;
 
   TextEditingController _ipListCtl = TextEditingController();
 
@@ -156,6 +157,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
   @override
   void initState() {
     super.initState();
+    cntScaleTimerMgr.startCntScaleTimer(5);
 
     ipAddrCtl.text = '';
     wifiNameCtl.text = '';
@@ -190,7 +192,8 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                 ':' +
                 'Download Serial OutPut' +
                 '\r\n' +
-                mySetSerialOutputResp.msgBody);
+                mySetSerialOutputResp.msgBody +
+                '\r\n');
           }
         });
 
@@ -206,7 +209,8 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                 ':' +
                 'Download Print Format' +
                 '\r\n' +
-                myDownPrnFmtResp.msgBody);
+                myDownPrnFmtResp.msgBody +
+                '\r\n');
           }
         });
         performNextDask();
@@ -223,7 +227,8 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                 ':' +
                 'Modify Bluetooth Name' +
                 '\r\n' +
-                myConnectBTResponse.msgBody);
+                myConnectBTResponse.msgBody +
+                '\r\n');
           }
         });
         performNextDask();
@@ -239,7 +244,8 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                 ':' +
                 'Modify Emission Power' +
                 '\r\n' +
-                myRespBTData.msgBody);
+                myRespBTData.msgBody +
+                '\r\n');
           }
         });
         performNextDask();
@@ -254,7 +260,8 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                 ':' +
                 'Connect Ap' +
                 '\r\n' +
-                myConnectApResponse.msgBody);
+                myConnectApResponse.msgBody +
+                '\r\n');
           }
         });
         performNextDask();
@@ -270,7 +277,8 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                 ':' +
                 'Connect Static Ip' +
                 '\r\n' +
-                mySetStaticIpResp.msgBody);
+                mySetStaticIpResp.msgBody +
+                '\r\n');
           }
         });
         performNextDask();
@@ -285,10 +293,23 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                 ':' +
                 'Connect Dynamic Ip' +
                 '\r\n' +
-                mySetDynamicIpResp.msgBody);
+                mySetDynamicIpResp.msgBody +
+                '\r\n');
           }
         });
         performNextDask();
+      }
+    });
+    _eventbus8 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
+      if (mounted) {
+        setState(() {
+          myRespCheckSerialPort = event.obj;
+          if (myRespCheckSerialPort.msgBody == 'ok') {
+            myScreenMgr.serialPortST = true;
+          } else {
+            myScreenMgr.serialPortST = false;
+          }
+        });
       }
     });
   }
@@ -336,6 +357,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
     _eventbus5.cancel();
     _eventbus6.cancel();
     _eventbus7.cancel();
+    _eventbus8.cancel();
     super.dispose();
   }
 
@@ -351,22 +373,8 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
           height: 50,
           width: screenSize.width - 10,
           color: colorScheme.primary,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Center(
-                child: SizedBox(
-                  width: 240,
-                  child: Text(
-                    'Batch Delivery',
-                    style:
-                        TextStyle(fontSize: 20, color: colorScheme.onPrimary),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-            ],
-          ),
+          child: pageHead(
+              context, 'Batch Delivery', localizedStrings.serial_port_status),
         ),
       ),
       body: Row(
@@ -376,145 +384,6 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
               flex: 5,
               child: Column(
                 children: <Widget>[
-                  Expanded(
-                      flex: 2, // 设置子部件占用空间的比例
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          SizedBox(
-                            width: 150,
-                            height: 50,
-                            child: OutlinedButton(
-                              style: OutlinedButton.styleFrom(
-                                side: BorderSide(
-                                  width: 1,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                                foregroundColor:
-                                    Theme.of(context).colorScheme.primary,
-                                backgroundColor: Theme.of(context)
-                                    .colorScheme
-                                    .onPrimary, // 设置按钮的背景色
-                                shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.circular(4), // 设置按钮的圆角
-                                ),
-                              ),
-                              child: Center(
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Icon(
-                                      Icons.home,
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                    ),
-                                    Text(
-                                      localizedStrings.button_home,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              onPressed: () {
-                                PublicFunctions.closeScalePassth();
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          ),
-                          SizedBox(
-                            width: 150,
-                            height: 50,
-                            child: OutlinedButton(
-                              style: !isDownloading
-                                  ? OutlinedButton.styleFrom(
-                                      side: BorderSide(
-                                        width: 1,
-                                        color: colorScheme.primary,
-                                      ),
-                                      foregroundColor: Theme.of(context)
-                                          .colorScheme
-                                          .onPrimary,
-                                      backgroundColor:
-                                          colorScheme.primary, // 设置按钮的背景色
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(4), // 设置按钮的圆角
-                                      ),
-                                    )
-                                  : OutlinedButton.styleFrom(
-                                      side: BorderSide(
-                                        width: 1,
-                                        color: colorScheme.secondaryContainer,
-                                      ),
-                                      foregroundColor: Theme.of(context)
-                                          .colorScheme
-                                          .onPrimary,
-                                      backgroundColor: colorScheme
-                                          .secondaryContainer, // 设置按钮的背景色
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(4), // 设置按钮的圆角
-                                      ),
-                                    ),
-                              child: Center(
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Icon(
-                                      Icons.download,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onPrimary,
-                                    ),
-                                    Text(
-                                      localizedStrings.download,
-                                      maxLines: 2,
-                                      textAlign: TextAlign.center,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              onPressed: isDownloading
-                                  ? null
-                                  : () {
-                                      if (checkDownload()) {
-                                        downLoadIndex = 0;
-                                        performDownload();
-                                        setState(() {
-                                          isDownloading = true;
-
-                                          _showProgressBar = !_showProgressBar;
-                                          if (_showProgressBar) {
-                                            _overlayEntry =
-                                                _createOverlayEntry();
-                                            Overlay.of(context)
-                                                .insert(_overlayEntry);
-                                          }
-                                        });
-                                      }
-                                    },
-                            ),
-                          ),
-                        ],
-                      )),
                   Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 5,
@@ -602,6 +471,139 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                       }),
                     ),
                   ),
+                  Expanded(
+                      flex: 1, // 设置子部件占用空间的比例
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          // SizedBox(
+                          //   width: 150,
+                          //   height: 50,
+                          //   child: OutlinedButton(
+                          //     style: OutlinedButton.styleFrom(
+                          //       side: BorderSide(
+                          //         width: 1,
+                          //         color: Theme.of(context).colorScheme.primary,
+                          //       ),
+                          //       foregroundColor:
+                          //           Theme.of(context).colorScheme.primary,
+                          //       backgroundColor: Theme.of(context)
+                          //           .colorScheme
+                          //           .onPrimary, // 设置按钮的背景色
+                          //       shape: RoundedRectangleBorder(
+                          //         borderRadius:
+                          //             BorderRadius.circular(4), // 设置按钮的圆角
+                          //       ),
+                          //     ),
+                          //     child: Center(
+                          //       child: Row(
+                          //         mainAxisAlignment:
+                          //             MainAxisAlignment.spaceEvenly,
+                          //         children: [
+                          //           Icon(
+                          //             Icons.home,
+                          //             color:
+                          //                 Theme.of(context).colorScheme.primary,
+                          //           ),
+                          //           Text(
+                          //             localizedStrings.button_home,
+                          //             maxLines: 1,
+                          //             overflow: TextOverflow.ellipsis,
+                          //             style: TextStyle(
+                          //                 color: Theme.of(context)
+                          //                     .colorScheme
+                          //                     .primary,
+                          //                 fontSize: 14,
+                          //                 fontWeight: FontWeight.normal),
+                          //           ),
+                          //         ],
+                          //       ),
+                          //     ),
+                          //     onPressed: () {
+                          //       PublicFunctions.closeScalePassth();
+                          //       myScreenMgr.isMainScreen = true;
+                          //       Navigator.of(context).pop();
+                          //     },
+                          //   ),
+                          // ),
+                          SizedBox(
+                            width: 150,
+                            height: 50,
+                            child: OutlinedButton(
+                              style: !isDownloading
+                                  ? OutlinedButton.styleFrom(
+                                      side: BorderSide(
+                                        width: 1,
+                                        color: colorScheme.primary,
+                                      ),
+                                      foregroundColor: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimary,
+                                      backgroundColor:
+                                          colorScheme.primary, // 设置按钮的背景色
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(4), // 设置按钮的圆角
+                                      ),
+                                    )
+                                  : OutlinedButton.styleFrom(
+                                      side: BorderSide(
+                                        width: 1,
+                                        color: colorScheme.secondaryContainer,
+                                      ),
+                                      foregroundColor: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimary,
+                                      backgroundColor: colorScheme
+                                          .secondaryContainer, // 设置按钮的背景色
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(4), // 设置按钮的圆角
+                                      ),
+                                    ),
+                              child: Center(
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Icon(
+                                      Icons.download,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimary,
+                                    ),
+                                    Text(
+                                      localizedStrings.download,
+                                      maxLines: 2,
+                                      textAlign: TextAlign.center,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              onPressed: isDownloading
+                                  ? null
+                                  : () {
+                                      if (checkDownload()) {
+                                        downLoadIndex = 0;
+                                        performDownload();
+                                        setState(() {
+                                          isDownloading = true;
+                                          cntScaleTimerMgr.stopCntScaleTimer();
+                                        });
+                                      }
+                                    },
+                            ),
+                          ),
+                        ],
+                      )),
                 ],
               )),
           Expanded(
@@ -999,21 +1001,6 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
     );
   }
 
-  OverlayEntry _createOverlayEntry() {
-    return OverlayEntry(
-      builder: (BuildContext context) {
-        return Positioned(
-          top: 0,
-          left: 0,
-          right: 0,
-          child: LinearProgressIndicator(
-            color: colorScheme.outline,
-          ),
-        );
-      },
-    );
-  }
-
   String ipFilePath = '';
 
   performAutoIp() {
@@ -1094,6 +1081,9 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
       if (confirmed) {
         setState(() {
           isDownloading = false;
+
+          cntScaleTimerMgr.stopCntScaleTimer();
+          cntScaleTimerMgr.startCntScaleTimer(5);
         });
       }
     });
@@ -1261,6 +1251,8 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
           isBtSelect &&
           isModifyBtName &&
           btNameCtl.text.isNotEmpty) {
+        outputData.add(
+            getDateTime() + ':' + 'Now modify the Bluetooth name' + '\r\n');
         PublicFunctions.modifyBtName(btNameCtl.text);
         downLoadIndex++;
         return;
@@ -1271,16 +1263,20 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
             jsonDataList.where((item) => item["Req"] == "connect_ap").toList();
 
         if (filteredList.isNotEmpty) {
+          outputData.add(getDateTime() + ':' + 'Now set AP info ' + '\r\n');
           MyApp.webchannel1.sendMessage(jsonEncode(filteredList[0]));
           writelog(jsonEncode(filteredList[0]));
         }
 
         downLoadIndex++;
+
         return;
       }
       if (downLoadIndex == 3 && isWifiSelect && isConnectDhcp) {
+        outputData.add(getDateTime() + ':' + 'Now set DHCP' + '\r\n');
         PublicFunctions.setWifiDynamicMode();
         downLoadIndex++;
+
         return;
       }
       if (downLoadIndex == 4 && isWifiSelect && isConnectStaticIp) {
@@ -1292,11 +1288,13 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
               jsonDecode((filteredList[0])['ReqData']);
           jsonWifi['ip'] = ipAddrCtl.text;
           filteredList[0]['ReqData'] = jsonEncode(jsonWifi);
+          outputData.add(getDateTime() + ':' + 'Now set static ip' + '\r\n');
 
           MyApp.webchannel1.sendMessage(jsonEncode(filteredList[0]));
           writelog(jsonEncode(filteredList[0]));
         }
         downLoadIndex++;
+
         return;
       }
       if (downLoadIndex == 5 && isPrnFmtSelect) {
@@ -1304,6 +1302,8 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
             .where((item) => item["Req"] == "down_print_format_to_scale")
             .toList();
         if (filteredList.isNotEmpty) {
+          outputData
+              .add(getDateTime() + ':' + 'Now download print format' + '\r\n');
           MyApp.webchannel1.sendMessage(jsonEncode(filteredList[0]));
           writelog(jsonEncode(filteredList[0]));
         }
@@ -1314,6 +1314,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
         List<Map<String, dynamic>> filteredList = jsonDataList
             .where((item) => item["Req"] == "set_output_format")
             .toList();
+        outputData.add(getDateTime() + ':' + 'Now set output format' + '\r\n');
         MyApp.webchannel1.sendMessage(jsonEncode(filteredList[0]));
         writelog(jsonEncode(filteredList[0]));
         downLoadIndex++;
@@ -1321,12 +1322,6 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
       }
 
       downLoadIndex++;
-    }
-    if (_showProgressBar) {
-      setState(() {
-        _showProgressBar = !_showProgressBar;
-        _overlayEntry.remove();
-      });
     }
 
     _showErrorDialog(context, 'This download is complete');

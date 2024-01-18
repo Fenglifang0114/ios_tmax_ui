@@ -1,12 +1,14 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
 import '../../generated/l10n.dart';
+import '../data/common.dart';
 import '../data/downloadresponse.dart';
+import '../data/screen_mgr.dart';
+import '../data/timer_manager.dart';
 import '../widget/page_head.dart';
-import '../widget/timerwidget.dart';
 
 class SetSystemTimePage extends StatefulWidget {
   const SetSystemTimePage({Key? key}) : super(key: key);
@@ -17,29 +19,35 @@ class SetSystemTimePage extends StatefulWidget {
 class SetSystemTimePageState extends State<SetSystemTimePage> {
   dynamic eventBus1;
   dynamic eventBus2;
-
-  String olCount = '-';
-  String olTime = '-';
-  String ulCount = '-';
-  String ulTime = '-';
+  dynamic eventbus3;
 
   DateTime customDate = DateTime.now();
   DateTime customTime = DateTime.now();
+  DateTime deviceTime = DateTime.now();
+
   bool isManaul = false;
 
-  TextEditingController deviceTimeCtl = TextEditingController();
   TextEditingController manualTimeCtl = TextEditingController();
+
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
-    deviceTimeCtl.text = '2024-01-11 08:08:08';
+    cntScaleTimerMgr.stopCntScaleTimer();
     PublicFunctions.getScaleTime();
+
     eventBus1 = eventBus.on<EventSetScaleTime>().listen((event) {
       if (mounted) {
-        PublicFunctions.getScaleTime();
         mySetScaleTimeResp = event.obj;
         if (mySetScaleTimeResp.msgBody.isNotEmpty) {
+          if (mySetScaleTimeResp.msgBody.contains('ok')) {
+            cntScaleTimerMgr.stopCntScaleTimer();
+            PublicFunctions.getScaleTime();
+          } else {
+            stopTimer();
+            cntScaleTimerMgr.startCntScaleTimer(5);
+          }
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text(
                   (mySetScaleTimeResp.msgBody.contains('ok'))
@@ -58,43 +66,41 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
     eventBus2 = eventBus.on<EventGetScaleTime>().listen((event) {
       if (mounted) {
         myGetScaleTimeResp = event.obj;
-        if (myGetScaleTimeResp.msgBody.isNotEmpty) {
-          if (myGetScaleTimeResp.msgBody.contains('ok')) {
-            String dataStr = myGetScaleTimeResp.msgBody;
-            List<String> parts = dataStr.split(',');
-
-            if (parts.length > 1) {
-              String secondPart = parts[1].trim(); // 移除字符串两边的空白字符
-              int? intValue = int.tryParse(secondPart);
-              if (intValue != null) {
-                DateTime dateTime =
+        if (myGetScaleTimeResp.msgBody.contains('ok')) {
+          String dataStr = myGetScaleTimeResp.msgBody;
+          List<String> parts = dataStr.split(',');
+          if (parts.length > 1) {
+            String secondPart = parts[1].trim(); // 移除字符串两边的空白字符
+            int? intValue = int.tryParse(secondPart);
+            if (intValue != null) {
+              setState(() {
+                deviceTime =
                     DateTime.fromMillisecondsSinceEpoch(intValue * 1000);
-
-                String formattedDateTime =
-                    DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime);
-                setState(() {
-                  deviceTimeCtl.text = formattedDateTime;
-                });
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: const Text('fail to get time',
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.normal)), ////此处需要秤回复
-                    duration: const Duration(seconds: 3),
-                    backgroundColor: Colors.red.shade900));
-              }
+                stopTimer();
+                startTimer();
+              });
             } else {
+              stopTimer();
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: const Text('fail to get time',
+                  content: const Text('failed to get time',
                       style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.normal)), ////此处需要秤回复
                   duration: const Duration(seconds: 3),
                   backgroundColor: Colors.red.shade900));
             }
+          } else {
+            stopTimer();
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: const Text('failed to get time',
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.normal)), ////此处需要秤回复
+                duration: const Duration(seconds: 3),
+                backgroundColor: Colors.red.shade900));
           }
         } else {
+          stopTimer();
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text(myGetScaleTimeResp.msgBody,
                   style: const TextStyle(
@@ -102,12 +108,20 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
               duration: const Duration(seconds: 3),
               backgroundColor: Colors.red.shade900));
         }
+        cntScaleTimerMgr.stopCntScaleTimer();
+        cntScaleTimerMgr.startCntScaleTimer(5);
+      }
+    });
 
+    eventbus3 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
+      if (mounted) {
         setState(() {
-          olCount = '50';
-          olTime = '2000';
-          ulCount = '100';
-          ulTime = '20032';
+          myRespCheckSerialPort = event.obj;
+          if (myRespCheckSerialPort.msgBody == 'ok') {
+            myScreenMgr.serialPortST = true;
+          } else {
+            myScreenMgr.serialPortST = false;
+          }
         });
       }
     });
@@ -117,6 +131,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
   void dispose() {
     eventBus1.cancel();
     eventBus2.cancel();
+    _timer?.cancel();
     super.dispose();
   }
 
@@ -124,6 +139,20 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+  }
+
+  void startTimer() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        deviceTime = deviceTime.add(Duration(seconds: 1));
+      });
+    });
+  }
+
+  void stopTimer() {
+    setState(() {
+      _timer?.cancel();
+    });
   }
 
   @override
@@ -142,7 +171,8 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
           // mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            pageHead(context, localizedStrings.device_time_title),
+            pageHead(context, localizedStrings.device_time_title,
+                localizedStrings.serial_port_status),
             const SizedBox(height: 5),
             Expanded(
               flex: 3,
@@ -150,18 +180,6 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                 color: Theme.of(context).colorScheme.onPrimary,
                 child: Column(
                   children: [
-                    Container(
-                        height: 50,
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        alignment: Alignment.centerLeft,
-                        child: const Row(
-                          children: [
-                            SizedBox(
-                              width: 20,
-                            ),
-                            TimerWidget(),
-                          ],
-                        )),
                     const Row(
                       children: [
                         SizedBox(
@@ -170,28 +188,53 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                         SizedBox(
                           width: 400,
                           child: Text(
-                            'Last synced:',
+                            'Device time:',
                             style: TextStyle(
                                 fontSize: 18, overflow: TextOverflow.ellipsis),
                           ),
                         ),
                       ],
                     ),
-                    Row(
-                      children: [
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        SizedBox(
-                          width: 200,
-                          child: TextField(
-                            controller: deviceTimeCtl,
-                            readOnly: true,
-                            maxLines: 1,
-                          ),
-                        ),
-                      ],
-                    ),
+                    Container(
+                        height: 50,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          children: [
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            SizedBox(
+                              width: 300,
+                              child: Text.rich(
+                                TextSpan(
+                                    text:
+                                        "${deviceTime.year}-${pad0(deviceTime.month)}-${pad0(deviceTime.day)} ${pad0(deviceTime.hour)}:${pad0(deviceTime.minute)}:${pad0(deviceTime.second)}",
+                                    style: const TextStyle(
+                                      fontSize: 30.0,
+                                      color: Colors.blue,
+                                      height: 1.5,
+                                    )),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            OutlinedButton(
+                              onPressed: () {
+                                var timestamp = (DateTime.now()
+                                            .toUtc()
+                                            .millisecondsSinceEpoch /
+                                        1000)
+                                    .truncate();
+                                cntScaleTimerMgr.stopCntScaleTimer();
+                                PublicFunctions.setScaleTime(
+                                    timestamp.toString());
+                              },
+                              child: btnStyle('Sync PC Time'),
+                            ),
+                          ],
+                        )),
                     const SizedBox(
                       height: 20,
                     ),
@@ -204,22 +247,6 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                             padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
                             child: Row(
                               children: [
-                                OutlinedButton(
-                                  onPressed: () {
-                                    var timestamp = (DateTime.now()
-                                                .toUtc()
-                                                .millisecondsSinceEpoch /
-                                            1000)
-                                        .truncate();
-                                    print(timestamp);
-                                    PublicFunctions.setScaleTime(
-                                        timestamp.toString());
-                                  },
-                                  child: btnStyle('Sync now'),
-                                ),
-                                const SizedBox(
-                                  width: 20,
-                                ),
                                 OutlinedButton(
                                   onPressed: () {
                                     setState(() {
@@ -239,6 +266,9 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                         ),
                       ),
                     ]),
+                    const SizedBox(
+                      height: 40,
+                    ),
                     isManaul
                         ? Row(
                             children: [
@@ -246,18 +276,36 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                                 width: 20,
                               ),
                               SizedBox(
-                                width: 200,
+                                width: 300,
                                 child: TextField(
                                   controller: manualTimeCtl,
                                   readOnly: true,
+                                  style: TextStyle(fontSize: 30),
                                   maxLines: 1,
                                 ),
                               ),
+                              const SizedBox(
+                                width: 20,
+                              ),
+                              OutlinedButton(
+                                  onPressed: () {
+                                    var timestamp = (customDate
+                                                .toUtc()
+                                                .millisecondsSinceEpoch /
+                                            1000)
+                                        .truncate();
+                                    print(timestamp);
+                                    cntScaleTimerMgr.stopCntScaleTimer();
+
+                                    PublicFunctions.setScaleTime(
+                                        timestamp.toString());
+                                  },
+                                  child: btnStyle('Sync Time')),
                             ],
                           )
                         : const SizedBox(),
                     const SizedBox(
-                      height: 20,
+                      height: 40,
                     ),
                     isManaul
                         ? Row(
@@ -331,19 +379,6 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                               const SizedBox(
                                 width: 20,
                               ),
-                              OutlinedButton(
-                                  onPressed: () {
-                                    var timestamp = (customDate
-                                                .toUtc()
-                                                .millisecondsSinceEpoch /
-                                            1000)
-                                        .truncate();
-                                    print(timestamp);
-
-                                    PublicFunctions.setScaleTime(
-                                        timestamp.toString());
-                                  },
-                                  child: btnStyle('Send Date/Time')),
                             ],
                           )
                         : const SizedBox(),

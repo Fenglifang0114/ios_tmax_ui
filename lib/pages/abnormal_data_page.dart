@@ -6,6 +6,8 @@ import 'package:t_max/data/olul_err_data.dart';
 import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
 import '../../generated/l10n.dart';
+import '../data/screen_mgr.dart';
+import '../data/timer_manager.dart';
 import '../widget/page_head.dart';
 
 class AbnormalDataPage extends StatefulWidget {
@@ -15,7 +17,8 @@ class AbnormalDataPage extends StatefulWidget {
 }
 
 class AbnormalDataPageState extends State<AbnormalDataPage> {
-  dynamic eventBus14;
+  dynamic eventBus1;
+  dynamic eventBus2;
   String olCount = '-';
   String olTime = '-';
   String ulCount = '-';
@@ -26,20 +29,38 @@ class AbnormalDataPageState extends State<AbnormalDataPage> {
   @override
   void initState() {
     super.initState();
+    cntScaleTimerMgr.stopCntScaleTimer();
+
     PublicFunctions.getWeightErr();
 
     isWeightDataBtn = false;
 
-    eventBus14 = eventBus.on<EventGetWeightErr>().listen((event) {
+    eventBus1 = eventBus.on<EventGetWeightErr>().listen((event) {
       if (mounted) {
         myGetWeightErrResp = event.obj;
         setState(() {
           isWeightDataBtn = true;
         });
 
-        if (myGetWeightErrResp.msgBody.isNotEmpty) {
-          if (myGetWeightErrResp.msgBody.contains('fail') ||
-              myGetWeightErrResp.msgBody.contains('no')) {
+        if (myGetWeightErrResp.msgBody.contains('fail') ||
+            myGetWeightErrResp.msgBody.contains('no')) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(myGetWeightErrResp.msgBody,
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
+              duration: const Duration(seconds: 3),
+              backgroundColor: Colors.red.shade900));
+        } else {
+          try {
+            final jsonResponse = json.decode(myGetWeightErrResp.msgBody);
+            myOlUlErrInfo = OlUlErrInfo.fromJson(jsonResponse);
+            setState(() {
+              olCount = myOlUlErrInfo.olCnt.toString();
+              olTime = myOlUlErrInfo.olTime.toString();
+              ulCount = myOlUlErrInfo.ulCnt.toString();
+              ulTime = myOlUlErrInfo.ulTime.toString();
+            });
+          } catch (e) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text(myGetWeightErrResp.msgBody,
                     style: const TextStyle(
@@ -47,34 +68,31 @@ class AbnormalDataPageState extends State<AbnormalDataPage> {
                         fontWeight: FontWeight.normal)), ////此处需要秤回复
                 duration: const Duration(seconds: 3),
                 backgroundColor: Colors.red.shade900));
-          } else {
-            try {
-              final jsonResponse = json.decode(myGetWeightErrResp.msgBody);
-              myOlUlErrInfo = OlUlErrInfo.fromJson(jsonResponse);
-              setState(() {
-                olCount = myOlUlErrInfo.olCnt.toString();
-                olTime = myOlUlErrInfo.olTime.toString();
-                ulCount = myOlUlErrInfo.ulCnt.toString();
-                ulTime = myOlUlErrInfo.ulTime.toString();
-              });
-            } catch (e) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(myGetWeightErrResp.msgBody,
-                      style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.normal)), ////此处需要秤回复
-                  duration: const Duration(seconds: 3),
-                  backgroundColor: Colors.red.shade900));
-            }
           }
         }
+        cntScaleTimerMgr.stopCntScaleTimer();
+        cntScaleTimerMgr.startCntScaleTimer(5);
+      }
+    });
+
+    eventBus2 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
+      if (mounted) {
+        setState(() {
+          myRespCheckSerialPort = event.obj;
+          if (myRespCheckSerialPort.msgBody == 'ok') {
+            myScreenMgr.serialPortST = true;
+          } else {
+            myScreenMgr.serialPortST = false;
+          }
+        });
       }
     });
   }
 
   @override
   void dispose() {
-    eventBus14.cancel();
+    eventBus1.cancel();
+    eventBus2.cancel();
     super.dispose();
   }
 
@@ -100,7 +118,8 @@ class AbnormalDataPageState extends State<AbnormalDataPage> {
           // mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            pageHead(context, localizedStrings.abnormal_data_title),
+            pageHead(context, localizedStrings.abnormal_data_title,
+                localizedStrings.serial_port_status),
             const SizedBox(height: 5),
             Expanded(
               flex: 3,
@@ -127,6 +146,7 @@ class AbnormalDataPageState extends State<AbnormalDataPage> {
                             OutlinedButton(
                                 onPressed: isWeightDataBtn
                                     ? () {
+                                        cntScaleTimerMgr.stopCntScaleTimer();
                                         PublicFunctions.getWeightErr();
                                         setState(() {
                                           isWeightDataBtn = false;
@@ -165,7 +185,7 @@ class AbnormalDataPageState extends State<AbnormalDataPage> {
                                 DataRow(
                                   cells: [
                                     const DataCell(Text(
-                                      'Overload anomalies',
+                                      'OL',
                                       style: TextStyle(fontSize: 12),
                                     )),
                                     DataCell(Text(
@@ -181,7 +201,7 @@ class AbnormalDataPageState extends State<AbnormalDataPage> {
                                 DataRow(
                                   cells: [
                                     const DataCell(Text(
-                                      'Underload anomalies',
+                                      'UL',
                                       style: TextStyle(fontSize: 12),
                                     )),
                                     DataCell(Text(

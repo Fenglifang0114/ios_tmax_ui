@@ -9,6 +9,7 @@ import 'package:t_max/data/writelog.dart';
 import 'package:t_max/main.dart';
 import '../data/downloadresponse.dart';
 import '../data/ipinfodata.dart';
+import '../data/screen_mgr.dart';
 import '../eventbus/eventbus.dart';
 import '../functions/methods.dart';
 import '../generated/l10n.dart';
@@ -333,6 +334,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                       ),
                       ElevatedButton(
                           onPressed: () {
+                            myScreenMgr.isMainScreen = true;
                             Navigator.of(context).pop();
                           },
                           style: ElevatedButton.styleFrom(

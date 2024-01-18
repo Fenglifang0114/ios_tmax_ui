@@ -18,6 +18,7 @@ import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
 import '../../generated/l10n.dart';
 import '../../main.dart';
+import '../data/screen_mgr.dart';
 import '../dialog/addproduct_dialog.dart';
 import '../dialog/adduser_dialog.dart';
 import '../dialog/setting_dialog.dart';
@@ -351,6 +352,7 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                                 ),
                                 onPressed: () {
                                   PublicFunctions.stopWeight();
+                                  myScreenMgr.isMainScreen = true;
                                   Navigator.of(context).pop();
                                 },
                               ),

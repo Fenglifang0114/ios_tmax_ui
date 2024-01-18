@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../data/screen_mgr.dart';
 import '../data/setting_version_info.dart';
 import '../dialog/language_setting.dart';
 import '../generated/l10n.dart';
@@ -87,6 +88,7 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
                       height: 50,
                       child: IconButton(
                           onPressed: () {
+                            myScreenMgr.isMainScreen = true;
                             Navigator.of(context).pop();
                           },
                           icon: CustomCircleIcon(

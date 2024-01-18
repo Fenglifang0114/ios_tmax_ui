@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../data/screen_mgr.dart';
 import '../widget/dropdown.dart';
 
 List<String> firstField = ['简体中文', '繁体中文', 'English'];
@@ -101,6 +102,7 @@ fieldModifyDialog(BuildContext context) {
                 children: [
                   ElevatedButton(
                       onPressed: () {
+                        myScreenMgr.isMainScreen = true;
                         Navigator.of(context).pop();
                       },
                       child: const Text("确定")),
@@ -108,6 +110,7 @@ fieldModifyDialog(BuildContext context) {
                   OutlinedButton(
                       child: const Text("取消"),
                       onPressed: () {
+                        myScreenMgr.isMainScreen = true;
                         Navigator.of(context).pop();
                       })
                 ],

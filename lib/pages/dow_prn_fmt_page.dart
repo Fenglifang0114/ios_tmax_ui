@@ -6,11 +6,13 @@ import 'package:file_picker/file_picker.dart';
 import '../data/download_prt_fmt.dart';
 import '../data/downloadresponse.dart';
 import '../data/scalecmd_data.dart';
+import '../data/screen_mgr.dart';
+import '../data/timer_manager.dart';
 import '../data/writelog.dart';
 import '../eventbus/eventbus.dart';
 import '../generated/l10n.dart';
 import '../main.dart';
-import '../widget/box_gradient.dart';
+import '../widget/page_head.dart';
 
 class DownloadPage extends StatefulWidget {
   const DownloadPage({super.key});
@@ -40,6 +42,7 @@ class _DownloadPageState extends State<DownloadPage> {
   late ScrollController _fileScrollerController;
   var currentPath = Directory.current.path;
   dynamic _eventbus1;
+  dynamic _eventbus2;
   Timer? _downloadTimer;
 
   @override
@@ -50,12 +53,16 @@ class _DownloadPageState extends State<DownloadPage> {
     accModeController.text = '';
     pcsModeController.text = '';
     pctModeController.text = '';
+    cntScaleTimerMgr.stopCntScaleTimer();
+    cntScaleTimerMgr.startCntScaleTimer(5);
     _eventbus1 = eventBus.on<EventDownPrnFmtResp>().listen((event) {
       if (mounted) {
         setState(() {
           myDownPrnFmtResp = event.obj;
           isDownloadClicked = false;
           _stopTimer();
+          cntScaleTimerMgr.stopCntScaleTimer();
+          cntScaleTimerMgr.startCntScaleTimer(5);
           if (myDownPrnFmtResp.msgBody.isNotEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text(
@@ -69,6 +76,18 @@ class _DownloadPageState extends State<DownloadPage> {
                 backgroundColor: (myDownPrnFmtResp.msgBody.contains('ok'))
                     ? Colors.green.shade900
                     : Colors.red.shade900));
+          }
+        });
+      }
+    });
+    _eventbus2 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
+      if (mounted) {
+        setState(() {
+          myRespCheckSerialPort = event.obj;
+          if (myRespCheckSerialPort.msgBody == 'ok') {
+            myScreenMgr.serialPortST = true;
+          } else {
+            myScreenMgr.serialPortST = false;
           }
         });
       }
@@ -87,6 +106,7 @@ class _DownloadPageState extends State<DownloadPage> {
   void dispose() {
     _fileScrollerController.dispose();
     _eventbus1.cancel;
+    _eventbus2.cancel;
     _stopTimer();
     super.dispose();
   }
@@ -99,13 +119,10 @@ class _DownloadPageState extends State<DownloadPage> {
           children: [
             SizedBox(
               height: 20,
-              child: Text(
-                '',
-                style: TextStyle(color: Theme.of(context).colorScheme.primary),
-              ),
             ),
-            _buildButtonRow(),
+            _buildDownloading(),
             Expanded(
+              flex: 2,
               child: SingleChildScrollView(
                 controller: _fileScrollerController,
                 padding: const EdgeInsets.all(10),
@@ -337,54 +354,20 @@ class _DownloadPageState extends State<DownloadPage> {
                 ),
               ),
             ),
+            Expanded(
+              flex: 1,
+              child: _buildButtonRow(),
+            ),
           ],
         ),
       ),
     ]);
   }
 
-  Widget _buildButtonRow() {
+  Widget _buildDownloading() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        SizedBox(
-          width: 120,
-          height: 50,
-          child: OutlinedButton(
-            style: OutlinedButton.styleFrom(
-              side: BorderSide(
-                width: 1,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              foregroundColor: Colors.blue,
-              backgroundColor: Colors.white, // 设置按钮的背景色
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
-              ),
-            ),
-            child: Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Icon(
-                    Icons.home,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  Text(
-                    localizedStrings.button_home,
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontSize: 14,
-                        fontWeight: FontWeight.normal),
-                  ),
-                ],
-              ),
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ),
         isDownloadClicked
             ? Center(
                 child: CircularProgressIndicator(
@@ -394,6 +377,14 @@ class _DownloadPageState extends State<DownloadPage> {
                 ),
               )
             : const SizedBox(),
+      ],
+    );
+  }
+
+  Widget _buildButtonRow() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
         SizedBox(
           width: 120,
           height: 50,
@@ -479,6 +470,7 @@ class _DownloadPageState extends State<DownloadPage> {
         sendFormatToScale(printFormatSequence);
         setState(() {
           isDownloadClicked = true;
+          cntScaleTimerMgr.stopCntScaleTimer();
         });
         _startTimer(30);
       }
@@ -534,38 +526,13 @@ class _DownloadPageState extends State<DownloadPage> {
   Widget build(BuildContext context) {
     // final width = MediaQuery.of(context).size.width;
     // final _height = MediaQuery.of(context).size.height;
-    // if (!pathFlag) {
-    //   currentPath = Directory.current.path;
-    //   if (kDebugMode) {
-    //     print(currentPath);
-    //   }
-    //   pathFlag = true;
-    // }
 
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),
         child: Container(
-          decoration: BoxDecoration(gradient: boxGradient()),
-          child: Row(
-            children: [
-              const SizedBox(
-                width: 50,
-              ),
-              Center(
-                child: SizedBox(
-                  width: 300,
-                  child: Text(
-                    localizedStrings.print_format_download,
-                    style: TextStyle(
-                        fontSize: 20,
-                        color: Theme.of(context).colorScheme.onPrimary),
-                    textAlign: TextAlign.left,
-                  ),
-                ),
-              ),
-            ],
-          ),
+          child: pageHead(context, localizedStrings.print_format_download,
+              localizedStrings.serial_port_status),
         ),
       ),
       body: ListView(

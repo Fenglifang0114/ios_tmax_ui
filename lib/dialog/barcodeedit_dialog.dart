@@ -260,6 +260,7 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
         ElevatedButton(
           onPressed: () {
             myBarCodeRowDataList.barCodeRowDataList.clear();
+
             Navigator.of(context).pop();
           },
           child: const Text(

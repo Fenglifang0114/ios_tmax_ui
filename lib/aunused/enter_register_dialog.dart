@@ -1,6 +1,6 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
+import '../data/screen_mgr.dart';
 
 TextEditingController computerid = TextEditingController();
 TextEditingController license = TextEditingController();
@@ -41,12 +41,14 @@ enterRegisterDialog(BuildContext context) {
                       OutlinedButton(
                           child: const Text("License this software"),
                           onPressed: () {
+                            myScreenMgr.isMainScreen = true;
                             Navigator.of(context).pop();
                           }),
                       const SizedBox(width: 30),
                       ElevatedButton(
                           child: const Text("Start trial"),
                           onPressed: () {
+                            myScreenMgr.isMainScreen = true;
                             Navigator.of(context).pop();
                           })
                     ],

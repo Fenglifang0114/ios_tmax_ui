@@ -192,7 +192,7 @@ class PublicFunctions {
 
   static void modifyBtName(String btName) {
     myScaleCmd.cmdMode = "modify_bt_name";
-    myScaleCmd.cmdData = "btName";
+    myScaleCmd.cmdData = btName;
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
     writelog(jsonEncode(myScaleCmd));
   }

@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:t_max/data/timer_manager.dart';
+import '../data/screen_mgr.dart';
 import 'box_gradient.dart';
 import 'custom_circle_icon.dart';
 
-Widget pageHead(dynamic context, String pageTitle) {
+Widget pageHead(
+  dynamic context,
+  String pageTitle,
+  String serialPortStatus,
+) {
   return Container(
       color: Theme.of(context).colorScheme.onPrimary,
       child: Container(
@@ -29,6 +35,8 @@ Widget pageHead(dynamic context, String pageTitle) {
                                   height: 50,
                                   child: IconButton(
                                       onPressed: () {
+                                        myScreenMgr.isMainScreen = true;
+                                        cntScaleTimerMgr.stopCntScaleTimer();
                                         Navigator.of(context).pop();
                                       },
                                       icon: CustomCircleIcon(
@@ -61,6 +69,45 @@ Widget pageHead(dynamic context, String pageTitle) {
                     ],
                   )),
             ),
+            SizedBox(
+              width: 360,
+              height: 50,
+              child: Row(
+                children: [
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                    child: Text(serialPortStatus,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.right,
+                        maxLines: 1,
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: Theme.of(context).colorScheme.onPrimary)),
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  (myScreenMgr.serialPortST)
+                      ? const CustomCircleIcon(
+                          outerColor: Colors.blue,
+                          innerColor: Colors.white,
+                          icon: Icons.check_circle,
+                          size: 24.0,
+                        )
+                      : const CustomCircleIcon(
+                          outerColor: Colors.red,
+                          innerColor: Colors.white,
+                          icon: Icons.cancel,
+                          size: 24.0,
+                        ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                ],
+              ),
+            )
           ],
         ),
       ));

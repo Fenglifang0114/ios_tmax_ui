@@ -6,6 +6,7 @@ import 'package:t_max/functions/methods.dart';
 import '../../eventbus/eventbus.dart';
 import '../../generated/l10n.dart';
 import '../../main.dart';
+import '../data/screen_mgr.dart';
 
 class BluetoothDialog extends StatefulWidget {
   const BluetoothDialog({super.key});
@@ -278,6 +279,7 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
             OutlinedButton(
               child: Text(localizedStrings.button_exit),
               onPressed: () {
+                myScreenMgr.isMainScreen = true;
                 Navigator.of(context).pop();
               },
             ),

@@ -6,6 +6,7 @@ import 'package:path/path.dart' as p;
 
 import '../data/downloadresponse.dart';
 import '../data/scalecmd_data.dart';
+import '../data/screen_mgr.dart';
 import '../eventbus/eventbus.dart';
 import '../generated/l10n.dart';
 import '../main.dart';
@@ -201,6 +202,7 @@ class _SerialOutputPageState extends State<SerialOutputPage> {
               ),
             ),
             onPressed: () {
+              myScreenMgr.isMainScreen = true;
               Navigator.of(context).pop();
             },
           ),
