@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,9 +11,11 @@ import 'package:t_max/main.dart';
 import '../data/downloadresponse.dart';
 import '../data/ipinfodata.dart';
 import '../data/screen_mgr.dart';
+import '../data/timer_manager.dart';
 import '../eventbus/eventbus.dart';
 import '../functions/methods.dart';
 import '../generated/l10n.dart';
+import '../widget/page_head.dart';
 import '../widget/wifitextfeild.dart';
 
 class WifiSettingPage extends StatefulWidget {
@@ -48,6 +51,8 @@ class WifiSettingPageState extends State<WifiSettingPage> {
   bool isConnecting = false;
   bool alreadyConnected = false;
 
+  Timer? getIpTimer;
+
   dynamic _eventbus1;
   dynamic _eventbus2;
   dynamic _eventbus3;
@@ -59,6 +64,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
   dynamic _eventbus9;
   dynamic _eventbus10;
   dynamic _eventbus11;
+  dynamic _eventbus12;
 
   TextEditingController controller = TextEditingController();
   RegExp ipaddressRegex = RegExp(r'[0-9.]');
@@ -68,6 +74,17 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     multiLine: false,
     caseSensitive: false,
   );
+
+  void _startGetIP(int time) {
+    getIpTimer = Timer(Duration(seconds: time), () {
+      PublicFunctions.getIpInfo();
+      _stopGetIp();
+    });
+  }
+
+  void _stopGetIp() {
+    getIpTimer?.cancel(); // 停止计时器
+  }
 
   bool _isValidIpAddress(bool tempValid, String value) {
     if (tempValid) {
@@ -124,7 +141,11 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                 wifiRssiList.add(myWifiListInfo.wifidatalist![i].rssi!);
               }
             }
+            cntScaleTimerMgr.stopCntScaleTimer();
             PublicFunctions.getApInfo();
+          } else {
+            cntScaleTimerMgr.stopCntScaleTimer();
+            cntScaleTimerMgr.startCntScaleTimer(5);
           }
           displayedItems = List.from(wifiItems);
           _enableRefresh = true;
@@ -140,9 +161,12 @@ class WifiSettingPageState extends State<WifiSettingPage> {
             if (mySetDynamicIpResp.msgBody.contains('ok')) {
               isConnecting = false;
               errorMessage = 'Obtaining IP, please wait...';
+              cntScaleTimerMgr.stopCntScaleTimer();
+              _startGetIP(1);
             } else {
               isConnecting = false;
               errorMessage = mySetDynamicIpResp.msgBody;
+              cntScaleTimerMgr.stopCntScaleTimer();
               PublicFunctions.getApInfo();
             }
           }
@@ -158,8 +182,11 @@ class WifiSettingPageState extends State<WifiSettingPage> {
               isConnecting = false;
               if (alreadyConnected) {
                 errorMessage = 'Obtaining IP, please wait...';
+                cntScaleTimerMgr.stopCntScaleTimer();
+
                 PublicFunctions.getApInfo();
               } else {
+                cntScaleTimerMgr.stopCntScaleTimer();
                 connectAp();
               }
             } else {
@@ -185,6 +212,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
             } else {
               errorMessage = 'Get ip fail !';
             }
+            cntScaleTimerMgr.stopCntScaleTimer();
             PublicFunctions.getIpMode();
           }
         });
@@ -209,6 +237,8 @@ class WifiSettingPageState extends State<WifiSettingPage> {
           if (!myGetIpError.messagedata!.contains('ok')) {
             errorMessage = myGetIpError.messagedata!;
           }
+          cntScaleTimerMgr.stopCntScaleTimer();
+          cntScaleTimerMgr.startCntScaleTimer(5);
 
           isConnecting = false;
         });
@@ -225,6 +255,8 @@ class WifiSettingPageState extends State<WifiSettingPage> {
               _isStatic = true;
             }
           }
+          cntScaleTimerMgr.stopCntScaleTimer();
+          cntScaleTimerMgr.startCntScaleTimer(5);
         });
       }
     });
@@ -236,6 +268,8 @@ class WifiSettingPageState extends State<WifiSettingPage> {
           errorMessage = myGetWifiListError.messagedata!;
           _enableRefresh = true;
         });
+        cntScaleTimerMgr.stopCntScaleTimer();
+        cntScaleTimerMgr.startCntScaleTimer(5);
       }
     });
 
@@ -246,6 +280,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
           if (myWiFiAPInfo.ssid!.isNotEmpty) {
             connectedSsid = myWiFiAPInfo.ssid!;
             connectedMac = myWiFiAPInfo.bssid!;
+            cntScaleTimerMgr.stopCntScaleTimer();
             PublicFunctions.getIpInfo();
           } else {
             connectedSsid = "";
@@ -253,6 +288,8 @@ class WifiSettingPageState extends State<WifiSettingPage> {
             ipController.clear();
             gateWayController.clear();
             netMaskController.clear();
+            cntScaleTimerMgr.stopCntScaleTimer();
+            cntScaleTimerMgr.startCntScaleTimer(5);
           }
         });
       }
@@ -266,9 +303,12 @@ class WifiSettingPageState extends State<WifiSettingPage> {
             if (myConnectApResponse.msgBody.contains('ok')) {
               isConnecting = false;
               errorMessage = 'Obtaining IP, please wait...';
+              cntScaleTimerMgr.stopCntScaleTimer();
+              PublicFunctions.getIpInfo();
             } else {
               isConnecting = false;
               errorMessage = myConnectApResponse.msgBody;
+              cntScaleTimerMgr.stopCntScaleTimer();
               PublicFunctions.getApInfo();
             }
           }
@@ -279,7 +319,29 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     _eventbus11 = eventBus.on<EventRespChangeWiFiMode>().listen((event) {
       if (mounted) {
         setState(() {
-          PublicFunctions.getWifiList();
+          myRespChangeWifiMode = event.obj;
+          if (myRespChangeWifiMode.msgBody.contains('ok')) {
+            myScreenMgr.serialPortST = true;
+            cntScaleTimerMgr.stopCntScaleTimer();
+            PublicFunctions.getWifiList();
+          } else {
+            _enableRefresh = true;
+            errorMessage = myRespChangeWifiMode.msgBody;
+            cntScaleTimerMgr.stopCntScaleTimer();
+            cntScaleTimerMgr.startCntScaleTimer(5);
+          }
+        });
+      }
+    });
+    _eventbus12 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
+      if (mounted) {
+        setState(() {
+          myRespCheckSerialPort = event.obj;
+          if (myRespCheckSerialPort.msgBody == 'ok') {
+            myScreenMgr.serialPortST = true;
+          } else {
+            myScreenMgr.serialPortST = false;
+          }
         });
       }
     });
@@ -300,7 +362,8 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     _eventbus9.cancel();
     _eventbus10.cancel();
     _eventbus11.cancel();
-
+    _eventbus12.cancel();
+    _stopGetIp();
     super.dispose();
   }
 
@@ -312,317 +375,251 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     // final _height = MediaQuery.of(context).size.height;
 
     return Scaffold(
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(50),
+          child: pageHead(context, localizedStrings.wifi_setting_title,
+              localizedStrings.serial_port_status),
+        ),
         body: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Expanded(
-        flex: 2,
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height,
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              SizedBox(
-                  height: 100,
-                  // color: Theme.of(context).colorScheme.primary,
-                  child: Column(
-                    children: [
-                      const Divider(
-                        thickness: 2,
-                        height: 2,
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      ElevatedButton(
-                          onPressed: () {
-                            myScreenMgr.isMainScreen = true;
-                            Navigator.of(context).pop();
-                          },
-                          style: ElevatedButton.styleFrom(
-                            fixedSize: const Size(180, 40),
-                            side: BorderSide(
-                                width: 2,
-                                color: Theme.of(context).colorScheme.primary),
-                            foregroundColor:
-                                Theme.of(context).colorScheme.primary,
-                            backgroundColor: Colors.white, //体颜色
-                            textStyle: const TextStyle(
-                                fontWeight: FontWeight.bold), // 字体样式
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8), // 圆角
-                            ),
-                            elevation: 5, // 阴影
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              const Icon(Icons.home),
-                              Text(localizedStrings.button_home),
-                            ],
-                          )),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Expanded(
-                          child: Container(
-                        // height: 48,
-                        color: Theme.of(context).colorScheme.primary,
-                        child: Row(children: [
-                          SizedBox(
-                            width: 40, // 为Container指定一个固定的宽度
-                            child: Tooltip(
-                              message: localizedStrings.refresh_tip,
-                              child: IconButton(
-                                splashRadius: 20,
-                                onPressed: _enableRefresh
-                                    ? () {
-                                        setState(() {
-                                          _enableRefresh = false;
-                                          errorMessage = '';
-                                        });
-                                        PublicFunctions.getWifiList();
-                                      }
-                                    : null,
-                                icon: Icon(
-                                  Icons.refresh,
-                                  color: _enableRefresh
-                                      ? Theme.of(context).colorScheme.onPrimary
-                                      : Theme.of(context)
-                                          .colorScheme
-                                          .background,
+          Expanded(
+            flex: 2,
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height,
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  SizedBox(
+                      height: 100,
+                      // color: Theme.of(context).colorScheme.primary,
+                      child: Column(
+                        children: [
+                          Expanded(
+                              child: Container(
+                            // height: 48,
+                            // color: Theme.of(context).colorScheme.primary,
+                            child: Row(children: [
+                              SizedBox(
+                                width: 40, // 为Container指定一个固定的宽度
+                                child: Tooltip(
+                                  message: localizedStrings.refresh_tip,
+                                  child: IconButton(
+                                    splashRadius: 20,
+                                    onPressed: _enableRefresh
+                                        ? () {
+                                            setState(() {
+                                              _enableRefresh = false;
+                                              errorMessage = '';
+                                            });
+                                            cntScaleTimerMgr
+                                                .stopCntScaleTimer();
+
+                                            PublicFunctions.getWifiList();
+                                          }
+                                        : null,
+                                    icon: Icon(
+                                      Icons.refresh,
+                                      color: _enableRefresh
+                                          ? Theme.of(context)
+                                              .colorScheme
+                                              .primary
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .background,
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
-                          Expanded(
-                            child: TextField(
-                              controller: _findWifiText,
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: Colors.white,
-                                suffixIcon: IconButton(
-                                  splashRadius: 20,
-                                  icon: Icon(
-                                    Icons.close,
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
+                              Expanded(
+                                child: TextField(
+                                  controller: _findWifiText,
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor: Colors.white,
+                                    suffixIcon: IconButton(
+                                      splashRadius: 20,
+                                      icon: Icon(
+                                        Icons.close,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          _findWifiText.clear();
+                                          displayedItems = wifiItems;
+                                        });
+                                      },
+                                    ),
+                                    prefixIcon: Icon(
+                                      Icons.search,
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                    ),
+                                    labelText: localizedStrings.find_ssid,
+                                    floatingLabelBehavior:
+                                        FloatingLabelBehavior.never,
+                                    border: const OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: Colors.white, // 设置边框颜色
+                                        width: 2.0, // 设置边框宽度
+                                      ),
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(30)),
+                                    ),
                                   ),
-                                  onPressed: () {
+                                  onChanged: (value) {
+                                    List<String> filteredItems = wifiItems
+                                        .where((item) => item
+                                            .toLowerCase()
+                                            .contains(value.toLowerCase()))
+                                        .toList();
                                     setState(() {
-                                      _findWifiText.clear();
-                                      displayedItems = wifiItems;
+                                      displayedItems = filteredItems;
                                     });
                                   },
                                 ),
-                                prefixIcon: Icon(
-                                  Icons.search,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                                labelText: localizedStrings.find_ssid,
-                                floatingLabelBehavior:
-                                    FloatingLabelBehavior.never,
-                                border: const OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.white, // 设置边框颜色
-                                    width: 2.0, // 设置边框宽度
-                                  ),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(30)),
-                                ),
                               ),
-                              onChanged: (value) {
-                                List<String> filteredItems = wifiItems
-                                    .where((item) => item
-                                        .toLowerCase()
-                                        .contains(value.toLowerCase()))
-                                    .toList();
-                                setState(() {
-                                  displayedItems = filteredItems;
-                                });
-                              },
-                            ),
-                          ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                            ]),
+                          )),
                           const SizedBox(
-                            width: 10,
+                            height: 5,
                           ),
-                        ]),
-                      )),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                    ],
-                  )),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: displayedItems.length,
-                  itemBuilder: (context, index) {
-                    return SizedBox(
-                      child: Column(
-                        children: [
-                          Divider(
-                            height: 2,
-                            color: Theme.of(context).colorScheme.background,
-                          ),
-                          ListTile(
-                            dense: true,
-                            title: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  displayedItems[index],
-                                  maxLines: 1, // 设置文本最大行数为1
-                                  style: const TextStyle(
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                )
-                              ],
-                            ),
-                            subtitle: Text(
-                              bssidList[index],
-                              maxLines: 1, // 设置文本最大行数为1
-                              style: const TextStyle(
-                                fontSize: 12,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            trailing: Icon((wifiRssiList[index] == 4)
-                                ? Icons.wifi
-                                : (wifiRssiList[index] == 3)
-                                    ? Icons.wifi_2_bar
-                                    : (wifiRssiList[index] == 2 ||
-                                            wifiRssiList[index] == 1)
-                                        ? Icons.wifi_1_bar
-                                        : Icons.wifi),
-                            tileColor: selectedIndex == index
-                                ? const Color.fromARGB(255, 167, 215, 255)
-                                : null,
-                            onTap: () {
-                              setState(() {
-                                selectedIndex = index;
-                                // 更新文本框中的值
-                                ssidController.text = displayedItems[index];
-                                if (index <
-                                    myWifiListInfo.wifidatalist!.length) {
-                                  bssId =
-                                      myWifiListInfo.wifidatalist![index].mac!;
-                                }
-                              });
-                            },
-                          )
                         ],
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      Expanded(
-          flex: 7,
-          child: Container(
-              color: Theme.of(context).colorScheme.onPrimary,
-              child: Column(
-                children: [
-                  Container(
+                      )),
+                  Divider(
                     height: 2,
-                    color: Theme.of(context).colorScheme.primary, // 蓝色分隔条颜色
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                   Expanded(
-                    child: Row(
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              width: 2,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .primary, // 蓝色分隔条颜色
-                            ),
-                          ],
-                        ),
-                        Expanded(
-                          child: SizedBox(
-                            width: double.infinity,
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: Center(
-                                child: ListView(
+                    child: ListView.builder(
+                      itemCount: displayedItems.length,
+                      itemBuilder: (context, index) {
+                        return SizedBox(
+                          child: Column(
+                            children: [
+                              ListTile(
+                                dense: true,
+                                title: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const SizedBox(
-                                      height: 20,
-                                    ),
-                                    Center(
-                                      child: Text(
-                                        localizedStrings.network_setting,
-                                        style: TextStyle(
-                                          fontSize: 40,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                        ),
+                                    Text(
+                                      displayedItems[index],
+                                      maxLines: 1, // 设置文本最大行数为1
+                                      style: const TextStyle(
+                                        overflow: TextOverflow.ellipsis,
                                       ),
-                                    ),
-                                    const SizedBox(
-                                      height: 20,
-                                    ),
-                                    Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          const SizedBox(
-                                            width: 20,
-                                          ),
-                                          SizedBox(
-                                            height: 40,
-                                            width: 200,
-                                            child: Align(
-                                              alignment: Alignment.centerLeft,
-                                              child: Text(
-                                                "Connected AP Info:",
-                                                textAlign: TextAlign.right,
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .primary,
-                                                ),
-                                              ),
+                                    )
+                                  ],
+                                ),
+                                subtitle: Text(
+                                  bssidList[index],
+                                  maxLines: 1, // 设置文本最大行数为1
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                trailing: Icon((wifiRssiList[index] == 4)
+                                    ? Icons.wifi
+                                    : (wifiRssiList[index] == 3)
+                                        ? Icons.wifi_2_bar
+                                        : (wifiRssiList[index] == 2 ||
+                                                wifiRssiList[index] == 1)
+                                            ? Icons.wifi_1_bar
+                                            : Icons.wifi),
+                                tileColor: selectedIndex == index
+                                    ? const Color.fromARGB(255, 167, 215, 255)
+                                    : null,
+                                onTap: () {
+                                  setState(() {
+                                    selectedIndex = index;
+                                    // 更新文本框中的值
+                                    ssidController.text = displayedItems[index];
+                                    if (index <
+                                        myWifiListInfo.wifidatalist!.length) {
+                                      bssId = myWifiListInfo
+                                          .wifidatalist![index].mac!;
+                                    }
+                                  });
+                                },
+                              )
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Expanded(
+              flex: 7,
+              child: Container(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                  child: Column(
+                    children: [
+                      Container(
+                        height: 2,
+                        color: Theme.of(context).colorScheme.primary, // 蓝色分隔条颜色
+                      ),
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  width: 2,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .primary, // 蓝色分隔条颜色
+                                ),
+                              ],
+                            ),
+                            Expanded(
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  child: Center(
+                                    child: ListView(
+                                      children: [
+                                        const SizedBox(
+                                          height: 20,
+                                        ),
+                                        Center(
+                                          child: Text(
+                                            localizedStrings.network_setting,
+                                            style: TextStyle(
+                                              fontSize: 40,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary,
                                             ),
                                           ),
-                                          Column(
+                                        ),
+                                        const SizedBox(
+                                          height: 20,
+                                        ),
+                                        Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
                                             children: [
-                                              SizedBox(
-                                                height: 30,
-                                                width: 200,
-                                                child: Align(
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  child: Text(
-                                                    connectedSsid,
-                                                    textAlign: TextAlign.right,
-                                                    style: TextStyle(
-                                                      fontSize: 14,
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .primary,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
                                               const SizedBox(
                                                 width: 20,
                                               ),
                                               SizedBox(
-                                                height: 30,
+                                                height: 40,
                                                 width: 200,
                                                 child: Align(
                                                   alignment:
                                                       Alignment.centerLeft,
                                                   child: Text(
-                                                    connectedMac,
+                                                    "Connected AP Info:",
                                                     textAlign: TextAlign.right,
                                                     style: TextStyle(
                                                       fontSize: 14,
@@ -633,381 +630,452 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                                   ),
                                                 ),
                                               ),
-                                            ],
-                                          )
-                                        ]),
-                                    const SizedBox(
-                                      height: 20,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
+                                              Column(
+                                                children: [
+                                                  SizedBox(
+                                                    height: 30,
+                                                    width: 200,
+                                                    child: Align(
+                                                      alignment:
+                                                          Alignment.centerLeft,
+                                                      child: Text(
+                                                        connectedSsid,
+                                                        textAlign:
+                                                            TextAlign.right,
+                                                        style: TextStyle(
+                                                          fontSize: 14,
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .colorScheme
+                                                                  .primary,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(
+                                                    width: 20,
+                                                  ),
+                                                  SizedBox(
+                                                    height: 30,
+                                                    width: 200,
+                                                    child: Align(
+                                                      alignment:
+                                                          Alignment.centerLeft,
+                                                      child: Text(
+                                                        connectedMac,
+                                                        textAlign:
+                                                            TextAlign.right,
+                                                        style: TextStyle(
+                                                          fontSize: 14,
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .colorScheme
+                                                                  .primary,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
+                                            ]),
                                         const SizedBox(
-                                          width: 20,
+                                          height: 20,
                                         ),
-                                        const SizedBox(
-                                          height: 40,
-                                          width: 100,
-                                          child: Align(
-                                            alignment: Alignment.centerRight,
-                                            child: Text(
-                                              "SSID:",
-                                              textAlign: TextAlign.right,
-                                              style: TextStyle(
-                                                fontSize: 20,
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            const SizedBox(
+                                              width: 20,
+                                            ),
+                                            const SizedBox(
+                                              height: 40,
+                                              width: 100,
+                                              child: Align(
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                child: Text(
+                                                  "SSID:",
+                                                  textAlign: TextAlign.right,
+                                                  style: TextStyle(
+                                                    fontSize: 20,
+                                                  ),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          width: 20,
-                                        ),
-                                        SizedBox(
-                                          width: 300,
-                                          height: 40,
-                                          child: TextField(
-                                            readOnly: false,
-                                            style: const TextStyle(
-                                              overflow: TextOverflow.ellipsis,
+                                            const SizedBox(
+                                              width: 20,
                                             ),
-                                            controller: ssidController,
-                                            onChanged: (value) {
-                                              // List<String> filteredItems =
-                                              //     wifiItems
-                                              //         .where((item) => item
-                                              //             .toLowerCase()
-                                              //             .contains(value
-                                              //                 .toLowerCase()))
-                                              //         .toList();
-                                              // setState(() {
-                                              //   displayedItems =
-                                              //       filteredItems;
-                                              // });
-                                            },
-                                            maxLines: 1,
-                                            inputFormatters: [
-                                              LengthLimitingTextInputFormatter(
-                                                  28),
-                                              FilteringTextInputFormatter.allow(
-                                                  RegExp(
-                                                      r'[\x00-\xF]+$')), // 允许输入数字和点
-                                            ],
-                                            textAlign: TextAlign.start,
-                                            textAlignVertical:
-                                                TextAlignVertical.center,
-                                            decoration: const InputDecoration(
-                                              border: OutlineInputBorder(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(30)),
-                                              ),
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 20,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        const SizedBox(
-                                          width: 20,
-                                        ),
-                                        SizedBox(
-                                          height: 60,
-                                          width: 100,
-                                          child: Align(
-                                            alignment: Alignment.centerRight,
-                                            child: Text(
-                                              localizedStrings.password,
-                                              textAlign: TextAlign.right,
-                                              style: const TextStyle(
-                                                fontSize: 20,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          width: 20,
-                                        ),
-                                        SizedBox(
-                                          width: 300,
-                                          height: 40,
-                                          child: TextField(
-                                            controller: passwordController,
-                                            textAlign: TextAlign.start,
-                                            textAlignVertical:
-                                                TextAlignVertical.center,
-                                            obscureText: passwordLock,
-                                            maxLines: 1,
-                                            inputFormatters: [
-                                              LengthLimitingTextInputFormatter(
-                                                  20),
-                                              FilteringTextInputFormatter.allow(
-                                                  RegExp(
-                                                      r'^[ -~!@#$%^&*()_+<>?:"{},.\/;]+$')), // 允许输入数字和点
-                                            ],
-                                            decoration: InputDecoration(
-                                              suffixIcon: IconButton(
-                                                icon: Icon(passwordLock
-                                                    ? Icons.visibility_off
-                                                    : Icons.visibility),
-                                                onPressed: () {
-                                                  setState(() {
-                                                    if (passwordLock) {
-                                                      passwordLock = false;
-                                                    } else {
-                                                      passwordLock = true;
-                                                    }
-                                                  });
-                                                },
-                                              ),
-                                              border: const OutlineInputBorder(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(30)),
-                                              ),
-                                            ),
-                                            onChanged: (value) {
-                                              isValidData();
-                                              setState(() {
-                                                errorMessage = '';
-                                              });
-                                            },
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 20,
-                                    ),
-                                    buildCommonRow(
-                                      localizedStrings.ip_address,
-                                      15,
-                                      ipaddressRegex,
-                                      _isValidIP,
-                                      'Incorrect IP! e.g. 192.168.100.188',
-                                      (value) => validateIp(value),
-                                      ipController,
-                                      _isStatic,
-                                    ),
-                                    buildCommonRow(
-                                      localizedStrings.netmask,
-                                      15,
-                                      ipaddressRegex,
-                                      _isValidMask,
-                                      'Incorrect NetMask! e.g. 255.255.255.0',
-                                      (value) => validateNetMask(value),
-                                      netMaskController,
-                                      _isStatic,
-                                    ),
-                                    buildCommonRow(
-                                      localizedStrings.gateway,
-                                      15,
-                                      ipaddressRegex,
-                                      _isValidGateway,
-                                      'Incorrect Gateway! e.g. 192.168.100.1',
-                                      (value) => validateGateWay(value),
-                                      gateWayController,
-                                      _isStatic,
-                                    ),
-                                    // buildCommonRow(
-                                    //   "DNS:",
-                                    //   15,
-                                    //   ipaddressRegex,
-                                    //   _isValidDns,
-                                    //   'Incorrect DNS! e.g. 8.8.8.8',
-                                    //   (value) => validateDns(value),
-                                    //   dnsController,
-                                    //   _isStatic,
-                                    // ),
-                                    Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            errorMessage,
-                                            style: TextStyle(
-                                                fontSize: 20,
-                                                color: (errorMessage
-                                                            .contains('ok') ||
-                                                        errorMessage
-                                                            .contains('OK'))
-                                                    ? Colors.green.shade900
-                                                    : Colors.red.shade900),
-                                          ),
-                                        ]),
-                                    const SizedBox(
-                                      width: 20,
-                                    ),
-                                    const SizedBox(
-                                      height: 20,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        OutlinedButton(
-                                          style: ButtonStyle(
-                                            side: MaterialStateProperty.all(
-                                                BorderSide(
-                                                    width: 2,
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .primary)),
-                                          ),
-                                          child: SizedBox(
-                                            width: 150,
-                                            height: 40,
-                                            child: Center(
-                                              child: Text(
-                                                localizedStrings.button_get_ip,
-                                                textAlign: TextAlign.center,
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
+                                            SizedBox(
+                                              width: 300,
+                                              height: 40,
+                                              child: TextField(
+                                                readOnly: false,
                                                 style: const TextStyle(
-                                                    fontSize: 20.0),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                                controller: ssidController,
+                                                onChanged: (value) {
+                                                  // List<String> filteredItems =
+                                                  //     wifiItems
+                                                  //         .where((item) => item
+                                                  //             .toLowerCase()
+                                                  //             .contains(value
+                                                  //                 .toLowerCase()))
+                                                  //         .toList();
+                                                  // setState(() {
+                                                  //   displayedItems =
+                                                  //       filteredItems;
+                                                  // });
+                                                },
+                                                maxLines: 1,
+                                                inputFormatters: [
+                                                  LengthLimitingTextInputFormatter(
+                                                      28),
+                                                  FilteringTextInputFormatter
+                                                      .allow(RegExp(
+                                                          r'[\x00-\xF]+$')), // 允许输入数字和点
+                                                ],
+                                                textAlign: TextAlign.start,
+                                                textAlignVertical:
+                                                    TextAlignVertical.center,
+                                                decoration:
+                                                    const InputDecoration(
+                                                  border: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                30)),
+                                                  ),
+                                                ),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 20,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            const SizedBox(
+                                              width: 20,
+                                            ),
+                                            SizedBox(
+                                              height: 60,
+                                              width: 100,
+                                              child: Align(
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                child: Text(
+                                                  localizedStrings.password,
+                                                  textAlign: TextAlign.right,
+                                                  style: const TextStyle(
+                                                    fontSize: 20,
+                                                  ),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          onPressed: isConnecting
-                                              ? null
-                                              : () {
+                                            const SizedBox(
+                                              width: 20,
+                                            ),
+                                            SizedBox(
+                                              width: 300,
+                                              height: 40,
+                                              child: TextField(
+                                                controller: passwordController,
+                                                textAlign: TextAlign.start,
+                                                textAlignVertical:
+                                                    TextAlignVertical.center,
+                                                obscureText: passwordLock,
+                                                maxLines: 1,
+                                                inputFormatters: [
+                                                  LengthLimitingTextInputFormatter(
+                                                      20),
+                                                  FilteringTextInputFormatter
+                                                      .allow(RegExp(
+                                                          r'^[ -~!@#$%^&*()_+<>?:"{},.\/;]+$')), // 允许输入数字和点
+                                                ],
+                                                decoration: InputDecoration(
+                                                  suffixIcon: IconButton(
+                                                    icon: Icon(passwordLock
+                                                        ? Icons.visibility_off
+                                                        : Icons.visibility),
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        if (passwordLock) {
+                                                          passwordLock = false;
+                                                        } else {
+                                                          passwordLock = true;
+                                                        }
+                                                      });
+                                                    },
+                                                  ),
+                                                  border:
+                                                      const OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                30)),
+                                                  ),
+                                                ),
+                                                onChanged: (value) {
+                                                  isValidData();
                                                   setState(() {
                                                     errorMessage = '';
                                                   });
-
-                                                  PublicFunctions.getIpInfo();
                                                 },
-                                        ),
-                                        const SizedBox(
-                                          width: 20,
-                                        ),
-                                        OutlinedButton(
-                                          style: ButtonStyle(
-                                            side: MaterialStateProperty.all(
-                                                BorderSide(
-                                                    width: 2,
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .primary)),
-                                          ),
-                                          child: SizedBox(
-                                            width: 150,
-                                            height: 40,
-                                            child: Center(
-                                              child: Text(
-                                                localizedStrings.button_static,
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                textAlign: TextAlign.center,
-                                                style: const TextStyle(
-                                                    fontSize: 20.0),
                                               ),
-                                            ),
-                                          ),
-                                          onPressed: (_isStatic || isConnecting)
-                                              ? null
-                                              : () {
-                                                  setState(() {
-                                                    _isStatic = true;
-                                                    errorMessage =
-                                                        'Enter IP information and click the connect button!';
-                                                  });
-
-                                                  // sendDataToWifi();
-                                                },
+                                            )
+                                          ],
                                         ),
                                         const SizedBox(
-                                          width: 20,
+                                          height: 20,
                                         ),
-                                        OutlinedButton(
-                                          style: ButtonStyle(
-                                            side: MaterialStateProperty.all(
-                                                BorderSide(
-                                                    width: 2,
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .primary)),
-                                          ),
-                                          child: SizedBox(
-                                            width: 150,
-                                            height: 40,
-                                            child: Center(
-                                              child: Text(
-                                                localizedStrings.button_dynamic,
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                textAlign: TextAlign.center,
-                                                style: const TextStyle(
-                                                    fontSize: 20.0),
-                                              ),
-                                            ),
-                                          ),
-                                          onPressed:
-                                              (_isStatic && !isConnecting)
-                                                  ? () {
-                                                      setState(() {
-                                                        _isStatic = false;
-                                                        errorMessage = '';
-                                                        // dnsController.clear();
-                                                        // netMaskController.clear();
-                                                        // ipController.clear();
-                                                        // gateWayController.clear();
-                                                        // _isValidDns = true;
-                                                        // _isValidGateway = true;
-                                                        // _isValidIP = true;
-                                                        // _isValidMask = true;
-                                                      });
-                                                      PublicFunctions
-                                                          .setWifiDynamicMode();
-                                                    }
-                                                  : null,
+                                        buildCommonRow(
+                                          localizedStrings.ip_address,
+                                          15,
+                                          ipaddressRegex,
+                                          _isValidIP,
+                                          'Incorrect IP! e.g. 192.168.100.188',
+                                          (value) => validateIp(value),
+                                          ipController,
+                                          _isStatic,
                                         ),
-                                        const SizedBox(
-                                          width: 20,
+                                        buildCommonRow(
+                                          localizedStrings.netmask,
+                                          15,
+                                          ipaddressRegex,
+                                          _isValidMask,
+                                          'Incorrect NetMask! e.g. 255.255.255.0',
+                                          (value) => validateNetMask(value),
+                                          netMaskController,
+                                          _isStatic,
                                         ),
-                                        ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Theme.of(context)
-                                                .colorScheme
-                                                .primary, // 设置按钮的背景色
-                                            elevation: 10, // 设置按钮的阴影
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      8), // 设置按钮的圆角
-                                            ),
-                                          ),
-                                          child: SizedBox(
-                                            width: 150,
-                                            height: 40,
-                                            child: Center(
-                                              child: Text(
-                                                localizedStrings.button_set,
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
+                                        buildCommonRow(
+                                          localizedStrings.gateway,
+                                          15,
+                                          ipaddressRegex,
+                                          _isValidGateway,
+                                          'Incorrect Gateway! e.g. 192.168.100.1',
+                                          (value) => validateGateWay(value),
+                                          gateWayController,
+                                          _isStatic,
+                                        ),
+                                        // buildCommonRow(
+                                        //   "DNS:",
+                                        //   15,
+                                        //   ipaddressRegex,
+                                        //   _isValidDns,
+                                        //   'Incorrect DNS! e.g. 8.8.8.8',
+                                        //   (value) => validateDns(value),
+                                        //   dnsController,
+                                        //   _isStatic,
+                                        // ),
+                                        Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                errorMessage,
                                                 style: TextStyle(
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .onPrimary,
-                                                    fontSize: 18,
-                                                    fontWeight:
-                                                        FontWeight.bold),
+                                                    fontSize: 20,
+                                                    color: (errorMessage
+                                                                .contains(
+                                                                    'ok') ||
+                                                            errorMessage
+                                                                .contains('OK'))
+                                                        ? Colors.green.shade900
+                                                        : Colors.red.shade900),
                                               ),
+                                            ]),
+                                        const SizedBox(
+                                          width: 20,
+                                        ),
+                                        const SizedBox(
+                                          height: 20,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            OutlinedButton(
+                                              style: ButtonStyle(
+                                                side: MaterialStateProperty.all(
+                                                    BorderSide(
+                                                        width: 2,
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .primary)),
+                                              ),
+                                              child: SizedBox(
+                                                width: 150,
+                                                height: 40,
+                                                child: Center(
+                                                  child: Text(
+                                                    localizedStrings
+                                                        .button_get_ip,
+                                                    textAlign: TextAlign.center,
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: const TextStyle(
+                                                        fontSize: 20.0),
+                                                  ),
+                                                ),
+                                              ),
+                                              onPressed: isConnecting
+                                                  ? null
+                                                  : () {
+                                                      setState(() {
+                                                        errorMessage = '';
+                                                      });
+                                                      cntScaleTimerMgr
+                                                          .stopCntScaleTimer();
+
+                                                      PublicFunctions
+                                                          .getIpInfo();
+                                                    },
                                             ),
-                                          ),
-                                          onPressed:
-                                              (isValidData() && !isConnecting)
+                                            const SizedBox(
+                                              width: 20,
+                                            ),
+                                            OutlinedButton(
+                                              style: ButtonStyle(
+                                                side: MaterialStateProperty.all(
+                                                    BorderSide(
+                                                        width: 2,
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .primary)),
+                                              ),
+                                              child: SizedBox(
+                                                width: 150,
+                                                height: 40,
+                                                child: Center(
+                                                  child: Text(
+                                                    localizedStrings
+                                                        .button_static,
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    textAlign: TextAlign.center,
+                                                    style: const TextStyle(
+                                                        fontSize: 20.0),
+                                                  ),
+                                                ),
+                                              ),
+                                              onPressed:
+                                                  (_isStatic || isConnecting)
+                                                      ? null
+                                                      : () {
+                                                          setState(() {
+                                                            _isStatic = true;
+                                                            errorMessage =
+                                                                'Enter IP information and click the connect button!';
+                                                          });
+
+                                                          // sendDataToWifi();
+                                                        },
+                                            ),
+                                            const SizedBox(
+                                              width: 20,
+                                            ),
+                                            OutlinedButton(
+                                              style: ButtonStyle(
+                                                side: MaterialStateProperty.all(
+                                                    BorderSide(
+                                                        width: 2,
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .primary)),
+                                              ),
+                                              child: SizedBox(
+                                                width: 150,
+                                                height: 40,
+                                                child: Center(
+                                                  child: Text(
+                                                    localizedStrings
+                                                        .button_dynamic,
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    textAlign: TextAlign.center,
+                                                    style: const TextStyle(
+                                                        fontSize: 20.0),
+                                                  ),
+                                                ),
+                                              ),
+                                              onPressed:
+                                                  (_isStatic && !isConnecting)
+                                                      ? () {
+                                                          setState(() {
+                                                            _isStatic = false;
+                                                            errorMessage = '';
+                                                            // dnsController.clear();
+                                                            // netMaskController.clear();
+                                                            // ipController.clear();
+                                                            // gateWayController.clear();
+                                                            // _isValidDns = true;
+                                                            // _isValidGateway = true;
+                                                            // _isValidIP = true;
+                                                            // _isValidMask = true;
+                                                          });
+                                                          cntScaleTimerMgr
+                                                              .stopCntScaleTimer();
+
+                                                          PublicFunctions
+                                                              .setWifiDynamicMode();
+                                                        }
+                                                      : null,
+                                            ),
+                                            const SizedBox(
+                                              width: 20,
+                                            ),
+                                            ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    Theme.of(context)
+                                                        .colorScheme
+                                                        .primary, // 设置按钮的背景色
+                                                elevation: 10, // 设置按钮的阴影
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8), // 设置按钮的圆角
+                                                ),
+                                              ),
+                                              child: SizedBox(
+                                                width: 150,
+                                                height: 40,
+                                                child: Center(
+                                                  child: Text(
+                                                    localizedStrings.button_set,
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .onPrimary,
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                ),
+                                              ),
+                                              onPressed: (isValidData() &&
+                                                      !isConnecting)
                                                   ? () {
                                                       setState(() {
                                                         errorMessage =
                                                             'Connecting...';
                                                       });
                                                       isConnecting = true;
-
+                                                      cntScaleTimerMgr
+                                                          .stopCntScaleTimer();
                                                       if (_isStatic) {
                                                         connectStaticIp();
                                                       } else {
@@ -1020,25 +1088,25 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                                       // gateWayController.clear();
                                                     }
                                                   : null,
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 20,
                                         ),
                                       ],
                                     ),
-                                    const SizedBox(
-                                      height: 20,
-                                    ),
-                                  ],
+                                  ),
                                 ),
+                                // 右侧剩余部分分配给此Container
                               ),
                             ),
-                            // 右侧剩余部分分配给此Container
-                          ),
+                          ],
                         ),
-                      ],
-                    ),
-                  )
-                ],
-              ))),
-    ]));
+                      )
+                    ],
+                  ))),
+        ]));
   }
 
   bool isValidData() {

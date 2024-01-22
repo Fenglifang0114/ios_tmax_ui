@@ -9,6 +9,7 @@ import '../data/comscaleinfo_data.dart';
 import '../data/currentport_data.dart';
 import '../data/device_data.dart';
 import '../data/downloadresponse.dart';
+import '../data/screen_mgr.dart';
 import '../data/setting_version_info.dart';
 import '../dialog/get_build_info_dialog.dart';
 import '../dialog/language_setting.dart';
@@ -46,7 +47,6 @@ class IndustryHomePageState extends State<IndustryHomePage> {
   dynamic _eventbus3;
   dynamic _eventbus4;
 
-  bool isComConnected = false;
   Timer? _timer;
   bool isTiming = false;
 
@@ -95,15 +95,17 @@ class IndustryHomePageState extends State<IndustryHomePage> {
 
     _eventbus3 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
       if (mounted) {
-        setState(() {
-          myRespCheckSerialPort = event.obj;
-          if (myRespCheckSerialPort.msgBody == 'ok') {
-            isComConnected = true;
-            PublicFunctions.getScaleInfo();
-          } else {
-            isComConnected = false;
-          }
-        });
+        if (myScreenMgr.isMainScreen) {
+          setState(() {
+            myRespCheckSerialPort = event.obj;
+            if (myRespCheckSerialPort.msgBody == 'ok') {
+              myScreenMgr.serialPortST = true;
+              PublicFunctions.getScaleInfo();
+            } else {
+              myScreenMgr.serialPortST = false;
+            }
+          });
+        }
       }
     });
 
@@ -213,7 +215,7 @@ class IndustryHomePageState extends State<IndustryHomePage> {
                           const SizedBox(
                             width: 20,
                           ),
-                          (isComConnected)
+                          (myScreenMgr.serialPortST)
                               ? const CustomCircleIcon(
                                   outerColor: Colors.blue,
                                   innerColor: Colors.white,
@@ -769,6 +771,7 @@ class IndustryHomePageState extends State<IndustryHomePage> {
   }
 
   void stopCheckSerialPort() {
+    myScreenMgr.isMainScreen = false;
     _stopTimer();
   }
 }

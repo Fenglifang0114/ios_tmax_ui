@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import '../data/downloadresponse.dart';
 import '../data/screen_mgr.dart';
 import '../data/setting_version_info.dart';
+import '../data/timer_manager.dart';
 import '../dialog/language_setting.dart';
+import '../eventbus/eventbus.dart';
 import '../generated/l10n.dart';
-import '../widget/box_gradient.dart';
 import '../widget/custom_circle_icon.dart';
 import '../dialog/license_info.dart';
+import '../widget/page_head.dart';
 
 class SystemSettingPage extends StatefulWidget {
   const SystemSettingPage({Key? key}) : super(key: key);
@@ -35,16 +38,33 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
   ];
   bool isCardHovered = false;
   bool isCardClicked = false;
+
+  dynamic eventBus1;
+
   // 初始文字颜色
   @override
   void initState() {
     super.initState();
     _pageScrollerController = ScrollController();
+    cntScaleTimerMgr.stopCntScaleTimer();
+    eventBus1 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
+      if (mounted) {
+        setState(() {
+          myRespCheckSerialPort = event.obj;
+          if (myRespCheckSerialPort.msgBody == 'ok') {
+            myScreenMgr.serialPortST = true;
+          } else {
+            myScreenMgr.serialPortST = false;
+          }
+        });
+      }
+    });
   }
 
   @override
   void dispose() {
     _pageScrollerController.dispose();
+    eventBus1.cancel();
     super.dispose();
   }
 
@@ -62,48 +82,52 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
     // final _height = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(50),
-          child: Container(
-            color: Theme.of(context).colorScheme.onPrimary,
-            // foregroundColor: Theme.of(context).colorScheme.primary,
-            child: Container(
-              decoration: BoxDecoration(gradient: boxGradient()),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Center(
-                    child: SizedBox(
-                      width: 300,
-                      child: Text(
-                        mySystemVersionInfo.getTitle(mySystemVersion),
-                        style: TextStyle(
-                            fontSize: 20,
-                            color: Theme.of(context).colorScheme.onPrimary),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                      width: 240,
-                      height: 50,
-                      child: IconButton(
-                          onPressed: () {
-                            myScreenMgr.isMainScreen = true;
-                            Navigator.of(context).pop();
-                          },
-                          icon: CustomCircleIcon(
-                            outerColor: Theme.of(context).colorScheme.onPrimary,
-                            innerColor: Theme.of(context).colorScheme.primary,
-                            icon: Icons.home,
-                            size: 30.0,
-                          ))),
-                ],
-              ),
-            ),
-            //设置状态栏颜色渐变
-            // flexibleSpace:
-            //     Container(decoration: BoxDecoration(gradient: boxGradient())),
-          )),
+        preferredSize: const Size.fromHeight(50),
+        child: pageHead(context, mySystemVersionInfo.getTitle(mySystemVersion),
+            localizedStrings.serial_port_status),
+      ),
+
+      // Container(
+      //   color: Theme.of(context).colorScheme.onPrimary,
+      //   // foregroundColor: Theme.of(context).colorScheme.primary,
+      //   child: Container(
+      //     decoration: BoxDecoration(gradient: boxGradient()),
+      //     child: Row(
+      //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //       children: [
+      //         Center(
+      //           child: SizedBox(
+      //             width: 300,
+      //             child: Text(
+      //               mySystemVersionInfo.getTitle(mySystemVersion),
+      //               style: TextStyle(
+      //                   fontSize: 20,
+      //                   color: Theme.of(context).colorScheme.onPrimary),
+      //               textAlign: TextAlign.center,
+      //             ),
+      //           ),
+      //         ),
+      //         // SizedBox(
+      //         //     width: 240,
+      //         //     height: 50,
+      //         //     child: IconButton(
+      //         //         onPressed: () {
+      //         //           myScreenMgr.isMainScreen = true;
+      //         //           Navigator.of(context).pop();
+      //         //         },
+      //         //         icon: CustomCircleIcon(
+      //         //           outerColor: Theme.of(context).colorScheme.onPrimary,
+      //         //           innerColor: Theme.of(context).colorScheme.primary,
+      //         //           icon: Icons.home,
+      //         //           size: 30.0,
+      //         //         ))),
+      //       ],
+      //     ),
+      //   ),
+      //   //设置状态栏颜色渐变
+      //   // flexibleSpace:
+      //   //     Container(decoration: BoxDecoration(gradient: boxGradient())),
+      // )),
       body: Container(
         color: Theme.of(context).colorScheme.surface,
         padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 30.0),

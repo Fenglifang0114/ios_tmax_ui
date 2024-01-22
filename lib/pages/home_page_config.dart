@@ -670,7 +670,7 @@ class _HomePageState extends State<HomePage> {
                               }
                             : null,
                         child: customFunctionCard(
-                            'Batch delivery',
+                            localizedStrings.batch_delivery_title,
                             "assets/images/line.png",
                             Icons.system_update_alt,
                             myLicenseInfo.isValid),

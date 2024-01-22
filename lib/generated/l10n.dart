@@ -1899,6 +1899,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Batch Delivery`
+  String get batch_delivery_title {
+    return Intl.message(
+      'Batch Delivery',
+      name: 'batch_delivery_title',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

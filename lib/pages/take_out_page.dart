@@ -29,6 +29,7 @@ import 'package:path/path.dart';
 
 import '../dialog/show_warning.dart';
 import '../dialog/weight_report_feilds_setting.dart';
+import '../widget/page_head.dart';
 
 class TakeOutPage extends StatefulWidget {
   const TakeOutPage({Key? key}) : super(key: key);
@@ -472,6 +473,11 @@ class TakeOutPageState extends State<TakeOutPage> {
     localizedStrings = S.of(context);
     final _width = MediaQuery.of(context).size.width;
     return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(50),
+        child: pageHead(context, localizedStrings.take_out_title,
+            localizedStrings.serial_port_status),
+      ),
       body: _isFirstLayout
           ? firstLayout(context, _width)
           : secondLayout(context, _width),
@@ -499,80 +505,16 @@ class TakeOutPageState extends State<TakeOutPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              width: _width,
-              height: 10,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            Container(
               color: Colors.white,
               child: Row(
                 children: [
                   Container(
                       // width: _width,
-                      height: 40,
+                      height: 20,
                       margin: const EdgeInsets.only(left: 5, top: 2),
                       alignment: Alignment.center, //设置控件内容的位置
                       child: Row(
                         children: [
-                          SizedBox(
-                            width: 120,
-                            height: 40,
-                            child: OutlinedButton(
-                              style: OutlinedButton.styleFrom(
-                                side: BorderSide(
-                                  width: 1,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                                foregroundColor: Colors.blue,
-                                backgroundColor: Colors.white, // 设置按钮的背景色
-                                shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.circular(4), // 设置按钮的圆角
-                                ),
-                              ),
-                              child: Center(
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Icon(
-                                      Icons.home,
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                    ),
-                                    Text(
-                                      localizedStrings.button_home,
-                                      style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              onPressed: () {
-                                PublicFunctions.stopWeight();
-                                myScreenMgr.isMainScreen = true;
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 20,
-                          ),
-                          SizedBox(
-                            width: 400,
-                            child: Text(
-                              localizedStrings.take_out_title,
-                              maxLines: 1,
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  color: Theme.of(context).colorScheme.primary),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
                           SizedBox(
                             width: 200,
                             child: Text(
@@ -1352,80 +1294,16 @@ class TakeOutPageState extends State<TakeOutPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              width: _width,
-              height: 10,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            Container(
               color: Colors.white,
               child: Row(
                 children: [
                   Container(
                       // width: _width,
-                      height: 40,
+                      height: 20,
                       margin: const EdgeInsets.only(left: 5, top: 2),
                       alignment: Alignment.center, //设置控件内容的位置
                       child: Row(
                         children: [
-                          SizedBox(
-                            width: 120,
-                            height: 40,
-                            child: OutlinedButton(
-                              style: OutlinedButton.styleFrom(
-                                side: BorderSide(
-                                  width: 1,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                                foregroundColor: Colors.blue,
-                                backgroundColor: Colors.white, // 设置按钮的背景色
-                                shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.circular(4), // 设置按钮的圆角
-                                ),
-                              ),
-                              child: Center(
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Icon(
-                                      Icons.home,
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                    ),
-                                    Text(
-                                      localizedStrings.button_home,
-                                      style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              onPressed: () {
-                                PublicFunctions.stopWeight();
-                                myScreenMgr.isMainScreen = true;
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 20,
-                          ),
-                          SizedBox(
-                            width: 400,
-                            child: Text(
-                              localizedStrings.take_out_title,
-                              maxLines: 1,
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  color: Theme.of(context).colorScheme.primary),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
                           SizedBox(
                             width: 200,
                             child: Text(

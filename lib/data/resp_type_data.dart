@@ -31,6 +31,7 @@ class RespMsgType {
   static const String respGetApList = 'resp_get_ap_list';
   static const String respRescanApList = 'resp_rescan_ap_list';
   static const String respConnectAp = 'resp_connect_ap';
+  static const String respConnectApOneKey = 'resp_connect_ap_one_key';
   static const String respSetWifiDynamicIp = 'resp_set_wifi_dynamic_ip';
   static const String respSetWifiStaticIp = 'resp_set_wifi_static_ip';
   static const String respGetWifiApInfo = 'resp_get_wifi_ap_info';
@@ -93,6 +94,7 @@ class RespMsgType {
     RespMsgType.respChangeWifiMode: handleRespChangeWifiMode,
     RespMsgType.respGetIpInfo: handleRespGetIpInfo,
     RespMsgType.respConnectAp: handleRespConnectAp,
+    RespMsgType.respConnectApOneKey: handleRespConnectApOneKey,
     RespMsgType.respGetApList: handleRespGetApList,
     RespMsgType.respGetIpMode: handleRespGetIpMode,
     RespMsgType.respGetWifiApInfo: handleRespGetWifiApInfo,
@@ -263,6 +265,11 @@ class RespMsgType {
   }
 
   static void handleRespConnectAp(dynamic data) {
+    final jsonStrings = data['MsgBody'];
+    pasterConnectApInfo(jsonStrings);
+  }
+
+  static void handleRespConnectApOneKey(dynamic data) {
     final jsonStrings = data['MsgBody'];
     pasterConnectApInfo(jsonStrings);
   }

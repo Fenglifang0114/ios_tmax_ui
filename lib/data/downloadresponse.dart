@@ -44,6 +44,7 @@ ChannelResponse myDownPluResp = ChannelResponse('', '', 0);
 ChannelResponse myGetWeightErrResp = ChannelResponse('', '', 0);
 ChannelResponse myGetScaleTimeResp = ChannelResponse('', '', 0);
 ChannelResponse mySetScaleTimeResp = ChannelResponse('', '', 0);
+ChannelResponse myRespChangeWifiMode = ChannelResponse('', '', 0);
 
 class SerialPortStatus {
   bool serialPortStatus;

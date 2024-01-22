@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:t_max/pages/system_setting_page.dart';
 
+import '../data/screen_mgr.dart';
+
 class CustomSettingButton extends StatefulWidget {
   const CustomSettingButton({super.key});
 
@@ -18,6 +20,7 @@ class _CustomSettingButtonState extends State<CustomSettingButton> {
       onTap: () {
         setState(() {
           isPressed = !isPressed;
+          myScreenMgr.isMainScreen = false;
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const SystemSettingPage()),

@@ -8,6 +8,7 @@ import '../../eventbus/eventbus.dart';
 import '../../generated/l10n.dart';
 import '../../main.dart';
 import '../data/screen_mgr.dart';
+import '../data/writelog.dart';
 
 class UpdateFirmWareDialog extends StatefulWidget {
   const UpdateFirmWareDialog({super.key});
@@ -258,6 +259,7 @@ class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
     myScaleCmd.cmdMode = "update_firmware";
     myScaleCmd.cmdData = firmwarePathStr;
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+    writelog(jsonEncode(myScaleCmd));
   }
 
   Future<String?> pickFirmwareFile() async {

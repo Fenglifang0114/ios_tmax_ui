@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:t_max/data/timer_manager.dart';
 import '../../data/currentport_data.dart';
 import '../../data/device_data.dart';
 import '../../data/reqweightdata_data.dart';
@@ -9,6 +10,7 @@ import '../../generated/l10n.dart';
 import '../../main.dart';
 import '../data/downloadresponse.dart';
 import '../data/screen_mgr.dart';
+import '../widget/page_head.dart';
 
 class WeightModePage extends StatefulWidget {
   const WeightModePage({Key? key}) : super(key: key);
@@ -63,6 +65,7 @@ class WeightModePageState extends State<WeightModePage> {
         setState(() {
           myReqWeightCountine = event.obj;
           isStart = true;
+          myScreenMgr.serialPortST = true;
         });
       }
     });
@@ -104,6 +107,8 @@ class WeightModePageState extends State<WeightModePage> {
           setState(() {
             isStart = false;
           });
+          cntScaleTimerMgr.stopCntScaleTimer();
+          cntScaleTimerMgr.startCntScaleTimer(5);
         }
       }
     });
@@ -146,98 +151,11 @@ class WeightModePageState extends State<WeightModePage> {
           // mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
+            SizedBox(
               width: _width,
-              height: 10,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            Container(
-              color: Colors.white,
-              child: Row(
-                children: [
-                  Container(
-                      // width: _width,
-                      height: 40,
-                      margin: const EdgeInsets.only(left: 5, top: 2),
-                      alignment: Alignment.center, //设置控件内容的位置
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            width: 120,
-                            height: 40,
-                            child: OutlinedButton(
-                              style: OutlinedButton.styleFrom(
-                                side: BorderSide(
-                                  width: 1,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                                foregroundColor: Colors.blue,
-                                backgroundColor: Colors.white, // 设置按钮的背景色
-                                shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.circular(4), // 设置按钮的圆角
-                                ),
-                              ),
-                              child: Center(
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Icon(
-                                      Icons.home,
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                    ),
-                                    Text(
-                                      localizedStrings.button_home,
-                                      style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              onPressed: () {
-                                PublicFunctions.stopWeight();
-                                myScreenMgr.isMainScreen = true;
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 20,
-                          ),
-                          SizedBox(
-                            width: 400,
-                            child: Text(
-                              localizedStrings.weighing_title,
-                              maxLines: 1,
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  color: Theme.of(context).colorScheme.primary),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          SizedBox(
-                            width: 200,
-                            child: Text(
-                              _errorText.text, //报错信息
-                              maxLines: 1,
-                              style: TextStyle(
-                                color: (_errorText.text).contains('succeed')
-                                    ? Theme.of(context).colorScheme.outline
-                                    : Theme.of(context).colorScheme.error,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ),
-                        ],
-                      )),
-                ],
-              ),
+              height: 50,
+              child: pageHead(context, localizedStrings.weighing_title,
+                  localizedStrings.serial_port_status),
             ),
             const SizedBox(height: 5),
             Expanded(

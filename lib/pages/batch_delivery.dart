@@ -8,11 +8,20 @@ import 'package:t_max/functions/methods.dart';
 import 'package:t_max/main.dart';
 import '../data/downloadresponse.dart';
 import '../data/parse_log.dart';
+import '../data/scalecmd_data.dart';
 import '../data/screen_mgr.dart';
 import '../data/writelog.dart';
 import '../eventbus/eventbus.dart';
 import '../generated/l10n.dart';
 import '../widget/page_head.dart';
+
+const int updateFirmwareIndex = 0;
+const int downPrintFormatIndex = 1;
+const int downOutputFormatIndex = 2;
+const int modifyBtNameIndex = 3;
+const int setDhcpIndex = 4;
+const int setStaticIpIndex = 5;
+const int connectApIndex = 6;
 
 class BatchDeliveryPage extends StatefulWidget {
   const BatchDeliveryPage({Key? key}) : super(key: key);
@@ -32,6 +41,8 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
   TextEditingController btNameCtl = TextEditingController();
   TextEditingController wifiNameCtl = TextEditingController();
   TextEditingController ipAddrCtl = TextEditingController();
+  TextEditingController firmwarePathCtl = TextEditingController();
+
   TextEditingController prnFmt1Ctl = TextEditingController();
   TextEditingController prnFmt2Ctl = TextEditingController();
   TextEditingController prnFmt3Ctl = TextEditingController();
@@ -47,6 +58,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
   String logContant = '';
   late ColorScheme colorScheme;
 
+  bool isUpdateFirmwareSelect = false;
   bool isWifiSelect = false;
   bool isBtSelect = false;
   bool isPrnFmtSelect = false;
@@ -82,6 +94,14 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
   void getLog() async {
     logContant = await readlog();
     jsonDataList = parseLog(logContant, '');
+
+    String firmwarePathStr = getFirmwarePathFromLog(jsonDataList);
+    if (firmwarePathStr.isNotEmpty) {
+      setState(() {
+        firmwarePathCtl.text = firmwarePathStr;
+      });
+    }
+
     String btNameStr = getBtNameFromLog(jsonDataList);
     if (btNameStr.isNotEmpty) {
       setState(() {
@@ -158,10 +178,11 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
   void initState() {
     super.initState();
     cntScaleTimerMgr.startCntScaleTimer(5);
-
+    firmwarePathCtl.text = '';
     ipAddrCtl.text = '';
     wifiNameCtl.text = '';
     btNameCtl.text = '';
+
     prnFmt1Ctl.text = '';
     prnFmt2Ctl.text = '';
     prnFmt3Ctl.text = '';
@@ -399,6 +420,21 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                           (BuildContext context, BoxConstraints constraints) {
                         return Column(
                           children: [
+                            Row(
+                              children: [
+                                Checkbox(
+                                  value: isUpdateFirmwareSelect,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      isUpdateFirmwareSelect = value!;
+                                    });
+                                  },
+                                ),
+                                textStyle(localizedStrings.firmwart_update,
+                                    constraints),
+                                // 省略部分代码
+                              ],
+                            ),
                             Row(
                               children: [
                                 Checkbox(
@@ -788,6 +824,27 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                                 ],
                               )
                             : const SizedBox(),
+                        titleStyle('Firmware Path:'),
+                        SizedBox(
+                          height: 67,
+                          child: Column(children: [
+                            Expanded(
+                              child: TextField(
+                                controller: firmwarePathCtl,
+                                readOnly: true,
+                                maxLines: 1,
+                                style: const TextStyle(
+                                    overflow: TextOverflow.ellipsis),
+                                decoration: const InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10)),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ]),
+                        ),
                         titleStyle('Print Format:'),
                         SizedBox(
                           height: 280,
@@ -1187,10 +1244,20 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
   }
 
   bool checkDownload() {
-    if (!isWifiSelect && !isBtSelect && !isPrnFmtSelect && !isSerialOutput) {
+    if (!isUpdateFirmwareSelect &&
+        !isWifiSelect &&
+        !isBtSelect &&
+        !isPrnFmtSelect &&
+        !isSerialOutput) {
       _showErrorDialog(context, 'No downloads were selected');
       return false;
     }
+
+    if (isUpdateFirmwareSelect && firmwarePathCtl.text == '') {
+      _showErrorDialog(context, 'No firmware record');
+      return false;
+    }
+
     if (isBtSelect && !isModifyBtName) {
       _showErrorDialog(context, 'No bluetooth record');
       return false;
@@ -1245,9 +1312,50 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
     return true;
   }
 
+  void sendFormatToScale(String firmwarePathStr) {
+    myScaleCmd.cmdMode = "update_firmware";
+    myScaleCmd.cmdData = firmwarePathStr;
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+    writelog(jsonEncode(myScaleCmd));
+  }
+
   void performDownload() {
     for (int i = 0; i < 7; i++) {
-      if (downLoadIndex == 0 &&
+      if (downLoadIndex == updateFirmwareIndex &&
+          isUpdateFirmwareSelect &&
+          firmwarePathCtl.text.isNotEmpty) {
+        outputData.add(getDateTime() + ':' + 'Now update firmware' + '\r\n');
+        sendFormatToScale(firmwarePathCtl.text);
+
+        downLoadIndex++;
+        return;
+      }
+      if (downLoadIndex == downPrintFormatIndex && isPrnFmtSelect) {
+        List<Map<String, dynamic>> filteredList = jsonDataList
+            .where((item) => item["Req"] == "down_print_format_to_scale")
+            .toList();
+        if (filteredList.isNotEmpty) {
+          outputData
+              .add(getDateTime() + ':' + 'Now download print format' + '\r\n');
+          MyApp.webchannel1.sendMessage(jsonEncode(filteredList[0]));
+          writelog(jsonEncode(filteredList[0]));
+        }
+        downLoadIndex++;
+        return;
+      }
+
+      if (downLoadIndex == downOutputFormatIndex && isSerialOutput) {
+        List<Map<String, dynamic>> filteredList = jsonDataList
+            .where((item) => item["Req"] == "set_output_format")
+            .toList();
+        outputData.add(getDateTime() + ':' + 'Now set output format' + '\r\n');
+        MyApp.webchannel1.sendMessage(jsonEncode(filteredList[0]));
+        writelog(jsonEncode(filteredList[0]));
+        downLoadIndex++;
+        return;
+      }
+
+      if (downLoadIndex == modifyBtNameIndex &&
           isBtSelect &&
           isModifyBtName &&
           btNameCtl.text.isNotEmpty) {
@@ -1258,28 +1366,17 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
         return;
       }
 
-      if (downLoadIndex == 2 && isWifiSelect && isConnectAp) {
-        List<Map<String, dynamic>> filteredList =
-            jsonDataList.where((item) => item["Req"] == "connect_ap").toList();
-
-        if (filteredList.isNotEmpty) {
-          outputData.add(getDateTime() + ':' + 'Now set AP info ' + '\r\n');
-          MyApp.webchannel1.sendMessage(jsonEncode(filteredList[0]));
-          writelog(jsonEncode(filteredList[0]));
-        }
-
-        downLoadIndex++;
-
-        return;
-      }
-      if (downLoadIndex == 3 && isWifiSelect && isConnectDhcp) {
+      if (downLoadIndex == setDhcpIndex && isWifiSelect && isConnectDhcp) {
         outputData.add(getDateTime() + ':' + 'Now set DHCP' + '\r\n');
         PublicFunctions.setWifiDynamicMode();
         downLoadIndex++;
 
         return;
       }
-      if (downLoadIndex == 4 && isWifiSelect && isConnectStaticIp) {
+
+      if (downLoadIndex == setStaticIpIndex &&
+          isWifiSelect &&
+          isConnectStaticIp) {
         List<Map<String, dynamic>> filteredList = jsonDataList
             .where((item) => item["Req"] == "set_wifi_static_ip")
             .toList();
@@ -1297,27 +1394,21 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
 
         return;
       }
-      if (downLoadIndex == 5 && isPrnFmtSelect) {
-        List<Map<String, dynamic>> filteredList = jsonDataList
-            .where((item) => item["Req"] == "down_print_format_to_scale")
-            .toList();
+
+      if (downLoadIndex == connectApIndex && isWifiSelect && isConnectAp) {
+        List<Map<String, dynamic>> filteredList =
+            jsonDataList.where((item) => item["Req"] == "connect_ap").toList();
+
         if (filteredList.isNotEmpty) {
-          outputData
-              .add(getDateTime() + ':' + 'Now download print format' + '\r\n');
+          outputData.add(getDateTime() + ':' + 'Now set AP info ' + '\r\n');
+          filteredList[0]['Req'] = "connect_ap_one_key";
           MyApp.webchannel1.sendMessage(jsonEncode(filteredList[0]));
+          filteredList[0]['Req'] = "connect_ap";
           writelog(jsonEncode(filteredList[0]));
         }
+
         downLoadIndex++;
-        return;
-      }
-      if (downLoadIndex == 6 && isSerialOutput) {
-        List<Map<String, dynamic>> filteredList = jsonDataList
-            .where((item) => item["Req"] == "set_output_format")
-            .toList();
-        outputData.add(getDateTime() + ':' + 'Now set output format' + '\r\n');
-        MyApp.webchannel1.sendMessage(jsonEncode(filteredList[0]));
-        writelog(jsonEncode(filteredList[0]));
-        downLoadIndex++;
+
         return;
       }
 

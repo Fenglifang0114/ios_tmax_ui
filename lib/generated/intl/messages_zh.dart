@@ -31,6 +31,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "auto": MessageLookupByLibrary.simpleMessage("自动"),
         "barcode_edit": MessageLookupByLibrary.simpleMessage("条码编辑"),
         "barcode_height": MessageLookupByLibrary.simpleMessage("条码高度："),
+        "batch_delivery_title": MessageLookupByLibrary.simpleMessage("批量下发"),
         "baud_rate": MessageLookupByLibrary.simpleMessage("波特率："),
         "bluetooth_modification":
             MessageLookupByLibrary.simpleMessage("蓝牙信息修改"),

@@ -36,6 +36,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Редактирование штрих-кода"),
         "barcode_height":
             MessageLookupByLibrary.simpleMessage("Высота штрих-кода:"),
+        "batch_delivery_title":
+            MessageLookupByLibrary.simpleMessage("Batch Delivery"),
         "baud_rate": MessageLookupByLibrary.simpleMessage("Скорость передачи:"),
         "bluetooth_modification": MessageLookupByLibrary.simpleMessage(
             "Изменение информации о Bluetooth"),

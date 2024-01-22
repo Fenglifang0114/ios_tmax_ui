@@ -51,6 +51,17 @@ String getBtNameFromLog(List<Map<String, dynamic>> jsonDataList) {
   return '';
 }
 
+String getFirmwarePathFromLog(List<Map<String, dynamic>> jsonDataList) {
+  for (Map<String, dynamic> jsonData in jsonDataList) {
+    String req = jsonData['Req'];
+    String reqData = jsonData['ReqData'];
+    if (req == 'update_firmware') {
+      return reqData;
+    }
+  }
+  return '';
+}
+
 String getWifiNameFromLog(List<Map<String, dynamic>> jsonDataList) {
   for (Map<String, dynamic> jsonData in jsonDataList) {
     String req = jsonData['Req'];

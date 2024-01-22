@@ -7,10 +7,11 @@ import '../data/download_prt_fmt.dart';
 import '../data/downloadresponse.dart';
 import '../data/scalecmd_data.dart';
 import '../data/screen_mgr.dart';
+import '../data/timer_manager.dart';
 import '../eventbus/eventbus.dart';
 import '../generated/l10n.dart';
 import '../main.dart';
-import '../widget/box_gradient.dart';
+import '../widget/page_head.dart';
 
 class ProductDownloadPage extends StatefulWidget {
   const ProductDownloadPage({super.key});
@@ -36,6 +37,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
   dynamic _eventbus1;
   dynamic _eventbus2;
   dynamic _eventbus3;
+  dynamic _eventbus4;
   bool _isShowDownload = true;
 
   @override
@@ -43,13 +45,16 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
     super.initState();
     _fileScrollerController = ScrollController();
     pluAllCtl.text = '';
-
+    cntScaleTimerMgr.stopCntScaleTimer();
+    cntScaleTimerMgr.startCntScaleTimer(5);
     _eventbus1 = eventBus.on<EventRespDownPlu>().listen((event) {
       if (mounted) {
         setState(() {
           myDownPluResp = event.obj;
           if (myDownPluResp.msgBody.isNotEmpty) {
             _isShowDownload = true;
+            cntScaleTimerMgr.stopCntScaleTimer();
+            cntScaleTimerMgr.startCntScaleTimer(5);
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text(
                     (myDownPluResp.msgBody.contains('ok'))
@@ -72,6 +77,8 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
           myDownPluResp = event.obj;
           if (myDownPluResp.msgBody.isNotEmpty) {
             _isShowDownload = true;
+            cntScaleTimerMgr.stopCntScaleTimer();
+            cntScaleTimerMgr.startCntScaleTimer(5);
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text(
                     (myDownPluResp.msgBody.contains('ok'))
@@ -94,6 +101,8 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
           myDownPluResp = event.obj;
           if (myDownPluResp.msgBody.isNotEmpty) {
             _isShowDownload = true;
+            cntScaleTimerMgr.stopCntScaleTimer();
+            cntScaleTimerMgr.startCntScaleTimer(5);
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text(
                     (myDownPluResp.msgBody.contains('ok'))
@@ -106,6 +115,19 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                 backgroundColor: (myDownPluResp.msgBody.contains('ok'))
                     ? Colors.green.shade900
                     : Colors.red.shade900));
+          }
+        });
+      }
+    });
+
+    _eventbus4 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
+      if (mounted) {
+        setState(() {
+          myRespCheckSerialPort = event.obj;
+          if (myRespCheckSerialPort.msgBody == 'ok') {
+            myScreenMgr.serialPortST = true;
+          } else {
+            myScreenMgr.serialPortST = false;
           }
         });
       }
@@ -123,9 +145,10 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
   @override
   void dispose() {
     _fileScrollerController.dispose();
-    _eventbus1.cancel;
-    _eventbus2.cancel;
-    _eventbus3.cancel;
+    _eventbus1.cancel();
+    _eventbus2.cancel();
+    _eventbus3.cancel();
+    _eventbus4.cancel();
     super.dispose();
   }
 
@@ -287,45 +310,6 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
         SizedBox(
           width: 120,
           height: 50,
-          child: OutlinedButton(
-            style: OutlinedButton.styleFrom(
-              side: BorderSide(
-                width: 1,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              foregroundColor: Colors.blue,
-              backgroundColor: Colors.white, // 设置按钮的背景色
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
-              ),
-            ),
-            child: Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Icon(
-                    Icons.home,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  Text(
-                    localizedStrings.button_home,
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontSize: 14,
-                        fontWeight: FontWeight.normal),
-                  ),
-                ],
-              ),
-            ),
-            onPressed: () {
-              myScreenMgr.isMainScreen = true;
-              Navigator.of(context).pop();
-            },
-          ),
-        ),
-        SizedBox(
-          width: 120,
-          height: 50,
           child: ElevatedButton(
             style: ButtonStyle(
               shape: MaterialStateProperty.all(
@@ -402,6 +386,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
         sendFormatToScale();
         setState(() {
           _isShowDownload = false;
+          cntScaleTimerMgr.stopCntScaleTimer();
         });
       }
     });
@@ -492,28 +477,8 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),
-        child: Container(
-          decoration: BoxDecoration(gradient: boxGradient()),
-          child: Row(
-            children: [
-              const SizedBox(
-                width: 50,
-              ),
-              Center(
-                child: SizedBox(
-                  width: 300,
-                  child: Text(
-                    "Product Download",
-                    style: TextStyle(
-                        fontSize: 20,
-                        color: Theme.of(context).colorScheme.onPrimary),
-                    textAlign: TextAlign.left,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+        child: pageHead(context, localizedStrings.plu_download_title,
+            localizedStrings.serial_port_status),
       ),
       body: ListView(
         scrollDirection: Axis.horizontal,

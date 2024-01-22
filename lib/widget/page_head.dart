@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:t_max/data/timer_manager.dart';
 import '../data/screen_mgr.dart';
+import '../functions/methods.dart';
 import 'box_gradient.dart';
 import 'custom_circle_icon.dart';
 
@@ -37,6 +38,7 @@ Widget pageHead(
                                       onPressed: () {
                                         myScreenMgr.isMainScreen = true;
                                         cntScaleTimerMgr.stopCntScaleTimer();
+                                        PublicFunctions.stopWeight();
                                         Navigator.of(context).pop();
                                       },
                                       icon: CustomCircleIcon(

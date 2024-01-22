@@ -35,6 +35,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "barcode_edit": MessageLookupByLibrary.simpleMessage("BarCode Edit"),
         "barcode_height":
             MessageLookupByLibrary.simpleMessage("BarCode Height:"),
+        "batch_delivery_title":
+            MessageLookupByLibrary.simpleMessage("Batch Delivery"),
         "baud_rate": MessageLookupByLibrary.simpleMessage("Baud rate:"),
         "bluetooth_modification":
             MessageLookupByLibrary.simpleMessage("Bluetooth Configurations"),
