@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -78,7 +79,11 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
   bool prnFmt3 = false;
   bool prnFmt4 = false;
 
+  bool updateFwDone = false;
+  bool downOtherFunc = false; //除了更新FW还有没有别的需要更新
+
   int downLoadIndex = 0;
+  int updateProcess = 0;
 
   dynamic _eventbus1;
   dynamic _eventbus2;
@@ -88,6 +93,8 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
   dynamic _eventbus6;
   dynamic _eventbus7;
   dynamic _eventbus8;
+  dynamic _eventbus9;
+  dynamic _eventbus10;
 
   TextEditingController _ipListCtl = TextEditingController();
 
@@ -327,10 +334,61 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
           myRespCheckSerialPort = event.obj;
           if (myRespCheckSerialPort.msgBody == 'ok') {
             myScreenMgr.serialPortST = true;
+            if (downOtherFunc) {
+              downOtherFunc = false;
+              performNextDask();
+            }
           } else {
             myScreenMgr.serialPortST = false;
           }
         });
+      }
+    });
+
+    _eventbus9 = eventBus.on<EventRespUpdateFirmware>().listen((event) {
+      if (mounted) {
+        myRespUpdateFirmware = event.obj;
+        setState(() {
+          outputData.add(getDateTime() +
+              ':' +
+              'Update Firmware Result' +
+              '\r\n' +
+              myRespUpdateFirmware.msgBody +
+              '\r\n\r\n\r\n');
+          scrollToBottom();
+        });
+        if (myRespUpdateFirmware.msgBody.contains('ok')) {
+          cntScaleTimerMgr.stopCntScaleTimer();
+          cntScaleTimerMgr.startCntScaleTimer(5);
+          if (!downOtherFunc) {
+            performNextDask();
+          }
+        } else {
+          downLoadIndex = 7;
+          performNextDask();
+        }
+      }
+    });
+    _eventbus10 = eventBus.on<EventRespUpdateFirmwareProcess>().listen((event) {
+      if (mounted) {
+        myRespUpdateFirmware = event.obj;
+        if (myRespUpdateFirmware.msgBody.contains('ok') ||
+            myRespUpdateFirmware.msgBody.contains('fail')) {
+        } else {
+          if (int.tryParse(myRespUpdateFirmware.msgBody) != null) {
+            // 字符串全是数字
+            int numericValue = int.parse(myRespUpdateFirmware.msgBody);
+            setState(() {
+              updateProcess = numericValue;
+              if (numericValue < 100 && numericValue * 1.5 < 100.0) {
+                numericValue = (numericValue * 1.5).toInt();
+              }
+              outputData
+                  .add('Update Progress: ' + numericValue.toString() + '%');
+              scrollToBottom();
+            });
+          } else {}
+        }
       }
     });
   }
@@ -379,6 +437,8 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
     _eventbus6.cancel();
     _eventbus7.cancel();
     _eventbus8.cancel();
+    _eventbus9.cancel();
+    _eventbus10.cancel();
     super.dispose();
   }
 
@@ -1309,6 +1369,13 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
       return false;
     }
 
+    if (isUpdateFirmwareSelect &&
+        (isWifiSelect || isBtSelect || isPrnFmtSelect || isSerialOutput)) {
+      downOtherFunc = true;
+    } else {
+      downOtherFunc = false;
+    }
+
     return true;
   }
 
@@ -1317,6 +1384,16 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
     myScaleCmd.cmdData = firmwarePathStr;
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
     writelog(jsonEncode(myScaleCmd));
+    setState(() {
+      outputData.add(localizedStrings.update_firmware_wait);
+    });
+    Timer(const Duration(seconds: 5), () {
+      if (!(updateProcess > 0)) {
+        setState(() {
+          outputData.add(localizedStrings.update_firmware_reboot);
+        });
+      }
+    });
   }
 
   void performDownload() {

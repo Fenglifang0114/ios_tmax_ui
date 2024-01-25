@@ -53,6 +53,9 @@ class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
           if (int.tryParse(myRespUpdateFirmware.msgBody) != null) {
             // 字符串全是数字
             int numericValue = int.parse(myRespUpdateFirmware.msgBody);
+            if (numericValue < 100 && numericValue * 1.5 < 100.0) {
+              numericValue = (numericValue * 1.5).toInt();
+            }
             updateProgress(numericValue);
           } else {
             setState(() {
