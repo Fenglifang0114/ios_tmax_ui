@@ -386,11 +386,11 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         _onSubmit(yPosvar.text, 3);
       }
     });
-    _focusNodex2Pos.addListener(() {
-      if (!_focusNodex2Pos.hasFocus) {
-        _onSubmit(x2Posvar.text, 9);
-      }
-    });
+    // _focusNodex2Pos.addListener(() {
+    //   if (!_focusNodex2Pos.hasFocus) {
+    //     _onSubmit(x2Posvar.text, 9);
+    //   }
+    // });
     _focusNodey2Pos.addListener(() {
       if (!_focusNodey2Pos.hasFocus) {
         _onSubmit(y2Posvar.text, 10);

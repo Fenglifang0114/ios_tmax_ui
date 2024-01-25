@@ -197,6 +197,13 @@ class PublicFunctions {
     writelog(jsonEncode(myScaleCmd));
   }
 
+  static void getOneEepromInfo(String func) {
+    myScaleCmd.cmdMode = "get_one_eeprom_info";
+    myScaleCmd.cmdData = func;
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+    writelog(jsonEncode(myScaleCmd));
+  }
+
   static void setWifiDynamicMode() {
     myScaleCmd.cmdMode = 'set_wifi_dynamic_ip';
     myScaleCmd.cmdData = '';
