@@ -149,6 +149,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "open_preview": MessageLookupByLibrary.simpleMessage("Open preview"),
         "operation_steps":
             MessageLookupByLibrary.simpleMessage("Operation Steps:"),
+        "parameter_set_title":
+            MessageLookupByLibrary.simpleMessage("Parameter Setting"),
         "parameter_settings_title":
             MessageLookupByLibrary.simpleMessage("Parameter settings"),
         "passed_fail_message": MessageLookupByLibrary.simpleMessage(

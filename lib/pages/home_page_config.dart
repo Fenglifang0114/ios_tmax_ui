@@ -28,6 +28,7 @@ import 'abnormal_data_page.dart';
 import 'batch_delivery.dart';
 import 'custom_serial_protocol_page.dart';
 import 'modify_com_port_page.dart';
+import 'set_system_parameter.dart';
 import 'set_system_time.dart';
 
 class HomePage extends StatefulWidget {
@@ -47,6 +48,7 @@ class _HomePageState extends State<HomePage> {
   dynamic _eventbus2;
   dynamic _eventbus3;
   dynamic _eventbus4;
+  dynamic _eventbus5;
 
   Timer? _timer;
   bool isTiming = false;
@@ -127,6 +129,26 @@ class _HomePageState extends State<HomePage> {
       if (mounted) {
         setState(() {
           myScaleInfoFromScale = event.obj;
+          PublicFunctions.getOneEepromInfo("wifi_or_bt");
+        });
+      }
+    });
+
+    _eventbus5 = eventBus.on<EventGetOneEepromDateResp>().listen((event) {
+      if (mounted) {
+        setState(() {
+          myRespGetOneEepromData = event.obj;
+          if (myRespGetOneEepromData.msgBody.contains('ok')) {
+            if (myRespGetOneEepromData.msgBody.contains('bt')) {
+              myScreenMgr.wifiOrBt = 'bt';
+            } else if (myRespGetOneEepromData.msgBody.contains('wifi')) {
+              myScreenMgr.wifiOrBt = 'wifi';
+            } else if (myRespGetOneEepromData.msgBody.contains('off')) {
+              myScreenMgr.wifiOrBt = 'off';
+            }
+          } else {
+            myScreenMgr.wifiOrBt = 'off';
+          }
         });
       }
     });
@@ -138,6 +160,7 @@ class _HomePageState extends State<HomePage> {
     _eventbus2.cancel();
     _eventbus3.cancel();
     _eventbus4.cancel();
+    _eventbus5.cancel();
     _pageScrollerController.dispose();
     _stopTimer();
     super.dispose();
@@ -506,17 +529,19 @@ class _HomePageState extends State<HomePage> {
                         cursor: SystemMouseCursors.click, // 设置光标为手的形状
                         child: GestureDetector(
                           onTap: () {
-                            //蓝牙页面
-                            setState(() {
-                              stopCheckSerialPort();
-                              showBluetoothDialog(context);
-                            });
+                            //蓝牙页面\
+                            if (myScreenMgr.wifiOrBt == 'bt') {
+                              setState(() {
+                                stopCheckSerialPort();
+                                showBluetoothDialog(context);
+                              });
+                            }
                           },
                           child: customFunctionCard(
                               localizedStrings.bt_setting_title,
                               "assets/images/line.png",
                               Icons.bluetooth,
-                              true),
+                              (myScreenMgr.wifiOrBt == 'bt')),
                         ),
                       ),
                       MouseRegion(
@@ -524,23 +549,25 @@ class _HomePageState extends State<HomePage> {
                           child: GestureDetector(
                             onTap: () {
                               //wifi页面
-                              setState(() {
-                                stopCheckSerialPort();
-                                PublicFunctions.changeWifiMode();
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const WifiSettingPage(),
-                                  ),
-                                ).then((value) => _startTimer(5));
-                              });
+                              if (myScreenMgr.wifiOrBt == 'wifi') {
+                                setState(() {
+                                  stopCheckSerialPort();
+                                  PublicFunctions.changeWifiMode();
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const WifiSettingPage(),
+                                    ),
+                                  ).then((value) => _updateStatus());
+                                });
+                              }
                             },
                             child: customFunctionCard(
                                 localizedStrings.wifi_setting_title,
                                 "assets/images/line.png",
                                 Icons.wifi,
-                                true),
+                                (myScreenMgr.wifiOrBt == 'wifi')),
                           )),
                       MouseRegion(
                         cursor: SystemMouseCursors.click, // 设置光标为手的形状
@@ -625,7 +652,7 @@ class _HomePageState extends State<HomePage> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => const DownloadPage()),
-                          ).then((value) => _startTimer(5));
+                          ).then((value) => _updateStatus());
                         },
                         child: customFunctionCard(
                             localizedStrings.print_format_download,
@@ -645,7 +672,7 @@ class _HomePageState extends State<HomePage> {
                                   MaterialPageRoute(
                                       builder: (context) =>
                                           const CustomSerialProtocol()),
-                                ).then((value) => _startTimer(5));
+                                ).then((value) => _updateStatus());
                               }
                             : null,
                         child: customFunctionCard(
@@ -666,7 +693,7 @@ class _HomePageState extends State<HomePage> {
                                   MaterialPageRoute(
                                       builder: (context) =>
                                           const BatchDeliveryPage()),
-                                ).then((value) => _startTimer(5));
+                                ).then((value) => _updateStatus());
                               }
                             : null,
                         child: customFunctionCard(
@@ -689,7 +716,7 @@ class _HomePageState extends State<HomePage> {
                                         MaterialPageRoute(
                                             builder: (context) =>
                                                 const AbnormalDataPage()),
-                                      ).then((value) => _startTimer(5));
+                                      ).then((value) => _updateStatus());
                                     });
                                   });
                                 }
@@ -713,7 +740,7 @@ class _HomePageState extends State<HomePage> {
                                         MaterialPageRoute(
                                             builder: (context) =>
                                                 const SetSystemTimePage()),
-                                      ).then((value) => _startTimer(5));
+                                      ).then((value) => _updateStatus());
                                     });
                                   });
                                 }
@@ -722,6 +749,30 @@ class _HomePageState extends State<HomePage> {
                               localizedStrings.device_time_title,
                               "assets/images/line.png",
                               Icons.date_range,
+                              myLicenseInfo.isValid),
+                        )),
+                    MouseRegion(
+                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                        child: GestureDetector(
+                          onTap: myLicenseInfo.isValid
+                              ? () {
+                                  setState(() {
+                                    stopCheckSerialPort();
+                                    setState(() {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const SetParameterPage()),
+                                      ).then((value) => _updateStatus());
+                                    });
+                                  });
+                                }
+                              : null,
+                          child: customFunctionCard(
+                              localizedStrings.parameter_set_title,
+                              "assets/images/line.png",
+                              Icons.tune_outlined,
                               myLicenseInfo.isValid),
                         )),
                   ]),
@@ -740,7 +791,7 @@ class _HomePageState extends State<HomePage> {
       builder: (context) {
         return const GetBuildInfoPage();
       },
-    ).then((value) => _startTimer(5));
+    ).then((value) => _updateStatus());
   }
 
   void showLabelDesign(bool isValid) {
@@ -750,7 +801,7 @@ class _HomePageState extends State<HomePage> {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const LabelDesignPage()),
-      ).then((value) => _startTimer(5));
+      ).then((value) => _updateStatus());
     }
   }
 
@@ -761,7 +812,7 @@ class _HomePageState extends State<HomePage> {
       builder: (context) {
         return const BluetoothDialog();
       },
-    ).then((value) => _startTimer(5));
+    ).then((value) => _updateStatus());
   }
 
   void showUpdateFirmWareDialog(BuildContext context) {
@@ -771,7 +822,7 @@ class _HomePageState extends State<HomePage> {
       builder: (context) {
         return const UpdateFirmWareDialog();
       },
-    ).then((value) => _startTimer(5));
+    ).then((value) => _updateStatus());
   }
 
   void showComPortDialog(BuildContext context) {
@@ -781,7 +832,12 @@ class _HomePageState extends State<HomePage> {
       builder: (context) {
         return const ModifyComPortPage();
       },
-    ).then((value) => _startTimer(5));
+    ).then((value) => _updateStatus());
+  }
+
+  void _updateStatus() {
+    setState(() {});
+    _startTimer(5);
   }
 
   void showLicenseDialog(BuildContext context) {
@@ -791,7 +847,7 @@ class _HomePageState extends State<HomePage> {
       builder: (context) {
         return const LicenseInfoDialog();
       },
-    ).then((value) => _startTimer(5));
+    ).then((value) => _updateStatus());
   }
 
   void setLanguageDialog(BuildContext context) {
@@ -801,7 +857,7 @@ class _HomePageState extends State<HomePage> {
       builder: (context) {
         return const LanguageSettingPage();
       },
-    ).then((value) => _startTimer(5));
+    ).then((value) => _updateStatus());
   }
 
   void _startTimer(int time) {

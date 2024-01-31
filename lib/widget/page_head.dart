@@ -38,6 +38,7 @@ Widget pageHead(
                                       onPressed: () {
                                         myScreenMgr.isMainScreen = true;
                                         cntScaleTimerMgr.stopCntScaleTimer();
+                                        PublicFunctions.closeScalePassth();
                                         PublicFunctions.stopWeight();
                                         Navigator.of(context).pop();
                                       },

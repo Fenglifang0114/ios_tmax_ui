@@ -30,7 +30,6 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
     super.initState();
     _deviceNameController.text = '';
     emissionPowerVale = 'Strong';
-    PublicFunctions.getOneEepromInfo("wifi_or_bt");
     _eventbus1 = eventBus.on<EventConnectBTResponse>().listen((event) {
       if (mounted) {
         setState(() {
@@ -237,7 +236,8 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
                                 ? 'OK'
                                 : (_errorMessage.contains('error') ||
                                         _errorMessage.contains('Time out') ||
-                                        _errorMessage.contains('ERROR'))
+                                        _errorMessage.contains('ERROR') ||
+                                        _errorMessage.contains('fail'))
                                     ? _errorMessage
                                     : '',
                             style: TextStyle(

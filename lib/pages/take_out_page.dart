@@ -21,6 +21,7 @@ import '../data/downloadresponse.dart';
 import '../data/record_data.dart';
 import '../data/scalecmd_data.dart';
 import '../data/screen_mgr.dart';
+import '../data/timer_manager.dart';
 import '../data/weight_report_data.dart';
 import '../dialog/addproduct_dialog.dart';
 import '../dialog/adduser_dialog.dart';
@@ -64,6 +65,7 @@ class TakeOutPageState extends State<TakeOutPage> {
   bool _isPassZero = false;
   bool showDialogFlag = false;
   bool _isShowing = false;
+  bool isCnting = false;
 
   late bool _isTakeOutStart = false;
   double basicWeightval = 0.000; //开始加法秤的时候的基础重量
@@ -140,6 +142,7 @@ class TakeOutPageState extends State<TakeOutPage> {
   dynamic eventBus12;
   dynamic eventBus13;
   dynamic eventBus14;
+  dynamic eventBus15;
 
   @override
   void initState() {
@@ -173,6 +176,11 @@ class TakeOutPageState extends State<TakeOutPage> {
     if (myDevicedata.scaleID == "1") {
       PublicFunctions.getTakeOutRecords();
     }
+    if (!isStart) {
+      cntScaleTimerMgr.stopCntScaleTimer();
+      cntScaleTimerMgr.startCntScaleTimer(5);
+    }
+
     eventBus1 = eventBus.on<EventDeviceName>().listen((event) {
       if (mounted) {
         setState(() {
@@ -198,6 +206,8 @@ class TakeOutPageState extends State<TakeOutPage> {
         setState(() {
           myReqWeightCountine = event.obj;
           isStart = true;
+          isCnting = true;
+          myScreenMgr.serialPortST = true;
           if (_isTakeOutStart && !isSameUnit()) {
             showDialogFlag = true;
           } else {
@@ -298,6 +308,8 @@ class TakeOutPageState extends State<TakeOutPage> {
         } else {
           setState(() {
             isStart = false;
+            cntScaleTimerMgr.stopCntScaleTimer();
+            cntScaleTimerMgr.startCntScaleTimer(5);
           });
         }
       }
@@ -328,6 +340,32 @@ class TakeOutPageState extends State<TakeOutPage> {
       if (mounted) {
         setState(() {
           PublicFunctions.getUIConfTakeOut();
+        });
+      }
+    });
+
+    eventBus15 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
+      if (mounted) {
+        if (isStart) {
+          cntScaleTimerMgr.stopCntScaleTimer();
+          cntScaleTimerMgr.stopPortOffTimer();
+          cntScaleTimerMgr.startPortOffTimer(2, () {
+            if (!isCnting) {
+              setState(() {
+                myScreenMgr.serialPortST = false;
+              });
+            }
+            isCnting = false;
+          });
+        }
+
+        setState(() {
+          myRespCheckSerialPort = event.obj;
+          if (myRespCheckSerialPort.msgBody == 'ok') {
+            myScreenMgr.serialPortST = true;
+          } else {
+            myScreenMgr.serialPortST = false;
+          }
         });
       }
     });
@@ -458,6 +496,8 @@ class TakeOutPageState extends State<TakeOutPage> {
     eventBus12.cancel();
     eventBus13.cancel();
     eventBus14.cancel();
+    eventBus15.cancel();
+    cntScaleTimerMgr.stopPortOffTimer();
 
     super.dispose();
   }
@@ -487,6 +527,41 @@ class TakeOutPageState extends State<TakeOutPage> {
   void handleOKPressed(bool isOKPressed) {
     // 根据用户点击 OK 的结果更新 _isShowing 值
     _isShowing = !isOKPressed;
+  }
+
+  void performStart() {
+    setState(() {
+      if (!isStart) {
+        if (MyApp.webchannel1.heartStatus == true) {
+          isStart = true;
+          PublicFunctions.getWeight();
+        }
+      }
+      cntScaleTimerMgr.stopPortOffTimer();
+      cntScaleTimerMgr.startPortOffTimer(2, () {
+        if (!isCnting) {
+          setState(() {
+            myScreenMgr.serialPortST = false;
+          });
+        }
+        isCnting = false;
+      });
+      cntScaleTimerMgr.stopCntScaleTimer();
+    });
+  }
+
+  void performStop() {
+    if (isStart) {
+      setState(() {
+        if (MyApp.webchannel1.heartStatus == true) {
+          isStart = false;
+          PublicFunctions.stopWeight();
+        }
+      });
+      cntScaleTimerMgr.stopCntScaleTimer();
+      cntScaleTimerMgr.startCntScaleTimer(5);
+      cntScaleTimerMgr.stopPortOffTimer();
+    }
   }
 
   Widget firstLayout(context, _width) {
@@ -937,14 +1012,7 @@ class TakeOutPageState extends State<TakeOutPage> {
         iconSize: iconSize,
         color: (isStart) ? (Colors.grey) : (color),
         onPressed: () {
-          setState(() {
-            if (!isStart) {
-              if (MyApp.webchannel1.heartStatus == true) {
-                isStart = true;
-                PublicFunctions.getWeight();
-              }
-            }
-          });
+          performStart();
         },
       ),
     );
@@ -959,14 +1027,7 @@ class TakeOutPageState extends State<TakeOutPage> {
       width: width,
       child: IconButton(
         onPressed: () {
-          if (isStart) {
-            setState(() {
-              if (MyApp.webchannel1.heartStatus == true) {
-                isStart = false;
-                PublicFunctions.stopWeight();
-              }
-            });
-          }
+          performStop();
         },
         icon: const Icon(Icons.pause),
         iconSize: iconSize,
@@ -1474,13 +1535,7 @@ class TakeOutPageState extends State<TakeOutPage> {
                               ? (Colors.grey)
                               : (Theme.of(context).colorScheme.primary),
                           onPressed: () {
-                            setState(() {
-                              if (!isStart) {
-                                if (MyApp.webchannel1.heartStatus == true) {
-                                  PublicFunctions.getWeight();
-                                }
-                              }
-                            });
+                            performStart();
                           },
                         ),
                       ),
@@ -1488,15 +1543,8 @@ class TakeOutPageState extends State<TakeOutPage> {
                         width: 50,
                         child: IconButton(
                           onPressed: () {
-                            if (isStart) {
-                              setState(() {
-                                if (MyApp.webchannel1.heartStatus == true) {
-                                  isStart = false;
-                                  myReqWeightCountine.msgBody = null;
-                                  PublicFunctions.stopWeight();
-                                }
-                              });
-                            }
+                            myReqWeightCountine.msgBody = null;
+                            performStop();
                           },
                           icon: const Icon(Icons.pause),
                           iconSize: 30,

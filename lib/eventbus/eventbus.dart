@@ -322,6 +322,16 @@ class EventConnectBTResponse {
   EventConnectBTResponse(this.obj);
 }
 
+class EventGetAllEepromDateResp {
+  dynamic obj;
+  EventGetAllEepromDateResp(this.obj);
+}
+
+class EventGetOneEepromDateResp {
+  dynamic obj;
+  EventGetOneEepromDateResp(this.obj);
+}
+
 class EventBTResponse {
   dynamic obj;
   EventBTResponse(this.obj);

@@ -119,6 +119,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "open_file": MessageLookupByLibrary.simpleMessage("打开文件(json)"),
         "open_preview": MessageLookupByLibrary.simpleMessage("打开预览"),
         "operation_steps": MessageLookupByLibrary.simpleMessage("操作步骤："),
+        "parameter_set_title":
+            MessageLookupByLibrary.simpleMessage("Parameter Setting"),
         "parameter_settings_title":
             MessageLookupByLibrary.simpleMessage("参数设置"),
         "passed_fail_message":

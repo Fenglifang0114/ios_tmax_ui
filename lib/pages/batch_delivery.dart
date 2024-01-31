@@ -73,6 +73,10 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
   bool isIpListSelect = false;
   bool ipIsUsedUp = false;
   bool isDownloading = false;
+  bool btDownloading = false;
+  bool wifiCnting = false;
+  bool wifiDhcp = false;
+  bool wifiStatic = false;
 
   bool prnFmt1 = false;
   bool prnFmt2 = false;
@@ -95,6 +99,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
   dynamic _eventbus8;
   dynamic _eventbus9;
   dynamic _eventbus10;
+  dynamic _eventbus11;
 
   TextEditingController _ipListCtl = TextEditingController();
 
@@ -288,7 +293,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                 ':' +
                 'Connect Ap' +
                 '\r\n' +
-                myConnectApResponse.msgBody +
+                'The setup is complete.' +
                 '\r\n');
           }
         });
@@ -354,7 +359,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
               'Update Firmware Result' +
               '\r\n' +
               myRespUpdateFirmware.msgBody +
-              '\r\n\r\n\r\n');
+              '\r\n');
           scrollToBottom();
         });
         if (myRespUpdateFirmware.msgBody.contains('ok')) {
@@ -383,14 +388,115 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
               if (numericValue < 100 && numericValue * 1.5 < 100.0) {
                 numericValue = (numericValue * 1.5).toInt();
               }
-              outputData
-                  .add('Update Progress: ' + numericValue.toString() + '%');
+
+              if (outputData[outputData.length - 1]
+                  .contains('Update Progress')) {
+                outputData[outputData.length - 1] =
+                    'Update Progress: ' + numericValue.toString() + '%';
+              } else {
+                outputData
+                    .add('Update Progress: ' + numericValue.toString() + '%');
+              }
               scrollToBottom();
             });
           } else {}
         }
       }
     });
+
+    _eventbus11 = eventBus.on<EventGetOneEepromDateResp>().listen((event) {
+      if (mounted) {
+        setState(() {
+          myRespGetOneEepromData = event.obj;
+          if (myRespGetOneEepromData.msgBody.contains('ok')) {
+            if (myRespGetOneEepromData.msgBody.contains('bt')) {
+              myScreenMgr.wifiOrBt = 'bt';
+            } else if (myRespGetOneEepromData.msgBody.contains('wifi')) {
+              myScreenMgr.wifiOrBt = 'wifi';
+            } else if (myRespGetOneEepromData.msgBody.contains('off')) {
+              myScreenMgr.wifiOrBt = 'off';
+            }
+          } else {
+            myScreenMgr.wifiOrBt = 'off';
+          }
+          checkWifiOrBtExist();
+        });
+      }
+    });
+  }
+
+  void checkWifiOrBtExist() {
+    if (myScreenMgr.wifiOrBt == 'off') {
+      if (btDownloading) {
+        setState(() {
+          outputData.add(
+              getDateTime() + ':' + 'There is no bluetooth device' + '\r\n');
+          btDownloading = false;
+          scrollToBottom();
+        });
+
+        downLoadIndex++;
+        performNextDask();
+      } else if (wifiCnting || wifiDhcp || wifiStatic) {
+        setState(() {
+          outputData
+              .add(getDateTime() + ':' + 'There is no wifi device' + '\r\n');
+          scrollToBottom();
+        });
+
+        wifiCnting = false;
+        wifiDhcp = false;
+        wifiStatic = false;
+        downLoadIndex++;
+        performNextDask();
+      }
+    } else if (myScreenMgr.wifiOrBt == 'bt' && btDownloading) {
+      btDownloading = false;
+      PublicFunctions.modifyBtName(btNameCtl.text);
+      downLoadIndex++;
+    } else if (myScreenMgr.wifiOrBt == 'wifi' && wifiDhcp) {
+      wifiDhcp = false;
+      PublicFunctions.setWifiDynamicMode();
+      downLoadIndex++;
+    } else if (myScreenMgr.wifiOrBt == 'wifi' && wifiStatic) {
+      wifiStatic = false;
+      List<Map<String, dynamic>> filteredList = jsonDataList
+          .where((item) => item["Req"] == "set_wifi_static_ip")
+          .toList();
+      if (filteredList.isNotEmpty) {
+        Map<String, dynamic> jsonWifi =
+            jsonDecode((filteredList[0])['ReqData']);
+        jsonWifi['ip'] = ipAddrCtl.text;
+        filteredList[0]['ReqData'] = jsonEncode(jsonWifi);
+
+        MyApp.webchannel1.sendMessage(jsonEncode(filteredList[0]));
+        writelog(jsonEncode(filteredList[0]));
+      }
+      downLoadIndex++;
+    } else if (myScreenMgr.wifiOrBt == 'wifi' && wifiCnting) {
+      wifiCnting = false;
+      List<Map<String, dynamic>> filteredList =
+          jsonDataList.where((item) => item["Req"] == "connect_ap").toList();
+
+      if (filteredList.isNotEmpty) {
+        filteredList[0]['Req'] = "connect_ap_one_key";
+        MyApp.webchannel1.sendMessage(jsonEncode(filteredList[0]));
+        filteredList[0]['Req'] = "connect_ap";
+        writelog(jsonEncode(filteredList[0]));
+      }
+      downLoadIndex++;
+    } else {
+      if (myScreenMgr.wifiOrBt == 'wifi') {
+        outputData
+            .add(getDateTime() + ':' + 'There is no bluetooth device' + '\r\n');
+      } else {
+        outputData
+            .add(getDateTime() + ':' + 'There is no wifi device' + '\r\n');
+      }
+      scrollToBottom();
+      downLoadIndex++;
+      performNextDask();
+    }
   }
 
   String getDateTime() {
@@ -439,6 +545,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
     _eventbus8.cancel();
     _eventbus9.cancel();
     _eventbus10.cancel();
+    _eventbus11.cancel();
     super.dispose();
   }
 
@@ -1386,6 +1493,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
     writelog(jsonEncode(myScaleCmd));
     setState(() {
       outputData.add(localizedStrings.update_firmware_wait);
+      scrollToBottom();
     });
     Timer(const Duration(seconds: 5), () {
       if (!(updateProcess > 0)) {
@@ -1403,7 +1511,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
           firmwarePathCtl.text.isNotEmpty) {
         outputData.add(getDateTime() + ':' + 'Now update firmware' + '\r\n');
         sendFormatToScale(firmwarePathCtl.text);
-
+        scrollToBottom();
         downLoadIndex++;
         return;
       }
@@ -1414,9 +1522,11 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
         if (filteredList.isNotEmpty) {
           outputData
               .add(getDateTime() + ':' + 'Now download print format' + '\r\n');
+
           MyApp.webchannel1.sendMessage(jsonEncode(filteredList[0]));
           writelog(jsonEncode(filteredList[0]));
         }
+        scrollToBottom();
         downLoadIndex++;
         return;
       }
@@ -1436,55 +1546,33 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
           isBtSelect &&
           isModifyBtName &&
           btNameCtl.text.isNotEmpty) {
+        PublicFunctions.getOneEepromInfo('wifi_or_bt');
+        btDownloading = true;
         outputData.add(
             getDateTime() + ':' + 'Now modify the Bluetooth name' + '\r\n');
-        PublicFunctions.modifyBtName(btNameCtl.text);
-        downLoadIndex++;
         return;
       }
 
       if (downLoadIndex == setDhcpIndex && isWifiSelect && isConnectDhcp) {
         outputData.add(getDateTime() + ':' + 'Now set DHCP' + '\r\n');
-        PublicFunctions.setWifiDynamicMode();
-        downLoadIndex++;
-
+        wifiDhcp = true;
+        PublicFunctions.getOneEepromInfo('wifi_or_bt');
         return;
       }
 
       if (downLoadIndex == setStaticIpIndex &&
           isWifiSelect &&
           isConnectStaticIp) {
-        List<Map<String, dynamic>> filteredList = jsonDataList
-            .where((item) => item["Req"] == "set_wifi_static_ip")
-            .toList();
-        if (filteredList.isNotEmpty) {
-          Map<String, dynamic> jsonWifi =
-              jsonDecode((filteredList[0])['ReqData']);
-          jsonWifi['ip'] = ipAddrCtl.text;
-          filteredList[0]['ReqData'] = jsonEncode(jsonWifi);
-          outputData.add(getDateTime() + ':' + 'Now set static ip' + '\r\n');
-
-          MyApp.webchannel1.sendMessage(jsonEncode(filteredList[0]));
-          writelog(jsonEncode(filteredList[0]));
-        }
-        downLoadIndex++;
-
+        wifiStatic = true;
+        PublicFunctions.getOneEepromInfo('wifi_or_bt');
+        outputData.add(getDateTime() + ':' + 'Now set static ip' + '\r\n');
         return;
       }
 
       if (downLoadIndex == connectApIndex && isWifiSelect && isConnectAp) {
-        List<Map<String, dynamic>> filteredList =
-            jsonDataList.where((item) => item["Req"] == "connect_ap").toList();
-
-        if (filteredList.isNotEmpty) {
-          outputData.add(getDateTime() + ':' + 'Now set AP info ' + '\r\n');
-          filteredList[0]['Req'] = "connect_ap_one_key";
-          MyApp.webchannel1.sendMessage(jsonEncode(filteredList[0]));
-          filteredList[0]['Req'] = "connect_ap";
-          writelog(jsonEncode(filteredList[0]));
-        }
-
-        downLoadIndex++;
+        wifiCnting = true;
+        PublicFunctions.getOneEepromInfo('wifi_or_bt');
+        outputData.add(getDateTime() + ':' + 'Now set AP info ' + '\r\n');
 
         return;
       }

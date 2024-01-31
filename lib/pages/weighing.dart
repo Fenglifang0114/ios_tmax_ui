@@ -35,6 +35,7 @@ class WeightModePageState extends State<WeightModePage> {
   late int weightMode; //0,手动保存，1，连续保存，2，稳定保存
   late int dateformat;
   late double zeroRange;
+  bool isCnting = false;
 
   dynamic eventBus1;
   dynamic eventBus2;
@@ -42,6 +43,7 @@ class WeightModePageState extends State<WeightModePage> {
   dynamic eventBus4;
   dynamic eventBus5;
   dynamic eventBus6;
+  dynamic eventBus7;
 
   @override
   void initState() {
@@ -51,6 +53,10 @@ class WeightModePageState extends State<WeightModePage> {
     dateformat = 1;
     zeroRange = 0;
     _errorText.text = '';
+    if (!isStart) {
+      cntScaleTimerMgr.stopCntScaleTimer();
+      cntScaleTimerMgr.startCntScaleTimer(5);
+    }
 
     eventBus1 = eventBus.on<EventDeviceName>().listen((event) {
       if (mounted) {
@@ -66,6 +72,7 @@ class WeightModePageState extends State<WeightModePage> {
           myReqWeightCountine = event.obj;
           isStart = true;
           myScreenMgr.serialPortST = true;
+          isCnting = true;
         });
       }
     });
@@ -95,6 +102,8 @@ class WeightModePageState extends State<WeightModePage> {
         } else {
           setState(() {
             isStart = false;
+            cntScaleTimerMgr.stopCntScaleTimer();
+            cntScaleTimerMgr.startCntScaleTimer(5);
           });
         }
       }
@@ -112,6 +121,31 @@ class WeightModePageState extends State<WeightModePage> {
         }
       }
     });
+    eventBus7 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
+      if (mounted) {
+        if (isStart) {
+          cntScaleTimerMgr.stopCntScaleTimer();
+          cntScaleTimerMgr.stopPortOffTimer();
+          cntScaleTimerMgr.startPortOffTimer(2, () {
+            if (!isCnting) {
+              setState(() {
+                myScreenMgr.serialPortST = false;
+              });
+            }
+            isCnting = false;
+          });
+        }
+
+        setState(() {
+          myRespCheckSerialPort = event.obj;
+          if (myRespCheckSerialPort.msgBody == 'ok') {
+            myScreenMgr.serialPortST = true;
+          } else {
+            myScreenMgr.serialPortST = false;
+          }
+        });
+      }
+    });
   }
 
   @override
@@ -123,7 +157,8 @@ class WeightModePageState extends State<WeightModePage> {
     eventBus4.cancel();
     eventBus5.cancel();
     eventBus6.cancel();
-
+    eventBus7.cancel();
+    cntScaleTimerMgr.stopPortOffTimer();
     super.dispose();
   }
 
@@ -319,6 +354,16 @@ class WeightModePageState extends State<WeightModePage> {
                 PublicFunctions.getWeight();
               }
             }
+            cntScaleTimerMgr.stopPortOffTimer();
+            cntScaleTimerMgr.startPortOffTimer(2, () {
+              if (!isCnting) {
+                setState(() {
+                  myScreenMgr.serialPortST = false;
+                });
+              }
+              isCnting = false;
+            });
+            cntScaleTimerMgr.stopCntScaleTimer();
           });
         },
       ),
@@ -341,6 +386,9 @@ class WeightModePageState extends State<WeightModePage> {
                 PublicFunctions.stopWeight();
               }
             });
+            cntScaleTimerMgr.stopCntScaleTimer();
+            cntScaleTimerMgr.startCntScaleTimer(5);
+            cntScaleTimerMgr.stopPortOffTimer();
           }
         },
         icon: const Icon(Icons.pause),

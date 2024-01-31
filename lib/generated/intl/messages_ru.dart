@@ -155,6 +155,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Открыть предварительный просмотр"),
         "operation_steps":
             MessageLookupByLibrary.simpleMessage("Шаги операции:"),
+        "parameter_set_title":
+            MessageLookupByLibrary.simpleMessage("Parameter Setting"),
         "parameter_settings_title":
             MessageLookupByLibrary.simpleMessage("Настройки параметров"),
         "passed_fail_message": MessageLookupByLibrary.simpleMessage(

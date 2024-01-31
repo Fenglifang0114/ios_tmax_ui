@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import '../functions/methods.dart';
 
 class TimerManager {
@@ -7,6 +6,7 @@ class TimerManager {
   factory TimerManager() => _instance;
 
   Timer? _cntScaleTimer;
+
   bool _isCntScaleTiming = false;
 
   bool get isCntScaleTiming => _isCntScaleTiming;
@@ -26,6 +26,23 @@ class TimerManager {
   void stopCntScaleTimer() {
     _cntScaleTimer?.cancel();
     _isCntScaleTiming = false;
+  }
+
+  Timer? _portTimer;
+
+  void startPortOffTimer(int time, Function setStateCallback) {
+    if (_portTimer != null) {
+      _portTimer!.cancel();
+    }
+
+    _portTimer = Timer(Duration(seconds: time), () {
+      setStateCallback();
+      startPortOffTimer(2, setStateCallback);
+    });
+  }
+
+  void stopPortOffTimer() {
+    _portTimer?.cancel();
   }
 
   TimerManager._internal();

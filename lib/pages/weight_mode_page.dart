@@ -22,6 +22,7 @@ import '../data/downloadresponse.dart';
 import '../data/record_data.dart';
 import '../data/scalecmd_data.dart';
 import '../data/screen_mgr.dart';
+import '../data/timer_manager.dart';
 import '../data/weight_report_data.dart';
 import '../dialog/addproduct_dialog.dart';
 import '../dialog/adduser_dialog.dart';
@@ -63,6 +64,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
   bool _isTiming = false;
   bool _isZero = false;
   bool _isPassZero = false;
+  bool isCnting = false;
 
   late WeightReportDataSource _weightReportDataSource;
   List<WeightReportData> _weightReportDatas = <WeightReportData>[];
@@ -121,6 +123,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
   dynamic eventBus11;
   dynamic eventBus12;
   dynamic eventBus13;
+  dynamic eventBus14;
 
   @override
   void initState() {
@@ -145,6 +148,11 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     PublicFunctions.getProductList();
     if (myDevicedata.scaleID == "1") {
       PublicFunctions.getRecords();
+    }
+
+    if (!isStart) {
+      cntScaleTimerMgr.stopCntScaleTimer();
+      cntScaleTimerMgr.startCntScaleTimer(5);
     }
     eventBus1 = eventBus.on<EventDeviceName>().listen((event) {
       if (mounted) {
@@ -171,6 +179,8 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
         setState(() {
           myReqWeightCountine = event.obj;
           isStart = true;
+          isCnting = true;
+          myScreenMgr.serialPortST = true;
           switch (weightMode) {
             case 1:
               if (myReqWeightCountine.msgBody!.weightVal == "0" ||
@@ -337,6 +347,32 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
         }
       }
     });
+
+    eventBus14 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
+      if (mounted) {
+        if (isStart) {
+          cntScaleTimerMgr.stopCntScaleTimer();
+          cntScaleTimerMgr.stopPortOffTimer();
+          cntScaleTimerMgr.startPortOffTimer(2, () {
+            if (!isCnting) {
+              setState(() {
+                myScreenMgr.serialPortST = false;
+              });
+            }
+            isCnting = false;
+          });
+        }
+
+        setState(() {
+          myRespCheckSerialPort = event.obj;
+          if (myRespCheckSerialPort.msgBody == 'ok') {
+            myScreenMgr.serialPortST = true;
+          } else {
+            myScreenMgr.serialPortST = false;
+          }
+        });
+      }
+    });
   }
 
   void _addDBdataToReport() {
@@ -386,7 +422,8 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     eventBus11.cancel();
     eventBus12.cancel();
     eventBus13.cancel();
-
+    eventBus14.cancel();
+    cntScaleTimerMgr.stopPortOffTimer();
     super.dispose();
   }
 
@@ -578,6 +615,16 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                                   PublicFunctions.getWeight();
                                 }
                               }
+                              cntScaleTimerMgr.stopPortOffTimer();
+                              cntScaleTimerMgr.startPortOffTimer(2, () {
+                                if (!isCnting) {
+                                  setState(() {
+                                    myScreenMgr.serialPortST = false;
+                                  });
+                                }
+                                isCnting = false;
+                              });
+                              cntScaleTimerMgr.stopCntScaleTimer();
                             });
                           },
                         ),
@@ -593,6 +640,9 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                                   PublicFunctions.stopWeight();
                                 }
                               });
+                              cntScaleTimerMgr.stopCntScaleTimer();
+                              cntScaleTimerMgr.startCntScaleTimer(5);
+                              cntScaleTimerMgr.stopPortOffTimer();
                             }
                           },
                           icon: const Icon(Icons.pause),

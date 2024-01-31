@@ -184,7 +184,8 @@
     "choose_json_file": "Choose json",
     "abnormal_data_title":"异常数据",
     "device_time_title":"设备时间",
-    "batch_delivery_title":"批量下发" 
+    "batch_delivery_title":"批量下发",
+    "parameter_set_title":"Parameter Setting" 
     
   }
   

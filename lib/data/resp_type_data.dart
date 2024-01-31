@@ -65,6 +65,8 @@ class RespMsgType {
   static const String respGetUIConf = 'resp_get_ui_conf';
   static const String respUpdateUIConf = 'resp_update_ui_conf';
   static const String respChangeWifiMode = 'resp_change_wifi_mode';
+  static const String respGetAllEepromData = 'resp_get_all_eeprom_info';
+  static const String respGetOneEepromData = 'resp_get_one_eeprom_info';
 
   static final Map<String, Function> handlers = {
     RespMsgType.respGetUIConf: handleGetUIConf,
@@ -102,6 +104,8 @@ class RespMsgType {
     RespMsgType.respGetScaleInfo: handleRespGetScaleInfo,
     RespMsgType.respRegWeight: handleRespRegWeight,
     RespMsgType.respModifyBTName: handleRespModifyBTName,
+    RespMsgType.respGetAllEepromData: handleRespGetAllEepromData,
+    RespMsgType.respGetOneEepromData: handleRespGetOneEepromData,
   };
   static void handleGetUIConf(dynamic data) {
     final jsonResponse = json.decode(data['MsgBody']);
@@ -136,6 +140,16 @@ class RespMsgType {
   static void handleRespModifyBTName(dynamic data) {
     dynamic mobj = ChannelResponse.fromJson(data);
     eventBus.fire(EventConnectBTResponse(mobj));
+  }
+
+  static void handleRespGetAllEepromData(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventGetAllEepromDateResp(mobj));
+  }
+
+  static void handleRespGetOneEepromData(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventGetOneEepromDateResp(mobj));
   }
 
   static void handleRespBTPassthData(dynamic data) {

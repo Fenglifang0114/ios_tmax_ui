@@ -20,6 +20,8 @@ import '../../main.dart';
 import '../data/downloadresponse.dart';
 import '../data/record_data.dart';
 import '../data/scalecmd_data.dart';
+import '../data/screen_mgr.dart';
+import '../data/timer_manager.dart';
 import '../data/weight_report_data.dart';
 import '../dialog/addproduct_dialog.dart';
 import '../dialog/adduser_dialog.dart';
@@ -140,6 +142,8 @@ class TakeInPageState extends State<TakeInPage> {
   dynamic eventBus12;
   dynamic eventBus13;
   dynamic eventBus14;
+  dynamic eventBus15;
+  bool isCnting = false;
 
   @override
   void initState() {
@@ -174,6 +178,12 @@ class TakeInPageState extends State<TakeInPage> {
     if (myDevicedata.scaleID == "1") {
       PublicFunctions.getTakeInRecords();
     }
+
+    if (!isStart) {
+      cntScaleTimerMgr.stopCntScaleTimer();
+      cntScaleTimerMgr.startCntScaleTimer(5);
+    }
+
     eventBus1 = eventBus.on<EventDeviceName>().listen((event) {
       if (mounted) {
         setState(() {
@@ -195,6 +205,8 @@ class TakeInPageState extends State<TakeInPage> {
         setState(() {
           myReqWeightCountine = event.obj;
           isStart = true;
+          isCnting = true;
+          myScreenMgr.serialPortST = true;
           if (_isTakeInStart && !isSameUnit()) {
             showDialogFlag = true;
           } else {
@@ -295,6 +307,8 @@ class TakeInPageState extends State<TakeInPage> {
         } else {
           setState(() {
             isStart = false;
+            cntScaleTimerMgr.stopCntScaleTimer();
+            cntScaleTimerMgr.startCntScaleTimer(5);
           });
         }
       }
@@ -323,6 +337,32 @@ class TakeInPageState extends State<TakeInPage> {
       if (mounted) {
         setState(() {
           PublicFunctions.getUIConfTakeIn();
+        });
+      }
+    });
+
+    eventBus15 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
+      if (mounted) {
+        if (isStart) {
+          cntScaleTimerMgr.stopCntScaleTimer();
+          cntScaleTimerMgr.stopPortOffTimer();
+          cntScaleTimerMgr.startPortOffTimer(2, () {
+            if (!isCnting) {
+              setState(() {
+                myScreenMgr.serialPortST = false;
+              });
+            }
+            isCnting = false;
+          });
+        }
+
+        setState(() {
+          myRespCheckSerialPort = event.obj;
+          if (myRespCheckSerialPort.msgBody == 'ok') {
+            myScreenMgr.serialPortST = true;
+          } else {
+            myScreenMgr.serialPortST = false;
+          }
         });
       }
     });
@@ -448,6 +488,8 @@ class TakeInPageState extends State<TakeInPage> {
     eventBus12.cancel();
     eventBus13.cancel();
     eventBus14.cancel();
+    eventBus15.cancel();
+    cntScaleTimerMgr.stopPortOffTimer();
 
     super.dispose();
   }
@@ -943,14 +985,7 @@ class TakeInPageState extends State<TakeInPage> {
         iconSize: iconSize,
         color: (isStart) ? (Colors.grey) : (color),
         onPressed: () {
-          setState(() {
-            if (!isStart) {
-              if (MyApp.webchannel1.heartStatus == true) {
-                isStart = true;
-                PublicFunctions.getWeight();
-              }
-            }
-          });
+          performStart();
         },
       ),
     );
@@ -965,14 +1000,7 @@ class TakeInPageState extends State<TakeInPage> {
       width: width,
       child: IconButton(
         onPressed: () {
-          if (isStart) {
-            setState(() {
-              if (MyApp.webchannel1.heartStatus == true) {
-                isStart = false;
-                PublicFunctions.stopWeight();
-              }
-            });
-          }
+          performStop();
         },
         icon: const Icon(Icons.pause),
         iconSize: iconSize,
@@ -1440,13 +1468,7 @@ class TakeInPageState extends State<TakeInPage> {
                               ? (Colors.grey)
                               : (Theme.of(context).colorScheme.primary),
                           onPressed: () {
-                            setState(() {
-                              if (!isStart) {
-                                if (MyApp.webchannel1.heartStatus == true) {
-                                  PublicFunctions.getWeight();
-                                }
-                              }
-                            });
+                            performStart();
                           },
                         ),
                       ),
@@ -1454,15 +1476,8 @@ class TakeInPageState extends State<TakeInPage> {
                         width: 50,
                         child: IconButton(
                           onPressed: () {
-                            if (isStart) {
-                              setState(() {
-                                if (MyApp.webchannel1.heartStatus == true) {
-                                  isStart = false;
-                                  myReqWeightCountine.msgBody = null;
-                                  PublicFunctions.stopWeight();
-                                }
-                              });
-                            }
+                            myReqWeightCountine.msgBody = null;
+                            performStop();
                           },
                           icon: const Icon(Icons.pause),
                           iconSize: 30,
@@ -1669,6 +1684,41 @@ class TakeInPageState extends State<TakeInPage> {
             displayGrid(),
           ],
         ));
+  }
+
+  void performStart() {
+    setState(() {
+      if (!isStart) {
+        if (MyApp.webchannel1.heartStatus == true) {
+          isStart = true;
+          PublicFunctions.getWeight();
+        }
+      }
+      cntScaleTimerMgr.stopPortOffTimer();
+      cntScaleTimerMgr.startPortOffTimer(2, () {
+        if (!isCnting) {
+          setState(() {
+            myScreenMgr.serialPortST = false;
+          });
+        }
+        isCnting = false;
+      });
+      cntScaleTimerMgr.stopCntScaleTimer();
+    });
+  }
+
+  void performStop() {
+    if (isStart) {
+      setState(() {
+        if (MyApp.webchannel1.heartStatus == true) {
+          isStart = false;
+          PublicFunctions.stopWeight();
+        }
+      });
+      cntScaleTimerMgr.stopCntScaleTimer();
+      cntScaleTimerMgr.startCntScaleTimer(5);
+      cntScaleTimerMgr.stopPortOffTimer();
+    }
   }
 
   void isWeightStable() {

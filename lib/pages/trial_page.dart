@@ -69,6 +69,7 @@ class TrialPageState extends State<TrialPage> {
             PublicFunctions.getUIConfCheck();
             PublicFunctions.getUIConfTakeIn();
             PublicFunctions.getUIConfTakeOut();
+            PublicFunctions.getOneEepromInfo("wifi_or_bt");
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) {
               return mySystemVersionInfo.getHomePage(mySystemVersion);
@@ -321,6 +322,9 @@ class TrialPageState extends State<TrialPage> {
                                                     .getUIConfTakeIn();
                                                 PublicFunctions
                                                     .getUIConfTakeOut();
+                                                PublicFunctions
+                                                    .getOneEepromInfo(
+                                                        "wifi_or_bt");
                                                 Navigator.pushReplacement(
                                                     context, MaterialPageRoute(
                                                         builder: (context) {

@@ -11,6 +11,7 @@ import '../../main.dart';
 import '../data/cominfoslist_data.dart';
 import '../data/comscaleinfo_data.dart';
 import '../data/modifyresult_data.dart';
+import '../data/screen_mgr.dart';
 import '../functions/methods.dart';
 import '../generated/l10n.dart';
 import '../widget/comport_dorpdown.dart';
@@ -141,8 +142,10 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
           myRespCheckSerialPort = event.obj;
           if (myRespCheckSerialPort.msgBody == 'ok') {
             serialPortConnect = localizedStrings.txt_serial_port_connected;
+            myScreenMgr.serialPortST = true;
           } else {
             serialPortConnect = localizedStrings.txt_serial_port_connected_fail;
+            myScreenMgr.serialPortST = false;
           }
         });
       }
@@ -346,6 +349,7 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
             OutlinedButton(
                 child: Text(localizedStrings.button_exit),
                 onPressed: () {
+                  myScreenMgr.isMainScreen = true;
                   Navigator.of(context)
                       .pop(); // to go back to screen after submitting
                 })

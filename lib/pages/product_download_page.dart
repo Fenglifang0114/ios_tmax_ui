@@ -225,6 +225,26 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                           child: const Text('Choose Product Excel'),
                         ),
                       ),
+                      const SizedBox(
+                        width: 50,
+                      ),
+                      SizedBox(
+                        width: 150,
+                        height: 40,
+                        child: OutlinedButton(
+                          style: ButtonStyle(
+                            shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                            ),
+                          ),
+                          onPressed: () async {
+                            pluAllCtl.text = '';
+                          },
+                          child: const Text('Clear'),
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(
@@ -278,6 +298,26 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                             pickFiles(pluPartCtl);
                           },
                           child: const Text('Choose Product Excel'),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 50,
+                      ),
+                      SizedBox(
+                        width: 150,
+                        height: 40,
+                        child: OutlinedButton(
+                          style: ButtonStyle(
+                            shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                            ),
+                          ),
+                          onPressed: () async {
+                            pluPartCtl.text = '';
+                          },
+                          child: const Text('Clear'),
                         ),
                       ),
                     ],

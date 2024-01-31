@@ -498,7 +498,7 @@ class IndustryHomePageState extends State<IndustryHomePage> {
                                 MaterialPageRoute(
                                     builder: (context) =>
                                         const ProductDownloadPage()),
-                              ).then((value) => _startTimer(5));
+                              ).then((value) => _updateStatus());
                             });
                           },
                           child: customFunctionCard(
@@ -579,7 +579,7 @@ class IndustryHomePageState extends State<IndustryHomePage> {
                                 MaterialPageRoute(
                                     builder: (context) =>
                                         const WeightModePage()),
-                              ).then((value) => _startTimer(5));
+                              ).then((value) => _updateStatus());
                             });
                           });
                         },
@@ -603,7 +603,7 @@ class IndustryHomePageState extends State<IndustryHomePage> {
                                       MaterialPageRoute(
                                           builder: (context) =>
                                               const WeightDataCollectionPage()),
-                                    ).then((value) => _startTimer(5));
+                                    ).then((value) => _updateStatus());
                                   });
                                 });
                               }
@@ -628,7 +628,7 @@ class IndustryHomePageState extends State<IndustryHomePage> {
                                         MaterialPageRoute(
                                             builder: (context) =>
                                                 const CheckWeighersPage()),
-                                      ).then((value) => _startTimer(5));
+                                      ).then((value) => _updateStatus());
                                     });
                                   });
                                 }
@@ -652,7 +652,7 @@ class IndustryHomePageState extends State<IndustryHomePage> {
                                         MaterialPageRoute(
                                             builder: (context) =>
                                                 const TakeInPage()),
-                                      ).then((value) => _startTimer(5));
+                                      ).then((value) => _updateStatus());
                                     });
                                   });
                                 }
@@ -676,7 +676,7 @@ class IndustryHomePageState extends State<IndustryHomePage> {
                                         MaterialPageRoute(
                                             builder: (context) =>
                                                 const TakeOutPage()),
-                                      ).then((value) => _startTimer(5));
+                                      ).then((value) => _updateStatus());
                                     });
                                   });
                                 }
@@ -703,7 +703,7 @@ class IndustryHomePageState extends State<IndustryHomePage> {
       builder: (context) {
         return const GetBuildInfoPage();
       },
-    ).then((value) => _startTimer(5));
+    ).then((value) => _updateStatus());
   }
 
   void showLabelDesign(bool isValid) {
@@ -713,7 +713,7 @@ class IndustryHomePageState extends State<IndustryHomePage> {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const LabelDesignPage()),
-      ).then((value) => _startTimer(5));
+      ).then((value) => _updateStatus());
     }
   }
 
@@ -724,7 +724,7 @@ class IndustryHomePageState extends State<IndustryHomePage> {
       builder: (context) {
         return const UpdateFirmWareDialog();
       },
-    ).then((value) => _startTimer(5));
+    ).then((value) => _updateStatus());
   }
 
   void showComPortDialog(BuildContext context) {
@@ -734,7 +734,7 @@ class IndustryHomePageState extends State<IndustryHomePage> {
       builder: (context) {
         return const ModifyComPortPage();
       },
-    ).then((value) => _startTimer(5));
+    ).then((value) => _updateStatus());
   }
 
   void showLicenseDialog(BuildContext context) {
@@ -744,7 +744,7 @@ class IndustryHomePageState extends State<IndustryHomePage> {
       builder: (context) {
         return const LicenseInfoDialog();
       },
-    ).then((value) => _startTimer(5));
+    ).then((value) => _updateStatus());
   }
 
   void setLanguageDialog(BuildContext context) {
@@ -754,7 +754,12 @@ class IndustryHomePageState extends State<IndustryHomePage> {
       builder: (context) {
         return const LanguageSettingPage();
       },
-    ).then((value) => _startTimer(5));
+    ).then((value) => _updateStatus());
+  }
+
+  void _updateStatus() {
+    setState(() {});
+    _startTimer(5);
   }
 
   void _startTimer(int time) {

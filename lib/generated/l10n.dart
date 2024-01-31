@@ -1909,6 +1909,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Parameter Setting`
+  String get parameter_set_title {
+    return Intl.message(
+      'Parameter Setting',
+      name: 'parameter_set_title',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

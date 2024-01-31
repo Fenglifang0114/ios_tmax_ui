@@ -24,6 +24,7 @@ import '../data/downloadresponse.dart';
 import '../data/record_data.dart';
 import '../data/scalecmd_data.dart';
 import '../data/screen_mgr.dart';
+import '../data/timer_manager.dart';
 import '../data/weight_report_data.dart';
 import '../dialog/addproduct_dialog.dart';
 import '../dialog/adduser_dialog.dart';
@@ -80,6 +81,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
   bool _isFirstLayout = true;
 
   int _stableSaveTime = 0;
+  bool isCnting = false;
 
   dynamic eventBus1;
   dynamic eventBus2;
@@ -94,6 +96,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
   dynamic eventBus11;
   dynamic eventBus12;
   dynamic eventBus13;
+  dynamic eventBus14;
 
   void updateTableData(List<WeightReportData> newReportData) {
     _weightReportDataSource.updateData(newReportData);
@@ -178,6 +181,11 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     if (myDevicedata.scaleID == "1") {
       PublicFunctions.getCheckWeigherRecords();
     }
+
+    if (!isStart) {
+      cntScaleTimerMgr.stopCntScaleTimer();
+      cntScaleTimerMgr.startCntScaleTimer(5);
+    }
     eventBus1 = eventBus.on<EventDeviceName>().listen((event) {
       if (mounted) {
         setState(() {
@@ -199,6 +207,8 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
         setState(() {
           myReqWeightCountine = event.obj;
           isStart = true;
+          isCnting = true;
+          myScreenMgr.serialPortST = true;
           switch (weightMode) {
             case 1:
               if (PubWeightFuncs.weightIsZero()) {
@@ -402,8 +412,36 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
         } else {
           setState(() {
             isStart = false;
+            cntScaleTimerMgr.stopCntScaleTimer();
+            cntScaleTimerMgr.startCntScaleTimer(5);
           });
         }
+      }
+    });
+
+    eventBus14 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
+      if (mounted) {
+        if (isStart) {
+          cntScaleTimerMgr.stopCntScaleTimer();
+          cntScaleTimerMgr.stopPortOffTimer();
+          cntScaleTimerMgr.startPortOffTimer(2, () {
+            if (!isCnting) {
+              setState(() {
+                myScreenMgr.serialPortST = false;
+              });
+            }
+            isCnting = false;
+          });
+        }
+
+        setState(() {
+          myRespCheckSerialPort = event.obj;
+          if (myRespCheckSerialPort.msgBody == 'ok') {
+            myScreenMgr.serialPortST = true;
+          } else {
+            myScreenMgr.serialPortST = false;
+          }
+        });
       }
     });
   }
@@ -454,6 +492,8 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     eventBus11.cancel();
     eventBus12.cancel();
     eventBus13.cancel();
+    eventBus14.cancel();
+    cntScaleTimerMgr.stopPortOffTimer();
 
     super.dispose();
   }
@@ -964,6 +1004,41 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
             onPressed: onPressed));
   }
 
+  void performStart() {
+    setState(() {
+      if (!isStart) {
+        if (MyApp.webchannel1.heartStatus == true) {
+          isStart = true;
+          PublicFunctions.getWeight();
+        }
+      }
+      cntScaleTimerMgr.stopPortOffTimer();
+      cntScaleTimerMgr.startPortOffTimer(2, () {
+        if (!isCnting) {
+          setState(() {
+            myScreenMgr.serialPortST = false;
+          });
+        }
+        isCnting = false;
+      });
+      cntScaleTimerMgr.stopCntScaleTimer();
+    });
+  }
+
+  void performStop() {
+    if (isStart) {
+      setState(() {
+        if (MyApp.webchannel1.heartStatus == true) {
+          isStart = false;
+          PublicFunctions.stopWeight();
+        }
+      });
+      cntScaleTimerMgr.stopCntScaleTimer();
+      cntScaleTimerMgr.startCntScaleTimer(5);
+      cntScaleTimerMgr.stopPortOffTimer();
+    }
+  }
+
   Widget buildStartIcon(double width, double? iconSize,
       BoxConstraints constraints, Color? color) {
     width = width * constraints.maxWidth / 100;
@@ -977,14 +1052,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
         iconSize: iconSize,
         color: (isStart) ? (Colors.grey) : (color),
         onPressed: () {
-          setState(() {
-            if (!isStart) {
-              if (MyApp.webchannel1.heartStatus == true) {
-                isStart = true;
-                PublicFunctions.getWeight();
-              }
-            }
-          });
+          performStart();
         },
       ),
     );
@@ -999,14 +1067,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
       width: width,
       child: IconButton(
         onPressed: () {
-          if (isStart) {
-            setState(() {
-              if (MyApp.webchannel1.heartStatus == true) {
-                isStart = false;
-                PublicFunctions.stopWeight();
-              }
-            });
-          }
+          performStop();
         },
         icon: const Icon(Icons.pause),
         iconSize: iconSize,
@@ -1317,14 +1378,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                               ? (Colors.grey)
                               : (Theme.of(context).colorScheme.primary),
                           onPressed: () {
-                            setState(() {
-                              if (!isStart) {
-                                if (MyApp.webchannel1.heartStatus == true) {
-                                  isStart = true;
-                                  PublicFunctions.getWeight();
-                                }
-                              }
-                            });
+                            performStart();
                           },
                         ),
                       ),
@@ -1332,14 +1386,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                         width: 50,
                         child: IconButton(
                           onPressed: () {
-                            if (isStart) {
-                              setState(() {
-                                if (MyApp.webchannel1.heartStatus == true) {
-                                  isStart = false;
-                                  PublicFunctions.stopWeight();
-                                }
-                              });
-                            }
+                            performStop();
                           },
                           icon: const Icon(Icons.pause),
                           iconSize: 30,
