@@ -5,4 +5,4 @@ class ScreenMgr {
   ScreenMgr(this.isMainScreen, this.serialPortST, this.wifiOrBt);
 }
 
-ScreenMgr myScreenMgr = ScreenMgr(true, false, 'off');
+ScreenMgr myScreenMgr = ScreenMgr(true, false, 'bt wifi');

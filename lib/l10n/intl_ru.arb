@@ -185,6 +185,7 @@
     "abnormal_data_title":"Abnormal Data",
     "device_time_title":"Device Time",
     "batch_delivery_title":"Batch Delivery" ,
-    "parameter_set_title":"Parameter Setting"
+    "parameter_set_title":"Parameter Setting",
+    "save_as":"Parameter Setting"  
     
 }

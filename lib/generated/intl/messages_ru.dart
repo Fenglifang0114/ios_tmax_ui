@@ -198,6 +198,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "report_set_btn":
             MessageLookupByLibrary.simpleMessage("Report Setting"),
         "report_show_btn": MessageLookupByLibrary.simpleMessage("Show Report"),
+        "save_as": MessageLookupByLibrary.simpleMessage("Parameter Setting"),
         "save_csv": MessageLookupByLibrary.simpleMessage("Сохранить csv"),
         "save_file":
             MessageLookupByLibrary.simpleMessage("Сохранить файл (json)"),

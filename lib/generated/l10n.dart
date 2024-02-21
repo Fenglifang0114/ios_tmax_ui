@@ -1919,6 +1919,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Save as`
+  String get save_as {
+    return Intl.message(
+      'Save as',
+      name: 'save_as',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

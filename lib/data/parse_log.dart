@@ -4,7 +4,13 @@ import 'package:path/path.dart' as p;
 
 const String myLogName = 'operation.log';
 const String myIpConfig = 'server_ip.config';
-const String myIpListName = 'ip_list.txt';
+const String myIpListName = 'wifi\\ip_list.txt';
+const String myLogDir = 'records';
+const String myImportDir = 'import';
+const String myPrnFormatDir = 'prnFormat';
+const String myFirmwareDir = 'firmware';
+const String myLastRecName = 'records.txt';
+const String myImportLogName = 'operation.log';
 
 List<Map<String, dynamic>> parseLog(String contentStr, String targetStr) {
   RegExp regExp = RegExp(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+){(.+)}');
@@ -15,7 +21,7 @@ List<Map<String, dynamic>> parseLog(String contentStr, String targetStr) {
       LineSplitter.split(contentStr).toList().reversed.toList();
 
   for (String line in lines) {
-    if (jsonDataList.length == 7) {
+    if (jsonDataList.length == 13) {
       return jsonDataList;
     }
     Match? match = regExp.firstMatch(line);
@@ -32,7 +38,6 @@ List<Map<String, dynamic>> parseLog(String contentStr, String targetStr) {
               uniqueReqSet.contains('set_wifi_static_ip'))) {
         continue;
       }
-
       uniqueReqSet.add(req); // 将新的 "Req" 值添加到集合中
       jsonDataList.add(jsonData);
     }
@@ -133,6 +138,15 @@ List<String> getSerialOutputFromLog(List<Map<String, dynamic>> jsonDataList) {
 Future<String> getAppFilePath(String fileName) async {
   String appDirectory = Platform.resolvedExecutable;
   var directory = p.dirname(appDirectory);
+  directory = directory + '\\' + myLogDir;
+  final formatfilePath = Directory('$directory\\$fileName');
+  return formatfilePath.path;
+}
+
+Future<String> getAppImportPath(String fileName) async {
+  String appDirectory = Platform.resolvedExecutable;
+  var directory = p.dirname(appDirectory);
+  directory = directory + '\\' + myImportDir;
   final formatfilePath = Directory('$directory\\$fileName');
   return formatfilePath.path;
 }

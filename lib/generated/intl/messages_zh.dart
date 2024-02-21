@@ -119,8 +119,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "open_file": MessageLookupByLibrary.simpleMessage("打开文件(json)"),
         "open_preview": MessageLookupByLibrary.simpleMessage("打开预览"),
         "operation_steps": MessageLookupByLibrary.simpleMessage("操作步骤："),
-        "parameter_set_title":
-            MessageLookupByLibrary.simpleMessage("Parameter Setting"),
+        "parameter_set_title": MessageLookupByLibrary.simpleMessage("参数设置"),
         "parameter_settings_title":
             MessageLookupByLibrary.simpleMessage("参数设置"),
         "passed_fail_message":
@@ -152,6 +151,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "report_hide_btn": MessageLookupByLibrary.simpleMessage("隐藏报表"),
         "report_set_btn": MessageLookupByLibrary.simpleMessage("报表设置"),
         "report_show_btn": MessageLookupByLibrary.simpleMessage("显示报表"),
+        "save_as": MessageLookupByLibrary.simpleMessage("另存为"),
         "save_csv": MessageLookupByLibrary.simpleMessage("保存 csv"),
         "save_file": MessageLookupByLibrary.simpleMessage("保存文件(json)"),
         "save_mode": MessageLookupByLibrary.simpleMessage("保存模式："),

@@ -116,7 +116,7 @@ class _HomePageState extends State<HomePage> {
             myRespCheckSerialPort = event.obj;
             if (myRespCheckSerialPort.msgBody == 'ok') {
               myScreenMgr.serialPortST = true;
-              PublicFunctions.getScaleInfo();
+              PublicFunctions.getOneEepromInfo("wifi_or_bt");
             } else {
               myScreenMgr.serialPortST = false;
             }
@@ -129,7 +129,6 @@ class _HomePageState extends State<HomePage> {
       if (mounted) {
         setState(() {
           myScaleInfoFromScale = event.obj;
-          PublicFunctions.getOneEepromInfo("wifi_or_bt");
         });
       }
     });
@@ -146,8 +145,9 @@ class _HomePageState extends State<HomePage> {
             } else if (myRespGetOneEepromData.msgBody.contains('off')) {
               myScreenMgr.wifiOrBt = 'off';
             }
+            PublicFunctions.getScaleInfo();
           } else {
-            myScreenMgr.wifiOrBt = 'off';
+            // myScreenMgr.wifiOrBt = 'off';
           }
         });
       }
@@ -530,7 +530,7 @@ class _HomePageState extends State<HomePage> {
                         child: GestureDetector(
                           onTap: () {
                             //蓝牙页面\
-                            if (myScreenMgr.wifiOrBt == 'bt') {
+                            if (myScreenMgr.wifiOrBt.contains('bt')) {
                               setState(() {
                                 stopCheckSerialPort();
                                 showBluetoothDialog(context);
@@ -541,7 +541,7 @@ class _HomePageState extends State<HomePage> {
                               localizedStrings.bt_setting_title,
                               "assets/images/line.png",
                               Icons.bluetooth,
-                              (myScreenMgr.wifiOrBt == 'bt')),
+                              (myScreenMgr.wifiOrBt.contains('bt'))),
                         ),
                       ),
                       MouseRegion(
@@ -549,7 +549,7 @@ class _HomePageState extends State<HomePage> {
                           child: GestureDetector(
                             onTap: () {
                               //wifi页面
-                              if (myScreenMgr.wifiOrBt == 'wifi') {
+                              if (myScreenMgr.wifiOrBt.contains('wifi')) {
                                 setState(() {
                                   stopCheckSerialPort();
                                   PublicFunctions.changeWifiMode();
@@ -567,7 +567,7 @@ class _HomePageState extends State<HomePage> {
                                 localizedStrings.wifi_setting_title,
                                 "assets/images/line.png",
                                 Icons.wifi,
-                                (myScreenMgr.wifiOrBt == 'wifi')),
+                                (myScreenMgr.wifiOrBt.contains('wifi'))),
                           )),
                       MouseRegion(
                         cursor: SystemMouseCursors.click, // 设置光标为手的形状

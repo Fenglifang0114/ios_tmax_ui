@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/data/timer_manager.dart';
@@ -12,6 +13,7 @@ import '../generated/l10n.dart';
 import 'package:path/path.dart' as p;
 
 import '../widget/page_head.dart';
+import 'package:archive/archive.dart';
 
 class CustomSerialProtocol extends StatefulWidget {
   const CustomSerialProtocol({Key? key}) : super(key: key);
@@ -356,7 +358,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         SizedBox(
-                          width: 120,
+                          width: 150,
                           height: 50,
                           child: OutlinedButton(
                             style: OutlinedButton.styleFrom(
@@ -414,7 +416,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                           ),
                         ),
                         SizedBox(
-                          width: 120,
+                          width: 150,
                           height: 50,
                           child: OutlinedButton(
                             style: OutlinedButton.styleFrom(
@@ -453,7 +455,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                           ),
                         ),
                         SizedBox(
-                          width: 120,
+                          width: 150,
                           height: 50,
                           child: OutlinedButton(
                             style: OutlinedButton.styleFrom(
@@ -654,6 +656,98 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         ],
       ),
     );
+  }
+
+//导出文件到压缩包
+  void exportFile() async {
+    final directory = Directory.current.path;
+    String? outputFile = (await FilePicker.platform.saveFile(
+      initialDirectory: directory,
+      dialogTitle: 'Output file:',
+      type: FileType.custom,
+      allowedExtensions: ['zip'],
+      fileName: 'serialOutput.zip',
+    ));
+    print(directory);
+
+    if (outputFile != null) {
+      final serialOutputPath = await getJsonFileDir();
+      if (!await serialOutputPath.exists()) {
+        await serialOutputPath.create(recursive: true);
+      }
+      var sourceFolder = serialOutputPath.path;
+      copyFilesAndCompressToZip(sourceFolder, directory, outputFile);
+    }
+  }
+
+  void copyFilesAndCompressToZip(String sourceFolderPath,
+      String destinationFolderPath, String destFolderZipPath) {
+    Directory sourceFolder = Directory(sourceFolderPath);
+    Directory destinationFolder = Directory(destinationFolderPath);
+
+    if (!destinationFolder.existsSync()) {
+      // 如果目标文件夹不存在，可以使用 createSync() 方法创建
+      destinationFolder.createSync(recursive: true);
+    }
+
+    List<FileSystemEntity> files = sourceFolder.listSync(recursive: true);
+    Archive archive = Archive(); // 创建一个空的 Archive 对象
+    if (files.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: const Text(('There are no files to save.'),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal)),
+          duration: const Duration(seconds: 3),
+          backgroundColor: Colors.green.shade900));
+    }
+
+    for (var file in files) {
+      if (file is File) {
+        String destinationFilePath = file.path
+            .replaceAll(sourceFolder.path, destinationFolder.path); // 目标文件路径
+
+        File destinationFile = File(destinationFilePath);
+        try {
+          file.copySync(destinationFile.path);
+          ArchiveFile archiveFile = ArchiveFile(
+              destinationFile.path,
+              destinationFile.lengthSync(),
+              File(destinationFile.path)
+                  .readAsBytesSync()); // 创建 ArchiveFile 对象
+          archive.addFile(archiveFile); // 将 ArchiveFile 对象添加到 Archive 中
+          destinationFile.deleteSync();
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text('fail' + e.toString(),
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
+              duration: const Duration(seconds: 3),
+              backgroundColor: Colors.red.shade900));
+        }
+      }
+    }
+    if (archive.isNotEmpty) {
+      List<int>? zipData = ZipEncoder().encode(archive); // 压缩 Archive 对象为字节数组
+      Archive archiveWithoutDirectory = Archive();
+      for (var file in archive) {
+        if (!file.isFile) continue;
+        String fileName = file.name.contains('/')
+            ? file.name.substring(file.name.lastIndexOf('/') + 1)
+            : file.name;
+        ArchiveFile archiveFile =
+            ArchiveFile(fileName, file.size, file.content);
+        archiveWithoutDirectory.addFile(archiveFile);
+      }
+
+      zipData =
+          ZipEncoder().encode(archiveWithoutDirectory); // 重新压缩仅包含文件的 Archive 对象
+      File(destFolderZipPath).writeAsBytesSync(zipData!); // 将字节数组写入目标 ZIP 文件
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(('Save $destFolderZipPath successful.'),
+              style: const TextStyle(
+                  fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
+          duration: const Duration(seconds: 3),
+          backgroundColor: Colors.green.shade900));
+    }
   }
 
   void handleButtonPress() async {
@@ -1894,7 +1988,6 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
   Future<Directory> getJsonFileDir() async {
     String executablePath = Platform.resolvedExecutable;
     var directory = p.dirname(executablePath);
-
     return Directory('$directory\\output');
   }
 

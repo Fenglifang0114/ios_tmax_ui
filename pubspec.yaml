@@ -80,6 +80,7 @@ dependencies:
   gbk_codec: ^0.4.0
   encrypt: ^5.0.3
   flutter_time_picker_spinner: ^2.0.0
+  crypto: ^3.0.3
   #gbk2utf8: ^1.0.1
 
 

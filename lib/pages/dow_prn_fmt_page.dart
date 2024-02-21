@@ -117,7 +117,7 @@ class _DownloadPageState extends State<DownloadPage> {
         width: MediaQuery.of(context).size.width,
         child: Column(
           children: [
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             _buildDownloading(),
@@ -402,12 +402,7 @@ class _DownloadPageState extends State<DownloadPage> {
                         pcsModeController.text.isNotEmpty ||
                         pctModeController.text.isNotEmpty)
                 ? () {
-                    if (weightModeController.text.isNotEmpty ||
-                        accModeController.text.isNotEmpty ||
-                        pcsModeController.text.isNotEmpty ||
-                        pctModeController.text.isNotEmpty) {
-                      _showConfirmationDialog(context);
-                    }
+                    _showConfirmationDialog(context);
                   }
                 : null,
             child: Text(
@@ -417,6 +412,36 @@ class _DownloadPageState extends State<DownloadPage> {
         ),
       ],
     );
+  }
+
+  //导出文件到文件夹
+
+  void copyFileToFolder(String sourceFilePath, String destinationFolderPath) {
+    File sourceFile = File(sourceFilePath);
+    Directory destinationFolder = Directory(destinationFolderPath);
+
+    if (!destinationFolder.existsSync()) {
+      destinationFolder.createSync(recursive: true);
+    }
+    File destinationFile = File(
+        '$destinationFolderPath\\${sourceFile.path.split('\\').last}'); // 目标文件路径
+
+    try {
+      sourceFile.copySync(destinationFile.path);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(('Save ${destinationFile.path} successful.'),
+              style: const TextStyle(
+                  fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
+          duration: const Duration(seconds: 3),
+          backgroundColor: Colors.green.shade900));
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('fail' + e.toString(),
+              style: const TextStyle(
+                  fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
+          duration: const Duration(seconds: 3),
+          backgroundColor: Colors.red.shade900));
+    }
   }
 
   void _startTimer(int time) {
@@ -520,6 +545,11 @@ class _DownloadPageState extends State<DownloadPage> {
         showFilePath.text = '';
       });
     }
+  }
+
+  Future<String?> pickFolder() async {
+    final folderPath = await FilePicker.platform.getDirectoryPath();
+    return folderPath;
   }
 
   @override

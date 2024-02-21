@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:crypto/crypto.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:t_max/data/timer_manager.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/main.dart';
+import '../data/download_prt_fmt.dart';
 import '../data/downloadresponse.dart';
 import '../data/parse_log.dart';
 import '../data/scalecmd_data.dart';
@@ -15,6 +17,8 @@ import '../data/writelog.dart';
 import '../eventbus/eventbus.dart';
 import '../generated/l10n.dart';
 import '../widget/page_head.dart';
+import 'package:archive/archive.dart';
+import 'package:path/path.dart' as p;
 
 const int updateFirmwareIndex = 0;
 const int downPrintFormatIndex = 1;
@@ -56,7 +60,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
   TextEditingController serialOutput5Ctl = TextEditingController();
   TextEditingController serialOutput6Ctl = TextEditingController();
 
-  String logContant = '';
+  String logContent = '';
   late ColorScheme colorScheme;
 
   bool isUpdateFirmwareSelect = false;
@@ -85,6 +89,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
 
   bool updateFwDone = false;
   bool downOtherFunc = false; //除了更新FW还有没有别的需要更新
+  bool importFlag = false; //标识当前是否是导入操作
 
   int downLoadIndex = 0;
   int updateProcess = 0;
@@ -101,11 +106,11 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
   dynamic _eventbus10;
   dynamic _eventbus11;
 
-  TextEditingController _ipListCtl = TextEditingController();
+  final TextEditingController _ipListCtl = TextEditingController();
 
   void getLog() async {
-    logContant = await readlog();
-    jsonDataList = parseLog(logContant, '');
+    logContent = await readlog();
+    jsonDataList = parseLog(logContent, '');
 
     String firmwarePathStr = getFirmwarePathFromLog(jsonDataList);
     if (firmwarePathStr.isNotEmpty) {
@@ -148,16 +153,16 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
           String text = prnFmtList[i];
           if (i == 0) {
             prnFmt1 = true;
-            prnFmt1Ctl.text = text;
+            prnFmt1Ctl.text = text.substring(1);
           } else if (i == 1) {
             prnFmt2 = true;
-            prnFmt2Ctl.text = text;
+            prnFmt2Ctl.text = text.substring(1);
           } else if (i == 2) {
             prnFmt3 = true;
-            prnFmt3Ctl.text = text;
+            prnFmt3Ctl.text = text.substring(1);
           } else if (i == 3) {
             prnFmt4 = true;
-            prnFmt4Ctl.text = text;
+            prnFmt4Ctl.text = text.substring(1);
           }
         }
       });
@@ -169,17 +174,17 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
         for (int i = 0; i < serialOutputList.length; i++) {
           String text = serialOutputList[i];
           if (i == 0) {
-            serialOutput1Ctl.text = text;
+            serialOutput1Ctl.text = text.substring(1);
           } else if (i == 1) {
-            serialOutput2Ctl.text = text;
+            serialOutput2Ctl.text = text.substring(1);
           } else if (i == 2) {
-            serialOutput3Ctl.text = text;
+            serialOutput3Ctl.text = text.substring(1);
           } else if (i == 3) {
-            serialOutput4Ctl.text = text;
+            serialOutput4Ctl.text = text.substring(1);
           } else if (i == 4) {
-            serialOutput5Ctl.text = text;
+            serialOutput5Ctl.text = text.substring(1);
           } else if (i == 5) {
-            serialOutput6Ctl.text = text;
+            serialOutput6Ctl.text = text.substring(1);
           }
         }
       });
@@ -339,7 +344,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
           myRespCheckSerialPort = event.obj;
           if (myRespCheckSerialPort.msgBody == 'ok') {
             myScreenMgr.serialPortST = true;
-            if (downOtherFunc) {
+            if (downOtherFunc && isDownloading) {
               downOtherFunc = false;
               performNextDask();
             }
@@ -507,7 +512,6 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       scrollToBottom();
     });
-
     performDownload();
   }
 
@@ -569,7 +573,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-              flex: 5,
+              flex: 3,
               child: Column(
                 children: <Widget>[
                   Padding(
@@ -666,7 +670,6 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                                 ),
                                 textStyle(localizedStrings.serial_output,
                                     constraints),
-                                // 省略部分代码
                               ],
                             ),
                           ],
@@ -675,60 +678,10 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                     ),
                   ),
                   Expanded(
-                      flex: 1, // 设置子部件占用空间的比例
+                      flex: 2,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          // SizedBox(
-                          //   width: 150,
-                          //   height: 50,
-                          //   child: OutlinedButton(
-                          //     style: OutlinedButton.styleFrom(
-                          //       side: BorderSide(
-                          //         width: 1,
-                          //         color: Theme.of(context).colorScheme.primary,
-                          //       ),
-                          //       foregroundColor:
-                          //           Theme.of(context).colorScheme.primary,
-                          //       backgroundColor: Theme.of(context)
-                          //           .colorScheme
-                          //           .onPrimary, // 设置按钮的背景色
-                          //       shape: RoundedRectangleBorder(
-                          //         borderRadius:
-                          //             BorderRadius.circular(4), // 设置按钮的圆角
-                          //       ),
-                          //     ),
-                          //     child: Center(
-                          //       child: Row(
-                          //         mainAxisAlignment:
-                          //             MainAxisAlignment.spaceEvenly,
-                          //         children: [
-                          //           Icon(
-                          //             Icons.home,
-                          //             color:
-                          //                 Theme.of(context).colorScheme.primary,
-                          //           ),
-                          //           Text(
-                          //             localizedStrings.button_home,
-                          //             maxLines: 1,
-                          //             overflow: TextOverflow.ellipsis,
-                          //             style: TextStyle(
-                          //                 color: Theme.of(context)
-                          //                     .colorScheme
-                          //                     .primary,
-                          //                 fontSize: 14,
-                          //                 fontWeight: FontWeight.normal),
-                          //           ),
-                          //         ],
-                          //       ),
-                          //     ),
-                          //     onPressed: () {
-                          //       PublicFunctions.closeScalePassth();
-                          //       myScreenMgr.isMainScreen = true;
-                          //       Navigator.of(context).pop();
-                          //     },
-                          //   ),
-                          // ),
                           SizedBox(
                             width: 150,
                             height: 50,
@@ -796,13 +749,118 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                                   : () {
                                       if (checkDownload()) {
                                         downLoadIndex = 0;
-                                        performDownload();
                                         setState(() {
                                           isDownloading = true;
                                           cntScaleTimerMgr.stopCntScaleTimer();
                                         });
+                                        performDownload();
                                       }
                                     },
+                            ),
+                          ),
+                          SizedBox(
+                            width: 150,
+                            height: 50,
+                            child: OutlinedButton(
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide(
+                                  width: 1,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                                foregroundColor:
+                                    Theme.of(context).colorScheme.primary,
+                                backgroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .onPrimary, // 设置按钮的背景色
+                                shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(4), // 设置按钮的圆角
+                                ),
+                              ),
+                              child: Center(
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Text(
+                                      'Export',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.normal),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              onPressed: () async {
+                                await wirteRecordsName();
+                                final selectedFolderPath = await pickFolder();
+                                if (selectedFolderPath != null) {
+                                  performExport(selectedFolderPath);
+                                }
+                              },
+                            ),
+                          ),
+                          SizedBox(
+                            width: 150,
+                            height: 50,
+                            child: OutlinedButton(
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide(
+                                  width: 1,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                                foregroundColor:
+                                    Theme.of(context).colorScheme.primary,
+                                backgroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .onPrimary, // 设置按钮的背景色
+                                shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(4), // 设置按钮的圆角
+                                ),
+                              ),
+                              child: Center(
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Text(
+                                      'Import',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.normal),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              onPressed: () async {
+                                String str = await pickZipFiles();
+                                bool res;
+                                if (str == '') {
+                                  return;
+                                }
+                                res = await unZipImportFile(str);
+                                if (res) {
+                                  cleanAllTextCtl();
+                                  getImportFileName();
+                                  _getImportLog();
+                                  importFlag = true;
+                                  _showErrorDialog(context, 'Import complete!');
+                                } else {
+                                  _showErrorDialog(context,
+                                      'The exported backup is modified. Not recognizable.');
+                                }
+                              },
                             ),
                           ),
                         ],
@@ -810,7 +868,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                 ],
               )),
           Expanded(
-            flex: 7,
+            flex: 9,
             child: Container(
               padding: const EdgeInsets.all(5),
               child: Column(
@@ -929,35 +987,6 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                                       ),
                                     ],
                                   ),
-                                  // (isWifiSelect && isConnectStaticIp)
-                                  //     ? Row(
-                                  //         children: [
-                                  //           Checkbox(
-                                  //             value: isAutoIncrease,
-                                  //             onChanged: (value) {
-                                  //               isAutoIncrease = value!;
-                                  //               if (isAutoIncrease) {
-                                  //                 setState(() {
-                                  //                   isIpListSelect = false;
-                                  //                 });
-                                  //                 performAutoIp();
-                                  //               }
-                                  //             },
-                                  //           ),
-                                  //           Text(
-                                  //             'ip Auto-increase',
-                                  //             overflow: TextOverflow.ellipsis,
-                                  //             maxLines: 1,
-                                  //             style: TextStyle(
-                                  //                 color: Theme.of(context)
-                                  //                     .colorScheme
-                                  //                     .primary),
-                                  //           ),
-
-                                  //           // 省略部分代码
-                                  //         ],
-                                  //       )
-                                  //     : const SizedBox(),
                                   (isWifiSelect && isConnectStaticIp)
                                       ? Row(
                                           children: [
@@ -991,7 +1020,19 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                                 ],
                               )
                             : const SizedBox(),
-                        titleStyle('Firmware Path:'),
+                        Container(
+                          color: colorScheme.scrim,
+                          height: 35,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: titleStyle('Firmware Path:'),
+                              ),
+                              buildSelectFirmWareBtn(firmwarePathCtl),
+                            ],
+                          ),
+                        ),
                         SizedBox(
                           height: 67,
                           child: Column(children: [
@@ -1013,168 +1054,91 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                           ]),
                         ),
                         titleStyle('Print Format:'),
-                        SizedBox(
-                          height: 280,
-                          child: Column(
+                        Container(
+                          color: colorScheme.surface,
+                          height: 35,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Expanded(
-                                child: TextField(
-                                  controller: prnFmt1Ctl,
-                                  readOnly: true,
-                                  maxLines: 1,
-                                  style: const TextStyle(
-                                      overflow: TextOverflow.ellipsis),
-                                  decoration: const InputDecoration(
-                                    border: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(10)),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: TextField(
-                                  controller: prnFmt2Ctl,
-                                  readOnly: true,
-                                  maxLines: 1,
-                                  style: const TextStyle(
-                                      overflow: TextOverflow.ellipsis),
-                                  decoration: const InputDecoration(
-                                    border: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(10)),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: TextField(
-                                  controller: prnFmt3Ctl,
-                                  readOnly: true,
-                                  maxLines: 1,
-                                  style: const TextStyle(
-                                      overflow: TextOverflow.ellipsis),
-                                  decoration: const InputDecoration(
-                                    border: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(10)),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: TextField(
-                                  controller: prnFmt4Ctl,
-                                  readOnly: true,
-                                  maxLines: 1,
-                                  style: const TextStyle(
-                                      overflow: TextOverflow.ellipsis),
-                                  decoration: const InputDecoration(
-                                    border: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(10)),
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              title2ndStyle(
+                                  localizedStrings.weight_mode_format),
+                              buildSelectBtn(prnFmt1Ctl),
                             ],
                           ),
                         ),
-                        titleStyle('Serial Output:'),
+                        SizedBox(
+                          height: 370,
+                          child: Column(
+                            children: [
+                              outputCtlText(prnFmt1Ctl),
+                              Container(
+                                color: colorScheme.surface,
+                                height: 35,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    title2ndStyle(
+                                        localizedStrings.acc_mode_format),
+                                    buildSelectBtn(prnFmt2Ctl),
+                                  ],
+                                ),
+                              ),
+                              outputCtlText(prnFmt2Ctl),
+                              Container(
+                                color: colorScheme.surface,
+                                height: 35,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    title2ndStyle(
+                                        localizedStrings.pcs_mode_format),
+                                    buildSelectBtn(prnFmt3Ctl),
+                                  ],
+                                ),
+                              ),
+                              outputCtlText(prnFmt3Ctl),
+                              Container(
+                                color: colorScheme.surface,
+                                height: 35,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    title2ndStyle(
+                                        localizedStrings.pct_mode_format),
+                                    buildSelectBtn(prnFmt4Ctl),
+                                  ],
+                                ),
+                              ),
+                              outputCtlText(prnFmt4Ctl),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          color: colorScheme.scrim,
+                          height: 35,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: titleStyle('Serial Output:'),
+                              ),
+                              buildSelectZipBtn(),
+                            ],
+                          ),
+                        ),
                         SizedBox(
                           height: 400,
                           child: Column(
                             children: [
-                              Expanded(
-                                child: TextField(
-                                  controller: serialOutput1Ctl,
-                                  readOnly: true,
-                                  maxLines: 1,
-                                  style: const TextStyle(
-                                      overflow: TextOverflow.ellipsis),
-                                  decoration: const InputDecoration(
-                                    border: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(10)),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: TextField(
-                                  controller: serialOutput2Ctl,
-                                  readOnly: true,
-                                  maxLines: 1,
-                                  style: const TextStyle(
-                                      overflow: TextOverflow.ellipsis),
-                                  decoration: const InputDecoration(
-                                    border: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(10)),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: TextField(
-                                  controller: serialOutput3Ctl,
-                                  readOnly: true,
-                                  maxLines: 1,
-                                  style: const TextStyle(
-                                      overflow: TextOverflow.ellipsis),
-                                  decoration: const InputDecoration(
-                                    border: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(10)),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: TextField(
-                                  controller: serialOutput4Ctl,
-                                  readOnly: true,
-                                  maxLines: 1,
-                                  style: const TextStyle(
-                                      overflow: TextOverflow.ellipsis),
-                                  decoration: const InputDecoration(
-                                    border: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(10)),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: TextField(
-                                  controller: serialOutput5Ctl,
-                                  readOnly: true,
-                                  maxLines: 1,
-                                  style: const TextStyle(
-                                      overflow: TextOverflow.ellipsis),
-                                  decoration: const InputDecoration(
-                                    border: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(10)),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: TextField(
-                                  controller: serialOutput6Ctl,
-                                  readOnly: true,
-                                  maxLines: 1,
-                                  style: const TextStyle(
-                                      overflow: TextOverflow.ellipsis),
-                                  decoration: const InputDecoration(
-                                    border: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(10)),
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              outputCtlText(serialOutput1Ctl),
+                              outputCtlText(serialOutput2Ctl),
+                              outputCtlText(serialOutput3Ctl),
+                              outputCtlText(serialOutput4Ctl),
+                              outputCtlText(serialOutput5Ctl),
+                              outputCtlText(serialOutput6Ctl),
                             ],
                           ),
                         ),
@@ -1225,6 +1189,609 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
     );
   }
 
+  void _getImportLog() async {
+    logContent = await readImportlog();
+    jsonDataList = parseLog(logContent, '');
+
+    String btNameStr = getBtNameFromLog(jsonDataList);
+    if (btNameStr.isNotEmpty) {
+      setState(() {
+        btNameCtl.text = btNameStr;
+        isModifyBtName = true;
+      });
+    }
+    String wifiName = getWifiNameFromLog(jsonDataList);
+    if (wifiName.isNotEmpty) {
+      setState(() {
+        wifiNameCtl.text = wifiName;
+        isConnectAp = true;
+      });
+    }
+    String ipAddrStr = getIpAddrFromLog(jsonDataList);
+    if (isConnectAp && ipAddrStr.isNotEmpty) {
+      setState(() {
+        lastIpStr = ipAddrStr;
+        ipAddrCtl.text = ipAddrStr;
+        isConnectStaticIp = true;
+      });
+    }
+    if (isConnectAp && !isConnectStaticIp) {
+      isConnectDhcp = true;
+    } else {
+      isConnectDhcp = false;
+    }
+  }
+
+  Future<void> writeRecName(
+      String prefix, TextEditingController controller) async {
+    if (controller.text.isNotEmpty) {
+      List<String> parts = controller.text.split('\\');
+      String lastPart = parts.last;
+      await writeRecordsName('$prefix:$lastPart');
+    } else {
+      await writeRecordsName('$prefix:');
+    }
+  }
+
+  Future<void> wirteRecordsName() async {
+    await delRecordsName();
+    await writeRecName('firmware', firmwarePathCtl);
+    await writeRecName('prnFmt1', prnFmt1Ctl);
+    await writeRecName('prnFmt2', prnFmt2Ctl);
+    await writeRecName('prnFmt3', prnFmt3Ctl);
+    await writeRecName('prnFmt4', prnFmt4Ctl);
+    await writeRecName('serialOutput1', serialOutput1Ctl);
+    await writeRecName('serialOutput2', serialOutput2Ctl);
+    await writeRecName('serialOutput3', serialOutput3Ctl);
+    await writeRecName('serialOutput4', serialOutput4Ctl);
+    await writeRecName('serialOutput5', serialOutput5Ctl);
+    await writeRecName('serialOutput6', serialOutput6Ctl);
+  }
+
+  void performExport(String folderPath) {
+    String appDirectory = Platform.resolvedExecutable;
+    var directory = p.dirname(appDirectory);
+    var sourcedir = directory + '\\' + myLogDir;
+    if (importFlag) {
+      copyIpListToLocal();
+    }
+    copyPrnFmtToLocal(prnFmt1Ctl, sourcedir, 'weight');
+    copyPrnFmtToLocal(prnFmt2Ctl, sourcedir, 'acc');
+    copyPrnFmtToLocal(prnFmt3Ctl, sourcedir, 'pcs');
+    copyPrnFmtToLocal(prnFmt4Ctl, sourcedir, 'percent');
+    copyFirmwareToLocal(firmwarePathCtl, sourcedir);
+    Directory(folderPath).createSync(recursive: true); // 创建目标文件夹（如果它不存在）
+    String zipPath = folderPath + '\\' + 'backup.zip';
+    Archive archive = createArchiveFromPath(sourcedir);
+    saveArchiveToPath(archive, zipPath);
+  }
+
+  Archive createArchiveFromPath(String sourcePath) {
+    Archive archive = Archive();
+    Directory sourceDir = Directory(sourcePath);
+    List<FileSystemEntity> entities = sourceDir.listSync(recursive: true);
+    List<int> allFileData = [];
+    for (var entity in entities) {
+      if (entity is File) {
+        File file = entity;
+        String fileName = file.path.substring(sourceDir.path.length);
+        List<int> fileData = file.readAsBytesSync();
+        allFileData.addAll(fileData);
+        archive.addFile(
+            ArchiveFile(fileName, file.lengthSync(), file.readAsBytesSync()));
+      }
+    }
+
+    final md5 = calculateMD5(allFileData.toString());
+    String contentHash = md5.toString();
+    // 将整个文件夹内容的哈希值写入metadata.txt文件
+    archive.addFile(
+        ArchiveFile('metadata.txt', contentHash.length, contentHash.codeUnits));
+    return archive;
+  }
+
+  String calculateMD5(String input) {
+    // 使用MD5算法计算input的哈希值
+    var hash = md5.convert(utf8.encode(input)).toString();
+    return hash;
+  }
+
+  void saveArchiveToPath(Archive archive, String zipPath) {
+    File zipFile = File(zipPath);
+    List<int>? encoded = ZipEncoder().encode(archive);
+    zipFile.writeAsBytesSync(encoded!);
+    if (zipPath.length > 66) {
+      String last50Characters = zipPath.substring(zipPath.length - 66);
+      _showErrorDialog(context, 'Backup successful!\r\n...$last50Characters');
+    } else {
+      _showErrorDialog(context, 'Backup successful!\r\n$zipPath');
+    }
+  }
+
+  void copyIpListToLocal() async {
+    ipFilePath = await getAppImportPath(myIpListName);
+    String destFilePath = await getAppFilePath(myIpListName);
+    File file = File(destFilePath);
+    copyFile(file.parent.path, ipFilePath);
+  }
+
+  void copyPrnFmtToLocal(
+      TextEditingController fmtCtl, String destDir, String secendFile) {
+    destDir = destDir + '\\' + myPrnFormatDir + '\\' + secendFile;
+    if (fmtCtl.text.isNotEmpty) {
+      var str = fmtCtl.text;
+      bool isFirstCharDigit = isDigit(str[0]);
+      deleteFilesInDir(destDir);
+      if (isFirstCharDigit) {
+        copyFile(destDir, str.substring(1));
+      } else {
+        copyFile(destDir, str);
+      }
+    }
+  }
+
+  void deleteFilesInDir(String path) {
+    Directory directory = Directory(path);
+    if (directory.existsSync()) {
+      directory.listSync().forEach((FileSystemEntity entity) {
+        if (entity is File) {
+          entity.deleteSync();
+        }
+      });
+    }
+  }
+
+  void copyFirmwareToLocal(TextEditingController textCtl, String destDir) {
+    destDir = destDir + '\\' + myFirmwareDir;
+    if (textCtl.text.isNotEmpty) {
+      var str = textCtl.text;
+      bool isFirstCharDigit = isDigit(str[0]);
+      if (isFirstCharDigit) {
+        copyFile(destDir, str.substring(1));
+      } else {
+        copyFile(destDir, str);
+      }
+    }
+  }
+
+  bool isDigit(String char) {
+    int? digit = int.tryParse(char);
+    return digit != null;
+  }
+
+  void copyFile(String localPath, String sourceFile) {
+    File destFile = File('$localPath\\${sourceFile.split('\\').last}');
+    Directory(localPath).createSync(recursive: true);
+    if (File(sourceFile).existsSync()) {
+      File(sourceFile).copySync(destFile.path);
+    }
+  }
+
+  void copyFolder(String sourceFolder, String destinationFolder) {
+    Directory(sourceFolder)
+        .listSync(recursive: true)
+        .forEach((FileSystemEntity entity) {
+      String relativePath =
+          p.relative(entity.path, from: sourceFolder); // 计算相对路径
+      String newPath = p.join(destinationFolder, relativePath); // 构建新的路径
+
+      if (entity is Directory) {
+        Directory(newPath).createSync(recursive: true); // 创建目标文件夹
+      } else if (entity is File) {
+        File(entity.path).copySync(newPath); // 复制文件
+      }
+    });
+  }
+
+  Widget outputCtlText(TextEditingController ctlText) {
+    return Expanded(
+      child: TextField(
+        controller: ctlText,
+        readOnly: true,
+        maxLines: 1,
+        style: const TextStyle(overflow: TextOverflow.ellipsis),
+        decoration: const InputDecoration(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<String?> pickFolder() async {
+    final folderPath = await FilePicker.platform.getDirectoryPath();
+    return folderPath;
+  }
+
+  Widget buildSelectBtn(TextEditingController textCtl) {
+    return SizedBox(
+      width: 200,
+      height: 30,
+      child: OutlinedButton(
+        style: buildButtonStyle(),
+        child: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Text(
+                localizedStrings.button_select_format,
+                maxLines: 2,
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                  fontSize: 14,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+            ],
+          ),
+        ),
+        onPressed: isDownloading
+            ? null
+            : () async {
+                pickFiles(textCtl);
+              },
+      ),
+    );
+  }
+
+  Widget buildSelectFirmWareBtn(TextEditingController textCtl) {
+    return SizedBox(
+      width: 200,
+      height: 30,
+      child: OutlinedButton(
+        style: buildButtonStyle(),
+        child: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Text(
+                localizedStrings.select_firmware_btn,
+                maxLines: 2,
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                  fontSize: 14,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+            ],
+          ),
+        ),
+        onPressed: isDownloading
+            ? null
+            : () async {
+                pickFirmwareFiles(textCtl);
+              },
+      ),
+    );
+  }
+
+  Widget buildSelectZipBtn() {
+    return SizedBox(
+      width: 200,
+      height: 30,
+      child: OutlinedButton(
+        style: buildButtonStyle(),
+        child: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Text(
+                'Select Folder',
+                maxLines: 2,
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                  fontSize: 14,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+            ],
+          ),
+        ),
+        onPressed: isDownloading
+            ? null
+            : () async {
+                getSerialFiles();
+              },
+      ),
+    );
+  }
+
+  Future getSerialFiles() async {
+    final selectedFolderPath = await pickFolder();
+    if (selectedFolderPath != null) {
+      serialOutput1Ctl.clear();
+      serialOutput2Ctl.clear();
+      serialOutput3Ctl.clear();
+      serialOutput4Ctl.clear();
+      serialOutput5Ctl.clear();
+      serialOutput6Ctl.clear();
+      String filePath = p.join(selectedFolderPath, 'OL.json');
+      File file = File(filePath);
+      if (await file.exists()) {
+        serialOutput1Ctl.text = filePath;
+      }
+      filePath = p.join(selectedFolderPath, 'UL.json');
+      file = File(filePath);
+      if (await file.exists()) {
+        serialOutput2Ctl.text = filePath;
+      }
+      filePath = p.join(selectedFolderPath, 'Weight.json');
+      file = File(filePath);
+      if (await file.exists()) {
+        serialOutput3Ctl.text = filePath;
+      }
+      filePath = p.join(selectedFolderPath, 'Pcs.json');
+      file = File(filePath);
+      if (await file.exists()) {
+        serialOutput4Ctl.text = filePath;
+      }
+      filePath = p.join(selectedFolderPath, 'Price.json');
+      file = File(filePath);
+      if (await file.exists()) {
+        serialOutput5Ctl.text = filePath;
+      }
+      filePath = p.join(selectedFolderPath, 'Percent.json');
+      file = File(filePath);
+      if (await file.exists()) {
+        serialOutput6Ctl.text = filePath;
+      }
+    }
+  }
+
+  Future<String> pickZipFiles() async {
+    String str = '';
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      // initialDirectory: directory,
+      allowMultiple: false,
+      type: FileType.custom,
+      allowedExtensions: ['zip'],
+    );
+    if (result != null) {
+      str = result.files.single.path!;
+    }
+    return str;
+  }
+
+  void cleanAllTextCtl() {
+    prnFmt1Ctl.clear();
+    prnFmt2Ctl.clear();
+    prnFmt3Ctl.clear();
+    prnFmt4Ctl.clear();
+    serialOutput1Ctl.clear();
+    serialOutput2Ctl.clear();
+    serialOutput3Ctl.clear();
+    serialOutput4Ctl.clear();
+    serialOutput5Ctl.clear();
+    serialOutput6Ctl.clear();
+  }
+
+  void recreateDir(String path) {
+    Directory directory = Directory(path);
+    if (directory.existsSync()) {
+      directory.deleteSync(recursive: true); // 删除目录及其子目录文件
+    }
+    directory.createSync(recursive: true); // 创建目录及其父目录
+  }
+
+  Future<bool> unZipImportFile(String zipFilePath) async {
+    bool res = false;
+    final recPath = await getImportDir();
+    if (!await recPath.exists()) {
+      await recPath.create(recursive: true);
+    }
+    var destFolder = recPath.path;
+    Directory(destFolder).createSync(recursive: true);
+    final bytes = File(zipFilePath).readAsBytesSync();
+    final archive = ZipDecoder().decodeBytes(bytes);
+    // 获取压缩文件中存储的哈希值
+    String storedContentHash = '';
+    List<int> allFileData = [];
+    for (var file in archive) {
+      if (file.name == 'metadata.txt') {
+        storedContentHash = utf8.decode(file.content);
+        break;
+      } else {
+        List<int> fileData = file.content;
+        allFileData.addAll(fileData);
+      }
+    }
+    if (storedContentHash == '') {
+      return res;
+    }
+    // 计算除metadata.txt外的文件内容哈希值
+    String extractedContentHash = calculateMD5(allFileData.toString());
+    if (storedContentHash == extractedContentHash) {
+      res = true;
+    } else {
+      return res;
+    }
+    recreateDir(destFolder);
+    for (final file in archive) {
+      final fileName = '$destFolder/${file.name}';
+      if (file.isFile) {
+        File(fileName)
+          ..createSync(recursive: true)
+          ..writeAsBytesSync(file.content as List<int>);
+      } else {
+        Directory(fileName).createSync(recursive: true);
+      }
+    }
+    return res;
+  }
+
+  void getImportFileName() async {
+    String recData = await readRecName();
+    List<String> lines = recData.split('\r\n');
+
+    Map<String, String> keyToPrefixMap = {
+      'firmware': 'firmware',
+      'prnFmt1': 'prnFormat\\weight',
+      'prnFmt2': 'prnFormat\\acc',
+      'prnFmt3': 'prnFormat\\pcs',
+      'prnFmt4': 'prnFormat\\percent',
+      'serialOutput1': 'serialOutput',
+      'serialOutput2': 'serialOutput',
+      'serialOutput3': 'serialOutput',
+      'serialOutput4': 'serialOutput',
+      'serialOutput5': 'serialOutput',
+      'serialOutput6': 'serialOutput',
+    };
+
+    Map<String, dynamic> keyToCtlMap = {
+      'firmware': firmwarePathCtl,
+      'prnFmt1': prnFmt1Ctl,
+      'prnFmt2': prnFmt2Ctl,
+      'prnFmt3': prnFmt3Ctl,
+      'prnFmt4': prnFmt4Ctl,
+      'serialOutput1': serialOutput1Ctl,
+      'serialOutput2': serialOutput2Ctl,
+      'serialOutput3': serialOutput3Ctl,
+      'serialOutput4': serialOutput4Ctl,
+      'serialOutput5': serialOutput5Ctl,
+      'serialOutput6': serialOutput6Ctl,
+    };
+
+    for (String line in lines) {
+      List<String> lineStrList = line.split(':');
+      if (lineStrList.length != 2 || lineStrList.last.isEmpty) {
+        continue;
+      }
+      String key = lineStrList.first;
+      if (keyToPrefixMap.containsKey(key) &&
+          keyToCtlMap.containsKey(key) &&
+          lineStrList.last != '') {
+        checkNameAndFilePath(
+            lineStrList.last, keyToPrefixMap[key]!, keyToCtlMap[key]);
+      }
+    }
+  }
+
+  Future<void> checkNameAndFilePath(
+      String fileName, String path, TextEditingController textCtl) async {
+    final importPath = await getImportDir();
+    String filePath = '${importPath.path}\\$path\\$fileName';
+    File destFile = File(filePath);
+    if (await destFile.exists()) {
+      textCtl.text = filePath;
+    }
+  }
+
+  void parserOutputZip(String zipFilePath) async {
+    final recPath = await getJsonFileDir();
+    if (!await recPath.exists()) {
+      await recPath.create(recursive: true);
+    }
+    var destFolder = recPath.path;
+    Directory(destFolder).createSync(recursive: true);
+    final bytes = File(zipFilePath).readAsBytesSync();
+    final archive = ZipDecoder().decodeBytes(bytes);
+
+    for (final file in archive) {
+      final fileName = '$destFolder/${file.name}';
+      if (file.isFile) {
+        File(fileName)
+          ..createSync(recursive: true)
+          ..writeAsBytesSync(file.content as List<int>);
+        if (file.name == 'OL.json') {
+          serialOutput1Ctl.text = '$destFolder\\${file.name}';
+        } else if (file.name == 'UL.json') {
+          serialOutput2Ctl.text = '$destFolder\\${file.name}';
+        } else if (file.name == 'Weight.json') {
+          serialOutput3Ctl.text = '$destFolder\\${file.name}';
+        } else if (file.name == 'Pcs.json') {
+          serialOutput4Ctl.text = '$destFolder\\${file.name}';
+        } else if (file.name == 'Price.json') {
+          serialOutput5Ctl.text = '$destFolder\\${file.name}';
+        } else if (file.name == 'Percent.json') {
+          serialOutput6Ctl.text = '$destFolder\\${file.name}';
+        }
+      } else {
+        Directory(fileName).createSync(recursive: true);
+      }
+    }
+  }
+
+  Future<Directory> getImportDir() async {
+    String executablePath = Platform.resolvedExecutable;
+    var directory = p.dirname(executablePath);
+    return Directory('$directory\\import');
+  }
+
+  Future<Directory> getJsonFileDir() async {
+    String executablePath = Platform.resolvedExecutable;
+    var directory = p.dirname(executablePath);
+    return Directory('$directory\\output');
+  }
+
+  Future pickFirmwareFiles(TextEditingController showFilePath) async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      // initialDirectory: directory,
+      allowMultiple: false,
+      type: FileType.custom,
+      allowedExtensions: ['srec'],
+    );
+    if (result != null) {
+      setState(() {
+        showFilePath.text = result.files.single.path!;
+      });
+    } else {
+      setState(() {
+        showFilePath.text = '';
+      });
+    }
+  }
+
+  Future pickFiles(TextEditingController showFilePath) async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      // initialDirectory: directory,
+      allowMultiple: false,
+      type: FileType.custom,
+      allowedExtensions: ['fmt'],
+    );
+    if (result != null) {
+      setState(() {
+        showFilePath.text = result.files.single.path!;
+      });
+    } else {
+      setState(() {
+        showFilePath.text = '';
+      });
+    }
+  }
+
+  ButtonStyle? buildButtonStyle() {
+    return !isDownloading
+        ? OutlinedButton.styleFrom(
+            side: BorderSide(
+              width: 1,
+              color: colorScheme.primary,
+            ),
+            foregroundColor: Theme.of(context).colorScheme.onPrimary,
+            backgroundColor: colorScheme.primary, // 设置按钮的背景色
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
+            ),
+          )
+        : OutlinedButton.styleFrom(
+            side: BorderSide(
+              width: 1,
+              color: colorScheme.secondaryContainer,
+            ),
+            foregroundColor: Theme.of(context).colorScheme.onPrimary,
+            backgroundColor: colorScheme.secondaryContainer, // 设置按钮的背景色
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
+            ),
+          );
+  }
+
   String ipFilePath = '';
 
   performAutoIp() {
@@ -1258,7 +1825,12 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
   }
 
   getIpListFormFile() async {
-    ipFilePath = await getAppFilePath(myIpListName);
+    if (importFlag) {
+      ipFilePath = await getAppImportPath(myIpListName);
+    } else {
+      ipFilePath = await getAppFilePath(myIpListName);
+    }
+
     bool fileExists = await File(ipFilePath).exists();
     if (!fileExists) {
       await File(ipFilePath).create(recursive: true);
@@ -1305,7 +1877,6 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
       if (confirmed) {
         setState(() {
           isDownloading = false;
-
           cntScaleTimerMgr.stopCntScaleTimer();
           cntScaleTimerMgr.startCntScaleTimer(5);
         });
@@ -1406,7 +1977,6 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
     if (ipListNew.isNotEmpty) {
       ipIsUsedUp = false;
     }
-
     return true;
   }
 
@@ -1504,6 +2074,62 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
     });
   }
 
+  Future<List<String>> checkAndAddPath(TextEditingController controller,
+      String prefix, List<String> paths) async {
+    String path = controller.text;
+    if (path.isNotEmpty) {
+      File file = File(path);
+      if (await file.exists()) {
+        paths.add(prefix + path);
+      }
+    }
+    return paths;
+  }
+
+  void sendPrnFmtToScale() async {
+    myScaleCmd.cmdMode = "down_print_format_to_scale";
+    List<String> paths = [];
+    paths = await checkAndAddPath(prnFmt1Ctl, '1', paths);
+    paths = await checkAndAddPath(prnFmt2Ctl, '2', paths);
+    paths = await checkAndAddPath(prnFmt3Ctl, '3', paths);
+    paths = await checkAndAddPath(prnFmt4Ctl, '4', paths);
+
+    if (paths.isNotEmpty) {
+      myDownLoadPrtFmt.scaleModel = 'TMax';
+      myDownLoadPrtFmt.printerModel = 'EPM205';
+      myDownLoadPrtFmt.filePaths = paths;
+
+      myScaleCmd.cmdData = json.encode(myDownLoadPrtFmt);
+      MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+    }
+    writelog(jsonEncode(myScaleCmd));
+  }
+
+  void sendSerialToScale() async {
+    List<String> filePaths = [
+      serialOutput1Ctl.text,
+      serialOutput2Ctl.text,
+      serialOutput3Ctl.text,
+      serialOutput4Ctl.text,
+      serialOutput5Ctl.text,
+      serialOutput6Ctl.text,
+    ];
+    List<String> jsonFilesList = [];
+    for (int i = 1; i <= 6; i++) {
+      String filePath = filePaths[i - 1];
+      if (filePath == '') {
+        continue;
+      }
+      File file = File(filePath);
+      if (await file.exists()) {
+        jsonFilesList.add('$i' + filePath);
+      }
+    }
+    if (jsonFilesList.isNotEmpty) {
+      PublicFunctions.sendOutoutFmtToScale(jsonFilesList);
+    }
+  }
+
   void performDownload() {
     for (int i = 0; i < 7; i++) {
       if (downLoadIndex == updateFirmwareIndex &&
@@ -1516,28 +2142,16 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
         return;
       }
       if (downLoadIndex == downPrintFormatIndex && isPrnFmtSelect) {
-        List<Map<String, dynamic>> filteredList = jsonDataList
-            .where((item) => item["Req"] == "down_print_format_to_scale")
-            .toList();
-        if (filteredList.isNotEmpty) {
-          outputData
-              .add(getDateTime() + ':' + 'Now download print format' + '\r\n');
-
-          MyApp.webchannel1.sendMessage(jsonEncode(filteredList[0]));
-          writelog(jsonEncode(filteredList[0]));
-        }
+        outputData.add(getDateTime() + ':' + 'Now set print format' + '\r\n');
+        sendPrnFmtToScale();
         scrollToBottom();
         downLoadIndex++;
         return;
       }
 
       if (downLoadIndex == downOutputFormatIndex && isSerialOutput) {
-        List<Map<String, dynamic>> filteredList = jsonDataList
-            .where((item) => item["Req"] == "set_output_format")
-            .toList();
         outputData.add(getDateTime() + ':' + 'Now set output format' + '\r\n');
-        MyApp.webchannel1.sendMessage(jsonEncode(filteredList[0]));
-        writelog(jsonEncode(filteredList[0]));
+        sendSerialToScale();
         downLoadIndex++;
         return;
       }
@@ -1566,6 +2180,10 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
         wifiStatic = true;
         PublicFunctions.getOneEepromInfo('wifi_or_bt');
         outputData.add(getDateTime() + ':' + 'Now set static ip' + '\r\n');
+        if (importFlag) {
+          copyIpListToLocal();
+        }
+
         return;
       }
 
@@ -1613,6 +2231,22 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
       alignment: Alignment.centerLeft,
       height: 30,
       color: colorScheme.scrim,
+      child: Text(
+        title,
+        textAlign: TextAlign.left,
+        style: const TextStyle(
+          overflow: TextOverflow.ellipsis,
+          fontSize: 16,
+        ),
+      ),
+    );
+  }
+
+  Widget title2ndStyle(String title) {
+    return Container(
+      alignment: Alignment.centerLeft,
+      height: 30,
+      color: colorScheme.surface,
       child: Text(
         title,
         textAlign: TextAlign.left,
