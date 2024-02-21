@@ -1260,6 +1260,12 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
     copyPrnFmtToLocal(prnFmt3Ctl, sourcedir, 'pcs');
     copyPrnFmtToLocal(prnFmt4Ctl, sourcedir, 'percent');
     copyFirmwareToLocal(firmwarePathCtl, sourcedir);
+    copySerialToLocal(serialOutput1Ctl, sourcedir);
+    copySerialToLocal(serialOutput2Ctl, sourcedir);
+    copySerialToLocal(serialOutput3Ctl, sourcedir);
+    copySerialToLocal(serialOutput4Ctl, sourcedir);
+    copySerialToLocal(serialOutput5Ctl, sourcedir);
+    copySerialToLocal(serialOutput6Ctl, sourcedir);
     Directory(folderPath).createSync(recursive: true); // 创建目标文件夹（如果它不存在）
     String zipPath = folderPath + '\\' + 'backup.zip';
     Archive archive = createArchiveFromPath(sourcedir);
@@ -1338,6 +1344,19 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
           entity.deleteSync();
         }
       });
+    }
+  }
+
+  void copySerialToLocal(TextEditingController textCtl, String destDir) {
+    destDir = destDir + '\\' + mySerialOutput;
+    if (textCtl.text.isNotEmpty) {
+      var str = textCtl.text;
+      bool isFirstCharDigit = isDigit(str[0]);
+      if (isFirstCharDigit) {
+        copyFile(destDir, str.substring(1));
+      } else {
+        copyFile(destDir, str);
+      }
     }
   }
 

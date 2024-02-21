@@ -9,6 +9,7 @@ const String myLogDir = 'records';
 const String myImportDir = 'import';
 const String myPrnFormatDir = 'prnFormat';
 const String myFirmwareDir = 'firmware';
+const String mySerialOutput = 'serialOutput';
 const String myLastRecName = 'records.txt';
 const String myImportLogName = 'operation.log';
 
