@@ -668,7 +668,6 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       allowedExtensions: ['zip'],
       fileName: 'serialOutput.zip',
     ));
-    print(directory);
 
     if (outputFile != null) {
       final serialOutputPath = await getJsonFileDir();

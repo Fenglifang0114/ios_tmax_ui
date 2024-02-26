@@ -4,7 +4,8 @@ import 'package:t_max/pages/system_setting_page.dart';
 import '../data/screen_mgr.dart';
 
 class CustomSettingButton extends StatefulWidget {
-  const CustomSettingButton({super.key});
+  final VoidCallback onRefresh;
+  const CustomSettingButton({required this.onRefresh, super.key});
 
   @override
   _CustomSettingButtonState createState() => _CustomSettingButtonState();
@@ -26,6 +27,7 @@ class _CustomSettingButtonState extends State<CustomSettingButton> {
             MaterialPageRoute(builder: (context) => const SystemSettingPage()),
           ).then((value) => setState(() {
                 isPressed = !isPressed;
+                widget.onRefresh();
               }));
         });
         // 处理按钮点击事件

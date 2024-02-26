@@ -161,6 +161,9 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
     _eventbus4.cancel();
     _eventbus5.cancel();
     _eventbus6.cancel();
+    deviceNum.dispose();
+    model.dispose();
+    description.dispose();
     super.dispose();
   }
 
@@ -255,11 +258,6 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
                           } else {
                             tempCurrentPort.devPath = '';
                           }
-
-                          // setState(() {
-                          //   checkPortList();
-                          //   // eventBus.fire(EventDialogData(myDialogData));
-                          // });
                         },
                         // 传入可选的数组
                         items: comLists
@@ -320,18 +318,6 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            // OutlinedButton(
-            //     child: const Text('Test Connection'),
-            //     onPressed: () {
-            //       if (myCurrentPort.devPath != '') {
-            //         setState(() {
-            //           serialPortConnect = '';
-            //         });
-
-            //         checkSerialPort();
-            //       }
-            //     }),
-            // const SizedBox(width: 20),
             OutlinedButton(
                 child: Text(localizedStrings.button_connect),
                 onPressed: () {
@@ -343,7 +329,6 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
                     });
                     modifyComInfo();
                   }
-                  // Navigator.of(context).pop(connectionType);
                 }),
             const SizedBox(width: 20),
             OutlinedButton(
@@ -389,7 +374,7 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
   }
 
   void checkPortList() {
-    if (myComInfoList.msgBody!.isEmpty == true) {
+    if (myComInfoList.msgBody!.isEmpty) {
       comLists = [refresh];
       comPort = refresh;
       tempCurrentPort.devPath = '';
@@ -398,6 +383,8 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
       if (!comLists.contains(comPort)) {
         comPort = comLists[0];
         myCurrentPort.devPath = comPort; //20230411@F
+      } else {
+        myCurrentPort.devPath = comPort; //20240221@F
       }
     }
     // getPortList();

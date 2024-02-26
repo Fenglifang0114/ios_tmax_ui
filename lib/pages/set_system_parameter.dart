@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/eeprom_info.dart';
 import '../../eventbus/eventbus.dart';
@@ -66,7 +67,9 @@ class SetParameterPageState extends State<SetParameterPage> {
               //     eepromInfoList.where((item) => item.permission != 0).toList();
               // editInfoList.addAll(filteredList);
             } catch (e) {
-              print(e);
+              if (kDebugMode) {
+                print(e);
+              }
             }
           } else {
             myScreenMgr.serialPortST = false;
@@ -222,7 +225,7 @@ class SetParameterPageState extends State<SetParameterPage> {
         ));
   }
 
-  _showConfirmationDialog(BuildContext context) {
+  void showConfirmationDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext ctx) {

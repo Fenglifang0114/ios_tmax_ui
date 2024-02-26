@@ -207,7 +207,9 @@ class _RetailHomePageState extends State<RetailHomePage> {
                       height: 50,
                       child: Row(
                         children: [
-                          const CustomSettingButton(),
+                          CustomSettingButton(onRefresh: () {
+                            setState(() {});
+                          }),
                           const SizedBox(
                             width: 20,
                           ),

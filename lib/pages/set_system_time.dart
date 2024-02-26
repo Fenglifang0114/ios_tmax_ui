@@ -142,9 +142,9 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
   }
 
   void startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
-        deviceTime = deviceTime.add(Duration(seconds: 1));
+        deviceTime = deviceTime.add(const Duration(seconds: 1));
       });
     });
   }
@@ -280,7 +280,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                                 child: TextField(
                                   controller: manualTimeCtl,
                                   readOnly: true,
-                                  style: TextStyle(fontSize: 30),
+                                  style: const TextStyle(fontSize: 30),
                                   maxLines: 1,
                                 ),
                               ),
@@ -294,7 +294,6 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                                                 .millisecondsSinceEpoch /
                                             1000)
                                         .truncate();
-                                    print(timestamp);
                                     cntScaleTimerMgr.stopCntScaleTimer();
 
                                     PublicFunctions.setScaleTime(
@@ -372,7 +371,6 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                                           0);
                                       customDate = customTime;
                                       manualTimeCtl.text = formattedTime;
-                                      print('Selected Time: $selectedTime');
                                     }
                                   },
                                   child: btnStyle('Select Time')),
@@ -400,7 +398,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
         ));
   }
 
-  _showConfirmationDialog(BuildContext context) {
+  void showConfirmationDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext ctx) {

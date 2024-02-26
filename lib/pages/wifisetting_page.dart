@@ -394,96 +394,88 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                       child: Column(
                         children: [
                           Expanded(
-                              child: Container(
-                            // height: 48,
-                            // color: Theme.of(context).colorScheme.primary,
-                            child: Row(children: [
-                              SizedBox(
-                                width: 40, // 为Container指定一个固定的宽度
-                                child: Tooltip(
-                                  message: localizedStrings.refresh_tip,
-                                  child: IconButton(
-                                    splashRadius: 20,
-                                    onPressed: _enableRefresh
-                                        ? () {
-                                            setState(() {
-                                              _enableRefresh = false;
-                                              errorMessage = '';
-                                            });
-                                            cntScaleTimerMgr
-                                                .stopCntScaleTimer();
+                              child: Row(children: [
+                            SizedBox(
+                              width: 40, // 为Container指定一个固定的宽度
+                              child: Tooltip(
+                                message: localizedStrings.refresh_tip,
+                                child: IconButton(
+                                  splashRadius: 20,
+                                  onPressed: _enableRefresh
+                                      ? () {
+                                          setState(() {
+                                            _enableRefresh = false;
+                                            errorMessage = '';
+                                          });
+                                          cntScaleTimerMgr.stopCntScaleTimer();
 
-                                            PublicFunctions.getWifiList();
-                                          }
-                                        : null,
-                                    icon: Icon(
-                                      Icons.refresh,
-                                      color: _enableRefresh
-                                          ? Theme.of(context)
-                                              .colorScheme
-                                              .primary
-                                          : Theme.of(context)
-                                              .colorScheme
-                                              .background,
-                                    ),
+                                          PublicFunctions.getWifiList();
+                                        }
+                                      : null,
+                                  icon: Icon(
+                                    Icons.refresh,
+                                    color: _enableRefresh
+                                        ? Theme.of(context).colorScheme.primary
+                                        : Theme.of(context)
+                                            .colorScheme
+                                            .background,
                                   ),
                                 ),
                               ),
-                              Expanded(
-                                child: TextField(
-                                  controller: _findWifiText,
-                                  decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor: Colors.white,
-                                    suffixIcon: IconButton(
-                                      splashRadius: 20,
-                                      icon: Icon(
-                                        Icons.close,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                      ),
-                                      onPressed: () {
-                                        setState(() {
-                                          _findWifiText.clear();
-                                          displayedItems = wifiItems;
-                                        });
-                                      },
-                                    ),
-                                    prefixIcon: Icon(
-                                      Icons.search,
+                            ),
+                            Expanded(
+                              child: TextField(
+                                controller: _findWifiText,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                  suffixIcon: IconButton(
+                                    splashRadius: 20,
+                                    icon: Icon(
+                                      Icons.close,
                                       color:
                                           Theme.of(context).colorScheme.primary,
                                     ),
-                                    labelText: localizedStrings.find_ssid,
-                                    floatingLabelBehavior:
-                                        FloatingLabelBehavior.never,
-                                    border: const OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Colors.white, // 设置边框颜色
-                                        width: 2.0, // 设置边框宽度
-                                      ),
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(30)),
-                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        _findWifiText.clear();
+                                        displayedItems = wifiItems;
+                                      });
+                                    },
                                   ),
-                                  onChanged: (value) {
-                                    List<String> filteredItems = wifiItems
-                                        .where((item) => item
-                                            .toLowerCase()
-                                            .contains(value.toLowerCase()))
-                                        .toList();
-                                    setState(() {
-                                      displayedItems = filteredItems;
-                                    });
-                                  },
+                                  prefixIcon: Icon(
+                                    Icons.search,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                  ),
+                                  labelText: localizedStrings.find_ssid,
+                                  floatingLabelBehavior:
+                                      FloatingLabelBehavior.never,
+                                  border: const OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.white, // 设置边框颜色
+                                      width: 2.0, // 设置边框宽度
+                                    ),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(30)),
+                                  ),
                                 ),
+                                onChanged: (value) {
+                                  List<String> filteredItems = wifiItems
+                                      .where((item) => item
+                                          .toLowerCase()
+                                          .contains(value.toLowerCase()))
+                                      .toList();
+                                  setState(() {
+                                    displayedItems = filteredItems;
+                                  });
+                                },
                               ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                            ]),
-                          )),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                          ])),
                           const SizedBox(
                             height: 5,
                           ),

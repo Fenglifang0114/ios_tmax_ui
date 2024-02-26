@@ -197,7 +197,9 @@ class IndustryHomePageState extends State<IndustryHomePage> {
                       height: 50,
                       child: Row(
                         children: [
-                          const CustomSettingButton(),
+                          CustomSettingButton(onRefresh: () {
+                            setState(() {});
+                          }),
                           const SizedBox(
                             width: 20,
                           ),
