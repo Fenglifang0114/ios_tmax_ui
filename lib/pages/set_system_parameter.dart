@@ -19,6 +19,7 @@ class SetParameterPage extends StatefulWidget {
 
 class SetParameterPageState extends State<SetParameterPage> {
   dynamic eventBus1;
+  dynamic eventBus2;
   dynamic eventBus3;
 
   bool isManaul = false;
@@ -29,9 +30,24 @@ class SetParameterPageState extends State<SetParameterPage> {
   List<EepromInfo> eepromInfoList = [];
   List<EepromInfo> editInfoList = [];
 
+  Map<String, List<EepromInfo>> groupedData = {};
+
+  void generateCategoryList(List<EepromInfo> dataList) {
+    setState(() {
+      for (var item in dataList) {
+        String cate = item.category!;
+        if (!groupedData.containsKey(cate)) {
+          groupedData[cate] = [];
+        }
+        item.isChanged = false;
+        item.oldValue = item.currValue;
+        groupedData[cate]!.add(item);
+      }
+    });
+  }
+
   List<EepromInfo> parseEepromInfoList(String jsonString) {
     final parsedList = json.decode(jsonString) as List<dynamic>;
-
     return parsedList.map((json) => EepromInfo.fromJson(json)).toList();
   }
 
@@ -44,7 +60,7 @@ class SetParameterPageState extends State<SetParameterPage> {
     eventBus1 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
       if (mounted) {
         setState(() {
-          myRespGetAllEepromData = event.obj;
+          myRespCheckSerialPort = event.obj;
           if (myRespCheckSerialPort.msgBody == 'ok') {
             myScreenMgr.serialPortST = true;
           } else {
@@ -58,23 +74,52 @@ class SetParameterPageState extends State<SetParameterPage> {
       if (mounted) {
         setState(() {
           myRespGetAllEepromData = event.obj;
+          groupedData.clear();
           if (myRespGetAllEepromData.msgBody.isNotEmpty) {
             try {
               eepromInfoList =
                   parseEepromInfoList(myRespGetAllEepromData.msgBody);
-              editInfoList = eepromInfoList;
-              // var filteredList =
-              //     eepromInfoList.where((item) => item.permission != 0).toList();
-              // editInfoList.addAll(filteredList);
+              var filteredList = eepromInfoList
+                  .where((item) =>
+                      (item.permission != 0 && item.permission != null))
+                  .toList();
+              generateCategoryList(filteredList);
+              editInfoList.addAll(filteredList);
             } catch (e) {
               if (kDebugMode) {
                 print(e);
               }
             }
+            cntScaleTimerMgr.startCntScaleTimer(1);
           } else {
             myScreenMgr.serialPortST = false;
           }
         });
+      }
+    });
+
+    eventBus2 = eventBus.on<EventModifyEepromInfoResp>().listen((event) {
+      if (mounted) {
+        setState(() {
+          myRespModifyEepromInfo = event.obj;
+          if (myRespModifyEepromInfo.msgBody.isNotEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(
+                    (myRespModifyEepromInfo.msgBody.contains('ok'))
+                        ? localizedStrings.download_result_ok
+                        : myRespModifyEepromInfo.msgBody,
+                    style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.normal)), ////此处需要秤回复
+                duration: const Duration(seconds: 3),
+                backgroundColor: (myRespModifyEepromInfo.msgBody.contains('ok'))
+                    ? Colors.green.shade900
+                    : Colors.red.shade900));
+          }
+        });
+        groupedData.clear();
+        cntScaleTimerMgr.stopCntScaleTimer();
+        PublicFunctions.getAllEepromInfo();
       }
     });
   }
@@ -82,7 +127,7 @@ class SetParameterPageState extends State<SetParameterPage> {
   @override
   void dispose() {
     eventBus1.cancel();
-
+    eventBus2.cancel();
     eventBus3.cancel();
     _timer?.cancel();
     super.dispose();
@@ -102,117 +147,334 @@ class SetParameterPageState extends State<SetParameterPage> {
     });
   }
 
+  List<EepromInfo> checkParameter() {
+    List<EepromInfo> changedEepromInfos = groupedData.values
+        .expand((infoList) => infoList)
+        .where((eepromInfo) =>
+            eepromInfo.isChanged! &&
+            eepromInfo.currValue != eepromInfo.oldValue)
+        .toList();
+
+    return changedEepromInfos;
+  }
+
+  void submitParameter(List<EepromInfo> changedEepromInfos) {
+    cntScaleTimerMgr.stopCntScaleTimer();
+    var jsonStr = jsonEncode(changedEepromInfos);
+    PublicFunctions.modifyEepromInfo(jsonStr);
+  }
+
   @override
   Widget build(BuildContext context) {
     localizedStrings = S.of(context);
     final _width = MediaQuery.of(context).size.width;
     final _height = MediaQuery.of(context).size.height;
-    return Scaffold(body: firstLayout(context, _width, _height));
-  }
-
-  Widget firstLayout(context, _width, _height) {
-    return Container(
-        width: _width,
-        decoration: BoxDecoration(color: Colors.grey.shade200),
+    return Scaffold(
+      body: Container(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          // mainAxisSize: MainAxisSize.max,
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             pageHead(context, localizedStrings.parameter_set_title,
                 localizedStrings.serial_port_status),
-            const SizedBox(height: 5),
-            Expanded(
-              child: Container(
-                height: _height - 50,
-                width: _width,
-                color: Theme.of(context).colorScheme.onPrimary,
-                child: (editInfoList.isNotEmpty)
-                    ? ListView.builder(
-                        itemCount: editInfoList.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Row(
+            Container(
+              height: 50,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.scrim,
+                border: Border(
+                  bottom:
+                      BorderSide(color: Theme.of(context).colorScheme.primary),
+                ),
+              ),
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: Text(
+                      'Configuration name',
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Text(
+                      'Editable',
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Text(
+                      'Size',
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Text(
+                      'Type',
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Text(
+                      'Value',
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Text(
+                      'Description',
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: _height - 100,
+              child: ListView.builder(
+                itemCount: groupedData.length, // 每个分类一个ExpansionTile
+                itemBuilder: (context, index) {
+                  String category = groupedData.keys.toList()[index];
+                  String categoryTitle = category;
+
+                  return ExpansionTile(
+                    initiallyExpanded: false,
+                    title: Container(
+                      child: Text(categoryTitle,
+                          style: const TextStyle(fontWeight: FontWeight.bold)),
+                    ),
+                    children: groupedData[category]!.map((item) {
+                      return Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            // border: Border(
+                            //   bottom: BorderSide(color: Colors.grey),
+                            // ),
+                          ),
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              SizedBox(
-                                width: 300,
+                              Expanded(
+                                flex: 2,
                                 child: Text(
-                                  ((editInfoList[index].comment.toString())
+                                  ((item.comment.toString())
                                               .replaceAll('/', ''))
                                           .replaceAll('*', '') +
                                       ': ',
-                                  textAlign: TextAlign.right,
+                                  textAlign: TextAlign.center,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              SizedBox(
-                                width: 120,
+                              Expanded(
+                                flex: 2,
                                 child: Text(
-                                  (editInfoList[index].permission == 0 ||
-                                          editInfoList[index].permission == 1)
-                                      ? 'Read Only: Yes'
-                                      : 'Edit: Yes',
-                                  textAlign: TextAlign.right,
+                                  (item.permission == 1) ? 'No' : 'Yes',
+                                  textAlign: TextAlign.center,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              SizedBox(
-                                width: 80,
+                              Expanded(
+                                flex: 2,
                                 child: Text(
-                                  'Size: ' +
-                                      (editInfoList[index].size.toString()),
-                                  textAlign: TextAlign.left,
+                                  (item.size.toString()),
+                                  textAlign: TextAlign.center,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              SizedBox(
-                                width: 100,
+                              Expanded(
+                                flex: 2,
                                 child: Text(
-                                  'Type: ' +
-                                      (editInfoList[index].type.toString()),
-                                  textAlign: TextAlign.left,
+                                  (item.type.toString()),
+                                  textAlign: TextAlign.center,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              SizedBox(
-                                width: 300,
+                              Expanded(
+                                flex: 2,
                                 child: TextFormField(
-                                  readOnly: (editInfoList[index].permission ==
-                                              0 ||
-                                          editInfoList[index].permission == 1)
-                                      ? true
-                                      : false,
+                                  readOnly:
+                                      (item.permission == 1) ? true : false,
                                   // 根据数据列表设置初始值
                                   maxLines: 1,
+                                  decoration: InputDecoration(
+                                    border: (item.permission == 1)
+                                        ? InputBorder.none
+                                        : UnderlineInputBorder(), // 去掉底部线条
+                                  ),
+                                  textAlign: TextAlign.center,
                                   style: const TextStyle(
                                       overflow: TextOverflow.ellipsis),
-                                  initialValue: editInfoList[index].currValue,
+                                  initialValue: item.currValue,
                                   // 处理每个文本字段的变化
                                   onChanged: (value) {
-                                    // 更新数据列表中的值
-                                    editInfoList[index].currValue = value;
+                                    setState(() {
+                                      item.currValue = value;
+                                      item.isChanged = true;
+                                    });
                                   },
                                 ),
                               ),
-                              SizedBox(
-                                width: 300,
+                              Expanded(
+                                flex: 2,
                                 child: Text(
-                                  editInfoList[index].description.toString(),
-                                  textAlign: TextAlign.left,
+                                  item.description.toString(),
+                                  textAlign: TextAlign.center,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ],
-                          );
-                        },
-                      )
-                    :
-                    // 空列表时的处理
-                    const Text('Empty list, please wait a moment.'),
+                          ));
+                    }).toList(),
+                  );
+                },
               ),
+            )
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          var changedEepromInfos = checkParameter();
+          if (changedEepromInfos.isNotEmpty) {
+            String checkStr = checkEepromData(changedEepromInfos);
+            if (checkStr != '') {
+              changedEepromInfos.clear();
+              var title = '''Please check $checkStr!''';
+              _showConfirmationDialog(context, changedEepromInfos, title);
+            } else {
+              var title =
+                  '''Please make sure the values are correct, continue?''';
+              _showConfirmationDialog(context, changedEepromInfos, title);
+            }
+          } else {
+            var title = '''No parameters have been modified!''';
+            _showConfirmationDialog(context, changedEepromInfos, title);
+          }
+        },
+        tooltip: 'Click to submit',
+        child: const Icon(Icons.upload_file_outlined),
+      ),
+    );
+  }
+
+  String checkEepromData(List<EepromInfo> dataList) {
+    for (var i = 0; i < dataList.length; i++) {
+      if (dataList[i].type == 'int' && dataList[i].size == 1) {
+        if (dataList[i].currValue == null ||
+            !isNumberInRange1(dataList[i].currValue!)) {
+          return '${dataList[i].comment}';
+        }
+      } else if (dataList[i].type == 'int' && dataList[i].size == 2) {
+        if (dataList[i].currValue == null ||
+            !isNumberInRange2(dataList[i].currValue!)) {
+          return '${dataList[i].comment}';
+        }
+      } else if (dataList[i].type == 'int' &&
+          dataList[i].size == 4 &&
+          dataList[i].subType != 'ip') {
+        if (dataList[i].currValue == null ||
+            !isValidInteger3(dataList[i].currValue!)) {
+          return '${dataList[i].comment}';
+        }
+      } else if (dataList[i].type == 'double') {
+        if (dataList[i].currValue == null ||
+            !isValidNumber(dataList[i].currValue!)) {
+          return '${dataList[i].comment}';
+        }
+      }
+    }
+
+    return '';
+  }
+
+  bool isValidNumber(String value) {
+    RegExp regex = RegExp(r'^\d*\.?\d+$'); // 匹配整数或小数的正则表达式
+    return regex.hasMatch(value);
+  }
+
+  bool isValidValue(String value) {
+    return value.isNotEmpty && value.length <= 20;
+  }
+
+  void _showConfirmationDialog(
+      BuildContext context, List<EepromInfo> changedEepromInfos, String title) {
+    showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          title: Text(
+            localizedStrings.confirm_title,
+            style: const TextStyle(color: Color.fromARGB(255, 15, 71, 161)),
+          ),
+          content: Text(title),
+          actions: <Widget>[
+            changedEepromInfos.length > 0
+                ? OutlinedButton(
+                    child: Text(localizedStrings.button_cancel),
+                    onPressed: () {
+                      Navigator.of(context).pop(false); // 不跳转
+                    },
+                  )
+                : SizedBox(),
+            OutlinedButton(
+              child: Text(localizedStrings.confirm_btn),
+              onPressed: () {
+                Navigator.of(context).pop(true); // 跳转
+              },
             ),
           ],
-        ));
+        );
+      },
+    ).then((confirmed) {
+      if (confirmed) {
+        if (changedEepromInfos.length > 0) {
+          submitParameter(changedEepromInfos);
+        }
+      }
+    });
+  }
+
+  bool isNumberInRange1(String input) {
+    final regExp = RegExp(r'^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$');
+    return regExp.hasMatch(input);
+  }
+
+  bool isNumberInRange2(String input) {
+    final regExp = RegExp(
+        r'^(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5]?\d{1,4})$');
+    return regExp.hasMatch(input);
+  }
+
+  bool isValidInteger3(String value) {
+    RegExp regex = RegExp(r'^(?!0\d)\d{1,10}$'); // 匹配1到10位数字的正则表达式
+    return regex.hasMatch(value);
   }
 
   Widget btnStyle(String head) {

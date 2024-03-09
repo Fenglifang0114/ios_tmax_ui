@@ -332,6 +332,11 @@ class EventGetOneEepromDateResp {
   EventGetOneEepromDateResp(this.obj);
 }
 
+class EventModifyEepromInfoResp {
+  dynamic obj;
+  EventModifyEepromInfoResp(this.obj);
+}
+
 class EventBTResponse {
   dynamic obj;
   EventBTResponse(this.obj);

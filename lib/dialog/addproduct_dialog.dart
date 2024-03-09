@@ -31,10 +31,11 @@ addProductDialog(BuildContext context) {
       ((myProductRecInfo.pretare == null) ? "" : myProductRecInfo.pretare)!;
   productRemark.text =
       ((myProductRecInfo.remarks == null) ? "" : myProductRecInfo.remarks)!;
-  isPresetTare = ((myProductRecInfo.withPretare == null)
+  isPresetTare = (myProductRecInfo.withPretare == null)
       ? false
-      : myProductRecInfo.withPretare);
+      : myProductRecInfo.withPretare;
   localizedStrings = S.of(context);
+  errorText.text = '';
 
   return showDialog(
       barrierDismissible: false, //设置为false，点击空白处弹窗不关闭
@@ -66,7 +67,7 @@ addProductDialog(BuildContext context) {
                           color: Theme.of(context).colorScheme.onPrimary),
                       child: Column(
                         children: [
-                          const SizedBox(height: 15),
+                          // const SizedBox(height: 15),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -83,8 +84,7 @@ addProductDialog(BuildContext context) {
                                       maxLengthEnforcement:
                                           MaxLengthEnforcement.enforced,
                                       maxLines: 1,
-                                      textAlignVertical:
-                                          TextAlignVertical.bottom,
+                                      textAlignVertical: TextAlignVertical.top,
                                       decoration: const InputDecoration(
                                         counterText: "",
                                         // hintText: "请输入机种类型，如：ztp",
@@ -106,8 +106,7 @@ addProductDialog(BuildContext context) {
                                       maxLengthEnforcement:
                                           MaxLengthEnforcement.enforced,
                                       maxLines: 1,
-                                      textAlignVertical:
-                                          TextAlignVertical.bottom,
+                                      textAlignVertical: TextAlignVertical.top,
                                       decoration: const InputDecoration(
                                         counterText: "",
                                         // hintText: "请输入机种类型，如：ztp",
@@ -175,7 +174,7 @@ addProductDialog(BuildContext context) {
                                   Text(localizedStrings.plu_remarks),
                                   SizedBox(
                                     width: 400,
-                                    height: 120,
+                                    height: 80,
                                     child: TextField(
                                       controller: productRemark,
                                       maxLength: 300,
@@ -244,21 +243,19 @@ addProductDialog(BuildContext context) {
                       child: Text(localizedStrings.button_add),
                       onPressed: () {
                         errorText.text = '';
-                        getProductList();
+                        // getProductList();
                         addProductRec();
-                        getProductList();
-                        // Navigator.of(context).pop(connectionType);
+                        // getProductList();
                       }),
                   const SizedBox(width: 20),
                   OutlinedButton(
                       child: Text(localizedStrings.button_edit),
                       onPressed: () {
                         errorText.text = '';
-                        getProductList();
-                        getProductList();
+                        // getProductList();
+                        // getProductList();
                         editProductRec();
-                        getProductList();
-                        // Navigator.of(context).pop(connectionType);
+                        // getProductList();
                       }),
                   const SizedBox(width: 20),
                   OutlinedButton(
@@ -267,10 +264,10 @@ addProductDialog(BuildContext context) {
                         if (productID.text.isNotEmpty ||
                             productName.text.isNotEmpty) {
                           errorText.text = '';
-                          getProductList();
-                          getProductList();
+                          // getProductList();
+                          // getProductList();
                           delProductRec();
-                          getProductList();
+                          // getProductList();
                         } else {
                           errorText.text = localizedStrings.plu_error_message;
                         }

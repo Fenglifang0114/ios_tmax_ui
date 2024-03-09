@@ -209,6 +209,12 @@ class PublicFunctions {
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
 
+  static void modifyEepromInfo(String dataStr) {
+    myScaleCmd.cmdMode = "modify_eeprom_info";
+    myScaleCmd.cmdData = dataStr;
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+  }
+
   static void setWifiDynamicMode() {
     myScaleCmd.cmdMode = 'set_wifi_dynamic_ip';
     myScaleCmd.cmdData = '';

@@ -5,23 +5,30 @@ class EepromInfo {
   int? size;
   int? addr;
   String? type;
+  String? subType;
   int? permission;
   String? values;
   String? currValue;
+  String? oldValue;
   String? description;
   String? comment;
+  String? category;
+  bool? isChanged;
 
-  EepromInfo({
-    this.filedName,
-    this.size,
-    this.addr,
-    this.type,
-    this.permission,
-    this.values,
-    this.currValue,
-    this.description,
-    this.comment,
-  });
+  EepromInfo(
+      {this.filedName,
+      this.size,
+      this.addr,
+      this.type,
+      this.subType,
+      this.permission,
+      this.values,
+      this.currValue,
+      this.oldValue,
+      this.description,
+      this.comment,
+      this.category,
+      this.isChanged});
 
   factory EepromInfo.fromRawJson(String str) =>
       EepromInfo.fromJson(json.decode(str));
@@ -33,11 +40,13 @@ class EepromInfo {
         size: json["size"],
         addr: json["addr"],
         type: json["type"],
+        subType: json["subType"],
         permission: json["permission"],
         values: json["values"],
         currValue: json["currValue"],
         description: json["description"],
-        comment: json["Comment"],
+        comment: json["comment"],
+        category: json["category"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -45,11 +54,13 @@ class EepromInfo {
         "size": size,
         "addr": addr,
         "type": type,
+        "subType": subType,
         "permission": permission,
         "values": values,
         "currValue": currValue,
         "description": description,
-        "Comment": comment,
+        "comment": comment,
+        "category": category,
       };
 }
 

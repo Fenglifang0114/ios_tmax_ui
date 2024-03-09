@@ -736,7 +736,7 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                             style: const TextStyle(
                                 fontSize: 14, fontWeight: FontWeight.normal)),
                         onPressed: () {
-                          getProductList();
+                          // getProductList();
                           addProductDialog(context).then((onvalue) {
                             if (!productNameList.contains(productNameValue)) {
                               myProductRecInfo.product = "";
