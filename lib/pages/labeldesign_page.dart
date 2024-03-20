@@ -1399,7 +1399,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     } else if (_selectedPageSize == '50*40') {
       csvData.add(['P', 400, 320]);
     } else if (_selectedPageSize == '55*50') {
-      csvData.add(['P', 384, 400]);
+      csvData.add(['P', 440, 400]);
     } else if (_selectedPageSize == '50*55') {
       csvData.add(['P', 390, 440]);
     } else if (_selectedPageSize == '50*110') {

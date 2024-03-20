@@ -1155,7 +1155,7 @@ class _PT566PageState extends State<PT566Page> {
     } else if (_selectedPageSize == '50*40') {
       csvData.add(['P', 400, 320]);
     } else if (_selectedPageSize == '55*50') {
-      csvData.add(['P', 384, 400]);
+      csvData.add(['P', 440, 400]);
     } else if (_selectedPageSize == '58*75') {
       csvData.add(['P', 464, 600]);
     }

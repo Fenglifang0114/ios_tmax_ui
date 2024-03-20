@@ -24,6 +24,7 @@ class RowDataWidgetState extends State<RowDataWidget> {
     'Net',
     'Pcs',
     'WeightUnit',
+    'Percent',
   ];
 
   final List<String> _alignments = [

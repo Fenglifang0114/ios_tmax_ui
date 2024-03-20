@@ -77,6 +77,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     'isstable',
     'istare',
     'PCS',
+    'Percent',
   ];
 
   dynamic _eventbus1;
@@ -1817,7 +1818,10 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     } else if (varname == 'isiero') {
       list.add(SerialProtocolText('Bool', ' kg', varname, 'right', 3, ++count,
           'Z', 'NZ', 'space', 0, '', false));
-    } else if (varname == 'Gross' || varname == 'Tare' || varname == 'Net') {
+    } else if (varname == 'Gross' ||
+        varname == 'Tare' ||
+        varname == 'Net' ||
+        varname == 'Percent') {
       list.add(SerialProtocolText('Float', '0123456', varname, 'right', 7,
           ++count, '', '', 'space', 3, '', false));
     } else if (varname == 'PCS') {
