@@ -493,21 +493,28 @@ class IndustryHomePageState extends State<IndustryHomePage> {
                         cursor: SystemMouseCursors.click, // 设置光标为手的形状
                         child: GestureDetector(
                           onTap: () {
-                            setState(() {
-                              stopCheckSerialPort();
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ProductDownloadPage()),
-                              ).then((value) => _updateStatus());
-                            });
+                            if (myScaleInfoFromScale.modelName == null ||
+                                (!myScaleInfoFromScale.modelName!
+                                    .contains('2200'))) {
+                              setState(() {
+                                stopCheckSerialPort();
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const ProductDownloadPage()),
+                                ).then((value) => _updateStatus());
+                              });
+                            }
                           },
                           child: customFunctionCard(
                               localizedStrings.plu_download_title,
                               "assets/images/line.png",
                               Icons.shopping_bag,
-                              true),
+                              myScaleInfoFromScale.modelName == null
+                                  ? true
+                                  : !myScaleInfoFromScale.modelName!
+                                      .contains('2200')),
                         ),
                       ),
                       MouseRegion(

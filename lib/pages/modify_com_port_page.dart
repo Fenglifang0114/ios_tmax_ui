@@ -196,47 +196,6 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Text(localizedStrings.scale_model),
-                    // ComPortDropdown(
-                    //     3, scale_model, myCurrentPort.baud.toString()),
-                    const SizedBox(height: 15),
-                    Text(localizedStrings.scale_model),
-                    Container(
-                      height: 53,
-                      width: 200,
-                      padding: const EdgeInsets.all(0),
-                      child: DropdownButtonFormField<String>(
-                        isExpanded: true,
-                        // decoration: const InputDecoration(border: OutlineInputBorder()),
-                        // 设置默认值
-                        value: scaleModel,
-                        // 选择回调
-                        onChanged: (String? newPosition) {
-                          scaleModel = newPosition.toString();
-                        },
-                        // 传入可选的数组
-                        items: scaleModelList
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem(
-                              value: value, child: Text(value));
-                        }).toList(),
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-
-                    Text(localizedStrings.baud_rate),
-                    ComPortDropdown(
-                        3, baudRateList, myCurrentPort.baud.toString()),
-                    const SizedBox(height: 15),
-                    Text(localizedStrings.data_bits),
-                    ComPortDropdown(
-                        1, dataBitsList, myCurrentPort.dataBits.toString()),
-                  ],
-                ),
-                const SizedBox(width: 60),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
                     const SizedBox(height: 15),
                     Text(localizedStrings.serial_port),
                     Container(
@@ -267,7 +226,43 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
                         }).toList(),
                       ),
                     ),
+                    // Text(localizedStrings.scale_model),
+                    // Container(
+                    //   height: 53,
+                    //   width: 200,
+                    //   padding: const EdgeInsets.all(0),
+                    //   child: DropdownButtonFormField<String>(
+                    //     isExpanded: true,
+                    //     // 设置默认值
+                    //     value: scaleModel,
+                    //     // 选择回调
+                    //     onChanged: (String? newPosition) {
+                    //       scaleModel = newPosition.toString();
+                    //     },
+                    //     // 传入可选的数组
+                    //     items: scaleModelList
+                    //         .map<DropdownMenuItem<String>>((String value) {
+                    //       return DropdownMenuItem(
+                    //           value: value, child: Text(value));
+                    //     }).toList(),
+                    //   ),
+                    // ),
                     const SizedBox(height: 15),
+
+                    Text(localizedStrings.baud_rate),
+                    ComPortDropdown(
+                        3, baudRateList, myCurrentPort.baud.toString()),
+                    const SizedBox(height: 15),
+                    Text(localizedStrings.data_bits),
+                    ComPortDropdown(
+                        1, dataBitsList, myCurrentPort.dataBits.toString()),
+                  ],
+                ),
+                const SizedBox(width: 60),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 106),
                     Text(localizedStrings.Parity),
                     ComPortDropdown(
                         4,
@@ -305,7 +300,8 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
                   serialPortConnect,
                   style: TextStyle(
                       fontSize: 20,
-                      color: (serialPortConnect.contains('fail'))
+                      color: (serialPortConnect.contains('fail') ||
+                              serialPortConnect.contains('Unable'))
                           ? Theme.of(context).colorScheme.error
                           : Theme.of(context).colorScheme.outline),
                 )

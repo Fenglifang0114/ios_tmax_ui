@@ -10,6 +10,7 @@ import '../data/comscaleinfo_data.dart';
 import '../data/currentport_data.dart';
 import '../data/device_data.dart';
 import '../data/downloadresponse.dart';
+import '../data/screen_mgr.dart';
 import '../data/setting_version_info.dart';
 import '../dialog/get_build_info_dialog.dart';
 import '../dialog/language_setting.dart';
@@ -25,6 +26,7 @@ import '../widget/version.dart';
 import 'custom_serial_protocol_page.dart';
 import 'modify_com_port_page.dart';
 import 'product_download_page.dart';
+import 'wifisetting_page.dart';
 
 class RetailHomePage extends StatefulWidget {
   const RetailHomePage({Key? key}) : super(key: key);
@@ -500,17 +502,90 @@ class _RetailHomePageState extends State<RetailHomePage> {
                         vertical: 10.0, horizontal: 20.0),
                     children: [
                       MouseRegion(
+                          cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                          child: GestureDetector(
+                            onTap: () {
+                              //wifi页面
+                              if (myScreenMgr.wifiOrBt.contains('wifi')) {
+                                setState(() {
+                                  stopCheckSerialPort();
+                                  PublicFunctions.changeWifiMode();
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const WifiSettingPage(),
+                                    ),
+                                  ).then((value) => _updateStatus());
+                                });
+                              }
+                            },
+                            child: customFunctionCard(
+                                localizedStrings.wifi_setting_title,
+                                "assets/images/line.png",
+                                Icons.wifi,
+                                (myScreenMgr.wifiOrBt.contains('wifi'))),
+                          )),
+                      MouseRegion(
+                          cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                          child: GestureDetector(
+                            onTap: () {
+                              //wifi页面
+
+                              setState(() {
+                                stopCheckSerialPort();
+                                PublicFunctions.changeWifiMode();
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const WifiSettingPage(),
+                                  ),
+                                ).then((value) => _updateStatus());
+                              });
+                            },
+                            child: customFunctionCard(
+                                'Ethernet Setting',
+                                "assets/images/line.png",
+                                Icons.settings_ethernet,
+                                true),
+                          )),
+                      MouseRegion(
+                          cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                          child: GestureDetector(
+                            onTap: () {
+                              //wifi页面
+
+                              setState(() {
+                                stopCheckSerialPort();
+                                PublicFunctions.changeWifiMode();
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const WifiSettingPage(),
+                                  ),
+                                ).then((value) => _updateStatus());
+                              });
+                            },
+                            child: customFunctionCard(
+                                'Header And Footer Setting',
+                                "assets/images/line.png",
+                                Icons.view_headline,
+                                true),
+                          )),
+                      MouseRegion(
                         cursor: SystemMouseCursors.click, // 设置光标为手的形状
                         child: GestureDetector(
                           onTap: myLicenseInfo.isValid
                               ? () {
-                                  showLabelDesign(myLicenseInfo.isValid);
+                                  showReceiptDesign(myLicenseInfo.isValid);
                                 }
                               : null,
                           child: customFunctionCard(
-                              'Label Format',
+                              'Receipt Format',
                               "assets/images/line.png",
-                              Icons.sell,
+                              Icons.receipt,
                               myLicenseInfo.isValid),
                         ),
                       ),
@@ -663,6 +738,11 @@ class _RetailHomePageState extends State<RetailHomePage> {
     );
   }
 
+  void _updateStatus() {
+    setState(() {});
+    _startTimer(5);
+  }
+
   void showBuildInfo() {
     stopCheckSerialPort();
     showDialog(
@@ -682,6 +762,17 @@ class _RetailHomePageState extends State<RetailHomePage> {
         context,
         MaterialPageRoute(builder: (context) => const LabelDesignPage()),
       ).then((value) => _startTimer(5));
+    }
+  }
+
+  void showReceiptDesign(bool isValid) {
+    if (isValid) {
+      stopCheckSerialPort();
+
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(builder: (context) => const LabelDesignPage()),
+      // ).then((value) => _startTimer(5));
     }
   }
 
