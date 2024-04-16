@@ -108,11 +108,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "editor": MessageLookupByLibrary.simpleMessage("Editor"),
         "element_type": MessageLookupByLibrary.simpleMessage("Type:"),
         "en": MessageLookupByLibrary.simpleMessage("English"),
+        "error_ip_tip": MessageLookupByLibrary.simpleMessage(
+            "Incorrect address! e.g. xxx.xxx.xxx.xxx"),
         "expiration_date":
             MessageLookupByLibrary.simpleMessage("Expiration date:"),
         "find_ssid": MessageLookupByLibrary.simpleMessage("Discover SSID"),
         "firmwart_update":
             MessageLookupByLibrary.simpleMessage("Update Firmware"),
+        "fmt_confirm_info": MessageLookupByLibrary.simpleMessage(
+            "Please confirm the format is saved."),
         "font_bold": MessageLookupByLibrary.simpleMessage("Bold:"),
         "font_reverse":
             MessageLookupByLibrary.simpleMessage("Reverse Contrast:"),
@@ -122,6 +126,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "get_bt_name": MessageLookupByLibrary.simpleMessage("Get name"),
         "get_build_info":
             MessageLookupByLibrary.simpleMessage("Software Information"),
+        "header_confirm_info": MessageLookupByLibrary.simpleMessage(
+            "Please confirm the information."),
+        "header_footer_setting_title":
+            MessageLookupByLibrary.simpleMessage("Header And Footer Setting"),
         "hr_alignment": MessageLookupByLibrary.simpleMessage("HRI Alignment:"),
         "ip_address": MessageLookupByLibrary.simpleMessage("IPv4:"),
         "label_design_title":
@@ -194,7 +202,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "save_csv": MessageLookupByLibrary.simpleMessage("Save as CSV"),
         "save_file": MessageLookupByLibrary.simpleMessage("Save File (json)"),
         "save_mode": MessageLookupByLibrary.simpleMessage("Save Mode:"),
-        "scale_model": MessageLookupByLibrary.simpleMessage("Model Name"),
+        "scale_model": MessageLookupByLibrary.simpleMessage("Scale Model:"),
         "scale_name": MessageLookupByLibrary.simpleMessage("Scale Name:"),
         "scale_sn": MessageLookupByLibrary.simpleMessage("SN#:"),
         "select_barcode": MessageLookupByLibrary.simpleMessage("BarCode:"),
@@ -225,6 +233,10 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Serial port output preview"),
         "serial_port_status":
             MessageLookupByLibrary.simpleMessage("Serial port status:"),
+        "server_ip": MessageLookupByLibrary.simpleMessage("Server Ip:"),
+        "server_port": MessageLookupByLibrary.simpleMessage("Server Port:"),
+        "set_ethernet_ip_title":
+            MessageLookupByLibrary.simpleMessage("Ethernet IP Setting"),
         "set_language_title":
             MessageLookupByLibrary.simpleMessage("Set Language"),
         "set_wifi_success": MessageLookupByLibrary.simpleMessage(

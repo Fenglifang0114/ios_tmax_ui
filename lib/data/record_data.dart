@@ -94,20 +94,27 @@ class AddScaleRecord {
   String? userName;
   String? userRemarks;
   String? scaleMode;
+  String? scaleModel;
+  String? scaleSn;
+  String? scaleName;
 
-  AddScaleRecord(
-      {this.scaleId,
-      this.product,
-      this.weight,
-      this.price,
-      this.pluNo,
-      this.pluRemarks,
-      this.weightUnit,
-      this.pretare,
-      this.userNo,
-      this.userName,
-      this.userRemarks,
-      this.scaleMode});
+  AddScaleRecord({
+    this.scaleId,
+    this.product,
+    this.weight,
+    this.price,
+    this.pluNo,
+    this.pluRemarks,
+    this.weightUnit,
+    this.pretare,
+    this.userNo,
+    this.userName,
+    this.userRemarks,
+    this.scaleMode,
+    this.scaleModel,
+    this.scaleSn,
+    this.scaleName,
+  });
 
   AddScaleRecord.fromJson(Map<String, dynamic> json) {
     scaleId = json['ScaleId'];
@@ -121,6 +128,9 @@ class AddScaleRecord {
     userName = json['UserName'];
     userRemarks = json['UserRemarks'];
     scaleMode = json['ScaleMode'];
+    scaleModel = json['ScaleModel'];
+    scaleSn = json['ScaleSn'];
+    scaleName = json['ScaleName'];
   }
 
   Map<String, dynamic> toJson() {
@@ -137,6 +147,9 @@ class AddScaleRecord {
     data['UserName'] = userName;
     data['UserRemarks'] = userRemarks;
     data['ScaleMode'] = scaleMode;
+    data['ScaleModel'] = scaleModel;
+    data['ScaleSn'] = scaleSn;
+    data['ScaleName'] = scaleName;
 
     return data;
   }

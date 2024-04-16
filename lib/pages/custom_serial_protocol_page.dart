@@ -990,7 +990,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
             backgroundColor: colorScheme.primary, // 设置按钮的背景色
             elevation: 10, // 设置按钮的阴影
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
+              borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
             ),
           ),
           child: const Text('Delete',
@@ -1069,7 +1069,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
             backgroundColor: colorScheme.primary, // 设置按钮的背景色
             elevation: 10, // 设置按钮的阴影
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
+              borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
             ),
           ),
           child: Text('Delete',
@@ -1600,7 +1600,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
           backgroundColor: colorScheme.primary, // 设置按钮的背景色
           elevation: 10, // 设置按钮的阴影
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
+            borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
           ),
         ),
         child: const Text('Delete',

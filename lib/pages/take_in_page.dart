@@ -19,6 +19,7 @@ import '../../generated/l10n.dart';
 import '../../main.dart';
 import '../data/downloadresponse.dart';
 import '../data/record_data.dart';
+import '../data/scale_info_from_scale.dart';
 import '../data/scalecmd_data.dart';
 import '../data/screen_mgr.dart';
 import '../data/timer_manager.dart';
@@ -2209,7 +2210,7 @@ class TakeInPageState extends State<TakeInPage> {
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
                 .value = myWeightReportData[row - 1].userNo;
             break;
-          case 'Scale Name':
+          case 'Scale Model':
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
@@ -2245,6 +2246,11 @@ class TakeInPageState extends State<TakeInPage> {
     myAddScaleRecord.scaleId = 1;
     myAddScaleRecord.price = '0.0';
     myAddScaleRecord.scaleMode = '2';
+    myAddScaleRecord.scaleModel = myScaleInfoFromScale.modelName;
+    myAddScaleRecord.scaleSn = myScaleInfoFromScale.scaleSn;
+    myAddScaleRecord.scaleName = myScaleInfoFromScale.scaleName == null
+        ? ""
+        : myScaleInfoFromScale.scaleName!;
     myAddScaleRecord.product = currentData.pluName;
     myAddScaleRecord.weight = currentData.weight.toString();
     myAddScaleRecord.pluNo = currentData.plu;
@@ -2379,7 +2385,9 @@ class TakeInPageState extends State<TakeInPage> {
               ? ""
               : myUserInfo.id.toString()),
       (myUserInfo.remarks == null) ? "" : myUserInfo.remarks.toString(),
-      myDevicedata.name,
+      myScaleInfoFromScale.modelName == null
+          ? ''
+          : myScaleInfoFromScale.modelName!, //此处应该是秤机种名
     ));
 
     setState(() {
@@ -2491,7 +2499,7 @@ class WeightReportDataSource extends DataGridSource {
         return reportData.userName;
       case 'User Remarks':
         return reportData.userRemarks;
-      case 'Scale Name':
+      case 'Scale Model':
         return reportData.scaleName;
       // 其他属性的处理类似
       default:

@@ -186,6 +186,13 @@
     "device_time_title":"Device Time",
     "batch_delivery_title":"Batch Delivery" ,
     "parameter_set_title":"Parameter Setting",
-    "save_as":"Parameter Setting"  
+    "save_as":"Parameter Setting",
+    "header_footer_setting_title":"Header And Footer Setting",
+    "header_confirm_info":"Please confirm the information." ,
+    "server_ip":"Server Ip:",
+    "server_port":"Server Port:",
+    "error_ip_tip":"Incorrect address! e.g. xxx.xxx.xxx.xxx",
+    "set_ethernet_ip_title":"Ethernet IP Setting",
+    "fmt_confirm_info":"Please confirm the format is saved."
     
 }

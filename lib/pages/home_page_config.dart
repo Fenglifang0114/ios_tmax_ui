@@ -119,6 +119,9 @@ class _HomePageState extends State<HomePage> {
               PublicFunctions.getOneEepromInfo("wifi_or_bt");
             } else {
               myScreenMgr.serialPortST = false;
+              myScaleInfoFromScale.addrInfos = [];
+              myScaleInfoFromScale.modelName = '';
+              myScaleInfoFromScale.scaleSn = '';
             }
           });
         }

@@ -337,6 +337,16 @@ class EventModifyEepromInfoResp {
   EventModifyEepromInfoResp(this.obj);
 }
 
+class EventModifyHeaderFooterResp {
+  dynamic obj;
+  EventModifyHeaderFooterResp(this.obj);
+}
+
+class EventSetServerIPResp {
+  dynamic obj;
+  EventSetServerIPResp(this.obj);
+}
+
 class EventBTResponse {
   dynamic obj;
   EventBTResponse(this.obj);

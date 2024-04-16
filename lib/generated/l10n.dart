@@ -1210,10 +1210,10 @@ class S {
     );
   }
 
-  /// `Model Name`
+  /// `Scale Model:`
   String get scale_model {
     return Intl.message(
-      'Model Name',
+      'Scale Model:',
       name: 'scale_model',
       desc: '',
       args: [],
@@ -1925,6 +1925,76 @@ class S {
     return Intl.message(
       'Save as',
       name: 'save_as',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Header And Footer Setting`
+  String get header_footer_setting_title {
+    return Intl.message(
+      'Header And Footer Setting',
+      name: 'header_footer_setting_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please confirm the information.`
+  String get header_confirm_info {
+    return Intl.message(
+      'Please confirm the information.',
+      name: 'header_confirm_info',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Server Ip:`
+  String get server_ip {
+    return Intl.message(
+      'Server Ip:',
+      name: 'server_ip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Server Port:`
+  String get server_port {
+    return Intl.message(
+      'Server Port:',
+      name: 'server_port',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Incorrect address! e.g. xxx.xxx.xxx.xxx`
+  String get error_ip_tip {
+    return Intl.message(
+      'Incorrect address! e.g. xxx.xxx.xxx.xxx',
+      name: 'error_ip_tip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ethernet IP Setting`
+  String get set_ethernet_ip_title {
+    return Intl.message(
+      'Ethernet IP Setting',
+      name: 'set_ethernet_ip_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please confirm the format is saved.`
+  String get fmt_confirm_info {
+    return Intl.message(
+      'Please confirm the format is saved.',
+      name: 'fmt_confirm_info',
       desc: '',
       args: [],
     );

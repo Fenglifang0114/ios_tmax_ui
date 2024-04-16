@@ -111,11 +111,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "editor": MessageLookupByLibrary.simpleMessage("Редактор"),
         "element_type": MessageLookupByLibrary.simpleMessage("Тип:"),
         "en": MessageLookupByLibrary.simpleMessage("English"),
+        "error_ip_tip": MessageLookupByLibrary.simpleMessage(
+            "Incorrect address! e.g. xxx.xxx.xxx.xxx"),
         "expiration_date":
             MessageLookupByLibrary.simpleMessage("Срок действия:"),
         "find_ssid": MessageLookupByLibrary.simpleMessage("Найти SSID"),
         "firmwart_update":
             MessageLookupByLibrary.simpleMessage("Обновление прошивки"),
+        "fmt_confirm_info": MessageLookupByLibrary.simpleMessage(
+            "Please confirm the format is saved."),
         "font_bold": MessageLookupByLibrary.simpleMessage("Полужирный шрифт:"),
         "font_reverse": MessageLookupByLibrary.simpleMessage("Обратный шрифт:"),
         "gateway": MessageLookupByLibrary.simpleMessage("Шлюз:"),
@@ -124,6 +128,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "get_bt_name": MessageLookupByLibrary.simpleMessage("get name"),
         "get_build_info": MessageLookupByLibrary.simpleMessage(
             "Информация о программном обеспечении"),
+        "header_confirm_info": MessageLookupByLibrary.simpleMessage(
+            "Please confirm the information."),
+        "header_footer_setting_title":
+            MessageLookupByLibrary.simpleMessage("Header And Footer Setting"),
         "hr_alignment": MessageLookupByLibrary.simpleMessage(
             "Выравнивание горизонтальной черты:"),
         "ip_address": MessageLookupByLibrary.simpleMessage("IPv4:"),
@@ -233,6 +241,10 @@ class MessageLookup extends MessageLookupByLibrary {
             "Предварительный просмотр вывода на последовательный порт"),
         "serial_port_status": MessageLookupByLibrary.simpleMessage(
             "Состояние последовательного порта:"),
+        "server_ip": MessageLookupByLibrary.simpleMessage("Server Ip:"),
+        "server_port": MessageLookupByLibrary.simpleMessage("Server Port:"),
+        "set_ethernet_ip_title":
+            MessageLookupByLibrary.simpleMessage("Ethernet IP Setting"),
         "set_language_title":
             MessageLookupByLibrary.simpleMessage("Установить язык"),
         "set_wifi_success": MessageLookupByLibrary.simpleMessage(

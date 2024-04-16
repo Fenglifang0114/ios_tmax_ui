@@ -23,9 +23,12 @@ import '../widget/custom_setting.dart';
 import '../dialog/license_info.dart';
 import '../widget/update_firmware.dart';
 import '../widget/version.dart';
+import 'cable_ip_settig_page.dart';
 import 'custom_serial_protocol_page.dart';
+import 'header_footer_page.dart';
 import 'modify_com_port_page.dart';
 import 'product_download_page.dart';
+import 'receipt_design_page.dart';
 import 'wifisetting_page.dart';
 
 class RetailHomePage extends StatefulWidget {
@@ -534,61 +537,22 @@ class _RetailHomePageState extends State<RetailHomePage> {
 
                               setState(() {
                                 stopCheckSerialPort();
-                                PublicFunctions.changeWifiMode();
+
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        const WifiSettingPage(),
+                                        const CableIpSettingPage(),
                                   ),
                                 ).then((value) => _updateStatus());
                               });
                             },
                             child: customFunctionCard(
-                                'Ethernet Setting',
+                                localizedStrings.set_ethernet_ip_title,
                                 "assets/images/line.png",
                                 Icons.settings_ethernet,
                                 true),
                           )),
-                      MouseRegion(
-                          cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                          child: GestureDetector(
-                            onTap: () {
-                              //wifi页面
-
-                              setState(() {
-                                stopCheckSerialPort();
-                                PublicFunctions.changeWifiMode();
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const WifiSettingPage(),
-                                  ),
-                                ).then((value) => _updateStatus());
-                              });
-                            },
-                            child: customFunctionCard(
-                                'Header And Footer Setting',
-                                "assets/images/line.png",
-                                Icons.view_headline,
-                                true),
-                          )),
-                      MouseRegion(
-                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                        child: GestureDetector(
-                          onTap: myLicenseInfo.isValid
-                              ? () {
-                                  showReceiptDesign(myLicenseInfo.isValid);
-                                }
-                              : null,
-                          child: customFunctionCard(
-                              'Receipt Format',
-                              "assets/images/line.png",
-                              Icons.receipt,
-                              myLicenseInfo.isValid),
-                        ),
-                      ),
                       MouseRegion(
                         cursor: SystemMouseCursors.click, // 设置光标为手的形状
                         child: GestureDetector(
@@ -678,58 +642,116 @@ class _RetailHomePageState extends State<RetailHomePage> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => const DownloadPage()),
-                          ).then((value) => _startTimer(5));
-                        },
-                        child: customFunctionCard('Pricing Scale',
-                            "assets/images/line.png", Icons.price_change, true),
-                      ),
-                    ),
-                    MouseRegion(
-                      cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                      child: GestureDetector(
-                        onTap: () {
-                          stopCheckSerialPort();
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const DownloadPage()),
-                          ).then((value) => _startTimer(5));
+                          ).then((value) => _updateStatus());
                         },
                         child: customFunctionCard(
-                            'Fiscal Scale',
+                            localizedStrings.print_format_download,
                             "assets/images/line.png",
-                            Icons.monetization_on,
+                            Icons.receipt_long_outlined,
                             true),
                       ),
                     ),
+                    MouseRegion(
+                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                        child: GestureDetector(
+                          onTap: () {
+                            //wifi页面
+
+                            setState(() {
+                              stopCheckSerialPort();
+
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const HeaderFooterPage(),
+                                ),
+                              ).then((value) => _updateStatus());
+                            });
+                          },
+                          child: customFunctionCard(
+                              'Header And Footer Setting',
+                              "assets/images/line.png",
+                              Icons.view_headline,
+                              true),
+                        )),
                     MouseRegion(
                       cursor: SystemMouseCursors.click, // 设置光标为手的形状
                       child: GestureDetector(
                         onTap: myLicenseInfo.isValid
                             ? () {
-                                stopCheckSerialPort();
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const CustomSerialProtocol()),
-                                ).then((value) => _startTimer(5));
-                                // Navigator.push(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //       builder: (context) => const SerialOutputPage()),
-                                // ).then((value) => setState(() {
-                                //       isCardClicked = false;
-                                //     }));
+                                showReceiptDesign(myLicenseInfo.isValid);
                               }
                             : null,
                         child: customFunctionCard(
-                            'Floating Sale',
+                            'Receipt Format',
                             "assets/images/line.png",
-                            Icons.real_estate_agent,
+                            Icons.receipt,
                             myLicenseInfo.isValid),
                       ),
                     ),
+
+                    // MouseRegion(
+                    //   cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                    //   child: GestureDetector(
+                    //     onTap: () {
+                    //       stopCheckSerialPort();
+                    //       Navigator.push(
+                    //         context,
+                    //         MaterialPageRoute(
+                    //             builder: (context) => const DownloadPage()),
+                    //       ).then((value) => _startTimer(5));
+                    //     },
+                    //     child: customFunctionCard('Pricing Scale',
+                    //         "assets/images/line.png", Icons.price_change, true),
+                    //   ),
+                    // ),
+                    // MouseRegion(
+                    //   cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                    //   child: GestureDetector(
+                    //     onTap: () {
+                    //       stopCheckSerialPort();
+                    //       Navigator.push(
+                    //         context,
+                    //         MaterialPageRoute(
+                    //             builder: (context) => const DownloadPage()),
+                    //       ).then((value) => _startTimer(5));
+                    //     },
+                    //     child: customFunctionCard(
+                    //         'Fiscal Scale',
+                    //         "assets/images/line.png",
+                    //         Icons.monetization_on,
+                    //         true),
+                    //   ),
+                    // ),
+                    // MouseRegion(
+                    //   cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                    //   child: GestureDetector(
+                    //     onTap: myLicenseInfo.isValid
+                    //         ? () {
+                    //             stopCheckSerialPort();
+                    //             Navigator.push(
+                    //               context,
+                    //               MaterialPageRoute(
+                    //                   builder: (context) =>
+                    //                       const CustomSerialProtocol()),
+                    //             ).then((value) => _startTimer(5));
+                    //             // Navigator.push(
+                    //             //   context,
+                    //             //   MaterialPageRoute(
+                    //             //       builder: (context) => const SerialOutputPage()),
+                    //             // ).then((value) => setState(() {
+                    //             //       isCardClicked = false;
+                    //             //     }));
+                    //           }
+                    //         : null,
+                    //     child: customFunctionCard(
+                    //         'Floating Sale',
+                    //         "assets/images/line.png",
+                    //         Icons.real_estate_agent,
+                    //         myLicenseInfo.isValid),
+                    //   ),
+                    // ),
                   ]),
             ),
           ],
@@ -754,25 +776,14 @@ class _RetailHomePageState extends State<RetailHomePage> {
     ).then((value) => _startTimer(5));
   }
 
-  void showLabelDesign(bool isValid) {
+  void showReceiptDesign(bool isValid) {
     if (isValid) {
       stopCheckSerialPort();
 
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const LabelDesignPage()),
+        MaterialPageRoute(builder: (context) => const ReceiptDesignPage()),
       ).then((value) => _startTimer(5));
-    }
-  }
-
-  void showReceiptDesign(bool isValid) {
-    if (isValid) {
-      stopCheckSerialPort();
-
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => const LabelDesignPage()),
-      // ).then((value) => _startTimer(5));
     }
   }
 

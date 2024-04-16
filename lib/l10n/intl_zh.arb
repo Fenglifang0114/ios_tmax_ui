@@ -115,7 +115,7 @@
     "language_setting_title": "语言设置",
     "button_back": "返回",
     "button_select_format": "选择打印格式",
-    "scale_model": "机种",
+    "scale_model": "机种:",
     "button_get_ip": "获取IP",
     "firmwart_update":"更新固件",
     "button_add_license":"添加授权",
@@ -186,7 +186,14 @@
     "device_time_title":"设备时间",
     "batch_delivery_title":"批量下发",
     "parameter_set_title":"参数设置",
-    "save_as":"另存为"   
+    "save_as":"另存为",
+    "header_footer_setting_title":"页眉页脚设置" ,
+    "header_confirm_info":"请确认输入信息."  ,
+    "server_ip":"服务器 Ip:",
+    "server_port":"服务器端口号:" ,
+    "error_ip_tip":"错误的地址格式! 例如： xxx.xxx.xxx.xxx",
+    "set_ethernet_ip_title":"有线网络设置",
+    "fmt_confirm_info":"请确认打印格式已保存."
     
   }
   

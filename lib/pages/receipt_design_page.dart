@@ -1,63 +1,104 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:csv/csv.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gbk_codec/gbk_codec.dart';
-import 'package:t_max/data/downloadresponse.dart';
+
 import '../data/barcoderowdata.dart';
+import '../data/downloadresponse.dart';
 import '../data/formatdata.dart';
+// import '../data/item_key_list.dart';
 import '../data/item_key_list.dart';
-import '../data/offset.dart';
+import '../data/receipt_item.dart';
+import '../data/receipt_offset.dart';
 import '../data/scalecmd_data.dart';
 import '../data/screen_mgr.dart';
 import '../data/selectedcontrol.dart';
-import '../data/text.dart';
 import '../data/writelog.dart';
-import '../dialog/barcodeedit_dialog.dart';
-import '../dialog/qrcodeedit_dialog.dart';
 import '../eventbus/eventbus.dart';
-import 'package:path/path.dart' as p;
-import 'package:file_picker/file_picker.dart';
 import '../generated/l10n.dart';
 import '../main.dart';
-import '../widget/draggable_fliating.dart';
 import '../widget/dropdown_copy.dart';
-import '../widget/line_painter.dart';
-import '../widget/textlist_item.dart';
+import '../widget/receipt_draggable_floating.dart';
+import '../widget/receipt_item.dart';
+import 'package:path/path.dart' as p;
 
-class LabelDesignPage extends StatefulWidget {
-  const LabelDesignPage({Key? key}) : super(key: key);
+import '../widget/receipt_line_painter.dart';
+
+const double receiptLineHeight = 3.9 * 8; //3.9mm *8 个点
+
+class ReceiptDesignPage extends StatefulWidget {
+  const ReceiptDesignPage({Key? key}) : super(key: key);
 
   @override
-  State<LabelDesignPage> createState() => _LabelDesignPageState();
+  State<ReceiptDesignPage> createState() => _ReceiptDesignPageState();
 }
 
-const citys = {
+const receiptVarMap = {
   "Free Text": ["Text,TEXT"],
-  "BarCode": ["BarCode,BarCode"],
-  "Qrcode": ["Qrcode,Qrcode"],
-  "Shape": ["Line,Line"],
+  // "BarCode": ["BarCode,BarCode"],
+  // "Qrcode": ["Qrcode,Qrcode"],
+  "Dividing Line": ["Line,Line"],
   // "Shape": ["Rectangle,Rectangle", "Circle,Circle", "Line,Line"],
-  "Variable": [
-    "NO.,DATA",
-    "Gross,DATA",
-    "Tare,DATA",
-    "Net,DATA",
-    "PCS,DATA",
-    "WeightUnit,DATA",
+  "Price Variable": [
+    "NO._P,DATA",
+    "Header1_P,DATA",
+    "Header2_P,DATA",
+    "Header3_P,DATA",
+    "Footer1_P,DATA",
+    "Footer2_P,DATA",
+    "Footer3_P,DATA",
+    "PLU_ID_P,DATA",
+    "PLU_Name_P,DATA",
+    "OrderNumber_P,DATA",
+    "UnitPrice_P,DATA",
+    "PriceUnit_P,DATA",
+    "Price_P,DATA",
+    "Weight_Pcs_P,DATA",
+    "PreTare_P,DATA",
+    "Tare_P,DATA",
+    "Unit_P,DATA",
     "Date,DATA",
     "Time,DATA",
-    "UnitWeight,DATA",
-    "Percent,DATA",
-    "TotalWeight,DATA",
-    "TotalCount,DATA",
+    "TaxType1_P,DATA",
+    "TaxType2_P,DATA",
+    "TaxType3_P,DATA",
+    "TaxBase1_P,DATA",
+    "TaxBase2_P,DATA",
+    "TaxBase3_P,DATA",
+    "TaxAmount1_P,DATA",
+    "TaxAmount2_P,DATA",
+    "TaxAmount3_P,DATA",
+    "TaxModel_P,DATA",
+    "TotalTaxAmount_P,DATA",
+    "PaymentAmount_P,DATA",
+    "Change Amount_P,DATA",
+    "Subtotal_P,DATA",
+    "Currency_P,DATA",
+    "CopyTimes_P,DATA",
   ],
+  // "Weight Variable": [
+  //   "NO.,DATA",
+  //   "Gross,DATA",
+  //   "Tare,DATA",
+  //   "Net,DATA",
+  //   "PCS,DATA",
+  //   "WeightUnit,DATA",
+  //   "Date,DATA",
+  //   "Time,DATA",
+  //   "UnitWeight,DATA",
+  //   "Percent,DATA",
+  //   "TotalWeight,DATA",
+  //   "TotalCount,DATA",
+  // ],
 };
 
-class _LabelDesignPageState extends State<LabelDesignPage> {
-  List<TextItem> textItemList = [];
-  List<DraggableFloatingActionButton> floatButtonList = [];
+class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
+  List<ReceiptItem> receiptItemList = [];
+  List<ReceiptDraggableFloating> floatButtonList = [];
   GlobalKey _parentKey = GlobalKey();
   List<int> num = [0];
   dynamic name = "Text,TEXT";
@@ -67,7 +108,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   int yPos = 0;
   int width = 0;
   int height = 50;
-  int fontSize = 23;
+  int fontSize = 24;
   int fontWidthRatio = 1;
   int fontHeightRatio = 1;
   int style = 0;
@@ -81,9 +122,9 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   String barcodeName = '--';
   String barcodeType = '';
   String hralignment = 'Bottom';
-  int x2Pos = 100;
+  int x2Pos = 384;
   int y2Pos = 0;
-  double lineWidth = 2;
+  double lineWidth = 0.5;
   String qrWidth = '3';
   String qrcodename = '--';
   String qrcodeType = 'Qrcode';
@@ -123,7 +164,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   final FocusNode _focusNodey2Pos = FocusNode();
   final FocusNode _focusNodelineWidth = FocusNode();
 
-  String _selectedPrinterName = 'EPM205';
+  String _selectedPrinterName = 'ESC/POS';
   String _selectedAlignment = 'Left';
   String _selectedBarcode = '--';
   String _selectedQrcode = '--';
@@ -136,7 +177,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   String _selectFontBold = 'false';
   String _selectFontReverse = 'false';
   bool downloadStatus = true;
-  String _selectFontsize = '23';
+  String _selectFontsize = '24';
   double myPageWidth = 0;
   double myPageHeight = 0;
   final _lineList = [];
@@ -145,7 +186,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   List<DataRow> dataRows = [];
 
   final List<String> _printers = [
-    'EPM205',
+    'ESC/POS',
   ];
   final List<String> _printDirections = [
     'Forward',
@@ -183,18 +224,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   ];
 
   final List<String> _fontSizes = [
-    // '20', //1 1 1   中文不支持
-    '20',
-    '21',
-    '23', //4 1 1
-    // '39', //1 2 2   中文不支持
-    '46', //4 2 2
-    '69', //4 3 3
-    '95', //4 4 4
-    '115', //4 5 5
-    '137', //4 6 6
-    '165', //4 7 7
-    '170', //4 8 8
+    '24',
   ];
   dynamic localizedStrings;
   String systemId = '';
@@ -206,91 +236,95 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
 
   @override
   void initState() {
-    addfloatbutton(name); //暂时屏蔽掉
-    textItemList;
-    textvariable.text = myTextData.content;
-    xPosvar.text = myTextData.xPos.toString();
-    yPosvar.text = myTextData.yPos.toString();
-    x2Posvar.text = myTextData.x2Pos.toString();
-    y2Posvar.text = myTextData.y2Pos.toString();
+    receiptItemList;
+    textvariable.text = myReceiptItemData.content;
+    xPosvar.text = myReceiptItemData.xPos.toString();
+    yPosvar.text = myReceiptItemData.yPos.toString();
+    x2Posvar.text = myReceiptItemData.x2Pos.toString();
+    y2Posvar.text = myReceiptItemData.y2Pos.toString();
     pageWidth.text = '55';
-    pageHeight.text = '50';
+    pageHeight.text = '55';
     myPageWidth = 440;
-    myPageHeight = 400;
+    myPageHeight = 440;
     barcodeDataReload();
     openTemplateJson();
+    addfloatbutton(name); //暂时屏蔽掉
 
     _eventbus1 = eventBus.on<EventText>().listen((event) {
       if (mounted) {
         setState(() {
-          myTextData = event.obj;
-          textvariable.text = myTextData.content;
-          fontsizevar.text = myTextData.fontSize.toString();
-          barcodeHeight.text = myTextData.height.toString();
-          _selectedRotation = myTextData.rotation.toString();
-          _selectedBarcode = myTextData.barcodeName;
-          _selectedQrcode = myTextData.qrcodeName;
-          _selectFontsize = myTextData.fontSize.toString();
-          _selectedQr = int.parse(myTextData.qrWidth.toString()).toString();
-          if (myTextData.alignment == 1) {
+          myReceiptItemData = event.obj;
+          textvariable.text = myReceiptItemData.content;
+          fontsizevar.text = myReceiptItemData.fontSize.toString();
+          barcodeHeight.text = myReceiptItemData.height.toString();
+          _selectedRotation = myReceiptItemData.rotation.toString();
+          _selectedBarcode = myReceiptItemData.barcodeName;
+          _selectedQrcode = myReceiptItemData.qrcodeName;
+          _selectFontsize = myReceiptItemData.fontSize.toString();
+          _selectedQr =
+              int.parse(myReceiptItemData.qrWidth.toString()).toString();
+          if (myReceiptItemData.alignment == 1) {
             _selectedAlignment = 'Left';
-          } else if (myTextData.alignment == 2) {
+          } else if (myReceiptItemData.alignment == 2) {
             _selectedAlignment = 'Center';
-          } else if (myTextData.alignment == 3) {
+          } else if (myReceiptItemData.alignment == 3) {
             _selectedAlignment = 'Right';
           }
-          _selectFontBold = myTextData.fontBold;
-          _selectFontReverse = myTextData.fontReverse;
-          _selectedHRAlignment = myTextData.hralignment;
+          _selectFontBold = myReceiptItemData.fontBold;
+          _selectFontReverse = myReceiptItemData.fontReverse;
+          _selectedHRAlignment = myReceiptItemData.hralignment;
         });
       }
     });
     _eventbus2 = eventBus.on<EventOffset>().listen((event) {
       if (mounted) {
         setState(() {
-          myOffsetData = event.obj;
-          xPosvar.text = myOffsetData.x.toString();
-          yPosvar.text = myOffsetData.y.toString();
+          myReceiptOffsetData = event.obj;
+          xPosvar.text = myReceiptOffsetData.x.toString();
+          yPosvar.text = myReceiptOffsetData.y.toString();
           // _onSubmit(xPosvar.text.toString(), 2);
           // _onSubmit(yPosvar.text.toString(), 3);
-          if (textItemList.isNotEmpty) {
-            for (var i = 0; i < textItemList.length; i++) {
-              if (textItemList[i].key == myOffsetData.key) {
-                textItemList[i].xPos = myOffsetData.x.toInt();
-                textItemList[i].yPos = myOffsetData.y.toInt();
-                myTextData.tabOrder = textItemList[i].index;
-                myTextData.type = textItemList[i].type;
-                myTextData.xPos = textItemList[i].xPos;
-                myTextData.yPos = textItemList[i].yPos;
-                myTextData.height = textItemList[i].height;
-                myTextData.width = textItemList[i].width;
-                myTextData.style = textItemList[i].style;
-                myTextData.fontWidthRatio = textItemList[i].fontWidthRatio;
-                myTextData.fontHeightRatio = textItemList[i].fontHeightRatio;
-                myTextData.fontSize = textItemList[i].fontSize;
-                myTextData.maxLength = textItemList[i].maxLength;
-                myTextData.alignment = textItemList[i].alignment;
-                myTextData.content = textItemList[i].content;
-                myTextData.varcontent = textItemList[i].varcontent;
-                myTextData.defaultValue = textItemList[i].defaultValue;
-                myTextData.rotation = textItemList[i].rotation;
-                myTextData.varName = textItemList[i].varName;
-                myTextData.hralignment = textItemList[i].hralignment;
-                myTextData.x2Pos = textItemList[i].x2Pos;
-                myTextData.y2Pos = textItemList[i].y2Pos;
-                myTextData.lineWidth = textItemList[i].lineWidth;
-                myTextData.qrWidth = textItemList[i].qrWidth;
-                myTextData.barcodeName = textItemList[i].barcodeName;
-                myTextData.barcodeType = textItemList[i].barcodeType;
-                myTextData.qrcodeName = textItemList[i].qrcodeName;
-                myTextData.qrcodeType = textItemList[i].qrcodeType;
-                myTextData.fontBold = textItemList[i].fontBold;
-                myTextData.fontReverse = textItemList[i].fontReverse;
+          if (receiptItemList.isNotEmpty) {
+            for (var i = 0; i < receiptItemList.length; i++) {
+              if (receiptItemList[i].key == myReceiptOffsetData.key) {
+                receiptItemList[i].xPos = myReceiptOffsetData.x.toInt();
+                receiptItemList[i].yPos = myReceiptOffsetData.y.toInt();
+                myReceiptItemData.tabOrder = receiptItemList[i].index;
+                myReceiptItemData.type = receiptItemList[i].type;
+                myReceiptItemData.xPos = receiptItemList[i].xPos;
+                myReceiptItemData.yPos = receiptItemList[i].yPos;
+                myReceiptItemData.height = receiptItemList[i].height;
+                myReceiptItemData.width = receiptItemList[i].width;
+                myReceiptItemData.style = receiptItemList[i].style;
+                myReceiptItemData.fontWidthRatio =
+                    receiptItemList[i].fontWidthRatio;
+                myReceiptItemData.fontHeightRatio =
+                    receiptItemList[i].fontHeightRatio;
+                myReceiptItemData.fontSize = receiptItemList[i].fontSize;
+                myReceiptItemData.maxLength = receiptItemList[i].maxLength;
+                myReceiptItemData.alignment = receiptItemList[i].alignment;
+                myReceiptItemData.content = receiptItemList[i].content;
+                myReceiptItemData.varcontent = receiptItemList[i].varcontent;
+                myReceiptItemData.defaultValue =
+                    receiptItemList[i].defaultValue;
+                myReceiptItemData.rotation = receiptItemList[i].rotation;
+                myReceiptItemData.varName = receiptItemList[i].varName;
+                myReceiptItemData.hralignment = receiptItemList[i].hralignment;
+                myReceiptItemData.x2Pos = receiptItemList[i].x2Pos;
+                myReceiptItemData.y2Pos = receiptItemList[i].y2Pos;
+                myReceiptItemData.lineWidth = receiptItemList[i].lineWidth;
+                myReceiptItemData.qrWidth = receiptItemList[i].qrWidth;
+                myReceiptItemData.barcodeName = receiptItemList[i].barcodeName;
+                myReceiptItemData.barcodeType = receiptItemList[i].barcodeType;
+                myReceiptItemData.qrcodeName = receiptItemList[i].qrcodeName;
+                myReceiptItemData.qrcodeType = receiptItemList[i].qrcodeType;
+                myReceiptItemData.fontBold = receiptItemList[i].fontBold;
+                myReceiptItemData.fontReverse = receiptItemList[i].fontReverse;
 
-                mySelectedControl.selectid = myTextData.tabOrder;
-                mySelectedControl.isSelect = true;
-                eventBus.fire(EventSelectedControl(mySelectedControl));
-                eventBus.fire(EventText(myTextData));
+                myReceiptSelCtl.selectid = myReceiptItemData.tabOrder;
+                myReceiptSelCtl.isSelect = true;
+                eventBus.fire(EventSelectedControl(myReceiptSelCtl));
+                eventBus.fire(EventText(myReceiptItemData));
                 break;
               }
             }
@@ -473,9 +507,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                           ),
                         ),
                         onPressed: () {
-                          myItemKey.keyList.clear();
-                          myScreenMgr.isMainScreen = true;
-                          Navigator.of(context).pop();
+                          _showConfirmationDialog(context);
                         },
                       ),
                     ),
@@ -855,87 +887,87 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                         ),
                       ],
                     ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        SizedBox(
-                          width: 120,
-                          child: OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                              side: BorderSide(
-                                width: 1,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                              foregroundColor: Colors.blue,
-                              backgroundColor: Colors.white, // 设置按钮的背景色
-                              shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(4), // 设置按钮的圆角
-                              ),
-                            ),
-                            child: Text(
-                              localizedStrings.barcode_edit,
-                              style: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.normal),
-                            ),
-                            onPressed: () async {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return const MyBarCodeDialog();
-                                },
-                              ).then((value) {
-                                if (value != null) {
-                                  setState(() {
-                                    // rowDataList = value;
-                                  });
-                                }
-                              });
-                            },
-                          ),
-                        ),
-                        SizedBox(
-                          width: 120,
-                          child: OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                              side: BorderSide(
-                                width: 1,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                              foregroundColor: Colors.blue,
-                              backgroundColor: Colors.white, // 设置按钮的背景色
-                              shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(4), // 设置按钮的圆角
-                              ),
-                            ),
-                            child: Text(
-                              localizedStrings.qrcode_edit,
-                              style: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.normal),
-                            ),
-                            onPressed: () async {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return const MyQrcodeDialog();
-                                },
-                              ).then((value) {
-                                if (value != null) {
-                                  setState(() {
-                                    // rowDataList = value;
-                                  });
-                                }
-                              });
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
+                    // Column(
+                    //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    //   children: [
+                    //     SizedBox(
+                    //       width: 120,
+                    //       child: OutlinedButton(
+                    //         style: OutlinedButton.styleFrom(
+                    //           side: BorderSide(
+                    //             width: 1,
+                    //             color: Theme.of(context).colorScheme.primary,
+                    //           ),
+                    //           foregroundColor: Colors.blue,
+                    //           backgroundColor: Colors.white, // 设置按钮的背景色
+                    //           shape: RoundedRectangleBorder(
+                    //             borderRadius:
+                    //                 BorderRadius.circular(4), // 设置按钮的圆角
+                    //           ),
+                    //         ),
+                    //         child: Text(
+                    //           localizedStrings.barcode_edit,
+                    //           style: TextStyle(
+                    //               color: Theme.of(context).colorScheme.primary,
+                    //               fontSize: 14,
+                    //               fontWeight: FontWeight.normal),
+                    //         ),
+                    //         onPressed: () async {
+                    //           showDialog(
+                    //             context: context,
+                    //             builder: (BuildContext context) {
+                    //               return const MyBarCodeDialog();
+                    //             },
+                    //           ).then((value) {
+                    //             if (value != null) {
+                    //               setState(() {
+                    //                 // rowDataList = value;
+                    //               });
+                    //             }
+                    //           });
+                    //         },
+                    //       ),
+                    //     ),
+                    //     SizedBox(
+                    //       width: 120,
+                    //       child: OutlinedButton(
+                    //         style: OutlinedButton.styleFrom(
+                    //           side: BorderSide(
+                    //             width: 1,
+                    //             color: Theme.of(context).colorScheme.primary,
+                    //           ),
+                    //           foregroundColor: Colors.blue,
+                    //           backgroundColor: Colors.white, // 设置按钮的背景色
+                    //           shape: RoundedRectangleBorder(
+                    //             borderRadius:
+                    //                 BorderRadius.circular(4), // 设置按钮的圆角
+                    //           ),
+                    //         ),
+                    //         child: Text(
+                    //           localizedStrings.qrcode_edit,
+                    //           style: TextStyle(
+                    //               color: Theme.of(context).colorScheme.primary,
+                    //               fontSize: 14,
+                    //               fontWeight: FontWeight.normal),
+                    //         ),
+                    //         onPressed: () async {
+                    //           showDialog(
+                    //             context: context,
+                    //             builder: (BuildContext context) {
+                    //               return const MyQrcodeDialog();
+                    //             },
+                    //           ).then((value) {
+                    //             if (value != null) {
+                    //               setState(() {
+                    //                 // rowDataList = value;
+                    //               });
+                    //             }
+                    //           });
+                    //         },
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -1012,6 +1044,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Container(
+                          padding: EdgeInsets.fromLTRB(28, 0, 28, 0),
                           //60mmX60
                           width: _getPageWidth(),
                           height: _getPageHeight(),
@@ -1023,8 +1056,8 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                             clipBehavior: Clip.none,
                             key: _parentKey,
                             children: [
+                              _buildLines(), //屏蔽横线
                               ...floatButtonList,
-                              // _buildLines(),//屏蔽横线
                             ],
                           ),
                         )
@@ -1044,17 +1077,17 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                   ),
                   Expanded(
                     child: ListView(
-                      children: (myTextData.tabOrder == 9999)
+                      children: (myReceiptItemData.tabOrder == 9999)
                           ? _selectItem()
-                          : (myTextData.type == 'TEXT')
+                          : (myReceiptItemData.type == 'TEXT')
                               ? _textproperties()
-                              : (myTextData.type == 'DATA')
+                              : (myReceiptItemData.type == 'DATA')
                                   ? _varproperties()
-                                  : (myTextData.type == 'BarCode')
+                                  : (myReceiptItemData.type == 'BarCode')
                                       ? _barCodeproperties()
-                                      : (myTextData.type == 'Line')
+                                      : (myReceiptItemData.type == 'Line')
                                           ? _lineproperties()
-                                          : (myTextData.type == 'Qrcode')
+                                          : (myReceiptItemData.type == 'Qrcode')
                                               ? _qrcodeproperties()
                                               : _textproperties(),
                     ),
@@ -1085,41 +1118,40 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     }
   }
 
-  // void _showConfirmationDialog(BuildContext context) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext ctx) {
-  //       return AlertDialog(
-  //         title: const Text(
-  //           'Confirmation',
-  //           style: TextStyle(color: Color.fromARGB(255, 15, 71, 161)),
-  //         ),
-  //         content: const Text('Please confirm the format is saved as CSV?'),
-  //         actions: <Widget>[
-  //           OutlinedButton(
-  //             child: const Text('Cancel'),
-  //             onPressed: () {
-  //               Navigator.of(context).pop(false); // 不跳转
-  //             },
-  //           ),
-  //           OutlinedButton(
-  //             child: const Text('Confirm'),
-  //             onPressed: () {
-  //               Navigator.of(context).pop(true); // 跳转
-  //             },
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   ).then((confirmed) {
-  //     if (confirmed) {
-  //       Navigator.push(
-  //         context,
-  //         MaterialPageRoute(builder: (context) => DownloadPage()),
-  //       );
-  //     }
-  //   });
-  // }
+  void _showConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          title: const Text(
+            'Confirmation',
+            style: TextStyle(color: Color.fromARGB(255, 15, 71, 161)),
+          ),
+          content: Text(localizedStrings.fmt_confirm_info),
+          actions: <Widget>[
+            OutlinedButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop(false); // 不跳转
+              },
+            ),
+            OutlinedButton(
+              child: const Text('Confirm'),
+              onPressed: () {
+                Navigator.of(context).pop(true); // 跳转
+              },
+            ),
+          ],
+        );
+      },
+    ).then((confirmed) {
+      if (confirmed) {
+        myReceiptItemKey.keyList.clear();
+        myScreenMgr.isMainScreen = true;
+        Navigator.of(context).pop();
+      }
+    });
+  }
 
   Future pickFiles() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -1158,6 +1190,16 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   }
 
   Widget _buildLines() {
+    double height = _getPageHeight();
+    double width = _getPageWidth();
+    int loopTmp = height ~/ (receiptLineHeight);
+
+    _lineList.clear();
+    for (var i = 1; i <= loopTmp; i++) {
+      var start = Offset(0, receiptLineHeight * i);
+      var end = Offset(width, receiptLineHeight * i);
+      _lineList.add(Line(start, end));
+    }
     return Stack(
       children: [
         for (var i = 0; i < _lineList.length; i++)
@@ -1180,88 +1222,18 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
 
     return Stack(children: [
       Positioned(
-        left: _offset.dy,
-        top: _offset.dx, // start.dy, //math.min(start.dy, end.dy),
-        //start.dx, //math.min(start.dx, end.dx),
-        // right: end.dy,
-        // bottom: end.dx,
+        left: 0,
+        top: 0,
         width: (start - end).distance,
         height: 50.0,
-        child: Listener(
-          onPointerMove: (PointerMoveEvent pointerMoveEvent) {
-            _updatePosition(pointerMoveEvent);
-
-            setState(() {
-              _isDragging = true;
-            });
-          },
-          onPointerUp: (PointerUpEvent pointerUpEvent) {
-            var dx = (pointerUpEvent.delta.dx.toInt()).roundToDouble();
-            var dy = ((pointerUpEvent.delta.dy).toInt()).roundToDouble();
-            final line = _lineList[index];
-            setState(() {
-              _lineList[index] = Line(_offset, line.end + Offset(dx, dy));
-            });
-
-            if (_isDragging) {
-              setState(() {
-                _isDragging = false;
-              });
-            } else {}
-          },
-          child: CustomPaint(
-            painter: LinePainter(
-                startPoint: _lineList[index].start,
-                endPoint: _lineList[index].end),
-          ),
+        child: CustomPaint(
+          painter: ReceiptLinePainter(
+              startPoint: _lineList[index].start,
+              endPoint: _lineList[index].end),
         ),
       ),
-
-      // angle: 0, //math.atan2(end.dy - start.dy, end.dx - start.dx),
     ]);
   }
-
-  // void _onLineDragged(int index, DragUpdateDetails details) {
-  //   setState(() {
-  //     final line = _lineList[index];
-  //     if ((_getPageWidth() < (line.start.dx + details.delta.dx)) ||
-  //         _getPageHeight() - 10 < (line.end.dy + details.delta.dy) ||
-  //         _getPageWidth() < (line.end.dx + details.delta.dx) ||
-  //         _getPageHeight() - 10 < (line.start.dy + details.delta.dy) ||
-  //         (0 > (line.start.dx + details.delta.dx)) ||
-  //         0 > (line.end.dy + details.delta.dy) ||
-  //         0 > (line.end.dx + details.delta.dx) ||
-  //         0 > (line.start.dy + details.delta.dy)) {
-  //       return;
-  //     }
-  //     var _tmpOffsetDx = ((details.delta.dx).toInt()).roundToDouble();
-  //     var _tmpOffsetDy = ((details.delta.dy).toInt()).roundToDouble();
-  //     Offset tmpOffset = Offset(_tmpOffsetDx, _tmpOffsetDy);
-  //     _lineList[index] = Line(line.start + tmpOffset, line.end + tmpOffset);
-  //   });
-  // }
-
-  // void _onCircleDragged(
-  //     int index, Offset oldPosition, Offset newPosition, int circleIndex) {
-  //   setState(() {
-  //     final line = _lineList[index];
-  //     if ((_getPageWidth() < (newPosition.dx)) ||
-  //         _getPageHeight() - 10 < (newPosition.dy) ||
-  //         (0 > (newPosition.dx)) ||
-  //         0 > (newPosition.dy)) {
-  //       return;
-  //     }
-  //     var _tmpOffsetDx = ((newPosition.dx).toInt()).roundToDouble();
-  //     var _tmpOffsetDy = ((newPosition.dy).toInt()).roundToDouble();
-  //     Offset tmpOffset = Offset(_tmpOffsetDx, _tmpOffsetDy);
-
-  //     if (circleIndex == 1) {
-  //       _lineList[index] = Line(line.start, tmpOffset);
-  //     } else {
-  //       _lineList[index] = Line(tmpOffset, line.end);
-  //     }
-  //   });
-  // }
 
   String pad0(int num) {
     if (num < 10) {
@@ -1290,7 +1262,11 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           myPageWidth = 1600;
           pageWidth.text = '200';
         }
-        x2Pos = myPageWidth.toInt();
+        if (myPageWidth > 40) {
+          x2Pos = myPageWidth.toInt() -
+              56; //小票55CM  但是打印机实际打印的宽度只有384   55*8-56=384
+        }
+
         return myPageWidth;
       }
       return 0;
@@ -1384,7 +1360,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       width = 8;
       height = 8;
     }
-
     return [fontsize, width, height];
   }
 
@@ -1402,95 +1377,108 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     }
     //打印纸张大小
     csvData.add(['P', myPageWidth, myPageHeight]);
-    // csvData.add(['R', '147', '124', '247', '184', '2', '0', '0']);
-    // csvData.add(['L', '147', '124', '247', '184', '2', '0', '0']);
+    List<ReceiptItem> tempList = List.of(receiptItemList);
 
-    for (var i = 0; i < textItemList.length; i++) {
-      if (textItemList[i].type == 'TEXT') {
-        List fontlist = getFontSize(textItemList[i].fontSize);
-        csvData.add([
-          'TB',
-          textItemList[i].xPos,
-          textItemList[i].yPos,
-          textItemList[i].width,
-          textItemList[i].height,
-          fontlist[0],
-          fontlist[1],
-          fontlist[2],
-          _getstyle(textItemList[i].fontBold, textItemList[i].fontReverse),
-          _getRotation(textItemList[i].rotation),
-          textItemList[i].type,
-          textItemList[i].content,
-          textItemList[i].index,
-        ]);
-      } else if (textItemList[i].type == 'DATA') {
-        List fontlist = getFontSize(textItemList[i].fontSize);
-        csvData.add([
-          'TB',
-          textItemList[i].xPos,
-          textItemList[i].yPos,
-          textItemList[i].width,
-          textItemList[i].height,
-          fontlist[0],
-          fontlist[1],
-          fontlist[2],
-          _getstyle(textItemList[i].fontBold, textItemList[i].fontReverse),
-          _getRotation(textItemList[i].rotation),
-          textItemList[i].type,
-          textItemList[i].varName,
-          textItemList[i].defaultValue,
-          textItemList[i].alignment,
-          textItemList[i].maxLength,
-          textItemList[i].index,
-        ]);
-      } else if (textItemList[i].type == 'BarCode') {
-        String tempContent = '';
-        if (textItemList[i].style == 0) {
-          tempContent = _barcodeContent(textItemList[i].varcontent);
+    tempList.sort((a, b) {
+      if (a.yPos == b.yPos) {
+        if (a.type == 'Line' && b.type != 'Line') {
+          return -1;
+        } else if (a.type != 'Line' && b.type == 'Line') {
+          return 1;
         } else {
-          tempContent = _barcodeContent1(textItemList[i].varcontent);
+          return a.xPos.compareTo(b.xPos);
+        }
+      } else {
+        return a.yPos.compareTo(b.yPos);
+      }
+    });
+
+    for (var i = 0; i < tempList.length; i++) {
+      if (tempList[i].type == 'TEXT') {
+        List fontlist = getFontSize(tempList[i].fontSize);
+        csvData.add([
+          'TB',
+          tempList[i].xPos,
+          tempList[i].yPos,
+          tempList[i].width,
+          tempList[i].height,
+          fontlist[0],
+          fontlist[1],
+          fontlist[2],
+          _getstyle(tempList[i].fontBold, tempList[i].fontReverse),
+          _getRotation(tempList[i].rotation),
+          tempList[i].type,
+          tempList[i].content,
+          tempList[i].index,
+        ]);
+      } else if (tempList[i].type == 'DATA') {
+        List fontlist = getFontSize(tempList[i].fontSize);
+        csvData.add([
+          'TB',
+          tempList[i].xPos,
+          tempList[i].yPos,
+          tempList[i].width,
+          tempList[i].height,
+          fontlist[0],
+          fontlist[1],
+          fontlist[2],
+          _getstyle(tempList[i].fontBold, tempList[i].fontReverse),
+          _getRotation(tempList[i].rotation),
+          tempList[i].type,
+          tempList[i].varName,
+          tempList[i].defaultValue,
+          tempList[i].alignment,
+          tempList[i].maxLength,
+          tempList[i].index,
+        ]);
+      } else if (tempList[i].type == 'BarCode') {
+        String tempContent = '';
+        if (tempList[i].style == 0) {
+          tempContent = _barcodeContent(tempList[i].varcontent);
+        } else {
+          tempContent = _barcodeContent1(tempList[i].varcontent);
         }
         String barcodeType = '';
         String hrAlignment;
-        if (textItemList[i].barcodeType == 'Code128') {
+        if (tempList[i].barcodeType == 'Code128') {
           barcodeType = '1';
-        } else if (textItemList[i].barcodeType == 'Code39') {
+        } else if (tempList[i].barcodeType == 'Code39') {
           barcodeType = 'CODE39';
-        } else if (textItemList[i].barcodeType == 'EAN8') {
+        } else if (tempList[i].barcodeType == 'EAN8') {
           barcodeType = 'EAN8';
-        } else if (textItemList[i].barcodeType == 'EAN13') {
+        } else if (tempList[i].barcodeType == 'EAN13') {
           barcodeType = 'EAN13';
-        } else if (textItemList[i].barcodeType == 'UPC-A') {
+        } else if (tempList[i].barcodeType == 'UPC-A') {
           barcodeType = 'UPCA';
-        } else if (textItemList[i].barcodeType == 'UPC-E') {
+        } else if (tempList[i].barcodeType == 'UPC-E') {
           barcodeType = 'UPCE';
         }
-        if (textItemList[i].hralignment == 'Top') {
+        if (tempList[i].hralignment == 'Top') {
           hrAlignment = 'TC';
-        } else if (textItemList[i].hralignment == 'Bottom') {
+        } else if (tempList[i].hralignment == 'Bottom') {
           hrAlignment = 'BC';
         } else {
           hrAlignment = 'N';
         }
         csvData.add([
           'B',
-          textItemList[i].xPos,
-          textItemList[i].yPos,
-          textItemList[i].width,
-          textItemList[i].height,
+          tempList[i].xPos,
+          tempList[i].yPos,
+          tempList[i].width,
+          tempList[i].height,
           '2',
           barcodeType,
-          _getRotation(textItemList[i].rotation),
+          _getRotation(tempList[i].rotation),
           hrAlignment,
           tempContent,
-          textItemList[i].index,
+          tempList[i].index,
         ]);
-      } else if (textItemList[i].type == 'Qrcode') {
+      } else if (tempList[i].type == 'Qrcode') {
         String tempContent = '';
-        if (textItemList[i].style == 0) {
-          tempContent = _barcodeContent(textItemList[i].varcontent);
+        if (tempList[i].style == 0) {
+          tempContent = _barcodeContent(tempList[i].varcontent);
         } else {
-          tempContent = _barcodeContent1(textItemList[i].varcontent);
+          tempContent = _barcodeContent1(tempList[i].varcontent);
         }
 
         String version = '1';
@@ -1498,39 +1486,57 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
 
         csvData.add([
           'QR',
-          textItemList[i].xPos,
-          textItemList[i].yPos,
+          tempList[i].xPos,
+          tempList[i].yPos,
           version,
-          textItemList[i].qrWidth.toString(),
+          tempList[i].qrWidth.toString(),
           errorlevel,
           '',
           tempContent,
-          textItemList[i].index,
+          tempList[i].index,
         ]);
-      } else if (textItemList[i].type == 'Line') {
-        if (textItemList[i].lineWidth <= textItemList[i].x2Pos) {
-          csvData.add([
-            'L',
-            textItemList[i].xPos,
-            textItemList[i].yPos,
-            (textItemList[i].x2Pos + textItemList[i].xPos).toInt(),
-            textItemList[i].yPos,
-            textItemList[i].lineWidth.toInt(),
-            0, //线类型
-            textItemList[i].index,
-          ]);
-        } else {
-          csvData.add([
-            'L',
-            textItemList[i].xPos,
-            textItemList[i].yPos,
-            textItemList[i].xPos,
-            (textItemList[i].lineWidth + textItemList[i].yPos).toInt(),
-            textItemList[i].x2Pos.toInt(),
-            0, //线类型
-            textItemList[i].index,
-          ]);
-        }
+      } else if (tempList[i].type == 'Line') {
+        csvData.add([
+          'TB',
+          tempList[i].xPos,
+          tempList[i].yPos,
+          tempList[i].width,
+          tempList[i].height,
+          '4',
+          '1',
+          '1',
+          '0',
+          '0',
+          'DATA',
+          'StartLoop',
+          '',
+          '1',
+          '0',
+          tempList[i].index,
+        ]);
+        // if (tempList[i].lineWidth <= tempList[i].x2Pos) {
+        //   csvData.add([
+        //     'L',
+        //     tempList[i].xPos,
+        //     tempList[i].yPos,
+        //     (tempList[i].x2Pos + tempList[i].xPos).toInt(),
+        //     tempList[i].yPos,
+        //     tempList[i].lineWidth.toInt(),
+        //     0, //线类型
+        //     tempList[i].index,
+        //   ]);
+        // } else {
+        //   csvData.add([
+        //     'L',
+        //     tempList[i].xPos,
+        //     tempList[i].yPos,
+        //     tempList[i].xPos,
+        //     (tempList[i].lineWidth + tempList[i].yPos).toInt(),
+        //     tempList[i].x2Pos.toInt(),
+        //     0, //线类型
+        //     tempList[i].index,
+        //   ]);
+        // }
       }
     }
     csvData.add(['']);
@@ -1619,8 +1625,8 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
 
   void deleteAllItem() {
     setState(() {
-      textItemList.clear();
-      myItemKey.keyList.clear();
+      receiptItemList.clear();
+      myReceiptItemKey.keyList.clear();
       num.clear();
       count = 0;
       floatButtonList.clear();
@@ -1631,12 +1637,12 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   void redrawInterface(List list) {
     setState(() {
       for (var i = 0; i < list.length; i++) {
-        // temptextItemList[i].index = i;
+        // tempreceiptItemList[i].index = i;
         FromateItemData formData = list[i];
         num.add(i);
         count = num.length;
 
-        textItemList.add(TextItem(
+        receiptItemList.add(ReceiptItem(
           key: ObjectKey(i),
           index: (i),
           content: formData.content,
@@ -1669,14 +1675,14 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           fontReverse: formData.fontReverse,
         ));
         //中间页面添加最新的可拖拽控件
-        floatButtonList.add(DraggableFloatingActionButton(
-            index: (textItemList[i].index),
-            key: textItemList[i].key,
-            initialOffset: Offset(textItemList[i].xPos.toDouble(),
-                textItemList[i].yPos.toDouble()),
+        floatButtonList.add(ReceiptDraggableFloating(
+            index: (receiptItemList[i].index),
+            key: receiptItemList[i].key,
+            initialOffset: Offset(receiptItemList[i].xPos.toDouble(),
+                receiptItemList[i].yPos.toDouble()),
             parentKey: _parentKey,
             onPressed: () {},
-            children: [textItemList[i]]));
+            children: [receiptItemList[i]]));
       }
     });
     reconstructItem();
@@ -1684,36 +1690,36 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
 
   void _saveFormatToJson(String path) {
     List formatDataList = [];
-    for (var i = 0; i < textItemList.length; i++) {
+    for (var i = 0; i < receiptItemList.length; i++) {
       FromateItemData formatdata = FromateItemData(
-        type: textItemList[i].type,
-        xPos: textItemList[i].xPos,
-        yPos: textItemList[i].yPos,
-        width: textItemList[i].width,
-        height: textItemList[i].height,
-        fontSize: textItemList[i].fontSize,
-        fontWidthRatio: textItemList[i].fontWidthRatio,
-        fontHeightRatio: textItemList[i].fontHeightRatio,
-        alignment: textItemList[i].alignment,
-        maxLength: textItemList[i].maxLength,
-        rotation: textItemList[i].rotation,
-        style: textItemList[i].style,
-        tabOrder: textItemList[i].tabOrder,
-        varName: textItemList[i].varName,
-        content: textItemList[i].content,
-        defaultValue: textItemList[i].defaultValue,
-        varcontent: textItemList[i].varcontent,
-        barcodeName: textItemList[i].barcodeName,
-        barcodeType: textItemList[i].barcodeType,
-        hralignment: textItemList[i].hralignment,
-        x2Pos: textItemList[i].x2Pos,
-        y2Pos: textItemList[i].y2Pos,
-        lineWidth: textItemList[i].lineWidth,
-        qrWidth: textItemList[i].qrWidth,
-        qrcodeName: textItemList[i].qrcodeName,
-        qrcodeType: textItemList[i].qrcodeType,
-        fontBold: textItemList[i].fontBold,
-        fontReverse: textItemList[i].fontReverse,
+        type: receiptItemList[i].type,
+        xPos: receiptItemList[i].xPos,
+        yPos: receiptItemList[i].yPos,
+        width: receiptItemList[i].width,
+        height: receiptItemList[i].height,
+        fontSize: receiptItemList[i].fontSize,
+        fontWidthRatio: receiptItemList[i].fontWidthRatio,
+        fontHeightRatio: receiptItemList[i].fontHeightRatio,
+        alignment: receiptItemList[i].alignment,
+        maxLength: receiptItemList[i].maxLength,
+        rotation: receiptItemList[i].rotation,
+        style: receiptItemList[i].style,
+        tabOrder: receiptItemList[i].tabOrder,
+        varName: receiptItemList[i].varName,
+        content: receiptItemList[i].content,
+        defaultValue: receiptItemList[i].defaultValue,
+        varcontent: receiptItemList[i].varcontent,
+        barcodeName: receiptItemList[i].barcodeName,
+        barcodeType: receiptItemList[i].barcodeType,
+        hralignment: receiptItemList[i].hralignment,
+        x2Pos: receiptItemList[i].x2Pos,
+        y2Pos: receiptItemList[i].y2Pos,
+        lineWidth: receiptItemList[i].lineWidth,
+        qrWidth: receiptItemList[i].qrWidth,
+        qrcodeName: receiptItemList[i].qrcodeName,
+        qrcodeType: receiptItemList[i].qrcodeType,
+        fontBold: receiptItemList[i].fontBold,
+        fontReverse: receiptItemList[i].fontReverse,
       );
       formatDataList.add(formatdata);
     }
@@ -1843,8 +1849,8 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   /// 创建列表 , 每个元素都是一个 ExpansionTile 组件
   List<Widget> _buildList() {
     List<Widget> widgets = [];
-    for (var key in citys.keys) {
-      widgets.add(_generateExpansionTileWidget(key, citys[key]));
+    for (var key in receiptVarMap.keys) {
+      widgets.add(_generateExpansionTileWidget(key, receiptVarMap[key]));
     }
     return widgets;
   }
@@ -1876,14 +1882,14 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
             onPressed: () {
               count++;
               num.add(count);
-              myTextData.tabOrder = count;
+              myReceiptItemData.tabOrder = count;
               addfloatbutton(name);
 
               //原代码20230818
               // if (name != 'Line,Line') {
               //   count++;
               //   num.add(count);
-              //   myTextData.tabOrder = count;
+              //   myReceiptItemData.tabOrder = count;
               //   addfloatbutton(name);
               // } else {
               //   _createLine();
@@ -1910,57 +1916,67 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   // }
 
   void _onUpdate(int i) {
-    textItemList.fillRange(
+    receiptItemList.fillRange(
         i,
         i + 1,
-        TextItem(
-          key: textItemList[i].key,
-          index: textItemList[i].index,
-          xPos: textItemList[i].xPos,
-          yPos: textItemList[i].yPos,
-          width: textItemList[i].width,
-          varName: textItemList[i].varName,
-          tabOrder: textItemList[i].tabOrder,
-          style: textItemList[i].style,
-          rotation: textItemList[i].rotation,
-          maxLength: textItemList[i].maxLength,
-          height: textItemList[i].height,
-          fontWidthRatio: textItemList[i].fontWidthRatio,
-          fontSize: textItemList[i].fontSize,
-          fontHeightRatio: textItemList[i].fontHeightRatio,
-          defaultValue: textItemList[i].defaultValue,
-          content: textItemList[i].content,
-          alignment: textItemList[i].alignment,
-          type: textItemList[i].type,
-          varcontent: textItemList[i].varcontent,
-          barcodeName: textItemList[i].barcodeName,
-          barcodeType: textItemList[i].barcodeType,
-          hralignment: textItemList[i].hralignment,
-          x2Pos: textItemList[i].x2Pos,
-          y2Pos: textItemList[i].y2Pos,
-          lineWidth: textItemList[i].lineWidth,
-          qrWidth: textItemList[i].qrWidth,
-          qrcodeName: textItemList[i].qrcodeName,
-          qrcodeType: textItemList[i].qrcodeType,
-          fontBold: textItemList[i].fontBold,
-          fontReverse: textItemList[i].fontReverse,
+        ReceiptItem(
+          key: receiptItemList[i].key,
+          index: receiptItemList[i].index,
+          xPos: receiptItemList[i].xPos,
+          yPos: receiptItemList[i].yPos,
+          width: receiptItemList[i].width,
+          varName: receiptItemList[i].varName,
+          tabOrder: receiptItemList[i].tabOrder,
+          style: receiptItemList[i].style,
+          rotation: receiptItemList[i].rotation,
+          maxLength: receiptItemList[i].maxLength,
+          height: receiptItemList[i].height,
+          fontWidthRatio: receiptItemList[i].fontWidthRatio,
+          fontSize: receiptItemList[i].fontSize,
+          fontHeightRatio: receiptItemList[i].fontHeightRatio,
+          defaultValue: receiptItemList[i].defaultValue,
+          content: receiptItemList[i].content,
+          alignment: receiptItemList[i].alignment,
+          type: receiptItemList[i].type,
+          varcontent: receiptItemList[i].varcontent,
+          barcodeName: receiptItemList[i].barcodeName,
+          barcodeType: receiptItemList[i].barcodeType,
+          hralignment: receiptItemList[i].hralignment,
+          x2Pos: receiptItemList[i].x2Pos,
+          y2Pos: receiptItemList[i].y2Pos,
+          lineWidth: receiptItemList[i].lineWidth,
+          qrWidth: receiptItemList[i].qrWidth,
+          qrcodeName: receiptItemList[i].qrcodeName,
+          qrcodeType: receiptItemList[i].qrcodeType,
+          fontBold: receiptItemList[i].fontBold,
+          fontReverse: receiptItemList[i].fontReverse,
         ));
 
     floatButtonList.replaceRange(
       i,
       i + 1,
       [
-        DraggableFloatingActionButton(
-          key: textItemList[i].key,
+        ReceiptDraggableFloating(
+          key: receiptItemList[i].key,
           index: i,
-          initialOffset: Offset(myOffsetData.x, myOffsetData.y),
+          initialOffset: Offset(myReceiptOffsetData.x, myReceiptOffsetData.y),
           parentKey: _parentKey,
           onPressed: () {},
-          children: [textItemList[i]],
+          children: [receiptItemList[i]],
         )
       ],
     );
     floatButtonList;
+  }
+
+  String getShowVarName(String varName, int num) {
+    if (varName.length <= num) {
+      // 如果字符串长度小于等于指定长度，补充空格
+      return varName.padRight(num);
+    } else {
+      // 如果字符串长度大于指定长度，截取指定长度
+      return varName.substring(0, num);
+    }
   }
 
   // 最后，在执行修改操作的方法中，需要将FocusNode设为失去焦点状态
@@ -1970,12 +1986,12 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       //文本内容更新
       //文本框操作
       setState(() {
-        myTextData.content = s.toString();
-        for (var i = 0; i < textItemList.length; i++) {
-          if (textItemList[i].index == myTextData.tabOrder) {
-            textItemList[i].content = myTextData.content;
+        myReceiptItemData.content = s.toString();
+        for (var i = 0; i < receiptItemList.length; i++) {
+          if (receiptItemList[i].index == myReceiptItemData.tabOrder) {
+            receiptItemList[i].content = myReceiptItemData.content;
 
-            eventBus.fire(EventText(myTextData));
+            eventBus.fire(EventText(myReceiptItemData));
             //修改可拖拽控件的信息
             _onUpdate(i);
           }
@@ -1988,11 +2004,11 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           RegExp(r"^([1-9]|[1-9]\d|1\d{2}|2[0-4]\d|500)$"); //1-50限制大小
       if (regex.hasMatch(s)) {
         setState(() {
-          myTextData.fontSize = int.tryParse(s.toString())!;
-          for (var i = 0; i < textItemList.length; i++) {
-            if (textItemList[i].index == myTextData.tabOrder) {
-              textItemList[i].fontSize = myTextData.fontSize;
-              eventBus.fire(EventText(myTextData));
+          myReceiptItemData.fontSize = int.tryParse(s.toString())!;
+          for (var i = 0; i < receiptItemList.length; i++) {
+            if (receiptItemList[i].index == myReceiptItemData.tabOrder) {
+              receiptItemList[i].fontSize = myReceiptItemData.fontSize;
+              eventBus.fire(EventText(myReceiptItemData));
               _onUpdate(i);
             }
           }
@@ -2002,12 +2018,12 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       //x坐标
       setState(() {
         var ss = double.parse(s.toString());
-        myTextData.xPos = ss.toInt();
+        myReceiptItemData.xPos = ss.toInt();
 
-        for (var i = 0; i < textItemList.length; i++) {
-          if (textItemList[i].index == myTextData.tabOrder) {
-            textItemList[i].xPos = myTextData.xPos;
-            eventBus.fire(EventText(myTextData));
+        for (var i = 0; i < receiptItemList.length; i++) {
+          if (receiptItemList[i].index == myReceiptItemData.tabOrder) {
+            receiptItemList[i].xPos = myReceiptItemData.xPos;
+            eventBus.fire(EventText(myReceiptItemData));
             _onUpdate(i);
           }
         }
@@ -2016,12 +2032,12 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       //y坐标
       setState(() {
         var ss = double.parse(s.toString());
-        myTextData.yPos = ss.toInt();
+        myReceiptItemData.yPos = ss.toInt();
 
-        for (var i = 0; i < textItemList.length; i++) {
-          if (textItemList[i].index == myTextData.tabOrder) {
-            textItemList[i].yPos = myTextData.yPos;
-            eventBus.fire(EventText(myTextData));
+        for (var i = 0; i < receiptItemList.length; i++) {
+          if (receiptItemList[i].index == myReceiptItemData.tabOrder) {
+            receiptItemList[i].yPos = myReceiptItemData.yPos;
+            eventBus.fire(EventText(myReceiptItemData));
             _onUpdate(i);
           }
         }
@@ -2031,11 +2047,13 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       RegExp regex = RegExp(r"^(?:0|[1-9]\d?|100)$"); //1-50限制大小
       if (regex.hasMatch(s)) {
         setState(() {
-          myTextData.maxLength = int.tryParse(s.toString())!;
-          for (var i = 0; i < textItemList.length; i++) {
-            if (textItemList[i].index == myTextData.tabOrder) {
-              textItemList[i].maxLength = myTextData.maxLength;
-              eventBus.fire(EventText(myTextData));
+          myReceiptItemData.maxLength = int.tryParse(s.toString())!;
+          for (var i = 0; i < receiptItemList.length; i++) {
+            if (receiptItemList[i].index == myReceiptItemData.tabOrder) {
+              receiptItemList[i].maxLength = myReceiptItemData.maxLength;
+              receiptItemList[i].content = getShowVarName(
+                  receiptItemList[i].varName, receiptItemList[i].maxLength);
+              eventBus.fire(EventText(myReceiptItemData));
               _onUpdate(i);
             }
           }
@@ -2045,18 +2063,18 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     } else if (indexTemp == 5) {
       //对齐方式
       setState(() {
-        myTextData.alignment = int.tryParse(s.toString())!;
-        for (var i = 0; i < textItemList.length; i++) {
-          if (textItemList[i].index == myTextData.tabOrder) {
-            textItemList[i].alignment = myTextData.alignment;
-            eventBus.fire(EventText(myTextData));
+        myReceiptItemData.alignment = int.tryParse(s.toString())!;
+        for (var i = 0; i < receiptItemList.length; i++) {
+          if (receiptItemList[i].index == myReceiptItemData.tabOrder) {
+            receiptItemList[i].alignment = myReceiptItemData.alignment;
+            eventBus.fire(EventText(myReceiptItemData));
             _onUpdate(i);
           }
         }
       });
     } else if (indexTemp == 6) {
       //条码类型
-      int objectIndex = _findIndex(myTextData.tabOrder);
+      int objectIndex = _findIndex(myReceiptItemData.tabOrder);
       if (objectIndex == -1) {
         return;
       }
@@ -2065,13 +2083,14 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       List<dynamic> tempcontent = [];
       setState(() {
         if (s != '--') {
-          int barcodeIndex = _findVarcontent(tempBacodeName, myTextData.type);
+          int barcodeIndex =
+              _findVarcontent(tempBacodeName, myReceiptItemData.type);
           if (barcodeIndex != -1) {
-            // myTextData.varcontent.clear();
-            myTextData.style = 0;
-            myTextData.barcodeType =
+            // myReceiptItemData.varcontent.clear();
+            myReceiptItemData.style = 0;
+            myReceiptItemData.barcodeType =
                 myBarCodeListList.barCodeListList[barcodeIndex].barCodeType;
-            myTextData.barcodeName =
+            myReceiptItemData.barcodeName =
                 myBarCodeListList.barCodeListList[barcodeIndex].barCodeName;
             for (var j = 0;
                 j <
@@ -2096,20 +2115,25 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
             }
           }
 
-          myTextData.varcontent = tempcontent;
-          myTextData.content = totalcontent;
-          textItemList[objectIndex].content = myTextData.content;
-          textItemList[objectIndex].barcodeName = myTextData.barcodeName;
-          textItemList[objectIndex].barcodeType = myTextData.barcodeType;
-          textItemList[objectIndex].varcontent = myTextData.varcontent;
-          textItemList[objectIndex].style = myTextData.style; //此处说明条码库中有此条码
-          eventBus.fire(EventText(myTextData));
+          myReceiptItemData.varcontent = tempcontent;
+          myReceiptItemData.content = totalcontent;
+          receiptItemList[objectIndex].content = myReceiptItemData.content;
+          receiptItemList[objectIndex].barcodeName =
+              myReceiptItemData.barcodeName;
+          receiptItemList[objectIndex].barcodeType =
+              myReceiptItemData.barcodeType;
+          receiptItemList[objectIndex].varcontent =
+              myReceiptItemData.varcontent;
+          receiptItemList[objectIndex].style =
+              myReceiptItemData.style; //此处说明条码库中有此条码
+          eventBus.fire(EventText(myReceiptItemData));
           _onUpdate(objectIndex);
         } else {
-          if (textItemList[objectIndex].style == 0) {
-            myTextData.varcontent.clear();
-            textItemList[objectIndex].varcontent = myTextData.varcontent;
-            eventBus.fire(EventText(myTextData));
+          if (receiptItemList[objectIndex].style == 0) {
+            myReceiptItemData.varcontent.clear();
+            receiptItemList[objectIndex].varcontent =
+                myReceiptItemData.varcontent;
+            eventBus.fire(EventText(myReceiptItemData));
           }
         }
       });
@@ -2118,11 +2142,11 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       RegExp regex = RegExp(r"^(?:[1-9]|[1-9]\d|[1-4]\d\d|500)$"); //1-500限制大小
       if (regex.hasMatch(s)) {
         setState(() {
-          myTextData.height = int.tryParse(s.toString())!;
-          for (var i = 0; i < textItemList.length; i++) {
-            if (textItemList[i].index == myTextData.tabOrder) {
-              textItemList[i].height = myTextData.height;
-              eventBus.fire(EventText(myTextData));
+          myReceiptItemData.height = int.tryParse(s.toString())!;
+          for (var i = 0; i < receiptItemList.length; i++) {
+            if (receiptItemList[i].index == myReceiptItemData.tabOrder) {
+              receiptItemList[i].height = myReceiptItemData.height;
+              eventBus.fire(EventText(myReceiptItemData));
               _onUpdate(i);
             }
           }
@@ -2132,11 +2156,11 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     } else if (indexTemp == 8) {
       //rotation
       setState(() {
-        myTextData.rotation = int.tryParse(s.toString())!;
-        for (var i = 0; i < textItemList.length; i++) {
-          if (textItemList[i].index == myTextData.tabOrder) {
-            textItemList[i].rotation = myTextData.rotation;
-            eventBus.fire(EventText(myTextData));
+        myReceiptItemData.rotation = int.tryParse(s.toString())!;
+        for (var i = 0; i < receiptItemList.length; i++) {
+          if (receiptItemList[i].index == myReceiptItemData.tabOrder) {
+            receiptItemList[i].rotation = myReceiptItemData.rotation;
+            eventBus.fire(EventText(myReceiptItemData));
             _onUpdate(i);
           }
         }
@@ -2144,11 +2168,11 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     } else if (indexTemp == 9) {
       //rotation
       setState(() {
-        myTextData.hralignment = s;
-        for (var i = 0; i < textItemList.length; i++) {
-          if (textItemList[i].index == myTextData.tabOrder) {
-            textItemList[i].hralignment = myTextData.hralignment;
-            eventBus.fire(EventText(myTextData));
+        myReceiptItemData.hralignment = s;
+        for (var i = 0; i < receiptItemList.length; i++) {
+          if (receiptItemList[i].index == myReceiptItemData.tabOrder) {
+            receiptItemList[i].hralignment = myReceiptItemData.hralignment;
+            eventBus.fire(EventText(myReceiptItemData));
             _onUpdate(i);
           }
         }
@@ -2157,12 +2181,12 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       //x2坐标
       setState(() {
         var ss = double.parse(s.toString());
-        myTextData.x2Pos = ss.toInt();
+        myReceiptItemData.x2Pos = ss.toInt();
 
-        for (var i = 0; i < textItemList.length; i++) {
-          if (textItemList[i].index == myTextData.tabOrder) {
-            textItemList[i].x2Pos = myTextData.x2Pos;
-            eventBus.fire(EventText(myTextData));
+        for (var i = 0; i < receiptItemList.length; i++) {
+          if (receiptItemList[i].index == myReceiptItemData.tabOrder) {
+            receiptItemList[i].x2Pos = myReceiptItemData.x2Pos;
+            eventBus.fire(EventText(myReceiptItemData));
             _onUpdate(i);
           }
         }
@@ -2171,12 +2195,12 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       //y2坐标
       setState(() {
         var ss = double.parse(s.toString());
-        myTextData.y2Pos = ss.toInt();
+        myReceiptItemData.y2Pos = ss.toInt();
 
-        for (var i = 0; i < textItemList.length; i++) {
-          if (textItemList[i].index == myTextData.tabOrder) {
-            textItemList[i].y2Pos = myTextData.y2Pos;
-            eventBus.fire(EventText(myTextData));
+        for (var i = 0; i < receiptItemList.length; i++) {
+          if (receiptItemList[i].index == myReceiptItemData.tabOrder) {
+            receiptItemList[i].y2Pos = myReceiptItemData.y2Pos;
+            eventBus.fire(EventText(myReceiptItemData));
             _onUpdate(i);
           }
         }
@@ -2187,13 +2211,14 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       var tempQrcodeName = s;
       setState(() {
         if (s != '--') {
-          int qrcodeIndex = _findVarcontent(tempQrcodeName, myTextData.type);
+          int qrcodeIndex =
+              _findVarcontent(tempQrcodeName, myReceiptItemData.type);
           if (qrcodeIndex != -1) {
-            // myTextData.varcontent.clear();
-            myTextData.style = 0;
-            myTextData.qrcodeType =
+            // myReceiptItemData.varcontent.clear();
+            myReceiptItemData.style = 0;
+            myReceiptItemData.qrcodeType =
                 myBarCodeListList.barCodeListList[qrcodeIndex].barCodeType;
-            myTextData.qrcodeName =
+            myReceiptItemData.qrcodeName =
                 myBarCodeListList.barCodeListList[qrcodeIndex].barCodeName;
             for (var j = 0;
                 j <
@@ -2204,14 +2229,14 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                   .barCodeListList[qrcodeIndex].barCodeRowDataList[j]);
             }
           }
-          myTextData.varcontent = tempcontent;
-          for (var i = 0; i < textItemList.length; i++) {
-            if (textItemList[i].index == myTextData.tabOrder) {
-              textItemList[i].qrcodeName = myTextData.qrcodeName;
-              textItemList[i].qrcodeType = myTextData.qrcodeType;
-              textItemList[i].varcontent = myTextData.varcontent;
-              textItemList[i].style = myTextData.style;
-              eventBus.fire(EventText(myTextData));
+          myReceiptItemData.varcontent = tempcontent;
+          for (var i = 0; i < receiptItemList.length; i++) {
+            if (receiptItemList[i].index == myReceiptItemData.tabOrder) {
+              receiptItemList[i].qrcodeName = myReceiptItemData.qrcodeName;
+              receiptItemList[i].qrcodeType = myReceiptItemData.qrcodeType;
+              receiptItemList[i].varcontent = myReceiptItemData.varcontent;
+              receiptItemList[i].style = myReceiptItemData.style;
+              eventBus.fire(EventText(myReceiptItemData));
               _onUpdate(i);
             }
           }
@@ -2220,11 +2245,11 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     } else if (indexTemp == 13) {
       //qrcode width
       setState(() {
-        myTextData.qrWidth = s;
-        for (var i = 0; i < textItemList.length; i++) {
-          if (textItemList[i].index == myTextData.tabOrder) {
-            textItemList[i].qrWidth = myTextData.qrWidth;
-            eventBus.fire(EventText(myTextData));
+        myReceiptItemData.qrWidth = s;
+        for (var i = 0; i < receiptItemList.length; i++) {
+          if (receiptItemList[i].index == myReceiptItemData.tabOrder) {
+            receiptItemList[i].qrWidth = myReceiptItemData.qrWidth;
+            eventBus.fire(EventText(myReceiptItemData));
             _onUpdate(i);
           }
         }
@@ -2232,11 +2257,11 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     } else if (indexTemp == 14) {
       //Font bold
       setState(() {
-        myTextData.fontBold = s;
-        for (var i = 0; i < textItemList.length; i++) {
-          if (textItemList[i].index == myTextData.tabOrder) {
-            textItemList[i].fontBold = myTextData.fontBold;
-            eventBus.fire(EventText(myTextData));
+        myReceiptItemData.fontBold = s;
+        for (var i = 0; i < receiptItemList.length; i++) {
+          if (receiptItemList[i].index == myReceiptItemData.tabOrder) {
+            receiptItemList[i].fontBold = myReceiptItemData.fontBold;
+            eventBus.fire(EventText(myReceiptItemData));
             _onUpdate(i);
           }
         }
@@ -2244,11 +2269,11 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     } else if (indexTemp == 15) {
       //Font reverse
       setState(() {
-        myTextData.fontReverse = s;
-        for (var i = 0; i < textItemList.length; i++) {
-          if (textItemList[i].index == myTextData.tabOrder) {
-            textItemList[i].fontReverse = myTextData.fontReverse;
-            eventBus.fire(EventText(myTextData));
+        myReceiptItemData.fontReverse = s;
+        for (var i = 0; i < receiptItemList.length; i++) {
+          if (receiptItemList[i].index == myReceiptItemData.tabOrder) {
+            receiptItemList[i].fontReverse = myReceiptItemData.fontReverse;
+            eventBus.fire(EventText(myReceiptItemData));
             _onUpdate(i);
           }
         }
@@ -2256,11 +2281,11 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     } else if (indexTemp == 16) {
       //Font reverse
       setState(() {
-        myTextData.lineWidth = double.parse(s);
-        for (var i = 0; i < textItemList.length; i++) {
-          if (textItemList[i].index == myTextData.tabOrder) {
-            textItemList[i].lineWidth = myTextData.lineWidth;
-            eventBus.fire(EventText(myTextData));
+        myReceiptItemData.lineWidth = double.parse(s);
+        for (var i = 0; i < receiptItemList.length; i++) {
+          if (receiptItemList[i].index == myReceiptItemData.tabOrder) {
+            receiptItemList[i].lineWidth = myReceiptItemData.lineWidth;
+            eventBus.fire(EventText(myReceiptItemData));
             _onUpdate(i);
           }
         }
@@ -2268,11 +2293,11 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     } else if (indexTemp == 17) {
       //Font reverse
       setState(() {
-        myTextData.x2Pos = int.parse(s);
-        for (var i = 0; i < textItemList.length; i++) {
-          if (textItemList[i].index == myTextData.tabOrder) {
-            textItemList[i].x2Pos = myTextData.x2Pos;
-            eventBus.fire(EventText(myTextData));
+        myReceiptItemData.x2Pos = int.parse(s);
+        for (var i = 0; i < receiptItemList.length; i++) {
+          if (receiptItemList[i].index == myReceiptItemData.tabOrder) {
+            receiptItemList[i].x2Pos = myReceiptItemData.x2Pos;
+            eventBus.fire(EventText(myReceiptItemData));
             _onUpdate(i);
           }
         }
@@ -2283,8 +2308,8 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   int _findIndex(int taborder) {
     int objectIndex = -1;
 
-    for (var i = 0; i < textItemList.length; i++) {
-      if (textItemList[i].index == taborder) {
+    for (var i = 0; i < receiptItemList.length; i++) {
+      if (receiptItemList[i].index == taborder) {
         objectIndex = i;
         break;
       }
@@ -2317,89 +2342,57 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     text = name.split(",")[0];
     type = name.split(",")[1];
     setState(() {
-      myTextData.tabOrder = count;
-      myTextData.content = text;
-      myTextData.type = type;
-      myTextData.xPos = xPos;
-
-      if (text == "WeightUnit") {
-        var contentStr = "Unit";
-        textItemList.add(TextItem(
-          key: ObjectKey(myTextData.tabOrder),
-          index: count,
-          content: contentStr,
-          type: type,
-          xPos: xPos,
-          yPos: yPos,
-          width: width,
-          height: height,
-          fontSize: fontSize,
-          fontWidthRatio: fontWidthRatio,
-          fontHeightRatio: fontHeightRatio,
-          style: style,
-          rotation: rotation,
-          defaultValue: defaultValue,
-          alignment: alignment,
-          maxLength: maxLength,
-          tabOrder: tabOrder,
-          varName: text,
-          varcontent: varcontent,
-          barcodeName: barcodeName,
-          barcodeType: barcodeType,
-          hralignment: hralignment,
-          x2Pos: x2Pos,
-          y2Pos: y2Pos,
-          lineWidth: lineWidth,
-          qrWidth: qrWidth,
-          qrcodeName: qrcodename,
-          qrcodeType: qrcodeType,
-          fontBold: fontBold,
-          fontReverse: fontReverse,
-        ));
-      } else {
-        textItemList.add(TextItem(
-          key: ObjectKey(myTextData.tabOrder),
-          index: count,
-          content: text,
-          type: type,
-          xPos: xPos,
-          yPos: yPos,
-          width: width,
-          height: height,
-          fontSize: fontSize,
-          fontWidthRatio: fontWidthRatio,
-          fontHeightRatio: fontHeightRatio,
-          style: style,
-          rotation: rotation,
-          defaultValue: defaultValue,
-          alignment: alignment,
-          maxLength: maxLength,
-          tabOrder: tabOrder,
-          varName: text,
-          varcontent: varcontent,
-          barcodeName: barcodeName,
-          barcodeType: barcodeType,
-          hralignment: hralignment,
-          x2Pos: x2Pos,
-          y2Pos: y2Pos,
-          lineWidth: lineWidth,
-          qrWidth: qrWidth,
-          qrcodeName: qrcodename,
-          qrcodeType: qrcodeType,
-          fontBold: fontBold,
-          fontReverse: fontReverse,
-        ));
+      myReceiptItemData.tabOrder = count;
+      myReceiptItemData.content = text;
+      myReceiptItemData.type = type;
+      myReceiptItemData.xPos = xPos;
+      if (myReceiptItemData.type == 'DATA') {
+        myReceiptItemData.content = getShowVarName(text, maxLength);
       }
-      myItemKey.keyList.add(ObjectKey(myTextData.tabOrder));
+
+      receiptItemList.add(ReceiptItem(
+        key: ObjectKey(myReceiptItemData.tabOrder),
+        index: count,
+        content: myReceiptItemData.content,
+        type: type,
+        xPos: xPos,
+        yPos: yPos,
+        width: width,
+        height: height,
+        fontSize: fontSize,
+        fontWidthRatio: fontWidthRatio,
+        fontHeightRatio: fontHeightRatio,
+        style: style,
+        rotation: rotation,
+        defaultValue: defaultValue,
+        alignment: alignment,
+        maxLength: maxLength,
+        tabOrder: tabOrder,
+        varName: text,
+        varcontent: varcontent,
+        barcodeName: barcodeName,
+        barcodeType: barcodeType,
+        hralignment: hralignment,
+        x2Pos: x2Pos,
+        y2Pos: y2Pos,
+        lineWidth: lineWidth,
+        qrWidth: qrWidth,
+        qrcodeName: qrcodename,
+        qrcodeType: qrcodeType,
+        fontBold: fontBold,
+        fontReverse: fontReverse,
+      ));
+
+      myReceiptItemKey.keyList.add(ObjectKey(myReceiptItemData.tabOrder));
 
       //中间页面添加最新的可拖拽控件
-      floatButtonList.add(DraggableFloatingActionButton(
+      floatButtonList.add(ReceiptDraggableFloating(
           index: (num.length - 1),
-          key: ObjectKey(myTextData.tabOrder),
+          key: ObjectKey(myReceiptItemData.tabOrder),
           initialOffset: const Offset(0, 0),
           parentKey: _parentKey,
           onPressed: () {},
-          children: [textItemList[num.length - 1]]));
+          children: [receiptItemList[num.length - 1]]));
     });
   }
 
@@ -2674,7 +2667,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
             height: 5,
           ),
           Text(
-            myTextData.tabOrder.toString(),
+            myReceiptItemData.tabOrder.toString(),
             style: TextStyle(
                 fontSize: 14, color: Theme.of(context).colorScheme.primary),
           )
@@ -2691,7 +2684,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                   fontSize: 14,
                 )),
           ),
-          Text(myTextData.type,
+          Text(myReceiptItemData.type,
               style: TextStyle(
                   fontSize: 14, color: Theme.of(context).colorScheme.primary))
         ],
@@ -2724,7 +2717,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
               enabled: false,
               controller: xPosvar,
               decoration: InputDecoration(
-                hintText: myTextData.content.toString(),
+                hintText: myReceiptItemData.content.toString(),
                 hintStyle: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
                     fontSize: 14,
@@ -2757,7 +2750,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                       color: Color.fromARGB(255, 0, 74, 152),
                       fontSize: 14,
                       fontWeight: FontWeight.normal), // 设置label字体大小为20
-                  hintText: myTextData.yPos.toString()),
+                  hintText: myReceiptItemData.yPos.toString()),
               onEditingComplete: () {
                 _onSubmit(yPosvar.text, 3);
               }, // 点击“完成”按钮后，调用失去焦点方法
@@ -2790,7 +2783,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
             )),
       ),
 
-      buildTextField(textvariable, "", myTextData.content.toString(), 0),
+      buildTextField(textvariable, "", myReceiptItemData.content.toString(), 0),
       Text(
         localizedStrings.select_fontsize,
         style: const TextStyle(
@@ -2816,7 +2809,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         onSelect: _handleRotationSelected,
       ),
       // buildTextField(
-      //     fontsizevar, "Font Size", myTextData.fontSize.toString(), 1),
+      //     fontsizevar, "Font Size", myReceiptItemData.fontSize.toString(), 1),
       Text(
         localizedStrings.font_bold,
         style: const TextStyle(
@@ -2855,7 +2848,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           ),
           onPressed: () {
             setState(() {
-              _deleteTextItem(myTextData.tabOrder);
+              _deleteReceiptItem(myReceiptItemData.tabOrder);
             });
           },
           child: Text(localizedStrings.button_delete,
@@ -2866,71 +2859,71 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     ];
   }
 
-  _deleteTextItem(int deleteNum) {
+  _deleteReceiptItem(int deleteNum) {
     int indexToRemove = -1;
-    for (var i = 0; i < textItemList.length; i++) {
-      if (textItemList[i].index == deleteNum) {
+    for (var i = 0; i < receiptItemList.length; i++) {
+      if (receiptItemList[i].index == deleteNum) {
         indexToRemove = i;
         break;
       }
     }
     if (indexToRemove >= 0) {
-      textItemList.removeAt(indexToRemove);
-      List<TextItem> temptextItemList = [];
-      for (var i = 0; i < textItemList.length; i++) {
-        temptextItemList.add(textItemList[i]);
+      receiptItemList.removeAt(indexToRemove);
+      List<ReceiptItem> tempreceiptItemList = [];
+      for (var i = 0; i < receiptItemList.length; i++) {
+        tempreceiptItemList.add(receiptItemList[i]);
       }
 
-      textItemList.clear();
-      myItemKey.keyList.clear();
+      receiptItemList.clear();
+      myReceiptItemKey.keyList.clear();
       num.removeAt(indexToRemove);
       // count = 0;
       floatButtonList.clear();
       _parentKey = GlobalKey();
 
-      for (var i = 0; i < temptextItemList.length; i++) {
-        // temptextItemList[i].index = i;
-        textItemList.add(temptextItemList[i]);
-        myItemKey.keyList.add(ObjectKey(textItemList[i].index));
+      for (var i = 0; i < tempreceiptItemList.length; i++) {
+        // tempreceiptItemList[i].index = i;
+        receiptItemList.add(tempreceiptItemList[i]);
+        myReceiptItemKey.keyList.add(ObjectKey(receiptItemList[i].index));
 
-        floatButtonList.add(DraggableFloatingActionButton(
-            index: (textItemList[i].index),
-            key: ObjectKey(textItemList[i].index),
-            initialOffset: Offset(textItemList[i].xPos.toDouble(),
-                textItemList[i].yPos.toDouble()),
+        floatButtonList.add(ReceiptDraggableFloating(
+            index: (receiptItemList[i].index),
+            key: ObjectKey(receiptItemList[i].index),
+            initialOffset: Offset(receiptItemList[i].xPos.toDouble(),
+                receiptItemList[i].yPos.toDouble()),
             parentKey: _parentKey,
             onPressed: () {},
-            children: [textItemList[i]]));
+            children: [receiptItemList[i]]));
       }
-      myTextData.tabOrder = 9999;
+      myReceiptItemData.tabOrder = 9999;
     }
   }
 
   void reconstructItem() {
-    List<TextItem> temptextItemList = [];
-    for (var i = 0; i < textItemList.length; i++) {
-      temptextItemList.add(textItemList[i]);
+    List<ReceiptItem> tempreceiptItemList = [];
+    for (var i = 0; i < receiptItemList.length; i++) {
+      tempreceiptItemList.add(receiptItemList[i]);
     }
-    textItemList.clear();
-    myItemKey.keyList.clear();
+    receiptItemList.clear();
+    myReceiptItemKey.keyList.clear();
     floatButtonList.clear();
     _parentKey = GlobalKey();
 
-    for (var i = 0; i < temptextItemList.length; i++) {
-      // temptextItemList[i].index = i;
-      textItemList.add(temptextItemList[i]);
-      myItemKey.keyList.add(ObjectKey(textItemList[i].index));
+    for (var i = 0; i < tempreceiptItemList.length; i++) {
+      // tempreceiptItemList[i].index = i;
+      receiptItemList.add(tempreceiptItemList[i]);
+      myReceiptItemKey.keyList.add(ObjectKey(receiptItemList[i].index));
 
-      floatButtonList.add(DraggableFloatingActionButton(
-          index: (textItemList[i].index),
-          key: ObjectKey(textItemList[i].index),
-          initialOffset: Offset(
-              textItemList[i].xPos.toDouble(), textItemList[i].yPos.toDouble()),
+      floatButtonList.add(ReceiptDraggableFloating(
+          index: (receiptItemList[i].index),
+          key: ObjectKey(receiptItemList[i].index),
+          initialOffset: Offset(receiptItemList[i].xPos.toDouble(),
+              receiptItemList[i].yPos.toDouble()),
           parentKey: _parentKey,
           onPressed: () {},
-          children: [textItemList[i]]));
+          children: [receiptItemList[i]]));
     }
-    myTextData.tabOrder = 9999;
+    myReceiptItemData.tabOrder = 9999;
   }
 
   _varproperties() {
@@ -2973,7 +2966,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
             height: 5,
           ),
           Text(
-            myTextData.tabOrder.toString(),
+            myReceiptItemData.tabOrder.toString(),
             style: TextStyle(
                 fontSize: 14, color: Theme.of(context).colorScheme.primary),
           )
@@ -2990,7 +2983,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                   fontSize: 14,
                 )),
           ),
-          Text(myTextData.type,
+          Text(myReceiptItemData.varName,
               style: TextStyle(
                   fontSize: 14, color: Theme.of(context).colorScheme.primary))
         ],
@@ -3023,7 +3016,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
               enabled: false,
               controller: xPosvar,
               decoration: InputDecoration(
-                hintText: myTextData.content.toString(),
+                hintText: myReceiptItemData.content.toString(),
                 hintStyle: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
                     fontSize: 14,
@@ -3056,7 +3049,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                       color: Color.fromARGB(255, 0, 74, 152),
                       fontSize: 14,
                       fontWeight: FontWeight.normal), // 设置label字体大小为20
-                  hintText: myTextData.yPos.toString()),
+                  hintText: myReceiptItemData.yPos.toString()),
               onEditingComplete: () {
                 _onSubmit(yPosvar.text, 3);
               }, // 点击“完成”按钮后，调用失去焦点方法
@@ -3074,7 +3067,8 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
               fontSize: 14,
             )),
       ),
-      buildTextField(maxLenthvar, "", myTextData.maxLength.toString(), 4),
+      buildTextField(
+          maxLenthvar, "", myReceiptItemData.maxLength.toString(), 4),
       const SizedBox(width: 10),
       Text(
         localizedStrings.alignment,
@@ -3108,7 +3102,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         onSelect: _handleFontSizeSelected,
       ),
       // buildTextField(
-      //     fontsizevar, "Font Size", myTextData.fontSize.toString(), 1),
+      //     fontsizevar, "Font Size", myReceiptItemData.fontSize.toString(), 1),
       Text(
         localizedStrings.font_bold,
         style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
@@ -3133,7 +3127,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       ElevatedButton(
           onPressed: () {
             setState(() {
-              _deleteTextItem(myTextData.tabOrder);
+              _deleteReceiptItem(myReceiptItemData.tabOrder);
             });
           },
           child: Text(localizedStrings.button_delete,
@@ -3184,7 +3178,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
             height: 5,
           ),
           Text(
-            myTextData.tabOrder.toString(),
+            myReceiptItemData.tabOrder.toString(),
             style: TextStyle(
                 fontSize: 14, color: Theme.of(context).colorScheme.primary),
           )
@@ -3201,7 +3195,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                   fontSize: 14,
                 )),
           ),
-          Text(myTextData.type,
+          Text(myReceiptItemData.type,
               style: TextStyle(
                   fontSize: 14, color: Theme.of(context).colorScheme.primary))
         ],
@@ -3219,16 +3213,17 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                 color: Theme.of(context).colorScheme.primary,
                 fontWeight: FontWeight.normal)),
       ),
-      buildTextField(xPosvar, "X1", myTextData.xPos.toString(), 2),
-      buildTextField(yPosvar, "Y1", myTextData.yPos.toString(), 3),
-      buildTextField(x2Posvar, "Line Lenth", myTextData.x2Pos.toString(), 17),
+      buildTextField(xPosvar, "X1", myReceiptItemData.xPos.toString(), 2),
+      buildTextField(yPosvar, "Y1", myReceiptItemData.yPos.toString(), 3),
       buildTextField(
-          lineWidthVar, "Line Width", myTextData.lineWidth.toString(), 16),
+          x2Posvar, "Line Lenth", myReceiptItemData.x2Pos.toString(), 17),
+      buildTextField(lineWidthVar, "Line Width",
+          myReceiptItemData.lineWidth.toString(), 16),
       const SizedBox(height: 20),
       ElevatedButton(
           onPressed: () {
             setState(() {
-              _deleteTextItem(myTextData.tabOrder);
+              _deleteReceiptItem(myReceiptItemData.tabOrder);
             });
           },
           child: Text(localizedStrings.button_delete,
@@ -3279,7 +3274,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
             height: 5,
           ),
           Text(
-            myTextData.tabOrder.toString(),
+            myReceiptItemData.tabOrder.toString(),
             style: TextStyle(
                 fontSize: 14, color: Theme.of(context).colorScheme.primary),
           )
@@ -3296,7 +3291,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                   fontSize: 14,
                 )),
           ),
-          Text(myTextData.type,
+          Text(myReceiptItemData.type,
               style: TextStyle(
                   fontSize: 14, color: Theme.of(context).colorScheme.primary))
         ],
@@ -3329,7 +3324,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
               enabled: false,
               controller: xPosvar,
               decoration: InputDecoration(
-                hintText: myTextData.content.toString(),
+                hintText: myReceiptItemData.content.toString(),
                 hintStyle: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
                     fontSize: 14,
@@ -3362,7 +3357,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                       color: Color.fromARGB(255, 0, 74, 152),
                       fontSize: 14,
                       fontWeight: FontWeight.normal), // 设置label字体大小为20
-                  hintText: myTextData.yPos.toString()),
+                  hintText: myReceiptItemData.yPos.toString()),
               onEditingComplete: () {
                 _onSubmit(yPosvar.text, 3);
               }, // 点击“完成”按钮后，调用失去焦点方法
@@ -3386,7 +3381,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         localizedStrings.barcode_height,
         style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
       ),
-      buildTextField(barcodeHeight, "", myTextData.height.toString(), 7),
+      buildTextField(barcodeHeight, "", myReceiptItemData.height.toString(), 7),
       const SizedBox(height: 20),
       Text(
         localizedStrings.hr_alignment,
@@ -3412,7 +3407,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       ElevatedButton(
           onPressed: () {
             setState(() {
-              _deleteTextItem(myTextData.tabOrder);
+              _deleteReceiptItem(myReceiptItemData.tabOrder);
             });
           },
           child: Text(localizedStrings.button_delete,
@@ -3463,7 +3458,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
             height: 5,
           ),
           Text(
-            myTextData.tabOrder.toString(),
+            myReceiptItemData.tabOrder.toString(),
             style: TextStyle(
                 fontSize: 14, color: Theme.of(context).colorScheme.primary),
           )
@@ -3480,7 +3475,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                   fontSize: 14,
                 )),
           ),
-          Text(myTextData.type,
+          Text(myReceiptItemData.type,
               style: TextStyle(
                   fontSize: 14, color: Theme.of(context).colorScheme.primary))
         ],
@@ -3513,7 +3508,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
               enabled: false,
               controller: xPosvar,
               decoration: InputDecoration(
-                hintText: myTextData.content.toString(),
+                hintText: myReceiptItemData.content.toString(),
                 hintStyle: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
                     fontSize: 14,
@@ -3546,7 +3541,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                       color: Color.fromARGB(255, 0, 74, 152),
                       fontSize: 14,
                       fontWeight: FontWeight.normal), // 设置label字体大小为20
-                  hintText: myTextData.yPos.toString()),
+                  hintText: myReceiptItemData.yPos.toString()),
               onEditingComplete: () {
                 _onSubmit(yPosvar.text, 3);
               }, // 点击“完成”按钮后，调用失去焦点方法
@@ -3581,7 +3576,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       ElevatedButton(
           onPressed: () {
             setState(() {
-              _deleteTextItem(myTextData.tabOrder);
+              _deleteReceiptItem(myReceiptItemData.tabOrder);
             });
           },
           child: Text(localizedStrings.button_delete,

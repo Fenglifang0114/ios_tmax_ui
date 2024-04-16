@@ -46,5 +46,5 @@ ReportFields myReportFields = ReportFields([
   'User NO.',
   'User Name',
   'User Remarks',
-  'Scale Name'
+  'Scale Model'
 ]);

@@ -457,7 +457,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                       width: 2.0, // 设置边框宽度
                                     ),
                                     borderRadius:
-                                        BorderRadius.all(Radius.circular(30)),
+                                        BorderRadius.all(Radius.circular(4)),
                                   ),
                                 ),
                                 onChanged: (value) {
@@ -678,11 +678,8 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                               MainAxisAlignment.center,
                                           children: [
                                             const SizedBox(
-                                              width: 20,
-                                            ),
-                                            const SizedBox(
                                               height: 40,
-                                              width: 100,
+                                              width: 200,
                                               child: Align(
                                                 alignment:
                                                     Alignment.centerRight,
@@ -737,27 +734,21 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                                   border: OutlineInputBorder(
                                                     borderRadius:
                                                         BorderRadius.all(
-                                                            Radius.circular(
-                                                                30)),
+                                                            Radius.circular(4)),
                                                   ),
                                                 ),
                                               ),
                                             )
                                           ],
                                         ),
-                                        const SizedBox(
-                                          height: 20,
-                                        ),
+
                                         Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: [
-                                            const SizedBox(
-                                              width: 20,
-                                            ),
                                             SizedBox(
                                               height: 60,
-                                              width: 100,
+                                              width: 200,
                                               child: Align(
                                                 alignment:
                                                     Alignment.centerRight,
@@ -809,8 +800,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                                       const OutlineInputBorder(
                                                     borderRadius:
                                                         BorderRadius.all(
-                                                            Radius.circular(
-                                                                30)),
+                                                            Radius.circular(4)),
                                                   ),
                                                 ),
                                                 onChanged: (value) {
@@ -831,8 +821,13 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                           15,
                                           ipaddressRegex,
                                           _isValidIP,
-                                          'Incorrect IP! e.g. 192.168.100.188',
-                                          (value) => validateIp(value),
+                                          localizedStrings.error_ip_tip,
+                                          (value) {
+                                            setState(() {
+                                              _isValidIP =
+                                                  validateIpFlag(value);
+                                            });
+                                          },
                                           ipController,
                                           _isStatic,
                                         ),
@@ -841,8 +836,13 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                           15,
                                           ipaddressRegex,
                                           _isValidMask,
-                                          'Incorrect NetMask! e.g. 255.255.255.0',
-                                          (value) => validateNetMask(value),
+                                          localizedStrings.error_ip_tip,
+                                          (value) {
+                                            setState(() {
+                                              _isValidMask =
+                                                  validateIpFlag(value);
+                                            });
+                                          },
                                           netMaskController,
                                           _isStatic,
                                         ),
@@ -851,8 +851,13 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                           15,
                                           ipaddressRegex,
                                           _isValidGateway,
-                                          'Incorrect Gateway! e.g. 192.168.100.1',
-                                          (value) => validateGateWay(value),
+                                          localizedStrings.error_ip_tip,
+                                          (value) {
+                                            setState(() {
+                                              _isValidGateway =
+                                                  validateIpFlag(value);
+                                            });
+                                          },
                                           gateWayController,
                                           _isStatic,
                                         ),
@@ -1036,7 +1041,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                                 shape: RoundedRectangleBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(
-                                                          8), // 设置按钮的圆角
+                                                          4), // 设置按钮的圆角
                                                 ),
                                               ),
                                               child: SizedBox(
@@ -1203,59 +1208,17 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     writelog(jsonEncode(myScaleCmd));
   }
 
-  void validateNetMask(String value) {
+  bool validateIpFlag(String value) {
     bool isValid = false;
-    _isValidMask = false;
-    setState(() {
-      _isValidMask = isValid;
-      errorMessage = '';
-    });
-    isValid = ipRegex.hasMatch(value);
-    isValid = _isValidIpAddress(isValid, value);
-    setState(() {
-      _isValidMask = isValid;
-    });
-  }
 
-  void validateGateWay(String value) {
-    bool isValid = false;
-    _isValidGateway = false;
     setState(() {
-      _isValidGateway = isValid;
-      errorMessage = '';
+      if (value != '') {
+        isValid = ipRegex.hasMatch(value);
+        isValid = _isValidIpAddress(isValid, value);
+      } else {
+        isValid = true;
+      }
     });
-    isValid = ipRegex.hasMatch(value);
-    isValid = _isValidIpAddress(isValid, value);
-    setState(() {
-      _isValidGateway = isValid;
-    });
+    return isValid;
   }
-
-  void validateIp(String value) {
-    bool isValid = false;
-    _isValidIP = false;
-    setState(() {
-      _isValidIP = isValid;
-      errorMessage = '';
-    });
-    isValid = ipRegex.hasMatch(value);
-    isValid = _isValidIpAddress(isValid, value);
-    setState(() {
-      _isValidIP = isValid;
-    });
-  }
-
-  // void validateDns(String value) {
-  //   bool isValid = false;
-  //   _isValidDns = false;
-  //   setState(() {
-  //     _isValidDns = isValid;
-  //     errorMessage = '';
-  //   });
-  //   isValid = ipRegex.hasMatch(value);
-  //   isValid = _isValidIpAddress(isValid, value);
-  //   setState(() {
-  //     _isValidDns = isValid;
-  //   });
-  // }
 }

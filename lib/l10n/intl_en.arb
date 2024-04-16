@@ -115,7 +115,7 @@
   "language_setting_title":"Language Setting" ,
   "button_back":"Back",
   "button_select_format":"Select Format",
-  "scale_model":"Model Name",
+  "scale_model":"Scale Model:",
   "button_get_ip":"Get IP Address",
   "firmwart_update":"Update Firmware",
   "button_add_license":"Add License",
@@ -150,7 +150,7 @@
   "acc_mode_format":"Accumulation mode format:",
   "pcs_mode_format":"Counting mode format:",
   "pct_mode_format":"Percent mode format:",
-  "scale_name":"Scale Name:",
+  "scale_name":"Scale Name:",  
   "scale_sn":"SN#:",
   "plu_download_title":"PLU Download",
   "weighing_title":"Weighing",
@@ -186,5 +186,14 @@
   "device_time_title":"Device Time" ,
   "batch_delivery_title":"Batch Delivery",
   "parameter_set_title":"Parameter Setting",
-  "save_as":"Save as"  
+  "save_as":"Save as",
+  "header_footer_setting_title":"Header And Footer Setting",
+  "header_confirm_info":"Please confirm the information.",
+  "server_ip":"Server Ip:",
+  "server_port":"Server Port:",
+  "error_ip_tip":"Incorrect address! e.g. xxx.xxx.xxx.xxx",
+  "set_ethernet_ip_title":"Ethernet IP Setting",
+  "fmt_confirm_info":"Please confirm the format is saved."
+
+ 
 }

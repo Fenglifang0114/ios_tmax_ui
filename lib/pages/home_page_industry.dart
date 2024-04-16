@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:t_max/data/dialog_data.dart';
 import 'package:t_max/data/license_data.dart';
 import 'package:t_max/data/scale_info_from_scale.dart';
@@ -40,6 +41,7 @@ class IndustryHomePageState extends State<IndustryHomePage> {
   List<String> items = [];
   TextEditingController weightController = TextEditingController();
   TextEditingController repsController = TextEditingController();
+  TextEditingController _scaleNameCtl = TextEditingController();
 
   late ScrollController _pageScrollerController;
   dynamic _eventbus1;
@@ -54,6 +56,7 @@ class IndustryHomePageState extends State<IndustryHomePage> {
   DateTime now = DateTime.now();
   bool isCardHovered = false;
   bool isCardClicked = false;
+  bool editScaleNameFlag = false;
 
   // 初始文字颜色
   @override
@@ -370,7 +373,7 @@ class IndustryHomePageState extends State<IndustryHomePage> {
                 child: ListView(children: [
                   (myScaleInfoFromScale.modelName != null)
                       ? SizedBox(
-                          height: 80,
+                          height: 120,
                           child: Column(
                             children: [
                               Row(
@@ -381,7 +384,7 @@ class IndustryHomePageState extends State<IndustryHomePage> {
                                   ),
                                   Flexible(
                                     child: Text(
-                                      localizedStrings.scale_name,
+                                      localizedStrings.scale_model,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -437,6 +440,81 @@ class IndustryHomePageState extends State<IndustryHomePage> {
                                       ),
                                     ),
                                   ]),
+                              // Row(
+                              //   mainAxisAlignment: MainAxisAlignment.start,
+                              //   children: [
+                              //     const SizedBox(
+                              //       width: 30,
+                              //     ),
+                              //     Flexible(
+                              //       child: Text(
+                              //         localizedStrings.scale_name,
+                              //         maxLines: 1,
+                              //         overflow: TextOverflow.ellipsis,
+                              //       ),
+                              //     ),
+                              //     IconButton(
+                              //         onPressed: () {
+                              //           setState(() {
+                              //             editScaleNameFlag = true;
+                              //           });
+                              //         },
+                              //         icon: Icon(
+                              //           Icons.edit,
+                              //           color: Theme.of(context)
+                              //               .colorScheme
+                              //               .primary,
+                              //         )),
+                              //   ],
+                              // ),
+                              // Row(
+                              //     mainAxisAlignment: MainAxisAlignment.start,
+                              //     children: [
+                              //       const SizedBox(
+                              //         width: 30,
+                              //       ),
+                              //       editScaleNameFlag
+                              //           ? Expanded(
+                              //               child: TextFormField(
+                              //                   controller: _scaleNameCtl,
+                              //                   maxLines: 1,
+                              //                   style: const TextStyle(
+                              //                       overflow:
+                              //                           TextOverflow.ellipsis),
+                              //                   inputFormatters: [
+                              //                     LengthLimitingTextInputFormatter(
+                              //                         50)
+                              //                   ],
+                              //                   decoration:
+                              //                       const InputDecoration(
+                              //                     // prefixIcon: Icon(Icons.edit),
+                              //                     border: OutlineInputBorder(),
+                              //                   ),
+                              //                   onEditingComplete: () {
+                              //                     setState(() {
+                              //                       editScaleNameFlag = false;
+                              //                       myScaleInfoFromScale
+                              //                               .scaleName =
+                              //                           _scaleNameCtl.text;
+                              //                       // --tijiaomingzixiugai
+                              //                     });
+                              //                   }),
+                              //             )
+                              //           : Flexible(
+                              //               child: Text(
+                              //                 myScaleInfoFromScale.scaleName ==
+                              //                         null
+                              //                     ? ''
+                              //                     : myScaleInfoFromScale
+                              //                         .scaleName!,
+                              //                 maxLines: 1,
+                              //                 textAlign: TextAlign.start,
+                              //                 style: const TextStyle(
+                              //                     fontWeight: FontWeight.bold),
+                              //                 overflow: TextOverflow.ellipsis,
+                              //               ),
+                              //             ),
+                              //     ]),
                             ],
                           ),
                         )

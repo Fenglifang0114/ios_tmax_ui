@@ -18,6 +18,7 @@ import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
 import '../../generated/l10n.dart';
 import '../../main.dart';
+import '../data/scale_info_from_scale.dart';
 import '../data/screen_mgr.dart';
 import '../dialog/addproduct_dialog.dart';
 import '../dialog/adduser_dialog.dart';
@@ -1090,7 +1091,9 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
               ? ""
               : myUserInfo.name.toString()),
       (myUserInfo.remarks == null) ? "" : myUserInfo.remarks.toString(),
-      myDevicedata.name,
+      myScaleInfoFromScale.modelName == null
+          ? ''
+          : myScaleInfoFromScale.modelName!, //此处应该是秤机种名
     ));
     setState(() {
       _weightReportDataSource = WeightReportDataSource(_weightReportDatas);

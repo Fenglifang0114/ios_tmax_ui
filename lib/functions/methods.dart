@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'package:t_max/data/server_ip_data.dart';
 import 'package:t_max/data/writelog.dart';
 
 import '../data/download_prt_fmt.dart';
+import '../data/scale_info_from_scale.dart';
 import '../data/scalecmd_data.dart';
 import '../data/settingparam_data.dart';
 import '../main.dart';
@@ -140,26 +142,62 @@ class PublicFunctions {
   }
 
   static void getRecords() {
+    String scaleName = myScaleInfoFromScale.scaleName == null
+        ? ''
+        : myScaleInfoFromScale.scaleName!;
     myScaleCmd.cmdMode = "get_recs";
-    myScaleCmd.cmdData = "0";
+    myScaleCmd.cmdData = "0" +
+        ',' +
+        myScaleInfoFromScale.modelName! +
+        ',' +
+        myScaleInfoFromScale.scaleSn! +
+        ',' +
+        scaleName; //根据scale model scale sn  scale name(别名)
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
 
   static void getCheckWeigherRecords() {
+    String scaleName = myScaleInfoFromScale.scaleName == null
+        ? ''
+        : myScaleInfoFromScale.scaleName!;
     myScaleCmd.cmdMode = "get_recs";
-    myScaleCmd.cmdData = "1";
+    myScaleCmd.cmdData = "1" +
+        ',' +
+        myScaleInfoFromScale.modelName! +
+        ',' +
+        myScaleInfoFromScale.scaleSn! +
+        ',' +
+        scaleName; //根据scale model scale sn  scale name(别名)
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
 
   static void getTakeInRecords() {
+    String scaleName = myScaleInfoFromScale.scaleName == null
+        ? ''
+        : myScaleInfoFromScale.scaleName!;
     myScaleCmd.cmdMode = "get_recs";
-    myScaleCmd.cmdData = "2";
+    myScaleCmd.cmdData = "2" +
+        ',' +
+        myScaleInfoFromScale.modelName! +
+        ',' +
+        myScaleInfoFromScale.scaleSn! +
+        ',' +
+        scaleName; //根据scale model scale sn  scale name(别名)
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
 
   static void getTakeOutRecords() {
+    String scaleName = myScaleInfoFromScale.scaleName == null
+        ? ''
+        : myScaleInfoFromScale.scaleName!;
     myScaleCmd.cmdMode = "get_recs";
-    myScaleCmd.cmdData = "3";
+    myScaleCmd.cmdData = "3" +
+        ',' +
+        myScaleInfoFromScale.modelName! +
+        ',' +
+        myScaleInfoFromScale.scaleSn! +
+        ',' +
+        scaleName; //根据scale model scale sn  scale name(别名)
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
 
@@ -288,26 +326,50 @@ class PublicFunctions {
   }
 
   static void deleteAllRecords() {
+    String modelName = myScaleInfoFromScale.modelName == null
+        ? ''
+        : myScaleInfoFromScale.modelName!;
+    String scaleSn = myScaleInfoFromScale.scaleSn == null
+        ? ''
+        : myScaleInfoFromScale.scaleSn!;
     myScaleCmd.cmdMode = "del_rec";
-    myScaleCmd.cmdData = '999999999,0';
+    myScaleCmd.cmdData = '999999999,0,' + modelName + ',' + scaleSn;
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
 
   static void deleteAllRecordsCheck() {
+    String modelName = myScaleInfoFromScale.modelName == null
+        ? ''
+        : myScaleInfoFromScale.modelName!;
+    String scaleSn = myScaleInfoFromScale.scaleSn == null
+        ? ''
+        : myScaleInfoFromScale.scaleSn!;
     myScaleCmd.cmdMode = "del_rec";
-    myScaleCmd.cmdData = '999999999,1';
+    myScaleCmd.cmdData = '999999999,1,' + modelName + ',' + scaleSn;
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
 
   static void deleteAllRecordsTakeIn() {
+    String modelName = myScaleInfoFromScale.modelName == null
+        ? ''
+        : myScaleInfoFromScale.modelName!;
+    String scaleSn = myScaleInfoFromScale.scaleSn == null
+        ? ''
+        : myScaleInfoFromScale.scaleSn!;
     myScaleCmd.cmdMode = "del_rec";
-    myScaleCmd.cmdData = '999999999,2';
+    myScaleCmd.cmdData = '999999999,2,' + modelName + ',' + scaleSn;
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
 
   static void deleteAllRecordsTakeOut() {
+    String modelName = myScaleInfoFromScale.modelName == null
+        ? ''
+        : myScaleInfoFromScale.modelName!;
+    String scaleSn = myScaleInfoFromScale.scaleSn == null
+        ? ''
+        : myScaleInfoFromScale.scaleSn!;
     myScaleCmd.cmdMode = "del_rec";
-    myScaleCmd.cmdData = '999999999,3';
+    myScaleCmd.cmdData = '999999999,3,' + modelName + ',' + scaleSn;
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
 
@@ -330,5 +392,13 @@ class PublicFunctions {
     myScaleCmd.cmdData = json;
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
     writelog(jsonEncode(myScaleCmd));
+  }
+
+  static void sendServerIpToScale(ServerIpData serverData) async {
+    String json = jsonEncode(serverData);
+    myScaleCmd.cmdMode = "set_server_ip";
+    myScaleCmd.cmdData = json;
+    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+    print(jsonEncode(myScaleCmd));
   }
 }

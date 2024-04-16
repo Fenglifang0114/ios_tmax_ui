@@ -48,6 +48,8 @@ ChannelResponse myRespChangeWifiMode = ChannelResponse('', '', 0);
 ChannelResponse myRespGetAllEepromData = ChannelResponse('', '', 0);
 ChannelResponse myRespGetOneEepromData = ChannelResponse('', '', 0);
 ChannelResponse myRespModifyEepromInfo = ChannelResponse('', '', 0);
+ChannelResponse myRespModifyHeaderFooter = ChannelResponse('', '', 0);
+ChannelResponse myRespSetServerIp = ChannelResponse('', '', 0);
 
 class SerialPortStatus {
   bool serialPortStatus;

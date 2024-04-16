@@ -6,3 +6,10 @@ class ItemKey {
 }
 
 ItemKey myItemKey = ItemKey([]);
+
+class ReceiptItemKey {
+  List<Key> keyList;
+  ReceiptItemKey(this.keyList);
+}
+
+ReceiptItemKey myReceiptItemKey = ReceiptItemKey([]);

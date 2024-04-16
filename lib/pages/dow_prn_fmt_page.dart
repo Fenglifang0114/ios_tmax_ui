@@ -520,7 +520,8 @@ class _DownloadPageState extends State<DownloadPage> {
     }
     if (paths.isNotEmpty) {
       myDownLoadPrtFmt.scaleModel = 'TMax';
-      myDownLoadPrtFmt.printerModel = 'EPM205';
+      // myDownLoadPrtFmt.printerModel = 'EPM205';
+      myDownLoadPrtFmt.printerModel = 'ESP/POS';
       myDownLoadPrtFmt.filePaths = paths;
 
       myScaleCmd.cmdData = json.encode(myDownLoadPrtFmt);

@@ -14,12 +14,9 @@ Widget buildCommonRow(
   return Row(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
-      const SizedBox(
-        width: 20,
-      ),
       SizedBox(
         height: 60,
-        width: 100,
+        width: 200,
         child: Align(
           alignment: Alignment.topRight,
           child: Text(
@@ -51,7 +48,7 @@ Widget buildCommonRow(
             errorText: errortextFlag ? null : errortext,
             errorStyle: const TextStyle(fontSize: 14.0),
             border: const OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(30)),
+              borderRadius: BorderRadius.all(Radius.circular(4)),
             ),
           ),
           onChanged: onchange,

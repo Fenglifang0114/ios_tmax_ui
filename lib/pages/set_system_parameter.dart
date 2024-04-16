@@ -7,6 +7,7 @@ import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
 import '../../generated/l10n.dart';
 import '../data/downloadresponse.dart';
+import '../data/scale_info_from_scale.dart';
 import '../data/screen_mgr.dart';
 import '../data/timer_manager.dart';
 import '../widget/page_head.dart';
@@ -65,6 +66,9 @@ class SetParameterPageState extends State<SetParameterPage> {
             myScreenMgr.serialPortST = true;
           } else {
             myScreenMgr.serialPortST = false;
+            myScaleInfoFromScale.addrInfos = [];
+            myScaleInfoFromScale.modelName = '';
+            myScaleInfoFromScale.scaleSn = '';
           }
         });
       }

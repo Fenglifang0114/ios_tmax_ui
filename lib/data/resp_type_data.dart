@@ -68,6 +68,8 @@ class RespMsgType {
   static const String respGetAllEepromData = 'resp_get_all_eeprom_info';
   static const String respGetOneEepromData = 'resp_get_one_eeprom_info';
   static const String respModifyEepromInfo = 'resp_modify_eeprom_info';
+  static const String respModifyHeaderFooter = 'resp_header_footer';
+  static const String respSetServerIP = 'resp_set_server_ip';
 
   static final Map<String, Function> handlers = {
     RespMsgType.respGetUIConf: handleGetUIConf,
@@ -108,6 +110,8 @@ class RespMsgType {
     RespMsgType.respGetAllEepromData: handleRespGetAllEepromData,
     RespMsgType.respGetOneEepromData: handleRespGetOneEepromData,
     RespMsgType.respModifyEepromInfo: handleRespModifyEepromInfo,
+    RespMsgType.respModifyHeaderFooter: handleRespModifyHeaderFooter,
+    RespMsgType.respSetServerIP: handleRespSetServerIp,
   };
   static void handleGetUIConf(dynamic data) {
     final jsonResponse = json.decode(data['MsgBody']);
@@ -157,6 +161,16 @@ class RespMsgType {
   static void handleRespModifyEepromInfo(dynamic data) {
     dynamic mobj = ChannelResponse.fromJson(data);
     eventBus.fire(EventModifyEepromInfoResp(mobj));
+  }
+
+  static void handleRespModifyHeaderFooter(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventModifyHeaderFooterResp(mobj));
+  }
+
+  static void handleRespSetServerIp(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventSetServerIPResp(mobj));
   }
 
   static void handleRespBTPassthData(dynamic data) {
@@ -373,7 +387,7 @@ class RespMsgType {
     if (!jsonStrings.contains('fail')) {
       mobj = ScaleInfoFromScale.fromJson(json.decode(jsonStrings));
     } else {
-      mobj = ScaleInfoFromScale();
+      mobj = ScaleInfoFromScale("", "", "", []);
     }
     eventBus.fire(EventGetScaleInfo(mobj));
   }
