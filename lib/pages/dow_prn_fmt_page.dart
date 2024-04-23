@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import '../data/download_prt_fmt.dart';
 import '../data/downloadresponse.dart';
+import '../data/scale_info_from_scale.dart';
 import '../data/scalecmd_data.dart';
 import '../data/screen_mgr.dart';
 import '../data/timer_manager.dart';
@@ -83,8 +84,8 @@ class _DownloadPageState extends State<DownloadPage> {
     _eventbus2 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
       if (mounted) {
         setState(() {
-          myRespCheckSerialPort = event.obj;
-          if (myRespCheckSerialPort.msgBody == 'ok') {
+          myFactoryInfoFromScale = event.obj;
+          if (myFactoryInfoFromScale.modelName != '') {
             myScreenMgr.serialPortST = true;
           } else {
             myScreenMgr.serialPortST = false;

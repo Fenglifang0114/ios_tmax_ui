@@ -1091,9 +1091,9 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
               ? ""
               : myUserInfo.name.toString()),
       (myUserInfo.remarks == null) ? "" : myUserInfo.remarks.toString(),
-      myScaleInfoFromScale.modelName == null
+      myFactoryInfoFromScale.modelName == null
           ? ''
-          : myScaleInfoFromScale.modelName!, //此处应该是秤机种名
+          : myFactoryInfoFromScale.modelName!, //此处应该是秤机种名
     ));
     setState(() {
       _weightReportDataSource = WeightReportDataSource(_weightReportDatas);

@@ -76,7 +76,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _pageScrollerController = ScrollController();
     _startTimer(5);
-    // _checkTimerFuc(5);
+
     _eventbus1 = eventBus.on<EventDialogData>().listen((event) {
       if (mounted) {
         setState(() {
@@ -113,25 +113,24 @@ class _HomePageState extends State<HomePage> {
       if (mounted) {
         if (myScreenMgr.isMainScreen) {
           setState(() {
-            myRespCheckSerialPort = event.obj;
-            if (myRespCheckSerialPort.msgBody == 'ok') {
+            myFactoryInfoFromScale = event.obj;
+            if (myFactoryInfoFromScale.modelName != '') {
               myScreenMgr.serialPortST = true;
               PublicFunctions.getOneEepromInfo("wifi_or_bt");
             } else {
               myScreenMgr.serialPortST = false;
-              myScaleInfoFromScale.addrInfos = [];
-              myScaleInfoFromScale.modelName = '';
-              myScaleInfoFromScale.scaleSn = '';
+              myFactoryInfoFromScale.modelName = '';
+              myFactoryInfoFromScale.scaleSn = '';
             }
           });
         }
       }
     });
 
-    _eventbus4 = eventBus.on<EventGetScaleInfo>().listen((event) {
+    _eventbus4 = eventBus.on<EventGetFactoryInfo>().listen((event) {
       if (mounted) {
         setState(() {
-          myScaleInfoFromScale = event.obj;
+          myFactoryInfoFromScale = event.obj;
         });
       }
     });
@@ -148,7 +147,6 @@ class _HomePageState extends State<HomePage> {
             } else if (myRespGetOneEepromData.msgBody.contains('off')) {
               myScreenMgr.wifiOrBt = 'off';
             }
-            PublicFunctions.getScaleInfo();
           } else {
             // myScreenMgr.wifiOrBt = 'off';
           }
@@ -410,7 +408,7 @@ class _HomePageState extends State<HomePage> {
               ),
               Expanded(
                 child: ListView(children: [
-                  (myScaleInfoFromScale.modelName != null)
+                  (myFactoryInfoFromScale.modelName != null)
                       ? SizedBox(
                           height: 80,
                           child: Column(
@@ -438,7 +436,7 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                     Flexible(
                                       child: Text(
-                                        myScaleInfoFromScale.modelName!,
+                                        myFactoryInfoFromScale.modelName!,
                                         maxLines: 1,
                                         textAlign: TextAlign.start,
                                         style: const TextStyle(
@@ -470,7 +468,7 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                     Flexible(
                                       child: Text(
-                                        myScaleInfoFromScale.scaleSn!,
+                                        myFactoryInfoFromScale.scaleSn!,
                                         maxLines: 1,
                                         textAlign: TextAlign.start,
                                         style: const TextStyle(

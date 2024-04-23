@@ -56,7 +56,6 @@ class RespMsgType {
   static const String scalePassthData = 'scale_passth_data';
   static const String respChangeScalePassthMode =
       'resp_change_scale_passth_mode';
-  static const String respGetScaleInfo = 'resp_get_scale_info';
   static const String respGetScaleTime = 'resp_get_scale_time';
   static const String respSetScaleTime = 'resp_set_scale_time';
   static const String respDownPlu = 'resp_down_plu';
@@ -70,6 +69,7 @@ class RespMsgType {
   static const String respModifyEepromInfo = 'resp_modify_eeprom_info';
   static const String respModifyHeaderFooter = 'resp_header_footer';
   static const String respSetServerIP = 'resp_set_server_ip';
+  static const String respGetFactoryInfo = 'resp_get_factory_info';
 
   static final Map<String, Function> handlers = {
     RespMsgType.respGetUIConf: handleGetUIConf,
@@ -104,7 +104,6 @@ class RespMsgType {
     RespMsgType.respGetIpMode: handleRespGetIpMode,
     RespMsgType.respGetWifiApInfo: handleRespGetWifiApInfo,
     RespMsgType.respGetRecs: handleRespGetRecs,
-    RespMsgType.respGetScaleInfo: handleRespGetScaleInfo,
     RespMsgType.respRegWeight: handleRespRegWeight,
     RespMsgType.respModifyBTName: handleRespModifyBTName,
     RespMsgType.respGetAllEepromData: handleRespGetAllEepromData,
@@ -112,6 +111,7 @@ class RespMsgType {
     RespMsgType.respModifyEepromInfo: handleRespModifyEepromInfo,
     RespMsgType.respModifyHeaderFooter: handleRespModifyHeaderFooter,
     RespMsgType.respSetServerIP: handleRespSetServerIp,
+    RespMsgType.respGetFactoryInfo: handleRespGetfactoryInfo,
   };
   static void handleGetUIConf(dynamic data) {
     final jsonResponse = json.decode(data['MsgBody']);
@@ -196,11 +196,6 @@ class RespMsgType {
   static void handleRespUpdateFirmwareProgress(dynamic data) {
     dynamic mobj = ChannelResponse.fromJson(data);
     eventBus.fire(EventRespUpdateFirmwareProcess(mobj));
-  }
-
-  static void handleRespCheckSerialPort(dynamic data) {
-    dynamic mobj = ChannelResponse.fromJson(data);
-    eventBus.fire(EventRespCheckSerialPort(mobj));
   }
 
   static void handleRespGetBuildInfo(dynamic data) {
@@ -381,15 +376,32 @@ class RespMsgType {
     eventBus.fire(EventGetScaleRecords(myGetScaleRecords));
   }
 
-  static void handleRespGetScaleInfo(dynamic data) {
+  static void handleRespGetfactoryInfo(dynamic data) {
     final jsonStrings = data['MsgBody'];
     dynamic mobj;
     if (!jsonStrings.contains('fail')) {
-      mobj = ScaleInfoFromScale.fromJson(json.decode(jsonStrings));
+      mobj = FactoryInfoFromScale.fromJson(json.decode(jsonStrings));
     } else {
-      mobj = ScaleInfoFromScale("", "", "", []);
+      mobj = FactoryInfoFromScale(
+        "",
+        "",
+      );
     }
-    eventBus.fire(EventGetScaleInfo(mobj));
+    eventBus.fire(EventGetFactoryInfo(mobj));
+  }
+
+  static void handleRespCheckSerialPort(dynamic data) {
+    final jsonStrings = data['MsgBody'];
+    dynamic mobj;
+    if (!jsonStrings.contains('fail')) {
+      mobj = FactoryInfoFromScale.fromJson(json.decode(jsonStrings));
+    } else {
+      mobj = FactoryInfoFromScale(
+        "",
+        "",
+      );
+    }
+    eventBus.fire(EventRespCheckSerialPort(mobj));
   }
 
   static void handleRespTareCmd(dynamic data) {}

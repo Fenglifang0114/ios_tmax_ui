@@ -11,6 +11,7 @@ import '../../main.dart';
 import '../data/cominfoslist_data.dart';
 import '../data/comscaleinfo_data.dart';
 import '../data/modifyresult_data.dart';
+import '../data/scale_info_from_scale.dart';
 import '../data/screen_mgr.dart';
 import '../functions/methods.dart';
 import '../generated/l10n.dart';
@@ -139,8 +140,8 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
     _eventbus6 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
       if (mounted) {
         setState(() {
-          myRespCheckSerialPort = event.obj;
-          if (myRespCheckSerialPort.msgBody == 'ok') {
+          myFactoryInfoFromScale = event.obj;
+          if (myFactoryInfoFromScale.modelName != '') {
             serialPortConnect = localizedStrings.txt_serial_port_connected;
             myScreenMgr.serialPortST = true;
           } else {

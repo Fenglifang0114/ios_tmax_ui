@@ -61,14 +61,14 @@ class SetParameterPageState extends State<SetParameterPage> {
     eventBus1 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
       if (mounted) {
         setState(() {
-          myRespCheckSerialPort = event.obj;
-          if (myRespCheckSerialPort.msgBody == 'ok') {
+          myFactoryInfoFromScale = event.obj;
+          if (myFactoryInfoFromScale.modelName != '') {
             myScreenMgr.serialPortST = true;
           } else {
             myScreenMgr.serialPortST = false;
-            myScaleInfoFromScale.addrInfos = [];
-            myScaleInfoFromScale.modelName = '';
-            myScaleInfoFromScale.scaleSn = '';
+
+            myFactoryInfoFromScale.modelName = '';
+            myFactoryInfoFromScale.scaleSn = '';
           }
         });
       }

@@ -11,6 +11,7 @@ import 'package:t_max/main.dart';
 import '../data/download_prt_fmt.dart';
 import '../data/downloadresponse.dart';
 import '../data/parse_log.dart';
+import '../data/scale_info_from_scale.dart';
 import '../data/scalecmd_data.dart';
 import '../data/screen_mgr.dart';
 import '../data/writelog.dart';
@@ -341,8 +342,8 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
     _eventbus8 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
       if (mounted) {
         setState(() {
-          myRespCheckSerialPort = event.obj;
-          if (myRespCheckSerialPort.msgBody == 'ok') {
+          myFactoryInfoFromScale = event.obj;
+          if (myFactoryInfoFromScale.modelName != '') {
             myScreenMgr.serialPortST = true;
             if (downOtherFunc && isDownloading) {
               downOtherFunc = false;

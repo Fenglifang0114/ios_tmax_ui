@@ -436,8 +436,8 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
         }
 
         setState(() {
-          myRespCheckSerialPort = event.obj;
-          if (myRespCheckSerialPort.msgBody == 'ok') {
+          myFactoryInfoFromScale = event.obj;
+          if (myFactoryInfoFromScale.modelName != '') {
             myScreenMgr.serialPortST = true;
           } else {
             myScreenMgr.serialPortST = false;
@@ -2048,11 +2048,11 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     myAddScaleRecord.scaleId = 1;
     myAddScaleRecord.price = '0.0';
     myAddScaleRecord.scaleMode = '1';
-    myAddScaleRecord.scaleModel = myScaleInfoFromScale.modelName;
-    myAddScaleRecord.scaleSn = myScaleInfoFromScale.scaleSn;
-    myAddScaleRecord.scaleName = myScaleInfoFromScale.scaleName == null
+    myAddScaleRecord.scaleModel = myFactoryInfoFromScale.modelName;
+    myAddScaleRecord.scaleSn = myFactoryInfoFromScale.scaleSn;
+    myAddScaleRecord.scaleName = myFactoryInfoFromScale.modelName == null
         ? ""
-        : myScaleInfoFromScale.scaleName!;
+        : myFactoryInfoFromScale.modelName!;
     myAddScaleRecord.product = currentData.pluName;
     myAddScaleRecord.weight = currentData.weight.toString();
     myAddScaleRecord.pluNo = currentData.plu;
@@ -2099,9 +2099,9 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
               ? ""
               : myUserInfo.id.toString()),
       (myUserInfo.remarks == null) ? "" : myUserInfo.remarks.toString(),
-      myScaleInfoFromScale.modelName == null
+      myFactoryInfoFromScale.modelName == null
           ? ''
-          : myScaleInfoFromScale.modelName!, //此处应该是秤机种名
+          : myFactoryInfoFromScale.modelName!, //此处应该是秤机种名
     ));
 
     _weightReportDatas = myWeightReportData;

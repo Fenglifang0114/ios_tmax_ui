@@ -10,6 +10,7 @@ import 'package:t_max/data/writelog.dart';
 import 'package:t_max/main.dart';
 import '../data/downloadresponse.dart';
 import '../data/ipinfodata.dart';
+import '../data/scale_info_from_scale.dart';
 import '../data/screen_mgr.dart';
 import '../data/timer_manager.dart';
 import '../eventbus/eventbus.dart';
@@ -336,8 +337,8 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     _eventbus12 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
       if (mounted) {
         setState(() {
-          myRespCheckSerialPort = event.obj;
-          if (myRespCheckSerialPort.msgBody == 'ok') {
+          myFactoryInfoFromScale = event.obj;
+          if (myFactoryInfoFromScale.modelName != '') {
             myScreenMgr.serialPortST = true;
           } else {
             myScreenMgr.serialPortST = false;

@@ -402,9 +402,9 @@ class EventGetWeightErr {
   EventGetWeightErr(this.obj);
 }
 
-class EventGetScaleInfo {
+class EventGetFactoryInfo {
   dynamic obj;
-  EventGetScaleInfo(this.obj);
+  EventGetFactoryInfo(this.obj);
 }
 
 class EventDeleteRec {

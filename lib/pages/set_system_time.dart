@@ -6,6 +6,7 @@ import '../../functions/methods.dart';
 import '../../generated/l10n.dart';
 import '../data/common.dart';
 import '../data/downloadresponse.dart';
+import '../data/scale_info_from_scale.dart';
 import '../data/screen_mgr.dart';
 import '../data/timer_manager.dart';
 import '../widget/page_head.dart';
@@ -116,8 +117,8 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
     eventbus3 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
       if (mounted) {
         setState(() {
-          myRespCheckSerialPort = event.obj;
-          if (myRespCheckSerialPort.msgBody == 'ok') {
+          myFactoryInfoFromScale = event.obj;
+          if (myFactoryInfoFromScale.modelName != '') {
             myScreenMgr.serialPortST = true;
           } else {
             myScreenMgr.serialPortST = false;

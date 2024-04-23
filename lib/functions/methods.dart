@@ -142,60 +142,60 @@ class PublicFunctions {
   }
 
   static void getRecords() {
-    String scaleName = myScaleInfoFromScale.scaleName == null
+    String scaleName = myFactoryInfoFromScale.modelName == null
         ? ''
-        : myScaleInfoFromScale.scaleName!;
+        : myFactoryInfoFromScale.modelName!;
     myScaleCmd.cmdMode = "get_recs";
     myScaleCmd.cmdData = "0" +
         ',' +
-        myScaleInfoFromScale.modelName! +
+        myFactoryInfoFromScale.modelName! +
         ',' +
-        myScaleInfoFromScale.scaleSn! +
+        myFactoryInfoFromScale.scaleSn! +
         ',' +
         scaleName; //根据scale model scale sn  scale name(别名)
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
 
   static void getCheckWeigherRecords() {
-    String scaleName = myScaleInfoFromScale.scaleName == null
+    String scaleName = myFactoryInfoFromScale.modelName == null
         ? ''
-        : myScaleInfoFromScale.scaleName!;
+        : myFactoryInfoFromScale.modelName!;
     myScaleCmd.cmdMode = "get_recs";
     myScaleCmd.cmdData = "1" +
         ',' +
-        myScaleInfoFromScale.modelName! +
+        myFactoryInfoFromScale.modelName! +
         ',' +
-        myScaleInfoFromScale.scaleSn! +
+        myFactoryInfoFromScale.scaleSn! +
         ',' +
         scaleName; //根据scale model scale sn  scale name(别名)
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
 
   static void getTakeInRecords() {
-    String scaleName = myScaleInfoFromScale.scaleName == null
+    String scaleName = myFactoryInfoFromScale.modelName == null
         ? ''
-        : myScaleInfoFromScale.scaleName!;
+        : myFactoryInfoFromScale.modelName!;
     myScaleCmd.cmdMode = "get_recs";
     myScaleCmd.cmdData = "2" +
         ',' +
-        myScaleInfoFromScale.modelName! +
+        myFactoryInfoFromScale.modelName! +
         ',' +
-        myScaleInfoFromScale.scaleSn! +
+        myFactoryInfoFromScale.scaleSn! +
         ',' +
         scaleName; //根据scale model scale sn  scale name(别名)
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
 
   static void getTakeOutRecords() {
-    String scaleName = myScaleInfoFromScale.scaleName == null
+    String scaleName = myFactoryInfoFromScale.modelName == null
         ? ''
-        : myScaleInfoFromScale.scaleName!;
+        : myFactoryInfoFromScale.modelName!;
     myScaleCmd.cmdMode = "get_recs";
     myScaleCmd.cmdData = "3" +
         ',' +
-        myScaleInfoFromScale.modelName! +
+        myFactoryInfoFromScale.modelName! +
         ',' +
-        myScaleInfoFromScale.scaleSn! +
+        myFactoryInfoFromScale.scaleSn! +
         ',' +
         scaleName; //根据scale model scale sn  scale name(别名)
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
@@ -319,55 +319,55 @@ class PublicFunctions {
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
 
-  static void getScaleInfo() {
-    myScaleCmd.cmdMode = "get_scale_info";
+  static void getFactoryInfo() {
+    myScaleCmd.cmdMode = "get_factory_info";
     myScaleCmd.cmdData = '';
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
 
   static void deleteAllRecords() {
-    String modelName = myScaleInfoFromScale.modelName == null
+    String modelName = myFactoryInfoFromScale.modelName == null
         ? ''
-        : myScaleInfoFromScale.modelName!;
-    String scaleSn = myScaleInfoFromScale.scaleSn == null
+        : myFactoryInfoFromScale.modelName!;
+    String scaleSn = myFactoryInfoFromScale.scaleSn == null
         ? ''
-        : myScaleInfoFromScale.scaleSn!;
+        : myFactoryInfoFromScale.scaleSn!;
     myScaleCmd.cmdMode = "del_rec";
     myScaleCmd.cmdData = '999999999,0,' + modelName + ',' + scaleSn;
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
 
   static void deleteAllRecordsCheck() {
-    String modelName = myScaleInfoFromScale.modelName == null
+    String modelName = myFactoryInfoFromScale.modelName == null
         ? ''
-        : myScaleInfoFromScale.modelName!;
-    String scaleSn = myScaleInfoFromScale.scaleSn == null
+        : myFactoryInfoFromScale.modelName!;
+    String scaleSn = myFactoryInfoFromScale.scaleSn == null
         ? ''
-        : myScaleInfoFromScale.scaleSn!;
+        : myFactoryInfoFromScale.scaleSn!;
     myScaleCmd.cmdMode = "del_rec";
     myScaleCmd.cmdData = '999999999,1,' + modelName + ',' + scaleSn;
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
 
   static void deleteAllRecordsTakeIn() {
-    String modelName = myScaleInfoFromScale.modelName == null
+    String modelName = myFactoryInfoFromScale.modelName == null
         ? ''
-        : myScaleInfoFromScale.modelName!;
-    String scaleSn = myScaleInfoFromScale.scaleSn == null
+        : myFactoryInfoFromScale.modelName!;
+    String scaleSn = myFactoryInfoFromScale.scaleSn == null
         ? ''
-        : myScaleInfoFromScale.scaleSn!;
+        : myFactoryInfoFromScale.scaleSn!;
     myScaleCmd.cmdMode = "del_rec";
     myScaleCmd.cmdData = '999999999,2,' + modelName + ',' + scaleSn;
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
 
   static void deleteAllRecordsTakeOut() {
-    String modelName = myScaleInfoFromScale.modelName == null
+    String modelName = myFactoryInfoFromScale.modelName == null
         ? ''
-        : myScaleInfoFromScale.modelName!;
-    String scaleSn = myScaleInfoFromScale.scaleSn == null
+        : myFactoryInfoFromScale.modelName!;
+    String scaleSn = myFactoryInfoFromScale.scaleSn == null
         ? ''
-        : myScaleInfoFromScale.scaleSn!;
+        : myFactoryInfoFromScale.scaleSn!;
     myScaleCmd.cmdMode = "del_rec";
     myScaleCmd.cmdData = '999999999,3,' + modelName + ',' + scaleSn;
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));

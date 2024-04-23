@@ -33,7 +33,7 @@ ChannelResponse myConnectBTResponse = ChannelResponse('', '', 0);
 ChannelResponse myRespBTData = ChannelResponse('', '', 0);
 ChannelResponse myRespUpdateFirmware = ChannelResponse('', '', 0);
 ChannelResponse myConnectApResponse = ChannelResponse('', '', 0);
-ChannelResponse myRespCheckSerialPort = ChannelResponse('', '', 0);
+
 ChannelResponse myRespGetBuildInfo = ChannelResponse('', '', 0);
 ChannelResponse myScalePassthData = ChannelResponse('', '', 0);
 ChannelResponse myOpenScalePassthData = ChannelResponse('', '', 0);

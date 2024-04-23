@@ -100,10 +100,9 @@ class IndustryHomePageState extends State<IndustryHomePage> {
       if (mounted) {
         if (myScreenMgr.isMainScreen) {
           setState(() {
-            myRespCheckSerialPort = event.obj;
-            if (myRespCheckSerialPort.msgBody == 'ok') {
+            myFactoryInfoFromScale = event.obj;
+            if (myFactoryInfoFromScale.modelName != '') {
               myScreenMgr.serialPortST = true;
-              PublicFunctions.getScaleInfo();
             } else {
               myScreenMgr.serialPortST = false;
             }
@@ -112,10 +111,10 @@ class IndustryHomePageState extends State<IndustryHomePage> {
       }
     });
 
-    _eventbus4 = eventBus.on<EventGetScaleInfo>().listen((event) {
+    _eventbus4 = eventBus.on<EventGetFactoryInfo>().listen((event) {
       if (mounted) {
         setState(() {
-          myScaleInfoFromScale = event.obj;
+          myFactoryInfoFromScale = event.obj;
         });
       }
     });
@@ -371,7 +370,7 @@ class IndustryHomePageState extends State<IndustryHomePage> {
               ),
               Expanded(
                 child: ListView(children: [
-                  (myScaleInfoFromScale.modelName != null)
+                  (myFactoryInfoFromScale.modelName != null)
                       ? SizedBox(
                           height: 120,
                           child: Column(
@@ -399,7 +398,7 @@ class IndustryHomePageState extends State<IndustryHomePage> {
                                     ),
                                     Flexible(
                                       child: Text(
-                                        myScaleInfoFromScale.modelName!,
+                                        myFactoryInfoFromScale.modelName!,
                                         maxLines: 1,
                                         textAlign: TextAlign.start,
                                         style: const TextStyle(
@@ -431,7 +430,7 @@ class IndustryHomePageState extends State<IndustryHomePage> {
                                     ),
                                     Flexible(
                                       child: Text(
-                                        myScaleInfoFromScale.scaleSn!,
+                                        myFactoryInfoFromScale.scaleSn!,
                                         maxLines: 1,
                                         textAlign: TextAlign.start,
                                         style: const TextStyle(
@@ -493,7 +492,7 @@ class IndustryHomePageState extends State<IndustryHomePage> {
                               //                   onEditingComplete: () {
                               //                     setState(() {
                               //                       editScaleNameFlag = false;
-                              //                       myScaleInfoFromScale
+                              //                       myFactoryInfoFromScale
                               //                               .scaleName =
                               //                           _scaleNameCtl.text;
                               //                       // --tijiaomingzixiugai
@@ -502,10 +501,10 @@ class IndustryHomePageState extends State<IndustryHomePage> {
                               //             )
                               //           : Flexible(
                               //               child: Text(
-                              //                 myScaleInfoFromScale.scaleName ==
+                              //                 myFactoryInfoFromScale.scaleName ==
                               //                         null
                               //                     ? ''
-                              //                     : myScaleInfoFromScale
+                              //                     : myFactoryInfoFromScale
                               //                         .scaleName!,
                               //                 maxLines: 1,
                               //                 textAlign: TextAlign.start,
@@ -571,8 +570,8 @@ class IndustryHomePageState extends State<IndustryHomePage> {
                         cursor: SystemMouseCursors.click, // 设置光标为手的形状
                         child: GestureDetector(
                           onTap: () {
-                            if (myScaleInfoFromScale.modelName == null ||
-                                (!myScaleInfoFromScale.modelName!
+                            if (myFactoryInfoFromScale.modelName == null ||
+                                (!myFactoryInfoFromScale.modelName!
                                     .contains('2200'))) {
                               setState(() {
                                 stopCheckSerialPort();
@@ -589,9 +588,9 @@ class IndustryHomePageState extends State<IndustryHomePage> {
                               localizedStrings.plu_download_title,
                               "assets/images/line.png",
                               Icons.shopping_bag,
-                              myScaleInfoFromScale.modelName == null
+                              myFactoryInfoFromScale.modelName == null
                                   ? true
-                                  : !myScaleInfoFromScale.modelName!
+                                  : !myFactoryInfoFromScale.modelName!
                                       .contains('2200')),
                         ),
                       ),

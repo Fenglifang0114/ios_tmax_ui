@@ -9,6 +9,7 @@ import '../../functions/methods.dart';
 import '../../generated/l10n.dart';
 import '../../main.dart';
 import '../data/downloadresponse.dart';
+import '../data/scale_info_from_scale.dart';
 import '../data/screen_mgr.dart';
 import '../widget/page_head.dart';
 
@@ -137,8 +138,8 @@ class WeightModePageState extends State<WeightModePage> {
         }
 
         setState(() {
-          myRespCheckSerialPort = event.obj;
-          if (myRespCheckSerialPort.msgBody == 'ok') {
+          myFactoryInfoFromScale = event.obj;
+          if (myFactoryInfoFromScale.modelName != '') {
             myScreenMgr.serialPortST = true;
           } else {
             myScreenMgr.serialPortST = false;

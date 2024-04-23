@@ -20,9 +20,16 @@ class ScaleInfoFromScale {
   }
 }
 
-ScaleInfoFromScale myScaleInfoFromScale = ScaleInfoFromScale(
-  '',
-  '',
-  '',
-  [],
-);
+class FactoryInfoFromScale {
+  String? scaleSn;
+  String? modelName;
+
+  FactoryInfoFromScale(this.scaleSn, this.modelName);
+
+  FactoryInfoFromScale.fromJson(Map<String, dynamic> json) {
+    scaleSn = json['ScaleSn'];
+    modelName = json['ModelName'];
+  }
+}
+
+FactoryInfoFromScale myFactoryInfoFromScale = FactoryInfoFromScale('', '');

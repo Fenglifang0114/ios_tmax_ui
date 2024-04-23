@@ -7,6 +7,7 @@ import 'package:t_max/data/timer_manager.dart';
 import 'package:t_max/functions/methods.dart';
 import '../data/custom_serial_protocol_text_dart.dart';
 import '../data/downloadresponse.dart';
+import '../data/scale_info_from_scale.dart';
 import '../data/screen_mgr.dart';
 import '../eventbus/eventbus.dart';
 import '../generated/l10n.dart';
@@ -175,8 +176,8 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     _eventbus6 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
       if (mounted) {
         setState(() {
-          myRespCheckSerialPort = event.obj;
-          if (myRespCheckSerialPort.msgBody == 'ok') {
+          myFactoryInfoFromScale = event.obj;
+          if (myFactoryInfoFromScale.modelName != '') {
             myScreenMgr.serialPortST = true;
           } else {
             myScreenMgr.serialPortST = false;

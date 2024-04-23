@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../data/downloadresponse.dart';
+import '../data/scale_info_from_scale.dart';
 import '../data/screen_mgr.dart';
 import '../data/setting_version_info.dart';
 import '../data/timer_manager.dart';
@@ -50,8 +51,8 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
     eventBus1 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
       if (mounted) {
         setState(() {
-          myRespCheckSerialPort = event.obj;
-          if (myRespCheckSerialPort.msgBody == 'ok') {
+          myFactoryInfoFromScale = event.obj;
+          if (myFactoryInfoFromScale.modelName != '') {
             myScreenMgr.serialPortST = true;
           } else {
             myScreenMgr.serialPortST = false;

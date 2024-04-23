@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/downloadresponse.dart';
 import 'package:t_max/data/olul_err_data.dart';
+import 'package:t_max/data/scale_info_from_scale.dart';
 import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
 import '../../generated/l10n.dart';
@@ -78,8 +79,8 @@ class AbnormalDataPageState extends State<AbnormalDataPage> {
     eventBus2 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
       if (mounted) {
         setState(() {
-          myRespCheckSerialPort = event.obj;
-          if (myRespCheckSerialPort.msgBody == 'ok') {
+          myFactoryInfoFromScale = event.obj;
+          if (myFactoryInfoFromScale.modelName != '') {
             myScreenMgr.serialPortST = true;
           } else {
             myScreenMgr.serialPortST = false;

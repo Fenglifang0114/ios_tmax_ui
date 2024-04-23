@@ -5,11 +5,9 @@ import 'package:t_max/data/license_data.dart';
 import 'package:t_max/data/scale_info_from_scale.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/pages/dow_prn_fmt_page.dart';
-import 'package:t_max/pages/labeldesign_page.dart';
 import '../data/comscaleinfo_data.dart';
 import '../data/currentport_data.dart';
 import '../data/device_data.dart';
-import '../data/downloadresponse.dart';
 import '../data/screen_mgr.dart';
 import '../data/setting_version_info.dart';
 import '../dialog/get_build_info_dialog.dart';
@@ -24,7 +22,6 @@ import '../dialog/license_info.dart';
 import '../widget/update_firmware.dart';
 import '../widget/version.dart';
 import 'cable_ip_settig_page.dart';
-import 'custom_serial_protocol_page.dart';
 import 'header_footer_page.dart';
 import 'modify_com_port_page.dart';
 import 'product_download_page.dart';
@@ -49,7 +46,6 @@ class _RetailHomePageState extends State<RetailHomePage> {
   dynamic _eventbus3;
   dynamic _eventbus4;
 
-  bool isComConnected = false;
   Timer? _timer;
   bool isTiming = false;
 
@@ -112,21 +108,20 @@ class _RetailHomePageState extends State<RetailHomePage> {
     _eventbus3 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
       if (mounted) {
         setState(() {
-          myRespCheckSerialPort = event.obj;
-          if (myRespCheckSerialPort.msgBody == 'ok') {
-            isComConnected = true;
-            PublicFunctions.getScaleInfo();
+          myFactoryInfoFromScale = event.obj;
+          if (myFactoryInfoFromScale.modelName != '') {
+            myScreenMgr.serialPortST = true;
           } else {
-            isComConnected = false;
+            myScreenMgr.serialPortST = false;
           }
         });
       }
     });
 
-    _eventbus4 = eventBus.on<EventGetScaleInfo>().listen((event) {
+    _eventbus4 = eventBus.on<EventGetFactoryInfo>().listen((event) {
       if (mounted) {
         setState(() {
-          myScaleInfoFromScale = event.obj;
+          myFactoryInfoFromScale = event.obj;
         });
       }
     });
@@ -232,7 +227,7 @@ class _RetailHomePageState extends State<RetailHomePage> {
                           const SizedBox(
                             width: 20,
                           ),
-                          (isComConnected)
+                          (myScreenMgr.serialPortST)
                               ? const CustomCircleIcon(
                                   outerColor: Colors.blue,
                                   innerColor: Colors.white,
@@ -384,7 +379,7 @@ class _RetailHomePageState extends State<RetailHomePage> {
               ),
               Expanded(
                 child: ListView(children: [
-                  (myScaleInfoFromScale.modelName != null)
+                  (myFactoryInfoFromScale.modelName != null)
                       ? SizedBox(
                           height: 80,
                           child: Column(
@@ -412,7 +407,7 @@ class _RetailHomePageState extends State<RetailHomePage> {
                                     ),
                                     Flexible(
                                       child: Text(
-                                        myScaleInfoFromScale.modelName!,
+                                        myFactoryInfoFromScale.modelName!,
                                         maxLines: 1,
                                         textAlign: TextAlign.start,
                                         style: const TextStyle(
@@ -444,7 +439,7 @@ class _RetailHomePageState extends State<RetailHomePage> {
                                     ),
                                     Flexible(
                                       child: Text(
-                                        myScaleInfoFromScale.scaleSn!,
+                                        myFactoryInfoFromScale.scaleSn!,
                                         maxLines: 1,
                                         textAlign: TextAlign.start,
                                         style: const TextStyle(
