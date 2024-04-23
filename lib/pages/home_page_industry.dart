@@ -9,7 +9,6 @@ import 'package:t_max/pages/labeldesign_page.dart';
 import '../data/comscaleinfo_data.dart';
 import '../data/currentport_data.dart';
 import '../data/device_data.dart';
-import '../data/downloadresponse.dart';
 import '../data/screen_mgr.dart';
 import '../data/setting_version_info.dart';
 import '../dialog/get_build_info_dialog.dart';
@@ -41,7 +40,7 @@ class IndustryHomePageState extends State<IndustryHomePage> {
   List<String> items = [];
   TextEditingController weightController = TextEditingController();
   TextEditingController repsController = TextEditingController();
-  TextEditingController _scaleNameCtl = TextEditingController();
+  // TextEditingController _scaleNameCtl = TextEditingController();
 
   late ScrollController _pageScrollerController;
   dynamic _eventbus1;

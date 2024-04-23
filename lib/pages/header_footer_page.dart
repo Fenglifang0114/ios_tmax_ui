@@ -121,6 +121,7 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
   @override
   void dispose() {
     _eventbus1.cancel();
+    _eventbus2.cancel();
 
     super.dispose();
   }
