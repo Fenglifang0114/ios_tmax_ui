@@ -98,6 +98,7 @@ class CableIpSettingPageState extends State<CableIpSettingPage> {
   @override
   void dispose() {
     _eventbus1.cancel();
+    _eventbus2.cancel();
 
     super.dispose();
   }

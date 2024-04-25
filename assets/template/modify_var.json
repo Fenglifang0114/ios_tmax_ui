@@ -1,0 +1,58 @@
+{
+    "Print_var": [         
+        {
+            "valuename": "Header1",
+            "id": 31,
+            "comment": "Header1",
+			"maxLen": 30
+        },
+        {
+            "valuename": "Header2",
+            "id": 32,
+            "comment": "Header2",
+			"maxLen": 30
+        },
+        {
+            "valuename": "Header3",
+            "id": 33,
+            "comment": "Header3",
+			"maxLen": 30
+        },
+        {
+            "valuename": "Footer1",
+            "id": 34,
+            "comment": "Footer1",
+			"maxLen": 30
+        },
+        {
+            "valuename": "Footer2",
+            "id": 35,
+            "comment": "Footer2",
+			"maxLen": 30
+        },
+        {
+            "valuename": "Footer3",
+            "id": 36,
+            "comment": "Footer3",
+			"maxLen": 30
+        },        
+		{
+            "valuename": "Operator1",
+            "id": 256,
+            "comment": "Operator1",
+			"maxLen": 20
+        },
+		{
+            "valuename": "Operator2",
+            "id": 257,
+            "comment": "Operator2",
+			"maxLen": 20
+        },
+        {
+            "valuename": "Operator3",
+            "id": 258,
+            "comment": "Operator3",
+			"maxLen": 20
+        }
+    ]
+}

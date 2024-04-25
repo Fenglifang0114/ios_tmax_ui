@@ -15,16 +15,16 @@ import '../generated/l10n.dart';
 import '../main.dart';
 import '../widget/page_head.dart';
 
-class DownloadPage extends StatefulWidget {
-  const DownloadPage({super.key});
+class DownloadLabelPage extends StatefulWidget {
+  const DownloadLabelPage({super.key});
 
   @override
-  State<DownloadPage> createState() => _DownloadPageState();
+  State<DownloadLabelPage> createState() => _DownloadPageState();
 }
 
 // late int connectionType;
 
-class _DownloadPageState extends State<DownloadPage> {
+class _DownloadPageState extends State<DownloadLabelPage> {
   List<String> items = [];
   List<String> paths = [];
   List<String> printFormatSequence = [];
@@ -137,10 +137,10 @@ class _DownloadPageState extends State<DownloadPage> {
                       mainAxisAlignment:
                           MainAxisAlignment.center, // 设置主轴对齐方式为居中
                       children: [
-                        const SizedBox(
+                        SizedBox(
                           width: 150,
                           child: Text(
-                            'format1',
+                            localizedStrings.weight_mode_format,
                             textAlign: TextAlign.right,
                           ),
                         ),
@@ -193,10 +193,10 @@ class _DownloadPageState extends State<DownloadPage> {
                       mainAxisAlignment:
                           MainAxisAlignment.center, // 设置主轴对齐方式为居中
                       children: [
-                        const SizedBox(
+                        SizedBox(
                           width: 150,
                           child: Text(
-                            'format2',
+                            localizedStrings.acc_mode_format,
                             textAlign: TextAlign.right,
                           ),
                         ),
@@ -248,10 +248,10 @@ class _DownloadPageState extends State<DownloadPage> {
                       mainAxisAlignment:
                           MainAxisAlignment.center, // 设置主轴对齐方式为居中
                       children: [
-                        const SizedBox(
+                        SizedBox(
                           width: 150,
                           child: Text(
-                            'format3',
+                            localizedStrings.pcs_mode_format,
                             textAlign: TextAlign.right,
                           ),
                         ),
@@ -303,10 +303,10 @@ class _DownloadPageState extends State<DownloadPage> {
                       mainAxisAlignment:
                           MainAxisAlignment.center, // 设置主轴对齐方式为居中
                       children: [
-                        const SizedBox(
+                        SizedBox(
                           width: 150,
                           child: Text(
-                            'Copy format',
+                            localizedStrings.pct_mode_format,
                             textAlign: TextAlign.right,
                           ),
                         ),
@@ -521,8 +521,8 @@ class _DownloadPageState extends State<DownloadPage> {
     }
     if (paths.isNotEmpty) {
       myDownLoadPrtFmt.scaleModel = 'TMax';
-      // myDownLoadPrtFmt.printerModel = 'EPM205';
-      myDownLoadPrtFmt.printerModel = 'ESP/POS';
+      myDownLoadPrtFmt.printerModel = 'EPM205';
+      // myDownLoadPrtFmt.printerModel = 'ESP/POS';
       myDownLoadPrtFmt.filePaths = paths;
 
       myScaleCmd.cmdData = json.encode(myDownLoadPrtFmt);

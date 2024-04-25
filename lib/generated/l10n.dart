@@ -1930,11 +1930,11 @@ class S {
     );
   }
 
-  /// `Header And Footer Setting`
-  String get header_footer_setting_title {
+  /// `Variable Value Setting`
+  String get variable_value_setting_title {
     return Intl.message(
-      'Header And Footer Setting',
-      name: 'header_footer_setting_title',
+      'Variable Value Setting',
+      name: 'variable_value_setting_title',
       desc: '',
       args: [],
     );
@@ -1995,6 +1995,16 @@ class S {
     return Intl.message(
       'Please confirm the format is saved.',
       name: 'fmt_confirm_info',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Receipt Format Download`
+  String get receipt_format_download {
+    return Intl.message(
+      'Receipt Format Download',
+      name: 'receipt_format_download',
       desc: '',
       args: [],
     );

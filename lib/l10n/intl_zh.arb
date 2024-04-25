@@ -187,13 +187,14 @@
     "batch_delivery_title":"批量下发",
     "parameter_set_title":"参数设置",
     "save_as":"另存为",
-    "header_footer_setting_title":"页眉页脚设置" ,
+    "variable_value_setting_title":"变量值设置",
     "header_confirm_info":"请确认输入信息."  ,
     "server_ip":"服务器 Ip:",
     "server_port":"服务器端口号:" ,
     "error_ip_tip":"错误的地址格式! 例如： xxx.xxx.xxx.xxx",
     "set_ethernet_ip_title":"有线网络设置",
-    "fmt_confirm_info":"请确认打印格式已保存."
+    "fmt_confirm_info":"请确认打印格式已保存.",
+    "receipt_format_download":"票据打印格式下发"
     
   }
   

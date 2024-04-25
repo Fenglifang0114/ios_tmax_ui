@@ -337,9 +337,9 @@ class EventModifyEepromInfoResp {
   EventModifyEepromInfoResp(this.obj);
 }
 
-class EventModifyHeaderFooterResp {
+class EventModifyVarValueResp {
   dynamic obj;
-  EventModifyHeaderFooterResp(this.obj);
+  EventModifyVarValueResp(this.obj);
 }
 
 class EventSetServerIPResp {

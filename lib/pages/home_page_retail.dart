@@ -640,7 +640,7 @@ class _RetailHomePageState extends State<RetailHomePage> {
                           ).then((value) => _updateStatus());
                         },
                         child: customFunctionCard(
-                            localizedStrings.print_format_download,
+                            localizedStrings.receipt_format_download,
                             "assets/images/line.png",
                             Icons.receipt_long_outlined,
                             true),
@@ -665,9 +665,9 @@ class _RetailHomePageState extends State<RetailHomePage> {
                             });
                           },
                           child: customFunctionCard(
-                              'Header And Footer Setting',
+                              localizedStrings.variable_value_setting_title,
                               "assets/images/line.png",
-                              Icons.view_headline,
+                              Icons.edit_attributes_outlined,
                               true),
                         )),
                     MouseRegion(

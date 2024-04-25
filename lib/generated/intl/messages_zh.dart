@@ -104,8 +104,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "get_bt_name": MessageLookupByLibrary.simpleMessage("获取名称"),
         "get_build_info": MessageLookupByLibrary.simpleMessage("软件信息"),
         "header_confirm_info": MessageLookupByLibrary.simpleMessage("请确认输入信息."),
-        "header_footer_setting_title":
-            MessageLookupByLibrary.simpleMessage("页眉页脚设置"),
         "hr_alignment": MessageLookupByLibrary.simpleMessage("文字对齐方式"),
         "ip_address": MessageLookupByLibrary.simpleMessage("IP地址:"),
         "label_design_title": MessageLookupByLibrary.simpleMessage("标签设置"),
@@ -151,6 +149,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "printer": MessageLookupByLibrary.simpleMessage("打印机："),
         "product_information": MessageLookupByLibrary.simpleMessage("产品信息"),
         "qrcode_edit": MessageLookupByLibrary.simpleMessage("二维码编辑"),
+        "receipt_format_download":
+            MessageLookupByLibrary.simpleMessage("票据打印格式下发"),
         "refresh_port": MessageLookupByLibrary.simpleMessage("刷新串口"),
         "refresh_tip": MessageLookupByLibrary.simpleMessage("刷新"),
         "report_delete_btn": MessageLookupByLibrary.simpleMessage("删除所有"),
@@ -233,6 +233,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "user_phone": MessageLookupByLibrary.simpleMessage("电话:"),
         "user_remarks": MessageLookupByLibrary.simpleMessage("用户备注："),
         "user_sex": MessageLookupByLibrary.simpleMessage("性别："),
+        "variable_value_setting_title":
+            MessageLookupByLibrary.simpleMessage("变量值设置"),
         "weighing_title": MessageLookupByLibrary.simpleMessage("称重"),
         "weight_collection_title":
             MessageLookupByLibrary.simpleMessage("重量数据收集"),

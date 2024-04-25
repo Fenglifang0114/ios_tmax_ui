@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:t_max/data/receipt_item.dart';
 import '../../data/selectedcontrol.dart';
-import '../../data/text.dart';
 import '../../eventbus/eventbus.dart';
 import 'line_painter.dart';
 import 'package:barcode_widget/barcode_widget.dart';

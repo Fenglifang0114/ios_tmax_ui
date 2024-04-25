@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../data/downloadresponse.dart';
 import '../data/scale_info_from_scale.dart';
 import '../data/screen_mgr.dart';
 import '../data/setting_version_info.dart';

@@ -65,7 +65,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   String type = '';
   int xPos = 0;
   int yPos = 0;
-  int width = 0;
+  int width = 20;
   int height = 50;
   int fontSize = 23;
   int fontWidthRatio = 1;
@@ -1803,12 +1803,10 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         } else {
           varalignment = 3;
         }
-
         barcodedata.write(
             'DATA,${con[i].type},${con[i].defaultvalue},$varalignment,${con[i].maxlength}');
       }
     }
-
     return barcodedata.toString();
   }
 
@@ -1836,7 +1834,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
             'DATA,${item['type']},${item['defaultvalue']},$varalignment,${item['maxlength']}');
       }
     }
-
     return barcodedata.toString();
   }
 
@@ -1878,16 +1875,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
               num.add(count);
               myTextData.tabOrder = count;
               addfloatbutton(name);
-
-              //原代码20230818
-              // if (name != 'Line,Line') {
-              //   count++;
-              //   num.add(count);
-              //   myTextData.tabOrder = count;
-              //   addfloatbutton(name);
-              // } else {
-              //   _createLine();
-              // }
             },
             child: Text(
               //左侧按钮文本的颜色
@@ -1900,14 +1887,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           )),
     );
   }
-
-  // void _createLine() {
-  //   const start = Offset(10, 100);
-  //   const end = Offset(100, 100);
-  //   setState(() {
-  //     _lineList.add(Line(start, end));
-  //   });
-  // }
 
   void _onUpdate(int i) {
     textItemList.fillRange(

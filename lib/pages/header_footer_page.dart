@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,19 +22,19 @@ class HeaderFooterPage extends StatefulWidget {
 }
 
 class HeaderFooterPageState extends State<HeaderFooterPage> {
-  TextEditingController header1Ctl = TextEditingController();
-  TextEditingController header2Ctl = TextEditingController();
-  TextEditingController header3Ctl = TextEditingController();
-  TextEditingController footer1Ctl = TextEditingController();
-  TextEditingController footer2Ctl = TextEditingController();
-  TextEditingController footer3Ctl = TextEditingController();
+  TextEditingController header1Ctl = TextEditingController(text: '');
+  TextEditingController header2Ctl = TextEditingController(text: '');
+  TextEditingController header3Ctl = TextEditingController(text: '');
+  TextEditingController footer1Ctl = TextEditingController(text: '');
+  TextEditingController footer2Ctl = TextEditingController(text: '');
+  TextEditingController footer3Ctl = TextEditingController(text: '');
 
-  TextEditingController operator1Ctl = TextEditingController();
-  TextEditingController operator2Ctl = TextEditingController();
-  TextEditingController operator3Ctl = TextEditingController();
-  TextEditingController operator4Ctl = TextEditingController();
+  TextEditingController operator1Ctl = TextEditingController(text: '');
+  TextEditingController operator2Ctl = TextEditingController(text: '');
+  TextEditingController operator3Ctl = TextEditingController(text: '');
+  TextEditingController operator4Ctl = TextEditingController(text: '');
 
-  List<TextEditingController> listCtls = [];
+  Map<String, TextEditingController> titleMap = {};
 
   bool isDownloadClicked = false;
 
@@ -50,29 +51,18 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
 
   @override
   void initState() {
-    header1Ctl.text = "";
-    header2Ctl.text = "";
-    header3Ctl.text = "";
-    footer1Ctl.text = "";
-    footer2Ctl.text = "";
-    footer3Ctl.text = "";
+    titleMap = {
+      'Header1': header1Ctl,
+      'Header2': header2Ctl,
+      'Header3': header3Ctl,
+      'Footer1': footer1Ctl,
+      'Footer2': footer2Ctl,
+      'Footer3': footer3Ctl,
+      'Operator1': operator1Ctl,
+      'Operator2': operator2Ctl,
+      'Operator3': operator3Ctl,
+    };
 
-    operator1Ctl.text = "";
-    operator2Ctl.text = "";
-    operator3Ctl.text = "";
-    operator4Ctl.text = "";
-
-    listCtls.add(header1Ctl);
-    listCtls.add(header2Ctl);
-    listCtls.add(header3Ctl);
-    listCtls.add(footer1Ctl);
-    listCtls.add(footer2Ctl);
-    listCtls.add(footer3Ctl);
-
-    listCtls.add(operator1Ctl);
-    listCtls.add(operator2Ctl);
-    listCtls.add(operator3Ctl);
-    listCtls.add(operator4Ctl);
     cntScaleTimerMgr.startCntScaleTimer(1);
     _eventbus1 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
       if (mounted) {
@@ -87,7 +77,7 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
       }
     });
 
-    _eventbus2 = eventBus.on<EventModifyHeaderFooterResp>().listen((event) {
+    _eventbus2 = eventBus.on<EventModifyVarValueResp>().listen((event) {
       if (mounted) {
         setState(() {
           isDownloadClicked = false;
@@ -133,7 +123,7 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),
-        child: pageHead(context, localizedStrings.header_footer_setting_title,
+        child: pageHead(context, localizedStrings.variable_value_setting_title,
             localizedStrings.serial_port_status),
       ),
 
@@ -488,7 +478,7 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
     ).then((confirmed) {
       if (confirmed) {
         getJsonString();
-        myScaleCmd.cmdMode = 'modify_header_footer';
+        myScaleCmd.cmdMode = 'modify_var_value';
         myScaleCmd.cmdData = json.encode(myHeaderFooterList);
         MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
         setState(() {
@@ -499,14 +489,63 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
     });
   }
 
+  List<MyvariableData> getVariableList() {
+    File file = File('assets/template/modify_var.json');
+    String jsonString = file.readAsStringSync();
+    Map<String, dynamic> jsonData = json.decode(jsonString);
+
+    var data = jsonData['Print_var'] as List;
+    List<MyvariableData> dataList =
+        data.map((e) => MyvariableData.fromJson(e)).toList();
+    return dataList;
+  }
+
+  int? getVarId(String varName, List<MyvariableData> varList) {
+    int? id = varList
+        .where((data) => data.valuename == varName)
+        .map((data) => data.id)
+        .first;
+    return id;
+  }
+
+  String searchValue = 'Footer3';
+
+  // 查找值为'Footer3'的id值
+
   void getJsonString() {
     myHeaderFooterList.listData.clear();
-    for (int i = 0; i < 9; i++) {
-      String headerText = listCtls[i].text;
-      if (headerText.isNotEmpty && headerText != "") {
-        HeaderFooterData tmpHeader = HeaderFooterData(i + 1, headerText);
-        myHeaderFooterList.listData.add(tmpHeader);
+    List<MyvariableData> varList = getVariableList();
+
+    titleMap.forEach((key, value) {
+      if (value.text != '') {
+        var id = getVarId(key, varList);
+        if (id != null) {
+          HeaderFooterData tmpHeader = HeaderFooterData(id, value.text);
+          myHeaderFooterList.listData.add(tmpHeader);
+        }
       }
-    }
+    });
+  }
+}
+
+class MyvariableData {
+  final String valuename;
+  final int id;
+  final String comment;
+  final int maxLen;
+
+  MyvariableData(
+      {required this.valuename,
+      required this.id,
+      required this.comment,
+      required this.maxLen});
+
+  factory MyvariableData.fromJson(Map<String, dynamic> json) {
+    return MyvariableData(
+      valuename: json['valuename'],
+      id: json['id'],
+      comment: json['comment'],
+      maxLen: json['maxLen'],
+    );
   }
 }

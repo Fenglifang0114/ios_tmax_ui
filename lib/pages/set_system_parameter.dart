@@ -171,7 +171,7 @@ class SetParameterPageState extends State<SetParameterPage> {
   @override
   Widget build(BuildContext context) {
     localizedStrings = S.of(context);
-    final _width = MediaQuery.of(context).size.width;
+    // final _width = MediaQuery.of(context).size.width;
     final _height = MediaQuery.of(context).size.height;
     return Scaffold(
       body: Container(

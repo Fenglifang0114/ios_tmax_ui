@@ -7,7 +7,7 @@ import '../pages/home_page_retail.dart';
 const int tConfig = 1;
 const int tIndustry = 2;
 const int tRetail = 3;
-int mySystemVersion = tConfig;
+int mySystemVersion = tRetail;
 
 class SystemVersionInfo {
   Widget getHomePage(int mySystemVersion) {

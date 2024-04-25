@@ -27,6 +27,7 @@ import '../widget/version.dart';
 import 'abnormal_data_page.dart';
 import 'batch_delivery.dart';
 import 'custom_serial_protocol_page.dart';
+import 'lable_down_prn_fmt_page.dart';
 import 'modify_com_port_page.dart';
 import 'set_system_parameter.dart';
 import 'set_system_time.dart';
@@ -654,13 +655,14 @@ class _HomePageState extends State<HomePage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const DownloadPage()),
+                                builder: (context) =>
+                                    const DownloadLabelPage()),
                           ).then((value) => _updateStatus());
                         },
                         child: customFunctionCard(
                             localizedStrings.print_format_download,
                             "assets/images/line.png",
-                            Icons.receipt_long_outlined,
+                            Icons.pages,
                             true),
                       ),
                     ),

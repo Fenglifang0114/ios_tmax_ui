@@ -67,7 +67,7 @@ class RespMsgType {
   static const String respGetAllEepromData = 'resp_get_all_eeprom_info';
   static const String respGetOneEepromData = 'resp_get_one_eeprom_info';
   static const String respModifyEepromInfo = 'resp_modify_eeprom_info';
-  static const String respModifyHeaderFooter = 'resp_header_footer';
+  static const String respModifyVarValue = 'resp_modify_var_value';
   static const String respSetServerIP = 'resp_set_server_ip';
   static const String respGetFactoryInfo = 'resp_get_factory_info';
 
@@ -109,7 +109,7 @@ class RespMsgType {
     RespMsgType.respGetAllEepromData: handleRespGetAllEepromData,
     RespMsgType.respGetOneEepromData: handleRespGetOneEepromData,
     RespMsgType.respModifyEepromInfo: handleRespModifyEepromInfo,
-    RespMsgType.respModifyHeaderFooter: handleRespModifyHeaderFooter,
+    RespMsgType.respModifyVarValue: handleRespModifyVarValue,
     RespMsgType.respSetServerIP: handleRespSetServerIp,
     RespMsgType.respGetFactoryInfo: handleRespGetfactoryInfo,
   };
@@ -163,9 +163,9 @@ class RespMsgType {
     eventBus.fire(EventModifyEepromInfoResp(mobj));
   }
 
-  static void handleRespModifyHeaderFooter(dynamic data) {
+  static void handleRespModifyVarValue(dynamic data) {
     dynamic mobj = ChannelResponse.fromJson(data);
-    eventBus.fire(EventModifyHeaderFooterResp(mobj));
+    eventBus.fire(EventModifyVarValueResp(mobj));
   }
 
   static void handleRespSetServerIp(dynamic data) {

@@ -128,8 +128,6 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Software Information"),
         "header_confirm_info": MessageLookupByLibrary.simpleMessage(
             "Please confirm the information."),
-        "header_footer_setting_title":
-            MessageLookupByLibrary.simpleMessage("Header And Footer Setting"),
         "hr_alignment": MessageLookupByLibrary.simpleMessage("HRI Alignment:"),
         "ip_address": MessageLookupByLibrary.simpleMessage("IPv4:"),
         "label_design_title":
@@ -191,6 +189,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "product_information":
             MessageLookupByLibrary.simpleMessage("Product Information"),
         "qrcode_edit": MessageLookupByLibrary.simpleMessage("Qrcode Edit"),
+        "receipt_format_download":
+            MessageLookupByLibrary.simpleMessage("Receipt Format Download"),
         "refresh_port": MessageLookupByLibrary.simpleMessage("Refresh port"),
         "refresh_tip": MessageLookupByLibrary.simpleMessage("Refresh"),
         "report_delete_btn": MessageLookupByLibrary.simpleMessage("Delete All"),
@@ -296,6 +296,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "user_phone": MessageLookupByLibrary.simpleMessage("Phone:"),
         "user_remarks": MessageLookupByLibrary.simpleMessage("User Notes:"),
         "user_sex": MessageLookupByLibrary.simpleMessage("Gender:"),
+        "variable_value_setting_title":
+            MessageLookupByLibrary.simpleMessage("Variable Value Setting"),
         "weighing_title": MessageLookupByLibrary.simpleMessage("Weighing"),
         "weight_collection_title":
             MessageLookupByLibrary.simpleMessage("Weight Data Collection"),

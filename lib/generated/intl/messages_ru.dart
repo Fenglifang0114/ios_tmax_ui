@@ -130,8 +130,6 @@ class MessageLookup extends MessageLookupByLibrary {
             "Информация о программном обеспечении"),
         "header_confirm_info": MessageLookupByLibrary.simpleMessage(
             "Please confirm the information."),
-        "header_footer_setting_title":
-            MessageLookupByLibrary.simpleMessage("Header And Footer Setting"),
         "hr_alignment": MessageLookupByLibrary.simpleMessage(
             "Выравнивание горизонтальной черты:"),
         "ip_address": MessageLookupByLibrary.simpleMessage("IPv4:"),
@@ -199,6 +197,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Информация о продукте"),
         "qrcode_edit":
             MessageLookupByLibrary.simpleMessage("Редактирование QR-кода"),
+        "receipt_format_download":
+            MessageLookupByLibrary.simpleMessage("Receipt Format Download"),
         "refresh_port": MessageLookupByLibrary.simpleMessage("Обновить порт"),
         "refresh_tip": MessageLookupByLibrary.simpleMessage("Обновить"),
         "report_delete_btn": MessageLookupByLibrary.simpleMessage("Delete All"),
@@ -307,6 +307,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "user_remarks":
             MessageLookupByLibrary.simpleMessage("Примечания пользователя:"),
         "user_sex": MessageLookupByLibrary.simpleMessage("Пол:"),
+        "variable_value_setting_title":
+            MessageLookupByLibrary.simpleMessage("Variable Value Setting"),
         "weighing_title": MessageLookupByLibrary.simpleMessage("Weighing"),
         "weight_collection_title":
             MessageLookupByLibrary.simpleMessage("Weight Data Collection"),

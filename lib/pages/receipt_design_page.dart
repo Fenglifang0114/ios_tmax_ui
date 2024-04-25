@@ -132,7 +132,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
   String fontReverse = 'false';
   List<dynamic> varcontent = [];
   Offset _offset = const Offset(0, 0);
-  bool _isDragging = false;
+  // bool _isDragging = false;
 
   TextEditingController textvariable = TextEditingController();
   TextEditingController fontsizevar = TextEditingController();
