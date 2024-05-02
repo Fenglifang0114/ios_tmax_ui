@@ -1723,11 +1723,21 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
 
   void _saveFormatToCsv(String csv, String path) async {
     final file = File(path);
-    //后台做了转GB2312的操作，此处不做转换。
-    // var gb2312Bytes = stringToGb2312Bytes(csv);
-    // var resultList = convertList(gb2312Bytes);
-    // file.writeAsBytesSync(resultList, mode: FileMode.write);
+    csv = encryptCsv(csv);
     await file.writeAsString(csv, mode: FileMode.write, encoding: utf8);
+  }
+
+  String encryptCsv(String csv) {
+    List<int> encryptedBytes = [];
+    List<int> utf8Bytes = utf8.encode(csv);
+
+    for (int byte in utf8Bytes) {
+      int encryptedByte1 = (byte >> 4) + 3; // 取高4位加密
+      int encryptedByte2 = (byte & 0x0F) + 3; // 取低4位加密
+      encryptedBytes.addAll([encryptedByte1, encryptedByte2]);
+    }
+
+    return String.fromCharCodes(encryptedBytes);
   }
 
   // void _saveFormatToCsv(String csv) async {

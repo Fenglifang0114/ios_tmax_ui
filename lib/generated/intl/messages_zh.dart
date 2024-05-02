@@ -75,14 +75,14 @@ class MessageLookup extends MessageLookupByLibrary {
         "contact_us":
             MessageLookupByLibrary.simpleMessage("联系我们:sales@taiwanscale.com"),
         "customization_setting_title":
-            MessageLookupByLibrary.simpleMessage("自定义设置"),
+            MessageLookupByLibrary.simpleMessage("APP"),
         "data_bits": MessageLookupByLibrary.simpleMessage("数据位："),
         "data_delete_confirm":
             MessageLookupByLibrary.simpleMessage("是否删除所有数据?"),
         "date_format": MessageLookupByLibrary.simpleMessage("日期格式"),
         "device_connection_title": MessageLookupByLibrary.simpleMessage("设备连接"),
         "device_name": MessageLookupByLibrary.simpleMessage("设备名称："),
-        "device_setting_title": MessageLookupByLibrary.simpleMessage("设备设置"),
+        "device_setting_title": MessageLookupByLibrary.simpleMessage("设备配置"),
         "device_time_title": MessageLookupByLibrary.simpleMessage("设备时间"),
         "download": MessageLookupByLibrary.simpleMessage("下载"),
         "download_result_fail": MessageLookupByLibrary.simpleMessage("下发失败!"),

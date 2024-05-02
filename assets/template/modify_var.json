@@ -53,6 +53,12 @@
             "id": 258,
             "comment": "Operator3",
 			"maxLen": 20
+        },
+        {
+            "valuename": "Operator4",
+            "id": 259,
+            "comment": "Operator4",
+			"maxLen": 20
         }
     ]
 }

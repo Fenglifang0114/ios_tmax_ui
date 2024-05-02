@@ -1370,10 +1370,10 @@ class S {
     );
   }
 
-  /// `Device Setting`
+  /// `Device Configuration`
   String get device_setting_title {
     return Intl.message(
-      'Device Setting',
+      'Device Configuration',
       name: 'device_setting_title',
       desc: '',
       args: [],
@@ -1400,10 +1400,10 @@ class S {
     );
   }
 
-  /// `Customization Setting`
+  /// `Applications`
   String get customization_setting_title {
     return Intl.message(
-      'Customization Setting',
+      'Applications',
       name: 'customization_setting_title',
       desc: '',
       args: [],

@@ -299,58 +299,58 @@ class _DownloadPageState extends State<DownloadPage> {
                     const SizedBox(
                       height: 30,
                     ),
-                    Row(
-                      mainAxisAlignment:
-                          MainAxisAlignment.center, // 设置主轴对齐方式为居中
-                      children: [
-                        const SizedBox(
-                          width: 150,
-                          child: Text(
-                            'Copy format',
-                            textAlign: TextAlign.right,
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        SizedBox(
-                          width: 400,
-                          child: TextField(
-                            controller: pctModeController,
-                            readOnly: true,
-                            maxLines: 2,
-                            minLines: 1,
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20)),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 50,
-                        ),
-                        SizedBox(
-                          width: 150,
-                          height: 40,
-                          child: OutlinedButton(
-                            style: ButtonStyle(
-                              shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                              ),
-                            ),
-                            onPressed: () async {
-                              pctModeController.text = '';
-                              pickFiles(pctModeController);
-                            },
-                            child: Text(localizedStrings.button_select_format),
-                          ),
-                        ),
-                      ],
-                    ),
+                    // Row(
+                    //   mainAxisAlignment:
+                    //       MainAxisAlignment.center, // 设置主轴对齐方式为居中
+                    //   children: [
+                    //     const SizedBox(
+                    //       width: 150,
+                    //       child: Text(
+                    //         'Copy format',
+                    //         textAlign: TextAlign.right,
+                    //       ),
+                    //     ),
+                    //     const SizedBox(
+                    //       width: 20,
+                    //     ),
+                    //     SizedBox(
+                    //       width: 400,
+                    //       child: TextField(
+                    //         controller: pctModeController,
+                    //         readOnly: true,
+                    //         maxLines: 2,
+                    //         minLines: 1,
+                    //         decoration: const InputDecoration(
+                    //           border: OutlineInputBorder(
+                    //             borderRadius:
+                    //                 BorderRadius.all(Radius.circular(20)),
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     ),
+                    //     const SizedBox(
+                    //       width: 50,
+                    //     ),
+                    //     SizedBox(
+                    //       width: 150,
+                    //       height: 40,
+                    //       child: OutlinedButton(
+                    //         style: ButtonStyle(
+                    //           shape: MaterialStateProperty.all(
+                    //             RoundedRectangleBorder(
+                    //               borderRadius: BorderRadius.circular(6),
+                    //             ),
+                    //           ),
+                    //         ),
+                    //         onPressed: () async {
+                    //           pctModeController.text = '';
+                    //           pickFiles(pctModeController);
+                    //         },
+                    //         child: Text(localizedStrings.button_select_format),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
                   ],
                 ),
               ),

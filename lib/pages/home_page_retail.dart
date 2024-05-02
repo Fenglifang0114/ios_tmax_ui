@@ -273,7 +273,6 @@ class _RetailHomePageState extends State<RetailHomePage> {
                   children: [
                     firstCard(),
                     secondCard(),
-                    thirdCard(),
                   ],
                 ),
               ),
@@ -319,8 +318,8 @@ class _RetailHomePageState extends State<RetailHomePage> {
     );
   }
 
-  Widget customFunctionCard(
-      String titleName, String iconImage, IconData iconInfo, bool isValid) {
+  Widget customFunctionCard(String titleName, String iconImage,
+      IconData iconInfo, bool isValid, String explanation) {
     return Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
@@ -329,35 +328,117 @@ class _RetailHomePageState extends State<RetailHomePage> {
             ? Theme.of(context).colorScheme.onPrimary
             : Theme.of(context).colorScheme.background,
         child: SizedBox(
-            height: 80,
-            child: Row(
-              children: [
-                Image.asset(
-                  iconImage,
-                  width: 30,
-                  height: 30,
+          height: 100,
+          child: Row(
+            children: [
+              SizedBox(
+                child: Container(
+                  child: (Row(
+                    children: [
+                      Image.asset(
+                        iconImage,
+                        width: 30,
+                        height: 30,
+                      ),
+                      ShaderMask(
+                        shaderCallback: (bounds) {
+                          return lineGradient().createShader(bounds);
+                        },
+                        child: Icon(
+                          size: 30,
+                          iconInfo,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      )
+                    ],
+                  )),
                 ),
-                ShaderMask(
-                  shaderCallback: (bounds) {
-                    return lineGradient().createShader(bounds);
-                  },
-                  child: Icon(
-                    size: 30,
-                    iconInfo,
-                    color: Colors.white,
-                  ),
+              ),
+              Expanded(
+                child: Column(
+                  children: [
+                    Expanded(
+                      flex: 8, // 上下分割比例
+                      child: Align(
+                        alignment: Alignment.bottomLeft,
+                        child: Text(
+                          titleName,
+                          overflow: TextOverflow.visible,
+                          style: const TextStyle(fontSize: 18),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 5, // 上下分割比例
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          explanation,
+                          overflow: TextOverflow.visible,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(
-                  width: 5,
-                ),
-                Flexible(
-                  child: Text(
-                    titleName,
-                    overflow: TextOverflow.visible,
-                  ),
-                ),
-              ],
-            )));
+              ),
+            ],
+          ),
+        )
+
+        // SizedBox(
+        //     height: 100,
+        //     child: Row(
+        //       mainAxisAlignment: MainAxisAlignment.start,
+        //       children: [
+        //         Image.asset(
+        //           iconImage,
+        //           width: 30,
+        //           height: 30,
+        //         ),
+        //         ShaderMask(
+        //           shaderCallback: (bounds) {
+        //             return lineGradient().createShader(bounds);
+        //           },
+        //           child: Icon(
+        //             size: 30,
+        //             iconInfo,
+        //             color: Colors.white,
+        //           ),
+        //         ),
+        //         const SizedBox(
+        //           width: 5,
+        //         ),
+        //         SizedBox(
+        //           child: Column(
+        //             children: [
+        //               const SizedBox(
+        //                 height: 40,
+        //               ),
+        //               Align(
+        //                 alignment: Alignment.centerLeft,
+        //                 child: Text(
+        //                   titleName,
+        //                   overflow: TextOverflow.visible,
+        //                   style: const TextStyle(fontSize: 18),
+        //                 ),
+        //               ),
+        //               Align(
+        //                 alignment: Alignment.centerLeft,
+        //                 child: Text(
+        //                   explanation,
+        //                   overflow: TextOverflow.visible,
+        //                 ),
+        //               ),
+        //             ],
+        //           ),
+        //         )
+        //       ],
+        //     ))
+
+        );
   }
 
   Widget firstCard() {
@@ -375,7 +456,7 @@ class _RetailHomePageState extends State<RetailHomePage> {
                 padding: const EdgeInsets.symmetric(
                     vertical: 10.0, horizontal: 20.0),
                 child: functionTitle(
-                    localizedStrings.device_connection_title, Icons.link),
+                    localizedStrings.device_setting_title, Icons.settings),
               ),
               Expanded(
                 child: ListView(children: [
@@ -467,7 +548,62 @@ class _RetailHomePageState extends State<RetailHomePage> {
                           localizedStrings.title_serial_port_connection,
                           "assets/images/line.png",
                           Icons.cable,
-                          true),
+                          true,
+                          ''),
+                    ),
+                  ),
+                  MouseRegion(
+                      cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                      child: GestureDetector(
+                        onTap: () {
+                          //wifi页面
+
+                          setState(() {
+                            stopCheckSerialPort();
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const CableIpSettingPage(),
+                              ),
+                            ).then((value) => _updateStatus());
+                          });
+                        },
+                        child: customFunctionCard(
+                            localizedStrings.set_ethernet_ip_title,
+                            "assets/images/line.png",
+                            Icons.settings_ethernet,
+                            true,
+                            ''),
+                      )),
+                  MouseRegion(
+                    cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          stopCheckSerialPort();
+                          showUpdateFirmWareDialog(context);
+                        });
+                      },
+                      child: customFunctionCard(
+                          localizedStrings.update_firmware,
+                          "assets/images/line.png",
+                          Icons.update,
+                          true,
+                          ''),
+                    ),
+                  ),
+                  MouseRegion(
+                    cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          showBuildInfo();
+                        });
+                      },
+                      child: customFunctionCard(localizedStrings.get_build_info,
+                          "assets/images/line.png", Icons.info, true, ''),
                     ),
                   ),
                 ]),
@@ -477,137 +613,33 @@ class _RetailHomePageState extends State<RetailHomePage> {
     );
   }
 
+  // MouseRegion(
+  //     cursor: SystemMouseCursors.click, // 设置光标为手的形状
+  //     child: GestureDetector(
+  //       onTap: () {
+  //         //wifi页面
+  //         if (myScreenMgr.wifiOrBt.contains('wifi')) {
+  //           setState(() {
+  //             stopCheckSerialPort();
+  //             PublicFunctions.changeWifiMode();
+  //             Navigator.push(
+  //               context,
+  //               MaterialPageRoute(
+  //                 builder: (context) =>
+  //                     const WifiSettingPage(),
+  //               ),
+  //             ).then((value) => _updateStatus());
+  //           });
+  //         }
+  //       },
+  //       child: customFunctionCard(
+  //           localizedStrings.wifi_setting_title,
+  //           "assets/images/line.png",
+  //           Icons.wifi,
+  //           (myScreenMgr.wifiOrBt.contains('wifi'))),
+  //     )),
+
   Widget secondCard() {
-    return Expanded(
-      flex: 1,
-      child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15), // 根据实际需要设置圆角半径
-            color: Theme.of(context).colorScheme.tertiary,
-          ),
-          margin: const EdgeInsets.only(right: 20), // 根据实际需要设置容器间距
-          child: Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 10.0, horizontal: 20.0),
-                child: functionTitle(
-                    localizedStrings.device_setting_title, Icons.settings),
-              ),
-              Expanded(
-                child: ListView(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 10.0, horizontal: 20.0),
-                    children: [
-                      MouseRegion(
-                          cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                          child: GestureDetector(
-                            onTap: () {
-                              //wifi页面
-                              if (myScreenMgr.wifiOrBt.contains('wifi')) {
-                                setState(() {
-                                  stopCheckSerialPort();
-                                  PublicFunctions.changeWifiMode();
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          const WifiSettingPage(),
-                                    ),
-                                  ).then((value) => _updateStatus());
-                                });
-                              }
-                            },
-                            child: customFunctionCard(
-                                localizedStrings.wifi_setting_title,
-                                "assets/images/line.png",
-                                Icons.wifi,
-                                (myScreenMgr.wifiOrBt.contains('wifi'))),
-                          )),
-                      MouseRegion(
-                          cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                          child: GestureDetector(
-                            onTap: () {
-                              //wifi页面
-
-                              setState(() {
-                                stopCheckSerialPort();
-
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const CableIpSettingPage(),
-                                  ),
-                                ).then((value) => _updateStatus());
-                              });
-                            },
-                            child: customFunctionCard(
-                                localizedStrings.set_ethernet_ip_title,
-                                "assets/images/line.png",
-                                Icons.settings_ethernet,
-                                true),
-                          )),
-                      MouseRegion(
-                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              stopCheckSerialPort();
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ProductDownloadPage()),
-                              ).then((value) => _startTimer(5));
-                            });
-                          },
-                          child: customFunctionCard(
-                              "PLU Download",
-                              "assets/images/line.png",
-                              Icons.shopping_bag,
-                              true),
-                        ),
-                      ),
-                      MouseRegion(
-                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              stopCheckSerialPort();
-                              showUpdateFirmWareDialog(context);
-                            });
-                          },
-                          child: customFunctionCard(
-                              localizedStrings.update_firmware,
-                              "assets/images/line.png",
-                              Icons.update,
-                              true),
-                        ),
-                      ),
-                      MouseRegion(
-                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              showBuildInfo();
-                            });
-                          },
-                          child: customFunctionCard(
-                              localizedStrings.get_build_info,
-                              "assets/images/line.png",
-                              Icons.info,
-                              true),
-                        ),
-                      ),
-                    ]),
-              ),
-            ],
-          )),
-    );
-  }
-
-  Widget thirdCard() {
     return Expanded(
       flex: 1, // 设置一个容器的flex为2，在剩余空间中占用更多的比例
       child: Container(
@@ -621,13 +653,57 @@ class _RetailHomePageState extends State<RetailHomePage> {
               padding:
                   const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
               child: functionTitle(localizedStrings.customization_setting_title,
-                  Icons.design_services),
+                  Icons.app_registration),
             ),
             Expanded(
               child: ListView(
                   padding: const EdgeInsets.symmetric(
                       vertical: 10.0, horizontal: 20.0),
                   children: [
+                    MouseRegion(
+                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              stopCheckSerialPort();
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const HeaderFooterPage(),
+                                ),
+                              ).then((value) => _updateStatus());
+                            });
+                          },
+                          child: customFunctionCard(
+                              localizedStrings.variable_value_setting_title,
+                              "assets/images/line.png",
+                              Icons.edit_attributes_outlined,
+                              true,
+                              ':This application is used to distribute various variable information, such as headers and footers.'),
+                        )),
+                    MouseRegion(
+                      cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            stopCheckSerialPort();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ProductDownloadPage()),
+                            ).then((value) => _startTimer(5));
+                          });
+                        },
+                        child: customFunctionCard(
+                            "PLU Download",
+                            "assets/images/line.png",
+                            Icons.shopping_bag,
+                            true,
+                            ':This application is used to download product information.'),
+                      ),
+                    ),
                     MouseRegion(
                       cursor: SystemMouseCursors.click, // 设置光标为手的形状
                       child: GestureDetector(
@@ -643,33 +719,10 @@ class _RetailHomePageState extends State<RetailHomePage> {
                             localizedStrings.receipt_format_download,
                             "assets/images/line.png",
                             Icons.receipt_long_outlined,
-                            true),
+                            true,
+                            ':This application is used to download the print format of the receipt.'),
                       ),
                     ),
-                    MouseRegion(
-                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                        child: GestureDetector(
-                          onTap: () {
-                            //wifi页面
-
-                            setState(() {
-                              stopCheckSerialPort();
-
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const HeaderFooterPage(),
-                                ),
-                              ).then((value) => _updateStatus());
-                            });
-                          },
-                          child: customFunctionCard(
-                              localizedStrings.variable_value_setting_title,
-                              "assets/images/line.png",
-                              Icons.edit_attributes_outlined,
-                              true),
-                        )),
                     MouseRegion(
                       cursor: SystemMouseCursors.click, // 设置光标为手的形状
                       child: GestureDetector(
@@ -682,7 +735,8 @@ class _RetailHomePageState extends State<RetailHomePage> {
                             'Receipt Format',
                             "assets/images/line.png",
                             Icons.receipt,
-                            myLicenseInfo.isValid),
+                            myLicenseInfo.isValid,
+                            ':This application is designed for the printing format of the receipt.'),
                       ),
                     ),
 
@@ -722,29 +776,13 @@ class _RetailHomePageState extends State<RetailHomePage> {
                     // MouseRegion(
                     //   cursor: SystemMouseCursors.click, // 设置光标为手的形状
                     //   child: GestureDetector(
-                    //     onTap: myLicenseInfo.isValid
-                    //         ? () {
-                    //             stopCheckSerialPort();
-                    //             Navigator.push(
-                    //               context,
-                    //               MaterialPageRoute(
-                    //                   builder: (context) =>
-                    //                       const CustomSerialProtocol()),
-                    //             ).then((value) => _startTimer(5));
-                    //             // Navigator.push(
-                    //             //   context,
-                    //             //   MaterialPageRoute(
-                    //             //       builder: (context) => const SerialOutputPage()),
-                    //             // ).then((value) => setState(() {
-                    //             //       isCardClicked = false;
-                    //             //     }));
-                    //           }
-                    //         : null,
+                    //     onTap: myLicenseInfo.isValid ? () {} : null,
                     //     child: customFunctionCard(
-                    //         'Floating Sale',
+                    //         'Trading Report',
                     //         "assets/images/line.png",
-                    //         Icons.real_estate_agent,
-                    //         myLicenseInfo.isValid),
+                    //         Icons.data_exploration,
+                    //         true,
+                    //         ''),
                     //   ),
                     // ),
                   ]),

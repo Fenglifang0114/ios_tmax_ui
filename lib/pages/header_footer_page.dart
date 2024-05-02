@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../data/downloadresponse.dart';
@@ -37,6 +36,7 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
   Map<String, TextEditingController> titleMap = {};
 
   bool isDownloadClicked = false;
+  List<MyvariableData> varList = [];
 
   dynamic _eventbus1;
   dynamic _eventbus2;
@@ -61,7 +61,9 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
       'Operator1': operator1Ctl,
       'Operator2': operator2Ctl,
       'Operator3': operator3Ctl,
+      'Operator4': operator4Ctl
     };
+    openVarListJson();
 
     cntScaleTimerMgr.startCntScaleTimer(1);
     _eventbus1 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
@@ -478,6 +480,15 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
     ).then((confirmed) {
       if (confirmed) {
         getJsonString();
+        if (myHeaderFooterList.listData.isEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: const Text('Data error !',
+                  style: TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
+              duration: const Duration(seconds: 3),
+              backgroundColor: Colors.red.shade900));
+          return;
+        }
         myScaleCmd.cmdMode = 'modify_var_value';
         myScaleCmd.cmdData = json.encode(myHeaderFooterList);
         MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
@@ -489,36 +500,62 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
     });
   }
 
-  List<MyvariableData> getVariableList() {
+  void fetchData() async {
+    await getVariableList().then((dataList) {
+      varList = dataList;
+    }).catchError((error) {
+      varList = [];
+    });
+  }
+
+  void openVarListJson() async {
+    final ByteData bytes =
+        await rootBundle.load('assets/template/modify_var.json');
+    // 将 ByteData 直接转换为 JSON 字符串
+    final jsonString = bytes.buffer.asUint8List();
+    final jsonData = utf8.decode(jsonString);
+
+    Map<String, dynamic> jsonDataMap = json.decode(jsonData);
+
+    var data = jsonDataMap['Print_var'] as List;
+    varList = data.map((e) => MyvariableData.fromJson(e)).toList();
+  }
+
+  Future<List<MyvariableData>> getVariableList() async {
     File file = File('assets/template/modify_var.json');
-    String jsonString = file.readAsStringSync();
+    String jsonString = await file.readAsString(); // 异步读取文件内容
+
     Map<String, dynamic> jsonData = json.decode(jsonString);
 
     var data = jsonData['Print_var'] as List;
     List<MyvariableData> dataList =
         data.map((e) => MyvariableData.fromJson(e)).toList();
+
     return dataList;
   }
 
-  int? getVarId(String varName, List<MyvariableData> varList) {
-    int? id = varList
-        .where((data) => data.valuename == varName)
-        .map((data) => data.id)
-        .first;
-    return id;
+  int? getVarId(String varName) {
+    var data = varList.firstWhere((data) => data.valuename == varName,
+        orElse: () => MyvariableData(
+            id: -1, valuename: '', comment: '', maxLen: 0) // 返回一个默认值
+        );
+
+    if (data.id != -1) {
+      return data.id;
+    } else {
+      return null;
+    }
   }
-
-  String searchValue = 'Footer3';
-
-  // 查找值为'Footer3'的id值
 
   void getJsonString() {
     myHeaderFooterList.listData.clear();
-    List<MyvariableData> varList = getVariableList();
-
+    // fetchData();
+    if (varList == []) {
+      return;
+    }
     titleMap.forEach((key, value) {
       if (value.text != '') {
-        var id = getVarId(key, varList);
+        var id = getVarId(key);
         if (id != null) {
           HeaderFooterData tmpHeader = HeaderFooterData(id, value.text);
           myHeaderFooterList.listData.add(tmpHeader);

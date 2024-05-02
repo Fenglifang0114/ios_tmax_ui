@@ -88,7 +88,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "contact_us": MessageLookupByLibrary.simpleMessage(
             "Contact us: sales@taiwanscale.com"),
         "customization_setting_title":
-            MessageLookupByLibrary.simpleMessage("Customization Setting"),
+            MessageLookupByLibrary.simpleMessage("Applications"),
         "data_bits": MessageLookupByLibrary.simpleMessage("Data bits:"),
         "data_delete_confirm":
             MessageLookupByLibrary.simpleMessage("Whether to delete all data?"),
@@ -97,7 +97,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Device Connection"),
         "device_name": MessageLookupByLibrary.simpleMessage("Device name:"),
         "device_setting_title":
-            MessageLookupByLibrary.simpleMessage("Device Setting"),
+            MessageLookupByLibrary.simpleMessage("Device Configuration"),
         "device_time_title":
             MessageLookupByLibrary.simpleMessage("Device Time"),
         "download": MessageLookupByLibrary.simpleMessage("Download"),
