@@ -25,9 +25,21 @@ class MessageLookup extends MessageLookupByLibrary {
         "Parity": MessageLookupByLibrary.simpleMessage("Parity:"),
         "abnormal_data_title":
             MessageLookupByLibrary.simpleMessage("Abnormal Data"),
+        "about_title": MessageLookupByLibrary.simpleMessage("Information"),
         "acc_mode_format":
             MessageLookupByLibrary.simpleMessage("Accumulation mode format:"),
+        "advanced_setting_title":
+            MessageLookupByLibrary.simpleMessage("Advanced"),
         "alignment": MessageLookupByLibrary.simpleMessage("Alignment:"),
+        "app_address_title": MessageLookupByLibrary.simpleMessage("Address:"),
+        "app_company_title": MessageLookupByLibrary.simpleMessage("Company:"),
+        "app_email_title": MessageLookupByLibrary.simpleMessage("Email:"),
+        "app_models":
+            MessageLookupByLibrary.simpleMessage("Applicable Models:"),
+        "app_tel_title": MessageLookupByLibrary.simpleMessage("Tel:"),
+        "app_version_title": MessageLookupByLibrary.simpleMessage("Version:"),
+        "app_web_title":
+            MessageLookupByLibrary.simpleMessage("Website Address:"),
         "application_title":
             MessageLookupByLibrary.simpleMessage("Applications"),
         "attribute": MessageLookupByLibrary.simpleMessage("Attribute"),
@@ -93,14 +105,17 @@ class MessageLookup extends MessageLookupByLibrary {
         "data_delete_confirm":
             MessageLookupByLibrary.simpleMessage("Whether to delete all data?"),
         "date_format": MessageLookupByLibrary.simpleMessage("Date Format:"),
-        "device_connection_title":
-            MessageLookupByLibrary.simpleMessage("Device Connection"),
-        "device_name": MessageLookupByLibrary.simpleMessage("Device name:"),
-        "device_setting_title":
+        "device_configuration_title":
             MessageLookupByLibrary.simpleMessage("Device Configuration"),
+        "device_connection_title":
+            MessageLookupByLibrary.simpleMessage("Device Info & Connection"),
+        "device_name": MessageLookupByLibrary.simpleMessage("Device name:"),
+        "device_setting_title": MessageLookupByLibrary.simpleMessage("Basics"),
         "device_time_title":
             MessageLookupByLibrary.simpleMessage("Device Time"),
         "download": MessageLookupByLibrary.simpleMessage("Download"),
+        "download_default":
+            MessageLookupByLibrary.simpleMessage("Default Format"),
         "download_result_fail":
             MessageLookupByLibrary.simpleMessage("Download failed!"),
         "download_result_ok":
@@ -115,8 +130,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "find_ssid": MessageLookupByLibrary.simpleMessage("Discover SSID"),
         "firmwart_update":
             MessageLookupByLibrary.simpleMessage("Update Firmware"),
-        "fmt_confirm_info": MessageLookupByLibrary.simpleMessage(
-            "Please confirm the format is saved."),
         "font_bold": MessageLookupByLibrary.simpleMessage("Bold:"),
         "font_reverse":
             MessageLookupByLibrary.simpleMessage("Reverse Contrast:"),
@@ -126,12 +139,17 @@ class MessageLookup extends MessageLookupByLibrary {
         "get_bt_name": MessageLookupByLibrary.simpleMessage("Get name"),
         "get_build_info":
             MessageLookupByLibrary.simpleMessage("Software Information"),
+        "go_home": MessageLookupByLibrary.simpleMessage("Confirm exit?"),
         "header_confirm_info": MessageLookupByLibrary.simpleMessage(
             "Please confirm the information."),
         "hr_alignment": MessageLookupByLibrary.simpleMessage("HRI Alignment:"),
         "ip_address": MessageLookupByLibrary.simpleMessage("IPv4:"),
+        "jump_confirm_info": MessageLookupByLibrary.simpleMessage(
+            "Please confirm to go to the default print format page."),
         "label_design_title":
             MessageLookupByLibrary.simpleMessage("Label Design"),
+        "label_fmt_download": MessageLookupByLibrary.simpleMessage(
+            "Download Label Printing Formats"),
         "language": MessageLookupByLibrary.simpleMessage("Language"),
         "language_setting_title":
             MessageLookupByLibrary.simpleMessage("Language Setting"),
@@ -182,13 +200,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "position": MessageLookupByLibrary.simpleMessage("Position"),
         "pretare": MessageLookupByLibrary.simpleMessage("Pretare:"),
         "print_direction": MessageLookupByLibrary.simpleMessage("Direction:"),
-        "print_format_download":
-            MessageLookupByLibrary.simpleMessage("Print Format Download"),
         "print_page": MessageLookupByLibrary.simpleMessage("Page:"),
         "printer": MessageLookupByLibrary.simpleMessage("Printer:"),
         "product_information":
             MessageLookupByLibrary.simpleMessage("Product Information"),
         "qrcode_edit": MessageLookupByLibrary.simpleMessage("Qrcode Edit"),
+        "receipt_design_title":
+            MessageLookupByLibrary.simpleMessage("Receipt Design"),
         "receipt_format_download":
             MessageLookupByLibrary.simpleMessage("Receipt Format Download"),
         "refresh_port": MessageLookupByLibrary.simpleMessage("Refresh port"),

@@ -25,9 +25,21 @@ class MessageLookup extends MessageLookupByLibrary {
         "Parity": MessageLookupByLibrary.simpleMessage("Четность:"),
         "abnormal_data_title":
             MessageLookupByLibrary.simpleMessage("Abnormal Data"),
+        "about_title": MessageLookupByLibrary.simpleMessage("Information"),
         "acc_mode_format":
             MessageLookupByLibrary.simpleMessage("Формат режима акк:"),
+        "advanced_setting_title":
+            MessageLookupByLibrary.simpleMessage("Advanced"),
         "alignment": MessageLookupByLibrary.simpleMessage("Выравнивание:"),
+        "app_address_title": MessageLookupByLibrary.simpleMessage("Address:"),
+        "app_company_title": MessageLookupByLibrary.simpleMessage("Company:"),
+        "app_email_title": MessageLookupByLibrary.simpleMessage("Email:"),
+        "app_models":
+            MessageLookupByLibrary.simpleMessage("Applicable Models:"),
+        "app_tel_title": MessageLookupByLibrary.simpleMessage("Tel:"),
+        "app_version_title": MessageLookupByLibrary.simpleMessage("Version:"),
+        "app_web_title":
+            MessageLookupByLibrary.simpleMessage("Website Address:"),
         "application_title":
             MessageLookupByLibrary.simpleMessage("Applications"),
         "attribute": MessageLookupByLibrary.simpleMessage("Атрибут"),
@@ -96,14 +108,17 @@ class MessageLookup extends MessageLookupByLibrary {
         "data_delete_confirm":
             MessageLookupByLibrary.simpleMessage("Whether to delete all data?"),
         "date_format": MessageLookupByLibrary.simpleMessage("Формат даты:"),
-        "device_connection_title":
-            MessageLookupByLibrary.simpleMessage("Подключение устройства"),
-        "device_name": MessageLookupByLibrary.simpleMessage("Имя устройства:"),
-        "device_setting_title":
+        "device_configuration_title":
             MessageLookupByLibrary.simpleMessage("Device Configuration"),
+        "device_connection_title":
+            MessageLookupByLibrary.simpleMessage("Device Info & Connection"),
+        "device_name": MessageLookupByLibrary.simpleMessage("Имя устройства:"),
+        "device_setting_title": MessageLookupByLibrary.simpleMessage("Basics"),
         "device_time_title":
             MessageLookupByLibrary.simpleMessage("Device Time"),
         "download": MessageLookupByLibrary.simpleMessage("Загрузить"),
+        "download_default":
+            MessageLookupByLibrary.simpleMessage("Default Format"),
         "download_result_fail":
             MessageLookupByLibrary.simpleMessage("Download fail!"),
         "download_result_ok":
@@ -118,8 +133,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "find_ssid": MessageLookupByLibrary.simpleMessage("Найти SSID"),
         "firmwart_update":
             MessageLookupByLibrary.simpleMessage("Обновление прошивки"),
-        "fmt_confirm_info": MessageLookupByLibrary.simpleMessage(
-            "Please confirm the format is saved."),
         "font_bold": MessageLookupByLibrary.simpleMessage("Полужирный шрифт:"),
         "font_reverse": MessageLookupByLibrary.simpleMessage("Обратный шрифт:"),
         "gateway": MessageLookupByLibrary.simpleMessage("Шлюз:"),
@@ -128,13 +141,18 @@ class MessageLookup extends MessageLookupByLibrary {
         "get_bt_name": MessageLookupByLibrary.simpleMessage("get name"),
         "get_build_info": MessageLookupByLibrary.simpleMessage(
             "Информация о программном обеспечении"),
+        "go_home": MessageLookupByLibrary.simpleMessage("Confirm exit?"),
         "header_confirm_info": MessageLookupByLibrary.simpleMessage(
             "Please confirm the information."),
         "hr_alignment": MessageLookupByLibrary.simpleMessage(
             "Выравнивание горизонтальной черты:"),
         "ip_address": MessageLookupByLibrary.simpleMessage("IPv4:"),
+        "jump_confirm_info": MessageLookupByLibrary.simpleMessage(
+            "Please confirm to go to the default print format page."),
         "label_design_title":
             MessageLookupByLibrary.simpleMessage("Дизайн этикетки"),
+        "label_fmt_download": MessageLookupByLibrary.simpleMessage(
+            "Download Label Printing Formats"),
         "language": MessageLookupByLibrary.simpleMessage("Язык"),
         "language_setting_title":
             MessageLookupByLibrary.simpleMessage("Настройка языка"),
@@ -189,14 +207,14 @@ class MessageLookup extends MessageLookupByLibrary {
         "pretare":
             MessageLookupByLibrary.simpleMessage("Предварительная тара:"),
         "print_direction": MessageLookupByLibrary.simpleMessage("Направление:"),
-        "print_format_download":
-            MessageLookupByLibrary.simpleMessage("Загрузка формата печати"),
         "print_page": MessageLookupByLibrary.simpleMessage("Страница:"),
         "printer": MessageLookupByLibrary.simpleMessage("Принтер:"),
         "product_information":
             MessageLookupByLibrary.simpleMessage("Информация о продукте"),
         "qrcode_edit":
             MessageLookupByLibrary.simpleMessage("Редактирование QR-кода"),
+        "receipt_design_title":
+            MessageLookupByLibrary.simpleMessage("Receipt Design"),
         "receipt_format_download":
             MessageLookupByLibrary.simpleMessage("Receipt Format Download"),
         "refresh_port": MessageLookupByLibrary.simpleMessage("Обновить порт"),

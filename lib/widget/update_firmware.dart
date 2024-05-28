@@ -102,10 +102,10 @@ class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
           height: 300,
           width: 400,
           decoration:
-              const BoxDecoration(color: Color.fromARGB(255, 233, 232, 232)),
+              BoxDecoration(color: Theme.of(context).colorScheme.surface),
           child: Container(
             decoration:
-                BoxDecoration(color: Theme.of(context).colorScheme.onPrimary),
+                BoxDecoration(color: Theme.of(context).colorScheme.surfaceTint),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

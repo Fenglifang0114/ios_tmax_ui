@@ -29,9 +29,9 @@ class _TimerWidgetState extends ClockBaseState<TimerWidget> {
         TextSpan(
             text:
                 "${now.year}-${pad0(now.month)}-${pad0(now.day)} ${pad0(now.hour)}:${pad0(now.minute)}:${pad0(now.second)}",
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 30.0,
-              color: Colors.blue,
+              color: Theme.of(context).colorScheme.primary,
               height: 1.5,
             ))
       ]),

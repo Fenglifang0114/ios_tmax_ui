@@ -152,13 +152,13 @@ class TextItemState extends State<TextItem> {
           child: Container(
               decoration: BoxDecoration(
                 color: (widget.fontReverse == 'true')
-                    ? Colors.black
-                    : Colors.white,
+                    ? Theme.of(context).colorScheme.onSurface
+                    : Theme.of(context).colorScheme.onPrimary,
                 border: Border.all(
                     color: (widget.index == mySelectedControl.selectid &&
                             mySelectedControl.isSelect)
-                        ? Colors.blue.shade900
-                        : Colors.black),
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context).colorScheme.onSurface),
                 borderRadius: const BorderRadius.all(Radius.circular(1)),
               ),
               // color: Colors.grey.shade200,
@@ -169,8 +169,8 @@ class TextItemState extends State<TextItem> {
                           ? (widget.fontSize).toDouble()
                           : 19,
                       color: (widget.fontReverse == 'true')
-                          ? Colors.white
-                          : Colors.black,
+                          ? Theme.of(context).colorScheme.onPrimary
+                          : Theme.of(context).colorScheme.onSurface,
                       fontWeight: (widget.fontBold == 'true')
                           ? FontWeight.bold
                           : FontWeight.normal))),
@@ -283,7 +283,7 @@ class TextItemState extends State<TextItem> {
                       1), //Offset(double.parse(widget.x2Pos.toString()),                  double.parse((widget.y2Pos).toString())),
               // startPoint: Offset(30, 70),
               // endPoint: Offset(100, 100),
-              lineColor: Colors.black,
+              lineColor: Theme.of(context).colorScheme.onSurface,
               lineWidth: widget.lineWidth,
             ),
           ),
@@ -318,7 +318,7 @@ class TextItemState extends State<TextItem> {
         //   painter: LinePainter(
         //       startPoint: Offset(10, 100),
         //       endPoint: Offset(10, 200),
-        //       lineColor: Colors.black,
+        //       lineColor: Theme.of(context).colorScheme.onSurface,
         //       lineWidth: 100 //widget.lineWidth,
         //       ),
         // ),
@@ -331,8 +331,8 @@ class TextItemState extends State<TextItem> {
       border: Border.all(
           color: (widget.index == mySelectedControl.selectid &&
                   mySelectedControl.isSelect)
-              ? Colors.blue.shade900
-              : Colors.black),
+              ? Theme.of(context).colorScheme.primary
+              : Theme.of(context).colorScheme.onSurface),
       borderRadius: const BorderRadius.all(Radius.circular(1)),
     );
   }

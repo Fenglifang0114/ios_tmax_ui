@@ -91,23 +91,24 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
         color: Theme.of(context).colorScheme.primary,
         child: Row(
           children: [
-            const Icon(Icons.bluetooth, color: Colors.white),
+            Icon(Icons.bluetooth,
+                color: Theme.of(context).colorScheme.onPrimary),
             Text(
               localizedStrings.bluetooth_modification,
-              style: const TextStyle(color: Colors.white),
+              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
             )
           ],
         ),
       ),
       content: Container(
         height: 300,
-        decoration:
-            const BoxDecoration(color: Color.fromARGB(255, 233, 232, 232)),
+        decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
         child: Column(
           children: [
             const SizedBox(height: 2),
             Container(
-              decoration: const BoxDecoration(color: Colors.white),
+              decoration:
+                  BoxDecoration(color: Theme.of(context).colorScheme.onPrimary),
               child: Column(
                 children: [
                   const SizedBox(height: 10),
@@ -243,8 +244,8 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
                             style: TextStyle(
                                 color: (_errorMessage.contains('ok') ||
                                         _errorMessage.contains('OK'))
-                                    ? Colors.green.shade900
-                                    : Colors.red.shade900),
+                                    ? Theme.of(context).colorScheme.outline
+                                    : Theme.of(context).colorScheme.error),
                           ),
                         ],
                       ),

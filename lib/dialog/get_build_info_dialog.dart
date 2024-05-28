@@ -54,19 +54,23 @@ class _GetBuildInfoPageState extends State<GetBuildInfoPage> {
           color: Theme.of(context).colorScheme.primary,
           child: Row(
             children: [
-              const Icon(Icons.info, color: Colors.white),
+              Icon(Icons.privacy_tip,
+                  color: Theme.of(context).colorScheme.onPrimary),
               Text(localizedStrings.get_build_info,
-                  style: const TextStyle(color: Colors.white))
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.onPrimary))
             ],
           )),
       content: Container(
         height: 300,
-        decoration: const BoxDecoration(color: Colors.white),
+        decoration:
+            BoxDecoration(color: Theme.of(context).colorScheme.surfaceTint),
         child: Column(
           children: [
             const SizedBox(height: 2),
             Container(
-              decoration: const BoxDecoration(color: Colors.white),
+              decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceTint),
               child: Column(
                 children: [
                   // const SizedBox(height: 10),

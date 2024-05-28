@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import '../data/get_theme_color.dart';
 import '../data/login_data.dart';
 
 import '../dialog/register_dialog.dart';
@@ -37,35 +38,35 @@ class _LoginPageState extends State<LoginPage> {
     final _height = MediaQuery.of(context).size.height;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: themeColor(),
+      theme: themeColor(colorTheme),
       home: Scaffold(
           // AppBar：相当于iOS 的导航栏
           appBar: PreferredSize(
               preferredSize: const Size.fromHeight(30),
               child: AppBar(
-                title: version(Theme.of(context).colorScheme.onPrimary),
+                title: versionInfo(Theme.of(context).colorScheme.onPrimary),
                 //设置状态栏颜色渐变
                 flexibleSpace: Container(
-                    decoration: BoxDecoration(gradient: boxGradient())),
+                    decoration: BoxDecoration(gradient: boxGradient(context))),
               )),
           body: ListView(
             children: [
               Container(
                 height: _height,
                 width: _width,
-                decoration: BoxDecoration(gradient: boxGradient()),
+                decoration: BoxDecoration(gradient: boxGradient(context)),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     SizedBox(
                         width: 400,
                         child: Card(
-                          shadowColor: Colors.grey,
+                          shadowColor: Theme.of(context).colorScheme.background,
                           elevation: 40,
                           margin: const EdgeInsets.all(10),
                           shape: const RoundedRectangleBorder(
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(20.0))),
+                                  BorderRadius.all(Radius.circular(4))),
                           child: Column(
                             children: [
                               const SizedBox(height: 20),
@@ -159,7 +160,7 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         SizedBox(
                             width: 250,
-                            child: Image.asset('assets/images/tscale.png')),
+                            child: Image.asset('assets/images/company.png')),
                         const SizedBox(width: 100)
                       ],
                     )

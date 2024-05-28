@@ -1,32 +1,45 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:window_size/window_size.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'common/web_socket_channel.dart';
 import 'common/web_socket_scale_channel.dart';
+import 'data/get_theme_color.dart';
 import 'data/parse_log.dart';
 import 'data/scalecmd_data.dart';
 import 'generated/l10n.dart';
 import 'pages/trial_page.dart';
 import 'widget/theme_color.dart';
+import 'package:window_manager/window_manager.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await windowManager.ensureInitialized();
+
+  WindowOptions windowOptions = const WindowOptions(
+      // size: Size(800, 600),
+      minimumSize: Size(1320, 720),
+      center: true,
+      backgroundColor: Colors.transparent,
+      skipTaskbar: false, //底部任务栏是否显示 true不显示
+      titleBarStyle: TitleBarStyle.normal, //标题栏的图标是否显示
+      windowButtonVisibility: false, //没有作用呢
+      title: '');
+  windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.show();
+    await windowManager.focus();
+    await windowManager.setMinimizable(true);
+  });
+
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String savedLanguage = prefs.getString('language') ?? 'en_US';
-
-  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-    setWindowMinSize(const Size(1320, 720));
-    setWindowTitle('');
-  }
 
   String ipAddr = await readIpAddr();
   if (ipAddr.isEmpty) {
     ipAddr = '127.0.0.1';
   }
-
+  colorTheme = await loadColorsFromJson();
   runApp(MyApp(savedLanguage, ipAddr));
 }
 
@@ -60,7 +73,7 @@ class MyApp extends StatelessWidget {
     getLicense();
     return MaterialApp(
         //自定义主题
-        theme: themeColor(),
+        theme: themeColor(colorTheme),
         // 国际化
         localizationsDelegates: const [
           // 本地化的代理类

@@ -451,7 +451,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
   Widget firstLayout(BuildContext context, double _width) {
     return Container(
         width: _width,
-        decoration: BoxDecoration(color: Colors.grey.shade200),
+        decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           // mainAxisSize: MainAxisSize.max,
@@ -461,7 +461,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
             const SizedBox(height: 5),
             Container(
               height: 120,
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.onPrimary,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -561,8 +561,11 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                                   (myReqWeightCountine.msgBody == null)
                                       ? ("-----")
                                       : myReqWeightCountine.msgBody!.weightVal,
-                                  style: const TextStyle(
-                                      color: Colors.white, fontSize: 55),
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimary,
+                                      fontSize: 55),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
@@ -583,8 +586,8 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                               (myReqWeightCountine.msgBody == null)
                                   ? ("kg")
                                   : myReqWeightCountine.msgBody!.weightUnit,
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.onPrimary,
                                 fontSize: 30,
                               ),
                               maxLines: 1,
@@ -606,7 +609,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                           icon: const Icon(Icons.play_arrow),
                           iconSize: 30,
                           color: (isStart)
-                              ? (Colors.grey)
+                              ? (Theme.of(context).colorScheme.background)
                               : (Theme.of(context).colorScheme.primary),
                           onPressed: () {
                             setState(() {
@@ -649,7 +652,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                           icon: const Icon(Icons.pause),
                           iconSize: 30,
                           color: (!isStart)
-                              ? (Colors.grey)
+                              ? (Theme.of(context).colorScheme.background)
                               : (Theme.of(context).colorScheme.primary),
                         ),
                       ),
@@ -762,7 +765,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
             const SizedBox(height: 5),
             Container(
                 height: 40,
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.onPrimary,
                 child: LayoutBuilder(builder:
                     (BuildContext context, BoxConstraints constraints) {
                   return Row(
@@ -816,7 +819,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                         width: constraints.maxWidth / 10,
                         child: MaterialButton(
                             color: Theme.of(context).colorScheme.primary,
-                            textColor: Colors.white,
+                            textColor: Theme.of(context).colorScheme.onPrimary,
                             elevation: 5.0,
                             child: Text(localizedStrings.plu_edit,
                                 style: const TextStyle(
@@ -883,7 +886,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                         width: constraints.maxWidth / 10,
                         child: MaterialButton(
                             color: Theme.of(context).colorScheme.primary,
-                            textColor: Colors.white,
+                            textColor: Theme.of(context).colorScheme.onPrimary,
                             elevation: 5.0,
                             child: Text(localizedStrings.user_edit,
                                 style: const TextStyle(
@@ -920,7 +923,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                         width: constraints.maxWidth / 10,
                         child: MaterialButton(
                             color: Theme.of(context).colorScheme.primary,
-                            textColor: Colors.white,
+                            textColor: Theme.of(context).colorScheme.onPrimary,
                             elevation: 5.0,
                             child: Text(localizedStrings.report_set_btn,
                                 style: const TextStyle(
@@ -934,7 +937,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                         width: constraints.maxWidth / 10,
                         child: MaterialButton(
                             color: Theme.of(context).colorScheme.primary,
-                            textColor: Colors.white,
+                            textColor: Theme.of(context).colorScheme.onPrimary,
                             elevation: 5.0,
                             child: Text(localizedStrings.report_delete_btn,
                                 style: const TextStyle(
@@ -968,7 +971,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
         return AlertDialog(
           title: Text(
             localizedStrings.confirm_title,
-            style: const TextStyle(color: Color.fromARGB(255, 15, 71, 161)),
+            style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
           content: Text(localizedStrings.data_delete_confirm),
           actions: <Widget>[

@@ -187,7 +187,7 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
       content: Container(
         height: 356,
         decoration:
-            BoxDecoration(color: Theme.of(context).colorScheme.onPrimary),
+            BoxDecoration(color: Theme.of(context).colorScheme.surfaceTint),
         child: Column(
           children: [
             // const SizedBox(height: 10),

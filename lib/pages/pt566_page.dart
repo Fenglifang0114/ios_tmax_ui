@@ -359,8 +359,8 @@ class _PT566PageState extends State<PT566Page> {
                           fontWeight: FontWeight.bold)), ////此处需要秤回复
                   duration: const Duration(seconds: 3),
                   backgroundColor: (myDownPrnFmtResp.msgBody.contains('ok'))
-                      ? Colors.green.shade900
-                      : Colors.red.shade900));
+                      ? Theme.of(context).colorScheme.outline
+                      : Theme.of(context).colorScheme.error));
             });
           }
         });
@@ -433,7 +433,7 @@ class _PT566PageState extends State<PT566Page> {
         child: Container(
           height: 80,
           width: screenSize.width - 10,
-          color: Colors.blue.shade900,
+          color: Theme.of(context).colorScheme.primary,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -442,7 +442,8 @@ class _PT566PageState extends State<PT566Page> {
                 height: 50,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white, // 设置按钮的背景色
+                    backgroundColor:
+                        Theme.of(context).colorScheme.onPrimary, // 设置按钮的背景色
                     elevation: 10, // 设置按钮的阴影
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
@@ -454,12 +455,12 @@ class _PT566PageState extends State<PT566Page> {
                       children: [
                         Icon(
                           Icons.home,
-                          color: Colors.blue.shade900,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                         Text(
                           'Home',
                           style: TextStyle(
-                              color: Colors.blue.shade900,
+                              color: Theme.of(context).colorScheme.primary,
                               fontSize: 18,
                               fontWeight: FontWeight.bold),
                         ),
@@ -481,10 +482,11 @@ class _PT566PageState extends State<PT566Page> {
                         height: 40,
                         child: Row(
                           children: [
-                            const Text(
+                            Text(
                               'Printer:',
                               style: TextStyle(
-                                  color: Colors.white,
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold),
                             ),
@@ -492,15 +494,18 @@ class _PT566PageState extends State<PT566Page> {
                               width: 10,
                             ),
                             DropdownButton<String>(
-                              dropdownColor: Colors.grey[400],
-                              style: const TextStyle(
-                                  color: Colors.white,
+                              dropdownColor:
+                                  Theme.of(context).colorScheme.background,
+                              style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
                                   fontSize: 20,
                                   fontWeight: FontWeight.normal),
-                              hint: const Text(
+                              hint: Text(
                                 'Printer',
                                 style: TextStyle(
-                                    color: Colors.white,
+                                    color:
+                                        Theme.of(context).colorScheme.onPrimary,
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold),
                               ),
@@ -529,10 +534,11 @@ class _PT566PageState extends State<PT566Page> {
                         height: 40,
                         child: Row(
                           children: [
-                            const Text(
+                            Text(
                               'Direction:',
                               style: TextStyle(
-                                  color: Colors.white,
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold),
                             ),
@@ -540,15 +546,18 @@ class _PT566PageState extends State<PT566Page> {
                               width: 10,
                             ),
                             DropdownButton<String>(
-                              dropdownColor: Colors.grey[400],
-                              style: const TextStyle(
-                                  color: Colors.white,
+                              dropdownColor:
+                                  Theme.of(context).colorScheme.background,
+                              style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
                                   fontSize: 20,
                                   fontWeight: FontWeight.normal),
-                              hint: const Text(
+                              hint: Text(
                                 'Direction',
                                 style: TextStyle(
-                                    color: Colors.white,
+                                    color:
+                                        Theme.of(context).colorScheme.onPrimary,
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold),
                               ),
@@ -580,23 +589,24 @@ class _PT566PageState extends State<PT566Page> {
                     height: 40,
                     child: Row(
                       children: [
-                        const Text(
+                        Text(
                           'Page:',
                           style: TextStyle(
-                              color: Colors.white,
+                              color: Theme.of(context).colorScheme.onPrimary,
                               fontSize: 20,
                               fontWeight: FontWeight.bold),
                         ),
                         DropdownButton<String>(
-                          dropdownColor: Colors.grey[400],
-                          style: const TextStyle(
-                              color: Colors.white,
+                          dropdownColor:
+                              Theme.of(context).colorScheme.background,
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.onPrimary,
                               fontSize: 20,
                               fontWeight: FontWeight.normal),
                           // hint: const Text(
                           //   'Select Page Size',
                           //   style: TextStyle(
-                          //       color: Color.fromARGB(255, 13, 71, 161),
+                          //       color: Theme.of(context).colorScheme.primary,
                           //       fontSize: 20,
                           //       fontWeight: FontWeight.bold),
                           // ),
@@ -632,19 +642,21 @@ class _PT566PageState extends State<PT566Page> {
                                 deleteAllItem();
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    Colors.yellow.shade900, // 设置按钮的背景色
+                                backgroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .primary, // 设置按钮的背景色
                                 elevation: 10, // 设置按钮的阴影
                                 shape: RoundedRectangleBorder(
                                   borderRadius:
                                       BorderRadius.circular(8), // 设置按钮的圆角
                                 ),
                               ),
-                              child: const Text('New Format',
+                              child: Text('New Format',
                                   style: TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                                    color:
+                                        Theme.of(context).colorScheme.onPrimary,
                                   ))),
                         ),
                       ],
@@ -674,17 +686,18 @@ class _PT566PageState extends State<PT566Page> {
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.yellow.shade900, // 设置按钮的背景色
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary, // 设置按钮的背景色
                           elevation: 10, // 设置按钮的阴影
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
                           ),
                         ),
-                        child: const Text('Save File',
+                        child: Text('Save File',
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              color: Theme.of(context).colorScheme.onPrimary,
                             ))),
                   ),
                   SizedBox(
@@ -713,7 +726,8 @@ class _PT566PageState extends State<PT566Page> {
                                               fontWeight:
                                                   FontWeight.bold)), ////此处需要秤回复
                                       duration: const Duration(seconds: 1),
-                                      backgroundColor: Colors.red.shade900));
+                                      backgroundColor:
+                                          Theme.of(context).colorScheme.error));
                             });
                           }
                           if (filePath != '') {
@@ -722,17 +736,18 @@ class _PT566PageState extends State<PT566Page> {
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.yellow.shade900, // 设置按钮的背景色
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary, // 设置按钮的背景色
                           elevation: 10, // 设置按钮的阴影
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
                           ),
                         ),
-                        child: const Text('Open File',
+                        child: Text('Open File',
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              color: Theme.of(context).colorScheme.onPrimary,
                             ))),
                   ),
                 ],
@@ -745,7 +760,8 @@ class _PT566PageState extends State<PT566Page> {
                     width: 150,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white, // 设置按钮的背景色
+                        backgroundColor:
+                            Theme.of(context).colorScheme.onPrimary, // 设置按钮的背景色
                         elevation: 10, // 设置按钮的阴影
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
@@ -754,7 +770,7 @@ class _PT566PageState extends State<PT566Page> {
                       child: Text(
                         'BarCode Edit',
                         style: TextStyle(
-                            color: Colors.blue.shade900,
+                            color: Theme.of(context).colorScheme.primary,
                             fontSize: 18,
                             fontWeight: FontWeight.bold),
                       ),
@@ -778,7 +794,8 @@ class _PT566PageState extends State<PT566Page> {
                     width: 150,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white, // 设置按钮的背景色
+                        backgroundColor:
+                            Theme.of(context).colorScheme.onPrimary, // 设置按钮的背景色
                         elevation: 10, // 设置按钮的阴影
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
@@ -787,7 +804,7 @@ class _PT566PageState extends State<PT566Page> {
                       child: Text(
                         'Qrcode Edit',
                         style: TextStyle(
-                            color: Colors.blue.shade900,
+                            color: Theme.of(context).colorScheme.primary,
                             fontSize: 18,
                             fontWeight: FontWeight.bold),
                       ),
@@ -835,8 +852,8 @@ class _PT566PageState extends State<PT566Page> {
                         : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: downloadStatus
-                          ? Colors.green.shade900
-                          : Colors.white, // 设置按钮的背景色
+                          ? Theme.of(context).colorScheme.outline
+                          : Theme.of(context).colorScheme.onPrimary, // 设置按钮的背景色
                       elevation: 10, // 设置按钮的阴影
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8), // 设置按钮的圆角
@@ -846,7 +863,9 @@ class _PT566PageState extends State<PT566Page> {
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: downloadStatus ? Colors.white : Colors.black,
+                          color: downloadStatus
+                              ? Theme.of(context).colorScheme.onPrimary
+                              : Theme.of(context).colorScheme.onSurface,
                         ))),
               ),
 
@@ -870,8 +889,10 @@ class _PT566PageState extends State<PT566Page> {
             child: Container(
               height: 1200,
               decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 223, 223, 223),
-                  border: Border.all(width: 0.2, color: Colors.black)),
+                  color: Theme.of(context).colorScheme.surface,
+                  border: Border.all(
+                      width: 0.2,
+                      color: Theme.of(context).colorScheme.onSurface)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -880,8 +901,10 @@ class _PT566PageState extends State<PT566Page> {
                     width: _getPageWidth(),
                     height: _getPageHeight(),
                     decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(width: 0.5, color: Colors.black)),
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        border: Border.all(
+                            width: 0.5,
+                            color: Theme.of(context).colorScheme.onSurface)),
                     child: Stack(
                       key: _parentKey,
                       children: [
@@ -1344,7 +1367,7 @@ class _PT566PageState extends State<PT566Page> {
               style: const TextStyle(
                   fontSize: 20, fontWeight: FontWeight.bold)), ////此处需要秤回复
           duration: const Duration(seconds: 1),
-          backgroundColor: Colors.red.shade900));
+          backgroundColor: Theme.of(context).colorScheme.error));
     }
     return textInfoList;
   }
@@ -1565,9 +1588,11 @@ class _PT566PageState extends State<PT566Page> {
       widthFactor: 1,
       child: Container(
           height: 30,
-          decoration: const BoxDecoration(
-              border:
-                  Border(bottom: BorderSide(width: 0.2, color: Colors.grey))),
+          decoration: BoxDecoration(
+              border: Border(
+                  bottom: BorderSide(
+                      width: 0.2,
+                      color: Theme.of(context).colorScheme.background))),
           alignment: Alignment.center,
           child: TextButton(
             onPressed: () {
@@ -1583,8 +1608,8 @@ class _PT566PageState extends State<PT566Page> {
             child: Text(
               //左侧按钮文本的颜色
               text,
-              style: const TextStyle(
-                  color: Color.fromARGB(255, 15, 71, 161),
+              style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.bold),
             ),
           )),
@@ -2106,18 +2131,18 @@ class _PT566PageState extends State<PT566Page> {
       const SizedBox(height: 100),
       Container(
         height: 50,
-        color: const Color.fromARGB(255, 240, 247, 252),
-        child: const Text(
+        color: Theme.of(context).colorScheme.surface,
+        child: Text(
           "You haven't selected any element.",
           style: TextStyle(
               fontSize: 20,
-              color: Color.fromARGB(255, 245, 127, 23),
+              color: Theme.of(context).colorScheme.primary,
               fontWeight: FontWeight.bold),
         ),
       ),
       Container(
         height: 50,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: const Text(
           "Operation Steps:",
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -2125,7 +2150,7 @@ class _PT566PageState extends State<PT566Page> {
       ),
       Container(
         height: 50,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: const Text(
           "1. Please click on one or more elements on the left side; ",
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -2133,7 +2158,7 @@ class _PT566PageState extends State<PT566Page> {
       ),
       Container(
         height: 80,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: const Text(
           "2. The selected elements will be displayed in the center of the page, and you can edit their attributes here. ",
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -2265,7 +2290,7 @@ class _PT566PageState extends State<PT566Page> {
       const SizedBox(height: 20),
       Container(
         height: 30,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: const Text(
           "------------------Attribute------------------",
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -2293,7 +2318,7 @@ class _PT566PageState extends State<PT566Page> {
       ),
       Container(
         height: 30,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: const Text("----------Position--------------",
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
       ),
@@ -2323,7 +2348,7 @@ class _PT566PageState extends State<PT566Page> {
       ),
       Container(
         height: 30,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: const Text("----------Editor-----------------",
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
       ),
@@ -2425,7 +2450,7 @@ class _PT566PageState extends State<PT566Page> {
       const SizedBox(height: 20),
       Container(
         height: 30,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: const Text(
           "------------------Attribute------------------",
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -2455,7 +2480,7 @@ class _PT566PageState extends State<PT566Page> {
       const SizedBox(height: 20),
       Container(
         height: 30,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: const Text("----------Position--------------",
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
       ),
@@ -2557,7 +2582,7 @@ class _PT566PageState extends State<PT566Page> {
       const SizedBox(height: 20),
       Container(
         height: 30,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: const Text(
           "------------------Attribute------------------",
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -2587,7 +2612,7 @@ class _PT566PageState extends State<PT566Page> {
       const SizedBox(height: 20),
       Container(
         height: 30,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: const Text("----------Position--------------",
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
       ),
@@ -2612,7 +2637,7 @@ class _PT566PageState extends State<PT566Page> {
       const SizedBox(height: 20),
       Container(
         height: 30,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: const Text(
           "------------------Attribute------------------",
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -2642,7 +2667,7 @@ class _PT566PageState extends State<PT566Page> {
       const SizedBox(height: 20),
       Container(
         height: 30,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: const Text("----------Position--------------",
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
       ),
@@ -2721,7 +2746,7 @@ class _PT566PageState extends State<PT566Page> {
       const SizedBox(height: 20),
       Container(
         height: 30,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: const Text(
           "------------------Attribute------------------",
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -2751,7 +2776,7 @@ class _PT566PageState extends State<PT566Page> {
       const SizedBox(height: 20),
       Container(
         height: 30,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: const Text("----------Position--------------",
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
       ),
@@ -2853,9 +2878,9 @@ class Circle extends StatelessWidget {
           width: 6,
           height: 6,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.onPrimary,
             border: Border.all(
-              color: Colors.black,
+              color: Theme.of(context).colorScheme.onSurface,
               width: 2.0,
             ),
             borderRadius: BorderRadius.circular(12),

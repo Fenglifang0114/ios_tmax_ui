@@ -50,20 +50,22 @@ class _LanguageSettingPageState extends State<LanguageSettingPage> {
           color: Theme.of(context).colorScheme.primary,
           child: Row(
             children: [
-              const Icon(Icons.language, color: Colors.white),
+              Icon(Icons.language,
+                  color: Theme.of(context).colorScheme.onPrimary),
               Text(localizedStrings.language_setting_title,
-                  style: const TextStyle(color: Colors.white))
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.onPrimary))
             ],
           )),
       content: Container(
         height: 356,
-        decoration:
-            const BoxDecoration(color: Color.fromARGB(255, 233, 232, 232)),
+        decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
         child: Column(
           children: [
             const SizedBox(height: 2),
             Container(
-              decoration: const BoxDecoration(color: Colors.white),
+              decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceTint),
               child: Column(
                 children: [
                   // const SizedBox(height: 10),

@@ -13,64 +13,60 @@ Widget pageHead(
   return Container(
       color: Theme.of(context).colorScheme.onPrimary,
       child: Container(
-        decoration: BoxDecoration(gradient: boxGradient()),
+        decoration: BoxDecoration(gradient: boxGradient(context)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Center(
               child: SizedBox(
-                  width: 400,
                   child: Row(
-                    children: [
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      Container(
-                          // width: _width,
-                          height: 50,
-                          alignment: Alignment.centerLeft, //设置控件内容的位置
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                  width: 50,
-                                  height: 50,
-                                  child: IconButton(
-                                      onPressed: () {
-                                        myScreenMgr.isMainScreen = true;
-                                        cntScaleTimerMgr.stopCntScaleTimer();
-                                        PublicFunctions.closeScalePassth();
-                                        PublicFunctions.stopWeight();
-                                        Navigator.of(context).pop();
-                                      },
-                                      icon: CustomCircleIcon(
-                                        outerColor: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary,
-                                        innerColor: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                        icon: Icons.home,
-                                        size: 30.0,
-                                      ))),
-                              const SizedBox(
-                                width: 20,
-                              ),
-                              SizedBox(
-                                child: Text(
-                                  pageTitle,
-                                  maxLines: 1,
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onPrimary),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          )),
-                    ],
-                  )),
+                children: [
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Container(
+                      // width: _width,
+                      height: 50,
+                      alignment: Alignment.centerLeft, //设置控件内容的位置
+                      child: Row(
+                        children: [
+                          SizedBox(
+                              width: 50,
+                              height: 50,
+                              child: IconButton(
+                                  onPressed: () {
+                                    myScreenMgr.isMainScreen = true;
+                                    cntScaleTimerMgr.stopCntScaleTimer();
+                                    PublicFunctions.closeScalePassth();
+                                    PublicFunctions.stopWeight();
+                                    Navigator.of(context).pop();
+                                  },
+                                  icon: CustomCircleIcon(
+                                    outerColor:
+                                        Theme.of(context).colorScheme.onPrimary,
+                                    innerColor:
+                                        Theme.of(context).colorScheme.primary,
+                                    icon: Icons.home,
+                                    size: 30.0,
+                                  ))),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          SizedBox(
+                            child: Text(
+                              pageTitle,
+                              maxLines: 1,
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      )),
+                ],
+              )),
             ),
             SizedBox(
               width: 360,
@@ -93,15 +89,15 @@ Widget pageHead(
                     width: 20,
                   ),
                   (myScreenMgr.serialPortST)
-                      ? const CustomCircleIcon(
-                          outerColor: Colors.blue,
-                          innerColor: Colors.white,
+                      ? CustomCircleIcon(
+                          outerColor: Theme.of(context).colorScheme.primary,
+                          innerColor: Theme.of(context).colorScheme.onPrimary,
                           icon: Icons.check_circle,
                           size: 24.0,
                         )
-                      : const CustomCircleIcon(
-                          outerColor: Colors.red,
-                          innerColor: Colors.white,
+                      : CustomCircleIcon(
+                          outerColor: Theme.of(context).colorScheme.error,
+                          innerColor: Theme.of(context).colorScheme.onPrimary,
                           icon: Icons.cancel,
                           size: 24.0,
                         ),

@@ -1,0 +1,8 @@
+{
+  "primary": "0xFF1599FE",
+  "secondary": "0xFF0A7CFF",
+  "tertiary": "0xFF1FA6FF",
+  "background": "0xFFEFF3F6",
+  "error": "0xFFC70026",
+  "success": "0xFF1B5E20" 
+}

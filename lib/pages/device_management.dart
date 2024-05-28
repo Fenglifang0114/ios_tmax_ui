@@ -128,7 +128,7 @@
 //                     style: const TextStyle(
 //                         fontSize: 20, fontWeight: FontWeight.bold)), ////此处需要秤回复
 //                 duration: const Duration(seconds: 10),
-//                 backgroundColor: Colors.red.shade900));
+//                 backgroundColor: Theme.of(context).colorScheme.error.shade900));
 //           }
 //           mySerialPortStatus.serialPortStatus = false;
 //           eventBus.fire(EventSerialPortStatus(mySerialPortStatus));
@@ -187,7 +187,7 @@
 //                 width: 200,
 //                 decoration: const BoxDecoration(
 //                     border: Border(
-//                         right: BorderSide(width: 0.5, color: Colors.black))),
+//                         right: BorderSide(width: 0.5, color: Theme.of(context).colorScheme.onSurface))),
 //                 child: Column(
 //                   children: <Widget>[
 //                     const Divider(
@@ -214,7 +214,7 @@
 //                               color: Theme.of(context).colorScheme.primary),
 //                           foregroundColor:
 //                               Theme.of(context).colorScheme.primary,
-//                           backgroundColor: Colors.white, //体颜色
+//                           backgroundColor: Theme.of(context).colorScheme.onPrimary, //体颜色
 //                           textStyle: const TextStyle(
 //                               fontWeight: FontWeight.bold), // 字体样式
 //                           shape: RoundedRectangleBorder(

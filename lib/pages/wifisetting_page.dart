@@ -429,7 +429,8 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                 controller: _findWifiText,
                                 decoration: InputDecoration(
                                   filled: true,
-                                  fillColor: Colors.white,
+                                  fillColor:
+                                      Theme.of(context).colorScheme.onPrimary,
                                   suffixIcon: IconButton(
                                     splashRadius: 20,
                                     icon: Icon(
@@ -452,9 +453,11 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                   labelText: localizedStrings.find_ssid,
                                   floatingLabelBehavior:
                                       FloatingLabelBehavior.never,
-                                  border: const OutlineInputBorder(
+                                  border: OutlineInputBorder(
                                     borderSide: BorderSide(
-                                      color: Colors.white, // 设置边框颜色
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimary, // 设置边框颜色
                                       width: 2.0, // 设置边框宽度
                                     ),
                                     borderRadius:
@@ -525,7 +528,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                             ? Icons.wifi_1_bar
                                             : Icons.wifi),
                                 tileColor: selectedIndex == index
-                                    ? const Color.fromARGB(255, 167, 215, 255)
+                                    ? Theme.of(context).colorScheme.scrim
                                     : null,
                                 onTap: () {
                                   setState(() {
@@ -885,8 +888,12 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                                                     'ok') ||
                                                             errorMessage
                                                                 .contains('OK'))
-                                                        ? Colors.green.shade900
-                                                        : Colors.red.shade900),
+                                                        ? Theme.of(context)
+                                                            .colorScheme
+                                                            .outline
+                                                        : Theme.of(context)
+                                                            .colorScheme
+                                                            .error),
                                               ),
                                             ]),
                                         const SizedBox(

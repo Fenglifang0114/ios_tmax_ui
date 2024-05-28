@@ -17,23 +17,26 @@ modifyAddNetworkDialog(BuildContext context) {
         return StatefulBuilder(builder: ((context, setState) {
           return AlertDialog(
             title: Container(
-                color: Colors.blue.shade900,
-                child: const Row(
+                color: Theme.of(context).colorScheme.primary,
+                child: Row(
                   children: [
-                    Icon(Icons.wifi, color: Colors.white),
+                    Icon(Icons.wifi,
+                        color: Theme.of(context).colorScheme.onPrimary),
                     Text("Device information modification",
-                        style: TextStyle(color: Colors.white))
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary))
                   ],
                 )),
             content: Container(
               height: 275,
-              decoration: const BoxDecoration(
-                  color: Color.fromARGB(255, 233, 232, 232)),
+              decoration:
+                  BoxDecoration(color: Theme.of(context).colorScheme.surface),
               child: Column(
                 children: [
                   const SizedBox(height: 2),
                   Container(
-                    decoration: const BoxDecoration(color: Colors.white),
+                    decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.onPrimary),
                     child: Column(
                       children: [
                         const SizedBox(height: 10),

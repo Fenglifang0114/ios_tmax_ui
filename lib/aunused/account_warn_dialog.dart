@@ -8,15 +8,17 @@ accountWarnDialog(BuildContext context) {
         return StatefulBuilder(builder: ((context, setState) {
           return AlertDialog(
             title: Container(
-                color: Colors.blue.shade900,
-                child: const Row(
+                color: Theme.of(context).colorScheme.primary,
+                child: Row(
                   children: [
                     Icon(
                       Icons.message,
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.onPrimary,
                     ),
                     SizedBox(width: 10),
-                    Text("提示信息！", style: TextStyle(color: Colors.white)),
+                    Text("提示信息！",
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary)),
                   ],
                 )),
             content: const Text("对不起，您输入的密码不正确，\n请重新输入！"),

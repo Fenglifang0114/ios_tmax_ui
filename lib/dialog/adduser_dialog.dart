@@ -223,18 +223,22 @@ addUserDialog(BuildContext context) {
                                       enabled: false,
                                       controller: errorText,
                                       maxLength: 100,
-                                      style: const TextStyle(color: Colors.red),
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .error),
                                       maxLengthEnforcement:
                                           MaxLengthEnforcement.enforced,
                                       maxLines: 1,
                                       textAlignVertical:
                                           TextAlignVertical.bottom,
-                                      decoration: const InputDecoration(
+                                      decoration: InputDecoration(
                                         border: OutlineInputBorder(
                                             borderSide: BorderSide.none),
                                         counterText: "",
-                                        focusColor: Colors
-                                            .red, // hintText: "请输入机种类型，如：ztp",
+                                        focusColor: Theme.of(context)
+                                            .colorScheme
+                                            .error, // hintText: "请输入机种类型，如：ztp",
                                         // border: OutlineInputBorder(),
                                       ),
                                       onChanged: (value) {

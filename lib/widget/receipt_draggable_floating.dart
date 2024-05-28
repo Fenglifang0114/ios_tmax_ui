@@ -326,7 +326,7 @@ class _ReceiptDraggableFloatingState extends State<ReceiptDraggableFloating> {
             if (_isDragging && _indexesX.isNotEmpty)
               CustomPaint(
                 painter: SolidLinePainter(
-                  color: Colors.red.shade300,
+                  color: Theme.of(context).colorScheme.error,
                   p1: Offset(0, _minYvalue),
                   p2: Offset(0, _maxYvalue),
                 ),
@@ -334,7 +334,7 @@ class _ReceiptDraggableFloatingState extends State<ReceiptDraggableFloating> {
             if (_isDragging && _indexesY.isNotEmpty)
               CustomPaint(
                 painter: SolidLinePainter(
-                  color: Colors.red.shade300,
+                  color: Theme.of(context).colorScheme.error,
                   p1: Offset(_minXvalue, 0),
                   p2: Offset(_maxXvalue, 0),
                 ),
@@ -342,7 +342,7 @@ class _ReceiptDraggableFloatingState extends State<ReceiptDraggableFloating> {
             if (_isDragging && _indexesX1.isNotEmpty)
               CustomPaint(
                 painter: SolidLinePainter(
-                  color: Colors.red.shade300,
+                  color: Theme.of(context).colorScheme.error,
                   p1: Offset(myReceiptOffsetData.width, _minYX1value),
                   p2: Offset(myReceiptOffsetData.width, _maxYX1value),
                 ),
@@ -350,7 +350,7 @@ class _ReceiptDraggableFloatingState extends State<ReceiptDraggableFloating> {
             if (_isDragging && _indexesY1.isNotEmpty)
               CustomPaint(
                 painter: SolidLinePainter(
-                  color: Colors.red.shade300,
+                  color: Theme.of(context).colorScheme.error,
                   p1: Offset(_minXY1value, myReceiptOffsetData.height),
                   p2: Offset(_maxXY1value, myReceiptOffsetData.height),
                 ),
@@ -358,7 +358,7 @@ class _ReceiptDraggableFloatingState extends State<ReceiptDraggableFloating> {
             if (_isDragging && _indexesYY1.isNotEmpty)
               CustomPaint(
                 painter: SolidLinePainter(
-                  color: Colors.red.shade300,
+                  color: Theme.of(context).colorScheme.error,
                   p1: Offset(_minYY1value, 0),
                   p2: Offset(_maxYY1value, 0),
                 ),
@@ -366,7 +366,7 @@ class _ReceiptDraggableFloatingState extends State<ReceiptDraggableFloating> {
             if (_isDragging && _indexesXX1.isNotEmpty)
               CustomPaint(
                 painter: SolidLinePainter(
-                  color: Colors.red.shade300,
+                  color: Theme.of(context).colorScheme.error,
                   p1: Offset(0, _minXX1value),
                   p2: Offset(0, _maxXX1value),
                 ),
@@ -374,7 +374,7 @@ class _ReceiptDraggableFloatingState extends State<ReceiptDraggableFloating> {
             if (_isDragging && _indexesX1X.isNotEmpty)
               CustomPaint(
                 painter: SolidLinePainter(
-                  color: Colors.red.shade300,
+                  color: Theme.of(context).colorScheme.error,
                   p1: Offset(myReceiptOffsetData.width, _minX1Xvalue),
                   p2: Offset(myReceiptOffsetData.width, _maxX1Xvalue),
                 ),
@@ -382,7 +382,7 @@ class _ReceiptDraggableFloatingState extends State<ReceiptDraggableFloating> {
             if (_isDragging && _indexesY1Y.isNotEmpty)
               CustomPaint(
                 painter: SolidLinePainter(
-                  color: Colors.red.shade300,
+                  color: Theme.of(context).colorScheme.error,
                   p1: Offset(_minY1Yvalue, myReceiptOffsetData.height),
                   p2: Offset(_maxY1Yvalue, myReceiptOffsetData.height),
                 ),

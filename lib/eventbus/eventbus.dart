@@ -207,6 +207,11 @@ class EventDownPrnFmtResp {
   EventDownPrnFmtResp(this.obj);
 }
 
+class EventDownDefPrnFmtResp {
+  dynamic obj;
+  EventDownDefPrnFmtResp(this.obj);
+}
+
 class EventSerialOutputResp {
   dynamic obj;
   EventSerialOutputResp(this.obj);

@@ -187,9 +187,9 @@ class RowDataWidgetState extends State<RowDataWidget> {
           width: 10,
         ),
         IconButton(
-          icon: const Icon(
+          icon: Icon(
             Icons.delete,
-            color: Color.fromARGB(255, 13, 71, 161),
+            color: Theme.of(context).colorScheme.primary,
           ),
           onPressed: widget.rowData.canDelete
               ? () {

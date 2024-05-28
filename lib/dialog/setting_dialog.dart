@@ -269,7 +269,8 @@ class _ParamSettingDialogState extends State<ParamSettingDialog> {
                           enabled: false,
                           controller: errorText,
                           maxLength: 100,
-                          style: const TextStyle(color: Colors.red),
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.error),
                           maxLengthEnforcement: MaxLengthEnforcement.enforced,
                           maxLines: 1,
                           textAlignVertical: TextAlignVertical.bottom,

@@ -97,8 +97,8 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
                 duration: const Duration(seconds: 3),
                 backgroundColor:
                     (myRespModifyHeaderFooter.msgBody.contains('ok'))
-                        ? Colors.green.shade900
-                        : Colors.red.shade900));
+                        ? Theme.of(context).colorScheme.outline
+                        : Theme.of(context).colorScheme.error));
           }
 
           cntScaleTimerMgr.stopCntScaleTimer();
@@ -138,7 +138,7 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
               children: [
                 Expanded(
                   child: Container(
-                    color: Theme.of(context).colorScheme.onPrimary,
+                    color: Theme.of(context).colorScheme.surfaceTint,
                     child: Column(
                       children: [
                         Container(
@@ -162,7 +162,7 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
                 ),
                 Expanded(
                   child: Container(
-                    color: Theme.of(context).colorScheme.onPrimary,
+                    color: Theme.of(context).colorScheme.surfaceTint,
                     child: Column(
                       children: [
                         Container(
@@ -458,7 +458,7 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
         return AlertDialog(
           title: Text(
             localizedStrings.confirm_title,
-            style: const TextStyle(color: Color.fromARGB(255, 15, 71, 161)),
+            style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
           content: Text(localizedStrings.header_confirm_info),
           actions: <Widget>[
@@ -486,7 +486,7 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
                   style: TextStyle(
                       fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
               duration: const Duration(seconds: 3),
-              backgroundColor: Colors.red.shade900));
+              backgroundColor: Theme.of(context).colorScheme.error));
           return;
         }
         myScaleCmd.cmdMode = 'modify_var_value';

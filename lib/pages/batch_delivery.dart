@@ -653,8 +653,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                                     });
                                   },
                                 ),
-                                textStyle(
-                                    localizedStrings.print_format_download,
+                                textStyle(localizedStrings.label_fmt_download,
                                     constraints),
                                 // 省略部分代码
                               ],
@@ -706,13 +705,13 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                                   : OutlinedButton.styleFrom(
                                       side: BorderSide(
                                         width: 1,
-                                        color: colorScheme.secondaryContainer,
+                                        color: colorScheme.background,
                                       ),
                                       foregroundColor: Theme.of(context)
                                           .colorScheme
                                           .onPrimary,
-                                      backgroundColor: colorScheme
-                                          .secondaryContainer, // 设置按钮的背景色
+                                      backgroundColor:
+                                          colorScheme.background, // 设置按钮的背景色
                                       shape: RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(4), // 设置按钮的圆角
@@ -1167,7 +1166,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                       padding: const EdgeInsets.all(10.0),
                       decoration: BoxDecoration(
                         border: Border.all(
-                          color: Colors.blue, // 边框颜色
+                          color: Theme.of(context).colorScheme.primary, // 边框颜色
                           width: 1.0, // 边框宽度
                         ),
                         borderRadius: const BorderRadius.all(
@@ -1802,10 +1801,10 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
         : OutlinedButton.styleFrom(
             side: BorderSide(
               width: 1,
-              color: colorScheme.secondaryContainer,
+              color: colorScheme.background,
             ),
             foregroundColor: Theme.of(context).colorScheme.onPrimary,
-            backgroundColor: colorScheme.secondaryContainer, // 设置按钮的背景色
+            backgroundColor: colorScheme.background, // 设置按钮的背景色
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
             ),
@@ -1869,7 +1868,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
         return AlertDialog(
           title: Text(
             localizedStrings.confirm_title,
-            style: const TextStyle(color: Color.fromARGB(255, 15, 71, 161)),
+            style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
           content: SizedBox(
             width: 300,
@@ -1909,9 +1908,9 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
       context: context,
       builder: (BuildContext ctx) {
         return AlertDialog(
-          title: const Text(
+          title: Text(
             'Edit Ip List',
-            style: TextStyle(color: Color.fromARGB(255, 15, 71, 161)),
+            style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
           content: SizedBox(
               width: 400,

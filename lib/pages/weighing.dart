@@ -181,7 +181,7 @@ class WeightModePageState extends State<WeightModePage> {
   Widget firstLayout(context, _width) {
     return Container(
         width: _width,
-        decoration: BoxDecoration(color: Colors.grey.shade200),
+        decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           // mainAxisSize: MainAxisSize.max,
@@ -197,7 +197,7 @@ class WeightModePageState extends State<WeightModePage> {
             Expanded(
               flex: 3,
               child: Container(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.onPrimary,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -346,7 +346,7 @@ class WeightModePageState extends State<WeightModePage> {
         //开始按钮
         icon: const Icon(Icons.play_arrow),
         iconSize: iconSize,
-        color: (isStart) ? (Colors.grey) : (color),
+        color: (isStart) ? (Theme.of(context).colorScheme.background) : (color),
         onPressed: () {
           setState(() {
             if (!isStart) {
@@ -394,7 +394,7 @@ class WeightModePageState extends State<WeightModePage> {
         },
         icon: const Icon(Icons.pause),
         iconSize: iconSize,
-        color: (!isStart) ? (Colors.grey) : color,
+        color: (!isStart) ? (Theme.of(context).colorScheme.background) : color,
       ),
     );
   }
@@ -420,7 +420,9 @@ class WeightModePageState extends State<WeightModePage> {
           Text(
             text,
             textAlign: TextAlign.right,
-            style: TextStyle(color: Colors.white, fontSize: fontSize),
+            style: TextStyle(
+                color: Theme.of(context).colorScheme.onPrimary,
+                fontSize: fontSize),
             overflow: TextOverflow.ellipsis,
           ),
         ],
@@ -459,7 +461,9 @@ class WeightModePageState extends State<WeightModePage> {
           Text(
             text,
             textAlign: TextAlign.right,
-            style: TextStyle(color: Colors.white, fontSize: fontSize),
+            style: TextStyle(
+                color: Theme.of(context).colorScheme.onPrimary,
+                fontSize: fontSize),
             overflow: TextOverflow.ellipsis,
           ),
         ],
@@ -503,7 +507,7 @@ class WeightModePageState extends State<WeightModePage> {
         width: width,
         child: MaterialButton(
             color: color,
-            textColor: Colors.white,
+            textColor: Theme.of(context).colorScheme.onPrimary,
             elevation: 5.0,
             child: Text(text,
                 maxLines: 1,

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:t_max/data/weightparam_data.dart';
 import '../data/date_data.dart';
 import '../data/device_data.dart';
+import '../data/get_theme_color.dart';
 import '../data/time_data.dart';
 import '../eventbus/eventbus.dart';
 import '../widget/appbar_msg.dart';
@@ -110,14 +111,14 @@ class _ChangeParamPageState extends State<ChangeParamPage> {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: themeColor(),
+      theme: themeColor(colorTheme),
       home: Scaffold(
         drawer: leftSidebar(context),
         // AppBar：相当于iOS 的导航栏
         appBar: PreferredSize(
             preferredSize: const Size.fromHeight(30),
             child: AppBar(
-              title: version(Theme.of(context).colorScheme.primary),
+              title: versionInfo(Theme.of(context).colorScheme.primary),
               actions: [appbarMsg(context)],
             )),
         body: ListView(
@@ -126,12 +127,13 @@ class _ChangeParamPageState extends State<ChangeParamPage> {
           children: [
             Container(
               width: 20,
-              color: Colors.blue.shade900,
+              color: Theme.of(context).colorScheme.primary,
             ),
             Container(
                 width: _width,
                 height: _height,
-                decoration: const BoxDecoration(color: Colors.white),
+                decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.onPrimary),
                 child: ListView(
                   controller: _pageScrollerController,
                   children: [
@@ -155,7 +157,7 @@ class _ChangeParamPageState extends State<ChangeParamPage> {
                       children: [
                         const SizedBox(width: 50),
                         Checkbox(
-                            // activeColor: Colors.black,
+                            // activeColor: Theme.of(context).colorScheme.onSurface,
                             value: isPrecisionChecked,
                             onChanged: (value) {
                               setState(() {
@@ -511,7 +513,10 @@ class _ChangeParamPageState extends State<ChangeParamPage> {
                               width: 200,
                               height: 32,
                               decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.grey)),
+                                  border: Border.all(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .background)),
                               child: TextField(
                                 controller: _gravitycontroller,
                                 textAlignVertical: TextAlignVertical.center,
@@ -533,7 +538,10 @@ class _ChangeParamPageState extends State<ChangeParamPage> {
                                   width: 100,
                                   height: 32,
                                   decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey)),
+                                      border: Border.all(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .background)),
                                   child: TextField(
                                     // controller: _gravitycontroller,
                                     // enabled: false,
@@ -565,7 +573,10 @@ class _ChangeParamPageState extends State<ChangeParamPage> {
                                   width: 80,
                                   height: 32,
                                   decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey)),
+                                      border: Border.all(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .background)),
                                   child: TextField(
                                     // controller: _gravitycontroller,
                                     // enabled: false,
@@ -582,7 +593,9 @@ class _ChangeParamPageState extends State<ChangeParamPage> {
                                                   return Theme(
                                                       data: ThemeData(
                                                           cardColor:
-                                                              Colors.white,
+                                                              Theme.of(context)
+                                                                  .colorScheme
+                                                                  .onPrimary,
                                                           brightness:
                                                               Brightness.light),
                                                       child: child!);

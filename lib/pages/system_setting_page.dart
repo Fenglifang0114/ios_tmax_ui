@@ -8,6 +8,7 @@ import '../eventbus/eventbus.dart';
 import '../generated/l10n.dart';
 import '../widget/custom_circle_icon.dart';
 import '../dialog/license_info.dart';
+import '../widget/home_page_widget.dart';
 import '../widget/page_head.dart';
 
 class SystemSettingPage extends StatefulWidget {
@@ -24,18 +25,6 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
   late ScrollController _pageScrollerController;
 
   String groupValue = 'zh';
-
-  List<Color> cardColors = List.generate(9, (index) => Colors.white);
-  List<Color> textColors = List.generate(9, (index) => Colors.blue.shade900);
-
-  List<String> imagePaths = [
-    'assets/images/11.png',
-    'assets/images/12.png',
-    'assets/images/13.png',
-    'assets/images/14.png',
-    'assets/images/15.png',
-    'assets/images/16.png',
-  ];
   bool isCardHovered = false;
   bool isCardClicked = false;
 
@@ -77,57 +66,12 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
 
   @override
   Widget build(BuildContext context) {
-    // final _width = MediaQuery.of(context).size.width;
-    // final _height = MediaQuery.of(context).size.height;
-    // final _height = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),
         child: pageHead(context, mySystemVersionInfo.getTitle(mySystemVersion),
             localizedStrings.serial_port_status),
       ),
-
-      // Container(
-      //   color: Theme.of(context).colorScheme.onPrimary,
-      //   // foregroundColor: Theme.of(context).colorScheme.primary,
-      //   child: Container(
-      //     decoration: BoxDecoration(gradient: boxGradient()),
-      //     child: Row(
-      //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //       children: [
-      //         Center(
-      //           child: SizedBox(
-      //             width: 300,
-      //             child: Text(
-      //               mySystemVersionInfo.getTitle(mySystemVersion),
-      //               style: TextStyle(
-      //                   fontSize: 20,
-      //                   color: Theme.of(context).colorScheme.onPrimary),
-      //               textAlign: TextAlign.center,
-      //             ),
-      //           ),
-      //         ),
-      //         // SizedBox(
-      //         //     width: 240,
-      //         //     height: 50,
-      //         //     child: IconButton(
-      //         //         onPressed: () {
-      //         //           myScreenMgr.isMainScreen = true;
-      //         //           Navigator.of(context).pop();
-      //         //         },
-      //         //         icon: CustomCircleIcon(
-      //         //           outerColor: Theme.of(context).colorScheme.onPrimary,
-      //         //           innerColor: Theme.of(context).colorScheme.primary,
-      //         //           icon: Icons.home,
-      //         //           size: 30.0,
-      //         //         ))),
-      //       ],
-      //     ),
-      //   ),
-      //   //设置状态栏颜色渐变
-      //   // flexibleSpace:
-      //   //     Container(decoration: BoxDecoration(gradient: boxGradient())),
-      // )),
       body: Container(
         color: Theme.of(context).colorScheme.surface,
         padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 30.0),
@@ -138,7 +82,7 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15), // 根据实际需要设置圆角半径
-                  color: Theme.of(context).colorScheme.onPrimary,
+                  color: Theme.of(context).colorScheme.surfaceTint,
                 ),
                 padding: const EdgeInsets.symmetric(
                     vertical: 20.0, horizontal: 30.0),
@@ -170,24 +114,12 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
     );
   }
 
-  LinearGradient lineGradient() {
-    return const LinearGradient(
-      colors: [
-        Color.fromARGB(255, 21, 129, 238),
-        Color.fromARGB(255, 115, 238, 207),
-      ],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    );
-  }
-
-  Widget customFunctionCard(
-      String titleName, String iconImage, IconData iconInfo) {
+  Widget settingCard(String titleName, String iconImage, IconData iconInfo) {
     return Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
         ),
-        color: Theme.of(context).colorScheme.onPrimary,
+        color: Theme.of(context).colorScheme.surfaceTint,
         child: SizedBox(
             height: 80,
             child: Row(
@@ -199,12 +131,12 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
                 ),
                 ShaderMask(
                   shaderCallback: (bounds) {
-                    return lineGradient().createShader(bounds);
+                    return lineGradient(context).createShader(bounds);
                   },
                   child: Icon(
                     size: 30,
                     iconInfo,
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.onPrimary,
                   ),
                 ),
                 const SizedBox(
@@ -226,7 +158,7 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15), // 根据实际需要设置圆角半径
-          color: Theme.of(context).colorScheme.tertiary,
+          color: Theme.of(context).colorScheme.primaryContainer,
         ),
         margin: const EdgeInsets.only(right: 20), // 根据实际需要设置容器间距
         child: ListView(
@@ -244,7 +176,7 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
                   onTap: () {
                     setLanguageDialog(context);
                   },
-                  child: customFunctionCard(localizedStrings.set_language_title,
+                  child: settingCard(localizedStrings.set_language_title,
                       "assets/images/line.png", Icons.language),
                 ),
               ),
@@ -257,8 +189,11 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
                   onTap: () {
                     showLicenseDialog(context);
                   },
-                  child: customFunctionCard(localizedStrings.license_info_title,
-                      "assets/images/line.png", Icons.info),
+                  child: settingCard(
+                    localizedStrings.license_info_title,
+                    "assets/images/line.png",
+                    Icons.key,
+                  ),
                 ),
               ),
             ]),

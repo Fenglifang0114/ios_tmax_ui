@@ -12,26 +12,27 @@ registerWarnDialog(BuildContext context) {
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             titlePadding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 20.0),
             title: Container(
-                decoration: const BoxDecoration(
-                  color: Color.fromARGB(255, 13, 71, 161),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(10),
                       topRight: Radius.circular(10)),
                 ),
                 width: 200,
                 alignment: Alignment.centerRight,
-                child: const Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    SizedBox(width: 5),
+                    const SizedBox(width: 5),
                     Icon(
                       Icons.message,
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.onPrimary,
                     ),
-                    SizedBox(width: 20),
+                    const SizedBox(width: 20),
                     Text(
                       "提示信息！",
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onPrimary),
                       maxLines: 3,
                     ),
                   ],

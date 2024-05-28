@@ -27,6 +27,7 @@ class RespMsgType {
   static const String respEraseFlash = 'resp_erase_flash';
   static const String respWriteDataFlash = 'resp_write_data_flash';
   static const String respDownPrnFmt = 'resp_down_prn_fmt';
+  static const String respDownDefPrnFmt = 'resp_down_def_prn_fmt';
   static const String respErrSerial = 'resp_err_serial';
   static const String respGetApList = 'resp_get_ap_list';
   static const String respRescanApList = 'resp_rescan_ap_list';
@@ -75,6 +76,7 @@ class RespMsgType {
     RespMsgType.respGetUIConf: handleGetUIConf,
     RespMsgType.weightData: handleWeightData,
     RespMsgType.respDownPrnFmt: handleRespDownPrnFmt,
+    RespMsgType.respDownDefPrnFmt: handleRespDefDownPrnFmt,
     RespMsgType.respErrSerial: handleRespErrSerial,
     RespMsgType.respBTPassthData: handleRespBTPassthData,
     RespMsgType.respSetWifiDynamicIp: handleRespSetWifiDynamicIp,
@@ -136,6 +138,11 @@ class RespMsgType {
   static void handleRespDownPrnFmt(dynamic data) {
     dynamic mobj = ChannelResponse.fromJson(data);
     eventBus.fire(EventDownPrnFmtResp(mobj));
+  }
+
+  static void handleRespDefDownPrnFmt(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventDownDefPrnFmtResp(mobj));
   }
 
   static void handleRespErrSerial(dynamic data) {

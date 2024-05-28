@@ -1,24 +1,29 @@
-import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:t_max/data/dialog_data.dart';
 import 'package:t_max/data/license_data.dart';
 import 'package:t_max/data/scale_info_from_scale.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/pages/labeldesign_page.dart';
+import 'package:tray_manager/tray_manager.dart';
+import 'package:window_manager/window_manager.dart';
 import '../data/comscaleinfo_data.dart';
 import '../data/currentport_data.dart';
 import '../data/device_data.dart';
 import '../data/screen_mgr.dart';
 import '../data/setting_version_info.dart';
+import '../data/timer_manager.dart';
 import '../dialog/get_build_info_dialog.dart';
 import '../dialog/language_setting.dart';
 import '../functions/methods.dart';
 import '../generated/l10n.dart';
+import '../widget/app_info.dart';
 import '../widget/box_gradient.dart';
 import '../widget/custom_circle_icon.dart';
 import '../widget/custom_setting.dart';
 import '../dialog/license_info.dart';
+import '../widget/home_page_widget.dart';
 import '../widget/update_firmware.dart';
 import '../widget/version.dart';
 import 'check_weighers_page.dart';
@@ -36,7 +41,7 @@ class IndustryHomePage extends StatefulWidget {
   State<IndustryHomePage> createState() => IndustryHomePageState();
 }
 
-class IndustryHomePageState extends State<IndustryHomePage> {
+class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
   List<String> items = [];
   TextEditingController weightController = TextEditingController();
   TextEditingController repsController = TextEditingController();
@@ -48,21 +53,33 @@ class IndustryHomePageState extends State<IndustryHomePage> {
   dynamic _eventbus3;
   dynamic _eventbus4;
 
-  Timer? _timer;
-  bool isTiming = false;
-
   String groupValue = 'zh';
   DateTime now = DateTime.now();
   bool isCardHovered = false;
   bool isCardClicked = false;
   bool editScaleNameFlag = false;
 
-  // 初始文字颜色
+  Future<void> _handleSetIcon() async {
+    String iconPath =
+        Platform.isWindows ? 'assets/images/app.ico' : 'assets/images/app.png';
+    await windowManager.setIcon(iconPath);
+  }
+
+  Future<void> _init() async {
+    await trayManager.setIcon(
+      Platform.isWindows ? 'assets/images/app.ico' : 'assets/images/app.png',
+    );
+    setState(() {});
+  }
+
   @override
   void initState() {
+    trayManager.addListener(this);
+    _init();
+    _handleSetIcon();
     super.initState();
     _pageScrollerController = ScrollController();
-    _startTimer(5);
+    cntScaleTimerMgr.startCntScaleTimer(5);
     _eventbus1 = eventBus.on<EventDialogData>().listen((event) {
       if (mounted) {
         setState(() {
@@ -126,7 +143,7 @@ class IndustryHomePageState extends State<IndustryHomePage> {
     _eventbus3.cancel();
     _eventbus4.cancel();
     _pageScrollerController.dispose();
-    _stopTimer();
+    cntScaleTimerMgr.stopCntScaleTimer();
     super.dispose();
   }
 
@@ -147,7 +164,7 @@ class IndustryHomePageState extends State<IndustryHomePage> {
           child: Container(
               color: Theme.of(context).colorScheme.onPrimary,
               child: Container(
-                decoration: BoxDecoration(gradient: boxGradient()),
+                decoration: BoxDecoration(gradient: boxGradient(context)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -160,7 +177,7 @@ class IndustryHomePageState extends State<IndustryHomePage> {
                                 width: 20,
                               ),
                               Image.asset(
-                                'assets/images/4.png',
+                                'assets/images/app.png',
                                 width: 30.0,
                                 height: 30.0,
                               ),
@@ -179,7 +196,8 @@ class IndustryHomePageState extends State<IndustryHomePage> {
                               const SizedBox(
                                 width: 20,
                               ),
-                              version(Theme.of(context).colorScheme.onPrimary),
+                              versionInfo(
+                                  Theme.of(context).colorScheme.onPrimary),
                               Text(
                                   myLicenseInfo.isValid
                                       ? '(Professional)'
@@ -204,6 +222,12 @@ class IndustryHomePageState extends State<IndustryHomePage> {
                           const SizedBox(
                             width: 20,
                           ),
+                          AppInfoButton(onRefresh: () {
+                            setState(() {});
+                          }),
+                          const SizedBox(
+                            width: 20,
+                          ),
                           Expanded(
                             child: Text(localizedStrings.serial_port_status,
                                 overflow: TextOverflow.ellipsis,
@@ -219,15 +243,19 @@ class IndustryHomePageState extends State<IndustryHomePage> {
                             width: 20,
                           ),
                           (myScreenMgr.serialPortST)
-                              ? const CustomCircleIcon(
-                                  outerColor: Colors.blue,
-                                  innerColor: Colors.white,
+                              ? CustomCircleIcon(
+                                  outerColor:
+                                      Theme.of(context).colorScheme.primary,
+                                  innerColor:
+                                      Theme.of(context).colorScheme.onPrimary,
                                   icon: Icons.check_circle,
                                   size: 24.0,
                                 )
-                              : const CustomCircleIcon(
-                                  outerColor: Colors.red,
-                                  innerColor: Colors.white,
+                              : CustomCircleIcon(
+                                  outerColor:
+                                      Theme.of(context).colorScheme.error,
+                                  innerColor:
+                                      Theme.of(context).colorScheme.onPrimary,
                                   icon: Icons.cancel,
                                   size: 24.0,
                                 ),
@@ -263,7 +291,6 @@ class IndustryHomePageState extends State<IndustryHomePage> {
                   children: [
                     firstCard(),
                     secondCard(),
-                    thirdCard(),
                   ],
                 ),
               ),
@@ -272,7 +299,8 @@ class IndustryHomePageState extends State<IndustryHomePage> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(
-                    width: 100, child: Image.asset('assets/images/tscale.png')),
+                    width: 100,
+                    child: Image.asset('assets/images/company.png')),
               ],
             ),
           ],
@@ -285,8 +313,8 @@ class IndustryHomePageState extends State<IndustryHomePage> {
     return Row(
       children: [
         CustomCircleIcon(
-          outerColor: Colors.blue,
-          innerColor: Colors.white,
+          outerColor: Theme.of(context).colorScheme.primary,
+          innerColor: Theme.of(context).colorScheme.onPrimary,
           icon: iconName,
           size: 30.0,
         ),
@@ -298,65 +326,13 @@ class IndustryHomePageState extends State<IndustryHomePage> {
     );
   }
 
-  LinearGradient lineGradient() {
-    return const LinearGradient(
-      colors: [
-        Color.fromARGB(255, 21, 129, 238),
-        Color.fromARGB(255, 115, 238, 207),
-      ],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    );
-  }
-
-  Widget customFunctionCard(
-      String titleName, String iconImage, IconData iconInfo, bool isValid) {
-    return Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-        color: isValid
-            ? Theme.of(context).colorScheme.onPrimary
-            : Theme.of(context).colorScheme.background,
-        child: SizedBox(
-            height: 80,
-            child: Row(
-              children: [
-                Image.asset(
-                  iconImage,
-                  width: 30,
-                  height: 30,
-                ),
-                ShaderMask(
-                  shaderCallback: (bounds) {
-                    return lineGradient().createShader(bounds);
-                  },
-                  child: Icon(
-                    size: 30,
-                    iconInfo,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(
-                  width: 5,
-                ),
-                Flexible(
-                  child: Text(
-                    titleName,
-                    overflow: TextOverflow.visible,
-                  ),
-                ),
-              ],
-            )));
-  }
-
   Widget firstCard() {
     return Expanded(
-      flex: 1,
+      flex: 4,
       child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15), // 根据实际需要设置圆角半径
-            color: Theme.of(context).colorScheme.tertiary,
+            color: Theme.of(context).colorScheme.primaryContainer,
           ),
           margin: const EdgeInsets.only(right: 20), // 根据实际需要设置容器间距
           child: Column(
@@ -365,7 +341,7 @@ class IndustryHomePageState extends State<IndustryHomePage> {
                 padding: const EdgeInsets.symmetric(
                     vertical: 10.0, horizontal: 20.0),
                 child: functionTitle(
-                    localizedStrings.device_connection_title, Icons.link),
+                    localizedStrings.device_configuration_title, Icons.link),
               ),
               Expanded(
                 child: ListView(children: [
@@ -438,81 +414,6 @@ class IndustryHomePageState extends State<IndustryHomePage> {
                                       ),
                                     ),
                                   ]),
-                              // Row(
-                              //   mainAxisAlignment: MainAxisAlignment.start,
-                              //   children: [
-                              //     const SizedBox(
-                              //       width: 30,
-                              //     ),
-                              //     Flexible(
-                              //       child: Text(
-                              //         localizedStrings.scale_name,
-                              //         maxLines: 1,
-                              //         overflow: TextOverflow.ellipsis,
-                              //       ),
-                              //     ),
-                              //     IconButton(
-                              //         onPressed: () {
-                              //           setState(() {
-                              //             editScaleNameFlag = true;
-                              //           });
-                              //         },
-                              //         icon: Icon(
-                              //           Icons.edit,
-                              //           color: Theme.of(context)
-                              //               .colorScheme
-                              //               .primary,
-                              //         )),
-                              //   ],
-                              // ),
-                              // Row(
-                              //     mainAxisAlignment: MainAxisAlignment.start,
-                              //     children: [
-                              //       const SizedBox(
-                              //         width: 30,
-                              //       ),
-                              //       editScaleNameFlag
-                              //           ? Expanded(
-                              //               child: TextFormField(
-                              //                   controller: _scaleNameCtl,
-                              //                   maxLines: 1,
-                              //                   style: const TextStyle(
-                              //                       overflow:
-                              //                           TextOverflow.ellipsis),
-                              //                   inputFormatters: [
-                              //                     LengthLimitingTextInputFormatter(
-                              //                         50)
-                              //                   ],
-                              //                   decoration:
-                              //                       const InputDecoration(
-                              //                     // prefixIcon: Icon(Icons.edit),
-                              //                     border: OutlineInputBorder(),
-                              //                   ),
-                              //                   onEditingComplete: () {
-                              //                     setState(() {
-                              //                       editScaleNameFlag = false;
-                              //                       myFactoryInfoFromScale
-                              //                               .scaleName =
-                              //                           _scaleNameCtl.text;
-                              //                       // --tijiaomingzixiugai
-                              //                     });
-                              //                   }),
-                              //             )
-                              //           : Flexible(
-                              //               child: Text(
-                              //                 myFactoryInfoFromScale.scaleName ==
-                              //                         null
-                              //                     ? ''
-                              //                     : myFactoryInfoFromScale
-                              //                         .scaleName!,
-                              //                 maxLines: 1,
-                              //                 textAlign: TextAlign.start,
-                              //                 style: const TextStyle(
-                              //                     fontWeight: FontWeight.bold),
-                              //                 overflow: TextOverflow.ellipsis,
-                              //               ),
-                              //             ),
-                              //     ]),
                             ],
                           ),
                         )
@@ -529,9 +430,72 @@ class IndustryHomePageState extends State<IndustryHomePage> {
                         });
                       },
                       child: customFunctionCard(
+                          context,
                           localizedStrings.title_serial_port_connection,
                           "assets/images/line.png",
                           Icons.cable,
+                          true),
+                    ),
+                  ),
+                  MouseRegion(
+                    cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                    child: GestureDetector(
+                      onTap: () {
+                        if (myFactoryInfoFromScale.modelName == null ||
+                            (!myFactoryInfoFromScale.modelName!
+                                .contains('2200'))) {
+                          setState(() {
+                            stopCheckSerialPort();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ProductDownloadPage()),
+                            ).then((value) => _updateStatus());
+                          });
+                        }
+                      },
+                      child: customFunctionCard(
+                          context,
+                          localizedStrings.plu_download_title,
+                          "assets/images/line.png",
+                          Icons.shopping_bag,
+                          myFactoryInfoFromScale.modelName == null
+                              ? true
+                              : !myFactoryInfoFromScale.modelName!
+                                  .contains('2200')),
+                    ),
+                  ),
+                  MouseRegion(
+                    cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          stopCheckSerialPort();
+                          showUpdateFirmWareDialog(context);
+                        });
+                      },
+                      child: customFunctionCard(
+                          context,
+                          localizedStrings.update_firmware,
+                          "assets/images/line.png",
+                          Icons.update,
+                          true),
+                    ),
+                  ),
+                  MouseRegion(
+                    cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          showBuildInfo();
+                        });
+                      },
+                      child: customFunctionCard(
+                          context,
+                          localizedStrings.get_build_info,
+                          "assets/images/line.png",
+                          Icons.privacy_tip,
                           true),
                     ),
                   ),
@@ -544,11 +508,11 @@ class IndustryHomePageState extends State<IndustryHomePage> {
 
   Widget secondCard() {
     return Expanded(
-      flex: 1,
+      flex: 8,
       child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15), // 根据实际需要设置圆角半径
-            color: Theme.of(context).colorScheme.tertiary,
+            color: Theme.of(context).colorScheme.primaryContainer,
           ),
           margin: const EdgeInsets.only(right: 20), // 根据实际需要设置容器间距
           child: Column(
@@ -557,7 +521,7 @@ class IndustryHomePageState extends State<IndustryHomePage> {
                 padding: const EdgeInsets.symmetric(
                     vertical: 10.0, horizontal: 20.0),
                 child: functionTitle(
-                    localizedStrings.general_configuration_title,
+                    localizedStrings.customization_setting_title,
                     Icons.settings),
               ),
               Expanded(
@@ -569,214 +533,136 @@ class IndustryHomePageState extends State<IndustryHomePage> {
                         cursor: SystemMouseCursors.click, // 设置光标为手的形状
                         child: GestureDetector(
                           onTap: () {
-                            if (myFactoryInfoFromScale.modelName == null ||
-                                (!myFactoryInfoFromScale.modelName!
-                                    .contains('2200'))) {
+                            setState(() {
+                              stopCheckSerialPort();
                               setState(() {
-                                stopCheckSerialPort();
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
-                                          const ProductDownloadPage()),
+                                          const WeightModePage()),
                                 ).then((value) => _updateStatus());
                               });
-                            }
+                            });
                           },
-                          child: customFunctionCard(
-                              localizedStrings.plu_download_title,
+                          child: appCard(
+                              context,
+                              localizedStrings.weighing_title,
                               "assets/images/line.png",
-                              Icons.shopping_bag,
-                              myFactoryInfoFromScale.modelName == null
-                                  ? true
-                                  : !myFactoryInfoFromScale.modelName!
-                                      .contains('2200')),
+                              Icons.monitor_weight_outlined,
+                              true,
+                              'This application is used to display the weighing data in real time.'),
                         ),
                       ),
                       MouseRegion(
                         cursor: SystemMouseCursors.click, // 设置光标为手的形状
                         child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              stopCheckSerialPort();
-                              showUpdateFirmWareDialog(context);
-                            });
-                          },
-                          child: customFunctionCard(
-                              localizedStrings.update_firmware,
+                          onTap: myLicenseInfo.isValid
+                              ? () {
+                                  setState(() {
+                                    stopCheckSerialPort();
+                                    setState(() {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const WeightDataCollectionPage()),
+                                      ).then((value) => _updateStatus());
+                                    });
+                                  });
+                                }
+                              : null,
+                          child: appCard(
+                              context,
+                              localizedStrings.weight_collection_title,
                               "assets/images/line.png",
-                              Icons.update,
-                              true),
+                              Icons.save_as,
+                              myLicenseInfo.isValid,
+                              'This application is used to collect weighing data in real time'),
                         ),
                       ),
                       MouseRegion(
-                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              showBuildInfo();
-                            });
-                          },
-                          child: customFunctionCard(
-                              localizedStrings.get_build_info,
-                              "assets/images/line.png",
-                              Icons.info,
-                              true),
-                        ),
-                      ),
+                          cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                          child: GestureDetector(
+                            onTap: myLicenseInfo.isValid
+                                ? () {
+                                    setState(() {
+                                      stopCheckSerialPort();
+                                      setState(() {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const CheckWeighersPage()),
+                                        ).then((value) => _updateStatus());
+                                      });
+                                    });
+                                  }
+                                : null,
+                            child: appCard(
+                                context,
+                                localizedStrings.checkweigher_title,
+                                "assets/images/line.png",
+                                Icons.scale,
+                                myLicenseInfo.isValid,
+                                'This application is used to check weighing data in real time'),
+                          )),
+                      MouseRegion(
+                          cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                          child: GestureDetector(
+                            onTap: myLicenseInfo.isValid
+                                ? () {
+                                    setState(() {
+                                      stopCheckSerialPort();
+                                      setState(() {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const TakeInPage()),
+                                        ).then((value) => _updateStatus());
+                                      });
+                                    });
+                                  }
+                                : null,
+                            child: appCard(
+                                context,
+                                localizedStrings.take_in_title,
+                                "assets/images/line.png",
+                                Icons.add,
+                                myLicenseInfo.isValid,
+                                'This app is used to implement the increment scale.'),
+                          )),
+                      MouseRegion(
+                          cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                          child: GestureDetector(
+                            onTap: myLicenseInfo.isValid
+                                ? () {
+                                    setState(() {
+                                      stopCheckSerialPort();
+                                      setState(() {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const TakeOutPage()),
+                                        ).then((value) => _updateStatus());
+                                      });
+                                    });
+                                  }
+                                : null,
+                            child: appCard(
+                                context,
+                                localizedStrings.take_out_title,
+                                "assets/images/line.png",
+                                Icons.remove,
+                                myLicenseInfo.isValid,
+                                'This app is used to implement the take out scale.'),
+                          )),
                     ]),
               ),
             ],
           )),
-    );
-  }
-
-  Widget thirdCard() {
-    return Expanded(
-      flex: 1, // 设置一个容器的flex为2，在剩余空间中占用更多的比例
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15), // 根据实际需要设置圆角半径
-          color: Theme.of(context).colorScheme.tertiary,
-        ),
-        child: Column(
-          children: [
-            Container(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-              child: functionTitle(
-                  localizedStrings.application_title, Icons.design_services),
-            ),
-            Expanded(
-              child: ListView(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 10.0, horizontal: 20.0),
-                  children: [
-                    MouseRegion(
-                      cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            stopCheckSerialPort();
-                            setState(() {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const WeightModePage()),
-                              ).then((value) => _updateStatus());
-                            });
-                          });
-                        },
-                        child: customFunctionCard(
-                            localizedStrings.weighing_title,
-                            "assets/images/line.png",
-                            Icons.monitor_weight_outlined,
-                            true),
-                      ),
-                    ),
-                    MouseRegion(
-                      cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                      child: GestureDetector(
-                        onTap: myLicenseInfo.isValid
-                            ? () {
-                                setState(() {
-                                  stopCheckSerialPort();
-                                  setState(() {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const WeightDataCollectionPage()),
-                                    ).then((value) => _updateStatus());
-                                  });
-                                });
-                              }
-                            : null,
-                        child: customFunctionCard(
-                            localizedStrings.weight_collection_title,
-                            "assets/images/line.png",
-                            Icons.save_as,
-                            myLicenseInfo.isValid),
-                      ),
-                    ),
-                    MouseRegion(
-                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                        child: GestureDetector(
-                          onTap: myLicenseInfo.isValid
-                              ? () {
-                                  setState(() {
-                                    stopCheckSerialPort();
-                                    setState(() {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const CheckWeighersPage()),
-                                      ).then((value) => _updateStatus());
-                                    });
-                                  });
-                                }
-                              : null,
-                          child: customFunctionCard(
-                              localizedStrings.checkweigher_title,
-                              "assets/images/line.png",
-                              Icons.scale,
-                              myLicenseInfo.isValid),
-                        )),
-                    MouseRegion(
-                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                        child: GestureDetector(
-                          onTap: myLicenseInfo.isValid
-                              ? () {
-                                  setState(() {
-                                    stopCheckSerialPort();
-                                    setState(() {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const TakeInPage()),
-                                      ).then((value) => _updateStatus());
-                                    });
-                                  });
-                                }
-                              : null,
-                          child: customFunctionCard(
-                              localizedStrings.take_in_title,
-                              "assets/images/line.png",
-                              Icons.add,
-                              myLicenseInfo.isValid),
-                        )),
-                    MouseRegion(
-                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                        child: GestureDetector(
-                          onTap: myLicenseInfo.isValid
-                              ? () {
-                                  setState(() {
-                                    stopCheckSerialPort();
-                                    setState(() {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const TakeOutPage()),
-                                      ).then((value) => _updateStatus());
-                                    });
-                                  });
-                                }
-                              : null,
-                          child: customFunctionCard(
-                              localizedStrings.take_out_title,
-                              "assets/images/line.png",
-                              Icons.remove,
-                              myLicenseInfo.isValid),
-                        )),
-                  ]),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -844,24 +730,12 @@ class IndustryHomePageState extends State<IndustryHomePage> {
 
   void _updateStatus() {
     setState(() {});
-    _startTimer(5);
-  }
-
-  void _startTimer(int time) {
-    isTiming = true;
-    _timer = Timer(Duration(seconds: time), () {
-      PublicFunctions.checkSerialPort();
-      _startTimer(5);
-    });
-  }
-
-  void _stopTimer() {
-    _timer?.cancel(); // 停止计时器
-    isTiming = false;
+    cntScaleTimerMgr.stopCntScaleTimer();
+    cntScaleTimerMgr.startCntScaleTimer(5);
   }
 
   void stopCheckSerialPort() {
     myScreenMgr.isMainScreen = false;
-    _stopTimer();
+    cntScaleTimerMgr.stopCntScaleTimer();
   }
 }

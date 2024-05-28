@@ -50,7 +50,7 @@ class AbnormalDataPageState extends State<AbnormalDataPage> {
                   style: const TextStyle(
                       fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
               duration: const Duration(seconds: 3),
-              backgroundColor: Colors.red.shade900));
+              backgroundColor: Theme.of(context).colorScheme.error));
         } else {
           try {
             final jsonResponse = json.decode(myGetWeightErrResp.msgBody);
@@ -68,7 +68,7 @@ class AbnormalDataPageState extends State<AbnormalDataPage> {
                         fontSize: 20,
                         fontWeight: FontWeight.normal)), ////此处需要秤回复
                 duration: const Duration(seconds: 3),
-                backgroundColor: Colors.red.shade900));
+                backgroundColor: Theme.of(context).colorScheme.error));
           }
         }
         cntScaleTimerMgr.stopCntScaleTimer();
@@ -113,7 +113,8 @@ class AbnormalDataPageState extends State<AbnormalDataPage> {
   Widget firstLayout(context, _width) {
     return Container(
         width: _width,
-        decoration: BoxDecoration(color: Colors.grey.shade200),
+        decoration:
+            BoxDecoration(color: Theme.of(context).colorScheme.background),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           // mainAxisSize: MainAxisSize.max,

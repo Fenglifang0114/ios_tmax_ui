@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:t_max/pages/home_page_config.dart';
 import 'package:t_max/pages/home_page_industry.dart';
-
 import '../pages/home_page_retail.dart';
 
 const int tConfig = 1;

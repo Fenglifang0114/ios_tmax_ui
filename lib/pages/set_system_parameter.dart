@@ -117,8 +117,8 @@ class SetParameterPageState extends State<SetParameterPage> {
                         fontWeight: FontWeight.normal)), ////此处需要秤回复
                 duration: const Duration(seconds: 3),
                 backgroundColor: (myRespModifyEepromInfo.msgBody.contains('ok'))
-                    ? Colors.green.shade900
-                    : Colors.red.shade900));
+                    ? Theme.of(context).colorScheme.outline
+                    : Theme.of(context).colorScheme.error));
           }
         });
         groupedData.clear();
@@ -173,195 +173,193 @@ class SetParameterPageState extends State<SetParameterPage> {
     localizedStrings = S.of(context);
     // final _width = MediaQuery.of(context).size.width;
     final _height = MediaQuery.of(context).size.height;
+
     return Scaffold(
-      body: Container(
-        child: Column(
-          children: [
-            pageHead(context, localizedStrings.parameter_set_title,
-                localizedStrings.serial_port_status),
-            Container(
-              height: 50,
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.scrim,
-                border: Border(
-                  bottom:
-                      BorderSide(color: Theme.of(context).colorScheme.primary),
-                ),
-              ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      'Configuration name',
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      'Editable',
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      'Size',
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      'Type',
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      'Value',
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      'Description',
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(50),
+        child: pageHead(context, localizedStrings.parameter_set_title,
+            localizedStrings.serial_port_status),
+      ),
+      body: Column(
+        children: [
+          Container(
+            height: 50,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.scrim,
+              border: Border(
+                bottom:
+                    BorderSide(color: Theme.of(context).colorScheme.primary),
               ),
             ),
-            SizedBox(
-              height: _height - 100,
-              child: ListView.builder(
-                itemCount: groupedData.length, // 每个分类一个ExpansionTile
-                itemBuilder: (context, index) {
-                  String category = groupedData.keys.toList()[index];
-                  String categoryTitle = category;
-
-                  return ExpansionTile(
-                    initiallyExpanded: false,
-                    title: Container(
-                      child: Text(categoryTitle,
-                          style: const TextStyle(fontWeight: FontWeight.bold)),
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Text(
+                    'Configuration name',
+                    style: TextStyle(
+                      fontSize: 18,
                     ),
-                    children: groupedData[category]!.map((item) {
-                      return Container(
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            // border: Border(
-                            //   bottom: BorderSide(color: Colors.grey),
-                            // ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Expanded(
-                                flex: 2,
-                                child: Text(
-                                  ((item.comment.toString())
-                                              .replaceAll('/', ''))
-                                          .replaceAll('*', '') +
-                                      ': ',
-                                  textAlign: TextAlign.center,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Text(
+                    'Editable',
+                    style: TextStyle(
+                      fontSize: 18,
+                    ),
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Text(
+                    'Size',
+                    style: TextStyle(
+                      fontSize: 18,
+                    ),
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Text(
+                    'Type',
+                    style: TextStyle(
+                      fontSize: 18,
+                    ),
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Text(
+                    'Value',
+                    style: TextStyle(
+                      fontSize: 18,
+                    ),
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Text(
+                    'Description',
+                    style: TextStyle(
+                      fontSize: 18,
+                    ),
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: _height - 100,
+            child: ListView.builder(
+              itemCount: groupedData.length, // 每个分类一个ExpansionTile
+              itemBuilder: (context, index) {
+                String category = groupedData.keys.toList()[index];
+                String categoryTitle = category;
+
+                return ExpansionTile(
+                  initiallyExpanded: false,
+                  title: Text(categoryTitle,
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                  children: groupedData[category]!.map((item) {
+                    return Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          // border: Border(
+                          //   bottom: BorderSide(color: Theme.of(context).colorScheme.background),
+                          // ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                ((item.comment.toString()).replaceAll('/', ''))
+                                        .replaceAll('*', '') +
+                                    ': ',
+                                textAlign: TextAlign.center,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              Expanded(
-                                flex: 2,
-                                child: Text(
-                                  (item.permission == 1) ? 'No' : 'Yes',
-                                  textAlign: TextAlign.center,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                (item.permission == 1) ? 'No' : 'Yes',
+                                textAlign: TextAlign.center,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              Expanded(
-                                flex: 2,
-                                child: Text(
-                                  (item.size.toString()),
-                                  textAlign: TextAlign.center,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                (item.size.toString()),
+                                textAlign: TextAlign.center,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              Expanded(
-                                flex: 2,
-                                child: Text(
-                                  (item.type.toString()),
-                                  textAlign: TextAlign.center,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                (item.type.toString()),
+                                textAlign: TextAlign.center,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              Expanded(
-                                flex: 2,
-                                child: TextFormField(
-                                  readOnly:
-                                      (item.permission == 1) ? true : false,
-                                  // 根据数据列表设置初始值
-                                  maxLines: 1,
-                                  decoration: InputDecoration(
-                                    border: (item.permission == 1)
-                                        ? InputBorder.none
-                                        : UnderlineInputBorder(), // 去掉底部线条
-                                  ),
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                      overflow: TextOverflow.ellipsis),
-                                  initialValue: item.currValue,
-                                  // 处理每个文本字段的变化
-                                  onChanged: (value) {
-                                    setState(() {
-                                      item.currValue = value;
-                                      item.isChanged = true;
-                                    });
-                                  },
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: TextFormField(
+                                readOnly: (item.permission == 1) ? true : false,
+                                // 根据数据列表设置初始值
+                                maxLines: 1,
+                                decoration: InputDecoration(
+                                  border: (item.permission == 1)
+                                      ? InputBorder.none
+                                      : const UnderlineInputBorder(), // 去掉底部线条
                                 ),
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                    overflow: TextOverflow.ellipsis),
+                                initialValue: item.currValue,
+                                // 处理每个文本字段的变化
+                                onChanged: (value) {
+                                  setState(() {
+                                    item.currValue = value;
+                                    item.isChanged = true;
+                                  });
+                                },
                               ),
-                              Expanded(
-                                flex: 2,
-                                child: Text(
-                                  item.description.toString(),
-                                  textAlign: TextAlign.center,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                item.description.toString(),
+                                textAlign: TextAlign.center,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                            ],
-                          ));
-                    }).toList(),
-                  );
-                },
-              ),
-            )
-          ],
-        ),
+                            ),
+                          ],
+                        ));
+                  }).toList(),
+                );
+              },
+            ),
+          )
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -435,7 +433,7 @@ class SetParameterPageState extends State<SetParameterPage> {
         return AlertDialog(
           title: Text(
             localizedStrings.confirm_title,
-            style: const TextStyle(color: Color.fromARGB(255, 15, 71, 161)),
+            style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
           content: Text(title),
           actions: <Widget>[
@@ -446,7 +444,7 @@ class SetParameterPageState extends State<SetParameterPage> {
                       Navigator.of(context).pop(false); // 不跳转
                     },
                   )
-                : SizedBox(),
+                : const SizedBox(),
             OutlinedButton(
               child: Text(localizedStrings.confirm_btn),
               onPressed: () {
@@ -487,7 +485,7 @@ class SetParameterPageState extends State<SetParameterPage> {
         child: Text(
           head,
           textAlign: TextAlign.center,
-          style: const TextStyle(color: Colors.blue),
+          style: TextStyle(color: Theme.of(context).colorScheme.primary),
         ));
   }
 
@@ -498,7 +496,7 @@ class SetParameterPageState extends State<SetParameterPage> {
         return AlertDialog(
           title: Text(
             localizedStrings.confirm_title,
-            style: const TextStyle(color: Color.fromARGB(255, 15, 71, 161)),
+            style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
           content: Text(localizedStrings.data_delete_confirm),
           actions: <Widget>[

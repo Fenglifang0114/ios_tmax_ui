@@ -36,8 +36,9 @@ class _GridPageState extends State<GridPage> {
     for (var i = 0; i < listData.length; i++) {
       list.add(Container(
         decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: Colors.black26, width: 1)),
+            color: Theme.of(context).colorScheme.onPrimary,
+            border: Border.all(
+                color: Theme.of(context).colorScheme.onSurface, width: 1)),
         child: Column(
           children: [
             Text(
@@ -52,8 +53,10 @@ class _GridPageState extends State<GridPage> {
               width: 300,
               height: 210,
               decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(width: 0.5, color: Colors.black)),
+                  color: Theme.of(context).colorScheme.onPrimary,
+                  border: Border.all(
+                      width: 0.5,
+                      color: Theme.of(context).colorScheme.onSurface)),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -64,16 +67,17 @@ class _GridPageState extends State<GridPage> {
                       Container(
                         width: 180,
                         height: 60,
-                        color: Colors.blue.shade900,
-                        child: const TextField(
+                        color: Theme.of(context).colorScheme.primary,
+                        child: TextField(
                           enabled: false,
                           maxLines: 1,
                           textAlignVertical: TextAlignVertical.center,
                           decoration: InputDecoration(
                             hintText: "999999.9999",
-                            hintStyle:
-                                TextStyle(color: Colors.white, fontSize: 25),
-                            border: OutlineInputBorder(),
+                            hintStyle: TextStyle(
+                                color: Theme.of(context).colorScheme.onPrimary,
+                                fontSize: 25),
+                            border: const OutlineInputBorder(),
                           ),
                         ),
                       ),
@@ -81,16 +85,17 @@ class _GridPageState extends State<GridPage> {
                       Container(
                         width: 50,
                         height: 60,
-                        color: Colors.blue.shade900,
-                        child: const TextField(
+                        color: Theme.of(context).colorScheme.primary,
+                        child: TextField(
                           enabled: false,
                           maxLines: 1,
                           textAlignVertical: TextAlignVertical.center,
                           decoration: InputDecoration(
                             hintText: "kg",
-                            hintStyle:
-                                TextStyle(color: Colors.white, fontSize: 20),
-                            border: OutlineInputBorder(),
+                            hintStyle: TextStyle(
+                                color: Theme.of(context).colorScheme.onPrimary,
+                                fontSize: 20),
+                            border: const OutlineInputBorder(),
                           ),
                         ),
                       ),
@@ -155,7 +160,7 @@ class _GridPageState extends State<GridPage> {
   Widget build(BuildContext context) {
     return Container(
         width: 1000,
-        decoration: BoxDecoration(color: Colors.grey.shade200),
+        decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
         child: Expanded(
             child: ListView(controller: _pageScrollerController, children: [
           GridView.count(

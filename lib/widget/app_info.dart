@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:t_max/pages/system_setting_page.dart';
+import '../dialog/company_info_dialog.dart';
 
-import '../data/screen_mgr.dart';
-
-class CustomSettingButton extends StatefulWidget {
+class AppInfoButton extends StatefulWidget {
   final VoidCallback onRefresh;
-  const CustomSettingButton({required this.onRefresh, super.key});
+  const AppInfoButton({required this.onRefresh, super.key});
 
   @override
-  _CustomSettingButtonState createState() => _CustomSettingButtonState();
+  _AppInfoButtonState createState() => _AppInfoButtonState();
 }
 
-class _CustomSettingButtonState extends State<CustomSettingButton> {
+class _AppInfoButtonState extends State<AppInfoButton> {
   bool isHovered = false;
   bool isPressed = false;
 
@@ -21,10 +19,12 @@ class _CustomSettingButtonState extends State<CustomSettingButton> {
       onTap: () {
         setState(() {
           isPressed = !isPressed;
-          myScreenMgr.isMainScreen = false;
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const SystemSettingPage()),
+          showDialog(
+            context: context,
+            barrierDismissible: false, // 允许点击空白处关闭对话框
+            builder: (context) {
+              return const CompanyInfoDialog();
+            },
           ).then((value) => setState(() {
                 isPressed = !isPressed;
                 widget.onRefresh();
@@ -51,7 +51,7 @@ class _CustomSettingButtonState extends State<CustomSettingButton> {
           color: Theme.of(context).colorScheme.onPrimary,
         ),
         child: Icon(
-          Icons.settings,
+          Icons.info_outline,
           color: isHovered || isPressed
               ? Theme.of(context).colorScheme.primary
               : Theme.of(context).colorScheme.background,

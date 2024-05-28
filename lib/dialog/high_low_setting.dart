@@ -40,21 +40,24 @@ class _HighLowSettingDialogState extends State<HighLowSettingDialog> {
     return AlertDialog(
       title: Container(
           color: Theme.of(context).colorScheme.primary,
-          child: const Row(
+          child: Row(
             children: [
-              Icon(Icons.edit, color: Colors.white),
-              Text('High/Low Setting', style: TextStyle(color: Colors.white))
+              Icon(Icons.edit, color: Theme.of(context).colorScheme.onPrimary),
+              Text('High/Low Setting',
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.onPrimary))
             ],
           )),
       content: Container(
           height: 200,
           decoration:
-              const BoxDecoration(color: Color.fromARGB(255, 233, 232, 232)),
+              BoxDecoration(color: Theme.of(context).colorScheme.surface),
           child: SingleChildScrollView(
             child: Column(
               children: [
                 Container(
-                  decoration: const BoxDecoration(color: Colors.white),
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.onPrimary),
                   child: Column(
                     children: [
                       Row(

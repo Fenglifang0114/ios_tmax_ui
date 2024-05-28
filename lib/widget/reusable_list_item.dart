@@ -57,15 +57,15 @@
 //                   (icons == "Icons.usb")
 //                       ? const Icon(Icons.usb, color: Color(0xff006e1a))
 //                       : (icons == "Icons.usb_off")
-//                           ? Icon(Icons.usb, color: Colors.red.shade900)
+//                           ? Icon(Icons.usb, color: Theme.of(context).colorScheme.error.shade900)
 //                           : (icons == "Icons.device_unknown")
 //                               ? const Icon(Icons.device_unknown,
 //                                   color: Color.fromARGB(255, 240, 133, 0))
 //                               : (icons == "Icons.wifi")
 //                                   ? Icon(Icons.wifi,
-//                                       color: Colors.blue.shade900)
+//                                       color: Theme.of(context).colorScheme.primary)
 //                                   : Icon(Icons.bluetooth,
-//                                       color: Colors.blue.shade900),
+//                                       color: Theme.of(context).colorScheme.primary),
 //                   SizedBox(
 //                     width: 135,
 //                     height: 50,
@@ -126,7 +126,7 @@
 //                               content,
 //                               style: const TextStyle(
 //                                 fontSize: 18,
-//                                 // color: Colors.white, //字体颜色
+//                                 // color: Theme.of(context).colorScheme.onPrimary, //字体颜色
 //                                 fontWeight: FontWeight.bold, //字体粗细
 //                               ),
 //                             ),

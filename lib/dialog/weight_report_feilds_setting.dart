@@ -64,22 +64,25 @@ class _ReportFeildsSettingDialogState extends State<ReportFeildsSettingDialog> {
     return AlertDialog(
       title: Container(
           color: Theme.of(context).colorScheme.primary,
-          child: const Row(
+          child: Row(
             children: [
-              Icon(Icons.description, color: Colors.white),
+              Icon(Icons.description,
+                  color: Theme.of(context).colorScheme.onPrimary),
               Text('Report Fields Setting',
-                  style: TextStyle(color: Colors.white))
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.onPrimary))
             ],
           )),
       content: Container(
           height: 350,
           decoration:
-              const BoxDecoration(color: Color.fromARGB(255, 233, 232, 232)),
+              BoxDecoration(color: Theme.of(context).colorScheme.surface),
           child: SingleChildScrollView(
             child: Column(
               children: [
                 Container(
-                  decoration: const BoxDecoration(color: Colors.white),
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.onPrimary),
                   child: Column(
                     children: [
                       buildCheckBox(0),

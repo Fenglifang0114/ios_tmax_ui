@@ -126,8 +126,8 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                         fontWeight: FontWeight.normal)), ////此处需要秤回复
                 duration: const Duration(seconds: 3),
                 backgroundColor: (mySetSerialOutputResp.msgBody.contains('ok'))
-                    ? Colors.green.shade900
-                    : Colors.red.shade900));
+                    ? Theme.of(context).colorScheme.outline
+                    : Theme.of(context).colorScheme.error));
           }
         });
       }
@@ -296,7 +296,9 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
             child: Container(
               decoration: BoxDecoration(
                   color: colorScheme.onPrimary,
-                  border: Border.all(width: 0.2, color: Colors.black)),
+                  border: Border.all(
+                      width: 0.2,
+                      color: Theme.of(context).colorScheme.onSurface)),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -635,7 +637,9 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                                   padding: const EdgeInsets.all(10.0),
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                      color: Colors.blue, // 边框颜色
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary, // 边框颜色
                                       width: 2.0, // 边框宽度
                                     ),
                                     borderRadius: const BorderRadius.all(
@@ -698,7 +702,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
           content: const Text(('There are no files to save.'),
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal)),
           duration: const Duration(seconds: 3),
-          backgroundColor: Colors.green.shade900));
+          backgroundColor: Theme.of(context).colorScheme.outline));
     }
 
     for (var file in files) {
@@ -722,7 +726,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                   style: const TextStyle(
                       fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
               duration: const Duration(seconds: 3),
-              backgroundColor: Colors.red.shade900));
+              backgroundColor: Theme.of(context).colorScheme.error));
         }
       }
     }
@@ -747,7 +751,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
               style: const TextStyle(
                   fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
           duration: const Duration(seconds: 3),
-          backgroundColor: Colors.green.shade900));
+          backgroundColor: Theme.of(context).colorScheme.outline));
     }
   }
 
@@ -841,7 +845,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
           Expanded(
             child: Container(
               width: double.infinity,
-              color: colorScheme.tertiary,
+              color: colorScheme.primaryContainer,
               child: SingleChildScrollView(
                 child: Text(
                   _getOutputData(pageId),
@@ -911,7 +915,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     return [
       Container(
         height: 40,
-        color: colorScheme.tertiary,
+        color: colorScheme.primaryContainer,
         child: Center(
           child: Text(
             'Text Property',
@@ -994,11 +998,11 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
               borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
             ),
           ),
-          child: const Text('Delete',
+          child: Text('Delete',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.onPrimary,
               ))),
       const SizedBox(
         height: 50,
@@ -1027,7 +1031,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     return [
       Container(
         height: 40,
-        color: colorScheme.tertiary,
+        color: colorScheme.primaryContainer,
         child: Center(
           child: Text(
             'Enter Property',
@@ -1211,7 +1215,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     return [
       Container(
         height: 40,
-        color: colorScheme.tertiary,
+        color: colorScheme.primaryContainer,
         child: Center(
           child: Text(
             'Text Property',
@@ -1266,7 +1270,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     return [
       Container(
         height: 40,
-        color: colorScheme.tertiary,
+        color: colorScheme.primaryContainer,
         child: Center(
           child: Text(
             'String Property',
@@ -1437,7 +1441,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     return [
       Container(
         height: 40,
-        color: colorScheme.tertiary,
+        color: colorScheme.primaryContainer,
         child: Center(
           child: Text(
             'Float Property',
@@ -1518,7 +1522,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     return [
       Container(
         height: 40,
-        color: colorScheme.tertiary,
+        color: colorScheme.primaryContainer,
         child: Center(
           child: Text(
             'Integer Property',
@@ -1604,11 +1608,11 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
             borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
           ),
         ),
-        child: const Text('Delete',
+        child: Text('Delete',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.onPrimary,
             )));
   }
 
@@ -1640,8 +1644,9 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                 color: colorScheme.primary,
                 width: 1.0,
               ),
-              color:
-                  !isArrowBackHovered ? Colors.white : colorScheme.background,
+              color: !isArrowBackHovered
+                  ? Theme.of(context).colorScheme.onPrimary
+                  : colorScheme.background,
             ),
             child: Icon(
               Icons.arrow_back,
@@ -1675,7 +1680,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                 width: 1.0,
               ),
               color: !isArrowForwardHovered
-                  ? Colors.white
+                  ? Theme.of(context).colorScheme.onPrimary
                   : colorScheme.background,
             ),
             child: Icon(
@@ -1885,7 +1890,9 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
               : textData.content,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
-              color: (textData.isSelect) ? Colors.white : colorScheme.primary),
+              color: (textData.isSelect)
+                  ? Theme.of(context).colorScheme.onPrimary
+                  : colorScheme.primary),
         ),
       ),
     );

@@ -15,20 +15,23 @@ accountDialog(BuildContext context) {
         return StatefulBuilder(builder: ((context, setState) {
           return AlertDialog(
             title: Container(
-                color: Colors.blue.shade900,
-                child: const Row(
+                color: Theme.of(context).colorScheme.primary,
+                child: Row(
                   children: [
                     Icon(
                       Icons.lock_outline,
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.onPrimary,
                     ),
                     SizedBox(width: 10),
-                    Text("账号密码", style: TextStyle(color: Colors.white)),
+                    Text("账号密码",
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary)),
                   ],
                 )),
             content: Container(
               height: 280,
-              decoration: const BoxDecoration(color: Colors.white),
+              decoration:
+                  BoxDecoration(color: Theme.of(context).colorScheme.onPrimary),
               child: Column(
                 children: [
                   const SizedBox(height: 15),

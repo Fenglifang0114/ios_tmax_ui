@@ -82,8 +82,8 @@ class CableIpSettingPageState extends State<CableIpSettingPage> {
                         fontWeight: FontWeight.normal)), ////此处需要秤回复
                 duration: const Duration(seconds: 3),
                 backgroundColor: (myRespSetServerIp.msgBody.contains('ok'))
-                    ? Colors.green.shade900
-                    : Colors.red.shade900));
+                    ? Theme.of(context).colorScheme.outline
+                    : Theme.of(context).colorScheme.error));
           }
 
           cntScaleTimerMgr.stopCntScaleTimer();
@@ -360,7 +360,7 @@ class CableIpSettingPageState extends State<CableIpSettingPage> {
         return AlertDialog(
           title: Text(
             localizedStrings.confirm_title,
-            style: const TextStyle(color: Color.fromARGB(255, 15, 71, 161)),
+            style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
           content: Text(localizedStrings.header_confirm_info),
           actions: <Widget>[

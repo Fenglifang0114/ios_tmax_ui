@@ -22,16 +22,18 @@ void showWarningDialog(BuildContext context, void Function(bool) onOKPressed) {
               child: AlertDialog(
                 title: Container(
                     color: Theme.of(context).colorScheme.primary,
-                    child: const Row(
+                    child: Row(
                       children: [
-                        Text("Warning", style: TextStyle(color: Colors.white))
+                        Text("Warning",
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.onPrimary))
                       ],
                     )),
                 content: Container(
                   height: 100,
                   width: 300,
-                  decoration: const BoxDecoration(
-                      color: Color.fromARGB(255, 233, 232, 232)),
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surface),
                   child: const Text(
                     "You cannot switch units during the process, please switch back to the original unit. ",
                     maxLines: 3,

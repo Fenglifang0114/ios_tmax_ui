@@ -43,18 +43,22 @@ DownLoadSetOutputFmt myDownLoadSetOutputFmt = DownLoadSetOutputFmt();
 class DownLoadPluFile {
   String? scaleModel;
   String? filePath;
+  int? nameMaxLen;
 
-  DownLoadPluFile({this.scaleModel, this.filePath});
+  DownLoadPluFile({this.scaleModel, this.filePath, this.nameMaxLen});
 
   DownLoadPluFile.fromJson(Map<String, dynamic> json) {
     scaleModel = json['ScaleModel'];
     filePath = json['FilePath'].cast<String>();
+    nameMaxLen = json['NameMaxLen'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['ScaleModel'] = scaleModel;
     data['FilePath'] = filePath;
+    data['NameMaxLen'] = nameMaxLen;
+
     return data;
   }
 }
@@ -81,3 +85,27 @@ class DelPlu {
 }
 
 DelPlu myDelPlu = DelPlu();
+
+class DefaultPrtFmt {
+  String? scaleModel;
+  String? printerModel;
+  String? filePath;
+
+  DefaultPrtFmt({this.scaleModel, this.printerModel, this.filePath});
+
+  DefaultPrtFmt.fromJson(Map<String, dynamic> json) {
+    scaleModel = json['ScaleModel'];
+    printerModel = json['PrinterModel'];
+    filePath = json['FilePath'].cast<String>();
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['ScaleModel'] = scaleModel;
+    data['PrinterModel'] = printerModel;
+    data['FilePath'] = filePath;
+    return data;
+  }
+}
+
+DefaultPrtFmt myDefaultPrtFmt = DefaultPrtFmt();

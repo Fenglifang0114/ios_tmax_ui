@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:t_max/data/license_data.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 
+import '../data/get_theme_color.dart';
 import '../data/setting_version_info.dart';
 import '../generated/l10n.dart';
 
@@ -157,16 +158,17 @@ class TrialPageState extends State<TrialPage> {
     systemId = localizedStrings.system_id;
     return MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: themeColor(),
+        theme: themeColor(colorTheme),
         home: Scaffold(
             // AppBar：相当于iOS 的导航栏
             appBar: PreferredSize(
                 preferredSize: const Size.fromHeight(40),
                 child: AppBar(
-                  title: version(Theme.of(context).colorScheme.onPrimary),
+                  title: versionInfo(Theme.of(context).colorScheme.onPrimary),
                   //设置状态栏颜色渐变
                   flexibleSpace: Container(
-                      decoration: BoxDecoration(gradient: boxGradient())),
+                      decoration:
+                          BoxDecoration(gradient: boxGradient(context))),
                 )),
             body: ListView(
               children: [
@@ -385,7 +387,7 @@ class TrialPageState extends State<TrialPage> {
                               SizedBox(
                                   width: 250,
                                   child:
-                                      Image.asset('assets/images/tscale.png')),
+                                      Image.asset('assets/images/company.png')),
                               const SizedBox(width: 100)
                             ],
                           )

@@ -58,8 +58,8 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                       fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
               duration: const Duration(seconds: 3),
               backgroundColor: (mySetScaleTimeResp.msgBody.contains('ok'))
-                  ? Colors.green.shade900
-                  : Colors.red.shade900));
+                  ? Theme.of(context).colorScheme.outline
+                  : Theme.of(context).colorScheme.error));
         }
       }
     });
@@ -88,7 +88,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                           fontSize: 20,
                           fontWeight: FontWeight.normal)), ////此处需要秤回复
                   duration: const Duration(seconds: 3),
-                  backgroundColor: Colors.red.shade900));
+                  backgroundColor: Theme.of(context).colorScheme.error));
             }
           } else {
             stopTimer();
@@ -98,7 +98,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                         fontSize: 20,
                         fontWeight: FontWeight.normal)), ////此处需要秤回复
                 duration: const Duration(seconds: 3),
-                backgroundColor: Colors.red.shade900));
+                backgroundColor: Theme.of(context).colorScheme.error));
           }
         } else {
           stopTimer();
@@ -107,7 +107,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                   style: const TextStyle(
                       fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
               duration: const Duration(seconds: 3),
-              backgroundColor: Colors.red.shade900));
+              backgroundColor: Theme.of(context).colorScheme.error));
         }
         cntScaleTimerMgr.stopCntScaleTimer();
         cntScaleTimerMgr.startCntScaleTimer(5);
@@ -166,7 +166,8 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
   Widget firstLayout(context, _width) {
     return Container(
         width: _width,
-        decoration: BoxDecoration(color: Colors.grey.shade200),
+        decoration:
+            BoxDecoration(color: Theme.of(context).colorScheme.background),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           // mainAxisSize: MainAxisSize.max,
@@ -211,9 +212,10 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                                 TextSpan(
                                     text:
                                         "${deviceTime.year}-${pad0(deviceTime.month)}-${pad0(deviceTime.day)} ${pad0(deviceTime.hour)}:${pad0(deviceTime.minute)}:${pad0(deviceTime.second)}",
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 30.0,
-                                      color: Colors.blue,
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
                                       height: 1.5,
                                     )),
                               ),
@@ -395,7 +397,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
         child: Text(
           head,
           textAlign: TextAlign.center,
-          style: const TextStyle(color: Colors.blue),
+          style: TextStyle(color: Theme.of(context).colorScheme.primary),
         ));
   }
 
@@ -406,7 +408,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
         return AlertDialog(
           title: Text(
             localizedStrings.confirm_title,
-            style: const TextStyle(color: Color.fromARGB(255, 15, 71, 161)),
+            style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
           content: Text(localizedStrings.data_delete_confirm),
           actions: <Widget>[

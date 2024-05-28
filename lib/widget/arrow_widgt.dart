@@ -43,7 +43,7 @@ class _ArrowButtonState extends State<ArrowButton> {
                 : Theme.of(context).colorScheme.background,
             width: 1.0,
           ),
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.onPrimary,
         ),
         child: Icon(
           Icons.settings,

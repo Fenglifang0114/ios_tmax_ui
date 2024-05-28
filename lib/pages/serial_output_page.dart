@@ -54,8 +54,8 @@ class _SerialOutputPageState extends State<SerialOutputPage> {
                         fontWeight: FontWeight.normal)), ////此处需要秤回复
                 duration: const Duration(seconds: 3),
                 backgroundColor: (mySetSerialOutputResp.msgBody.contains('ok'))
-                    ? Colors.green.shade900
-                    : Colors.red.shade900));
+                    ? Theme.of(context).colorScheme.outline
+                    : Theme.of(context).colorScheme.error));
           }
         });
       }
@@ -124,7 +124,7 @@ class _SerialOutputPageState extends State<SerialOutputPage> {
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(20)),
+                                  BorderRadius.all(Radius.circular(4)),
                             ),
                           ),
                         ),
@@ -139,7 +139,7 @@ class _SerialOutputPageState extends State<SerialOutputPage> {
                           style: ButtonStyle(
                             shape: MaterialStateProperty.all(
                               RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                             ),
                           ),
@@ -177,8 +177,9 @@ class _SerialOutputPageState extends State<SerialOutputPage> {
                 width: 1,
                 color: Theme.of(context).colorScheme.primary,
               ),
-              foregroundColor: Colors.blue,
-              backgroundColor: Colors.white, // 设置按钮的背景色
+              foregroundColor: Theme.of(context).colorScheme.primary,
+              backgroundColor:
+                  Theme.of(context).colorScheme.onPrimary, // 设置按钮的背景色
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
               ),
@@ -214,7 +215,7 @@ class _SerialOutputPageState extends State<SerialOutputPage> {
             style: ButtonStyle(
               shape: MaterialStateProperty.all(
                 RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: BorderRadius.circular(4),
                 ),
               ),
             ),
@@ -235,9 +236,9 @@ class _SerialOutputPageState extends State<SerialOutputPage> {
       context: context,
       builder: (BuildContext ctx) {
         return AlertDialog(
-          title: const Text(
+          title: Text(
             'Confirmation',
-            style: TextStyle(color: Color.fromARGB(255, 15, 71, 161)),
+            style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
           content: const Text(
               '''Please confirm the order of the printing format.     
@@ -309,7 +310,7 @@ class _SerialOutputPageState extends State<SerialOutputPage> {
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),
         child: Container(
-          decoration: BoxDecoration(gradient: boxGradient()),
+          decoration: BoxDecoration(gradient: boxGradient(context)),
           child: Row(
             children: [
               const SizedBox(

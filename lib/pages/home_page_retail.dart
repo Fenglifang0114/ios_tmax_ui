@@ -1,24 +1,30 @@
-import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:t_max/data/dialog_data.dart';
 import 'package:t_max/data/license_data.dart';
 import 'package:t_max/data/scale_info_from_scale.dart';
 import 'package:t_max/eventbus/eventbus.dart';
-import 'package:t_max/pages/dow_prn_fmt_page.dart';
+import 'package:t_max/pages/down_recipt_fmt_page.dart';
+import 'package:tray_manager/tray_manager.dart';
+import 'package:window_manager/window_manager.dart';
 import '../data/comscaleinfo_data.dart';
 import '../data/currentport_data.dart';
 import '../data/device_data.dart';
 import '../data/screen_mgr.dart';
 import '../data/setting_version_info.dart';
+import '../data/timer_manager.dart';
 import '../dialog/get_build_info_dialog.dart';
 import '../dialog/language_setting.dart';
 import '../functions/methods.dart';
 import '../generated/l10n.dart';
+import '../widget/app_info.dart';
 import '../widget/bluetooth_setting.dart';
 import '../widget/box_gradient.dart';
 import '../widget/custom_circle_icon.dart';
 import '../widget/custom_setting.dart';
 import '../dialog/license_info.dart';
+import '../widget/home_page_widget.dart';
 import '../widget/update_firmware.dart';
 import '../widget/version.dart';
 import 'cable_ip_settig_page.dart';
@@ -26,7 +32,6 @@ import 'header_footer_page.dart';
 import 'modify_com_port_page.dart';
 import 'product_download_page.dart';
 import 'receipt_design_page.dart';
-import 'wifisetting_page.dart';
 
 class RetailHomePage extends StatefulWidget {
   const RetailHomePage({Key? key}) : super(key: key);
@@ -35,7 +40,7 @@ class RetailHomePage extends StatefulWidget {
   State<RetailHomePage> createState() => _RetailHomePageState();
 }
 
-class _RetailHomePageState extends State<RetailHomePage> {
+class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
   List<String> items = [];
   TextEditingController weightController = TextEditingController();
   TextEditingController repsController = TextEditingController();
@@ -46,32 +51,33 @@ class _RetailHomePageState extends State<RetailHomePage> {
   dynamic _eventbus3;
   dynamic _eventbus4;
 
-  Timer? _timer;
-  bool isTiming = false;
-
   String groupValue = 'zh';
   DateTime now = DateTime.now();
-
-  List<Color> cardColors = List.generate(9, (index) => Colors.white);
-  List<Color> textColors = List.generate(9, (index) => Colors.blue.shade900);
-  List<String> imagePaths = [
-    'assets/images/11.png',
-    'assets/images/12.png',
-    'assets/images/13.png',
-    'assets/images/14.png',
-    'assets/images/15.png',
-    'assets/images/16.png',
-  ];
   bool isCardHovered = false;
   bool isCardClicked = false;
 
-  // 初始文字颜色
+  Future<void> _handleSetIcon() async {
+    String iconPath =
+        Platform.isWindows ? 'assets/images/app.ico' : 'assets/images/app.png';
+    await windowManager.setIcon(iconPath);
+  }
+
+  Future<void> _init() async {
+    await trayManager.setIcon(
+      Platform.isWindows ? 'assets/images/app.ico' : 'assets/images/app.png',
+    );
+    setState(() {});
+  }
 
   @override
   void initState() {
+    trayManager.addListener(this);
+    _init();
+    _handleSetIcon();
     super.initState();
     _pageScrollerController = ScrollController();
-    _startTimer(5);
+    cntScaleTimerMgr.stopCntScaleTimer();
+    cntScaleTimerMgr.startCntScaleTimer(5);
     // _checkTimerFuc(5);
     _eventbus1 = eventBus.on<EventDialogData>().listen((event) {
       if (mounted) {
@@ -134,7 +140,7 @@ class _RetailHomePageState extends State<RetailHomePage> {
     _eventbus3.cancel();
     _eventbus4.cancel();
     _pageScrollerController.dispose();
-    _stopTimer();
+    cntScaleTimerMgr.stopCntScaleTimer();
     super.dispose();
   }
 
@@ -156,7 +162,7 @@ class _RetailHomePageState extends State<RetailHomePage> {
               color: Theme.of(context).colorScheme.onPrimary,
               // foregroundColor: Theme.of(context).colorScheme.primary,
               child: Container(
-                decoration: BoxDecoration(gradient: boxGradient()),
+                decoration: BoxDecoration(gradient: boxGradient(context)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -169,7 +175,7 @@ class _RetailHomePageState extends State<RetailHomePage> {
                                 width: 20,
                               ),
                               Image.asset(
-                                'assets/images/4.png',
+                                'assets/images/app.png',
                                 width: 30.0,
                                 height: 30.0,
                               ),
@@ -188,7 +194,8 @@ class _RetailHomePageState extends State<RetailHomePage> {
                               const SizedBox(
                                 width: 20,
                               ),
-                              version(Theme.of(context).colorScheme.onPrimary),
+                              versionInfo(
+                                  Theme.of(context).colorScheme.onPrimary),
                               Text(
                                   myLicenseInfo.isValid
                                       ? '(Professional)'
@@ -213,6 +220,12 @@ class _RetailHomePageState extends State<RetailHomePage> {
                           const SizedBox(
                             width: 20,
                           ),
+                          AppInfoButton(onRefresh: () {
+                            setState(() {});
+                          }),
+                          const SizedBox(
+                            width: 20,
+                          ),
                           Expanded(
                             child: Text(localizedStrings.serial_port_status,
                                 overflow: TextOverflow.ellipsis,
@@ -228,15 +241,19 @@ class _RetailHomePageState extends State<RetailHomePage> {
                             width: 20,
                           ),
                           (myScreenMgr.serialPortST)
-                              ? const CustomCircleIcon(
-                                  outerColor: Colors.blue,
-                                  innerColor: Colors.white,
+                              ? CustomCircleIcon(
+                                  outerColor:
+                                      Theme.of(context).colorScheme.primary,
+                                  innerColor:
+                                      Theme.of(context).colorScheme.onPrimary,
                                   icon: Icons.check_circle,
                                   size: 24.0,
                                 )
-                              : const CustomCircleIcon(
-                                  outerColor: Colors.red,
-                                  innerColor: Colors.white,
+                              : CustomCircleIcon(
+                                  outerColor:
+                                      Theme.of(context).colorScheme.error,
+                                  innerColor:
+                                      Theme.of(context).colorScheme.onPrimary,
                                   icon: Icons.cancel,
                                   size: 24.0,
                                 ),
@@ -264,7 +281,7 @@ class _RetailHomePageState extends State<RetailHomePage> {
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15), // 根据实际需要设置圆角半径
-                  color: Theme.of(context).colorScheme.onPrimary,
+                  color: Theme.of(context).colorScheme.surfaceTint,
                 ),
                 padding: const EdgeInsets.symmetric(
                     vertical: 20.0, horizontal: 30.0),
@@ -281,7 +298,8 @@ class _RetailHomePageState extends State<RetailHomePage> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(
-                    width: 100, child: Image.asset('assets/images/tscale.png')),
+                    width: 100,
+                    child: Image.asset('assets/images/company.png')),
               ],
             ),
           ],
@@ -294,8 +312,8 @@ class _RetailHomePageState extends State<RetailHomePage> {
     return Row(
       children: [
         CustomCircleIcon(
-          outerColor: Colors.blue,
-          innerColor: Colors.white,
+          outerColor: Theme.of(context).colorScheme.primary,
+          innerColor: Theme.of(context).colorScheme.onPrimary,
           icon: iconName,
           size: 30.0,
         ),
@@ -307,147 +325,13 @@ class _RetailHomePageState extends State<RetailHomePage> {
     );
   }
 
-  LinearGradient lineGradient() {
-    return const LinearGradient(
-      colors: [
-        Color.fromARGB(255, 21, 129, 238),
-        Color.fromARGB(255, 115, 238, 207),
-      ],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    );
-  }
-
-  Widget customFunctionCard(String titleName, String iconImage,
-      IconData iconInfo, bool isValid, String explanation) {
-    return Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-        color: isValid
-            ? Theme.of(context).colorScheme.onPrimary
-            : Theme.of(context).colorScheme.background,
-        child: SizedBox(
-          height: 100,
-          child: Row(
-            children: [
-              SizedBox(
-                child: Container(
-                  child: (Row(
-                    children: [
-                      Image.asset(
-                        iconImage,
-                        width: 30,
-                        height: 30,
-                      ),
-                      ShaderMask(
-                        shaderCallback: (bounds) {
-                          return lineGradient().createShader(bounds);
-                        },
-                        child: Icon(
-                          size: 30,
-                          iconInfo,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      )
-                    ],
-                  )),
-                ),
-              ),
-              Expanded(
-                child: Column(
-                  children: [
-                    Expanded(
-                      flex: 8, // 上下分割比例
-                      child: Align(
-                        alignment: Alignment.bottomLeft,
-                        child: Text(
-                          titleName,
-                          overflow: TextOverflow.visible,
-                          style: const TextStyle(fontSize: 18),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 5, // 上下分割比例
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          explanation,
-                          overflow: TextOverflow.visible,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        )
-
-        // SizedBox(
-        //     height: 100,
-        //     child: Row(
-        //       mainAxisAlignment: MainAxisAlignment.start,
-        //       children: [
-        //         Image.asset(
-        //           iconImage,
-        //           width: 30,
-        //           height: 30,
-        //         ),
-        //         ShaderMask(
-        //           shaderCallback: (bounds) {
-        //             return lineGradient().createShader(bounds);
-        //           },
-        //           child: Icon(
-        //             size: 30,
-        //             iconInfo,
-        //             color: Colors.white,
-        //           ),
-        //         ),
-        //         const SizedBox(
-        //           width: 5,
-        //         ),
-        //         SizedBox(
-        //           child: Column(
-        //             children: [
-        //               const SizedBox(
-        //                 height: 40,
-        //               ),
-        //               Align(
-        //                 alignment: Alignment.centerLeft,
-        //                 child: Text(
-        //                   titleName,
-        //                   overflow: TextOverflow.visible,
-        //                   style: const TextStyle(fontSize: 18),
-        //                 ),
-        //               ),
-        //               Align(
-        //                 alignment: Alignment.centerLeft,
-        //                 child: Text(
-        //                   explanation,
-        //                   overflow: TextOverflow.visible,
-        //                 ),
-        //               ),
-        //             ],
-        //           ),
-        //         )
-        //       ],
-        //     ))
-
-        );
-  }
-
   Widget firstCard() {
     return Expanded(
-      flex: 1,
+      flex: 4,
       child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15), // 根据实际需要设置圆角半径
-            color: Theme.of(context).colorScheme.tertiary,
+            color: Theme.of(context).colorScheme.primaryContainer,
           ),
           margin: const EdgeInsets.only(right: 20), // 根据实际需要设置容器间距
           child: Column(
@@ -456,7 +340,8 @@ class _RetailHomePageState extends State<RetailHomePage> {
                 padding: const EdgeInsets.symmetric(
                     vertical: 10.0, horizontal: 20.0),
                 child: functionTitle(
-                    localizedStrings.device_setting_title, Icons.settings),
+                    localizedStrings.device_configuration_title,
+                    Icons.settings),
               ),
               Expanded(
                 child: ListView(children: [
@@ -545,11 +430,12 @@ class _RetailHomePageState extends State<RetailHomePage> {
                         });
                       },
                       child: customFunctionCard(
-                          localizedStrings.title_serial_port_connection,
-                          "assets/images/line.png",
-                          Icons.cable,
-                          true,
-                          ''),
+                        context,
+                        localizedStrings.title_serial_port_connection,
+                        "assets/images/line.png",
+                        Icons.cable,
+                        true,
+                      ),
                     ),
                   ),
                   MouseRegion(
@@ -571,11 +457,12 @@ class _RetailHomePageState extends State<RetailHomePage> {
                           });
                         },
                         child: customFunctionCard(
-                            localizedStrings.set_ethernet_ip_title,
-                            "assets/images/line.png",
-                            Icons.settings_ethernet,
-                            true,
-                            ''),
+                          context,
+                          localizedStrings.set_ethernet_ip_title,
+                          "assets/images/line.png",
+                          Icons.settings_ethernet,
+                          true,
+                        ),
                       )),
                   MouseRegion(
                     cursor: SystemMouseCursors.click, // 设置光标为手的形状
@@ -587,11 +474,12 @@ class _RetailHomePageState extends State<RetailHomePage> {
                         });
                       },
                       child: customFunctionCard(
-                          localizedStrings.update_firmware,
-                          "assets/images/line.png",
-                          Icons.update,
-                          true,
-                          ''),
+                        context,
+                        localizedStrings.update_firmware,
+                        "assets/images/line.png",
+                        Icons.update,
+                        true,
+                      ),
                     ),
                   ),
                   MouseRegion(
@@ -602,8 +490,13 @@ class _RetailHomePageState extends State<RetailHomePage> {
                           showBuildInfo();
                         });
                       },
-                      child: customFunctionCard(localizedStrings.get_build_info,
-                          "assets/images/line.png", Icons.info, true, ''),
+                      child: customFunctionCard(
+                        context,
+                        localizedStrings.get_build_info,
+                        "assets/images/line.png",
+                        Icons.privacy_tip,
+                        true,
+                      ),
                     ),
                   ),
                 ]),
@@ -613,39 +506,13 @@ class _RetailHomePageState extends State<RetailHomePage> {
     );
   }
 
-  // MouseRegion(
-  //     cursor: SystemMouseCursors.click, // 设置光标为手的形状
-  //     child: GestureDetector(
-  //       onTap: () {
-  //         //wifi页面
-  //         if (myScreenMgr.wifiOrBt.contains('wifi')) {
-  //           setState(() {
-  //             stopCheckSerialPort();
-  //             PublicFunctions.changeWifiMode();
-  //             Navigator.push(
-  //               context,
-  //               MaterialPageRoute(
-  //                 builder: (context) =>
-  //                     const WifiSettingPage(),
-  //               ),
-  //             ).then((value) => _updateStatus());
-  //           });
-  //         }
-  //       },
-  //       child: customFunctionCard(
-  //           localizedStrings.wifi_setting_title,
-  //           "assets/images/line.png",
-  //           Icons.wifi,
-  //           (myScreenMgr.wifiOrBt.contains('wifi'))),
-  //     )),
-
   Widget secondCard() {
     return Expanded(
-      flex: 1, // 设置一个容器的flex为2，在剩余空间中占用更多的比例
+      flex: 8, // 设置一个容器的flex为2，在剩余空间中占用更多的比例
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15), // 根据实际需要设置圆角半径
-          color: Theme.of(context).colorScheme.tertiary,
+          color: Theme.of(context).colorScheme.primaryContainer,
         ),
         child: Column(
           children: [
@@ -675,12 +542,13 @@ class _RetailHomePageState extends State<RetailHomePage> {
                               ).then((value) => _updateStatus());
                             });
                           },
-                          child: customFunctionCard(
+                          child: appCard(
+                              context,
                               localizedStrings.variable_value_setting_title,
                               "assets/images/line.png",
                               Icons.edit_attributes_outlined,
                               true,
-                              ':This application is used to distribute various variable information, such as headers and footers.'),
+                              'This application is used to distribute various variable information, such as headers and footers.'),
                         )),
                     MouseRegion(
                       cursor: SystemMouseCursors.click, // 设置光标为手的形状
@@ -688,20 +556,22 @@ class _RetailHomePageState extends State<RetailHomePage> {
                         onTap: () {
                           setState(() {
                             stopCheckSerialPort();
+                            PublicFunctions.stopWeight();
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
                                       const ProductDownloadPage()),
-                            ).then((value) => _startTimer(5));
+                            ).then((value) => _updateStatus());
                           });
                         },
-                        child: customFunctionCard(
+                        child: appCard(
+                            context,
                             "PLU Download",
                             "assets/images/line.png",
                             Icons.shopping_bag,
                             true,
-                            ':This application is used to download product information.'),
+                            'This application is used to download product information.'),
                       ),
                     ),
                     MouseRegion(
@@ -712,15 +582,16 @@ class _RetailHomePageState extends State<RetailHomePage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const DownloadPage()),
+                                builder: (context) => const DownReciptPage()),
                           ).then((value) => _updateStatus());
                         },
-                        child: customFunctionCard(
+                        child: appCard(
+                            context,
                             localizedStrings.receipt_format_download,
                             "assets/images/line.png",
                             Icons.receipt_long_outlined,
                             true,
-                            ':This application is used to download the print format of the receipt.'),
+                            'This application is used to download the print format of the receipt.'),
                       ),
                     ),
                     MouseRegion(
@@ -731,60 +602,15 @@ class _RetailHomePageState extends State<RetailHomePage> {
                                 showReceiptDesign(myLicenseInfo.isValid);
                               }
                             : null,
-                        child: customFunctionCard(
-                            'Receipt Format',
+                        child: appCard(
+                            context,
+                            localizedStrings.receipt_design_title,
                             "assets/images/line.png",
                             Icons.receipt,
                             myLicenseInfo.isValid,
-                            ':This application is designed for the printing format of the receipt.'),
+                            'This application is designed for the printing format of the receipt.'),
                       ),
                     ),
-
-                    // MouseRegion(
-                    //   cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                    //   child: GestureDetector(
-                    //     onTap: () {
-                    //       stopCheckSerialPort();
-                    //       Navigator.push(
-                    //         context,
-                    //         MaterialPageRoute(
-                    //             builder: (context) => const DownloadPage()),
-                    //       ).then((value) => _startTimer(5));
-                    //     },
-                    //     child: customFunctionCard('Pricing Scale',
-                    //         "assets/images/line.png", Icons.price_change, true),
-                    //   ),
-                    // ),
-                    // MouseRegion(
-                    //   cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                    //   child: GestureDetector(
-                    //     onTap: () {
-                    //       stopCheckSerialPort();
-                    //       Navigator.push(
-                    //         context,
-                    //         MaterialPageRoute(
-                    //             builder: (context) => const DownloadPage()),
-                    //       ).then((value) => _startTimer(5));
-                    //     },
-                    //     child: customFunctionCard(
-                    //         'Fiscal Scale',
-                    //         "assets/images/line.png",
-                    //         Icons.monetization_on,
-                    //         true),
-                    //   ),
-                    // ),
-                    // MouseRegion(
-                    //   cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                    //   child: GestureDetector(
-                    //     onTap: myLicenseInfo.isValid ? () {} : null,
-                    //     child: customFunctionCard(
-                    //         'Trading Report',
-                    //         "assets/images/line.png",
-                    //         Icons.data_exploration,
-                    //         true,
-                    //         ''),
-                    //   ),
-                    // ),
                   ]),
             ),
           ],
@@ -795,7 +621,8 @@ class _RetailHomePageState extends State<RetailHomePage> {
 
   void _updateStatus() {
     setState(() {});
-    _startTimer(5);
+    cntScaleTimerMgr.stopCntScaleTimer();
+    cntScaleTimerMgr.startCntScaleTimer(5);
   }
 
   void showBuildInfo() {
@@ -806,7 +633,7 @@ class _RetailHomePageState extends State<RetailHomePage> {
       builder: (context) {
         return const GetBuildInfoPage();
       },
-    ).then((value) => _startTimer(5));
+    ).then((value) => _updateStatus());
   }
 
   void showReceiptDesign(bool isValid) {
@@ -816,7 +643,7 @@ class _RetailHomePageState extends State<RetailHomePage> {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const ReceiptDesignPage()),
-      ).then((value) => _startTimer(5));
+      ).then((value) => _updateStatus());
     }
   }
 
@@ -827,7 +654,7 @@ class _RetailHomePageState extends State<RetailHomePage> {
       builder: (context) {
         return const BluetoothDialog();
       },
-    ).then((value) => _startTimer(5));
+    ).then((value) => _updateStatus());
   }
 
   void showUpdateFirmWareDialog(BuildContext context) {
@@ -837,7 +664,7 @@ class _RetailHomePageState extends State<RetailHomePage> {
       builder: (context) {
         return const UpdateFirmWareDialog();
       },
-    ).then((value) => _startTimer(5));
+    ).then((value) => _updateStatus());
   }
 
   void showComPortDialog(BuildContext context) {
@@ -847,7 +674,7 @@ class _RetailHomePageState extends State<RetailHomePage> {
       builder: (context) {
         return const ModifyComPortPage();
       },
-    ).then((value) => _startTimer(5));
+    ).then((value) => _updateStatus());
   }
 
   void showLicenseDialog(BuildContext context) {
@@ -857,7 +684,7 @@ class _RetailHomePageState extends State<RetailHomePage> {
       builder: (context) {
         return const LicenseInfoDialog();
       },
-    ).then((value) => _startTimer(5));
+    ).then((value) => _updateStatus());
   }
 
   void setLanguageDialog(BuildContext context) {
@@ -867,23 +694,10 @@ class _RetailHomePageState extends State<RetailHomePage> {
       builder: (context) {
         return const LanguageSettingPage();
       },
-    ).then((value) => _startTimer(5));
-  }
-
-  void _startTimer(int time) {
-    isTiming = true;
-    _timer = Timer(Duration(seconds: time), () {
-      PublicFunctions.checkSerialPort();
-      _startTimer(5);
-    });
-  }
-
-  void _stopTimer() {
-    _timer?.cancel(); // 停止计时器
-    isTiming = false;
+    ).then((value) => _updateStatus());
   }
 
   void stopCheckSerialPort() {
-    _stopTimer();
+    cntScaleTimerMgr.stopCntScaleTimer();
   }
 }

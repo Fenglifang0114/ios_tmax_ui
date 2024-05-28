@@ -108,10 +108,10 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
         color: Theme.of(context).colorScheme.primary,
         child: Row(
           children: [
-            const Icon(Icons.info_outline, color: Colors.white),
+            Icon(Icons.key, color: Theme.of(context).colorScheme.onPrimary),
             Text(
               localizedStrings.license_title,
-              style: const TextStyle(color: Colors.white),
+              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
             )
           ],
         ),
@@ -120,7 +120,7 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
         height: 360,
         width: 400,
         decoration:
-            BoxDecoration(color: Theme.of(context).colorScheme.onPrimary),
+            BoxDecoration(color: Theme.of(context).colorScheme.surfaceTint),
         child: ListView(
           children: [
             SizedBox(
@@ -204,7 +204,7 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
                 ],
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    borderRadius: BorderRadius.all(Radius.circular(4)),
                   ),
                 ),
                 onChanged: (value) {

@@ -20,23 +20,26 @@ leftMenu(BuildContext context) {
                             //没有传值
                             builder: (context) => const HomePage()));
                       },
-                      icon: const Icon(Icons.home, color: Colors.white)),
+                      icon: Icon(Icons.home,
+                          color: Theme.of(context).colorScheme.onPrimary)),
                   IconButton(
                       onPressed: () {
                         registerDialog(context).then((onValue) {});
                       },
-                      icon: const Icon(Icons.app_registration,
-                          color: Colors.white)),
+                      icon: Icon(Icons.app_registration,
+                          color: Theme.of(context).colorScheme.onPrimary)),
                   IconButton(
                       onPressed: () {
                         accountDialog(context).then((onValue) {});
                       },
-                      icon: const Icon(Icons.account_box, color: Colors.white)),
+                      icon: Icon(Icons.account_box,
+                          color: Theme.of(context).colorScheme.onPrimary)),
                   IconButton(
                       onPressed: () {
                         launguageDialog(context).then((onValue) {});
                       },
-                      icon: const Icon(Icons.language, color: Colors.white)),
+                      icon: Icon(Icons.language,
+                          color: Theme.of(context).colorScheme.onPrimary)),
                 ],
               )))
     ],

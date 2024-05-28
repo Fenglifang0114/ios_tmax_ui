@@ -1,16 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gbk_codec/gbk_codec.dart';
-
 import '../data/barcoderowdata.dart';
 import '../data/downloadresponse.dart';
 import '../data/formatdata.dart';
-// import '../data/item_key_list.dart';
 import '../data/item_key_list.dart';
 import '../data/receipt_item.dart';
 import '../data/receipt_offset.dart';
@@ -388,8 +385,8 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                         fontWeight: FontWeight.normal)), ////此处需要秤回复
                 duration: const Duration(seconds: 3),
                 backgroundColor: (myDownPrnFmtResp.msgBody.contains('ok'))
-                    ? Colors.green.shade900
-                    : Colors.red.shade900));
+                    ? Theme.of(context).colorScheme.outline
+                    : Theme.of(context).colorScheme.error));
           }
         });
       }
@@ -468,7 +465,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
               Container(
                 height: 80,
                 width: screenSize.width - 10,
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surfaceTint,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -481,8 +478,11 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                             width: 1,
                             color: Theme.of(context).colorScheme.primary,
                           ),
-                          foregroundColor: Colors.blue,
-                          backgroundColor: Colors.white, // 设置按钮的背景色
+                          foregroundColor:
+                              Theme.of(context).colorScheme.primary,
+                          backgroundColor: Theme.of(context)
+                              .colorScheme
+                              .surfaceTint, // 设置按钮的背景色
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
                           ),
@@ -541,7 +541,9 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                                     child: DropdownButton<String>(
                                       alignment:
                                           AlignmentDirectional.centerStart,
-                                      dropdownColor: Colors.grey[400],
+                                      dropdownColor: Theme.of(context)
+                                          .colorScheme
+                                          .background,
                                       style: TextStyle(
                                           color: Theme.of(context)
                                               .colorScheme
@@ -602,7 +604,9 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                                   SizedBox(
                                     width: 100, // 设置固定宽度
                                     child: DropdownButton<String>(
-                                      dropdownColor: Colors.grey[400],
+                                      dropdownColor: Theme.of(context)
+                                          .colorScheme
+                                          .background,
                                       style: TextStyle(
                                           color: Theme.of(context)
                                               .colorScheme
@@ -681,9 +685,10 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                                                 .colorScheme
                                                 .primary,
                                           )),
-                                          labelStyle: const TextStyle(
-                                              color: Color.fromARGB(
-                                                  255, 0, 74, 152),
+                                          labelStyle: TextStyle(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary,
                                               fontSize: 14,
                                               fontWeight: FontWeight
                                                   .normal), // 设置label字体大小为20
@@ -738,9 +743,10 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                                                 .colorScheme
                                                 .primary,
                                           )),
-                                          labelStyle: const TextStyle(
-                                              color: Color.fromARGB(
-                                                  255, 0, 74, 152),
+                                          labelStyle: TextStyle(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary,
                                               fontSize: 14,
                                               overflow: TextOverflow.ellipsis,
                                               fontWeight: FontWeight
@@ -771,8 +777,11 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                                 width: 1,
                                 color: Theme.of(context).colorScheme.primary,
                               ),
-                              foregroundColor: Colors.blue,
-                              backgroundColor: Colors.white, // 设置按钮的背景色
+                              foregroundColor:
+                                  Theme.of(context).colorScheme.primary,
+                              backgroundColor: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceTint, // 设置按钮的背景色
                               shape: RoundedRectangleBorder(
                                 borderRadius:
                                     BorderRadius.circular(4), // 设置按钮的圆角
@@ -855,8 +864,9 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                                                         .bold)), ////此处需要秤回复
                                             duration:
                                                 const Duration(seconds: 1),
-                                            backgroundColor:
-                                                Colors.red.shade900));
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .error));
                                   });
                                 }
                                 if (filePath != '') {
@@ -869,8 +879,11 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                                   width: 1,
                                   color: Theme.of(context).colorScheme.primary,
                                 ),
-                                foregroundColor: Colors.blue,
-                                backgroundColor: Colors.white, // 设置按钮的背景色
+                                foregroundColor:
+                                    Theme.of(context).colorScheme.primary,
+                                backgroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .surfaceTint, // 设置按钮的背景色
                                 shape: RoundedRectangleBorder(
                                   borderRadius:
                                       BorderRadius.circular(4), // 设置按钮的圆角
@@ -898,8 +911,8 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                     //             width: 1,
                     //             color: Theme.of(context).colorScheme.primary,
                     //           ),
-                    //           foregroundColor: Colors.blue,
-                    //           backgroundColor: Colors.white, // 设置按钮的背景色
+                    //           foregroundColor: Theme.of(context).colorScheme.primary,
+                    //           backgroundColor: Theme.of(context).colorScheme.onPrimary, // 设置按钮的背景色
                     //           shape: RoundedRectangleBorder(
                     //             borderRadius:
                     //                 BorderRadius.circular(4), // 设置按钮的圆角
@@ -936,8 +949,8 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                     //             width: 1,
                     //             color: Theme.of(context).colorScheme.primary,
                     //           ),
-                    //           foregroundColor: Colors.blue,
-                    //           backgroundColor: Colors.white, // 设置按钮的背景色
+                    //           foregroundColor: Theme.of(context).colorScheme.primary,
+                    //           backgroundColor: Theme.of(context).colorScheme.onPrimary, // 设置按钮的背景色
                     //           shape: RoundedRectangleBorder(
                     //             borderRadius:
                     //                 BorderRadius.circular(4), // 设置按钮的圆角
@@ -982,8 +995,11 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                                   width: 1,
                                   color: Theme.of(context).colorScheme.primary,
                                 ),
-                                foregroundColor: Colors.blue,
-                                backgroundColor: Colors.white, // 设置按钮的背景色
+                                foregroundColor:
+                                    Theme.of(context).colorScheme.primary,
+                                backgroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .surfaceTint, // 设置按钮的背景色
                                 shape: RoundedRectangleBorder(
                                   borderRadius:
                                       BorderRadius.circular(4), // 设置按钮的圆角
@@ -1035,8 +1051,10 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                   width: 1700,
                   height: 1000,
                   decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 223, 223, 223),
-                      border: Border.all(width: 0.2, color: Colors.black)),
+                      color: Theme.of(context).colorScheme.surface,
+                      border: Border.all(
+                          width: 0.2,
+                          color: Theme.of(context).colorScheme.onSurface)),
                   child: SingleChildScrollView(
                     scrollDirection: Axis.vertical, // 水平滚动
                     controller: _scrollController1,
@@ -1049,9 +1067,11 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                           width: _getPageWidth(),
                           height: _getPageHeight(),
                           decoration: BoxDecoration(
-                              color: Colors.white,
-                              border:
-                                  Border.all(width: 0.5, color: Colors.black)),
+                              color: Theme.of(context).colorScheme.surfaceTint,
+                              border: Border.all(
+                                  width: 0.5,
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface)),
                           child: Stack(
                             clipBehavior: Clip.none,
                             key: _parentKey,
@@ -1123,11 +1143,11 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       context: context,
       builder: (BuildContext ctx) {
         return AlertDialog(
-          title: const Text(
+          title: Text(
             'Confirmation',
-            style: TextStyle(color: Color.fromARGB(255, 15, 71, 161)),
+            style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
-          content: Text(localizedStrings.fmt_confirm_info),
+          content: Text(localizedStrings.go_home),
           actions: <Widget>[
             OutlinedButton(
               child: const Text('Cancel'),
@@ -1618,7 +1638,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
               style:
                   const TextStyle(fontSize: 20, fontWeight: FontWeight.normal)),
           duration: const Duration(seconds: 1),
-          backgroundColor: Colors.red.shade900));
+          backgroundColor: Theme.of(context).colorScheme.error));
     }
     return textInfoList;
   }
@@ -1884,9 +1904,11 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       widthFactor: 1,
       child: Container(
           height: 30,
-          decoration: const BoxDecoration(
-              border:
-                  Border(bottom: BorderSide(width: 0.2, color: Colors.grey))),
+          decoration: BoxDecoration(
+              border: Border(
+                  bottom: BorderSide(
+                      width: 0.2,
+                      color: Theme.of(context).colorScheme.background))),
           alignment: Alignment.center,
           child: TextButton(
             onPressed: () {
@@ -1908,9 +1930,9 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
             child: Text(
               //左侧按钮文本的颜色
               text,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
-                color: Color.fromARGB(255, 15, 71, 161),
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
           )),
@@ -2479,18 +2501,18 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       const SizedBox(height: 100),
       Container(
         height: 50,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: Text(
           localizedStrings.no_element,
           style: TextStyle(
               fontSize: 20,
-              color: Colors.red.shade900,
+              color: Theme.of(context).colorScheme.error,
               fontWeight: FontWeight.normal),
         ),
       ),
       Container(
         height: 50,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: Text(
           localizedStrings.operation_steps,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
@@ -2498,7 +2520,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       ),
       Container(
         height: 50,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: Text(
           localizedStrings.step1,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
@@ -2506,7 +2528,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       ),
       Container(
         height: 80,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: Text(
           localizedStrings.step2,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
@@ -2642,7 +2664,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       const SizedBox(height: 10),
       Container(
         height: 30,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: Column(
           children: [
             Text(
@@ -2704,7 +2726,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       ),
       Container(
         height: 20,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: Text(localizedStrings.position,
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -2756,8 +2778,8 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
               enabled: false,
               controller: yPosvar,
               decoration: InputDecoration(
-                  labelStyle: const TextStyle(
-                      color: Color.fromARGB(255, 0, 74, 152),
+                  labelStyle: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
                       fontSize: 14,
                       fontWeight: FontWeight.normal), // 设置label字体大小为20
                   hintText: myReceiptItemData.yPos.toString()),
@@ -2775,7 +2797,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
 
       Container(
         height: 20,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: Text(localizedStrings.editor,
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -2850,7 +2872,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
               width: 1,
               color: Theme.of(context).colorScheme.primary,
             ),
-            foregroundColor: Theme.of(context).colorScheme.secondary,
+            foregroundColor: Theme.of(context).colorScheme.primary,
             backgroundColor: Theme.of(context).colorScheme.primary, // 设置按钮的背景色
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
@@ -2941,7 +2963,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       const SizedBox(height: 10),
       Container(
         height: 30,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: Column(
           children: [
             Text(
@@ -3003,7 +3025,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       ),
       Container(
         height: 20,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: Text(localizedStrings.position,
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -3055,8 +3077,8 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
               enabled: false,
               controller: yPosvar,
               decoration: InputDecoration(
-                  labelStyle: const TextStyle(
-                      color: Color.fromARGB(255, 0, 74, 152),
+                  labelStyle: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
                       fontSize: 14,
                       fontWeight: FontWeight.normal), // 设置label字体大小为20
                   hintText: myReceiptItemData.yPos.toString()),
@@ -3153,7 +3175,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       const SizedBox(height: 10),
       Container(
         height: 30,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: Column(
           children: [
             Text(
@@ -3215,7 +3237,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       ),
       Container(
         height: 20,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: Text(localizedStrings.position,
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -3249,7 +3271,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       const SizedBox(height: 10),
       Container(
         height: 30,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: Column(
           children: [
             Text(
@@ -3311,7 +3333,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       ),
       Container(
         height: 20,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: Text(localizedStrings.position,
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -3363,8 +3385,8 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
               enabled: false,
               controller: yPosvar,
               decoration: InputDecoration(
-                  labelStyle: const TextStyle(
-                      color: Color.fromARGB(255, 0, 74, 152),
+                  labelStyle: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
                       fontSize: 14,
                       fontWeight: FontWeight.normal), // 设置label字体大小为20
                   hintText: myReceiptItemData.yPos.toString()),
@@ -3433,7 +3455,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       const SizedBox(height: 10),
       Container(
         height: 30,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: Column(
           children: [
             Text(
@@ -3495,7 +3517,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       ),
       Container(
         height: 20,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: Text(localizedStrings.position,
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -3547,8 +3569,8 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
               enabled: false,
               controller: yPosvar,
               decoration: InputDecoration(
-                  labelStyle: const TextStyle(
-                      color: Color.fromARGB(255, 0, 74, 152),
+                  labelStyle: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
                       fontSize: 14,
                       fontWeight: FontWeight.normal), // 设置label字体大小为20
                   hintText: myReceiptItemData.yPos.toString()),
@@ -3637,9 +3659,9 @@ class Circle extends StatelessWidget {
           width: 10,
           height: 10,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.surfaceTint,
             border: Border.all(
-              color: Colors.black,
+              color: Theme.of(context).colorScheme.onSurface,
               width: 2.0,
             ),
             borderRadius: BorderRadius.circular(12),

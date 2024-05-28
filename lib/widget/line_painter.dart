@@ -24,7 +24,7 @@ class LinePainter extends CustomPainter {
     // canvas.drawLine(startPoint, endPoint, linePaint);
 
     // if (endPoint.dx == startPoint.dx || endPoint.dy == startPoint.dy) {
-    //   linePaint.color = Colors.red;
+    //   linePaint.color = Theme.of(context).colorScheme.error;
     // } else {
     //   linePaint.color = Colors.black;
     // }

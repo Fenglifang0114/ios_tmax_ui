@@ -154,8 +154,8 @@ class ReceiptItemState extends State<ReceiptItem> {
           child: Container(
               decoration: BoxDecoration(
                 color: (widget.fontReverse == 'true')
-                    ? Colors.black
-                    : Colors.white,
+                    ? Theme.of(context).colorScheme.onSurface
+                    : Theme.of(context).colorScheme.surfaceTint,
                 border: Border.all(
                     width: (widget.index == myReceiptSelCtl.selectid &&
                             myReceiptSelCtl.isSelect)
@@ -163,8 +163,8 @@ class ReceiptItemState extends State<ReceiptItem> {
                         : 0.5,
                     color: (widget.index == myReceiptSelCtl.selectid &&
                             myReceiptSelCtl.isSelect)
-                        ? Colors.blue.shade900
-                        : Colors.black),
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context).colorScheme.onSurface),
                 borderRadius: const BorderRadius.all(Radius.circular(1)),
               ),
               child: SizedBox(
@@ -179,8 +179,8 @@ class ReceiptItemState extends State<ReceiptItem> {
                                 ? (widget.fontSize).toDouble()
                                 : 19,
                             color: (widget.fontReverse == 'true')
-                                ? Colors.white
-                                : Colors.black,
+                                ? Theme.of(context).colorScheme.onPrimary
+                                : Theme.of(context).colorScheme.onSurface,
                             fontWeight: (widget.fontBold == 'true')
                                 ? FontWeight.bold
                                 : FontWeight.normal)),
@@ -294,7 +294,7 @@ class ReceiptItemState extends State<ReceiptItem> {
                       1), //Offset(double.parse(widget.x2Pos.toString()),                  double.parse((widget.y2Pos).toString())),
               // startPoint: Offset(30, 70),
               // endPoint: Offset(100, 100),
-              lineColor: Colors.black,
+              lineColor: Theme.of(context).colorScheme.onSurface,
               lineWidth: widget.lineWidth,
             ),
           ),
@@ -329,7 +329,7 @@ class ReceiptItemState extends State<ReceiptItem> {
         //   painter: LinePainter(
         //       startPoint: Offset(10, 100),
         //       endPoint: Offset(10, 200),
-        //       lineColor: Colors.black,
+        //       lineColor: Theme.of(context).colorScheme.onSurface,
         //       lineWidth: 100 //widget.lineWidth,
         //       ),
         // ),
@@ -342,8 +342,8 @@ class ReceiptItemState extends State<ReceiptItem> {
       border: Border.all(
           color: (widget.index == myReceiptSelCtl.selectid &&
                   myReceiptSelCtl.isSelect)
-              ? Colors.blue.shade900
-              : Colors.black),
+              ? Theme.of(context).colorScheme.primary
+              : Theme.of(context).colorScheme.onSurface),
       borderRadius: const BorderRadius.all(Radius.circular(1)),
     );
   }

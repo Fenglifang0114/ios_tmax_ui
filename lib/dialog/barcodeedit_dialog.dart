@@ -60,11 +60,14 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Container(
-          color: Colors.blue.shade900,
-          child: const Row(
+          color: Theme.of(context).colorScheme.primary,
+          child: Row(
             children: [
-              Icon(Icons.qr_code, color: Colors.white),
-              Text("BarCode Edit", style: TextStyle(color: Colors.white))
+              Icon(Icons.qr_code,
+                  color: Theme.of(context).colorScheme.onPrimary),
+              Text("BarCode Edit",
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.onPrimary))
             ],
           )),
       content: SizedBox(
@@ -189,33 +192,33 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
                 children: [
                   Text("DATA TYPE",
                       style: TextStyle(
-                          color: Colors.blue.shade900,
+                          color: Theme.of(context).colorScheme.primary,
                           fontSize: 14,
                           fontWeight: FontWeight.bold)),
                   Text("Content",
                       style: TextStyle(
-                          color: Colors.blue.shade900,
+                          color: Theme.of(context).colorScheme.primary,
                           fontSize: 14,
                           fontWeight: FontWeight.bold)),
                   Text("Default Value",
                       style: TextStyle(
-                        color: Colors.blue.shade900,
+                        color: Theme.of(context).colorScheme.primary,
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                       )),
                   Text("Alignment",
                       style: TextStyle(
-                          color: Colors.blue.shade900,
+                          color: Theme.of(context).colorScheme.primary,
                           fontSize: 14,
                           fontWeight: FontWeight.bold)),
                   Text("Max Length",
                       style: TextStyle(
-                          color: Colors.blue.shade900,
+                          color: Theme.of(context).colorScheme.primary,
                           fontSize: 14,
                           fontWeight: FontWeight.bold)),
                   Text("Delete",
                       style: TextStyle(
-                          color: Colors.blue.shade900,
+                          color: Theme.of(context).colorScheme.primary,
                           fontSize: 14,
                           fontWeight: FontWeight.bold)),
                 ]),
@@ -240,8 +243,8 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
             controller: _errorController,
             style: TextStyle(
                 color: (_errorController.text.contains("successfully"))
-                    ? Colors.green.shade900
-                    : Colors.red.shade900,
+                    ? Theme.of(context).colorScheme.outline
+                    : Theme.of(context).colorScheme.error,
                 fontSize: 14,
                 fontWeight: FontWeight.bold),
             decoration: const InputDecoration(
@@ -278,7 +281,7 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
       controller: _barCodeNameController,
       style: TextStyle(
         fontWeight: FontWeight.bold,
-        color: Colors.blue.shade900,
+        color: Theme.of(context).colorScheme.primary,
         fontSize: 14,
       ),
       decoration: const InputDecoration(

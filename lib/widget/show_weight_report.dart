@@ -278,7 +278,8 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
     return Scaffold(
       body: Container(
           width: _width,
-          decoration: BoxDecoration(color: Colors.grey.shade200),
+          decoration:
+              BoxDecoration(color: Theme.of(context).colorScheme.background),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             // mainAxisSize: MainAxisSize.max,
@@ -290,7 +291,7 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                 color: Theme.of(context).colorScheme.primary,
               ),
               Container(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.onPrimary,
                 child: Row(
                   children: [
                     Container(
@@ -298,7 +299,7 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                         height: 40,
                         margin: const EdgeInsets.only(left: 5, top: 2),
                         // decoration: BoxDecoration(
-                        //     color: Colors.white,
+                        //     color: Theme.of(context).colorScheme.onPrimary,
                         //     borderRadius: BorderRadius.circular(0),
                         //     boxShadow: [
                         //       BoxShadow(
@@ -321,8 +322,11 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                                     color:
                                         Theme.of(context).colorScheme.primary,
                                   ),
-                                  foregroundColor: Colors.blue,
-                                  backgroundColor: Colors.white, // 设置按钮的背景色
+                                  foregroundColor:
+                                      Theme.of(context).colorScheme.primary,
+                                  backgroundColor: Theme.of(context)
+                                      .colorScheme
+                                      .onPrimary, // 设置按钮的背景色
                                   shape: RoundedRectangleBorder(
                                     borderRadius:
                                         BorderRadius.circular(4), // 设置按钮的圆角
@@ -381,7 +385,7 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
               const SizedBox(height: 5),
               Container(
                 height: 100,
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.onPrimary,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -494,8 +498,11 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                                         ? ("0.000")
                                         : myReqWeightCountine
                                             .msgBody!.weightVal,
-                                    style: const TextStyle(
-                                        color: Colors.white, fontSize: 55),
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary,
+                                        fontSize: 55),
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
@@ -516,8 +523,9 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                                 (myReqWeightCountine.msgBody == null)
                                     ? ("kg")
                                     : myReqWeightCountine.msgBody!.weightUnit,
-                                style: const TextStyle(
-                                  color: Colors.white,
+                                style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
                                   fontSize: 30,
                                 ),
                                 maxLines: 1,
@@ -539,7 +547,7 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                             icon: const Icon(Icons.play_arrow),
                             iconSize: 30,
                             color: (isStart)
-                                ? (Colors.grey)
+                                ? (Theme.of(context).colorScheme.background)
                                 : (Theme.of(context).colorScheme.primary),
                             onPressed: () {
                               setState(() {
@@ -572,7 +580,7 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                             icon: const Icon(Icons.pause),
                             iconSize: 30,
                             color: (!isStart)
-                                ? (Colors.grey)
+                                ? (Theme.of(context).colorScheme.background)
                                 : (Theme.of(context).colorScheme.primary),
                           ),
                         )
@@ -663,14 +671,17 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                         enabled: false,
                         controller: _errorText, //报错信息
                         maxLength: 100,
-                        style: const TextStyle(color: Colors.red),
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.error),
                         maxLines: 3,
                         textAlignVertical: TextAlignVertical.bottom,
-                        decoration: const InputDecoration(
-                          border:
-                              OutlineInputBorder(borderSide: BorderSide.none),
+                        decoration: InputDecoration(
+                          border: const OutlineInputBorder(
+                              borderSide: BorderSide.none),
                           counterText: "",
-                          focusColor: Colors.red, // hintText: "请输入机种类型，如：ztp",
+                          focusColor: Theme.of(context)
+                              .colorScheme
+                              .error, // hintText: "请输入机种类型，如：ztp",
                           // border: OutlineInputBorder(),
                         ),
                         onChanged: (value) {},
@@ -689,7 +700,7 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
               const SizedBox(height: 5),
               Container(
                 height: 40,
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.onPrimary,
                 child: Row(
                   children: [
                     Text(localizedStrings.plu_name),
@@ -731,7 +742,7 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                     const SizedBox(width: 10),
                     MaterialButton(
                         color: Theme.of(context).colorScheme.primary,
-                        textColor: Colors.white,
+                        textColor: Theme.of(context).colorScheme.onPrimary,
                         elevation: 5.0,
                         child: Text(localizedStrings.plu_edit,
                             style: const TextStyle(
@@ -789,7 +800,7 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
                     // const SizedBox(width: 10),
                     MaterialButton(
                         color: Theme.of(context).colorScheme.primary,
-                        textColor: Colors.white,
+                        textColor: Theme.of(context).colorScheme.onPrimary,
                         elevation: 5.0,
                         child: Text(localizedStrings.user_edit,
                             style: const TextStyle(

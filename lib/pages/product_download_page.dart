@@ -21,8 +21,6 @@ class ProductDownloadPage extends StatefulWidget {
   State<ProductDownloadPage> createState() => _ProductDownloadPageState();
 }
 
-// late int connectionType;
-
 class _ProductDownloadPageState extends State<ProductDownloadPage> {
   List<String> items = [];
   String filePath = '';
@@ -35,11 +33,16 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
 
   late ScrollController _fileScrollerController;
   var currentPath = Directory.current.path;
+
   dynamic _eventbus1;
   dynamic _eventbus2;
   dynamic _eventbus3;
   dynamic _eventbus4;
+
   bool _isShowDownload = true;
+
+  String _nameLen = '30';
+  final List<String> nameMaxLen = ['30'];
 
   @override
   void initState() {
@@ -66,8 +69,8 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                         fontWeight: FontWeight.normal)), ////此处需要秤回复
                 duration: const Duration(seconds: 3),
                 backgroundColor: (myDownPluResp.msgBody.contains('ok'))
-                    ? Colors.green.shade900
-                    : Colors.red.shade900));
+                    ? Theme.of(context).colorScheme.outline
+                    : Theme.of(context).colorScheme.error));
           }
         });
       }
@@ -90,8 +93,8 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                         fontWeight: FontWeight.normal)), ////此处需要秤回复
                 duration: const Duration(seconds: 3),
                 backgroundColor: (myDownPluResp.msgBody.contains('ok'))
-                    ? Colors.green.shade900
-                    : Colors.red.shade900));
+                    ? Theme.of(context).colorScheme.outline
+                    : Theme.of(context).colorScheme.error));
           }
         });
       }
@@ -114,8 +117,8 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                         fontWeight: FontWeight.normal)), ////此处需要秤回复
                 duration: const Duration(seconds: 3),
                 backgroundColor: (myDownPluResp.msgBody.contains('ok'))
-                    ? Colors.green.shade900
-                    : Colors.red.shade900));
+                    ? Theme.of(context).colorScheme.outline
+                    : Theme.of(context).colorScheme.error));
           }
         });
       }
@@ -180,7 +183,70 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                     mainAxisAlignment: MainAxisAlignment.center, // 设置主轴对齐方式为居中
                     children: [
                       const SizedBox(
-                        width: 150,
+                        width: 200,
+                        child: Text(
+                          'Product name max length:',
+                          textAlign: TextAlign.right,
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      SizedBox(
+                        width: 400,
+                        // height: 40,
+                        child: DropdownButton<String>(
+                          alignment: AlignmentDirectional.centerStart,
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(4)),
+                          dropdownColor:
+                              Theme.of(context).colorScheme.onPrimary,
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontSize: 14,
+                              fontWeight: FontWeight.normal),
+                          hint: Text(
+                            localizedStrings.printer,
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.primary,
+                                fontSize: 14,
+                                fontWeight: FontWeight.normal),
+                          ),
+                          value: _nameLen,
+                          items: nameMaxLen
+                              .map((String value) => DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  ))
+                              .toList(),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              _nameLen = newValue!;
+                            });
+                          },
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 50,
+                      ),
+                      const SizedBox(
+                        width: 300,
+                        height: 40,
+                        child: Text(''),
+                      ),
+                      const SizedBox(
+                        width: 50,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center, // 设置主轴对齐方式为居中
+                    children: [
+                      const SizedBox(
+                        width: 200,
                         child: Text(
                           'All Products:',
                           textAlign: TextAlign.right,
@@ -200,7 +266,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(20)),
+                                  BorderRadius.all(Radius.circular(4)),
                             ),
                           ),
                         ),
@@ -215,7 +281,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                           style: ButtonStyle(
                             shape: MaterialStateProperty.all(
                               RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                             ),
                           ),
@@ -236,12 +302,14 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                           style: ButtonStyle(
                             shape: MaterialStateProperty.all(
                               RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                             ),
                           ),
                           onPressed: () async {
-                            pluAllCtl.text = '';
+                            setState(() {
+                              pluAllCtl.text = '';
+                            });
                           },
                           child: const Text('Clear'),
                         ),
@@ -255,7 +323,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                     mainAxisAlignment: MainAxisAlignment.center, // 设置主轴对齐方式为居中
                     children: [
                       const SizedBox(
-                        width: 150,
+                        width: 200,
                         child: Text(
                           'Partial Products:',
                           textAlign: TextAlign.right,
@@ -275,7 +343,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(20)),
+                                  BorderRadius.all(Radius.circular(4)),
                             ),
                           ),
                         ),
@@ -290,7 +358,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                           style: ButtonStyle(
                             shape: MaterialStateProperty.all(
                               RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                             ),
                           ),
@@ -311,12 +379,14 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                           style: ButtonStyle(
                             shape: MaterialStateProperty.all(
                               RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                             ),
                           ),
                           onPressed: () async {
-                            pluPartCtl.text = '';
+                            setState(() {
+                              pluPartCtl.text = '';
+                            });
                           },
                           child: const Text('Clear'),
                         ),
@@ -355,7 +425,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
             style: ButtonStyle(
               shape: MaterialStateProperty.all(
                 RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: BorderRadius.circular(4),
                 ),
               ),
             ),
@@ -374,7 +444,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
             style: ButtonStyle(
               shape: MaterialStateProperty.all(
                 RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: BorderRadius.circular(4),
                 ),
               ),
             ),
@@ -397,9 +467,9 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
       context: context,
       builder: (BuildContext ctx) {
         return AlertDialog(
-          title: const Text(
+          title: Text(
             'Confirmation',
-            style: TextStyle(color: Color.fromARGB(255, 15, 71, 161)),
+            style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
           content: isOneModeDown()
               ? const Text('Please confirm the PLU file.')
@@ -458,6 +528,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
   void sendFileToScale(String fmtPath) {
     myDownLoadPluFile.scaleModel = 'TMax';
     myDownLoadPluFile.filePath = fmtPath;
+    myDownLoadPluFile.nameMaxLen = (_nameLen == '30') ? 30 : 60;
     myScaleCmd.cmdData = json.encode(myDownLoadPluFile);
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }

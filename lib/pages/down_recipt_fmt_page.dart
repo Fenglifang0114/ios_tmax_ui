@@ -14,18 +14,17 @@ import '../eventbus/eventbus.dart';
 import '../generated/l10n.dart';
 import '../main.dart';
 import '../widget/page_head.dart';
-import 'default_prn_fmt_page.dart';
 
-class DownloadLabelPage extends StatefulWidget {
-  const DownloadLabelPage({super.key});
+class DownReciptPage extends StatefulWidget {
+  const DownReciptPage({super.key});
 
   @override
-  State<DownloadLabelPage> createState() => _DownloadPageState();
+  State<DownReciptPage> createState() => _DownReciptPageState();
 }
 
 // late int connectionType;
 
-class _DownloadPageState extends State<DownloadLabelPage> {
+class _DownReciptPageState extends State<DownReciptPage> {
   List<String> items = [];
   List<String> paths = [];
   List<String> printFormatSequence = [];
@@ -138,10 +137,10 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                       mainAxisAlignment:
                           MainAxisAlignment.center, // 设置主轴对齐方式为居中
                       children: [
-                        SizedBox(
+                        const SizedBox(
                           width: 150,
                           child: Text(
-                            localizedStrings.weight_mode_format,
+                            'format1',
                             textAlign: TextAlign.right,
                           ),
                         ),
@@ -194,10 +193,10 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                       mainAxisAlignment:
                           MainAxisAlignment.center, // 设置主轴对齐方式为居中
                       children: [
-                        SizedBox(
+                        const SizedBox(
                           width: 150,
                           child: Text(
-                            localizedStrings.acc_mode_format,
+                            'format2',
                             textAlign: TextAlign.right,
                           ),
                         ),
@@ -249,10 +248,10 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                       mainAxisAlignment:
                           MainAxisAlignment.center, // 设置主轴对齐方式为居中
                       children: [
-                        SizedBox(
+                        const SizedBox(
                           width: 150,
                           child: Text(
-                            localizedStrings.pcs_mode_format,
+                            'format3',
                             textAlign: TextAlign.right,
                           ),
                         ),
@@ -300,58 +299,58 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                     const SizedBox(
                       height: 30,
                     ),
-                    Row(
-                      mainAxisAlignment:
-                          MainAxisAlignment.center, // 设置主轴对齐方式为居中
-                      children: [
-                        SizedBox(
-                          width: 150,
-                          child: Text(
-                            localizedStrings.pct_mode_format,
-                            textAlign: TextAlign.right,
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        SizedBox(
-                          width: 400,
-                          child: TextField(
-                            controller: pctModeController,
-                            readOnly: true,
-                            maxLines: 2,
-                            minLines: 1,
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(4)),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 50,
-                        ),
-                        SizedBox(
-                          width: 150,
-                          height: 40,
-                          child: OutlinedButton(
-                            style: ButtonStyle(
-                              shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                              ),
-                            ),
-                            onPressed: () async {
-                              pctModeController.text = '';
-                              pickFiles(pctModeController);
-                            },
-                            child: Text(localizedStrings.button_select_format),
-                          ),
-                        ),
-                      ],
-                    ),
+                    // Row(
+                    //   mainAxisAlignment:
+                    //       MainAxisAlignment.center, // 设置主轴对齐方式为居中
+                    //   children: [
+                    //     const SizedBox(
+                    //       width: 150,
+                    //       child: Text(
+                    //         'Copy format',
+                    //         textAlign: TextAlign.right,
+                    //       ),
+                    //     ),
+                    //     const SizedBox(
+                    //       width: 20,
+                    //     ),
+                    //     SizedBox(
+                    //       width: 400,
+                    //       child: TextField(
+                    //         controller: pctModeController,
+                    //         readOnly: true,
+                    //         maxLines: 2,
+                    //         minLines: 1,
+                    //         decoration: const InputDecoration(
+                    //           border: OutlineInputBorder(
+                    //             borderRadius:
+                    //                 BorderRadius.all(Radius.circular(4)),
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     ),
+                    //     const SizedBox(
+                    //       width: 50,
+                    //     ),
+                    //     SizedBox(
+                    //       width: 150,
+                    //       height: 40,
+                    //       child: OutlinedButton(
+                    //         style: ButtonStyle(
+                    //           shape: MaterialStateProperty.all(
+                    //             RoundedRectangleBorder(
+                    //               borderRadius: BorderRadius.circular(4),
+                    //             ),
+                    //           ),
+                    //         ),
+                    //         onPressed: () async {
+                    //           pctModeController.text = '';
+                    //           pickFiles(pctModeController);
+                    //         },
+                    //         child: Text(localizedStrings.button_select_format),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
                   ],
                 ),
               ),
@@ -388,7 +387,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         SizedBox(
-          width: 200,
+          width: 120,
           height: 50,
           child: ElevatedButton(
             style: ButtonStyle(
@@ -409,27 +408,6 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                 : null,
             child: Text(
               localizedStrings.download,
-            ),
-          ),
-        ),
-        SizedBox(
-          width: 200,
-          height: 50,
-          child: ElevatedButton(
-            style: ButtonStyle(
-              shape: MaterialStateProperty.all(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              ),
-            ),
-            onPressed: (!isDownloadClicked)
-                ? () {
-                    _jumpCfmDialog(context);
-                  }
-                : null,
-            child: Text(
-              localizedStrings.download_default,
             ),
           ),
         ),
@@ -485,44 +463,6 @@ class _DownloadPageState extends State<DownloadLabelPage> {
 
   void _stopTimer() {
     _downloadTimer?.cancel(); // 停止计时器
-  }
-
-  void _jumpCfmDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext ctx) {
-        return AlertDialog(
-          title: Text(
-            localizedStrings.confirm_title,
-            style: TextStyle(color: Theme.of(context).colorScheme.primary),
-          ),
-          content: Text(localizedStrings.jump_confirm_info),
-          actions: <Widget>[
-            OutlinedButton(
-              child: Text(localizedStrings.button_cancel),
-              onPressed: () {
-                Navigator.of(context).pop(false); // 不跳转
-              },
-            ),
-            OutlinedButton(
-              child: Text(localizedStrings.confirm_btn),
-              onPressed: () {
-                cntScaleTimerMgr.stopCntScaleTimer();
-                Navigator.of(context).pop(true); // 跳转
-              },
-            ),
-          ],
-        );
-      },
-    ).then((confirmed) {
-      if (confirmed) {
-        cntScaleTimerMgr.stopCntScaleTimer();
-        Navigator.of(context).pop();
-        Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return const DefaultPrnFmtPage();
-        }));
-      }
-    });
   }
 
   void _showConfirmationDialog(BuildContext context) {
@@ -581,8 +521,8 @@ class _DownloadPageState extends State<DownloadLabelPage> {
     }
     if (paths.isNotEmpty) {
       myDownLoadPrtFmt.scaleModel = 'TMax';
-      myDownLoadPrtFmt.printerModel = 'EPM205';
-      // myDownLoadPrtFmt.printerModel = 'ESP/POS';
+      // myDownLoadPrtFmt.printerModel = 'EPM205';
+      myDownLoadPrtFmt.printerModel = 'ESP/POS';
       myDownLoadPrtFmt.filePaths = paths;
 
       myScaleCmd.cmdData = json.encode(myDownLoadPrtFmt);

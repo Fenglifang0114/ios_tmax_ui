@@ -354,8 +354,8 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                         fontWeight: FontWeight.normal)), ////此处需要秤回复
                 duration: const Duration(seconds: 3),
                 backgroundColor: (myDownPrnFmtResp.msgBody.contains('ok'))
-                    ? Colors.green.shade900
-                    : Colors.red.shade900));
+                    ? Theme.of(context).colorScheme.outline
+                    : Theme.of(context).colorScheme.error));
           }
         });
       }
@@ -434,7 +434,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
               Container(
                 height: 80,
                 width: screenSize.width - 10,
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.onPrimary,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -447,8 +447,11 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                             width: 1,
                             color: Theme.of(context).colorScheme.primary,
                           ),
-                          foregroundColor: Colors.blue,
-                          backgroundColor: Colors.white, // 设置按钮的背景色
+                          foregroundColor:
+                              Theme.of(context).colorScheme.primary,
+                          backgroundColor: Theme.of(context)
+                              .colorScheme
+                              .onPrimary, // 设置按钮的背景色
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
                           ),
@@ -509,7 +512,9 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                                     child: DropdownButton<String>(
                                       alignment:
                                           AlignmentDirectional.centerStart,
-                                      dropdownColor: Colors.grey[400],
+                                      dropdownColor: Theme.of(context)
+                                          .colorScheme
+                                          .background,
                                       style: TextStyle(
                                           color: Theme.of(context)
                                               .colorScheme
@@ -570,7 +575,9 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                                   SizedBox(
                                     width: 100, // 设置固定宽度
                                     child: DropdownButton<String>(
-                                      dropdownColor: Colors.grey[400],
+                                      dropdownColor: Theme.of(context)
+                                          .colorScheme
+                                          .background,
                                       style: TextStyle(
                                           color: Theme.of(context)
                                               .colorScheme
@@ -649,9 +656,10 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                                                 .colorScheme
                                                 .primary,
                                           )),
-                                          labelStyle: const TextStyle(
-                                              color: Color.fromARGB(
-                                                  255, 0, 74, 152),
+                                          labelStyle: TextStyle(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary,
                                               fontSize: 14,
                                               fontWeight: FontWeight
                                                   .normal), // 设置label字体大小为20
@@ -706,9 +714,10 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                                                 .colorScheme
                                                 .primary,
                                           )),
-                                          labelStyle: const TextStyle(
-                                              color: Color.fromARGB(
-                                                  255, 0, 74, 152),
+                                          labelStyle: TextStyle(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary,
                                               fontSize: 14,
                                               overflow: TextOverflow.ellipsis,
                                               fontWeight: FontWeight
@@ -739,8 +748,11 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                                 width: 1,
                                 color: Theme.of(context).colorScheme.primary,
                               ),
-                              foregroundColor: Colors.blue,
-                              backgroundColor: Colors.white, // 设置按钮的背景色
+                              foregroundColor:
+                                  Theme.of(context).colorScheme.primary,
+                              backgroundColor: Theme.of(context)
+                                  .colorScheme
+                                  .onPrimary, // 设置按钮的背景色
                               shape: RoundedRectangleBorder(
                                 borderRadius:
                                     BorderRadius.circular(4), // 设置按钮的圆角
@@ -823,8 +835,9 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                                                         .bold)), ////此处需要秤回复
                                             duration:
                                                 const Duration(seconds: 1),
-                                            backgroundColor:
-                                                Colors.red.shade900));
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .error));
                                   });
                                 }
                                 if (filePath != '') {
@@ -837,8 +850,11 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                                   width: 1,
                                   color: Theme.of(context).colorScheme.primary,
                                 ),
-                                foregroundColor: Colors.blue,
-                                backgroundColor: Colors.white, // 设置按钮的背景色
+                                foregroundColor:
+                                    Theme.of(context).colorScheme.primary,
+                                backgroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .onPrimary, // 设置按钮的背景色
                                 shape: RoundedRectangleBorder(
                                   borderRadius:
                                       BorderRadius.circular(4), // 设置按钮的圆角
@@ -866,8 +882,11 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                                 width: 1,
                                 color: Theme.of(context).colorScheme.primary,
                               ),
-                              foregroundColor: Colors.blue,
-                              backgroundColor: Colors.white, // 设置按钮的背景色
+                              foregroundColor:
+                                  Theme.of(context).colorScheme.primary,
+                              backgroundColor: Theme.of(context)
+                                  .colorScheme
+                                  .onPrimary, // 设置按钮的背景色
                               shape: RoundedRectangleBorder(
                                 borderRadius:
                                     BorderRadius.circular(4), // 设置按钮的圆角
@@ -904,8 +923,11 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                                 width: 1,
                                 color: Theme.of(context).colorScheme.primary,
                               ),
-                              foregroundColor: Colors.blue,
-                              backgroundColor: Colors.white, // 设置按钮的背景色
+                              foregroundColor:
+                                  Theme.of(context).colorScheme.primary,
+                              backgroundColor: Theme.of(context)
+                                  .colorScheme
+                                  .onPrimary, // 设置按钮的背景色
                               shape: RoundedRectangleBorder(
                                 borderRadius:
                                     BorderRadius.circular(4), // 设置按钮的圆角
@@ -950,8 +972,11 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                                   width: 1,
                                   color: Theme.of(context).colorScheme.primary,
                                 ),
-                                foregroundColor: Colors.blue,
-                                backgroundColor: Colors.white, // 设置按钮的背景色
+                                foregroundColor:
+                                    Theme.of(context).colorScheme.primary,
+                                backgroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .onPrimary, // 设置按钮的背景色
                                 shape: RoundedRectangleBorder(
                                   borderRadius:
                                       BorderRadius.circular(4), // 设置按钮的圆角
@@ -1003,8 +1028,10 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                   width: 1700,
                   height: 1000,
                   decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 223, 223, 223),
-                      border: Border.all(width: 0.2, color: Colors.black)),
+                      color: Theme.of(context).colorScheme.surface,
+                      border: Border.all(
+                          width: 0.2,
+                          color: Theme.of(context).colorScheme.onSurface)),
                   child: SingleChildScrollView(
                     scrollDirection: Axis.vertical, // 水平滚动
                     controller: _scrollController1,
@@ -1016,9 +1043,11 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                           width: _getPageWidth(),
                           height: _getPageHeight(),
                           decoration: BoxDecoration(
-                              color: Colors.white,
-                              border:
-                                  Border.all(width: 0.5, color: Colors.black)),
+                              color: Theme.of(context).colorScheme.onPrimary,
+                              border: Border.all(
+                                  width: 0.5,
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface)),
                           child: Stack(
                             clipBehavior: Clip.none,
                             key: _parentKey,
@@ -1084,42 +1113,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       return;
     }
   }
-
-  // void _showConfirmationDialog(BuildContext context) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext ctx) {
-  //       return AlertDialog(
-  //         title: const Text(
-  //           'Confirmation',
-  //           style: TextStyle(color: Color.fromARGB(255, 15, 71, 161)),
-  //         ),
-  //         content: const Text('Please confirm the format is saved as CSV?'),
-  //         actions: <Widget>[
-  //           OutlinedButton(
-  //             child: const Text('Cancel'),
-  //             onPressed: () {
-  //               Navigator.of(context).pop(false); // 不跳转
-  //             },
-  //           ),
-  //           OutlinedButton(
-  //             child: const Text('Confirm'),
-  //             onPressed: () {
-  //               Navigator.of(context).pop(true); // 跳转
-  //             },
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   ).then((confirmed) {
-  //     if (confirmed) {
-  //       Navigator.push(
-  //         context,
-  //         MaterialPageRoute(builder: (context) => DownloadPage()),
-  //       );
-  //     }
-  //   });
-  // }
 
   Future pickFiles() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -1612,7 +1605,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
               style:
                   const TextStyle(fontSize: 20, fontWeight: FontWeight.normal)),
           duration: const Duration(seconds: 1),
-          backgroundColor: Colors.red.shade900));
+          backgroundColor: Theme.of(context).colorScheme.error));
     }
     return textInfoList;
   }
@@ -1875,9 +1868,11 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       widthFactor: 1,
       child: Container(
           height: 30,
-          decoration: const BoxDecoration(
-              border:
-                  Border(bottom: BorderSide(width: 0.2, color: Colors.grey))),
+          decoration: BoxDecoration(
+              border: Border(
+                  bottom: BorderSide(
+                      width: 0.2,
+                      color: Theme.of(context).colorScheme.background))),
           alignment: Alignment.center,
           child: TextButton(
             onPressed: () {
@@ -1889,9 +1884,9 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
             child: Text(
               //左侧按钮文本的颜色
               text,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
-                color: Color.fromARGB(255, 15, 71, 161),
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
           )),
@@ -2465,18 +2460,18 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       const SizedBox(height: 100),
       Container(
         height: 50,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: Text(
           localizedStrings.no_element,
           style: TextStyle(
               fontSize: 20,
-              color: Colors.red.shade900,
+              color: Theme.of(context).colorScheme.error,
               fontWeight: FontWeight.normal),
         ),
       ),
       Container(
         height: 50,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: Text(
           localizedStrings.operation_steps,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
@@ -2484,7 +2479,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       ),
       Container(
         height: 50,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: Text(
           localizedStrings.step1,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
@@ -2492,7 +2487,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       ),
       Container(
         height: 80,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: Text(
           localizedStrings.step2,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
@@ -2628,7 +2623,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       const SizedBox(height: 10),
       Container(
         height: 30,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: Column(
           children: [
             Text(
@@ -2690,7 +2685,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       ),
       Container(
         height: 20,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: Text(localizedStrings.position,
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -2742,8 +2737,8 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
               enabled: false,
               controller: yPosvar,
               decoration: InputDecoration(
-                  labelStyle: const TextStyle(
-                      color: Color.fromARGB(255, 0, 74, 152),
+                  labelStyle: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
                       fontSize: 14,
                       fontWeight: FontWeight.normal), // 设置label字体大小为20
                   hintText: myTextData.yPos.toString()),
@@ -2761,7 +2756,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
 
       Container(
         height: 20,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: Text(localizedStrings.editor,
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -2836,7 +2831,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
               width: 1,
               color: Theme.of(context).colorScheme.primary,
             ),
-            foregroundColor: Theme.of(context).colorScheme.secondary,
+            foregroundColor: Theme.of(context).colorScheme.primary,
             backgroundColor: Theme.of(context).colorScheme.primary, // 设置按钮的背景色
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
@@ -2927,7 +2922,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       const SizedBox(height: 10),
       Container(
         height: 30,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: Column(
           children: [
             Text(
@@ -2989,7 +2984,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       ),
       Container(
         height: 20,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: Text(localizedStrings.position,
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -3041,8 +3036,8 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
               enabled: false,
               controller: yPosvar,
               decoration: InputDecoration(
-                  labelStyle: const TextStyle(
-                      color: Color.fromARGB(255, 0, 74, 152),
+                  labelStyle: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
                       fontSize: 14,
                       fontWeight: FontWeight.normal), // 设置label字体大小为20
                   hintText: myTextData.yPos.toString()),
@@ -3138,7 +3133,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       const SizedBox(height: 10),
       Container(
         height: 30,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: Column(
           children: [
             Text(
@@ -3200,7 +3195,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       ),
       Container(
         height: 20,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: Text(localizedStrings.position,
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -3233,7 +3228,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       const SizedBox(height: 10),
       Container(
         height: 30,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: Column(
           children: [
             Text(
@@ -3295,7 +3290,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       ),
       Container(
         height: 20,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: Text(localizedStrings.position,
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -3347,8 +3342,8 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
               enabled: false,
               controller: yPosvar,
               decoration: InputDecoration(
-                  labelStyle: const TextStyle(
-                      color: Color.fromARGB(255, 0, 74, 152),
+                  labelStyle: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
                       fontSize: 14,
                       fontWeight: FontWeight.normal), // 设置label字体大小为20
                   hintText: myTextData.yPos.toString()),
@@ -3417,7 +3412,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       const SizedBox(height: 10),
       Container(
         height: 30,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: Column(
           children: [
             Text(
@@ -3479,7 +3474,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       ),
       Container(
         height: 20,
-        color: const Color.fromARGB(255, 240, 247, 252),
+        color: Theme.of(context).colorScheme.surface,
         child: Text(localizedStrings.position,
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -3531,8 +3526,8 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
               enabled: false,
               controller: yPosvar,
               decoration: InputDecoration(
-                  labelStyle: const TextStyle(
-                      color: Color.fromARGB(255, 0, 74, 152),
+                  labelStyle: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
                       fontSize: 14,
                       fontWeight: FontWeight.normal), // 设置label字体大小为20
                   hintText: myTextData.yPos.toString()),
@@ -3621,9 +3616,9 @@ class Circle extends StatelessWidget {
           width: 10,
           height: 10,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.onPrimary,
             border: Border.all(
-              color: Colors.black,
+              color: Theme.of(context).colorScheme.onSurface,
               width: 2.0,
             ),
             borderRadius: BorderRadius.circular(12),

@@ -610,6 +610,16 @@ class S {
     );
   }
 
+  /// `Default Format`
+  String get download_default {
+    return Intl.message(
+      'Default Format',
+      name: 'download_default',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Attribute`
   String get attribute {
     return Intl.message(
@@ -1360,21 +1370,31 @@ class S {
     );
   }
 
-  /// `Device Connection`
+  /// `Device Info & Connection`
   String get device_connection_title {
     return Intl.message(
-      'Device Connection',
+      'Device Info & Connection',
       name: 'device_connection_title',
       desc: '',
       args: [],
     );
   }
 
-  /// `Device Configuration`
+  /// `Basics`
   String get device_setting_title {
     return Intl.message(
-      'Device Configuration',
+      'Basics',
       name: 'device_setting_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Device Configuration`
+  String get device_configuration_title {
+    return Intl.message(
+      'Device Configuration',
+      name: 'device_configuration_title',
       desc: '',
       args: [],
     );
@@ -1410,6 +1430,16 @@ class S {
     );
   }
 
+  /// `Advanced`
+  String get advanced_setting_title {
+    return Intl.message(
+      'Advanced',
+      name: 'advanced_setting_title',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Label Design`
   String get label_design_title {
     return Intl.message(
@@ -1420,11 +1450,21 @@ class S {
     );
   }
 
-  /// `Print Format Download`
-  String get print_format_download {
+  /// `Receipt Design`
+  String get receipt_design_title {
     return Intl.message(
-      'Print Format Download',
-      name: 'print_format_download',
+      'Receipt Design',
+      name: 'receipt_design_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Download Label Printing Formats`
+  String get label_fmt_download {
+    return Intl.message(
+      'Download Label Printing Formats',
+      name: 'label_fmt_download',
       desc: '',
       args: [],
     );
@@ -1710,6 +1750,16 @@ class S {
     );
   }
 
+  /// `Please confirm to go to the default print format page.`
+  String get jump_confirm_info {
+    return Intl.message(
+      'Please confirm to go to the default print format page.',
+      name: 'jump_confirm_info',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Download is successful!`
   String get download_result_ok {
     return Intl.message(
@@ -1990,11 +2040,11 @@ class S {
     );
   }
 
-  /// `Please confirm the format is saved.`
-  String get fmt_confirm_info {
+  /// `Confirm exit?`
+  String get go_home {
     return Intl.message(
-      'Please confirm the format is saved.',
-      name: 'fmt_confirm_info',
+      'Confirm exit?',
+      name: 'go_home',
       desc: '',
       args: [],
     );
@@ -2005,6 +2055,86 @@ class S {
     return Intl.message(
       'Receipt Format Download',
       name: 'receipt_format_download',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Information`
+  String get about_title {
+    return Intl.message(
+      'Information',
+      name: 'about_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Version:`
+  String get app_version_title {
+    return Intl.message(
+      'Version:',
+      name: 'app_version_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Company:`
+  String get app_company_title {
+    return Intl.message(
+      'Company:',
+      name: 'app_company_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tel:`
+  String get app_tel_title {
+    return Intl.message(
+      'Tel:',
+      name: 'app_tel_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Email:`
+  String get app_email_title {
+    return Intl.message(
+      'Email:',
+      name: 'app_email_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Address:`
+  String get app_address_title {
+    return Intl.message(
+      'Address:',
+      name: 'app_address_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Website Address:`
+  String get app_web_title {
+    return Intl.message(
+      'Website Address:',
+      name: 'app_web_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Applicable Models:`
+  String get app_models {
+    return Intl.message(
+      'Applicable Models:',
+      name: 'app_models',
       desc: '',
       args: [],
     );

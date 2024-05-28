@@ -48,11 +48,14 @@ class MyQrcodeDialogState extends State<MyQrcodeDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Container(
-          color: Colors.blue.shade900,
-          child: const Row(
+          color: Theme.of(context).colorScheme.primary,
+          child: Row(
             children: [
-              Icon(Icons.qr_code, color: Colors.white),
-              Text("Qrcode Edit", style: TextStyle(color: Colors.white))
+              Icon(Icons.qr_code,
+                  color: Theme.of(context).colorScheme.onPrimary),
+              Text("Qrcode Edit",
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.onPrimary))
             ],
           )),
       content: SizedBox(
@@ -84,7 +87,7 @@ class MyQrcodeDialogState extends State<MyQrcodeDialog> {
                             controller: _barCodeNameController,
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: Colors.blue.shade900,
+                              color: Theme.of(context).colorScheme.primary,
                               fontSize: 20,
                             ),
                             decoration: const InputDecoration(
@@ -156,7 +159,8 @@ class MyQrcodeDialogState extends State<MyQrcodeDialog> {
                       ElevatedButton(
                         onPressed: _addRowData,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue.shade900, // 设置按钮的背景色
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary, // 设置按钮的背景色
                           elevation: 10, // 设置按钮的阴影
                         ),
                         child: const Text(
@@ -171,7 +175,8 @@ class MyQrcodeDialogState extends State<MyQrcodeDialog> {
                       ElevatedButton(
                         onPressed: _saveRowData,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green.shade900, // 设置按钮的背景色
+                          backgroundColor:
+                              Theme.of(context).colorScheme.outline, // 设置按钮的背景色
                           elevation: 10, // 设置按钮的阴影
                         ),
                         child: const Text(
@@ -205,33 +210,33 @@ class MyQrcodeDialogState extends State<MyQrcodeDialog> {
                 children: [
                   Text("DATA TYPE",
                       style: TextStyle(
-                          color: Colors.blue.shade900,
+                          color: Theme.of(context).colorScheme.primary,
                           fontSize: 20,
                           fontWeight: FontWeight.bold)),
                   Text("Content",
                       style: TextStyle(
-                          color: Colors.blue.shade900,
+                          color: Theme.of(context).colorScheme.primary,
                           fontSize: 20,
                           fontWeight: FontWeight.bold)),
                   Text("Default Value",
                       style: TextStyle(
-                        color: Colors.blue.shade900,
+                        color: Theme.of(context).colorScheme.primary,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       )),
                   Text("Alignment",
                       style: TextStyle(
-                          color: Colors.blue.shade900,
+                          color: Theme.of(context).colorScheme.primary,
                           fontSize: 20,
                           fontWeight: FontWeight.bold)),
                   Text("Max Length",
                       style: TextStyle(
-                          color: Colors.blue.shade900,
+                          color: Theme.of(context).colorScheme.primary,
                           fontSize: 20,
                           fontWeight: FontWeight.bold)),
                   Text("Delete",
                       style: TextStyle(
-                          color: Colors.blue.shade900,
+                          color: Theme.of(context).colorScheme.primary,
                           fontSize: 20,
                           fontWeight: FontWeight.bold)),
                 ]),
@@ -256,8 +261,8 @@ class MyQrcodeDialogState extends State<MyQrcodeDialog> {
             controller: _errorController,
             style: TextStyle(
                 color: (_errorController.text.contains("successfully"))
-                    ? Colors.green.shade900
-                    : Colors.red.shade900,
+                    ? Theme.of(context).colorScheme.outline
+                    : Theme.of(context).colorScheme.error,
                 fontSize: 20,
                 fontWeight: FontWeight.bold),
             decoration: const InputDecoration(

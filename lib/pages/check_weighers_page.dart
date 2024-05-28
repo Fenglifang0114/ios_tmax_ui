@@ -524,7 +524,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
   Widget firstLayout(BuildContext context, double _width) {
     return Container(
         width: _width,
-        decoration: BoxDecoration(color: Colors.grey.shade200),
+        decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           // mainAxisSize: MainAxisSize.max,
@@ -534,7 +534,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
             Expanded(
               flex: 3,
               child: Container(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.onPrimary,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -589,6 +589,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               buildTextWithWeight(
+                                  Theme.of(context).colorScheme,
                                   280,
                                   70,
                                   (myReqWeightCountine.msgBody == null)
@@ -598,14 +599,15 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                                   constraints,
                                   Theme.of(context).colorScheme.primary),
                               buildTextWithUnit(
-                                  100,
-                                  70,
-                                  (myReqWeightCountine.msgBody == null)
-                                      ? ("kg")
-                                      : myReqWeightCountine.msgBody!.weightUnit,
-                                  30,
-                                  constraints,
-                                  Theme.of(context).colorScheme.primary)
+                                Theme.of(context).colorScheme,
+                                100,
+                                70,
+                                (myReqWeightCountine.msgBody == null)
+                                    ? ("kg")
+                                    : myReqWeightCountine.msgBody!.weightUnit,
+                                30,
+                                constraints,
+                              )
                             ],
                           );
                         })),
@@ -616,10 +618,14 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                           return Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              buildStartIcon(50, 30, constraints,
-                                  Theme.of(context).colorScheme.primary),
-                              buildStopIcon(50, 30, constraints,
-                                  Theme.of(context).colorScheme.primary)
+                              buildStartIcon(Theme.of(context).colorScheme, 50,
+                                  30, constraints),
+                              buildStopIcon(
+                                Theme.of(context).colorScheme,
+                                50,
+                                30,
+                                constraints,
+                              )
                             ],
                           );
                         })),
@@ -703,7 +709,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                 child: LayoutBuilder(builder:
                     (BuildContext context, BoxConstraints constraints) {
                   return Container(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.onPrimary,
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
@@ -792,18 +798,15 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                               localizedStrings.user_edit,
                               constraints,
                               context),
-                          buildSetReportButton(
-                              Theme.of(context).colorScheme.primary,
-                              localizedStrings.report_set_btn,
-                              constraints,
-                              context),
+                          buildSetReportButton(localizedStrings.report_set_btn,
+                              constraints, context),
                           buildButton(
-                              Theme.of(context).colorScheme.primary,
+                              Theme.of(context).colorScheme,
                               localizedStrings.report_show_btn,
                               constraints,
                               _toggleLayout),
                           buildButton(
-                              Theme.of(context).colorScheme.primary,
+                              Theme.of(context).colorScheme,
                               localizedStrings.report_delete_btn,
                               constraints,
                               () => _showConfirmationDialog(context)),
@@ -873,7 +876,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
         return AlertDialog(
           title: Text(
             localizedStrings.confirm_title,
-            style: const TextStyle(color: Color.fromARGB(255, 15, 71, 161)),
+            style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
           content: Text(localizedStrings.data_delete_confirm),
           actions: <Widget>[
@@ -907,7 +910,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
         width: width,
         child: MaterialButton(
             color: color,
-            textColor: Colors.white,
+            textColor: Theme.of(context).colorScheme.onPrimary,
             elevation: 5.0,
             child: Text(text,
                 style: TextStyle(
@@ -934,7 +937,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
         width: width,
         child: MaterialButton(
             color: Theme.of(context).colorScheme.primary,
-            textColor: Colors.white,
+            textColor: Theme.of(context).colorScheme.onPrimary,
             elevation: 5.0,
             child: Text(text,
                 style: TextStyle(
@@ -967,15 +970,15 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
             }));
   }
 
-  Widget buildSetReportButton(Color? color, String text,
-      BoxConstraints constraints, BuildContext context) {
+  Widget buildSetReportButton(
+      String text, BoxConstraints constraints, BuildContext context) {
     var fontSize = 14 * constraints.maxHeight / 60;
     var width = constraints.maxWidth / 10;
     return SizedBox(
       width: width,
       child: MaterialButton(
-          color: color,
-          textColor: Colors.white,
+          color: Theme.of(context).colorScheme.primary,
+          textColor: Theme.of(context).colorScheme.onPrimary,
           elevation: 5.0,
           child: Text(text,
               style:
@@ -986,16 +989,16 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     );
   }
 
-  Widget buildButton(Color? color, String text, BoxConstraints constraints,
-      VoidCallback onPressed) {
+  Widget buildButton(ColorScheme colorScheme, String text,
+      BoxConstraints constraints, VoidCallback onPressed) {
     var fontSize = 14 * constraints.maxHeight / 60;
     var width = constraints.maxWidth / 10;
 
     return SizedBox(
         width: width,
         child: MaterialButton(
-            color: color,
-            textColor: Colors.white,
+            color: colorScheme.primary,
+            textColor: colorScheme.onPrimary,
             elevation: 5.0,
             child: Text(text,
                 maxLines: 1,
@@ -1040,8 +1043,8 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     }
   }
 
-  Widget buildStartIcon(double width, double? iconSize,
-      BoxConstraints constraints, Color? color) {
+  Widget buildStartIcon(ColorScheme colorScheme, double width, double? iconSize,
+      BoxConstraints constraints) {
     width = width * constraints.maxWidth / 100;
     iconSize = iconSize! * constraints.maxHeight / 100;
 
@@ -1051,7 +1054,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
         //开始按钮
         icon: const Icon(Icons.play_arrow),
         iconSize: iconSize,
-        color: (isStart) ? (Colors.grey) : (color),
+        color: (isStart) ? (colorScheme.background) : (colorScheme.primary),
         onPressed: () {
           performStart();
         },
@@ -1059,8 +1062,8 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     );
   }
 
-  Widget buildStopIcon(double width, double? iconSize,
-      BoxConstraints constraints, Color? color) {
+  Widget buildStopIcon(ColorScheme colorScheme, double width, double? iconSize,
+      BoxConstraints constraints) {
     width = width * constraints.maxWidth / 100;
     iconSize = iconSize! * constraints.maxHeight / 100;
 
@@ -1072,13 +1075,19 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
         },
         icon: const Icon(Icons.pause),
         iconSize: iconSize,
-        color: (!isStart) ? (Colors.grey) : color,
+        color: (!isStart) ? (colorScheme.background) : colorScheme.primary,
       ),
     );
   }
 
-  Widget buildTextWithWeight(double width, double height, String text,
-      double? fontSize, BoxConstraints constraints, Color? color) {
+  Widget buildTextWithWeight(
+      ColorScheme colorScheme,
+      double width,
+      double height,
+      String text,
+      double? fontSize,
+      BoxConstraints constraints,
+      Color? color) {
     width = width * constraints.maxWidth / 400;
     height = height * constraints.maxHeight / 80;
     fontSize = fontSize! * constraints.maxHeight / 120;
@@ -1089,7 +1098,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     return Container(
       width: width,
       height: height,
-      color: color,
+      color: colorScheme.primary,
       child: Column(
         // 将 Row 改为 Column
         mainAxisAlignment: MainAxisAlignment.center, // 垂直方向居中对齐
@@ -1098,7 +1107,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
           Text(
             text,
             textAlign: TextAlign.right,
-            style: TextStyle(color: Colors.white, fontSize: fontSize),
+            style: TextStyle(color: colorScheme.onPrimary, fontSize: fontSize),
             overflow: TextOverflow.ellipsis,
           ),
         ],
@@ -1106,8 +1115,8 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     );
   }
 
-  Widget buildTextWithUnit(double width, double height, String text,
-      double? fontSize, BoxConstraints constraints, Color? color) {
+  Widget buildTextWithUnit(ColorScheme colorScheme, double width, double height,
+      String text, double? fontSize, BoxConstraints constraints) {
     width = width * constraints.maxWidth / 400;
     height = height * constraints.maxHeight / 80;
     fontSize = constraints.maxHeight / 3;
@@ -1118,7 +1127,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     return Container(
       width: width,
       height: height,
-      color: color,
+      color: colorScheme.primary,
       child: Column(
         // 将 Row 改为 Column
         mainAxisAlignment: MainAxisAlignment.center, // 垂直方向居中对齐
@@ -1127,7 +1136,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
           Text(
             text,
             textAlign: TextAlign.right,
-            style: TextStyle(color: Colors.white, fontSize: fontSize),
+            style: TextStyle(color: colorScheme.onPrimary, fontSize: fontSize),
             overflow: TextOverflow.ellipsis,
           ),
         ],
@@ -1192,14 +1201,14 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
   Widget secondLayout(BuildContext context, double _width) {
     return Container(
         width: _width,
-        decoration: BoxDecoration(color: Colors.grey.shade200),
+        decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           // mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.onPrimary,
               child: Row(
                 children: [
                   Container(
@@ -1231,7 +1240,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
             const SizedBox(height: 5),
             Container(
               height: 120,
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.onPrimary,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -1331,8 +1340,11 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                                   (myReqWeightCountine.msgBody == null)
                                       ? ("-----")
                                       : myReqWeightCountine.msgBody!.weightVal,
-                                  style: const TextStyle(
-                                      color: Colors.white, fontSize: 55),
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimary,
+                                      fontSize: 55),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
@@ -1353,8 +1365,8 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                               (myReqWeightCountine.msgBody == null)
                                   ? ("kg")
                                   : myReqWeightCountine.msgBody!.weightUnit,
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.onPrimary,
                                 fontSize: 30,
                               ),
                               maxLines: 1,
@@ -1376,7 +1388,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                           icon: const Icon(Icons.play_arrow),
                           iconSize: 30,
                           color: (isStart)
-                              ? (Colors.grey)
+                              ? (Theme.of(context).colorScheme.background)
                               : (Theme.of(context).colorScheme.primary),
                           onPressed: () {
                             performStart();
@@ -1392,7 +1404,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                           icon: const Icon(Icons.pause),
                           iconSize: 30,
                           color: (!isStart)
-                              ? (Colors.grey)
+                              ? (Theme.of(context).colorScheme.background)
                               : (Theme.of(context).colorScheme.primary),
                         ),
                       ),
@@ -1613,7 +1625,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                       width: constraints.maxWidth / 10,
                       child: MaterialButton(
                           color: Theme.of(context).colorScheme.primary,
-                          textColor: Colors.white,
+                          textColor: Theme.of(context).colorScheme.onPrimary,
                           elevation: 5.0,
                           child: Text(localizedStrings.plu_edit,
                               maxLines: 1,
@@ -1678,7 +1690,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                       width: constraints.maxWidth / 10,
                       child: MaterialButton(
                           color: Theme.of(context).colorScheme.primary,
-                          textColor: Colors.white,
+                          textColor: Theme.of(context).colorScheme.onPrimary,
                           elevation: 5.0,
                           child: Text(localizedStrings.user_edit,
                               overflow: TextOverflow.ellipsis,
@@ -1715,7 +1727,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                       width: constraints.maxWidth / 10,
                       child: MaterialButton(
                           color: Theme.of(context).colorScheme.primary,
-                          textColor: Colors.white,
+                          textColor: Theme.of(context).colorScheme.onPrimary,
                           elevation: 5.0,
                           child: Text(localizedStrings.report_set_btn,
                               overflow: TextOverflow.ellipsis,
@@ -1729,7 +1741,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                       width: constraints.maxWidth / 10,
                       child: MaterialButton(
                           color: Theme.of(context).colorScheme.primary,
-                          textColor: Colors.white,
+                          textColor: Theme.of(context).colorScheme.onPrimary,
                           elevation: 5.0,
                           child: Text(localizedStrings.report_hide_btn,
                               overflow: TextOverflow.ellipsis,
@@ -1743,7 +1755,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                       width: constraints.maxWidth / 10,
                       child: MaterialButton(
                           color: Theme.of(context).colorScheme.primary,
-                          textColor: Colors.white,
+                          textColor: Theme.of(context).colorScheme.onPrimary,
                           elevation: 5.0,
                           child: Text(localizedStrings.report_delete_btn,
                               overflow: TextOverflow.ellipsis,

@@ -265,8 +265,8 @@
 //         style: TextStyle(
 //             fontSize: 18.0,
 //             color: (dialogString == "Success!")
-//                 ? Colors.green.shade900
-//                 : Colors.red.shade900),
+//                 ? Theme.of(context).colorScheme.outline
+//                 : Theme.of(context).colorScheme.error.shade900),
 //       ),
 //     );
 
@@ -279,7 +279,7 @@
 //           children: [
 //             const SizedBox(height: 0),
 //             Container(
-//               color: Colors.white,
+//               color: Theme.of(context).colorScheme.onPrimary,
 //               child: Row(
 //                 children: [
 //                   Container(
@@ -287,11 +287,11 @@
 //                       height: 40,
 //                       margin: const EdgeInsets.only(left: 5, top: 2),
 //                       decoration: BoxDecoration(
-//                           color: Colors.white,
+//                           color: Theme.of(context).colorScheme.onPrimary,
 //                           borderRadius: BorderRadius.circular(0),
 //                           boxShadow: [
 //                             BoxShadow(
-//                                 color: Colors.blue.shade900,
+//                                 color: Theme.of(context).colorScheme.primary,
 //                                 offset: const Offset(0.0, 2.0),
 //                                 blurStyle: BlurStyle.solid,
 //                                 blurRadius: 1.0,
@@ -301,9 +301,9 @@
 //                       child: Row(
 //                         children: [
 //                           (myDevicedata.type == "Icons.usb")
-//                               ? Icon(Icons.usb, color: Colors.green.shade900)
+//                               ? Icon(Icons.usb, color: Theme.of(context).colorScheme.outline)
 //                               : (myDevicedata.type == "Icons.usb_off")
-//                                   ? Icon(Icons.usb, color: Colors.red.shade900)
+//                                   ? Icon(Icons.usb, color: Theme.of(context).colorScheme.error.shade900)
 //                                   : (myDevicedata.type ==
 //                                           "Icons.device_unknown")
 //                                       ? const Icon(Icons.device_unknown,
@@ -311,7 +311,7 @@
 //                                               Color.fromARGB(255, 240, 133, 0))
 //                                       : (myDevicedata.type == "Icons.wifi")
 //                                           ? const Icon(Icons.wifi,
-//                                               color: Colors.white)
+//                                               color: Theme.of(context).colorScheme.onPrimary)
 //                                           : const Text(
 //                                               "Please select a device first...",
 //                                               style: TextStyle(
@@ -342,7 +342,7 @@
 //             const SizedBox(height: 5),
 //             Container(
 //               height: 100,
-//               color: Colors.white,
+//               color: Theme.of(context).colorScheme.onPrimary,
 //               child: Row(
 //                 children: [
 //                   const SizedBox(width: 20),
@@ -431,10 +431,10 @@
 //                       width: 360,
 //                       height: 70,
 //                       color: (myReqWeightCountine.msgBody == null)
-//                           ? (Colors.blue.shade900)
+//                           ? (Theme.of(context).colorScheme.primary)
 //                           : (myReqWeightCountine.msgBody!.isStable == true)
-//                               ? (Colors.green.shade900)
-//                               : (Colors.red.shade900),
+//                               ? (Theme.of(context).colorScheme.outline)
+//                               : (Theme.of(context).colorScheme.error.shade900),
 //                       // alignment: Alignment.bottomRight, //设置控件内容的位置
 //                       child: Row(
 //                         mainAxisAlignment: MainAxisAlignment.end,
@@ -446,7 +446,7 @@
 //                                   ? ("0.000")
 //                                   : myReqWeightCountine.msgBody!.weightVal,
 //                               style: const TextStyle(
-//                                   color: Colors.white, fontSize: 55),
+//                                   color: Theme.of(context).colorScheme.onPrimary, fontSize: 55),
 //                               overflow: TextOverflow.ellipsis,
 //                             ),
 //                           ),
@@ -459,10 +459,10 @@
 //                     width: 120,
 //                     height: 70,
 //                     color: (myReqWeightCountine.msgBody == null)
-//                         ? (Colors.blue.shade900)
+//                         ? (Theme.of(context).colorScheme.primary)
 //                         : (myReqWeightCountine.msgBody!.isStable == true)
-//                             ? (Colors.green.shade900)
-//                             : (Colors.red.shade900),
+//                             ? (Theme.of(context).colorScheme.outline)
+//                             : (Theme.of(context).colorScheme.error.shade900),
 //                     alignment: Alignment.center, //设置控件内容的位置
 //                     child: Expanded(
 //                         child: Text(
@@ -471,7 +471,7 @@
 //                           ? ("kg")
 //                           : myReqWeightCountine.msgBody!.weightUnit,
 //                       style: const TextStyle(
-//                         color: Colors.white,
+//                         color: Theme.of(context).colorScheme.onPrimary,
 //                         fontSize: 50,
 //                       ),
 //                       maxLines: 1,
@@ -486,7 +486,7 @@
 //                         icon: const Icon(Icons.play_arrow),
 //                         iconSize: 30,
 //                         color:
-//                             (isStart) ? (Colors.grey) : (Colors.blue.shade900),
+//                             (isStart) ? (Colors.grey) : (Theme.of(context).colorScheme.primary),
 //                         onPressed: () {
 //                           setState(() {
 //                             if (!isStart) {
@@ -512,7 +512,7 @@
 //                         icon: const Icon(Icons.pause),
 //                         iconSize: 30,
 //                         color:
-//                             (!isStart) ? (Colors.grey) : (Colors.blue.shade900),
+//                             (!isStart) ? (Colors.grey) : (Theme.of(context).colorScheme.primary),
 //                       ),
 //                     ],
 //                   ),
@@ -601,13 +601,13 @@
 //                       enabled: false,
 //                       controller: _errorText, //报错信息
 //                       maxLength: 100,
-//                       style: const TextStyle(color: Colors.red),
+//                       style: const TextStyle(color: Theme.of(context).colorScheme.error),
 //                       maxLines: 3,
 //                       textAlignVertical: TextAlignVertical.bottom,
 //                       decoration: const InputDecoration(
 //                         border: OutlineInputBorder(borderSide: BorderSide.none),
 //                         counterText: "",
-//                         focusColor: Colors.red, // hintText: "请输入机种类型，如：ztp",
+//                         focusColor: Theme.of(context).colorScheme.error, // hintText: "请输入机种类型，如：ztp",
 //                         // border: OutlineInputBorder(),
 //                       ),
 //                       onChanged: (value) {},
@@ -625,7 +625,7 @@
 //             const SizedBox(height: 5),
 //             Container(
 //               height: 40,
-//               color: Colors.white,
+//               color: Theme.of(context).colorScheme.onPrimary,
 //               child: Row(
 //                 children: [
 //                   TextButton(
@@ -665,8 +665,8 @@
 //                   ),
 //                   const SizedBox(width: 10),
 //                   MaterialButton(
-//                       color: Colors.blue.shade900,
-//                       textColor: Colors.white,
+//                       color: Theme.of(context).colorScheme.primary,
+//                       textColor: Theme.of(context).colorScheme.onPrimary,
 //                       elevation: 5.0,
 //                       child: const Text("PLU Edit"),
 //                       onPressed: () {
@@ -714,8 +714,8 @@
 //                   ),
 //                   const SizedBox(width: 10),
 //                   MaterialButton(
-//                       color: Colors.blue.shade900,
-//                       textColor: Colors.white,
+//                       color: Theme.of(context).colorScheme.primary,
+//                       textColor: Theme.of(context).colorScheme.onPrimary,
 //                       elevation: 5.0,
 //                       child: const Text("User Edit"),
 //                       onPressed: () {
