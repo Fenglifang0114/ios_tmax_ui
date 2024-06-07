@@ -7,8 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:gbk_codec/gbk_codec.dart';
 import '../data/barcoderowdata.dart';
 import '../data/downloadresponse.dart';
+import '../data/encrypt_data.dart';
 import '../data/formatdata.dart';
 import '../data/item_key_list.dart';
+import '../data/language.dart';
 import '../data/receipt_item.dart';
 import '../data/receipt_offset.dart';
 import '../data/scalecmd_data.dart';
@@ -16,7 +18,6 @@ import '../data/screen_mgr.dart';
 import '../data/selectedcontrol.dart';
 import '../data/writelog.dart';
 import '../eventbus/eventbus.dart';
-import '../generated/l10n.dart';
 import '../main.dart';
 import '../widget/dropdown_copy.dart';
 import '../widget/receipt_draggable_floating.dart';
@@ -36,10 +37,7 @@ class ReceiptDesignPage extends StatefulWidget {
 
 const receiptVarMap = {
   "Free Text": ["Text,TEXT"],
-  // "BarCode": ["BarCode,BarCode"],
-  // "Qrcode": ["Qrcode,Qrcode"],
   "Dividing Line": ["Line,Line"],
-  // "Shape": ["Rectangle,Rectangle", "Circle,Circle", "Line,Line"],
   "Price Variable": [
     "NO._P,DATA",
     "Header1_P,DATA",
@@ -72,25 +70,11 @@ const receiptVarMap = {
     "TaxModel_P,DATA",
     "TotalTaxAmount_P,DATA",
     "PaymentAmount_P,DATA",
-    "Change Amount_P,DATA",
+    "ChangeAmount_P,DATA",
     "Subtotal_P,DATA",
     "Currency_P,DATA",
     "CopyTimes_P,DATA",
   ],
-  // "Weight Variable": [
-  //   "NO.,DATA",
-  //   "Gross,DATA",
-  //   "Tare,DATA",
-  //   "Net,DATA",
-  //   "PCS,DATA",
-  //   "WeightUnit,DATA",
-  //   "Date,DATA",
-  //   "Time,DATA",
-  //   "UnitWeight,DATA",
-  //   "Percent,DATA",
-  //   "TotalWeight,DATA",
-  //   "TotalCount,DATA",
-  // ],
 };
 
 class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
@@ -223,13 +207,11 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
   final List<String> _fontSizes = [
     '24',
   ];
-  dynamic localizedStrings;
+
+  Map<String, String> languageVarMap = {};
+  Map<String, String> languageVarExplMap = {};
+
   String systemId = '';
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    localizedStrings = S.of(context);
-  }
 
   @override
   void initState() {
@@ -450,7 +432,6 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
   @override
   Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;
-    // localizedStrings = S.of(context);
     ScrollController _scrollController = ScrollController();
     ScrollController _scrollController1 = ScrollController();
     return Scaffold(
@@ -1749,21 +1730,8 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
 
   void _saveFormatToCsv(String csv, String path) async {
     final file = File(path);
-    csv = encryptCsv(csv);
+    csv = myFilePassword.encryptCsv(csv);
     await file.writeAsString(csv, mode: FileMode.write, encoding: utf8);
-  }
-
-  String encryptCsv(String csv) {
-    List<int> encryptedBytes = [];
-    List<int> utf8Bytes = utf8.encode(csv);
-
-    for (int byte in utf8Bytes) {
-      int encryptedByte1 = (byte >> 4) + 3; // 取高4位加密
-      int encryptedByte2 = (byte & 0x0F) + 3; // 取低4位加密
-      encryptedBytes.addAll([encryptedByte1, encryptedByte2]);
-    }
-
-    return String.fromCharCodes(encryptedBytes);
   }
 
   // void _saveFormatToCsv(String csv) async {
@@ -1879,8 +1847,10 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
   /// 创建列表 , 每个元素都是一个 ExpansionTile 组件
   List<Widget> _buildList() {
     List<Widget> widgets = [];
+    getLanguageVarMap();
     for (var key in receiptVarMap.keys) {
-      widgets.add(_generateExpansionTileWidget(key, receiptVarMap[key]));
+      String keyStr = languageVarMap[key]!;
+      widgets.add(_generateExpansionTileWidget(keyStr, receiptVarMap[key]));
     }
     return widgets;
   }
@@ -1898,11 +1868,18 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
   Widget _generateWidget(name) {
     text = name.split(",")[0];
     type = name.split(",")[1];
+    String expStr = "";
+    if (languageVarExplMap[text] != "") {
+      expStr = languageVarExplMap[text]!;
+    }
+    if (languageVarMap[text] != "") {
+      text = languageVarMap[text]!;
+    }
 
     /// 使用该组件可以使宽度撑满
     return FractionallySizedBox(
-      widthFactor: 1,
-      child: Container(
+        widthFactor: 1,
+        child: Container(
           height: 30,
           decoration: BoxDecoration(
               border: Border(
@@ -1910,33 +1887,28 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                       width: 0.2,
                       color: Theme.of(context).colorScheme.background))),
           alignment: Alignment.center,
-          child: TextButton(
-            onPressed: () {
-              count++;
-              num.add(count);
-              myReceiptItemData.tabOrder = count;
-              addfloatbutton(name);
-
-              //原代码20230818
-              // if (name != 'Line,Line') {
-              //   count++;
-              //   num.add(count);
-              //   myReceiptItemData.tabOrder = count;
-              //   addfloatbutton(name);
-              // } else {
-              //   _createLine();
-              // }
-            },
-            child: Text(
-              //左侧按钮文本的颜色
-              text,
-              style: TextStyle(
-                fontSize: 14,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-            ),
-          )),
-    );
+          child: Tooltip(
+              message: expStr,
+              preferBelow: false,
+              verticalOffset: 10.0,
+              waitDuration: const Duration(seconds: 1),
+              child: TextButton(
+                onPressed: () {
+                  count++;
+                  num.add(count);
+                  myReceiptItemData.tabOrder = count;
+                  addfloatbutton(name);
+                },
+                child: Text(
+                  //左侧按钮文本的颜色
+                  text,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+              )),
+        ));
   }
 
   // void _createLine() {
@@ -3617,6 +3589,97 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                   fontWeight: FontWeight.normal,
                   color: Theme.of(context).colorScheme.onPrimary)))
     ];
+  }
+
+  void getLanguageVarMap() {
+    if (languageVarMap.isNotEmpty) {
+      return;
+    }
+    languageVarMap = {
+      "Text": localizedStrings.p_text_var,
+      "Line": localizedStrings.p_div_line_var,
+      "NO._P": localizedStrings.p_no_var,
+      "Header1_P": localizedStrings.p_header1_var,
+      "Header2_P": localizedStrings.p_Header2_var,
+      "Header3_P": localizedStrings.p_header3_var,
+      "Footer1_P": localizedStrings.p_footer1_var,
+      "Footer2_P": localizedStrings.p_footer2_var,
+      "Footer3_P": localizedStrings.p_footer3_var,
+      "PLU_ID_P": localizedStrings.p_plu_id_var,
+      "PLU_Name_P": localizedStrings.p_plu_name_var,
+      "OrderNumber_P": localizedStrings.p_order_number_var,
+      "UnitPrice_P": localizedStrings.p_unit_price_var,
+      "PriceUnit_P": localizedStrings.p_price_unit_var,
+      "Price_P": localizedStrings.p_price_var,
+      "PreTare_P": localizedStrings.p_pre_tare_var,
+      "Weight_Pcs_P": localizedStrings.p_weight_pcs_var,
+      "Unit_P": localizedStrings.p_unit_var,
+      "Tare_P": localizedStrings.p_tare_var,
+      "Date": localizedStrings.p_date_var,
+      "Time": localizedStrings.p_time_var,
+      "TaxType1_P": localizedStrings.p_tax_type1_var,
+      "TaxType2_P": localizedStrings.p_tax_type2_var,
+      "TaxType3_P": localizedStrings.p_tax_type3_var,
+      "TaxBase1_P": localizedStrings.p_tax_base1_var,
+      "TaxBase2_P": localizedStrings.p_tax_base2_var,
+      "TaxBase3_P": localizedStrings.p_tax_base3_var,
+      "TaxAmount1_P": localizedStrings.p_tax_amount1_var,
+      "TaxAmount2_P": localizedStrings.p_tax_amount2_var,
+      "TaxAmount3_P": localizedStrings.p_tax_amount3_var,
+      "TaxModel_P": localizedStrings.p_tax_model_var,
+      "TotalTaxAmount_P": localizedStrings.p_total_tax_amount_var,
+      "PaymentAmount_P": localizedStrings.p_payment_amount_P_var,
+      "ChangeAmount_P": localizedStrings.p_change_amount_var,
+      "Subtotal_P": localizedStrings.p_subtotal_var,
+      "Currency_P": localizedStrings.p_currency_var,
+      "CopyTimes_P": localizedStrings.p_copy_times_var,
+      "Free Text": localizedStrings.p_text_title,
+      "Dividing Line": localizedStrings.p_line_title,
+      "Price Variable": localizedStrings.p_price_title,
+    };
+
+    languageVarExplMap = {
+      "Text": localizedStrings.p_text_expl,
+      "Line": localizedStrings.p_div_line_expl,
+      "NO._P": localizedStrings.p_no_expl,
+      "Header1_P": localizedStrings.p_header1_expl,
+      "Header2_P": localizedStrings.p_Header2_expl,
+      "Header3_P": localizedStrings.p_header3_expl,
+      "Footer1_P": localizedStrings.p_footer1_expl,
+      "Footer2_P": localizedStrings.p_footer2_expl,
+      "Footer3_P": localizedStrings.p_footer3_expl,
+      "PLU_ID_P": localizedStrings.p_plu_id_expl,
+      "PLU_Name_P": localizedStrings.p_plu_name_expl,
+      "OrderNumber_P": localizedStrings.p_order_number_expl,
+      "UnitPrice_P": localizedStrings.p_unit_price_expl,
+      "PriceUnit_P": localizedStrings.p_price_unit_expl,
+      "Price_P": localizedStrings.p_price_expl,
+      "PreTare_P": localizedStrings.p_pre_tare_expl,
+      "Weight_Pcs_P": localizedStrings.p_weight_pcs_expl,
+      "Unit_P": localizedStrings.p_unit_expl,
+      "Tare_P": localizedStrings.p_tare_expl,
+      "Date": localizedStrings.p_date_expl,
+      "Time": localizedStrings.p_time_expl,
+      "TaxType1_P": localizedStrings.p_tax_type1_expl,
+      "TaxType2_P": localizedStrings.p_tax_type2_expl,
+      "TaxType3_P": localizedStrings.p_tax_type3_expl,
+      "TaxBase1_P": localizedStrings.p_tax_base1_expl,
+      "TaxBase2_P": localizedStrings.p_tax_base2_expl,
+      "TaxBase3_P": localizedStrings.p_tax_base3_expl,
+      "TaxAmount1_P": localizedStrings.p_tax_amount1_expl,
+      "TaxAmount2_P": localizedStrings.p_tax_amount2_expl,
+      "TaxAmount3_P": localizedStrings.p_tax_amount3_expl,
+      "TaxModel_P": localizedStrings.p_tax_model_expl,
+      "TotalTaxAmount_P": localizedStrings.p_total_tax_amount_expl,
+      "PaymentAmount_P": localizedStrings.p_payment_amount_P_expl,
+      "ChangeAmount_P": localizedStrings.p_change_amount_expl,
+      "Subtotal_P": localizedStrings.p_subtotal_expl,
+      "Currency_P": localizedStrings.p_currency_expl,
+      "CopyTimes_P": localizedStrings.p_copy_times_expl,
+      "Free Text": localizedStrings.p_text_title,
+      "Dividing Line": localizedStrings.p_line_title,
+      "Price Variable": localizedStrings.p_price_title
+    };
   }
 }
 

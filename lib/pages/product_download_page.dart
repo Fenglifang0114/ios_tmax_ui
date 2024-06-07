@@ -5,12 +5,12 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
 import '../data/download_prt_fmt.dart';
 import '../data/downloadresponse.dart';
+import '../data/language.dart';
 import '../data/scale_info_from_scale.dart';
 import '../data/scalecmd_data.dart';
 import '../data/screen_mgr.dart';
 import '../data/timer_manager.dart';
 import '../eventbus/eventbus.dart';
-import '../generated/l10n.dart';
 import '../main.dart';
 import '../widget/page_head.dart';
 
@@ -138,13 +138,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
     });
   }
 
-  dynamic localizedStrings;
   String systemId = '';
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    localizedStrings = S.of(context);
-  }
 
   @override
   void dispose() {
@@ -587,17 +581,19 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(50),
-        child: pageHead(context, localizedStrings.plu_download_title,
-            localizedStrings.serial_port_status),
-      ),
-      body: ListView(
-        scrollDirection: Axis.horizontal,
-        children: [
-          _buildMainContent(),
-        ],
-      ),
-    );
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(50),
+          child: pageHead(context, localizedStrings.plu_download_title,
+              localizedStrings.serial_port_status),
+        ),
+        body: Container(
+          color: Theme.of(context).colorScheme.surfaceTint,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: [
+              _buildMainContent(),
+            ],
+          ),
+        ));
   }
 }

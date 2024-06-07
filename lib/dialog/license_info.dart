@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:t_max/data/license_data.dart';
-
-import '../../generated/l10n.dart';
+import '../data/language.dart';
 import '../data/screen_mgr.dart';
 import '../eventbus/eventbus.dart';
 import '../functions/methods.dart';
+import '../widget/custom_button.dart';
 
 class LicenseInfoDialog extends StatefulWidget {
   const LicenseInfoDialog({super.key});
@@ -26,16 +26,9 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
   bool isPass = false;
   bool licenseKey = false;
 
-  dynamic localizedStrings;
   dynamic _eventbus1;
   String systemId = '';
   String errMessage = '';
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    localizedStrings = S.of(context);
-  }
 
   @override
   void initState() {
@@ -104,18 +97,8 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
     systemId = localizedStrings.system_id;
     pidController.text = systemId + pId;
     return AlertDialog(
-      title: Container(
-        color: Theme.of(context).colorScheme.primary,
-        child: Row(
-          children: [
-            Icon(Icons.key, color: Theme.of(context).colorScheme.onPrimary),
-            Text(
-              localizedStrings.license_title,
-              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-            )
-          ],
-        ),
-      ),
+      title: getDialogTitle(
+          context, localizedStrings.license_title, Icons.key, 400),
       content: Container(
         height: 360,
         width: 400,
@@ -221,17 +204,18 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(
-                  width: 400,
-                  child: ElevatedButton(
-                      onPressed: (isValidLicense())
-                          ? () {
-                              PublicFunctions.checkLicenseKey(
-                                  licenseController.text);
-                            }
-                          : null,
-                      child: Text(localizedStrings.button_add_license)),
-                )
+                CustomElevatedButton(
+                  btnWidth: 360,
+                  btnHeight: 40,
+                  icon: Icons.add_box_outlined,
+                  text: localizedStrings.button_add_license,
+                  onPressed: (isValidLicense())
+                      ? () {
+                          PublicFunctions.checkLicenseKey(
+                              licenseController.text);
+                        }
+                      : null,
+                ),
               ],
             ),
             const SizedBox(
@@ -254,8 +238,11 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             const SizedBox(width: 20),
-            OutlinedButton(
-              child: Text(localizedStrings.button_exit),
+            CustomOutlinedButton(
+              btnWidth: 120,
+              btnHeight: 40,
+              icon: Icons.exit_to_app,
+              text: localizedStrings.button_exit,
               onPressed: () {
                 myScreenMgr.isMainScreen = true;
                 Navigator.of(context).pop();

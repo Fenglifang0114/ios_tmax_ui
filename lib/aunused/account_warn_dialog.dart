@@ -15,7 +15,7 @@ accountWarnDialog(BuildContext context) {
                       Icons.message,
                       color: Theme.of(context).colorScheme.onPrimary,
                     ),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     Text("提示信息！",
                         style: TextStyle(
                             color: Theme.of(context).colorScheme.onPrimary)),

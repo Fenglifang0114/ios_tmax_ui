@@ -4,9 +4,10 @@ import 'package:flutter/services.dart';
 import 'package:t_max/data/downloadresponse.dart';
 import 'package:t_max/functions/methods.dart';
 import '../../eventbus/eventbus.dart';
-import '../../generated/l10n.dart';
 import '../../main.dart';
+import '../data/language.dart';
 import '../data/screen_mgr.dart';
+import 'custom_button.dart';
 
 class BluetoothDialog extends StatefulWidget {
   const BluetoothDialog({super.key});
@@ -67,13 +68,6 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
     return result;
   }
 
-  dynamic localizedStrings;
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    localizedStrings = S.of(context);
-  }
-
   @override
   void dispose() {
     _deviceNameController.dispose();
@@ -85,30 +79,18 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
 
   @override
   Widget build(BuildContext context) {
-    localizedStrings = S.of(context);
     return AlertDialog(
-      title: Container(
-        color: Theme.of(context).colorScheme.primary,
-        child: Row(
-          children: [
-            Icon(Icons.bluetooth,
-                color: Theme.of(context).colorScheme.onPrimary),
-            Text(
-              localizedStrings.bluetooth_modification,
-              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-            )
-          ],
-        ),
-      ),
+      title: getDialogTitle(context, localizedStrings.bluetooth_modification,
+          Icons.bluetooth, 400),
       content: Container(
-        height: 300,
+        height: 310,
         decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
         child: Column(
           children: [
             const SizedBox(height: 2),
             Container(
-              decoration:
-                  BoxDecoration(color: Theme.of(context).colorScheme.onPrimary),
+              decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceTint),
               child: Column(
                 children: [
                   const SizedBox(height: 10),
@@ -147,8 +129,11 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              OutlinedButton(
-                                  child: Text(localizedStrings.get_bt_name),
+                              CustomOutlinedButton(
+                                  btnWidth: 120,
+                                  btnHeight: 40,
+                                  icon: Icons.bluetooth_audio,
+                                  text: localizedStrings.get_bt_name,
                                   onPressed: isSetting
                                       ? null
                                       : () {
@@ -159,30 +144,33 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
                                           PublicFunctions.getBtName();
                                           _startTimer(15);
                                         }),
-                              const SizedBox(width: 50),
-                              OutlinedButton(
-                                child: Text(localizedStrings.modify_bt_name),
-                                onPressed: isSetting
-                                    ? null
-                                    : () {
-                                        try {
-                                          setState(() {
-                                            _errorMessage = '';
-                                            if (MyApp.webchannel1.heartStatus) {
-                                              sendBluetoothName();
-                                            } else {
+                              const SizedBox(width: 40),
+                              CustomOutlinedButton(
+                                  btnWidth: 120,
+                                  btnHeight: 40,
+                                  icon: Icons.mode_edit,
+                                  text: localizedStrings.modify_bt_name,
+                                  onPressed: isSetting
+                                      ? null
+                                      : () {
+                                          try {
+                                            setState(() {
+                                              _errorMessage = '';
+                                              if (MyApp
+                                                  .webchannel1.heartStatus) {
+                                                sendBluetoothName();
+                                              } else {
+                                                _errorMessage = localizedStrings
+                                                    .serial_error;
+                                              }
+                                            });
+                                          } catch (e) {
+                                            setState(() {
                                               _errorMessage =
                                                   localizedStrings.serial_error;
-                                            }
-                                          });
-                                        } catch (e) {
-                                          setState(() {
-                                            _errorMessage =
-                                                localizedStrings.serial_error;
-                                          });
-                                        }
-                                      },
-                              ),
+                                            });
+                                          }
+                                        }),
                             ],
                           ),
                           const SizedBox(height: 10),
@@ -212,8 +200,11 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
                             ),
                           ),
                           const SizedBox(height: 10),
-                          OutlinedButton(
-                              child: Text(localizedStrings.bt_modify_emission),
+                          CustomOutlinedButton(
+                              btnWidth: 340,
+                              btnHeight: 40,
+                              icon: Icons.settings_bluetooth_outlined,
+                              text: localizedStrings.bt_modify_emission,
                               onPressed: isSetting
                                   ? null
                                   : () {
@@ -278,13 +269,17 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            OutlinedButton(
-              child: Text(localizedStrings.button_exit),
+            CustomOutlinedButton(
+              btnWidth: 120,
+              btnHeight: 40,
+              icon: Icons.exit_to_app,
+              text: localizedStrings.button_exit,
               onPressed: () {
                 myScreenMgr.isMainScreen = true;
                 Navigator.of(context).pop();
               },
             ),
+            const SizedBox(width: 30),
           ],
         )
       ],

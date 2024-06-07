@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/functions/methods.dart';
 import '../data/downloadresponse.dart';
+import '../data/language.dart';
 import '../data/scale_info_from_scale.dart';
 import '../data/screen_mgr.dart';
 import '../data/server_ip_data.dart';
 import '../data/timer_manager.dart';
 import '../eventbus/eventbus.dart';
-import '../generated/l10n.dart';
+
 import '../widget/page_head.dart';
 import '../widget/wifitextfeild.dart';
 
@@ -40,14 +41,6 @@ class CableIpSettingPageState extends State<CableIpSettingPage> {
     multiLine: false,
     caseSensitive: false,
   );
-
-  dynamic localizedStrings;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    localizedStrings = S.of(context);
-  }
 
   @override
   void initState() {
@@ -105,122 +98,123 @@ class CableIpSettingPageState extends State<CableIpSettingPage> {
 
   @override
   Widget build(BuildContext context) {
-    localizedStrings = S.of(context);
-
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),
         child: pageHead(context, localizedStrings.set_ethernet_ip_title,
             localizedStrings.serial_port_status),
       ),
-      body: Column(
-        children: [
-          Container(
-            height: 2,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-          Expanded(
-            child: Column(
-              children: [
-                Container(
-                  width: 2,
-                  color: Theme.of(context).colorScheme.primary, // 左侧分隔条
-                ),
-                const SizedBox(width: 16), // 间距
-                Expanded(
-                  child: ListView(
-                    children: [
-                      const SizedBox(height: 40), // 顶部间距
-                      buildCommonRow(
-                        localizedStrings.ip_address,
-                        15,
-                        ipaddressRegex,
-                        _isValidIP,
-                        localizedStrings.error_ip_tip,
-                        (value) {
-                          setState(() {
-                            _isValidIP = validateIpFlag(value);
-                          });
-                        },
-                        ipController,
-                        _isStatic,
-                      ),
-                      buildCommonRow(
-                        localizedStrings.netmask,
-                        15,
-                        ipaddressRegex,
-                        _isValidMask,
-                        localizedStrings.error_ip_tip,
-                        (value) {
-                          setState(() {
-                            _isValidMask = validateIpFlag(value);
-                          });
-                        },
-                        netMaskController,
-                        _isStatic,
-                      ),
-                      buildCommonRow(
-                        localizedStrings.gateway,
-                        15,
-                        ipaddressRegex,
-                        _isValidGateway,
-                        localizedStrings.error_ip_tip,
-                        (value) {
-                          setState(() {
-                            _isValidGateway = validateIpFlag(value);
-                          });
-                        },
-                        gateWayController,
-                        _isStatic,
-                      ),
-
-                      const SizedBox(height: 40), // 底部间距
-
-                      buildCommonRow(
-                        localizedStrings.server_ip,
-                        15,
-                        ipaddressRegex,
-                        _isValidServerIp,
-                        localizedStrings.error_ip_tip,
-                        (value) {
-                          setState(() {
-                            _isValidServerIp = validateIpFlag(value);
-                          });
-                        },
-                        serverIpCtl,
-                        _isStatic,
-                      ),
-
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          _buildTextTitle(localizedStrings.server_port),
-                          const SizedBox(
-                            width: 20,
-                          ),
-                          SizedBox(
-                            width: 300,
-                            height: 45,
-                            child: _buildEditFeild(serverPortCtl),
-                          )
-                        ],
-                      ),
-
-                      const SizedBox(height: 40), // 底部间距
-
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          _buildButtonSection(), // 按钮部分
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+      body: Container(
+        color: Theme.of(context).colorScheme.surfaceTint,
+        child: Column(
+          children: [
+            Container(
+              height: 2,
+              color: Theme.of(context).colorScheme.primary,
             ),
-          ),
-        ],
+            Expanded(
+              child: Column(
+                children: [
+                  Container(
+                    width: 2,
+                    color: Theme.of(context).colorScheme.primary, // 左侧分隔条
+                  ),
+                  const SizedBox(width: 16), // 间距
+                  Expanded(
+                    child: ListView(
+                      children: [
+                        const SizedBox(height: 40), // 顶部间距
+                        buildCommonRow(
+                          localizedStrings.ip_address,
+                          15,
+                          ipaddressRegex,
+                          _isValidIP,
+                          localizedStrings.error_ip_tip,
+                          (value) {
+                            setState(() {
+                              _isValidIP = validateIpFlag(value);
+                            });
+                          },
+                          ipController,
+                          _isStatic,
+                        ),
+                        buildCommonRow(
+                          localizedStrings.netmask,
+                          15,
+                          ipaddressRegex,
+                          _isValidMask,
+                          localizedStrings.error_ip_tip,
+                          (value) {
+                            setState(() {
+                              _isValidMask = validateIpFlag(value);
+                            });
+                          },
+                          netMaskController,
+                          _isStatic,
+                        ),
+                        buildCommonRow(
+                          localizedStrings.gateway,
+                          15,
+                          ipaddressRegex,
+                          _isValidGateway,
+                          localizedStrings.error_ip_tip,
+                          (value) {
+                            setState(() {
+                              _isValidGateway = validateIpFlag(value);
+                            });
+                          },
+                          gateWayController,
+                          _isStatic,
+                        ),
+
+                        const SizedBox(height: 40), // 底部间距
+
+                        buildCommonRow(
+                          localizedStrings.server_ip,
+                          15,
+                          ipaddressRegex,
+                          _isValidServerIp,
+                          localizedStrings.error_ip_tip,
+                          (value) {
+                            setState(() {
+                              _isValidServerIp = validateIpFlag(value);
+                            });
+                          },
+                          serverIpCtl,
+                          _isStatic,
+                        ),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _buildTextTitle(localizedStrings.server_port),
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            SizedBox(
+                              width: 300,
+                              height: 45,
+                              child: _buildEditFeild(serverPortCtl),
+                            )
+                          ],
+                        ),
+
+                        const SizedBox(height: 40), // 底部间距
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _buildButtonSection(), // 按钮部分
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

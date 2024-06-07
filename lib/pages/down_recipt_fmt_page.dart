@@ -5,14 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import '../data/download_prt_fmt.dart';
 import '../data/downloadresponse.dart';
+import '../data/language.dart';
 import '../data/scale_info_from_scale.dart';
 import '../data/scalecmd_data.dart';
 import '../data/screen_mgr.dart';
 import '../data/timer_manager.dart';
 import '../data/writelog.dart';
 import '../eventbus/eventbus.dart';
-import '../generated/l10n.dart';
 import '../main.dart';
+import '../widget/custom_button.dart';
 import '../widget/page_head.dart';
 
 class DownReciptPage extends StatefulWidget {
@@ -95,13 +96,7 @@ class _DownReciptPageState extends State<DownReciptPage> {
     });
   }
 
-  dynamic localizedStrings;
   String systemId = '';
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    localizedStrings = S.of(context);
-  }
 
   @override
   void dispose() {
@@ -123,7 +118,11 @@ class _DownReciptPageState extends State<DownReciptPage> {
             ),
             _buildDownloading(),
             Expanded(
-              flex: 2,
+              flex: 1,
+              child: _buildButtonRow(),
+            ),
+            Expanded(
+              flex: 4,
               child: SingleChildScrollView(
                 controller: _fileScrollerController,
                 padding: const EdgeInsets.all(10),
@@ -137,10 +136,10 @@ class _DownReciptPageState extends State<DownReciptPage> {
                       mainAxisAlignment:
                           MainAxisAlignment.center, // 设置主轴对齐方式为居中
                       children: [
-                        const SizedBox(
-                          width: 150,
+                        SizedBox(
+                          width: 200,
                           child: Text(
-                            'format1',
+                            localizedStrings.receipt_format1_item,
                             textAlign: TextAlign.right,
                           ),
                         ),
@@ -166,23 +165,15 @@ class _DownReciptPageState extends State<DownReciptPage> {
                         const SizedBox(
                           width: 50,
                         ),
-                        SizedBox(
-                          width: 150,
-                          height: 40,
-                          child: OutlinedButton(
-                            style: ButtonStyle(
-                              shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                              ),
-                            ),
-                            onPressed: () async {
-                              weightModeController.text = '';
-                              pickFiles(weightModeController);
-                            },
-                            child: Text(localizedStrings.button_select_format),
-                          ),
+                        CustomOutlinedButton(
+                          btnWidth: 150,
+                          btnHeight: 40,
+                          icon: Icons.file_open_outlined,
+                          text: localizedStrings.button_select_format,
+                          onPressed: () async {
+                            weightModeController.text = '';
+                            pickFiles(weightModeController);
+                          },
                         ),
                       ],
                     ),
@@ -193,10 +184,10 @@ class _DownReciptPageState extends State<DownReciptPage> {
                       mainAxisAlignment:
                           MainAxisAlignment.center, // 设置主轴对齐方式为居中
                       children: [
-                        const SizedBox(
-                          width: 150,
+                        SizedBox(
+                          width: 200,
                           child: Text(
-                            'format2',
+                            localizedStrings.receipt_format2_item,
                             textAlign: TextAlign.right,
                           ),
                         ),
@@ -221,23 +212,15 @@ class _DownReciptPageState extends State<DownReciptPage> {
                         const SizedBox(
                           width: 50,
                         ),
-                        SizedBox(
-                          width: 150,
-                          height: 40,
-                          child: OutlinedButton(
-                            style: ButtonStyle(
-                              shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                              ),
-                            ),
-                            onPressed: () async {
-                              accModeController.text = '';
-                              pickFiles(accModeController);
-                            },
-                            child: Text(localizedStrings.button_select_format),
-                          ),
+                        CustomOutlinedButton(
+                          btnWidth: 150,
+                          btnHeight: 40,
+                          icon: Icons.file_open_outlined,
+                          text: localizedStrings.button_select_format,
+                          onPressed: () async {
+                            accModeController.text = '';
+                            pickFiles(accModeController);
+                          },
                         ),
                       ],
                     ),
@@ -248,10 +231,10 @@ class _DownReciptPageState extends State<DownReciptPage> {
                       mainAxisAlignment:
                           MainAxisAlignment.center, // 设置主轴对齐方式为居中
                       children: [
-                        const SizedBox(
-                          width: 150,
+                        SizedBox(
+                          width: 200,
                           child: Text(
-                            'format3',
+                            localizedStrings.receipt_format3_item,
                             textAlign: TextAlign.right,
                           ),
                         ),
@@ -276,88 +259,24 @@ class _DownReciptPageState extends State<DownReciptPage> {
                         const SizedBox(
                           width: 50,
                         ),
-                        SizedBox(
-                          width: 150,
-                          height: 40,
-                          child: OutlinedButton(
-                            style: ButtonStyle(
-                              shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                              ),
-                            ),
-                            onPressed: () async {
-                              pcsModeController.text = '';
-                              pickFiles(pcsModeController);
-                            },
-                            child: Text(localizedStrings.button_select_format),
-                          ),
+                        CustomOutlinedButton(
+                          btnWidth: 150,
+                          btnHeight: 40,
+                          icon: Icons.file_open_outlined,
+                          text: localizedStrings.button_select_format,
+                          onPressed: () async {
+                            pcsModeController.text = '';
+                            pickFiles(pcsModeController);
+                          },
                         ),
                       ],
                     ),
                     const SizedBox(
                       height: 30,
                     ),
-                    // Row(
-                    //   mainAxisAlignment:
-                    //       MainAxisAlignment.center, // 设置主轴对齐方式为居中
-                    //   children: [
-                    //     const SizedBox(
-                    //       width: 150,
-                    //       child: Text(
-                    //         'Copy format',
-                    //         textAlign: TextAlign.right,
-                    //       ),
-                    //     ),
-                    //     const SizedBox(
-                    //       width: 20,
-                    //     ),
-                    //     SizedBox(
-                    //       width: 400,
-                    //       child: TextField(
-                    //         controller: pctModeController,
-                    //         readOnly: true,
-                    //         maxLines: 2,
-                    //         minLines: 1,
-                    //         decoration: const InputDecoration(
-                    //           border: OutlineInputBorder(
-                    //             borderRadius:
-                    //                 BorderRadius.all(Radius.circular(4)),
-                    //           ),
-                    //         ),
-                    //       ),
-                    //     ),
-                    //     const SizedBox(
-                    //       width: 50,
-                    //     ),
-                    //     SizedBox(
-                    //       width: 150,
-                    //       height: 40,
-                    //       child: OutlinedButton(
-                    //         style: ButtonStyle(
-                    //           shape: MaterialStateProperty.all(
-                    //             RoundedRectangleBorder(
-                    //               borderRadius: BorderRadius.circular(4),
-                    //             ),
-                    //           ),
-                    //         ),
-                    //         onPressed: () async {
-                    //           pctModeController.text = '';
-                    //           pickFiles(pctModeController);
-                    //         },
-                    //         child: Text(localizedStrings.button_select_format),
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
                   ],
                 ),
               ),
-            ),
-            Expanded(
-              flex: 1,
-              child: _buildButtonRow(),
             ),
           ],
         ),
@@ -386,30 +305,20 @@ class _DownReciptPageState extends State<DownReciptPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        SizedBox(
-          width: 120,
-          height: 50,
-          child: ElevatedButton(
-            style: ButtonStyle(
-              shape: MaterialStateProperty.all(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              ),
-            ),
-            onPressed: (!isDownloadClicked) &&
-                    (weightModeController.text.isNotEmpty ||
-                        accModeController.text.isNotEmpty ||
-                        pcsModeController.text.isNotEmpty ||
-                        pctModeController.text.isNotEmpty)
-                ? () {
-                    _showConfirmationDialog(context);
-                  }
-                : null,
-            child: Text(
-              localizedStrings.download,
-            ),
-          ),
+        CustomOutlinedButton(
+          btnWidth: 150,
+          btnHeight: 50,
+          icon: Icons.download_outlined,
+          text: localizedStrings.download,
+          onPressed: (!isDownloadClicked) &&
+                  (weightModeController.text.isNotEmpty ||
+                      accModeController.text.isNotEmpty ||
+                      pcsModeController.text.isNotEmpty ||
+                      pctModeController.text.isNotEmpty)
+              ? () {
+                  _showConfirmationDialog(context);
+                }
+              : null,
         ),
       ],
     );
@@ -560,19 +469,21 @@ class _DownReciptPageState extends State<DownReciptPage> {
     // final _height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(50),
-        child: Container(
-          child: pageHead(context, localizedStrings.label_fmt_download,
-              localizedStrings.serial_port_status),
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(50),
+          child: Container(
+            child: pageHead(context, localizedStrings.receipt_format_download,
+                localizedStrings.serial_port_status),
+          ),
         ),
-      ),
-      body: ListView(
-        scrollDirection: Axis.horizontal,
-        children: [
-          _buildMainContent(),
-        ],
-      ),
-    );
+        body: Container(
+          color: Theme.of(context).colorScheme.surfaceTint,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: [
+              _buildMainContent(),
+            ],
+          ),
+        ));
   }
 }

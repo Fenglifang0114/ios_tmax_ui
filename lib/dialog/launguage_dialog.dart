@@ -18,7 +18,7 @@ launguageDialog(BuildContext context) {
                       Icons.language,
                       color: Theme.of(context).colorScheme.onPrimary,
                     ),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     Text("语言设置",
                         style: TextStyle(
                             color: Theme.of(context).colorScheme.onPrimary)),

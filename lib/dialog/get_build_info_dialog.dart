@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:t_max/functions/methods.dart';
-import '../../generated/l10n.dart';
 import '../data/downloadresponse.dart';
+import '../data/language.dart';
 import '../eventbus/eventbus.dart';
+import '../widget/custom_button.dart';
 
 class GetBuildInfoPage extends StatefulWidget {
   const GetBuildInfoPage({super.key});
@@ -12,15 +13,8 @@ class GetBuildInfoPage extends StatefulWidget {
 }
 
 class _GetBuildInfoPageState extends State<GetBuildInfoPage> {
-  dynamic localizedStrings;
   dynamic eventbus1;
   TextEditingController buildInfoController = TextEditingController();
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    localizedStrings = S.of(context);
-  }
 
   @override
   void initState() {
@@ -49,18 +43,8 @@ class _GetBuildInfoPageState extends State<GetBuildInfoPage> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Container(
-          width: 400,
-          color: Theme.of(context).colorScheme.primary,
-          child: Row(
-            children: [
-              Icon(Icons.privacy_tip,
-                  color: Theme.of(context).colorScheme.onPrimary),
-              Text(localizedStrings.get_build_info,
-                  style:
-                      TextStyle(color: Theme.of(context).colorScheme.onPrimary))
-            ],
-          )),
+      title: getDialogTitle(
+          context, localizedStrings.get_build_info, Icons.privacy_tip, 400),
       content: Container(
         height: 300,
         decoration:
@@ -98,13 +82,15 @@ class _GetBuildInfoPageState extends State<GetBuildInfoPage> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             const SizedBox(width: 20),
-            OutlinedButton(
-                child: Text(localizedStrings.button_exit),
-                onPressed: () {
-                  setState(() {});
-                  Navigator.of(context)
-                      .pop(); // to go back to screen after submitting
-                })
+            CustomOutlinedButton(
+              btnWidth: 120,
+              btnHeight: 40,
+              icon: Icons.exit_to_app,
+              text: localizedStrings.button_exit,
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
           ],
         )
       ],

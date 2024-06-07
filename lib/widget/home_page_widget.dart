@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-Widget appCard(BuildContext context, String titleName, String iconImage,
-    IconData iconInfo, bool isValid, String explanation) {
+Widget appCard(BuildContext context, String titleName, IconData iconInfo,
+    bool isValid, String explanation) {
   return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
@@ -13,31 +13,32 @@ Widget appCard(BuildContext context, String titleName, String iconImage,
         height: 100,
         child: Row(
           children: [
-            SizedBox(
-              child: Container(
-                child: (Row(
-                  children: [
-                    Image.asset(
-                      iconImage,
-                      width: 30,
-                      height: 30,
+            Container(
+              child: (Row(
+                children: [
+                  Container(
+                    width: 3.0,
+                    height: 30,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  const SizedBox(
+                    width: 25,
+                  ),
+                  ShaderMask(
+                    shaderCallback: (bounds) {
+                      return lineGradient(context).createShader(bounds);
+                    },
+                    child: Icon(
+                      size: 30,
+                      iconInfo,
+                      color: Theme.of(context).colorScheme.onPrimary,
                     ),
-                    ShaderMask(
-                      shaderCallback: (bounds) {
-                        return lineGradient(context).createShader(bounds);
-                      },
-                      child: Icon(
-                        size: 30,
-                        iconInfo,
-                        color: Theme.of(context).colorScheme.onPrimary,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 5,
-                    )
-                  ],
-                )),
-              ),
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  )
+                ],
+              )),
             ),
             Expanded(
               child: Column(
@@ -94,8 +95,8 @@ LinearGradient lineGradient(BuildContext context) {
   );
 }
 
-Widget customFunctionCard(BuildContext context, String titleName,
-    String iconImage, IconData iconInfo, bool isValid) {
+Widget customFunctionCard(
+    BuildContext context, String titleName, IconData iconInfo, bool isValid) {
   return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
@@ -107,10 +108,13 @@ Widget customFunctionCard(BuildContext context, String titleName,
           height: 80,
           child: Row(
             children: [
-              Image.asset(
-                iconImage,
-                width: 30,
+              Container(
+                width: 3.0,
                 height: 30,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              const SizedBox(
+                width: 25,
               ),
               ShaderMask(
                 shaderCallback: (bounds) {

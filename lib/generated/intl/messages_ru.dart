@@ -25,6 +25,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "Parity": MessageLookupByLibrary.simpleMessage("Четность:"),
         "abnormal_data_title":
             MessageLookupByLibrary.simpleMessage("Abnormal Data"),
+        "abnormal_weight":
+            MessageLookupByLibrary.simpleMessage("Get abnormal weight"),
         "about_title": MessageLookupByLibrary.simpleMessage("Information"),
         "acc_mode_format":
             MessageLookupByLibrary.simpleMessage("Формат режима акк:"),
@@ -50,6 +52,10 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Высота штрих-кода:"),
         "batch_delivery_title":
             MessageLookupByLibrary.simpleMessage("Batch Delivery"),
+        "batch_down_export": MessageLookupByLibrary.simpleMessage("Export"),
+        "batch_down_import": MessageLookupByLibrary.simpleMessage("Import"),
+        "batch_down_slt_folder":
+            MessageLookupByLibrary.simpleMessage("Select Folder"),
         "baud_rate": MessageLookupByLibrary.simpleMessage("Скорость передачи:"),
         "bluetooth_modification": MessageLookupByLibrary.simpleMessage(
             "Изменение информации о Bluetooth"),
@@ -76,7 +82,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "button_export_report": MessageLookupByLibrary.simpleMessage("Экспорт"),
         "button_get_ip": MessageLookupByLibrary.simpleMessage("Получить IP"),
         "button_home": MessageLookupByLibrary.simpleMessage("Главная"),
-        "button_net": MessageLookupByLibrary.simpleMessage("Нетто"),
         "button_ok": MessageLookupByLibrary.simpleMessage("ОК"),
         "button_save": MessageLookupByLibrary.simpleMessage("Сохранить"),
         "button_select_format":
@@ -100,8 +105,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "confirm_info": MessageLookupByLibrary.simpleMessage(
             "Please confirm the order of the printing format."),
         "confirm_title": MessageLookupByLibrary.simpleMessage("Confirmation"),
-        "contact_us": MessageLookupByLibrary.simpleMessage(
-            "Свяжитесь с нами: sales@taiwanscale.com"),
+        "current_language": MessageLookupByLibrary.simpleMessage("Русский"),
         "customization_setting_title":
             MessageLookupByLibrary.simpleMessage("Applications"),
         "data_bits": MessageLookupByLibrary.simpleMessage("Биты данных:"),
@@ -125,7 +129,6 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Download successful!"),
         "editor": MessageLookupByLibrary.simpleMessage("Редактор"),
         "element_type": MessageLookupByLibrary.simpleMessage("Тип:"),
-        "en": MessageLookupByLibrary.simpleMessage("English"),
         "error_ip_tip": MessageLookupByLibrary.simpleMessage(
             "Incorrect address! e.g. xxx.xxx.xxx.xxx"),
         "expiration_date":
@@ -149,6 +152,47 @@ class MessageLookup extends MessageLookupByLibrary {
         "ip_address": MessageLookupByLibrary.simpleMessage("IPv4:"),
         "jump_confirm_info": MessageLookupByLibrary.simpleMessage(
             "Please confirm to go to the default print format page."),
+        "l_barcode_expl": MessageLookupByLibrary.simpleMessage("BarCode"),
+        "l_barcode_title":
+            MessageLookupByLibrary.simpleMessage("BarCode Variable"),
+        "l_barcode_var": MessageLookupByLibrary.simpleMessage("BarCode"),
+        "l_date_expl": MessageLookupByLibrary.simpleMessage("Date"),
+        "l_date_var": MessageLookupByLibrary.simpleMessage("Date"),
+        "l_gross_expl": MessageLookupByLibrary.simpleMessage("Gross"),
+        "l_gross_var": MessageLookupByLibrary.simpleMessage("Gross"),
+        "l_line_expl": MessageLookupByLibrary.simpleMessage("Line"),
+        "l_line_lenth_txt": MessageLookupByLibrary.simpleMessage("Line Length"),
+        "l_line_var": MessageLookupByLibrary.simpleMessage("Line"),
+        "l_line_width_txt": MessageLookupByLibrary.simpleMessage("Line Width"),
+        "l_net_expl": MessageLookupByLibrary.simpleMessage("Net"),
+        "l_net_var": MessageLookupByLibrary.simpleMessage("Net"),
+        "l_no_expl": MessageLookupByLibrary.simpleMessage("NO."),
+        "l_no_var": MessageLookupByLibrary.simpleMessage("NO."),
+        "l_pcs_expl": MessageLookupByLibrary.simpleMessage("PCS"),
+        "l_pcs_var": MessageLookupByLibrary.simpleMessage("PCS"),
+        "l_percent_expl": MessageLookupByLibrary.simpleMessage("Percent"),
+        "l_percent_var": MessageLookupByLibrary.simpleMessage("Percent"),
+        "l_qrcode_expl": MessageLookupByLibrary.simpleMessage("Qrcode"),
+        "l_qrcode_title":
+            MessageLookupByLibrary.simpleMessage("Qrcode Variable"),
+        "l_qrcode_var": MessageLookupByLibrary.simpleMessage("Qrcode"),
+        "l_shape_title": MessageLookupByLibrary.simpleMessage("Shape"),
+        "l_tare_expl": MessageLookupByLibrary.simpleMessage("Tare"),
+        "l_tare_var": MessageLookupByLibrary.simpleMessage("Tare"),
+        "l_text_expl": MessageLookupByLibrary.simpleMessage("Text"),
+        "l_text_title": MessageLookupByLibrary.simpleMessage("Free Text"),
+        "l_text_var": MessageLookupByLibrary.simpleMessage("Text"),
+        "l_time_expl": MessageLookupByLibrary.simpleMessage("Time"),
+        "l_time_var": MessageLookupByLibrary.simpleMessage("Time"),
+        "l_total_cnt_expl": MessageLookupByLibrary.simpleMessage("TotalCount"),
+        "l_total_cnt_var": MessageLookupByLibrary.simpleMessage("TotalCount"),
+        "l_total_wgt_expl": MessageLookupByLibrary.simpleMessage("TotalWeight"),
+        "l_total_wgt_var": MessageLookupByLibrary.simpleMessage("TotalWeight"),
+        "l_unit_wgt_expl": MessageLookupByLibrary.simpleMessage("UnitWeight"),
+        "l_unit_wgt_var": MessageLookupByLibrary.simpleMessage("UnitWeight"),
+        "l_var_title": MessageLookupByLibrary.simpleMessage("Variable"),
+        "l_wgt_unit_expl": MessageLookupByLibrary.simpleMessage("WeightUnit"),
+        "l_wgt_unit_var": MessageLookupByLibrary.simpleMessage("WeightUnit"),
         "label_design_title":
             MessageLookupByLibrary.simpleMessage("Дизайн этикетки"),
         "label_fmt_download": MessageLookupByLibrary.simpleMessage(
@@ -179,6 +223,109 @@ class MessageLookup extends MessageLookupByLibrary {
             "Открыть предварительный просмотр"),
         "operation_steps":
             MessageLookupByLibrary.simpleMessage("Шаги операции:"),
+        "p_Header2_expl":
+            MessageLookupByLibrary.simpleMessage("The secend page header."),
+        "p_Header2_var": MessageLookupByLibrary.simpleMessage("Header2"),
+        "p_change_amount_expl":
+            MessageLookupByLibrary.simpleMessage("Change Amount."),
+        "p_change_amount_var":
+            MessageLookupByLibrary.simpleMessage("Change Amount"),
+        "p_copy_times_expl":
+            MessageLookupByLibrary.simpleMessage("Copy Times."),
+        "p_copy_times_var": MessageLookupByLibrary.simpleMessage("Copy Times"),
+        "p_currency_expl": MessageLookupByLibrary.simpleMessage("Currency."),
+        "p_currency_var": MessageLookupByLibrary.simpleMessage("Currency"),
+        "p_date_expl": MessageLookupByLibrary.simpleMessage("Date."),
+        "p_date_var": MessageLookupByLibrary.simpleMessage("Date"),
+        "p_div_line_expl":
+            MessageLookupByLibrary.simpleMessage("Loop divider line."),
+        "p_div_line_var": MessageLookupByLibrary.simpleMessage("Line"),
+        "p_footer1_expl":
+            MessageLookupByLibrary.simpleMessage("The first page footer."),
+        "p_footer1_var": MessageLookupByLibrary.simpleMessage("Footer1"),
+        "p_footer2_expl":
+            MessageLookupByLibrary.simpleMessage("The secend page footer."),
+        "p_footer2_var": MessageLookupByLibrary.simpleMessage("Footer2"),
+        "p_footer3_expl":
+            MessageLookupByLibrary.simpleMessage("The third page footer."),
+        "p_footer3_var": MessageLookupByLibrary.simpleMessage("Footer3"),
+        "p_header1_expl":
+            MessageLookupByLibrary.simpleMessage("The first page header."),
+        "p_header1_var": MessageLookupByLibrary.simpleMessage("Header1"),
+        "p_header3_expl":
+            MessageLookupByLibrary.simpleMessage("The third page header."),
+        "p_header3_var": MessageLookupByLibrary.simpleMessage("Header3"),
+        "p_line_title": MessageLookupByLibrary.simpleMessage("Dividing Line"),
+        "p_no_expl":
+            MessageLookupByLibrary.simpleMessage("Sequence number value."),
+        "p_no_var": MessageLookupByLibrary.simpleMessage("NO."),
+        "p_order_number_expl": MessageLookupByLibrary.simpleMessage(
+            "The serial number of the pending order."),
+        "p_order_number_var":
+            MessageLookupByLibrary.simpleMessage("Order Number"),
+        "p_payment_amount_P_expl":
+            MessageLookupByLibrary.simpleMessage("Payment Amount."),
+        "p_payment_amount_P_var":
+            MessageLookupByLibrary.simpleMessage("Payment Amount"),
+        "p_plu_id_expl": MessageLookupByLibrary.simpleMessage("PLU_ID."),
+        "p_plu_id_var": MessageLookupByLibrary.simpleMessage("PLU_ID"),
+        "p_plu_name_expl": MessageLookupByLibrary.simpleMessage("PLU_Name."),
+        "p_plu_name_var": MessageLookupByLibrary.simpleMessage("PLU_Name"),
+        "p_pre_tare_expl": MessageLookupByLibrary.simpleMessage("PreTare."),
+        "p_pre_tare_var": MessageLookupByLibrary.simpleMessage("PreTare"),
+        "p_price_expl": MessageLookupByLibrary.simpleMessage("Price value."),
+        "p_price_title": MessageLookupByLibrary.simpleMessage("Price Variable"),
+        "p_price_unit_expl":
+            MessageLookupByLibrary.simpleMessage("Price Unit."),
+        "p_price_unit_var": MessageLookupByLibrary.simpleMessage("Price Unit"),
+        "p_price_var": MessageLookupByLibrary.simpleMessage("Price"),
+        "p_subtotal_expl": MessageLookupByLibrary.simpleMessage("Subtotal."),
+        "p_subtotal_var": MessageLookupByLibrary.simpleMessage("Subtotal"),
+        "p_tare_expl": MessageLookupByLibrary.simpleMessage("Tare value."),
+        "p_tare_var": MessageLookupByLibrary.simpleMessage("Tare"),
+        "p_tax_amount1_expl":
+            MessageLookupByLibrary.simpleMessage("Tax Amount 1."),
+        "p_tax_amount1_var":
+            MessageLookupByLibrary.simpleMessage("Tax Amount1"),
+        "p_tax_amount2_expl":
+            MessageLookupByLibrary.simpleMessage("Tax Amount 2."),
+        "p_tax_amount2_var":
+            MessageLookupByLibrary.simpleMessage("Tax Amount2"),
+        "p_tax_amount3_expl":
+            MessageLookupByLibrary.simpleMessage("Tax Amount 3."),
+        "p_tax_amount3_var":
+            MessageLookupByLibrary.simpleMessage("Tax Amount3"),
+        "p_tax_base1_expl": MessageLookupByLibrary.simpleMessage("Tax Base 1."),
+        "p_tax_base1_var": MessageLookupByLibrary.simpleMessage("Tax Base1"),
+        "p_tax_base2_expl": MessageLookupByLibrary.simpleMessage("Tax Base 2."),
+        "p_tax_base2_var": MessageLookupByLibrary.simpleMessage("Tax Base2"),
+        "p_tax_base3_expl": MessageLookupByLibrary.simpleMessage("Tax Base 3."),
+        "p_tax_base3_var": MessageLookupByLibrary.simpleMessage("Tax Base3"),
+        "p_tax_model_expl": MessageLookupByLibrary.simpleMessage(
+            "Tax Model,tax included or  tax external."),
+        "p_tax_model_var": MessageLookupByLibrary.simpleMessage("Tax Model"),
+        "p_tax_type1_expl": MessageLookupByLibrary.simpleMessage("Tax Type 1."),
+        "p_tax_type1_var": MessageLookupByLibrary.simpleMessage("Tax Type1"),
+        "p_tax_type2_expl": MessageLookupByLibrary.simpleMessage("Tax Type 2."),
+        "p_tax_type2_var": MessageLookupByLibrary.simpleMessage("Tax Type2"),
+        "p_tax_type3_expl": MessageLookupByLibrary.simpleMessage("Tax Type 3."),
+        "p_tax_type3_var": MessageLookupByLibrary.simpleMessage("Tax Type3"),
+        "p_text_expl": MessageLookupByLibrary.simpleMessage("Free text."),
+        "p_text_title": MessageLookupByLibrary.simpleMessage("Free Text"),
+        "p_time_expl": MessageLookupByLibrary.simpleMessage("Time."),
+        "p_time_var": MessageLookupByLibrary.simpleMessage("Time"),
+        "p_total_tax_amount_expl":
+            MessageLookupByLibrary.simpleMessage("Total Tax Amount."),
+        "p_total_tax_amount_var":
+            MessageLookupByLibrary.simpleMessage("Total Tax Amount"),
+        "p_unit_expl": MessageLookupByLibrary.simpleMessage("Weight Unit."),
+        "p_unit_price_expl":
+            MessageLookupByLibrary.simpleMessage("Unit Price."),
+        "p_unit_price_var": MessageLookupByLibrary.simpleMessage("Unit Price"),
+        "p_unit_var": MessageLookupByLibrary.simpleMessage("Unit"),
+        "p_weight_pcs_expl":
+            MessageLookupByLibrary.simpleMessage("Weight or Pcs."),
+        "p_weight_pcs_var": MessageLookupByLibrary.simpleMessage("Weight Pcs"),
         "parameter_set_title":
             MessageLookupByLibrary.simpleMessage("Parameter Setting"),
         "parameter_settings_title":
@@ -215,6 +362,12 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Редактирование QR-кода"),
         "receipt_design_title":
             MessageLookupByLibrary.simpleMessage("Receipt Design"),
+        "receipt_format1_item":
+            MessageLookupByLibrary.simpleMessage("Receipt Format1:"),
+        "receipt_format2_item":
+            MessageLookupByLibrary.simpleMessage("Receipt Format2:"),
+        "receipt_format3_item":
+            MessageLookupByLibrary.simpleMessage("Receipt Format3:"),
         "receipt_format_download":
             MessageLookupByLibrary.simpleMessage("Receipt Format Download"),
         "refresh_port": MessageLookupByLibrary.simpleMessage("Обновить порт"),
@@ -245,7 +398,10 @@ class MessageLookup extends MessageLookupByLibrary {
             "Потеряно соединение с последовательным портом. Проверьте настройки."),
         "serial_modify_title": MessageLookupByLibrary.simpleMessage(
             "Изменение информации о последовательном порту"),
-        "serial_output": MessageLookupByLibrary.simpleMessage("Серийный вывод"),
+        "serial_output_design":
+            MessageLookupByLibrary.simpleMessage("Serial Output Design"),
+        "serial_output_download":
+            MessageLookupByLibrary.simpleMessage("Serial Output Download"),
         "serial_page_ol": MessageLookupByLibrary.simpleMessage("Режим OL"),
         "serial_page_pcs": MessageLookupByLibrary.simpleMessage("Режим Pcs"),
         "serial_page_percent":
@@ -336,7 +492,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "wifi_setting_title":
             MessageLookupByLibrary.simpleMessage("Настройка Wi-Fi"),
         "zero": MessageLookupByLibrary.simpleMessage("Ноль:"),
-        "zero_range": MessageLookupByLibrary.simpleMessage("Диапазон ноля:"),
-        "zh_cn": MessageLookupByLibrary.simpleMessage("Китайский")
+        "zero_range": MessageLookupByLibrary.simpleMessage("Диапазон ноля:")
       };
 }

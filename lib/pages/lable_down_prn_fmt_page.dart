@@ -5,14 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import '../data/download_prt_fmt.dart';
 import '../data/downloadresponse.dart';
+import '../data/language.dart';
 import '../data/scale_info_from_scale.dart';
 import '../data/scalecmd_data.dart';
 import '../data/screen_mgr.dart';
 import '../data/timer_manager.dart';
 import '../data/writelog.dart';
 import '../eventbus/eventbus.dart';
-import '../generated/l10n.dart';
 import '../main.dart';
+import '../widget/custom_button.dart';
 import '../widget/page_head.dart';
 import 'default_prn_fmt_page.dart';
 
@@ -96,13 +97,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
     });
   }
 
-  dynamic localizedStrings;
   String systemId = '';
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    localizedStrings = S.of(context);
-  }
 
   @override
   void dispose() {
@@ -124,7 +119,11 @@ class _DownloadPageState extends State<DownloadLabelPage> {
             ),
             _buildDownloading(),
             Expanded(
-              flex: 2,
+              flex: 1,
+              child: _buildButtonRow(),
+            ),
+            Expanded(
+              flex: 4,
               child: SingleChildScrollView(
                 controller: _fileScrollerController,
                 padding: const EdgeInsets.all(10),
@@ -139,7 +138,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                           MainAxisAlignment.center, // 设置主轴对齐方式为居中
                       children: [
                         SizedBox(
-                          width: 150,
+                          width: 300,
                           child: Text(
                             localizedStrings.weight_mode_format,
                             textAlign: TextAlign.right,
@@ -152,6 +151,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                           width: 400,
                           // height: 40,
                           child: TextField(
+                            enabled: false,
                             controller: weightModeController,
                             readOnly: true,
                             maxLines: 2,
@@ -167,23 +167,15 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                         const SizedBox(
                           width: 50,
                         ),
-                        SizedBox(
-                          width: 150,
-                          height: 40,
-                          child: OutlinedButton(
-                            style: ButtonStyle(
-                              shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                              ),
-                            ),
-                            onPressed: () async {
-                              weightModeController.text = '';
-                              pickFiles(weightModeController);
-                            },
-                            child: Text(localizedStrings.button_select_format),
-                          ),
+                        CustomOutlinedButton(
+                          btnWidth: 150,
+                          btnHeight: 40,
+                          icon: Icons.file_open_outlined,
+                          text: localizedStrings.button_select_format,
+                          onPressed: () async {
+                            weightModeController.text = '';
+                            pickFiles(weightModeController);
+                          },
                         ),
                       ],
                     ),
@@ -195,7 +187,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                           MainAxisAlignment.center, // 设置主轴对齐方式为居中
                       children: [
                         SizedBox(
-                          width: 150,
+                          width: 300,
                           child: Text(
                             localizedStrings.acc_mode_format,
                             textAlign: TextAlign.right,
@@ -207,6 +199,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                         SizedBox(
                           width: 400,
                           child: TextField(
+                            enabled: false,
                             controller: accModeController,
                             readOnly: true,
                             maxLines: 2,
@@ -222,23 +215,15 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                         const SizedBox(
                           width: 50,
                         ),
-                        SizedBox(
-                          width: 150,
-                          height: 40,
-                          child: OutlinedButton(
-                            style: ButtonStyle(
-                              shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                              ),
-                            ),
-                            onPressed: () async {
-                              accModeController.text = '';
-                              pickFiles(accModeController);
-                            },
-                            child: Text(localizedStrings.button_select_format),
-                          ),
+                        CustomOutlinedButton(
+                          btnWidth: 150,
+                          btnHeight: 40,
+                          icon: Icons.file_open_outlined,
+                          text: localizedStrings.button_select_format,
+                          onPressed: () async {
+                            accModeController.text = '';
+                            pickFiles(accModeController);
+                          },
                         ),
                       ],
                     ),
@@ -250,7 +235,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                           MainAxisAlignment.center, // 设置主轴对齐方式为居中
                       children: [
                         SizedBox(
-                          width: 150,
+                          width: 300,
                           child: Text(
                             localizedStrings.pcs_mode_format,
                             textAlign: TextAlign.right,
@@ -262,6 +247,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                         SizedBox(
                           width: 400,
                           child: TextField(
+                            enabled: false,
                             controller: pcsModeController,
                             readOnly: true,
                             maxLines: 2,
@@ -277,23 +263,15 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                         const SizedBox(
                           width: 50,
                         ),
-                        SizedBox(
-                          width: 150,
-                          height: 40,
-                          child: OutlinedButton(
-                            style: ButtonStyle(
-                              shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                              ),
-                            ),
-                            onPressed: () async {
-                              pcsModeController.text = '';
-                              pickFiles(pcsModeController);
-                            },
-                            child: Text(localizedStrings.button_select_format),
-                          ),
+                        CustomOutlinedButton(
+                          btnWidth: 150,
+                          btnHeight: 40,
+                          icon: Icons.file_open_outlined,
+                          text: localizedStrings.button_select_format,
+                          onPressed: () async {
+                            pcsModeController.text = '';
+                            pickFiles(pcsModeController);
+                          },
                         ),
                       ],
                     ),
@@ -305,7 +283,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                           MainAxisAlignment.center, // 设置主轴对齐方式为居中
                       children: [
                         SizedBox(
-                          width: 150,
+                          width: 300,
                           child: Text(
                             localizedStrings.pct_mode_format,
                             textAlign: TextAlign.right,
@@ -317,6 +295,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                         SizedBox(
                           width: 400,
                           child: TextField(
+                            enabled: false,
                             controller: pctModeController,
                             readOnly: true,
                             maxLines: 2,
@@ -332,33 +311,21 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                         const SizedBox(
                           width: 50,
                         ),
-                        SizedBox(
-                          width: 150,
-                          height: 40,
-                          child: OutlinedButton(
-                            style: ButtonStyle(
-                              shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                              ),
-                            ),
-                            onPressed: () async {
-                              pctModeController.text = '';
-                              pickFiles(pctModeController);
-                            },
-                            child: Text(localizedStrings.button_select_format),
-                          ),
+                        CustomOutlinedButton(
+                          btnWidth: 150,
+                          btnHeight: 40,
+                          icon: Icons.file_open_outlined,
+                          text: localizedStrings.button_select_format,
+                          onPressed: () async {
+                            pctModeController.text = '';
+                            pickFiles(pctModeController);
+                          },
                         ),
                       ],
                     ),
                   ],
                 ),
               ),
-            ),
-            Expanded(
-              flex: 1,
-              child: _buildButtonRow(),
             ),
           ],
         ),
@@ -387,51 +354,31 @@ class _DownloadPageState extends State<DownloadLabelPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        SizedBox(
-          width: 200,
-          height: 50,
-          child: ElevatedButton(
-            style: ButtonStyle(
-              shape: MaterialStateProperty.all(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              ),
-            ),
-            onPressed: (!isDownloadClicked) &&
-                    (weightModeController.text.isNotEmpty ||
-                        accModeController.text.isNotEmpty ||
-                        pcsModeController.text.isNotEmpty ||
-                        pctModeController.text.isNotEmpty)
-                ? () {
-                    _showConfirmationDialog(context);
-                  }
-                : null,
-            child: Text(
-              localizedStrings.download,
-            ),
-          ),
+        CustomElevatedButton(
+          btnWidth: 200,
+          btnHeight: 50,
+          icon: Icons.download_outlined,
+          text: localizedStrings.download,
+          onPressed: (!isDownloadClicked) &&
+                  (weightModeController.text.isNotEmpty ||
+                      accModeController.text.isNotEmpty ||
+                      pcsModeController.text.isNotEmpty ||
+                      pctModeController.text.isNotEmpty)
+              ? () {
+                  _showConfirmationDialog(context);
+                }
+              : null,
         ),
-        SizedBox(
-          width: 200,
-          height: 50,
-          child: ElevatedButton(
-            style: ButtonStyle(
-              shape: MaterialStateProperty.all(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              ),
-            ),
-            onPressed: (!isDownloadClicked)
-                ? () {
-                    _jumpCfmDialog(context);
-                  }
-                : null,
-            child: Text(
-              localizedStrings.download_default,
-            ),
-          ),
+        CustomElevatedButton(
+          btnWidth: 200,
+          btnHeight: 50,
+          icon: Icons.logout,
+          text: localizedStrings.download_default,
+          onPressed: (!isDownloadClicked)
+              ? () {
+                  _jumpCfmDialog(context);
+                }
+              : null,
         ),
       ],
     );
@@ -620,19 +567,21 @@ class _DownloadPageState extends State<DownloadLabelPage> {
     // final _height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(50),
-        child: Container(
-          child: pageHead(context, localizedStrings.label_fmt_download,
-              localizedStrings.serial_port_status),
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(50),
+          child: Container(
+            child: pageHead(context, localizedStrings.label_fmt_download,
+                localizedStrings.serial_port_status),
+          ),
         ),
-      ),
-      body: ListView(
-        scrollDirection: Axis.horizontal,
-        children: [
-          _buildMainContent(),
-        ],
-      ),
-    );
+        body: Container(
+          color: Theme.of(context).colorScheme.surfaceTint,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: [
+              _buildMainContent(),
+            ],
+          ),
+        ));
   }
 }

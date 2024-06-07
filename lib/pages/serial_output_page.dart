@@ -5,10 +5,10 @@ import 'package:file_picker/file_picker.dart';
 import 'package:path/path.dart' as p;
 
 import '../data/downloadresponse.dart';
+import '../data/language.dart';
 import '../data/scalecmd_data.dart';
 import '../data/screen_mgr.dart';
 import '../eventbus/eventbus.dart';
-import '../generated/l10n.dart';
 import '../main.dart';
 import '../widget/box_gradient.dart';
 
@@ -62,13 +62,7 @@ class _SerialOutputPageState extends State<SerialOutputPage> {
     });
   }
 
-  dynamic localizedStrings;
   String systemId = '';
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    localizedStrings = S.of(context);
-  }
 
   @override
   void dispose() {

@@ -8,8 +8,9 @@ import '../../data/device_data.dart';
 import '../../data/scalecmd_data.dart';
 import '../../data/settingparam_data.dart';
 import '../../functions/methods.dart';
-import '../../generated/l10n.dart';
 import '../../main.dart';
+import '../data/language.dart';
+import '../widget/custom_button.dart';
 import 'modify_network_dialog.dart';
 
 class ParamSettingDialog extends StatefulWidget {
@@ -61,13 +62,6 @@ class _ParamSettingDialogState extends State<ParamSettingDialog> {
     _checkHiLow = int.parse(mySettingParam.saveMode);
   }
 
-  dynamic localizedStrings;
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    localizedStrings = S.of(context);
-  }
-
   @override
   void dispose() {
     super.dispose();
@@ -76,17 +70,8 @@ class _ParamSettingDialogState extends State<ParamSettingDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Container(
-          color: Theme.of(context).colorScheme.primary,
-          child: Row(
-            children: [
-              Icon(Icons.settings,
-                  color: Theme.of(context).colorScheme.onPrimary),
-              Text(localizedStrings.parameter_settings_title,
-                  style:
-                      TextStyle(color: Theme.of(context).colorScheme.onPrimary))
-            ],
-          )),
+      title: getDialogTitle(context, localizedStrings.serial_modify_title,
+          Icons.settings_outlined, 400),
       content: Container(
           height: 350,
           decoration:
@@ -296,22 +281,26 @@ class _ParamSettingDialogState extends State<ParamSettingDialog> {
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            MaterialButton(
-                textColor: Theme.of(context).colorScheme.onPrimary,
-                color: Theme.of(context).colorScheme.primary,
-                child: Text(localizedStrings.button_ok),
-                onPressed: () {
-                  updateUIConf();
-
-                  Navigator.of(context).pop(connectionType);
-                }),
+            CustomElevatedButton(
+              btnWidth: 120,
+              btnHeight: 40,
+              icon: Icons.check_circle,
+              text: localizedStrings.button_ok,
+              onPressed: () {
+                updateUIConf();
+                Navigator.of(context).pop(connectionType);
+              },
+            ),
             const SizedBox(width: 20),
-            OutlinedButton(
-                child: Text(localizedStrings.button_cancel),
-                onPressed: () {
-                  Navigator.of(context)
-                      .pop(); // to go back to screen after submitting
-                })
+            CustomOutlinedButton(
+              btnWidth: 120,
+              btnHeight: 40,
+              icon: Icons.cancel,
+              text: localizedStrings.button_cancel,
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
           ],
         )
       ],

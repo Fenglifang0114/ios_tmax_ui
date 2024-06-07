@@ -22,7 +22,7 @@ enterRegisterDialog(BuildContext context) {
                       Icons.lock_outline,
                       color: Theme.of(context).colorScheme.onPrimary,
                     ),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     Text("DC500 Trial version",
                         style: TextStyle(
                             color: Theme.of(context).colorScheme.onPrimary)),

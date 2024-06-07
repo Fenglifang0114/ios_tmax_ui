@@ -8,16 +8,16 @@ import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/pages/labeldesign_page.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
+import '../data/company_info.dart';
 import '../data/comscaleinfo_data.dart';
 import '../data/currentport_data.dart';
 import '../data/device_data.dart';
+import '../data/language.dart';
 import '../data/screen_mgr.dart';
-import '../data/setting_version_info.dart';
 import '../data/timer_manager.dart';
 import '../dialog/get_build_info_dialog.dart';
 import '../dialog/language_setting.dart';
 import '../functions/methods.dart';
-import '../generated/l10n.dart';
 import '../widget/app_info.dart';
 import '../widget/box_gradient.dart';
 import '../widget/custom_circle_icon.dart';
@@ -147,13 +147,6 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
     super.dispose();
   }
 
-  dynamic localizedStrings;
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    localizedStrings = S.of(context);
-  }
-
   @override
   Widget build(BuildContext context) {
     // final _width = MediaQuery.of(context).size.width;
@@ -185,7 +178,7 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                                 width: 20,
                               ),
                               Text(
-                                mySystemVersionInfo.getTitle(mySystemVersion),
+                                myAppName.appName!,
                                 style: TextStyle(
                                     fontSize: 20,
                                     color: Theme.of(context)
@@ -282,7 +275,7 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15), // 根据实际需要设置圆角半径
-                  color: Theme.of(context).colorScheme.onPrimary,
+                  color: Theme.of(context).colorScheme.surfaceTint,
                 ),
                 padding: const EdgeInsets.symmetric(
                     vertical: 20.0, horizontal: 30.0),
@@ -295,12 +288,13 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                 ),
               ),
             ),
+            const SizedBox(
+              height: 10,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                SizedBox(
-                    width: 100,
-                    child: Image.asset('assets/images/company.png')),
+                SizedBox(width: 100, child: Image.asset(companyImage)),
               ],
             ),
           ],
@@ -347,7 +341,7 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                 child: ListView(children: [
                   (myFactoryInfoFromScale.modelName != null)
                       ? SizedBox(
-                          height: 120,
+                          height: 80,
                           child: Column(
                             children: [
                               Row(
@@ -432,7 +426,6 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                       child: customFunctionCard(
                           context,
                           localizedStrings.title_serial_port_connection,
-                          "assets/images/line.png",
                           Icons.cable,
                           true),
                     ),
@@ -458,7 +451,6 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                       child: customFunctionCard(
                           context,
                           localizedStrings.plu_download_title,
-                          "assets/images/line.png",
                           Icons.shopping_bag,
                           myFactoryInfoFromScale.modelName == null
                               ? true
@@ -475,12 +467,8 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                           showUpdateFirmWareDialog(context);
                         });
                       },
-                      child: customFunctionCard(
-                          context,
-                          localizedStrings.update_firmware,
-                          "assets/images/line.png",
-                          Icons.update,
-                          true),
+                      child: customFunctionCard(context,
+                          localizedStrings.update_firmware, Icons.update, true),
                     ),
                   ),
                   MouseRegion(
@@ -494,7 +482,6 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                       child: customFunctionCard(
                           context,
                           localizedStrings.get_build_info,
-                          "assets/images/line.png",
                           Icons.privacy_tip,
                           true),
                     ),
@@ -548,7 +535,6 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                           child: appCard(
                               context,
                               localizedStrings.weighing_title,
-                              "assets/images/line.png",
                               Icons.monitor_weight_outlined,
                               true,
                               'This application is used to display the weighing data in real time.'),
@@ -575,7 +561,6 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                           child: appCard(
                               context,
                               localizedStrings.weight_collection_title,
-                              "assets/images/line.png",
                               Icons.save_as,
                               myLicenseInfo.isValid,
                               'This application is used to collect weighing data in real time'),
@@ -602,7 +587,6 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                             child: appCard(
                                 context,
                                 localizedStrings.checkweigher_title,
-                                "assets/images/line.png",
                                 Icons.scale,
                                 myLicenseInfo.isValid,
                                 'This application is used to check weighing data in real time'),
@@ -628,7 +612,6 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                             child: appCard(
                                 context,
                                 localizedStrings.take_in_title,
-                                "assets/images/line.png",
                                 Icons.add,
                                 myLicenseInfo.isValid,
                                 'This app is used to implement the increment scale.'),
@@ -654,7 +637,6 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                             child: appCard(
                                 context,
                                 localizedStrings.take_out_title,
-                                "assets/images/line.png",
                                 Icons.remove,
                                 myLicenseInfo.isValid,
                                 'This app is used to implement the take out scale.'),

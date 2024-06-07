@@ -10,13 +10,14 @@ import 'package:t_max/functions/methods.dart';
 import 'package:t_max/main.dart';
 import '../data/download_prt_fmt.dart';
 import '../data/downloadresponse.dart';
+import '../data/language.dart';
 import '../data/parse_log.dart';
 import '../data/scale_info_from_scale.dart';
 import '../data/scalecmd_data.dart';
 import '../data/screen_mgr.dart';
 import '../data/writelog.dart';
 import '../eventbus/eventbus.dart';
-import '../generated/l10n.dart';
+import '../widget/custom_button.dart';
 import '../widget/page_head.dart';
 import 'package:archive/archive.dart';
 import 'package:path/path.dart' as p;
@@ -516,13 +517,6 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
     performDownload();
   }
 
-  dynamic localizedStrings;
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    localizedStrings = S.of(context);
-  }
-
   String convertHexToAsciiString(String hexString) {
     final bytes = hexString
         .replaceAll(" ", "")
@@ -668,7 +662,8 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                                     });
                                   },
                                 ),
-                                textStyle(localizedStrings.serial_output,
+                                textStyle(
+                                    localizedStrings.serial_output_download,
                                     constraints),
                               ],
                             ),
@@ -678,72 +673,18 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                     ),
                   ),
                   Expanded(
-                      flex: 2,
+                      flex: 3,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          SizedBox(
-                            width: 150,
-                            height: 50,
-                            child: OutlinedButton(
-                              style: !isDownloading
-                                  ? OutlinedButton.styleFrom(
-                                      side: BorderSide(
-                                        width: 1,
-                                        color: colorScheme.primary,
-                                      ),
-                                      foregroundColor: Theme.of(context)
-                                          .colorScheme
-                                          .onPrimary,
-                                      backgroundColor:
-                                          colorScheme.primary, // 设置按钮的背景色
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(4), // 设置按钮的圆角
-                                      ),
-                                    )
-                                  : OutlinedButton.styleFrom(
-                                      side: BorderSide(
-                                        width: 1,
-                                        color: colorScheme.background,
-                                      ),
-                                      foregroundColor: Theme.of(context)
-                                          .colorScheme
-                                          .onPrimary,
-                                      backgroundColor:
-                                          colorScheme.background, // 设置按钮的背景色
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(4), // 设置按钮的圆角
-                                      ),
-                                    ),
-                              child: Center(
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Icon(
-                                      Icons.download,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onPrimary,
-                                    ),
-                                    Text(
-                                      localizedStrings.download,
-                                      maxLines: 2,
-                                      textAlign: TextAlign.center,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5), // 设置上下边距值
+                            child: CustomElevatedButton(
+                              btnWidth: 120,
+                              btnHeight: 50,
+                              icon: Icons.download_outlined,
+                              text: localizedStrings.download,
                               onPressed: isDownloading
                                   ? null
                                   : () {
@@ -758,44 +699,14 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                                     },
                             ),
                           ),
-                          SizedBox(
-                            width: 150,
-                            height: 50,
-                            child: OutlinedButton(
-                              style: OutlinedButton.styleFrom(
-                                side: BorderSide(
-                                  width: 1,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                                foregroundColor:
-                                    Theme.of(context).colorScheme.primary,
-                                backgroundColor: Theme.of(context)
-                                    .colorScheme
-                                    .onPrimary, // 设置按钮的背景色
-                                shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.circular(4), // 设置按钮的圆角
-                                ),
-                              ),
-                              child: Center(
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Text(
-                                      'Export',
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5), // 设置上下边距值
+                            child: CustomOutlinedButton(
+                              btnWidth: 120,
+                              btnHeight: 50,
+                              icon: Icons.drive_file_move_outlined,
+                              text: localizedStrings.batch_down_export,
                               onPressed: () async {
                                 await wirteRecordsName();
                                 final selectedFolderPath = await pickFolder();
@@ -805,44 +716,14 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                               },
                             ),
                           ),
-                          SizedBox(
-                            width: 150,
-                            height: 50,
-                            child: OutlinedButton(
-                              style: OutlinedButton.styleFrom(
-                                side: BorderSide(
-                                  width: 1,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                                foregroundColor:
-                                    Theme.of(context).colorScheme.primary,
-                                backgroundColor: Theme.of(context)
-                                    .colorScheme
-                                    .onPrimary, // 设置按钮的背景色
-                                shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.circular(4), // 设置按钮的圆角
-                                ),
-                              ),
-                              child: Center(
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Text(
-                                      'Import',
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5), // 设置上下边距值
+                            child: CustomOutlinedButton(
+                              btnWidth: 120,
+                              btnHeight: 50,
+                              icon: Icons.drive_file_move_rtl_outlined,
+                              text: localizedStrings.batch_down_import,
                               onPressed: () async {
                                 String str = await pickZipFiles();
                                 bool res;
@@ -1424,102 +1305,42 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
   }
 
   Widget buildSelectBtn(TextEditingController textCtl) {
-    return SizedBox(
-      width: 200,
-      height: 30,
-      child: OutlinedButton(
-        style: buildButtonStyle(),
-        child: Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Text(
-                localizedStrings.button_select_format,
-                maxLines: 2,
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  fontSize: 14,
-                  fontWeight: FontWeight.normal,
-                ),
-              ),
-            ],
-          ),
-        ),
+    return CustomElevatedButton(
+        btnWidth: 150,
+        btnHeight: 30,
+        icon: Icons.file_open_outlined,
+        text: localizedStrings.button_select_format,
         onPressed: isDownloading
             ? null
             : () async {
                 pickFiles(textCtl);
-              },
-      ),
-    );
+              });
   }
 
   Widget buildSelectFirmWareBtn(TextEditingController textCtl) {
-    return SizedBox(
-      width: 200,
-      height: 30,
-      child: OutlinedButton(
-        style: buildButtonStyle(),
-        child: Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Text(
-                localizedStrings.select_firmware_btn,
-                maxLines: 2,
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  fontSize: 14,
-                  fontWeight: FontWeight.normal,
-                ),
-              ),
-            ],
-          ),
-        ),
+    return CustomElevatedButton(
+        btnWidth: 150,
+        btnHeight: 30,
+        icon: Icons.file_open_outlined,
+        text: localizedStrings.select_firmware_btn,
         onPressed: isDownloading
             ? null
             : () async {
                 pickFirmwareFiles(textCtl);
-              },
-      ),
-    );
+              });
   }
 
   Widget buildSelectZipBtn() {
-    return SizedBox(
-      width: 200,
-      height: 30,
-      child: OutlinedButton(
-        style: buildButtonStyle(),
-        child: Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Text(
-                'Select Folder',
-                maxLines: 2,
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  fontSize: 14,
-                  fontWeight: FontWeight.normal,
-                ),
-              ),
-            ],
-          ),
-        ),
+    return CustomElevatedButton(
+        btnWidth: 150,
+        btnHeight: 30,
+        icon: Icons.folder_sharp,
+        text: localizedStrings.batch_down_slt_folder,
         onPressed: isDownloading
             ? null
             : () async {
                 getSerialFiles();
-              },
-      ),
-    );
+              });
   }
 
   Future getSerialFiles() async {

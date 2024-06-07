@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import '../data/download_prt_fmt.dart';
 import '../data/downloadresponse.dart';
+import '../data/language.dart';
 import '../data/scale_info_from_scale.dart';
 import '../data/scalecmd_data.dart';
 import '../data/screen_mgr.dart';
 import '../data/timer_manager.dart';
 import '../data/writelog.dart';
 import '../eventbus/eventbus.dart';
-import '../generated/l10n.dart';
 import '../main.dart';
 import '../widget/page_head.dart';
 
@@ -90,13 +90,7 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
     });
   }
 
-  dynamic localizedStrings;
   String systemId = '';
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    localizedStrings = S.of(context);
-  }
 
   @override
   void dispose() {

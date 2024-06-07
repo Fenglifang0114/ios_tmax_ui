@@ -10,12 +10,13 @@ import '../../eventbus/eventbus.dart';
 import '../../main.dart';
 import '../data/cominfoslist_data.dart';
 import '../data/comscaleinfo_data.dart';
+import '../data/language.dart';
 import '../data/modifyresult_data.dart';
 import '../data/scale_info_from_scale.dart';
 import '../data/screen_mgr.dart';
 import '../functions/methods.dart';
-import '../generated/l10n.dart';
 import '../widget/comport_dorpdown.dart';
+import '../widget/custom_button.dart';
 
 class ModifyComPortPage extends StatefulWidget {
   const ModifyComPortPage({super.key});
@@ -58,15 +59,8 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
   dynamic _eventbus5;
   dynamic _eventbus6;
 
-  dynamic localizedStrings;
   String refresh = " ";
   String serialPortConnect = " ";
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    localizedStrings = S.of(context);
-  }
 
   void getScaleList() {
     myScaleCmd.cmdMode = "get_scale_list";
@@ -171,19 +165,11 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
   @override
   Widget build(BuildContext context) {
     tempCurrentPort = myCurrentPort;
-    // localizedStrings = S.of(context);
+
     refresh = localizedStrings.refresh_port;
     return AlertDialog(
-      title: Container(
-          color: Theme.of(context).colorScheme.primary,
-          child: Row(
-            children: [
-              Icon(Icons.usb, color: Theme.of(context).colorScheme.onPrimary),
-              Text(localizedStrings.serial_modify_title,
-                  style:
-                      TextStyle(color: Theme.of(context).colorScheme.onPrimary))
-            ],
-          )),
+      title: getDialogTitle(
+          context, localizedStrings.serial_modify_title, Icons.usb, 400),
       content: Container(
         height: 356,
         decoration:
@@ -227,29 +213,7 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
                         }).toList(),
                       ),
                     ),
-                    // Text(localizedStrings.scale_model),
-                    // Container(
-                    //   height: 53,
-                    //   width: 200,
-                    //   padding: const EdgeInsets.all(0),
-                    //   child: DropdownButtonFormField<String>(
-                    //     isExpanded: true,
-                    //     // 设置默认值
-                    //     value: scaleModel,
-                    //     // 选择回调
-                    //     onChanged: (String? newPosition) {
-                    //       scaleModel = newPosition.toString();
-                    //     },
-                    //     // 传入可选的数组
-                    //     items: scaleModelList
-                    //         .map<DropdownMenuItem<String>>((String value) {
-                    //       return DropdownMenuItem(
-                    //           value: value, child: Text(value));
-                    //     }).toList(),
-                    //   ),
-                    // ),
                     const SizedBox(height: 15),
-
                     Text(localizedStrings.baud_rate),
                     ComPortDropdown(
                         3, baudRateList, myCurrentPort.baud.toString()),
@@ -315,26 +279,33 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            OutlinedButton(
-                child: Text(localizedStrings.button_connect),
-                onPressed: () {
-                  mySerialPortStatus.serialPortStatus = true;
-                  eventBus.fire(EventSerialPortStatus(mySerialPortStatus));
-                  if (myCurrentPort.devPath != '') {
-                    setState(() {
-                      serialPortConnect = '';
-                    });
-                    modifyComInfo();
-                  }
-                }),
+            CustomOutlinedButton(
+              btnWidth: 120,
+              btnHeight: 40,
+              icon: Icons.arrow_forward_ios,
+              text: localizedStrings.button_connect,
+              onPressed: () {
+                mySerialPortStatus.serialPortStatus = true;
+                eventBus.fire(EventSerialPortStatus(mySerialPortStatus));
+                if (myCurrentPort.devPath != '') {
+                  setState(() {
+                    serialPortConnect = '';
+                  });
+                  modifyComInfo();
+                }
+              },
+            ),
             const SizedBox(width: 20),
-            OutlinedButton(
-                child: Text(localizedStrings.button_exit),
-                onPressed: () {
-                  myScreenMgr.isMainScreen = true;
-                  Navigator.of(context)
-                      .pop(); // to go back to screen after submitting
-                })
+            CustomOutlinedButton(
+              btnWidth: 120,
+              btnHeight: 40,
+              icon: Icons.exit_to_app,
+              text: localizedStrings.button_exit,
+              onPressed: () {
+                myScreenMgr.isMainScreen = true;
+                Navigator.of(context).pop();
+              },
+            ),
           ],
         )
       ],

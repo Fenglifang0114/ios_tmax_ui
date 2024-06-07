@@ -61,20 +61,10 @@ class S {
   }
 
   /// `Chinese`
-  String get zh_cn {
+  String get current_language {
     return Intl.message(
       'Chinese',
-      name: 'zh_cn',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `English`
-  String get en {
-    return Intl.message(
-      'English',
-      name: 'en',
+      name: 'current_language',
       desc: '',
       args: [],
     );
@@ -100,16 +90,6 @@ class S {
     );
   }
 
-  /// `Net`
-  String get button_net {
-    return Intl.message(
-      'Net',
-      name: 'button_net',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Save`
   String get button_save {
     return Intl.message(
@@ -125,16 +105,6 @@ class S {
     return Intl.message(
       'Serial port',
       name: 'com_port',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Contact us: sales@taiwanscale.com`
-  String get contact_us {
-    return Intl.message(
-      'Contact us: sales@taiwanscale.com',
-      name: 'contact_us',
       desc: '',
       args: [],
     );
@@ -1470,11 +1440,21 @@ class S {
     );
   }
 
-  /// `Serial Output`
-  String get serial_output {
+  /// `Serial Output Design`
+  String get serial_output_design {
     return Intl.message(
-      'Serial Output',
-      name: 'serial_output',
+      'Serial Output Design',
+      name: 'serial_output_design',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Serial Output Download`
+  String get serial_output_download {
+    return Intl.message(
+      'Serial Output Download',
+      name: 'serial_output_download',
       desc: '',
       args: [],
     );
@@ -2135,6 +2115,1236 @@ class S {
     return Intl.message(
       'Applicable Models:',
       name: 'app_models',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Free Text`
+  String get p_text_title {
+    return Intl.message(
+      'Free Text',
+      name: 'p_text_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Dividing Line`
+  String get p_line_title {
+    return Intl.message(
+      'Dividing Line',
+      name: 'p_line_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Price Variable`
+  String get p_price_title {
+    return Intl.message(
+      'Price Variable',
+      name: 'p_price_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Text`
+  String get p_text_var {
+    return Intl.message(
+      'Text',
+      name: 'p_text_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Line`
+  String get p_div_line_var {
+    return Intl.message(
+      'Line',
+      name: 'p_div_line_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `NO.`
+  String get p_no_var {
+    return Intl.message(
+      'NO.',
+      name: 'p_no_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Header1`
+  String get p_header1_var {
+    return Intl.message(
+      'Header1',
+      name: 'p_header1_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Header2`
+  String get p_Header2_var {
+    return Intl.message(
+      'Header2',
+      name: 'p_Header2_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Header3`
+  String get p_header3_var {
+    return Intl.message(
+      'Header3',
+      name: 'p_header3_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Footer1`
+  String get p_footer1_var {
+    return Intl.message(
+      'Footer1',
+      name: 'p_footer1_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Footer2`
+  String get p_footer2_var {
+    return Intl.message(
+      'Footer2',
+      name: 'p_footer2_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Footer3`
+  String get p_footer3_var {
+    return Intl.message(
+      'Footer3',
+      name: 'p_footer3_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `PLU_ID`
+  String get p_plu_id_var {
+    return Intl.message(
+      'PLU_ID',
+      name: 'p_plu_id_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `PLU_Name`
+  String get p_plu_name_var {
+    return Intl.message(
+      'PLU_Name',
+      name: 'p_plu_name_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order Number`
+  String get p_order_number_var {
+    return Intl.message(
+      'Order Number',
+      name: 'p_order_number_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unit Price`
+  String get p_unit_price_var {
+    return Intl.message(
+      'Unit Price',
+      name: 'p_unit_price_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Price Unit`
+  String get p_price_unit_var {
+    return Intl.message(
+      'Price Unit',
+      name: 'p_price_unit_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `PreTare`
+  String get p_pre_tare_var {
+    return Intl.message(
+      'PreTare',
+      name: 'p_pre_tare_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unit`
+  String get p_unit_var {
+    return Intl.message(
+      'Unit',
+      name: 'p_unit_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Date`
+  String get p_date_var {
+    return Intl.message(
+      'Date',
+      name: 'p_date_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tax Type1`
+  String get p_tax_type1_var {
+    return Intl.message(
+      'Tax Type1',
+      name: 'p_tax_type1_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tax Type2`
+  String get p_tax_type2_var {
+    return Intl.message(
+      'Tax Type2',
+      name: 'p_tax_type2_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tax Type3`
+  String get p_tax_type3_var {
+    return Intl.message(
+      'Tax Type3',
+      name: 'p_tax_type3_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tax Base1`
+  String get p_tax_base1_var {
+    return Intl.message(
+      'Tax Base1',
+      name: 'p_tax_base1_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tax Base2`
+  String get p_tax_base2_var {
+    return Intl.message(
+      'Tax Base2',
+      name: 'p_tax_base2_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tax Base3`
+  String get p_tax_base3_var {
+    return Intl.message(
+      'Tax Base3',
+      name: 'p_tax_base3_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tax Amount1`
+  String get p_tax_amount1_var {
+    return Intl.message(
+      'Tax Amount1',
+      name: 'p_tax_amount1_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tax Amount2`
+  String get p_tax_amount2_var {
+    return Intl.message(
+      'Tax Amount2',
+      name: 'p_tax_amount2_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tax Amount3`
+  String get p_tax_amount3_var {
+    return Intl.message(
+      'Tax Amount3',
+      name: 'p_tax_amount3_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tax Model`
+  String get p_tax_model_var {
+    return Intl.message(
+      'Tax Model',
+      name: 'p_tax_model_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Total Tax Amount`
+  String get p_total_tax_amount_var {
+    return Intl.message(
+      'Total Tax Amount',
+      name: 'p_total_tax_amount_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Payment Amount`
+  String get p_payment_amount_P_var {
+    return Intl.message(
+      'Payment Amount',
+      name: 'p_payment_amount_P_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Subtotal`
+  String get p_subtotal_var {
+    return Intl.message(
+      'Subtotal',
+      name: 'p_subtotal_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Currency`
+  String get p_currency_var {
+    return Intl.message(
+      'Currency',
+      name: 'p_currency_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Copy Times`
+  String get p_copy_times_var {
+    return Intl.message(
+      'Copy Times',
+      name: 'p_copy_times_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Weight Pcs`
+  String get p_weight_pcs_var {
+    return Intl.message(
+      'Weight Pcs',
+      name: 'p_weight_pcs_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tare`
+  String get p_tare_var {
+    return Intl.message(
+      'Tare',
+      name: 'p_tare_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Time`
+  String get p_time_var {
+    return Intl.message(
+      'Time',
+      name: 'p_time_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Change Amount`
+  String get p_change_amount_var {
+    return Intl.message(
+      'Change Amount',
+      name: 'p_change_amount_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Price`
+  String get p_price_var {
+    return Intl.message(
+      'Price',
+      name: 'p_price_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Free text.`
+  String get p_text_expl {
+    return Intl.message(
+      'Free text.',
+      name: 'p_text_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Loop divider line.`
+  String get p_div_line_expl {
+    return Intl.message(
+      'Loop divider line.',
+      name: 'p_div_line_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sequence number value.`
+  String get p_no_expl {
+    return Intl.message(
+      'Sequence number value.',
+      name: 'p_no_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The first page header.`
+  String get p_header1_expl {
+    return Intl.message(
+      'The first page header.',
+      name: 'p_header1_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The secend page header.`
+  String get p_Header2_expl {
+    return Intl.message(
+      'The secend page header.',
+      name: 'p_Header2_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The third page header.`
+  String get p_header3_expl {
+    return Intl.message(
+      'The third page header.',
+      name: 'p_header3_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The first page footer.`
+  String get p_footer1_expl {
+    return Intl.message(
+      'The first page footer.',
+      name: 'p_footer1_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The secend page footer.`
+  String get p_footer2_expl {
+    return Intl.message(
+      'The secend page footer.',
+      name: 'p_footer2_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The third page footer.`
+  String get p_footer3_expl {
+    return Intl.message(
+      'The third page footer.',
+      name: 'p_footer3_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `PLU_ID.`
+  String get p_plu_id_expl {
+    return Intl.message(
+      'PLU_ID.',
+      name: 'p_plu_id_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `PLU_Name.`
+  String get p_plu_name_expl {
+    return Intl.message(
+      'PLU_Name.',
+      name: 'p_plu_name_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The serial number of the pending order.`
+  String get p_order_number_expl {
+    return Intl.message(
+      'The serial number of the pending order.',
+      name: 'p_order_number_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unit Price.`
+  String get p_unit_price_expl {
+    return Intl.message(
+      'Unit Price.',
+      name: 'p_unit_price_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Price Unit.`
+  String get p_price_unit_expl {
+    return Intl.message(
+      'Price Unit.',
+      name: 'p_price_unit_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `PreTare.`
+  String get p_pre_tare_expl {
+    return Intl.message(
+      'PreTare.',
+      name: 'p_pre_tare_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Weight Unit.`
+  String get p_unit_expl {
+    return Intl.message(
+      'Weight Unit.',
+      name: 'p_unit_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Date.`
+  String get p_date_expl {
+    return Intl.message(
+      'Date.',
+      name: 'p_date_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tax Type 1.`
+  String get p_tax_type1_expl {
+    return Intl.message(
+      'Tax Type 1.',
+      name: 'p_tax_type1_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tax Type 2.`
+  String get p_tax_type2_expl {
+    return Intl.message(
+      'Tax Type 2.',
+      name: 'p_tax_type2_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tax Type 3.`
+  String get p_tax_type3_expl {
+    return Intl.message(
+      'Tax Type 3.',
+      name: 'p_tax_type3_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tax Base 1.`
+  String get p_tax_base1_expl {
+    return Intl.message(
+      'Tax Base 1.',
+      name: 'p_tax_base1_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tax Base 2.`
+  String get p_tax_base2_expl {
+    return Intl.message(
+      'Tax Base 2.',
+      name: 'p_tax_base2_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tax Base 3.`
+  String get p_tax_base3_expl {
+    return Intl.message(
+      'Tax Base 3.',
+      name: 'p_tax_base3_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tax Amount 1.`
+  String get p_tax_amount1_expl {
+    return Intl.message(
+      'Tax Amount 1.',
+      name: 'p_tax_amount1_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tax Amount 2.`
+  String get p_tax_amount2_expl {
+    return Intl.message(
+      'Tax Amount 2.',
+      name: 'p_tax_amount2_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tax Amount 3.`
+  String get p_tax_amount3_expl {
+    return Intl.message(
+      'Tax Amount 3.',
+      name: 'p_tax_amount3_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tax Model,tax included or  tax external.`
+  String get p_tax_model_expl {
+    return Intl.message(
+      'Tax Model,tax included or  tax external.',
+      name: 'p_tax_model_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Total Tax Amount.`
+  String get p_total_tax_amount_expl {
+    return Intl.message(
+      'Total Tax Amount.',
+      name: 'p_total_tax_amount_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Payment Amount.`
+  String get p_payment_amount_P_expl {
+    return Intl.message(
+      'Payment Amount.',
+      name: 'p_payment_amount_P_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Subtotal.`
+  String get p_subtotal_expl {
+    return Intl.message(
+      'Subtotal.',
+      name: 'p_subtotal_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Currency.`
+  String get p_currency_expl {
+    return Intl.message(
+      'Currency.',
+      name: 'p_currency_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Copy Times.`
+  String get p_copy_times_expl {
+    return Intl.message(
+      'Copy Times.',
+      name: 'p_copy_times_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Weight or Pcs.`
+  String get p_weight_pcs_expl {
+    return Intl.message(
+      'Weight or Pcs.',
+      name: 'p_weight_pcs_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tare value.`
+  String get p_tare_expl {
+    return Intl.message(
+      'Tare value.',
+      name: 'p_tare_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Time.`
+  String get p_time_expl {
+    return Intl.message(
+      'Time.',
+      name: 'p_time_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Change Amount.`
+  String get p_change_amount_expl {
+    return Intl.message(
+      'Change Amount.',
+      name: 'p_change_amount_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Price value.`
+  String get p_price_expl {
+    return Intl.message(
+      'Price value.',
+      name: 'p_price_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Variable`
+  String get l_var_title {
+    return Intl.message(
+      'Variable',
+      name: 'l_var_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Free Text`
+  String get l_text_title {
+    return Intl.message(
+      'Free Text',
+      name: 'l_text_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `BarCode Variable`
+  String get l_barcode_title {
+    return Intl.message(
+      'BarCode Variable',
+      name: 'l_barcode_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Qrcode Variable`
+  String get l_qrcode_title {
+    return Intl.message(
+      'Qrcode Variable',
+      name: 'l_qrcode_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Shape`
+  String get l_shape_title {
+    return Intl.message(
+      'Shape',
+      name: 'l_shape_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Line`
+  String get l_line_var {
+    return Intl.message(
+      'Line',
+      name: 'l_line_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Text`
+  String get l_text_var {
+    return Intl.message(
+      'Text',
+      name: 'l_text_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `BarCode`
+  String get l_barcode_var {
+    return Intl.message(
+      'BarCode',
+      name: 'l_barcode_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Qrcode`
+  String get l_qrcode_var {
+    return Intl.message(
+      'Qrcode',
+      name: 'l_qrcode_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `NO.`
+  String get l_no_var {
+    return Intl.message(
+      'NO.',
+      name: 'l_no_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Gross`
+  String get l_gross_var {
+    return Intl.message(
+      'Gross',
+      name: 'l_gross_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tare`
+  String get l_tare_var {
+    return Intl.message(
+      'Tare',
+      name: 'l_tare_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Net`
+  String get l_net_var {
+    return Intl.message(
+      'Net',
+      name: 'l_net_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `PCS`
+  String get l_pcs_var {
+    return Intl.message(
+      'PCS',
+      name: 'l_pcs_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `WeightUnit`
+  String get l_wgt_unit_var {
+    return Intl.message(
+      'WeightUnit',
+      name: 'l_wgt_unit_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Date`
+  String get l_date_var {
+    return Intl.message(
+      'Date',
+      name: 'l_date_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Time`
+  String get l_time_var {
+    return Intl.message(
+      'Time',
+      name: 'l_time_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `UnitWeight`
+  String get l_unit_wgt_var {
+    return Intl.message(
+      'UnitWeight',
+      name: 'l_unit_wgt_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Percent`
+  String get l_percent_var {
+    return Intl.message(
+      'Percent',
+      name: 'l_percent_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `TotalWeight`
+  String get l_total_wgt_var {
+    return Intl.message(
+      'TotalWeight',
+      name: 'l_total_wgt_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `TotalCount`
+  String get l_total_cnt_var {
+    return Intl.message(
+      'TotalCount',
+      name: 'l_total_cnt_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Line`
+  String get l_line_expl {
+    return Intl.message(
+      'Line',
+      name: 'l_line_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Text`
+  String get l_text_expl {
+    return Intl.message(
+      'Text',
+      name: 'l_text_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `BarCode`
+  String get l_barcode_expl {
+    return Intl.message(
+      'BarCode',
+      name: 'l_barcode_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Qrcode`
+  String get l_qrcode_expl {
+    return Intl.message(
+      'Qrcode',
+      name: 'l_qrcode_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `NO.`
+  String get l_no_expl {
+    return Intl.message(
+      'NO.',
+      name: 'l_no_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Gross`
+  String get l_gross_expl {
+    return Intl.message(
+      'Gross',
+      name: 'l_gross_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tare`
+  String get l_tare_expl {
+    return Intl.message(
+      'Tare',
+      name: 'l_tare_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Net`
+  String get l_net_expl {
+    return Intl.message(
+      'Net',
+      name: 'l_net_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `PCS`
+  String get l_pcs_expl {
+    return Intl.message(
+      'PCS',
+      name: 'l_pcs_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `WeightUnit`
+  String get l_wgt_unit_expl {
+    return Intl.message(
+      'WeightUnit',
+      name: 'l_wgt_unit_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Date`
+  String get l_date_expl {
+    return Intl.message(
+      'Date',
+      name: 'l_date_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Time`
+  String get l_time_expl {
+    return Intl.message(
+      'Time',
+      name: 'l_time_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `UnitWeight`
+  String get l_unit_wgt_expl {
+    return Intl.message(
+      'UnitWeight',
+      name: 'l_unit_wgt_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Percent`
+  String get l_percent_expl {
+    return Intl.message(
+      'Percent',
+      name: 'l_percent_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `TotalWeight`
+  String get l_total_wgt_expl {
+    return Intl.message(
+      'TotalWeight',
+      name: 'l_total_wgt_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `TotalCount`
+  String get l_total_cnt_expl {
+    return Intl.message(
+      'TotalCount',
+      name: 'l_total_cnt_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Line Width`
+  String get l_line_width_txt {
+    return Intl.message(
+      'Line Width',
+      name: 'l_line_width_txt',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Line Length`
+  String get l_line_lenth_txt {
+    return Intl.message(
+      'Line Length',
+      name: 'l_line_lenth_txt',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Receipt Format1:`
+  String get receipt_format1_item {
+    return Intl.message(
+      'Receipt Format1:',
+      name: 'receipt_format1_item',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Receipt Format2:`
+  String get receipt_format2_item {
+    return Intl.message(
+      'Receipt Format2:',
+      name: 'receipt_format2_item',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Receipt Format3:`
+  String get receipt_format3_item {
+    return Intl.message(
+      'Receipt Format3:',
+      name: 'receipt_format3_item',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Export`
+  String get batch_down_export {
+    return Intl.message(
+      'Export',
+      name: 'batch_down_export',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Import`
+  String get batch_down_import {
+    return Intl.message(
+      'Import',
+      name: 'batch_down_import',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select Folder`
+  String get batch_down_slt_folder {
+    return Intl.message(
+      'Select Folder',
+      name: 'batch_down_slt_folder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Get abnormal weight`
+  String get abnormal_weight {
+    return Intl.message(
+      'Get abnormal weight',
+      name: 'abnormal_weight',
       desc: '',
       args: [],
     );

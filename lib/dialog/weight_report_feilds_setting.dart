@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../generated/l10n.dart';
+import '../data/language.dart';
 import '../data/weight_report_data.dart';
+import '../widget/custom_button.dart';
 
 class ReportFeildsSettingDialog extends StatefulWidget {
   const ReportFeildsSettingDialog({super.key});
@@ -21,7 +22,7 @@ List<String> allFieldSList = [
   'User NO.',
   'User Name',
   'User Remarks',
-  'Scale Name'
+  'Scale Model'
 ];
 
 class _ReportFeildsSettingDialogState extends State<ReportFeildsSettingDialog> {
@@ -47,13 +48,6 @@ class _ReportFeildsSettingDialogState extends State<ReportFeildsSettingDialog> {
     fieldsInit();
   }
 
-  dynamic localizedStrings;
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    localizedStrings = S.of(context);
-  }
-
   @override
   void dispose() {
     super.dispose();
@@ -62,17 +56,8 @@ class _ReportFeildsSettingDialogState extends State<ReportFeildsSettingDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Container(
-          color: Theme.of(context).colorScheme.primary,
-          child: Row(
-            children: [
-              Icon(Icons.description,
-                  color: Theme.of(context).colorScheme.onPrimary),
-              Text('Report Fields Setting',
-                  style:
-                      TextStyle(color: Theme.of(context).colorScheme.onPrimary))
-            ],
-          )),
+      title: getDialogTitle(context, localizedStrings.report_set_btn,
+          Icons.settings_applications_rounded, 400),
       content: Container(
           height: 350,
           decoration:
@@ -130,20 +115,26 @@ class _ReportFeildsSettingDialogState extends State<ReportFeildsSettingDialog> {
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            MaterialButton(
-                textColor: Theme.of(context).colorScheme.onPrimary,
-                color: Theme.of(context).colorScheme.primary,
-                child: Text(localizedStrings.button_ok),
-                onPressed: () {
-                  creatFieldList();
-                  Navigator.of(context).pop(true);
-                }),
+            CustomElevatedButton(
+              btnWidth: 120,
+              btnHeight: 40,
+              icon: Icons.check_circle,
+              text: localizedStrings.button_ok,
+              onPressed: () {
+                creatFieldList();
+                Navigator.of(context).pop(true);
+              },
+            ),
             const SizedBox(width: 20),
-            OutlinedButton(
-                child: Text(localizedStrings.button_cancel),
-                onPressed: () {
-                  Navigator.of(context).pop(false);
-                })
+            CustomOutlinedButton(
+              btnWidth: 120,
+              btnHeight: 40,
+              icon: Icons.cancel,
+              text: localizedStrings.button_cancel,
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+            ),
           ],
         )
       ],

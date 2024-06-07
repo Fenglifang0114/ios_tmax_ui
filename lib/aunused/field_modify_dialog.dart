@@ -28,7 +28,7 @@ fieldModifyDialog(BuildContext context) {
                       Icons.language,
                       color: Theme.of(context).colorScheme.onPrimary,
                     ),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     Text("报表字段修改",
                         style: TextStyle(
                             color: Theme.of(context).colorScheme.onPrimary)),

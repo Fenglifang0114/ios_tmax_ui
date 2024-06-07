@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../generated/l10n.dart';
+import '../widget/custom_button.dart';
 
 class LanguageSettingPage extends StatefulWidget {
   const LanguageSettingPage({super.key});
@@ -10,7 +11,17 @@ class LanguageSettingPage extends StatefulWidget {
 }
 
 class _LanguageSettingPageState extends State<LanguageSettingPage> {
-  List<String> languageList = ['中文', 'English', 'Русский'];
+  List<String> languageList = [
+    '中文',
+    'English',
+    'Русский',
+    'Português',
+    'Italiano',
+    'Français',
+    'Deutsch',
+    '日本語',
+    '한국어'
+  ];
   dynamic localizedStrings;
   String language = '';
 
@@ -18,12 +29,14 @@ class _LanguageSettingPageState extends State<LanguageSettingPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     localizedStrings = S.of(context);
-    if (localizedStrings.zh_cn == 'Chinese') {
+    if (localizedStrings.current_language == 'Chinese') {
       language = 'English';
-    } else if ((localizedStrings.zh_cn == 'Китайский')) {
+    } else if ((localizedStrings.current_language == 'Русский')) {
       language = 'Русский';
-    } else {
+    } else if (localizedStrings.current_language == '中文') {
       language = '中文';
+    } else {
+      language = 'English';
     }
   }
 
@@ -45,21 +58,12 @@ class _LanguageSettingPageState extends State<LanguageSettingPage> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Container(
-          width: 400,
-          color: Theme.of(context).colorScheme.primary,
-          child: Row(
-            children: [
-              Icon(Icons.language,
-                  color: Theme.of(context).colorScheme.onPrimary),
-              Text(localizedStrings.language_setting_title,
-                  style:
-                      TextStyle(color: Theme.of(context).colorScheme.onPrimary))
-            ],
-          )),
+      title: getDialogTitle(context, localizedStrings.language_setting_title,
+          Icons.language, 400),
       content: Container(
         height: 356,
-        decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
+        decoration:
+            BoxDecoration(color: Theme.of(context).colorScheme.surfaceTint),
         child: Column(
           children: [
             const SizedBox(height: 2),
@@ -103,25 +107,17 @@ class _LanguageSettingPageState extends State<LanguageSettingPage> {
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            // OutlinedButton(
-            //     child: Text(localizedStrings.button_ok),
-            //     onPressed: () {
-            //       setState(() {});
-            //       // myScreenMgr.isMainScreen = true;
-            // Navigator.of(context).pop();
-            //       Navigator.push(
-            //         context,
-            //         MaterialPageRoute(builder: (context) => const HomePage()),
-            //       );
-            //     }),
             const SizedBox(width: 20),
-            OutlinedButton(
-                child: Text(localizedStrings.button_exit),
-                onPressed: () {
-                  setState(() {});
-                  Navigator.of(context)
-                      .pop(); // to go back to screen after submitting
-                })
+            CustomOutlinedButton(
+              btnWidth: 120,
+              btnHeight: 40,
+              icon: Icons.exit_to_app,
+              text: localizedStrings.button_exit,
+              onPressed: () {
+                setState(() {});
+                Navigator.of(context).pop();
+              },
+            ),
           ],
         )
       ],
@@ -130,7 +126,7 @@ class _LanguageSettingPageState extends State<LanguageSettingPage> {
 
   void _changed(value) {
     if (value != null) {
-      //SpUtil.putString(SpConstant.LANGUAGE, value);
+      // SpUtil.putString(SpConstant.LANGUAGE, value);
       setState(() {
         if (value == "中文") {
           S.load(const Locale('zh', 'CN'));

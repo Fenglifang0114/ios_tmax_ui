@@ -16,8 +16,9 @@ import '../../data/userinfo_data.dart';
 import '../../data/weight_data.dart';
 import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
-import '../../generated/l10n.dart';
+
 import '../../main.dart';
+import '../data/language.dart';
 import '../data/scale_info_from_scale.dart';
 import '../data/screen_mgr.dart';
 import '../dialog/addproduct_dialog.dart';
@@ -265,15 +266,8 @@ class _ShowWeightReportState extends State<ShowWeightReport> {
     super.dispose();
   }
 
-  dynamic localizedStrings;
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
   @override
   Widget build(BuildContext context) {
-    localizedStrings = S.of(context);
     final _width = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Container(

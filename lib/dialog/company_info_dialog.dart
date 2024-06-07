@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-
 import 'package:t_max/data/license_data.dart';
-
-import '../../generated/l10n.dart';
 import '../data/company_info.dart';
+import '../data/language.dart';
 import '../data/screen_mgr.dart';
-import '../data/setting_version_info.dart';
+import '../widget/custom_button.dart';
 import '../widget/version.dart';
 
 class CompanyInfoDialog extends StatefulWidget {
@@ -17,13 +15,6 @@ class CompanyInfoDialog extends StatefulWidget {
 
 class _CompanyInfoDialogState extends State<CompanyInfoDialog> {
   bool isPass = false;
-  dynamic localizedStrings;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    localizedStrings = S.of(context);
-  }
 
   Future<void> setAppInfo() async {
     await openAppJson();
@@ -46,34 +37,23 @@ class _CompanyInfoDialogState extends State<CompanyInfoDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Container(
-        color: Theme.of(context).colorScheme.primary,
-        child: Row(
-          children: [
-            Icon(Icons.info_outline,
-                color: Theme.of(context).colorScheme.onPrimary),
-            Text(
-              localizedStrings.about_title,
-              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-            )
-          ],
-        ),
-      ),
+      title: getDialogTitle(
+          context, localizedStrings.about_title, Icons.info_outline, 400),
       content: Container(
         height: 300,
         width: 400,
         decoration:
-            BoxDecoration(color: Theme.of(context).colorScheme.onPrimary),
+            BoxDecoration(color: Theme.of(context).colorScheme.surfaceTint),
         child: ListView(
           children: [
             Center(
               child: Text(
-                mySystemVersionInfo.getTitle(mySystemVersion),
+                myAppName.appName!,
                 style: TextStyle(
                     color: Theme.of(context).colorScheme.primary, fontSize: 40),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Row(
@@ -154,8 +134,11 @@ class _CompanyInfoDialogState extends State<CompanyInfoDialog> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             const SizedBox(width: 20),
-            OutlinedButton(
-              child: Text(localizedStrings.button_exit),
+            CustomOutlinedButton(
+              btnWidth: 120,
+              btnHeight: 40,
+              icon: Icons.exit_to_app,
+              text: localizedStrings.button_exit,
               onPressed: () {
                 myScreenMgr.isMainScreen = true;
                 Navigator.of(context).pop();

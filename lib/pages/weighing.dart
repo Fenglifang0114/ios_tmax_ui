@@ -6,9 +6,9 @@ import '../../data/reqweightdata_data.dart';
 import '../../data/weight_data.dart';
 import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
-import '../../generated/l10n.dart';
 import '../../main.dart';
 import '../data/downloadresponse.dart';
+import '../data/language.dart';
 import '../data/scale_info_from_scale.dart';
 import '../data/screen_mgr.dart';
 import '../widget/page_head.dart';
@@ -163,15 +163,8 @@ class WeightModePageState extends State<WeightModePage> {
     super.dispose();
   }
 
-  dynamic localizedStrings;
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
   @override
   Widget build(BuildContext context) {
-    localizedStrings = S.of(context);
     final _width = MediaQuery.of(context).size.width;
     return Scaffold(
       body: firstLayout(context, _width),
@@ -197,7 +190,7 @@ class WeightModePageState extends State<WeightModePage> {
             Expanded(
               flex: 3,
               child: Container(
-                color: Theme.of(context).colorScheme.onPrimary,
+                color: Theme.of(context).colorScheme.surfaceTint,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -305,19 +298,19 @@ class WeightModePageState extends State<WeightModePage> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               _buildFlexibleButtonAndText(
-                                width: 150,
-                                buttonText: localizedStrings.button_tare,
-                                onPressed: PublicFunctions.performTare,
-                                constraints: constraints,
-                                isTrue: isStart,
-                              ),
+                                  width: 150,
+                                  buttonText: localizedStrings.button_tare,
+                                  onPressed: PublicFunctions.performTare,
+                                  constraints: constraints,
+                                  isTrue: isStart,
+                                  icon: Icons.title),
                               _buildFlexibleButtonAndText(
-                                width: 150,
-                                buttonText: localizedStrings.button_zero,
-                                onPressed: PublicFunctions.performZero,
-                                constraints: constraints,
-                                isTrue: isStart,
-                              ),
+                                  width: 150,
+                                  buttonText: localizedStrings.button_zero,
+                                  onPressed: PublicFunctions.performZero,
+                                  constraints: constraints,
+                                  isTrue: isStart,
+                                  icon: Icons.exposure_zero),
                             ],
                           );
                         })),
@@ -328,7 +321,7 @@ class WeightModePageState extends State<WeightModePage> {
             Expanded(
               flex: 1,
               child: Container(
-                color: Theme.of(context).colorScheme.onPrimary,
+                color: Theme.of(context).colorScheme.surfaceTint,
               ),
             ),
           ],
@@ -546,23 +539,44 @@ class WeightModePageState extends State<WeightModePage> {
     required VoidCallback onPressed,
     required BoxConstraints constraints,
     required bool isTrue,
+    required IconData icon,
   }) {
-    double buttonWidth = width * (constraints.maxWidth / 350); // 自适应按钮宽度
+    double buttonWidth = width * (constraints.maxWidth / 400); // 自适应按钮宽度
     double fontSize = 14 * (constraints.maxWidth / 260); // 自适应字体大小
 
-    return SizedBox(
-      width: buttonWidth,
-      child: ElevatedButton(
-        onPressed: isTrue ? onPressed : null,
-        child: Text(
-          buttonText,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            fontSize: fontSize,
-            fontWeight: FontWeight.normal,
-          ),
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Theme.of(context).colorScheme.primary, // 设置按钮的背景色
+        elevation: 5, // 设置按钮的阴影
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
         ),
+      ),
+      onPressed: isTrue ? onPressed : null,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Icon(
+            icon,
+            size: fontSize,
+          ),
+          const SizedBox(width: 4),
+          SizedBox(
+            width: buttonWidth,
+            height: 80,
+            child: Center(
+              child: Text(
+                buttonText,
+                maxLines: 1,
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontSize: fontSize,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+          )
+        ],
       ),
     );
   }

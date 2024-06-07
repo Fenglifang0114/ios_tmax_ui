@@ -5,10 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:t_max/data/downloadresponse.dart';
 import '../../data/scalecmd_data.dart';
 import '../../eventbus/eventbus.dart';
-import '../../generated/l10n.dart';
 import '../../main.dart';
+import '../data/language.dart';
 import '../data/screen_mgr.dart';
 import '../data/writelog.dart';
+import 'custom_button.dart';
 
 class UpdateFirmWareDialog extends StatefulWidget {
   const UpdateFirmWareDialog({super.key});
@@ -67,13 +68,6 @@ class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
     });
   }
 
-  dynamic localizedStrings;
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    localizedStrings = S.of(context);
-  }
-
   @override
   void dispose() {
     _filePathController.dispose();
@@ -84,22 +78,11 @@ class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
 
   @override
   Widget build(BuildContext context) {
-    localizedStrings = S.of(context);
     return AlertDialog(
-      title: Container(
-        color: Theme.of(context).colorScheme.primary,
-        child: Row(
-          children: [
-            Icon(Icons.update, color: Theme.of(context).colorScheme.onPrimary),
-            Text(
-              localizedStrings.firmwart_update,
-              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-            )
-          ],
-        ),
-      ),
+      title: getDialogTitle(
+          context, localizedStrings.firmwart_update, Icons.usb, 400),
       content: Container(
-          height: 300,
+          height: 312,
           width: 400,
           decoration:
               BoxDecoration(color: Theme.of(context).colorScheme.surface),
@@ -109,18 +92,22 @@ class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                OutlinedButton(
-                    child: Text(localizedStrings.select_firmware_btn),
+                CustomOutlinedButton(
+                    btnWidth: 350,
+                    btnHeight: 40,
+                    icon: Icons.file_open_outlined,
+                    text: localizedStrings.select_firmware_btn,
                     onPressed: isSetting
                         ? null
                         : () async {
                             updateFilePath();
                           }),
-                const SizedBox(height: 10),
+                const SizedBox(height: 20),
                 SizedBox(
                   width: 400,
                   height: 150,
                   child: TextField(
+                    enabled: false,
                     onChanged: (value) {
                       setState(() {
                         _errorMessage = '';
@@ -144,8 +131,11 @@ class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      ElevatedButton(
-                        child: Text(localizedStrings.button_start),
+                      CustomElevatedButton(
+                        btnWidth: 120,
+                        btnHeight: 40,
+                        icon: Icons.arrow_circle_right_outlined,
+                        text: localizedStrings.button_start,
                         onPressed:
                             (isSetting || _filePathController.text.isEmpty)
                                 ? null
@@ -193,8 +183,11 @@ class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            OutlinedButton(
-              child: Text(localizedStrings.button_exit),
+            CustomOutlinedButton(
+              btnWidth: 120,
+              btnHeight: 40,
+              icon: Icons.exit_to_app,
+              text: localizedStrings.button_exit,
               onPressed: isSetting
                   ? null
                   : () {

@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
-import '../../generated/l10n.dart';
 import '../data/common.dart';
 import '../data/downloadresponse.dart';
+import '../data/language.dart';
 import '../data/scale_info_from_scale.dart';
 import '../data/screen_mgr.dart';
 import '../data/timer_manager.dart';
@@ -136,12 +136,6 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
     super.dispose();
   }
 
-  dynamic localizedStrings;
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
   void startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
@@ -158,7 +152,6 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
 
   @override
   Widget build(BuildContext context) {
-    localizedStrings = S.of(context);
     final _width = MediaQuery.of(context).size.width;
     return Scaffold(body: firstLayout(context, _width));
   }
@@ -179,7 +172,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
             Expanded(
               flex: 3,
               child: Container(
-                color: Theme.of(context).colorScheme.onPrimary,
+                color: Theme.of(context).colorScheme.surfaceTint,
                 child: Column(
                   children: [
                     const Row(
@@ -199,7 +192,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                     ),
                     Container(
                         height: 50,
-                        color: Theme.of(context).colorScheme.onPrimary,
+                        color: Theme.of(context).colorScheme.surfaceTint,
                         alignment: Alignment.centerLeft,
                         child: Row(
                           children: [
@@ -245,7 +238,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                       Expanded(
                         flex: 10,
                         child: Container(
-                          color: Theme.of(context).colorScheme.onPrimary,
+                          color: Theme.of(context).colorScheme.surfaceTint,
                           child: Padding(
                             padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
                             child: Row(

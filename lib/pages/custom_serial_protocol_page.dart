@@ -7,12 +7,13 @@ import 'package:t_max/data/timer_manager.dart';
 import 'package:t_max/functions/methods.dart';
 import '../data/custom_serial_protocol_text_dart.dart';
 import '../data/downloadresponse.dart';
+import '../data/language.dart';
 import '../data/scale_info_from_scale.dart';
 import '../data/screen_mgr.dart';
 import '../eventbus/eventbus.dart';
-import '../generated/l10n.dart';
 import 'package:path/path.dart' as p;
 
+import '../widget/custom_button.dart';
 import '../widget/page_head.dart';
 import 'package:archive/archive.dart';
 
@@ -187,13 +188,6 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     });
   }
 
-  dynamic localizedStrings;
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    localizedStrings = S.of(context);
-  }
-
   String convertHexToAsciiString(String hexString) {
     final bytes = hexString
         .replaceAll(" ", "")
@@ -239,7 +233,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
           height: 50,
           width: screenSize.width - 10,
           color: colorScheme.primary,
-          child: pageHead(context, localizedStrings.serial_output,
+          child: pageHead(context, localizedStrings.serial_output_design,
               localizedStrings.serial_port_status),
         ),
       ),
@@ -250,43 +244,43 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
               flex: 2,
               child: Column(
                 children: <Widget>[
-                  const SizedBox(
-                    height: 20,
-                  ),
                   Divider(
                     height: 2,
                     color: colorScheme.primary,
                   ),
                   Expanded(
                     flex: 6, // 设置子部件占用空间的比例
-                    child: ListView.builder(
-                      itemCount: _buttonLabels.length + 1, // +1是为了添加"Enter"按钮
-                      itemBuilder: (context, index) {
-                        if (index == _buttonLabels.length) {
-                          // 最后一个是"Enter"按钮
+                    child: Container(
+                      color: colorScheme.surfaceTint,
+                      child: ListView.builder(
+                        itemCount: _buttonLabels.length + 1, // +1是为了添加"Enter"按钮
+                        itemBuilder: (context, index) {
+                          if (index == _buttonLabels.length) {
+                            // 最后一个是"Enter"按钮
+                            return TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  _addEnter(_currentPageIndex);
+                                });
+                              },
+                              child: const Text('Enter'),
+                            );
+                          }
+                          final label = _buttonLabels[index];
                           return TextButton(
                             onPressed: () {
                               setState(() {
-                                _addEnter(_currentPageIndex);
+                                if (label == 'Text') {
+                                  _addTextData(_currentPageIndex);
+                                } else {
+                                  _addVarData(label, _currentPageIndex);
+                                }
                               });
                             },
-                            child: const Text('Enter'),
+                            child: Text(label),
                           );
-                        }
-                        final label = _buttonLabels[index];
-                        return TextButton(
-                          onPressed: () {
-                            setState(() {
-                              if (label == 'Text') {
-                                _addTextData(_currentPageIndex);
-                              } else {
-                                _addVarData(label, _currentPageIndex);
-                              }
-                            });
-                          },
-                          child: Text(label),
-                        );
-                      },
+                        },
+                      ),
                     ),
                   ),
                 ],
@@ -295,7 +289,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
             flex: 7,
             child: Container(
               decoration: BoxDecoration(
-                  color: colorScheme.onPrimary,
+                  color: colorScheme.surfaceTint,
                   border: Border.all(
                       width: 0.2,
                       color: Theme.of(context).colorScheme.onSurface)),
@@ -350,174 +344,77 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
             ),
           ),
           Expanded(
-              flex: 5,
-              child: Column(
-                children: [
-                  // const SizedBox(
-                  //   height: 20,
-                  // ),
-                  Expanded(
-                    flex: 1, // 设置子部件占用空间的比例
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        SizedBox(
-                          width: 150,
-                          height: 50,
-                          child: OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                              side: BorderSide(
-                                width: 1,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                              foregroundColor:
-                                  Theme.of(context).colorScheme.onPrimary,
-                              backgroundColor: (!serialPreview &&
+              flex: 6,
+              child: Container(
+                  color: Theme.of(context).colorScheme.surfaceTint,
+                  child: Column(
+                    children: [
+                      Expanded(
+                        flex: 1, // 设置子部件占用空间的比例
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            CustomElevatedButton(
+                              btnWidth: 110,
+                              btnHeight: 50,
+                              icon: Icons.download_rounded,
+                              text: localizedStrings.download,
+                              onPressed: (!serialPreview &&
                                       isListEmpty() &&
                                       !_downloading)
-                                  ? Theme.of(context).colorScheme.primary
-                                  : Theme.of(context)
-                                      .colorScheme
-                                      .background, // 设置按钮的背景色
-                              shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(4), // 设置按钮的圆角
-                              ),
-                            ),
-                            child: Center(
-                              child: Text(
-                                localizedStrings.download,
-                                maxLines: 2,
-                                textAlign: TextAlign.center,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                            ),
-                            onPressed: (!serialPreview &&
-                                    isListEmpty() &&
-                                    !_downloading)
-                                ? () async {
-                                    jsonFilesList.clear();
-                                    for (var i = 1; i < 7; i++) {
-                                      await generateJson(i);
+                                  ? () async {
+                                      jsonFilesList.clear();
+                                      for (var i = 1; i < 7; i++) {
+                                        await generateJson(i);
+                                      }
+                                      await generateFileList();
+                                      if (jsonFilesList.isNotEmpty) {
+                                        PublicFunctions.sendOutoutFmtToScale(
+                                            jsonFilesList);
+                                      }
+                                      setState(() {
+                                        _downloading = true;
+                                      });
+                                      cntScaleTimerMgr.stopCntScaleTimer();
                                     }
-                                    await generateFileList();
-                                    if (jsonFilesList.isNotEmpty) {
-                                      PublicFunctions.sendOutoutFmtToScale(
-                                          jsonFilesList);
-                                    }
-                                    setState(() {
-                                      _downloading = true;
-                                    });
-                                    cntScaleTimerMgr.stopCntScaleTimer();
-                                  }
-                                : null,
-                          ),
+                                  : null,
+                            ),
+                            CustomElevatedButton(
+                              btnWidth: 110,
+                              btnHeight: 50,
+                              icon: Icons.visibility_outlined,
+                              text: localizedStrings.open_preview,
+                              onPressed:
+                                  !serialPreview ? handleButtonPress : null,
+                            ),
+                            CustomElevatedButton(
+                              btnWidth: 110,
+                              btnHeight: 50,
+                              icon: Icons.visibility_off_outlined,
+                              text: localizedStrings.close_preview,
+                              onPressed: () async {
+                                setState(() {
+                                  serialPreview = false;
+                                  outputData.clear();
+                                });
+                                PublicFunctions.closeScalePassth();
+                              },
+                            ),
+                          ],
                         ),
-                        SizedBox(
-                          width: 150,
-                          height: 50,
-                          child: OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                              side: BorderSide(
-                                width: 1,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                              foregroundColor:
-                                  Theme.of(context).colorScheme.onPrimary,
-                              backgroundColor: !serialPreview
-                                  ? Theme.of(context).colorScheme.primary
-                                  : Theme.of(context)
-                                      .colorScheme
-                                      .background, // 设置按钮的背景色
-                              shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(4), // 设置按钮的圆角
-                              ),
-                            ),
-                            child: Center(
-                              child: Text(
-                                localizedStrings.open_preview,
-                                maxLines: 2,
-                                textAlign: TextAlign.center,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                            ),
-                            onPressed:
-                                !serialPreview ? handleButtonPress : null,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 150,
-                          height: 50,
-                          child: OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                              side: BorderSide(
-                                width: 1,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                              foregroundColor:
-                                  Theme.of(context).colorScheme.onPrimary,
-                              backgroundColor: Theme.of(context)
-                                  .colorScheme
-                                  .primary, // 设置按钮的背景色
-                              shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(4), // 设置按钮的圆角
-                              ),
-                            ),
-                            child: Center(
-                              child: Text(
-                                localizedStrings.close_preview,
-                                maxLines: 2,
-                                textAlign: TextAlign.center,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                            ),
-                            onPressed: () async {
-                              setState(() {
-                                serialPreview = false;
-                                outputData.clear();
-                              });
-                              PublicFunctions.closeScalePassth();
-                              // PublicFunctions.stopWeight();
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Divider(
-                    height: 2,
-                    color: colorScheme.primary,
-                  ),
-                  !serialPreview
-                      ? Expanded(
-                          flex: 6, // 设置子部件占用空间的比例
-                          child: ListView(
-                            children:
-                                (getListName(_currentPageIndex).isNotEmpty &&
+                      ),
+                      Divider(
+                        height: 2,
+                        color: colorScheme.primary,
+                      ),
+                      !serialPreview
+                          ? Expanded(
+                              flex: 6, // 设置子部件占用空间的比例
+                              child: ListView(
+                                children: (getListName(_currentPageIndex).isNotEmpty &&
                                         mySerialProtocolText.type == 'Bool' &&
                                         mySerialProtocolText.tabOrder != 9999 &&
-                                        (mySerialProtocolText.varName ==
-                                                'isstable' ||
+                                        (mySerialProtocolText.varName == 'isstable' ||
                                             mySerialProtocolText.varName ==
                                                 'istare'))
                                     ? _boolProperty()
@@ -543,8 +440,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                                                 ? _enterProperty()
                                                 : (getListName(_currentPageIndex)
                                                             .isNotEmpty &&
-                                                        mySerialProtocolText
-                                                                .type ==
+                                                        mySerialProtocolText.type ==
                                                             'Float' &&
                                                         mySerialProtocolText
                                                                 .tabOrder !=
@@ -560,105 +456,108 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                                                                 9999)
                                                         ? _intProperty()
                                                         : [],
-                          ),
-                        )
-                      : Expanded(
-                          flex: 6,
-                          child: Column(
-                            children: [
-                              Expanded(
-                                  flex: 1,
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      OutlinedButton(
-                                          style: ButtonStyle(
-                                            side: MaterialStateProperty
-                                                .resolveWith<BorderSide>(
-                                              (Set<MaterialState> states) {
-                                                return BorderSide(
-                                                  color: colorScheme
-                                                      .scrim, // 设置边框颜色为红色
-                                                  width: 2, // 设置边框宽度
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                          onPressed: () {
-                                            setState(() {
-                                              outputData.clear();
-                                            });
-                                          },
-                                          child: Text(
-                                            localizedStrings.clear_btn,
-                                            overflow: TextOverflow.ellipsis,
-                                          )),
-                                      OutlinedButton(
-                                          style: ButtonStyle(
-                                            backgroundColor: _isHexDisplay
-                                                ? MaterialStateProperty.all(
-                                                    colorScheme.primary)
-                                                : MaterialStateProperty.all(
-                                                    colorScheme.onPrimary),
-                                            side: MaterialStateProperty
-                                                .resolveWith<BorderSide>(
-                                              (Set<MaterialState> states) {
-                                                return BorderSide(
-                                                  color: colorScheme
-                                                      .scrim, // 设置边框颜色为红色
-                                                  width: 2, // 设置边框宽度
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                          onPressed: () {
-                                            setState(() {
-                                              _isHexDisplay = !_isHexDisplay;
-                                            });
-                                            PublicFunctions.changeScalePassth(
-                                                _isHexDisplay);
-                                          },
-                                          child: Text(
-                                            'HEX',
-                                            style: TextStyle(
-                                              color: _isHexDisplay
-                                                  ? colorScheme.onPrimary
-                                                  : colorScheme.primary,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ))
-                                    ],
-                                  )),
-                              Expanded(
-                                flex: 6,
-                                child: Container(
-                                  margin: const EdgeInsets.all(10.0),
-                                  padding: const EdgeInsets.all(10.0),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primary, // 边框颜色
-                                      width: 2.0, // 边框宽度
-                                    ),
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(10.0)), // 边框圆角
-                                  ),
-                                  child: ListView.builder(
-                                    padding: const EdgeInsets.all(10.0), // 添加边距
-                                    itemCount: outputData.length,
-                                    itemBuilder: (context, index) {
-                                      return Text(outputData[index]);
-                                    },
-                                    controller: _scrollController,
-                                  ),
-                                ),
                               ),
-                            ],
-                          ))
-                ],
-              ))
+                            )
+                          : Expanded(
+                              flex: 6,
+                              child: Column(
+                                children: [
+                                  Expanded(
+                                      flex: 1,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          OutlinedButton(
+                                              style: ButtonStyle(
+                                                side: MaterialStateProperty
+                                                    .resolveWith<BorderSide>(
+                                                  (Set<MaterialState> states) {
+                                                    return BorderSide(
+                                                      color: colorScheme
+                                                          .scrim, // 设置边框颜色为红色
+                                                      width: 2, // 设置边框宽度
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                setState(() {
+                                                  outputData.clear();
+                                                });
+                                              },
+                                              child: Text(
+                                                localizedStrings.clear_btn,
+                                                overflow: TextOverflow.ellipsis,
+                                              )),
+                                          OutlinedButton(
+                                              style: ButtonStyle(
+                                                backgroundColor: _isHexDisplay
+                                                    ? MaterialStateProperty.all(
+                                                        colorScheme.primary)
+                                                    : MaterialStateProperty.all(
+                                                        colorScheme.onPrimary),
+                                                side: MaterialStateProperty
+                                                    .resolveWith<BorderSide>(
+                                                  (Set<MaterialState> states) {
+                                                    return BorderSide(
+                                                      color: colorScheme
+                                                          .scrim, // 设置边框颜色为红色
+                                                      width: 2, // 设置边框宽度
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                setState(() {
+                                                  _isHexDisplay =
+                                                      !_isHexDisplay;
+                                                });
+                                                PublicFunctions
+                                                    .changeScalePassth(
+                                                        _isHexDisplay);
+                                              },
+                                              child: Text(
+                                                'HEX',
+                                                style: TextStyle(
+                                                  color: _isHexDisplay
+                                                      ? colorScheme.onPrimary
+                                                      : colorScheme.primary,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                              ))
+                                        ],
+                                      )),
+                                  Expanded(
+                                    flex: 6,
+                                    child: Container(
+                                      margin: const EdgeInsets.all(10.0),
+                                      padding: const EdgeInsets.all(10.0),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary, // 边框颜色
+                                          width: 2.0, // 边框宽度
+                                        ),
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(10.0)), // 边框圆角
+                                      ),
+                                      child: ListView.builder(
+                                        padding:
+                                            const EdgeInsets.all(10.0), // 添加边距
+                                        itemCount: outputData.length,
+                                        itemBuilder: (context, index) {
+                                          return Text(outputData[index]);
+                                        },
+                                        controller: _scrollController,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ))
+                    ],
+                  )))
         ],
       ),
     );
@@ -824,8 +723,9 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     );
   }
 
-  SizedBox secondPageBuild(int pageId) {
-    return SizedBox(
+  Container secondPageBuild(int pageId) {
+    return Container(
+      color: Theme.of(context).colorScheme.surfaceTint,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -845,7 +745,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
           Expanded(
             child: Container(
               width: double.infinity,
-              color: colorScheme.primaryContainer,
+              color: colorScheme.surfaceTint,
               child: SingleChildScrollView(
                 child: Text(
                   _getOutputData(pageId),
@@ -915,7 +815,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     return [
       Container(
         height: 40,
-        color: colorScheme.primaryContainer,
+        color: colorScheme.surfaceTint,
         child: Center(
           child: Text(
             'Text Property',

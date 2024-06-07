@@ -27,7 +27,7 @@ printerDialog(BuildContext context) {
                       Icons.print,
                       color: Theme.of(context).colorScheme.onPrimary,
                     ),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     Text("Select the printer",
                         style: TextStyle(
                             color: Theme.of(context).colorScheme.onPrimary)),

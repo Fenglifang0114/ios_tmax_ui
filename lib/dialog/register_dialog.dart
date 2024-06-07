@@ -22,7 +22,7 @@ registerDialog(BuildContext context) {
                       Icons.lock_outline,
                       color: Theme.of(context).colorScheme.onPrimary,
                     ),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     Text("注册许可管理",
                         style: TextStyle(
                             color: Theme.of(context).colorScheme.onPrimary)),

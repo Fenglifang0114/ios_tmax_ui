@@ -6,8 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:gbk_codec/gbk_codec.dart';
 import 'package:t_max/data/downloadresponse.dart';
 import '../data/barcoderowdata.dart';
+import '../data/encrypt_data.dart';
 import '../data/formatdata.dart';
 import '../data/item_key_list.dart';
+import '../data/language.dart';
 import '../data/offset.dart';
 import '../data/scalecmd_data.dart';
 import '../data/screen_mgr.dart';
@@ -19,7 +21,6 @@ import '../dialog/qrcodeedit_dialog.dart';
 import '../eventbus/eventbus.dart';
 import 'package:path/path.dart' as p;
 import 'package:file_picker/file_picker.dart';
-import '../generated/l10n.dart';
 import '../main.dart';
 import '../widget/draggable_fliating.dart';
 import '../widget/dropdown_copy.dart';
@@ -33,11 +34,11 @@ class LabelDesignPage extends StatefulWidget {
   State<LabelDesignPage> createState() => _LabelDesignPageState();
 }
 
-const citys = {
+const labelVarMap = {
   "Free Text": ["Text,TEXT"],
-  "BarCode": ["BarCode,BarCode"],
-  "Qrcode": ["Qrcode,Qrcode"],
-  "Shape": ["Line,Line"],
+  "BarCode Variable": ["BarCode,BarCode"],
+  "Qrcode Variable": ["Qrcode,Qrcode"],
+  // "Shape": ["Line,Line"],
   // "Shape": ["Rectangle,Rectangle", "Circle,Circle", "Line,Line"],
   "Variable": [
     "NO.,DATA",
@@ -196,13 +197,10 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     '165', //4 7 7
     '170', //4 8 8
   ];
-  dynamic localizedStrings;
+  Map<String, String> langVarMap = {};
+  Map<String, String> langVarExplMap = {};
+
   String systemId = '';
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    localizedStrings = S.of(context);
-  }
 
   @override
   void initState() {
@@ -381,11 +379,11 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         _onSubmit(yPosvar.text, 3);
       }
     });
-    // _focusNodex2Pos.addListener(() {
-    //   if (!_focusNodex2Pos.hasFocus) {
-    //     _onSubmit(x2Posvar.text, 9);
-    //   }
-    // });
+    _focusNodex2Pos.addListener(() {
+      if (!_focusNodex2Pos.hasFocus) {
+        _onSubmit(x2Posvar.text, 9);
+      }
+    });
     _focusNodey2Pos.addListener(() {
       if (!_focusNodey2Pos.hasFocus) {
         _onSubmit(y2Posvar.text, 10);
@@ -419,7 +417,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   @override
   Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;
-    // localizedStrings = S.of(context);
+
     ScrollController _scrollController = ScrollController();
     ScrollController _scrollController1 = ScrollController();
     return Scaffold(
@@ -476,9 +474,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                           ),
                         ),
                         onPressed: () {
-                          myItemKey.keyList.clear();
-                          myScreenMgr.isMainScreen = true;
-                          Navigator.of(context).pop();
+                          _showConfirmationDialog(context);
                         },
                       ),
                     ),
@@ -1094,6 +1090,41 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         ],
       ),
     );
+  }
+
+  void _showConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          title: Text(
+            'Confirmation',
+            style: TextStyle(color: Theme.of(context).colorScheme.primary),
+          ),
+          content: Text(localizedStrings.go_home),
+          actions: <Widget>[
+            OutlinedButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop(false); // 不跳转
+              },
+            ),
+            OutlinedButton(
+              child: const Text('Confirm'),
+              onPressed: () {
+                Navigator.of(context).pop(true); // 跳转
+              },
+            ),
+          ],
+        );
+      },
+    ).then((confirmed) {
+      if (confirmed) {
+        myReceiptItemKey.keyList.clear();
+        myScreenMgr.isMainScreen = true;
+        Navigator.of(context).pop();
+      }
+    });
   }
 
   void openTemplateJson() async {
@@ -1716,21 +1747,8 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
 
   void _saveFormatToCsv(String csv, String path) async {
     final file = File(path);
-    csv = encryptCsv(csv);
+    csv = myFilePassword.encryptCsv(csv);
     await file.writeAsString(csv, mode: FileMode.write, encoding: utf8);
-  }
-
-  String encryptCsv(String csv) {
-    List<int> encryptedBytes = [];
-    List<int> utf8Bytes = utf8.encode(csv);
-
-    for (int byte in utf8Bytes) {
-      int encryptedByte1 = (byte >> 4) + 3; // 取高4位加密
-      int encryptedByte2 = (byte & 0x0F) + 3; // 取低4位加密
-      encryptedBytes.addAll([encryptedByte1, encryptedByte2]);
-    }
-
-    return String.fromCharCodes(encryptedBytes);
   }
 
   // void _saveFormatToCsv(String csv) async {
@@ -1842,9 +1860,11 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
 
   /// 创建列表 , 每个元素都是一个 ExpansionTile 组件
   List<Widget> _buildList() {
+    getLanguageVarMap();
     List<Widget> widgets = [];
-    for (var key in citys.keys) {
-      widgets.add(_generateExpansionTileWidget(key, citys[key]));
+    for (var key in labelVarMap.keys) {
+      String keyStr = langVarMap[key]!;
+      widgets.add(_generateExpansionTileWidget(keyStr, labelVarMap[key]));
     }
     return widgets;
   }
@@ -1862,11 +1882,18 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   Widget _generateWidget(name) {
     text = name.split(",")[0];
     type = name.split(",")[1];
+    String expStr = "";
+    if (langVarExplMap[text] != "") {
+      expStr = langVarExplMap[text]!;
+    }
+    if (langVarMap[text] != "") {
+      text = langVarMap[text]!;
+    }
 
     /// 使用该组件可以使宽度撑满
     return FractionallySizedBox(
-      widthFactor: 1,
-      child: Container(
+        widthFactor: 1,
+        child: Container(
           height: 30,
           decoration: BoxDecoration(
               border: Border(
@@ -1874,23 +1901,28 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                       width: 0.2,
                       color: Theme.of(context).colorScheme.background))),
           alignment: Alignment.center,
-          child: TextButton(
-            onPressed: () {
-              count++;
-              num.add(count);
-              myTextData.tabOrder = count;
-              addfloatbutton(name);
-            },
-            child: Text(
-              //左侧按钮文本的颜色
-              text,
-              style: TextStyle(
-                fontSize: 14,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-            ),
-          )),
-    );
+          child: Tooltip(
+              message: expStr,
+              preferBelow: false,
+              verticalOffset: 10.0,
+              waitDuration: const Duration(seconds: 1),
+              child: TextButton(
+                onPressed: () {
+                  count++;
+                  num.add(count);
+                  myTextData.tabOrder = count;
+                  addfloatbutton(name);
+                },
+                child: Text(
+                  //左侧按钮文本的颜色
+                  text,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+              )),
+        ));
   }
 
   void _onUpdate(int i) {
@@ -1959,7 +1991,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           if (textItemList[i].index == myTextData.tabOrder) {
             textItemList[i].content = myTextData.content;
 
-            eventBus.fire(EventText(myTextData));
+            updateMytextData();
             //修改可拖拽控件的信息
             _onUpdate(i);
           }
@@ -1976,7 +2008,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           for (var i = 0; i < textItemList.length; i++) {
             if (textItemList[i].index == myTextData.tabOrder) {
               textItemList[i].fontSize = myTextData.fontSize;
-              eventBus.fire(EventText(myTextData));
+              updateMytextData();
               _onUpdate(i);
             }
           }
@@ -1991,7 +2023,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         for (var i = 0; i < textItemList.length; i++) {
           if (textItemList[i].index == myTextData.tabOrder) {
             textItemList[i].xPos = myTextData.xPos;
-            eventBus.fire(EventText(myTextData));
+            updateMytextData();
             _onUpdate(i);
           }
         }
@@ -2005,7 +2037,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         for (var i = 0; i < textItemList.length; i++) {
           if (textItemList[i].index == myTextData.tabOrder) {
             textItemList[i].yPos = myTextData.yPos;
-            eventBus.fire(EventText(myTextData));
+            updateMytextData();
             _onUpdate(i);
           }
         }
@@ -2019,7 +2051,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           for (var i = 0; i < textItemList.length; i++) {
             if (textItemList[i].index == myTextData.tabOrder) {
               textItemList[i].maxLength = myTextData.maxLength;
-              eventBus.fire(EventText(myTextData));
+              updateMytextData();
               _onUpdate(i);
             }
           }
@@ -2033,7 +2065,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         for (var i = 0; i < textItemList.length; i++) {
           if (textItemList[i].index == myTextData.tabOrder) {
             textItemList[i].alignment = myTextData.alignment;
-            eventBus.fire(EventText(myTextData));
+            updateMytextData();
             _onUpdate(i);
           }
         }
@@ -2087,13 +2119,13 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           textItemList[objectIndex].barcodeType = myTextData.barcodeType;
           textItemList[objectIndex].varcontent = myTextData.varcontent;
           textItemList[objectIndex].style = myTextData.style; //此处说明条码库中有此条码
-          eventBus.fire(EventText(myTextData));
+          updateMytextData();
           _onUpdate(objectIndex);
         } else {
           if (textItemList[objectIndex].style == 0) {
             myTextData.varcontent.clear();
             textItemList[objectIndex].varcontent = myTextData.varcontent;
-            eventBus.fire(EventText(myTextData));
+            updateMytextData();
           }
         }
       });
@@ -2106,7 +2138,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           for (var i = 0; i < textItemList.length; i++) {
             if (textItemList[i].index == myTextData.tabOrder) {
               textItemList[i].height = myTextData.height;
-              eventBus.fire(EventText(myTextData));
+              updateMytextData();
               _onUpdate(i);
             }
           }
@@ -2120,7 +2152,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         for (var i = 0; i < textItemList.length; i++) {
           if (textItemList[i].index == myTextData.tabOrder) {
             textItemList[i].rotation = myTextData.rotation;
-            eventBus.fire(EventText(myTextData));
+            updateMytextData();
             _onUpdate(i);
           }
         }
@@ -2132,7 +2164,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         for (var i = 0; i < textItemList.length; i++) {
           if (textItemList[i].index == myTextData.tabOrder) {
             textItemList[i].hralignment = myTextData.hralignment;
-            eventBus.fire(EventText(myTextData));
+            updateMytextData();
             _onUpdate(i);
           }
         }
@@ -2146,7 +2178,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         for (var i = 0; i < textItemList.length; i++) {
           if (textItemList[i].index == myTextData.tabOrder) {
             textItemList[i].x2Pos = myTextData.x2Pos;
-            eventBus.fire(EventText(myTextData));
+            updateMytextData();
             _onUpdate(i);
           }
         }
@@ -2160,7 +2192,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         for (var i = 0; i < textItemList.length; i++) {
           if (textItemList[i].index == myTextData.tabOrder) {
             textItemList[i].y2Pos = myTextData.y2Pos;
-            eventBus.fire(EventText(myTextData));
+            updateMytextData();
             _onUpdate(i);
           }
         }
@@ -2195,7 +2227,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
               textItemList[i].qrcodeType = myTextData.qrcodeType;
               textItemList[i].varcontent = myTextData.varcontent;
               textItemList[i].style = myTextData.style;
-              eventBus.fire(EventText(myTextData));
+              updateMytextData();
               _onUpdate(i);
             }
           }
@@ -2208,7 +2240,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         for (var i = 0; i < textItemList.length; i++) {
           if (textItemList[i].index == myTextData.tabOrder) {
             textItemList[i].qrWidth = myTextData.qrWidth;
-            eventBus.fire(EventText(myTextData));
+            updateMytextData();
             _onUpdate(i);
           }
         }
@@ -2220,7 +2252,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         for (var i = 0; i < textItemList.length; i++) {
           if (textItemList[i].index == myTextData.tabOrder) {
             textItemList[i].fontBold = myTextData.fontBold;
-            eventBus.fire(EventText(myTextData));
+            updateMytextData();
             _onUpdate(i);
           }
         }
@@ -2232,7 +2264,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         for (var i = 0; i < textItemList.length; i++) {
           if (textItemList[i].index == myTextData.tabOrder) {
             textItemList[i].fontReverse = myTextData.fontReverse;
-            eventBus.fire(EventText(myTextData));
+            updateMytextData();
             _onUpdate(i);
           }
         }
@@ -2244,7 +2276,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         for (var i = 0; i < textItemList.length; i++) {
           if (textItemList[i].index == myTextData.tabOrder) {
             textItemList[i].lineWidth = myTextData.lineWidth;
-            eventBus.fire(EventText(myTextData));
+            updateMytextData();
             _onUpdate(i);
           }
         }
@@ -2253,15 +2285,44 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       //Font reverse
       setState(() {
         myTextData.x2Pos = int.parse(s);
+        if (myTextData.x2Pos > (double.tryParse(pageWidth.text)!) * 8) {
+          myTextData.x2Pos = (int.tryParse(pageWidth.text)!) * 8;
+        }
         for (var i = 0; i < textItemList.length; i++) {
           if (textItemList[i].index == myTextData.tabOrder) {
             textItemList[i].x2Pos = myTextData.x2Pos;
-            eventBus.fire(EventText(myTextData));
+            updateMytextData();
             _onUpdate(i);
           }
         }
       });
     }
+  }
+
+  void updateMytextData() {
+    setState(() {
+      xPosvar.text = myTextData.xPos.toString();
+      yPosvar.text = myTextData.yPos.toString();
+      textvariable.text = myTextData.content;
+      fontsizevar.text = myTextData.fontSize.toString();
+      barcodeHeight.text = myTextData.height.toString();
+      _selectedRotation = myTextData.rotation.toString();
+      _selectedBarcode = myTextData.barcodeName;
+      _selectedQrcode = myTextData.qrcodeName;
+      _selectFontsize = myTextData.fontSize.toString();
+      _selectedQr = int.parse(myTextData.qrWidth.toString()).toString();
+      if (myTextData.alignment == 1) {
+        _selectedAlignment = 'Left';
+      } else if (myTextData.alignment == 2) {
+        _selectedAlignment = 'Center';
+      } else if (myTextData.alignment == 3) {
+        _selectedAlignment = 'Right';
+      }
+      _selectFontBold = myTextData.fontBold;
+      _selectFontReverse = myTextData.fontReverse;
+      _selectedHRAlignment = myTextData.hralignment;
+      // yPosvar.text = myTextData.yPos.toString(); //20240503
+    });
   }
 
   int _findIndex(int taborder) {
@@ -3205,9 +3266,10 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       ),
       buildTextField(xPosvar, "X1", myTextData.xPos.toString(), 2),
       buildTextField(yPosvar, "Y1", myTextData.yPos.toString(), 3),
-      buildTextField(x2Posvar, "Line Lenth", myTextData.x2Pos.toString(), 17),
-      buildTextField(
-          lineWidthVar, "Line Width", myTextData.lineWidth.toString(), 16),
+      buildTextField(x2Posvar, localizedStrings.l_line_lenth_txt,
+          myTextData.x2Pos.toString(), 17),
+      buildTextField(lineWidthVar, localizedStrings.l_line_width_txt,
+          myTextData.lineWidth.toString(), 16),
       const SizedBox(height: 20),
       ElevatedButton(
           onPressed: () {
@@ -3575,25 +3637,55 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                   color: Theme.of(context).colorScheme.onPrimary)))
     ];
   }
+
+  void getLanguageVarMap() {
+    if (langVarMap.isNotEmpty) {
+      return;
+    }
+    langVarMap = {
+      "Variable": localizedStrings.l_var_title,
+      "Free Text": localizedStrings.l_text_title,
+      "BarCode Variable": localizedStrings.l_barcode_title,
+      "Qrcode Variable": localizedStrings.l_qrcode_title,
+      "Shape": localizedStrings.l_shape_title,
+      "Line": localizedStrings.l_line_var,
+      "Text": localizedStrings.l_text_var,
+      "BarCode": localizedStrings.l_barcode_var,
+      "Qrcode": localizedStrings.l_qrcode_var,
+      "NO.": localizedStrings.l_no_var,
+      "Gross": localizedStrings.l_gross_var,
+      "Tare": localizedStrings.l_tare_var,
+      "Net": localizedStrings.l_net_var,
+      "PCS": localizedStrings.l_pcs_var,
+      "WeightUnit": localizedStrings.l_wgt_unit_var,
+      "Date": localizedStrings.l_date_var,
+      "Time": localizedStrings.l_time_var,
+      "UnitWeight": localizedStrings.l_unit_wgt_var,
+      "Percent": localizedStrings.l_percent_var,
+      "TotalWeight": localizedStrings.l_total_wgt_var,
+      "TotalCount": localizedStrings.l_total_cnt_var,
+    };
+
+    langVarExplMap = {
+      "Line": localizedStrings.l_line_expl,
+      "Text": localizedStrings.l_text_expl,
+      "BarCode": localizedStrings.l_barcode_expl,
+      "Qrcode": localizedStrings.l_qrcode_expl,
+      "NO.": localizedStrings.l_no_expl,
+      "Gross": localizedStrings.l_gross_expl,
+      "Tare": localizedStrings.l_tare_expl,
+      "Net": localizedStrings.l_net_expl,
+      "PCS": localizedStrings.l_pcs_expl,
+      "WeightUnit": localizedStrings.l_wgt_unit_expl,
+      "Date": localizedStrings.l_date_expl,
+      "Time": localizedStrings.l_time_expl,
+      "UnitWeight": localizedStrings.l_unit_wgt_expl,
+      "Percent": localizedStrings.l_percent_expl,
+      "TotalWeight": localizedStrings.l_total_wgt_expl,
+      "TotalCount": localizedStrings.l_total_cnt_expl,
+    };
+  }
 }
-
-// showAddComPortDialog(context).then((onValue) {
-//   if (kDebugMode) {
-//     print(onValue);
-//   }
-//   setState(() {
-//     // items.add(onValue.toString());
-//   });
-// });
-
-// final result = await Navigator.push(
-//   context,
-//   MaterialPageRoute(
-//       builder: (context) => BarCodeEditPage(value: 'nihao')),
-// );
-// setState(() {
-//   // value = result;
-// });
 
 class Circle extends StatelessWidget {
   final int index;

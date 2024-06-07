@@ -8,17 +8,17 @@ import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/pages/labeldesign_page.dart';
 import 'package:t_max/pages/wifisetting_page.dart';
 import 'package:window_manager/window_manager.dart';
+import '../data/company_info.dart';
 import '../data/comscaleinfo_data.dart';
 import '../data/currentport_data.dart';
 import '../data/device_data.dart';
 import '../data/downloadresponse.dart';
+import '../data/language.dart';
 import '../data/screen_mgr.dart';
-import '../data/setting_version_info.dart';
 import '../data/timer_manager.dart';
 import '../dialog/get_build_info_dialog.dart';
 import '../dialog/language_setting.dart';
 import '../functions/methods.dart';
-import '../generated/l10n.dart';
 import '../widget/app_info.dart';
 import '../widget/bluetooth_setting.dart';
 import '../widget/box_gradient.dart';
@@ -77,8 +77,10 @@ class _HomePageState extends State<HomePage> with TrayListener {
   @override
   void initState() {
     trayManager.addListener(this);
+
     _init();
     _handleSetIcon();
+    windowManager.setMinimumSize(Size(1320, 720));
     super.initState();
     _pageScrollerController = ScrollController();
     cntScaleTimerMgr.startCntScaleTimer(5);
@@ -172,13 +174,6 @@ class _HomePageState extends State<HomePage> with TrayListener {
     super.dispose();
   }
 
-  dynamic localizedStrings;
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    localizedStrings = S.of(context);
-  }
-
   @override
   Widget build(BuildContext context) {
     // final _width = MediaQuery.of(context).size.width;
@@ -211,7 +206,7 @@ class _HomePageState extends State<HomePage> with TrayListener {
                                 width: 20,
                               ),
                               Text(
-                                mySystemVersionInfo.getTitle(mySystemVersion),
+                                myAppName.appName!,
                                 style: TextStyle(
                                     fontSize: 20,
                                     color: Theme.of(context)
@@ -308,7 +303,7 @@ class _HomePageState extends State<HomePage> with TrayListener {
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15), // 根据实际需要设置圆角半径
-                  color: Theme.of(context).colorScheme.onPrimary,
+                  color: Theme.of(context).colorScheme.surfaceTint,
                 ),
                 padding: const EdgeInsets.symmetric(
                     vertical: 20.0, horizontal: 30.0),
@@ -322,12 +317,13 @@ class _HomePageState extends State<HomePage> with TrayListener {
                 ),
               ),
             ),
+            const SizedBox(
+              height: 10,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                SizedBox(
-                    width: 100,
-                    child: Image.asset('assets/images/company.png')),
+                SizedBox(width: 100, child: Image.asset(companyImage)),
               ],
             ),
           ],
@@ -459,7 +455,6 @@ class _HomePageState extends State<HomePage> with TrayListener {
                       child: customFunctionCard(
                           context,
                           localizedStrings.title_serial_port_connection,
-                          "assets/images/line.png",
                           Icons.cable,
                           true),
                     ),
@@ -467,27 +462,24 @@ class _HomePageState extends State<HomePage> with TrayListener {
                   MouseRegion(
                       cursor: SystemMouseCursors.click, // 设置光标为手的形状
                       child: GestureDetector(
-                        onTap: myLicenseInfo.isValid
-                            ? () {
-                                setState(() {
-                                  stopCheckSerialPort();
-                                  setState(() {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const SetSystemTimePage()),
-                                    ).then((value) => _updateStatus());
-                                  });
-                                });
-                              }
-                            : null,
+                        onTap: () {
+                          setState(() {
+                            stopCheckSerialPort();
+                            setState(() {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const SetSystemTimePage()),
+                              ).then((value) => _updateStatus());
+                            });
+                          });
+                        },
                         child: customFunctionCard(
                             context,
                             localizedStrings.device_time_title,
-                            "assets/images/line.png",
                             Icons.date_range,
-                            myLicenseInfo.isValid),
+                            true),
                       )),
                 ]),
               ),
@@ -511,8 +503,7 @@ class _HomePageState extends State<HomePage> with TrayListener {
                 padding: const EdgeInsets.symmetric(
                     vertical: 10.0, horizontal: 20.0),
                 child: functionTitle(
-                    localizedStrings.customization_setting_title,
-                    Icons.settings),
+                    localizedStrings.device_setting_title, Icons.settings),
               ),
               Expanded(
                 child: ListView(
@@ -534,7 +525,6 @@ class _HomePageState extends State<HomePage> with TrayListener {
                           child: customFunctionCard(
                               context,
                               localizedStrings.bt_setting_title,
-                              "assets/images/line.png",
                               Icons.bluetooth,
                               (myScreenMgr.wifiOrBt.contains('bt'))),
                         ),
@@ -561,7 +551,6 @@ class _HomePageState extends State<HomePage> with TrayListener {
                             child: customFunctionCard(
                                 context,
                                 localizedStrings.wifi_setting_title,
-                                "assets/images/line.png",
                                 Icons.wifi,
                                 (myScreenMgr.wifiOrBt.contains('wifi'))),
                           )),
@@ -577,7 +566,6 @@ class _HomePageState extends State<HomePage> with TrayListener {
                           child: customFunctionCard(
                               context,
                               localizedStrings.update_firmware,
-                              "assets/images/line.png",
                               Icons.update,
                               true),
                         ),
@@ -597,7 +585,6 @@ class _HomePageState extends State<HomePage> with TrayListener {
                           child: customFunctionCard(
                               context,
                               localizedStrings.label_fmt_download,
-                              "assets/images/line.png",
                               Icons.arrow_circle_down_outlined,
                               true),
                         ),
@@ -616,7 +603,6 @@ class _HomePageState extends State<HomePage> with TrayListener {
                           child: customFunctionCard(
                             context,
                             localizedStrings.receipt_format_download,
-                            "assets/images/line.png",
                             Icons.receipt_long_outlined,
                             true,
                           ),
@@ -625,23 +611,20 @@ class _HomePageState extends State<HomePage> with TrayListener {
                       MouseRegion(
                         cursor: SystemMouseCursors.click, // 设置光标为手的形状
                         child: GestureDetector(
-                          onTap: myLicenseInfo.isValid
-                              ? () {
-                                  stopCheckSerialPort();
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const CustomSerialProtocol()),
-                                  ).then((value) => _updateStatus());
-                                }
-                              : null,
+                          onTap: () {
+                            // stopCheckSerialPort();
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //       builder: (context) =>
+                            //           const CustomSerialProtocol()),
+                            // ).then((value) => _updateStatus());
+                          },
                           child: customFunctionCard(
                               context,
-                              localizedStrings.serial_output,
-                              "assets/images/line.png",
+                              localizedStrings.serial_output_download,
                               Icons.usb_sharp,
-                              myLicenseInfo.isValid),
+                              true),
                         ),
                       ),
                       MouseRegion(
@@ -655,7 +638,6 @@ class _HomePageState extends State<HomePage> with TrayListener {
                           child: customFunctionCard(
                               context,
                               localizedStrings.get_build_info,
-                              "assets/images/line.png",
                               Icons.privacy_tip,
                               true),
                         ),
@@ -699,7 +681,6 @@ class _HomePageState extends State<HomePage> with TrayListener {
                         child: customFunctionCard(
                             context,
                             localizedStrings.label_design_title,
-                            "assets/images/line.png",
                             Icons.design_services,
                             myLicenseInfo.isValid),
                       ),
@@ -715,7 +696,6 @@ class _HomePageState extends State<HomePage> with TrayListener {
                         child: customFunctionCard(
                           context,
                           localizedStrings.receipt_design_title,
-                          "assets/images/line.png",
                           Icons.receipt,
                           myLicenseInfo.isValid,
                         ),
@@ -738,8 +718,28 @@ class _HomePageState extends State<HomePage> with TrayListener {
                         child: customFunctionCard(
                             context,
                             localizedStrings.batch_delivery_title,
-                            "assets/images/line.png",
                             Icons.system_update_alt,
+                            myLicenseInfo.isValid),
+                      ),
+                    ),
+                    MouseRegion(
+                      cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                      child: GestureDetector(
+                        onTap: myLicenseInfo.isValid
+                            ? () {
+                                stopCheckSerialPort();
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const CustomSerialProtocol()),
+                                ).then((value) => _updateStatus());
+                              }
+                            : null,
+                        child: customFunctionCard(
+                            context,
+                            localizedStrings.serial_output_design,
+                            Icons.usb_sharp,
                             myLicenseInfo.isValid),
                       ),
                     ),
@@ -764,7 +764,6 @@ class _HomePageState extends State<HomePage> with TrayListener {
                           child: customFunctionCard(
                               context,
                               localizedStrings.abnormal_data_title,
-                              "assets/images/line.png",
                               Icons.warning,
                               myLicenseInfo.isValid),
                         )),
@@ -789,7 +788,6 @@ class _HomePageState extends State<HomePage> with TrayListener {
                           child: customFunctionCard(
                               context,
                               localizedStrings.parameter_set_title,
-                              "assets/images/line.png",
                               Icons.tune_outlined,
                               myLicenseInfo.isValid),
                         )),

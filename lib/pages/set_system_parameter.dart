@@ -5,8 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:t_max/data/eeprom_info.dart';
 import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
-import '../../generated/l10n.dart';
+
 import '../data/downloadresponse.dart';
+import '../data/language.dart';
 import '../data/scale_info_from_scale.dart';
 import '../data/screen_mgr.dart';
 import '../data/timer_manager.dart';
@@ -137,12 +138,6 @@ class SetParameterPageState extends State<SetParameterPage> {
     super.dispose();
   }
 
-  dynamic localizedStrings;
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
   void startTimer() {}
 
   void stopTimer() {
@@ -170,7 +165,6 @@ class SetParameterPageState extends State<SetParameterPage> {
 
   @override
   Widget build(BuildContext context) {
-    localizedStrings = S.of(context);
     // final _width = MediaQuery.of(context).size.width;
     final _height = MediaQuery.of(context).size.height;
 

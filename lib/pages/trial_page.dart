@@ -6,16 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/data/license_data.dart';
 import 'package:t_max/eventbus/eventbus.dart';
-
 import '../data/get_theme_color.dart';
+import '../data/language.dart';
 import '../data/setting_version_info.dart';
-import '../generated/l10n.dart';
-
 import '../data/comscaleinfo_data.dart';
 import '../data/currentport_data.dart';
 import '../data/device_data.dart';
 import '../functions/methods.dart';
-
+import '../generated/l10n.dart';
 import '../widget/box_gradient.dart';
 import '../widget/theme_color.dart';
 import '../widget/version.dart';
@@ -41,10 +39,16 @@ class TrialPageState extends State<TrialPage> {
   TextEditingController licenseController = TextEditingController();
   String systemId = '';
   String errMessage = '';
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    localizedStrings = S.of(context);
+  }
 
   @override
   void initState() {
     super.initState();
+    setState(() {});
     pidController.text = systemId;
     licenseController.text = '';
 
@@ -73,9 +77,7 @@ class TrialPageState extends State<TrialPage> {
             PublicFunctions.getOneEepromInfo("wifi_or_bt");
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) {
-              return mySystemVersionInfo.getHomePage(mySystemVersion);
-              // return const HomePage();
-              // return const IndustryHomePage();
+              return mySystemVersionInfo.getHomePage();
             }));
           }
         });
@@ -129,12 +131,8 @@ class TrialPageState extends State<TrialPage> {
         });
       }
     });
-
-    //初始化
-    // WebsocketManager.init();
   }
 
-  dynamic localizedStrings;
   @override
   void dispose() {
     _eventbus1.cancel();
@@ -142,13 +140,8 @@ class TrialPageState extends State<TrialPage> {
     _eventbus3.cancel();
     pidController.dispose();
     licenseController.dispose();
-    super.dispose();
-  }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    localizedStrings = S.of(context);
+    super.dispose();
   }
 
   @override
@@ -332,8 +325,7 @@ class TrialPageState extends State<TrialPage> {
                                                         builder: (context) {
                                                   // return const HomePage();
                                                   return mySystemVersionInfo
-                                                      .getHomePage(
-                                                          mySystemVersion);
+                                                      .getHomePage();
                                                 }));
                                               });
                                             },
@@ -385,9 +377,7 @@ class TrialPageState extends State<TrialPage> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               SizedBox(
-                                  width: 250,
-                                  child:
-                                      Image.asset('assets/images/company.png')),
+                                  width: 250, child: Image.asset(companyImage)),
                               const SizedBox(width: 100)
                             ],
                           )

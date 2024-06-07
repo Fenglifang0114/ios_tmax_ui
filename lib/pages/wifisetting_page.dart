@@ -10,12 +10,13 @@ import 'package:t_max/data/writelog.dart';
 import 'package:t_max/main.dart';
 import '../data/downloadresponse.dart';
 import '../data/ipinfodata.dart';
+import '../data/language.dart';
 import '../data/scale_info_from_scale.dart';
 import '../data/screen_mgr.dart';
 import '../data/timer_manager.dart';
 import '../eventbus/eventbus.dart';
 import '../functions/methods.dart';
-import '../generated/l10n.dart';
+import '../widget/custom_button.dart';
 import '../widget/page_head.dart';
 import '../widget/wifitextfeild.dart';
 
@@ -98,13 +99,8 @@ class WifiSettingPageState extends State<WifiSettingPage> {
   }
 
   var errorMessage = 'Obtaining AP list and Ip info,please wait...';
-  dynamic localizedStrings;
+
   String setMessage = '';
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    localizedStrings = S.of(context);
-  }
 
   @override
   void initState() {
@@ -370,7 +366,6 @@ class WifiSettingPageState extends State<WifiSettingPage> {
 
   @override
   Widget build(BuildContext context) {
-    localizedStrings = S.of(context);
     setMessage = localizedStrings.set_wifi_success;
     // final _width = MediaQuery.of(context).size.width;
     // final _height = MediaQuery.of(context).size.height;
@@ -384,179 +379,189 @@ class WifiSettingPageState extends State<WifiSettingPage> {
         body: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Expanded(
             flex: 2,
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height,
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  SizedBox(
-                      height: 100,
-                      // color: Theme.of(context).colorScheme.primary,
-                      child: Column(
-                        children: [
-                          Expanded(
-                              child: Row(children: [
-                            SizedBox(
-                              width: 40, // 为Container指定一个固定的宽度
-                              child: Tooltip(
-                                message: localizedStrings.refresh_tip,
-                                child: IconButton(
-                                  splashRadius: 20,
-                                  onPressed: _enableRefresh
-                                      ? () {
-                                          setState(() {
-                                            _enableRefresh = false;
-                                            errorMessage = '';
-                                          });
-                                          cntScaleTimerMgr.stopCntScaleTimer();
+            child: Container(
+              color: Theme.of(context).colorScheme.surfaceTint,
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height,
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    SizedBox(
+                        height: 100,
+                        // color: Theme.of(context).colorScheme.primary,
+                        child: Column(
+                          children: [
+                            Expanded(
+                                child: Row(children: [
+                              SizedBox(
+                                width: 40, // 为Container指定一个固定的宽度
+                                child: Tooltip(
+                                  message: localizedStrings.refresh_tip,
+                                  child: IconButton(
+                                    splashRadius: 20,
+                                    onPressed: _enableRefresh
+                                        ? () {
+                                            setState(() {
+                                              _enableRefresh = false;
+                                              errorMessage = '';
+                                            });
+                                            cntScaleTimerMgr
+                                                .stopCntScaleTimer();
 
-                                          PublicFunctions.getWifiList();
-                                        }
-                                      : null,
-                                  icon: Icon(
-                                    Icons.refresh,
-                                    color: _enableRefresh
-                                        ? Theme.of(context).colorScheme.primary
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .background,
+                                            PublicFunctions.getWifiList();
+                                          }
+                                        : null,
+                                    icon: Icon(
+                                      Icons.refresh,
+                                      color: _enableRefresh
+                                          ? Theme.of(context)
+                                              .colorScheme
+                                              .primary
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .background,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            Expanded(
-                              child: TextField(
-                                controller: _findWifiText,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor:
-                                      Theme.of(context).colorScheme.onPrimary,
-                                  suffixIcon: IconButton(
-                                    splashRadius: 20,
-                                    icon: Icon(
-                                      Icons.close,
+                              Expanded(
+                                child: TextField(
+                                  controller: _findWifiText,
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor: Theme.of(context)
+                                        .colorScheme
+                                        .surfaceTint,
+                                    suffixIcon: IconButton(
+                                      splashRadius: 20,
+                                      icon: Icon(
+                                        Icons.close,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          _findWifiText.clear();
+                                          displayedItems = wifiItems;
+                                        });
+                                      },
+                                    ),
+                                    prefixIcon: Icon(
+                                      Icons.search,
                                       color:
                                           Theme.of(context).colorScheme.primary,
                                     ),
-                                    onPressed: () {
-                                      setState(() {
-                                        _findWifiText.clear();
-                                        displayedItems = wifiItems;
-                                      });
-                                    },
-                                  ),
-                                  prefixIcon: Icon(
-                                    Icons.search,
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                  ),
-                                  labelText: localizedStrings.find_ssid,
-                                  floatingLabelBehavior:
-                                      FloatingLabelBehavior.never,
-                                  border: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onPrimary, // 设置边框颜色
-                                      width: 2.0, // 设置边框宽度
-                                    ),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(4)),
-                                  ),
-                                ),
-                                onChanged: (value) {
-                                  List<String> filteredItems = wifiItems
-                                      .where((item) => item
-                                          .toLowerCase()
-                                          .contains(value.toLowerCase()))
-                                      .toList();
-                                  setState(() {
-                                    displayedItems = filteredItems;
-                                  });
-                                },
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                          ])),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                        ],
-                      )),
-                  Divider(
-                    height: 2,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: displayedItems.length,
-                      itemBuilder: (context, index) {
-                        return SizedBox(
-                          child: Column(
-                            children: [
-                              ListTile(
-                                dense: true,
-                                title: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      displayedItems[index],
-                                      maxLines: 1, // 设置文本最大行数为1
-                                      style: const TextStyle(
-                                        overflow: TextOverflow.ellipsis,
+                                    labelText: localizedStrings.find_ssid,
+                                    floatingLabelBehavior:
+                                        FloatingLabelBehavior.never,
+                                    border: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary, // 设置边框颜色
+                                        width: 2.0, // 设置边框宽度
                                       ),
-                                    )
-                                  ],
-                                ),
-                                subtitle: Text(
-                                  bssidList[index],
-                                  maxLines: 1, // 设置文本最大行数为1
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    overflow: TextOverflow.ellipsis,
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(4)),
+                                    ),
                                   ),
+                                  onChanged: (value) {
+                                    List<String> filteredItems = wifiItems
+                                        .where((item) => item
+                                            .toLowerCase()
+                                            .contains(value.toLowerCase()))
+                                        .toList();
+                                    setState(() {
+                                      displayedItems = filteredItems;
+                                    });
+                                  },
                                 ),
-                                trailing: Icon((wifiRssiList[index] == 4)
-                                    ? Icons.wifi
-                                    : (wifiRssiList[index] == 3)
-                                        ? Icons.wifi_2_bar
-                                        : (wifiRssiList[index] == 2 ||
-                                                wifiRssiList[index] == 1)
-                                            ? Icons.wifi_1_bar
-                                            : Icons.wifi),
-                                tileColor: selectedIndex == index
-                                    ? Theme.of(context).colorScheme.scrim
-                                    : null,
-                                onTap: () {
-                                  setState(() {
-                                    selectedIndex = index;
-                                    // 更新文本框中的值
-                                    ssidController.text = displayedItems[index];
-                                    if (index <
-                                        myWifiListInfo.wifidatalist!.length) {
-                                      bssId = myWifiListInfo
-                                          .wifidatalist![index].mac!;
-                                    }
-                                  });
-                                },
-                              )
-                            ],
-                          ),
-                        );
-                      },
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                            ])),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                          ],
+                        )),
+                    Divider(
+                      height: 2,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
-                  ),
-                ],
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: displayedItems.length,
+                        itemBuilder: (context, index) {
+                          return SizedBox(
+                            child: Column(
+                              children: [
+                                ListTile(
+                                  dense: true,
+                                  title: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        displayedItems[index],
+                                        maxLines: 1, // 设置文本最大行数为1
+                                        style: const TextStyle(
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  subtitle: Text(
+                                    bssidList[index],
+                                    maxLines: 1, // 设置文本最大行数为1
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  trailing: Icon((wifiRssiList[index] == 4)
+                                      ? Icons.wifi
+                                      : (wifiRssiList[index] == 3)
+                                          ? Icons.wifi_2_bar
+                                          : (wifiRssiList[index] == 2 ||
+                                                  wifiRssiList[index] == 1)
+                                              ? Icons.wifi_1_bar
+                                              : Icons.wifi),
+                                  tileColor: selectedIndex == index
+                                      ? Theme.of(context).colorScheme.scrim
+                                      : null,
+                                  onTap: () {
+                                    setState(() {
+                                      selectedIndex = index;
+                                      // 更新文本框中的值
+                                      ssidController.text =
+                                          displayedItems[index];
+                                      if (index <
+                                          myWifiListInfo.wifidatalist!.length) {
+                                        bssId = myWifiListInfo
+                                            .wifidatalist![index].mac!;
+                                      }
+                                    });
+                                  },
+                                )
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
           Expanded(
               flex: 7,
               child: Container(
-                  color: Theme.of(context).colorScheme.onPrimary,
+                  color: Theme.of(context).colorScheme.surfaceTint,
                   child: Column(
                     children: [
                       Container(
@@ -906,31 +911,12 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: [
-                                            OutlinedButton(
-                                              style: ButtonStyle(
-                                                side: MaterialStateProperty.all(
-                                                    BorderSide(
-                                                        width: 2,
-                                                        color: Theme.of(context)
-                                                            .colorScheme
-                                                            .primary)),
-                                              ),
-                                              child: SizedBox(
-                                                width: 150,
-                                                height: 40,
-                                                child: Center(
-                                                  child: Text(
-                                                    localizedStrings
-                                                        .button_get_ip,
-                                                    textAlign: TextAlign.center,
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: const TextStyle(
-                                                        fontSize: 20.0),
-                                                  ),
-                                                ),
-                                              ),
+                                            CustomOutlinedButton(
+                                              btnWidth: 120,
+                                              btnHeight: 40,
+                                              icon: Icons.double_arrow,
+                                              text: localizedStrings
+                                                  .button_get_ip,
                                               onPressed: isConnecting
                                                   ? null
                                                   : () {
@@ -947,31 +933,13 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                             const SizedBox(
                                               width: 20,
                                             ),
-                                            OutlinedButton(
-                                              style: ButtonStyle(
-                                                side: MaterialStateProperty.all(
-                                                    BorderSide(
-                                                        width: 2,
-                                                        color: Theme.of(context)
-                                                            .colorScheme
-                                                            .primary)),
-                                              ),
-                                              child: SizedBox(
-                                                width: 150,
-                                                height: 40,
-                                                child: Center(
-                                                  child: Text(
-                                                    localizedStrings
-                                                        .button_static,
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    textAlign: TextAlign.center,
-                                                    style: const TextStyle(
-                                                        fontSize: 20.0),
-                                                  ),
-                                                ),
-                                              ),
+                                            CustomOutlinedButton(
+                                              btnWidth: 120,
+                                              btnHeight: 40,
+                                              icon:
+                                                  Icons.check_box_outline_blank,
+                                              text: localizedStrings
+                                                  .button_static,
                                               onPressed:
                                                   (_isStatic || isConnecting)
                                                       ? null
@@ -988,45 +956,19 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                             const SizedBox(
                                               width: 20,
                                             ),
-                                            OutlinedButton(
-                                              style: ButtonStyle(
-                                                side: MaterialStateProperty.all(
-                                                    BorderSide(
-                                                        width: 2,
-                                                        color: Theme.of(context)
-                                                            .colorScheme
-                                                            .primary)),
-                                              ),
-                                              child: SizedBox(
-                                                width: 150,
-                                                height: 40,
-                                                child: Center(
-                                                  child: Text(
-                                                    localizedStrings
-                                                        .button_dynamic,
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    textAlign: TextAlign.center,
-                                                    style: const TextStyle(
-                                                        fontSize: 20.0),
-                                                  ),
-                                                ),
-                                              ),
+                                            CustomOutlinedButton(
+                                              btnWidth: 120,
+                                              btnHeight: 40,
+                                              icon: Icons
+                                                  .wifi_protected_setup_outlined,
+                                              text: localizedStrings
+                                                  .button_dynamic,
                                               onPressed:
                                                   (_isStatic && !isConnecting)
                                                       ? () {
                                                           setState(() {
                                                             _isStatic = false;
                                                             errorMessage = '';
-                                                            // dnsController.clear();
-                                                            // netMaskController.clear();
-                                                            // ipController.clear();
-                                                            // gateWayController.clear();
-                                                            // _isValidDns = true;
-                                                            // _isValidGateway = true;
-                                                            // _isValidIP = true;
-                                                            // _isValidMask = true;
                                                           });
                                                           cntScaleTimerMgr
                                                               .stopCntScaleTimer();
@@ -1039,38 +981,11 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                             const SizedBox(
                                               width: 20,
                                             ),
-                                            ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor:
-                                                    Theme.of(context)
-                                                        .colorScheme
-                                                        .primary, // 设置按钮的背景色
-                                                elevation: 10, // 设置按钮的阴影
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          4), // 设置按钮的圆角
-                                                ),
-                                              ),
-                                              child: SizedBox(
-                                                width: 150,
-                                                height: 40,
-                                                child: Center(
-                                                  child: Text(
-                                                    localizedStrings.button_set,
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                        color: Theme.of(context)
-                                                            .colorScheme
-                                                            .onPrimary,
-                                                        fontSize: 18,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
-                                                ),
-                                              ),
+                                            CustomElevatedButton(
+                                              btnWidth: 120,
+                                              btnHeight: 40,
+                                              icon: Icons.wifi,
+                                              text: localizedStrings.button_set,
                                               onPressed: (isValidData() &&
                                                       !isConnecting)
                                                   ? () {
@@ -1086,11 +1001,6 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                                       } else {
                                                         connectDynamicIp();
                                                       }
-
-                                                      // ipController.clear();
-                                                      // netMaskController.clear();
-                                                      // dnsController.clear();
-                                                      // gateWayController.clear();
                                                     }
                                                   : null,
                                             ),

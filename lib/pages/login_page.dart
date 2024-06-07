@@ -158,9 +158,7 @@ class _LoginPageState extends State<LoginPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        SizedBox(
-                            width: 250,
-                            child: Image.asset('assets/images/company.png')),
+                        SizedBox(width: 250, child: Image.asset(companyImage)),
                         const SizedBox(width: 100)
                       ],
                     )

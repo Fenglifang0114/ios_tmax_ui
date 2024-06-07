@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../data/downloadresponse.dart';
 import '../data/header_footer.dart';
+import '../data/language.dart';
 import '../data/scale_info_from_scale.dart';
 import '../data/scalecmd_data.dart';
 import '../data/screen_mgr.dart';
 import '../data/timer_manager.dart';
 import '../eventbus/eventbus.dart';
-import '../generated/l10n.dart';
 import '../main.dart';
 import '../widget/page_head.dart';
 
@@ -40,14 +40,6 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
 
   dynamic _eventbus1;
   dynamic _eventbus2;
-
-  dynamic localizedStrings;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    localizedStrings = S.of(context);
-  }
 
   @override
   void initState() {
@@ -120,8 +112,6 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
 
   @override
   Widget build(BuildContext context) {
-    localizedStrings = S.of(context);
-
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),
@@ -186,17 +176,19 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
             ),
           ),
           Expanded(
-            flex: 2,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Align(
-                  alignment: Alignment.topCenter, // 让子组件在顶部中心对齐
-                  child: _buildButtonSection(), // 按钮部分
+              flex: 2,
+              child: Container(
+                color: Theme.of(context).colorScheme.surfaceTint,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Align(
+                      alignment: Alignment.topCenter, // 让子组件在顶部中心对齐
+                      child: _buildButtonSection(), // 按钮部分
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
+              )),
         ],
       ),
       // ),

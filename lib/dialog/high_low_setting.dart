@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/data/high_low_weight.dart';
-import '../../generated/l10n.dart';
+
+import '../data/language.dart';
 
 class HighLowSettingDialog extends StatefulWidget {
   const HighLowSettingDialog({super.key});
@@ -21,13 +22,6 @@ class _HighLowSettingDialogState extends State<HighLowSettingDialog> {
     minValueController.text = myHighLowWeight.lowValue.toString();
 
     super.initState();
-  }
-
-  dynamic localizedStrings;
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    localizedStrings = S.of(context);
   }
 
   @override

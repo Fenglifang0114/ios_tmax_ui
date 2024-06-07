@@ -16,9 +16,10 @@ import '../../data/userinfo_data.dart';
 import '../../data/weight_data.dart';
 import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
-import '../../generated/l10n.dart';
+
 import '../../main.dart';
 import '../data/downloadresponse.dart';
+import '../data/language.dart';
 import '../data/record_data.dart';
 import '../data/scale_info_from_scale.dart';
 import '../data/scalecmd_data.dart';
@@ -32,6 +33,7 @@ import '../dialog/setting_dialog.dart';
 import 'package:path/path.dart';
 
 import '../dialog/weight_report_feilds_setting.dart';
+import '../widget/custom_button.dart';
 import '../widget/page_head.dart';
 
 class WeightDataCollectionPage extends StatefulWidget {
@@ -428,15 +430,8 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     super.dispose();
   }
 
-  dynamic localizedStrings;
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
   @override
   Widget build(BuildContext context) {
-    localizedStrings = S.of(context);
     final _width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: PreferredSize(
@@ -451,7 +446,8 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
   Widget firstLayout(BuildContext context, double _width) {
     return Container(
         width: _width,
-        decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
+        decoration:
+            BoxDecoration(color: Theme.of(context).colorScheme.surfaceTint),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           // mainAxisSize: MainAxisSize.max,
@@ -665,93 +661,70 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            SizedBox(
-                              width: 80,
-                              child: ElevatedButton(
-                                  onPressed: () {
-                                    PublicFunctions.performTare();
-                                  },
-                                  child: Text(localizedStrings.button_tare,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal))),
+                            CustomElevatedButton(
+                              btnWidth: 100,
+                              btnHeight: 40,
+                              icon: Icons.title,
+                              text: localizedStrings.button_tare,
+                              onPressed: () {
+                                PublicFunctions.performTare();
+                              },
                             ),
-                            SizedBox(
-                              width: 80,
-                              child: ElevatedButton(
-                                  onPressed: () {
-                                    PublicFunctions.performZero();
-                                  },
-                                  child: Text(localizedStrings.button_zero,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal))),
+                            CustomElevatedButton(
+                              btnWidth: 100,
+                              btnHeight: 40,
+                              icon: Icons.exposure_zero,
+                              text: localizedStrings.button_zero,
+                              onPressed: () {
+                                PublicFunctions.performZero();
+                              },
                             ),
-                            SizedBox(
-                              width: 80,
-                              child: ElevatedButton(
-                                  onPressed: _isSaveButtonDisabled
-                                      ? null
-                                      : _changeSaveButton,
-                                  child: Text(localizedStrings.button_save,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal))),
+                            CustomElevatedButton(
+                              btnWidth: 100,
+                              btnHeight: 40,
+                              icon: Icons.save_outlined,
+                              text: localizedStrings.button_save,
+                              onPressed: _isSaveButtonDisabled
+                                  ? null
+                                  : _changeSaveButton,
                             ),
                           ],
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            SizedBox(
-                              width: 80,
-                              child: ElevatedButton(
-                                  onPressed: () {
-                                    //跳转页面
-                                    mySettingParam = myModeSettingNormal;
-                                    paramSettingDialog(context);
-                                  },
-                                  child: Text(localizedStrings.button_setting,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal))),
+                            CustomElevatedButton(
+                              btnWidth: 100,
+                              btnHeight: 40,
+                              icon: Icons.settings_outlined,
+                              text: localizedStrings.button_setting,
+                              onPressed: () {
+                                //跳转页面
+                                mySettingParam = myModeSettingNormal;
+                                paramSettingDialog(context);
+                              },
                             ),
-                            SizedBox(
-                              width: 80,
-                              child: ElevatedButton(
-                                  // elevation: 5.0,
-                                  child: Text(
-                                      localizedStrings.button_export_report,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal)),
-                                  onPressed: () async {
-                                    final directory = Directory.current.path;
-                                    String? outputFile =
-                                        (await FilePicker.platform.saveFile(
-                                      initialDirectory: directory,
-                                      type: FileType.custom,
-                                      dialogTitle: 'Output file:',
-                                      allowedExtensions: ["xlsx"],
-                                      fileName: 'report.xlsx',
-                                    ));
-                                    if (outputFile != null) {
-                                      _creatFile(outputFile);
-                                    }
-                                  }),
-                            ),
+                            CustomElevatedButton(
+                                btnWidth: 100,
+                                btnHeight: 40,
+                                icon: Icons.outbox,
+                                text: localizedStrings.button_export_report,
+                                onPressed: () async {
+                                  final directory = Directory.current.path;
+                                  String? outputFile =
+                                      (await FilePicker.platform.saveFile(
+                                    initialDirectory: directory,
+                                    type: FileType.custom,
+                                    dialogTitle: 'Output file:',
+                                    allowedExtensions: ["xlsx"],
+                                    fileName: 'report.xlsx',
+                                  ));
+                                  if (outputFile != null) {
+                                    _creatFile(outputFile);
+                                  }
+                                }),
                             const SizedBox(
-                              width: 80,
+                              width: 160,
                             )
                           ],
                         )
@@ -761,7 +734,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                 ],
               ),
             ),
-            //////////////
+
             const SizedBox(height: 5),
             Container(
                 height: 40,
@@ -815,29 +788,23 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                         width: constraints.maxWidth / 10,
                         padding: const EdgeInsets.all(0),
                       ),
-                      SizedBox(
-                        width: constraints.maxWidth / 10,
-                        child: MaterialButton(
-                            color: Theme.of(context).colorScheme.primary,
-                            textColor: Theme.of(context).colorScheme.onPrimary,
-                            elevation: 5.0,
-                            child: Text(localizedStrings.plu_edit,
-                                style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal)),
-                            onPressed: () {
-                              getProductList();
-                              addProductDialog(context).then((onvalue) {
-                                if (!productNameList
-                                    .contains(productNameValue)) {
-                                  myProductRecInfo.product = "";
-                                  productNameValue = "";
-                                  myProductRecInfo.id = "";
-                                  myProductRecInfo.withPretare = false;
-                                  myProductRecInfo.remarks = "";
-                                }
-                              });
-                            }),
+                      CustomElevatedButton(
+                        btnWidth: constraints.maxWidth / 10 - 30,
+                        btnHeight: 40,
+                        icon: Icons.edit_note_outlined,
+                        text: localizedStrings.plu_edit,
+                        onPressed: () {
+                          getProductList();
+                          addProductDialog(context).then((onvalue) {
+                            if (!productNameList.contains(productNameValue)) {
+                              myProductRecInfo.product = "";
+                              productNameValue = "";
+                              myProductRecInfo.id = "";
+                              myProductRecInfo.withPretare = false;
+                              myProductRecInfo.remarks = "";
+                            }
+                          });
+                        },
                       ),
                       SizedBox(
                         width: constraints.maxWidth / 10,
@@ -858,11 +825,11 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                           value: userNameValue,
                           onChanged: (String? newPosition) {
                             setState(() {
-                              myUserInfo.name = newPosition.toString();
+                              userNameValue = newPosition.toString();
                               for (var i = 0;
                                   i < myUserInfoList.userInfo!.length;
                                   i++) {
-                                if (myUserInfo.name ==
+                                if (userNameValue ==
                                     myUserInfoList.userInfo![i].name) {
                                   myUserInfo = myUserInfoList.userInfo![i];
                                   eventBus.fire(EventUserInfo(myUserInfo));
@@ -882,17 +849,24 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                         width: constraints.maxWidth / 10,
                         padding: const EdgeInsets.all(0),
                       ),
-                      SizedBox(
-                        width: constraints.maxWidth / 10,
-                        child: MaterialButton(
-                            color: Theme.of(context).colorScheme.primary,
-                            textColor: Theme.of(context).colorScheme.onPrimary,
-                            elevation: 5.0,
-                            child: Text(localizedStrings.user_edit,
-                                style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal)),
-                            onPressed: () {
+                      CustomElevatedButton(
+                        btnWidth: constraints.maxWidth / 10 - 30,
+                        btnHeight: 40,
+                        icon: Icons.edit_note_outlined,
+                        text: localizedStrings.user_edit,
+                        onPressed: () {
+                          PublicFunctions.getUserList();
+                          getUserNameList();
+                          if (!userNameList.contains(userNameValue)) {
+                            myUserInfo.name = "";
+                            userNameValue = "";
+                            myUserInfo.id = "";
+                            myUserInfo.isFemale = true;
+                            myUserInfo.phone = "";
+                            myUserInfo.remarks = "";
+                          }
+                          addUserDialog(context).then((onvalue) {
+                            setState(() {
                               PublicFunctions.getUserList();
                               getUserNameList();
                               if (!userNameList.contains(userNameValue)) {
@@ -903,49 +877,27 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                                 myUserInfo.phone = "";
                                 myUserInfo.remarks = "";
                               }
-                              addUserDialog(context).then((onvalue) {
-                                setState(() {
-                                  PublicFunctions.getUserList();
-                                  getUserNameList();
-                                  if (!userNameList.contains(userNameValue)) {
-                                    myUserInfo.name = "";
-                                    userNameValue = "";
-                                    myUserInfo.id = "";
-                                    myUserInfo.isFemale = true;
-                                    myUserInfo.phone = "";
-                                    myUserInfo.remarks = "";
-                                  }
-                                });
-                              });
-                            }),
+                            });
+                          });
+                        },
                       ),
-                      SizedBox(
-                        width: constraints.maxWidth / 10,
-                        child: MaterialButton(
-                            color: Theme.of(context).colorScheme.primary,
-                            textColor: Theme.of(context).colorScheme.onPrimary,
-                            elevation: 5.0,
-                            child: Text(localizedStrings.report_set_btn,
-                                style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal)),
-                            onPressed: () {
-                              reportFieldsSettingDialog(context);
-                            }),
+                      CustomOutlinedButton(
+                        btnWidth: constraints.maxWidth / 10 - 30,
+                        btnHeight: 40,
+                        icon: Icons.settings_applications_rounded,
+                        text: localizedStrings.report_set_btn,
+                        onPressed: () {
+                          reportFieldsSettingDialog(context);
+                        },
                       ),
-                      SizedBox(
-                        width: constraints.maxWidth / 10,
-                        child: MaterialButton(
-                            color: Theme.of(context).colorScheme.primary,
-                            textColor: Theme.of(context).colorScheme.onPrimary,
-                            elevation: 5.0,
-                            child: Text(localizedStrings.report_delete_btn,
-                                style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal)),
-                            onPressed: () {
-                              _showConfirmationDialog(context);
-                            }),
+                      CustomOutlinedButton(
+                        btnWidth: constraints.maxWidth / 10 - 30,
+                        btnHeight: 40,
+                        icon: Icons.delete_forever_outlined,
+                        text: localizedStrings.report_delete_btn,
+                        onPressed: () {
+                          _showConfirmationDialog(context);
+                        },
                       ),
                     ],
                   );
@@ -975,18 +927,29 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
           ),
           content: Text(localizedStrings.data_delete_confirm),
           actions: <Widget>[
-            OutlinedButton(
-              child: Text(localizedStrings.button_cancel),
-              onPressed: () {
-                Navigator.of(context).pop(false); // 不跳转
-              },
-            ),
-            OutlinedButton(
-              child: Text(localizedStrings.confirm_btn),
-              onPressed: () {
-                Navigator.of(context).pop(true); // 跳转
-              },
-            ),
+            Row(
+              children: [
+                CustomElevatedButton(
+                  btnWidth: 100,
+                  btnHeight: 40,
+                  icon: Icons.check_circle,
+                  text: localizedStrings.confirm_btn,
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  },
+                ),
+                const SizedBox(width: 20),
+                CustomOutlinedButton(
+                  btnWidth: 100,
+                  btnHeight: 40,
+                  icon: Icons.cancel,
+                  text: localizedStrings.button_cancel,
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
+                ),
+              ],
+            )
           ],
         );
       },

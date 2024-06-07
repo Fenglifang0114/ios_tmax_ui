@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import '../data/company_info.dart';
+import '../data/language.dart';
 import '../data/scale_info_from_scale.dart';
 import '../data/screen_mgr.dart';
-import '../data/setting_version_info.dart';
 import '../data/timer_manager.dart';
 import '../dialog/language_setting.dart';
 import '../eventbus/eventbus.dart';
-import '../generated/l10n.dart';
 import '../widget/custom_circle_icon.dart';
 import '../dialog/license_info.dart';
 import '../widget/home_page_widget.dart';
@@ -57,20 +57,13 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
     super.dispose();
   }
 
-  dynamic localizedStrings;
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    localizedStrings = S.of(context);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),
-        child: pageHead(context, mySystemVersionInfo.getTitle(mySystemVersion),
-            localizedStrings.serial_port_status),
+        child: pageHead(
+            context, myAppName.appName!, localizedStrings.serial_port_status),
       ),
       body: Container(
         color: Theme.of(context).colorScheme.surface,
@@ -114,7 +107,7 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
     );
   }
 
-  Widget settingCard(String titleName, String iconImage, IconData iconInfo) {
+  Widget settingCard(String titleName, IconData iconInfo) {
     return Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
@@ -124,10 +117,13 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
             height: 80,
             child: Row(
               children: [
-                Image.asset(
-                  iconImage,
-                  width: 30,
+                Container(
+                  width: 3.0,
                   height: 30,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                const SizedBox(
+                  width: 25,
                 ),
                 ShaderMask(
                   shaderCallback: (bounds) {
@@ -176,8 +172,8 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
                   onTap: () {
                     setLanguageDialog(context);
                   },
-                  child: settingCard(localizedStrings.set_language_title,
-                      "assets/images/line.png", Icons.language),
+                  child: settingCard(
+                      localizedStrings.set_language_title, Icons.language),
                 ),
               ),
               const SizedBox(
@@ -191,7 +187,6 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
                   },
                   child: settingCard(
                     localizedStrings.license_info_title,
-                    "assets/images/line.png",
                     Icons.key,
                   ),
                 ),

@@ -8,16 +8,16 @@ import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/pages/down_recipt_fmt_page.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
+import '../data/company_info.dart';
 import '../data/comscaleinfo_data.dart';
 import '../data/currentport_data.dart';
 import '../data/device_data.dart';
+import '../data/language.dart';
 import '../data/screen_mgr.dart';
-import '../data/setting_version_info.dart';
 import '../data/timer_manager.dart';
 import '../dialog/get_build_info_dialog.dart';
 import '../dialog/language_setting.dart';
 import '../functions/methods.dart';
-import '../generated/l10n.dart';
 import '../widget/app_info.dart';
 import '../widget/bluetooth_setting.dart';
 import '../widget/box_gradient.dart';
@@ -144,13 +144,6 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
     super.dispose();
   }
 
-  dynamic localizedStrings;
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    localizedStrings = S.of(context);
-  }
-
   @override
   Widget build(BuildContext context) {
     // final _width = MediaQuery.of(context).size.width;
@@ -183,7 +176,7 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
                                 width: 20,
                               ),
                               Text(
-                                mySystemVersionInfo.getTitle(mySystemVersion),
+                                myAppName.appName!,
                                 style: TextStyle(
                                     fontSize: 20,
                                     color: Theme.of(context)
@@ -294,12 +287,13 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
                 ),
               ),
             ),
+            const SizedBox(
+              height: 10,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                SizedBox(
-                    width: 100,
-                    child: Image.asset('assets/images/company.png')),
+                SizedBox(width: 100, child: Image.asset(companyImage)),
               ],
             ),
           ],
@@ -432,7 +426,6 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
                       child: customFunctionCard(
                         context,
                         localizedStrings.title_serial_port_connection,
-                        "assets/images/line.png",
                         Icons.cable,
                         true,
                       ),
@@ -459,7 +452,6 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
                         child: customFunctionCard(
                           context,
                           localizedStrings.set_ethernet_ip_title,
-                          "assets/images/line.png",
                           Icons.settings_ethernet,
                           true,
                         ),
@@ -476,7 +468,6 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
                       child: customFunctionCard(
                         context,
                         localizedStrings.update_firmware,
-                        "assets/images/line.png",
                         Icons.update,
                         true,
                       ),
@@ -493,7 +484,6 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
                       child: customFunctionCard(
                         context,
                         localizedStrings.get_build_info,
-                        "assets/images/line.png",
                         Icons.privacy_tip,
                         true,
                       ),
@@ -545,7 +535,6 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
                           child: appCard(
                               context,
                               localizedStrings.variable_value_setting_title,
-                              "assets/images/line.png",
                               Icons.edit_attributes_outlined,
                               true,
                               'This application is used to distribute various variable information, such as headers and footers.'),
@@ -568,7 +557,6 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
                         child: appCard(
                             context,
                             "PLU Download",
-                            "assets/images/line.png",
                             Icons.shopping_bag,
                             true,
                             'This application is used to download product information.'),
@@ -588,7 +576,6 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
                         child: appCard(
                             context,
                             localizedStrings.receipt_format_download,
-                            "assets/images/line.png",
                             Icons.receipt_long_outlined,
                             true,
                             'This application is used to download the print format of the receipt.'),
@@ -605,7 +592,6 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
                         child: appCard(
                             context,
                             localizedStrings.receipt_design_title,
-                            "assets/images/line.png",
                             Icons.receipt,
                             myLicenseInfo.isValid,
                             'This application is designed for the printing format of the receipt.'),

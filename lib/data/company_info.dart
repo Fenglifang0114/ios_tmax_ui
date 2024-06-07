@@ -28,3 +28,18 @@ class CompanyInfo {
 }
 
 CompanyInfo myCompanyInfo = CompanyInfo('', '', '', '', '');
+
+class AppName {
+  String? appName;
+  AppName(this.appName);
+  AppName.fromJson(Map<String, dynamic> json) {
+    appName = json['AppName'];
+  }
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['AppName'] = appName;
+    return data;
+  }
+}
+
+AppName myAppName = AppName('');

@@ -15,9 +15,9 @@ import '../../data/userinfo_data.dart';
 import '../../data/weight_data.dart';
 import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
-import '../../generated/l10n.dart';
 import '../../main.dart';
 import '../data/downloadresponse.dart';
+import '../data/language.dart';
 import '../data/record_data.dart';
 import '../data/scale_info_from_scale.dart';
 import '../data/scalecmd_data.dart';
@@ -503,15 +503,8 @@ class TakeOutPageState extends State<TakeOutPage> {
     super.dispose();
   }
 
-  dynamic localizedStrings;
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
   @override
   Widget build(BuildContext context) {
-    localizedStrings = S.of(context);
     final _width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: PreferredSize(
@@ -581,7 +574,7 @@ class TakeOutPageState extends State<TakeOutPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              color: Theme.of(context).colorScheme.onPrimary,
+              color: Theme.of(context).colorScheme.surfaceTint,
               child: Row(
                 children: [
                   Container(
@@ -613,7 +606,7 @@ class TakeOutPageState extends State<TakeOutPage> {
             Expanded(
               flex: 3,
               child: Container(
-                color: Theme.of(context).colorScheme.onPrimary,
+                color: Theme.of(context).colorScheme.surfaceTint,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -719,7 +712,7 @@ class TakeOutPageState extends State<TakeOutPage> {
             Expanded(
               flex: 3,
               child: Container(
-                color: Theme.of(context).colorScheme.onPrimary,
+                color: Theme.of(context).colorScheme.surfaceTint,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -852,7 +845,7 @@ class TakeOutPageState extends State<TakeOutPage> {
                 child: LayoutBuilder(builder:
                     (BuildContext context, BoxConstraints constraints) {
                   return Container(
-                    color: Theme.of(context).colorScheme.onPrimary,
+                    color: Theme.of(context).colorScheme.surfaceTint,
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
@@ -912,11 +905,11 @@ class TakeOutPageState extends State<TakeOutPage> {
                               value: userNameValue,
                               onChanged: (String? newPosition) {
                                 setState(() {
-                                  myUserInfo.name = newPosition.toString();
+                                  userNameValue = newPosition.toString();
                                   for (var i = 0;
                                       i < myUserInfoList.userInfo!.length;
                                       i++) {
-                                    if (myUserInfo.name ==
+                                    if (userNameValue ==
                                         myUserInfoList.userInfo![i].name) {
                                       myUserInfo = myUserInfoList.userInfo![i];
                                       eventBus.fire(EventUserInfo(myUserInfo));
@@ -962,7 +955,7 @@ class TakeOutPageState extends State<TakeOutPage> {
             Expanded(
               flex: 1,
               child: Container(
-                color: Theme.of(context).colorScheme.onPrimary,
+                color: Theme.of(context).colorScheme.surfaceTint,
               ),
             ),
           ],
@@ -1357,7 +1350,8 @@ class TakeOutPageState extends State<TakeOutPage> {
     }
     return Container(
         width: _width,
-        decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
+        decoration:
+            BoxDecoration(color: Theme.of(context).colorScheme.surfaceTint),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           // mainAxisSize: MainAxisSize.max,
@@ -1884,9 +1878,9 @@ class TakeOutPageState extends State<TakeOutPage> {
                 value: userNameValue,
                 onChanged: (String? newPosition) {
                   setState(() {
-                    myUserInfo.name = newPosition.toString();
+                    userNameValue = newPosition.toString();
                     for (var i = 0; i < myUserInfoList.userInfo!.length; i++) {
-                      if (myUserInfo.name == myUserInfoList.userInfo![i].name) {
+                      if (userNameValue == myUserInfoList.userInfo![i].name) {
                         myUserInfo = myUserInfoList.userInfo![i];
                         eventBus.fire(EventUserInfo(myUserInfo));
                       }

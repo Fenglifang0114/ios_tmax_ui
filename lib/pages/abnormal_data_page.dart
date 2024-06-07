@@ -6,9 +6,11 @@ import 'package:t_max/data/olul_err_data.dart';
 import 'package:t_max/data/scale_info_from_scale.dart';
 import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
-import '../../generated/l10n.dart';
+
+import '../data/language.dart';
 import '../data/screen_mgr.dart';
 import '../data/timer_manager.dart';
+import '../widget/custom_button.dart';
 import '../widget/page_head.dart';
 
 class AbnormalDataPage extends StatefulWidget {
@@ -97,15 +99,8 @@ class AbnormalDataPageState extends State<AbnormalDataPage> {
     super.dispose();
   }
 
-  dynamic localizedStrings;
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
   @override
   Widget build(BuildContext context) {
-    localizedStrings = S.of(context);
     final _width = MediaQuery.of(context).size.width;
     return Scaffold(body: firstLayout(context, _width));
   }
@@ -113,8 +108,9 @@ class AbnormalDataPageState extends State<AbnormalDataPage> {
   Widget firstLayout(context, _width) {
     return Container(
         width: _width,
-        decoration:
-            BoxDecoration(color: Theme.of(context).colorScheme.background),
+        // decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceTint,
+        // ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           // mainAxisSize: MainAxisSize.max,
@@ -125,13 +121,13 @@ class AbnormalDataPageState extends State<AbnormalDataPage> {
             const SizedBox(height: 5),
             Expanded(
               flex: 3,
-              child: Container(
-                color: Theme.of(context).colorScheme.onPrimary,
+              child: SizedBox(
+                // color: Theme.of(context).colorScheme.surfaceTint,
                 child: Column(
                   children: [
                     Container(
-                        height: 30,
-                        color: Theme.of(context).colorScheme.onPrimary,
+                        height: 50,
+                        // color: Theme.of(context).colorScheme.surfaceTint,
                         alignment: Alignment.centerLeft,
                         child: Row(
                           children: [
@@ -145,24 +141,28 @@ class AbnormalDataPageState extends State<AbnormalDataPage> {
                             const SizedBox(
                               width: 20,
                             ),
-                            OutlinedButton(
-                                onPressed: isWeightDataBtn
-                                    ? () {
-                                        cntScaleTimerMgr.stopCntScaleTimer();
-                                        PublicFunctions.getWeightErr();
-                                        setState(() {
-                                          isWeightDataBtn = false;
-                                        });
-                                      }
-                                    : null,
-                                child: const Text('Get abnormal data'))
+                            CustomOutlinedButton(
+                              btnWidth: 120,
+                              btnHeight: 40,
+                              icon: Icons.monitor_weight_outlined,
+                              text: localizedStrings.abnormal_weight,
+                              onPressed: isWeightDataBtn
+                                  ? () {
+                                      cntScaleTimerMgr.stopCntScaleTimer();
+                                      PublicFunctions.getWeightErr();
+                                      setState(() {
+                                        isWeightDataBtn = false;
+                                      });
+                                    }
+                                  : null,
+                            ),
                           ],
                         )),
                     Row(children: [
                       Expanded(
                         flex: 10,
-                        child: Container(
-                          color: Theme.of(context).colorScheme.onPrimary,
+                        child: SizedBox(
+                          // color: Theme.of(context).colorScheme.surfaceTint,
                           child: Padding(
                             padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
                             child: DataTable(
@@ -234,23 +234,23 @@ class AbnormalDataPageState extends State<AbnormalDataPage> {
                 ),
               ),
             ),
-            Expanded(
+            const Expanded(
               flex: 1,
-              child: Container(
-                color: Theme.of(context).colorScheme.onPrimary,
-              ),
+              child: SizedBox(
+                  // color: Theme.of(context).colorScheme.surfaceTint,
+                  ),
             ),
-            Expanded(
+            const Expanded(
               flex: 1,
-              child: Container(
-                color: Theme.of(context).colorScheme.onPrimary,
-              ),
+              child: SizedBox(
+                  // color: Theme.of(context).colorScheme.surfaceTint,
+                  ),
             ),
-            Expanded(
+            const Expanded(
               flex: 1,
-              child: Container(
-                color: Theme.of(context).colorScheme.onPrimary,
-              ),
+              child: SizedBox(
+                  // color: Theme.of(context).colorScheme.surfaceTint,
+                  ),
             ),
           ],
         ));

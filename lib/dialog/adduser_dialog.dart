@@ -6,8 +6,10 @@ import 'package:t_max/data/userinfo_data.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import '../../data/scalecmd_data.dart';
 import '../../functions/methods.dart';
-import '../../generated/l10n.dart';
+
 import '../../main.dart';
+import '../data/language.dart';
+import '../widget/custom_button.dart';
 
 TextEditingController userName = TextEditingController(
     text: ((myUserInfo.name == null) ? "" : myUserInfo.name));
@@ -21,7 +23,6 @@ TextEditingController userRemark = TextEditingController(
     text: ((myUserInfo.remarks == null) ? "" : myUserInfo.remarks));
 TextEditingController errorText = TextEditingController();
 int _checkFemale = 1;
-dynamic localizedStrings;
 
 addUserDialog(BuildContext context) {
   userName.text = ((myUserInfo.name == null) ? "" : myUserInfo.name)!;
@@ -34,7 +35,6 @@ addUserDialog(BuildContext context) {
           ? 1
           : 2);
   errorText.text = "";
-  localizedStrings = S.of(context);
 
   return showDialog(
       barrierDismissible: false, //设置为false，点击空白处弹窗不关闭
@@ -42,21 +42,12 @@ addUserDialog(BuildContext context) {
       builder: (context) {
         return StatefulBuilder(builder: ((context, setState) {
           return AlertDialog(
-            title: Container(
-                color: Theme.of(context).colorScheme.primary,
-                child: Row(
-                  children: [
-                    Icon(Icons.person,
-                        color: Theme.of(context).colorScheme.onPrimary),
-                    Text(localizedStrings.user_info,
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.onPrimary))
-                  ],
-                )),
+            title: getDialogTitle(context, localizedStrings.user_info,
+                Icons.edit_note_outlined, 400),
             content: Container(
-              height: 350,
-              decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.background),
+              height: 440,
+              decoration:
+                  BoxDecoration(color: Theme.of(context).colorScheme.onPrimary),
               child: SingleChildScrollView(
                 child: Column(
                   children: [
@@ -233,7 +224,7 @@ addUserDialog(BuildContext context) {
                                       textAlignVertical:
                                           TextAlignVertical.bottom,
                                       decoration: InputDecoration(
-                                        border: OutlineInputBorder(
+                                        border: const OutlineInputBorder(
                                             borderSide: BorderSide.none),
                                         counterText: "",
                                         focusColor: Theme.of(context)
@@ -254,64 +245,80 @@ addUserDialog(BuildContext context) {
                         ],
                       ),
                     ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        CustomOutlinedButton(
+                          btnWidth: 130,
+                          btnHeight: 40,
+                          icon: Icons.add,
+                          text: localizedStrings.button_add,
+                          onPressed: () {
+                            errorText.text = '';
+                            PublicFunctions.getUserList();
+                            setState(() {
+                              addUser();
+                            });
+
+                            PublicFunctions.getUserList();
+                          },
+                        ),
+                        const SizedBox(width: 20),
+                        CustomOutlinedButton(
+                          btnWidth: 130,
+                          btnHeight: 40,
+                          icon: Icons.edit_outlined,
+                          text: localizedStrings.button_edit,
+                          onPressed: () {
+                            errorText.text = '';
+                            PublicFunctions.getUserList();
+                            PublicFunctions.getUserList();
+                            editUser();
+                            PublicFunctions.getUserList();
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 5),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        CustomOutlinedButton(
+                          btnWidth: 130,
+                          btnHeight: 40,
+                          icon: Icons.delete,
+                          text: localizedStrings.button_delete,
+                          onPressed: () {
+                            if (userId.text.isNotEmpty ||
+                                userName.text.isNotEmpty) {
+                              errorText.text = '';
+                              PublicFunctions.getUserList();
+                              PublicFunctions.getUserList();
+                              delUser();
+                              PublicFunctions.getUserList();
+                            } else {
+                              errorText.text =
+                                  localizedStrings.user_error_message1;
+                            }
+                          },
+                        ),
+                        const SizedBox(width: 20),
+                        CustomOutlinedButton(
+                          btnWidth: 130,
+                          btnHeight: 40,
+                          icon: Icons.exit_to_app,
+                          text: localizedStrings.button_exit,
+                          onPressed: () {
+                            PublicFunctions.getUserList();
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    )
                   ],
                 ),
               ),
             ),
-            actions: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  OutlinedButton(
-                      child: Text(localizedStrings.button_add),
-                      onPressed: () {
-                        errorText.text = '';
-                        PublicFunctions.getUserList();
-                        setState(() {
-                          addUser();
-                        });
-
-                        PublicFunctions.getUserList();
-                        // Navigator.of(context).pop(connectionType);
-                      }),
-                  const SizedBox(width: 20),
-                  OutlinedButton(
-                      child: Text(localizedStrings.button_edit),
-                      onPressed: () {
-                        errorText.text = '';
-                        PublicFunctions.getUserList();
-                        PublicFunctions.getUserList();
-                        editUser();
-                        PublicFunctions.getUserList();
-                        // Navigator.of(context).pop(connectionType);
-                      }),
-                  const SizedBox(width: 20),
-                  OutlinedButton(
-                      child: Text(localizedStrings.button_delete),
-                      onPressed: () {
-                        if (userId.text.isNotEmpty ||
-                            userName.text.isNotEmpty) {
-                          errorText.text = '';
-                          PublicFunctions.getUserList();
-                          PublicFunctions.getUserList();
-                          delUser();
-                          PublicFunctions.getUserList();
-                        } else {
-                          errorText.text = localizedStrings.user_error_message1;
-                        }
-                        // Navigator.of(context).pop(connectionType);
-                      }),
-                  const SizedBox(width: 20),
-                  OutlinedButton(
-                      child: Text(localizedStrings.button_exit),
-                      onPressed: () {
-                        PublicFunctions.getUserList();
-                        Navigator.of(context)
-                            .pop(); // to go back to screen after submitting
-                      })
-                ],
-              )
-            ],
           );
         }));
       });

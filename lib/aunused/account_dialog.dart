@@ -22,7 +22,7 @@ accountDialog(BuildContext context) {
                       Icons.lock_outline,
                       color: Theme.of(context).colorScheme.onPrimary,
                     ),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     Text("账号密码",
                         style: TextStyle(
                             color: Theme.of(context).colorScheme.onPrimary)),

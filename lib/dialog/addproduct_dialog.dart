@@ -6,8 +6,10 @@ import 'package:t_max/data/productrec.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import '../../data/productlist_data.dart';
 import '../../data/scalecmd_data.dart';
-import '../../generated/l10n.dart';
+
 import '../../main.dart';
+import '../data/language.dart';
+import '../widget/custom_button.dart';
 
 TextEditingController productName = TextEditingController(
     text: ((myProductRecInfo.product == null) ? "" : myProductRecInfo.product));
@@ -22,7 +24,7 @@ TextEditingController productRemark = TextEditingController(
 TextEditingController errorText = TextEditingController();
 
 bool? isPresetTare = ((myProductRecInfo.withPretare == null) ? false : true);
-dynamic localizedStrings;
+
 addProductDialog(BuildContext context) {
   productName.text =
       ((myProductRecInfo.product == null) ? "" : myProductRecInfo.product)!;
@@ -34,7 +36,6 @@ addProductDialog(BuildContext context) {
   isPresetTare = (myProductRecInfo.withPretare == null)
       ? false
       : myProductRecInfo.withPretare;
-  localizedStrings = S.of(context);
   errorText.text = '';
 
   return showDialog(
@@ -43,21 +44,12 @@ addProductDialog(BuildContext context) {
       builder: (context) {
         return StatefulBuilder(builder: ((context, setState) {
           return AlertDialog(
-            title: Container(
-                color: Theme.of(context).colorScheme.primary,
-                child: Row(
-                  children: [
-                    Icon(Icons.feed,
-                        color: Theme.of(context).colorScheme.onPrimary),
-                    Text(localizedStrings.product_information,
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.onPrimary))
-                  ],
-                )),
+            title: getDialogTitle(context, localizedStrings.product_information,
+                Icons.edit_note_outlined, 400),
             content: Container(
-              height: 350,
-              decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.background),
+              height: 430,
+              decoration:
+                  BoxDecoration(color: Theme.of(context).colorScheme.onPrimary),
               child: SingleChildScrollView(
                 child: Column(
                   children: [
@@ -67,7 +59,6 @@ addProductDialog(BuildContext context) {
                           color: Theme.of(context).colorScheme.onPrimary),
                       child: Column(
                         children: [
-                          // const SizedBox(height: 15),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -230,61 +221,71 @@ addProductDialog(BuildContext context) {
                           const SizedBox(height: 10),
                         ],
                       ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        CustomOutlinedButton(
+                          btnWidth: 130,
+                          btnHeight: 40,
+                          icon: Icons.add,
+                          text: localizedStrings.button_add,
+                          onPressed: () {
+                            errorText.text = '';
+                            addProductRec();
+                          },
+                        ),
+                        const SizedBox(width: 20),
+                        CustomOutlinedButton(
+                          btnWidth: 130,
+                          btnHeight: 40,
+                          icon: Icons.edit_outlined,
+                          text: localizedStrings.button_edit,
+                          onPressed: () {
+                            errorText.text = '';
+                            editProductRec();
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 5),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        CustomOutlinedButton(
+                          btnWidth: 130,
+                          btnHeight: 40,
+                          icon: Icons.delete,
+                          text: localizedStrings.button_delete,
+                          onPressed: () {
+                            if (productID.text.isNotEmpty ||
+                                productName.text.isNotEmpty) {
+                              errorText.text = '';
+
+                              delProductRec();
+                            } else {
+                              errorText.text =
+                                  localizedStrings.plu_error_message;
+                            }
+                          },
+                        ),
+                        const SizedBox(width: 20),
+                        CustomOutlinedButton(
+                          btnWidth: 130,
+                          btnHeight: 40,
+                          icon: Icons.exit_to_app,
+                          text: localizedStrings.button_exit,
+                          onPressed: () {
+                            getProductList();
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
                     )
                   ],
                 ),
               ),
             ),
-            actions: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  OutlinedButton(
-                      child: Text(localizedStrings.button_add),
-                      onPressed: () {
-                        errorText.text = '';
-                        // getProductList();
-                        addProductRec();
-                        // getProductList();
-                      }),
-                  const SizedBox(width: 20),
-                  OutlinedButton(
-                      child: Text(localizedStrings.button_edit),
-                      onPressed: () {
-                        errorText.text = '';
-                        // getProductList();
-                        // getProductList();
-                        editProductRec();
-                        // getProductList();
-                      }),
-                  const SizedBox(width: 20),
-                  OutlinedButton(
-                      child: Text(localizedStrings.button_delete),
-                      onPressed: () {
-                        if (productID.text.isNotEmpty ||
-                            productName.text.isNotEmpty) {
-                          errorText.text = '';
-                          // getProductList();
-                          // getProductList();
-                          delProductRec();
-                          // getProductList();
-                        } else {
-                          errorText.text = localizedStrings.plu_error_message;
-                        }
-
-                        // Navigator.of(context).pop(connectionType);
-                      }),
-                  const SizedBox(width: 20),
-                  OutlinedButton(
-                      child: Text(localizedStrings.button_exit),
-                      onPressed: () {
-                        getProductList();
-                        Navigator.of(context)
-                            .pop(); // to go back to screen after submitting
-                      })
-                ],
-              )
-            ],
           );
         }));
       });
