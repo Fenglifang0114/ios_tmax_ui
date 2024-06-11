@@ -3349,6 +3349,96 @@ class S {
       args: [],
     );
   }
+
+  /// `Choose Product Excel`
+  String get plu_choose_file {
+    return Intl.message(
+      'Choose Product Excel',
+      name: 'plu_choose_file',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Clear`
+  String get plu_btn_clear {
+    return Intl.message(
+      'Clear',
+      name: 'plu_btn_clear',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Download`
+  String get plu_btn_download {
+    return Intl.message(
+      'Download',
+      name: 'plu_btn_download',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Get Product Template`
+  String get plu_btn_get_template {
+    return Intl.message(
+      'Get Product Template',
+      name: 'plu_btn_get_template',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please confirm the PLU file.`
+  String get plu_cfm_file {
+    return Intl.message(
+      'Please confirm the PLU file.',
+      name: 'plu_cfm_file',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Only one PLU file can be selected`
+  String get plu_cfm_one_file {
+    return Intl.message(
+      'Only one PLU file can be selected',
+      name: 'plu_cfm_one_file',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Product name max length:`
+  String get plu_name_length {
+    return Intl.message(
+      'Product name max length:',
+      name: 'plu_name_length',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All Products:`
+  String get plu_all_plu_title {
+    return Intl.message(
+      'All Products:',
+      name: 'plu_all_plu_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Partial Products:`
+  String get plu_partial_plu_title {
+    return Intl.message(
+      'Partial Products:',
+      name: 'plu_partial_plu_title',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

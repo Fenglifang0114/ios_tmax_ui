@@ -9,6 +9,7 @@ import '../data/server_ip_data.dart';
 import '../data/timer_manager.dart';
 import '../eventbus/eventbus.dart';
 
+import '../widget/custom_button.dart';
 import '../widget/page_head.dart';
 import '../widget/wifitextfeild.dart';
 
@@ -204,7 +205,18 @@ class CableIpSettingPageState extends State<CableIpSettingPage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            _buildButtonSection(), // 按钮部分
+                            CustomElevatedButton(
+                              btnWidth: 150,
+                              btnHeight: 50,
+                              icon: Icons.download_rounded,
+                              text: localizedStrings.download,
+                              onPressed:
+                                  (!isDownloadClicked) && (downloadFlag())
+                                      ? () {
+                                          _showConfirmationDialog(context);
+                                        }
+                                      : null,
+                            ),
                           ],
                         ),
                       ],

@@ -328,10 +328,17 @@
   "batch_down_export":"Export",
   "batch_down_import":"Import",
   "batch_down_slt_folder":"Select Folder",
-  "abnormal_weight":"Get abnormal weight"
-
-
-   
+  "abnormal_weight":"Get abnormal weight",
+  "plu_choose_file":"Choose Product Excel",
+  "plu_btn_clear":"Clear",
+  "plu_btn_download":"Download",
+  "plu_btn_get_template":"Get Product Template",
+  "plu_cfm_file":"Please confirm the PLU file.",
+  "plu_cfm_one_file":"Only one PLU file can be selected",
+  "plu_name_length":"Product name max length:",
+  "plu_all_plu_title":"All Products:",
+  "plu_partial_plu_title":"Partial Products:"
+  
   
   
 

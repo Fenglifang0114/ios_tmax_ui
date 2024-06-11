@@ -295,6 +295,18 @@ class MessageLookup extends MessageLookupByLibrary {
         "password": MessageLookupByLibrary.simpleMessage("密码:"),
         "pcs_mode_format": MessageLookupByLibrary.simpleMessage("计数模式打印格式:"),
         "pct_mode_format": MessageLookupByLibrary.simpleMessage("百分比模式打印格式:"),
+        "plu_all_plu_title":
+            MessageLookupByLibrary.simpleMessage("All Products:"),
+        "plu_btn_clear": MessageLookupByLibrary.simpleMessage("Clear"),
+        "plu_btn_download": MessageLookupByLibrary.simpleMessage("Download"),
+        "plu_btn_get_template":
+            MessageLookupByLibrary.simpleMessage("Get Product Template"),
+        "plu_cfm_file": MessageLookupByLibrary.simpleMessage(
+            "Please confirm the PLU file."),
+        "plu_cfm_one_file": MessageLookupByLibrary.simpleMessage(
+            "Only one PLU file can be selected"),
+        "plu_choose_file":
+            MessageLookupByLibrary.simpleMessage("Choose Product Excel"),
         "plu_download_title": MessageLookupByLibrary.simpleMessage("PLU 下发"),
         "plu_edit": MessageLookupByLibrary.simpleMessage("PLU 编辑"),
         "plu_error_message": MessageLookupByLibrary.simpleMessage("预扣重不能为空."),
@@ -303,6 +315,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "plu_error_message2":
             MessageLookupByLibrary.simpleMessage("PLU序号或PLU名称已经存在."),
         "plu_name": MessageLookupByLibrary.simpleMessage("PLU 名称："),
+        "plu_name_length":
+            MessageLookupByLibrary.simpleMessage("Product name max length:"),
+        "plu_partial_plu_title":
+            MessageLookupByLibrary.simpleMessage("Partial Products:"),
         "plu_remarks": MessageLookupByLibrary.simpleMessage("PLU 备注"),
         "position": MessageLookupByLibrary.simpleMessage("位置"),
         "pretare": MessageLookupByLibrary.simpleMessage("预扣重"),

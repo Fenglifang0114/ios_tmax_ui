@@ -35,6 +35,7 @@ import '../dialog/setting_dialog.dart';
 import 'package:path/path.dart';
 import '../dialog/weight_report_feilds_setting.dart';
 import '../functions/weight_funcs.dart';
+import '../widget/custom_button.dart';
 import '../widget/page_head.dart';
 
 const String allMode = '1';
@@ -635,65 +636,45 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     _buildFlexibleButtonAndText(
-                      width: 80,
-                      buttonText: localizedStrings.button_tare,
-                      onPressed: PublicFunctions.performTare,
-                      constraints: constraints,
-                      isTrue: true,
-                    ),
+                        width: 80,
+                        buttonText: localizedStrings.button_tare,
+                        onPressed: PublicFunctions.performTare,
+                        constraints: constraints,
+                        isTrue: true,
+                        icon: Icons.title),
                     _buildFlexibleButtonAndText(
-                      width: 80,
-                      buttonText: localizedStrings.button_zero,
-                      onPressed: PublicFunctions.performZero,
-                      constraints: constraints,
-                      isTrue: true,
-                    ),
+                        width: 80,
+                        buttonText: localizedStrings.button_zero,
+                        onPressed: PublicFunctions.performZero,
+                        constraints: constraints,
+                        isTrue: true,
+                        icon: Icons.exposure_zero),
                     _buildFlexibleButtonAndText(
-                      width: 80,
-                      buttonText: localizedStrings.button_save,
-                      onPressed: _changeSaveButton,
-                      constraints: constraints,
-                      isTrue: !_isSaveButtonDisabled && isStart,
-                    ),
+                        width: 80,
+                        buttonText: localizedStrings.button_save,
+                        onPressed: _changeSaveButton,
+                        constraints: constraints,
+                        isTrue: !_isSaveButtonDisabled && isStart,
+                        icon: Icons.save_outlined),
                     _buildFlexibleButtonAndText(
-                      width: 80,
-                      buttonText: 'Edit',
-                      onPressed: () {
-                        highLowSettingDialog(context);
-                      },
-                      constraints: constraints,
-                      isTrue: true,
-                    ),
+                        width: 80,
+                        buttonText: 'Edit',
+                        onPressed: () {
+                          highLowSettingDialog(context);
+                        },
+                        constraints: constraints,
+                        isTrue: true,
+                        icon: Icons.mode_edit),
                     _buildFlexibleButtonAndText(
-                      width: 80,
-                      buttonText: localizedStrings.button_setting,
-                      onPressed: () {
-                        mySettingParam = myModeSettingCheck;
-                        paramSettingDialog(context);
-                      },
-                      constraints: constraints,
-                      isTrue: true,
-                    ),
-                    _buildFlexibleButtonAndText(
-                      width: 80,
-                      buttonText: localizedStrings.button_export_report,
-                      onPressed: () async {
-                        final directory = Directory.current.path;
-                        String? outputFile =
-                            (await FilePicker.platform.saveFile(
-                          initialDirectory: directory,
-                          type: FileType.custom,
-                          dialogTitle: 'Output file:',
-                          allowedExtensions: ["xlsx"],
-                          fileName: 'report.xlsx',
-                        ));
-                        if (outputFile != null) {
-                          _creatFile(outputFile);
-                        }
-                      },
-                      constraints: constraints,
-                      isTrue: true,
-                    ),
+                        width: 80,
+                        buttonText: localizedStrings.button_setting,
+                        onPressed: () {
+                          mySettingParam = myModeSettingCheck;
+                          paramSettingDialog(context);
+                        },
+                        constraints: constraints,
+                        isTrue: true,
+                        icon: Icons.settings_outlined),
                   ],
                 );
               }),
@@ -748,11 +729,25 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                             width: 150,
                             padding: const EdgeInsets.all(0),
                           ),
-                          buildPluEditButton(
-                              Theme.of(context).colorScheme.primary,
-                              localizedStrings.plu_edit,
-                              constraints,
-                              context),
+                          CustomElevatedButton(
+                            btnWidth: constraints.maxWidth / 10 - 50,
+                            btnHeight: 40,
+                            icon: Icons.edit_note_outlined,
+                            text: localizedStrings.plu_edit,
+                            onPressed: () {
+                              getProductList();
+                              addProductDialog(context).then((onvalue) {
+                                if (!productNameList
+                                    .contains(productNameValue)) {
+                                  myProductRecInfo.product = "";
+                                  productNameValue = "";
+                                  myProductRecInfo.id = "";
+                                  myProductRecInfo.withPretare = false;
+                                  myProductRecInfo.remarks = "";
+                                }
+                              });
+                            },
+                          ),
                           buildTextString(
                               localizedStrings.user_name, constraints, context),
                           Container(
@@ -787,23 +782,47 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                             width: 150,
                             padding: const EdgeInsets.all(0),
                           ),
-                          buildUserEditButton(
-                              Theme.of(context).colorScheme.primary,
-                              localizedStrings.user_edit,
-                              constraints,
-                              context),
-                          buildSetReportButton(localizedStrings.report_set_btn,
-                              constraints, context),
-                          buildButton(
-                              Theme.of(context).colorScheme,
-                              localizedStrings.report_show_btn,
-                              constraints,
-                              _toggleLayout),
-                          buildButton(
-                              Theme.of(context).colorScheme,
-                              localizedStrings.report_delete_btn,
-                              constraints,
-                              () => _showConfirmationDialog(context)),
+                          CustomElevatedButton(
+                            btnWidth: constraints.maxWidth / 10 - 50,
+                            btnHeight: 40,
+                            icon: Icons.edit_note_outlined,
+                            text: localizedStrings.user_edit,
+                            onPressed: () {
+                              PublicFunctions.getUserList();
+                              getUserNameList();
+                              if (!userNameList.contains(userNameValue)) {
+                                myUserInfo.name = "";
+                                userNameValue = "";
+                                myUserInfo.id = "";
+                                myUserInfo.isFemale = true;
+                                myUserInfo.phone = "";
+                                myUserInfo.remarks = "";
+                              }
+                              addUserDialog(context).then((onvalue) {
+                                setState(() {
+                                  PublicFunctions.getUserList();
+                                  getUserNameList();
+                                  if (!userNameList.contains(userNameValue)) {
+                                    myUserInfo.name = "";
+                                    userNameValue = "";
+                                    myUserInfo.id = "";
+                                    myUserInfo.isFemale = true;
+                                    myUserInfo.phone = "";
+                                    myUserInfo.remarks = "";
+                                  }
+                                });
+                              });
+                            },
+                          ),
+                          CustomOutlinedButton(
+                            btnWidth: constraints.maxWidth / 10 - 30,
+                            btnHeight: 40,
+                            icon: Icons.show_chart,
+                            text: localizedStrings.report_show_btn,
+                            onPressed: () {
+                              _toggleLayout();
+                            },
+                          ),
                         ]),
                   );
                 })),
@@ -874,17 +893,28 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
           ),
           content: Text(localizedStrings.data_delete_confirm),
           actions: <Widget>[
-            OutlinedButton(
-              child: Text(localizedStrings.button_cancel),
-              onPressed: () {
-                Navigator.of(context).pop(false); // 不跳转
-              },
-            ),
-            OutlinedButton(
-              child: Text(localizedStrings.confirm_btn),
-              onPressed: () {
-                Navigator.of(context).pop(true); // 跳转
-              },
+            Row(
+              children: [
+                CustomElevatedButton(
+                  btnWidth: 120,
+                  btnHeight: 40,
+                  icon: Icons.check_circle,
+                  text: localizedStrings.confirm_btn,
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  },
+                ),
+                const SizedBox(width: 20),
+                CustomOutlinedButton(
+                  btnWidth: 120,
+                  btnHeight: 40,
+                  icon: Icons.cancel,
+                  text: localizedStrings.button_cancel,
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
+                ),
+              ],
             ),
           ],
         );
@@ -894,74 +924,6 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
         PublicFunctions.deleteAllRecordsCheck();
       }
     });
-  }
-
-  Widget buildPluEditButton(Color? color, String text,
-      BoxConstraints constraints, BuildContext context) {
-    var fontSize = 14 * constraints.maxHeight / 60;
-    var width = constraints.maxWidth / 10;
-    return SizedBox(
-        width: width,
-        child: MaterialButton(
-            color: color,
-            textColor: Theme.of(context).colorScheme.onPrimary,
-            elevation: 5.0,
-            child: Text(text,
-                style: TextStyle(
-                    fontSize: fontSize, fontWeight: FontWeight.normal)),
-            onPressed: () {
-              getProductList();
-              addProductDialog(context).then((onvalue) {
-                if (!productNameList.contains(productNameValue)) {
-                  myProductRecInfo.product = "";
-                  productNameValue = "";
-                  myProductRecInfo.id = "";
-                  myProductRecInfo.withPretare = false;
-                  myProductRecInfo.remarks = "";
-                }
-              });
-            }));
-  }
-
-  Widget buildUserEditButton(Color? color, String text,
-      BoxConstraints constraints, BuildContext context) {
-    var fontSize = 14 * constraints.maxHeight / 60;
-    var width = constraints.maxWidth / 10;
-    return SizedBox(
-        width: width,
-        child: MaterialButton(
-            color: Theme.of(context).colorScheme.primary,
-            textColor: Theme.of(context).colorScheme.onPrimary,
-            elevation: 5.0,
-            child: Text(text,
-                style: TextStyle(
-                    fontSize: fontSize, fontWeight: FontWeight.normal)),
-            onPressed: () {
-              PublicFunctions.getUserList();
-              getUserNameList();
-              if (!userNameList.contains(userNameValue)) {
-                myUserInfo.name = "";
-                userNameValue = "";
-                myUserInfo.id = "";
-                myUserInfo.isFemale = true;
-                myUserInfo.phone = "";
-                myUserInfo.remarks = "";
-              }
-              addUserDialog(context).then((onvalue) {
-                setState(() {
-                  PublicFunctions.getUserList();
-                  getUserNameList();
-                  if (!userNameList.contains(userNameValue)) {
-                    myUserInfo.name = "";
-                    userNameValue = "";
-                    myUserInfo.id = "";
-                    myUserInfo.isFemale = true;
-                    myUserInfo.phone = "";
-                    myUserInfo.remarks = "";
-                  }
-                });
-              });
-            }));
   }
 
   Widget buildSetReportButton(
@@ -981,25 +943,6 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
             reportFieldsSettingDialog(context);
           }),
     );
-  }
-
-  Widget buildButton(ColorScheme colorScheme, String text,
-      BoxConstraints constraints, VoidCallback onPressed) {
-    var fontSize = 14 * constraints.maxHeight / 60;
-    var width = constraints.maxWidth / 10;
-
-    return SizedBox(
-        width: width,
-        child: MaterialButton(
-            color: colorScheme.primary,
-            textColor: colorScheme.onPrimary,
-            elevation: 5.0,
-            child: Text(text,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                    fontSize: fontSize, fontWeight: FontWeight.normal)),
-            onPressed: onPressed));
   }
 
   void performStart() {
@@ -1171,22 +1114,38 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     required VoidCallback onPressed,
     required BoxConstraints constraints,
     required bool isTrue,
+    required IconData icon,
   }) {
     double buttonWidth = width * (constraints.maxWidth / 600); // 自适应按钮宽度
     double fontSize = 14 * (constraints.maxWidth / 600); // 自适应字体大小
 
     return SizedBox(
-      width: buttonWidth,
       child: ElevatedButton(
         onPressed: isTrue ? onPressed : null,
-        child: Text(
-          buttonText,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            fontSize: fontSize,
-            fontWeight: FontWeight.normal,
-          ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Icon(
+              icon,
+              size: fontSize,
+            ),
+            const SizedBox(width: 4),
+            SizedBox(
+              width: buttonWidth,
+              height: buttonWidth / 3,
+              child: Center(
+                child: Text(
+                  buttonText,
+                  maxLines: 1,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: fontSize,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+            )
+          ],
         ),
       ),
     );
@@ -1414,45 +1373,32 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                           return Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              SizedBox(
-                                width: constraints.maxWidth / 3.5,
-                                child: ElevatedButton(
-                                    onPressed: () {
-                                      PublicFunctions.performTare();
-                                    },
-                                    child: Text(localizedStrings.button_tare,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.normal))),
+                              CustomElevatedButton(
+                                btnWidth: constraints.maxWidth / 5,
+                                btnHeight: 40,
+                                icon: Icons.title,
+                                text: localizedStrings.button_tare,
+                                onPressed: () {
+                                  PublicFunctions.performTare();
+                                },
                               ),
-                              SizedBox(
-                                width: constraints.maxWidth / 3.5,
-                                child: ElevatedButton(
-                                    onPressed: () {
-                                      PublicFunctions.performZero();
-                                    },
-                                    child: Text(localizedStrings.button_zero,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.normal))),
+                              CustomElevatedButton(
+                                btnWidth: constraints.maxWidth / 5,
+                                btnHeight: 40,
+                                icon: Icons.exposure_zero,
+                                text: localizedStrings.button_zero,
+                                onPressed: () {
+                                  PublicFunctions.performZero();
+                                },
                               ),
-                              SizedBox(
-                                width: constraints.maxWidth / 3.5,
-                                child: ElevatedButton(
-                                    onPressed:
-                                        (_isSaveButtonDisabled || !isStart)
-                                            ? null
-                                            : _changeSaveButton,
-                                    child: Text(localizedStrings.button_save,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.normal))),
+                              CustomElevatedButton(
+                                btnWidth: constraints.maxWidth / 5,
+                                btnHeight: 40,
+                                icon: Icons.save_outlined,
+                                text: localizedStrings.button_save,
+                                onPressed: (_isSaveButtonDisabled || !isStart)
+                                    ? null
+                                    : _changeSaveButton,
                               ),
                             ],
                           );
@@ -1462,60 +1408,45 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                           return Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              SizedBox(
-                                width: constraints.maxWidth / 3.5,
-                                child: ElevatedButton(
-                                    onPressed: () {
-                                      highLowSettingDialog(context);
-                                    },
-                                    child: const Text('Edit',
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.normal))),
+                              CustomElevatedButton(
+                                btnWidth: constraints.maxWidth / 5,
+                                btnHeight: 40,
+                                icon: Icons.edit_sharp,
+                                text: localizedStrings.button_edit,
+                                onPressed: () {
+                                  highLowSettingDialog(context);
+                                },
                               ),
-                              SizedBox(
-                                width: constraints.maxWidth / 3.5,
-                                child: ElevatedButton(
-                                    onPressed: () {
-                                      //跳转页面
-                                      mySettingParam = myModeSettingCheck;
-                                      paramSettingDialog(context);
-                                    },
-                                    child: Text(localizedStrings.button_setting,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.normal))),
+                              CustomElevatedButton(
+                                btnWidth: constraints.maxWidth / 5,
+                                btnHeight: 40,
+                                icon: Icons.settings_outlined,
+                                text: localizedStrings.button_setting,
+                                onPressed: () {
+                                  //跳转页面
+                                  mySettingParam = myModeSettingCheck;
+                                  paramSettingDialog(context);
+                                },
                               ),
-                              SizedBox(
-                                width: constraints.maxWidth / 3.5,
-                                child: ElevatedButton(
-                                    // elevation: 5.0,
-                                    child: Text(
-                                        localizedStrings.button_export_report,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.normal)),
-                                    onPressed: () async {
-                                      final directory = Directory.current.path;
-                                      String? outputFile =
-                                          (await FilePicker.platform.saveFile(
-                                        initialDirectory: directory,
-                                        type: FileType.custom,
-                                        dialogTitle: 'Output file:',
-                                        allowedExtensions: ["xlsx"],
-                                        fileName: 'report.xlsx',
-                                      ));
-                                      if (outputFile != null) {
-                                        _creatFile(outputFile);
-                                      }
-                                    }),
-                              ),
+                              CustomElevatedButton(
+                                  btnWidth: constraints.maxWidth / 5,
+                                  btnHeight: 40,
+                                  icon: Icons.outbox,
+                                  text: localizedStrings.button_export_report,
+                                  onPressed: () async {
+                                    final directory = Directory.current.path;
+                                    String? outputFile =
+                                        (await FilePicker.platform.saveFile(
+                                      initialDirectory: directory,
+                                      type: FileType.custom,
+                                      dialogTitle: 'Output file:',
+                                      allowedExtensions: ["xlsx"],
+                                      fileName: 'report.xlsx',
+                                    ));
+                                    if (outputFile != null) {
+                                      _creatFile(outputFile);
+                                    }
+                                  }),
                             ],
                           );
                         }),
@@ -1555,13 +1486,6 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                       ),
                     ],
                   ),
-
-                  // const SizedBox(width: 20),
-                  // OutlinedButton(
-                  //     onPressed: () {
-                  //       fieldModifyDialog(context).then((onValue) {});
-                  //     },
-                  //     child: const Text("设置报表字段")),
                 ],
               ),
             ),
@@ -1616,29 +1540,23 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                       width: constraints.maxWidth / 10,
                       padding: const EdgeInsets.all(0),
                     ),
-                    SizedBox(
-                      width: constraints.maxWidth / 10,
-                      child: MaterialButton(
-                          color: Theme.of(context).colorScheme.primary,
-                          textColor: Theme.of(context).colorScheme.onPrimary,
-                          elevation: 5.0,
-                          child: Text(localizedStrings.plu_edit,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.normal)),
-                          onPressed: () {
-                            getProductList();
-                            addProductDialog(context).then((onvalue) {
-                              if (!productNameList.contains(productNameValue)) {
-                                myProductRecInfo.product = "";
-                                productNameValue = "";
-                                myProductRecInfo.id = "";
-                                myProductRecInfo.withPretare = false;
-                                myProductRecInfo.remarks = "";
-                              }
-                            });
-                          }),
+                    CustomElevatedButton(
+                      btnWidth: constraints.maxWidth / 10 - 50,
+                      btnHeight: 40,
+                      icon: Icons.edit_note_outlined,
+                      text: localizedStrings.plu_edit,
+                      onPressed: () {
+                        getProductList();
+                        addProductDialog(context).then((onvalue) {
+                          if (!productNameList.contains(productNameValue)) {
+                            myProductRecInfo.product = "";
+                            productNameValue = "";
+                            myProductRecInfo.id = "";
+                            myProductRecInfo.withPretare = false;
+                            myProductRecInfo.remarks = "";
+                          }
+                        });
+                      },
                     ),
                     SizedBox(
                       width: constraints.maxWidth / 10,
@@ -1681,17 +1599,24 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                       width: constraints.maxWidth / 10,
                       padding: const EdgeInsets.all(0),
                     ),
-                    SizedBox(
-                      width: constraints.maxWidth / 10,
-                      child: MaterialButton(
-                          color: Theme.of(context).colorScheme.primary,
-                          textColor: Theme.of(context).colorScheme.onPrimary,
-                          elevation: 5.0,
-                          child: Text(localizedStrings.user_edit,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.normal)),
-                          onPressed: () {
+                    CustomElevatedButton(
+                      btnWidth: constraints.maxWidth / 10 - 50,
+                      btnHeight: 40,
+                      icon: Icons.edit_note_outlined,
+                      text: localizedStrings.user_edit,
+                      onPressed: () {
+                        PublicFunctions.getUserList();
+                        getUserNameList();
+                        if (!userNameList.contains(userNameValue)) {
+                          myUserInfo.name = "";
+                          userNameValue = "";
+                          myUserInfo.id = "";
+                          myUserInfo.isFemale = true;
+                          myUserInfo.phone = "";
+                          myUserInfo.remarks = "";
+                        }
+                        addUserDialog(context).then((onvalue) {
+                          setState(() {
                             PublicFunctions.getUserList();
                             getUserNameList();
                             if (!userNameList.contains(userNameValue)) {
@@ -1702,63 +1627,36 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                               myUserInfo.phone = "";
                               myUserInfo.remarks = "";
                             }
-                            addUserDialog(context).then((onvalue) {
-                              setState(() {
-                                PublicFunctions.getUserList();
-                                getUserNameList();
-                                if (!userNameList.contains(userNameValue)) {
-                                  myUserInfo.name = "";
-                                  userNameValue = "";
-                                  myUserInfo.id = "";
-                                  myUserInfo.isFemale = true;
-                                  myUserInfo.phone = "";
-                                  myUserInfo.remarks = "";
-                                }
-                              });
-                            });
-                          }),
+                          });
+                        });
+                      },
                     ),
-                    SizedBox(
-                      width: constraints.maxWidth / 10,
-                      child: MaterialButton(
-                          color: Theme.of(context).colorScheme.primary,
-                          textColor: Theme.of(context).colorScheme.onPrimary,
-                          elevation: 5.0,
-                          child: Text(localizedStrings.report_set_btn,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.normal)),
-                          onPressed: () {
-                            reportFieldsSettingDialog(context);
-                          }),
+                    CustomOutlinedButton(
+                      btnWidth: constraints.maxWidth / 10 - 50,
+                      btnHeight: 40,
+                      icon: Icons.settings_applications_rounded,
+                      text: localizedStrings.report_set_btn,
+                      onPressed: () {
+                        reportFieldsSettingDialog(context);
+                      },
                     ),
-                    SizedBox(
-                      width: constraints.maxWidth / 10,
-                      child: MaterialButton(
-                          color: Theme.of(context).colorScheme.primary,
-                          textColor: Theme.of(context).colorScheme.onPrimary,
-                          elevation: 5.0,
-                          child: Text(localizedStrings.report_hide_btn,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.normal)),
-                          onPressed: () {
-                            _toggleLayout();
-                          }),
+                    CustomOutlinedButton(
+                      btnWidth: constraints.maxWidth / 10 - 50,
+                      btnHeight: 40,
+                      icon: Icons.hide_source,
+                      text: localizedStrings.report_hide_btn,
+                      onPressed: () {
+                        _toggleLayout();
+                      },
                     ),
-                    SizedBox(
-                      width: constraints.maxWidth / 10,
-                      child: MaterialButton(
-                          color: Theme.of(context).colorScheme.primary,
-                          textColor: Theme.of(context).colorScheme.onPrimary,
-                          elevation: 5.0,
-                          child: Text(localizedStrings.report_delete_btn,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.normal)),
-                          onPressed: () {
-                            _showConfirmationDialog(context);
-                          }),
+                    CustomOutlinedButton(
+                      btnWidth: constraints.maxWidth / 10 - 50,
+                      btnHeight: 40,
+                      icon: Icons.delete_forever_outlined,
+                      text: localizedStrings.report_delete_btn,
+                      onPressed: () {
+                        _showConfirmationDialog(context);
+                      },
                     ),
                   ],
                 );

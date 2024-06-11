@@ -334,6 +334,18 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Counting mode format:"),
         "pct_mode_format":
             MessageLookupByLibrary.simpleMessage("Percent mode format:"),
+        "plu_all_plu_title":
+            MessageLookupByLibrary.simpleMessage("All Products:"),
+        "plu_btn_clear": MessageLookupByLibrary.simpleMessage("Clear"),
+        "plu_btn_download": MessageLookupByLibrary.simpleMessage("Download"),
+        "plu_btn_get_template":
+            MessageLookupByLibrary.simpleMessage("Get Product Template"),
+        "plu_cfm_file": MessageLookupByLibrary.simpleMessage(
+            "Please confirm the PLU file."),
+        "plu_cfm_one_file": MessageLookupByLibrary.simpleMessage(
+            "Only one PLU file can be selected"),
+        "plu_choose_file":
+            MessageLookupByLibrary.simpleMessage("Choose Product Excel"),
         "plu_download_title":
             MessageLookupByLibrary.simpleMessage("PLU Download"),
         "plu_edit": MessageLookupByLibrary.simpleMessage("PLU Edit"),
@@ -344,6 +356,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "plu_error_message2": MessageLookupByLibrary.simpleMessage(
             "PLU ID or PLU name already exists."),
         "plu_name": MessageLookupByLibrary.simpleMessage("PLU Name:"),
+        "plu_name_length":
+            MessageLookupByLibrary.simpleMessage("Product name max length:"),
+        "plu_partial_plu_title":
+            MessageLookupByLibrary.simpleMessage("Partial Products:"),
         "plu_remarks": MessageLookupByLibrary.simpleMessage("PLu Remarks:"),
         "position": MessageLookupByLibrary.simpleMessage("Position"),
         "pretare": MessageLookupByLibrary.simpleMessage("Pretare:"),

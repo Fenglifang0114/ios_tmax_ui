@@ -11,6 +11,7 @@ import '../data/screen_mgr.dart';
 import '../data/timer_manager.dart';
 import '../eventbus/eventbus.dart';
 import '../main.dart';
+import '../widget/custom_button.dart';
 import '../widget/page_head.dart';
 
 class HeaderFooterPage extends StatefulWidget {
@@ -118,7 +119,6 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
         child: pageHead(context, localizedStrings.variable_value_setting_title,
             localizedStrings.serial_port_status),
       ),
-
       body: Column(
         children: [
           Expanded(
@@ -184,21 +184,34 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
                   children: [
                     Align(
                       alignment: Alignment.topCenter, // 让子组件在顶部中心对齐
-                      child: _buildButtonSection(), // 按钮部分
+                      child: // 按钮部分
+                          CustomElevatedButton(
+                        btnWidth: 150,
+                        btnHeight: 50,
+                        icon: Icons.download_rounded,
+                        text: localizedStrings.download,
+                        onPressed: (!isDownloadClicked) &&
+                                (header1Ctl.text.isNotEmpty ||
+                                    header2Ctl.text.isNotEmpty ||
+                                    header3Ctl.text.isNotEmpty ||
+                                    footer1Ctl.text.isNotEmpty ||
+                                    footer2Ctl.text.isNotEmpty ||
+                                    footer3Ctl.text.isNotEmpty ||
+                                    operator1Ctl.text.isNotEmpty ||
+                                    operator2Ctl.text.isNotEmpty ||
+                                    operator3Ctl.text.isNotEmpty ||
+                                    operator4Ctl.text.isNotEmpty)
+                            ? () {
+                                _showConfirmationDialog(context);
+                              }
+                            : null,
+                      ),
                     ),
                   ],
                 ),
               )),
         ],
       ),
-      // ),
-
-      // Row(
-      //   mainAxisAlignment: MainAxisAlignment.center,
-      //   children: [
-      //     _buildButtonSection(), // 按钮部分
-      //   ],
-      // ),
     );
   }
 

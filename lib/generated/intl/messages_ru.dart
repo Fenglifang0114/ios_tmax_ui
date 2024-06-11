@@ -339,6 +339,18 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Формат режима pcs:"),
         "pct_mode_format":
             MessageLookupByLibrary.simpleMessage("Формат режима процентов:"),
+        "plu_all_plu_title":
+            MessageLookupByLibrary.simpleMessage("All Products:"),
+        "plu_btn_clear": MessageLookupByLibrary.simpleMessage("Clear"),
+        "plu_btn_download": MessageLookupByLibrary.simpleMessage("Download"),
+        "plu_btn_get_template":
+            MessageLookupByLibrary.simpleMessage("Get Product Template"),
+        "plu_cfm_file": MessageLookupByLibrary.simpleMessage(
+            "Please confirm the PLU file."),
+        "plu_cfm_one_file": MessageLookupByLibrary.simpleMessage(
+            "Only one PLU file can be selected"),
+        "plu_choose_file":
+            MessageLookupByLibrary.simpleMessage("Choose Product Excel"),
         "plu_download_title":
             MessageLookupByLibrary.simpleMessage("PLU Download"),
         "plu_edit": MessageLookupByLibrary.simpleMessage("Редактирование PLU"),
@@ -349,6 +361,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "plu_error_message2": MessageLookupByLibrary.simpleMessage(
             "PLU ID или имя PLU уже существует."),
         "plu_name": MessageLookupByLibrary.simpleMessage("Имя PLU:"),
+        "plu_name_length":
+            MessageLookupByLibrary.simpleMessage("Product name max length:"),
+        "plu_partial_plu_title":
+            MessageLookupByLibrary.simpleMessage("Partial Products:"),
         "plu_remarks": MessageLookupByLibrary.simpleMessage("Примечания PLU:"),
         "position": MessageLookupByLibrary.simpleMessage("Позиция"),
         "pretare":

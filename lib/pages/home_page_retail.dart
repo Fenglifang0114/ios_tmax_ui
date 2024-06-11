@@ -146,8 +146,6 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
 
   @override
   Widget build(BuildContext context) {
-    // final _width = MediaQuery.of(context).size.width;
-    // final _height = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: PreferredSize(
           preferredSize: const Size.fromHeight(50),

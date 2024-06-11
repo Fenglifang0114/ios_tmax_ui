@@ -12,6 +12,7 @@ import '../data/screen_mgr.dart';
 import '../data/timer_manager.dart';
 import '../eventbus/eventbus.dart';
 import '../main.dart';
+import '../widget/custom_button.dart';
 import '../widget/page_head.dart';
 
 class ProductDownloadPage extends StatefulWidget {
@@ -40,9 +41,6 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
   dynamic _eventbus4;
 
   bool _isShowDownload = true;
-
-  String _nameLen = '30';
-  final List<String> nameMaxLen = ['30'];
 
   @override
   void initState() {
@@ -176,60 +174,11 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center, // 设置主轴对齐方式为居中
                     children: [
-                      const SizedBox(
-                        width: 200,
+                      SizedBox(
                         child: Text(
-                          'Product name max length:',
+                          '${localizedStrings.plu_name_length}   30',
                           textAlign: TextAlign.right,
                         ),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      SizedBox(
-                        width: 400,
-                        // height: 40,
-                        child: DropdownButton<String>(
-                          alignment: AlignmentDirectional.centerStart,
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(4)),
-                          dropdownColor:
-                              Theme.of(context).colorScheme.onPrimary,
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.primary,
-                              fontSize: 14,
-                              fontWeight: FontWeight.normal),
-                          hint: Text(
-                            localizedStrings.printer,
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary,
-                                fontSize: 14,
-                                fontWeight: FontWeight.normal),
-                          ),
-                          value: _nameLen,
-                          items: nameMaxLen
-                              .map((String value) => DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  ))
-                              .toList(),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              _nameLen = newValue!;
-                            });
-                          },
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 50,
-                      ),
-                      const SizedBox(
-                        width: 300,
-                        height: 40,
-                        child: Text(''),
-                      ),
-                      const SizedBox(
-                        width: 50,
                       ),
                     ],
                   ),
@@ -239,10 +188,10 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center, // 设置主轴对齐方式为居中
                     children: [
-                      const SizedBox(
+                      SizedBox(
                         width: 200,
                         child: Text(
-                          'All Products:',
+                          localizedStrings.plu_all_plu_title,
                           textAlign: TextAlign.right,
                         ),
                       ),
@@ -268,45 +217,29 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                       const SizedBox(
                         width: 50,
                       ),
-                      SizedBox(
-                        width: 150,
-                        height: 40,
-                        child: OutlinedButton(
-                          style: ButtonStyle(
-                            shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
-                          ),
-                          onPressed: () async {
-                            pluAllCtl.text = '';
-                            pickFiles(pluAllCtl);
-                          },
-                          child: const Text('Choose Product Excel'),
-                        ),
+                      CustomOutlinedButton(
+                        btnWidth: 150,
+                        btnHeight: 40,
+                        icon: Icons.file_open_outlined,
+                        text: localizedStrings.plu_choose_file,
+                        onPressed: () async {
+                          pluAllCtl.text = '';
+                          pickFiles(pluAllCtl);
+                        },
                       ),
                       const SizedBox(
                         width: 50,
                       ),
-                      SizedBox(
-                        width: 150,
-                        height: 40,
-                        child: OutlinedButton(
-                          style: ButtonStyle(
-                            shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
-                          ),
-                          onPressed: () async {
-                            setState(() {
-                              pluAllCtl.text = '';
-                            });
-                          },
-                          child: const Text('Clear'),
-                        ),
+                      CustomOutlinedButton(
+                        btnWidth: 100,
+                        btnHeight: 40,
+                        icon: Icons.cleaning_services,
+                        text: localizedStrings.plu_btn_clear,
+                        onPressed: () {
+                          setState(() {
+                            pluAllCtl.text = '';
+                          });
+                        },
                       ),
                     ],
                   ),
@@ -316,10 +249,10 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center, // 设置主轴对齐方式为居中
                     children: [
-                      const SizedBox(
+                      SizedBox(
                         width: 200,
                         child: Text(
-                          'Partial Products:',
+                          localizedStrings.plu_partial_plu_title,
                           textAlign: TextAlign.right,
                         ),
                       ),
@@ -345,45 +278,29 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                       const SizedBox(
                         width: 50,
                       ),
-                      SizedBox(
-                        width: 150,
-                        height: 40,
-                        child: OutlinedButton(
-                          style: ButtonStyle(
-                            shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
-                          ),
-                          onPressed: () async {
-                            pluPartCtl.text = '';
-                            pickFiles(pluPartCtl);
-                          },
-                          child: const Text('Choose Product Excel'),
-                        ),
+                      CustomOutlinedButton(
+                        btnWidth: 150,
+                        btnHeight: 40,
+                        icon: Icons.file_open_outlined,
+                        text: localizedStrings.plu_choose_file,
+                        onPressed: () async {
+                          pluPartCtl.text = '';
+                          pickFiles(pluPartCtl);
+                        },
                       ),
                       const SizedBox(
                         width: 50,
                       ),
-                      SizedBox(
-                        width: 150,
-                        height: 40,
-                        child: OutlinedButton(
-                          style: ButtonStyle(
-                            shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
-                          ),
-                          onPressed: () async {
-                            setState(() {
-                              pluPartCtl.text = '';
-                            });
-                          },
-                          child: const Text('Clear'),
-                        ),
+                      CustomOutlinedButton(
+                        btnWidth: 100,
+                        btnHeight: 40,
+                        icon: Icons.cleaning_services,
+                        text: localizedStrings.plu_btn_clear,
+                        onPressed: () {
+                          setState(() {
+                            pluPartCtl.text = '';
+                          });
+                        },
                       ),
                     ],
                   ),
@@ -412,47 +329,62 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        SizedBox(
-          width: 120,
-          height: 50,
-          child: ElevatedButton(
-            style: ButtonStyle(
-              shape: MaterialStateProperty.all(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              ),
-            ),
-            onPressed: () {
-              downloadTemplate();
-            },
-            child: const Text(
-              "Get Product Template",
-            ),
-          ),
+        CustomElevatedButton(
+          btnWidth: 150,
+          btnHeight: 50,
+          icon: Icons.file_copy,
+          text: localizedStrings.plu_btn_get_template,
+          onPressed: () {
+            downloadTemplate();
+          },
         ),
-        SizedBox(
-          width: 120,
-          height: 50,
-          child: ElevatedButton(
-            style: ButtonStyle(
-              shape: MaterialStateProperty.all(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              ),
-            ),
-            onPressed: _isShowDownload
-                ? () {
-                    _showConfirmationDialog(context);
-                  }
-                : null,
-            child: const Text(
-              "Download",
-            ),
-          ),
+        CustomElevatedButton(
+          btnWidth: 150,
+          btnHeight: 50,
+          icon: Icons.download_rounded,
+          text: localizedStrings.plu_btn_download,
+          onPressed: _isShowDownload
+              ? () {
+                  _showConfirmationDialog(context);
+                }
+              : null,
         ),
       ],
+    );
+  }
+
+  void _showFileSaveCfmDialog(BuildContext context, String filePath) {
+    showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          title: Text(
+            localizedStrings.confirm_title,
+            style: TextStyle(color: Theme.of(context).colorScheme.primary),
+          ),
+          content: SizedBox(
+            width: 400,
+            child: TextField(
+              enabled: true,
+              readOnly: true,
+              maxLines: 2,
+              controller: TextEditingController(text: filePath),
+              style: const TextStyle(overflow: TextOverflow.ellipsis),
+            ),
+          ),
+          actions: <Widget>[
+            CustomElevatedButton(
+              btnWidth: 120,
+              btnHeight: 40,
+              icon: Icons.check_circle,
+              text: localizedStrings.confirm_btn,
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -462,27 +394,40 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
       builder: (BuildContext ctx) {
         return AlertDialog(
           title: Text(
-            'Confirmation',
+            localizedStrings.confirm_title,
             style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
           content: isOneModeDown()
-              ? const Text('Please confirm the PLU file.')
-              : const Text('Only one PLU file can be selected'),
+              ? Text(localizedStrings.plu_cfm_file)
+              : Text(localizedStrings.plu_cfm_one_file),
           actions: <Widget>[
-            OutlinedButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop(false); // 不跳转
-              },
+            Row(
+              children: [
+                isOneModeDown()
+                    ? CustomElevatedButton(
+                        btnWidth: 120,
+                        btnHeight: 40,
+                        icon: Icons.check_circle,
+                        text: localizedStrings.confirm_btn,
+                        onPressed: () {
+                          Navigator.of(context).pop(true);
+                        },
+                      )
+                    : const SizedBox(),
+                const SizedBox(
+                  width: 10,
+                ),
+                CustomOutlinedButton(
+                  btnWidth: 120,
+                  btnHeight: 40,
+                  icon: Icons.cancel,
+                  text: localizedStrings.button_cancel,
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
+                ),
+              ],
             ),
-            isOneModeDown()
-                ? OutlinedButton(
-                    child: const Text('Confirm'),
-                    onPressed: () {
-                      Navigator.of(context).pop(true); // 跳转
-                    },
-                  )
-                : const SizedBox(),
           ],
         );
       },
@@ -522,7 +467,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
   void sendFileToScale(String fmtPath) {
     myDownLoadPluFile.scaleModel = 'TMax';
     myDownLoadPluFile.filePath = fmtPath;
-    myDownLoadPluFile.nameMaxLen = (_nameLen == '30') ? 30 : 60;
+    myDownLoadPluFile.nameMaxLen = 30;
     myScaleCmd.cmdData = json.encode(myDownLoadPluFile);
     MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   }
@@ -573,8 +518,13 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
       final buffer = bytes.buffer;
 
       // 将模板文件保存到指定路径
-      await output.writeAsBytes(
-          buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes));
+      try {
+        await output.writeAsBytes(
+            buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes));
+        _showFileSaveCfmDialog(context, outputFile);
+      } catch (e) {
+        _showFileSaveCfmDialog(context, e.toString());
+      }
     }
   }
 

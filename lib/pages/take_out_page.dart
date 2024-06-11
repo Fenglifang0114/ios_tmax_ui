@@ -31,6 +31,7 @@ import 'package:path/path.dart';
 
 import '../dialog/show_warning.dart';
 import '../dialog/weight_report_feilds_setting.dart';
+import '../widget/custom_button.dart';
 import '../widget/page_head.dart';
 
 class TakeOutPage extends StatefulWidget {
@@ -777,65 +778,72 @@ class TakeOutPageState extends State<TakeOutPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     _buildFlexibleButtonAndText(
-                      width: 80,
-                      buttonText: localizedStrings.button_tare,
-                      onPressed: PublicFunctions.performTare,
-                      constraints: constraints,
-                      isTrue: (isStart && !_isTakeOutStart),
-                    ),
+                        width: 80,
+                        buttonText: localizedStrings.button_tare,
+                        onPressed: PublicFunctions.performTare,
+                        constraints: constraints,
+                        isTrue: isStart && !_isTakeOutStart,
+                        icon: Icons.title),
                     _buildFlexibleButtonAndText(
-                      width: 80,
-                      buttonText: localizedStrings.button_zero,
-                      onPressed: PublicFunctions.performZero,
-                      constraints: constraints,
-                      isTrue: (isStart && !_isTakeOutStart),
-                    ),
+                        width: 80,
+                        buttonText: localizedStrings.button_zero,
+                        onPressed: PublicFunctions.performZero,
+                        constraints: constraints,
+                        isTrue: isStart && !_isTakeOutStart,
+                        icon: Icons.exposure_zero),
                     _buildFlexibleButtonAndText(
-                      width: 80,
-                      buttonText: localizedStrings.button_save,
-                      onPressed: _changeSaveButton,
-                      constraints: constraints,
-                      isTrue: (!_isSaveButtonDisabled && isStart),
-                    ),
-                    _buildStartButton(
-                      width: 80,
-                      buttonText: (myReqWeightCountine.msgBody == null)
-                          ? 'Start'
-                          : (_isTakeOutStart)
-                              ? 'End'
-                              : 'Start',
-                      constraints: constraints,
-                    ),
+                        width: 80,
+                        buttonText: (myReqWeightCountine.msgBody == null)
+                            ? 'Start'
+                            : (_isTakeOutStart)
+                                ? 'End'
+                                : 'Start',
+                        onPressed: checkStartButton()
+                            ? () {
+                                if (_isTakeOutStart) {
+                                  _isTakeOutStart = false;
+                                  weightValueList.clear();
+                                  lastTakeOutWeightval = 0.000;
+                                } else {
+                                  if (isWeightValue()) {
+                                    basicWeightval = double.tryParse(
+                                        myReqWeightCountine
+                                            .msgBody!.weightVal)!;
+                                    startWeightUnit =
+                                        myReqWeightCountine.msgBody!.weightUnit;
+                                  }
+                                  lastTakeOutWeightval = 0.000;
+                                  _isTakeOutStart = true;
+                                  weightValueList.clear();
+                                }
+                              }
+                            : (_isTakeOutStart)
+                                ? () {
+                                    _isTakeOutStart = false;
+                                    weightValueList.clear();
+                                    lastTakeOutWeightval = 0.000;
+                                  }
+                                : null,
+                        constraints: constraints,
+                        isTrue: isStart && !_isTakeOutStart,
+                        icon: Icons.swipe_right_outlined),
                     _buildFlexibleButtonAndText(
-                      width: 80,
-                      buttonText: localizedStrings.button_setting,
-                      onPressed: () {
-                        mySettingParam = myModeSettingTakeOut;
-                        paramSettingDialog(context);
-                      },
-                      constraints: constraints,
-                      isTrue: true,
-                    ),
+                        width: 80,
+                        buttonText: localizedStrings.button_save,
+                        onPressed: _changeSaveButton,
+                        constraints: constraints,
+                        isTrue: !_isSaveButtonDisabled && isStart,
+                        icon: Icons.save_outlined),
                     _buildFlexibleButtonAndText(
-                      width: 80,
-                      buttonText: localizedStrings.button_export_report,
-                      onPressed: () async {
-                        final directory = Directory.current.path;
-                        String? outputFile =
-                            (await FilePicker.platform.saveFile(
-                          initialDirectory: directory,
-                          type: FileType.custom,
-                          dialogTitle: 'Output file:',
-                          allowedExtensions: ["xlsx"],
-                          fileName: 'report.xlsx',
-                        ));
-                        if (outputFile != null) {
-                          _creatFile(outputFile);
-                        }
-                      },
-                      constraints: constraints,
-                      isTrue: true,
-                    ),
+                        width: 80,
+                        buttonText: localizedStrings.button_setting,
+                        onPressed: () {
+                          mySettingParam = myModeSettingTakeOut;
+                          paramSettingDialog(context);
+                        },
+                        constraints: constraints,
+                        isTrue: true,
+                        icon: Icons.settings_outlined),
                   ],
                 );
               }),
@@ -890,11 +898,25 @@ class TakeOutPageState extends State<TakeOutPage> {
                             width: 150,
                             padding: const EdgeInsets.all(0),
                           ),
-                          buildPluEditButton(
-                              Theme.of(context).colorScheme.primary,
-                              localizedStrings.plu_edit,
-                              constraints,
-                              context),
+                          CustomElevatedButton(
+                            btnWidth: constraints.maxWidth / 10 - 50,
+                            btnHeight: 40,
+                            icon: Icons.edit_note_outlined,
+                            text: localizedStrings.plu_edit,
+                            onPressed: () {
+                              getProductList();
+                              addProductDialog(context).then((onvalue) {
+                                if (!productNameList
+                                    .contains(productNameValue)) {
+                                  myProductRecInfo.product = "";
+                                  productNameValue = "";
+                                  myProductRecInfo.id = "";
+                                  myProductRecInfo.withPretare = false;
+                                  myProductRecInfo.remarks = "";
+                                }
+                              });
+                            },
+                          ),
                           buildTextString(
                               localizedStrings.user_name, constraints, context),
                           Container(
@@ -929,26 +951,56 @@ class TakeOutPageState extends State<TakeOutPage> {
                             width: 150,
                             padding: const EdgeInsets.all(0),
                           ),
-                          buildUserEditButton(
-                              Theme.of(context).colorScheme.primary,
-                              localizedStrings.user_edit,
-                              constraints,
-                              context),
-                          buildSetReportButton(
-                              Theme.of(context).colorScheme.primary,
-                              localizedStrings.report_set_btn,
-                              constraints,
-                              context),
-                          buildButton(
-                              Theme.of(context).colorScheme,
-                              localizedStrings.report_show_btn,
-                              constraints,
-                              _toggleLayout),
-                          buildButton(
-                              Theme.of(context).colorScheme,
-                              localizedStrings.report_delete_btn,
-                              constraints,
-                              () => _showConfirmationDialog(context)),
+                          CustomElevatedButton(
+                            btnWidth: constraints.maxWidth / 10 - 50,
+                            btnHeight: 40,
+                            icon: Icons.edit_note_outlined,
+                            text: localizedStrings.user_edit,
+                            onPressed: () {
+                              PublicFunctions.getUserList();
+                              getUserNameList();
+                              if (!userNameList.contains(userNameValue)) {
+                                myUserInfo.name = "";
+                                userNameValue = "";
+                                myUserInfo.id = "";
+                                myUserInfo.isFemale = true;
+                                myUserInfo.phone = "";
+                                myUserInfo.remarks = "";
+                              }
+                              addUserDialog(context).then((onvalue) {
+                                setState(() {
+                                  PublicFunctions.getUserList();
+                                  getUserNameList();
+                                  if (!userNameList.contains(userNameValue)) {
+                                    myUserInfo.name = "";
+                                    userNameValue = "";
+                                    myUserInfo.id = "";
+                                    myUserInfo.isFemale = true;
+                                    myUserInfo.phone = "";
+                                    myUserInfo.remarks = "";
+                                  }
+                                });
+                              });
+                            },
+                          ),
+                          CustomOutlinedButton(
+                            btnWidth: constraints.maxWidth / 10 - 50,
+                            btnHeight: 40,
+                            icon: Icons.settings_applications_rounded,
+                            text: localizedStrings.report_set_btn,
+                            onPressed: () {
+                              reportFieldsSettingDialog(context);
+                            },
+                          ),
+                          CustomOutlinedButton(
+                            btnWidth: constraints.maxWidth / 10 - 50,
+                            btnHeight: 40,
+                            icon: Icons.show_chart,
+                            text: localizedStrings.report_show_btn,
+                            onPressed: () {
+                              _toggleLayout();
+                            },
+                          ),
                         ]),
                   );
                 })),
@@ -973,18 +1025,31 @@ class TakeOutPageState extends State<TakeOutPage> {
           ),
           content: Text(localizedStrings.data_delete_confirm),
           actions: <Widget>[
-            OutlinedButton(
-              child: Text(localizedStrings.button_cancel),
-              onPressed: () {
-                Navigator.of(context).pop(false); // 不跳转
-              },
-            ),
-            OutlinedButton(
-              child: Text(localizedStrings.confirm_btn),
-              onPressed: () {
-                Navigator.of(context).pop(true); // 跳转
-              },
-            ),
+            Row(
+              children: [
+                CustomOutlinedButton(
+                  btnWidth: 120,
+                  btnHeight: 40,
+                  icon: Icons.cancel,
+                  text: localizedStrings.button_cancel,
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
+                ),
+                const SizedBox(
+                  width: 20,
+                ),
+                CustomElevatedButton(
+                  btnWidth: 120,
+                  btnHeight: 40,
+                  icon: Icons.check_circle,
+                  text: localizedStrings.confirm_btn,
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  },
+                ),
+              ],
+            )
           ],
         );
       },
@@ -1168,93 +1233,6 @@ class TakeOutPageState extends State<TakeOutPage> {
             onPressed: onPressed));
   }
 
-  Widget buildSetReportButton(Color? color, String text,
-      BoxConstraints constraints, BuildContext context) {
-    var fontSize = 14 * constraints.maxHeight / 60;
-    var width = constraints.maxWidth / 10;
-    return SizedBox(
-      width: width,
-      child: MaterialButton(
-          color: color,
-          textColor: Theme.of(context).colorScheme.onPrimary,
-          elevation: 5.0,
-          child: Text(text,
-              style:
-                  TextStyle(fontSize: fontSize, fontWeight: FontWeight.normal)),
-          onPressed: () {
-            reportFieldsSettingDialog(context);
-          }),
-    );
-  }
-
-  Widget buildUserEditButton(Color? color, String text,
-      BoxConstraints constraints, BuildContext context) {
-    var fontSize = 14 * constraints.maxHeight / 60;
-    var width = constraints.maxWidth / 10;
-    return SizedBox(
-        width: width,
-        child: MaterialButton(
-            color: Theme.of(context).colorScheme.primary,
-            textColor: Theme.of(context).colorScheme.onPrimary,
-            elevation: 5.0,
-            child: Text(text,
-                style: TextStyle(
-                    fontSize: fontSize, fontWeight: FontWeight.normal)),
-            onPressed: () {
-              PublicFunctions.getUserList();
-              getUserNameList();
-              if (!userNameList.contains(userNameValue)) {
-                myUserInfo.name = "";
-                userNameValue = "";
-                myUserInfo.id = "";
-                myUserInfo.isFemale = true;
-                myUserInfo.phone = "";
-                myUserInfo.remarks = "";
-              }
-              addUserDialog(context).then((onvalue) {
-                setState(() {
-                  PublicFunctions.getUserList();
-                  getUserNameList();
-                  if (!userNameList.contains(userNameValue)) {
-                    myUserInfo.name = "";
-                    userNameValue = "";
-                    myUserInfo.id = "";
-                    myUserInfo.isFemale = true;
-                    myUserInfo.phone = "";
-                    myUserInfo.remarks = "";
-                  }
-                });
-              });
-            }));
-  }
-
-  Widget buildPluEditButton(Color? color, String text,
-      BoxConstraints constraints, BuildContext context) {
-    var fontSize = 14 * constraints.maxHeight / 60;
-    var width = constraints.maxWidth / 10;
-    return SizedBox(
-        width: width,
-        child: MaterialButton(
-            color: color,
-            textColor: Theme.of(context).colorScheme.onPrimary,
-            elevation: 5.0,
-            child: Text(text,
-                style: TextStyle(
-                    fontSize: fontSize, fontWeight: FontWeight.normal)),
-            onPressed: () {
-              getProductList();
-              addProductDialog(context).then((onvalue) {
-                if (!productNameList.contains(productNameValue)) {
-                  myProductRecInfo.product = "";
-                  productNameValue = "";
-                  myProductRecInfo.id = "";
-                  myProductRecInfo.withPretare = false;
-                  myProductRecInfo.remarks = "";
-                }
-              });
-            }));
-  }
-
   Widget buildTextString(
       String text, BoxConstraints constraints, BuildContext context) {
     var fontSize = 14 * constraints.maxHeight / 60;
@@ -1266,76 +1244,44 @@ class TakeOutPageState extends State<TakeOutPage> {
                 TextStyle(fontSize: fontSize, fontWeight: FontWeight.normal)));
   }
 
-  Widget _buildStartButton({
-    required double width,
-    required String buttonText,
-    required BoxConstraints constraints,
-  }) {
-    double buttonWidth = width * (constraints.maxWidth / 600); // 自适应按钮宽度
-    double fontSize = 14 * (constraints.maxWidth / 600); // 自适应字体大小
-
-    return SizedBox(
-      width: buttonWidth,
-      child: ElevatedButton(
-        onPressed: checkStartButton()
-            ? () {
-                if (_isTakeOutStart) {
-                  _isTakeOutStart = false;
-                  weightValueList.clear();
-                  lastTakeOutWeightval = 0.000;
-                } else {
-                  if (isWeightValue()) {
-                    basicWeightval = double.tryParse(
-                        myReqWeightCountine.msgBody!.weightVal)!;
-                    startWeightUnit = myReqWeightCountine.msgBody!.weightUnit;
-                  }
-                  lastTakeOutWeightval = 0.000;
-                  _isTakeOutStart = true;
-                  weightValueList.clear();
-                }
-              }
-            : (_isTakeOutStart)
-                ? () {
-                    _isTakeOutStart = false;
-                    weightValueList.clear();
-                    lastTakeOutWeightval = 0.000;
-                  }
-                : null,
-        child: Text(
-          buttonText,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            fontSize: fontSize,
-            fontWeight: FontWeight.normal,
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildFlexibleButtonAndText({
     required double width,
     required String buttonText,
-    required VoidCallback onPressed,
+    required VoidCallback? onPressed,
     required BoxConstraints constraints,
     required bool isTrue,
+    required IconData icon,
   }) {
     double buttonWidth = width * (constraints.maxWidth / 600); // 自适应按钮宽度
     double fontSize = 14 * (constraints.maxWidth / 600); // 自适应字体大小
 
     return SizedBox(
-      width: buttonWidth,
       child: ElevatedButton(
         onPressed: isTrue ? onPressed : null,
-        child: Text(
-          buttonText,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            fontSize: fontSize,
-            fontWeight: FontWeight.normal,
-          ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Icon(
+              icon,
+              size: fontSize,
+            ),
+            const SizedBox(width: 4),
+            SizedBox(
+              width: buttonWidth,
+              height: buttonWidth / 3,
+              child: Center(
+                child: Text(
+                  buttonText,
+                  maxLines: 1,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: fontSize,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+            )
+          ],
         ),
       ),
     );
@@ -1603,50 +1549,36 @@ class TakeOutPageState extends State<TakeOutPage> {
                           return Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              SizedBox(
-                                width: constraints.maxWidth / 3.5,
-                                child: ElevatedButton(
-                                    onPressed: (isStart && !_isTakeOutStart)
-                                        ? () {
-                                            PublicFunctions.performTare();
-                                          }
-                                        : null,
-                                    child: Text(localizedStrings.button_tare,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.normal))),
+                              CustomElevatedButton(
+                                btnWidth: constraints.maxWidth / 5,
+                                btnHeight: 40,
+                                icon: Icons.title,
+                                text: localizedStrings.button_tare,
+                                onPressed: (isStart && !_isTakeOutStart)
+                                    ? () {
+                                        PublicFunctions.performTare();
+                                      }
+                                    : null,
                               ),
-                              SizedBox(
-                                width: constraints.maxWidth / 3.5,
-                                child: ElevatedButton(
-                                    onPressed: (isStart && !_isTakeOutStart)
-                                        ? () {
-                                            PublicFunctions.performZero();
-                                          }
-                                        : null,
-                                    child: Text(localizedStrings.button_zero,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.normal))),
+                              CustomElevatedButton(
+                                btnWidth: constraints.maxWidth / 5,
+                                btnHeight: 40,
+                                icon: Icons.exposure_zero,
+                                text: localizedStrings.button_zero,
+                                onPressed: (isStart && !_isTakeOutStart)
+                                    ? () {
+                                        PublicFunctions.performZero();
+                                      }
+                                    : null,
                               ),
-                              SizedBox(
-                                width: constraints.maxWidth / 3.5,
-                                child: ElevatedButton(
-                                    onPressed:
-                                        (!_isSaveButtonDisabled && isStart)
-                                            ? _changeSaveButton
-                                            : null,
-                                    child: Text(localizedStrings.button_save,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.normal))),
-                              ),
+                              CustomElevatedButton(
+                                  btnWidth: constraints.maxWidth / 5,
+                                  btnHeight: 40,
+                                  icon: Icons.save_outlined,
+                                  text: localizedStrings.button_save,
+                                  onPressed: (!_isSaveButtonDisabled && isStart)
+                                      ? _changeSaveButton
+                                      : null),
                             ],
                           );
                         }),
@@ -1655,91 +1587,72 @@ class TakeOutPageState extends State<TakeOutPage> {
                           return Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              SizedBox(
-                                width: constraints.maxWidth / 3.5,
-                                child: ElevatedButton(
-                                    onPressed: checkStartButton()
-                                        ? () {
-                                            if (_isTakeOutStart) {
-                                              _isTakeOutStart = false;
-                                              weightValueList.clear();
-                                              lastTakeOutWeightval = 0.000;
-                                            } else {
-                                              if (isWeightValue()) {
-                                                basicWeightval =
-                                                    double.tryParse(
-                                                        myReqWeightCountine
-                                                            .msgBody!
-                                                            .weightVal)!;
-                                                startWeightUnit =
-                                                    myReqWeightCountine
-                                                        .msgBody!.weightUnit;
-                                              }
-                                              lastTakeOutWeightval = 0.000;
-                                              _isTakeOutStart = true;
-                                              weightValueList.clear();
-                                            }
+                              CustomElevatedButton(
+                                btnWidth: constraints.maxWidth / 5,
+                                btnHeight: 40,
+                                icon: Icons.settings_outlined,
+                                text: localizedStrings.button_setting,
+                                onPressed: () {
+                                  mySettingParam = myModeSettingTakeOut;
+                                  paramSettingDialog(context);
+                                },
+                              ),
+                              CustomElevatedButton(
+                                btnWidth: constraints.maxWidth / 5,
+                                btnHeight: 40,
+                                icon: Icons.swipe_right_outlined,
+                                text: (myReqWeightCountine.msgBody == null)
+                                    ? 'Start'
+                                    : (_isTakeOutStart)
+                                        ? 'End'
+                                        : 'Start',
+                                onPressed: checkStartButton()
+                                    ? () {
+                                        if (_isTakeOutStart) {
+                                          _isTakeOutStart = false;
+                                          weightValueList.clear();
+                                          lastTakeOutWeightval = 0.000;
+                                        } else {
+                                          if (isWeightValue()) {
+                                            basicWeightval = double.tryParse(
+                                                myReqWeightCountine
+                                                    .msgBody!.weightVal)!;
+                                            startWeightUnit =
+                                                myReqWeightCountine
+                                                    .msgBody!.weightUnit;
                                           }
-                                        : (_isTakeOutStart)
-                                            ? () {
-                                                _isTakeOutStart = false;
-                                                weightValueList.clear();
-                                                lastTakeOutWeightval = 0.000;
-                                              }
-                                            : null,
-                                    child: Text(
-                                        (myReqWeightCountine.msgBody == null)
-                                            ? 'Start'
-                                            : (_isTakeOutStart)
-                                                ? 'End'
-                                                : 'Start',
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.normal))),
-                              ),
-                              SizedBox(
-                                width: constraints.maxWidth / 3.5,
-                                child: ElevatedButton(
-                                    onPressed: () {
-                                      //跳转页面
-                                      mySettingParam = myModeSettingTakeOut;
-                                      paramSettingDialog(context);
-                                    },
-                                    child: Text(localizedStrings.button_setting,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.normal))),
-                              ),
-                              SizedBox(
-                                width: constraints.maxWidth / 3.5,
-                                child: ElevatedButton(
-                                    // elevation: 5.0,
-                                    child: Text(
-                                        localizedStrings.button_export_report,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.normal)),
-                                    onPressed: () async {
-                                      final directory = Directory.current.path;
-                                      String? outputFile =
-                                          (await FilePicker.platform.saveFile(
-                                        initialDirectory: directory,
-                                        type: FileType.custom,
-                                        dialogTitle: 'Output file:',
-                                        allowedExtensions: ["xlsx"],
-                                        fileName: 'report.xlsx',
-                                      ));
-                                      if (outputFile != null) {
-                                        _creatFile(outputFile);
+                                          lastTakeOutWeightval = 0.000;
+                                          _isTakeOutStart = true;
+                                          weightValueList.clear();
+                                        }
                                       }
-                                    }),
+                                    : (_isTakeOutStart)
+                                        ? () {
+                                            _isTakeOutStart = false;
+                                            weightValueList.clear();
+                                            lastTakeOutWeightval = 0.000;
+                                          }
+                                        : null,
                               ),
+                              CustomElevatedButton(
+                                  btnWidth: constraints.maxWidth / 5,
+                                  btnHeight: 40,
+                                  icon: Icons.outbox,
+                                  text: localizedStrings.button_export_report,
+                                  onPressed: () async {
+                                    final directory = Directory.current.path;
+                                    String? outputFile =
+                                        (await FilePicker.platform.saveFile(
+                                      initialDirectory: directory,
+                                      type: FileType.custom,
+                                      dialogTitle: 'Output file:',
+                                      allowedExtensions: ["xlsx"],
+                                      fileName: 'report.xlsx',
+                                    ));
+                                    if (outputFile != null) {
+                                      _creatFile(outputFile);
+                                    }
+                                  }),
                             ],
                           );
                         }),
@@ -1840,27 +1753,23 @@ class TakeOutPageState extends State<TakeOutPage> {
               width: constraints.maxWidth / 10,
               padding: const EdgeInsets.all(0),
             ),
-            SizedBox(
-              width: constraints.maxWidth / 10,
-              child: MaterialButton(
-                  color: Theme.of(context).colorScheme.primary,
-                  textColor: Theme.of(context).colorScheme.onPrimary,
-                  elevation: 5.0,
-                  child: Text(localizedStrings.plu_edit,
-                      style: const TextStyle(
-                          fontSize: 14, fontWeight: FontWeight.normal)),
-                  onPressed: () {
-                    getProductList();
-                    addProductDialog(context).then((onvalue) {
-                      if (!productNameList.contains(productNameValue)) {
-                        myProductRecInfo.product = "";
-                        productNameValue = "";
-                        myProductRecInfo.id = "";
-                        myProductRecInfo.withPretare = false;
-                        myProductRecInfo.remarks = "";
-                      }
-                    });
-                  }),
+            CustomElevatedButton(
+              btnWidth: constraints.maxWidth / 10 - 50,
+              btnHeight: 40,
+              icon: Icons.edit_note_outlined,
+              text: localizedStrings.plu_edit,
+              onPressed: () {
+                getProductList();
+                addProductDialog(context).then((onvalue) {
+                  if (!productNameList.contains(productNameValue)) {
+                    myProductRecInfo.product = "";
+                    productNameValue = "";
+                    myProductRecInfo.id = "";
+                    myProductRecInfo.withPretare = false;
+                    myProductRecInfo.remarks = "";
+                  }
+                });
+              },
             ),
             SizedBox(
               width: constraints.maxWidth / 10,
@@ -1898,16 +1807,24 @@ class TakeOutPageState extends State<TakeOutPage> {
               width: constraints.maxWidth / 10,
               padding: const EdgeInsets.all(0),
             ),
-            SizedBox(
-              width: constraints.maxWidth / 10,
-              child: MaterialButton(
-                  color: Theme.of(context).colorScheme.primary,
-                  textColor: Theme.of(context).colorScheme.onPrimary,
-                  elevation: 5.0,
-                  child: Text(localizedStrings.user_edit,
-                      style: const TextStyle(
-                          fontSize: 14, fontWeight: FontWeight.normal)),
-                  onPressed: () {
+            CustomElevatedButton(
+              btnWidth: constraints.maxWidth / 10 - 50,
+              btnHeight: 40,
+              icon: Icons.edit_note_outlined,
+              text: localizedStrings.user_edit,
+              onPressed: () {
+                PublicFunctions.getUserList();
+                getUserNameList();
+                if (!userNameList.contains(userNameValue)) {
+                  myUserInfo.name = "";
+                  userNameValue = "";
+                  myUserInfo.id = "";
+                  myUserInfo.isFemale = true;
+                  myUserInfo.phone = "";
+                  myUserInfo.remarks = "";
+                }
+                addUserDialog(context).then((onvalue) {
+                  setState(() {
                     PublicFunctions.getUserList();
                     getUserNameList();
                     if (!userNameList.contains(userNameValue)) {
@@ -1918,57 +1835,36 @@ class TakeOutPageState extends State<TakeOutPage> {
                       myUserInfo.phone = "";
                       myUserInfo.remarks = "";
                     }
-                    addUserDialog(context).then((onvalue) {
-                      setState(() {
-                        PublicFunctions.getUserList();
-                        getUserNameList();
-                        if (!userNameList.contains(userNameValue)) {
-                          myUserInfo.name = "";
-                          userNameValue = "";
-                          myUserInfo.id = "";
-                          myUserInfo.isFemale = true;
-                          myUserInfo.phone = "";
-                          myUserInfo.remarks = "";
-                        }
-                      });
-                    });
-                  }),
+                  });
+                });
+              },
             ),
-            SizedBox(
-              width: constraints.maxWidth / 10,
-              child: MaterialButton(
-                  color: Theme.of(context).colorScheme.primary,
-                  textColor: Theme.of(context).colorScheme.onPrimary,
-                  elevation: 5.0,
-                  child: Text(localizedStrings.report_set_btn,
-                      style: const TextStyle(
-                          fontSize: 14, fontWeight: FontWeight.normal)),
-                  onPressed: () {
-                    reportFieldsSettingDialog(context);
-                  }),
+            CustomOutlinedButton(
+              btnWidth: constraints.maxWidth / 10 - 50,
+              btnHeight: 40,
+              icon: Icons.settings_applications_rounded,
+              text: localizedStrings.report_set_btn,
+              onPressed: () {
+                reportFieldsSettingDialog(context);
+              },
             ),
-            MaterialButton(
-                color: Theme.of(context).colorScheme.primary,
-                textColor: Theme.of(context).colorScheme.onPrimary,
-                elevation: 5.0,
-                child: Text(localizedStrings.report_hide_btn,
-                    style: const TextStyle(
-                        fontSize: 14, fontWeight: FontWeight.normal)),
-                onPressed: () {
-                  _toggleLayout();
-                }),
-            SizedBox(
-              width: constraints.maxWidth / 10,
-              child: MaterialButton(
-                  color: Theme.of(context).colorScheme.primary,
-                  textColor: Theme.of(context).colorScheme.onPrimary,
-                  elevation: 5.0,
-                  child: Text(localizedStrings.report_delete_btn,
-                      style: const TextStyle(
-                          fontSize: 14, fontWeight: FontWeight.normal)),
-                  onPressed: () {
-                    _showConfirmationDialog(context);
-                  }),
+            CustomOutlinedButton(
+              btnWidth: constraints.maxWidth / 10 - 50,
+              btnHeight: 40,
+              icon: Icons.hide_source,
+              text: localizedStrings.report_hide_btn,
+              onPressed: () {
+                _toggleLayout();
+              },
+            ),
+            CustomOutlinedButton(
+              btnWidth: constraints.maxWidth / 10 - 50,
+              btnHeight: 40,
+              icon: Icons.delete_forever_outlined,
+              text: localizedStrings.report_delete_btn,
+              onPressed: () {
+                _showConfirmationDialog(context);
+              },
             ),
           ],
         );
