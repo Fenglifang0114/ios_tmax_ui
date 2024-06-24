@@ -204,7 +204,7 @@ class WebSocketChannel {
         pasterProductList(jsonData['MsgBody']);
       } else if (jsonData['MsgType'] == "resp_user_list") {
         pasterUserList(jsonData['MsgBody']);
-      } else if (jsonData['MsgType'] == "resp_check_license") {
+      } else if (jsonData['MsgType'] == "resp_get_license") {
         pasterLicense(jsonData['MsgBody']);
       } else if (jsonData['MsgType'] == "resp_check_license_key") {
         pasterLicenseKey(jsonData['MsgBody']);
@@ -212,6 +212,9 @@ class WebSocketChannel {
         pasterWifiList(jsonData['MsgBody']);
       } else if (jsonData['MsgType'] == "resp_get_ip_info") {
         pasterIpInfo(jsonData['MsgBody']);
+      } else if (jsonData['MsgType'] == "resp_update_license") {
+        var dataString = jsonData['MsgBody'];
+        eventBus.fire(EventRespUpdateLic(dataString));
       } else {}
     } catch (e) {
       if (kDebugMode) {
@@ -221,13 +224,11 @@ class WebSocketChannel {
   }
 
   void pasterLicense(String jsonDataString) {
-    myLicenseData.data = jsonDataString;
-    eventBus.fire(EventLicenseData(myLicenseData));
+    eventBus.fire(EventLicenseData(jsonDataString));
   }
 
   void pasterLicenseKey(String jsonDataString) {
-    myLicenseData.data = jsonDataString;
-    eventBus.fire(EventCheckLicenseKey(myLicenseData));
+    eventBus.fire(EventCheckLicenseKey(jsonDataString));
   }
 
   Future pasterProductList(String jsonDataString) async {

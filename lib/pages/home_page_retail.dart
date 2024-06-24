@@ -187,16 +187,16 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
                               ),
                               versionInfo(
                                   Theme.of(context).colorScheme.onPrimary),
-                              Text(
-                                  myLicenseInfo.isValid
-                                      ? '(Professional)'
-                                      : '(Basic)',
-                                  style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.onPrimary,
-                                    fontSize: 16,
-                                  ),
-                                  textAlign: TextAlign.center),
+                              // Text(
+                              //     myLicenseInfo.isValid
+                              //         ? '(Professional)'
+                              //         : '(Basic)',
+                              //     style: TextStyle(
+                              //       color:
+                              //           Theme.of(context).colorScheme.onPrimary,
+                              //       fontSize: 16,
+                              //     ),
+                              //     textAlign: TextAlign.center),
                             ],
                           )),
                     ),
@@ -582,16 +582,16 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
                     MouseRegion(
                       cursor: SystemMouseCursors.click, // 设置光标为手的形状
                       child: GestureDetector(
-                        onTap: myLicenseInfo.isValid
+                        onTap: myRedeLicInfo.isValid
                             ? () {
-                                showReceiptDesign(myLicenseInfo.isValid);
+                                showReceiptDesign(myRedeLicInfo.isValid);
                               }
                             : null,
                         child: appCard(
                             context,
                             localizedStrings.receipt_design_title,
                             Icons.receipt,
-                            myLicenseInfo.isValid,
+                            myRedeLicInfo.isValid,
                             'This application is designed for the printing format of the receipt.'),
                       ),
                     ),

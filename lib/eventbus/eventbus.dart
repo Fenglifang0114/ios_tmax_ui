@@ -87,6 +87,11 @@ class EventRespData {
   EventRespData(this.obj);
 }
 
+class EventRespUpdateLic {
+  dynamic obj;
+  EventRespUpdateLic(this.obj);
+}
+
 class EventRecData {
   dynamic obj;
   EventRecData(this.obj);

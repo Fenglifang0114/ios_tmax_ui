@@ -191,16 +191,16 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                               ),
                               versionInfo(
                                   Theme.of(context).colorScheme.onPrimary),
-                              Text(
-                                  myLicenseInfo.isValid
-                                      ? '(Professional)'
-                                      : '(Basic)',
-                                  style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.onPrimary,
-                                    fontSize: 16,
-                                  ),
-                                  textAlign: TextAlign.center),
+                              // Text(
+                              //     myLicenseInfo.isValid
+                              //         ? '(Professional)'
+                              //         : '(Basic)',
+                              //     style: TextStyle(
+                              //       color:
+                              //           Theme.of(context).colorScheme.onPrimary,
+                              //       fontSize: 16,
+                              //     ),
+                              //     textAlign: TextAlign.center),
                             ],
                           )),
                     ),
@@ -543,7 +543,7 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                       MouseRegion(
                         cursor: SystemMouseCursors.click, // 设置光标为手的形状
                         child: GestureDetector(
-                          onTap: myLicenseInfo.isValid
+                          onTap: myWedaLicInfo.isValid
                               ? () {
                                   setState(() {
                                     stopCheckSerialPort();
@@ -562,14 +562,14 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                               context,
                               localizedStrings.weight_collection_title,
                               Icons.save_as,
-                              myLicenseInfo.isValid,
+                              myWedaLicInfo.isValid,
                               'This application is used to collect weighing data in real time'),
                         ),
                       ),
                       MouseRegion(
                           cursor: SystemMouseCursors.click, // 设置光标为手的形状
                           child: GestureDetector(
-                            onTap: myLicenseInfo.isValid
+                            onTap: myChweLicInfo.isValid
                                 ? () {
                                     setState(() {
                                       stopCheckSerialPort();
@@ -588,13 +588,13 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                                 context,
                                 localizedStrings.checkweigher_title,
                                 Icons.scale,
-                                myLicenseInfo.isValid,
+                                myChweLicInfo.isValid,
                                 'This application is used to check weighing data in real time'),
                           )),
                       MouseRegion(
                           cursor: SystemMouseCursors.click, // 设置光标为手的形状
                           child: GestureDetector(
-                            onTap: myLicenseInfo.isValid
+                            onTap: myInWeLicInfo.isValid
                                 ? () {
                                     setState(() {
                                       stopCheckSerialPort();
@@ -613,13 +613,13 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                                 context,
                                 localizedStrings.take_in_title,
                                 Icons.add,
-                                myLicenseInfo.isValid,
+                                myInWeLicInfo.isValid,
                                 'This app is used to implement the increment scale.'),
                           )),
                       MouseRegion(
                           cursor: SystemMouseCursors.click, // 设置光标为手的形状
                           child: GestureDetector(
-                            onTap: myLicenseInfo.isValid
+                            onTap: myTaouLicInfo.isValid
                                 ? () {
                                     setState(() {
                                       stopCheckSerialPort();
@@ -638,7 +638,7 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                                 context,
                                 localizedStrings.take_out_title,
                                 Icons.remove,
-                                myLicenseInfo.isValid,
+                                myTaouLicInfo.isValid,
                                 'This app is used to implement the take out scale.'),
                           )),
                     ]),

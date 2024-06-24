@@ -336,6 +336,11 @@
     "plu_cfm_one_file":"Only one PLU file can be selected",
     "plu_name_length":"Product name max length:",
     "plu_all_plu_title":"All Products:",
-    "plu_partial_plu_title":"Partial Products:"
+    "plu_partial_plu_title":"Partial Products:",
+    "btn_add_lic_file":"Select License File",
+    "output_res_folder":"Resource Folder",
+    "output_select_folder":"Select Folder" ,
+    "output_confirm_info":"Please confirm the folder name!" ,
+    "output_no_file":"No files were matched!" 
     
 }

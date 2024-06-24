@@ -1966,7 +1966,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
       }
     }
     if (jsonFilesList.isNotEmpty) {
-      PublicFunctions.sendOutoutFmtToScale(jsonFilesList);
+      PublicFunctions.sendOutputFmtToScale(jsonFilesList);
     }
   }
 

@@ -32,6 +32,7 @@ import 'abnormal_data_page.dart';
 import 'batch_delivery.dart';
 import 'custom_serial_protocol_page.dart';
 import 'down_recipt_fmt_page.dart';
+import 'down_serial_output.dart';
 import 'lable_down_prn_fmt_page.dart';
 import 'modify_com_port_page.dart';
 import 'receipt_design_page.dart';
@@ -220,7 +221,7 @@ class _HomePageState extends State<HomePage> with TrayListener {
                               versionInfo(
                                   Theme.of(context).colorScheme.onPrimary),
                               Text(
-                                  myLicenseInfo.isValid
+                                  myTConLicInfo.isValid
                                       ? '(Professional)'
                                       : '(Basic)',
                                   style: TextStyle(
@@ -612,18 +613,18 @@ class _HomePageState extends State<HomePage> with TrayListener {
                         cursor: SystemMouseCursors.click, // 设置光标为手的形状
                         child: GestureDetector(
                           onTap: () {
-                            // stopCheckSerialPort();
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //       builder: (context) =>
-                            //           const CustomSerialProtocol()),
-                            // ).then((value) => _updateStatus());
+                            stopCheckSerialPort();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const DownSerialOutputPage()),
+                            ).then((value) => _updateStatus());
                           },
                           child: customFunctionCard(
                               context,
                               localizedStrings.serial_output_download,
-                              Icons.usb_sharp,
+                              Icons.file_download_outlined,
                               true),
                         ),
                       ),
@@ -673,38 +674,38 @@ class _HomePageState extends State<HomePage> with TrayListener {
                     MouseRegion(
                       cursor: SystemMouseCursors.click, // 设置光标为手的形状
                       child: GestureDetector(
-                        onTap: myLicenseInfo.isValid
+                        onTap: myTConLicInfo.isValid
                             ? () {
-                                showLabelDesign(myLicenseInfo.isValid);
+                                showLabelDesign(myTConLicInfo.isValid);
                               }
                             : null,
                         child: customFunctionCard(
                             context,
                             localizedStrings.label_design_title,
                             Icons.design_services,
-                            myLicenseInfo.isValid),
+                            myTConLicInfo.isValid),
                       ),
                     ),
                     MouseRegion(
                       cursor: SystemMouseCursors.click, // 设置光标为手的形状
                       child: GestureDetector(
-                        onTap: myLicenseInfo.isValid
+                        onTap: myTConLicInfo.isValid
                             ? () {
-                                showReceiptDesign(myLicenseInfo.isValid);
+                                showReceiptDesign(myTConLicInfo.isValid);
                               }
                             : null,
                         child: customFunctionCard(
                           context,
                           localizedStrings.receipt_design_title,
                           Icons.receipt,
-                          myLicenseInfo.isValid,
+                          myTConLicInfo.isValid,
                         ),
                       ),
                     ),
                     MouseRegion(
                       cursor: SystemMouseCursors.click, // 设置光标为手的形状
                       child: GestureDetector(
-                        onTap: myLicenseInfo.isValid
+                        onTap: myTConLicInfo.isValid
                             ? () {
                                 stopCheckSerialPort();
                                 Navigator.push(
@@ -719,13 +720,13 @@ class _HomePageState extends State<HomePage> with TrayListener {
                             context,
                             localizedStrings.batch_delivery_title,
                             Icons.system_update_alt,
-                            myLicenseInfo.isValid),
+                            myTConLicInfo.isValid),
                       ),
                     ),
                     MouseRegion(
                       cursor: SystemMouseCursors.click, // 设置光标为手的形状
                       child: GestureDetector(
-                        onTap: myLicenseInfo.isValid
+                        onTap: myTConLicInfo.isValid
                             ? () {
                                 stopCheckSerialPort();
                                 Navigator.push(
@@ -740,13 +741,13 @@ class _HomePageState extends State<HomePage> with TrayListener {
                             context,
                             localizedStrings.serial_output_design,
                             Icons.usb_sharp,
-                            myLicenseInfo.isValid),
+                            myTConLicInfo.isValid),
                       ),
                     ),
                     MouseRegion(
                         cursor: SystemMouseCursors.click, // 设置光标为手的形状
                         child: GestureDetector(
-                          onTap: myLicenseInfo.isValid
+                          onTap: myTConLicInfo.isValid
                               ? () {
                                   setState(() {
                                     stopCheckSerialPort();
@@ -765,12 +766,12 @@ class _HomePageState extends State<HomePage> with TrayListener {
                               context,
                               localizedStrings.abnormal_data_title,
                               Icons.warning,
-                              myLicenseInfo.isValid),
+                              myTConLicInfo.isValid),
                         )),
                     MouseRegion(
                         cursor: SystemMouseCursors.click, // 设置光标为手的形状
                         child: GestureDetector(
-                          onTap: myLicenseInfo.isValid
+                          onTap: myTConLicInfo.isValid
                               ? () {
                                   setState(() {
                                     stopCheckSerialPort();
@@ -789,7 +790,7 @@ class _HomePageState extends State<HomePage> with TrayListener {
                               context,
                               localizedStrings.parameter_set_title,
                               Icons.tune_outlined,
-                              myLicenseInfo.isValid),
+                              myTConLicInfo.isValid),
                         )),
                   ]),
             ),

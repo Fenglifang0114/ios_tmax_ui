@@ -3439,6 +3439,56 @@ class S {
       args: [],
     );
   }
+
+  /// `Select License File`
+  String get btn_add_lic_file {
+    return Intl.message(
+      'Select License File',
+      name: 'btn_add_lic_file',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Resource Folder`
+  String get output_res_folder {
+    return Intl.message(
+      'Resource Folder',
+      name: 'output_res_folder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select Folder`
+  String get output_select_folder {
+    return Intl.message(
+      'Select Folder',
+      name: 'output_select_folder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please confirm the folder name!`
+  String get output_confirm_info {
+    return Intl.message(
+      'Please confirm the folder name!',
+      name: 'output_confirm_info',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No files were matched!`
+  String get output_no_file {
+    return Intl.message(
+      'No files were matched!',
+      name: 'output_no_file',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

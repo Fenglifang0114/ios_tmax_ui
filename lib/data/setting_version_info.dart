@@ -10,7 +10,7 @@ import 'encrypt_data.dart';
 const int tConfig = 1;
 const int tIndustry = 2;
 const int tRetail = 3;
-int mySystemVersion = tRetail;
+int mySystemVersion = tConfig;
 
 class SystemVersionInfo {
   Widget getHomePage() {

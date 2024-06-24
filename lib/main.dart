@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:t_max/functions/methods.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:window_size/window_size.dart';
 import 'common/web_socket_channel.dart';
@@ -88,7 +89,7 @@ class MyApp extends StatelessWidget {
     webchannel = WebSocketChannel('ws://$ipAddr:7878/tmax?scaleid=0');
     webchannel.connect();
     webchannel1.connect();
-    getLicense();
+    PublicFunctions.getLicense();
     return MaterialApp(
         //自定义主题
         theme: themeColor(colorTheme),
@@ -107,11 +108,5 @@ class MyApp extends StatelessWidget {
         //去掉右上角debug图标
         debugShowCheckedModeBanner: false,
         home: const TrialPage()); //HomePage()); //
-  }
-
-  void getLicense() {
-    myScaleCmd.cmdMode = "check_license";
-    myScaleCmd.cmdData = "";
-    MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
   }
 }

@@ -830,7 +830,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                                                     fontWeight: FontWeight
                                                         .bold)), ////此处需要秤回复
                                             duration:
-                                                const Duration(seconds: 1),
+                                                const Duration(seconds: 5),
                                             backgroundColor: Theme.of(context)
                                                 .colorScheme
                                                 .error));

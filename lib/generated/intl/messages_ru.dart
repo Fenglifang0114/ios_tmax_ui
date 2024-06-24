@@ -69,6 +69,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("modify emission power"),
         "bt_setting_title":
             MessageLookupByLibrary.simpleMessage("Настройка Bluetooth"),
+        "btn_add_lic_file":
+            MessageLookupByLibrary.simpleMessage("Select License File"),
         "button_add": MessageLookupByLibrary.simpleMessage("Добавить"),
         "button_add_license":
             MessageLookupByLibrary.simpleMessage("Добавить лицензию"),
@@ -223,6 +225,14 @@ class MessageLookup extends MessageLookupByLibrary {
             "Открыть предварительный просмотр"),
         "operation_steps":
             MessageLookupByLibrary.simpleMessage("Шаги операции:"),
+        "output_confirm_info": MessageLookupByLibrary.simpleMessage(
+            "Please confirm the folder name!"),
+        "output_no_file":
+            MessageLookupByLibrary.simpleMessage("No files were matched!"),
+        "output_res_folder":
+            MessageLookupByLibrary.simpleMessage("Resource Folder"),
+        "output_select_folder":
+            MessageLookupByLibrary.simpleMessage("Select Folder"),
         "p_Header2_expl":
             MessageLookupByLibrary.simpleMessage("The secend page header."),
         "p_Header2_var": MessageLookupByLibrary.simpleMessage("Header2"),

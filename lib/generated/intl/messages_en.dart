@@ -68,6 +68,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Modify emission power"),
         "bt_setting_title":
             MessageLookupByLibrary.simpleMessage("Bluetooth Setting"),
+        "btn_add_lic_file":
+            MessageLookupByLibrary.simpleMessage("Select License File"),
         "button_add": MessageLookupByLibrary.simpleMessage("Add"),
         "button_add_license":
             MessageLookupByLibrary.simpleMessage("Add License"),
@@ -217,6 +219,14 @@ class MessageLookup extends MessageLookupByLibrary {
         "open_preview": MessageLookupByLibrary.simpleMessage("Open preview"),
         "operation_steps":
             MessageLookupByLibrary.simpleMessage("Operation Steps:"),
+        "output_confirm_info": MessageLookupByLibrary.simpleMessage(
+            "Please confirm the folder name!"),
+        "output_no_file":
+            MessageLookupByLibrary.simpleMessage("No files were matched!"),
+        "output_res_folder":
+            MessageLookupByLibrary.simpleMessage("Resource Folder"),
+        "output_select_folder":
+            MessageLookupByLibrary.simpleMessage("Select Folder"),
         "p_Header2_expl":
             MessageLookupByLibrary.simpleMessage("The secend page header."),
         "p_Header2_var": MessageLookupByLibrary.simpleMessage("Header2"),

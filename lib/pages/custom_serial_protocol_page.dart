@@ -12,7 +12,6 @@ import '../data/scale_info_from_scale.dart';
 import '../data/screen_mgr.dart';
 import '../eventbus/eventbus.dart';
 import 'package:path/path.dart' as p;
-
 import '../widget/custom_button.dart';
 import '../widget/page_head.dart';
 import 'package:archive/archive.dart';
@@ -25,12 +24,12 @@ class CustomSerialProtocol extends StatefulWidget {
 }
 
 class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
-  final List<SerialProtocolText> _textListOl = [];
-  final List<SerialProtocolText> _textListUl = [];
-  final List<SerialProtocolText> _textListWeight = [];
-  final List<SerialProtocolText> _textListPcs = [];
-  final List<SerialProtocolText> _textListPrice = [];
-  final List<SerialProtocolText> _textListPercent = [];
+  List<SerialProtocolText> textListOl = [];
+  List<SerialProtocolText> textListUl = [];
+  List<SerialProtocolText> textListWgt = [];
+  List<SerialProtocolText> textListPcs = [];
+  List<SerialProtocolText> textListPrice = [];
+  List<SerialProtocolText> textListPct = [];
   final textController = TextEditingController();
   final RegExp englishRegExp = RegExp(r'^[\x00-\x7F]*$');
 
@@ -72,6 +71,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       TextEditingController(text: mySerialProtocolText.isFalse);
   final List<String> _buttonLabels = [
     'Text',
+    'Text_Hex',
     'Net',
     'Gross',
     'Tare',
@@ -91,12 +91,12 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
   final ScrollController _scrollController = ScrollController();
 
   bool isListEmpty() {
-    if (_textListOl.isNotEmpty ||
-        _textListPcs.isNotEmpty ||
-        _textListPercent.isNotEmpty ||
-        _textListPrice.isNotEmpty ||
-        _textListUl.isNotEmpty ||
-        _textListWeight.isNotEmpty) {
+    if (textListOl.isNotEmpty ||
+        textListPcs.isNotEmpty ||
+        textListPct.isNotEmpty ||
+        textListPrice.isNotEmpty ||
+        textListUl.isNotEmpty ||
+        textListWgt.isNotEmpty) {
       return true;
     }
     return false;
@@ -106,7 +106,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
   void initState() {
     _currentPageIndex = 3;
     super.initState();
-    // _serialOutputDataCtl.addListener(scrollToBottom); // 监听文本变化
+    initOutputList();
     cntScaleTimerMgr.stopCntScaleTimer();
     cntScaleTimerMgr.startCntScaleTimer(5);
     _eventbus1 = eventBus.on<EventSerialOutputResp>().listen((event) {
@@ -159,10 +159,10 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       if (mounted) {
         myCloseScalePassthData = event.obj;
         if (myCloseScalePassthData.msgBody.contains('ok')) {
-          PublicFunctions.stopWeight();
           cntScaleTimerMgr.stopCntScaleTimer();
           cntScaleTimerMgr.startCntScaleTimer(5);
         }
+        PublicFunctions.stopWeight();
       }
     });
 
@@ -272,6 +272,9 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                               setState(() {
                                 if (label == 'Text') {
                                   _addTextData(_currentPageIndex);
+                                }
+                                if (label == 'Text_Hex') {
+                                  _addTextHexData(_currentPageIndex);
                                 } else {
                                   _addVarData(label, _currentPageIndex);
                                 }
@@ -365,11 +368,14 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                                   ? () async {
                                       jsonFilesList.clear();
                                       for (var i = 1; i < 7; i++) {
-                                        await generateJson(i);
+                                        bool res = await generateJson(i);
+                                        if (!res) {
+                                          return;
+                                        }
                                       }
                                       await generateFileList();
                                       if (jsonFilesList.isNotEmpty) {
-                                        PublicFunctions.sendOutoutFmtToScale(
+                                        PublicFunctions.sendOutputFmtToScale(
                                             jsonFilesList);
                                       }
                                       setState(() {
@@ -418,44 +424,45 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                                             mySerialProtocolText.varName ==
                                                 'istare'))
                                     ? _boolProperty()
-                                    : (getListName(_currentPageIndex)
-                                                .isNotEmpty &&
+                                    : (getListName(_currentPageIndex).isNotEmpty &&
                                             mySerialProtocolText.type ==
                                                 'TEXT' &&
                                             mySerialProtocolText.tabOrder !=
                                                 9999)
                                         ? _textProperty()
-                                        : (getListName(_currentPageIndex)
-                                                    .isNotEmpty &&
+                                        : (getListName(_currentPageIndex).isNotEmpty &&
                                                 mySerialProtocolText.type ==
-                                                    'String' &&
+                                                    'TEXT_HEX' &&
                                                 mySerialProtocolText.tabOrder !=
                                                     9999)
-                                            ? _stringProperty()
-                                            : (getListName(_currentPageIndex)
-                                                        .isNotEmpty &&
-                                                    mySerialProtocolText
-                                                            .type ==
-                                                        'Enter')
-                                                ? _enterProperty()
+                                            ? _textHexProperty()
+                                            : (getListName(_currentPageIndex).isNotEmpty &&
+                                                    mySerialProtocolText.type ==
+                                                        'String' &&
+                                                    mySerialProtocolText.tabOrder !=
+                                                        9999)
+                                                ? _stringProperty()
                                                 : (getListName(_currentPageIndex)
                                                             .isNotEmpty &&
                                                         mySerialProtocolText.type ==
-                                                            'Float' &&
-                                                        mySerialProtocolText
-                                                                .tabOrder !=
-                                                            9999)
-                                                    ? _floatProperty()
+                                                            'Enter')
+                                                    ? _enterProperty()
                                                     : (getListName(_currentPageIndex)
                                                                 .isNotEmpty &&
-                                                            mySerialProtocolText
-                                                                    .type ==
-                                                                'Integer' &&
+                                                            mySerialProtocolText.type ==
+                                                                'Float' &&
                                                             mySerialProtocolText
                                                                     .tabOrder !=
                                                                 9999)
-                                                        ? _intProperty()
-                                                        : [],
+                                                        ? _floatProperty()
+                                                        : (getListName(_currentPageIndex)
+                                                                    .isNotEmpty &&
+                                                                mySerialProtocolText
+                                                                        .type ==
+                                                                    'Integer' &&
+                                                                mySerialProtocolText.tabOrder != 9999)
+                                                            ? _intProperty()
+                                                            : [],
                               ),
                             )
                           : Expanded(
@@ -772,19 +779,19 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
 
   List<SerialProtocolText> getListName(int pageId) {
     if (pageId == pageMap["OL"]) {
-      return _textListOl;
+      return textListOl;
     } else if (pageId == pageMap["UL"]) {
-      return _textListUl;
+      return textListUl;
     } else if (pageId == pageMap["Weight"]) {
-      return _textListWeight;
+      return textListWgt;
     } else if (pageId == pageMap["Pcs"]) {
-      return _textListPcs;
+      return textListPcs;
     } else if (pageId == pageMap["Price"]) {
-      return _textListPrice;
+      return textListPrice;
     } else if (pageId == pageMap["Percent"]) {
-      return _textListPercent;
+      return textListPct;
     }
-    return _textListWeight;
+    return textListWgt;
   }
 
   String _getOutputData(int pageId) {
@@ -914,12 +921,12 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
   }
 
   void _changedDefault(int index, String data, int defaultIndex) {
-    for (var i = 0; i < _textListWeight.length; i++) {
-      if (_textListWeight[i].tabOrder == index) {
+    for (var i = 0; i < textListWgt.length; i++) {
+      if (textListWgt[i].tabOrder == index) {
         if (defaultIndex == 1) {
-          _textListWeight[i].isTrue = data;
+          textListWgt[i].isTrue = data;
         } else {
-          _textListWeight[i].isFalse = data;
+          textListWgt[i].isFalse = data;
         }
 
         break;
@@ -1149,6 +1156,70 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
           });
         },
         textAlignVertical: TextAlignVertical.top,
+
+        // inputFormatters: [
+        //   FilteringTextInputFormatter.allow(englishRegExp), // 传入正则表达式
+        // ],
+        decoration: const InputDecoration(),
+      ),
+      const SizedBox(
+        height: 15,
+      ),
+      arrowWidget(),
+      const SizedBox(
+        height: 15,
+      ),
+      deleteButton(),
+    ];
+  }
+
+  //文本HEX编辑属性
+  _textHexProperty() {
+    return [
+      Container(
+        height: 40,
+        color: colorScheme.primaryContainer,
+        child: Center(
+          child: Text(
+            'Text Hex Property',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              color: colorScheme.primary,
+            ),
+          ),
+        ),
+      ),
+      const SizedBox(
+        height: 20,
+      ),
+      Text(
+        'Hexadecimal input, please separate with a space \r\nfor example: 31 32 33 34 35 36',
+        style: TextStyle(color: colorScheme.error),
+      ),
+      const SizedBox(
+        height: 20,
+      ),
+      Text(
+        'Type:    ${mySerialProtocolText.type}',
+        style: TextStyle(color: colorScheme.primary),
+      ),
+      const SizedBox(
+        height: 20,
+      ),
+      Text(
+        'Hex:',
+        style: TextStyle(color: colorScheme.primary),
+      ),
+      TextField(
+        controller: myContentCtl,
+        onChanged: (value) {
+          setState(() {
+            _changedContent(value, _currentPageIndex);
+          });
+        },
+        textAlignVertical: TextAlignVertical.top,
+
         // inputFormatters: [
         //   FilteringTextInputFormatter.allow(englishRegExp), // 传入正则表达式
         // ],
@@ -1695,6 +1766,17 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     });
   }
 
+  void _addTextHexData(int pageId) {
+    List<SerialProtocolText> list = getListName(pageId);
+    list.add(SerialProtocolText('TEXT_HEX', '54 65 73 74', '', 'right', 0,
+        ++count, '', '', '0', 0, '', false));
+    setState(() {
+      mySerialProtocolText = list[list.length - 1];
+      myContentCtl.text = mySerialProtocolText.content;
+      _changeSelect(list.length - 1, list);
+    });
+  }
+
   void _changeSelect(int index, List<SerialProtocolText> list) {
     for (var i = 0; i < list.length; i++) {
       list[i].isSelect = false;
@@ -1798,17 +1880,293 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     );
   }
 
+  bool validateHexStringWithSpaces(String str) {
+    List<String> parts = str.split(' ');
+    for (String part in parts) {
+      if (part.length != 2 || !RegExp(r'^[0-9A-Fa-f]{2}$').hasMatch(part)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  void _showConfirmationDialog(BuildContext context, String msg) {
+    showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          title: Text(
+            localizedStrings.confirm_title,
+            style: TextStyle(color: Theme.of(context).colorScheme.primary),
+          ),
+          content: Text(msg),
+          actions: <Widget>[
+            OutlinedButton(
+              child: Text(localizedStrings.confirm_btn),
+              onPressed: () {
+                Navigator.of(context).pop(true); // 跳转
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  bool fileExists(String filePath) {
+    try {
+      File(filePath).statSync();
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> readJsonFile(String filePath) async {
+    try {
+      final file = File(filePath);
+      final contents = await file.readAsString();
+      var jsondata = json.decode(contents);
+      if (jsondata.toString().isNotEmpty) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print("Error reading file: $e");
+      return false;
+    }
+  }
+
+  Future<List<SerialProtocolText>> loadJsonData(String filePath) async {
+    List<SerialProtocolText> textList = [];
+    if (fileExists(filePath)) {
+      bool res = await readJsonFile(filePath);
+      if (res) {
+        final file = File(filePath);
+        final contents = await file.readAsString();
+
+        var olList = OutPutList.fromJson(json.decode(contents));
+
+        textList = switchListData(olList);
+      }
+    }
+
+    return textList;
+  }
+
+  void initOutputList() async {
+    final formatfilePath = await getJsonFileDir();
+    if (!await formatfilePath.exists()) {
+      return;
+    } else {
+      var directory = formatfilePath.path;
+
+      var filePath1 = '$directory\\Weight.json';
+      textListWgt = await loadJsonData(filePath1);
+      var filePath2 = '$directory\\UL.json';
+      textListUl = await loadJsonData(filePath2);
+      var filePath3 = '$directory\\OL.json';
+      textListOl = await loadJsonData(filePath3);
+      var filePath4 = '$directory\\Pcs.json';
+      textListPcs = await loadJsonData(filePath4);
+      var filePath5 = '$directory\\Price.json';
+      textListPrice = await loadJsonData(filePath5);
+      var filePath6 = '$directory\\Percent.json';
+      textListPct = await loadJsonData(filePath6);
+    }
+    setState(() {});
+  }
+
+  List<SerialProtocolText> switchListData(OutPutList origList) {
+    List<SerialProtocolText> tempList = [];
+    SerialProtocolText tmpData;
+    if (origList.data.isEmpty) {
+      return tempList;
+    }
+    try {
+      for (var item in origList.data) {
+        if (!item.isvar &&
+            item.ishex != null &&
+            !item.ishex! &&
+            item.value != null) {
+          if (item.value == '\\r\\n') {
+            tempList.add(SerialProtocolText('Enter', '\\r\\n', '', 'left', 0,
+                ++count, '', '', '', 0, '', false));
+          } else {
+            tempList.add(SerialProtocolText('TEXT', item.value!, '', 'right', 0,
+                ++count, '', '', '0', 0, '', false));
+          }
+
+          continue;
+        } else if (!item.isvar &&
+            item.ishex != null &&
+            item.ishex! &&
+            item.value != null) {
+          tempList.add(SerialProtocolText('TEXT_HEX', item.value!, '', 'right',
+              0, ++count, '', '', '0', 0, '', false));
+          continue;
+        } else if (item.isvar) {
+          if (item.varname == null) {
+            continue;
+          }
+
+          var funcData = origList.function.firstWhere(
+              (data) => data.id == item.functionid!,
+              orElse: () =>
+                  FunctionData(id: -1, type: '', description: '') // 返回一个默认值
+              );
+          if (funcData.id == -1) {
+            continue;
+          }
+          String filling = '';
+
+          if (item.varname == 'WeightUnit') {
+            if (funcData.filling != null) {
+              filling = funcData.filling == '0' ? '0' : 'space';
+            }
+            tmpData = SerialProtocolText(
+                'String',
+                ' kg',
+                item.varname!,
+                funcData.alignment!,
+                item.length!,
+                ++count,
+                '',
+                '',
+                filling,
+                0,
+                '',
+                false);
+            tempList.add(tmpData);
+            continue;
+          } else if (item.varname == 'isstable') {
+            tmpData = SerialProtocolText(
+                'Bool',
+                '   ',
+                item.varname!,
+                'Left',
+                item.length!,
+                ++count,
+                funcData.istrue!,
+                funcData.isfalse!,
+                'space',
+                0,
+                '',
+                false);
+            tempList.add(tmpData);
+            continue;
+          } else if (item.varname == 'istare') {
+            if (funcData.filling != null) {
+              filling = funcData.filling == '0' ? '0' : 'space';
+            }
+            tmpData = SerialProtocolText(
+                'Bool',
+                '   ',
+                item.varname!,
+                'Left',
+                item.length!,
+                ++count,
+                funcData.istrue!,
+                funcData.isfalse!,
+                filling,
+                0,
+                '',
+                false);
+            tempList.add(tmpData);
+            continue;
+          } else if (item.varname == 'isiero') {
+            if (funcData.filling != null) {
+              filling = funcData.filling == '0' ? '0' : 'space';
+            }
+            tmpData = SerialProtocolText(
+                'Bool',
+                '   ',
+                item.varname!,
+                'Left',
+                item.length!,
+                ++count,
+                funcData.istrue!,
+                funcData.isfalse!,
+                filling,
+                0,
+                '',
+                false);
+            tempList.add(tmpData);
+            continue;
+          } else if (item.varname == 'Gross' ||
+              item.varname == 'Tare' ||
+              item.varname == 'Net' ||
+              item.varname == 'Percent') {
+            if (funcData.filling != null) {
+              filling = funcData.filling == '0' ? '0' : 'space';
+            }
+            tmpData = SerialProtocolText(
+                'Float',
+                '0123456',
+                item.varname!,
+                funcData.alignment!,
+                item.length!,
+                ++count,
+                '',
+                '',
+                filling,
+                funcData.decimal!,
+                '',
+                false);
+            tempList.add(tmpData);
+            continue;
+          } else if (item.varname == 'PCS') {
+            if (funcData.filling != null) {
+              filling = funcData.filling == '0' ? '0' : 'space';
+            }
+            tmpData = SerialProtocolText(
+                'Integer',
+                '01',
+                item.varname!,
+                funcData.alignment!,
+                item.length!,
+                ++count,
+                '',
+                '',
+                filling,
+                0,
+                '',
+                false);
+            tempList.add(tmpData);
+            continue;
+          }
+          continue;
+        }
+      }
+    } catch (e) {
+      print(e);
+    }
+
+    return tempList;
+  }
+
   Future<bool> generateJson(int pageId) async {
     List<Map<String, dynamic>> functionList = [];
     List<Map<String, dynamic>> dataList = [];
     List<SerialProtocolText> list = getListName(pageId);
     if (list.isEmpty) {
-      return false;
+      return true;
     }
     int functionId = 0;
     for (var i = 0; i < list.length; i++) {
       if (list[i].type == 'TEXT') {
-        dataList.add({"isvar": false, "value": list[i].content});
+        dataList
+            .add({"isvar": false, 'ishex': false, "value": list[i].content});
+      }
+      if (list[i].type == 'TEXT_HEX') {
+        if (validateHexStringWithSpaces(list[i].content)) {
+          dataList
+              .add({"isvar": false, 'ishex': true, "value": list[i].content});
+        } else {
+          _showConfirmationDialog(
+              context, 'The hexadecimal input is not valid');
+          return false;
+        }
       } else if (list[i].type == 'Enter') {
         dataList.add({"isvar": false, "value": '\r\n'});
       } else if (list[i].type == 'String') {

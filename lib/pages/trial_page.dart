@@ -27,14 +27,14 @@ class TrialPage extends StatefulWidget {
 
 class TrialPageState extends State<TrialPage> {
   bool ischangepassword = true;
-  bool isPass = false;
+  bool isPass = true;
   bool liceseKey = false;
   String pId = '';
   String dueDate = '';
   late Timer timer;
   dynamic _eventbus1;
   dynamic _eventbus2;
-  dynamic _eventbus3;
+
   TextEditingController pidController = TextEditingController();
   TextEditingController licenseController = TextEditingController();
   String systemId = '';
@@ -55,19 +55,20 @@ class TrialPageState extends State<TrialPage> {
     _eventbus1 = eventBus.on<EventLicenseData>().listen((event) {
       if (mounted) {
         setState(() {
-          myLicenseData = event.obj;
-          if (myLicenseData.data.isNotEmpty) {
-            List<String> strList = myLicenseData.data.split(',');
-            pId = strList[1]; // id
-            dueDate = strList[2];
-            if (strList[0] == 'true') {
-              isPass = true;
+          var eventInfo = event.obj;
+          if (eventInfo.isNotEmpty) {
+            var jsonData = json.decode(eventInfo);
+
+            try {
+              myLicenseData = LicenseData.fromJson(jsonData);
+            } catch (e) {
+              myLicenseData = LicenseData([]);
             }
-            pidController.text = systemId + pId;
-            myLicenseInfo.isValid = isPass;
-            myLicenseInfo.pId = pId;
-            myLicenseInfo.liceseDate = dueDate;
+            if (myLicenseData.licList.isNotEmpty) {
+              LicenseSetting().setLicInfo();
+            }
           }
+          pidController.text = systemId + myLicenseInfo.pId;
           if (isPass) {
             PublicFunctions.getScaleList();
             PublicFunctions.getUIConfNormal();
@@ -103,41 +104,13 @@ class TrialPageState extends State<TrialPage> {
         });
       }
     });
-    _eventbus3 = eventBus.on<EventCheckLicenseKey>().listen((event) {
-      if (mounted) {
-        setState(() {
-          myLicenseData = event.obj;
-          if (myLicenseData.data.isNotEmpty) {
-            List<String> strList = myLicenseData.data.split(',');
-            pId = strList[1]; // id
-            dueDate = strList[2];
-            if (strList[0] == 'true') {
-              liceseKey = true;
-            }
-            pidController.text = systemId + pId;
-          }
-          if (liceseKey) {
-            if (myLicenseInfo.isValid) {
-              if (isLongerValidityPeriod(myLicenseInfo.liceseDate, dueDate)) {
-                //要更新最新的日期的license
-                updateLicenseInfo();
-              }
-            } else {
-              updateLicenseInfo();
-            }
-          } else {
-            errMessage = 'Invalid license';
-          }
-        });
-      }
-    });
   }
 
   @override
   void dispose() {
     _eventbus1.cancel();
     _eventbus2.cancel();
-    _eventbus3.cancel();
+
     pidController.dispose();
     licenseController.dispose();
 
@@ -400,10 +373,10 @@ class TrialPageState extends State<TrialPage> {
   }
 
   void updateLicenseInfo() {
-    myLicenseInfo.isValid = liceseKey;
-    myLicenseInfo.pId = pId;
-    myLicenseInfo.liceseDate = dueDate;
-    PublicFunctions.updateLicense(licenseController.text);
+    // myLicenseInfo.isValid = liceseKey;
+    // myLicenseInfo.pId = pId;
+    // myLicenseInfo.liceseDate = dueDate;
+    // PublicFunctions.updateLicense(licenseController.text);
   }
 
 //验证新日期是否可用，true 可用，直接更新，false 询问是否更新

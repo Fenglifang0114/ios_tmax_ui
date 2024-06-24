@@ -56,6 +56,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "bt_emission_power": MessageLookupByLibrary.simpleMessage("信号强度:"),
         "bt_modify_emission": MessageLookupByLibrary.simpleMessage("修改信号强度"),
         "bt_setting_title": MessageLookupByLibrary.simpleMessage("蓝牙设置"),
+        "btn_add_lic_file":
+            MessageLookupByLibrary.simpleMessage("Select License File"),
         "button_add": MessageLookupByLibrary.simpleMessage("增加"),
         "button_add_license": MessageLookupByLibrary.simpleMessage("添加授权"),
         "button_back": MessageLookupByLibrary.simpleMessage("返回"),
@@ -183,6 +185,14 @@ class MessageLookup extends MessageLookupByLibrary {
         "open_file": MessageLookupByLibrary.simpleMessage("打开文件(json)"),
         "open_preview": MessageLookupByLibrary.simpleMessage("打开预览"),
         "operation_steps": MessageLookupByLibrary.simpleMessage("操作步骤："),
+        "output_confirm_info": MessageLookupByLibrary.simpleMessage(
+            "Please confirm the folder name!"),
+        "output_no_file":
+            MessageLookupByLibrary.simpleMessage("No files were matched!"),
+        "output_res_folder":
+            MessageLookupByLibrary.simpleMessage("Resource Folder"),
+        "output_select_folder":
+            MessageLookupByLibrary.simpleMessage("Select Folder"),
         "p_Header2_expl":
             MessageLookupByLibrary.simpleMessage("The secend page header."),
         "p_Header2_var": MessageLookupByLibrary.simpleMessage("Header2"),

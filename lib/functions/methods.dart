@@ -272,8 +272,8 @@ class PublicFunctions {
     MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
   }
 
-  static void checkLicense() {
-    myScaleCmd.cmdMode = "check_license";
+  static void getLicense() {
+    myScaleCmd.cmdMode = "get_license";
     myScaleCmd.cmdData = '';
     MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
   }
@@ -385,7 +385,7 @@ class PublicFunctions {
     }
   }
 
-  static void sendOutoutFmtToScale(List<String> list) async {
+  static void sendOutputFmtToScale(List<String> list) async {
     myDownLoadSetOutputFmt.filePath = list;
     String json = jsonEncode(myDownLoadSetOutputFmt);
     myScaleCmd.cmdMode = "set_output_format";
