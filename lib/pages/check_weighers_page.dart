@@ -1,13 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:t_max/data/high_low_weight.dart';
-
 import '../../data/currentport_data.dart';
 import '../../data/device_data.dart';
 import '../../data/productlist_data.dart';
@@ -18,7 +16,6 @@ import '../../data/userinfo_data.dart';
 import '../../data/weight_data.dart';
 import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
-
 import '../../main.dart';
 import '../data/downloadresponse.dart';
 import '../data/language.dart';

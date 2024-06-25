@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +9,6 @@ import 'common/web_socket_channel.dart';
 import 'common/web_socket_scale_channel.dart';
 import 'data/get_theme_color.dart';
 import 'data/parse_log.dart';
-import 'data/scalecmd_data.dart';
 import 'data/setting_version_info.dart';
 import 'generated/l10n.dart';
 import 'pages/trial_page.dart';
