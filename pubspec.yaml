@@ -119,12 +119,12 @@ flutter:
     - family: msyh
       fonts:
         - asset: fonts/msyh.ttc
-    - family: simhei
-      fonts:    
-        - asset: fonts/simhei.ttf
-    - family: STSONG
-      fonts:    
-        - asset: fonts/STSONG.TTF
+    # - family: simhei
+    #   fonts:    
+    #     - asset: fonts/simhei.ttf
+    # - family: STSONG
+    #   fonts:    
+    #     - asset: fonts/STSONG.TTF
     - family: simsunb
       fonts:    
         - asset: fonts/simsunb.TTF

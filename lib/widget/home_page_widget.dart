@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 Widget appCard(BuildContext context, String titleName, IconData iconInfo,
-    bool isValid, String explanation) {
+    bool isValid, String explanation, String validDate) {
   return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
@@ -44,9 +44,9 @@ Widget appCard(BuildContext context, String titleName, IconData iconInfo,
               child: Column(
                 children: [
                   Expanded(
-                    // flex: 5, // 上下分割比例
+                    flex: 5, // 上下分割比例
                     child: Align(
-                      alignment: Alignment.centerLeft,
+                      alignment: Alignment.bottomLeft,
                       child: Text(
                         titleName,
                         overflow: TextOverflow.visible,
@@ -54,10 +54,13 @@ Widget appCard(BuildContext context, String titleName, IconData iconInfo,
                       ),
                     ),
                   ),
+                  const SizedBox(
+                    height: 5,
+                  ),
                   Expanded(
-                    // flex: 5, // 上下分割比例
+                    flex: 5, // 上下分割比例
                     child: Align(
-                      alignment: Alignment.centerLeft,
+                      alignment: Alignment.topLeft,
                       child: Text(
                         explanation,
                         overflow: TextOverflow.visible,
@@ -67,13 +70,17 @@ Widget appCard(BuildContext context, String titleName, IconData iconInfo,
                 ],
               ),
             ),
-            const SizedBox(
+            SizedBox(
               width: 100,
               child: Align(
                 alignment: Alignment.center,
                 child: Text(
-                  '',
+                  validDate,
                   overflow: TextOverflow.visible,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                 ),
               ),
             )

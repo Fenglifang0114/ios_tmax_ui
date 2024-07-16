@@ -1,5 +1,5 @@
+import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:t_max/data/dialog_data.dart';
 import 'package:t_max/data/license_data.dart';
@@ -18,6 +18,7 @@ import '../data/timer_manager.dart';
 import '../dialog/get_build_info_dialog.dart';
 import '../dialog/language_setting.dart';
 import '../functions/methods.dart';
+import '../generated/l10n.dart';
 import '../widget/app_info.dart';
 import '../widget/bluetooth_setting.dart';
 import '../widget/box_gradient.dart';
@@ -50,6 +51,7 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
   dynamic _eventbus2;
   dynamic _eventbus3;
   dynamic _eventbus4;
+  dynamic _eventbus5;
 
   String groupValue = 'zh';
   DateTime now = DateTime.now();
@@ -67,6 +69,12 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
       Platform.isWindows ? 'assets/images/app.ico' : 'assets/images/app.png',
     );
     setState(() {});
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    localizedStrings = S.of(context);
   }
 
   @override
@@ -131,6 +139,26 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
         });
       }
     });
+
+    _eventbus5 = eventBus.on<EventLicenseData>().listen((event) {
+      if (mounted) {
+        setState(() {
+          var eventInfo = event.obj;
+          if (eventInfo.isNotEmpty) {
+            var jsonData = json.decode(eventInfo);
+
+            try {
+              myLicenseData = LicenseData.fromJson(jsonData);
+            } catch (e) {
+              myLicenseData = LicenseData([]);
+            }
+            if (myLicenseData.licList.isNotEmpty) {
+              LicenseSetting().setLicInfo();
+            }
+          }
+        });
+      }
+    });
   }
 
   @override
@@ -139,6 +167,7 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
     _eventbus2.cancel();
     _eventbus3.cancel();
     _eventbus4.cancel();
+    _eventbus5.cancel();
     _pageScrollerController.dispose();
     cntScaleTimerMgr.stopCntScaleTimer();
     super.dispose();
@@ -535,7 +564,8 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
                               localizedStrings.variable_value_setting_title,
                               Icons.edit_attributes_outlined,
                               true,
-                              'This application is used to distribute various variable information, such as headers and footers.'),
+                              'This application is used to distribute various variable information, such as headers and footers.',
+                              ''),
                         )),
                     MouseRegion(
                       cursor: SystemMouseCursors.click, // 设置光标为手的形状
@@ -557,7 +587,8 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
                             "PLU Download",
                             Icons.shopping_bag,
                             true,
-                            'This application is used to download product information.'),
+                            'This application is used to download product information.',
+                            ''),
                       ),
                     ),
                     MouseRegion(
@@ -576,7 +607,8 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
                             localizedStrings.receipt_format_download,
                             Icons.receipt_long_outlined,
                             true,
-                            'This application is used to download the print format of the receipt.'),
+                            'This application is used to download the print format of the receipt.',
+                            ''),
                       ),
                     ),
                     MouseRegion(
@@ -592,7 +624,10 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
                             localizedStrings.receipt_design_title,
                             Icons.receipt,
                             myRedeLicInfo.isValid,
-                            'This application is designed for the printing format of the receipt.'),
+                            'This application is designed for the printing format of the receipt.',
+                            myRedeLicInfo.liceseDate == "2299-01-01"
+                                ? 'Perpetual'
+                                : myRedeLicInfo.liceseDate),
                       ),
                     ),
                   ]),

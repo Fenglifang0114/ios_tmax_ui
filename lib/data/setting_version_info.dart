@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/pages/home_page_config.dart';
 import 'package:t_max/pages/home_page_industry.dart';
+import '../functions/methods.dart';
 import '../pages/home_page_retail.dart';
 import 'company_info.dart';
 import 'encrypt_data.dart';
@@ -11,12 +12,20 @@ const int tConfig = 1;
 const int tIndustry = 2;
 const int tRetail = 3;
 int mySystemVersion = tConfig;
+const String appTConfig = "T-CONFIG";
+const String appTIndustrial = "T-Industrial";
+const String appTRetail = "T-RETAIL";
 
 class SystemVersionInfo {
   Widget getHomePage() {
+    PublicFunctions.getScaleList();
     if (mySystemVersion == tConfig) {
       return const HomePage();
     } else if (mySystemVersion == tIndustry) {
+      PublicFunctions.getUIConfNormal();
+      PublicFunctions.getUIConfCheck();
+      PublicFunctions.getUIConfTakeIn();
+      PublicFunctions.getUIConfTakeOut();
       return const IndustryHomePage();
     } else {
       return const RetailHomePage();
@@ -49,11 +58,11 @@ class SystemVersionInfo {
     }
 
     if (mySystemVersion == tConfig) {
-      myAppName.appName = "T-CONFIG";
+      myAppName.appName = appTConfig;
     } else if (mySystemVersion == tIndustry) {
-      myAppName.appName = "T-Industrial";
+      myAppName.appName = appTIndustrial;
     } else {
-      myAppName.appName = "T-RETAIL";
+      myAppName.appName = appTRetail;
     }
     return;
   }

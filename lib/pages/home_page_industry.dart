@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ import '../data/timer_manager.dart';
 import '../dialog/get_build_info_dialog.dart';
 import '../dialog/language_setting.dart';
 import '../functions/methods.dart';
+import '../generated/l10n.dart';
 import '../widget/app_info.dart';
 import '../widget/box_gradient.dart';
 import '../widget/custom_circle_icon.dart';
@@ -52,6 +54,7 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
   dynamic _eventbus2;
   dynamic _eventbus3;
   dynamic _eventbus4;
+  dynamic _eventbus5;
 
   String groupValue = 'zh';
   DateTime now = DateTime.now();
@@ -70,6 +73,12 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
       Platform.isWindows ? 'assets/images/app.ico' : 'assets/images/app.png',
     );
     setState(() {});
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    localizedStrings = S.of(context);
   }
 
   @override
@@ -134,6 +143,25 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
         });
       }
     });
+    _eventbus5 = eventBus.on<EventLicenseData>().listen((event) {
+      if (mounted) {
+        setState(() {
+          var eventInfo = event.obj;
+          if (eventInfo.isNotEmpty) {
+            var jsonData = json.decode(eventInfo);
+
+            try {
+              myLicenseData = LicenseData.fromJson(jsonData);
+            } catch (e) {
+              myLicenseData = LicenseData([]);
+            }
+            if (myLicenseData.licList.isNotEmpty) {
+              LicenseSetting().setLicInfo();
+            }
+          }
+        });
+      }
+    });
   }
 
   @override
@@ -142,6 +170,7 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
     _eventbus2.cancel();
     _eventbus3.cancel();
     _eventbus4.cancel();
+    _eventbus5.cancel();
     _pageScrollerController.dispose();
     cntScaleTimerMgr.stopCntScaleTimer();
     super.dispose();
@@ -537,7 +566,8 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                               localizedStrings.weighing_title,
                               Icons.monitor_weight_outlined,
                               true,
-                              'This application is used to display the weighing data in real time.'),
+                              'This application is used to display the weighing data in real time.',
+                              ''),
                         ),
                       ),
                       MouseRegion(
@@ -563,7 +593,8 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                               localizedStrings.weight_collection_title,
                               Icons.save_as,
                               myWedaLicInfo.isValid,
-                              'This application is used to collect weighing data in real time'),
+                              'This application is used to collect weighing data in real time',
+                              ''),
                         ),
                       ),
                       MouseRegion(
@@ -589,7 +620,8 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                                 localizedStrings.checkweigher_title,
                                 Icons.scale,
                                 myChweLicInfo.isValid,
-                                'This application is used to check weighing data in real time'),
+                                'This application is used to check weighing data in real time',
+                                ''),
                           )),
                       MouseRegion(
                           cursor: SystemMouseCursors.click, // 设置光标为手的形状
@@ -614,7 +646,8 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                                 localizedStrings.take_in_title,
                                 Icons.add,
                                 myInWeLicInfo.isValid,
-                                'This app is used to implement the increment scale.'),
+                                'This app is used to implement the increment scale.',
+                                ''),
                           )),
                       MouseRegion(
                           cursor: SystemMouseCursors.click, // 设置光标为手的形状
@@ -639,7 +672,8 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                                 localizedStrings.take_out_title,
                                 Icons.remove,
                                 myTaouLicInfo.isValid,
-                                'This app is used to implement the take out scale.'),
+                                'This app is used to implement the take out scale.',
+                                ''),
                           )),
                     ]),
               ),

@@ -431,7 +431,7 @@ class _DownReciptPageState extends State<DownReciptPage> {
     if (paths.isNotEmpty) {
       myDownLoadPrtFmt.scaleModel = 'TMax';
       // myDownLoadPrtFmt.printerModel = 'EPM205';
-      myDownLoadPrtFmt.printerModel = 'ESP/POS';
+      myDownLoadPrtFmt.printerModel = 'Receipt';
       myDownLoadPrtFmt.filePaths = paths;
 
       myScaleCmd.cmdData = json.encode(myDownLoadPrtFmt);

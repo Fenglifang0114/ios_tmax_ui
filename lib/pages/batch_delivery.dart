@@ -941,8 +941,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              title2ndStyle(
-                                  localizedStrings.weight_mode_format),
+                              title2ndStyle(localizedStrings.free_fmt1_txt),
                               buildSelectBtn(prnFmt1Ctl),
                             ],
                           ),
@@ -960,7 +959,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     title2ndStyle(
-                                        localizedStrings.acc_mode_format),
+                                        localizedStrings.free_fmt2_txt),
                                     buildSelectBtn(prnFmt2Ctl),
                                   ],
                                 ),
@@ -974,7 +973,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     title2ndStyle(
-                                        localizedStrings.pcs_mode_format),
+                                        localizedStrings.free_fmt3_txt),
                                     buildSelectBtn(prnFmt3Ctl),
                                   ],
                                 ),
@@ -988,7 +987,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     title2ndStyle(
-                                        localizedStrings.pct_mode_format),
+                                        localizedStrings.total_fmt_txt),
                                     buildSelectBtn(prnFmt4Ctl),
                                   ],
                                 ),

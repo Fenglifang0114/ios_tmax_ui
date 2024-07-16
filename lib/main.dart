@@ -11,7 +11,6 @@ import 'data/get_theme_color.dart';
 import 'data/parse_log.dart';
 import 'data/setting_version_info.dart';
 import 'generated/l10n.dart';
-import 'pages/trial_page.dart';
 import 'widget/theme_color.dart';
 
 Future<void> main() async {
@@ -56,7 +55,7 @@ Future<void> setWindowOptions() async {
     await windowManager.show();
     await windowManager.focus();
     windowManager.setMinimizable(true);
-    // windowManager.setResizable(false);
+    windowManager.setResizable(true);
   });
 }
 
@@ -105,6 +104,6 @@ class MyApp extends StatelessWidget {
             Locale(savedLanguage.split('_')[0], savedLanguage.split('_')[1]),
         //去掉右上角debug图标
         debugShowCheckedModeBanner: false,
-        home: const TrialPage()); //HomePage()); //
+        home: mySystemVersionInfo.getHomePage()); //const TrialPage());
   }
 }

@@ -140,7 +140,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                         SizedBox(
                           width: 300,
                           child: Text(
-                            localizedStrings.weight_mode_format,
+                            localizedStrings.free_fmt1_txt,
                             textAlign: TextAlign.right,
                           ),
                         ),
@@ -189,7 +189,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                         SizedBox(
                           width: 300,
                           child: Text(
-                            localizedStrings.acc_mode_format,
+                            localizedStrings.free_fmt2_txt,
                             textAlign: TextAlign.right,
                           ),
                         ),
@@ -237,7 +237,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                         SizedBox(
                           width: 300,
                           child: Text(
-                            localizedStrings.pcs_mode_format,
+                            localizedStrings.free_fmt3_txt,
                             textAlign: TextAlign.right,
                           ),
                         ),
@@ -285,7 +285,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                         SizedBox(
                           width: 300,
                           child: Text(
-                            localizedStrings.pct_mode_format,
+                            localizedStrings.total_fmt_txt,
                             textAlign: TextAlign.right,
                           ),
                         ),
@@ -445,19 +445,29 @@ class _DownloadPageState extends State<DownloadLabelPage> {
           ),
           content: Text(localizedStrings.jump_confirm_info),
           actions: <Widget>[
-            OutlinedButton(
-              child: Text(localizedStrings.button_cancel),
-              onPressed: () {
-                Navigator.of(context).pop(false); // 不跳转
-              },
-            ),
-            OutlinedButton(
-              child: Text(localizedStrings.confirm_btn),
-              onPressed: () {
-                cntScaleTimerMgr.stopCntScaleTimer();
-                Navigator.of(context).pop(true); // 跳转
-              },
-            ),
+            Row(
+              children: [
+                CustomElevatedButton(
+                  btnWidth: 100,
+                  btnHeight: 40,
+                  icon: Icons.check_circle,
+                  text: localizedStrings.confirm_btn,
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  },
+                ),
+                const SizedBox(width: 20),
+                CustomOutlinedButton(
+                  btnWidth: 100,
+                  btnHeight: 40,
+                  icon: Icons.cancel,
+                  text: localizedStrings.button_cancel,
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
+                ),
+              ],
+            )
           ],
         );
       },
@@ -483,18 +493,29 @@ class _DownloadPageState extends State<DownloadLabelPage> {
           ),
           content: Text(localizedStrings.confirm_info),
           actions: <Widget>[
-            OutlinedButton(
-              child: Text(localizedStrings.button_cancel),
-              onPressed: () {
-                Navigator.of(context).pop(false); // 不跳转
-              },
-            ),
-            OutlinedButton(
-              child: Text(localizedStrings.confirm_btn),
-              onPressed: () {
-                Navigator.of(context).pop(true); // 跳转
-              },
-            ),
+            Row(
+              children: [
+                CustomElevatedButton(
+                  btnWidth: 100,
+                  btnHeight: 40,
+                  icon: Icons.check_circle,
+                  text: localizedStrings.confirm_btn,
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  },
+                ),
+                const SizedBox(width: 20),
+                CustomOutlinedButton(
+                  btnWidth: 100,
+                  btnHeight: 40,
+                  icon: Icons.cancel,
+                  text: localizedStrings.button_cancel,
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
+                ),
+              ],
+            )
           ],
         );
       },
@@ -528,7 +549,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
     }
     if (paths.isNotEmpty) {
       myDownLoadPrtFmt.scaleModel = 'TMax';
-      myDownLoadPrtFmt.printerModel = 'EPM205';
+      myDownLoadPrtFmt.printerModel = 'Label';
       // myDownLoadPrtFmt.printerModel = 'ESP/POS';
       myDownLoadPrtFmt.filePaths = paths;
 

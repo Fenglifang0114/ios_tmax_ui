@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/dialog_data.dart';
@@ -19,6 +20,7 @@ import '../data/timer_manager.dart';
 import '../dialog/get_build_info_dialog.dart';
 import '../dialog/language_setting.dart';
 import '../functions/methods.dart';
+import '../generated/l10n.dart';
 import '../widget/app_info.dart';
 import '../widget/bluetooth_setting.dart';
 import '../widget/box_gradient.dart';
@@ -58,6 +60,7 @@ class _HomePageState extends State<HomePage> with TrayListener {
   dynamic _eventbus3;
   dynamic _eventbus4;
   dynamic _eventbus5;
+  dynamic _eventbus6;
 
   String groupValue = 'zh';
   DateTime now = DateTime.now();
@@ -73,6 +76,12 @@ class _HomePageState extends State<HomePage> with TrayListener {
       Platform.isWindows ? 'assets/images/app.ico' : 'assets/images/app.png',
     );
     setState(() {});
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    localizedStrings = S.of(context);
   }
 
   @override
@@ -160,6 +169,25 @@ class _HomePageState extends State<HomePage> with TrayListener {
         });
       }
     });
+    _eventbus6 = eventBus.on<EventLicenseData>().listen((event) {
+      if (mounted) {
+        setState(() {
+          var eventInfo = event.obj;
+          if (eventInfo.isNotEmpty) {
+            var jsonData = json.decode(eventInfo);
+
+            try {
+              myLicenseData = LicenseData.fromJson(jsonData);
+            } catch (e) {
+              myLicenseData = LicenseData([]);
+            }
+            if (myLicenseData.licList.isNotEmpty) {
+              LicenseSetting().setLicInfo();
+            }
+          }
+        });
+      }
+    });
   }
 
   @override
@@ -169,6 +197,7 @@ class _HomePageState extends State<HomePage> with TrayListener {
     _eventbus3.cancel();
     _eventbus4.cancel();
     _eventbus5.cancel();
+    _eventbus6.cancel();
     _pageScrollerController.dispose();
     cntScaleTimerMgr.stopCntScaleTimer();
     trayManager.removeListener(this);

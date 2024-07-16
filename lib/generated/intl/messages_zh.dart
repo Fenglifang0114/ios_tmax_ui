@@ -27,7 +27,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "abnormal_weight":
             MessageLookupByLibrary.simpleMessage("Get abnormal weight"),
         "about_title": MessageLookupByLibrary.simpleMessage("信息"),
-        "acc_mode_format": MessageLookupByLibrary.simpleMessage("累加模式打印格式:"),
         "advanced_setting_title": MessageLookupByLibrary.simpleMessage("高级设置"),
         "alignment": MessageLookupByLibrary.simpleMessage("对齐方式："),
         "app_address_title": MessageLookupByLibrary.simpleMessage("地址:"),
@@ -95,6 +94,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "data_delete_confirm":
             MessageLookupByLibrary.simpleMessage("是否删除所有数据?"),
         "date_format": MessageLookupByLibrary.simpleMessage("日期格式"),
+        "def_fmt_file_title": MessageLookupByLibrary.simpleMessage("File Path"),
+        "def_fmt_no_file_tip":
+            MessageLookupByLibrary.simpleMessage("No data yet"),
+        "def_fmt_no_title":
+            MessageLookupByLibrary.simpleMessage("Default Number"),
+        "def_fmt_out_range_tip": MessageLookupByLibrary.simpleMessage(
+            "The overall print format content is out of scope"),
+        "def_fmt_sel_tip": MessageLookupByLibrary.simpleMessage(
+            "Please select 1-10 print formats."),
         "device_configuration_title":
             MessageLookupByLibrary.simpleMessage("设备基础设定"),
         "device_connection_title":
@@ -115,12 +123,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "firmwart_update": MessageLookupByLibrary.simpleMessage("更新固件"),
         "font_bold": MessageLookupByLibrary.simpleMessage("字体加粗："),
         "font_reverse": MessageLookupByLibrary.simpleMessage("字体反显:"),
+        "free_fmt1_txt": MessageLookupByLibrary.simpleMessage("自定义打印格式 1:"),
+        "free_fmt2_txt": MessageLookupByLibrary.simpleMessage("自定义打印格式 2:"),
+        "free_fmt3_txt": MessageLookupByLibrary.simpleMessage("自定义打印格式 3:"),
         "gateway": MessageLookupByLibrary.simpleMessage("网关:"),
         "general_configuration_title":
             MessageLookupByLibrary.simpleMessage("通用配置"),
         "get_bt_name": MessageLookupByLibrary.simpleMessage("获取名称"),
         "get_build_info": MessageLookupByLibrary.simpleMessage("软件信息"),
-        "go_home": MessageLookupByLibrary.simpleMessage("确定退出?"),
+        "go_home": MessageLookupByLibrary.simpleMessage("确定返回主页?"),
         "header_confirm_info": MessageLookupByLibrary.simpleMessage("请确认输入信息."),
         "hr_alignment": MessageLookupByLibrary.simpleMessage("文字对齐方式"),
         "ip_address": MessageLookupByLibrary.simpleMessage("IP地址:"),
@@ -142,6 +153,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "l_net_var": MessageLookupByLibrary.simpleMessage("Net"),
         "l_no_expl": MessageLookupByLibrary.simpleMessage("NO."),
         "l_no_var": MessageLookupByLibrary.simpleMessage("NO."),
+        "l_open_fmt_err": MessageLookupByLibrary.simpleMessage(
+            "Please select the correct print format"),
         "l_pcs_expl": MessageLookupByLibrary.simpleMessage("PCS"),
         "l_pcs_var": MessageLookupByLibrary.simpleMessage("PCS"),
         "l_percent_expl": MessageLookupByLibrary.simpleMessage("Percent"),
@@ -164,6 +177,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "l_total_wgt_var": MessageLookupByLibrary.simpleMessage("TotalWeight"),
         "l_unit_wgt_expl": MessageLookupByLibrary.simpleMessage("UnitWeight"),
         "l_unit_wgt_var": MessageLookupByLibrary.simpleMessage("UnitWeight"),
+        "l_uwgt_expl": MessageLookupByLibrary.simpleMessage("Universal weight"),
+        "l_uwu_expl":
+            MessageLookupByLibrary.simpleMessage("Universal weight unit"),
         "l_var_title": MessageLookupByLibrary.simpleMessage("Variable"),
         "l_wgt_unit_expl": MessageLookupByLibrary.simpleMessage("WeightUnit"),
         "l_wgt_unit_var": MessageLookupByLibrary.simpleMessage("WeightUnit"),
@@ -303,8 +319,6 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("没有认证。请发送上方的ID给我们。"),
         "passed_message": MessageLookupByLibrary.simpleMessage("认证通过.\r\n"),
         "password": MessageLookupByLibrary.simpleMessage("密码:"),
-        "pcs_mode_format": MessageLookupByLibrary.simpleMessage("计数模式打印格式:"),
-        "pct_mode_format": MessageLookupByLibrary.simpleMessage("百分比模式打印格式:"),
         "plu_all_plu_title":
             MessageLookupByLibrary.simpleMessage("All Products:"),
         "plu_btn_clear": MessageLookupByLibrary.simpleMessage("Clear"),
@@ -332,6 +346,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "plu_remarks": MessageLookupByLibrary.simpleMessage("PLU 备注"),
         "position": MessageLookupByLibrary.simpleMessage("位置"),
         "pretare": MessageLookupByLibrary.simpleMessage("预扣重"),
+        "print_acc_mode": MessageLookupByLibrary.simpleMessage("累加模式："),
         "print_direction": MessageLookupByLibrary.simpleMessage("打印方向："),
         "print_page": MessageLookupByLibrary.simpleMessage("纸张大小："),
         "printer": MessageLookupByLibrary.simpleMessage("打印机："),
@@ -409,6 +424,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("邮箱:sales@taiwanscale.com"),
         "title_serial_port_connection":
             MessageLookupByLibrary.simpleMessage("串口连接"),
+        "total_fmt_txt": MessageLookupByLibrary.simpleMessage("累加总计打印格式:"),
         "txt_serial_port_connected":
             MessageLookupByLibrary.simpleMessage("串口已连接"),
         "txt_serial_port_connected_fail":
@@ -437,7 +453,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "weighing_title": MessageLookupByLibrary.simpleMessage("称重"),
         "weight_collection_title":
             MessageLookupByLibrary.simpleMessage("重量数据收集"),
-        "weight_mode_format": MessageLookupByLibrary.simpleMessage("重量模式打印格式:"),
         "welcome": MessageLookupByLibrary.simpleMessage("欢迎"),
         "wifi_setting_title": MessageLookupByLibrary.simpleMessage("Wi-Fi 设置"),
         "zero": MessageLookupByLibrary.simpleMessage("零点："),

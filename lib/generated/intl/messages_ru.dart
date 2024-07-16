@@ -28,8 +28,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "abnormal_weight":
             MessageLookupByLibrary.simpleMessage("Get abnormal weight"),
         "about_title": MessageLookupByLibrary.simpleMessage("Information"),
-        "acc_mode_format":
-            MessageLookupByLibrary.simpleMessage("Формат режима акк:"),
         "advanced_setting_title":
             MessageLookupByLibrary.simpleMessage("Advanced"),
         "alignment": MessageLookupByLibrary.simpleMessage("Выравнивание:"),
@@ -114,6 +112,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "data_delete_confirm":
             MessageLookupByLibrary.simpleMessage("Whether to delete all data?"),
         "date_format": MessageLookupByLibrary.simpleMessage("Формат даты:"),
+        "def_fmt_file_title": MessageLookupByLibrary.simpleMessage("File Path"),
+        "def_fmt_no_file_tip":
+            MessageLookupByLibrary.simpleMessage("No data yet"),
+        "def_fmt_no_title":
+            MessageLookupByLibrary.simpleMessage("Default Number"),
+        "def_fmt_out_range_tip": MessageLookupByLibrary.simpleMessage(
+            "The overall print format content is out of scope"),
+        "def_fmt_sel_tip": MessageLookupByLibrary.simpleMessage(
+            "Please select 1-10 print formats."),
         "device_configuration_title":
             MessageLookupByLibrary.simpleMessage("Device Configuration"),
         "device_connection_title":
@@ -140,13 +147,17 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Обновление прошивки"),
         "font_bold": MessageLookupByLibrary.simpleMessage("Полужирный шрифт:"),
         "font_reverse": MessageLookupByLibrary.simpleMessage("Обратный шрифт:"),
+        "free_fmt1_txt": MessageLookupByLibrary.simpleMessage("Free format 1:"),
+        "free_fmt2_txt": MessageLookupByLibrary.simpleMessage("Free format 2:"),
+        "free_fmt3_txt": MessageLookupByLibrary.simpleMessage("Free format 3:"),
         "gateway": MessageLookupByLibrary.simpleMessage("Шлюз:"),
         "general_configuration_title":
             MessageLookupByLibrary.simpleMessage("General Configuration"),
         "get_bt_name": MessageLookupByLibrary.simpleMessage("get name"),
         "get_build_info": MessageLookupByLibrary.simpleMessage(
             "Информация о программном обеспечении"),
-        "go_home": MessageLookupByLibrary.simpleMessage("Confirm exit?"),
+        "go_home": MessageLookupByLibrary.simpleMessage(
+            "Confirm to return to hompage?"),
         "header_confirm_info": MessageLookupByLibrary.simpleMessage(
             "Please confirm the information."),
         "hr_alignment": MessageLookupByLibrary.simpleMessage(
@@ -170,6 +181,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "l_net_var": MessageLookupByLibrary.simpleMessage("Net"),
         "l_no_expl": MessageLookupByLibrary.simpleMessage("NO."),
         "l_no_var": MessageLookupByLibrary.simpleMessage("NO."),
+        "l_open_fmt_err": MessageLookupByLibrary.simpleMessage(
+            "Please select the correct print format"),
         "l_pcs_expl": MessageLookupByLibrary.simpleMessage("PCS"),
         "l_pcs_var": MessageLookupByLibrary.simpleMessage("PCS"),
         "l_percent_expl": MessageLookupByLibrary.simpleMessage("Percent"),
@@ -192,6 +205,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "l_total_wgt_var": MessageLookupByLibrary.simpleMessage("TotalWeight"),
         "l_unit_wgt_expl": MessageLookupByLibrary.simpleMessage("UnitWeight"),
         "l_unit_wgt_var": MessageLookupByLibrary.simpleMessage("UnitWeight"),
+        "l_uwgt_expl": MessageLookupByLibrary.simpleMessage("Universal weight"),
+        "l_uwgt_var": MessageLookupByLibrary.simpleMessage("U.WGT"),
+        "l_uwu_expl":
+            MessageLookupByLibrary.simpleMessage("Universal weight unit"),
+        "l_uwu_var": MessageLookupByLibrary.simpleMessage("U.WU"),
         "l_var_title": MessageLookupByLibrary.simpleMessage("Variable"),
         "l_wgt_unit_expl": MessageLookupByLibrary.simpleMessage("WeightUnit"),
         "l_wgt_unit_var": MessageLookupByLibrary.simpleMessage("WeightUnit"),
@@ -345,10 +363,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "passed_message": MessageLookupByLibrary.simpleMessage(
             "Аутентификация пройдена.\r\n"),
         "password": MessageLookupByLibrary.simpleMessage("Пароль:"),
-        "pcs_mode_format":
-            MessageLookupByLibrary.simpleMessage("Формат режима pcs:"),
-        "pct_mode_format":
-            MessageLookupByLibrary.simpleMessage("Формат режима процентов:"),
         "plu_all_plu_title":
             MessageLookupByLibrary.simpleMessage("All Products:"),
         "plu_btn_clear": MessageLookupByLibrary.simpleMessage("Clear"),
@@ -379,6 +393,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "position": MessageLookupByLibrary.simpleMessage("Позиция"),
         "pretare":
             MessageLookupByLibrary.simpleMessage("Предварительная тара:"),
+        "print_acc_mode": MessageLookupByLibrary.simpleMessage("ACC Mode："),
         "print_direction": MessageLookupByLibrary.simpleMessage("Направление:"),
         "print_page": MessageLookupByLibrary.simpleMessage("Страница:"),
         "printer": MessageLookupByLibrary.simpleMessage("Принтер:"),
@@ -479,6 +494,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Email: sales@taiwanscale.com"),
         "title_serial_port_connection":
             MessageLookupByLibrary.simpleMessage("Подключение через COM-порт"),
+        "total_fmt_txt": MessageLookupByLibrary.simpleMessage("Total format:"),
         "txt_serial_port_connected": MessageLookupByLibrary.simpleMessage(
             "Подключение последовательного порта"),
         "txt_serial_port_connected_fail": MessageLookupByLibrary.simpleMessage(
@@ -512,8 +528,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "weighing_title": MessageLookupByLibrary.simpleMessage("Weighing"),
         "weight_collection_title":
             MessageLookupByLibrary.simpleMessage("Weight Data Collection"),
-        "weight_mode_format":
-            MessageLookupByLibrary.simpleMessage("Формат режима веса:"),
         "welcome": MessageLookupByLibrary.simpleMessage("Добро пожаловать"),
         "wifi_setting_title":
             MessageLookupByLibrary.simpleMessage("Настройка Wi-Fi"),

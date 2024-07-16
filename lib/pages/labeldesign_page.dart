@@ -3,18 +3,20 @@ import 'dart:io';
 import 'package:csv/csv.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gbk_codec/gbk_codec.dart';
-import 'package:t_max/data/downloadresponse.dart';
 import '../data/barcoderowdata.dart';
 import '../data/encrypt_data.dart';
 import '../data/formatdata.dart';
 import '../data/item_key_list.dart';
 import '../data/language.dart';
 import '../data/offset.dart';
+import '../data/scale_info_from_scale.dart';
 import '../data/scalecmd_data.dart';
 import '../data/screen_mgr.dart';
 import '../data/selectedcontrol.dart';
 import '../data/text.dart';
+import '../data/timer_manager.dart';
 import '../data/writelog.dart';
 import '../dialog/barcodeedit_dialog.dart';
 import '../dialog/qrcodeedit_dialog.dart';
@@ -25,6 +27,7 @@ import '../main.dart';
 import '../widget/draggable_fliating.dart';
 import '../widget/dropdown_copy.dart';
 import '../widget/line_painter.dart';
+import '../widget/page_head.dart';
 import '../widget/textlist_item.dart';
 
 class LabelDesignPage extends StatefulWidget {
@@ -47,8 +50,12 @@ const labelVarMap = {
     "Net,DATA",
     "PCS,DATA",
     "WeightUnit,DATA",
-    "Date,DATA",
-    "Time,DATA",
+    // "Date,DATA",
+    // "Time,DATA",
+    "DATE,DATA",
+    "TIME,DATA",
+    "U.WGT,DATA",
+    "U.WU,DATA",
     "UnitWeight,DATA",
     "Percent,DATA",
     "TotalWeight,DATA",
@@ -112,7 +119,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   dynamic _eventbus3;
   dynamic _eventbus4;
   dynamic _eventbus5;
-  dynamic _eventbus6;
 
   final FocusNode _focusNodeContent = FocusNode();
   final FocusNode _focusNodeFontSize = FocusNode();
@@ -124,7 +130,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   final FocusNode _focusNodey2Pos = FocusNode();
   final FocusNode _focusNodelineWidth = FocusNode();
 
-  String _selectedPrinterName = 'EPM205';
+  String _sltPrtName = 'EPM205';
   String _selectedAlignment = 'Left';
   String _selectedBarcode = '--';
   String _selectedQrcode = '--';
@@ -336,28 +342,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         });
       }
     });
-    _eventbus6 = eventBus.on<EventDownPrnFmtResp>().listen((event) {
-      if (mounted) {
-        setState(() {
-          downloadStatus = true;
-          myDownPrnFmtResp = event.obj;
-          if (myDownPrnFmtResp.msgBody.isNotEmpty) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text(
-                    (myDownPrnFmtResp.msgBody.contains('ok'))
-                        ? 'Download successful!'
-                        : myDownPrnFmtResp.msgBody,
-                    style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.normal)), ////此处需要秤回复
-                duration: const Duration(seconds: 3),
-                backgroundColor: (myDownPrnFmtResp.msgBody.contains('ok'))
-                    ? Theme.of(context).colorScheme.outline
-                    : Theme.of(context).colorScheme.error));
-          }
-        });
-      }
-    });
 
     _focusNodeContent.addListener(() {
       if (!_focusNodeContent.hasFocus) {
@@ -410,7 +394,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     _eventbus3.cancel();
     _eventbus4.cancel();
     _eventbus5.cancel();
-    _eventbus6.cancel();
+
     super.dispose();
   }
 
@@ -418,17 +402,19 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;
 
+    final _height = MediaQuery.of(context).size.height;
+
     ScrollController _scrollController = ScrollController();
     ScrollController _scrollController1 = ScrollController();
     return Scaffold(
-      appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(92),
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(50),
+          child: pageHeadDesign(context, localizedStrings.label_design_title),
+        ),
+        body: SizedBox(
+          height: _height - 50,
           child: Column(
             children: [
-              Container(
-                height: 10,
-                color: Theme.of(context).colorScheme.primary,
-              ),
               Container(
                 height: 80,
                 width: screenSize.width - 10,
@@ -436,48 +422,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    SizedBox(
-                      width: 120,
-                      height: 50,
-                      child: OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          side: BorderSide(
-                            width: 1,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                          foregroundColor:
-                              Theme.of(context).colorScheme.primary,
-                          backgroundColor: Theme.of(context)
-                              .colorScheme
-                              .onPrimary, // 设置按钮的背景色
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
-                          ),
-                        ),
-                        child: Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Icon(
-                                Icons.home,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                              Text(
-                                localizedStrings.button_home,
-                                style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal),
-                              ),
-                            ],
-                          ),
-                        ),
-                        onPressed: () {
-                          _showConfirmationDialog(context);
-                        },
-                      ),
-                    ),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -526,7 +470,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                                             fontSize: 14,
                                             fontWeight: FontWeight.normal),
                                       ),
-                                      value: _selectedPrinterName,
+                                      value: _sltPrtName,
                                       items: _printers
                                           .map((String value) =>
                                               DropdownMenuItem<String>(
@@ -536,7 +480,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                                           .toList(),
                                       onChanged: (String? newValue) {
                                         setState(() {
-                                          _selectedPrinterName = newValue!;
+                                          _sltPrtName = newValue!;
                                         });
                                       },
                                     ),
@@ -989,10 +933,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                         ),
                       ],
                     ),
-                    Divider(
-                      height: 2,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
                   ],
                 ),
               ),
@@ -1000,149 +940,115 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                 height: 2,
                 color: Theme.of(context).colorScheme.primary,
               ),
-            ],
-          )),
-      body: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            flex: 2,
-            child: ListView(
-              children: _buildList(),
-            ),
-          ),
-          Expanded(
-            flex: 7,
-            child: Scrollbar(
-              controller: _scrollController,
-              isAlwaysShown: true,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                controller: _scrollController,
-                child: Container(
-                  padding: const EdgeInsets.all(10),
-                  width: 1700,
-                  height: 1000,
-                  decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
-                      border: Border.all(
-                          width: 0.2,
-                          color: Theme.of(context).colorScheme.onSurface)),
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.vertical, // 水平滚动
-                    controller: _scrollController1,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Container(
-                          //60mmX60
-                          width: _getPageWidth(),
-                          height: _getPageHeight(),
-                          decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.onPrimary,
-                              border: Border.all(
-                                  width: 0.5,
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface)),
-                          child: Stack(
-                            clipBehavior: Clip.none,
-                            key: _parentKey,
-                            children: [
-                              ...floatButtonList,
-                              // _buildLines(),//屏蔽横线
-                            ],
-                          ),
-                        )
-                      ],
+              Container(
+                height: _height - 50 - 100,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: ListView(
+                        children: _buildList(),
+                      ),
                     ),
-                  ),
+                    Expanded(
+                      flex: 7,
+                      child: Scrollbar(
+                        controller: _scrollController,
+                        isAlwaysShown: true,
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          controller: _scrollController,
+                          child: Container(
+                            padding: const EdgeInsets.all(10),
+                            width: 1700,
+                            height: 1000,
+                            decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.surface,
+                                border: Border.all(
+                                    width: 0.2,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface)),
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.vertical, // 水平滚动
+                              controller: _scrollController1,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    //60mmX60
+                                    width: _getPageWidth(),
+                                    height: _getPageHeight(),
+                                    decoration: BoxDecoration(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary,
+                                        border: Border.all(
+                                            width: 0.5,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface)),
+                                    child: Stack(
+                                      clipBehavior: Clip.none,
+                                      key: _parentKey,
+                                      children: [
+                                        ...floatButtonList,
+                                        // _buildLines(),//屏蔽横线
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                        flex: 3,
+                        child: Row(
+                          children: [
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            Expanded(
+                              child: ListView(
+                                children: (myTextData.tabOrder == 9999)
+                                    ? _selectItem()
+                                    : (myTextData.type == 'TEXT')
+                                        ? _textproperties()
+                                        : (myTextData.type == 'DATA')
+                                            ? _varproperties()
+                                            : (myTextData.type == 'BarCode')
+                                                ? _barCodeproperties()
+                                                : (myTextData.type == 'Line')
+                                                    ? _lineproperties()
+                                                    : (myTextData.type ==
+                                                            'Qrcode')
+                                                        ? _qrcodeproperties()
+                                                        : _textproperties(),
+                              ),
+                            )
+                          ],
+                        )),
+                    const SizedBox(width: 10)
+                  ],
                 ),
               ),
-            ),
+            ],
           ),
-          Expanded(
-              flex: 3,
-              child: Row(
-                children: [
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  Expanded(
-                    child: ListView(
-                      children: (myTextData.tabOrder == 9999)
-                          ? _selectItem()
-                          : (myTextData.type == 'TEXT')
-                              ? _textproperties()
-                              : (myTextData.type == 'DATA')
-                                  ? _varproperties()
-                                  : (myTextData.type == 'BarCode')
-                                      ? _barCodeproperties()
-                                      : (myTextData.type == 'Line')
-                                          ? _lineproperties()
-                                          : (myTextData.type == 'Qrcode')
-                                              ? _qrcodeproperties()
-                                              : _textproperties(),
-                    ),
-                  )
-                ],
-              )),
-          const SizedBox(width: 10)
-        ],
-      ),
-    );
-  }
-
-  void _showConfirmationDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext ctx) {
-        return AlertDialog(
-          title: Text(
-            'Confirmation',
-            style: TextStyle(color: Theme.of(context).colorScheme.primary),
-          ),
-          content: Text(localizedStrings.go_home),
-          actions: <Widget>[
-            OutlinedButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop(false); // 不跳转
-              },
-            ),
-            OutlinedButton(
-              child: const Text('Confirm'),
-              onPressed: () {
-                Navigator.of(context).pop(true); // 跳转
-              },
-            ),
-          ],
-        );
-      },
-    ).then((confirmed) {
-      if (confirmed) {
-        myReceiptItemKey.keyList.clear();
-        myScreenMgr.isMainScreen = true;
-        Navigator.of(context).pop();
-      }
-    });
+        ));
   }
 
   void openTemplateJson() async {
-    String executablePath = Platform.resolvedExecutable;
-    var directory = p.dirname(executablePath);
+    final ByteData bytes = await rootBundle.load('assets/template/label.json');
+    // 将 ByteData 直接转换为 JSON 字符串
+    final jsonString = bytes.buffer.asUint8List();
+    final jsonData = utf8.decode(jsonString);
 
-    final formatfilePath = Directory('$directory\\template');
-    if (!await formatfilePath.exists()) {
-      return;
-    }
-    File file = File(p.join(formatfilePath.path, '1weight.json'));
-    bool fileExists = file.existsSync();
-    if (fileExists) {
-      deleteAllItem();
-      _openJsonFile(file.path);
-    } else {
-      return;
-    }
+    deleteAllItem();
+    readTextInfoListFromStr(jsonData);
   }
 
   Future pickFiles() async {
@@ -1557,6 +1463,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         }
       }
     }
+    csvData.add(['F', _sltPrtName, 'L']);
     csvData.add(['']);
     csv = const ListToCsvConverter(
       textDelimiter: '',
@@ -1577,7 +1484,9 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         FormatContent myFormatContent = FormatContent(
             page: pageWidth.text + '*' + pageHeight.text,
             rotation: _selectedPrintDirection,
-            content: json);
+            content: json,
+            printer: _sltPrtName,
+            prtType: 'L');
 
         String formatjson = jsonEncode(myFormatContent);
 
@@ -1601,12 +1510,35 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
 
   // 读取本地文件中的文本框信息
   Future readTextInfoListFromFile(String path) async {
-    List textInfoList = [];
     try {
       var file = File(p.join(path)); //await _localFilepath;
       String jsonString = await file.readAsString();
-      FormatContent fromatContent =
-          FormatContent.fromJson(jsonDecode(jsonString));
+      readTextInfoListFromStr(jsonString);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(e.toString(),
+              style:
+                  const TextStyle(fontSize: 20, fontWeight: FontWeight.normal)),
+          duration: const Duration(seconds: 1),
+          backgroundColor: Theme.of(context).colorScheme.error));
+    }
+  }
+
+  // 读取本地文件中的文本框信息
+  Future readTextInfoListFromStr(String dataStr) async {
+    List textInfoList = [];
+    try {
+      FormatContent fromatContent = FormatContent.fromJson(jsonDecode(dataStr));
+      if (fromatContent.prtType != null && fromatContent.prtType == 'P') {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(localizedStrings.l_open_fmt_err,
+                style: const TextStyle(
+                    fontSize: 20, fontWeight: FontWeight.normal)),
+            duration: const Duration(seconds: 1),
+            backgroundColor: Theme.of(context).colorScheme.error));
+
+        return;
+      }
       setState(() {
         List<String> sizes = fromatContent.page.split('*');
 
@@ -1635,7 +1567,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           content: Text(e.toString(),
               style:
                   const TextStyle(fontSize: 20, fontWeight: FontWeight.normal)),
-          duration: const Duration(seconds: 1),
+          duration: const Duration(seconds: 5),
           backgroundColor: Theme.of(context).colorScheme.error));
     }
     return textInfoList;
@@ -2682,6 +2614,29 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   _textproperties() {
     return [
       const SizedBox(height: 10),
+      ElevatedButton(
+          style: OutlinedButton.styleFrom(
+            side: BorderSide(
+              width: 1,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            foregroundColor: Theme.of(context).colorScheme.primary,
+            backgroundColor: Theme.of(context).colorScheme.primary, // 设置按钮的背景色
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
+            ),
+          ),
+          onPressed: () {
+            setState(() {
+              _deleteTextItem(myTextData.tabOrder);
+            });
+          },
+          child: Text(localizedStrings.button_delete,
+              style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.normal,
+                  color: Theme.of(context).colorScheme.onPrimary))),
+      const SizedBox(height: 10),
       Container(
         height: 30,
         color: Theme.of(context).colorScheme.surface,
@@ -2886,28 +2841,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         hintText: localizedStrings.font_reverse,
         onSelect: _handleFontReverseSelected,
       ),
-      ElevatedButton(
-          style: OutlinedButton.styleFrom(
-            side: BorderSide(
-              width: 1,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            foregroundColor: Theme.of(context).colorScheme.primary,
-            backgroundColor: Theme.of(context).colorScheme.primary, // 设置按钮的背景色
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
-            ),
-          ),
-          onPressed: () {
-            setState(() {
-              _deleteTextItem(myTextData.tabOrder);
-            });
-          },
-          child: Text(localizedStrings.button_delete,
-              style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.normal,
-                  color: Theme.of(context).colorScheme.onPrimary)))
     ];
   }
 
@@ -3658,8 +3591,10 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       "Net": localizedStrings.l_net_var,
       "PCS": localizedStrings.l_pcs_var,
       "WeightUnit": localizedStrings.l_wgt_unit_var,
-      "Date": localizedStrings.l_date_var,
-      "Time": localizedStrings.l_time_var,
+      "DATE": localizedStrings.l_date_var,
+      "TIME": localizedStrings.l_time_var,
+      "U.WGT": localizedStrings.l_uwgt_var,
+      "U.WU": localizedStrings.l_uwu_var,
       "UnitWeight": localizedStrings.l_unit_wgt_var,
       "Percent": localizedStrings.l_percent_var,
       "TotalWeight": localizedStrings.l_total_wgt_var,
@@ -3677,8 +3612,10 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       "Net": localizedStrings.l_net_expl,
       "PCS": localizedStrings.l_pcs_expl,
       "WeightUnit": localizedStrings.l_wgt_unit_expl,
-      "Date": localizedStrings.l_date_expl,
-      "Time": localizedStrings.l_time_expl,
+      "DATE": localizedStrings.l_date_expl,
+      "TIME": localizedStrings.l_time_expl,
+      "U.WGT": localizedStrings.l_uwgt_expl,
+      "U.WU": localizedStrings.l_uwu_expl,
       "UnitWeight": localizedStrings.l_unit_wgt_expl,
       "Percent": localizedStrings.l_percent_expl,
       "TotalWeight": localizedStrings.l_total_wgt_expl,

@@ -89,21 +89,21 @@ DelPlu myDelPlu = DelPlu();
 class DefaultPrtFmt {
   String? scaleModel;
   String? printerModel;
-  String? filePath;
+  List<String>? filePathList;
 
-  DefaultPrtFmt({this.scaleModel, this.printerModel, this.filePath});
+  DefaultPrtFmt({this.scaleModel, this.printerModel, this.filePathList});
 
   DefaultPrtFmt.fromJson(Map<String, dynamic> json) {
     scaleModel = json['ScaleModel'];
     printerModel = json['PrinterModel'];
-    filePath = json['FilePath'].cast<String>();
+    filePathList = json['FilePath'].cast<String>();
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['ScaleModel'] = scaleModel;
     data['PrinterModel'] = printerModel;
-    data['FilePath'] = filePath;
+    data['FilePath'] = filePathList;
     return data;
   }
 }

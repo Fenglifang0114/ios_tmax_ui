@@ -27,35 +27,37 @@ class FromateItemData {
   String qrcodeType;
   String fontBold;
   String fontReverse;
-  FromateItemData(
-      {required this.type,
-      required this.xPos,
-      required this.yPos,
-      required this.width,
-      required this.height,
-      required this.fontSize,
-      required this.fontWidthRatio,
-      required this.fontHeightRatio,
-      required this.alignment,
-      required this.maxLength,
-      required this.rotation,
-      required this.style,
-      required this.tabOrder,
-      required this.varName,
-      required this.content,
-      required this.defaultValue,
-      required this.varcontent,
-      required this.barcodeName,
-      required this.barcodeType,
-      required this.hralignment,
-      required this.x2Pos,
-      required this.y2Pos,
-      required this.lineWidth,
-      required this.qrWidth,
-      required this.qrcodeName,
-      required this.qrcodeType,
-      required this.fontBold,
-      required this.fontReverse});
+
+  FromateItemData({
+    required this.type,
+    required this.xPos,
+    required this.yPos,
+    required this.width,
+    required this.height,
+    required this.fontSize,
+    required this.fontWidthRatio,
+    required this.fontHeightRatio,
+    required this.alignment,
+    required this.maxLength,
+    required this.rotation,
+    required this.style,
+    required this.tabOrder,
+    required this.varName,
+    required this.content,
+    required this.defaultValue,
+    required this.varcontent,
+    required this.barcodeName,
+    required this.barcodeType,
+    required this.hralignment,
+    required this.x2Pos,
+    required this.y2Pos,
+    required this.lineWidth,
+    required this.qrWidth,
+    required this.qrcodeName,
+    required this.qrcodeType,
+    required this.fontBold,
+    required this.fontReverse,
+  });
   FromateItemData.fromJson(Map json)
       : type = json['type'],
         xPos = json['xPos'],
@@ -121,19 +123,26 @@ class FormatContent {
   String page;
   String rotation;
   String content;
-  FormatContent({
-    required this.page,
-    required this.rotation,
-    required this.content,
-  });
+  String? printer;
+  String? prtType; //lable page mode
+  FormatContent(
+      {required this.page,
+      required this.rotation,
+      required this.content,
+      this.printer,
+      this.prtType});
   FormatContent.fromJson(Map json)
       : content = json['content'],
         page = json['page'],
-        rotation = json['rotation'];
+        rotation = json['rotation'],
+        printer = json['printer'],
+        prtType = json['prtType'];
 
   Map toJson() => {
         'page': page,
         'rotation': rotation,
         'content': content,
+        'printer': printer,
+        'prtType': prtType,
       };
 }

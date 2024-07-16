@@ -500,6 +500,16 @@ class S {
     );
   }
 
+  /// `ACC Mode：`
+  String get print_acc_mode {
+    return Intl.message(
+      'ACC Mode：',
+      name: 'print_acc_mode',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Page:`
   String get print_page {
     return Intl.message(
@@ -1540,41 +1550,41 @@ class S {
     );
   }
 
-  /// `Weighing mode format:`
-  String get weight_mode_format {
+  /// `Free format 1:`
+  String get free_fmt1_txt {
     return Intl.message(
-      'Weighing mode format:',
-      name: 'weight_mode_format',
+      'Free format 1:',
+      name: 'free_fmt1_txt',
       desc: '',
       args: [],
     );
   }
 
-  /// `Accumulation mode format:`
-  String get acc_mode_format {
+  /// `Free format 2:`
+  String get free_fmt2_txt {
     return Intl.message(
-      'Accumulation mode format:',
-      name: 'acc_mode_format',
+      'Free format 2:',
+      name: 'free_fmt2_txt',
       desc: '',
       args: [],
     );
   }
 
-  /// `Counting mode format:`
-  String get pcs_mode_format {
+  /// `Free format 3:`
+  String get free_fmt3_txt {
     return Intl.message(
-      'Counting mode format:',
-      name: 'pcs_mode_format',
+      'Free format 3:',
+      name: 'free_fmt3_txt',
       desc: '',
       args: [],
     );
   }
 
-  /// `Percent mode format:`
-  String get pct_mode_format {
+  /// `Total format:`
+  String get total_fmt_txt {
     return Intl.message(
-      'Percent mode format:',
-      name: 'pct_mode_format',
+      'Total format:',
+      name: 'total_fmt_txt',
       desc: '',
       args: [],
     );
@@ -2020,10 +2030,10 @@ class S {
     );
   }
 
-  /// `Confirm exit?`
+  /// `Confirm to return to hompage?`
   String get go_home {
     return Intl.message(
-      'Confirm exit?',
+      'Confirm to return to hompage?',
       name: 'go_home',
       desc: '',
       args: [],
@@ -3060,6 +3070,26 @@ class S {
     );
   }
 
+  /// `U.WGT`
+  String get l_uwgt_var {
+    return Intl.message(
+      'U.WGT',
+      name: 'l_uwgt_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `U.WU`
+  String get l_uwu_var {
+    return Intl.message(
+      'U.WU',
+      name: 'l_uwu_var',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `UnitWeight`
   String get l_unit_wgt_var {
     return Intl.message(
@@ -3220,6 +3250,26 @@ class S {
     );
   }
 
+  /// `Universal weight`
+  String get l_uwgt_expl {
+    return Intl.message(
+      'Universal weight',
+      name: 'l_uwgt_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Universal weight unit`
+  String get l_uwu_expl {
+    return Intl.message(
+      'Universal weight unit',
+      name: 'l_uwu_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `UnitWeight`
   String get l_unit_wgt_expl {
     return Intl.message(
@@ -3275,6 +3325,16 @@ class S {
     return Intl.message(
       'Line Length',
       name: 'l_line_lenth_txt',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select the correct print format`
+  String get l_open_fmt_err {
+    return Intl.message(
+      'Please select the correct print format',
+      name: 'l_open_fmt_err',
       desc: '',
       args: [],
     );
@@ -3485,6 +3545,56 @@ class S {
     return Intl.message(
       'No files were matched!',
       name: 'output_no_file',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select 1-10 print formats.`
+  String get def_fmt_sel_tip {
+    return Intl.message(
+      'Please select 1-10 print formats.',
+      name: 'def_fmt_sel_tip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Default Number`
+  String get def_fmt_no_title {
+    return Intl.message(
+      'Default Number',
+      name: 'def_fmt_no_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `File Path`
+  String get def_fmt_file_title {
+    return Intl.message(
+      'File Path',
+      name: 'def_fmt_file_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No data yet`
+  String get def_fmt_no_file_tip {
+    return Intl.message(
+      'No data yet',
+      name: 'def_fmt_no_file_tip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The overall print format content is out of scope`
+  String get def_fmt_out_range_tip {
+    return Intl.message(
+      'The overall print format content is out of scope',
+      name: 'def_fmt_out_range_tip',
       desc: '',
       args: [],
     );
