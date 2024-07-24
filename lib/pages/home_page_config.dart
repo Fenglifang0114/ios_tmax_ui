@@ -567,7 +567,6 @@ class _HomePageState extends State<HomePage> with TrayListener {
                               if (myScreenMgr.wifiOrBt.contains('wifi')) {
                                 setState(() {
                                   stopCheckSerialPort();
-                                  PublicFunctions.changeWifiMode();
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
