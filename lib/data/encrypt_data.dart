@@ -14,19 +14,16 @@ class FilePassword {
     return String.fromCharCodes(encryptedBytes);
   }
 
-  String decryptCsv(String encryptedCsv) {
-    List<String> utf8Bytes = [];
-    List<int> encryptedBytes = encryptedCsv.codeUnits;
-
-    for (int i = 0; i < encryptedBytes.length;) {
-      int encryptedByte1 = encryptedBytes[i++];
-      int encryptedByte2 = encryptedBytes[i++];
-
-      int decryptByte = ((encryptedByte1 - 3) << 4) | (encryptedByte2 - 3);
-      utf8Bytes.add(String.fromCharCode(decryptByte));
+  String decryptCsv(String encryptedStr) {
+    List<int> encryptedBytes = encryptedStr.codeUnits;
+    List<int> decryptedBytes = [];
+    for (int i = 0; i < encryptedBytes.length; i += 2) {
+      int decryptedByte1 = (encryptedBytes[i] - 3) << 4;
+      int decryptedByte2 = (encryptedBytes[i + 1] - 3) & 0x0F;
+      decryptedBytes.add(decryptedByte1 | decryptedByte2);
     }
-
-    return utf8Bytes.join('');
+    String utf8String = utf8.decode(decryptedBytes);
+    return utf8String;
   }
 }
 

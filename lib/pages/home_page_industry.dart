@@ -594,7 +594,9 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                               Icons.save_as,
                               myWedaLicInfo.isValid,
                               'This application is used to collect weighing data in real time',
-                              ''),
+                              myWedaLicInfo.liceseDate == "2299-01-01"
+                                  ? 'Perpetual'
+                                  : myWedaLicInfo.liceseDate),
                         ),
                       ),
                       MouseRegion(
@@ -621,7 +623,9 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                                 Icons.scale,
                                 myChweLicInfo.isValid,
                                 'This application is used to check weighing data in real time',
-                                ''),
+                                myChweLicInfo.liceseDate == "2299-01-01"
+                                    ? 'Perpetual'
+                                    : myChweLicInfo.liceseDate),
                           )),
                       MouseRegion(
                           cursor: SystemMouseCursors.click, // 设置光标为手的形状
@@ -647,7 +651,9 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                                 Icons.add,
                                 myInWeLicInfo.isValid,
                                 'This app is used to implement the increment scale.',
-                                ''),
+                                myInWeLicInfo.liceseDate == "2299-01-01"
+                                    ? 'Perpetual'
+                                    : myInWeLicInfo.liceseDate),
                           )),
                       MouseRegion(
                           cursor: SystemMouseCursors.click, // 设置光标为手的形状
@@ -673,7 +679,9 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                                 Icons.remove,
                                 myTaouLicInfo.isValid,
                                 'This app is used to implement the take out scale.',
-                                ''),
+                                myTaouLicInfo.liceseDate == "2299-01-01"
+                                    ? 'Perpetual'
+                                    : myTaouLicInfo.liceseDate),
                           )),
                     ]),
               ),
