@@ -122,11 +122,18 @@ class WebSocketChannel {
         myScaleTotalInfo.scaleDataList![indexInt].scaleId!;
     myComScaleInfoList.tMedia =
         myScaleTotalInfo.scaleDataList![indexInt].tMedia!;
-    myComScaleInfoList.portName = myMediaInfoJson.devPath!;
-    myComScaleInfoList.baudRate = myMediaInfoJson.baud!;
-    myComScaleInfoList.dataBits = myMediaInfoJson.dataBits!;
-    myComScaleInfoList.parity = myMediaInfoJson.parity!;
-    myComScaleInfoList.stopBits = myMediaInfoJson.stopBits!;
+    if (myMediaInfoJson.baud != null &&
+        myMediaInfoJson.devPath != null &&
+        myMediaInfoJson.dataBits != null &&
+        myMediaInfoJson.parity != null &&
+        myMediaInfoJson.stopBits != null) {
+      myComScaleInfoList.portName = myMediaInfoJson.devPath!;
+      myComScaleInfoList.baudRate = myMediaInfoJson.baud!;
+      myComScaleInfoList.dataBits = myMediaInfoJson.dataBits!;
+      myComScaleInfoList.parity = myMediaInfoJson.parity!;
+      myComScaleInfoList.stopBits = myMediaInfoJson.stopBits!;
+    }
+
     myComScaleInfoList.scaleSn =
         myScaleTotalInfo.scaleDataList![indexInt].scaleSn!;
     myComScaleList.comScaleList.add(myComScaleInfoList);

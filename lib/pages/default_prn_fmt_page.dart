@@ -382,7 +382,7 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
 
     if (fmtSequence.isNotEmpty) {
       myDefaultPrtFmt.scaleModel = 'TMax';
-      myDefaultPrtFmt.printerModel = 'Label';
+      myDefaultPrtFmt.printerModel = 'EPM205';
       myDefaultPrtFmt.filePathList = fmtSequence;
 
       myScaleCmd.cmdData = json.encode(myDefaultPrtFmt);
