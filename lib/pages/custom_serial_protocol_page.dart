@@ -5,8 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/data/timer_manager.dart';
 import 'package:t_max/functions/methods.dart';
-import '../data/custom_serial_protocol_text_dart.dart';
 import '../data/downloadresponse.dart';
+import '../data/manager_scale_channel.dart';
+import '../data/custom_serial_protocol_text_dart.dart';
 import '../data/language.dart';
 import '../data/scale_info_from_scale.dart';
 import '../data/screen_mgr.dart';
@@ -115,18 +116,18 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
           _downloading = false;
           cntScaleTimerMgr.stopCntScaleTimer();
           cntScaleTimerMgr.startCntScaleTimer(5);
-          mySetSerialOutputResp = event.obj;
-          if (mySetSerialOutputResp.msgBody.isNotEmpty) {
+          myRespDataFromScale = event.obj;
+          if (myRespDataFromScale.msgBody.isNotEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text(
-                    (mySetSerialOutputResp.msgBody.contains('ok'))
+                    (myRespDataFromScale.msgBody.contains('ok'))
                         ? 'Download successful!'
-                        : mySetSerialOutputResp.msgBody,
+                        : myRespDataFromScale.msgBody,
                     style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.normal)), ////此处需要秤回复
                 duration: const Duration(seconds: 3),
-                backgroundColor: (mySetSerialOutputResp.msgBody.contains('ok'))
+                backgroundColor: (myRespDataFromScale.msgBody.contains('ok'))
                     ? Theme.of(context).colorScheme.outline
                     : Theme.of(context).colorScheme.error));
           }
@@ -137,8 +138,8 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       if (mounted) {
         if (serialPreview) {
           setState(() {
-            myScalePassthData = event.obj;
-            outputData.add(myScalePassthData.msgBody);
+            myRespDataFromScale = event.obj;
+            outputData.add(myRespDataFromScale.msgBody);
             if (outputData.length > 1000) {
               outputData.clear();
             }
@@ -150,27 +151,27 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
 
     _eventbus3 = eventBus.on<EventOpenScalePassthResp>().listen((event) {
       if (mounted) {
-        myOpenScalePassthData = event.obj;
+        myRespDataFromScale = event.obj;
         setState(() {});
       }
     });
 
     _eventbus4 = eventBus.on<EventCloseScalePassthResp>().listen((event) {
       if (mounted) {
-        myCloseScalePassthData = event.obj;
-        if (myCloseScalePassthData.msgBody.contains('ok')) {
+        myRespDataFromScale = event.obj;
+        if (myRespDataFromScale.msgBody.contains('ok')) {
           cntScaleTimerMgr.stopCntScaleTimer();
           cntScaleTimerMgr.startCntScaleTimer(5);
         }
-        PublicFunctions.stopWeight();
+        PublicFunctions.stopWeight(defaultScaleId);
       }
     });
 
     _eventbus5 = eventBus.on<EventRegWeightResp>().listen((event) {
       if (mounted) {
-        myRegWeightResp = event.obj;
+        myRespDataFromScale = event.obj;
 
-        PublicFunctions.openScalePassth();
+        PublicFunctions.openScalePassth(defaultScaleId);
       }
     });
 
@@ -233,8 +234,8 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
           height: 50,
           width: screenSize.width - 10,
           color: colorScheme.primary,
-          child: pageHead(context, localizedStrings.serial_output_design,
-              localizedStrings.serial_port_status),
+          child:
+              pageHeadDefScale(context, localizedStrings.serial_output_design),
         ),
       ),
       body: Row(
@@ -376,7 +377,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                                       await generateFileList();
                                       if (jsonFilesList.isNotEmpty) {
                                         PublicFunctions.sendOutputFmtToScale(
-                                            jsonFilesList);
+                                            jsonFilesList, defaultScaleId);
                                       }
                                       setState(() {
                                         _downloading = true;
@@ -390,8 +391,9 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                               btnHeight: 50,
                               icon: Icons.visibility_outlined,
                               text: localizedStrings.open_preview,
-                              onPressed:
-                                  !serialPreview ? handleButtonPress : null,
+                              onPressed: !serialPreview && (defaultScaleId == 1)
+                                  ? handleButtonPress
+                                  : null,
                             ),
                             CustomElevatedButton(
                               btnWidth: 110,
@@ -403,7 +405,8 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                                   serialPreview = false;
                                   outputData.clear();
                                 });
-                                PublicFunctions.closeScalePassth();
+                                PublicFunctions.closeScalePassth(
+                                    defaultScaleId);
                               },
                             ),
                           ],
@@ -522,7 +525,8 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                                                 });
                                                 PublicFunctions
                                                     .changeScalePassth(
-                                                        _isHexDisplay);
+                                                        _isHexDisplay,
+                                                        defaultScaleId);
                                               },
                                               child: Text(
                                                 'HEX',
@@ -668,7 +672,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       _isHexDisplay = false;
       outputData.clear();
     });
-    PublicFunctions.getWeight();
+    PublicFunctions.getWeight(defaultScaleId);
   }
 
   String getTitleName(int pageId) {

@@ -3,16 +3,13 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:t_max/pages/sel_scales_page.dart';
+import '../data/manager_scale_channel.dart';
+import 'package:t_max/functions/methods.dart';
 import '../data/download_prt_fmt.dart';
-import '../data/downloadresponse.dart';
 import '../data/language.dart';
-import '../data/scale_info_from_scale.dart';
 import '../data/scalecmd_data.dart';
-import '../data/screen_mgr.dart';
-import '../data/timer_manager.dart';
 import '../data/writelog.dart';
-import '../eventbus/eventbus.dart';
-import '../main.dart';
 import '../widget/custom_button.dart';
 import '../widget/page_head.dart';
 
@@ -43,8 +40,7 @@ class _DownReciptPageState extends State<DownReciptPage> {
 
   late ScrollController _fileScrollerController;
   var currentPath = Directory.current.path;
-  dynamic _eventbus1;
-  dynamic _eventbus2;
+
   Timer? _downloadTimer;
 
   @override
@@ -55,45 +51,6 @@ class _DownReciptPageState extends State<DownReciptPage> {
     accModeController.text = '';
     pcsModeController.text = '';
     pctModeController.text = '';
-    cntScaleTimerMgr.stopCntScaleTimer();
-    cntScaleTimerMgr.startCntScaleTimer(5);
-    _eventbus1 = eventBus.on<EventDownPrnFmtResp>().listen((event) {
-      if (mounted) {
-        setState(() {
-          myDownPrnFmtResp = event.obj;
-          isDownloadClicked = false;
-          _stopTimer();
-          cntScaleTimerMgr.stopCntScaleTimer();
-          cntScaleTimerMgr.startCntScaleTimer(5);
-          if (myDownPrnFmtResp.msgBody.isNotEmpty) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text(
-                    (myDownPrnFmtResp.msgBody.contains('ok'))
-                        ? localizedStrings.download_result_ok
-                        : myDownPrnFmtResp.msgBody,
-                    style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.normal)), ////此处需要秤回复
-                duration: const Duration(seconds: 3),
-                backgroundColor: (myDownPrnFmtResp.msgBody.contains('ok'))
-                    ? Theme.of(context).colorScheme.outline
-                    : Theme.of(context).colorScheme.error));
-          }
-        });
-      }
-    });
-    _eventbus2 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
-      if (mounted) {
-        setState(() {
-          myFactoryInfoFromScale = event.obj;
-          if (myFactoryInfoFromScale.modelName != '') {
-            myScreenMgr.serialPortST = true;
-          } else {
-            myScreenMgr.serialPortST = false;
-          }
-        });
-      }
-    });
   }
 
   String systemId = '';
@@ -101,10 +58,33 @@ class _DownReciptPageState extends State<DownReciptPage> {
   @override
   void dispose() {
     _fileScrollerController.dispose();
-    _eventbus1.cancel;
-    _eventbus2.cancel;
+
     _stopTimer();
     super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // final width = MediaQuery.of(context).size.width;
+    // final _height = MediaQuery.of(context).size.height;
+
+    return Scaffold(
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(50),
+          child: Container(
+            child: pageHeadDesign(context,
+                localizedStrings.receipt_format_download, [defaultScaleId]),
+          ),
+        ),
+        body: Container(
+          color: Theme.of(context).colorScheme.surfaceTint,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: [
+              _buildMainContent(),
+            ],
+          ),
+        ));
   }
 
   Widget _buildMainContent() {
@@ -402,14 +382,51 @@ class _DownReciptPageState extends State<DownReciptPage> {
       },
     ).then((confirmed) {
       if (confirmed) {
-        sendFormatToScale(printFormatSequence);
-        setState(() {
-          isDownloadClicked = true;
-          cntScaleTimerMgr.stopCntScaleTimer();
-        });
-        _startTimer(30);
+        String msg = getSendMsg(printFormatSequence);
+        showSelScaleDialog(1, msg);
       }
     });
+  }
+
+  void showSelScaleDialog(int funcNo, String msg) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 允许点击空白处关闭对话框
+      builder: (context) {
+        return SelectScalesPage(
+          funcNo: funcNo,
+          sendMsgStr: msg,
+        );
+      },
+    );
+  }
+
+  String getSendMsg(List<String> fmtSequence) {
+    myScaleCmd.cmdMode = "down_print_format_to_scale";
+    paths.clear();
+    if (weightModeController.text.isNotEmpty) {
+      paths.add('1' + weightModeController.text);
+    }
+    if (accModeController.text.isNotEmpty) {
+      paths.add('2' + accModeController.text);
+    }
+    if (pcsModeController.text.isNotEmpty) {
+      paths.add('3' + pcsModeController.text);
+    }
+    if (pctModeController.text.isNotEmpty) {
+      paths.add('4' + pctModeController.text);
+    }
+    if (paths.isEmpty) {
+      return "";
+    }
+
+    myDownLoadPrtFmt.scaleModel = 'TMax';
+    myDownLoadPrtFmt.printerModel = 'Receipt';
+    myDownLoadPrtFmt.filePaths = paths;
+    myScaleCmd.cmdData = json.encode(myDownLoadPrtFmt);
+
+    writelog(jsonEncode(myScaleCmd));
+    return jsonEncode(myScaleCmd);
   }
 
   void sendFormatToScale(List<String> fmtSequence) async {
@@ -435,7 +452,7 @@ class _DownReciptPageState extends State<DownReciptPage> {
       myDownLoadPrtFmt.filePaths = paths;
 
       myScaleCmd.cmdData = json.encode(myDownLoadPrtFmt);
-      MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+      PublicFunctions.sendMsg(defaultScaleId, jsonEncode(myScaleCmd));
     }
     writelog(jsonEncode(myScaleCmd));
   }
@@ -461,29 +478,5 @@ class _DownReciptPageState extends State<DownReciptPage> {
   Future<String?> pickFolder() async {
     final folderPath = await FilePicker.platform.getDirectoryPath();
     return folderPath;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // final width = MediaQuery.of(context).size.width;
-    // final _height = MediaQuery.of(context).size.height;
-
-    return Scaffold(
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(50),
-          child: Container(
-            child: pageHead(context, localizedStrings.receipt_format_download,
-                localizedStrings.serial_port_status),
-          ),
-        ),
-        body: Container(
-          color: Theme.of(context).colorScheme.surfaceTint,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: [
-              _buildMainContent(),
-            ],
-          ),
-        ));
   }
 }

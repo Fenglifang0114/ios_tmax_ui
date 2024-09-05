@@ -2,15 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../data/downloadresponse.dart';
+import 'package:t_max/pages/sel_scales_page.dart';
 import '../data/header_footer.dart';
 import '../data/language.dart';
-import '../data/scale_info_from_scale.dart';
+import '../data/manager_scale_channel.dart';
 import '../data/scalecmd_data.dart';
-import '../data/screen_mgr.dart';
-import '../data/timer_manager.dart';
-import '../eventbus/eventbus.dart';
-import '../main.dart';
 import '../widget/custom_button.dart';
 import '../widget/page_head.dart';
 
@@ -39,9 +35,6 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
   bool isDownloadClicked = false;
   List<MyvariableData> varList = [];
 
-  dynamic _eventbus1;
-  dynamic _eventbus2;
-
   @override
   void initState() {
     titleMap = {
@@ -58,56 +51,11 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
     };
     openVarListJson();
 
-    cntScaleTimerMgr.startCntScaleTimer(1);
-    _eventbus1 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
-      if (mounted) {
-        setState(() {
-          myFactoryInfoFromScale = event.obj;
-          if (myFactoryInfoFromScale.modelName != '') {
-            myScreenMgr.serialPortST = true;
-          } else {
-            myScreenMgr.serialPortST = false;
-          }
-        });
-      }
-    });
-
-    _eventbus2 = eventBus.on<EventModifyVarValueResp>().listen((event) {
-      if (mounted) {
-        setState(() {
-          isDownloadClicked = false;
-          myRespModifyHeaderFooter = event.obj;
-
-          if (myRespModifyHeaderFooter.msgBody.isNotEmpty) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text(
-                    (myRespModifyHeaderFooter.msgBody.contains('ok'))
-                        ? localizedStrings.download_result_ok
-                        : myRespModifyHeaderFooter.msgBody,
-                    style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.normal)), ////此处需要秤回复
-                duration: const Duration(seconds: 3),
-                backgroundColor:
-                    (myRespModifyHeaderFooter.msgBody.contains('ok'))
-                        ? Theme.of(context).colorScheme.outline
-                        : Theme.of(context).colorScheme.error));
-          }
-
-          cntScaleTimerMgr.stopCntScaleTimer();
-          cntScaleTimerMgr.startCntScaleTimer(2);
-        });
-      }
-    });
-
     super.initState();
   }
 
   @override
   void dispose() {
-    _eventbus1.cancel();
-    _eventbus2.cancel();
-
     super.dispose();
   }
 
@@ -116,58 +64,77 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),
-        child: pageHead(context, localizedStrings.variable_value_setting_title,
-            localizedStrings.serial_port_status),
+        child: pageHeadDesign(context,
+            localizedStrings.variable_value_setting_title, [defaultScaleId]),
       ),
       body: Column(
         children: [
+          Container(
+            color: Theme.of(context).colorScheme.surfaceTint,
+            height: 40,
+          ),
+          Container(
+            color: Theme.of(context).colorScheme.surfaceTint,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Align(
+                  alignment: Alignment.topCenter, // 让子组件在顶部中心对齐
+                  child: // 按钮部分
+                      CustomElevatedButton(
+                    btnWidth: 150,
+                    btnHeight: 50,
+                    icon: Icons.download_rounded,
+                    text: localizedStrings.download,
+                    onPressed: (!isDownloadClicked) &&
+                            (header1Ctl.text.isNotEmpty ||
+                                header2Ctl.text.isNotEmpty ||
+                                header3Ctl.text.isNotEmpty ||
+                                footer1Ctl.text.isNotEmpty ||
+                                footer2Ctl.text.isNotEmpty ||
+                                footer3Ctl.text.isNotEmpty ||
+                                operator1Ctl.text.isNotEmpty ||
+                                operator2Ctl.text.isNotEmpty ||
+                                operator3Ctl.text.isNotEmpty ||
+                                operator4Ctl.text.isNotEmpty)
+                        ? () {
+                            _showConfirmationDialog(context);
+                          }
+                        : null,
+                  ),
+                ),
+              ],
+            ),
+          ),
           Expanded(
             flex: 8,
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
+                  flex: 5,
                   child: Container(
                     color: Theme.of(context).colorScheme.surfaceTint,
-                    child: Column(
+                    child: ListView(
                       children: [
-                        Container(
-                          height: 2,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        Expanded(
-                          child: ListView(
-                            children: [
-                              const SizedBox(height: 40), // 顶部间距
-                              _buildHeaderSection(), // 头部信息部分
-                              const SizedBox(height: 20), // 间距
-                              _buildFooterSection(), // 尾部信息部分
-                              const SizedBox(height: 40), // 底部间距
-                            ],
-                          ),
-                        ),
+                        const SizedBox(height: 40), // 顶部间距
+                        _buildHeaderSection(), // 头部信息部分
+                        const SizedBox(height: 20), // 间距
+                        _buildFooterSection(), // 尾部信息部分
+                        const SizedBox(height: 40), // 底部间距
                       ],
                     ),
                   ),
                 ),
                 Expanded(
+                  flex: 5,
                   child: Container(
                     color: Theme.of(context).colorScheme.surfaceTint,
-                    child: Column(
+                    child: ListView(
                       children: [
-                        Container(
-                          height: 2,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        Expanded(
-                          child: ListView(
-                            children: [
-                              const SizedBox(height: 40), // 顶部间距
-                              _buildOperatorSection(), // 头部信息部分
-                              const SizedBox(height: 20), // 间距
-                            ],
-                          ),
-                        ),
+                        const SizedBox(height: 40), // 顶部间距
+                        _buildOperatorSection(), // 头部信息部分
+                        const SizedBox(height: 20), // 间距
                       ],
                     ),
                   ),
@@ -175,41 +142,6 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
               ],
             ),
           ),
-          Expanded(
-              flex: 2,
-              child: Container(
-                color: Theme.of(context).colorScheme.surfaceTint,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Align(
-                      alignment: Alignment.topCenter, // 让子组件在顶部中心对齐
-                      child: // 按钮部分
-                          CustomElevatedButton(
-                        btnWidth: 150,
-                        btnHeight: 50,
-                        icon: Icons.download_rounded,
-                        text: localizedStrings.download,
-                        onPressed: (!isDownloadClicked) &&
-                                (header1Ctl.text.isNotEmpty ||
-                                    header2Ctl.text.isNotEmpty ||
-                                    header3Ctl.text.isNotEmpty ||
-                                    footer1Ctl.text.isNotEmpty ||
-                                    footer2Ctl.text.isNotEmpty ||
-                                    footer3Ctl.text.isNotEmpty ||
-                                    operator1Ctl.text.isNotEmpty ||
-                                    operator2Ctl.text.isNotEmpty ||
-                                    operator3Ctl.text.isNotEmpty ||
-                                    operator4Ctl.text.isNotEmpty)
-                            ? () {
-                                _showConfirmationDialog(context);
-                              }
-                            : null,
-                      ),
-                    ),
-                  ],
-                ),
-              )),
         ],
       ),
     );
@@ -225,7 +157,7 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
             _buildTextTitle("Operator1:"),
             const SizedBox(width: 40),
             SizedBox(
-              width: 400,
+              width: 300,
               child: _buildOperatorEditFeild(operator1Ctl),
             )
           ],
@@ -237,7 +169,7 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
             _buildTextTitle("Operator2:"),
             const SizedBox(width: 40),
             SizedBox(
-              width: 400,
+              width: 300,
               child: _buildOperatorEditFeild(operator2Ctl),
             )
           ],
@@ -249,7 +181,7 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
             _buildTextTitle("Operator3:"),
             const SizedBox(width: 40),
             SizedBox(
-              width: 400,
+              width: 300,
               child: _buildOperatorEditFeild(operator3Ctl),
             )
           ],
@@ -261,7 +193,7 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
             _buildTextTitle("Operator4:"),
             const SizedBox(width: 40),
             SizedBox(
-              width: 400,
+              width: 300,
               child: _buildOperatorEditFeild(operator4Ctl),
             )
           ],
@@ -280,7 +212,7 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
             _buildTextTitle("Header1:"),
             const SizedBox(width: 40),
             SizedBox(
-              width: 400,
+              width: 300,
               child: _buildEditFeild(header1Ctl),
             )
           ],
@@ -292,7 +224,7 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
             _buildTextTitle("Header2:"),
             const SizedBox(width: 40),
             SizedBox(
-              width: 400,
+              width: 300,
               child: _buildEditFeild(header2Ctl),
             )
           ],
@@ -304,7 +236,7 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
             _buildTextTitle("Header3:"),
             const SizedBox(width: 40),
             SizedBox(
-              width: 400,
+              width: 300,
               child: _buildEditFeild(header3Ctl),
             )
           ],
@@ -323,7 +255,7 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
             _buildTextTitle("Footer1:"),
             const SizedBox(width: 40),
             SizedBox(
-              width: 400,
+              width: 300,
               child: _buildEditFeild(footer1Ctl),
             )
           ],
@@ -335,7 +267,7 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
             _buildTextTitle("Footer2:"),
             const SizedBox(width: 40),
             SizedBox(
-              width: 400,
+              width: 300,
               child: _buildEditFeild(footer2Ctl),
             )
           ],
@@ -347,7 +279,7 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
             _buildTextTitle("Footer3:"),
             const SizedBox(width: 40),
             SizedBox(
-              width: 400,
+              width: 300,
               child: _buildEditFeild(footer3Ctl),
             )
           ],
@@ -467,18 +399,30 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
           ),
           content: Text(localizedStrings.header_confirm_info),
           actions: <Widget>[
-            OutlinedButton(
-              child: Text(localizedStrings.button_cancel),
-              onPressed: () {
-                Navigator.of(context).pop(false); // 不跳转
-              },
-            ),
-            OutlinedButton(
-              child: Text(localizedStrings.confirm_btn),
-              onPressed: () {
-                Navigator.of(context).pop(true); // 跳转
-              },
-            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                CustomOutlinedButton(
+                  btnWidth: 120,
+                  btnHeight: 40,
+                  icon: Icons.check_circle,
+                  text: localizedStrings.button_ok,
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  },
+                ),
+                const SizedBox(width: 20),
+                CustomOutlinedButton(
+                  btnWidth: 120,
+                  btnHeight: 40,
+                  icon: Icons.cancel,
+                  text: localizedStrings.button_cancel,
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
+                ),
+              ],
+            )
           ],
         );
       },
@@ -496,13 +440,22 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
         }
         myScaleCmd.cmdMode = 'modify_var_value';
         myScaleCmd.cmdData = json.encode(myHeaderFooterList);
-        MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
-        setState(() {
-          isDownloadClicked = true;
-          cntScaleTimerMgr.stopCntScaleTimer();
-        });
+        showSelScaleDialog(1, jsonEncode(myScaleCmd));
       }
     });
+  }
+
+  void showSelScaleDialog(int funcNo, String msg) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 允许点击空白处关闭对话框
+      builder: (context) {
+        return SelectScalesPage(
+          funcNo: funcNo,
+          sendMsgStr: msg,
+        );
+      },
+    );
   }
 
   void fetchData() async {

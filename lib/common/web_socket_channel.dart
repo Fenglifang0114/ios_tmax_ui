@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:t_max/data/cominfoslist_data.dart';
 import 'package:t_max/data/comscaleinfo_data.dart';
-import 'package:t_max/data/license_data.dart';
+
 import 'package:t_max/data/modifyresult_data.dart';
 import 'package:t_max/data/productlist_data.dart';
 
@@ -14,8 +14,11 @@ import 'package:t_max/data/wifi_list_info.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import '../data/ipinfodata.dart';
+import '../data/manager_scale_channel.dart';
 import '../data/reqweightdata_data.dart';
 import '../eventbus/eventbus.dart';
+
+late WebSocketChannel webchannel;
 
 class WebSocketChannel {
   late String url;
@@ -28,6 +31,7 @@ class WebSocketChannel {
   void connect() async {
     heartStatus = true;
     channel = IOWebSocketChannel.connect(url);
+
     channel.stream.listen(onData, onError: onError, onDone: onDone);
 
     // heartPacket();
@@ -113,30 +117,49 @@ class WebSocketChannel {
     }
   }
 
-  void getComScaleList(int indexInt) {
-    myComScaleInfoList.scaleModel =
-        myScaleTotalInfo.scaleDataList![indexInt].scaleModel!;
-    myComScaleInfoList.isOnline =
-        myScaleTotalInfo.scaleDataList![indexInt].isOnline!;
-    myComScaleInfoList.scaleId =
-        myScaleTotalInfo.scaleDataList![indexInt].scaleId!;
-    myComScaleInfoList.tMedia =
-        myScaleTotalInfo.scaleDataList![indexInt].tMedia!;
-    if (myMediaInfoJson.baud != null &&
-        myMediaInfoJson.devPath != null &&
-        myMediaInfoJson.dataBits != null &&
-        myMediaInfoJson.parity != null &&
-        myMediaInfoJson.stopBits != null) {
-      myComScaleInfoList.portName = myMediaInfoJson.devPath!;
-      myComScaleInfoList.baudRate = myMediaInfoJson.baud!;
-      myComScaleInfoList.dataBits = myMediaInfoJson.dataBits!;
-      myComScaleInfoList.parity = myMediaInfoJson.parity!;
-      myComScaleInfoList.stopBits = myMediaInfoJson.stopBits!;
-    }
+  void getComScaleList(ScaleDataInfo scaleInfo, CurrentPort mediaJson) {
+    myComScaleInfo.scaleModel = scaleInfo.scaleModel!;
 
-    myComScaleInfoList.scaleSn =
-        myScaleTotalInfo.scaleDataList![indexInt].scaleSn!;
-    myComScaleList.comScaleList.add(myComScaleInfoList);
+    myComScaleInfo.isOnline = scaleInfo.isOnline!;
+    myComScaleInfo.scaleId = scaleInfo.scaleId!;
+    myComScaleInfo.tMedia = scaleInfo.tMedia!;
+    myComScaleInfo.scaleSn = scaleInfo.scaleSn!;
+    myComScaleInfo.isDefault = scaleInfo.isDefault!;
+
+    myComScaleInfo.portName = myCurrentPort.devPath!;
+    myComScaleInfo.baudRate = myCurrentPort.baud!;
+    myComScaleInfo.dataBits = myCurrentPort.dataBits!;
+    myComScaleInfo.parity = myCurrentPort.parity!;
+    myComScaleInfo.stopBits = myCurrentPort.stopBits!;
+    String url = GetUrl.getUrl(scaleInfo.scaleId!);
+    manager.connect(scaleInfo.scaleId!, url);
+    if (defaultScaleId == scaleInfo.scaleId!) {
+      defaultScaleModel = scaleInfo.scaleModel!;
+      defaultScaleSn = scaleInfo.scaleSn!;
+      defscaleMedia =
+          myComScaleInfo.portName + ":" + myComScaleInfo.baudRate.toString();
+    }
+  }
+
+  void getNetScaleList(ScaleDataInfo scaleInfo, NetInfo netInfo) {
+    NetScaleInfoLocal newNetScale = NetScaleInfoLocal();
+    newNetScale.scaleModel = scaleInfo.scaleModel!;
+    newNetScale.isOnline = scaleInfo.isOnline!;
+    newNetScale.scaleId = scaleInfo.scaleId!;
+    newNetScale.scaleSn = scaleInfo.scaleSn!;
+    newNetScale.tMedia = scaleInfo.tMedia!;
+    newNetScale.isDefault = scaleInfo.isDefault!;
+    newNetScale.scaleCat = scaleInfo.scaleCat!;
+    newNetScale.ip = netInfo.ip;
+    newNetScale.port = netInfo.port;
+    NetScaleListMgr.addScale(myNetScaleList, newNetScale);
+    String url = GetUrl.getUrl(scaleInfo.scaleId!);
+    manager.connect(scaleInfo.scaleId!, url);
+    if (defaultScaleId == scaleInfo.scaleId!) {
+      defaultScaleModel = scaleInfo.scaleModel!;
+      defaultScaleSn = scaleInfo.scaleSn!;
+      defscaleMedia = newNetScale.ip! + ":" + newNetScale.port!.toString();
+    }
   }
 
   Future pasterScaleList(String jsonDataString) async {
@@ -147,22 +170,34 @@ class WebSocketChannel {
     if (myScaleTotalInfo.scaleDataList!.isNotEmpty) {
       var lenth = myScaleTotalInfo.scaleDataList!.length;
       for (var i = 0; i < lenth; i++) {
-        var jsonMediaInfoData =
-            myScaleTotalInfo.scaleDataList![i].mediaInfo!.mediaInfoJson;
-        if (jsonMediaInfoData!.isNotEmpty) {
-          await pasterMediaInfo(jsonMediaInfoData.toString(), i);
+        var scaleInfo = myScaleTotalInfo.scaleDataList![i];
+        var jsonMediaInfoData = scaleInfo.mediaInfo!.mediaInfoJson;
+        if (jsonMediaInfoData == null) {
+          continue;
+        }
+        if (scaleInfo.tMedia == 0) {
+          await pasterComMediaInfo(jsonMediaInfoData.toString(), scaleInfo);
+        } else if (scaleInfo.tMedia == 1) {
+          await pasterNetMediaInfo(jsonMediaInfoData.toString(), scaleInfo);
         }
       }
     }
+    eventBus.fire(EventRespAddScale('ok'));
   }
 
-  Future pasterMediaInfo(String jsonDataString, int indexInt) async {
-    String jsonStrings = jsonDataString;
-    myComScaleList.comScaleList.clear();
-    final jsonResponse = json.decode(jsonStrings);
-    myMediaInfoJson = MediaInfoJson.fromJson(jsonResponse);
-    getComScaleList(indexInt);
-    eventBus.fire(EventComScaleList(myComScaleList));
+  Future pasterComMediaInfo(
+      String jsonDataString, ScaleDataInfo scaleInfo) async {
+    final jsonResponse = json.decode(jsonDataString);
+    myCurrentPort = CurrentPort.fromJson(jsonResponse);
+
+    getComScaleList(scaleInfo, myCurrentPort);
+  }
+
+  Future pasterNetMediaInfo(
+      String jsonDataString, ScaleDataInfo scaleInfo) async {
+    final jsonResponse = json.decode(jsonDataString);
+    myNetInfo = NetInfo.fromJson(jsonResponse);
+    getNetScaleList(scaleInfo, myNetInfo);
   }
 
   Future pasterWifiList(String jsonDataString) async {
@@ -198,9 +233,6 @@ class WebSocketChannel {
         eventBus.fire(EventComInfoList(mobj));
       } else if (jsonData['MsgType'] == "resp_scales_list") {
         pasterScaleList(jsonData['MsgBody']);
-        if (myComScaleList.comScaleList.isNotEmpty) {
-          eventBus.fire(EventComScaleList(myComScaleList));
-        }
       } else if (jsonData['MsgType'] == "resp_scale_modify") {
         await pasterModifyAck(jsonData['MsgBody']);
       } else if (jsonData['MsgType'] == 'weight_data') {
@@ -222,6 +254,15 @@ class WebSocketChannel {
       } else if (jsonData['MsgType'] == "resp_update_license") {
         var dataString = jsonData['MsgBody'];
         eventBus.fire(EventRespUpdateLic(dataString));
+      } else if (jsonData['MsgType'] == "resp_scale_del") {
+        var dataString = jsonData['MsgBody'];
+        eventBus.fire(EventRespDelScale(dataString));
+      } else if (jsonData['MsgType'] == "resp_scale_add") {
+        var dataString = jsonData['MsgBody'];
+        eventBus.fire(EventRespAddScale(dataString));
+      } else if (jsonData['MsgType'] == "resp_detail_list") {
+        var dataString = jsonData['MsgBody'];
+        eventBus.fire(EventRespDetailInfo(dataString));
       } else {}
     } catch (e) {
       if (kDebugMode) {
@@ -285,244 +326,3 @@ class WebSocketChannel {
   //   MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
   // }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import 'dart:async';
-
-// import 'package:web_socket_channel/io.dart';
-// import 'package:web_socket_channel/web_socket_channel.dart';
-
-// enum StatusEnum{
-//   connect,connecting,close,closing
-// }
-// class WebsocketManager{
-//   static WebsocketManager _singleton;
-
-//   WebSocketChannel channel;
-//   factory WebsocketManager() {
-//     return _singleton;
-//   }
-//    StreamController<StatusEnum> socketStatusController = StreamController<StatusEnum>();
-//   WebsocketManager._();
-//   static void init() async {
-//     if (_singleton == null) {
-//       _singleton = WebsocketManager._();
-//     }
-//   }
-//   StatusEnum isConnect=StatusEnum.close ;  //默认为未连接
-//   String _url="ws://echo.websocket.org";
-
-
-//   Future connect() async{
-//     if(isConnect==StatusEnum.close){
-//       isConnect=StatusEnum.connecting;
-//       socketStatusController.add(StatusEnum.connecting);
-//       channel=await IOWebSocketChannel.connect(Uri.parse(_url));
-//       isConnect=StatusEnum.connect;
-//       socketStatusController.add(StatusEnum.connect);
-//        return true;
-//     }
-
-//   }
-
-//   Future disconnect() async{
-//     if(isConnect==StatusEnum.connect){
-//       isConnect=StatusEnum.closing;
-//       socketStatusController.add(StatusEnum.closing);
-//       await channel.sink.close(3000,"主动关闭");
-//       isConnect=StatusEnum.close;
-//       socketStatusController.add(StatusEnum.close);
-
-//     }
-
-//   }
-
-//   bool send(String text){
-//     if(isConnect==StatusEnum.connect) {
-//       channel.sink.add(text);
-//       return true;
-//     }
-//     return false;
-//   }
-
-//   void printStatus(){
-//     if(isConnect==StatusEnum.connect){
-//       print("websocket 已连接");
-//     }else if(isConnect==StatusEnum.connecting){
-//       print("websocket 连接中");
-//     }else if(isConnect==StatusEnum.close){
-//       print("websocket 已关闭");
-//     }else if(isConnect==StatusEnum.closing){
-//       print("websocket 关闭中");
-//     }
-//   }
-
-//   void dispose(){
-//     socketStatusController.close();
-//     socketStatusController=null;
-//   }
-
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import 'dart:async';
-// import 'package:dio/dio.dart';
-// import 'package:web_socket_channel/io.dart';
-// import 'package:web_socket_channel/web_socket_channel.dart';
-// import 'State.dart';
-// import 'dart:convert';
-
-// import 'Result.dart';
-// /**
-//  * @date 2022/9/26
-//  * @author Marinda
-//  * @desc websocket的实现
-//  */
-// class WebSocketHandle {
-//   static WebSocketState state = WebSocketState();
-//   static late Timer hearTimer;
-//   WebSocketHandle();
-
-//    static void connectSocket() async {
-//        await closeSocket();
-//        String socketUrl = state.socketUrl;
-//        LoggerUtil.logger.i("发起WebSocket请求，地址为：${socketUrl}");
-//        state.webSocket = IOWebSocketChannel.connect(socketUrl);
-
-//        state.socketStatus = true;
-//        initConnectSocket();
-//   }
-
-//   static void initConnectSocket(){
-//     WebSocketHandle.onMessageListener();
-//     heartPacket();
-//   }
-
-//   /**
-//    * @desc 校验连接配置是否重复
-//    * @author Marinda
-//    * @date 2022/9/27
-//    */
-//   static bool validConnection(String ip,int port){
-//      return state.ip == ip && state.port == port ? true : false;
-//   }
-//   /**
-//    * @desc WebSocket消息监听器
-//    * @author Marinda
-//    * @date 2022/9/26
-//    */
-//   static void onMessageListener(){
-
-//      WebSocketResult webSocketResult = WebSocketResult();
-//      state.webSocket?.stream.listen((data){
-//       var jsonData = json.decode(data);
-//       if(jsonData is Map<String,dynamic>){
-//         //检测到心跳包
-//         if(jsonData['code'] == 9999){
-//         //  不处理
-//         }else{
-//           Map<String,dynamic> mapData = jsonData['data'];
-//           webSocketResult = WebSocketResult.fromJson(mapData);
-//             state.webSocketResult = webSocketResult;
-//             LoggerUtil.logger.i("监听到服务端Socket返回数据：                   ${state.webSocketResult.toString()}");   
-// },onError: (e){
-//       state.socketStatus = false;
-//       state.isError = true;
-//     },onDone: (){
-//       state.socketStatus = false;
-//     });
-//   }
-
-//   /**
-//    * 销毁心跳包
-//    */
-//   static void destoryHeart(){
-//      //为心跳包则直接
-//      if(state.heartStatus){
-//         hearTimer?.cancel();
-//         state.heartStatus = false;
-//      }
-//   }
-
-//   /**
-//    * 发送心跳包
-//    */
-//   static void sendHeartPacket(){
-//     Map<String,dynamic> data = {
-//       "code": 9999,
-//       "msg": "心跳包",
-//     };
-//     var jsonData = json.encode(data);
-//     state.webSocket?.sink.add(jsonData);
-//     state.heartStatus = true;
-//   }
-
-//   /**
-//    * @desc WebSocket心跳包
-//    * @author Marinda
-//    * @date 2022/9/26
-//    */
-//   static void heartPacket(){
-//      if(state.socketStatus){
-//        hearTimer = Timer(Duration(seconds: state.socketClienTime),() async{
-//        //  重新连接
-//          reconnectSocket();
-//        });
-//        sendHeartPacket();
-//      }
-//   }
-
-//   /**
-//    * 重新连接socket
-//    */
-//   static void reconnectSocket(){
-//      destoryHeart();
-//      connectSocket();
-//   }
-
-//   /**
-//    * @desc 关闭WebSocket
-//    * @author Marinda
-//    * @date 2022/9/26
-//    */
-//   static Future closeSocket() async{
-//      if(state.webSocket != null){
-//        state.webSocket?.sink.close();
-//        state.webSocket = null;
-//        state.socketStatus = false;
-//      }
-//   }
-
-// }

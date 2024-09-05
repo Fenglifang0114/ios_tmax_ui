@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:t_max/data/currentport_data.dart';
 import '../../data/dialog_data.dart';
+import '../data/scalelist_data.dart';
 
 // ignore: must_be_immutable
 class ComPortDropdown extends StatefulWidget {

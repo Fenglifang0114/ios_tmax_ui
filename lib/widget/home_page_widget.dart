@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 Widget appCard(BuildContext context, String titleName, IconData iconInfo,
     bool isValid, String explanation, String validDate) {
   return Card(
+      elevation: 3.0,
+      shadowColor: Theme.of(context).colorScheme.primary,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
       ),
@@ -63,6 +65,7 @@ Widget appCard(BuildContext context, String titleName, IconData iconInfo,
                       alignment: Alignment.topLeft,
                       child: Text(
                         explanation,
+                        style: TextStyle(fontStyle: FontStyle.italic),
                         overflow: TextOverflow.visible,
                       ),
                     ),
@@ -105,6 +108,8 @@ LinearGradient lineGradient(BuildContext context) {
 Widget customFunctionCard(
     BuildContext context, String titleName, IconData iconInfo, bool isValid) {
   return Card(
+      elevation: 3.0,
+      shadowColor: Theme.of(context).colorScheme.primary,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
       ),

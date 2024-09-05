@@ -24,32 +24,7 @@ class ChannelResponse {
   }
 }
 
-ChannelResponse mySetSerialOutputResp = ChannelResponse('', '', 0);
-ChannelResponse myDownPrnFmtResp = ChannelResponse('', '', 0);
-ChannelResponse mySerialPortResponse = ChannelResponse('', '', 0);
-ChannelResponse mySetDynamicIpResp = ChannelResponse('', '', 0);
-ChannelResponse mySetStaticIpResp = ChannelResponse('', '', 0);
-ChannelResponse myConnectBTResponse = ChannelResponse('', '', 0);
-ChannelResponse myRespBTData = ChannelResponse('', '', 0);
-ChannelResponse myRespUpdateFirmware = ChannelResponse('', '', 0);
-ChannelResponse myConnectApResponse = ChannelResponse('', '', 0);
-
-ChannelResponse myRespGetBuildInfo = ChannelResponse('', '', 0);
-ChannelResponse myScalePassthData = ChannelResponse('', '', 0);
-ChannelResponse myOpenScalePassthData = ChannelResponse('', '', 0);
-ChannelResponse myCloseScalePassthData = ChannelResponse('', '', 0);
-ChannelResponse myRegWeightResp = ChannelResponse('', '', 0);
-ChannelResponse myUnregWeightResp = ChannelResponse('', '', 0);
-ChannelResponse myDownPluResp = ChannelResponse('', '', 0);
-ChannelResponse myGetWeightErrResp = ChannelResponse('', '', 0);
-ChannelResponse myGetScaleTimeResp = ChannelResponse('', '', 0);
-ChannelResponse mySetScaleTimeResp = ChannelResponse('', '', 0);
-ChannelResponse myRespChangeWifiMode = ChannelResponse('', '', 0);
-ChannelResponse myRespGetAllEepromData = ChannelResponse('', '', 0);
-ChannelResponse myRespGetOneEepromData = ChannelResponse('', '', 0);
-ChannelResponse myRespModifyEepromInfo = ChannelResponse('', '', 0);
-ChannelResponse myRespModifyHeaderFooter = ChannelResponse('', '', 0);
-ChannelResponse myRespSetServerIp = ChannelResponse('', '', 0);
+ChannelResponse myRespDataFromScale = ChannelResponse('', '', 0);
 
 class SerialPortStatus {
   bool serialPortStatus;

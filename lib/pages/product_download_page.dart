@@ -3,15 +3,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
+import 'package:t_max/pages/sel_scales_page.dart';
+import '../data/manager_scale_channel.dart';
+import 'package:t_max/functions/methods.dart';
 import '../data/download_prt_fmt.dart';
-import '../data/downloadresponse.dart';
 import '../data/language.dart';
-import '../data/scale_info_from_scale.dart';
 import '../data/scalecmd_data.dart';
-import '../data/screen_mgr.dart';
-import '../data/timer_manager.dart';
-import '../eventbus/eventbus.dart';
-import '../main.dart';
 import '../widget/custom_button.dart';
 import '../widget/page_head.dart';
 
@@ -35,105 +32,13 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
   late ScrollController _fileScrollerController;
   var currentPath = Directory.current.path;
 
-  dynamic _eventbus1;
-  dynamic _eventbus2;
-  dynamic _eventbus3;
-  dynamic _eventbus4;
-
-  bool _isShowDownload = true;
+  final bool _isShowDownload = true;
 
   @override
   void initState() {
     super.initState();
     _fileScrollerController = ScrollController();
     pluAllCtl.text = '';
-    cntScaleTimerMgr.stopCntScaleTimer();
-    cntScaleTimerMgr.startCntScaleTimer(5);
-    _eventbus1 = eventBus.on<EventRespDownPlu>().listen((event) {
-      if (mounted) {
-        setState(() {
-          myDownPluResp = event.obj;
-          if (myDownPluResp.msgBody.isNotEmpty) {
-            _isShowDownload = true;
-            cntScaleTimerMgr.stopCntScaleTimer();
-            cntScaleTimerMgr.startCntScaleTimer(5);
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text(
-                    (myDownPluResp.msgBody.contains('ok'))
-                        ? 'Download is successful!'
-                        : myDownPluResp.msgBody,
-                    style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.normal)), ////此处需要秤回复
-                duration: const Duration(seconds: 3),
-                backgroundColor: (myDownPluResp.msgBody.contains('ok'))
-                    ? Theme.of(context).colorScheme.outline
-                    : Theme.of(context).colorScheme.error));
-          }
-        });
-      }
-    });
-    _eventbus2 = eventBus.on<EventRespInsertPlu>().listen((event) {
-      if (mounted) {
-        setState(() {
-          myDownPluResp = event.obj;
-          if (myDownPluResp.msgBody.isNotEmpty) {
-            _isShowDownload = true;
-            cntScaleTimerMgr.stopCntScaleTimer();
-            cntScaleTimerMgr.startCntScaleTimer(5);
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text(
-                    (myDownPluResp.msgBody.contains('ok'))
-                        ? 'Download is successful!'
-                        : myDownPluResp.msgBody,
-                    style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.normal)), ////此处需要秤回复
-                duration: const Duration(seconds: 3),
-                backgroundColor: (myDownPluResp.msgBody.contains('ok'))
-                    ? Theme.of(context).colorScheme.outline
-                    : Theme.of(context).colorScheme.error));
-          }
-        });
-      }
-    });
-    _eventbus3 = eventBus.on<EventRespDelPlu>().listen((event) {
-      if (mounted) {
-        setState(() {
-          myDownPluResp = event.obj;
-          if (myDownPluResp.msgBody.isNotEmpty) {
-            _isShowDownload = true;
-            cntScaleTimerMgr.stopCntScaleTimer();
-            cntScaleTimerMgr.startCntScaleTimer(5);
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text(
-                    (myDownPluResp.msgBody.contains('ok'))
-                        ? 'Delete is successful!'
-                        : myDownPluResp.msgBody,
-                    style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.normal)), ////此处需要秤回复
-                duration: const Duration(seconds: 3),
-                backgroundColor: (myDownPluResp.msgBody.contains('ok'))
-                    ? Theme.of(context).colorScheme.outline
-                    : Theme.of(context).colorScheme.error));
-          }
-        });
-      }
-    });
-
-    _eventbus4 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
-      if (mounted) {
-        setState(() {
-          myFactoryInfoFromScale = event.obj;
-          if (myFactoryInfoFromScale.modelName != '') {
-            myScreenMgr.serialPortST = true;
-          } else {
-            myScreenMgr.serialPortST = false;
-          }
-        });
-      }
-    });
   }
 
   String systemId = '';
@@ -141,11 +46,30 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
   @override
   void dispose() {
     _fileScrollerController.dispose();
-    _eventbus1.cancel();
-    _eventbus2.cancel();
-    _eventbus3.cancel();
-    _eventbus4.cancel();
+
     super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(50),
+          child: pageHeadDesign(
+            context,
+            localizedStrings.plu_download_title,
+            [defaultScaleId],
+          ),
+        ),
+        body: Container(
+          color: Theme.of(context).colorScheme.surfaceTint,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: [
+              _buildMainContent(),
+            ],
+          ),
+        ));
   }
 
   Widget _buildMainContent() {
@@ -325,6 +249,19 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
     );
   }
 
+  void showSelScaleDialog(int funcNo, String msg) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 允许点击空白处关闭对话框
+      builder: (context) {
+        return SelectScalesPage(
+          funcNo: funcNo,
+          sendMsgStr: msg,
+        );
+      },
+    );
+  }
+
   Widget _buildButtonRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -433,11 +370,9 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
       },
     ).then((confirmed) {
       if (confirmed) {
-        sendFormatToScale();
-        setState(() {
-          _isShowDownload = false;
-          cntScaleTimerMgr.stopCntScaleTimer();
-        });
+        // sendFormatToScale();
+        String msg = getSendMsg();
+        showSelScaleDialog(1, msg);
       }
     });
   }
@@ -453,13 +388,12 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
     return res;
   }
 
-  Future<void> sendFormatToScale() async {
+  void sendFormatToScale() {
     if (pluAllCtl.text.isNotEmpty) {
       myScaleCmd.cmdMode = "down_plu_to_scale";
       sendFileToScale(pluAllCtl.text);
     } else if (pluPartCtl.text.isNotEmpty) {
       myScaleCmd.cmdMode = "insert_plu_to_scale";
-
       sendFileToScale(pluPartCtl.text);
     }
   }
@@ -469,7 +403,24 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
     myDownLoadPluFile.filePath = fmtPath;
     myDownLoadPluFile.nameMaxLen = 30;
     myScaleCmd.cmdData = json.encode(myDownLoadPluFile);
-    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+    PublicFunctions.sendMsg(defaultScaleId, jsonEncode(myScaleCmd));
+  }
+
+  String getSendMsg() {
+    String fmtPath = "";
+    if (pluAllCtl.text.isNotEmpty) {
+      myScaleCmd.cmdMode = "down_plu_to_scale";
+
+      fmtPath = pluAllCtl.text;
+    } else if (pluPartCtl.text.isNotEmpty) {
+      myScaleCmd.cmdMode = "insert_plu_to_scale";
+      fmtPath = pluPartCtl.text;
+    }
+    myDownLoadPluFile.scaleModel = 'TMax';
+    myDownLoadPluFile.filePath = fmtPath;
+    myDownLoadPluFile.nameMaxLen = 30;
+    myScaleCmd.cmdData = json.encode(myDownLoadPluFile);
+    return jsonEncode(myScaleCmd);
   }
 
   void delPluListFromScale(List<String> pluList) {
@@ -477,7 +428,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
     myDelPlu.scaleModel = 'TMax';
     myDelPlu.pluId = pluList;
     myScaleCmd.cmdData = json.encode(myDelPlu);
-    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+    PublicFunctions.sendMsg(defaultScaleId, jsonEncode(myScaleCmd));
   }
 
   Future pickFiles(TextEditingController showFilePath) async {
@@ -526,24 +477,5 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
         _showFileSaveCfmDialog(context, e.toString());
       }
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(50),
-          child: pageHead(context, localizedStrings.plu_download_title,
-              localizedStrings.serial_port_status),
-        ),
-        body: Container(
-          color: Theme.of(context).colorScheme.surfaceTint,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: [
-              _buildMainContent(),
-            ],
-          ),
-        ));
   }
 }

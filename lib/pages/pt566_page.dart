@@ -4,7 +4,8 @@ import 'dart:math';
 import 'package:csv/csv.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:t_max/data/downloadresponse.dart';
+import '../data/downloadresponse.dart';
+import '../data/manager_scale_channel.dart';
 import '../data/barcoderowdata.dart';
 import '../data/formatdata.dart';
 import '../data/offset.dart';
@@ -17,7 +18,7 @@ import '../dialog/qrcodeedit_dialog.dart';
 import '../eventbus/eventbus.dart';
 import 'package:path/path.dart' as p;
 import 'package:file_picker/file_picker.dart';
-import '../main.dart';
+import '../functions/methods.dart';
 import '../widget/draggable_fliating.dart';
 import '../widget/dropdown_copy.dart';
 import '../widget/line_painter.dart';
@@ -346,19 +347,19 @@ class _PT566PageState extends State<PT566Page> {
       if (mounted) {
         setState(() {
           downloadStatus = true;
-          myDownPrnFmtResp = event.obj;
-          if (myDownPrnFmtResp.msgBody.isNotEmpty) {
+          myRespDataFromScale = event.obj;
+          if (myRespDataFromScale.msgBody.isNotEmpty) {
             setState(() {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text(
-                      (myDownPrnFmtResp.msgBody.contains('ok'))
+                      (myRespDataFromScale.msgBody.contains('ok'))
                           ? 'Download successful!'
-                          : myDownPrnFmtResp.msgBody,
+                          : myRespDataFromScale.msgBody,
                       style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold)), ////此处需要秤回复
                   duration: const Duration(seconds: 3),
-                  backgroundColor: (myDownPrnFmtResp.msgBody.contains('ok'))
+                  backgroundColor: (myRespDataFromScale.msgBody.contains('ok'))
                       ? Theme.of(context).colorScheme.outline
                       : Theme.of(context).colorScheme.error));
             });
@@ -1067,8 +1068,7 @@ class _PT566PageState extends State<PT566Page> {
   void sendFormatToScale(String modifyString) {
     myScaleCmd.cmdMode = "down_print_format_to_scale";
     myScaleCmd.cmdData = modifyString;
-    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
-    // MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
+    PublicFunctions.sendMsg(defaultScaleId, jsonEncode(myScaleCmd));
   }
 
   int _getRotation(int rotation) {

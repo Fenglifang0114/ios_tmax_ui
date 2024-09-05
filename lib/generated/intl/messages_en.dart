@@ -24,9 +24,9 @@ class MessageLookup extends MessageLookupByLibrary {
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "Parity": MessageLookupByLibrary.simpleMessage("Parity:"),
         "abnormal_data_title":
-            MessageLookupByLibrary.simpleMessage("Abnormal Data"),
+            MessageLookupByLibrary.simpleMessage("Basic Data"),
         "abnormal_weight":
-            MessageLookupByLibrary.simpleMessage("Get abnormal weight"),
+            MessageLookupByLibrary.simpleMessage("Get Basic Data"),
         "about_title": MessageLookupByLibrary.simpleMessage("Information"),
         "advanced_setting_title":
             MessageLookupByLibrary.simpleMessage("Advanced"),
@@ -90,7 +90,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "button_start": MessageLookupByLibrary.simpleMessage("Start"),
         "button_static": MessageLookupByLibrary.simpleMessage("Static"),
         "button_tare": MessageLookupByLibrary.simpleMessage("Tare"),
-        "button_trial": MessageLookupByLibrary.simpleMessage("Free Trial"),
         "button_zero": MessageLookupByLibrary.simpleMessage("Zero"),
         "checkweigher_title":
             MessageLookupByLibrary.simpleMessage("Check Weighing"),
@@ -140,8 +139,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "expiration_date":
             MessageLookupByLibrary.simpleMessage("Expiration date:"),
         "find_ssid": MessageLookupByLibrary.simpleMessage("Discover SSID"),
-        "firmwart_update":
-            MessageLookupByLibrary.simpleMessage("Update Firmware"),
+        "firm_cfm_msg": MessageLookupByLibrary.simpleMessage(
+            "Please confirm the file correct."),
+        "firm_down_online":
+            MessageLookupByLibrary.simpleMessage("Firmware Download Online"),
+        "firm_zip_file": MessageLookupByLibrary.simpleMessage("Firmware Zip:"),
+        "firm_zip_file_sel":
+            MessageLookupByLibrary.simpleMessage("Select Firmware Zip"),
+        "firmware_update":
+            MessageLookupByLibrary.simpleMessage("Update Firmware Serial"),
         "font_bold": MessageLookupByLibrary.simpleMessage("Bold:"),
         "font_reverse":
             MessageLookupByLibrary.simpleMessage("Reverse Contrast:"),
@@ -221,6 +227,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("License Info"),
         "license_title":
             MessageLookupByLibrary.simpleMessage("License information"),
+        "m_scale_title":
+            MessageLookupByLibrary.simpleMessage("Multi-scale Management"),
         "manual": MessageLookupByLibrary.simpleMessage("Manual"),
         "max_length": MessageLookupByLibrary.simpleMessage("Max Length:"),
         "modify_bt_name": MessageLookupByLibrary.simpleMessage("Modify name"),
@@ -293,6 +301,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "p_plu_id_var": MessageLookupByLibrary.simpleMessage("PLU_ID"),
         "p_plu_name_expl": MessageLookupByLibrary.simpleMessage("PLU_Name."),
         "p_plu_name_var": MessageLookupByLibrary.simpleMessage("PLU_Name"),
+        "p_plu_tax_expl":
+            MessageLookupByLibrary.simpleMessage("PLU Tax Value."),
+        "p_plu_tax_var": MessageLookupByLibrary.simpleMessage("PLU Tax"),
         "p_pre_tare_expl": MessageLookupByLibrary.simpleMessage("PreTare."),
         "p_pre_tare_var": MessageLookupByLibrary.simpleMessage("PreTare"),
         "p_price_expl": MessageLookupByLibrary.simpleMessage("Price value."),
@@ -337,6 +348,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "p_text_var": MessageLookupByLibrary.simpleMessage("Text"),
         "p_time_expl": MessageLookupByLibrary.simpleMessage("Time."),
         "p_time_var": MessageLookupByLibrary.simpleMessage("Time"),
+        "p_total_no_tax_expl":
+            MessageLookupByLibrary.simpleMessage("Total No Tax."),
+        "p_total_no_tax_var":
+            MessageLookupByLibrary.simpleMessage("Total No Tax"),
         "p_total_tax_amount_expl":
             MessageLookupByLibrary.simpleMessage("Total Tax Amount."),
         "p_total_tax_amount_var":
@@ -387,13 +402,14 @@ class MessageLookup extends MessageLookupByLibrary {
         "plu_remarks": MessageLookupByLibrary.simpleMessage("PLu Remarks:"),
         "position": MessageLookupByLibrary.simpleMessage("Position"),
         "pretare": MessageLookupByLibrary.simpleMessage("Pretare:"),
-        "print_acc_mode": MessageLookupByLibrary.simpleMessage("ACC Mode："),
         "print_direction": MessageLookupByLibrary.simpleMessage("Direction:"),
         "print_page": MessageLookupByLibrary.simpleMessage("Page:"),
         "printer": MessageLookupByLibrary.simpleMessage("Printer:"),
         "product_information":
             MessageLookupByLibrary.simpleMessage("Product Information"),
         "qrcode_edit": MessageLookupByLibrary.simpleMessage("Qrcode Edit"),
+        "re_detail_report_title":
+            MessageLookupByLibrary.simpleMessage("Retail Detail Report"),
         "receipt_design_title":
             MessageLookupByLibrary.simpleMessage("Receipt Design"),
         "receipt_format1_item":
@@ -483,8 +499,6 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Take Out Scale"),
         "tare": MessageLookupByLibrary.simpleMessage("Tare:"),
         "text_content": MessageLookupByLibrary.simpleMessage("Text Content:"),
-        "text_email":
-            MessageLookupByLibrary.simpleMessage("Email:sales@taiwanscale.com"),
         "title_serial_port_connection":
             MessageLookupByLibrary.simpleMessage("Serial Port Connection"),
         "total_fmt_txt": MessageLookupByLibrary.simpleMessage("Total format:"),
@@ -493,7 +507,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "txt_serial_port_connected_fail":
             MessageLookupByLibrary.simpleMessage("Unable to connect"),
         "update_firmware":
-            MessageLookupByLibrary.simpleMessage("Update Firmware"),
+            MessageLookupByLibrary.simpleMessage("Update Firmware By Serial "),
         "update_firmware_info": MessageLookupByLibrary.simpleMessage(
             "The update process can not be canceled.\r\nPress confirm to continue."),
         "update_firmware_reboot": MessageLookupByLibrary.simpleMessage(
@@ -518,7 +532,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "weighing_title": MessageLookupByLibrary.simpleMessage("Weighing"),
         "weight_collection_title":
             MessageLookupByLibrary.simpleMessage("Weight Data Collection"),
-        "welcome": MessageLookupByLibrary.simpleMessage("Welcome"),
         "wifi_setting_title":
             MessageLookupByLibrary.simpleMessage("Wi-Fi Setting"),
         "zero": MessageLookupByLibrary.simpleMessage("Zero:"),

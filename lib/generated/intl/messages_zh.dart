@@ -23,9 +23,9 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "Parity": MessageLookupByLibrary.simpleMessage("校验位："),
-        "abnormal_data_title": MessageLookupByLibrary.simpleMessage("异常数据"),
+        "abnormal_data_title": MessageLookupByLibrary.simpleMessage("基础数据"),
         "abnormal_weight":
-            MessageLookupByLibrary.simpleMessage("Get abnormal weight"),
+            MessageLookupByLibrary.simpleMessage("Get Basic Data"),
         "about_title": MessageLookupByLibrary.simpleMessage("信息"),
         "advanced_setting_title": MessageLookupByLibrary.simpleMessage("高级设置"),
         "alignment": MessageLookupByLibrary.simpleMessage("对齐方式："),
@@ -77,7 +77,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "button_start": MessageLookupByLibrary.simpleMessage("开始"),
         "button_static": MessageLookupByLibrary.simpleMessage("静态"),
         "button_tare": MessageLookupByLibrary.simpleMessage("扣重"),
-        "button_trial": MessageLookupByLibrary.simpleMessage("免费试用"),
         "button_zero": MessageLookupByLibrary.simpleMessage("归零"),
         "checkweigher_title": MessageLookupByLibrary.simpleMessage("检重秤"),
         "choose_json_file": MessageLookupByLibrary.simpleMessage("Choose json"),
@@ -120,7 +119,14 @@ class MessageLookup extends MessageLookupByLibrary {
             "错误的地址格式! 例如： xxx.xxx.xxx.xxx"),
         "expiration_date": MessageLookupByLibrary.simpleMessage("有效期："),
         "find_ssid": MessageLookupByLibrary.simpleMessage("查找 SSID"),
-        "firmwart_update": MessageLookupByLibrary.simpleMessage("更新固件"),
+        "firm_cfm_msg": MessageLookupByLibrary.simpleMessage(
+            "Please confirm the file correct."),
+        "firm_down_online":
+            MessageLookupByLibrary.simpleMessage("Firmware Download Online"),
+        "firm_zip_file": MessageLookupByLibrary.simpleMessage("Firmware Zip:"),
+        "firm_zip_file_sel":
+            MessageLookupByLibrary.simpleMessage("Select Firmware Zip"),
+        "firmware_update": MessageLookupByLibrary.simpleMessage("更新固件"),
         "font_bold": MessageLookupByLibrary.simpleMessage("字体加粗："),
         "font_reverse": MessageLookupByLibrary.simpleMessage("字体反显:"),
         "free_fmt1_txt": MessageLookupByLibrary.simpleMessage("自定义打印格式 1:"),
@@ -189,6 +195,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "language_setting_title": MessageLookupByLibrary.simpleMessage("语言设置"),
         "license_info_title": MessageLookupByLibrary.simpleMessage("授权信息"),
         "license_title": MessageLookupByLibrary.simpleMessage("认证信息"),
+        "m_scale_title":
+            MessageLookupByLibrary.simpleMessage("Multi-scale Management"),
         "manual": MessageLookupByLibrary.simpleMessage("手动"),
         "max_length": MessageLookupByLibrary.simpleMessage("最大长度："),
         "modify_bt_name": MessageLookupByLibrary.simpleMessage("修改名称"),
@@ -257,6 +265,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "p_plu_id_var": MessageLookupByLibrary.simpleMessage("PLU_ID"),
         "p_plu_name_expl": MessageLookupByLibrary.simpleMessage("PLU_Name."),
         "p_plu_name_var": MessageLookupByLibrary.simpleMessage("PLU_Name"),
+        "p_plu_tax_expl":
+            MessageLookupByLibrary.simpleMessage("PLU Tax Value."),
+        "p_plu_tax_var": MessageLookupByLibrary.simpleMessage("PLU Tax"),
         "p_pre_tare_expl": MessageLookupByLibrary.simpleMessage("PreTare."),
         "p_pre_tare_var": MessageLookupByLibrary.simpleMessage("PreTare"),
         "p_price_expl": MessageLookupByLibrary.simpleMessage("Price value."),
@@ -300,6 +311,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "p_text_title": MessageLookupByLibrary.simpleMessage("Free Text"),
         "p_time_expl": MessageLookupByLibrary.simpleMessage("Time."),
         "p_time_var": MessageLookupByLibrary.simpleMessage("Time"),
+        "p_total_no_tax_expl":
+            MessageLookupByLibrary.simpleMessage("Total No Tax."),
+        "p_total_no_tax_var":
+            MessageLookupByLibrary.simpleMessage("Total No Tax"),
         "p_total_tax_amount_expl":
             MessageLookupByLibrary.simpleMessage("Total Tax Amount."),
         "p_total_tax_amount_var":
@@ -346,12 +361,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "plu_remarks": MessageLookupByLibrary.simpleMessage("PLU 备注"),
         "position": MessageLookupByLibrary.simpleMessage("位置"),
         "pretare": MessageLookupByLibrary.simpleMessage("预扣重"),
-        "print_acc_mode": MessageLookupByLibrary.simpleMessage("累加模式："),
         "print_direction": MessageLookupByLibrary.simpleMessage("打印方向："),
         "print_page": MessageLookupByLibrary.simpleMessage("纸张大小："),
         "printer": MessageLookupByLibrary.simpleMessage("打印机："),
         "product_information": MessageLookupByLibrary.simpleMessage("产品信息"),
         "qrcode_edit": MessageLookupByLibrary.simpleMessage("二维码编辑"),
+        "re_detail_report_title":
+            MessageLookupByLibrary.simpleMessage("Retail Detail Report"),
         "receipt_design_title":
             MessageLookupByLibrary.simpleMessage("Receipt Design"),
         "receipt_format1_item":
@@ -420,8 +436,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "take_out_title": MessageLookupByLibrary.simpleMessage("减法秤"),
         "tare": MessageLookupByLibrary.simpleMessage("扣重："),
         "text_content": MessageLookupByLibrary.simpleMessage("文本内容："),
-        "text_email":
-            MessageLookupByLibrary.simpleMessage("邮箱:sales@taiwanscale.com"),
         "title_serial_port_connection":
             MessageLookupByLibrary.simpleMessage("串口连接"),
         "total_fmt_txt": MessageLookupByLibrary.simpleMessage("累加总计打印格式:"),
@@ -429,7 +443,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("串口已连接"),
         "txt_serial_port_connected_fail":
             MessageLookupByLibrary.simpleMessage("串口连接失败"),
-        "update_firmware": MessageLookupByLibrary.simpleMessage("更新固件"),
+        "update_firmware": MessageLookupByLibrary.simpleMessage("串口更新固件"),
         "update_firmware_info":
             MessageLookupByLibrary.simpleMessage("更新过程不能取消.\r\n请确认更新."),
         "update_firmware_reboot":
@@ -453,7 +467,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "weighing_title": MessageLookupByLibrary.simpleMessage("称重"),
         "weight_collection_title":
             MessageLookupByLibrary.simpleMessage("重量数据收集"),
-        "welcome": MessageLookupByLibrary.simpleMessage("欢迎"),
         "wifi_setting_title": MessageLookupByLibrary.simpleMessage("Wi-Fi 设置"),
         "zero": MessageLookupByLibrary.simpleMessage("零点："),
         "zero_range": MessageLookupByLibrary.simpleMessage("零点范围")

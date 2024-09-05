@@ -2,14 +2,14 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:t_max/data/currentport_data.dart';
 import 'package:t_max/data/modifyscale_data.dart';
 import '../../data/device_data.dart';
 import '../../data/scalecmd_data.dart';
 import '../../data/settingparam_data.dart';
 import '../../functions/methods.dart';
-import '../../main.dart';
 import '../data/language.dart';
+import '../data/manager_scale_channel.dart';
+import '../data/scalelist_data.dart';
 import '../widget/custom_button.dart';
 import 'modify_network_dialog.dart';
 
@@ -323,7 +323,7 @@ class _ParamSettingDialogState extends State<ParamSettingDialog> {
     }
     String updateString = jsonEncode(mySettingParam);
     myScaleCmd.cmdData = updateString;
-    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+    PublicFunctions.sendMsg(defaultScaleId, jsonEncode(myScaleCmd));
   }
 
   void modifyComInfo() {

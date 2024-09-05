@@ -1,14 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:t_max/functions/methods.dart';
-import '../data/downloadresponse.dart';
+import 'package:t_max/pages/sel_scales_page.dart';
 import '../data/language.dart';
-import '../data/scale_info_from_scale.dart';
-import '../data/screen_mgr.dart';
 import '../data/server_ip_data.dart';
-import '../data/timer_manager.dart';
-import '../eventbus/eventbus.dart';
-
 import '../widget/custom_button.dart';
 import '../widget/page_head.dart';
 import '../widget/wifitextfeild.dart';
@@ -34,8 +29,6 @@ class CableIpSettingPageState extends State<CableIpSettingPage> {
   bool _isValidGateway = true;
   bool _isStatic = true;
 
-  dynamic _eventbus1;
-  dynamic _eventbus2;
   RegExp ipaddressRegex = RegExp(r'[0-9.]');
   RegExp ipRegex = RegExp(
     r'^((\d{1,3}\.){3}\d{1,3})$',
@@ -45,55 +38,11 @@ class CableIpSettingPageState extends State<CableIpSettingPage> {
 
   @override
   void initState() {
-    cntScaleTimerMgr.startCntScaleTimer(1);
-    _eventbus1 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
-      if (mounted) {
-        setState(() {
-          myFactoryInfoFromScale = event.obj;
-          if (myFactoryInfoFromScale.modelName != '') {
-            myScreenMgr.serialPortST = true;
-          } else {
-            myScreenMgr.serialPortST = false;
-          }
-        });
-      }
-    });
-    //
-    _eventbus2 = eventBus.on<EventSetServerIPResp>().listen((event) {
-      if (mounted) {
-        setState(() {
-          isDownloadClicked = false;
-          myRespSetServerIp = event.obj;
-
-          if (myRespSetServerIp.msgBody.isNotEmpty) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text(
-                    (myRespSetServerIp.msgBody.contains('ok'))
-                        ? localizedStrings.download_result_ok
-                        : myRespSetServerIp.msgBody,
-                    style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.normal)), ////此处需要秤回复
-                duration: const Duration(seconds: 3),
-                backgroundColor: (myRespSetServerIp.msgBody.contains('ok'))
-                    ? Theme.of(context).colorScheme.outline
-                    : Theme.of(context).colorScheme.error));
-          }
-
-          cntScaleTimerMgr.stopCntScaleTimer();
-          cntScaleTimerMgr.startCntScaleTimer(2);
-        });
-      }
-    });
-
     super.initState();
   }
 
   @override
   void dispose() {
-    _eventbus1.cancel();
-    _eventbus2.cancel();
-
     super.dispose();
   }
 
@@ -102,8 +51,8 @@ class CableIpSettingPageState extends State<CableIpSettingPage> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),
-        child: pageHead(context, localizedStrings.set_ethernet_ip_title,
-            localizedStrings.serial_port_status),
+        child:
+            pageHeadDefScale(context, localizedStrings.set_ethernet_ip_title),
       ),
       body: Container(
         color: Theme.of(context).colorScheme.surfaceTint,
@@ -124,6 +73,24 @@ class CableIpSettingPageState extends State<CableIpSettingPage> {
                   Expanded(
                     child: ListView(
                       children: [
+                        const SizedBox(height: 40), // 顶部间距
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CustomElevatedButton(
+                              btnWidth: 150,
+                              btnHeight: 50,
+                              icon: Icons.download_rounded,
+                              text: localizedStrings.download,
+                              onPressed:
+                                  (!isDownloadClicked) && (downloadFlag())
+                                      ? () {
+                                          _showConfirmationDialog(context);
+                                        }
+                                      : null,
+                            ),
+                          ],
+                        ),
                         const SizedBox(height: 40), // 顶部间距
                         buildCommonRow(
                           localizedStrings.ip_address,
@@ -201,24 +168,6 @@ class CableIpSettingPageState extends State<CableIpSettingPage> {
                         ),
 
                         const SizedBox(height: 40), // 底部间距
-
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            CustomElevatedButton(
-                              btnWidth: 150,
-                              btnHeight: 50,
-                              icon: Icons.download_rounded,
-                              text: localizedStrings.download,
-                              onPressed:
-                                  (!isDownloadClicked) && (downloadFlag())
-                                      ? () {
-                                          _showConfirmationDialog(context);
-                                        }
-                                      : null,
-                            ),
-                          ],
-                        ),
                       ],
                     ),
                   ),
@@ -370,18 +319,30 @@ class CableIpSettingPageState extends State<CableIpSettingPage> {
           ),
           content: Text(localizedStrings.header_confirm_info),
           actions: <Widget>[
-            OutlinedButton(
-              child: Text(localizedStrings.button_cancel),
-              onPressed: () {
-                Navigator.of(context).pop(false); // 不跳转
-              },
-            ),
-            OutlinedButton(
-              child: Text(localizedStrings.confirm_btn),
-              onPressed: () {
-                Navigator.of(context).pop(true); // 跳转
-              },
-            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                CustomOutlinedButton(
+                  btnWidth: 120,
+                  btnHeight: 40,
+                  icon: Icons.check_circle,
+                  text: localizedStrings.button_ok,
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  },
+                ),
+                const SizedBox(width: 20),
+                CustomOutlinedButton(
+                  btnWidth: 120,
+                  btnHeight: 40,
+                  icon: Icons.cancel,
+                  text: localizedStrings.button_cancel,
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
+                ),
+              ],
+            )
           ],
         );
       },
@@ -393,13 +354,21 @@ class CableIpSettingPageState extends State<CableIpSettingPage> {
         myServerIpData.netmask = netMaskController.text;
         myServerIpData.serverIp = serverIpCtl.text;
         myServerIpData.serverPort = serverPortCtl.text;
-        PublicFunctions.sendServerIpToScale(myServerIpData);
-
-        setState(() {
-          isDownloadClicked = true;
-          cntScaleTimerMgr.stopCntScaleTimer();
-        });
+        showSelScaleDialog(2, jsonEncode(myServerIpData));
       }
     });
+  }
+
+  void showSelScaleDialog(int funcNo, String msg) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 允许点击空白处关闭对话框
+      builder: (context) {
+        return SelectScalesPage(
+          funcNo: funcNo,
+          sendMsgStr: msg,
+        );
+      },
+    );
   }
 }

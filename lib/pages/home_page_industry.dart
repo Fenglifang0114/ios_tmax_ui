@@ -1,19 +1,17 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:t_max/data/dialog_data.dart';
 import 'package:t_max/data/license_data.dart';
 import 'package:t_max/data/scale_info_from_scale.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/pages/labeldesign_page.dart';
+import 'package:t_max/pages/sel_four_scales_page.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
 import '../data/company_info.dart';
-import '../data/comscaleinfo_data.dart';
-import '../data/currentport_data.dart';
-import '../data/device_data.dart';
 import '../data/language.dart';
+import '../data/manager_scale_channel.dart';
 import '../data/screen_mgr.dart';
 import '../data/timer_manager.dart';
 import '../dialog/get_build_info_dialog.dart';
@@ -29,8 +27,10 @@ import '../widget/home_page_widget.dart';
 import '../widget/update_firmware.dart';
 import '../widget/version.dart';
 import 'check_weighers_page.dart';
+import 'firmware_down_wifi.dart';
 import 'modify_com_port_page.dart';
 import 'product_download_page.dart';
+import 'scale_manager.dart';
 import 'take_in_page.dart';
 import 'take_out_page.dart';
 import 'weighing.dart';
@@ -51,10 +51,11 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
 
   late ScrollController _pageScrollerController;
   dynamic _eventbus1;
-  dynamic _eventbus2;
+
   dynamic _eventbus3;
   dynamic _eventbus4;
   dynamic _eventbus5;
+  dynamic _eventbus6;
 
   String groupValue = 'zh';
   DateTime now = DateTime.now();
@@ -88,7 +89,7 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
     _handleSetIcon();
     super.initState();
     _pageScrollerController = ScrollController();
-    cntScaleTimerMgr.startCntScaleTimer(5);
+    // cntScaleTimerMgr.startCntScaleTimer(5);
     _eventbus1 = eventBus.on<EventDialogData>().listen((event) {
       if (mounted) {
         setState(() {
@@ -98,27 +99,6 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
     });
     setState(() {
       now = DateTime.now();
-    });
-    _eventbus2 = eventBus.on<EventComScaleList>().listen((event) {
-      if (mounted) {
-        setState(() {
-          myComScaleList = event.obj;
-          if (myComScaleList.comScaleList.isNotEmpty) {
-            myDevicedata.name = myComScaleList.comScaleList[0].scaleModel;
-            myDevicedata.type = 'icons.usb';
-            myComScaleList.comScaleList[0].scaleId.toString();
-            myDevicedata.scaleID =
-                myComScaleList.comScaleList[0].scaleId.toString();
-            myCurrentPort.baud = myComScaleList.comScaleList[0].baudRate;
-            myCurrentPort.dataBits = myComScaleList.comScaleList[0].dataBits;
-            myCurrentPort.devPath = myComScaleList.comScaleList[0].portName;
-            myCurrentPort.parity = myComScaleList.comScaleList[0].parity;
-            myCurrentPort.stopBits = myComScaleList.comScaleList[0].stopBits;
-            myDevicedata.mediaType = myComScaleList.comScaleList[0].tMedia;
-            myDevicedata.scaleSn = myComScaleList.comScaleList[0].scaleSn;
-          }
-        });
-      }
     });
 
     _eventbus3 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
@@ -162,15 +142,22 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
         });
       }
     });
+
+    _eventbus6 = eventBus.on<EventCloseScalePassthResp>().listen((event) {
+      if (mounted) {
+        PublicFunctions.stopWeight(defaultScaleId);
+      }
+    });
   }
 
   @override
   void dispose() {
     _eventbus1.cancel();
-    _eventbus2.cancel();
+
     _eventbus3.cancel();
     _eventbus4.cancel();
     _eventbus5.cancel();
+    _eventbus6.cancel();
     _pageScrollerController.dispose();
     cntScaleTimerMgr.stopCntScaleTimer();
     super.dispose();
@@ -250,37 +237,38 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                           const SizedBox(
                             width: 20,
                           ),
-                          Expanded(
-                            child: Text(localizedStrings.serial_port_status,
-                                overflow: TextOverflow.ellipsis,
-                                textAlign: TextAlign.right,
-                                maxLines: 1,
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onPrimary)),
-                          ),
-                          const SizedBox(
-                            width: 20,
-                          ),
-                          (myScreenMgr.serialPortST)
-                              ? CustomCircleIcon(
-                                  outerColor:
-                                      Theme.of(context).colorScheme.primary,
-                                  innerColor:
-                                      Theme.of(context).colorScheme.onPrimary,
-                                  icon: Icons.check_circle,
-                                  size: 24.0,
-                                )
-                              : CustomCircleIcon(
-                                  outerColor:
-                                      Theme.of(context).colorScheme.error,
-                                  innerColor:
-                                      Theme.of(context).colorScheme.onPrimary,
-                                  icon: Icons.cancel,
-                                  size: 24.0,
-                                ),
+
+                          // Expanded(
+                          //   child: Text(localizedStrings.serial_port_status,
+                          //       overflow: TextOverflow.ellipsis,
+                          //       textAlign: TextAlign.right,
+                          //       maxLines: 1,
+                          //       style: TextStyle(
+                          //           fontSize: 20,
+                          //           color: Theme.of(context)
+                          //               .colorScheme
+                          //               .onPrimary)),
+                          // ),
+                          // const SizedBox(
+                          //   width: 20,
+                          // ),
+                          // (myScreenMgr.serialPortST)
+                          //     ? CustomCircleIcon(
+                          //         outerColor:
+                          //             Theme.of(context).colorScheme.primary,
+                          //         innerColor:
+                          //             Theme.of(context).colorScheme.onPrimary,
+                          //         icon: Icons.check_circle,
+                          //         size: 24.0,
+                          //       )
+                          //     : CustomCircleIcon(
+                          //         outerColor:
+                          //             Theme.of(context).colorScheme.error,
+                          //         innerColor:
+                          //             Theme.of(context).colorScheme.onPrimary,
+                          //         icon: Icons.cancel,
+                          //         size: 24.0,
+                          //       ),
                           const SizedBox(
                             width: 20,
                           ),
@@ -368,79 +356,79 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
               ),
               Expanded(
                 child: ListView(children: [
-                  (myFactoryInfoFromScale.modelName != null)
-                      ? SizedBox(
-                          height: 80,
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  const SizedBox(
-                                    width: 30,
-                                  ),
-                                  Flexible(
-                                    child: Text(
-                                      localizedStrings.scale_model,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    const SizedBox(
-                                      width: 30,
-                                    ),
-                                    Flexible(
-                                      child: Text(
-                                        myFactoryInfoFromScale.modelName!,
-                                        maxLines: 1,
-                                        textAlign: TextAlign.start,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ]),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  const SizedBox(
-                                    width: 30,
-                                  ),
-                                  Flexible(
-                                    child: Text(
-                                      localizedStrings.scale_sn,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    const SizedBox(
-                                      width: 30,
-                                    ),
-                                    Flexible(
-                                      child: Text(
-                                        myFactoryInfoFromScale.scaleSn!,
-                                        maxLines: 1,
-                                        textAlign: TextAlign.start,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ]),
-                            ],
-                          ),
-                        )
-                      : const SizedBox(),
+                  // (myFactoryInfoFromScale.modelName != null)
+                  //     ? SizedBox(
+                  //         height: 80,
+                  //         child: Column(
+                  //           children: [
+                  //             Row(
+                  //               mainAxisAlignment: MainAxisAlignment.start,
+                  //               children: [
+                  //                 const SizedBox(
+                  //                   width: 30,
+                  //                 ),
+                  //                 Flexible(
+                  //                   child: Text(
+                  //                     localizedStrings.scale_model,
+                  //                     maxLines: 1,
+                  //                     overflow: TextOverflow.ellipsis,
+                  //                   ),
+                  //                 ),
+                  //               ],
+                  //             ),
+                  //             Row(
+                  //                 mainAxisAlignment: MainAxisAlignment.start,
+                  //                 children: [
+                  //                   const SizedBox(
+                  //                     width: 30,
+                  //                   ),
+                  //                   Flexible(
+                  //                     child: Text(
+                  //                       myFactoryInfoFromScale.modelName!,
+                  //                       maxLines: 1,
+                  //                       textAlign: TextAlign.start,
+                  //                       style: const TextStyle(
+                  //                           fontWeight: FontWeight.bold),
+                  //                       overflow: TextOverflow.ellipsis,
+                  //                     ),
+                  //                   ),
+                  //                 ]),
+                  //             Row(
+                  //               mainAxisAlignment: MainAxisAlignment.start,
+                  //               children: [
+                  //                 const SizedBox(
+                  //                   width: 30,
+                  //                 ),
+                  //                 Flexible(
+                  //                   child: Text(
+                  //                     localizedStrings.scale_sn,
+                  //                     maxLines: 1,
+                  //                     overflow: TextOverflow.ellipsis,
+                  //                   ),
+                  //                 ),
+                  //               ],
+                  //             ),
+                  //             Row(
+                  //                 mainAxisAlignment: MainAxisAlignment.start,
+                  //                 children: [
+                  //                   const SizedBox(
+                  //                     width: 30,
+                  //                   ),
+                  //                   Flexible(
+                  //                     child: Text(
+                  //                       myFactoryInfoFromScale.scaleSn!,
+                  //                       maxLines: 1,
+                  //                       textAlign: TextAlign.start,
+                  //                       style: const TextStyle(
+                  //                           fontWeight: FontWeight.bold),
+                  //                       overflow: TextOverflow.ellipsis,
+                  //                     ),
+                  //                   ),
+                  //                 ]),
+                  //           ],
+                  //         ),
+                  //       )
+                  //     : const SizedBox(),
                   MouseRegion(
                     cursor: SystemMouseCursors.click, // 设置光标为手的形状
                     child: GestureDetector(
@@ -456,6 +444,26 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                           context,
                           localizedStrings.title_serial_port_connection,
                           Icons.cable,
+                          true),
+                    ),
+                  ),
+                  MouseRegion(
+                    cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                    child: GestureDetector(
+                      onTap: () {
+                        stopCheckSerialPort();
+                        setState(() {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const ScaleManagerPage()),
+                          ).then((value) => _updateStatus());
+                        });
+                      },
+                      child: customFunctionCard(
+                          context,
+                          localizedStrings.m_scale_title,
+                          Icons.schema_outlined,
                           true),
                     ),
                   ),
@@ -497,7 +505,27 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                         });
                       },
                       child: customFunctionCard(context,
-                          localizedStrings.update_firmware, Icons.update, true),
+                          localizedStrings.firmware_update, Icons.update, true),
+                    ),
+                  ),
+                  MouseRegion(
+                    cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          stopCheckSerialPort();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const FirmwareDownPage()),
+                          ).then((value) => _updateStatus());
+                        });
+                      },
+                      child: customFunctionCard(
+                          context,
+                          localizedStrings.firm_down_online,
+                          Icons.cloud_upload_outlined,
+                          true),
                     ),
                   ),
                   MouseRegion(
@@ -573,9 +601,50 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                       MouseRegion(
                         cursor: SystemMouseCursors.click, // 设置光标为手的形状
                         child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              stopCheckSerialPort();
+                              setState(() {
+                                showSelFourScaleDialog();
+                              });
+                            });
+                          },
+                          child: appCard(
+                              context,
+                              'Four Weightings',
+                              Icons.monitor_weight,
+                              true,
+                              'This application is used to display the weighing data in real time.',
+                              ''),
+                        ),
+                      ),
+                      MouseRegion(
+                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              stopCheckSerialPort();
+                              setState(() {
+                                showProductLinePageDialog();
+                              });
+                            });
+                          },
+                          child: appCard(
+                              context,
+                              'Real-time Production Line',
+                              Icons.checklist_rtl,
+                              true,
+                              'This application is used to check the weighing data in real time.',
+                              ''),
+                        ),
+                      ),
+                      MouseRegion(
+                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                        child: GestureDetector(
                           onTap: myWedaLicInfo.isValid
                               ? () {
                                   setState(() {
+                                    PublicFunctions.getUIConfNormal(1);
                                     stopCheckSerialPort();
                                     setState(() {
                                       Navigator.push(
@@ -605,6 +674,8 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                             onTap: myChweLicInfo.isValid
                                 ? () {
                                     setState(() {
+                                      PublicFunctions.getUIConfCheck(1);
+
                                       stopCheckSerialPort();
                                       setState(() {
                                         Navigator.push(
@@ -633,6 +704,8 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                             onTap: myInWeLicInfo.isValid
                                 ? () {
                                     setState(() {
+                                      PublicFunctions.getUIConfTakeIn(1);
+
                                       stopCheckSerialPort();
                                       setState(() {
                                         Navigator.push(
@@ -661,6 +734,7 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                             onTap: myTaouLicInfo.isValid
                                 ? () {
                                     setState(() {
+                                      PublicFunctions.getUIConfTakeOut(1);
                                       stopCheckSerialPort();
                                       setState(() {
                                         Navigator.push(
@@ -687,6 +761,26 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
               ),
             ],
           )),
+    );
+  }
+
+  void showSelFourScaleDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 允许点击空白处关闭对话框
+      builder: (context) {
+        return const SltFourScalesPage(mode: weightingMode);
+      },
+    );
+  }
+
+  void showProductLinePageDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 允许点击空白处关闭对话框
+      builder: (context) {
+        return const SltFourScalesPage(mode: checkWeightingMode);
+      },
     );
   }
 
@@ -755,7 +849,7 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
   void _updateStatus() {
     setState(() {});
     cntScaleTimerMgr.stopCntScaleTimer();
-    cntScaleTimerMgr.startCntScaleTimer(5);
+    // cntScaleTimerMgr.startCntScaleTimer(5);
   }
 
   void stopCheckSerialPort() {

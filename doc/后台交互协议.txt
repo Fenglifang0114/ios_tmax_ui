@@ -54,7 +54,7 @@ ws://127.0.0.1:7878/tmax?scaleid=0
 //关掉app
 12. inform application to quit => {"req":"quit_application","ReqData":""}
     response:
-	{"MsgType":"resp_quit_application","MsgBody":""}
+	{"MsgType":"_quit_application","MsgBody":""}
 //获取DC500配置信息
 13. get ui configuration => {"Req": "get_ui_conf", "ReqData": ""}
     response:

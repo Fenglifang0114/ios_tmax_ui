@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import '../data/downloadresponse.dart';
+import '../data/manager_scale_channel.dart';
 import '../data/language.dart';
 import '../data/scale_info_from_scale.dart';
 import '../data/screen_mgr.dart';
@@ -43,18 +44,18 @@ class _DownReciptPageState extends State<DownSerialOutputPage> {
           isDownloadClicked = false;
           cntScaleTimerMgr.stopCntScaleTimer();
           cntScaleTimerMgr.startCntScaleTimer(5);
-          mySetSerialOutputResp = event.obj;
-          if (mySetSerialOutputResp.msgBody.isNotEmpty) {
+          myRespDataFromScale = event.obj;
+          if (myRespDataFromScale.msgBody.isNotEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text(
-                    (mySetSerialOutputResp.msgBody.contains('ok'))
+                    (myRespDataFromScale.msgBody.contains('ok'))
                         ? 'Download successful!'
-                        : mySetSerialOutputResp.msgBody,
+                        : myRespDataFromScale.msgBody,
                     style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.normal)), ////此处需要秤回复
                 duration: const Duration(seconds: 3),
-                backgroundColor: (mySetSerialOutputResp.msgBody.contains('ok'))
+                backgroundColor: (myRespDataFromScale.msgBody.contains('ok'))
                     ? Theme.of(context).colorScheme.outline
                     : Theme.of(context).colorScheme.error));
           }
@@ -274,7 +275,7 @@ class _DownReciptPageState extends State<DownSerialOutputPage> {
     ).then((confirmed) async {
       if (confirmed) {
         if (jsonFilesList.isNotEmpty) {
-          PublicFunctions.sendOutputFmtToScale(jsonFilesList);
+          PublicFunctions.sendOutputFmtToScale(jsonFilesList, defaultScaleId);
           setState(() {
             isDownloadClicked = true;
             cntScaleTimerMgr.stopCntScaleTimer();
@@ -337,8 +338,10 @@ class _DownReciptPageState extends State<DownSerialOutputPage> {
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(50),
           child: Container(
-            child: pageHead(context, localizedStrings.receipt_format_download,
-                localizedStrings.serial_port_status),
+            child: pageHeadDefScale(
+              context,
+              localizedStrings.receipt_format_download,
+            ),
           ),
         ),
         body: Container(

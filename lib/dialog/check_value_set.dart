@@ -1,26 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:t_max/data/high_low_weight.dart';
 import 'package:t_max/widget/custom_button.dart';
 
 import '../data/language.dart';
 
-class HighLowSettingDialog extends StatefulWidget {
-  const HighLowSettingDialog({super.key});
+//设置流水线秤 上下限参数设置
+
+class CheckValueSetDialog extends StatefulWidget {
+  final double initialHigh;
+  final double initialLow;
+
+  const CheckValueSetDialog(
+      {required this.initialHigh, required this.initialLow, super.key});
   @override
-  _HighLowSettingDialogState createState() => _HighLowSettingDialogState();
+  _CheckValueSetDialogState createState() => _CheckValueSetDialogState();
 }
 
-class _HighLowSettingDialogState extends State<HighLowSettingDialog> {
-  TextEditingController maxValueController = TextEditingController();
-  TextEditingController minValueController = TextEditingController();
-
+class _CheckValueSetDialogState extends State<CheckValueSetDialog> {
+  TextEditingController maxValueCtl = TextEditingController(text: '');
+  TextEditingController minValueCtl = TextEditingController(text: '');
   TextEditingController errorText = TextEditingController();
+  double highValue = 0.0;
+  double lowValue = 0.0;
 
   @override
   void initState() {
-    maxValueController.text = myHighLowWeight.highValue.toString();
-    minValueController.text = myHighLowWeight.lowValue.toString();
+    maxValueCtl.text = widget.initialHigh.toString();
+    minValueCtl.text = widget.initialLow.toString();
+    highValue = widget.initialHigh;
+    lowValue = widget.initialLow;
 
     super.initState();
   }
@@ -72,7 +80,7 @@ class _HighLowSettingDialogState extends State<HighLowSettingDialog> {
                             width: 200,
                             child: TextField(
                               textAlignVertical: TextAlignVertical.top,
-                              controller: maxValueController,
+                              controller: maxValueCtl,
                               maxLength: 10,
                               maxLengthEnforcement:
                                   MaxLengthEnforcement.enforced,
@@ -88,12 +96,13 @@ class _HighLowSettingDialogState extends State<HighLowSettingDialog> {
                                 // border: OutlineInputBorder(),
                               ),
                               onChanged: (value) {
-                                if (value.isNotEmpty) {
-                                  myHighLowWeight.highValue =
-                                      double.parse(value);
-                                } else {
-                                  myHighLowWeight.highValue = 0.0;
-                                }
+                                setState(() {
+                                  if (value.isNotEmpty) {
+                                    highValue = double.parse(value);
+                                  } else {
+                                    highValue = 0.0;
+                                  }
+                                });
                               },
                             ),
                           ),
@@ -112,7 +121,7 @@ class _HighLowSettingDialogState extends State<HighLowSettingDialog> {
                           SizedBox(
                             width: 200,
                             child: TextField(
-                              controller: minValueController,
+                              controller: minValueCtl,
                               maxLength: 10,
                               maxLengthEnforcement:
                                   MaxLengthEnforcement.enforced,
@@ -128,12 +137,13 @@ class _HighLowSettingDialogState extends State<HighLowSettingDialog> {
                                 // border: OutlineInputBorder(),
                               ),
                               onChanged: (value) {
-                                if (value.isNotEmpty) {
-                                  myHighLowWeight.lowValue =
-                                      double.parse(value);
-                                } else {
-                                  myHighLowWeight.lowValue = 0.0;
-                                }
+                                setState(() {
+                                  if (value.isNotEmpty) {
+                                    lowValue = double.parse(value);
+                                  } else {
+                                    lowValue = 0.0;
+                                  }
+                                });
                               },
                             ),
                           ),
@@ -181,9 +191,11 @@ class _HighLowSettingDialogState extends State<HighLowSettingDialog> {
                 btnHeight: 40,
                 icon: Icons.check_circle,
                 text: localizedStrings.button_ok,
-                onPressed: () {
-                  Navigator.of(context).pop();
-                }),
+                onPressed: (lowValue > highValue)
+                    ? null
+                    : () {
+                        Navigator.of(context).pop([highValue, lowValue]);
+                      }),
             const SizedBox(width: 20),
             CustomOutlinedButton(
                 btnWidth: 120,
@@ -191,7 +203,8 @@ class _HighLowSettingDialogState extends State<HighLowSettingDialog> {
                 icon: Icons.cancel,
                 text: localizedStrings.button_cancel,
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  Navigator.of(context)
+                      .pop([widget.initialHigh, widget.initialLow]);
                 })
           ],
         )

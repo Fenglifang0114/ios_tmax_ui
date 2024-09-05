@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import '../data/manager_scale_channel.dart';
 import 'package:t_max/data/dialog_data.dart';
 import 'package:t_max/data/license_data.dart';
 import 'package:t_max/data/scale_info_from_scale.dart';
@@ -10,9 +11,6 @@ import 'package:t_max/pages/labeldesign_page.dart';
 import 'package:t_max/pages/wifisetting_page.dart';
 import 'package:window_manager/window_manager.dart';
 import '../data/company_info.dart';
-import '../data/comscaleinfo_data.dart';
-import '../data/currentport_data.dart';
-import '../data/device_data.dart';
 import '../data/downloadresponse.dart';
 import '../data/language.dart';
 import '../data/screen_mgr.dart';
@@ -30,14 +28,16 @@ import '../dialog/license_info.dart';
 import '../widget/home_page_widget.dart';
 import '../widget/update_firmware.dart';
 import '../widget/version.dart';
-import 'abnormal_data_page.dart';
+import 'basic_data_page.dart';
 import 'batch_delivery.dart';
 import 'custom_serial_protocol_page.dart';
 import 'down_recipt_fmt_page.dart';
 import 'down_serial_output.dart';
+import 'firmware_down_wifi.dart';
 import 'lable_down_prn_fmt_page.dart';
 import 'modify_com_port_page.dart';
 import 'receipt_design_page.dart';
+import 'scale_manager.dart';
 import 'set_system_parameter.dart';
 import 'set_system_time.dart';
 import 'package:tray_manager/tray_manager.dart';
@@ -56,11 +56,12 @@ class _HomePageState extends State<HomePage> with TrayListener {
 
   late ScrollController _pageScrollerController;
   dynamic _eventbus1;
-  dynamic _eventbus2;
+
   dynamic _eventbus3;
   dynamic _eventbus4;
   dynamic _eventbus5;
   dynamic _eventbus6;
+  dynamic _eventbus7;
 
   String groupValue = 'zh';
   DateTime now = DateTime.now();
@@ -93,7 +94,7 @@ class _HomePageState extends State<HomePage> with TrayListener {
     windowManager.setMinimumSize(Size(1320, 720));
     super.initState();
     _pageScrollerController = ScrollController();
-    cntScaleTimerMgr.startCntScaleTimer(5);
+    // cntScaleTimerMgr.startCntScaleTimer(10);
 
     _eventbus1 = eventBus.on<EventDialogData>().listen((event) {
       if (mounted) {
@@ -105,27 +106,6 @@ class _HomePageState extends State<HomePage> with TrayListener {
     setState(() {
       now = DateTime.now();
     });
-    _eventbus2 = eventBus.on<EventComScaleList>().listen((event) {
-      if (mounted) {
-        setState(() {
-          myComScaleList = event.obj;
-          if (myComScaleList.comScaleList.isNotEmpty) {
-            myDevicedata.name = myComScaleList.comScaleList[0].scaleModel;
-            myDevicedata.type = 'icons.usb';
-            myComScaleList.comScaleList[0].scaleId.toString();
-            myDevicedata.scaleID =
-                myComScaleList.comScaleList[0].scaleId.toString();
-            myCurrentPort.baud = myComScaleList.comScaleList[0].baudRate;
-            myCurrentPort.dataBits = myComScaleList.comScaleList[0].dataBits;
-            myCurrentPort.devPath = myComScaleList.comScaleList[0].portName;
-            myCurrentPort.parity = myComScaleList.comScaleList[0].parity;
-            myCurrentPort.stopBits = myComScaleList.comScaleList[0].stopBits;
-            myDevicedata.mediaType = myComScaleList.comScaleList[0].tMedia;
-            myDevicedata.scaleSn = myComScaleList.comScaleList[0].scaleSn;
-          }
-        });
-      }
-    });
 
     _eventbus3 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
       if (mounted) {
@@ -134,7 +114,7 @@ class _HomePageState extends State<HomePage> with TrayListener {
             myFactoryInfoFromScale = event.obj;
             if (myFactoryInfoFromScale.modelName != '') {
               myScreenMgr.serialPortST = true;
-              PublicFunctions.getOneEepromInfo("wifi_or_bt");
+              // PublicFunctions.getOneEepromInfo("wifi_or_bt", defaultScaleId);
             } else {
               myScreenMgr.serialPortST = false;
               myFactoryInfoFromScale.modelName = '';
@@ -156,13 +136,13 @@ class _HomePageState extends State<HomePage> with TrayListener {
     _eventbus5 = eventBus.on<EventGetOneEepromDateResp>().listen((event) {
       if (mounted) {
         setState(() {
-          myRespGetOneEepromData = event.obj;
-          if (myRespGetOneEepromData.msgBody.contains('ok')) {
-            if (myRespGetOneEepromData.msgBody.contains('bt')) {
+          myRespDataFromScale = event.obj;
+          if (myRespDataFromScale.msgBody.contains('ok')) {
+            if (myRespDataFromScale.msgBody.contains('bt')) {
               myScreenMgr.wifiOrBt = 'bt';
-            } else if (myRespGetOneEepromData.msgBody.contains('wifi')) {
+            } else if (myRespDataFromScale.msgBody.contains('wifi')) {
               myScreenMgr.wifiOrBt = 'wifi';
-            } else if (myRespGetOneEepromData.msgBody.contains('off')) {
+            } else if (myRespDataFromScale.msgBody.contains('off')) {
               myScreenMgr.wifiOrBt = 'off';
             }
           }
@@ -188,16 +168,22 @@ class _HomePageState extends State<HomePage> with TrayListener {
         });
       }
     });
+    _eventbus7 = eventBus.on<EventCloseScalePassthResp>().listen((event) {
+      if (mounted) {
+        PublicFunctions.stopWeight(defaultScaleId);
+      }
+    });
   }
 
   @override
   void dispose() {
     _eventbus1.cancel();
-    _eventbus2.cancel();
     _eventbus3.cancel();
     _eventbus4.cancel();
     _eventbus5.cancel();
     _eventbus6.cancel();
+    _eventbus7.cancel();
+
     _pageScrollerController.dispose();
     cntScaleTimerMgr.stopCntScaleTimer();
     trayManager.removeListener(this);
@@ -477,7 +463,6 @@ class _HomePageState extends State<HomePage> with TrayListener {
                       onTap: () {
                         stopCheckSerialPort();
                         setState(() {
-                          PublicFunctions.getProductList();
                           PublicFunctions.getPortList();
                           showComPortDialog(context);
                         });
@@ -486,6 +471,26 @@ class _HomePageState extends State<HomePage> with TrayListener {
                           context,
                           localizedStrings.title_serial_port_connection,
                           Icons.cable,
+                          true),
+                    ),
+                  ),
+                  MouseRegion(
+                    cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                    child: GestureDetector(
+                      onTap: () {
+                        stopCheckSerialPort();
+                        setState(() {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const ScaleManagerPage()),
+                          ).then((value) => _updateStatus());
+                        });
+                      },
+                      child: customFunctionCard(
+                          context,
+                          localizedStrings.m_scale_title,
+                          Icons.schema_outlined,
                           true),
                     ),
                   ),
@@ -567,6 +572,8 @@ class _HomePageState extends State<HomePage> with TrayListener {
                               if (myScreenMgr.wifiOrBt.contains('wifi')) {
                                 setState(() {
                                   stopCheckSerialPort();
+                                  PublicFunctions.changeWifiMode(
+                                      defaultScaleId);
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -596,6 +603,27 @@ class _HomePageState extends State<HomePage> with TrayListener {
                               context,
                               localizedStrings.update_firmware,
                               Icons.update,
+                              true),
+                        ),
+                      ),
+                      MouseRegion(
+                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              stopCheckSerialPort();
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const FirmwareDownPage()),
+                              ).then((value) => _updateStatus());
+                            });
+                          },
+                          child: customFunctionCard(
+                              context,
+                              localizedStrings.firm_down_online,
+                              Icons.cloud_upload_outlined,
                               true),
                         ),
                       ),
@@ -784,7 +812,7 @@ class _HomePageState extends State<HomePage> with TrayListener {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                const AbnormalDataPage()),
+                                                const BasicDataPage()),
                                       ).then((value) => _updateStatus());
                                     });
                                   });
@@ -893,7 +921,8 @@ class _HomePageState extends State<HomePage> with TrayListener {
 
   void _updateStatus() {
     setState(() {});
-    cntScaleTimerMgr.startCntScaleTimer(5);
+    cntScaleTimerMgr.stopCntScaleTimer();
+    // cntScaleTimerMgr.startCntScaleTimer(5);
   }
 
   void showLicenseDialog(BuildContext context) {

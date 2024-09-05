@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gbk_codec/gbk_codec.dart';
+import '../data/manager_scale_channel.dart';
 import '../data/barcoderowdata.dart';
 import '../data/encrypt_data.dart';
 import '../data/formatdata.dart';
@@ -13,14 +14,11 @@ import '../data/item_key_list.dart';
 import '../data/language.dart';
 import '../data/receipt_item.dart';
 import '../data/receipt_offset.dart';
-import '../data/scale_info_from_scale.dart';
 import '../data/scalecmd_data.dart';
-import '../data/screen_mgr.dart';
 import '../data/selectedcontrol.dart';
-import '../data/timer_manager.dart';
 import '../data/writelog.dart';
 import '../eventbus/eventbus.dart';
-import '../main.dart';
+import '../functions/methods.dart';
 import '../widget/dropdown_copy.dart';
 import '../widget/page_head.dart';
 import '../widget/receipt_draggable_floating.dart';
@@ -95,6 +93,8 @@ const receiptVarMap = {
     "Subtotal_P,DATA",
     "Currency_P,DATA",
     "CopyTimes_P,DATA",
+    "PLU_Tax_P,DATA",
+    "TotalNoTax_P,DATA",
   ],
 };
 
@@ -437,7 +437,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),
-        child: pageHeadDesign(context, localizedStrings.receipt_design_title),
+        child: pageHeadDefScale(context, localizedStrings.receipt_design_title),
       ),
       body: Column(
         children: [
@@ -1176,7 +1176,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
   void sendFormatToScale(String modifyString) async {
     myScaleCmd.cmdMode = "down_print_format_to_scale";
     myScaleCmd.cmdData = modifyString;
-    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+    PublicFunctions.sendMsg(defaultScaleId, jsonEncode(myScaleCmd));
     writelog(jsonEncode(myScaleCmd));
   }
 
@@ -3521,6 +3521,8 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       "Subtotal_P": localizedStrings.p_subtotal_var,
       "Currency_P": localizedStrings.p_currency_var,
       "CopyTimes_P": localizedStrings.p_copy_times_var,
+      "PLU_Tax_P": localizedStrings.p_plu_tax_var,
+      "TotalNoTax_P": localizedStrings.p_total_no_tax_var,
       "Free Text": localizedStrings.p_text_title,
       "Dividing Line": localizedStrings.p_line_title,
       "Price Variable": localizedStrings.p_price_title,
@@ -3576,6 +3578,8 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       "Subtotal_P": localizedStrings.p_subtotal_expl,
       "Currency_P": localizedStrings.p_currency_expl,
       "CopyTimes_P": localizedStrings.p_copy_times_expl,
+      "PLU_Tax_P": localizedStrings.p_plu_tax_expl,
+      "TotalNoTax_P": localizedStrings.p_total_no_tax_expl,
       "Free Text": localizedStrings.p_text_title,
       "Dividing Line": localizedStrings.p_line_title,
       "Price Variable": localizedStrings.p_price_title,

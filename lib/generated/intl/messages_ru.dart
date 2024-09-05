@@ -24,9 +24,9 @@ class MessageLookup extends MessageLookupByLibrary {
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "Parity": MessageLookupByLibrary.simpleMessage("Четность:"),
         "abnormal_data_title":
-            MessageLookupByLibrary.simpleMessage("Abnormal Data"),
+            MessageLookupByLibrary.simpleMessage("Basic Data"),
         "abnormal_weight":
-            MessageLookupByLibrary.simpleMessage("Get abnormal weight"),
+            MessageLookupByLibrary.simpleMessage("Get Basic Data"),
         "about_title": MessageLookupByLibrary.simpleMessage("Information"),
         "advanced_setting_title":
             MessageLookupByLibrary.simpleMessage("Advanced"),
@@ -91,8 +91,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "button_start": MessageLookupByLibrary.simpleMessage("Старт"),
         "button_static": MessageLookupByLibrary.simpleMessage("Статический"),
         "button_tare": MessageLookupByLibrary.simpleMessage("Установить тару"),
-        "button_trial":
-            MessageLookupByLibrary.simpleMessage("Бесплатная пробная версия"),
         "button_zero": MessageLookupByLibrary.simpleMessage("Ноль"),
         "checkweigher_title":
             MessageLookupByLibrary.simpleMessage("Checkweigher"),
@@ -143,7 +141,14 @@ class MessageLookup extends MessageLookupByLibrary {
         "expiration_date":
             MessageLookupByLibrary.simpleMessage("Срок действия:"),
         "find_ssid": MessageLookupByLibrary.simpleMessage("Найти SSID"),
-        "firmwart_update":
+        "firm_cfm_msg": MessageLookupByLibrary.simpleMessage(
+            "Please confirm the file correct."),
+        "firm_down_online":
+            MessageLookupByLibrary.simpleMessage("Firmware Download Online"),
+        "firm_zip_file": MessageLookupByLibrary.simpleMessage("Firmware Zip:"),
+        "firm_zip_file_sel":
+            MessageLookupByLibrary.simpleMessage("Select Firmware Zip"),
+        "firmware_update":
             MessageLookupByLibrary.simpleMessage("Обновление прошивки"),
         "font_bold": MessageLookupByLibrary.simpleMessage("Полужирный шрифт:"),
         "font_reverse": MessageLookupByLibrary.simpleMessage("Обратный шрифт:"),
@@ -224,6 +229,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Информация о лицензии"),
         "license_title":
             MessageLookupByLibrary.simpleMessage("Информация о лицензии"),
+        "m_scale_title":
+            MessageLookupByLibrary.simpleMessage("Multi-scale Management"),
         "manual": MessageLookupByLibrary.simpleMessage("Ручной"),
         "max_length":
             MessageLookupByLibrary.simpleMessage("Максимальная длина:"),
@@ -299,6 +306,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "p_plu_id_var": MessageLookupByLibrary.simpleMessage("PLU_ID"),
         "p_plu_name_expl": MessageLookupByLibrary.simpleMessage("PLU_Name."),
         "p_plu_name_var": MessageLookupByLibrary.simpleMessage("PLU_Name"),
+        "p_plu_tax_expl":
+            MessageLookupByLibrary.simpleMessage("PLU Tax Value."),
+        "p_plu_tax_var": MessageLookupByLibrary.simpleMessage("PLU Tax"),
         "p_pre_tare_expl": MessageLookupByLibrary.simpleMessage("PreTare."),
         "p_pre_tare_var": MessageLookupByLibrary.simpleMessage("PreTare"),
         "p_price_expl": MessageLookupByLibrary.simpleMessage("Price value."),
@@ -342,6 +352,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "p_text_title": MessageLookupByLibrary.simpleMessage("Free Text"),
         "p_time_expl": MessageLookupByLibrary.simpleMessage("Time."),
         "p_time_var": MessageLookupByLibrary.simpleMessage("Time"),
+        "p_total_no_tax_expl":
+            MessageLookupByLibrary.simpleMessage("Total No Tax."),
+        "p_total_no_tax_var":
+            MessageLookupByLibrary.simpleMessage("Total No Tax"),
         "p_total_tax_amount_expl":
             MessageLookupByLibrary.simpleMessage("Total Tax Amount."),
         "p_total_tax_amount_var":
@@ -393,7 +407,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "position": MessageLookupByLibrary.simpleMessage("Позиция"),
         "pretare":
             MessageLookupByLibrary.simpleMessage("Предварительная тара:"),
-        "print_acc_mode": MessageLookupByLibrary.simpleMessage("ACC Mode："),
         "print_direction": MessageLookupByLibrary.simpleMessage("Направление:"),
         "print_page": MessageLookupByLibrary.simpleMessage("Страница:"),
         "printer": MessageLookupByLibrary.simpleMessage("Принтер:"),
@@ -401,6 +414,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Информация о продукте"),
         "qrcode_edit":
             MessageLookupByLibrary.simpleMessage("Редактирование QR-кода"),
+        "re_detail_report_title":
+            MessageLookupByLibrary.simpleMessage("Retail Detail Report"),
         "receipt_design_title":
             MessageLookupByLibrary.simpleMessage("Receipt Design"),
         "receipt_format1_item":
@@ -490,8 +505,6 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Take Out Scale"),
         "tare": MessageLookupByLibrary.simpleMessage("Тара:"),
         "text_content": MessageLookupByLibrary.simpleMessage("Текст:"),
-        "text_email": MessageLookupByLibrary.simpleMessage(
-            "Email: sales@taiwanscale.com"),
         "title_serial_port_connection":
             MessageLookupByLibrary.simpleMessage("Подключение через COM-порт"),
         "total_fmt_txt": MessageLookupByLibrary.simpleMessage("Total format:"),
@@ -528,7 +541,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "weighing_title": MessageLookupByLibrary.simpleMessage("Weighing"),
         "weight_collection_title":
             MessageLookupByLibrary.simpleMessage("Weight Data Collection"),
-        "welcome": MessageLookupByLibrary.simpleMessage("Добро пожаловать"),
         "wifi_setting_title":
             MessageLookupByLibrary.simpleMessage("Настройка Wi-Fi"),
         "zero": MessageLookupByLibrary.simpleMessage("Ноль:"),

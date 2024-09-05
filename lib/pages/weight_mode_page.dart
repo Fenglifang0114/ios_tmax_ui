@@ -6,7 +6,6 @@ import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import '../../data/currentport_data.dart';
 import '../../data/device_data.dart';
 import '../../data/productlist_data.dart';
 import '../../data/report_data.dart';
@@ -16,22 +15,19 @@ import '../../data/userinfo_data.dart';
 import '../../data/weight_data.dart';
 import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
-
-import '../../main.dart';
 import '../data/downloadresponse.dart';
+import '../data/manager_scale_channel.dart';
 import '../data/language.dart';
 import '../data/record_data.dart';
 import '../data/scale_info_from_scale.dart';
 import '../data/scalecmd_data.dart';
+import '../data/scalelist_data.dart';
 import '../data/screen_mgr.dart';
-import '../data/timer_manager.dart';
 import '../data/weight_report_data.dart';
 import '../dialog/addproduct_dialog.dart';
 import '../dialog/adduser_dialog.dart';
-
 import '../dialog/setting_dialog.dart';
 import 'package:path/path.dart';
-
 import '../dialog/weight_report_feilds_setting.dart';
 import '../widget/custom_button.dart';
 import '../widget/page_head.dart';
@@ -126,7 +122,6 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
   dynamic eventBus11;
   dynamic eventBus12;
   dynamic eventBus13;
-  dynamic eventBus14;
 
   @override
   void initState() {
@@ -149,14 +144,8 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     _weightReportDataSource = WeightReportDataSource(_weightReportDatas);
     PublicFunctions.getUserList();
     PublicFunctions.getProductList();
-    if (myDevicedata.scaleID == "1") {
-      PublicFunctions.getRecords();
-    }
+    PublicFunctions.getRecords(defaultScaleId, weighingMode);
 
-    if (!isStart) {
-      cntScaleTimerMgr.stopCntScaleTimer();
-      cntScaleTimerMgr.startCntScaleTimer(5);
-    }
     eventBus1 = eventBus.on<EventDeviceName>().listen((event) {
       if (mounted) {
         setState(() {
@@ -180,64 +169,69 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     eventBus3 = eventBus.on<EventReqWeightCountine>().listen((event) {
       if (mounted) {
         setState(() {
-          myReqWeightCountine = event.obj;
-          isStart = true;
-          isCnting = true;
-          myScreenMgr.serialPortST = true;
-          switch (weightMode) {
-            case 1:
-              if (myReqWeightCountine.msgBody!.weightVal == "0" ||
-                  myReqWeightCountine.msgBody!.weightVal == "0.0" ||
-                  myReqWeightCountine.msgBody!.weightVal == "0.00" ||
-                  myReqWeightCountine.msgBody!.weightVal == "0.000" ||
-                  myReqWeightCountine.msgBody!.weightVal == "0.0000" ||
-                  myReqWeightCountine.msgBody!.weightVal == "0.00000") {
-                _isZero = true;
-                _isPassZero = true;
-              } else {
-                _isZero = false;
-              }
+          ReqWeightCountine tempWeight = ReqWeightCountine();
+          tempWeight = event.obj;
+          if (tempWeight.scaleId == defaultScaleId) {
+            myReqWeightCountine = tempWeight;
+            isStart = true;
+            myScreenMgr.serialPortST = true;
+            isCnting = true;
 
-              // if (!_isZero) {
-              //   var weight =
-              //       double.tryParse(myReqWeightCountine.msgBody!.weightVal);
-              // }
-
-              break;
-            case 2:
-              if (myReqWeightCountine.msgBody!.weightVal == "0" ||
-                  myReqWeightCountine.msgBody!.weightVal == "0.0" ||
-                  myReqWeightCountine.msgBody!.weightVal == "0.00" ||
-                  myReqWeightCountine.msgBody!.weightVal == "0.000" ||
-                  myReqWeightCountine.msgBody!.weightVal == "0.0000" ||
-                  myReqWeightCountine.msgBody!.weightVal == "0.00000") {
-                _isZero = true;
-                _isPassZero = true;
-              } else {
-                _isZero = false;
-              }
-              _saveWeight(myReqWeightCountine.msgBody!.isStable);
-
-              if (myReqWeightCountine.msgBody!.isStable == true &&
-                  !_isZero &&
-                  _isPassZero &&
-                  _isStableStatusJudge) {
-                {
-                  _isPassZero = false;
-                  _isTiming = false;
-                  _isStableStatusJudge = false;
-                  _addWeightToReport();
-                  sendReportDataToDB();
+            switch (weightMode) {
+              case 1:
+                if (myReqWeightCountine.msgBody!.weightVal == "0" ||
+                    myReqWeightCountine.msgBody!.weightVal == "0.0" ||
+                    myReqWeightCountine.msgBody!.weightVal == "0.00" ||
+                    myReqWeightCountine.msgBody!.weightVal == "0.000" ||
+                    myReqWeightCountine.msgBody!.weightVal == "0.0000" ||
+                    myReqWeightCountine.msgBody!.weightVal == "0.00000") {
+                  _isZero = true;
+                  _isPassZero = true;
+                } else {
+                  _isZero = false;
                 }
-                lastWeight = myReqWeightCountine.msgBody!.weightVal;
-              }
 
-              // if (!_isZero) {
-              //   var weight =
-              //       double.tryParse(myReqWeightCountine.msgBody!.weightVal);
-              // }
-              break;
-            default:
+                // if (!_isZero) {
+                //   var weight =
+                //       double.tryParse(myReqWeightCountine.msgBody!.weightVal);
+                // }
+
+                break;
+              case 2:
+                if (myReqWeightCountine.msgBody!.weightVal == "0" ||
+                    myReqWeightCountine.msgBody!.weightVal == "0.0" ||
+                    myReqWeightCountine.msgBody!.weightVal == "0.00" ||
+                    myReqWeightCountine.msgBody!.weightVal == "0.000" ||
+                    myReqWeightCountine.msgBody!.weightVal == "0.0000" ||
+                    myReqWeightCountine.msgBody!.weightVal == "0.00000") {
+                  _isZero = true;
+                  _isPassZero = true;
+                } else {
+                  _isZero = false;
+                }
+                _saveWeight(myReqWeightCountine.msgBody!.isStable);
+
+                if (myReqWeightCountine.msgBody!.isStable == true &&
+                    !_isZero &&
+                    _isPassZero &&
+                    _isStableStatusJudge) {
+                  {
+                    _isPassZero = false;
+                    _isTiming = false;
+                    _isStableStatusJudge = false;
+                    _addWeightToReport();
+                    sendReportDataToDB();
+                  }
+                  lastWeight = myReqWeightCountine.msgBody!.weightVal;
+                }
+
+                // if (!_isZero) {
+                //   var weight =
+                //       double.tryParse(myReqWeightCountine.msgBody!.weightVal);
+                // }
+                break;
+              default:
+            }
           }
         });
       }
@@ -321,9 +315,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     eventBus11 = eventBus.on<EventDeleteRec>().listen((event) {
       if (mounted) {
         setState(() {
-          if (myDevicedata.scaleID == "1") {
-            PublicFunctions.getRecords();
-          }
+          PublicFunctions.getRecords(defaultScaleId, weighingMode);
         });
       }
     });
@@ -331,15 +323,15 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     eventBus12 = eventBus.on<EventUpdateSettingParam>().listen((event) {
       if (mounted) {
         setState(() {
-          PublicFunctions.getUIConfTakeOut();
+          PublicFunctions.getUIConfTakeOut(defaultScaleId);
         });
       }
     });
 
     eventBus13 = eventBus.on<EventRegWeightResp>().listen((event) {
       if (mounted) {
-        myUnregWeightResp = event.obj;
-        if (myUnregWeightResp.msgBody.contains('ok')) {
+        myRespDataFromScale = event.obj;
+        if (myRespDataFromScale.msgBody.contains('ok')) {
           setState(() {
             isStart = true;
           });
@@ -348,32 +340,6 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
             isStart = false;
           });
         }
-      }
-    });
-
-    eventBus14 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
-      if (mounted) {
-        if (isStart) {
-          cntScaleTimerMgr.stopCntScaleTimer();
-          cntScaleTimerMgr.stopPortOffTimer();
-          cntScaleTimerMgr.startPortOffTimer(2, () {
-            if (!isCnting) {
-              setState(() {
-                myScreenMgr.serialPortST = false;
-              });
-            }
-            isCnting = false;
-          });
-        }
-
-        setState(() {
-          myFactoryInfoFromScale = event.obj;
-          if (myFactoryInfoFromScale.modelName != '') {
-            myScreenMgr.serialPortST = true;
-          } else {
-            myScreenMgr.serialPortST = false;
-          }
-        });
       }
     });
   }
@@ -425,8 +391,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     eventBus11.cancel();
     eventBus12.cancel();
     eventBus13.cancel();
-    eventBus14.cancel();
-    cntScaleTimerMgr.stopPortOffTimer();
+
     super.dispose();
   }
 
@@ -436,8 +401,10 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),
-        child: pageHead(context, localizedStrings.weight_collection_title,
-            localizedStrings.serial_port_status),
+        child: pageHeadDefScale(
+          context,
+          localizedStrings.weight_collection_title,
+        ),
       ),
       body: firstLayout(context, _width),
     );
@@ -610,21 +577,9 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                           onPressed: () {
                             setState(() {
                               if (!isStart) {
-                                if (MyApp.webchannel1.heartStatus == true) {
-                                  isStart = true;
-                                  PublicFunctions.getWeight();
-                                }
+                                isStart = true;
+                                PublicFunctions.getWeight(defaultScaleId);
                               }
-                              cntScaleTimerMgr.stopPortOffTimer();
-                              cntScaleTimerMgr.startPortOffTimer(2, () {
-                                if (!isCnting) {
-                                  setState(() {
-                                    myScreenMgr.serialPortST = false;
-                                  });
-                                }
-                                isCnting = false;
-                              });
-                              cntScaleTimerMgr.stopCntScaleTimer();
                             });
                           },
                         ),
@@ -635,14 +590,9 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                           onPressed: () {
                             if (isStart) {
                               setState(() {
-                                if (MyApp.webchannel1.heartStatus == true) {
-                                  isStart = false;
-                                  PublicFunctions.stopWeight();
-                                }
+                                isStart = false;
+                                PublicFunctions.stopWeight(defaultScaleId);
                               });
-                              cntScaleTimerMgr.stopCntScaleTimer();
-                              cntScaleTimerMgr.startCntScaleTimer(5);
-                              cntScaleTimerMgr.stopPortOffTimer();
                             }
                           },
                           icon: const Icon(Icons.pause),
@@ -794,7 +744,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                         icon: Icons.edit_note_outlined,
                         text: localizedStrings.plu_edit,
                         onPressed: () {
-                          getProductList();
+                          PublicFunctions.getProductList();
                           addProductDialog(context).then((onvalue) {
                             if (!productNameList.contains(productNameValue)) {
                               myProductRecInfo.product = "";
@@ -955,7 +905,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
       },
     ).then((confirmed) {
       if (confirmed) {
-        PublicFunctions.deleteAllRecords();
+        PublicFunctions.deleteAllRecords(defaultScaleId);
       }
     });
   }
@@ -1223,14 +1173,12 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
   void sendReportDataToDB() {
     var currentData = myWeightReportData[myWeightReportData.length - 1];
     myScaleCmd.cmdMode = "add_rec";
-    myAddScaleRecord.scaleId = 1;
+    myAddScaleRecord.scaleId = defaultScaleId;
     myAddScaleRecord.price = '0.0';
-    myAddScaleRecord.scaleMode = '0';
-    myAddScaleRecord.scaleModel = myFactoryInfoFromScale.modelName;
-    myAddScaleRecord.scaleSn = myFactoryInfoFromScale.scaleSn;
-    myAddScaleRecord.scaleName = myFactoryInfoFromScale.modelName == null
-        ? ""
-        : myFactoryInfoFromScale.modelName!;
+    myAddScaleRecord.scaleMode = weighingMode;
+    myAddScaleRecord.scaleModel = defaultScaleModel;
+    myAddScaleRecord.scaleSn = defaultScaleSn;
+    myAddScaleRecord.scaleName = defaultScaleModel;
 
     myAddScaleRecord.product = currentData.pluName;
     myAddScaleRecord.weight = currentData.weight.toString();
@@ -1242,7 +1190,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     myAddScaleRecord.userName = currentData.userName;
     myAddScaleRecord.userRemarks = currentData.userRemarks;
     myScaleCmd.cmdData = jsonEncode(myAddScaleRecord);
-    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+    PublicFunctions.sendMsg(defaultScaleId, jsonEncode(myScaleCmd));
   }
 
   void _addWeightToReport() {

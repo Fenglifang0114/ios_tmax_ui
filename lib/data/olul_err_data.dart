@@ -1,22 +1,36 @@
-class OlUlErrInfo {
-  int olCnt;
+class BasicErrInfo {
+  int forcedShutdownCnt;
+  int powerOnCnt;
+  int runningTime;
+  int caliCnt;
+  int calSwitchCnt;
+  int err4Cnt;
+  int err19Cnt;
   int olTime;
-  int ulCnt;
   int ulTime;
-  OlUlErrInfo(this.olCnt, this.olTime, this.ulCnt, this.ulTime);
-  OlUlErrInfo.fromJson(Map<String, dynamic> json)
-      : olCnt = json['OlCnt'],
+  int wgtCnt;
+  BasicErrInfo(
+      this.forcedShutdownCnt,
+      this.powerOnCnt,
+      this.ulTime,
+      this.runningTime,
+      this.calSwitchCnt,
+      this.caliCnt,
+      this.err19Cnt,
+      this.err4Cnt,
+      this.olTime,
+      this.wgtCnt);
+  BasicErrInfo.fromJson(Map<String, dynamic> json)
+      : forcedShutdownCnt = json['ForcedShutdownCnt'],
+        powerOnCnt = json['PowerOnCnt'],
+        runningTime = json['RunningTime'],
+        caliCnt = json['CaliCnt'],
+        calSwitchCnt = json['CalSwitchCnt'],
+        err4Cnt = json['Err4Cnt'],
+        err19Cnt = json['Err19Cnt'],
         olTime = json['OlTime'],
-        ulCnt = json['UlCnt'],
-        ulTime = json['UlTime'];
-  Map<String, dynamic> toJson() {
-    return {
-      'OlCnt': olCnt,
-      'OlTime': olTime,
-      'UlCnt': ulCnt,
-      'UlTime': ulTime,
-    };
-  }
+        ulTime = json['UlTime'],
+        wgtCnt = json['WgtCnt'];
 }
 
-OlUlErrInfo myOlUlErrInfo = OlUlErrInfo(0, 0, 0, 0);
+BasicErrInfo myBasicErrInfo = BasicErrInfo(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);

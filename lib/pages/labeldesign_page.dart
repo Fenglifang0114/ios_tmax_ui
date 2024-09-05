@@ -5,25 +5,23 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gbk_codec/gbk_codec.dart';
+import 'package:t_max/functions/methods.dart';
+import '../data/manager_scale_channel.dart';
 import '../data/barcoderowdata.dart';
 import '../data/encrypt_data.dart';
 import '../data/formatdata.dart';
 import '../data/item_key_list.dart';
 import '../data/language.dart';
 import '../data/offset.dart';
-import '../data/scale_info_from_scale.dart';
 import '../data/scalecmd_data.dart';
-import '../data/screen_mgr.dart';
 import '../data/selectedcontrol.dart';
 import '../data/text.dart';
-import '../data/timer_manager.dart';
 import '../data/writelog.dart';
 import '../dialog/barcodeedit_dialog.dart';
 import '../dialog/qrcodeedit_dialog.dart';
 import '../eventbus/eventbus.dart';
 import 'package:path/path.dart' as p;
 import 'package:file_picker/file_picker.dart';
-import '../main.dart';
 import '../widget/draggable_fliating.dart';
 import '../widget/dropdown_copy.dart';
 import '../widget/line_painter.dart';
@@ -409,7 +407,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     return Scaffold(
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(50),
-          child: pageHeadDesign(context, localizedStrings.label_design_title),
+          child: pageHeadDefScale(context, localizedStrings.label_design_title),
         ),
         body: SizedBox(
           height: _height - 50,
@@ -1249,7 +1247,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   void sendFormatToScale(String modifyString) async {
     myScaleCmd.cmdMode = "down_print_format_to_scale";
     myScaleCmd.cmdData = modifyString;
-    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+    PublicFunctions.sendMsg(defaultScaleId, jsonEncode(myScaleCmd));
     writelog(jsonEncode(myScaleCmd));
   }
 

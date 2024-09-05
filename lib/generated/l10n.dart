@@ -120,16 +120,6 @@ class S {
     );
   }
 
-  /// `Welcome`
-  String get welcome {
-    return Intl.message(
-      'Welcome',
-      name: 'welcome',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Authentication passed.\r\n`
   String get passed_message {
     return Intl.message(
@@ -150,31 +140,11 @@ class S {
     );
   }
 
-  /// `Email:sales@taiwanscale.com`
-  String get text_email {
-    return Intl.message(
-      'Email:sales@taiwanscale.com',
-      name: 'text_email',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Start`
   String get button_start {
     return Intl.message(
       'Start',
       name: 'button_start',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Free Trial`
-  String get button_trial {
-    return Intl.message(
-      'Free Trial',
-      name: 'button_trial',
       desc: '',
       args: [],
     );
@@ -495,16 +465,6 @@ class S {
     return Intl.message(
       'Direction:',
       name: 'print_direction',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `ACC Mode：`
-  String get print_acc_mode {
-    return Intl.message(
-      'ACC Mode：',
-      name: 'print_acc_mode',
       desc: '',
       args: [],
     );
@@ -1220,11 +1180,11 @@ class S {
     );
   }
 
-  /// `Update Firmware`
-  String get firmwart_update {
+  /// `Update Firmware Serial`
+  String get firmware_update {
     return Intl.message(
-      'Update Firmware',
-      name: 'firmwart_update',
+      'Update Firmware Serial',
+      name: 'firmware_update',
       desc: '',
       args: [],
     );
@@ -1470,10 +1430,10 @@ class S {
     );
   }
 
-  /// `Update Firmware`
+  /// `Update Firmware By Serial `
   String get update_firmware {
     return Intl.message(
-      'Update Firmware',
+      'Update Firmware By Serial ',
       name: 'update_firmware',
       desc: '',
       args: [],
@@ -1920,10 +1880,10 @@ class S {
     );
   }
 
-  /// `Abnormal Data`
+  /// `Basic Data`
   String get abnormal_data_title {
     return Intl.message(
-      'Abnormal Data',
+      'Basic Data',
       name: 'abnormal_data_title',
       desc: '',
       args: [],
@@ -2480,6 +2440,26 @@ class S {
     );
   }
 
+  /// `PLU Tax`
+  String get p_plu_tax_var {
+    return Intl.message(
+      'PLU Tax',
+      name: 'p_plu_tax_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Total No Tax`
+  String get p_total_no_tax_var {
+    return Intl.message(
+      'Total No Tax',
+      name: 'p_total_no_tax_var',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Weight Pcs`
   String get p_weight_pcs_var {
     return Intl.message(
@@ -2845,6 +2825,26 @@ class S {
     return Intl.message(
       'Copy Times.',
       name: 'p_copy_times_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `PLU Tax Value.`
+  String get p_plu_tax_expl {
+    return Intl.message(
+      'PLU Tax Value.',
+      name: 'p_plu_tax_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Total No Tax.`
+  String get p_total_no_tax_expl {
+    return Intl.message(
+      'Total No Tax.',
+      name: 'p_total_no_tax_expl',
       desc: '',
       args: [],
     );
@@ -3400,10 +3400,10 @@ class S {
     );
   }
 
-  /// `Get abnormal weight`
+  /// `Get Basic Data`
   String get abnormal_weight {
     return Intl.message(
-      'Get abnormal weight',
+      'Get Basic Data',
       name: 'abnormal_weight',
       desc: '',
       args: [],
@@ -3595,6 +3595,66 @@ class S {
     return Intl.message(
       'The overall print format content is out of scope',
       name: 'def_fmt_out_range_tip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Multi-scale Management`
+  String get m_scale_title {
+    return Intl.message(
+      'Multi-scale Management',
+      name: 'm_scale_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Firmware Download Online`
+  String get firm_down_online {
+    return Intl.message(
+      'Firmware Download Online',
+      name: 'firm_down_online',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Firmware Zip:`
+  String get firm_zip_file {
+    return Intl.message(
+      'Firmware Zip:',
+      name: 'firm_zip_file',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select Firmware Zip`
+  String get firm_zip_file_sel {
+    return Intl.message(
+      'Select Firmware Zip',
+      name: 'firm_zip_file_sel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please confirm the file correct.`
+  String get firm_cfm_msg {
+    return Intl.message(
+      'Please confirm the file correct.',
+      name: 'firm_cfm_msg',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Retail Detail Report`
+  String get re_detail_report_title {
+    return Intl.message(
+      'Retail Detail Report',
+      name: 're_detail_report_title',
       desc: '',
       args: [],
     );

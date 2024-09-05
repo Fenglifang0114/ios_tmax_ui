@@ -2,11 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import '../data/downloadresponse.dart';
+import '../data/manager_scale_channel.dart';
 import 'package:t_max/data/eeprom_info.dart';
 import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
-
-import '../data/downloadresponse.dart';
 import '../data/language.dart';
 import '../data/scale_info_from_scale.dart';
 import '../data/screen_mgr.dart';
@@ -57,7 +57,7 @@ class SetParameterPageState extends State<SetParameterPage> {
   void initState() {
     super.initState();
     cntScaleTimerMgr.stopCntScaleTimer();
-    PublicFunctions.getAllEepromInfo();
+    PublicFunctions.getAllEepromInfo(defaultScaleId);
 
     eventBus1 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
       if (mounted) {
@@ -78,12 +78,11 @@ class SetParameterPageState extends State<SetParameterPage> {
     eventBus3 = eventBus.on<EventGetAllEepromDateResp>().listen((event) {
       if (mounted) {
         setState(() {
-          myRespGetAllEepromData = event.obj;
+          myRespDataFromScale = event.obj;
           groupedData.clear();
-          if (myRespGetAllEepromData.msgBody.isNotEmpty) {
+          if (myRespDataFromScale.msgBody.isNotEmpty) {
             try {
-              eepromInfoList =
-                  parseEepromInfoList(myRespGetAllEepromData.msgBody);
+              eepromInfoList = parseEepromInfoList(myRespDataFromScale.msgBody);
               var filteredList = eepromInfoList
                   .where((item) =>
                       (item.permission != 0 && item.permission != null))
@@ -106,25 +105,25 @@ class SetParameterPageState extends State<SetParameterPage> {
     eventBus2 = eventBus.on<EventModifyEepromInfoResp>().listen((event) {
       if (mounted) {
         setState(() {
-          myRespModifyEepromInfo = event.obj;
-          if (myRespModifyEepromInfo.msgBody.isNotEmpty) {
+          myRespDataFromScale = event.obj;
+          if (myRespDataFromScale.msgBody.isNotEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text(
-                    (myRespModifyEepromInfo.msgBody.contains('ok'))
+                    (myRespDataFromScale.msgBody.contains('ok'))
                         ? localizedStrings.download_result_ok
-                        : myRespModifyEepromInfo.msgBody,
+                        : myRespDataFromScale.msgBody,
                     style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.normal)), ////此处需要秤回复
                 duration: const Duration(seconds: 3),
-                backgroundColor: (myRespModifyEepromInfo.msgBody.contains('ok'))
+                backgroundColor: (myRespDataFromScale.msgBody.contains('ok'))
                     ? Theme.of(context).colorScheme.outline
                     : Theme.of(context).colorScheme.error));
           }
         });
         groupedData.clear();
         cntScaleTimerMgr.stopCntScaleTimer();
-        PublicFunctions.getAllEepromInfo();
+        PublicFunctions.getAllEepromInfo(defaultScaleId);
       }
     });
   }
@@ -160,7 +159,7 @@ class SetParameterPageState extends State<SetParameterPage> {
   void submitParameter(List<EepromInfo> changedEepromInfos) {
     cntScaleTimerMgr.stopCntScaleTimer();
     var jsonStr = jsonEncode(changedEepromInfos);
-    PublicFunctions.modifyEepromInfo(jsonStr);
+    PublicFunctions.modifyEepromInfo(jsonStr, defaultScaleId);
   }
 
   @override
@@ -171,8 +170,10 @@ class SetParameterPageState extends State<SetParameterPage> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),
-        child: pageHead(context, localizedStrings.parameter_set_title,
-            localizedStrings.serial_port_status),
+        child: pageHeadDefScale(
+          context,
+          localizedStrings.parameter_set_title,
+        ),
       ),
       body: Column(
         children: [
@@ -511,7 +512,7 @@ class SetParameterPageState extends State<SetParameterPage> {
       },
     ).then((confirmed) {
       if (confirmed) {
-        PublicFunctions.deleteAllRecordsTakeOut();
+        PublicFunctions.deleteAllRecordsTakeOut(defaultScaleId);
       }
     });
   }

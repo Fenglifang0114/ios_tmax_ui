@@ -1,11 +1,11 @@
 class ScaleTotalInfo {
-  List<ScaleDataList>? scaleDataList;
+  List<ScaleDataInfo>? scaleDataList;
 
   ScaleTotalInfo({this.scaleDataList});
 
   factory ScaleTotalInfo.fromJson(List<dynamic> parsedJson) {
-    List<ScaleDataList> scaleDataList = <ScaleDataList>[];
-    scaleDataList = parsedJson.map((i) => ScaleDataList.fromJson(i)).toList();
+    List<ScaleDataInfo> scaleDataList = <ScaleDataInfo>[];
+    scaleDataList = parsedJson.map((i) => ScaleDataInfo.fromJson(i)).toList();
 
     return ScaleTotalInfo(scaleDataList: scaleDataList);
   }
@@ -13,24 +13,28 @@ class ScaleTotalInfo {
 
 ScaleTotalInfo myScaleTotalInfo = ScaleTotalInfo(scaleDataList: []);
 
-class ScaleDataList {
+class ScaleDataInfo {
   bool? isOnline;
   String? scaleModel;
+  int? scaleCat;
   String? scaleSn;
   int? scaleId;
   int? tMedia;
   MediaInfo? mediaInfo;
+  bool? isDefault;
 
-  ScaleDataList(
+  ScaleDataInfo(
       {this.isOnline,
       this.scaleModel,
       this.scaleSn,
       this.scaleId,
       this.tMedia,
-      this.mediaInfo});
+      this.mediaInfo,
+      this.scaleCat,
+      this.isDefault});
 
-  factory ScaleDataList.fromJson(Map<String, dynamic> json) {
-    return ScaleDataList(
+  factory ScaleDataInfo.fromJson(Map<String, dynamic> json) {
+    return ScaleDataInfo(
       isOnline: json['IsOnline'],
       scaleModel: json['ScaleModel'],
       scaleSn: json['ScaleSn'],
@@ -39,6 +43,8 @@ class ScaleDataList {
       mediaInfo: json['MediaConf'] != null
           ? MediaInfo.fromJson(json['MediaConf'])
           : null,
+      scaleCat: json['ScaleCat'],
+      isDefault: json['IsDefault'],
     );
   }
 }
@@ -86,24 +92,5 @@ class CurrentPort {
   }
 }
 
-class MediaInfoJson {
-  String? devPath;
-  int? baud;
-  int? dataBits;
-  int? stopBits;
-  int? parity;
-
-  MediaInfoJson(
-      {this.devPath, this.baud, this.dataBits, this.stopBits, this.parity});
-  factory MediaInfoJson.fromJson(Map<String, dynamic> json) {
-    return MediaInfoJson(
-      devPath: json['DevPath'],
-      baud: json['Baud'],
-      dataBits: json['DataBits'],
-      stopBits: json['StopBits'],
-      parity: json['Parity'],
-    );
-  }
-}
-
-MediaInfoJson myMediaInfoJson = MediaInfoJson();
+CurrentPort myCurrentPort = CurrentPort();
+CurrentPort tempCurrentPort = CurrentPort();

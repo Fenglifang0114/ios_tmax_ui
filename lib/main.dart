@@ -6,8 +6,8 @@ import 'package:t_max/functions/methods.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:window_size/window_size.dart';
 import 'common/web_socket_channel.dart';
-import 'common/web_socket_scale_channel.dart';
 import 'data/get_theme_color.dart';
+import 'data/manager_scale_channel.dart';
 import 'data/parse_log.dart';
 import 'data/setting_version_info.dart';
 import 'generated/l10n.dart';
@@ -20,13 +20,13 @@ Future<void> main() async {
 
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String savedLanguage = prefs.getString('language') ?? 'en_US';
-  String ipAddr = await readIpAddr();
-  if (ipAddr.isEmpty) {
-    ipAddr = '127.0.0.1';
+  ipAddress = await readIpAddr();
+  if (ipAddress.isEmpty) {
+    ipAddress = '127.0.0.1';
   }
   await ensureInitialized();
 
-  runApp(MyApp(savedLanguage, ipAddr));
+  runApp(MyApp(savedLanguage, ipAddress));
 }
 
 //初始化
@@ -76,16 +76,15 @@ class MyApp extends StatelessWidget {
   const MyApp(this.savedLanguage, this.ipAddr, {Key? key}) : super(key: key);
   final String savedLanguage;
   final String ipAddr;
-  static late WebSocketChannel webchannel;
-  static late WebSocketScaleChannel webchannel1;
+
+  // static late WebSocketScaleChannel webchannel1;
 
   // 重写build 方法，build 方法返回值为Widget类型，返回内容为屏幕上显示内容。
   @override
   Widget build(BuildContext context) {
-    webchannel1 = WebSocketScaleChannel('ws://$ipAddr:7878/tmax?scaleid=1');
+    // webchannel1 = WebSocketScaleChannel('ws://$ipAddr:7878/tmax?scaleid=1');
     webchannel = WebSocketChannel('ws://$ipAddr:7878/tmax?scaleid=0');
     webchannel.connect();
-    webchannel1.connect();
     PublicFunctions.getLicense();
     return MaterialApp(
         //自定义主题

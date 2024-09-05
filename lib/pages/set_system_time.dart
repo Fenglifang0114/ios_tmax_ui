@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../data/downloadresponse.dart';
+import '../data/manager_scale_channel.dart';
 import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
 import '../data/common.dart';
-import '../data/downloadresponse.dart';
 import '../data/language.dart';
 import '../data/scale_info_from_scale.dart';
 import '../data/screen_mgr.dart';
@@ -36,28 +37,28 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
   void initState() {
     super.initState();
     cntScaleTimerMgr.stopCntScaleTimer();
-    PublicFunctions.getScaleTime();
+    PublicFunctions.getScaleTime(defaultScaleId);
 
     eventBus1 = eventBus.on<EventSetScaleTime>().listen((event) {
       if (mounted) {
-        mySetScaleTimeResp = event.obj;
-        if (mySetScaleTimeResp.msgBody.isNotEmpty) {
-          if (mySetScaleTimeResp.msgBody.contains('ok')) {
+        myRespDataFromScale = event.obj;
+        if (myRespDataFromScale.msgBody.isNotEmpty) {
+          if (myRespDataFromScale.msgBody.contains('ok')) {
             cntScaleTimerMgr.stopCntScaleTimer();
-            PublicFunctions.getScaleTime();
+            PublicFunctions.getScaleTime(defaultScaleId);
           } else {
             stopTimer();
             cntScaleTimerMgr.startCntScaleTimer(5);
           }
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text(
-                  (mySetScaleTimeResp.msgBody.contains('ok'))
-                      ? mySetScaleTimeResp.msgBody
-                      : mySetScaleTimeResp.msgBody,
+                  (myRespDataFromScale.msgBody.contains('ok'))
+                      ? myRespDataFromScale.msgBody
+                      : myRespDataFromScale.msgBody,
                   style: const TextStyle(
                       fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
               duration: const Duration(seconds: 3),
-              backgroundColor: (mySetScaleTimeResp.msgBody.contains('ok'))
+              backgroundColor: (myRespDataFromScale.msgBody.contains('ok'))
                   ? Theme.of(context).colorScheme.outline
                   : Theme.of(context).colorScheme.error));
         }
@@ -66,9 +67,9 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
 
     eventBus2 = eventBus.on<EventGetScaleTime>().listen((event) {
       if (mounted) {
-        myGetScaleTimeResp = event.obj;
-        if (myGetScaleTimeResp.msgBody.contains('ok')) {
-          String dataStr = myGetScaleTimeResp.msgBody;
+        myRespDataFromScale = event.obj;
+        if (myRespDataFromScale.msgBody.contains('ok')) {
+          String dataStr = myRespDataFromScale.msgBody;
           List<String> parts = dataStr.split(',');
           if (parts.length > 1) {
             String secondPart = parts[1].trim(); // 移除字符串两边的空白字符
@@ -103,7 +104,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
         } else {
           stopTimer();
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(myGetScaleTimeResp.msgBody,
+              content: Text(myRespDataFromScale.msgBody,
                   style: const TextStyle(
                       fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
               duration: const Duration(seconds: 3),
@@ -166,8 +167,10 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
           // mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            pageHead(context, localizedStrings.device_time_title,
-                localizedStrings.serial_port_status),
+            pageHeadDefScale(
+              context,
+              localizedStrings.device_time_title,
+            ),
             const SizedBox(height: 5),
             Expanded(
               flex: 3,
@@ -225,7 +228,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                                     .truncate();
                                 cntScaleTimerMgr.stopCntScaleTimer();
                                 PublicFunctions.setScaleTime(
-                                    timestamp.toString());
+                                    timestamp.toString(), defaultScaleId);
                               },
                               child: btnStyle('Sync PC Time'),
                             ),
@@ -293,7 +296,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                                     cntScaleTimerMgr.stopCntScaleTimer();
 
                                     PublicFunctions.setScaleTime(
-                                        timestamp.toString());
+                                        timestamp.toString(), defaultScaleId);
                                   },
                                   child: btnStyle('Sync Time')),
                             ],
@@ -422,7 +425,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
       },
     ).then((confirmed) {
       if (confirmed) {
-        PublicFunctions.deleteAllRecordsTakeOut();
+        PublicFunctions.deleteAllRecordsTakeOut(defaultScaleId);
       }
     });
   }

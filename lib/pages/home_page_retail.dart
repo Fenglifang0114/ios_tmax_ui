@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:t_max/pages/scale_manager.dart';
+import '../data/manager_scale_channel.dart';
 import 'package:t_max/data/dialog_data.dart';
 import 'package:t_max/data/license_data.dart';
 import 'package:t_max/data/scale_info_from_scale.dart';
@@ -9,9 +11,6 @@ import 'package:t_max/pages/down_recipt_fmt_page.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
 import '../data/company_info.dart';
-import '../data/comscaleinfo_data.dart';
-import '../data/currentport_data.dart';
-import '../data/device_data.dart';
 import '../data/language.dart';
 import '../data/screen_mgr.dart';
 import '../data/timer_manager.dart';
@@ -29,10 +28,13 @@ import '../widget/home_page_widget.dart';
 import '../widget/update_firmware.dart';
 import '../widget/version.dart';
 import 'cable_ip_settig_page.dart';
+import 'firmware_down_wifi.dart';
 import 'header_footer_page.dart';
+import 'lable_down_prn_fmt_page.dart';
 import 'modify_com_port_page.dart';
 import 'product_download_page.dart';
 import 'receipt_design_page.dart';
+import 'retail_report_page.dart';
 
 class RetailHomePage extends StatefulWidget {
   const RetailHomePage({Key? key}) : super(key: key);
@@ -48,7 +50,6 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
 
   late ScrollController _pageScrollerController;
   dynamic _eventbus1;
-  dynamic _eventbus2;
   dynamic _eventbus3;
   dynamic _eventbus4;
   dynamic _eventbus5;
@@ -84,8 +85,8 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
     _handleSetIcon();
     super.initState();
     _pageScrollerController = ScrollController();
-    cntScaleTimerMgr.stopCntScaleTimer();
-    cntScaleTimerMgr.startCntScaleTimer(5);
+    // cntScaleTimerMgr.stopCntScaleTimer();
+    // cntScaleTimerMgr.startCntScaleTimer(5);
     // _checkTimerFuc(5);
     _eventbus1 = eventBus.on<EventDialogData>().listen((event) {
       if (mounted) {
@@ -96,27 +97,6 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
     });
     setState(() {
       now = DateTime.now();
-    });
-    _eventbus2 = eventBus.on<EventComScaleList>().listen((event) {
-      if (mounted) {
-        setState(() {
-          myComScaleList = event.obj;
-          if (myComScaleList.comScaleList.isNotEmpty) {
-            myDevicedata.name = myComScaleList.comScaleList[0].scaleModel;
-            myDevicedata.type = 'icons.usb';
-            myComScaleList.comScaleList[0].scaleId.toString();
-            myDevicedata.scaleID =
-                myComScaleList.comScaleList[0].scaleId.toString();
-            myCurrentPort.baud = myComScaleList.comScaleList[0].baudRate;
-            myCurrentPort.dataBits = myComScaleList.comScaleList[0].dataBits;
-            myCurrentPort.devPath = myComScaleList.comScaleList[0].portName;
-            myCurrentPort.parity = myComScaleList.comScaleList[0].parity;
-            myCurrentPort.stopBits = myComScaleList.comScaleList[0].stopBits;
-            myDevicedata.mediaType = myComScaleList.comScaleList[0].tMedia;
-            myDevicedata.scaleSn = myComScaleList.comScaleList[0].scaleSn;
-          }
-        });
-      }
     });
 
     _eventbus3 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
@@ -164,7 +144,6 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
   @override
   void dispose() {
     _eventbus1.cancel();
-    _eventbus2.cancel();
     _eventbus3.cancel();
     _eventbus4.cancel();
     _eventbus5.cancel();
@@ -216,16 +195,6 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
                               ),
                               versionInfo(
                                   Theme.of(context).colorScheme.onPrimary),
-                              // Text(
-                              //     myLicenseInfo.isValid
-                              //         ? '(Professional)'
-                              //         : '(Basic)',
-                              //     style: TextStyle(
-                              //       color:
-                              //           Theme.of(context).colorScheme.onPrimary,
-                              //       fontSize: 16,
-                              //     ),
-                              //     textAlign: TextAlign.center),
                             ],
                           )),
                     ),
@@ -459,6 +428,26 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
                     ),
                   ),
                   MouseRegion(
+                    cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                    child: GestureDetector(
+                      onTap: () {
+                        stopCheckSerialPort();
+                        setState(() {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const ScaleManagerPage()),
+                          ).then((value) => _updateStatus());
+                        });
+                      },
+                      child: customFunctionCard(
+                          context,
+                          localizedStrings.m_scale_title,
+                          Icons.schema_outlined,
+                          true),
+                    ),
+                  ),
+                  MouseRegion(
                       cursor: SystemMouseCursors.click, // 设置光标为手的形状
                       child: GestureDetector(
                         onTap: () {
@@ -492,12 +481,28 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
                           showUpdateFirmWareDialog(context);
                         });
                       },
+                      child: customFunctionCard(context,
+                          localizedStrings.update_firmware, Icons.update, true),
+                    ),
+                  ),
+                  MouseRegion(
+                    cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          stopCheckSerialPort();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const FirmwareDownPage()),
+                          ).then((value) => _updateStatus());
+                        });
+                      },
                       child: customFunctionCard(
-                        context,
-                        localizedStrings.update_firmware,
-                        Icons.update,
-                        true,
-                      ),
+                          context,
+                          localizedStrings.firm_down_online,
+                          Icons.cloud_upload_outlined,
+                          true),
                     ),
                   ),
                   MouseRegion(
@@ -545,6 +550,48 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
                       vertical: 10.0, horizontal: 20.0),
                   children: [
                     MouseRegion(
+                      cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                      child: GestureDetector(
+                        onTap: () {
+                          stopCheckSerialPort();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const TransactionReportPage()),
+                          ).then((value) => _updateStatus());
+                        },
+                        child: appCard(
+                            context,
+                            localizedStrings.re_detail_report_title,
+                            Icons.data_thresholding_outlined,
+                            true,
+                            'This app is used to display sales detail data.',
+                            ''),
+                      ),
+                    ),
+                    MouseRegion(
+                      cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                      child: GestureDetector(
+                        onTap: () {
+                          stopCheckSerialPort();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const DownloadLabelPage()),
+                          ).then((value) => _updateStatus());
+                        },
+                        child: appCard(
+                            context,
+                            localizedStrings.label_fmt_download,
+                            Icons.arrow_circle_down_outlined,
+                            true,
+                            'This application is used to download print format.',
+                            ''),
+                      ),
+                    ),
+                    MouseRegion(
                         cursor: SystemMouseCursors.click, // 设置光标为手的形状
                         child: GestureDetector(
                           onTap: () {
@@ -573,7 +620,7 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
                         onTap: () {
                           setState(() {
                             stopCheckSerialPort();
-                            PublicFunctions.stopWeight();
+                            PublicFunctions.stopWeight(defaultScaleId);
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -584,7 +631,7 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
                         },
                         child: appCard(
                             context,
-                            "PLU Download",
+                            localizedStrings.plu_download_title,
                             Icons.shopping_bag,
                             true,
                             'This application is used to download product information.',
@@ -641,7 +688,7 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
   void _updateStatus() {
     setState(() {});
     cntScaleTimerMgr.stopCntScaleTimer();
-    cntScaleTimerMgr.startCntScaleTimer(5);
+    // cntScaleTimerMgr.startCntScaleTimer(5);
   }
 
   void showBuildInfo() {

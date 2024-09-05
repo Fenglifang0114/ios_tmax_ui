@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:t_max/data/settingparam_data.dart';
 import '../eventbus/eventbus.dart';
+import 'comscaleinfo_data.dart';
 import 'downloadresponse.dart';
 import 'ipinfodata.dart';
+import 'manager_scale_channel.dart';
 import 'record_data.dart';
 import 'reqweightdata_data.dart';
 import 'respdata_data.dart';
@@ -71,6 +73,11 @@ class RespMsgType {
   static const String respModifyVarValue = 'resp_modify_var_value';
   static const String respSetServerIP = 'resp_set_server_ip';
   static const String respGetFactoryInfo = 'resp_get_factory_info';
+  static const String respUpdateFirmwareNet = 'resp_update_firmware_wifi';
+  static const String respGetBasicData = 'resp_get_basic_data';
+  static const String respSetLimit = 'resp_set_limit_to_scale';
+  static const String respSwitchLimit = 'resp_switch_limit_from_scale';
+  static const String respRevDetailTail = 'resp_rev_detail_tail';
 
   static final Map<String, Function> handlers = {
     RespMsgType.respGetUIConf: handleGetUIConf,
@@ -114,6 +121,11 @@ class RespMsgType {
     RespMsgType.respModifyVarValue: handleRespModifyVarValue,
     RespMsgType.respSetServerIP: handleRespSetServerIp,
     RespMsgType.respGetFactoryInfo: handleRespGetfactoryInfo,
+    RespMsgType.respUpdateFirmwareNet: handleRespUpdateFirmwareNet,
+    RespMsgType.respGetBasicData: handleRespGetBasicData,
+    RespMsgType.respSetLimit: handleRespSetLimit,
+    RespMsgType.respSwitchLimit: handleRespSwitchLimit,
+    RespMsgType.respRevDetailTail: handleRespRevDetailTail,
   };
   static void handleGetUIConf(dynamic data) {
     final jsonResponse = json.decode(data['MsgBody']);
@@ -313,8 +325,8 @@ class RespMsgType {
 
   static void pasterConnectApInfo(String jsonDataString) {
     String jsonStrings = jsonDataString;
-    myConnectApResponse.msgBody = jsonStrings;
-    eventBus.fire(EventConnectAp(myConnectApResponse));
+    myRespDataFromScale.msgBody = jsonStrings;
+    eventBus.fire(EventConnectAp(myRespDataFromScale));
   }
 
   static void handleRespGetApList(dynamic data) {
@@ -397,18 +409,78 @@ class RespMsgType {
     eventBus.fire(EventGetFactoryInfo(mobj));
   }
 
-  static void handleRespCheckSerialPort(dynamic data) {
+  static void handleRespGetBasicData(dynamic data) {
     final jsonStrings = data['MsgBody'];
     dynamic mobj;
+    mobj = jsonStrings;
+    eventBus.fire(EventGetBasicData(mobj));
+  }
+
+  static void handleRespSetLimit(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventSetLimitToScale(mobj));
+  }
+
+  static void handleRespSwitchLimit(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventSwitchLimitFromScale(mobj));
+  }
+
+  static void handleRespRevDetailTail(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventRevDetailTail(mobj));
+  }
+
+  static void handleRespUpdateFirmwareNet(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventUpdateFirmWareNetResp(mobj));
+  }
+
+  static void handleRespCheckSerialPort(dynamic data) {
+    final jsonStrings = data['MsgBody'];
+    int id = data['ScaleId'];
     if (!jsonStrings.contains('fail')) {
-      mobj = FactoryInfoFromScale.fromJson(json.decode(jsonStrings));
+      myFactoryInfoFromScale =
+          FactoryInfoFromScale.fromJson(json.decode(jsonStrings));
     } else {
-      mobj = FactoryInfoFromScale(
+      myFactoryInfoFromScale = FactoryInfoFromScale(
         "",
         "",
       );
     }
-    eventBus.fire(EventRespCheckSerialPort(mobj));
+
+    if (myFactoryInfoFromScale.modelName != '') {
+      if (id == 1) {
+        myComScaleInfo.scaleSn = myFactoryInfoFromScale.scaleSn!;
+        myComScaleInfo.scaleModel = myFactoryInfoFromScale.modelName!;
+        defaultScaleModel = myComScaleInfo.scaleModel;
+        defaultScaleSn = myComScaleInfo.scaleSn;
+        myComScaleInfo.portName + ":" + myComScaleInfo.baudRate.toString();
+        if (defaultScaleId == 1) {
+          defaultScaleModel = myComScaleInfo.scaleModel;
+          defaultScaleSn = myComScaleInfo.scaleSn;
+          myComScaleInfo.portName + ":" + myComScaleInfo.baudRate.toString();
+        }
+      } else {
+        NetScaleInfoLocal tempScale = NetScaleInfoLocal();
+        tempScale = NetScaleListMgr.findScaleInfo(myNetScaleList, id);
+        if (tempScale.scaleSn != myFactoryInfoFromScale.scaleSn) {
+          tempScale.scaleModel = myFactoryInfoFromScale.modelName;
+          tempScale.scaleSn = myFactoryInfoFromScale.scaleSn;
+          NetScaleListMgr.updateScale(myNetScaleList, tempScale);
+        }
+        if (defaultScaleId == id) {
+          var tempscale =
+              NetScaleListMgr.findScaleInfo(myNetScaleList, defaultScaleId);
+          defaultScaleModel = tempscale.scaleModel!;
+          defaultScaleSn = tempscale.scaleSn!;
+          myComScaleInfo.portName + ":" + myComScaleInfo.baudRate.toString();
+          defscaleMedia = tempscale.ip! + ":" + tempscale.port!.toString();
+        }
+      }
+    }
+
+    eventBus.fire(EventRespCheckSerialPort(myFactoryInfoFromScale));
   }
 
   static void handleRespTareCmd(dynamic data) {}

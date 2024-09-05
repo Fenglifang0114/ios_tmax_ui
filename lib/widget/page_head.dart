@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../data/manager_scale_channel.dart';
 import 'package:t_max/data/timer_manager.dart';
 import '../data/language.dart';
 import '../data/screen_mgr.dart';
@@ -7,11 +8,8 @@ import 'box_gradient.dart';
 import 'custom_button.dart';
 import 'custom_circle_icon.dart';
 
-Widget pageHead(
-  dynamic context,
-  String pageTitle,
-  String serialPortStatus,
-) {
+Widget pageHead(dynamic context, String pageTitle, String serialPortStatus,
+    List<int> scaleList) {
   return Container(
       color: Theme.of(context).colorScheme.onPrimary,
       child: Container(
@@ -37,7 +35,7 @@ Widget pageHead(
                               height: 50,
                               child: IconButton(
                                   onPressed: () {
-                                    _showConfirmationDialog(context);
+                                    _showConfirmationDialog(context, scaleList);
                                   },
                                   icon: CustomCircleIcon(
                                     outerColor:
@@ -110,7 +108,7 @@ Widget pageHead(
       ));
 }
 
-void _showConfirmationDialog(BuildContext context) {
+void _showConfirmationDialog(BuildContext context, List<int> scaleList) {
   showDialog(
     context: context,
     builder: (BuildContext ctx) {
@@ -151,14 +149,19 @@ void _showConfirmationDialog(BuildContext context) {
     if (confirmed) {
       myScreenMgr.isMainScreen = true;
       cntScaleTimerMgr.stopCntScaleTimer();
-      PublicFunctions.closeScalePassth();
-      PublicFunctions.stopWeight();
+      PublicFunctions.closeScalePassth(defaultScaleId);
+      //
+      if (scaleList.isNotEmpty) {
+        for (int i = 0; i < scaleList.length; i++) {
+          PublicFunctions.stopWeight(scaleList[i]);
+        }
+      }
       Navigator.of(context).pop();
     }
   });
 }
 
-Widget pageHeadDesign(dynamic context, String pageTitle) {
+Widget pageHeadDesign(dynamic context, String pageTitle, List<int> scaleList) {
   return Container(
       color: Theme.of(context).colorScheme.onPrimary,
       child: Container(
@@ -184,7 +187,7 @@ Widget pageHeadDesign(dynamic context, String pageTitle) {
                               height: 50,
                               child: IconButton(
                                   onPressed: () {
-                                    _showConfirmationDialog(context);
+                                    _showConfirmationDialog(context, scaleList);
                                   },
                                   icon: CustomCircleIcon(
                                     outerColor:
@@ -213,6 +216,90 @@ Widget pageHeadDesign(dynamic context, String pageTitle) {
                 ],
               )),
             ),
+          ],
+        ),
+      ));
+}
+
+Widget pageHeadDefScale(dynamic context, String pageTitle) {
+  List<int> scaleList = [defaultScaleId];
+  return Container(
+      color: Theme.of(context).colorScheme.onPrimary,
+      child: Container(
+        decoration: BoxDecoration(gradient: boxGradient(context)),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Center(
+              child: SizedBox(
+                  child: Row(
+                children: [
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Container(
+                      // width: _width,
+                      height: 50,
+                      alignment: Alignment.centerLeft, //设置控件内容的位置
+                      child: Row(
+                        children: [
+                          SizedBox(
+                              width: 50,
+                              height: 50,
+                              child: IconButton(
+                                  onPressed: () {
+                                    _showConfirmationDialog(context, scaleList);
+                                  },
+                                  icon: CustomCircleIcon(
+                                    outerColor:
+                                        Theme.of(context).colorScheme.onPrimary,
+                                    innerColor:
+                                        Theme.of(context).colorScheme.primary,
+                                    icon: Icons.home,
+                                    size: 30.0,
+                                  ))),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          SizedBox(
+                            child: Text(
+                              pageTitle,
+                              maxLines: 1,
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      )),
+                ],
+              )),
+            ),
+            SizedBox(
+              width: 360,
+              height: 50,
+              child: Row(
+                children: [
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                    child: Text(defaultScaleModel + "    " + defscaleMedia,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.right,
+                        maxLines: 1,
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: Theme.of(context).colorScheme.onPrimary)),
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                ],
+              ),
+            )
           ],
         ),
       ));

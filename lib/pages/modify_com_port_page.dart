@@ -1,18 +1,14 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:t_max/data/currentport_data.dart';
 import 'package:t_max/data/modifyscale_data.dart';
 import '../../data/device_data.dart';
 import '../../data/downloadresponse.dart';
-import '../../data/scalecmd_data.dart';
 import '../../eventbus/eventbus.dart';
-import '../../main.dart';
 import '../data/cominfoslist_data.dart';
-import '../data/comscaleinfo_data.dart';
 import '../data/language.dart';
 import '../data/modifyresult_data.dart';
 import '../data/scale_info_from_scale.dart';
+import '../data/scalelist_data.dart';
 import '../data/screen_mgr.dart';
 import '../functions/methods.dart';
 import '../widget/comport_dorpdown.dart';
@@ -54,19 +50,12 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
   bool isSetting = false;
   dynamic _eventbus1;
   dynamic _eventbus2;
-  dynamic _eventbus3;
   dynamic _eventbus4;
   dynamic _eventbus5;
   dynamic _eventbus6;
 
   String refresh = " ";
   String serialPortConnect = " ";
-
-  void getScaleList() {
-    myScaleCmd.cmdMode = "get_scale_list";
-    myScaleCmd.cmdData = "";
-    MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
-  }
 
   @override
   void initState() {
@@ -79,7 +68,7 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
         myModifyAck = event.obj;
 
         if (myModifyAck.isAck == true) {
-          checkSerialPort();
+          PublicFunctions.checkSerialPort(1);
         } else {
           setState(() {
             serialPortConnect = myModifyAck.ackData!;
@@ -96,26 +85,7 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
         });
       }
     });
-    _eventbus3 = eventBus.on<EventComScaleList>().listen((event) {
-      if (mounted) {
-        setState(() {
-          myComScaleList = event.obj;
-          if (myComScaleList.comScaleList.isNotEmpty) {
-            myDevicedata.name = myComScaleList.comScaleList[0].scaleModel;
-            myDevicedata.type = 'icons.usb';
-            myDevicedata.scaleID =
-                myComScaleList.comScaleList[0].scaleId.toString();
-            myCurrentPort.baud = myComScaleList.comScaleList[0].baudRate;
-            myCurrentPort.dataBits = myComScaleList.comScaleList[0].dataBits;
-            myCurrentPort.devPath = myComScaleList.comScaleList[0].portName;
-            myCurrentPort.parity = myComScaleList.comScaleList[0].parity;
-            myCurrentPort.stopBits = myComScaleList.comScaleList[0].stopBits;
-            myDevicedata.mediaType = myComScaleList.comScaleList[0].tMedia;
-            myDevicedata.scaleSn = myComScaleList.comScaleList[0].scaleSn;
-          }
-        });
-      }
-    });
+
     _eventbus4 = eventBus.on<EventDeviceName>().listen((event) {
       if (mounted) {
         setState(() {
@@ -134,6 +104,7 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
     _eventbus6 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
       if (mounted) {
         setState(() {
+          isSetting = false;
           myFactoryInfoFromScale = event.obj;
           if (myFactoryInfoFromScale.modelName != '') {
             serialPortConnect = localizedStrings.txt_serial_port_connected;
@@ -152,7 +123,6 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
     _deviceNameController.dispose();
     _eventbus1.cancel();
     _eventbus2.cancel();
-    _eventbus3.cancel();
     _eventbus4.cancel();
     _eventbus5.cancel();
     _eventbus6.cancel();
@@ -284,16 +254,19 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
               btnHeight: 40,
               icon: Icons.arrow_forward_ios,
               text: localizedStrings.button_connect,
-              onPressed: () {
-                mySerialPortStatus.serialPortStatus = true;
-                eventBus.fire(EventSerialPortStatus(mySerialPortStatus));
-                if (myCurrentPort.devPath != '') {
-                  setState(() {
-                    serialPortConnect = '';
-                  });
-                  modifyComInfo();
-                }
-              },
+              onPressed: isSetting
+                  ? null
+                  : () {
+                      mySerialPortStatus.serialPortStatus = true;
+                      eventBus.fire(EventSerialPortStatus(mySerialPortStatus));
+                      if (myCurrentPort.devPath != '') {
+                        setState(() {
+                          serialPortConnect = '';
+                          isSetting = true;
+                        });
+                        modifyComInfo();
+                      }
+                    },
             ),
             const SizedBox(width: 20),
             CustomOutlinedButton(
@@ -312,33 +285,14 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
     );
   }
 
-  void checkSerialPort() {
-    myScaleCmd.cmdMode = "check_serial_port";
-    myScaleCmd.cmdData = '';
-    if (kDebugMode) {
-      print(jsonEncode(myScaleCmd));
-    }
-    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
-  }
-
-  void sendModifyInfo(String modifyString) {
-    myScaleCmd.cmdMode = "modify_scale";
-    myScaleCmd.cmdData = modifyString;
-    if (kDebugMode) {
-      print(jsonEncode(myScaleCmd));
-    }
-    MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
-  }
-
   void modifyComInfo() {
     String infoString = jsonEncode(tempCurrentPort);
     myMediaConf.mediaInfoJson = infoString;
     myMediaConf.type = myDevicedata.mediaType;
-    myModifyScale.scaleId = int.parse(myDevicedata.scaleID);
+    myModifyScale.scaleId = 1;
     myModifyScale.scaleModel = scaleModel;
     myModifyScale.mediaConf = myMediaConf;
-    String modifyInfoString = jsonEncode(myModifyScale);
-    sendModifyInfo(modifyInfoString);
+    PublicFunctions.sendModifyInfo(jsonEncode(myModifyScale));
   }
 
   void checkPortList() {

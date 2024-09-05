@@ -59,6 +59,10 @@ class MsgBody {
 }
 
 ReqWeightCountine myReqWeightCountine = ReqWeightCountine();
+ReqWeightCountine myWgtCnt1 = ReqWeightCountine();
+ReqWeightCountine myWgtCnt2 = ReqWeightCountine();
+ReqWeightCountine myWgtCnt3 = ReqWeightCountine();
+ReqWeightCountine myWgtCnt4 = ReqWeightCountine();
 
 // class ReqWeightCountine {
 //   bool isZero;

@@ -6,9 +6,8 @@ import 'package:t_max/data/productrec.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import '../../data/productlist_data.dart';
 import '../../data/scalecmd_data.dart';
-
-import '../../main.dart';
 import '../data/language.dart';
+import '../functions/methods.dart';
 import '../widget/custom_button.dart';
 
 TextEditingController productName = TextEditingController(
@@ -276,7 +275,7 @@ addProductDialog(BuildContext context) {
                           icon: Icons.exit_to_app,
                           text: localizedStrings.button_exit,
                           onPressed: () {
-                            getProductList();
+                            PublicFunctions.getProductList();
                             Navigator.of(context).pop();
                           },
                         ),
@@ -291,14 +290,8 @@ addProductDialog(BuildContext context) {
       });
 }
 
-void getProductList() {
-  myScaleCmd.cmdMode = "get_product_list";
-  myScaleCmd.cmdData = "";
-  MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
-}
-
 void addProductRec() {
-  getProductList();
+  PublicFunctions.getProductList();
   bool result = true;
   if (productID.text.isEmpty || productName.text.isEmpty) {
     errorText.text = localizedStrings.plu_error_message1;
@@ -330,12 +323,7 @@ void addProductRec() {
     myProductRec.withPretare = isPresetTare!;
     myProductRec.remarks = productRemark.text;
     myProductRec.pretare = preTare.text;
-    myScaleCmd.cmdMode = "add_product";
-    myScaleCmd.cmdData = jsonEncode(myProductRec);
-    MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
-    if (kDebugMode) {
-      print(jsonEncode(myScaleCmd));
-    }
+    PublicFunctions.addProduct(jsonEncode(myProductRec));
     errorText.text = "Success!";
     productID.text = '';
     productName.text = '';
@@ -378,9 +366,8 @@ void editProductRec() {
       myProductRecEdit.withPretare = isPresetTare!;
       myProductRecEdit.remarks = productRemark.text;
       myProductRecEdit.pretare = preTare.text;
-      myScaleCmd.cmdMode = "modify_product";
-      myScaleCmd.cmdData = jsonEncode(myProductRecEdit);
-      MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
+      PublicFunctions.modifyProduct(jsonEncode(myProductRecEdit));
+
       if (kDebugMode) {
         print(jsonEncode(myScaleCmd));
       }
@@ -415,9 +402,7 @@ void delProductRec() {
     if (isFind && recid != 0) {
       myProductRecDel.recId = recid;
 
-      myScaleCmd.cmdMode = "del_product";
-      myScaleCmd.cmdData = jsonEncode(myProductRecDel);
-      MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
+      PublicFunctions.delProduct(jsonEncode(myProductRecDel));
       if (kDebugMode) {
         print(jsonEncode(myScaleCmd));
       }

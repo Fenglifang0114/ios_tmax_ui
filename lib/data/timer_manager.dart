@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:t_max/data/manager_scale_channel.dart';
+
 import '../functions/methods.dart';
 
 class TimerManager {
@@ -18,8 +20,8 @@ class TimerManager {
 
     _isCntScaleTiming = true;
     _cntScaleTimer = Timer(Duration(seconds: time), () {
-      PublicFunctions.checkSerialPort();
-      startCntScaleTimer(5);
+      PublicFunctions.checkSerialPort(defaultScaleId); //只管串口
+      startCntScaleTimer(10);
     });
   }
 

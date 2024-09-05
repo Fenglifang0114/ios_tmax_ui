@@ -11,9 +11,9 @@ import 'encrypt_data.dart';
 const int tConfig = 1;
 const int tIndustry = 2;
 const int tRetail = 3;
-int mySystemVersion = tRetail;
+int mySystemVersion = tConfig;
 const String appTConfig = "T-CONFIG";
-const String appTIndustrial = "T-Industrial";
+const String appTIndustrial = "T-Industry";
 const String appTRetail = "T-RETAIL";
 
 class SystemVersionInfo {
@@ -22,10 +22,6 @@ class SystemVersionInfo {
     if (mySystemVersion == tConfig) {
       return const HomePage();
     } else if (mySystemVersion == tIndustry) {
-      PublicFunctions.getUIConfNormal();
-      PublicFunctions.getUIConfCheck();
-      PublicFunctions.getUIConfTakeIn();
-      PublicFunctions.getUIConfTakeOut();
       return const IndustryHomePage();
     } else {
       return const RetailHomePage();

@@ -108,22 +108,29 @@ class CustomOutlinedButton extends StatelessWidget {
 
 Widget getDialogTitle(
     BuildContext context, String title, IconData icon, double titleWidth) {
-  return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primary,
-        borderRadius: BorderRadius.circular(4.0), // 设置圆角半径
-      ),
-      height: 40,
-      child: Row(
+  return SizedBox(
+      height: 35,
+      child: Column(
         children: [
-          Icon(icon, color: Theme.of(context).colorScheme.onPrimary),
-          SizedBox(
-            width: titleWidth,
-            child: Text(title,
-                overflow: TextOverflow.ellipsis,
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
-          )
+          Row(
+            children: [
+              Icon(icon, color: Theme.of(context).colorScheme.primary),
+              const SizedBox(
+                width: 5,
+              ),
+              SizedBox(
+                width: titleWidth,
+                child: Text(title,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary)),
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 5,
+          ),
+          Container(height: 2, color: Theme.of(context).colorScheme.primary),
         ],
       ));
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:t_max/functions/methods.dart';
 import '../data/downloadresponse.dart';
 import '../data/language.dart';
+import '../data/manager_scale_channel.dart';
 import '../eventbus/eventbus.dart';
 import '../widget/custom_button.dart';
 
@@ -20,13 +21,13 @@ class _GetBuildInfoPageState extends State<GetBuildInfoPage> {
   void initState() {
     buildInfoController.text = '';
     super.initState();
-    PublicFunctions.getBuildInfo();
+    PublicFunctions.getBuildInfo(defaultScaleId);
     eventbus1 = eventBus.on<EventGetBuildInfo>().listen((event) {
       if (mounted) {
         setState(() {
-          myRespGetBuildInfo = event.obj;
-          if (myRespGetBuildInfo.msgBody.isNotEmpty) {
-            buildInfoController.text = myRespGetBuildInfo.msgBody;
+          myRespDataFromScale = event.obj;
+          if (myRespDataFromScale.msgBody.isNotEmpty) {
+            buildInfoController.text = myRespDataFromScale.msgBody;
           }
         });
       }

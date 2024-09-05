@@ -5,7 +5,8 @@ import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import '../../data/currentport_data.dart';
+import '../data/downloadresponse.dart';
+import '../data/manager_scale_channel.dart';
 import '../../data/device_data.dart';
 import '../../data/productlist_data.dart';
 import '../../data/report_data.dart';
@@ -15,12 +16,11 @@ import '../../data/userinfo_data.dart';
 import '../../data/weight_data.dart';
 import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
-import '../../main.dart';
-import '../data/downloadresponse.dart';
 import '../data/language.dart';
 import '../data/record_data.dart';
 import '../data/scale_info_from_scale.dart';
 import '../data/scalecmd_data.dart';
+import '../data/scalelist_data.dart';
 import '../data/screen_mgr.dart';
 import '../data/timer_manager.dart';
 import '../data/weight_report_data.dart';
@@ -28,7 +28,6 @@ import '../dialog/addproduct_dialog.dart';
 import '../dialog/adduser_dialog.dart';
 import '../dialog/setting_dialog.dart';
 import 'package:path/path.dart';
-
 import '../dialog/show_warning.dart';
 import '../dialog/weight_report_feilds_setting.dart';
 import '../widget/custom_button.dart';
@@ -175,9 +174,8 @@ class TakeOutPageState extends State<TakeOutPage> {
     _weightReportDataSource = WeightReportDataSource(_weightReportDatas);
     PublicFunctions.getUserList();
     PublicFunctions.getProductList();
-    if (myDevicedata.scaleID == "1") {
-      PublicFunctions.getTakeOutRecords();
-    }
+    PublicFunctions.getRecords(defaultScaleId, weighingTakeOutMode);
+
     if (!isStart) {
       cntScaleTimerMgr.stopCntScaleTimer();
       cntScaleTimerMgr.startCntScaleTimer(5);
@@ -206,15 +204,20 @@ class TakeOutPageState extends State<TakeOutPage> {
     eventBus3 = eventBus.on<EventReqWeightCountine>().listen((event) {
       if (mounted) {
         setState(() {
-          myReqWeightCountine = event.obj;
-          isStart = true;
-          isCnting = true;
-          myScreenMgr.serialPortST = true;
-          if (_isTakeOutStart && !isSameUnit()) {
-            showDialogFlag = true;
-          } else {
-            showDialogFlag = false;
-            checkWeight();
+          ReqWeightCountine tempWeight = ReqWeightCountine();
+          tempWeight = event.obj;
+          if (tempWeight.scaleId == defaultScaleId) {
+            myReqWeightCountine = tempWeight;
+            isStart = true;
+            myScreenMgr.serialPortST = true;
+            isCnting = true;
+
+            if (_isTakeOutStart && !isSameUnit()) {
+              showDialogFlag = true;
+            } else {
+              showDialogFlag = false;
+              checkWeight();
+            }
           }
         });
       }
@@ -302,8 +305,8 @@ class TakeOutPageState extends State<TakeOutPage> {
     });
     eventBus11 = eventBus.on<EventRegWeightResp>().listen((event) {
       if (mounted) {
-        myUnregWeightResp = event.obj;
-        if (myUnregWeightResp.msgBody.contains('ok')) {
+        myRespDataFromScale = event.obj;
+        if (myRespDataFromScale.msgBody.contains('ok')) {
           setState(() {
             isStart = true;
           });
@@ -319,8 +322,8 @@ class TakeOutPageState extends State<TakeOutPage> {
 
     eventBus12 = eventBus.on<EventUnregWeightResp>().listen((event) {
       if (mounted) {
-        myUnregWeightResp = event.obj;
-        if (myUnregWeightResp.msgBody.contains('ok')) {
+        myRespDataFromScale = event.obj;
+        if (myRespDataFromScale.msgBody.contains('ok')) {
           setState(() {
             isStart = false;
           });
@@ -331,9 +334,7 @@ class TakeOutPageState extends State<TakeOutPage> {
     eventBus13 = eventBus.on<EventDeleteRec>().listen((event) {
       if (mounted) {
         setState(() {
-          if (myDevicedata.scaleID == "1") {
-            PublicFunctions.getTakeOutRecords();
-          }
+          PublicFunctions.getRecords(defaultScaleId, weighingTakeOutMode);
         });
       }
     });
@@ -341,7 +342,7 @@ class TakeOutPageState extends State<TakeOutPage> {
     eventBus14 = eventBus.on<EventUpdateSettingParam>().listen((event) {
       if (mounted) {
         setState(() {
-          PublicFunctions.getUIConfTakeOut();
+          PublicFunctions.getUIConfTakeOut(defaultScaleId);
         });
       }
     });
@@ -510,8 +511,10 @@ class TakeOutPageState extends State<TakeOutPage> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),
-        child: pageHead(context, localizedStrings.take_out_title,
-            localizedStrings.serial_port_status),
+        child: pageHeadDefScale(
+          context,
+          localizedStrings.take_out_title,
+        ),
       ),
       body: _isFirstLayout
           ? firstLayout(context, _width)
@@ -527,10 +530,8 @@ class TakeOutPageState extends State<TakeOutPage> {
   void performStart() {
     setState(() {
       if (!isStart) {
-        if (MyApp.webchannel1.heartStatus == true) {
-          isStart = true;
-          PublicFunctions.getWeight();
-        }
+        isStart = true;
+        PublicFunctions.getWeight(defaultScaleId);
       }
       cntScaleTimerMgr.stopPortOffTimer();
       cntScaleTimerMgr.startPortOffTimer(2, () {
@@ -548,10 +549,8 @@ class TakeOutPageState extends State<TakeOutPage> {
   void performStop() {
     if (isStart) {
       setState(() {
-        if (MyApp.webchannel1.heartStatus == true) {
-          isStart = false;
-          PublicFunctions.stopWeight();
-        }
+        isStart = false;
+        PublicFunctions.stopWeight(defaultScaleId);
       });
       cntScaleTimerMgr.stopCntScaleTimer();
       cntScaleTimerMgr.startCntScaleTimer(5);
@@ -777,53 +776,23 @@ class TakeOutPageState extends State<TakeOutPage> {
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildFlexibleButtonAndText(
+                    _buildFlexibleButtonAndTextT(
                         width: 80,
                         buttonText: localizedStrings.button_tare,
-                        onPressed: PublicFunctions.performTare,
                         constraints: constraints,
-                        isTrue: isStart && !_isTakeOutStart,
                         icon: Icons.title),
-                    _buildFlexibleButtonAndText(
+                    _buildFlexibleButtonAndTextZ(
                         width: 80,
                         buttonText: localizedStrings.button_zero,
-                        onPressed: PublicFunctions.performZero,
                         constraints: constraints,
-                        isTrue: isStart && !_isTakeOutStart,
                         icon: Icons.exposure_zero),
-                    _buildFlexibleButtonAndText(
+                    _buildFlexibleButtonAndTextEnd(
                         width: 80,
                         buttonText: (myReqWeightCountine.msgBody == null)
                             ? 'Start'
                             : (_isTakeOutStart)
                                 ? 'End'
                                 : 'Start',
-                        onPressed: checkStartButton()
-                            ? () {
-                                if (_isTakeOutStart) {
-                                  _isTakeOutStart = false;
-                                  weightValueList.clear();
-                                  lastTakeOutWeightval = 0.000;
-                                } else {
-                                  if (isWeightValue()) {
-                                    basicWeightval = double.tryParse(
-                                        myReqWeightCountine
-                                            .msgBody!.weightVal)!;
-                                    startWeightUnit =
-                                        myReqWeightCountine.msgBody!.weightUnit;
-                                  }
-                                  lastTakeOutWeightval = 0.000;
-                                  _isTakeOutStart = true;
-                                  weightValueList.clear();
-                                }
-                              }
-                            : (_isTakeOutStart)
-                                ? () {
-                                    _isTakeOutStart = false;
-                                    weightValueList.clear();
-                                    lastTakeOutWeightval = 0.000;
-                                  }
-                                : null,
                         constraints: constraints,
                         isTrue: isStart && !_isTakeOutStart,
                         icon: Icons.swipe_right_outlined),
@@ -904,7 +873,7 @@ class TakeOutPageState extends State<TakeOutPage> {
                             icon: Icons.edit_note_outlined,
                             text: localizedStrings.plu_edit,
                             onPressed: () {
-                              getProductList();
+                              PublicFunctions.getProductList();
                               addProductDialog(context).then((onvalue) {
                                 if (!productNameList
                                     .contains(productNameValue)) {
@@ -1055,7 +1024,7 @@ class TakeOutPageState extends State<TakeOutPage> {
       },
     ).then((confirmed) {
       if (confirmed) {
-        PublicFunctions.deleteAllRecordsTakeOut();
+        PublicFunctions.deleteAllRecordsTakeOut(defaultScaleId);
       }
     });
   }
@@ -1247,7 +1216,7 @@ class TakeOutPageState extends State<TakeOutPage> {
   Widget _buildFlexibleButtonAndText({
     required double width,
     required String buttonText,
-    required VoidCallback? onPressed,
+    required VoidCallback onPressed,
     required BoxConstraints constraints,
     required bool isTrue,
     required IconData icon,
@@ -1258,6 +1227,161 @@ class TakeOutPageState extends State<TakeOutPage> {
     return SizedBox(
       child: ElevatedButton(
         onPressed: isTrue ? onPressed : null,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Icon(
+              icon,
+              size: fontSize,
+            ),
+            const SizedBox(width: 4),
+            SizedBox(
+              width: buttonWidth,
+              height: buttonWidth / 3,
+              child: Center(
+                child: Text(
+                  buttonText,
+                  maxLines: 1,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: fontSize,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFlexibleButtonAndTextZ({
+    required double width,
+    required String buttonText,
+    required BoxConstraints constraints,
+    required IconData icon,
+  }) {
+    double buttonWidth = width * (constraints.maxWidth / 600); // 自适应按钮宽度
+    double fontSize = 14 * (constraints.maxWidth / 600); // 自适应字体大小
+
+    return SizedBox(
+      child: ElevatedButton(
+        onPressed: (isStart && !_isTakeOutStart)
+            ? () {
+                PublicFunctions.performZero();
+              }
+            : null,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Icon(
+              icon,
+              size: fontSize,
+            ),
+            const SizedBox(width: 4),
+            SizedBox(
+              width: buttonWidth,
+              height: buttonWidth / 3,
+              child: Center(
+                child: Text(
+                  buttonText,
+                  maxLines: 1,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: fontSize,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFlexibleButtonAndTextT({
+    required double width,
+    required String buttonText,
+    required BoxConstraints constraints,
+    required IconData icon,
+  }) {
+    double buttonWidth = width * (constraints.maxWidth / 600); // 自适应按钮宽度
+    double fontSize = 14 * (constraints.maxWidth / 600); // 自适应字体大小
+
+    return SizedBox(
+      child: ElevatedButton(
+        onPressed: (isStart && !_isTakeOutStart)
+            ? () {
+                PublicFunctions.performTare();
+              }
+            : null,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Icon(
+              icon,
+              size: fontSize,
+            ),
+            const SizedBox(width: 4),
+            SizedBox(
+              width: buttonWidth,
+              height: buttonWidth / 3,
+              child: Center(
+                child: Text(
+                  buttonText,
+                  maxLines: 1,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: fontSize,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFlexibleButtonAndTextEnd({
+    required double width,
+    required String buttonText,
+    required BoxConstraints constraints,
+    required bool isTrue,
+    required IconData icon,
+  }) {
+    double buttonWidth = width * (constraints.maxWidth / 600); // 自适应按钮宽度
+    double fontSize = 14 * (constraints.maxWidth / 600); // 自适应字体大小
+
+    return SizedBox(
+      child: ElevatedButton(
+        onPressed: checkStartButton()
+            ? () {
+                if (_isTakeOutStart) {
+                  _isTakeOutStart = false;
+                  weightValueList.clear();
+                  lastTakeOutWeightval = 0.000;
+                } else {
+                  if (isWeightValue()) {
+                    basicWeightval = double.tryParse(
+                        myReqWeightCountine.msgBody!.weightVal)!;
+                    startWeightUnit = myReqWeightCountine.msgBody!.weightUnit;
+                  }
+                  lastTakeOutWeightval = 0.000;
+                  _isTakeOutStart = true;
+                  weightValueList.clear();
+                }
+              }
+            : (_isTakeOutStart)
+                ? () {
+                    _isTakeOutStart = false;
+                    weightValueList.clear();
+                    lastTakeOutWeightval = 0.000;
+                  }
+                : null,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -1759,7 +1883,7 @@ class TakeOutPageState extends State<TakeOutPage> {
               icon: Icons.edit_note_outlined,
               text: localizedStrings.plu_edit,
               onPressed: () {
-                getProductList();
+                PublicFunctions.getProductList();
                 addProductDialog(context).then((onvalue) {
                   if (!productNameList.contains(productNameValue)) {
                     myProductRecInfo.product = "";
@@ -2162,14 +2286,12 @@ class TakeOutPageState extends State<TakeOutPage> {
   void sendReportDataToDB() {
     var currentData = myWeightReportData[myWeightReportData.length - 1];
     myScaleCmd.cmdMode = "add_rec";
-    myAddScaleRecord.scaleId = 1;
+    myAddScaleRecord.scaleId = defaultScaleId;
     myAddScaleRecord.price = '0.0';
-    myAddScaleRecord.scaleMode = '3';
-    myAddScaleRecord.scaleModel = myFactoryInfoFromScale.modelName;
-    myAddScaleRecord.scaleSn = myFactoryInfoFromScale.scaleSn;
-    myAddScaleRecord.scaleName = myFactoryInfoFromScale.modelName == null
-        ? ""
-        : myFactoryInfoFromScale.modelName!;
+    myAddScaleRecord.scaleMode = weighingTakeOutMode;
+    myAddScaleRecord.scaleModel = defaultScaleModel;
+    myAddScaleRecord.scaleSn = defaultScaleSn;
+    myAddScaleRecord.scaleName = defaultScaleModel;
     myAddScaleRecord.product = currentData.pluName;
     myAddScaleRecord.weight = currentData.weight.toString();
     myAddScaleRecord.pluNo = currentData.plu;
@@ -2180,7 +2302,7 @@ class TakeOutPageState extends State<TakeOutPage> {
     myAddScaleRecord.userName = currentData.userName;
     myAddScaleRecord.userRemarks = currentData.userRemarks;
     myScaleCmd.cmdData = jsonEncode(myAddScaleRecord);
-    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+    PublicFunctions.sendMsg(defaultScaleId, jsonEncode(myScaleCmd));
   }
 
   bool isWeightValue() {

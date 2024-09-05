@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:t_max/data/downloadresponse.dart';
+import '../data/downloadresponse.dart';
+import '../data/manager_scale_channel.dart';
 import 'package:t_max/functions/methods.dart';
 import '../../eventbus/eventbus.dart';
-import '../../main.dart';
 import '../data/language.dart';
 import '../data/screen_mgr.dart';
 import 'custom_button.dart';
@@ -34,10 +34,10 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
     _eventbus1 = eventBus.on<EventConnectBTResponse>().listen((event) {
       if (mounted) {
         setState(() {
-          myConnectBTResponse = event.obj;
+          myRespDataFromScale = event.obj;
           isSetting = false;
-          if (myConnectBTResponse.msgBody.isNotEmpty) {
-            _errorMessage = myConnectBTResponse.msgBody;
+          if (myRespDataFromScale.msgBody.isNotEmpty) {
+            _errorMessage = myRespDataFromScale.msgBody;
           }
           _stopTimer();
         });
@@ -46,13 +46,14 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
     _eventbus2 = eventBus.on<EventBTResponse>().listen((event) {
       if (mounted) {
         setState(() {
-          myRespBTData = event.obj;
+          myRespDataFromScale = event.obj;
           isSetting = false;
-          if (myRespBTData.msgBody.isNotEmpty) {
-            if (myRespBTData.msgBody.contains("TTM:NAM")) {
-              _deviceNameController.text = getBtName(myRespBTData.msgBody);
+          if (myRespDataFromScale.msgBody.isNotEmpty) {
+            if (myRespDataFromScale.msgBody.contains("TTM:NAM")) {
+              _deviceNameController.text =
+                  getBtName(myRespDataFromScale.msgBody);
             }
-            _errorMessage = myRespBTData.msgBody;
+            _errorMessage = myRespDataFromScale.msgBody;
           }
           _stopTimer();
         });
@@ -141,7 +142,8 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
                                             _errorMessage = '';
                                             _deviceNameController.clear();
                                           });
-                                          PublicFunctions.getBtName();
+                                          PublicFunctions.getBtName(
+                                              defaultScaleId);
                                           _startTimer(15);
                                         }),
                               const SizedBox(width: 40),
@@ -156,13 +158,7 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
                                           try {
                                             setState(() {
                                               _errorMessage = '';
-                                              if (MyApp
-                                                  .webchannel1.heartStatus) {
-                                                sendBluetoothName();
-                                              } else {
-                                                _errorMessage = localizedStrings
-                                                    .serial_error;
-                                              }
+                                              sendBluetoothName();
                                             });
                                           } catch (e) {
                                             setState(() {
@@ -212,12 +208,15 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
                                         _errorMessage = '';
                                       });
                                       if (emissionPowerVale == 'Strong') {
-                                        PublicFunctions.modifyBtPowerStrong();
+                                        PublicFunctions.modifyBtPowerStrong(
+                                            defaultScaleId);
                                       } else if (emissionPowerVale ==
                                           'Normal') {
-                                        PublicFunctions.modifyBtPowerNormal();
+                                        PublicFunctions.modifyBtPowerNormal(
+                                            defaultScaleId);
                                       } else {
-                                        PublicFunctions.modifyBtPowerWeak();
+                                        PublicFunctions.modifyBtPowerWeak(
+                                            defaultScaleId);
                                       }
                                       _startTimer(15);
                                     }),
@@ -288,7 +287,7 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
 
   void sendBluetoothName() async {
     if (_deviceNameController.text.isNotEmpty) {
-      PublicFunctions.modifyBtName(_deviceNameController.text);
+      PublicFunctions.modifyBtName(_deviceNameController.text, defaultScaleId);
       isSetting = true;
       _startTimer(15);
     } else {

@@ -6,8 +6,6 @@ import 'package:t_max/data/userinfo_data.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import '../../data/scalecmd_data.dart';
 import '../../functions/methods.dart';
-
-import '../../main.dart';
 import '../data/language.dart';
 import '../widget/custom_button.dart';
 
@@ -350,9 +348,7 @@ void addUser() {
     myCurrUserInfo.isFemale = (_checkFemale == 1) ? true : false;
     myCurrUserInfo.remarks = userRemark.text;
     myCurrUserInfo.phone = phone.text;
-    myScaleCmd.cmdMode = "add_user";
-    myScaleCmd.cmdData = jsonEncode(myCurrUserInfo);
-    MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
+    PublicFunctions.addUser(jsonEncode(myCurrUserInfo));
     errorText.text = "Success!";
     userId.text = "";
     userName.text = "";
@@ -391,9 +387,7 @@ void editUser() {
       myCurrUserInfo.isFemale = (_checkFemale == 1) ? true : false;
       myCurrUserInfo.remarks = userRemark.text;
       myCurrUserInfo.phone = phone.text;
-      myScaleCmd.cmdMode = "modify_user";
-      myScaleCmd.cmdData = jsonEncode(myCurrUserInfo);
-      MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
+      PublicFunctions.modifyUser(jsonEncode(myCurrUserInfo));
       if (kDebugMode) {
         print(jsonEncode(myScaleCmd));
       }
@@ -433,10 +427,7 @@ void delUser() {
     }
     if (isFind && recid != -1) {
       myUserRecDel.recId = recid;
-
-      myScaleCmd.cmdMode = "del_user";
-      myScaleCmd.cmdData = jsonEncode(myUserRecDel);
-      MyApp.webchannel.sendMessage(jsonEncode(myScaleCmd));
+      PublicFunctions.delUser(jsonEncode(myUserRecDel));
 
       if (recid == myUserInfo.recId) {
         myUserInfo.id = "";

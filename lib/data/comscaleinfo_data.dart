@@ -1,4 +1,6 @@
-class ComScaleInfoList {
+import 'dart:convert';
+
+class ComScaleInfo {
   int scaleId;
   int tMedia;
   bool isOnline;
@@ -9,8 +11,9 @@ class ComScaleInfoList {
   int stopBits;
   String scaleModel;
   String scaleSn;
+  bool isDefault;
 
-  ComScaleInfoList(
+  ComScaleInfo(
       this.scaleId,
       this.tMedia,
       this.isOnline,
@@ -20,51 +23,211 @@ class ComScaleInfoList {
       this.parity,
       this.stopBits,
       this.scaleModel,
-      this.scaleSn);
+      this.scaleSn,
+      this.isDefault);
+}
 
-  ComScaleInfoList.fromJson(Map<String, dynamic> json)
-      : scaleId = json['ScaleId'],
-        tMedia = json['TMedia'],
-        isOnline = json['IsOnline'],
-        portName = json['PortName'],
-        baudRate = json['BaudRate'],
-        dataBits = json['DataBits'],
-        parity = json['Parity'],
-        stopBits = json['StopBits'],
-        scaleModel = json['ScaleModel'],
-        scaleSn = json['scaleSn'];
+ComScaleInfo myComScaleInfo =
+    ComScaleInfo(1, 1, true, "", 1, 1, 1, 1, "", "", false);
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['ScaleId'] = scaleId;
-    data['TMedia'] = tMedia;
-    data['IsOnline'] = isOnline;
-    data['BaudRate'] = baudRate;
-    data['DataBits'] = dataBits;
-    data['Parity'] = parity;
-    data['StopBits'] = stopBits;
-    data['ScaleModel'] = scaleModel;
-    data['scaleSn'] = scaleSn;
+class Comportdata {
+  String modelName;
+  String scaSn;
+  String scdescription;
+  int id;
+  int mediaType;
+  String portName;
+  int baud;
+  int dataBits;
+  String parity;
+  int stopbits;
 
-    return data;
+  Comportdata(
+      this.modelName,
+      this.scaSn,
+      this.scdescription,
+      this.id,
+      this.mediaType,
+      this.portName,
+      this.baud,
+      this.dataBits,
+      this.parity,
+      this.stopbits);
+}
+
+Comportdata myComportdata = Comportdata("", "", "", 0, 0, "", 0, 0, "", 0);
+
+NetInfo netInfoFromJson(String str) => NetInfo.fromJson(json.decode(str));
+
+String netInfoToJson(NetInfo data) => json.encode(data.toJson());
+
+class NetInfo {
+  String ip;
+  int port;
+
+  NetInfo({
+    required this.ip,
+    required this.port,
+  });
+
+  factory NetInfo.fromJson(Map<String, dynamic> json) => NetInfo(
+        ip: json["Ip"],
+        port: json["Port"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "Ip": ip,
+        "Port": port,
+      };
+}
+
+NetInfo myNetInfo = NetInfo(ip: "", port: 0);
+
+SerialInfo serialInfoFromJson(String str) =>
+    SerialInfo.fromJson(json.decode(str));
+
+String serialInfoToJson(SerialInfo data) => json.encode(data.toJson());
+
+class SerialInfo {
+  String devPath;
+  int baud;
+  int dataBits;
+  int stopBits;
+  int parity;
+
+  SerialInfo({
+    required this.devPath,
+    required this.baud,
+    required this.dataBits,
+    required this.stopBits,
+    required this.parity,
+  });
+
+  factory SerialInfo.fromJson(Map<String, dynamic> json) => SerialInfo(
+        devPath: json["DevPath"],
+        baud: json["Baud"],
+        dataBits: json["DataBits"],
+        stopBits: json["StopBits"],
+        parity: json["Parity"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "DevPath": devPath,
+        "Baud": baud,
+        "DataBits": dataBits,
+        "StopBits": stopBits,
+        "Parity": parity,
+      };
+}
+
+//本机收到的网络秤的信息，删除只在这个里面进行，串口管理的秤不允许删除
+
+List<NetScaleInfoLocal> myNetScaleList = [];
+List<NetScaleInfoLocal> fourScaleList = [];
+
+class NetScaleListMgr {
+  static bool delScaleById(List<NetScaleInfoLocal> myNetScaleList, int id) {
+    myNetScaleList.removeWhere((scale) => scale.scaleId == id);
+    return myNetScaleList.every((scale) => scale.scaleId != id);
+  }
+
+  static void addScale(
+      List<NetScaleInfoLocal> myNetScaleList, NetScaleInfoLocal netScale) {
+    var existingScale = myNetScaleList
+        .firstWhere((scale) => scale.scaleId == netScale.scaleId, orElse: () {
+      NetScaleInfoLocal newScale = NetScaleInfoLocal(
+        isOnline: false,
+        scaleModel: "",
+        scaleCat: 0,
+        scaleSn: "",
+        scaleId: -1,
+        ip: "",
+        port: 0,
+      );
+      return newScale;
+    });
+    if (existingScale.scaleId == -1) {
+      myNetScaleList.add(netScale);
+      return;
+    }
+    if (existingScale.scaleSn != netScale.scaleSn) {
+      myNetScaleList.remove(existingScale);
+      myNetScaleList.add(netScale);
+    }
+  }
+
+  static void updateScale(
+      List<NetScaleInfoLocal> myNetScaleList, NetScaleInfoLocal netScale) {
+    var existingScale = myNetScaleList
+        .firstWhere((scale) => scale.scaleId == netScale.scaleId, orElse: () {
+      NetScaleInfoLocal newScale = NetScaleInfoLocal(
+        isOnline: false,
+        scaleModel: "",
+        scaleCat: 0,
+        scaleSn: "",
+        scaleId: -1,
+        ip: "",
+        port: 0,
+      );
+      return newScale;
+    });
+    if (existingScale.scaleId != -1) {
+      myNetScaleList.remove(existingScale);
+      myNetScaleList.add(netScale);
+    }
+  }
+
+  static NetScaleInfoLocal findScaleInfo(
+      List<NetScaleInfoLocal> myNetScaleList, int scaleId) {
+    NetScaleInfoLocal newScale = NetScaleInfoLocal();
+    var existingScale = myNetScaleList
+        .firstWhere((scale) => scale.scaleId == scaleId, orElse: () {
+      return newScale;
+    });
+    return existingScale;
   }
 }
 
-ComScaleInfoList myComScaleInfoList =
-    ComScaleInfoList(1, 1, true, "", 1, 1, 1, 1, "", "");
+class NetScaleInfoLocal {
+  bool? isOnline;
+  String? scaleModel;
+  int? scaleCat;
+  String? scaleSn;
+  int? scaleId;
+  int? tMedia;
+  bool? isDefault;
+  String? ip;
+  int? port;
 
-class ComScaleList {
-  late List<ComScaleInfoList> comScaleList;
-
-  ComScaleList({required this.comScaleList});
-
-  factory ComScaleList.fromJson(List<dynamic> parsedJson) {
-    List<ComScaleInfoList> scaleDataList = <ComScaleInfoList>[];
-    scaleDataList =
-        parsedJson.map((i) => ComScaleInfoList.fromJson(i)).toList();
-
-    return ComScaleList(comScaleList: scaleDataList);
-  }
+  NetScaleInfoLocal({
+    this.isOnline,
+    this.scaleModel,
+    this.scaleCat,
+    this.scaleSn,
+    this.scaleId,
+    this.tMedia,
+    this.isDefault,
+    this.ip,
+    this.port,
+  });
 }
 
-ComScaleList myComScaleList = ComScaleList(comScaleList: []);
+class DelScaleInfo {
+  int? scaleId;
+
+  DelScaleInfo({
+    this.scaleId,
+  });
+
+  factory DelScaleInfo.fromJson(Map<String, dynamic> json) => DelScaleInfo(
+        scaleId: json["ScaleId"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "ScaleId": scaleId,
+      };
+}
+
+getDefScaleInfo(int defId) {
+  if (defId == 1) {}
+}

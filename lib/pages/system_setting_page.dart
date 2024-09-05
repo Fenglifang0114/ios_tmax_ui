@@ -62,8 +62,10 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),
-        child: pageHead(
-            context, myAppName.appName!, localizedStrings.serial_port_status),
+        child: pageHeadDefScale(
+          context,
+          myAppName.appName!,
+        ),
       ),
       body: Container(
         color: Theme.of(context).colorScheme.surface,

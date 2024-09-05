@@ -2,10 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:t_max/data/downloadresponse.dart';
+import '../data/downloadresponse.dart';
+import '../data/manager_scale_channel.dart';
+import 'package:t_max/functions/methods.dart';
 import '../../data/scalecmd_data.dart';
 import '../../eventbus/eventbus.dart';
-import '../../main.dart';
 import '../data/language.dart';
 import '../data/screen_mgr.dart';
 import '../data/writelog.dart';
@@ -34,33 +35,33 @@ class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
 
     _eventbus1 = eventBus.on<EventRespUpdateFirmware>().listen((event) {
       if (mounted) {
-        myRespUpdateFirmware = event.obj;
+        myRespDataFromScale = event.obj;
         setState(() {
-          _errorMessage = myRespUpdateFirmware.msgBody;
+          _errorMessage = myRespDataFromScale.msgBody;
           isSetting = false;
         });
       }
     });
     _eventbus2 = eventBus.on<EventRespUpdateFirmwareProcess>().listen((event) {
       if (mounted) {
-        myRespUpdateFirmware = event.obj;
-        if (myRespUpdateFirmware.msgBody.contains('ok') ||
-            myRespUpdateFirmware.msgBody.contains('fail')) {
+        myRespDataFromScale = event.obj;
+        if (myRespDataFromScale.msgBody.contains('ok') ||
+            myRespDataFromScale.msgBody.contains('fail')) {
           isSetting = false;
           setState(() {
-            _errorMessage = myRespUpdateFirmware.msgBody;
+            _errorMessage = myRespDataFromScale.msgBody;
           });
         } else {
-          if (int.tryParse(myRespUpdateFirmware.msgBody) != null) {
+          if (int.tryParse(myRespDataFromScale.msgBody) != null) {
             // 字符串全是数字
-            int numericValue = int.parse(myRespUpdateFirmware.msgBody);
+            int numericValue = int.parse(myRespDataFromScale.msgBody);
             if (numericValue < 100 && numericValue * 1.5 < 100.0) {
               numericValue = (numericValue * 1.5).toInt();
             }
             updateProgress(numericValue);
           } else {
             setState(() {
-              _errorMessage = myRespUpdateFirmware.msgBody;
+              _errorMessage = myRespDataFromScale.msgBody;
             });
           }
         }
@@ -80,7 +81,7 @@ class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: getDialogTitle(
-          context, localizedStrings.firmwart_update, Icons.usb, 400),
+          context, localizedStrings.firmware_update, Icons.usb, 400),
       content: Container(
           height: 312,
           width: 400,
@@ -240,8 +241,8 @@ class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
           _errorMessage = localizedStrings.update_firmware_wait;
           isSetting = true;
         });
-        Timer(const Duration(seconds: 5), () {
-          if (!(_progress > 0)) {
+        Timer(const Duration(seconds: 10), () {
+          if (!(_progress > 0) && isSetting) {
             setState(() {
               _errorMessage = localizedStrings.update_firmware_reboot;
             });
@@ -254,7 +255,7 @@ class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
   void sendFormatToScale(String firmwarePathStr) {
     myScaleCmd.cmdMode = "update_firmware";
     myScaleCmd.cmdData = firmwarePathStr;
-    MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
+    PublicFunctions.sendMsg(defaultScaleId, jsonEncode(myScaleCmd));
     writelog(jsonEncode(myScaleCmd));
   }
 
@@ -263,7 +264,7 @@ class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         allowMultiple: false,
         type: FileType.custom,
-        allowedExtensions: ['srec'],
+        allowedExtensions: ['zip'],
       );
 
       if (result != null) {

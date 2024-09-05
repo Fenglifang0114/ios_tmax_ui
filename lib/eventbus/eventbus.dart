@@ -92,6 +92,21 @@ class EventRespUpdateLic {
   EventRespUpdateLic(this.obj);
 }
 
+class EventRespDelScale {
+  dynamic obj;
+  EventRespDelScale(this.obj);
+}
+
+class EventRespAddScale {
+  dynamic obj;
+  EventRespAddScale(this.obj);
+}
+
+class EventRespDetailInfo {
+  dynamic obj;
+  EventRespDetailInfo(this.obj);
+}
+
 class EventRecData {
   dynamic obj;
   EventRecData(this.obj);
@@ -357,6 +372,11 @@ class EventSetServerIPResp {
   EventSetServerIPResp(this.obj);
 }
 
+class EventUpdateFirmWareNetResp {
+  dynamic obj;
+  EventUpdateFirmWareNetResp(this.obj);
+}
+
 class EventBTResponse {
   dynamic obj;
   EventBTResponse(this.obj);
@@ -415,6 +435,26 @@ class EventGetWeightErr {
 class EventGetFactoryInfo {
   dynamic obj;
   EventGetFactoryInfo(this.obj);
+}
+
+class EventGetBasicData {
+  dynamic obj;
+  EventGetBasicData(this.obj);
+}
+
+class EventSetLimitToScale {
+  dynamic obj;
+  EventSetLimitToScale(this.obj);
+}
+
+class EventSwitchLimitFromScale {
+  dynamic obj;
+  EventSwitchLimitFromScale(this.obj);
+}
+
+class EventRevDetailTail {
+  dynamic obj;
+  EventRevDetailTail(this.obj);
 }
 
 class EventDeleteRec {
