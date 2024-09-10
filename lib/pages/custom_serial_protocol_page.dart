@@ -9,6 +9,7 @@ import '../data/downloadresponse.dart';
 import '../data/manager_scale_channel.dart';
 import '../data/custom_serial_protocol_text_dart.dart';
 import '../data/language.dart';
+import '../data/reqweightdata_data.dart';
 import '../data/scale_info_from_scale.dart';
 import '../data/screen_mgr.dart';
 import '../eventbus/eventbus.dart';
@@ -61,6 +62,8 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
   bool serialPreview = false;
   bool _isHexDisplay = false;
   bool _downloading = false;
+  bool _cntStop = false; //连续发送已经停止
+  bool sendStop = false; //连续发送已经停止
 
   TextEditingController myContentCtl =
       TextEditingController(text: mySerialProtocolText.content);
@@ -89,6 +92,8 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
   dynamic _eventbus4;
   dynamic _eventbus5;
   dynamic _eventbus6;
+  dynamic _eventbus7;
+  dynamic _eventbus8;
   final ScrollController _scrollController = ScrollController();
 
   bool isListEmpty() {
@@ -109,13 +114,13 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     super.initState();
     initOutputList();
     cntScaleTimerMgr.stopCntScaleTimer();
-    cntScaleTimerMgr.startCntScaleTimer(5);
+    // cntScaleTimerMgr.startCntScaleTimer(5);
     _eventbus1 = eventBus.on<EventSerialOutputResp>().listen((event) {
       if (mounted) {
         setState(() {
           _downloading = false;
           cntScaleTimerMgr.stopCntScaleTimer();
-          cntScaleTimerMgr.startCntScaleTimer(5);
+          // cntScaleTimerMgr.startCntScaleTimer(5);
           myRespDataFromScale = event.obj;
           if (myRespDataFromScale.msgBody.isNotEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -161,17 +166,17 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         myRespDataFromScale = event.obj;
         if (myRespDataFromScale.msgBody.contains('ok')) {
           cntScaleTimerMgr.stopCntScaleTimer();
-          cntScaleTimerMgr.startCntScaleTimer(5);
+          // cntScaleTimerMgr.startCntScaleTimer(5);
+          PublicFunctions.stopWeight(1);
+        } else if (!serialPreview) {
+          PublicFunctions.openScalePassth(1);
         }
-        PublicFunctions.stopWeight(defaultScaleId);
       }
     });
 
     _eventbus5 = eventBus.on<EventRegWeightResp>().listen((event) {
       if (mounted) {
         myRespDataFromScale = event.obj;
-
-        PublicFunctions.openScalePassth(defaultScaleId);
       }
     });
 
@@ -183,6 +188,36 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
             myScreenMgr.serialPortST = true;
           } else {
             myScreenMgr.serialPortST = false;
+          }
+        });
+      }
+    });
+
+    _eventbus7 = eventBus.on<EventReqWeightCountine>().listen((event) {
+      if (mounted) {
+        setState(() {
+          myReqWeightCountine = event.obj;
+          if (myReqWeightCountine.scaleId! == 1) {
+            if (!serialPreview) {
+              PublicFunctions.stopWeight(1);
+            } else {
+              PublicFunctions.openScalePassth(1);
+            }
+          }
+        });
+      }
+    });
+
+    _eventbus8 = eventBus.on<EventUnregWeightResp>().listen((event) {
+      if (mounted) {
+        myRespDataFromScale = event.obj;
+        setState(() {
+          if (myRespDataFromScale.msgBody.contains('ok')) {
+            print('ok');
+          } else {
+            if (!serialPreview) {
+              PublicFunctions.stopWeight(1);
+            }
           }
         });
       }
@@ -218,6 +253,8 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     _eventbus4.cancel();
     _eventbus5.cancel();
     _eventbus6.cancel();
+    _eventbus7.cancel();
+    _eventbus8.cancel();
     super.dispose();
   }
 
@@ -377,7 +414,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                                       await generateFileList();
                                       if (jsonFilesList.isNotEmpty) {
                                         PublicFunctions.sendOutputFmtToScale(
-                                            jsonFilesList, defaultScaleId);
+                                            jsonFilesList, 1);
                                       }
                                       setState(() {
                                         _downloading = true;
@@ -405,8 +442,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                                   serialPreview = false;
                                   outputData.clear();
                                 });
-                                PublicFunctions.closeScalePassth(
-                                    defaultScaleId);
+                                PublicFunctions.closeScalePassth(1);
                               },
                             ),
                           ],
@@ -525,8 +561,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                                                 });
                                                 PublicFunctions
                                                     .changeScalePassth(
-                                                        _isHexDisplay,
-                                                        defaultScaleId);
+                                                        _isHexDisplay, 1);
                                               },
                                               child: Text(
                                                 'HEX',
@@ -672,7 +707,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       _isHexDisplay = false;
       outputData.clear();
     });
-    PublicFunctions.getWeight(defaultScaleId);
+    PublicFunctions.getWeight(1);
   }
 
   String getTitleName(int pageId) {
@@ -1927,16 +1962,21 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
   }
 
   Future<bool> readJsonFile(String filePath) async {
-    try {
-      final file = File(filePath);
-      final contents = await file.readAsString();
-      var jsondata = json.decode(contents);
-      if (jsondata.toString().isNotEmpty) {
-        return true;
+    final file = File(filePath);
+    if (await file.exists()) {
+      try {
+        final contents = await file.readAsString();
+        var jsondata = json.decode(contents);
+        if (jsondata.toString().isNotEmpty) {
+          return true;
+        }
+        return false;
+      } catch (e) {
+        print("Error reading file: $e");
+        return false;
       }
-      return false;
-    } catch (e) {
-      print("Error reading file: $e");
+    } else {
+      print("File does not exist");
       return false;
     }
   }

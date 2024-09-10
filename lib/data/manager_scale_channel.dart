@@ -6,6 +6,7 @@ String defaultScaleModel = "TMax";
 String defaultScaleSn = "Sn";
 String defscaleMedia = "";
 String defScaleInfo = "";
+String defaultScaleName = "";
 List<int> webChannelList = [];
 String ipAddress = "127.0.0.1";
 int webPort = 7878;

@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../data/downloadresponse.dart';
-import '../data/manager_scale_channel.dart';
 import 'package:t_max/data/respdata_data.dart';
 import 'package:t_max/data/scalecmd_data.dart';
 import 'package:t_max/data/wifi_ap_info.dart';

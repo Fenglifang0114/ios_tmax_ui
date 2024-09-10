@@ -95,7 +95,12 @@ class PublicFunctions {
     myScaleCmd.cmdMode = "add_scale";
     myScaleCmd.cmdData = addString;
     sendMsgChan0(jsonEncode(myScaleCmd));
-    writelog(jsonEncode(myScaleCmd));
+  }
+
+  static void sendModifyScaleName(String scaleName) {
+    myScaleCmd.cmdMode = "modify_scale_name";
+    myScaleCmd.cmdData = scaleName;
+    sendMsgChan0(jsonEncode(myScaleCmd));
   }
 
   static void sendDelScale(String delString) {
@@ -371,26 +376,32 @@ class PublicFunctions {
   }
 
   static void openScalePassth(int scaleId) {
-    myScaleCmd.cmdMode = "open_scale_passthrough";
-    myScaleCmd.cmdData = 'string';
-    sendMsg(scaleId, jsonEncode(myScaleCmd));
+    if (scaleId == 1) {
+      myScaleCmd.cmdMode = "open_scale_passthrough";
+      myScaleCmd.cmdData = 'string';
+      sendMsg(scaleId, jsonEncode(myScaleCmd));
+    }
   }
 
   static void changeScalePassth(bool isHex, int scaleId) {
-    myScaleCmd.cmdMode = "change_scale_passth_mode";
-    if (isHex) {
-      myScaleCmd.cmdData = 'hex';
-    } else {
-      myScaleCmd.cmdData = 'string';
-    }
+    if (scaleId == 1) {
+      myScaleCmd.cmdMode = "change_scale_passth_mode";
+      if (isHex) {
+        myScaleCmd.cmdData = 'hex';
+      } else {
+        myScaleCmd.cmdData = 'string';
+      }
 
-    sendMsg(scaleId, jsonEncode(myScaleCmd));
+      sendMsg(scaleId, jsonEncode(myScaleCmd));
+    }
   }
 
   static void closeScalePassth(int scaleId) {
-    myScaleCmd.cmdMode = "close_scale_passthrough";
-    myScaleCmd.cmdData = '';
-    sendMsg(scaleId, jsonEncode(myScaleCmd));
+    if (scaleId == 1) {
+      myScaleCmd.cmdMode = "close_scale_passthrough";
+      myScaleCmd.cmdData = '';
+      sendMsg(scaleId, jsonEncode(myScaleCmd));
+    }
   }
 
   static void getFactoryInfo(int scaleId) {

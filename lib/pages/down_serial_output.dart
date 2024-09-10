@@ -37,13 +37,13 @@ class _DownReciptPageState extends State<DownSerialOutputPage> {
     folderCtl.text = '';
 
     cntScaleTimerMgr.stopCntScaleTimer();
-    cntScaleTimerMgr.startCntScaleTimer(5);
+    // cntScaleTimerMgr.startCntScaleTimer(5);
     _eventbus1 = eventBus.on<EventSerialOutputResp>().listen((event) {
       if (mounted) {
         setState(() {
           isDownloadClicked = false;
-          cntScaleTimerMgr.stopCntScaleTimer();
-          cntScaleTimerMgr.startCntScaleTimer(5);
+          // cntScaleTimerMgr.stopCntScaleTimer();
+          // cntScaleTimerMgr.startCntScaleTimer(5);
           myRespDataFromScale = event.obj;
           if (myRespDataFromScale.msgBody.isNotEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -85,6 +85,32 @@ class _DownReciptPageState extends State<DownSerialOutputPage> {
     folderCtl.dispose();
     _stopTimer();
     super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // final width = MediaQuery.of(context).size.width;
+    // final _height = MediaQuery.of(context).size.height;
+
+    return Scaffold(
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(50),
+          child: Container(
+            child: pageHeadDefScale(
+              context,
+              localizedStrings.serial_output_download,
+            ),
+          ),
+        ),
+        body: Container(
+          color: Theme.of(context).colorScheme.surfaceTint,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: [
+              _buildMainContent(),
+            ],
+          ),
+        ));
   }
 
   Widget _buildMainContent() {
@@ -278,7 +304,7 @@ class _DownReciptPageState extends State<DownSerialOutputPage> {
           PublicFunctions.sendOutputFmtToScale(jsonFilesList, defaultScaleId);
           setState(() {
             isDownloadClicked = true;
-            cntScaleTimerMgr.stopCntScaleTimer();
+            // cntScaleTimerMgr.stopCntScaleTimer();
           });
           _startTimer(30);
         }
@@ -327,31 +353,5 @@ class _DownReciptPageState extends State<DownSerialOutputPage> {
   Future<String?> pickFolder() async {
     final folderPath = await FilePicker.platform.getDirectoryPath();
     return folderPath;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // final width = MediaQuery.of(context).size.width;
-    // final _height = MediaQuery.of(context).size.height;
-
-    return Scaffold(
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(50),
-          child: Container(
-            child: pageHeadDefScale(
-              context,
-              localizedStrings.receipt_format_download,
-            ),
-          ),
-        ),
-        body: Container(
-          color: Theme.of(context).colorScheme.surfaceTint,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: [
-              _buildMainContent(),
-            ],
-          ),
-        ));
   }
 }

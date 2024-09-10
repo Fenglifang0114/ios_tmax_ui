@@ -22,6 +22,7 @@ class ScaleDataInfo {
   int? tMedia;
   MediaInfo? mediaInfo;
   bool? isDefault;
+  String? scaleName;
 
   ScaleDataInfo(
       {this.isOnline,
@@ -31,7 +32,8 @@ class ScaleDataInfo {
       this.tMedia,
       this.mediaInfo,
       this.scaleCat,
-      this.isDefault});
+      this.isDefault,
+      this.scaleName});
 
   factory ScaleDataInfo.fromJson(Map<String, dynamic> json) {
     return ScaleDataInfo(
@@ -45,6 +47,7 @@ class ScaleDataInfo {
           : null,
       scaleCat: json['ScaleCat'],
       isDefault: json['IsDefault'],
+      scaleName: json['ScaleName'],
     );
   }
 }

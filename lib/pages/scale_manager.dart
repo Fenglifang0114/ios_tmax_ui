@@ -26,17 +26,20 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
   List<NetScaleInfoLocal> scaleNetItems = [];
   List<int> wifiRssiList = [];
   List<String> bssidList = [];
-  TextEditingController scaleModelCtl = TextEditingController();
-  TextEditingController snCtl = TextEditingController();
-  TextEditingController portCtl = TextEditingController();
-  TextEditingController ipCtl = TextEditingController();
-  TextEditingController gateWayController = TextEditingController();
+  TextEditingController scaleModelCtl = TextEditingController(text: '');
+  TextEditingController scaleNameCtl = TextEditingController(text: '');
+  TextEditingController snCtl = TextEditingController(text: '');
+  TextEditingController portCtl = TextEditingController(text: '');
+  TextEditingController ipCtl = TextEditingController(text: '');
+  TextEditingController gateWayController = TextEditingController(text: '');
   // TextEditingController dnsController = TextEditingController();
-  final TextEditingController _findWifiText = TextEditingController();
+  final TextEditingController _findWifiText = TextEditingController(text: '');
   int selScaleId = -1;
   bool passwordLock = true;
   bool isAddScale = false;
   bool isTesting = false;
+  bool isEditScale = false;
+  bool _isValidIP = false;
 
   bool isDel = false; //是否执行删除
   NetScaleInfoLocal defNetScaleInfo = NetScaleInfoLocal();
@@ -70,7 +73,7 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
     super.initState();
 
     scaleNetItems = myNetScaleList;
-    scaleModelCtl.text = "";
+
     selScaleId = defaultScaleId;
     if (myNetScaleList.isNotEmpty) {
       defNetScaleInfo =
@@ -81,6 +84,7 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
       snCtl.text = defNetScaleInfo.scaleSn!;
       ipCtl.text = defNetScaleInfo.ip!;
       portCtl.text = defNetScaleInfo.port!.toString();
+      scaleNameCtl.text = defNetScaleInfo.scaleName!;
     }
 
     _eventbus1 = eventBus.on<EventRespDelScale>().listen((event) {
@@ -300,6 +304,10 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
                 const SizedBox(
                   height: 50,
                 ),
+                // showScaleName(),
+                // const SizedBox(
+                //   height: 20,
+                // ),
                 showModelName(),
                 const SizedBox(
                   height: 20,
@@ -326,8 +334,22 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
     );
   }
 
+  bool validateIpFlag(String value) {
+    bool isValid = false;
+
+    setState(() {
+      if (value != '') {
+        isValid = ipRegex.hasMatch(value);
+        isValid = _isValidIpAddress(isValid, value);
+      } else {
+        isValid = true;
+      }
+    });
+    return isValid;
+  }
+
   Widget showConfirmRow() {
-    return isAddScale
+    return isAddScale || isEditScale
         ? Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -336,9 +358,19 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
                 btnHeight: 40,
                 icon: Icons.arrow_forward_ios,
                 text: localizedStrings.button_ok,
-                onPressed: (ipCtl.text.isNotEmpty && portCtl.text.isNotEmpty)
+                onPressed: (isAddScale &&
+                            ipCtl.text.isNotEmpty &&
+                            portCtl.text.isNotEmpty &&
+                            _isValidIP) ||
+                        (isEditScale &&
+                            scaleNameCtl.text.isNotEmpty &&
+                            isValidScaleName(scaleNameCtl.text))
                     ? () {
-                        addScale();
+                        if (isAddScale) {
+                          addScale();
+                        } else if (isEditScale) {
+                          modifyScaleName();
+                        }
                       }
                     : null,
               ),
@@ -444,7 +476,9 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
               ),
             ),
             onChanged: (value) {
-              setState(() {});
+              setState(() {
+                _isValidIP = validateIpFlag(value);
+              });
             },
           ),
         )
@@ -555,19 +589,68 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
           );
   }
 
+  Widget showScaleName() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const SizedBox(
+          height: 40,
+          width: 200,
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              "ScaleName:",
+              textAlign: TextAlign.right,
+              style: TextStyle(
+                fontSize: 20,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(
+          width: 20,
+        ),
+        SizedBox(
+          width: 300,
+          height: 40,
+          child: TextField(
+            enabled: (isEditScale || isAddScale) ? true : false,
+            style: const TextStyle(
+              overflow: TextOverflow.ellipsis,
+            ),
+            controller: scaleNameCtl,
+            onChanged: (value) {},
+            maxLines: 1,
+            inputFormatters: [
+              LengthLimitingTextInputFormatter(30),
+            ],
+            textAlign: TextAlign.start,
+            textAlignVertical: TextAlignVertical.center,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(4)),
+              ),
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
   Widget buttonRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         CustomOutlinedButton(
-          btnWidth: 120,
+          btnWidth: 60,
           btnHeight: 40,
           icon: Icons.add_circle_outline,
-          text: 'Add Scale',
+          text: 'Add',
           onPressed: isTesting
               ? null
               : () {
                   setState(() {
+                    isEditScale = false;
                     isAddScale = true;
                   });
                 },
@@ -576,10 +659,10 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
           width: 20,
         ),
         CustomOutlinedButton(
-          btnWidth: 120,
+          btnWidth: 80,
           btnHeight: 40,
           icon: Icons.delete_outline,
-          text: 'Delete Scale',
+          text: 'Delete',
           onPressed: (isAddScale || isTesting) ||
                   (selScaleId == defaultScaleId) ||
                   selScaleId == 1
@@ -594,6 +677,23 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
         const SizedBox(
           width: 20,
         ),
+        // CustomOutlinedButton(
+        //   btnWidth: 80,
+        //   btnHeight: 40,
+        //   icon: Icons.edit,
+        //   text: 'Edit',
+        //   onPressed: (isAddScale || isTesting) || selScaleId == 1
+        //       ? null
+        //       : () {
+        //           setState(() {
+        //             isEditScale = true;
+        //             isAddScale = false;
+        //           });
+        //         },
+        // ),
+        // const SizedBox(
+        //   width: 20,
+        // ),
         CustomOutlinedButton(
           btnWidth: 120,
           btnHeight: 40,
@@ -651,10 +751,35 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
     String netInfoStr = jsonEncode(myNetInfo);
     myMediaConf.mediaInfoJson = netInfoStr;
     myMediaConf.type = 1;
-    myModifyScale.scaleId = 10;
-    myModifyScale.scaleModel = 'TMax';
-    myModifyScale.mediaConf = myMediaConf;
-    PublicFunctions.sendAddScale(jsonEncode(myModifyScale));
+    myAddNetScale.scaleId = 10;
+    myAddNetScale.scaleModel = 'TMax';
+    myAddNetScale.mediaConf = myMediaConf;
+    PublicFunctions.sendAddScale(jsonEncode(myAddNetScale));
+  }
+
+  bool isValidScaleName(String name) {
+    if (scaleNameCtl.text == "ComScale") {
+      return false;
+    }
+    for (NetScaleInfoLocal scaleInfo in myNetScaleList) {
+      if (scaleInfo.scaleName == scaleNameCtl.text) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  void modifyScaleName() {
+    myNetInfo.ip = ipCtl.text;
+    myNetInfo.port = int.tryParse(portCtl.text)!;
+    String netInfoStr = jsonEncode(myNetInfo);
+    myMediaConf.mediaInfoJson = netInfoStr;
+    myMediaConf.type = 1;
+    myModifyNetScale.scaleId = 10;
+    myModifyNetScale.scaleModel = 'TMax';
+    myModifyNetScale.scaleName = scaleModelCtl.text;
+    myModifyNetScale.mediaConf = myMediaConf;
+    PublicFunctions.sendAddScale(jsonEncode(myModifyNetScale));
   }
 
   void delScale() {
@@ -684,7 +809,7 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
           SizedBox(
               width: 150,
               child: Text(
-                'SN:' + myComScaleInfo.scaleSn!,
+                'SN:' + myComScaleInfo.scaleSn,
                 maxLines: 1, // 设置文本最大行数为1
                 style: const TextStyle(
                   overflow: TextOverflow.ellipsis,
@@ -827,6 +952,7 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
                         snCtl.text = scaleNetItems[index].scaleSn!;
                         ipCtl.text = scaleNetItems[index].ip!;
                         portCtl.text = scaleNetItems[index].port!.toString();
+                        scaleNameCtl.text = scaleNetItems[index].scaleName!;
 
                         print(selScaleId.toString());
 
@@ -877,19 +1003,5 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
     myScaleCmd.cmdData = jsonEncode(myStaticIpInfo).toString();
     PublicFunctions.sendMsg(defaultScaleId, jsonEncode(myScaleCmd));
     writelog(jsonEncode(myScaleCmd));
-  }
-
-  bool validateIpFlag(String value) {
-    bool isValid = false;
-
-    setState(() {
-      if (value != '') {
-        isValid = ipRegex.hasMatch(value);
-        isValid = _isValidIpAddress(isValid, value);
-      } else {
-        isValid = true;
-      }
-    });
-    return isValid;
   }
 }

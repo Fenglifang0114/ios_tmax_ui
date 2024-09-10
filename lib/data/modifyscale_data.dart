@@ -1,11 +1,11 @@
-class ModifyScale {
+class AddNetScale {
   int? scaleId;
   String? scaleModel;
   MediaConf? mediaConf;
 
-  ModifyScale({this.scaleId, this.scaleModel, this.mediaConf});
+  AddNetScale({this.scaleId, this.scaleModel, this.mediaConf});
 
-  ModifyScale.fromJson(Map<String, dynamic> json) {
+  AddNetScale.fromJson(Map<String, dynamic> json) {
     scaleId = json['ScaleId'];
     scaleModel = json['ScaleModel'];
     mediaConf = json['MediaConf'];
@@ -20,7 +20,8 @@ class ModifyScale {
   }
 }
 
-ModifyScale myModifyScale = ModifyScale(scaleModel: 'TMax');
+AddNetScale myAddNetScale = AddNetScale(scaleModel: 'TMax');
+AddNetScale myModifyScale = AddNetScale(scaleModel: 'TMax');
 
 class MediaConf {
   int? type;
@@ -42,3 +43,31 @@ class MediaConf {
 }
 
 MediaConf myMediaConf = MediaConf();
+
+class ModifyNetScale {
+  int? scaleId;
+  String? scaleModel;
+  String? scaleName;
+  MediaConf? mediaConf;
+
+  ModifyNetScale(
+      {this.scaleId, this.scaleModel, this.scaleName, this.mediaConf});
+
+  ModifyNetScale.fromJson(Map<String, dynamic> json) {
+    scaleId = json['ScaleId'];
+    scaleModel = json['ScaleModel'];
+    scaleName = json['ScaleName'];
+    mediaConf = json['MediaConf'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['ScaleId'] = scaleId;
+    data['ScaleModel'] = scaleModel;
+    data['ScaleName'] = scaleName;
+    data['MediaConf'] = mediaConf;
+    return data;
+  }
+}
+
+ModifyNetScale myModifyNetScale = ModifyNetScale(scaleModel: 'TMax');

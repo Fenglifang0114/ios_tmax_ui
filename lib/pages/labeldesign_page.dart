@@ -151,6 +151,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
 
   final List<String> _printers = [
     'EPM205',
+    'ZEBRA',
   ];
   final List<String> _printDirections = [
     'Forward',
@@ -1210,7 +1211,23 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   }
 
   double _getPageWidth() {
-    if (pageWidth.text.isNotEmpty) {
+    if (pageWidth.text.isEmpty) {
+      return 0;
+    }
+
+    if (_sltPrtName == "EPM205") {
+      double? d = double.tryParse(pageWidth.text);
+      if (d != null) {
+        myPageWidth = d * 8;
+        if (myPageWidth > 1600) {
+          myPageWidth = 1600;
+          pageWidth.text = '200';
+        }
+        x2Pos = myPageWidth.toInt();
+        return myPageWidth;
+      }
+      return 0;
+    } else if (_sltPrtName == "ZEBRA") {
       double? d = double.tryParse(pageWidth.text);
       if (d != null) {
         myPageWidth = d * 8;
@@ -1228,7 +1245,22 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   }
 
   double _getPageHeight() {
-    if (pageHeight.text.isNotEmpty) {
+    if (pageHeight.text.isEmpty) {
+      return 0;
+    }
+
+    if (_sltPrtName == "EPM205") {
+      double? d = double.tryParse(pageHeight.text);
+      if (d != null) {
+        myPageHeight = d * 8;
+        if (myPageHeight > 1600) {
+          myPageHeight = 1600;
+          pageHeight.text = '200';
+        }
+        return myPageHeight;
+      }
+      return 0;
+    } else if (_sltPrtName == "ZEBRA") {
       double? d = double.tryParse(pageHeight.text);
       if (d != null) {
         myPageHeight = d * 8;
@@ -1545,6 +1577,12 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           String num2 = sizes[1];
           pageWidth.text = num1;
           pageHeight.text = num2;
+        }
+
+        bool hasPrint =
+            _printers.any((element) => element == fromatContent.printer);
+        if (hasPrint) {
+          _sltPrtName = fromatContent.printer.toString();
         }
 
         if (_printDirections.contains(fromatContent.rotation)) {

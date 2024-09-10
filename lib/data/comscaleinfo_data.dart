@@ -12,6 +12,7 @@ class ComScaleInfo {
   String scaleModel;
   String scaleSn;
   bool isDefault;
+  String scaleName;
 
   ComScaleInfo(
       this.scaleId,
@@ -24,11 +25,12 @@ class ComScaleInfo {
       this.stopBits,
       this.scaleModel,
       this.scaleSn,
-      this.isDefault);
+      this.isDefault,
+      this.scaleName);
 }
 
 ComScaleInfo myComScaleInfo =
-    ComScaleInfo(1, 1, true, "", 1, 1, 1, 1, "", "", false);
+    ComScaleInfo(1, 1, true, "", 1, 1, 1, 1, "", "", false, "");
 
 class Comportdata {
   String modelName;
@@ -136,14 +138,14 @@ class NetScaleListMgr {
     var existingScale = myNetScaleList
         .firstWhere((scale) => scale.scaleId == netScale.scaleId, orElse: () {
       NetScaleInfoLocal newScale = NetScaleInfoLocal(
-        isOnline: false,
-        scaleModel: "",
-        scaleCat: 0,
-        scaleSn: "",
-        scaleId: -1,
-        ip: "",
-        port: 0,
-      );
+          isOnline: false,
+          scaleModel: "",
+          scaleCat: 0,
+          scaleSn: "",
+          scaleId: -1,
+          ip: "",
+          port: 0,
+          scaleName: "");
       return newScale;
     });
     if (existingScale.scaleId == -1) {
@@ -161,14 +163,14 @@ class NetScaleListMgr {
     var existingScale = myNetScaleList
         .firstWhere((scale) => scale.scaleId == netScale.scaleId, orElse: () {
       NetScaleInfoLocal newScale = NetScaleInfoLocal(
-        isOnline: false,
-        scaleModel: "",
-        scaleCat: 0,
-        scaleSn: "",
-        scaleId: -1,
-        ip: "",
-        port: 0,
-      );
+          isOnline: false,
+          scaleModel: "",
+          scaleCat: 0,
+          scaleSn: "",
+          scaleId: -1,
+          ip: "",
+          port: 0,
+          scaleName: "");
       return newScale;
     });
     if (existingScale.scaleId != -1) {
@@ -198,6 +200,7 @@ class NetScaleInfoLocal {
   bool? isDefault;
   String? ip;
   int? port;
+  String? scaleName;
 
   NetScaleInfoLocal({
     this.isOnline,
@@ -209,6 +212,7 @@ class NetScaleInfoLocal {
     this.isDefault,
     this.ip,
     this.port,
+    this.scaleName,
   });
 }
 

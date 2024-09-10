@@ -491,15 +491,15 @@ class SelectScalesPageState extends State<SelectScalesPage> {
   }
 
   bool checkSelect() {
-    if (checkboxStates.isEmpty) {
-      return false;
-    }
     scaleResMap.clear();
     if (isSelectCom) {
       int id = comScale.scaleId;
       Map<int, String> newMap = {id: ""};
       scaleResMap.add(newMap);
       return true;
+    }
+    if (checkboxStates.isEmpty) {
+      return false;
     }
     for (int i = 0; i < checkboxStates.length; i++) {
       if (checkboxStates[i]) {

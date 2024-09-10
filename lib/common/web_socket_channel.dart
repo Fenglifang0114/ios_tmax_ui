@@ -125,6 +125,7 @@ class WebSocketChannel {
     myComScaleInfo.tMedia = scaleInfo.tMedia!;
     myComScaleInfo.scaleSn = scaleInfo.scaleSn!;
     myComScaleInfo.isDefault = scaleInfo.isDefault!;
+    myComScaleInfo.scaleName = scaleInfo.scaleName!;
 
     myComScaleInfo.portName = myCurrentPort.devPath!;
     myComScaleInfo.baudRate = myCurrentPort.baud!;
@@ -152,12 +153,14 @@ class WebSocketChannel {
     newNetScale.scaleCat = scaleInfo.scaleCat!;
     newNetScale.ip = netInfo.ip;
     newNetScale.port = netInfo.port;
+    newNetScale.scaleName = scaleInfo.scaleName!;
     NetScaleListMgr.addScale(myNetScaleList, newNetScale);
     String url = GetUrl.getUrl(scaleInfo.scaleId!);
     manager.connect(scaleInfo.scaleId!, url);
     if (defaultScaleId == scaleInfo.scaleId!) {
       defaultScaleModel = scaleInfo.scaleModel!;
       defaultScaleSn = scaleInfo.scaleSn!;
+      defaultScaleName = scaleInfo.scaleName!;
       defscaleMedia = newNetScale.ip! + ":" + newNetScale.port!.toString();
     }
   }

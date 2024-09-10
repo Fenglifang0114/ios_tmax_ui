@@ -232,11 +232,13 @@ class _TransactionReportPageState extends State<TransactionReportPage> {
         subtitle: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
+            // buildDetailText(
+            //     'Time：${DateFormat('yyyy-MM-dd HH:mm:ss').format(tran.total.createdAt)}'),
             buildDetailText(
-                'Time：${DateFormat('yyyy-MM-dd HH:mm:ss').format(tran.total.createdAt)}'),
+                'Time：${convertDateTime(tran.total.createdAt.toString())}'),
             buildDetailText('Total Amount：${tran.total.totalPrice.toString()}'),
             buildDetailText('Pay Amount：${tran.total.payPrice.toString()}'),
-            buildDetailText('Plu Count：${tran.total.totalCount.toString()}'),
+            buildDetailText('ACC Count：${tran.total.totalCount.toString()}'),
             buildDetailText('Tax Type：${tran.total.taxKind.toString()}'),
           ],
         ),
@@ -250,6 +252,15 @@ class _TransactionReportPageState extends State<TransactionReportPage> {
         ),
       ),
     );
+  }
+
+  String convertDateTime(String timestr) {
+    DateTime originalTime = DateTime.parse(timestr);
+
+    DateTime localTime = originalTime.toLocal();
+    var formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
+    String formattedTime = formatter.format(localTime);
+    return formattedTime;
   }
 
   Widget buildText(String text) {
@@ -271,7 +282,7 @@ class _TransactionReportPageState extends State<TransactionReportPage> {
       'Plu Count',
       'Total Amount',
       'Pay Amount',
-      'PLU Index',
+      'Index',
       'PLU Number',
       'PLU Name',
       'Weight',
@@ -292,7 +303,8 @@ class _TransactionReportPageState extends State<TransactionReportPage> {
         transaction.total.scaleModel.toString(),
         transaction.total.scaleSn.toString(),
         transaction.total.settleAccountTimes.toString(),
-        DateFormat('yyyy-MM-dd HH:mm:ss').format(transaction.total.createdAt),
+        convertDateTime(transaction.total.createdAt.toString()),
+        // DateFormat('yyyy-MM-dd HH:mm:ss').format(transaction.total.createdAt),
         transaction.total.taxKind.toString(),
         transaction.total.totalCount.toString(),
         transaction.total.totalPrice.toString(),
@@ -383,56 +395,3 @@ class TransactionWithExpansion extends DetailInfoRev {
     this.isExpanded = false,
   });
 }
-
-// class TransactionWithExpansion extends Transaction {
-//   bool isExpanded;
-//   TransactionWithExpansion({
-//     required super.modelName,
-//     required super.sn,
-//     required super.transactionId,
-//     required super.transactionTime,
-//     required super.totalAmount,
-//     required super.productCount,
-//     required super.tax,
-//     required super.details,
-//     this.isExpanded = false,
-//   });
-// }
-
-// class Transaction {
-//   final String modelName;
-//   final String sn;
-//   final String transactionId;
-//   final DateTime transactionTime;
-//   final double totalAmount;
-//   final int productCount;
-//   final double tax;
-//   final List<Detail> details;
-
-//   Transaction({
-//     required this.modelName,
-//     required this.sn,
-//     required this.transactionId,
-//     required this.transactionTime,
-//     required this.totalAmount,
-//     required this.productCount,
-//     required this.tax,
-//     required this.details,
-//   });
-// }
-
-// class TransactionDetail {
-//   final String plu;
-//   final String productName;
-//   final double weight;
-//   final double unitPrice;
-//   final double amount;
-
-//   TransactionDetail({
-//     required this.plu,
-//     required this.productName,
-//     required this.weight,
-//     required this.unitPrice,
-//     required this.amount,
-//   });
-// }

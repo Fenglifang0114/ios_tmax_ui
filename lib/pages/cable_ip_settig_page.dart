@@ -146,6 +146,7 @@ class CableIpSettingPageState extends State<CableIpSettingPage> {
                           (value) {
                             setState(() {
                               _isValidServerIp = validateIpFlag(value);
+                              _isValidIP = validateIpFlag(value);
                             });
                           },
                           serverIpCtl,

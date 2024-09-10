@@ -30,6 +30,7 @@ import 'check_weighers_page.dart';
 import 'firmware_down_wifi.dart';
 import 'modify_com_port_page.dart';
 import 'product_download_page.dart';
+import 'production_line_page.dart';
 import 'scale_manager.dart';
 import 'take_in_page.dart';
 import 'take_out_page.dart';
@@ -625,7 +626,12 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                             setState(() {
                               stopCheckSerialPort();
                               setState(() {
-                                showProductLinePageDialog();
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const ProductionLinePage()),
+                                );
                               });
                             });
                           },
@@ -770,16 +776,6 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
       barrierDismissible: false, // 允许点击空白处关闭对话框
       builder: (context) {
         return const SltFourScalesPage(mode: weightingMode);
-      },
-    );
-  }
-
-  void showProductLinePageDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false, // 允许点击空白处关闭对话框
-      builder: (context) {
-        return const SltFourScalesPage(mode: checkWeightingMode);
       },
     );
   }
