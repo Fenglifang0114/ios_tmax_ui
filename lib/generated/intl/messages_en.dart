@@ -286,6 +286,9 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("The third page header."),
         "p_header3_var": MessageLookupByLibrary.simpleMessage("Header3"),
         "p_line_title": MessageLookupByLibrary.simpleMessage("Dividing Line"),
+        "p_model_name_expl":
+            MessageLookupByLibrary.simpleMessage("Scale Model Name."),
+        "p_model_name_var": MessageLookupByLibrary.simpleMessage("Model Name"),
         "p_no_expl":
             MessageLookupByLibrary.simpleMessage("Sequence number value."),
         "p_no_var": MessageLookupByLibrary.simpleMessage("NO."),
@@ -312,6 +315,13 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Price Unit."),
         "p_price_unit_var": MessageLookupByLibrary.simpleMessage("Price Unit"),
         "p_price_var": MessageLookupByLibrary.simpleMessage("Price"),
+        "p_scale_name_expl":
+            MessageLookupByLibrary.simpleMessage("Scale Name."),
+        "p_scale_name_var": MessageLookupByLibrary.simpleMessage("Scale Name"),
+        "p_settle_account_times_expl":
+            MessageLookupByLibrary.simpleMessage("Settle Account Times."),
+        "p_settle_account_times_var":
+            MessageLookupByLibrary.simpleMessage("Settle Account Times."),
         "p_subtotal_expl": MessageLookupByLibrary.simpleMessage("Subtotal."),
         "p_subtotal_var": MessageLookupByLibrary.simpleMessage("Subtotal"),
         "p_tare_expl": MessageLookupByLibrary.simpleMessage("Tare value."),
@@ -335,8 +345,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "p_tax_base3_expl": MessageLookupByLibrary.simpleMessage("Tax Base 3."),
         "p_tax_base3_var": MessageLookupByLibrary.simpleMessage("Tax Base3"),
         "p_tax_model_expl": MessageLookupByLibrary.simpleMessage(
-            "Tax Model,tax included or  tax external."),
+            "Tax Model,tax included or tax external."),
         "p_tax_model_var": MessageLookupByLibrary.simpleMessage("Tax Model"),
+        "p_tax_name_expl": MessageLookupByLibrary.simpleMessage("Tax Name."),
+        "p_tax_name_var": MessageLookupByLibrary.simpleMessage("Tax Name."),
         "p_tax_type1_expl": MessageLookupByLibrary.simpleMessage("Tax Type 1."),
         "p_tax_type1_var": MessageLookupByLibrary.simpleMessage("Tax Type1"),
         "p_tax_type2_expl": MessageLookupByLibrary.simpleMessage("Tax Type 2."),
@@ -389,7 +401,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("PLU Download"),
         "plu_edit": MessageLookupByLibrary.simpleMessage("PLU Edit"),
         "plu_error_message": MessageLookupByLibrary.simpleMessage(
-            "PLU pretare cannot be empty ."),
+            "PLU pretare cannot be empty."),
         "plu_error_message1": MessageLookupByLibrary.simpleMessage(
             "PLU ID or PLU name cannot be empty."),
         "plu_error_message2": MessageLookupByLibrary.simpleMessage(
@@ -408,7 +420,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "product_information":
             MessageLookupByLibrary.simpleMessage("Product Information"),
         "qrcode_edit": MessageLookupByLibrary.simpleMessage("Qrcode Edit"),
-        "re_detail_report_title":
+        "rDetailRptTitle":
             MessageLookupByLibrary.simpleMessage("Retail Detail Report"),
         "receipt_design_title":
             MessageLookupByLibrary.simpleMessage("Receipt Design"),
@@ -431,6 +443,17 @@ class MessageLookup extends MessageLookupByLibrary {
         "save_csv": MessageLookupByLibrary.simpleMessage("Save as CSV"),
         "save_file": MessageLookupByLibrary.simpleMessage("Save File (json)"),
         "save_mode": MessageLookupByLibrary.simpleMessage("Save Mode:"),
+        "scale_mgr_btn_add": MessageLookupByLibrary.simpleMessage("Add"),
+        "scale_mgr_btn_def":
+            MessageLookupByLibrary.simpleMessage("Set Default"),
+        "scale_mgr_btn_dlt": MessageLookupByLibrary.simpleMessage("Delete"),
+        "scale_mgr_btn_rename": MessageLookupByLibrary.simpleMessage("Rename"),
+        "scale_mgr_btn_test":
+            MessageLookupByLibrary.simpleMessage("Test Connect"),
+        "scale_mgr_scale_model":
+            MessageLookupByLibrary.simpleMessage("Scale Model:"),
+        "scale_mgr_scale_name":
+            MessageLookupByLibrary.simpleMessage("Scale Name"),
         "scale_model": MessageLookupByLibrary.simpleMessage("Scale Model:"),
         "scale_name": MessageLookupByLibrary.simpleMessage("Scale Name:"),
         "scale_sn": MessageLookupByLibrary.simpleMessage("SN#:"),

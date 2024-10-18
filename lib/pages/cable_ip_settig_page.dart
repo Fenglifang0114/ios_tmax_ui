@@ -9,7 +9,7 @@ import '../widget/page_head.dart';
 import '../widget/wifitextfeild.dart';
 
 class CableIpSettingPage extends StatefulWidget {
-  const CableIpSettingPage({Key? key}) : super(key: key);
+  const CableIpSettingPage({super.key});
 
   @override
   State<CableIpSettingPage> createState() => CableIpSettingPageState();
@@ -27,7 +27,7 @@ class CableIpSettingPageState extends State<CableIpSettingPage> {
   bool _isValidMask = true;
   bool _isValidServerIp = true;
   bool _isValidGateway = true;
-  bool _isStatic = true;
+  final bool _isStatic = true;
 
   RegExp ipaddressRegex = RegExp(r'[0-9.]');
   RegExp ipRegex = RegExp(
@@ -206,29 +206,29 @@ class CableIpSettingPageState extends State<CableIpSettingPage> {
   }
 
 // 按钮部分
-  Widget _buildButtonSection() {
-    return SizedBox(
-      width: 120,
-      height: 50,
-      child: ElevatedButton(
-        style: ButtonStyle(
-          shape: MaterialStateProperty.all(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(4),
-            ),
-          ),
-        ),
-        onPressed: (!isDownloadClicked) && (downloadFlag())
-            ? () {
-                _showConfirmationDialog(context);
-              }
-            : null,
-        child: Text(
-          localizedStrings.download,
-        ),
-      ),
-    );
-  }
+  // Widget _buildButtonSection() {
+  //   return SizedBox(
+  //     width: 120,
+  //     height: 50,
+  //     child: ElevatedButton(
+  //       style: ButtonStyle(
+  //         shape: MaterialStateProperty.all(
+  //           RoundedRectangleBorder(
+  //             borderRadius: BorderRadius.circular(4),
+  //           ),
+  //         ),
+  //       ),
+  //       onPressed: (!isDownloadClicked) && (downloadFlag())
+  //           ? () {
+  //               _showConfirmationDialog(context);
+  //             }
+  //           : null,
+  //       child: Text(
+  //         localizedStrings.download,
+  //       ),
+  //     ),
+  //   );
+  // }
 
   bool downloadFlag() {
     bool flag = false;

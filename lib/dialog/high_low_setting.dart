@@ -8,10 +8,10 @@ import '../data/language.dart';
 class HighLowSettingDialog extends StatefulWidget {
   const HighLowSettingDialog({super.key});
   @override
-  _HighLowSettingDialogState createState() => _HighLowSettingDialogState();
+  HighLowSettingDialogState createState() => HighLowSettingDialogState();
 }
 
-class _HighLowSettingDialogState extends State<HighLowSettingDialog> {
+class HighLowSettingDialogState extends State<HighLowSettingDialog> {
   TextEditingController maxValueController = TextEditingController();
   TextEditingController minValueController = TextEditingController();
 
@@ -46,7 +46,7 @@ class _HighLowSettingDialogState extends State<HighLowSettingDialog> {
       content: Container(
           height: 200,
           decoration:
-              BoxDecoration(color: Theme.of(context).colorScheme.surface),
+              BoxDecoration(color: Theme.of(context).colorScheme.surfaceBright),
           child: SingleChildScrollView(
             child: Column(
               children: [

@@ -47,8 +47,8 @@ class _FirmwareDownPageState extends State<FirmwareDownPage> {
     return Scaffold(
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(50),
-          child: pageHeadDesign(
-              context, localizedStrings.firm_down_online, [defaultScaleId]),
+          child: pageHeadDesign(context, localizedStrings.firm_down_online,
+              [myDefScaleInfo.defScaleId!]),
         ),
         body: Container(
           color: Theme.of(context).colorScheme.surfaceTint,

@@ -1,16 +1,25 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:t_max/functions/methods.dart';
 import '../../eventbus/eventbus.dart';
 import '../data/comscaleinfo_data.dart';
 import '../data/downloadresponse.dart';
 import '../data/language.dart';
-import '../data/scale_info_from_scale.dart';
+
 import '../data/screen_mgr.dart';
 import '../widget/custom_button.dart';
 
 int normalSend = 1; //正常的发送数据
 int sendServerIp = 2; //正常的发送数据
 int sendOnline = 3; //仅仅在线发送（无串口）
+
+class ScaleDownRes {
+  int scaleId;
+  String res;
+  double process;
+  ScaleDownRes(this.scaleId, this.res, this.process);
+}
 
 class SelectScalesPage extends StatefulWidget {
   final int funcNo;
@@ -40,7 +49,9 @@ class SelectScalesPageState extends State<SelectScalesPage> {
   List<bool> checkboxStates = [];
   List<NetScaleInfoLocal> scaleNetItems = [];
   int scaleNum = 0;
-  List<Map<int, String>> scaleResMap = [];
+  Map<int, ScaleDownRes> scaleResMap = {};
+  Map<int, Timer?> scaleTimerMap = {};
+
   bool isDownloading = false;
   bool isSelectCom = false;
   ComScaleInfo comScale = myComScaleInfo;
@@ -61,13 +72,7 @@ class SelectScalesPageState extends State<SelectScalesPage> {
         setState(() {
           myRespDataFromScale = event.obj;
           if (myRespDataFromScale.msgBody.isNotEmpty) {
-            int id = myRespDataFromScale.scaleId;
-            for (var map in scaleResMap) {
-              if (map.containsKey(id)) {
-                map[id] = myRespDataFromScale.msgBody;
-                break; // 找到并修改后就可以退出循环了
-              }
-            }
+            parseRecInfo(myRespDataFromScale.scaleId);
           }
 
           if (checkAllNotEmpty()) {
@@ -82,13 +87,7 @@ class SelectScalesPageState extends State<SelectScalesPage> {
         setState(() {
           myRespDataFromScale = event.obj;
           if (myRespDataFromScale.msgBody.isNotEmpty) {
-            int id = myRespDataFromScale.scaleId;
-            for (var map in scaleResMap) {
-              if (map.containsKey(id)) {
-                map[id] = myRespDataFromScale.msgBody;
-                break; // 找到并修改后就可以退出循环了
-              }
-            }
+            parseRecInfo(myRespDataFromScale.scaleId);
           }
 
           if (checkAllNotEmpty()) {
@@ -103,13 +102,7 @@ class SelectScalesPageState extends State<SelectScalesPage> {
         setState(() {
           myRespDataFromScale = event.obj;
           if (myRespDataFromScale.msgBody.isNotEmpty) {
-            int id = myRespDataFromScale.scaleId;
-            for (var map in scaleResMap) {
-              if (map.containsKey(id)) {
-                map[id] = myRespDataFromScale.msgBody;
-                break; // 找到并修改后就可以退出循环了
-              }
-            }
+            parseRecInfo(myRespDataFromScale.scaleId);
           }
 
           if (checkAllNotEmpty()) {
@@ -124,13 +117,7 @@ class SelectScalesPageState extends State<SelectScalesPage> {
         setState(() {
           myRespDataFromScale = event.obj;
           if (myRespDataFromScale.msgBody.isNotEmpty) {
-            int id = myRespDataFromScale.scaleId;
-            for (var map in scaleResMap) {
-              if (map.containsKey(id)) {
-                map[id] = myRespDataFromScale.msgBody;
-                break; // 找到并修改后就可以退出循环了
-              }
-            }
+            parseRecInfo(myRespDataFromScale.scaleId);
           }
 
           if (checkAllNotEmpty()) {
@@ -145,13 +132,7 @@ class SelectScalesPageState extends State<SelectScalesPage> {
         setState(() {
           myRespDataFromScale = event.obj;
           if (myRespDataFromScale.msgBody.isNotEmpty) {
-            int id = myRespDataFromScale.scaleId;
-            for (var map in scaleResMap) {
-              if (map.containsKey(id)) {
-                map[id] = myRespDataFromScale.msgBody;
-                break; // 找到并修改后就可以退出循环了
-              }
-            }
+            parseRecInfo(myRespDataFromScale.scaleId);
           }
 
           if (checkAllNotEmpty()) {
@@ -161,11 +142,11 @@ class SelectScalesPageState extends State<SelectScalesPage> {
       }
     });
 
-    _eventbus6 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
+    _eventbus6 = eventBus.on<EventRespCheckNetScale>().listen((event) {
       if (mounted) {
-        setState(() {
-          myFactoryInfoFromScale = event.obj;
-        });
+        // setState(() {
+        //   myFactoryInfoFromScale = event.obj;
+        // });
       }
     });
 
@@ -174,13 +155,7 @@ class SelectScalesPageState extends State<SelectScalesPage> {
         setState(() {
           myRespDataFromScale = event.obj;
           if (myRespDataFromScale.msgBody.isNotEmpty) {
-            int id = myRespDataFromScale.scaleId;
-            for (var map in scaleResMap) {
-              if (map.containsKey(id)) {
-                map[id] = myRespDataFromScale.msgBody;
-                break; // 找到并修改后就可以退出循环了
-              }
-            }
+            parseRecInfo(myRespDataFromScale.scaleId);
           }
 
           if (checkAllNotEmpty()) {
@@ -194,13 +169,7 @@ class SelectScalesPageState extends State<SelectScalesPage> {
         setState(() {
           myRespDataFromScale = event.obj;
           if (myRespDataFromScale.msgBody.isNotEmpty) {
-            int id = myRespDataFromScale.scaleId;
-            for (var map in scaleResMap) {
-              if (map.containsKey(id)) {
-                map[id] = myRespDataFromScale.msgBody;
-                break; // 找到并修改后就可以退出循环了
-              }
-            }
+            parseRecInfo(myRespDataFromScale.scaleId);
           }
 
           if (checkAllNotEmpty()) {
@@ -209,6 +178,18 @@ class SelectScalesPageState extends State<SelectScalesPage> {
         });
       }
     });
+  }
+
+//根据收到的结果处理
+  void parseRecInfo(int scaleId) {
+    if (scaleResMap.containsKey(scaleId)) {
+      scaleTimerMap[scaleId]!.cancel();
+      if (myRespDataFromScale.msgBody.contains('ok')) {
+        scaleResMap[scaleId]!.process = 1;
+      }
+
+      scaleResMap[scaleId]!.res = myRespDataFromScale.msgBody;
+    }
   }
 
   @override
@@ -222,6 +203,11 @@ class SelectScalesPageState extends State<SelectScalesPage> {
     _eventbus6.cancel();
     _eventbus7.cancel();
     _eventbus8.cancel();
+    if (scaleTimerMap.isNotEmpty) {
+      scaleTimerMap.forEach((int key, Timer? timer) {
+        timer!.cancel();
+      });
+    }
     super.dispose();
   }
 
@@ -306,9 +292,10 @@ class SelectScalesPageState extends State<SelectScalesPage> {
     return DataTable(
       headingTextStyle: TextStyle(
           fontWeight: FontWeight.bold,
-          color: Theme.of(context).colorScheme.onBackground),
+          color: Theme.of(context).colorScheme.onSurface),
       columns: const [
         DataColumn(label: Text('Select')),
+        // DataColumn(label: Text('Status')),
         DataColumn(
             label: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -318,13 +305,13 @@ class SelectScalesPageState extends State<SelectScalesPage> {
           ],
         )),
         DataColumn(label: Text('COM')),
-        DataColumn(label: Text('Baud')),
+        DataColumn(label: Text('Progress')),
         DataColumn(label: Text('Result')),
       ],
       rows: List.generate(
         1,
         (index) => DataRow(
-          color: MaterialStateProperty.all(getResBackColor(comScale.scaleId)),
+          color: WidgetStateProperty.all(getResBackColor(comScale.scaleId)),
           cells: [
             DataCell(Checkbox(
               value: isSelectCom,
@@ -340,6 +327,16 @@ class SelectScalesPageState extends State<SelectScalesPage> {
                       });
                     },
             )),
+            // DataCell(
+            //   SizedBox(
+            //     width: 50,
+            //     child: Text('online',
+            //         maxLines: 2,
+            //         style: TextStyle(
+            //             color: getResTextColor(comScale.scaleId),
+            //             overflow: TextOverflow.ellipsis)),
+            //   ),
+            // ),
             DataCell(Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -348,10 +345,22 @@ class SelectScalesPageState extends State<SelectScalesPage> {
                   buildDataCellInfo(
                       150, comScale.scaleSn, getResTextColor(comScale.scaleId)),
                 ])),
-            DataCell(buildDataCellInfo(
-                150, comScale.portName, getResTextColor(comScale.scaleId))),
-            DataCell(buildDataCellInfo(60, comScale.baudRate.toString(),
-                getResTextColor(comScale.scaleId))),
+            DataCell(
+              Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    buildDataCellInfo(150, comScale.portName,
+                        getResTextColor(comScale.scaleId)),
+                    buildDataCellInfo(150, comScale.baudRate.toString(),
+                        getResTextColor(comScale.scaleId))
+                  ]),
+            ),
+            DataCell(
+              SizedBox(
+                width: 150,
+                child: buildProgess(comScale.scaleId),
+              ),
+            ),
             DataCell(
               buildDataCellInfo(300, getResStr(comScale.scaleId),
                   getResTextColor(comScale.scaleId)),
@@ -375,9 +384,10 @@ class SelectScalesPageState extends State<SelectScalesPage> {
     return DataTable(
       headingTextStyle: TextStyle(
           fontWeight: FontWeight.bold,
-          color: Theme.of(context).colorScheme.onBackground),
+          color: Theme.of(context).colorScheme.onSurface),
       columns: const [
         DataColumn(label: Text('Select')),
+        // DataColumn(label: Text('Status')),
         DataColumn(
             label: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -387,13 +397,13 @@ class SelectScalesPageState extends State<SelectScalesPage> {
           ],
         )),
         DataColumn(label: Text('Ip')),
-        DataColumn(label: Text('Port')),
+        DataColumn(label: Text('Progress')),
         DataColumn(label: Text('Result')),
       ],
       rows: List.generate(
         scaleNum,
         (index) => DataRow(
-          color: MaterialStateProperty.all(
+          color: WidgetStateProperty.all(
               getResBackColor(scaleNetItems[index].scaleId!)),
           cells: [
             DataCell(Checkbox(
@@ -408,34 +418,62 @@ class SelectScalesPageState extends State<SelectScalesPage> {
                       });
                     },
             )),
+            // DataCell(
+            //   SizedBox(
+            //     width: 50,
+            //     child: Text('online',
+            //         maxLines: 2,
+            //         style: TextStyle(
+            //             color: getResTextColor(scaleNetItems[index].scaleId!),
+            //             overflow: TextOverflow.ellipsis)),
+            //   ),
+            // ),
             DataCell(Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   SizedBox(
                       width: 150,
-                      child: Text(scaleNetItems[index].scaleModel!,
+                      child: Text(
+                          scaleNetItems[index].scaleModel! == "TMax"
+                              ? ""
+                              : scaleNetItems[index].scaleModel!,
                           style: TextStyle(
                               color: getResTextColor(
                                   scaleNetItems[index].scaleId!)))),
                   SizedBox(
                       width: 150,
-                      child: Text(scaleNetItems[index].scaleSn!,
+                      child: Text(
+                          scaleNetItems[index].scaleModel! == "TMax"
+                              ? ""
+                              : scaleNetItems[index].scaleSn!,
                           style: TextStyle(
                               color: getResTextColor(
                                   scaleNetItems[index].scaleId!)))),
                 ])),
-            DataCell(SizedBox(
+            DataCell(
+              Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    SizedBox(
+                        width: 150,
+                        child: Text(scaleNetItems[index].ip!,
+                            style: TextStyle(
+                                color: getResTextColor(
+                                    scaleNetItems[index].scaleId!)))),
+                    SizedBox(
+                        width: 150,
+                        child: Text(scaleNetItems[index].port!.toString(),
+                            style: TextStyle(
+                                color: getResTextColor(
+                                    scaleNetItems[index].scaleId!))))
+                  ]),
+            ),
+            DataCell(
+              SizedBox(
                 width: 150,
-                child: Text(scaleNetItems[index].ip!,
-                    style: TextStyle(
-                        color:
-                            getResTextColor(scaleNetItems[index].scaleId!))))),
-            DataCell(SizedBox(
-                width: 60,
-                child: Text(scaleNetItems[index].port!.toString(),
-                    style: TextStyle(
-                        color:
-                            getResTextColor(scaleNetItems[index].scaleId!))))),
+                child: buildProgess(scaleNetItems[index].scaleId!),
+              ),
+            ),
             DataCell(
               SizedBox(
                 width: 300,
@@ -453,20 +491,53 @@ class SelectScalesPageState extends State<SelectScalesPage> {
   }
 
   bool checkAllNotEmpty() {
-    for (var map in scaleResMap) {
-      for (var value in map.values) {
-        if (value == "") {
-          return false;
-        }
+    for (var value in scaleResMap.values) {
+      if (value.res.isEmpty) {
+        return false;
       }
     }
     return true;
   }
 
+//根据结果显示整个行的颜色
   Color getResBackColor(int id) {
     return getResStr(id).contains('ok')
-        ? Theme.of(context).colorScheme.outline
+        ? Theme.of(context).colorScheme.surfaceContainerHigh
         : Theme.of(context).colorScheme.surfaceTint;
+  }
+
+  double getProcessValue(int id) {
+    if (scaleResMap.containsKey(id)) {
+      return scaleResMap[id]!.process;
+    }
+    return 0.0;
+  }
+
+  Widget buildProgess(int scaleId) {
+    double progessValue = getProcessValue(scaleId);
+    return LinearProgressIndicator(
+      value: progessValue,
+      backgroundColor: Theme.of(context).colorScheme.outline,
+    );
+  }
+
+  void buildProcessTimer(int downTime) {
+    scaleResMap.forEach((int id, ScaleDownRes value) {
+      final timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        if (scaleResMap[id]!.res != "") {
+          // setState(() {
+          scaleResMap[id]!.process = 1;
+          // });
+          timer.cancel();
+        } else if (scaleResMap[id]!.process < 0.9) {
+          setState(() {
+            scaleResMap[id]!.process += 0.9 / downTime;
+          });
+        }
+      });
+
+      scaleTimerMap[id] = timer;
+    });
   }
 
   Color getResTextColor(int id) {
@@ -474,19 +545,19 @@ class SelectScalesPageState extends State<SelectScalesPage> {
         ? Theme.of(context).colorScheme.onPrimary
         : getResStr(id) != ""
             ? Theme.of(context).colorScheme.error
-            : Theme.of(context).colorScheme.onBackground;
+            : Theme.of(context).colorScheme.onSurface;
   }
 
+//获取下发的结果
   String getResStr(int id) {
-    for (var map in scaleResMap) {
-      if (map.containsKey(id)) {
-        if (map[id] != null) {
-          return map[id]!;
-        } else {
-          return "";
-        }
+    if (scaleResMap.containsKey(id)) {
+      if (scaleResMap[id] != null) {
+        return scaleResMap[id]!.res;
+      } else {
+        return "";
       }
     }
+
     return "";
   }
 
@@ -494,8 +565,8 @@ class SelectScalesPageState extends State<SelectScalesPage> {
     scaleResMap.clear();
     if (isSelectCom) {
       int id = comScale.scaleId;
-      Map<int, String> newMap = {id: ""};
-      scaleResMap.add(newMap);
+      ScaleDownRes newMap = ScaleDownRes(id, '', 0.0);
+      scaleResMap[id] = newMap;
       return true;
     }
     if (checkboxStates.isEmpty) {
@@ -504,8 +575,8 @@ class SelectScalesPageState extends State<SelectScalesPage> {
     for (int i = 0; i < checkboxStates.length; i++) {
       if (checkboxStates[i]) {
         int id = scaleNetItems[i].scaleId!;
-        Map<int, String> newMap = {id: ""};
-        scaleResMap.add(newMap);
+        ScaleDownRes newMap = ScaleDownRes(id, '', 0.0);
+        scaleResMap[id] = newMap;
       }
     }
     if (scaleResMap.isEmpty) {
@@ -516,11 +587,10 @@ class SelectScalesPageState extends State<SelectScalesPage> {
   }
 
   void performSend() {
-    for (var map in scaleResMap) {
-      map.forEach((key, value) {
-        sendMessage(key);
-      });
-    }
+    scaleResMap.forEach((key, value) {
+      sendMessage(key);
+    });
+    buildProcessTimer(240);
   }
 
   void sendMessage(int scaleId) {

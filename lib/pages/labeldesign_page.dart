@@ -24,12 +24,11 @@ import 'package:path/path.dart' as p;
 import 'package:file_picker/file_picker.dart';
 import '../widget/draggable_fliating.dart';
 import '../widget/dropdown_copy.dart';
-import '../widget/line_painter.dart';
 import '../widget/page_head.dart';
 import '../widget/textlist_item.dart';
 
 class LabelDesignPage extends StatefulWidget {
-  const LabelDesignPage({Key? key}) : super(key: key);
+  const LabelDesignPage({super.key});
 
   @override
   State<LabelDesignPage> createState() => _LabelDesignPageState();
@@ -96,8 +95,9 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   String fontBold = 'false';
   String fontReverse = 'false';
   List<dynamic> varcontent = [];
-  Offset _offset = const Offset(0, 0);
-  bool _isDragging = false;
+  // Offset _offset = const Offset(0, 0);
+  // bool _isDragging = false;
+  final double btnWidth = 150;
 
   TextEditingController textvariable = TextEditingController();
   TextEditingController fontsizevar = TextEditingController();
@@ -144,7 +144,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   String _selectFontsize = '23';
   double myPageWidth = 0;
   double myPageHeight = 0;
-  final _lineList = [];
+  // final _lineList = [];
 
   List<String> paths = [];
   List<DataRow> dataRows = [];
@@ -401,17 +401,17 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;
 
-    final _height = MediaQuery.of(context).size.height;
+    final height = MediaQuery.of(context).size.height;
 
-    ScrollController _scrollController = ScrollController();
-    ScrollController _scrollController1 = ScrollController();
+    ScrollController scrollController = ScrollController();
+    ScrollController scrollController1 = ScrollController();
     return Scaffold(
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(50),
           child: pageHeadDefScale(context, localizedStrings.label_design_title),
         ),
         body: SizedBox(
-          height: _height - 50,
+          height: height - 50,
           child: Column(
             children: [
               Container(
@@ -453,7 +453,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                                           AlignmentDirectional.centerStart,
                                       dropdownColor: Theme.of(context)
                                           .colorScheme
-                                          .background,
+                                          .secondaryFixed,
                                       style: TextStyle(
                                           color: Theme.of(context)
                                               .colorScheme
@@ -516,7 +516,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                                     child: DropdownButton<String>(
                                       dropdownColor: Theme.of(context)
                                           .colorScheme
-                                          .background,
+                                          .secondaryFixed,
                                       style: TextStyle(
                                           color: Theme.of(context)
                                               .colorScheme
@@ -563,19 +563,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                               height: 40,
                               child: Row(
                                 children: [
-                                  SizedBox(
-                                    width: 120,
-                                    child: Text(
-                                      'Width(mm):',
-                                      textAlign: TextAlign.right,
-                                      style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal),
-                                    ),
-                                  ),
+                                  buildBtnText('Width(mm):'),
                                   const SizedBox(
                                     width: 10,
                                   ),
@@ -621,19 +609,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                               height: 40,
                               child: Row(
                                 children: [
-                                  SizedBox(
-                                    width: 120,
-                                    child: Text(
-                                      'Height(mm):',
-                                      textAlign: TextAlign.right,
-                                      style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal),
-                                    ),
-                                  ),
+                                  buildBtnText('Height(mm):'),
                                   const SizedBox(
                                     width: 10,
                                   ),
@@ -682,21 +658,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                         SizedBox(
                           width: 135,
                           child: OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                              side: BorderSide(
-                                width: 1,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                              foregroundColor:
-                                  Theme.of(context).colorScheme.primary,
-                              backgroundColor: Theme.of(context)
-                                  .colorScheme
-                                  .onPrimary, // 设置按钮的背景色
-                              shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(4), // 设置按钮的圆角
-                              ),
-                            ),
+                            style: buildBtnStyle(),
                             child: Text(
                               localizedStrings.save_csv,
                               style: TextStyle(
@@ -739,6 +701,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                         SizedBox(
                           width: 135,
                           child: OutlinedButton(
+                              style: buildBtnStyle(),
                               onPressed: () async {
                                 String filePath = '';
                                 try {
@@ -784,21 +747,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                                   _openJsonFile(filePath);
                                 }
                               },
-                              style: OutlinedButton.styleFrom(
-                                side: BorderSide(
-                                  width: 1,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                                foregroundColor:
-                                    Theme.of(context).colorScheme.primary,
-                                backgroundColor: Theme.of(context)
-                                    .colorScheme
-                                    .onPrimary, // 设置按钮的背景色
-                                shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.circular(4), // 设置按钮的圆角
-                                ),
-                              ),
                               child: Text(
                                 localizedStrings.open_file,
                                 style: TextStyle(
@@ -814,23 +762,9 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         SizedBox(
-                          width: 120,
+                          width: btnWidth,
                           child: OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                              side: BorderSide(
-                                width: 1,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                              foregroundColor:
-                                  Theme.of(context).colorScheme.primary,
-                              backgroundColor: Theme.of(context)
-                                  .colorScheme
-                                  .onPrimary, // 设置按钮的背景色
-                              shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(4), // 设置按钮的圆角
-                              ),
-                            ),
+                            style: buildBtnStyle(),
                             child: Text(
                               localizedStrings.barcode_edit,
                               style: TextStyle(
@@ -855,23 +789,9 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                           ),
                         ),
                         SizedBox(
-                          width: 120,
+                          width: btnWidth,
                           child: OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                              side: BorderSide(
-                                width: 1,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                              foregroundColor:
-                                  Theme.of(context).colorScheme.primary,
-                              backgroundColor: Theme.of(context)
-                                  .colorScheme
-                                  .onPrimary, // 设置按钮的背景色
-                              shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(4), // 设置按钮的圆角
-                              ),
-                            ),
+                            style: buildBtnStyle(),
                             child: Text(
                               localizedStrings.qrcode_edit,
                               style: TextStyle(
@@ -901,26 +821,12 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         SizedBox(
-                          width: 120,
+                          width: btnWidth,
                           child: OutlinedButton(
+                              style: buildBtnStyle(),
                               onPressed: () {
                                 deleteAllItem();
                               },
-                              style: OutlinedButton.styleFrom(
-                                side: BorderSide(
-                                  width: 1,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                                foregroundColor:
-                                    Theme.of(context).colorScheme.primary,
-                                backgroundColor: Theme.of(context)
-                                    .colorScheme
-                                    .onPrimary, // 设置按钮的背景色
-                                shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.circular(4), // 设置按钮的圆角
-                                ),
-                              ),
                               child: Text(
                                 localizedStrings.new_format,
                                 style: TextStyle(
@@ -939,8 +845,8 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                 height: 2,
                 color: Theme.of(context).colorScheme.primary,
               ),
-              Container(
-                height: _height - 50 - 100,
+              SizedBox(
+                height: height - 50 - 100,
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -953,17 +859,18 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                     Expanded(
                       flex: 7,
                       child: Scrollbar(
-                        controller: _scrollController,
-                        isAlwaysShown: true,
+                        controller: scrollController,
+                        // isAlwaysShown: true,
                         child: SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
-                          controller: _scrollController,
+                          controller: scrollController,
                           child: Container(
                             padding: const EdgeInsets.all(10),
                             width: 1700,
                             height: 1000,
                             decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.surface,
+                                color:
+                                    Theme.of(context).colorScheme.surfaceBright,
                                 border: Border.all(
                                     width: 0.2,
                                     color: Theme.of(context)
@@ -971,7 +878,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                                         .onSurface)),
                             child: SingleChildScrollView(
                               scrollDirection: Axis.vertical, // 水平滚动
-                              controller: _scrollController1,
+                              controller: scrollController1,
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
@@ -1040,6 +947,34 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         ));
   }
 
+  Widget buildBtnText(String textStr) {
+    return SizedBox(
+      width: btnWidth,
+      child: Text(
+        textStr,
+        textAlign: TextAlign.right,
+        style: TextStyle(
+            color: Theme.of(context).colorScheme.primary,
+            fontSize: 14,
+            fontWeight: FontWeight.normal),
+      ),
+    );
+  }
+
+  ButtonStyle buildBtnStyle() {
+    return OutlinedButton.styleFrom(
+      side: BorderSide(
+        width: 1,
+        color: Theme.of(context).colorScheme.primary,
+      ),
+      foregroundColor: Theme.of(context).colorScheme.primary,
+      backgroundColor: Theme.of(context).colorScheme.onPrimary, // 设置按钮的背景色
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
+      ),
+    );
+  }
+
   void openTemplateJson() async {
     final ByteData bytes = await rootBundle.load('assets/template/label.json');
     // 将 ByteData 直接转换为 JSON 字符串
@@ -1086,69 +1021,69 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     }
   }
 
-  Widget _buildLines() {
-    return Stack(
-      children: [
-        for (var i = 0; i < _lineList.length; i++)
-          _buildLine(i, _lineList[i].start, _lineList[i].end),
-      ],
-    );
-  }
+  // Widget _buildLines() {
+  //   return Stack(
+  //     children: [
+  //       for (var i = 0; i < _lineList.length; i++)
+  //         _buildLine(i, _lineList[i].start, _lineList[i].end),
+  //     ],
+  //   );
+  // }
 
-  void _updatePosition(PointerMoveEvent pointerMoveEvent) {
-    double newOffsetX = _offset.dx + pointerMoveEvent.delta.dx;
-    double newOffsetY = _offset.dy + pointerMoveEvent.delta.dy;
+  // void _updatePosition(PointerMoveEvent pointerMoveEvent) {
+  //   double newOffsetX = _offset.dx + pointerMoveEvent.delta.dx;
+  //   double newOffsetY = _offset.dy + pointerMoveEvent.delta.dy;
 
-    setState(() {
-      _offset = Offset(newOffsetX, newOffsetY);
-    });
-  }
+  //   setState(() {
+  //     _offset = Offset(newOffsetX, newOffsetY);
+  //   });
+  // }
 
-  Widget _buildLine(int index, Offset start, Offset end) {
-    _offset = start;
+  // Widget _buildLine(int index, Offset start, Offset end) {
+  //   _offset = start;
 
-    return Stack(children: [
-      Positioned(
-        left: _offset.dy,
-        top: _offset.dx, // start.dy, //math.min(start.dy, end.dy),
-        //start.dx, //math.min(start.dx, end.dx),
-        // right: end.dy,
-        // bottom: end.dx,
-        width: (start - end).distance,
-        height: 50.0,
-        child: Listener(
-          onPointerMove: (PointerMoveEvent pointerMoveEvent) {
-            _updatePosition(pointerMoveEvent);
+  //   return Stack(children: [
+  //     Positioned(
+  //       left: _offset.dy,
+  //       top: _offset.dx, // start.dy, //math.min(start.dy, end.dy),
+  //       //start.dx, //math.min(start.dx, end.dx),
+  //       // right: end.dy,
+  //       // bottom: end.dx,
+  //       width: (start - end).distance,
+  //       height: 50.0,
+  //       child: Listener(
+  //         onPointerMove: (PointerMoveEvent pointerMoveEvent) {
+  //           _updatePosition(pointerMoveEvent);
 
-            setState(() {
-              _isDragging = true;
-            });
-          },
-          onPointerUp: (PointerUpEvent pointerUpEvent) {
-            var dx = (pointerUpEvent.delta.dx.toInt()).roundToDouble();
-            var dy = ((pointerUpEvent.delta.dy).toInt()).roundToDouble();
-            final line = _lineList[index];
-            setState(() {
-              _lineList[index] = Line(_offset, line.end + Offset(dx, dy));
-            });
+  //           setState(() {
+  //             _isDragging = true;
+  //           });
+  //         },
+  //         onPointerUp: (PointerUpEvent pointerUpEvent) {
+  //           var dx = (pointerUpEvent.delta.dx.toInt()).roundToDouble();
+  //           var dy = ((pointerUpEvent.delta.dy).toInt()).roundToDouble();
+  //           final line = _lineList[index];
+  //           setState(() {
+  //             _lineList[index] = Line(_offset, line.end + Offset(dx, dy));
+  //           });
 
-            if (_isDragging) {
-              setState(() {
-                _isDragging = false;
-              });
-            } else {}
-          },
-          child: CustomPaint(
-            painter: LinePainter(
-                startPoint: _lineList[index].start,
-                endPoint: _lineList[index].end),
-          ),
-        ),
-      ),
+  //           if (_isDragging) {
+  //             setState(() {
+  //               _isDragging = false;
+  //             });
+  //           } else {}
+  //         },
+  //         child: CustomPaint(
+  //           painter: LinePainter(
+  //               startPoint: _lineList[index].start,
+  //               endPoint: _lineList[index].end),
+  //         ),
+  //       ),
+  //     ),
 
-      // angle: 0, //math.atan2(end.dy - start.dy, end.dx - start.dx),
-    ]);
-  }
+  //     // angle: 0, //math.atan2(end.dy - start.dy, end.dx - start.dx),
+  //   ]);
+  // }
 
   // void _onLineDragged(int index, DragUpdateDetails details) {
   //   setState(() {
@@ -1279,7 +1214,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   void sendFormatToScale(String modifyString) async {
     myScaleCmd.cmdMode = "down_print_format_to_scale";
     myScaleCmd.cmdData = modifyString;
-    PublicFunctions.sendMsg(defaultScaleId, jsonEncode(myScaleCmd));
+    PublicFunctions.sendMsg(myDefScaleInfo.defScaleId!, jsonEncode(myScaleCmd));
     writelog(jsonEncode(myScaleCmd));
   }
 
@@ -1512,7 +1447,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         // print(json);
 
         FormatContent myFormatContent = FormatContent(
-            page: pageWidth.text + '*' + pageHeight.text,
+            page: '${pageWidth.text}*${pageHeight.text}',
             rotation: _selectedPrintDirection,
             content: json,
             printer: _sltPrtName,
@@ -1867,7 +1802,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
               border: Border(
                   bottom: BorderSide(
                       width: 0.2,
-                      color: Theme.of(context).colorScheme.background))),
+                      color: Theme.of(context).colorScheme.secondaryFixed))),
           alignment: Alignment.center,
           child: Tooltip(
               message: expStr,
@@ -2489,7 +2424,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       const SizedBox(height: 100),
       Container(
         height: 50,
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: Text(
           localizedStrings.no_element,
           style: TextStyle(
@@ -2500,7 +2435,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       ),
       Container(
         height: 50,
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: Text(
           localizedStrings.operation_steps,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
@@ -2508,7 +2443,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       ),
       Container(
         height: 50,
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: Text(
           localizedStrings.step1,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
@@ -2516,7 +2451,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       ),
       Container(
         height: 80,
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: Text(
           localizedStrings.step2,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
@@ -2650,32 +2585,11 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   _textproperties() {
     return [
       const SizedBox(height: 10),
-      ElevatedButton(
-          style: OutlinedButton.styleFrom(
-            side: BorderSide(
-              width: 1,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            foregroundColor: Theme.of(context).colorScheme.primary,
-            backgroundColor: Theme.of(context).colorScheme.primary, // 设置按钮的背景色
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
-            ),
-          ),
-          onPressed: () {
-            setState(() {
-              _deleteTextItem(myTextData.tabOrder);
-            });
-          },
-          child: Text(localizedStrings.button_delete,
-              style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.normal,
-                  color: Theme.of(context).colorScheme.onPrimary))),
+      deleteBtnBuild(),
       const SizedBox(height: 10),
       Container(
-        height: 30,
-        color: Theme.of(context).colorScheme.surface,
+        height: 35,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: Column(
           children: [
             Text(
@@ -2737,7 +2651,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       ),
       Container(
         height: 20,
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: Text(localizedStrings.position,
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -2808,7 +2722,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
 
       Container(
         height: 20,
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: Text(localizedStrings.editor,
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -2950,9 +2864,11 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   _varproperties() {
     return [
       const SizedBox(height: 10),
+      deleteBtnBuild(),
+      const SizedBox(height: 10),
       Container(
-        height: 30,
-        color: Theme.of(context).colorScheme.surface,
+        height: 35,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: Column(
           children: [
             Text(
@@ -3014,7 +2930,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       ),
       Container(
         height: 20,
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: Text(localizedStrings.position,
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -3144,26 +3060,38 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         onSelect: _handleFontReverseSelected,
       ),
       const SizedBox(height: 5),
-      ElevatedButton(
-          onPressed: () {
-            setState(() {
-              _deleteTextItem(myTextData.tabOrder);
-            });
-          },
-          child: Text(localizedStrings.button_delete,
-              style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.normal,
-                  color: Theme.of(context).colorScheme.onPrimary)))
     ];
+  }
+
+  Widget deleteBtnBuild() {
+    return ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0), // 这里的10.0是圆角半径，可以根据需要调整
+          ),
+          backgroundColor: Theme.of(context).colorScheme.primary, // 设置按钮的背景色
+          elevation: 10, // 设置按钮的阴影
+        ),
+        onPressed: () {
+          setState(() {
+            _deleteTextItem(myTextData.tabOrder);
+          });
+        },
+        child: Text(localizedStrings.button_delete,
+            style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.normal,
+                color: Theme.of(context).colorScheme.onPrimary)));
   }
 
   _lineproperties() {
     return [
       const SizedBox(height: 10),
+      deleteBtnBuild(),
+      const SizedBox(height: 10),
       Container(
-        height: 30,
-        color: Theme.of(context).colorScheme.surface,
+        height: 35,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: Column(
           children: [
             Text(
@@ -3225,7 +3153,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       ),
       Container(
         height: 20,
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: Text(localizedStrings.position,
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -3240,26 +3168,17 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       buildTextField(lineWidthVar, localizedStrings.l_line_width_txt,
           myTextData.lineWidth.toString(), 16),
       const SizedBox(height: 20),
-      ElevatedButton(
-          onPressed: () {
-            setState(() {
-              _deleteTextItem(myTextData.tabOrder);
-            });
-          },
-          child: Text(localizedStrings.button_delete,
-              style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.normal,
-                  color: Theme.of(context).colorScheme.onPrimary)))
     ];
   }
 
   _barCodeproperties() {
     return [
       const SizedBox(height: 10),
+      deleteBtnBuild(),
+      const SizedBox(height: 10),
       Container(
-        height: 30,
-        color: Theme.of(context).colorScheme.surface,
+        height: 35,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: Column(
           children: [
             Text(
@@ -3321,7 +3240,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       ),
       Container(
         height: 20,
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: Text(localizedStrings.position,
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -3424,26 +3343,17 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         onSelect: _handleRotationSelected,
       ),
       const SizedBox(height: 5),
-      ElevatedButton(
-          onPressed: () {
-            setState(() {
-              _deleteTextItem(myTextData.tabOrder);
-            });
-          },
-          child: Text(localizedStrings.button_delete,
-              style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.normal,
-                  color: Theme.of(context).colorScheme.onPrimary)))
     ];
   }
 
   _qrcodeproperties() {
     return [
       const SizedBox(height: 10),
+      deleteBtnBuild(),
+      const SizedBox(height: 10),
       Container(
-        height: 30,
-        color: Theme.of(context).colorScheme.surface,
+        height: 35,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: Column(
           children: [
             Text(
@@ -3505,7 +3415,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       ),
       Container(
         height: 20,
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: Text(localizedStrings.position,
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -3593,17 +3503,6 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         onSelect: _handleQrWidthSelected,
       ),
       const SizedBox(height: 5),
-      ElevatedButton(
-          onPressed: () {
-            setState(() {
-              _deleteTextItem(myTextData.tabOrder);
-            });
-          },
-          child: Text(localizedStrings.button_delete,
-              style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.normal,
-                  color: Theme.of(context).colorScheme.onPrimary)))
     ];
   }
 

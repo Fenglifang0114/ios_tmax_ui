@@ -33,7 +33,7 @@ void showWarningDialog(BuildContext context, void Function(bool) onOKPressed) {
                   height: 100,
                   width: 300,
                   decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface),
+                      color: Theme.of(context).colorScheme.surfaceBright),
                   child: const Text(
                     "You cannot switch units during the process, please switch back to the original unit. ",
                     maxLines: 3,

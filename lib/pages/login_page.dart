@@ -11,7 +11,7 @@ import '../widget/version.dart';
 import 'home_page_config.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  const LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -34,8 +34,8 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final _width = MediaQuery.of(context).size.width;
-    final _height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: themeColor(colorTheme),
@@ -52,8 +52,8 @@ class _LoginPageState extends State<LoginPage> {
           body: ListView(
             children: [
               Container(
-                height: _height,
-                width: _width,
+                height: height,
+                width: width,
                 decoration: BoxDecoration(gradient: boxGradient(context)),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -61,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
                     SizedBox(
                         width: 400,
                         child: Card(
-                          shadowColor: Theme.of(context).colorScheme.background,
+                          shadowColor: Theme.of(context).colorScheme.secondaryFixed,
                           elevation: 40,
                           margin: const EdgeInsets.all(10),
                           shape: const RoundedRectangleBorder(

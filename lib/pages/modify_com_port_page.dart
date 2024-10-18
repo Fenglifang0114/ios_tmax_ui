@@ -5,6 +5,7 @@ import '../../data/device_data.dart';
 import '../../data/downloadresponse.dart';
 import '../../eventbus/eventbus.dart';
 import '../data/cominfoslist_data.dart';
+import '../data/comscaleinfo_data.dart';
 import '../data/language.dart';
 import '../data/modifyresult_data.dart';
 import '../data/scale_info_from_scale.dart';
@@ -101,17 +102,17 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
       }
     });
 
-    _eventbus6 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
+    _eventbus6 = eventBus.on<EventRespCheckComPort>().listen((event) {
       if (mounted) {
         setState(() {
           isSetting = false;
-          myFactoryInfoFromScale = event.obj;
-          if (myFactoryInfoFromScale.modelName != '') {
+          myComScaleSn = event.obj;
+          if (myComScaleSn.modelName != '') {
             serialPortConnect = localizedStrings.txt_serial_port_connected;
-            myScreenMgr.serialPortST = true;
+            myComScaleInfo.isOnline = true;
           } else {
             serialPortConnect = localizedStrings.txt_serial_port_connected_fail;
-            myScreenMgr.serialPortST = false;
+            myComScaleInfo.isOnline = false;
           }
         });
       }
@@ -137,11 +138,11 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
     tempCurrentPort = myCurrentPort;
 
     refresh = localizedStrings.refresh_port;
-    return AlertDialog(
+    return AlertDialog(      
       title: getDialogTitle(
           context, localizedStrings.serial_modify_title, Icons.usb, 400),
       content: Container(
-        height: 356,
+        height: 356,     
         decoration:
             BoxDecoration(color: Theme.of(context).colorScheme.surfaceTint),
         child: Column(
@@ -163,7 +164,7 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
                         isExpanded: true,
                         // decoration: const InputDecoration(border: OutlineInputBorder()),
                         // 设置默认值
-                        value: comPort,
+                        value: (comLists.isEmpty) ? refresh : comPort,
                         // 选择回调
                         onChanged: (String? newPosition) {
                           PublicFunctions.getPortList();
@@ -176,11 +177,17 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
                           }
                         },
                         // 传入可选的数组
-                        items: comLists
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem(
-                              value: value, child: Text(value));
-                        }).toList(),
+                        items: (comLists.isEmpty)
+                            ? [refresh]
+                                .map<DropdownMenuItem<String>>((String value) {
+                                return DropdownMenuItem(
+                                    value: value, child: Text(value));
+                              }).toList()
+                            : comLists
+                                .map<DropdownMenuItem<String>>((String value) {
+                                return DropdownMenuItem(
+                                    value: value, child: Text(value));
+                              }).toList(),
                       ),
                     ),
                     const SizedBox(height: 15),
@@ -238,7 +245,7 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
                       color: (serialPortConnect.contains('fail') ||
                               serialPortConnect.contains('Unable'))
                           ? Theme.of(context).colorScheme.error
-                          : Theme.of(context).colorScheme.outline),
+                          : Theme.of(context).colorScheme.surfaceContainerHigh),
                 )
               ],
             )
@@ -254,7 +261,7 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
               btnHeight: 40,
               icon: Icons.arrow_forward_ios,
               text: localizedStrings.button_connect,
-              onPressed: isSetting
+              onPressed: isSetting || comPort == refresh
                   ? null
                   : () {
                       mySerialPortStatus.serialPortStatus = true;
@@ -293,22 +300,30 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
     myModifyScale.scaleModel = scaleModel;
     myModifyScale.mediaConf = myMediaConf;
     PublicFunctions.sendModifyInfo(jsonEncode(myModifyScale));
+    myCurrentPort.devPath = tempCurrentPort.devPath;
+    myCurrentPort.baud = tempCurrentPort.baud;
+    myCurrentPort.dataBits = tempCurrentPort.dataBits;
+    myCurrentPort.parity = tempCurrentPort.parity;
+    myCurrentPort.stopBits = tempCurrentPort.stopBits;
   }
 
   void checkPortList() {
     if (myComInfoList.msgBody!.isEmpty) {
-      comLists = [refresh];
+      comLists = [];
       comPort = refresh;
-      tempCurrentPort.devPath = '';
+      // tempCurrentPort.devPath = '';
     } else {
       comLists = myComInfoList.msgBody!.toList();
-      if (!comLists.contains(comPort)) {
-        comPort = comLists[0];
-        myCurrentPort.devPath = comPort; //20230411@F
-      } else {
-        myCurrentPort.devPath = comPort; //20240221@F
+
+      for (var i = 0; i < comLists.length; i++) {
+        if (comLists[i] == myCurrentPort.devPath) {
+          comPort = myCurrentPort.devPath!;
+          return;
+        }
       }
+
+      comPort = comLists[0];
+      myCurrentPort.devPath = comPort; //20240221@F
     }
-    // getPortList();
   }
 }

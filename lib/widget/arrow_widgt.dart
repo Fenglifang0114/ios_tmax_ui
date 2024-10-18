@@ -5,10 +5,10 @@ class ArrowButton extends StatefulWidget {
   const ArrowButton({super.key});
 
   @override
-  _ArrowButtonState createState() => _ArrowButtonState();
+  ArrowButtonState createState() => ArrowButtonState();
 }
 
-class _ArrowButtonState extends State<ArrowButton> {
+class ArrowButtonState extends State<ArrowButton> {
   bool isHovered = false;
   bool isPressed = false;
 
@@ -40,7 +40,7 @@ class _ArrowButtonState extends State<ArrowButton> {
           border: Border.all(
             color: isPressed
                 ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.background,
+                : Theme.of(context).colorScheme.secondaryFixed,
             width: 1.0,
           ),
           color: Theme.of(context).colorScheme.onPrimary,
@@ -49,7 +49,7 @@ class _ArrowButtonState extends State<ArrowButton> {
           Icons.settings,
           color: isHovered || isPressed
               ? Theme.of(context).colorScheme.primary
-              : Theme.of(context).colorScheme.background,
+              : Theme.of(context).colorScheme.secondaryFixed,
           size: 24.0,
         ),
       ),

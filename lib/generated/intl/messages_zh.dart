@@ -250,6 +250,9 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("The third page header."),
         "p_header3_var": MessageLookupByLibrary.simpleMessage("Header3"),
         "p_line_title": MessageLookupByLibrary.simpleMessage("Dividing Line"),
+        "p_model_name_expl":
+            MessageLookupByLibrary.simpleMessage("Scale Model Name."),
+        "p_model_name_var": MessageLookupByLibrary.simpleMessage("Model Name"),
         "p_no_expl":
             MessageLookupByLibrary.simpleMessage("Sequence number value."),
         "p_no_var": MessageLookupByLibrary.simpleMessage("NO."),
@@ -276,6 +279,13 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Price Unit."),
         "p_price_unit_var": MessageLookupByLibrary.simpleMessage("Price Unit"),
         "p_price_var": MessageLookupByLibrary.simpleMessage("Price"),
+        "p_scale_name_expl":
+            MessageLookupByLibrary.simpleMessage("Scale Name."),
+        "p_scale_name_var": MessageLookupByLibrary.simpleMessage("Scale Name"),
+        "p_settle_account_times_expl":
+            MessageLookupByLibrary.simpleMessage("Settle Account Times"),
+        "p_settle_account_times_var":
+            MessageLookupByLibrary.simpleMessage("Settle Account Times"),
         "p_subtotal_expl": MessageLookupByLibrary.simpleMessage("Subtotal."),
         "p_subtotal_var": MessageLookupByLibrary.simpleMessage("Subtotal"),
         "p_tare_expl": MessageLookupByLibrary.simpleMessage("Tare value."),
@@ -301,6 +311,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "p_tax_model_expl": MessageLookupByLibrary.simpleMessage(
             "Tax Model,tax included or  tax external."),
         "p_tax_model_var": MessageLookupByLibrary.simpleMessage("Tax Model"),
+        "p_tax_name_expl": MessageLookupByLibrary.simpleMessage("Tax Name."),
+        "p_tax_name_var": MessageLookupByLibrary.simpleMessage("Tax Name"),
         "p_tax_type1_expl": MessageLookupByLibrary.simpleMessage("Tax Type 1."),
         "p_tax_type1_var": MessageLookupByLibrary.simpleMessage("Tax Type1"),
         "p_tax_type2_expl": MessageLookupByLibrary.simpleMessage("Tax Type 2."),
@@ -366,8 +378,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "printer": MessageLookupByLibrary.simpleMessage("打印机："),
         "product_information": MessageLookupByLibrary.simpleMessage("产品信息"),
         "qrcode_edit": MessageLookupByLibrary.simpleMessage("二维码编辑"),
-        "re_detail_report_title":
-            MessageLookupByLibrary.simpleMessage("Retail Detail Report"),
         "receipt_design_title":
             MessageLookupByLibrary.simpleMessage("Receipt Design"),
         "receipt_format1_item":
@@ -388,6 +398,17 @@ class MessageLookup extends MessageLookupByLibrary {
         "save_csv": MessageLookupByLibrary.simpleMessage("保存 csv"),
         "save_file": MessageLookupByLibrary.simpleMessage("保存文件(json)"),
         "save_mode": MessageLookupByLibrary.simpleMessage("保存模式："),
+        "scale_mgr_btn_add": MessageLookupByLibrary.simpleMessage("Add"),
+        "scale_mgr_btn_def":
+            MessageLookupByLibrary.simpleMessage("Set Default"),
+        "scale_mgr_btn_dlt": MessageLookupByLibrary.simpleMessage("Delete"),
+        "scale_mgr_btn_rename": MessageLookupByLibrary.simpleMessage("Rename"),
+        "scale_mgr_btn_test":
+            MessageLookupByLibrary.simpleMessage("Test Connect"),
+        "scale_mgr_scale_model":
+            MessageLookupByLibrary.simpleMessage("Scale Model:"),
+        "scale_mgr_scale_name":
+            MessageLookupByLibrary.simpleMessage("Scale Name:"),
         "scale_model": MessageLookupByLibrary.simpleMessage("机种:"),
         "scale_name": MessageLookupByLibrary.simpleMessage("秤名称:"),
         "scale_sn": MessageLookupByLibrary.simpleMessage("序列号:"),

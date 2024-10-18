@@ -17,10 +17,10 @@ class ParamSettingDialog extends StatefulWidget {
   const ParamSettingDialog({super.key});
 
   @override
-  _ParamSettingDialogState createState() => _ParamSettingDialogState();
+  ParamSettingDialogState createState() => ParamSettingDialogState();
 }
 
-class _ParamSettingDialogState extends State<ParamSettingDialog> {
+class ParamSettingDialogState extends State<ParamSettingDialog> {
   TextEditingController zeroRange = TextEditingController(
       text: (mySettingParam.zeroRange.isEmpty)
           ? "0"
@@ -74,8 +74,8 @@ class _ParamSettingDialogState extends State<ParamSettingDialog> {
           Icons.settings_outlined, 400),
       content: Container(
           height: 350,
-          decoration:
-              BoxDecoration(color: Theme.of(context).colorScheme.background),
+          decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.secondaryFixed),
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -323,7 +323,7 @@ class _ParamSettingDialogState extends State<ParamSettingDialog> {
     }
     String updateString = jsonEncode(mySettingParam);
     myScaleCmd.cmdData = updateString;
-    PublicFunctions.sendMsg(defaultScaleId, jsonEncode(myScaleCmd));
+    PublicFunctions.sendMsg(myDefScaleInfo.defScaleId!, jsonEncode(myScaleCmd));
   }
 
   void modifyComInfo() {

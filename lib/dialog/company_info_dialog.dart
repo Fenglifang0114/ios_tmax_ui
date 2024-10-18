@@ -10,10 +10,10 @@ class CompanyInfoDialog extends StatefulWidget {
   const CompanyInfoDialog({super.key});
 
   @override
-  _CompanyInfoDialogState createState() => _CompanyInfoDialogState();
+  CompanyInfoDialogState createState() => CompanyInfoDialogState();
 }
 
-class _CompanyInfoDialogState extends State<CompanyInfoDialog> {
+class CompanyInfoDialogState extends State<CompanyInfoDialog> {
   bool isPass = false;
 
   Future<void> setAppInfo() async {
@@ -168,7 +168,7 @@ class _CompanyInfoDialogState extends State<CompanyInfoDialog> {
           textAlign: TextAlign.right,
           overflow: TextOverflow.visible,
           style: TextStyle(
-            color: Theme.of(context).colorScheme.onBackground,
+            color: Theme.of(context).colorScheme.onSurface,
           )),
     );
   }

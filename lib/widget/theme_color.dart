@@ -9,15 +9,18 @@ themeColor(Map<String, dynamic> colorTheme) {
         tertiary: Color(int.parse(colorTheme['tertiary'])),
         surfaceTint: Color(int.parse(colorTheme['background'])), //主要的背景色
         error: Color(int.parse(colorTheme['error'])),
-        outline: Color(int.parse(colorTheme['success'])),
-        surface: const Color.fromARGB(255, 239, 243, 246), //0xFFEFF3F6
+        surfaceContainerHigh:Color(int.parse(colorTheme['success'])),
+        outline: const Color.fromARGB(255, 191, 191, 191),
+        surfaceBright: const Color.fromARGB(255, 239, 243, 246),
+        surface:Color(int.parse(colorTheme['background'])),  //0xFFEFF3F6
         brightness: Brightness.light,
-        onBackground: Colors.black,
+        
+     
         onError: Colors.white,
         onPrimary: Colors.white, //字体颜色
         onSecondary: Colors.white,
         onSurface: Colors.black,
-        background: const Color.fromARGB(255, 191, 191, 191), //0xFFBFBFBFF
+        secondaryFixed: const Color.fromARGB(255, 191, 191, 191), //0xFFBFBFBFF
         onTertiary: Colors.white,
         primaryContainer: const Color.fromARGB(255, 251, 253, 248), //0xFFF8F9FD
         scrim: const Color.fromARGB(255, 204, 224, 239), //0xCCE0EF

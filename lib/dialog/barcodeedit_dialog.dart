@@ -6,14 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:path/path.dart' as p;
 import 'package:t_max/data/barcodetype.dart';
+import 'package:t_max/data/language.dart';
+import 'package:t_max/widget/custom_button.dart';
 import '../../data/barcoderowdata.dart';
 import '../../eventbus/eventbus.dart';
 import '../widget/rowdatawidget.dart';
 
 class MyBarCodeDialog extends StatefulWidget {
   const MyBarCodeDialog({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
   @override
   MyBarCodeDialogState createState() => MyBarCodeDialogState();
 }
@@ -77,7 +79,7 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -112,27 +114,50 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
                     ],
                   ),
                   const SizedBox(
-                    width: 150,
+                    width: 10,
                   ),
-                  const Text(
-                    'Barcode Name:',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(
-                    width: 200,
-                    // padding: const EdgeInsets.all(20),
-                    child: TypeAheadFormField(
-                      textFieldConfiguration: _getTextFieldConfiguration(),
-                      suggestionsCallback: _getSuggestions,
-                      itemBuilder: _buildSuggestionItem,
-                      onSuggestionSelected: _onSuggestionSelected,
+                  const SizedBox(
+                    width: 300,
+                    child: Text(
+                      'Barcode Name:',
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          overflow: TextOverflow.ellipsis),
                     ),
                   ),
+                  Container(
+                    //屏蔽20241008
+                    width: 300,
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                    child: TypeAheadField<String>(
+                      controller: _barCodeNameController,
+                      builder: (context, controller, focusNode) => TextField(
+                        controller: _barCodeNameController,
+                        focusNode: focusNode,
+                        autofocus: true,
+                        style: DefaultTextStyle.of(context)
+                            .style
+                            .copyWith(fontStyle: FontStyle.italic),
+                        decoration: InputDecoration(
+                          border: UnderlineInputBorder(),
+                          hintText: 'Enter name to create/select.',
+                        ),
+                      ),
+                      itemBuilder: (context, name) => ListTile(
+                        title: Text(name),
+                      ),
+                      onSelected: _onSuggestionSelected,
+                      suggestionsCallback: suggestionsCallback,
+                    ),
+                  )
                 ],
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -145,41 +170,30 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
                   const SizedBox(
                     width: 30,
                   ),
-                  OutlinedButton(
-                    onPressed: _addRowData,
-                    child: const Text(
-                      'Add',
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                    ),
-                  ),
+                  CustomOutlinedButton(
+                      btnWidth: 150,
+                      btnHeight: 40,
+                      icon: Icons.add,
+                      text: localizedStrings.button_add,
+                      onPressed: _addRowData),
                   const SizedBox(
                     width: 10,
                   ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          Theme.of(context).colorScheme.primary, // 设置按钮的背景色
-                      elevation: 10, // 设置按钮的阴影
-                    ),
-                    onPressed: _saveRowData,
-                    child: const Text(
-                      'Save',
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                    ),
-                  ),
+                  CustomElevatedButton(
+                      btnWidth: 150,
+                      btnHeight: 40,
+                      icon: Icons.save,
+                      text: localizedStrings.button_save,
+                      onPressed: _saveRowData),
                   const SizedBox(
                     width: 10,
                   ),
-                  OutlinedButton(
-                    onPressed: _deleteRowData,
-                    child: const Text(
-                      'Delete All',
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                    ),
-                  ),
+                  CustomOutlinedButton(
+                      btnWidth: 150,
+                      btnHeight: 40,
+                      icon: Icons.delete,
+                      text: 'Delete All',
+                      onPressed: _deleteRowData),
                 ],
               ),
             ),
@@ -243,7 +257,7 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
             controller: _errorController,
             style: TextStyle(
                 color: (_errorController.text.contains("successfully"))
-                    ? Theme.of(context).colorScheme.outline
+                    ? Theme.of(context).colorScheme.surfaceContainerHigh
                     : Theme.of(context).colorScheme.error,
                 fontSize: 14,
                 fontWeight: FontWeight.bold),
@@ -260,33 +274,23 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
         const SizedBox(
           width: 50,
         ),
-        ElevatedButton(
-          onPressed: () {
-            myBarCodeRowDataList.barCodeRowDataList.clear();
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            CustomOutlinedButton(
+              btnWidth: 150,
+              btnHeight: 40,
+              icon: Icons.exit_to_app,
+              text: localizedStrings.button_exit,
+              onPressed: () {
+                myBarCodeRowDataList.barCodeRowDataList.clear();
 
-            Navigator.of(context).pop();
-          },
-          child: const Text(
-            'Exit',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-          ),
-        ),
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        )
       ],
-    );
-  }
-
-// 获取 TextField 的配置
-  TextFieldConfiguration _getTextFieldConfiguration() {
-    return TextFieldConfiguration(
-      controller: _barCodeNameController,
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-        color: Theme.of(context).colorScheme.primary,
-        fontSize: 14,
-      ),
-      decoration: const InputDecoration(
-        border: UnderlineInputBorder(),
-      ),
     );
   }
 
@@ -301,25 +305,17 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
     return tempList;
   }
 
-// 获取建议列表
-  List<String> _getSuggestions(String pattern) {
-    List<String> tempBarcodeName = _getTempBarcodeName();
-
-    return mySavedBarcodeName.savedBarcodeName
-        .where((option) => option.toLowerCase().contains(pattern.toLowerCase()))
-        .where((option) => tempBarcodeName.contains(option))
-        .toList();
-    // return mySavedBarcodeName.savedBarcodeName
-    //     .where((option) => option.toLowerCase().contains(pattern.toLowerCase()))
-    //     .toList();
-  }
-
-// 创建建议项
-  Widget _buildSuggestionItem(BuildContext context, String suggestion) {
-    return ListTile(
-      title: Text(suggestion),
-    );
-  }
+  //获取建议列表
+  Future<List<String>> suggestionsCallback(String pattern) async =>
+      Future<List<String>>.delayed(
+        Duration(milliseconds: 0),
+        () => mySavedBarcodeName.savedBarcodeName.where((option) {
+          final optionLower = option.toLowerCase();
+          final patternLower = pattern.toLowerCase();
+          return optionLower.contains(patternLower) &&
+              _getTempBarcodeName().contains(option);
+        }).toList(),
+      );
 
 // 选择建议项时的处理
   void _onSuggestionSelected(String suggestion) {

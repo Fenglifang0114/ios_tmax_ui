@@ -14,6 +14,7 @@ import '../../data/userinfo_data.dart';
 import '../../data/weight_data.dart';
 import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
+import '../data/comscaleinfo_data.dart';
 import '../data/downloadresponse.dart';
 import '../data/manager_scale_channel.dart';
 import '../data/language.dart';
@@ -21,7 +22,6 @@ import '../data/record_data.dart';
 import '../data/scale_info_from_scale.dart';
 import '../data/scalecmd_data.dart';
 import '../data/scalelist_data.dart';
-import '../data/screen_mgr.dart';
 import '../data/timer_manager.dart';
 import '../data/weight_report_data.dart';
 import '../dialog/addproduct_dialog.dart';
@@ -34,7 +34,7 @@ import '../widget/custom_button.dart';
 import '../widget/page_head.dart';
 
 class TakeInPage extends StatefulWidget {
-  const TakeInPage({Key? key}) : super(key: key);
+  const TakeInPage({super.key});
   @override
   State<TakeInPage> createState() => TakeInPageState();
 }
@@ -176,7 +176,7 @@ class TakeInPageState extends State<TakeInPage> {
     _weightReportDataSource = WeightReportDataSource(_weightReportDatas);
     PublicFunctions.getUserList();
     PublicFunctions.getProductList();
-    PublicFunctions.getRecords(defaultScaleId, weighingTakeInMode);
+    PublicFunctions.getRecords(myDefScaleInfo.defScaleId!, weighingTakeInMode);
 
     if (!isStart) {
       cntScaleTimerMgr.stopCntScaleTimer();
@@ -204,10 +204,10 @@ class TakeInPageState extends State<TakeInPage> {
         setState(() {
           ReqWeightCountine tempWeight = ReqWeightCountine();
           tempWeight = event.obj;
-          if (tempWeight.scaleId == defaultScaleId) {
+          if (tempWeight.scaleId == myDefScaleInfo.defScaleId!) {
             myReqWeightCountine = tempWeight;
             isStart = true;
-            myScreenMgr.serialPortST = true;
+            myComScaleInfo.isOnline = true;
             isCnting = true;
 
             if (_isTakeInStart && !isSameUnit()) {
@@ -331,41 +331,42 @@ class TakeInPageState extends State<TakeInPage> {
     eventBus13 = eventBus.on<EventDeleteRec>().listen((event) {
       if (mounted) {
         setState(() {
-          PublicFunctions.getRecords(defaultScaleId, weighingTakeInMode);
+          PublicFunctions.getRecords(
+              myDefScaleInfo.defScaleId!, weighingTakeInMode);
         });
       }
     });
     eventBus14 = eventBus.on<EventUpdateSettingParam>().listen((event) {
       if (mounted) {
         setState(() {
-          PublicFunctions.getUIConfTakeIn(defaultScaleId);
+          PublicFunctions.getUIConfTakeIn(myDefScaleInfo.defScaleId!);
         });
       }
     });
 
-    eventBus15 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
+    eventBus15 = eventBus.on<EventRespCheckNetScale>().listen((event) {
       if (mounted) {
-        if (isStart) {
-          cntScaleTimerMgr.stopCntScaleTimer();
-          cntScaleTimerMgr.stopPortOffTimer();
-          cntScaleTimerMgr.startPortOffTimer(2, () {
-            if (!isCnting) {
-              setState(() {
-                myScreenMgr.serialPortST = false;
-              });
-            }
-            isCnting = false;
-          });
-        }
+        // if (isStart) {
+        //   cntScaleTimerMgr.stopCntScaleTimer();
+        //   cntScaleTimerMgr.stopPortOffTimer();
+        //   cntScaleTimerMgr.startPortOffTimer(2, () {
+        //     if (!isCnting) {
+        //       setState(() {
+        //         myComScaleInfo.isOnline = false;
+        //       });
+        //     }
+        //     isCnting = false;
+        //   });
+        // }
 
-        setState(() {
-          myFactoryInfoFromScale = event.obj;
-          if (myFactoryInfoFromScale.modelName != '') {
-            myScreenMgr.serialPortST = true;
-          } else {
-            myScreenMgr.serialPortST = false;
-          }
-        });
+        // setState(() {
+        //   myFactoryInfoFromScale = event.obj;
+        //   if (myFactoryInfoFromScale.modelName != '') {
+        //     myComScaleInfo.isOnline = true;
+        //   } else {
+        //     myComScaleInfo.isOnline = false;
+        //   }
+        // });
       }
     });
   }
@@ -498,15 +499,15 @@ class TakeInPageState extends State<TakeInPage> {
 
   @override
   Widget build(BuildContext context) {
-    final _width = MediaQuery.of(context).size.width;
+    final width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),
         child: pageHeadDefScale(context, localizedStrings.take_in_title),
       ),
       body: _isFirstLayout
-          ? firstLayout(context, _width)
-          : secondLayout(context, _width),
+          ? firstLayout(context, width)
+          : secondLayout(context, width),
     );
   }
 
@@ -515,7 +516,7 @@ class TakeInPageState extends State<TakeInPage> {
     _isShowing = !isOKPressed;
   }
 
-  Widget firstLayout(context, _width) {
+  Widget firstLayout(context, width) {
     if (showDialogFlag) {
       if (!_isShowing) {
         _isShowing = true;
@@ -523,8 +524,9 @@ class TakeInPageState extends State<TakeInPage> {
       }
     }
     return Container(
-        width: _width,
-        decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
+        width: width,
+        decoration:
+            BoxDecoration(color: Theme.of(context).colorScheme.surfaceBright),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           // mainAxisSize: MainAxisSize.max,
@@ -548,7 +550,9 @@ class TakeInPageState extends State<TakeInPage> {
                               maxLines: 1,
                               style: TextStyle(
                                 color: (_errorText.text).contains('succeed')
-                                    ? Theme.of(context).colorScheme.outline
+                                    ? Theme.of(context)
+                                        .colorScheme
+                                        .surfaceContainerHigh
                                     : Theme.of(context).colorScheme.error,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -813,6 +817,9 @@ class TakeInPageState extends State<TakeInPage> {
                           buildTextString(
                               localizedStrings.plu_name, constraints, context),
                           Container(
+                            height: 53,
+                            width: 150,
+                            padding: const EdgeInsets.all(0),
                             child: DropdownButtonFormField<String>(
                               itemHeight: 50.0,
                               isExpanded: true,
@@ -847,9 +854,6 @@ class TakeInPageState extends State<TakeInPage> {
                                         overflow: TextOverflow.ellipsis));
                               }).toList(),
                             ),
-                            height: 53,
-                            width: 150,
-                            padding: const EdgeInsets.all(0),
                           ),
                           CustomElevatedButton(
                             btnWidth: constraints.maxWidth / 10 - 50,
@@ -873,6 +877,9 @@ class TakeInPageState extends State<TakeInPage> {
                           buildTextString(
                               localizedStrings.user_name, constraints, context),
                           Container(
+                            height: 53,
+                            width: 150,
+                            padding: const EdgeInsets.all(0),
                             child: DropdownButtonFormField<String>(
                               itemHeight: 50.0,
                               isExpanded: true,
@@ -900,9 +907,6 @@ class TakeInPageState extends State<TakeInPage> {
                                         overflow: TextOverflow.ellipsis));
                               }).toList(),
                             ),
-                            height: 53,
-                            width: 150,
-                            padding: const EdgeInsets.all(0),
                           ),
                           CustomElevatedButton(
                             btnWidth: constraints.maxWidth / 10 - 50,
@@ -1007,7 +1011,7 @@ class TakeInPageState extends State<TakeInPage> {
         //开始按钮
         icon: const Icon(Icons.play_arrow),
         iconSize: iconSize,
-        color: (isStart) ? (colorScheme.background) : (colorScheme.primary),
+        color: (isStart) ? (colorScheme.secondaryFixed) : (colorScheme.primary),
         onPressed: () {
           performStart();
         },
@@ -1032,7 +1036,7 @@ class TakeInPageState extends State<TakeInPage> {
         },
         icon: const Icon(Icons.pause),
         iconSize: iconSize,
-        color: (!isStart) ? (colorScheme.background) : colorScheme.primary,
+        color: (!isStart) ? (colorScheme.secondaryFixed) : colorScheme.primary,
       ),
     );
   }
@@ -1165,12 +1169,12 @@ class TakeInPageState extends State<TakeInPage> {
             color: colorScheme.primary,
             textColor: colorScheme.onPrimary,
             elevation: 5.0,
+            onPressed: onPressed,
             child: Text(text,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                    fontSize: fontSize, fontWeight: FontWeight.normal)),
-            onPressed: onPressed));
+                    fontSize: fontSize, fontWeight: FontWeight.normal))));
   }
 
   Widget buildSetReportButton(Color? color, String text,
@@ -1327,7 +1331,7 @@ class TakeInPageState extends State<TakeInPage> {
     );
   }
 
-  Widget secondLayout(context, _width) {
+  Widget secondLayout(context, width) {
     if (showDialogFlag) {
       if (!_isShowing) {
         _isShowing = true;
@@ -1336,7 +1340,7 @@ class TakeInPageState extends State<TakeInPage> {
     }
 
     return Container(
-        width: _width,
+        width: width,
         decoration:
             BoxDecoration(color: Theme.of(context).colorScheme.surfaceTint),
         child: Column(
@@ -1362,7 +1366,9 @@ class TakeInPageState extends State<TakeInPage> {
                               maxLines: 1,
                               style: TextStyle(
                                 color: (_errorText.text).contains('succeed')
-                                    ? Theme.of(context).colorScheme.outline
+                                    ? Theme.of(context)
+                                        .colorScheme
+                                        .surfaceContainerHigh
                                     : Theme.of(context).colorScheme.error,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -1519,7 +1525,7 @@ class TakeInPageState extends State<TakeInPage> {
                           icon: const Icon(Icons.play_arrow),
                           iconSize: 30,
                           color: (isStart)
-                              ? (Theme.of(context).colorScheme.background)
+                              ? (Theme.of(context).colorScheme.secondaryFixed)
                               : (Theme.of(context).colorScheme.primary),
                           onPressed: () {
                             performStart();
@@ -1536,7 +1542,7 @@ class TakeInPageState extends State<TakeInPage> {
                           icon: const Icon(Icons.pause),
                           iconSize: 30,
                           color: (!isStart)
-                              ? (Theme.of(context).colorScheme.background)
+                              ? (Theme.of(context).colorScheme.secondaryFixed)
                               : (Theme.of(context).colorScheme.primary),
                         ),
                       ),
@@ -1711,13 +1717,13 @@ class TakeInPageState extends State<TakeInPage> {
     setState(() {
       if (!isStart) {
         isStart = true;
-        PublicFunctions.getWeight(defaultScaleId);
+        PublicFunctions.getWeight(myDefScaleInfo.defScaleId!);
       }
       cntScaleTimerMgr.stopPortOffTimer();
       cntScaleTimerMgr.startPortOffTimer(2, () {
         if (!isCnting) {
           setState(() {
-            myScreenMgr.serialPortST = false;
+            myComScaleInfo.isOnline = false;
           });
         }
         isCnting = false;
@@ -1730,7 +1736,7 @@ class TakeInPageState extends State<TakeInPage> {
     if (isStart) {
       setState(() {
         isStart = false;
-        PublicFunctions.stopWeight(defaultScaleId);
+        PublicFunctions.stopWeight(myDefScaleInfo.defScaleId!);
       });
       cntScaleTimerMgr.stopCntScaleTimer();
       cntScaleTimerMgr.startCntScaleTimer(5);
@@ -1768,6 +1774,9 @@ class TakeInPageState extends State<TakeInPage> {
               ),
             ),
             Container(
+              height: 53,
+              width: constraints.maxWidth / 10,
+              padding: const EdgeInsets.all(0),
               child: DropdownButtonFormField<String>(
                 itemHeight: 50.0,
                 isExpanded: true,
@@ -1795,9 +1804,6 @@ class TakeInPageState extends State<TakeInPage> {
                       child: Text(value, overflow: TextOverflow.ellipsis));
                 }).toList(),
               ),
-              height: 53,
-              width: constraints.maxWidth / 10,
-              padding: const EdgeInsets.all(0),
             ),
             CustomElevatedButton(
               btnWidth: constraints.maxWidth / 10 - 50,
@@ -1828,6 +1834,9 @@ class TakeInPageState extends State<TakeInPage> {
                           fontSize: 14, fontWeight: FontWeight.normal))),
             ),
             Container(
+              height: 53,
+              width: constraints.maxWidth / 10,
+              padding: const EdgeInsets.all(0),
               child: DropdownButtonFormField<String>(
                 itemHeight: 50.0,
                 isExpanded: true,
@@ -1851,9 +1860,6 @@ class TakeInPageState extends State<TakeInPage> {
                       child: Text(value, overflow: TextOverflow.ellipsis));
                 }).toList(),
               ),
-              height: 53,
-              width: constraints.maxWidth / 10,
-              padding: const EdgeInsets.all(0),
             ),
             CustomElevatedButton(
               btnWidth: constraints.maxWidth / 10 - 50,
@@ -1974,7 +1980,7 @@ class TakeInPageState extends State<TakeInPage> {
       },
     ).then((confirmed) {
       if (confirmed) {
-        PublicFunctions.deleteAllRecordsTakeIn(defaultScaleId);
+        PublicFunctions.deleteAllRecordsTakeIn(myDefScaleInfo.defScaleId!);
       }
     });
   }
@@ -2137,7 +2143,7 @@ class TakeInPageState extends State<TakeInPage> {
     Sheet sh = excel['Sheet1'];
     for (var i = 0; i < title.length; i++) {
       sh.cell(CellIndex.indexByColumnRow(rowIndex: 0, columnIndex: i)).value =
-          title[i];
+          title[i] as CellValue?;
     }
 
     for (int row = 1; row <= myWeightReportData.length; row++) {
@@ -2147,73 +2153,73 @@ class TakeInPageState extends State<TakeInPage> {
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].id;
+                .value = myWeightReportData[row - 1].id as CellValue?;
             break;
           case 'Date Time':
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].dateTime;
+                .value = myWeightReportData[row - 1].dateTime as CellValue?;
             break;
           case 'Weight':
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].weight;
+                .value = myWeightReportData[row - 1].weight as CellValue?;
             break;
           case 'Weight Unit':
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].weightUnit;
+                .value = myWeightReportData[row - 1].weightUnit as CellValue?;
             break;
           case 'PLU NO.':
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].plu;
+                .value = myWeightReportData[row - 1].plu as CellValue?;
             break;
           case 'PLU Name':
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].pluName;
+                .value = myWeightReportData[row - 1].pluName as CellValue?;
             break;
           case 'PLU Remarks':
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].pluRemarks;
+                .value = myWeightReportData[row - 1].pluRemarks as CellValue?;
             break;
           case 'Pretare':
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].pretare;
+                .value = myWeightReportData[row - 1].pretare as CellValue?;
             break;
           case 'User Name':
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].userName;
+                .value = myWeightReportData[row - 1].userName as CellValue?;
             break;
           case 'User Remarks':
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].userRemarks;
+                .value = myWeightReportData[row - 1].userRemarks as CellValue?;
             break;
           case 'User NO.':
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].userNo;
+                .value = myWeightReportData[row - 1].userNo as CellValue?;
             break;
           case 'Scale Model':
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].scaleName;
+                .value = myWeightReportData[row - 1].scaleName as CellValue?;
             break;
 
           default:
@@ -2242,12 +2248,12 @@ class TakeInPageState extends State<TakeInPage> {
   void sendReportDataToDB() {
     var currentData = myWeightReportData[myWeightReportData.length - 1];
     myScaleCmd.cmdMode = "add_rec";
-    myAddScaleRecord.scaleId = defaultScaleId;
+    myAddScaleRecord.scaleId = myDefScaleInfo.defScaleId!;
     myAddScaleRecord.price = '0.0';
     myAddScaleRecord.scaleMode = weighingTakeInMode;
-    myAddScaleRecord.scaleModel = defaultScaleModel;
-    myAddScaleRecord.scaleSn = defaultScaleSn;
-    myAddScaleRecord.scaleName = defaultScaleModel;
+    myAddScaleRecord.scaleModel = myDefScaleInfo.defScaleModel;
+    myAddScaleRecord.scaleSn = myDefScaleInfo.defScaleSn;
+    myAddScaleRecord.scaleName = myDefScaleInfo.defScaleModel;
     myAddScaleRecord.product = currentData.pluName;
     myAddScaleRecord.weight = currentData.weight.toString();
     myAddScaleRecord.pluNo = currentData.plu;
@@ -2258,7 +2264,7 @@ class TakeInPageState extends State<TakeInPage> {
     myAddScaleRecord.userName = currentData.userName;
     myAddScaleRecord.userRemarks = currentData.userRemarks;
     myScaleCmd.cmdData = jsonEncode(myAddScaleRecord);
-    PublicFunctions.sendMsg(defaultScaleId, jsonEncode(myScaleCmd));
+    PublicFunctions.sendMsg(myDefScaleInfo.defScaleId!, jsonEncode(myScaleCmd));
   }
 
   bool isWeightValue() {

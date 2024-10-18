@@ -8,10 +8,10 @@ class CustomSettingButton extends StatefulWidget {
   const CustomSettingButton({required this.onRefresh, super.key});
 
   @override
-  _CustomSettingButtonState createState() => _CustomSettingButtonState();
+  CustomSettingButtonState createState() => CustomSettingButtonState();
 }
 
-class _CustomSettingButtonState extends State<CustomSettingButton> {
+class CustomSettingButtonState extends State<CustomSettingButton> {
   bool isHovered = false;
   bool isPressed = false;
 
@@ -45,7 +45,7 @@ class _CustomSettingButtonState extends State<CustomSettingButton> {
           border: Border.all(
             color: isPressed
                 ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.background,
+                : Theme.of(context).colorScheme.secondaryFixed,
             width: 1.0,
           ),
           color: Theme.of(context).colorScheme.onPrimary,
@@ -54,7 +54,7 @@ class _CustomSettingButtonState extends State<CustomSettingButton> {
           Icons.settings,
           color: isHovered || isPressed
               ? Theme.of(context).colorScheme.primary
-              : Theme.of(context).colorScheme.background,
+              : Theme.of(context).colorScheme.secondaryFixed,
           size: 24.0,
         ),
       ),

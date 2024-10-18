@@ -15,10 +15,10 @@ class MultLimitSettingDialog extends StatefulWidget {
       super.key});
 
   @override
-  _MultLimitSettingDialogState createState() => _MultLimitSettingDialogState();
+  MultLimitSettingDialogState createState() => MultLimitSettingDialogState();
 }
 
-class _MultLimitSettingDialogState extends State<MultLimitSettingDialog> {
+class MultLimitSettingDialogState extends State<MultLimitSettingDialog> {
   // 存储每组的最大最小值控制器
   List<TextEditingController> maxValueCtlList = [];
   List<TextEditingController> minValueCtlList = [];
@@ -64,7 +64,7 @@ class _MultLimitSettingDialogState extends State<MultLimitSettingDialog> {
       content: Container(
           height: 400,
           decoration:
-              BoxDecoration(color: Theme.of(context).colorScheme.surface),
+              BoxDecoration(color: Theme.of(context).colorScheme.onPrimary),
           child: SingleChildScrollView(
             child: Column(
               children: List.generate(widget.numGroups, (index) {

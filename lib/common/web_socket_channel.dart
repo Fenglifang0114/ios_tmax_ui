@@ -16,6 +16,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import '../data/ipinfodata.dart';
 import '../data/manager_scale_channel.dart';
 import '../data/reqweightdata_data.dart';
+import '../data/wifi_pwd_info.dart';
 import '../eventbus/eventbus.dart';
 
 late WebSocketChannel webchannel;
@@ -75,7 +76,7 @@ class WebSocketChannel {
   void onData(event) {
     if (event != Null) {
       if (kDebugMode) {
-        print('0收到消息:' + event);
+        print('0收到消息:$event');
       }
       paster(event);
     }
@@ -134,18 +135,15 @@ class WebSocketChannel {
     myComScaleInfo.stopBits = myCurrentPort.stopBits!;
     String url = GetUrl.getUrl(scaleInfo.scaleId!);
     manager.connect(scaleInfo.scaleId!, url);
-    if (defaultScaleId == scaleInfo.scaleId!) {
-      defaultScaleModel = scaleInfo.scaleModel!;
-      defaultScaleSn = scaleInfo.scaleSn!;
-      defscaleMedia =
-          myComScaleInfo.portName + ":" + myComScaleInfo.baudRate.toString();
+    if (myDefScaleInfo.defScaleId == scaleInfo.scaleId!) {
+      DefScaleInfo.getDefScaleInfo(scaleInfo.scaleId!);
     }
   }
 
   void getNetScaleList(ScaleDataInfo scaleInfo, NetInfo netInfo) {
     NetScaleInfoLocal newNetScale = NetScaleInfoLocal();
     newNetScale.scaleModel = scaleInfo.scaleModel!;
-    newNetScale.isOnline = scaleInfo.isOnline!;
+    newNetScale.isOnline = false; // scaleInfo.isOnline!;
     newNetScale.scaleId = scaleInfo.scaleId!;
     newNetScale.scaleSn = scaleInfo.scaleSn!;
     newNetScale.tMedia = scaleInfo.tMedia!;
@@ -157,11 +155,8 @@ class WebSocketChannel {
     NetScaleListMgr.addScale(myNetScaleList, newNetScale);
     String url = GetUrl.getUrl(scaleInfo.scaleId!);
     manager.connect(scaleInfo.scaleId!, url);
-    if (defaultScaleId == scaleInfo.scaleId!) {
-      defaultScaleModel = scaleInfo.scaleModel!;
-      defaultScaleSn = scaleInfo.scaleSn!;
-      defaultScaleName = scaleInfo.scaleName!;
-      defscaleMedia = newNetScale.ip! + ":" + newNetScale.port!.toString();
+    if (myDefScaleInfo.defScaleId == scaleInfo.scaleId!) {
+      DefScaleInfo.getDefScaleInfo(scaleInfo.scaleId!);
     }
   }
 
@@ -266,6 +261,11 @@ class WebSocketChannel {
       } else if (jsonData['MsgType'] == "resp_detail_list") {
         var dataString = jsonData['MsgBody'];
         eventBus.fire(EventRespDetailInfo(dataString));
+      } else if (jsonData['MsgType'] == "resp_wifi_pwd_list") {
+        String dataString = jsonData['MsgBody'];
+        if (dataString.isNotEmpty) {
+          myWifiPwdInfoList = wifiPwdInfoListFromJson(dataString);
+        }
       } else {}
     } catch (e) {
       if (kDebugMode) {

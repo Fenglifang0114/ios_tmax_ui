@@ -6,10 +6,10 @@ class AppInfoButton extends StatefulWidget {
   const AppInfoButton({required this.onRefresh, super.key});
 
   @override
-  _AppInfoButtonState createState() => _AppInfoButtonState();
+  AppInfoButtonState createState() => AppInfoButtonState();
 }
 
-class _AppInfoButtonState extends State<AppInfoButton> {
+class AppInfoButtonState extends State<AppInfoButton> {
   bool isHovered = false;
   bool isPressed = false;
 
@@ -45,7 +45,7 @@ class _AppInfoButtonState extends State<AppInfoButton> {
           border: Border.all(
             color: isPressed
                 ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.background,
+                : Theme.of(context).colorScheme.secondaryFixed,
             width: 1.0,
           ),
           color: Theme.of(context).colorScheme.onPrimary,
@@ -54,7 +54,7 @@ class _AppInfoButtonState extends State<AppInfoButton> {
           Icons.info_outline,
           color: isHovered || isPressed
               ? Theme.of(context).colorScheme.primary
-              : Theme.of(context).colorScheme.background,
+              : Theme.of(context).colorScheme.secondaryFixed,
           size: 24.0,
         ),
       ),

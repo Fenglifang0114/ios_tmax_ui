@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/pages/home_page_config.dart';
@@ -11,7 +12,7 @@ import 'encrypt_data.dart';
 const int tConfig = 1;
 const int tIndustry = 2;
 const int tRetail = 3;
-int mySystemVersion = tRetail;
+int mySystemVersion = tIndustry;
 const String appTConfig = "T-CONFIG";
 const String appTIndustrial = "T-Industry";
 const String appTRetail = "T-RETAIL";
@@ -36,7 +37,9 @@ class SystemVersionInfo {
       Map<String, dynamic> jsonMap = jsonDecode(decryptData);
       myAppName = AppName.fromJson(jsonMap);
     } catch (e) {
-      print('Failed to parse JSON: $e');
+      if (kDebugMode) {
+        print('Failed to parse JSON: $e');
+      }
     }
   }
 

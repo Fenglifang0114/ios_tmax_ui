@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/data/timer_manager.dart';
@@ -10,16 +11,15 @@ import '../data/manager_scale_channel.dart';
 import '../data/custom_serial_protocol_text_dart.dart';
 import '../data/language.dart';
 import '../data/reqweightdata_data.dart';
-import '../data/scale_info_from_scale.dart';
-import '../data/screen_mgr.dart';
+
 import '../eventbus/eventbus.dart';
 import 'package:path/path.dart' as p;
 import '../widget/custom_button.dart';
 import '../widget/page_head.dart';
-import 'package:archive/archive.dart';
+import 'package:archive/archive_io.dart';
 
 class CustomSerialProtocol extends StatefulWidget {
-  const CustomSerialProtocol({Key? key}) : super(key: key);
+  const CustomSerialProtocol({super.key});
 
   @override
   State<CustomSerialProtocol> createState() => _CustomSerialProtocolState();
@@ -32,17 +32,14 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
   List<SerialProtocolText> textListPcs = [];
   List<SerialProtocolText> textListPrice = [];
   List<SerialProtocolText> textListPct = [];
-  final textController = TextEditingController();
-  final RegExp englishRegExp = RegExp(r'^[\x00-\x7F]*$');
 
   List<String> outputData = [];
-
-  String _selectedAlignment = 'left';
-  String _selectedFilling = 'space';
-  int _selectedDecimal = 3;
   List<String> alignments = ['left', 'right'];
   List<String> fillings = ['0', 'space'];
+  List<String> jsonFilesList = [];
+
   List<int> decimals = [0, 1, 2, 3, 4];
+
   Map<String, int> pageMap = {
     "OL": 1,
     "UL": 2,
@@ -52,17 +49,23 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     "Percent": 6,
   };
 
-  int count = 0;
-  List<String> jsonFilesList = [];
-  late int _currentPageIndex;
   String pageTitle = '';
+  String _selectedAlignment = 'left';
+  String _selectedFilling = 'space';
+
+  int count = 0;
+  int _selectedDecimal = 3;
+  final double buttonWidth = 100;
+  final double buttonHeight = 40;
+
+  late int _currentPageIndex;
   late ColorScheme colorScheme;
   bool isArrowBackHovered = false;
   bool isArrowForwardHovered = false;
   bool serialPreview = false;
   bool _isHexDisplay = false;
   bool _downloading = false;
-  bool _cntStop = false; //连续发送已经停止
+  // bool _cntStop = false; //连续发送已经停止
   bool sendStop = false; //连续发送已经停止
 
   TextEditingController myContentCtl =
@@ -73,6 +76,9 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       TextEditingController(text: mySerialProtocolText.isTrue);
   TextEditingController myBoolTypeFalseCtl =
       TextEditingController(text: mySerialProtocolText.isFalse);
+
+  final textController = TextEditingController();
+  final RegExp englishRegExp = RegExp(r'^[\x00-\x7F]*$');
   final List<String> _buttonLabels = [
     'Text',
     'Text_Hex',
@@ -133,7 +139,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                         fontWeight: FontWeight.normal)), ////此处需要秤回复
                 duration: const Duration(seconds: 3),
                 backgroundColor: (myRespDataFromScale.msgBody.contains('ok'))
-                    ? Theme.of(context).colorScheme.outline
+                    ? Theme.of(context).colorScheme.surfaceContainerHigh
                     : Theme.of(context).colorScheme.error));
           }
         });
@@ -169,7 +175,8 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
           // cntScaleTimerMgr.startCntScaleTimer(5);
           PublicFunctions.stopWeight(1);
         } else if (!serialPreview) {
-          PublicFunctions.openScalePassth(1);
+          // PublicFunctions.openScalePassth(1);
+          PublicFunctions.stopWeight(1);
         }
       }
     });
@@ -180,17 +187,17 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       }
     });
 
-    _eventbus6 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
-      if (mounted) {
-        setState(() {
-          myFactoryInfoFromScale = event.obj;
-          if (myFactoryInfoFromScale.modelName != '') {
-            myScreenMgr.serialPortST = true;
-          } else {
-            myScreenMgr.serialPortST = false;
-          }
-        });
-      }
+    _eventbus6 = eventBus.on<EventRespCheckNetScale>().listen((event) {
+      // if (mounted) {
+      //   setState(() {
+      //     myFactoryInfoFromScale = event.obj;
+      //     if (myFactoryInfoFromScale.modelName != '') {
+      //       myComScaleInfo.isOnline = true;
+      //     } else {
+      //       myComScaleInfo.isOnline = false;
+      //     }
+      //   });
+      // }
     });
 
     _eventbus7 = eventBus.on<EventReqWeightCountine>().listen((event) {
@@ -201,7 +208,8 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
             if (!serialPreview) {
               PublicFunctions.stopWeight(1);
             } else {
-              PublicFunctions.openScalePassth(1);
+              // PublicFunctions.openScalePassth(1);
+              PublicFunctions.enUserContinue(1);
             }
           }
         });
@@ -213,7 +221,8 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         myRespDataFromScale = event.obj;
         setState(() {
           if (myRespDataFromScale.msgBody.contains('ok')) {
-            print('ok');
+            // print('ok');
+            return;
           } else {
             if (!serialPreview) {
               PublicFunctions.stopWeight(1);
@@ -279,7 +288,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-              flex: 2,
+              flex: 1,
               child: Column(
                 children: <Widget>[
                   Divider(
@@ -327,7 +336,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                 ],
               )),
           Expanded(
-            flex: 7,
+            flex: 5,
             child: Container(
               decoration: BoxDecoration(
                   color: colorScheme.surfaceTint,
@@ -385,7 +394,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
             ),
           ),
           Expanded(
-              flex: 6,
+              flex: 4,
               child: Container(
                   color: Theme.of(context).colorScheme.surfaceTint,
                   child: Column(
@@ -396,8 +405,8 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             CustomElevatedButton(
-                              btnWidth: 110,
-                              btnHeight: 50,
+                              btnWidth: buttonWidth,
+                              btnHeight: 40,
                               icon: Icons.download_rounded,
                               text: localizedStrings.download,
                               onPressed: (!serialPreview &&
@@ -424,17 +433,18 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                                   : null,
                             ),
                             CustomElevatedButton(
-                              btnWidth: 110,
-                              btnHeight: 50,
+                              btnWidth: buttonWidth,
+                              btnHeight: buttonHeight,
                               icon: Icons.visibility_outlined,
                               text: localizedStrings.open_preview,
-                              onPressed: !serialPreview && (defaultScaleId == 1)
+                              onPressed: !serialPreview &&
+                                      (myDefScaleInfo.defScaleId! == 1)
                                   ? handleButtonPress
                                   : null,
                             ),
                             CustomElevatedButton(
-                              btnWidth: 110,
-                              btnHeight: 50,
+                              btnWidth: buttonWidth,
+                              btnHeight: buttonHeight,
                               icon: Icons.visibility_off_outlined,
                               text: localizedStrings.close_preview,
                               onPressed: () async {
@@ -442,7 +452,8 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                                   serialPreview = false;
                                   outputData.clear();
                                 });
-                                PublicFunctions.closeScalePassth(1);
+                                // PublicFunctions.closeScalePassth(1);
+                                PublicFunctions.stopWeight(1);
                               },
                             ),
                           ],
@@ -516,9 +527,9 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                                         children: [
                                           OutlinedButton(
                                               style: ButtonStyle(
-                                                side: MaterialStateProperty
+                                                side: WidgetStateProperty
                                                     .resolveWith<BorderSide>(
-                                                  (Set<MaterialState> states) {
+                                                  (Set<WidgetState> states) {
                                                     return BorderSide(
                                                       color: colorScheme
                                                           .scrim, // 设置边框颜色为红色
@@ -539,13 +550,13 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                                           OutlinedButton(
                                               style: ButtonStyle(
                                                 backgroundColor: _isHexDisplay
-                                                    ? MaterialStateProperty.all(
+                                                    ? WidgetStateProperty.all(
                                                         colorScheme.primary)
-                                                    : MaterialStateProperty.all(
+                                                    : WidgetStateProperty.all(
                                                         colorScheme.onPrimary),
-                                                side: MaterialStateProperty
+                                                side: WidgetStateProperty
                                                     .resolveWith<BorderSide>(
-                                                  (Set<MaterialState> states) {
+                                                  (Set<WidgetState> states) {
                                                     return BorderSide(
                                                       color: colorScheme
                                                           .scrim, // 设置边框颜色为红色
@@ -647,7 +658,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
           content: const Text(('There are no files to save.'),
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal)),
           duration: const Duration(seconds: 3),
-          backgroundColor: Theme.of(context).colorScheme.outline));
+          backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh));
     }
 
     for (var file in files) {
@@ -667,7 +678,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
           destinationFile.deleteSync();
         } catch (e) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('fail' + e.toString(),
+              content: Text('fail$e',
                   style: const TextStyle(
                       fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
               duration: const Duration(seconds: 3),
@@ -696,7 +707,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
               style: const TextStyle(
                   fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
           duration: const Duration(seconds: 3),
-          backgroundColor: Theme.of(context).colorScheme.outline));
+          backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh));
     }
   }
 
@@ -707,7 +718,8 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       _isHexDisplay = false;
       outputData.clear();
     });
-    PublicFunctions.getWeight(1);
+    // PublicFunctions.getWeight(1);
+    PublicFunctions.enUserContinue(1);
   }
 
   String getTitleName(int pageId) {
@@ -747,8 +759,8 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
               : colorScheme.onPrimary,
           child: OutlinedButton(
               style: ButtonStyle(
-                side: MaterialStateProperty.resolveWith<BorderSide>(
-                  (Set<MaterialState> states) {
+                side: WidgetStateProperty.resolveWith<BorderSide>(
+                  (Set<WidgetState> states) {
                     return BorderSide(
                       color: colorScheme.scrim, // 设置边框颜色为红色
                       width: 2, // 设置边框宽度
@@ -777,6 +789,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         children: [
           Container(
             height: 30,
+            color: colorScheme.primary,
             child: Center(
               child: Text(
                 localizedStrings.serial_port_output_preview,
@@ -786,7 +799,6 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                 ),
               ),
             ),
-            color: colorScheme.primary,
           ),
           Expanded(
             child: Container(
@@ -849,7 +861,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
           res = res + list[i].isTrue;
         }
       } else if (list[i].type == 'Enter') {
-        res = res + '\r\n';
+        res = '$res\r\n';
       } else {
         res = res + list[i].content;
       }
@@ -1354,9 +1366,9 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
 
   DropdownButton _decimalDropdownButton(int pageId) {
     return DropdownButton<String>(
-      dropdownColor: colorScheme.background,
+      dropdownColor: colorScheme.secondaryFixed,
       style: TextStyle(
-          color: colorScheme.onBackground,
+          color: colorScheme.onSurface,
           fontSize: 20,
           fontWeight: FontWeight.normal),
       hint: Text(
@@ -1385,9 +1397,9 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
 
   DropdownButton _fillingDropdownButton(int pageId) {
     return DropdownButton<String>(
-      dropdownColor: colorScheme.background,
+      dropdownColor: colorScheme.secondaryFixed,
       style: TextStyle(
-          color: colorScheme.onBackground,
+          color: colorScheme.onSurface,
           fontSize: 20,
           fontWeight: FontWeight.normal),
       hint: Text(
@@ -1416,9 +1428,9 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
 
   DropdownButton _alignmentDropdownButton(int pageId) {
     return DropdownButton<String>(
-      dropdownColor: colorScheme.background,
+      dropdownColor: colorScheme.secondaryFixed,
       style: TextStyle(
-          color: colorScheme.onBackground,
+          color: colorScheme.onSurface,
           fontSize: 20,
           fontWeight: FontWeight.normal),
       hint: Text(
@@ -1656,7 +1668,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
               ),
               color: !isArrowBackHovered
                   ? Theme.of(context).colorScheme.onPrimary
-                  : colorScheme.background,
+                  : colorScheme.secondaryFixed,
             ),
             child: Icon(
               Icons.arrow_back,
@@ -1691,7 +1703,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
               ),
               color: !isArrowForwardHovered
                   ? Theme.of(context).colorScheme.onPrimary
-                  : colorScheme.background,
+                  : colorScheme.secondaryFixed,
             ),
             child: Icon(
               Icons.arrow_forward,
@@ -1881,7 +1893,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       child: TextButton(
         style: ButtonStyle(
             backgroundColor: (textData.isSelect)
-                ? MaterialStateProperty.all(colorScheme.primary)
+                ? WidgetStateProperty.all(colorScheme.primary)
                 : null),
         onPressed: () {
           setState(() {
@@ -1972,11 +1984,11 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         }
         return false;
       } catch (e) {
-        print("Error reading file: $e");
+        // print("Error reading file: $e");
         return false;
       }
     } else {
-      print("File does not exist");
+      // print("File does not exist");
       return false;
     }
   }
@@ -2183,7 +2195,9 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         }
       }
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     }
 
     return tempList;
@@ -2344,7 +2358,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       String filePath = filePaths[i - 1];
       File file = File(filePath);
       if (await file.exists()) {
-        jsonFilesList.add('$i' + filePath);
+        jsonFilesList.add('$i$filePath');
       }
     }
   }

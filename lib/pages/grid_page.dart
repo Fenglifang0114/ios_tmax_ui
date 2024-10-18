@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class GridPage extends StatefulWidget {
-  const GridPage({Key? key}) : super(key: key);
+  const GridPage({super.key});
 
   @override
   State<GridPage> createState() => _GridPageState();
@@ -160,7 +160,7 @@ class _GridPageState extends State<GridPage> {
   Widget build(BuildContext context) {
     return Container(
         width: 1000,
-        decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
+        decoration: BoxDecoration(color: Theme.of(context).colorScheme.surfaceBright),
         child: Expanded(
             child: ListView(controller: _pageScrollerController, children: [
           GridView.count(

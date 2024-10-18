@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:t_max/data/comscaleinfo_data.dart';
 import 'package:t_max/data/scalecmd_data.dart';
 import 'package:t_max/data/writelog.dart';
+import '../data/downloadresponse.dart';
 import '../data/ipinfodata.dart';
 import '../data/language.dart';
 import '../data/manager_scale_channel.dart';
@@ -16,7 +17,7 @@ import '../widget/custom_button.dart';
 import '../widget/page_head.dart';
 
 class ScaleManagerPage extends StatefulWidget {
-  const ScaleManagerPage({Key? key}) : super(key: key);
+  const ScaleManagerPage({super.key});
 
   @override
   State<ScaleManagerPage> createState() => ScaleManagerPageState();
@@ -26,30 +27,36 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
   List<NetScaleInfoLocal> scaleNetItems = [];
   List<int> wifiRssiList = [];
   List<String> bssidList = [];
+
   TextEditingController scaleModelCtl = TextEditingController(text: '');
   TextEditingController scaleNameCtl = TextEditingController(text: '');
   TextEditingController snCtl = TextEditingController(text: '');
   TextEditingController portCtl = TextEditingController(text: '');
   TextEditingController ipCtl = TextEditingController(text: '');
-  TextEditingController gateWayController = TextEditingController(text: '');
-  // TextEditingController dnsController = TextEditingController();
-  final TextEditingController _findWifiText = TextEditingController(text: '');
+
   int selScaleId = -1;
+
   bool passwordLock = true;
   bool isAddScale = false;
   bool isTesting = false;
-  bool isEditScale = false;
+  bool isRename = false;
   bool _isValidIP = false;
-
+  bool _isModifyName = false;
+  bool _isEditing = false;
+  bool _isNetPort = false;
   bool isDel = false; //是否执行删除
+
   NetScaleInfoLocal defNetScaleInfo = NetScaleInfoLocal();
+
   dynamic _eventbus1;
   dynamic _eventbus2;
   dynamic _eventbus3;
+  dynamic _eventbus4;
+  dynamic _eventbus5;
 
-  Timer? getIpTimer;
+  Timer? checkIsOnlineTimer;
+  Timer? _debounceTimer;
 
-  TextEditingController controller = TextEditingController();
   RegExp ipaddressRegex = RegExp(r'[0-9.]');
 
   RegExp ipRegex = RegExp(
@@ -71,13 +78,22 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
   @override
   void initState() {
     super.initState();
+    initScaleList();
+    initEventBus();
 
+    scaleNameCtl.addListener(_onScaleNameChanged);
+    ipCtl.addListener(_onIpChanged);
+    portCtl.addListener(_onPortChanged);
+
+    _startTimer();
+  }
+
+  void initScaleList() {
     scaleNetItems = myNetScaleList;
-
-    selScaleId = defaultScaleId;
+    selScaleId = myDefScaleInfo.defScaleId!;
     if (myNetScaleList.isNotEmpty) {
-      defNetScaleInfo =
-          NetScaleListMgr.findScaleInfo(myNetScaleList, defaultScaleId);
+      defNetScaleInfo = NetScaleListMgr.findScaleInfo(
+          myNetScaleList, myDefScaleInfo.defScaleId!);
     }
     if (defNetScaleInfo.scaleId != null) {
       scaleModelCtl.text = defNetScaleInfo.scaleModel!;
@@ -86,7 +102,14 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
       portCtl.text = defNetScaleInfo.port!.toString();
       scaleNameCtl.text = defNetScaleInfo.scaleName!;
     }
+    if (myDefScaleInfo.defScaleId! == 1) {
+      scaleModelCtl.text = myComScaleInfo.scaleModel;
+      snCtl.text = myComScaleInfo.scaleSn;
+      scaleNameCtl.text = myComScaleInfo.scaleName;
+    }
+  }
 
+  void initEventBus() {
     _eventbus1 = eventBus.on<EventRespDelScale>().listen((event) {
       if (mounted) {
         setState(() {
@@ -99,12 +122,26 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
                         fontWeight: FontWeight.normal)), ////此处需要秤回复
                 duration: const Duration(seconds: 3),
                 backgroundColor: (dataStr.contains('ok'))
-                    ? Theme.of(context).colorScheme.outline
+                    ? Theme.of(context).colorScheme.surfaceContainerHigh
                     : Theme.of(context).colorScheme.error));
             if (dataStr.contains('ok') && isDel) {
               NetScaleListMgr.delScaleById(myNetScaleList, selScaleId);
-              manager.delete(selScaleId);
-              selScaleId = defaultScaleId;
+              // manager.delete(selScaleId);TODO:检查这个要不要自动删除
+              selScaleId = myDefScaleInfo.defScaleId!;
+              scaleNameCtl.text = myDefScaleInfo.defScaleName!;
+              scaleModelCtl.text = myDefScaleInfo.defScaleModel!;
+              snCtl.text = myDefScaleInfo.defScaleSn!;
+              ipCtl.text = myDefScaleInfo.defScaleIp == null
+                  ? ""
+                  : myDefScaleInfo.defScaleIp!;
+              portCtl.text = myDefScaleInfo.defScalePort == null
+                  ? ""
+                  : myDefScaleInfo.defScalePort!;
+              if (scaleModelCtl.text == "TMax") {
+                scaleModelCtl.text = "";
+                snCtl.text = "";
+              }
+
               isDel = false;
             }
           }
@@ -125,37 +162,177 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
                         fontWeight: FontWeight.normal)), ////此处需要秤回复
                 duration: const Duration(seconds: 3),
                 backgroundColor: (dataStr.contains('ok'))
-                    ? Theme.of(context).colorScheme.outline
+                    ? Theme.of(context).colorScheme.surfaceContainerHigh
                     : Theme.of(context).colorScheme.error));
+          }
+
+          for (int i = 0; i < myNetScaleList.length; i++) {
+            if (selScaleId < myNetScaleList[i].scaleId!) {
+              selScaleId = myNetScaleList[i].scaleId!;
+              scaleNameCtl.text = myNetScaleList[i].scaleName!;
+              scaleModelCtl.text = myNetScaleList[i].scaleModel!;
+              snCtl.text = myNetScaleList[i].scaleSn!;
+            }
+          }
+          if (scaleModelCtl.text == "TMax") {
+            scaleModelCtl.text = "";
+            snCtl.text = "";
           }
         });
       }
     });
 
-    _eventbus3 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
+    _eventbus3 = eventBus.on<EventRespCheckNetScale>().listen((event) {
       if (mounted) {
+        myOnlineInfo = event.obj;
+        myFactoryInfoFromScale = myOnlineInfo.factInfo!;
         setState(() {
-          isTesting = false;
           if (myFactoryInfoFromScale.modelName != '') {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: const Text("OK",
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.normal)), ////此处需要秤回复
-                duration: const Duration(seconds: 3),
-                backgroundColor: Theme.of(context).colorScheme.outline));
+            setNetScaleStatus(myOnlineInfo.scaleId!, true);
+            if (isTesting) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: const Text("OK",
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.normal)), ////此处需要秤回复
+                  duration: const Duration(seconds: 3),
+                  backgroundColor:
+                      Theme.of(context).colorScheme.surfaceContainerHigh));
+            }
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: const Text('fail',
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.normal)), ////此处需要秤回复
-                duration: const Duration(seconds: 3),
-                backgroundColor: Theme.of(context).colorScheme.error));
+            setNetScaleStatus(myOnlineInfo.scaleId!, false);
+            if (isTesting) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: const Text('fail',
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.normal)), ////此处需要秤回复
+                  duration: const Duration(seconds: 3),
+                  backgroundColor: Theme.of(context).colorScheme.error));
+            }
+          }
+          if (isTesting) {
+            isTesting = false;
           }
         });
       }
     });
+
+    _eventbus4 = eventBus.on<EventRespCheckComPort>().listen((event) {
+      if (mounted) {
+        setState(() {
+          if (myComScaleSn.modelName != '') {
+            myComScaleInfo.isOnline = true;
+            if (isTesting) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: const Text("OK",
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.normal)), ////此处需要秤回复
+                  duration: const Duration(seconds: 3),
+                  backgroundColor:
+                      Theme.of(context).colorScheme.surfaceContainerHigh));
+            }
+          } else {
+            myComScaleInfo.isOnline = false;
+            myComScaleInfo.isOnline = false;
+            myComScaleSn.modelName = '';
+            myComScaleSn.scaleSn = '';
+            if (isTesting) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: const Text('fail',
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.normal)), ////此处需要秤回复
+                  duration: const Duration(seconds: 3),
+                  backgroundColor: Theme.of(context).colorScheme.error));
+            }
+          }
+          if (isTesting) {
+            isTesting = false;
+          }
+        });
+      }
+    });
+    _eventbus5 = eventBus.on<EventSerialPortResponse>().listen((event) {
+      if (mounted) {
+        setState(() {
+          myRespDataFromScale = event.obj;
+
+          if (myComScaleInfo.isOnline) {
+            myComScaleInfo.isOnline = false;
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: const Text('The serial port disconnected.',
+                    style: TextStyle(fontSize: 20)), ////此处需要秤回复
+                duration: const Duration(seconds: 5),
+                backgroundColor: Theme.of(context).colorScheme.error));
+          }
+          myComScaleInfo.isOnline = false;
+          myComScaleSn.modelName = '';
+          myComScaleSn.scaleSn = '';
+          myComScaleInfo.isOnline = false;
+        });
+      }
+    });
+  }
+
+  void _onPortChanged() {
+    if (portCtl.text.isEmpty) {
+      if (_isNetPort) {
+        setState(() {
+          _isNetPort = false;
+        });
+      }
+      return;
+    }
+
+    if (_isNetPort != true) {
+      setState(() {
+        _isNetPort = true;
+      });
+    }
+  }
+
+  void _onIpChanged() {
+    if (ipCtl.text.isEmpty) {
+      if (_isValidIP) {
+        setState(() {
+          _isValidIP = false;
+        });
+      }
+      return;
+    }
+    bool isValid = validateIpFlag(ipCtl.text);
+    if (isValid != _isValidIP) {
+      setState(() {
+        _isValidIP = isValid;
+      });
+    }
+  }
+
+  void _onScaleNameChanged() {
+    if (scaleNameCtl.text.isNotEmpty) {
+      bool isValid = isValidScaleName(scaleNameCtl.text);
+      if (_isModifyName != isValid) {
+        setState(() {
+          _isModifyName = isValid;
+        });
+      }
+    } else {
+      if (_isModifyName) {
+        setState(() {
+          _isModifyName = false;
+        });
+      }
+    }
+  }
+
+  void setNetScaleStatus(int scaleId, bool status) {
+    for (int i = 0; i < scaleNetItems.length; i++) {
+      if (scaleNetItems[i].scaleId == scaleId) {
+        scaleNetItems[i].isOnline = status;
+      }
+    }
   }
 
   @override
@@ -163,6 +340,11 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
     _eventbus1.cancel();
     _eventbus2.cancel();
     _eventbus3.cancel();
+    _eventbus4.cancel();
+    _eventbus5.cancel();
+    _stopTimer();
+    scaleNameCtl.dispose();
+    _debounceTimer?.cancel();
     super.dispose();
   }
 
@@ -177,92 +359,26 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
           child: pageHeadDesign(
             context,
             localizedStrings.m_scale_title,
-            [defaultScaleId],
+            [myDefScaleInfo.defScaleId!],
           ),
         ),
         body: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Expanded(
-            flex: 3,
-            child: Container(
-              color: Theme.of(context).colorScheme.surfaceTint,
-              child: SizedBox(
-                height: MediaQuery.of(context).size.height,
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    SizedBox(
-                        height: 100,
-                        // color: Theme.of(context).colorScheme.primary,
-                        child: Row(
-                          children: [
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Expanded(
-                              child: TextField(
-                                controller: _findWifiText,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor:
-                                      Theme.of(context).colorScheme.surfaceTint,
-                                  suffixIcon: IconButton(
-                                    splashRadius: 20,
-                                    icon: Icon(
-                                      Icons.close,
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                    ),
-                                    onPressed: () {
-                                      setState(() {
-                                        _findWifiText.clear();
-                                        scaleNetItems = myNetScaleList;
-                                      });
-                                    },
-                                  ),
-                                  prefixIcon: Icon(
-                                    Icons.search,
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                  ),
-                                  labelText: 'find ip',
-                                  floatingLabelBehavior:
-                                      FloatingLabelBehavior.never,
-                                  border: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onPrimary, // 设置边框颜色
-                                      width: 2.0, // 设置边框宽度
-                                    ),
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(4)),
-                                  ),
-                                ),
-                                onChanged: (value) {
-                                  setState(() {
-                                    scaleNetItems = myNetScaleList;
-                                  });
-                                },
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                          ],
-                        )),
-                    Container(
-                      height: 2,
-                      color: Theme.of(context).colorScheme.primary, // 蓝色分隔条颜色
-                    ),
-                    showComScale(),
-                    showScaleList(),
-                  ],
-                ),
+          Container(
+            width: 350,
+            color: Theme.of(context).colorScheme.surfaceTint,
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height,
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  showComScale(),
+                  showNetScaleList(),
+                ],
               ),
             ),
           ),
           Expanded(
-              flex: 6,
+              flex: 7,
               child: Container(
                   color: Theme.of(context).colorScheme.surfaceTint,
                   child: Column(
@@ -301,13 +417,14 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
                 const SizedBox(
                   height: 20,
                 ),
+                _buildProcess(),
                 const SizedBox(
                   height: 50,
                 ),
-                // showScaleName(),
-                // const SizedBox(
-                //   height: 20,
-                // ),
+                if (!isAddScale) showScaleName(),
+                const SizedBox(
+                  height: 20,
+                ),
                 showModelName(),
                 const SizedBox(
                   height: 20,
@@ -316,14 +433,16 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
                 const SizedBox(
                   height: 20,
                 ),
-                showIpAddr(),
-                const SizedBox(
-                  height: 20,
-                ),
-                showPort(),
-                const SizedBox(
-                  height: 60,
-                ),
+                if (selScaleId != 1) showIpAddr(),
+                if (selScaleId != 1)
+                  const SizedBox(
+                    height: 20,
+                  ),
+                if (selScaleId != 1) showPort(),
+                if (selScaleId != 1)
+                  const SizedBox(
+                    height: 20,
+                  ),
                 showConfirmRow(),
               ],
             ),
@@ -349,7 +468,7 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
   }
 
   Widget showConfirmRow() {
-    return isAddScale || isEditScale
+    return isRename || isAddScale
         ? Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -362,14 +481,13 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
                             ipCtl.text.isNotEmpty &&
                             portCtl.text.isNotEmpty &&
                             _isValidIP) ||
-                        (isEditScale &&
-                            scaleNameCtl.text.isNotEmpty &&
-                            isValidScaleName(scaleNameCtl.text))
+                        (isRename && _isModifyName)
                     ? () {
                         if (isAddScale) {
                           addScale();
-                        } else if (isEditScale) {
+                        } else if (isRename) {
                           modifyScaleName();
+                          _isEditing = true;
                         }
                       }
                     : null,
@@ -383,6 +501,15 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
                 onPressed: () {
                   setState(() {
                     isAddScale = false;
+                    isRename = false;
+                    selScaleId = myDefScaleInfo.defScaleId!;
+                    if (selScaleId == 1) {
+                      scaleNameCtl.text = myComScaleInfo.scaleName;
+                    } else {
+                      defNetScaleInfo = NetScaleListMgr.findScaleInfo(
+                          myNetScaleList, myDefScaleInfo.defScaleId!);
+                      scaleNameCtl.text = defNetScaleInfo.scaleName!;
+                    }
                   });
                 },
               ),
@@ -431,9 +558,6 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
                 borderRadius: BorderRadius.all(Radius.circular(4)),
               ),
             ),
-            onChanged: (value) {
-              setState(() {});
-            },
           ),
         )
       ],
@@ -475,11 +599,6 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
                 borderRadius: BorderRadius.all(Radius.circular(4)),
               ),
             ),
-            onChanged: (value) {
-              setState(() {
-                _isValidIP = validateIpFlag(value);
-              });
-            },
           ),
         )
       ],
@@ -528,9 +647,6 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
                       borderRadius: BorderRadius.all(Radius.circular(4)),
                     ),
                   ),
-                  onChanged: (value) {
-                    setState(() {});
-                  },
                 ),
               )
             ],
@@ -543,13 +659,13 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
         : Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(
+              SizedBox(
                 height: 40,
                 width: 200,
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: Text(
-                    "ScaleModel:",
+                    localizedStrings.scale_mgr_scale_model,
                     textAlign: TextAlign.right,
                     style: TextStyle(
                       fontSize: 20,
@@ -569,13 +685,6 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
                     overflow: TextOverflow.ellipsis,
                   ),
                   controller: scaleModelCtl,
-                  onChanged: (value) {},
-                  maxLines: 1,
-                  inputFormatters: [
-                    LengthLimitingTextInputFormatter(28),
-                    FilteringTextInputFormatter.allow(
-                        RegExp(r'[\x00-\xF]+$')), // 允许输入数字和点
-                  ],
                   textAlign: TextAlign.start,
                   textAlignVertical: TextAlignVertical.center,
                   decoration: const InputDecoration(
@@ -593,13 +702,13 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const SizedBox(
+        SizedBox(
           height: 40,
           width: 200,
           child: Align(
             alignment: Alignment.centerRight,
             child: Text(
-              "ScaleName:",
+              localizedStrings.scale_mgr_scale_name,
               textAlign: TextAlign.right,
               style: TextStyle(
                 fontSize: 20,
@@ -612,20 +721,19 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
         ),
         SizedBox(
           width: 300,
-          height: 40,
+          height: 80,
           child: TextField(
-            enabled: (isEditScale || isAddScale) ? true : false,
             style: const TextStyle(
               overflow: TextOverflow.ellipsis,
             ),
             controller: scaleNameCtl,
-            onChanged: (value) {},
-            maxLines: 1,
+            maxLines: 2,
             inputFormatters: [
               LengthLimitingTextInputFormatter(30),
             ],
             textAlign: TextAlign.start,
             textAlignVertical: TextAlignVertical.center,
+            readOnly: !isRename,
             decoration: const InputDecoration(
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.all(Radius.circular(4)),
@@ -645,13 +753,17 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
           btnWidth: 60,
           btnHeight: 40,
           icon: Icons.add_circle_outline,
-          text: 'Add',
-          onPressed: isTesting
+          text: localizedStrings.scale_mgr_btn_add,
+          onPressed: isTesting || isRename || isDel
               ? null
               : () {
                   setState(() {
-                    isEditScale = false;
+                    selScaleId = -1;
+                    isRename = false;
                     isAddScale = true;
+                    ipCtl.text = "";
+                    snCtl.text = "";
+                    portCtl.text = "";
                   });
                 },
         ),
@@ -662,10 +774,12 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
           btnWidth: 80,
           btnHeight: 40,
           icon: Icons.delete_outline,
-          text: 'Delete',
+          text: localizedStrings.scale_mgr_btn_dlt,
           onPressed: (isAddScale || isTesting) ||
-                  (selScaleId == defaultScaleId) ||
-                  selScaleId == 1
+                  (selScaleId == myDefScaleInfo.defScaleId!) ||
+                  selScaleId == 1 ||
+                  isRename ||
+                  isDel
               ? null
               : () {
                   setState(() {
@@ -677,50 +791,35 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
         const SizedBox(
           width: 20,
         ),
-        // CustomOutlinedButton(
-        //   btnWidth: 80,
-        //   btnHeight: 40,
-        //   icon: Icons.edit,
-        //   text: 'Edit',
-        //   onPressed: (isAddScale || isTesting) || selScaleId == 1
-        //       ? null
-        //       : () {
-        //           setState(() {
-        //             isEditScale = true;
-        //             isAddScale = false;
-        //           });
-        //         },
-        // ),
-        // const SizedBox(
-        //   width: 20,
-        // ),
+        CustomOutlinedButton(
+          btnWidth: 80,
+          btnHeight: 40,
+          icon: Icons.edit,
+          text: localizedStrings.scale_mgr_btn_rename,
+          onPressed: (isAddScale || isTesting) || isDel
+              ? null
+              : () {
+                  setState(() {
+                    isRename = true;
+                    isAddScale = false;
+                  });
+                },
+        ),
+        const SizedBox(
+          width: 20,
+        ),
         CustomOutlinedButton(
           btnWidth: 120,
           btnHeight: 40,
           icon: Icons.scale_outlined,
           text: "Set Default",
-          onPressed: (selScaleId == defaultScaleId)
+          onPressed: (selScaleId == myDefScaleInfo.defScaleId! ||
+                  selScaleId == -1 ||
+                  isDel)
               ? null
               : () {
                   setState(() {
-                    defaultScaleId = selScaleId;
-                    if (defaultScaleId == 1) {
-                      defaultScaleModel = myComScaleInfo.scaleModel;
-                      defaultScaleSn = myComScaleInfo.scaleSn;
-                      defscaleMedia = myComScaleInfo.portName +
-                          ":" +
-                          myComScaleInfo.baudRate.toString();
-                    } else {
-                      var tempscale = NetScaleListMgr.findScaleInfo(
-                          myNetScaleList, defaultScaleId);
-                      defaultScaleModel = tempscale.scaleModel!;
-                      defaultScaleSn = tempscale.scaleSn!;
-                      myComScaleInfo.portName +
-                          ":" +
-                          myComScaleInfo.baudRate.toString();
-                      defscaleMedia =
-                          tempscale.ip! + ":" + tempscale.port!.toString();
-                    }
+                    DefScaleInfo.getDefScaleInfo(selScaleId);
                   });
                 },
         ),
@@ -770,16 +869,33 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
   }
 
   void modifyScaleName() {
-    myNetInfo.ip = ipCtl.text;
-    myNetInfo.port = int.tryParse(portCtl.text)!;
-    String netInfoStr = jsonEncode(myNetInfo);
-    myMediaConf.mediaInfoJson = netInfoStr;
-    myMediaConf.type = 1;
-    myModifyNetScale.scaleId = 10;
-    myModifyNetScale.scaleModel = 'TMax';
-    myModifyNetScale.scaleName = scaleModelCtl.text;
-    myModifyNetScale.mediaConf = myMediaConf;
-    PublicFunctions.sendAddScale(jsonEncode(myModifyNetScale));
+    myModifyScaleName.scaleId = selScaleId;
+    myModifyScaleName.scaleName = scaleNameCtl.text;
+    PublicFunctions.sendModifyScaleName(jsonEncode(myModifyScaleName));
+    changeScaleName(myModifyScaleName.scaleId!, myModifyScaleName.scaleName!);
+    setState(() {
+      isRename = false;
+    });
+  }
+
+  void changeScaleName(int scaleId, String scaleName) {
+    if (scaleId == 1) {
+      setState(() {
+        myComScaleInfo.scaleName = scaleName;
+      });
+
+      return;
+    }
+    NetScaleInfoLocal tempScale = NetScaleInfoLocal();
+    tempScale = NetScaleListMgr.findScaleInfo(myNetScaleList, scaleId);
+    NetScaleListMgr.updateScale(myNetScaleList, tempScale);
+    setState(() {
+      for (int i = 0; i < scaleNetItems.length; i++) {
+        if (scaleNetItems[i].scaleId == scaleId) {
+          scaleNetItems[i].scaleName = scaleName;
+        }
+      }
+    });
   }
 
   void delScale() {
@@ -793,62 +909,53 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
     return ListTile(
       selected: selScaleId == myComScaleInfo.scaleId,
       dense: true,
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 150,
-            child: Text(
-              myComScaleInfo.scaleModel,
-              maxLines: 1, // 设置文本最大行数为1
-              style: const TextStyle(
-                overflow: TextOverflow.ellipsis,
-              ),
+      title: Tooltip(
+        richMessage: TextSpan(
+          text: '${myComScaleInfo.portName}\r\n\r\n',
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          children: <InlineSpan>[
+            TextSpan(
+              text:
+                  'Model:${myComScaleInfo.scaleModel}\r\nSN:${myComScaleInfo.scaleSn}\r\nPort:${myComScaleInfo.baudRate}',
+              style:
+                  const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
             ),
+          ],
+        ),
+        child: Text(
+          myComScaleInfo.scaleName,
+          maxLines: 1, // 设置文本最大行数为1
+          style: const TextStyle(
+            fontSize: 16,
+            overflow: TextOverflow.ellipsis,
           ),
-          SizedBox(
-              width: 150,
-              child: Text(
-                'SN:' + myComScaleInfo.scaleSn,
-                maxLines: 1, // 设置文本最大行数为1
-                style: const TextStyle(
-                  overflow: TextOverflow.ellipsis,
-                ),
-              )),
-        ],
+        ),
       ),
       subtitle: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           SizedBox(
-            width: 150,
-            child: Text(
-              myComScaleInfo.portName,
-              maxLines: 1, // 设置文本最大行数为1
-              style: const TextStyle(
-                fontSize: 12,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ),
+              width: 100,
+              child: Text(
+                myComScaleInfo.isOnline ? "online" : "offline",
+                maxLines: 1, // 设置文本最大行数为1
+                style: TextStyle(
+                  fontSize: 14,
+                  overflow: TextOverflow.ellipsis,
+                  color: myComScaleInfo.isOnline
+                      ? Theme.of(context).colorScheme.surfaceContainerHigh
+                      : Theme.of(context).colorScheme.error,
+                ),
+              )),
           SizedBox(
-            width: 150,
+            width: 100,
             child: Text(
-              myComScaleInfo.baudRate.toString(),
+              myComScaleInfo.scaleId == myDefScaleInfo.defScaleId!
+                  ? "Default"
+                  : "",
               maxLines: 1, // 设置文本最大行数为1
               style: const TextStyle(
-                fontSize: 12,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ),
-          SizedBox(
-            width: 50,
-            child: Text(
-              myComScaleInfo.scaleId == defaultScaleId ? "Default" : "",
-              maxLines: 1, // 设置文本最大行数为1
-              style: const TextStyle(
-                fontSize: 12,
+                fontSize: 14,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -861,6 +968,9 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
         if (!isTesting) {
           setState(() {
             selScaleId = myComScaleInfo.scaleId;
+            scaleModelCtl.text = myComScaleInfo.scaleModel;
+            snCtl.text = myComScaleInfo.scaleSn;
+            scaleNameCtl.text = myComScaleInfo.scaleName;
             // 更新文本框中的值
           });
         }
@@ -868,7 +978,7 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
     );
   }
 
-  Widget showScaleList() {
+  Widget showNetScaleList() {
     return Expanded(
       child: ListView.builder(
         itemCount: scaleNetItems.length,
@@ -879,63 +989,58 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
                 ListTile(
                   selected: selScaleId == scaleNetItems[index].scaleId,
                   dense: true,
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                  title: Tooltip(
+                    richMessage: TextSpan(
+                      text: '${scaleNetItems[index].ip!}\r\n\r\n',
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
+                      children: <InlineSpan>[
+                        TextSpan(
+                          text:
+                              'Model:${scaleNetItems[index].scaleModel!}\r\nSN:${scaleNetItems[index].scaleSn!}\r\nPort:${scaleNetItems[index].port!}',
+                          style: const TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.normal),
+                        ),
+                      ],
+                    ),
+                    child: Text(
+                      scaleNetItems[index].scaleName!,
+                      maxLines: 1, // 设置文本最大行数为1
+                      style: const TextStyle(
+                        fontSize: 16,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
+                  subtitle: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       SizedBox(
-                        width: 150,
+                        width: 100,
                         child: Text(
-                          scaleNetItems[index].scaleModel!,
+                          scaleNetItems[index].isOnline! ? "online" : "offline",
                           maxLines: 1, // 设置文本最大行数为1
-                          style: const TextStyle(
+                          style: TextStyle(
+                            fontSize: 14,
                             overflow: TextOverflow.ellipsis,
+                            color: scaleNetItems[index].isOnline!
+                                ? Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainerHigh
+                                : Theme.of(context).colorScheme.error,
                           ),
                         ),
                       ),
                       SizedBox(
-                          width: 150,
-                          child: Text(
-                            'SN:' + scaleNetItems[index].scaleSn!,
-                            maxLines: 1, // 设置文本最大行数为1
-                            style: const TextStyle(
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          )),
-                      SizedBox(
-                        width: 50,
+                        width: 100,
                         child: Text(
-                          scaleNetItems[index].scaleId == defaultScaleId
+                          scaleNetItems[index].scaleId ==
+                                  myDefScaleInfo.defScaleId!
                               ? "Default"
                               : "",
                           maxLines: 1, // 设置文本最大行数为1
                           style: const TextStyle(
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                  subtitle: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: 150,
-                        child: Text(
-                          'IP:' + scaleNetItems[index].ip!,
-                          maxLines: 1, // 设置文本最大行数为1
-                          style: const TextStyle(
-                            fontSize: 12,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 150,
-                        child: Text(
-                          'Port:' + scaleNetItems[index].port!.toString(),
-                          maxLines: 1, // 设置文本最大行数为1
-                          style: const TextStyle(
-                            fontSize: 12,
+                            fontSize: 14,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
@@ -953,8 +1058,10 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
                         ipCtl.text = scaleNetItems[index].ip!;
                         portCtl.text = scaleNetItems[index].port!.toString();
                         scaleNameCtl.text = scaleNetItems[index].scaleName!;
-
-                        print(selScaleId.toString());
+                        if (scaleModelCtl.text == "TMax") {
+                          scaleModelCtl.text = "";
+                          snCtl.text = "";
+                        }
 
                         // 更新文本框中的值
                       });
@@ -969,31 +1076,27 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
     );
   }
 
-  // void sendDataToWifi() {
-  //   myScaleCmd.cmdMode = 'send_data_to_wifi';
-  //   myScaleCmd.cmdData = 'AT+CWMODE?\r\n';
-  //   MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
-  // }
+  void sendToCheckOnline() {
+    PublicFunctions.checkSerialPort(1);
+    if (myNetScaleList.isEmpty) {
+      return;
+    }
+    for (var i = 0; i < myNetScaleList.length; i++) {
+      PublicFunctions.checkSerialPort(myNetScaleList[i].scaleId!);
+    }
+  }
 
-  // void _startTimer(int time) {
-  //   setState(() {
-  //     isConnecting = true;
-  //   });
+  void _startTimer() {
+    checkIsOnlineTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      if (!isRename && !isDel && !isTesting && !_isEditing) {
+        sendToCheckOnline();
+      }
+    });
+  }
 
-  //   _timer = Timer(Duration(seconds: time), () {
-  //     setState(() {
-  //       isConnecting = false;
-  //       errorMessage = 'Time out!';
-  //     });
-  //   });
-  // }
-
-  // void _stopTimer() {
-  //   setState(() {
-  //     isConnecting = false;
-  //   });
-  //   _timer?.cancel(); // 停止计时器
-  // }
+  void _stopTimer() {
+    checkIsOnlineTimer?.cancel(); // 停止计时器
+  }
 
   void sendStaticIpInfo(String ip, String gateway, String netmask) {
     myScaleCmd.cmdMode = 'set_wifi_static_ip';
@@ -1001,7 +1104,25 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
     myStaticIpInfo.ip = ip;
     myStaticIpInfo.netmask = netmask;
     myScaleCmd.cmdData = jsonEncode(myStaticIpInfo).toString();
-    PublicFunctions.sendMsg(defaultScaleId, jsonEncode(myScaleCmd));
+    PublicFunctions.sendMsg(myDefScaleInfo.defScaleId!, jsonEncode(myScaleCmd));
     writelog(jsonEncode(myScaleCmd));
+  }
+
+  //等待进度条
+  Widget _buildProcess() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        isDel || isTesting
+            ? Center(
+                child: CircularProgressIndicator(
+                  backgroundColor: Colors.transparent,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                      Theme.of(context).colorScheme.primary),
+                ),
+              )
+            : const SizedBox(),
+      ],
+    );
   }
 }

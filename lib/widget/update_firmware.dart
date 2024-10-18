@@ -16,10 +16,10 @@ class UpdateFirmWareDialog extends StatefulWidget {
   const UpdateFirmWareDialog({super.key});
 
   @override
-  _UpdateFirmWareDialogState createState() => _UpdateFirmWareDialogState();
+  UpdateFirmWareDialogState createState() => UpdateFirmWareDialogState();
 }
 
-class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
+class UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
   final TextEditingController _filePathController = TextEditingController();
 
   String _errorMessage = '';
@@ -86,7 +86,7 @@ class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
           height: 312,
           width: 400,
           decoration:
-              BoxDecoration(color: Theme.of(context).colorScheme.surface),
+              BoxDecoration(color: Theme.of(context).colorScheme.surfaceBright),
           child: Container(
             decoration:
                 BoxDecoration(color: Theme.of(context).colorScheme.surfaceTint),
@@ -158,7 +158,7 @@ class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
                       color: (_errorMessage.contains('ok') ||
                               _errorMessage.contains('OK') ||
                               _errorMessage.contains('started'))
-                          ? Theme.of(context).colorScheme.outline
+                          ? Theme.of(context).colorScheme.surfaceContainerHigh
                           : Theme.of(context).colorScheme.error),
                 ),
                 const SizedBox(
@@ -171,7 +171,7 @@ class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
                       ? LinearProgressIndicator(
                           value: _progress > 0 ? _progress : null,
                           backgroundColor:
-                              Theme.of(context).colorScheme.background,
+                              Theme.of(context).colorScheme.secondaryFixed,
                           valueColor: AlwaysStoppedAnimation<Color>(
                               Theme.of(context).colorScheme.primary),
                         )
@@ -255,7 +255,7 @@ class _UpdateFirmWareDialogState extends State<UpdateFirmWareDialog> {
   void sendFormatToScale(String firmwarePathStr) {
     myScaleCmd.cmdMode = "update_firmware";
     myScaleCmd.cmdData = firmwarePathStr;
-    PublicFunctions.sendMsg(defaultScaleId, jsonEncode(myScaleCmd));
+    PublicFunctions.sendMsg(myDefScaleInfo.defScaleId!, jsonEncode(myScaleCmd));
     writelog(jsonEncode(myScaleCmd));
   }
 

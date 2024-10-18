@@ -20,7 +20,7 @@ class TimerManager {
 
     _isCntScaleTiming = true;
     _cntScaleTimer = Timer(Duration(seconds: time), () {
-      PublicFunctions.checkSerialPort(defaultScaleId); //只管串口
+      PublicFunctions.checkSerialPort(myDefScaleInfo.defScaleId!); //只管串口
       startCntScaleTimer(10);
     });
   }

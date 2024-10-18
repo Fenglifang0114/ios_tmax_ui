@@ -5,6 +5,7 @@ import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+import '../data/comscaleinfo_data.dart';
 import '../data/downloadresponse.dart';
 import '../data/manager_scale_channel.dart';
 import '../../data/device_data.dart';
@@ -21,7 +22,6 @@ import '../data/record_data.dart';
 import '../data/scale_info_from_scale.dart';
 import '../data/scalecmd_data.dart';
 import '../data/scalelist_data.dart';
-import '../data/screen_mgr.dart';
 import '../data/timer_manager.dart';
 import '../data/weight_report_data.dart';
 import '../dialog/addproduct_dialog.dart';
@@ -34,7 +34,7 @@ import '../widget/custom_button.dart';
 import '../widget/page_head.dart';
 
 class TakeOutPage extends StatefulWidget {
-  const TakeOutPage({Key? key}) : super(key: key);
+  const TakeOutPage({super.key});
   @override
   State<TakeOutPage> createState() => TakeOutPageState();
 }
@@ -174,7 +174,7 @@ class TakeOutPageState extends State<TakeOutPage> {
     _weightReportDataSource = WeightReportDataSource(_weightReportDatas);
     PublicFunctions.getUserList();
     PublicFunctions.getProductList();
-    PublicFunctions.getRecords(defaultScaleId, weighingTakeOutMode);
+    PublicFunctions.getRecords(myDefScaleInfo.defScaleId!, weighingTakeOutMode);
 
     if (!isStart) {
       cntScaleTimerMgr.stopCntScaleTimer();
@@ -206,10 +206,10 @@ class TakeOutPageState extends State<TakeOutPage> {
         setState(() {
           ReqWeightCountine tempWeight = ReqWeightCountine();
           tempWeight = event.obj;
-          if (tempWeight.scaleId == defaultScaleId) {
+          if (tempWeight.scaleId == myDefScaleInfo.defScaleId!) {
             myReqWeightCountine = tempWeight;
             isStart = true;
-            myScreenMgr.serialPortST = true;
+            myComScaleInfo.isOnline = true;
             isCnting = true;
 
             if (_isTakeOutStart && !isSameUnit()) {
@@ -334,7 +334,8 @@ class TakeOutPageState extends State<TakeOutPage> {
     eventBus13 = eventBus.on<EventDeleteRec>().listen((event) {
       if (mounted) {
         setState(() {
-          PublicFunctions.getRecords(defaultScaleId, weighingTakeOutMode);
+          PublicFunctions.getRecords(
+              myDefScaleInfo.defScaleId!, weighingTakeOutMode);
         });
       }
     });
@@ -342,34 +343,34 @@ class TakeOutPageState extends State<TakeOutPage> {
     eventBus14 = eventBus.on<EventUpdateSettingParam>().listen((event) {
       if (mounted) {
         setState(() {
-          PublicFunctions.getUIConfTakeOut(defaultScaleId);
+          PublicFunctions.getUIConfTakeOut(myDefScaleInfo.defScaleId!);
         });
       }
     });
 
-    eventBus15 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
+    eventBus15 = eventBus.on<EventRespCheckNetScale>().listen((event) {
       if (mounted) {
-        if (isStart) {
-          cntScaleTimerMgr.stopCntScaleTimer();
-          cntScaleTimerMgr.stopPortOffTimer();
-          cntScaleTimerMgr.startPortOffTimer(2, () {
-            if (!isCnting) {
-              setState(() {
-                myScreenMgr.serialPortST = false;
-              });
-            }
-            isCnting = false;
-          });
-        }
+        // if (isStart) {
+        //   cntScaleTimerMgr.stopCntScaleTimer();
+        //   cntScaleTimerMgr.stopPortOffTimer();
+        //   cntScaleTimerMgr.startPortOffTimer(2, () {
+        //     if (!isCnting) {
+        //       setState(() {
+        //         myComScaleInfo.isOnline = false;
+        //       });
+        //     }
+        //     isCnting = false;
+        //   });
+        // }
 
-        setState(() {
-          myFactoryInfoFromScale = event.obj;
-          if (myFactoryInfoFromScale.modelName != '') {
-            myScreenMgr.serialPortST = true;
-          } else {
-            myScreenMgr.serialPortST = false;
-          }
-        });
+        // setState(() {
+        //   myFactoryInfoFromScale = event.obj;
+        //   if (myFactoryInfoFromScale.modelName != '') {
+        //     myComScaleInfo.isOnline = true;
+        //   } else {
+        //     myComScaleInfo.isOnline = false;
+        //   }
+        // });
       }
     });
   }
@@ -507,7 +508,7 @@ class TakeOutPageState extends State<TakeOutPage> {
 
   @override
   Widget build(BuildContext context) {
-    final _width = MediaQuery.of(context).size.width;
+    final width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),
@@ -517,8 +518,8 @@ class TakeOutPageState extends State<TakeOutPage> {
         ),
       ),
       body: _isFirstLayout
-          ? firstLayout(context, _width)
-          : secondLayout(context, _width),
+          ? firstLayout(context, width)
+          : secondLayout(context, width),
     );
   }
 
@@ -531,13 +532,13 @@ class TakeOutPageState extends State<TakeOutPage> {
     setState(() {
       if (!isStart) {
         isStart = true;
-        PublicFunctions.getWeight(defaultScaleId);
+        PublicFunctions.getWeight(myDefScaleInfo.defScaleId!);
       }
       cntScaleTimerMgr.stopPortOffTimer();
       cntScaleTimerMgr.startPortOffTimer(2, () {
         if (!isCnting) {
           setState(() {
-            myScreenMgr.serialPortST = false;
+            myComScaleInfo.isOnline = false;
           });
         }
         isCnting = false;
@@ -550,7 +551,7 @@ class TakeOutPageState extends State<TakeOutPage> {
     if (isStart) {
       setState(() {
         isStart = false;
-        PublicFunctions.stopWeight(defaultScaleId);
+        PublicFunctions.stopWeight(myDefScaleInfo.defScaleId!);
       });
       cntScaleTimerMgr.stopCntScaleTimer();
       cntScaleTimerMgr.startCntScaleTimer(5);
@@ -558,7 +559,7 @@ class TakeOutPageState extends State<TakeOutPage> {
     }
   }
 
-  Widget firstLayout(context, _width) {
+  Widget firstLayout(context, width) {
     if (showDialogFlag) {
       if (!_isShowing) {
         _isShowing = true;
@@ -566,8 +567,9 @@ class TakeOutPageState extends State<TakeOutPage> {
       }
     }
     return Container(
-        width: _width,
-        decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
+        width: width,
+        decoration:
+            BoxDecoration(color: Theme.of(context).colorScheme.surfaceBright),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           // mainAxisSize: MainAxisSize.max,
@@ -591,7 +593,9 @@ class TakeOutPageState extends State<TakeOutPage> {
                               maxLines: 1,
                               style: TextStyle(
                                 color: (_errorText.text).contains('succeed')
-                                    ? Theme.of(context).colorScheme.outline
+                                    ? Theme.of(context)
+                                        .colorScheme
+                                        .surfaceContainerHigh
                                     : Theme.of(context).colorScheme.error,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -829,6 +833,9 @@ class TakeOutPageState extends State<TakeOutPage> {
                           buildTextString(
                               localizedStrings.plu_name, constraints, context),
                           Container(
+                            height: 53,
+                            width: 150,
+                            padding: const EdgeInsets.all(0),
                             child: DropdownButtonFormField<String>(
                               itemHeight: 50.0,
                               isExpanded: true,
@@ -863,9 +870,6 @@ class TakeOutPageState extends State<TakeOutPage> {
                                         overflow: TextOverflow.ellipsis));
                               }).toList(),
                             ),
-                            height: 53,
-                            width: 150,
-                            padding: const EdgeInsets.all(0),
                           ),
                           CustomElevatedButton(
                             btnWidth: constraints.maxWidth / 10 - 50,
@@ -889,6 +893,9 @@ class TakeOutPageState extends State<TakeOutPage> {
                           buildTextString(
                               localizedStrings.user_name, constraints, context),
                           Container(
+                            height: 53,
+                            width: 150,
+                            padding: const EdgeInsets.all(0),
                             child: DropdownButtonFormField<String>(
                               itemHeight: 50.0,
                               isExpanded: true,
@@ -916,9 +923,6 @@ class TakeOutPageState extends State<TakeOutPage> {
                                         overflow: TextOverflow.ellipsis));
                               }).toList(),
                             ),
-                            height: 53,
-                            width: 150,
-                            padding: const EdgeInsets.all(0),
                           ),
                           CustomElevatedButton(
                             btnWidth: constraints.maxWidth / 10 - 50,
@@ -1024,7 +1028,7 @@ class TakeOutPageState extends State<TakeOutPage> {
       },
     ).then((confirmed) {
       if (confirmed) {
-        PublicFunctions.deleteAllRecordsTakeOut(defaultScaleId);
+        PublicFunctions.deleteAllRecordsTakeOut(myDefScaleInfo.defScaleId!);
       }
     });
   }
@@ -1040,7 +1044,7 @@ class TakeOutPageState extends State<TakeOutPage> {
         //开始按钮
         icon: const Icon(Icons.play_arrow),
         iconSize: iconSize,
-        color: (isStart) ? (colorScheme.background) : (colorScheme.primary),
+        color: (isStart) ? (colorScheme.secondaryFixed) : (colorScheme.primary),
         onPressed: () {
           performStart();
         },
@@ -1061,7 +1065,7 @@ class TakeOutPageState extends State<TakeOutPage> {
         },
         icon: const Icon(Icons.pause),
         iconSize: iconSize,
-        color: (!isStart) ? (colorScheme.background) : colorScheme.primary,
+        color: (!isStart) ? (colorScheme.secondaryFixed) : colorScheme.primary,
       ),
     );
   }
@@ -1194,12 +1198,12 @@ class TakeOutPageState extends State<TakeOutPage> {
             color: colorScheme.primary,
             textColor: colorScheme.onPrimary,
             elevation: 5.0,
+            onPressed: onPressed,
             child: Text(text,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                    fontSize: fontSize, fontWeight: FontWeight.normal)),
-            onPressed: onPressed));
+                    fontSize: fontSize, fontWeight: FontWeight.normal))));
   }
 
   Widget buildTextString(
@@ -1411,7 +1415,7 @@ class TakeOutPageState extends State<TakeOutPage> {
     );
   }
 
-  Widget secondLayout(context, _width) {
+  Widget secondLayout(context, width) {
     if (showDialogFlag) {
       if (!_isShowing) {
         _isShowing = true;
@@ -1419,7 +1423,7 @@ class TakeOutPageState extends State<TakeOutPage> {
       }
     }
     return Container(
-        width: _width,
+        width: width,
         decoration:
             BoxDecoration(color: Theme.of(context).colorScheme.surfaceTint),
         child: Column(
@@ -1445,7 +1449,9 @@ class TakeOutPageState extends State<TakeOutPage> {
                               maxLines: 1,
                               style: TextStyle(
                                 color: (_errorText.text).contains('succeed')
-                                    ? Theme.of(context).colorScheme.outline
+                                    ? Theme.of(context)
+                                        .colorScheme
+                                        .surfaceContainerHigh
                                     : Theme.of(context).colorScheme.error,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -1608,7 +1614,7 @@ class TakeOutPageState extends State<TakeOutPage> {
                           icon: const Icon(Icons.play_arrow),
                           iconSize: 30,
                           color: (isStart)
-                              ? (Theme.of(context).colorScheme.background)
+                              ? (Theme.of(context).colorScheme.secondaryFixed)
                               : (Theme.of(context).colorScheme.primary),
                           onPressed: () {
                             performStart();
@@ -1625,7 +1631,7 @@ class TakeOutPageState extends State<TakeOutPage> {
                           icon: const Icon(Icons.pause),
                           iconSize: 30,
                           color: (!isStart)
-                              ? (Theme.of(context).colorScheme.background)
+                              ? (Theme.of(context).colorScheme.secondaryFixed)
                               : (Theme.of(context).colorScheme.primary),
                         ),
                       ),
@@ -1846,6 +1852,9 @@ class TakeOutPageState extends State<TakeOutPage> {
               ),
             ),
             Container(
+              height: 53,
+              width: constraints.maxWidth / 10,
+              padding: const EdgeInsets.all(0),
               child: DropdownButtonFormField<String>(
                 itemHeight: 50.0,
                 isExpanded: true,
@@ -1873,9 +1882,6 @@ class TakeOutPageState extends State<TakeOutPage> {
                       child: Text(value, overflow: TextOverflow.ellipsis));
                 }).toList(),
               ),
-              height: 53,
-              width: constraints.maxWidth / 10,
-              padding: const EdgeInsets.all(0),
             ),
             CustomElevatedButton(
               btnWidth: constraints.maxWidth / 10 - 50,
@@ -1904,6 +1910,9 @@ class TakeOutPageState extends State<TakeOutPage> {
                           fontSize: 14, fontWeight: FontWeight.normal))),
             ),
             Container(
+              height: 53,
+              width: constraints.maxWidth / 10,
+              padding: const EdgeInsets.all(0),
               child: DropdownButtonFormField<String>(
                 itemHeight: 50.0,
                 isExpanded: true,
@@ -1927,9 +1936,6 @@ class TakeOutPageState extends State<TakeOutPage> {
                       child: Text(value, overflow: TextOverflow.ellipsis));
                 }).toList(),
               ),
-              height: 53,
-              width: constraints.maxWidth / 10,
-              padding: const EdgeInsets.all(0),
             ),
             CustomElevatedButton(
               btnWidth: constraints.maxWidth / 10 - 50,
@@ -2181,7 +2187,7 @@ class TakeOutPageState extends State<TakeOutPage> {
     Sheet sh = excel['Sheet1'];
     for (var i = 0; i < title.length; i++) {
       sh.cell(CellIndex.indexByColumnRow(rowIndex: 0, columnIndex: i)).value =
-          title[i];
+          title[i] as CellValue?;
     }
 
     for (int row = 1; row <= myWeightReportData.length; row++) {
@@ -2191,73 +2197,73 @@ class TakeOutPageState extends State<TakeOutPage> {
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].id;
+                .value = myWeightReportData[row - 1].id as CellValue?;
             break;
           case 'Date Time':
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].dateTime;
+                .value = myWeightReportData[row - 1].dateTime as CellValue?;
             break;
           case 'Weight':
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].weight;
+                .value = myWeightReportData[row - 1].weight as CellValue?;
             break;
           case 'Weight Unit':
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].weightUnit;
+                .value = myWeightReportData[row - 1].weightUnit as CellValue?;
             break;
           case 'PLU NO.':
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].plu;
+                .value = myWeightReportData[row - 1].plu as CellValue?;
             break;
           case 'PLU Name':
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].pluName;
+                .value = myWeightReportData[row - 1].pluName as CellValue?;
             break;
           case 'PLU Remarks':
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].pluRemarks;
+                .value = myWeightReportData[row - 1].pluRemarks as CellValue?;
             break;
           case 'Pretare':
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].pretare;
+                .value = myWeightReportData[row - 1].pretare as CellValue?;
             break;
           case 'User Name':
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].userName;
+                .value = myWeightReportData[row - 1].userName as CellValue?;
             break;
           case 'User Remarks':
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].userRemarks;
+                .value = myWeightReportData[row - 1].userRemarks as CellValue?;
             break;
           case 'User NO.':
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].userNo;
+                .value = myWeightReportData[row - 1].userNo as CellValue?;
             break;
           case 'Scale Model':
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].scaleName;
+                .value = myWeightReportData[row - 1].scaleName as CellValue?;
             break;
 
           default:
@@ -2286,12 +2292,12 @@ class TakeOutPageState extends State<TakeOutPage> {
   void sendReportDataToDB() {
     var currentData = myWeightReportData[myWeightReportData.length - 1];
     myScaleCmd.cmdMode = "add_rec";
-    myAddScaleRecord.scaleId = defaultScaleId;
+    myAddScaleRecord.scaleId = myDefScaleInfo.defScaleId!;
     myAddScaleRecord.price = '0.0';
     myAddScaleRecord.scaleMode = weighingTakeOutMode;
-    myAddScaleRecord.scaleModel = defaultScaleModel;
-    myAddScaleRecord.scaleSn = defaultScaleSn;
-    myAddScaleRecord.scaleName = defaultScaleModel;
+    myAddScaleRecord.scaleModel = myDefScaleInfo.defScaleModel;
+    myAddScaleRecord.scaleSn = myDefScaleInfo.defScaleSn;
+    myAddScaleRecord.scaleName = myDefScaleInfo.defScaleModel;
     myAddScaleRecord.product = currentData.pluName;
     myAddScaleRecord.weight = currentData.weight.toString();
     myAddScaleRecord.pluNo = currentData.plu;
@@ -2302,7 +2308,7 @@ class TakeOutPageState extends State<TakeOutPage> {
     myAddScaleRecord.userName = currentData.userName;
     myAddScaleRecord.userRemarks = currentData.userRemarks;
     myScaleCmd.cmdData = jsonEncode(myAddScaleRecord);
-    PublicFunctions.sendMsg(defaultScaleId, jsonEncode(myScaleCmd));
+    PublicFunctions.sendMsg(myDefScaleInfo.defScaleId!, jsonEncode(myScaleCmd));
   }
 
   bool isWeightValue() {

@@ -30,7 +30,7 @@ modifyAddNetworkDialog(BuildContext context) {
             content: Container(
               height: 275,
               decoration:
-                  BoxDecoration(color: Theme.of(context).colorScheme.surface),
+                  BoxDecoration(color: Theme.of(context).colorScheme.surfaceBright),
               child: Column(
                 children: [
                   const SizedBox(height: 2),
@@ -149,7 +149,7 @@ modifyAddNetworkDialog(BuildContext context) {
                       child: const Text("Ok"),
                       onPressed: () {
                         connectionType =
-                            deviceName.text.toString() + ",Icons.wifi";
+                            "${deviceName.text},Icons.wifi";
                         Navigator.of(context).pop(
                             connectionType); // to go back to screen after submitting
                       }),

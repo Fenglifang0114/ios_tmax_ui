@@ -5,8 +5,6 @@ import 'package:file_picker/file_picker.dart';
 import '../data/downloadresponse.dart';
 import '../data/manager_scale_channel.dart';
 import '../data/language.dart';
-import '../data/scale_info_from_scale.dart';
-import '../data/screen_mgr.dart';
 import '../data/timer_manager.dart';
 import '../eventbus/eventbus.dart';
 import '../functions/methods.dart';
@@ -56,22 +54,22 @@ class _DownReciptPageState extends State<DownSerialOutputPage> {
                         fontWeight: FontWeight.normal)), ////此处需要秤回复
                 duration: const Duration(seconds: 3),
                 backgroundColor: (myRespDataFromScale.msgBody.contains('ok'))
-                    ? Theme.of(context).colorScheme.outline
+                    ? Theme.of(context).colorScheme.surfaceContainerHigh
                     : Theme.of(context).colorScheme.error));
           }
         });
       }
     });
-    _eventbus2 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
+    _eventbus2 = eventBus.on<EventRespCheckNetScale>().listen((event) {
       if (mounted) {
-        setState(() {
-          myFactoryInfoFromScale = event.obj;
-          if (myFactoryInfoFromScale.modelName != '') {
-            myScreenMgr.serialPortST = true;
-          } else {
-            myScreenMgr.serialPortST = false;
-          }
-        });
+        // setState(() {
+        //   myFactoryInfoFromScale = event.obj;
+        //   if (myFactoryInfoFromScale.modelName != '') {
+        //     myComScaleInfo.isOnline = true;
+        //   } else {
+        //     myComScaleInfo.isOnline = false;
+        //   }
+        // });
       }
     });
   }
@@ -301,7 +299,8 @@ class _DownReciptPageState extends State<DownSerialOutputPage> {
     ).then((confirmed) async {
       if (confirmed) {
         if (jsonFilesList.isNotEmpty) {
-          PublicFunctions.sendOutputFmtToScale(jsonFilesList, defaultScaleId);
+          PublicFunctions.sendOutputFmtToScale(
+              jsonFilesList, myDefScaleInfo.defScaleId!);
           setState(() {
             isDownloadClicked = true;
             // cntScaleTimerMgr.stopCntScaleTimer();
@@ -332,7 +331,7 @@ class _DownReciptPageState extends State<DownSerialOutputPage> {
       String filePath = filePaths[i - 1];
       File file = File(filePath);
       if (await file.exists()) {
-        jsonFilesList.add('$i' + filePath);
+        jsonFilesList.add('$i$filePath');
       }
     }
   }

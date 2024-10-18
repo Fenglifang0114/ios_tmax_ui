@@ -30,7 +30,7 @@ const double receiptLineHeight = 3.9 * 8; //3.9mm *8 个点
 const String recieptMode = "P";
 
 class ReceiptDesignPage extends StatefulWidget {
-  const ReceiptDesignPage({Key? key}) : super(key: key);
+  const ReceiptDesignPage({super.key});
 
   @override
   State<ReceiptDesignPage> createState() => _ReceiptDesignPageState();
@@ -93,6 +93,10 @@ const receiptVarMap = {
     "Subtotal_P,DATA",
     "Currency_P,DATA",
     "CopyTimes_P,DATA",
+    "ModelName_P,DATA",
+    "ScaleName_P,DATA",
+    "TaxName_P,DATA",
+    "SettleAccountTimes_P,DATA",
     "PLU_Tax_P,DATA",
     "TotalNoTax_P,DATA",
   ],
@@ -133,8 +137,9 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
   String fontBold = 'false';
   String fontReverse = 'false';
   List<dynamic> varcontent = [];
-  Offset _offset = const Offset(0, 0);
+  // Offset _offset = const Offset(0, 0);
   // bool _isDragging = false;
+  final double btnWidth = 150;
 
   TextEditingController textvariable = TextEditingController();
   TextEditingController fontsizevar = TextEditingController();
@@ -431,9 +436,9 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
   @override
   Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;
-    final _height = MediaQuery.of(context).size.height;
-    ScrollController _scrollController = ScrollController();
-    ScrollController _scrollController1 = ScrollController();
+    final height = MediaQuery.of(context).size.height;
+    ScrollController scrollController = ScrollController();
+    ScrollController scrollController1 = ScrollController();
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),
@@ -545,8 +550,8 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
             height: 2,
             color: Theme.of(context).colorScheme.primary,
           ),
-          Container(
-            height: _height - 50 - 90,
+          SizedBox(
+            height: height - 50 - 90,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -559,24 +564,24 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                 Expanded(
                   flex: 7,
                   child: Scrollbar(
-                    controller: _scrollController,
-                    isAlwaysShown: true,
+                    controller: scrollController,
+                    // isAlwaysShown: true,
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
-                      controller: _scrollController,
+                      controller: scrollController,
                       child: Container(
                         padding: const EdgeInsets.all(10),
                         width: 1700,
                         height: 1000,
                         decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.surface,
+                            color: Theme.of(context).colorScheme.surfaceBright,
                             border: Border.all(
                                 width: 0.2,
                                 color:
                                     Theme.of(context).colorScheme.onSurface)),
                         child: SingleChildScrollView(
                           scrollDirection: Axis.vertical, // 水平滚动
-                          controller: _scrollController1,
+                          controller: scrollController1,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -674,7 +679,8 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                     width: 100, // 设置固定宽度
                     child: DropdownButton<String>(
                       alignment: AlignmentDirectional.centerStart,
-                      dropdownColor: Theme.of(context).colorScheme.background,
+                      dropdownColor:
+                          Theme.of(context).colorScheme.secondaryFixed,
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary,
                           fontSize: 14,
@@ -728,7 +734,8 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                   SizedBox(
                     width: 100, // 设置固定宽度
                     child: DropdownButton<String>(
-                      dropdownColor: Theme.of(context).colorScheme.background,
+                      dropdownColor:
+                          Theme.of(context).colorScheme.secondaryFixed,
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary,
                           fontSize: 14,
@@ -773,17 +780,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
               height: 40,
               child: Row(
                 children: [
-                  SizedBox(
-                    width: 120,
-                    child: Text(
-                      'Width(mm):',
-                      textAlign: TextAlign.right,
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontSize: 14,
-                          fontWeight: FontWeight.normal),
-                    ),
-                  ),
+                  buildBtnText('Width(mm):'),
                   const SizedBox(
                     width: 10,
                   ),
@@ -823,17 +820,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
               height: 40,
               child: Row(
                 children: [
-                  SizedBox(
-                    width: 120,
-                    child: Text(
-                      'Height(mm):',
-                      textAlign: TextAlign.right,
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontSize: 14,
-                          fontWeight: FontWeight.normal),
-                    ),
-                  ),
+                  buildBtnText('Height(mm):'),
                   const SizedBox(
                     width: 10,
                   ),
@@ -877,23 +864,12 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         SizedBox(
-          width: 120,
+          width: btnWidth,
           child: OutlinedButton(
               onPressed: () {
                 deleteAllItem();
               },
-              style: OutlinedButton.styleFrom(
-                side: BorderSide(
-                  width: 1,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                foregroundColor: Theme.of(context).colorScheme.primary,
-                backgroundColor:
-                    Theme.of(context).colorScheme.surfaceTint, // 设置按钮的背景色
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
-                ),
-              ),
+              style: buildBtnStyle(),
               child: Text(
                 localizedStrings.new_format,
                 style: TextStyle(
@@ -913,18 +889,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
         SizedBox(
           width: 135,
           child: OutlinedButton(
-            style: OutlinedButton.styleFrom(
-              side: BorderSide(
-                width: 1,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              foregroundColor: Theme.of(context).colorScheme.primary,
-              backgroundColor:
-                  Theme.of(context).colorScheme.surfaceTint, // 设置按钮的背景色
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
-              ),
-            ),
+            style: buildBtnStyle(),
             child: Text(
               localizedStrings.save_csv,
               style: TextStyle(
@@ -999,18 +964,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                   _openJsonFile(filePath);
                 }
               },
-              style: OutlinedButton.styleFrom(
-                side: BorderSide(
-                  width: 1,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                foregroundColor: Theme.of(context).colorScheme.primary,
-                backgroundColor:
-                    Theme.of(context).colorScheme.surfaceTint, // 设置按钮的背景色
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
-                ),
-              ),
+              style: buildBtnStyle(),
               child: Text(
                 localizedStrings.open_file,
                 style: TextStyle(
@@ -1020,6 +974,20 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
               )),
         ),
       ],
+    );
+  }
+
+  ButtonStyle buildBtnStyle() {
+    return OutlinedButton.styleFrom(
+      side: BorderSide(
+        width: 1,
+        color: Theme.of(context).colorScheme.primary,
+      ),
+      foregroundColor: Theme.of(context).colorScheme.primary,
+      backgroundColor: Theme.of(context).colorScheme.onPrimary, // 设置按钮的背景色
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
+      ),
     );
   }
 
@@ -1089,17 +1057,17 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
     );
   }
 
-  void _updatePosition(PointerMoveEvent pointerMoveEvent) {
-    double newOffsetX = _offset.dx + pointerMoveEvent.delta.dx;
-    double newOffsetY = _offset.dy + pointerMoveEvent.delta.dy;
+  // void _updatePosition(PointerMoveEvent pointerMoveEvent) {
+  //   double newOffsetX = _offset.dx + pointerMoveEvent.delta.dx;
+  //   double newOffsetY = _offset.dy + pointerMoveEvent.delta.dy;
 
-    setState(() {
-      _offset = Offset(newOffsetX, newOffsetY);
-    });
-  }
+  //   setState(() {
+  //     _offset = Offset(newOffsetX, newOffsetY);
+  //   });
+  // }
 
   Widget _buildLine(int index, Offset start, Offset end) {
-    _offset = start;
+    // _offset = start;
 
     return Stack(children: [
       Positioned(
@@ -1176,7 +1144,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
   void sendFormatToScale(String modifyString) async {
     myScaleCmd.cmdMode = "down_print_format_to_scale";
     myScaleCmd.cmdData = modifyString;
-    PublicFunctions.sendMsg(defaultScaleId, jsonEncode(myScaleCmd));
+    PublicFunctions.sendMsg(myDefScaleInfo.defScaleId!, jsonEncode(myScaleCmd));
     writelog(jsonEncode(myScaleCmd));
   }
 
@@ -1439,7 +1407,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
         // print(json);
 
         FormatContent myFormatContent = FormatContent(
-            page: pageWidth.text + '*' + pageHeight.text,
+            page: '${pageWidth.text}*${pageHeight.text}',
             rotation: _sltPrintDir,
             content: json,
             printer: _sltPrtName,
@@ -1771,7 +1739,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
               border: Border(
                   bottom: BorderSide(
                       width: 0.2,
-                      color: Theme.of(context).colorScheme.background))),
+                      color: Theme.of(context).colorScheme.secondaryFixed))),
           alignment: Alignment.center,
           child: Tooltip(
               message: expStr,
@@ -2359,7 +2327,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       const SizedBox(height: 100),
       Container(
         height: 50,
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: Text(
           localizedStrings.no_element,
           style: TextStyle(
@@ -2370,7 +2338,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       ),
       Container(
         height: 50,
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: Text(
           localizedStrings.operation_steps,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
@@ -2378,7 +2346,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       ),
       Container(
         height: 50,
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: Text(
           localizedStrings.step1,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
@@ -2386,13 +2354,27 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       ),
       Container(
         height: 80,
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: Text(
           localizedStrings.step2,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
         ),
       ),
     ];
+  }
+
+  Widget buildBtnText(String textStr) {
+    return SizedBox(
+      width: btnWidth,
+      child: Text(
+        textStr,
+        textAlign: TextAlign.right,
+        style: TextStyle(
+            color: Theme.of(context).colorScheme.primary,
+            fontSize: 14,
+            fontWeight: FontWeight.normal),
+      ),
+    );
   }
 
   TextField buildTextField(TextEditingController controller, String labelText,
@@ -2520,32 +2502,11 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
   _textproperties() {
     return [
       const SizedBox(height: 10),
-      ElevatedButton(
-          style: OutlinedButton.styleFrom(
-            side: BorderSide(
-              width: 1,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            foregroundColor: Theme.of(context).colorScheme.primary,
-            backgroundColor: Theme.of(context).colorScheme.primary, // 设置按钮的背景色
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
-            ),
-          ),
-          onPressed: () {
-            setState(() {
-              _deleteReceiptItem(myReceiptItemData.tabOrder);
-            });
-          },
-          child: Text(localizedStrings.button_delete,
-              style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.normal,
-                  color: Theme.of(context).colorScheme.onPrimary))),
+      deleteBtnBuild(),
       const SizedBox(height: 10),
       Container(
-        height: 30,
-        color: Theme.of(context).colorScheme.surface,
+        height: 35,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: Column(
           children: [
             Text(
@@ -2607,7 +2568,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       ),
       Container(
         height: 20,
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: Text(localizedStrings.position,
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -2678,7 +2639,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
 
       Container(
         height: 20,
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: Text(localizedStrings.editor,
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -2820,9 +2781,11 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
   _varproperties() {
     return [
       const SizedBox(height: 10),
+      deleteBtnBuild(),
+      const SizedBox(height: 10),
       Container(
-        height: 30,
-        color: Theme.of(context).colorScheme.surface,
+        height: 35,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: Column(
           children: [
             Text(
@@ -2884,7 +2847,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       ),
       Container(
         height: 20,
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: Text(localizedStrings.position,
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -3015,26 +2978,38 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
         onSelect: _handleFontReverseSelected,
       ),
       const SizedBox(height: 5),
-      ElevatedButton(
-          onPressed: () {
-            setState(() {
-              _deleteReceiptItem(myReceiptItemData.tabOrder);
-            });
-          },
-          child: Text(localizedStrings.button_delete,
-              style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.normal,
-                  color: Theme.of(context).colorScheme.onPrimary)))
     ];
+  }
+
+  Widget deleteBtnBuild() {
+    return ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0), // 这里的10.0是圆角半径，可以根据需要调整
+          ),
+          backgroundColor: Theme.of(context).colorScheme.primary, // 设置按钮的背景色
+          elevation: 10, // 设置按钮的阴影
+        ),
+        onPressed: () {
+          setState(() {
+            _deleteReceiptItem(myReceiptItemData.tabOrder);
+          });
+        },
+        child: Text(localizedStrings.button_delete,
+            style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.normal,
+                color: Theme.of(context).colorScheme.onPrimary)));
   }
 
   _lineproperties() {
     return [
       const SizedBox(height: 10),
+      deleteBtnBuild(),
+      const SizedBox(height: 10),
       Container(
-        height: 30,
-        color: Theme.of(context).colorScheme.surface,
+        height: 35,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: Column(
           children: [
             Text(
@@ -3096,7 +3071,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       ),
       Container(
         height: 20,
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: Text(localizedStrings.position,
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -3111,26 +3086,17 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       buildTextField(lineWidthVar, "Line Width",
           myReceiptItemData.lineWidth.toString(), 16),
       const SizedBox(height: 20),
-      ElevatedButton(
-          onPressed: () {
-            setState(() {
-              _deleteReceiptItem(myReceiptItemData.tabOrder);
-            });
-          },
-          child: Text(localizedStrings.button_delete,
-              style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.normal,
-                  color: Theme.of(context).colorScheme.onPrimary)))
     ];
   }
 
   _barCodeproperties() {
     return [
       const SizedBox(height: 10),
+      deleteBtnBuild(),
+      const SizedBox(height: 10),
       Container(
-        height: 30,
-        color: Theme.of(context).colorScheme.surface,
+        height: 35,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: Column(
           children: [
             Text(
@@ -3192,7 +3158,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       ),
       Container(
         height: 20,
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: Text(localizedStrings.position,
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -3295,26 +3261,17 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
         onSelect: _handleRotationSelected,
       ),
       const SizedBox(height: 5),
-      ElevatedButton(
-          onPressed: () {
-            setState(() {
-              _deleteReceiptItem(myReceiptItemData.tabOrder);
-            });
-          },
-          child: Text(localizedStrings.button_delete,
-              style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.normal,
-                  color: Theme.of(context).colorScheme.onPrimary)))
     ];
   }
 
   _qrcodeproperties() {
     return [
       const SizedBox(height: 10),
+      deleteBtnBuild(),
+      const SizedBox(height: 10),
       Container(
-        height: 30,
-        color: Theme.of(context).colorScheme.surface,
+        height: 35,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: Column(
           children: [
             Text(
@@ -3376,7 +3333,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       ),
       Container(
         height: 20,
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: Text(localizedStrings.position,
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -3464,17 +3421,6 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
         onSelect: _handleQrWidthSelected,
       ),
       const SizedBox(height: 5),
-      ElevatedButton(
-          onPressed: () {
-            setState(() {
-              _deleteReceiptItem(myReceiptItemData.tabOrder);
-            });
-          },
-          child: Text(localizedStrings.button_delete,
-              style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.normal,
-                  color: Theme.of(context).colorScheme.onPrimary)))
     ];
   }
 
@@ -3521,6 +3467,10 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       "Subtotal_P": localizedStrings.p_subtotal_var,
       "Currency_P": localizedStrings.p_currency_var,
       "CopyTimes_P": localizedStrings.p_copy_times_var,
+      "ModelName_P": localizedStrings.p_model_name_var,
+      "ScaleName_P": localizedStrings.p_scale_name_var,
+      "TaxName_P": localizedStrings.p_tax_name_var,
+      "SettleAccountTimes_P": localizedStrings.p_settle_account_times_var,
       "PLU_Tax_P": localizedStrings.p_plu_tax_var,
       "TotalNoTax_P": localizedStrings.p_total_no_tax_var,
       "Free Text": localizedStrings.p_text_title,
@@ -3578,6 +3528,10 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       "Subtotal_P": localizedStrings.p_subtotal_expl,
       "Currency_P": localizedStrings.p_currency_expl,
       "CopyTimes_P": localizedStrings.p_copy_times_expl,
+      "ModelName_P": localizedStrings.p_model_name_expl,
+      "ScaleName_P": localizedStrings.p_scale_name_expl,
+      "TaxName_P": localizedStrings.p_tax_name_expl,
+      "SettleAccountTimes_P": localizedStrings.p_settle_account_times_expl,
       "PLU_Tax_P": localizedStrings.p_plu_tax_expl,
       "TotalNoTax_P": localizedStrings.p_total_no_tax_expl,
       "Free Text": localizedStrings.p_text_title,

@@ -4,7 +4,7 @@ import '../../data/common.dart';
 import '../../data/theme_base.dart';
 
 class TimerWidget extends StatefulWidget {
-  const TimerWidget({Key? key}) : super(key: key);
+  const TimerWidget({super.key});
 
   @override
   State<StatefulWidget> createState() => _TimerWidgetState();

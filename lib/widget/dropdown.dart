@@ -7,7 +7,7 @@ import '../../eventbus/eventbus.dart';
 class Dropdown extends StatefulWidget {
   final List<String> dropDownList;
 
-  const Dropdown(this.dropDownList, {Key? key}) : super(key: key);
+  const Dropdown(this.dropDownList, {super.key});
 
   @override
   State<Dropdown> createState() => DropdownState();

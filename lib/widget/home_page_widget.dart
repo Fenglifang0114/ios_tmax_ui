@@ -10,7 +10,7 @@ Widget appCard(BuildContext context, String titleName, IconData iconInfo,
       ),
       color: isValid
           ? Theme.of(context).colorScheme.surfaceTint
-          : Theme.of(context).colorScheme.background,
+          : Theme.of(context).colorScheme.secondaryFixed,
       child: SizedBox(
         height: 100,
         child: Row(
@@ -115,7 +115,7 @@ Widget customFunctionCard(
       ),
       color: isValid
           ? Theme.of(context).colorScheme.surfaceTint
-          : Theme.of(context).colorScheme.background,
+          : Theme.of(context).colorScheme.secondaryFixed,
       child: SizedBox(
           height: 80,
           child: Row(

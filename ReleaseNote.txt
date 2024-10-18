@@ -1,4 +1,35 @@
+---------------------------------------------------------------------------------------
+Title:SoftWare For T-Max
+Version: V1.35
+Author: FLF
+Date: 2024-10-18
+Verify Platform: Windows
+Fixed Issues:
+1.升级Flutter版本到3.24.3
+2.修改串口连接不稳定问题
+3.适配最新WIFI模块32-C3
+4.增加秤修改名称，并在其他页面仅显示名字
+5.修改WIFI模块配置后关闭透传
+6.增加主页面提示下方有功能
 
+---------------------------------------------------------------------------------------
+Title:SoftWare For T-Max
+Version: V1.33
+Author: FLF
+Date: 2024-09-09
+Verify Platform: Windows
+Fixed Issues:
+1.增加斑马打印机的条码和二维码的打印
+2.修改串口协议打不开工厂模式的错误
+---------------------------------------------------------------------------------------
+Title:SoftWare For T-Max
+Version: V1.32
+Author: FLF
+Date: 2024-09-07
+Verify Platform: Windows
+Fixed Issues:
+1.明细数据修改时间
+2.流水线秤重新修改
 ---------------------------------------------------------------------------------------
 Title:SoftWare For T-Max
 Version: V1.31

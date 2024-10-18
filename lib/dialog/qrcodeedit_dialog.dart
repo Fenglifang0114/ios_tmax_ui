@@ -6,13 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 import 'package:path/path.dart' as p;
+import 'package:t_max/data/language.dart';
 
 import '../../data/barcoderowdata.dart';
 import '../../eventbus/eventbus.dart';
+import '../widget/custom_button.dart';
 import '../widget/rowdatawidget.dart';
 
 class MyQrcodeDialog extends StatefulWidget {
-  const MyQrcodeDialog({Key? key}) : super(key: key);
+  const MyQrcodeDialog({super.key});
   @override
   MyQrcodeDialogState createState() => MyQrcodeDialogState();
 }
@@ -20,12 +22,12 @@ class MyQrcodeDialog extends StatefulWidget {
 class MyQrcodeDialogState extends State<MyQrcodeDialog> {
   dynamic _eventbus1;
   late TextEditingController _errorController;
-  late TextEditingController _barCodeNameController;
+  late TextEditingController _qrCodeNameController;
   String _selectedQrcodeName = '--';
   @override
   void initState() {
     _errorController = TextEditingController(text: '');
-    _barCodeNameController = TextEditingController(text: '');
+    _qrCodeNameController = TextEditingController(text: '');
 
     _eventbus1 = eventBus.on<EventCurrentBarCodeRowDataList>().listen((event) {
       if (mounted) {
@@ -65,144 +67,94 @@ class MyQrcodeDialogState extends State<MyQrcodeDialog> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: SizedBox(
+                  width: 800,
+                  child: Row(
                     children: [
                       const SizedBox(
-                        width: 20,
-                      ),
-                      const Text(
-                        'Barcode Name:',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(
-                        width: 200,
-                        // padding: const EdgeInsets.all(20),
-                        child: TypeAheadFormField(
-                          textFieldConfiguration: TextFieldConfiguration(
-                            controller: _barCodeNameController,
-                            style: TextStyle(
+                        width: 300,
+                        child: Text(
+                          'Qrcode Name:',
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                              fontSize: 14,
                               fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.primary,
-                              fontSize: 20,
+                              overflow: TextOverflow.ellipsis),
+                        ),
+                      ),
+                      Expanded(
+                        child: Container(
+                          width: 400,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 0),
+                          child: TypeAheadField<String>(
+                            controller: _qrCodeNameController,
+                            builder: (context, controller, focusNode) =>
+                                TextField(
+                              controller: _qrCodeNameController,
+                              focusNode: focusNode,
+                              autofocus: true,
+                              style: DefaultTextStyle.of(context)
+                                  .style
+                                  .copyWith(fontStyle: FontStyle.italic),
+                              decoration: InputDecoration(
+                                border: UnderlineInputBorder(),
+                                hintText: 'Enter name to create/select.',
+                              ),
                             ),
-                            decoration: const InputDecoration(
-                              border: UnderlineInputBorder(),
+                            itemBuilder: (context, name) => ListTile(
+                              title: Text(name),
                             ),
+                            onSelected: _onSuggestionSelected,
+                            suggestionsCallback: suggestionsCallback,
                           ),
-                          suggestionsCallback: (pattern) {
-                            return mySavedQrcodeName.savedQrcodeName.where(
-                                (option) => option
-                                    .toLowerCase()
-                                    .contains(pattern.toLowerCase()));
-                          },
-                          itemBuilder: (context, String suggestion) {
-                            return ListTile(
-                              title: Text(suggestion),
-                            );
-                          },
-                          onSuggestionSelected: (String suggestion) {
-                            setState(() {
-                              _errorController.text = '';
-                              _selectedQrcodeName = suggestion;
-                              _barCodeNameController.text = suggestion;
-                              if (suggestion != '--') {
-                                for (var i = 0;
-                                    i <
-                                        myBarCodeListList
-                                            .barCodeListList.length;
-                                    i++) {
-                                  if (myBarCodeListList
-                                              .barCodeListList[i].barCodeName ==
-                                          _selectedQrcodeName &&
-                                      myBarCodeListList
-                                              .barCodeListList[i].barCodeType ==
-                                          'Qrcode') {
-                                    _saveDataList(i);
-                                    eventBus.fire(
-                                        EventCurrentBarCodeRowDataList(
-                                            myBarCodeRowDataList));
-                                    break;
-                                  }
-                                }
-                              } else {
-                                myBarCodeRowDataList.barCodeRowDataList.clear();
-                                myBarCodeListList;
-                              }
-                            });
-                          },
                         ),
-                      ),
-                      // SizedBox(
-                      //   width: 150,
-                      //   child: TextField(
-                      //     controller: _barCodeNameController,
-                      //     decoration: const InputDecoration(
-                      //         hintText: 'Enter barcode name'),
-                      //     textAlign: TextAlign.center,
-                      //     onChanged: (value) {
-                      //       setState(() {
-                      //         _errorClean();
-                      //       });
-
-                      //       // widget.rowData.content = value;
-                      //     },
-                      //   ),
-                      // ),
-                      const SizedBox(
-                        width: 100,
-                      ),
-                      ElevatedButton(
-                        onPressed: _addRowData,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              Theme.of(context).colorScheme.primary, // 设置按钮的背景色
-                          elevation: 10, // 设置按钮的阴影
-                        ),
-                        child: const Text(
-                          'Add',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      ElevatedButton(
-                        onPressed: _saveRowData,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              Theme.of(context).colorScheme.outline, // 设置按钮的背景色
-                          elevation: 10, // 设置按钮的阴影
-                        ),
-                        child: const Text(
-                          'Save',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      OutlinedButton(
-                        onPressed: _deleteRowData,
-                        child: const Text(
-                          'Delete',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                        ),
-                      ),
+                      )
                     ],
                   ),
+                )),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  const SizedBox(
+                    width: 30,
+                  ),
+                  const SizedBox(
+                    width: 30,
+                  ),
+                  CustomOutlinedButton(
+                      btnWidth: 150,
+                      btnHeight: 40,
+                      icon: Icons.add,
+                      text: localizedStrings.button_add,
+                      onPressed: _addRowData),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  CustomElevatedButton(
+                      btnWidth: 150,
+                      btnHeight: 40,
+                      icon: Icons.save,
+                      text: localizedStrings.button_save,
+                      onPressed: _saveRowData),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  CustomOutlinedButton(
+                      btnWidth: 150,
+                      btnHeight: 40,
+                      icon: Icons.delete,
+                      text: 'Delete All',
+                      onPressed: _deleteRowData),
                 ],
               ),
-            ),
-            const SizedBox(
-              height: 10,
             ),
             Row(
                 mainAxisSize: MainAxisSize.max,
@@ -211,33 +163,33 @@ class MyQrcodeDialogState extends State<MyQrcodeDialog> {
                   Text("DATA TYPE",
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary,
-                          fontSize: 20,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold)),
                   Text("Content",
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary,
-                          fontSize: 20,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold)),
                   Text("Default Value",
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
-                        fontSize: 20,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                       )),
                   Text("Alignment",
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary,
-                          fontSize: 20,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold)),
                   Text("Max Length",
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary,
-                          fontSize: 20,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold)),
                   Text("Delete",
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary,
-                          fontSize: 20,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold)),
                 ]),
             Expanded(
@@ -261,9 +213,8 @@ class MyQrcodeDialogState extends State<MyQrcodeDialog> {
             controller: _errorController,
             style: TextStyle(
                 color: (_errorController.text.contains("successfully"))
-                    ? Theme.of(context).colorScheme.outline
+                    ? Theme.of(context).colorScheme.surfaceContainerHigh
                     : Theme.of(context).colorScheme.error,
-                fontSize: 20,
                 fontWeight: FontWeight.bold),
             decoration: const InputDecoration(
                 border: OutlineInputBorder(
@@ -278,17 +229,58 @@ class MyQrcodeDialogState extends State<MyQrcodeDialog> {
         const SizedBox(
           width: 50,
         ),
-        ElevatedButton(
-          onPressed: () {
-            myBarCodeRowDataList.barCodeRowDataList.clear();
-
-            Navigator.of(context).pop();
-          },
-          child: const Text('Exit'),
-        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            CustomOutlinedButton(
+              btnWidth: 150,
+              btnHeight: 40,
+              icon: Icons.exit_to_app,
+              text: localizedStrings.button_exit,
+              onPressed: () {
+                myBarCodeRowDataList.barCodeRowDataList.clear();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        )
       ],
     );
   }
+
+  void _onSuggestionSelected(String suggestion) {
+    setState(() {
+      _errorController.text = '';
+      _selectedQrcodeName = suggestion;
+      _qrCodeNameController.text = suggestion;
+      if (suggestion != '--') {
+        for (var i = 0; i < myBarCodeListList.barCodeListList.length; i++) {
+          if (myBarCodeListList.barCodeListList[i].barCodeName ==
+                  _selectedQrcodeName &&
+              myBarCodeListList.barCodeListList[i].barCodeType == 'Qrcode') {
+            _saveDataList(i);
+            eventBus.fire(EventCurrentBarCodeRowDataList(myBarCodeRowDataList));
+            break;
+          }
+        }
+      } else {
+        myBarCodeRowDataList.barCodeRowDataList.clear();
+        myBarCodeListList;
+      }
+    });
+  }
+
+  //获取建议列表
+  Future<List<String>> suggestionsCallback(String pattern) async =>
+      Future<List<String>>.delayed(
+        Duration(milliseconds: 0),
+        () => mySavedQrcodeName.savedQrcodeName.where((option) {
+          final optionLower = option.toLowerCase();
+          final patternLower = pattern.toLowerCase();
+          return optionLower.contains(patternLower);
+          // &&              _getTempQrcodeName().contains(option);
+        }).toList(),
+      );
 
   Future<File> get _localFile async {
     final directory = p.dirname(Platform.script.toFilePath());
@@ -373,7 +365,7 @@ class MyQrcodeDialogState extends State<MyQrcodeDialog> {
   }
 
   void _addRowData() {
-    if (_barCodeNameController.text != '--') {
+    if (_qrCodeNameController.text != '--') {
       setState(() {
         myBarCodeRowDataList.barCodeRowDataList
             .add(BarCodeRowData('TEXT', '', '', 'Left', 7));
@@ -386,7 +378,7 @@ class MyQrcodeDialogState extends State<MyQrcodeDialog> {
 
   bool _judgeData() {
     bool res = true;
-    if (_barCodeNameController.text.isNotEmpty &&
+    if (_qrCodeNameController.text.isNotEmpty &&
         myBarCodeRowDataList.barCodeRowDataList.isNotEmpty) {
       for (var i = 0; i < myBarCodeRowDataList.barCodeRowDataList.length; i++) {
         if (myBarCodeRowDataList.barCodeRowDataList[i].type == 'TEXT') {
@@ -417,9 +409,9 @@ class MyQrcodeDialogState extends State<MyQrcodeDialog> {
         return;
       }
       bool result = true;
-      myBarCodeRowDataList.barCodeName = _barCodeNameController.text;
+      myBarCodeRowDataList.barCodeName = _qrCodeNameController.text;
       myBarCodeRowDataList.barCodeType = 'Qrcode';
-      String tempName = _barCodeNameController.text;
+      String tempName = _qrCodeNameController.text;
 
       if (myBarCodeListList.barCodeListList.isNotEmpty) {
         for (var i = 0; i < myBarCodeListList.barCodeListList.length; i++) {
@@ -459,7 +451,7 @@ class MyQrcodeDialogState extends State<MyQrcodeDialog> {
     }
     myBarCodeListList.barCodeListList.add(BarCodeRowDataList(
       tempRowDataList,
-      _barCodeNameController.text,
+      _qrCodeNameController.text,
       'Qrcode',
     ));
     _errorController.text = 'Qrcode  ($tempName) saved successfully!';
@@ -479,10 +471,10 @@ class MyQrcodeDialogState extends State<MyQrcodeDialog> {
 
   void _deleteRowData() {
     setState(() {
-      if (_barCodeNameController.text.isNotEmpty) {
+      if (_qrCodeNameController.text.isNotEmpty) {
         for (var i = 0; i < myBarCodeListList.barCodeListList.length; i++) {
           if (myBarCodeListList.barCodeListList[i].barCodeName ==
-                  _barCodeNameController.text &&
+                  _qrCodeNameController.text &&
               myBarCodeListList.barCodeListList[i].barCodeType == 'Qrcode') {
             myBarCodeListList.barCodeListList.removeAt(i);
           }

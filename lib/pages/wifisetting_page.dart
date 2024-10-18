@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../data/comscaleinfo_data.dart';
 import '../data/downloadresponse.dart';
 import 'package:t_max/data/respdata_data.dart';
 import 'package:t_max/data/scalecmd_data.dart';
@@ -11,9 +12,8 @@ import 'package:t_max/data/writelog.dart';
 
 import '../data/ipinfodata.dart';
 import '../data/language.dart';
-import '../data/scale_info_from_scale.dart';
-import '../data/screen_mgr.dart';
 import '../data/timer_manager.dart';
+import '../data/wifi_pwd_info.dart';
 import '../eventbus/eventbus.dart';
 import '../functions/methods.dart';
 import '../widget/custom_button.dart';
@@ -21,7 +21,7 @@ import '../widget/page_head.dart';
 import '../widget/wifitextfeild.dart';
 
 class WifiSettingPage extends StatefulWidget {
-  const WifiSettingPage({Key? key}) : super(key: key);
+  const WifiSettingPage({super.key});
 
   @override
   State<WifiSettingPage> createState() => WifiSettingPageState();
@@ -141,7 +141,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
               }
             }
             // cntScaleTimerMgr.stopCntScaleTimer();
-            PublicFunctions.getApInfo(1);
+            // PublicFunctions.getApInfo(1);
           } else {
             // cntScaleTimerMgr.stopCntScaleTimer();
             // cntScaleTimerMgr.startCntScaleTimer(5);
@@ -161,12 +161,12 @@ class WifiSettingPageState extends State<WifiSettingPage> {
               isConnecting = false;
               errorMessage = 'Obtaining IP, please wait...';
               // cntScaleTimerMgr.stopCntScaleTimer();
-              _startGetIP(1);
+              _startGetIP(2);
             } else {
               isConnecting = false;
               errorMessage = myRespDataFromScale.msgBody;
               // cntScaleTimerMgr.stopCntScaleTimer();
-              PublicFunctions.getApInfo(1);
+              _startGetIP(2);
             }
           }
         });
@@ -182,8 +182,6 @@ class WifiSettingPageState extends State<WifiSettingPage> {
               if (alreadyConnected) {
                 errorMessage = 'Obtaining IP, please wait...';
                 // cntScaleTimerMgr.stopCntScaleTimer();
-
-                PublicFunctions.getApInfo(1);
               } else {
                 // cntScaleTimerMgr.stopCntScaleTimer();
                 connectAp();
@@ -193,6 +191,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
             }
           }
         });
+        PublicFunctions.getApInfo(1);
       }
     });
 
@@ -257,6 +256,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
           // cntScaleTimerMgr.stopCntScaleTimer();
           // cntScaleTimerMgr.startCntScaleTimer(5);
         });
+        PublicFunctions.getWifiList(1);
       }
     });
 
@@ -279,17 +279,21 @@ class WifiSettingPageState extends State<WifiSettingPage> {
           if (myWiFiAPInfo.ssid!.isNotEmpty) {
             connectedSsid = myWiFiAPInfo.ssid!;
             connectedMac = myWiFiAPInfo.bssid!;
+            ssidController.text = myWiFiAPInfo.ssid!;
+            passwordController.text = getWifiPwd(myWiFiAPInfo.ssid!);
             cntScaleTimerMgr.stopCntScaleTimer();
-            PublicFunctions.getIpInfo(1);
           } else {
             connectedSsid = "";
             connectedMac = "";
+            ssidController.text = "";
+            passwordController.text = "";
             ipController.clear();
             gateWayController.clear();
             netMaskController.clear();
             // cntScaleTimerMgr.stopCntScaleTimer();
             // cntScaleTimerMgr.startCntScaleTimer(5);
           }
+          _startGetIP(1);
         });
       }
     });
@@ -303,15 +307,14 @@ class WifiSettingPageState extends State<WifiSettingPage> {
               isConnecting = false;
               errorMessage = 'Obtaining IP, please wait...';
               cntScaleTimerMgr.stopCntScaleTimer();
-              PublicFunctions.getIpInfo(1);
             } else {
               isConnecting = false;
               errorMessage = myRespDataFromScale.msgBody;
               cntScaleTimerMgr.stopCntScaleTimer();
-              PublicFunctions.getApInfo(1);
             }
           }
         });
+        PublicFunctions.getApInfo(1);
       }
     });
 
@@ -320,9 +323,9 @@ class WifiSettingPageState extends State<WifiSettingPage> {
         setState(() {
           myRespDataFromScale = event.obj;
           if (myRespDataFromScale.msgBody.contains('ok')) {
-            myScreenMgr.serialPortST = true;
+            myComScaleInfo.isOnline = true;
             cntScaleTimerMgr.stopCntScaleTimer();
-            PublicFunctions.getWifiList(1);
+            // PublicFunctions.getWifiList(1);
           } else {
             _enableRefresh = true;
             errorMessage = myRespDataFromScale.msgBody;
@@ -330,18 +333,19 @@ class WifiSettingPageState extends State<WifiSettingPage> {
             // cntScaleTimerMgr.startCntScaleTimer(5);
           }
         });
+        PublicFunctions.getApInfo(1);
       }
     });
-    _eventbus12 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
+    _eventbus12 = eventBus.on<EventRespCheckNetScale>().listen((event) {
       if (mounted) {
-        setState(() {
-          myFactoryInfoFromScale = event.obj;
-          if (myFactoryInfoFromScale.modelName != '') {
-            myScreenMgr.serialPortST = true;
-          } else {
-            myScreenMgr.serialPortST = false;
-          }
-        });
+        // setState(() {
+        //   myFactoryInfoFromScale = event.obj;
+        //   if (myFactoryInfoFromScale.modelName != '') {
+        //     myComScaleInfo.isOnline = true;
+        //   } else {
+        //     myComScaleInfo.isOnline = false;
+        //   }
+        // });
       }
     });
 
@@ -421,7 +425,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                               .primary
                                           : Theme.of(context)
                                               .colorScheme
-                                              .background,
+                                              .secondaryFixed,
                                     ),
                                   ),
                                 ),
@@ -541,6 +545,8 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                       // 更新文本框中的值
                                       ssidController.text =
                                           displayedItems[index];
+                                      passwordController.text =
+                                          getWifiPwd(ssidController.text);
                                       if (index <
                                           myWifiListInfo.wifidatalist!.length) {
                                         bssId = myWifiListInfo
@@ -1057,31 +1063,17 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     return res;
   }
 
-  // void sendDataToWifi() {
-  //   myScaleCmd.cmdMode = 'send_data_to_wifi';
-  //   myScaleCmd.cmdData = 'AT+CWMODE?\r\n';
-  //   MyApp.webchannel1.sendMessage(jsonEncode(myScaleCmd));
-  // }
-
-  // void _startTimer(int time) {
-  //   setState(() {
-  //     isConnecting = true;
-  //   });
-
-  //   _timer = Timer(Duration(seconds: time), () {
-  //     setState(() {
-  //       isConnecting = false;
-  //       errorMessage = 'Time out!';
-  //     });
-  //   });
-  // }
-
-  // void _stopTimer() {
-  //   setState(() {
-  //     isConnecting = false;
-  //   });
-  //   _timer?.cancel(); // 停止计时器
-  // }
+  String getWifiPwd(String ssid) {
+    if (myWifiPwdInfoList.isEmpty) {
+      return "";
+    }
+    for (var i = 0; i < myWifiPwdInfoList.length; i++) {
+      if (myWifiPwdInfoList[i].ssid == ssid) {
+        return myWifiPwdInfoList[i].pwd;
+      }
+    }
+    return "";
+  }
 
   void connectAp() {
     myScaleCmd.cmdMode = 'connect_ap';
@@ -1091,6 +1083,14 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     myScaleCmd.cmdData = jsonEncode(myConnectApInfo).toString();
     PublicFunctions.sendMsg(1, jsonEncode(myScaleCmd));
     writelog(jsonEncode(myScaleCmd));
+    addWifiPwd();
+  }
+
+  void addWifiPwd() {
+    myWifiPwdInfo.ssid = ssidController.text;
+    myWifiPwdInfo.pwd = passwordController.text;
+    String wifiStr = jsonEncode(myWifiPwdInfo).toString();
+    PublicFunctions.addWifiPwd(wifiStr);
   }
 
   void connectDynamicIp() {

@@ -1,8 +1,8 @@
 class ScreenMgr {
   bool isMainScreen;
-  bool serialPortST;
+
   String wifiOrBt;
-  ScreenMgr(this.isMainScreen, this.serialPortST, this.wifiOrBt);
+  ScreenMgr(this.isMainScreen, this.wifiOrBt);
 }
 
-ScreenMgr myScreenMgr = ScreenMgr(true, false, 'bt wifi');
+ScreenMgr myScreenMgr = ScreenMgr(true, 'bt wifi');

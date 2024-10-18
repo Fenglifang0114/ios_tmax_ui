@@ -31,9 +31,9 @@ class CustomElevatedButton extends StatelessWidget {
         children: [
           Icon(
             icon,
-            size: 24,
+            size: 20,
+            color: Theme.of(context).colorScheme.onPrimary,
           ),
-          const SizedBox(width: 4),
           SizedBox(
             width: btnWidth,
             height: btnHeight,
@@ -42,8 +42,9 @@ class CustomElevatedButton extends StatelessWidget {
                 text,
                 maxLines: 1,
                 textAlign: TextAlign.left,
-                style: const TextStyle(
+                style: TextStyle(
                   overflow: TextOverflow.ellipsis,
+                  color: Theme.of(context).colorScheme.onPrimary,
                 ),
               ),
             ),
@@ -83,7 +84,7 @@ class CustomOutlinedButton extends StatelessWidget {
         children: [
           Icon(
             icon,
-            size: 24,
+            size: 20,
           ),
           const SizedBox(width: 4),
           SizedBox(
@@ -109,7 +110,7 @@ class CustomOutlinedButton extends StatelessWidget {
 Widget getDialogTitle(
     BuildContext context, String title, IconData icon, double titleWidth) {
   return SizedBox(
-      height: 35,
+      height: 40,
       child: Column(
         children: [
           Row(
@@ -123,6 +124,7 @@ Widget getDialogTitle(
                 child: Text(title,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
+                        fontSize: 18,
                         color: Theme.of(context).colorScheme.primary)),
               ),
             ],

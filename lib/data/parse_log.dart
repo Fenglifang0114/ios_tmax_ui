@@ -139,7 +139,7 @@ List<String> getSerialOutputFromLog(List<Map<String, dynamic>> jsonDataList) {
 Future<String> getAppFilePath(String fileName) async {
   String appDirectory = Platform.resolvedExecutable;
   var directory = p.dirname(appDirectory);
-  directory = directory + '\\' + myLogDir;
+  directory = '$directory\\$myLogDir';
   final formatfilePath = Directory('$directory\\$fileName');
   return formatfilePath.path;
 }
@@ -147,7 +147,7 @@ Future<String> getAppFilePath(String fileName) async {
 Future<String> getAppImportPath(String fileName) async {
   String appDirectory = Platform.resolvedExecutable;
   var directory = p.dirname(appDirectory);
-  directory = directory + '\\' + myImportDir;
+  directory = '$directory\\$myImportDir';
   final formatfilePath = Directory('$directory\\$fileName');
   return formatfilePath.path;
 }

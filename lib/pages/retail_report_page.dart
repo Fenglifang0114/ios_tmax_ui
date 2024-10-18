@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:t_max/eventbus/eventbus.dart';
@@ -9,17 +10,16 @@ import 'package:t_max/widget/custom_button.dart';
 import '../data/comscaleinfo_data.dart';
 import '../data/detail_info.dart';
 import '../data/downloadresponse.dart';
-import '../data/language.dart';
 import '../widget/page_head.dart';
 
 class TransactionReportPage extends StatefulWidget {
   const TransactionReportPage({super.key});
 
   @override
-  _TransactionReportPageState createState() => _TransactionReportPageState();
+  TransactionReportPageState createState() => TransactionReportPageState();
 }
 
-class _TransactionReportPageState extends State<TransactionReportPage> {
+class TransactionReportPageState extends State<TransactionReportPage> {
   final ScrollController _scrollController = ScrollController();
   late final ScrollController _scrollController1 = ScrollController();
 
@@ -37,6 +37,9 @@ class _TransactionReportPageState extends State<TransactionReportPage> {
     isRefresh = true;
     eventBus1 = eventBus.on<EventRespDetailInfo>().listen((event) {
       String detailStr = event.obj;
+      if (detailStr == "null") {
+        return;
+      }
       if (mounted) {
         isRefresh = false;
         setState(() {
@@ -48,7 +51,12 @@ class _TransactionReportPageState extends State<TransactionReportPage> {
                 details: detail.details,
               );
             }).toList();
-          } catch (e) {}
+            for (int i = 0; i < transactions.length; i++) {}
+          } catch (e) {
+            if (kDebugMode) {
+              print(e);
+            }
+          }
         });
       }
     });
@@ -90,13 +98,12 @@ class _TransactionReportPageState extends State<TransactionReportPage> {
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(50),
           child: Container(
-            child: pageHeadDesign(
-                context, localizedStrings.re_detail_report_title, []),
+            child: pageHeadDesign(context, 'Retail Detail Report', []),
           ),
         ),
         body: Column(
           children: [
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Row(
@@ -113,7 +120,7 @@ class _TransactionReportPageState extends State<TransactionReportPage> {
                             PublicFunctions.getDetailList();
                             isRefresh = true;
                           }),
-                SizedBox(
+                const SizedBox(
                   width: 20,
                 ),
                 CustomOutlinedButton(
@@ -150,7 +157,7 @@ class _TransactionReportPageState extends State<TransactionReportPage> {
                                   children: [
                                     buildCartTitle(transactions[index]),
                                     if (transactions[index].isExpanded)
-                                      buildCartDetail(transactions[index]),
+                                      buildCardDetail(transactions[index]),
                                   ],
                                 );
                               },
@@ -167,7 +174,7 @@ class _TransactionReportPageState extends State<TransactionReportPage> {
         ));
   }
 
-  Widget buildCartDetail(TransactionWithExpansion tran) {
+  Widget buildCardDetail(TransactionWithExpansion tran) {
     return Column(
       children: tran.details.map((detail) {
         return Card(
@@ -176,7 +183,7 @@ class _TransactionReportPageState extends State<TransactionReportPage> {
             title: Row(
               children: [
                 Text('PLU：${detail.pluNum}'),
-                Text('        '),
+                const Text('        '),
                 Text('Name：${detail.pluName}'),
               ],
             ),
@@ -222,7 +229,7 @@ class _TransactionReportPageState extends State<TransactionReportPage> {
               '${tran.total.scaleModel}/${tran.total.scaleSn}',
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
-            Text('        '),
+            const Text('        '),
             Text(
               'ID：${tran.total.settleAccountTimes}',
               style: const TextStyle(fontWeight: FontWeight.bold),
@@ -373,7 +380,8 @@ class _TransactionReportPageState extends State<TransactionReportPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
               content: Text('OK    ${file.path}'),
-              backgroundColor: Theme.of(context).colorScheme.outline),
+              backgroundColor:
+                  Theme.of(context).colorScheme.surfaceContainerHigh),
         );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(

@@ -4,8 +4,7 @@ import '../data/scalelist_data.dart';
 
 // ignore: must_be_immutable
 class ComPortDropdown extends StatefulWidget {
-  ComPortDropdown(this.index, this.dropDownList, this.defaultValue, {Key? key})
-      : super(key: key);
+  ComPortDropdown(this.index, this.dropDownList, this.defaultValue, {super.key});
   late int index;
   late List<String> dropDownList = [];
   late var defaultValue = '';

@@ -12,7 +12,7 @@ class MyLogAccess {
       await File(logFilePath).create(recursive: true);
     }
     File(logFilePath).writeAsStringSync(
-        DateTime.now().toString() + newLogStr + '\r\n',
+        '${DateTime.now()}$newLogStr\r\n',
         mode: FileMode.append);
   }
 
@@ -25,7 +25,7 @@ class MyLogAccess {
       await File(logFilePath).create(recursive: true);
     }
     File(logFilePath)
-        .writeAsStringSync(newLogStr + '\r\n', mode: FileMode.append);
+        .writeAsStringSync('$newLogStr\r\n', mode: FileMode.append);
   }
 
   clearRecordsName() async {

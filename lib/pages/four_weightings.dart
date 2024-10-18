@@ -16,7 +16,7 @@ import '../data/scalelist_data.dart';
 import '../widget/page_head.dart';
 
 class FourWeightsPage extends StatefulWidget {
-  const FourWeightsPage({Key? key}) : super(key: key);
+  const FourWeightsPage({super.key});
   @override
   State<FourWeightsPage> createState() => FourWeightsPageState();
 }
@@ -26,7 +26,7 @@ class FourWeightsPageState extends State<FourWeightsPage> {
   List<bool> isCntingList = [false, false, false, false];
   List<int> scaleList = [];
 
-  int scaleId1 = defaultScaleId;
+  int scaleId1 = myDefScaleInfo.defScaleId!;
   int scaleId2 = 0;
   int scaleId3 = 0;
   int scaleId4 = 0;
@@ -47,13 +47,8 @@ class FourWeightsPageState extends State<FourWeightsPage> {
   void initState() {
     super.initState();
     for (int i = 0; i < fourScaleList.length; i++) {
-      var scaleInfo = fourScaleList[i].scaleModel! +
-          "    Sn:" +
-          fourScaleList[i].scaleSn! +
-          "    Ip:" +
-          fourScaleList[i].ip! +
-          ":" +
-          fourScaleList[i].port!.toString();
+      var scaleInfo =
+          "${fourScaleList[i].scaleModel!}    Sn:${fourScaleList[i].scaleSn!}    Ip:${fourScaleList[i].ip!}:${fourScaleList[i].port!}";
       if (i == 0) {
         scaleId1 = fourScaleList[i].scaleId!;
         scaleInfo1 = scaleInfo;
@@ -189,8 +184,8 @@ class FourWeightsPageState extends State<FourWeightsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final _width = MediaQuery.of(context).size.width;
-    final _height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),
@@ -201,10 +196,10 @@ class FourWeightsPageState extends State<FourWeightsPage> {
         ),
       ),
       body: Container(
-          width: _width,
-          height: _height,
+          width: width,
+          height: height,
           decoration:
-              BoxDecoration(color: Theme.of(context).colorScheme.surface),
+              BoxDecoration(color: Theme.of(context).colorScheme.surfaceBright),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             // mainAxisSize: MainAxisSize.max,
@@ -220,8 +215,8 @@ class FourWeightsPageState extends State<FourWeightsPage> {
                       // const SizedBox(width: 20),
                       Expanded(
                         flex: 5,
-                        child: buildOneScale(context, _width / 2, _height / 2,
-                            0, myWgtCnt1, scaleId1, scaleInfo1),
+                        child: buildOneScale(context, width / 2, height / 2, 0,
+                            myWgtCnt1, scaleId1, scaleInfo1),
                       ),
                       Container(
                         color: Theme.of(context).colorScheme.primary,
@@ -230,7 +225,7 @@ class FourWeightsPageState extends State<FourWeightsPage> {
 
                       Expanded(
                           flex: 5,
-                          child: buildOneScale(context, _width / 2, _height / 2,
+                          child: buildOneScale(context, width / 2, height / 2,
                               1, myWgtCnt2, scaleId2, scaleInfo2)),
                     ],
                   ),
@@ -250,8 +245,8 @@ class FourWeightsPageState extends State<FourWeightsPage> {
                       // const SizedBox(width: 20),
                       Expanded(
                         flex: 5,
-                        child: buildOneScale(context, _width / 2, _height / 2,
-                            2, myWgtCnt3, scaleId3, scaleInfo3),
+                        child: buildOneScale(context, width / 2, height / 2, 2,
+                            myWgtCnt3, scaleId3, scaleInfo3),
                       ),
                       Container(
                         color: Theme.of(context).colorScheme.primary,
@@ -259,7 +254,7 @@ class FourWeightsPageState extends State<FourWeightsPage> {
                       ),
                       Expanded(
                           flex: 5,
-                          child: buildOneScale(context, _width / 2, _height / 2,
+                          child: buildOneScale(context, width / 2, height / 2,
                               3, myWgtCnt4, scaleId4, scaleInfo4)),
                     ],
                   ),
@@ -270,22 +265,23 @@ class FourWeightsPageState extends State<FourWeightsPage> {
     );
   }
 
-  Widget buildOneScale(dynamic context, double _width, double _height,
+  Widget buildOneScale(dynamic context, double width, double height,
       int scaleNo, ReqWeightCountine reqWgt, int scaleId, String scaleInfo) {
     if (scaleId == 0) {
-      return SizedBox();
+      return const SizedBox();
     }
     return Container(
-        width: _width,
-        height: _height,
-        decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
+        width: width,
+        height: height,
+        decoration:
+            BoxDecoration(color: Theme.of(context).colorScheme.surfaceBright),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           // mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              width: _width,
+              width: width,
               height: 40,
               decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surfaceTint),
@@ -466,7 +462,7 @@ class FourWeightsPageState extends State<FourWeightsPage> {
         icon: const Icon(Icons.play_arrow),
         iconSize: iconSize,
         color: (isStartList[scaleNo])
-            ? (Theme.of(context).colorScheme.background)
+            ? (Theme.of(context).colorScheme.secondaryFixed)
             : (color),
         onPressed: () {
           setState(() {
@@ -499,7 +495,7 @@ class FourWeightsPageState extends State<FourWeightsPage> {
         icon: const Icon(Icons.pause),
         iconSize: iconSize,
         color: (!isStartList[scaleNo])
-            ? (Theme.of(context).colorScheme.background)
+            ? (Theme.of(context).colorScheme.secondaryFixed)
             : color,
       ),
     );
@@ -615,12 +611,12 @@ class FourWeightsPageState extends State<FourWeightsPage> {
             color: color,
             textColor: Theme.of(context).colorScheme.onPrimary,
             elevation: 5.0,
+            onPressed: onPressed,
             child: Text(text,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                    fontSize: fontSize, fontWeight: FontWeight.normal)),
-            onPressed: onPressed));
+                    fontSize: fontSize, fontWeight: FontWeight.normal))));
   }
 
   Widget buildTextString(

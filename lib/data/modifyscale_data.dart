@@ -71,3 +71,24 @@ class ModifyNetScale {
 }
 
 ModifyNetScale myModifyNetScale = ModifyNetScale(scaleModel: 'TMax');
+
+class ModifyScaleName {
+  int? scaleId;
+  String? scaleName;
+
+  ModifyScaleName({this.scaleId, this.scaleName});
+
+  ModifyScaleName.fromJson(Map<String, dynamic> json) {
+    scaleId = json['ScaleId'];
+    scaleName = json['ScaleName'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['ScaleId'] = scaleId;
+    data['ScaleName'] = scaleName;
+    return data;
+  }
+}
+
+ModifyScaleName myModifyScaleName = ModifyScaleName();

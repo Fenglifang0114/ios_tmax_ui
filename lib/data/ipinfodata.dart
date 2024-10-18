@@ -155,3 +155,24 @@ class ConnectApInfo {
     return data;
   }
 }
+
+class WifiPwdInfo {
+  String? ssid;
+  String? pwd;
+
+  WifiPwdInfo({this.ssid, this.pwd});
+
+  WifiPwdInfo.fromJson(Map<String, dynamic> json) {
+    ssid = json['ssid'];
+    pwd = json['pwd'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['Ssid'] = ssid;
+    data['Pwd'] = pwd;
+    return data;
+  }
+}
+
+WifiPwdInfo myWifiPwdInfo = WifiPwdInfo();

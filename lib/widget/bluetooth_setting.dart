@@ -13,10 +13,10 @@ class BluetoothDialog extends StatefulWidget {
   const BluetoothDialog({super.key});
 
   @override
-  _BluetoothDialogState createState() => _BluetoothDialogState();
+  BluetoothDialogState createState() => BluetoothDialogState();
 }
 
-class _BluetoothDialogState extends State<BluetoothDialog> {
+class BluetoothDialogState extends State<BluetoothDialog> {
   final TextEditingController _deviceNameController = TextEditingController();
   List<String> emissionPowerList = ['Strong', 'Normal', 'Weak'];
   String emissionPowerVale = '';
@@ -85,7 +85,8 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
           Icons.bluetooth, 400),
       content: Container(
         height: 310,
-        decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
+        decoration:
+            BoxDecoration(color: Theme.of(context).colorScheme.surfaceBright),
         child: Column(
           children: [
             const SizedBox(height: 2),
@@ -143,7 +144,7 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
                                             _deviceNameController.clear();
                                           });
                                           PublicFunctions.getBtName(
-                                              defaultScaleId);
+                                              myDefScaleInfo.defScaleId!);
                                           _startTimer(15);
                                         }),
                               const SizedBox(width: 40),
@@ -209,14 +210,14 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
                                       });
                                       if (emissionPowerVale == 'Strong') {
                                         PublicFunctions.modifyBtPowerStrong(
-                                            defaultScaleId);
+                                            myDefScaleInfo.defScaleId!);
                                       } else if (emissionPowerVale ==
                                           'Normal') {
                                         PublicFunctions.modifyBtPowerNormal(
-                                            defaultScaleId);
+                                            myDefScaleInfo.defScaleId!);
                                       } else {
                                         PublicFunctions.modifyBtPowerWeak(
-                                            defaultScaleId);
+                                            myDefScaleInfo.defScaleId!);
                                       }
                                       _startTimer(15);
                                     }),
@@ -234,7 +235,9 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
                             style: TextStyle(
                                 color: (_errorMessage.contains('ok') ||
                                         _errorMessage.contains('OK'))
-                                    ? Theme.of(context).colorScheme.outline
+                                    ? Theme.of(context)
+                                        .colorScheme
+                                        .surfaceContainerHigh
                                     : Theme.of(context).colorScheme.error),
                           ),
                         ],
@@ -248,7 +251,7 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
                         ? LinearProgressIndicator(
                             value: null,
                             backgroundColor:
-                                Theme.of(context).colorScheme.background,
+                                Theme.of(context).colorScheme.secondaryFixed,
                             valueColor: AlwaysStoppedAnimation<Color>(
                                 Theme.of(context).colorScheme.primary),
                           )
@@ -287,7 +290,8 @@ class _BluetoothDialogState extends State<BluetoothDialog> {
 
   void sendBluetoothName() async {
     if (_deviceNameController.text.isNotEmpty) {
-      PublicFunctions.modifyBtName(_deviceNameController.text, defaultScaleId);
+      PublicFunctions.modifyBtName(
+          _deviceNameController.text, myDefScaleInfo.defScaleId!);
       isSetting = true;
       _startTimer(15);
     } else {

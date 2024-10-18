@@ -74,7 +74,7 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
           child: pageHeadDesign(
             context,
             localizedStrings.label_fmt_download,
-            [defaultScaleId],
+            [myDefScaleInfo.defScaleId!],
           ),
         ),
       ),
@@ -143,7 +143,8 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
                       Text(
                         localizedStrings.def_fmt_no_file_tip,
                         style: TextStyle(
-                            color: Theme.of(context).colorScheme.background),
+                            color:
+                                Theme.of(context).colorScheme.secondaryFixed),
                       ),
                   ],
                 ),
@@ -233,7 +234,7 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
           height: 50,
           child: ElevatedButton(
             style: ButtonStyle(
-              shape: MaterialStateProperty.all(
+              shape: WidgetStateProperty.all(
                 RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(4),
                 ),
@@ -258,21 +259,21 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
     );
   }
 
-  void _startTimer(int time) {
-    _downloadTimer = Timer(Duration(seconds: time), () {
-      setState(() {
-        isDownloadClicked = false;
-      });
-      _stopTimer();
+  // void _startTimer(int time) {
+  //   _downloadTimer = Timer(Duration(seconds: time), () {
+  //     setState(() {
+  //       isDownloadClicked = false;
+  //     });
+  //     _stopTimer();
 
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(localizedStrings.download_result_fail,
-              style: const TextStyle(
-                  fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
-          duration: const Duration(seconds: 3),
-          backgroundColor: Theme.of(context).colorScheme.error));
-    });
-  }
+  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //         content: Text(localizedStrings.download_result_fail,
+  //             style: const TextStyle(
+  //                 fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
+  //         duration: const Duration(seconds: 3),
+  //         backgroundColor: Theme.of(context).colorScheme.error));
+  //   });
+  // }
 
   void _stopTimer() {
     _downloadTimer?.cancel(); // 停止计时器
@@ -392,7 +393,8 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
       myDefaultPrtFmt.filePathList = fmtSequence;
 
       myScaleCmd.cmdData = json.encode(myDefaultPrtFmt);
-      PublicFunctions.sendMsg(defaultScaleId, jsonEncode(myScaleCmd));
+      PublicFunctions.sendMsg(
+          myDefScaleInfo.defScaleId!, jsonEncode(myScaleCmd));
     }
 
     writelog(jsonEncode(myScaleCmd));

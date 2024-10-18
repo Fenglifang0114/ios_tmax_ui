@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../data/comscaleinfo_data.dart';
 import '../data/manager_scale_channel.dart';
 import 'package:t_max/data/timer_manager.dart';
 import '../data/language.dart';
@@ -84,7 +85,7 @@ Widget pageHead(dynamic context, String pageTitle, String serialPortStatus,
                   const SizedBox(
                     width: 20,
                   ),
-                  (myScreenMgr.serialPortST)
+                  (myComScaleInfo.isOnline)
                       ? CustomCircleIcon(
                           outerColor: Theme.of(context).colorScheme.primary,
                           innerColor: Theme.of(context).colorScheme.onPrimary,
@@ -149,14 +150,15 @@ void _showConfirmationDialog(BuildContext context, List<int> scaleList) {
     if (confirmed) {
       myScreenMgr.isMainScreen = true;
       cntScaleTimerMgr.stopCntScaleTimer();
-      PublicFunctions.closeScalePassth(defaultScaleId);
-      //
+      PublicFunctions.closewifiPassth(1);
       if (scaleList.isNotEmpty) {
         for (int i = 0; i < scaleList.length; i++) {
           PublicFunctions.stopWeight(scaleList[i]);
         }
       }
-      Navigator.of(context).pop();
+      if (context.mounted) {
+        Navigator.of(context).pop();
+      }
     }
   });
 }
@@ -222,7 +224,7 @@ Widget pageHeadDesign(dynamic context, String pageTitle, List<int> scaleList) {
 }
 
 Widget pageHeadDefScale(dynamic context, String pageTitle) {
-  List<int> scaleList = [defaultScaleId];
+  List<int> scaleList = [myDefScaleInfo.defScaleId!];
   return Container(
       color: Theme.of(context).colorScheme.onPrimary,
       child: Container(
@@ -286,13 +288,18 @@ Widget pageHeadDefScale(dynamic context, String pageTitle) {
                     width: 20,
                   ),
                   Expanded(
-                    child: Text(defaultScaleModel + "    " + defscaleMedia,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.right,
-                        maxLines: 1,
-                        style: TextStyle(
-                            fontSize: 20,
-                            color: Theme.of(context).colorScheme.onPrimary)),
+                    child: Tooltip(
+                        message: myDefScaleInfo.defScaleId == 1
+                            ? '${myDefScaleInfo.defScaleModel!}\r\nSN:${myDefScaleInfo.defScaleSn!}\r\nSerial Port:${myDefScaleInfo.defScalePort!}\r\nBuadRate:${myDefScaleInfo.defScaleBaud!}'
+                            : '${myDefScaleInfo.defScaleModel!}\r\nSN:${myDefScaleInfo.defScaleSn!}\r\nIP:${myDefScaleInfo.defScaleIp!}\r\nPort:${myDefScaleInfo.defScalePort!}',
+                        child: Text(myDefScaleInfo.defScaleName!,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.right,
+                            maxLines: 1,
+                            style: TextStyle(
+                                fontSize: 20,
+                                color:
+                                    Theme.of(context).colorScheme.onPrimary))),
                   ),
                   const SizedBox(
                     width: 20,

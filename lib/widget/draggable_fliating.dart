@@ -209,62 +209,62 @@ class _DraggableFloatingActionButtonState
           // bool isXOverlap = myPositionsList.positionsList.any((position) {
           //   return position.x == (_offset.dx.toInt()).roundToDouble();
           // });
-          double _currentX = (_offset.dx.toInt()).roundToDouble();
-          double _currentY = (_offset.dy.toInt()).roundToDouble();
-          double _currentX1 = _currentX + myOffsetData.width;
-          double _currentY1 = _currentY + myOffsetData.height;
+          double currentX = (_offset.dx.toInt()).roundToDouble();
+          double currentY = (_offset.dy.toInt()).roundToDouble();
+          double currentX1 = currentX + myOffsetData.width;
+          double currentY1 = currentY + myOffsetData.height;
           cleanList();
           myPositionsList.positionsList.asMap().forEach((index, element) {
-            if (element.key != widget.key! && _currentX == element.x) {
+            if (element.key != widget.key! && currentX == element.x) {
               _indexesX.add(index);
               _sameXValueYList
                   .add(myPositionsList.positionsList[index].y.toInt());
               _sameXValueYList
                   .add(myPositionsList.positionsList[index].y1.toInt());
             }
-            if (element.key != widget.key! && _currentY == element.y) {
+            if (element.key != widget.key! && currentY == element.y) {
               _indexesY.add(index);
               _sameYValueXList
                   .add(myPositionsList.positionsList[index].x.toInt());
               _sameYValueXList
                   .add(myPositionsList.positionsList[index].x1.toInt());
             }
-            if (element.key != widget.key! && _currentX1 == element.x1) {
+            if (element.key != widget.key! && currentX1 == element.x1) {
               _indexesX1.add(index);
               _sameX1ValueYList
                   .add(myPositionsList.positionsList[index].y.toInt());
               _sameX1ValueYList
                   .add(myPositionsList.positionsList[index].y1.toInt());
             }
-            if (element.key != widget.key! && _currentY1 == element.y1) {
+            if (element.key != widget.key! && currentY1 == element.y1) {
               _indexesY1.add(index);
               _sameY1ValueXList
                   .add(myPositionsList.positionsList[index].x.toInt());
               _sameY1ValueXList
                   .add(myPositionsList.positionsList[index].x1.toInt());
             }
-            if (element.key != widget.key! && _currentY == element.y1) {
+            if (element.key != widget.key! && currentY == element.y1) {
               _indexesYY1.add(index);
               _sameYY1ValueXList
                   .add(myPositionsList.positionsList[index].x.toInt());
               _sameYY1ValueXList
                   .add(myPositionsList.positionsList[index].x1.toInt());
             }
-            if (element.key != widget.key! && _currentX == element.x1) {
+            if (element.key != widget.key! && currentX == element.x1) {
               _indexesXX1.add(index);
               _sameXX1ValueYList
                   .add(myPositionsList.positionsList[index].y.toInt());
               _sameXX1ValueYList
                   .add(myPositionsList.positionsList[index].y1.toInt());
             }
-            if (element.key != widget.key! && _currentX1 == element.x) {
+            if (element.key != widget.key! && currentX1 == element.x) {
               _indexesX1X.add(index);
               _sameX1XValueYList
                   .add(myPositionsList.positionsList[index].y.toInt());
               _sameX1XValueYList
                   .add(myPositionsList.positionsList[index].y1.toInt());
             }
-            if (element.key != widget.key! && _currentY1 == element.y) {
+            if (element.key != widget.key! && currentY1 == element.y) {
               _indexesY1Y.add(index);
               _sameY1YValueXList
                   .add(myPositionsList.positionsList[index].x.toInt());
@@ -273,28 +273,28 @@ class _DraggableFloatingActionButtonState
             }
           });
 
-          _minYvalue = checkMinValue(_currentY, _sameXValueYList);
-          _maxYvalue = checkMaxValue(_currentY1, _currentY, _sameXValueYList);
-          _minXvalue = checkMinValue(_currentX, _sameYValueXList);
-          _maxXvalue = checkMaxValue(_currentX1, _currentX, _sameYValueXList);
-          _minYX1value = checkMinValue(_currentY, _sameX1ValueYList);
+          _minYvalue = checkMinValue(currentY, _sameXValueYList);
+          _maxYvalue = checkMaxValue(currentY1, currentY, _sameXValueYList);
+          _minXvalue = checkMinValue(currentX, _sameYValueXList);
+          _maxXvalue = checkMaxValue(currentX1, currentX, _sameYValueXList);
+          _minYX1value = checkMinValue(currentY, _sameX1ValueYList);
           _maxYX1value =
-              checkMaxValue(_currentY1, _currentY, _sameX1ValueYList);
-          _minXY1value = checkMinValue(_currentX, _sameY1ValueXList);
+              checkMaxValue(currentY1, currentY, _sameX1ValueYList);
+          _minXY1value = checkMinValue(currentX, _sameY1ValueXList);
           _maxXY1value =
-              checkMaxValue(_currentX1, _currentX, _sameY1ValueXList);
-          _minYY1value = checkMinValue(_currentX, _sameYY1ValueXList);
+              checkMaxValue(currentX1, currentX, _sameY1ValueXList);
+          _minYY1value = checkMinValue(currentX, _sameYY1ValueXList);
           _maxYY1value =
-              checkMaxValue(_currentX1, _currentX, _sameYY1ValueXList);
-          _minXX1value = checkMinValue(_currentY, _sameXX1ValueYList);
+              checkMaxValue(currentX1, currentX, _sameYY1ValueXList);
+          _minXX1value = checkMinValue(currentY, _sameXX1ValueYList);
           _maxXX1value =
-              checkMaxValue(_currentY1, _currentY, _sameXX1ValueYList);
-          _minX1Xvalue = checkMinValue(_currentY, _sameX1XValueYList);
+              checkMaxValue(currentY1, currentY, _sameXX1ValueYList);
+          _minX1Xvalue = checkMinValue(currentY, _sameX1XValueYList);
           _maxX1Xvalue =
-              checkMaxValue(_currentY1, _currentY, _sameX1XValueYList);
-          _minY1Yvalue = checkMinValue(_currentX, _sameY1YValueXList);
+              checkMaxValue(currentY1, currentY, _sameX1XValueYList);
+          _minY1Yvalue = checkMinValue(currentX, _sameY1YValueXList);
           _maxY1Yvalue =
-              checkMaxValue(_currentX1, _currentX, _sameY1YValueXList);
+              checkMaxValue(currentX1, currentX, _sameY1YValueXList);
         },
         onPointerUp: (PointerUpEvent pointerUpEvent) {
           // if (myPrinter.printer != 'PT566') {

@@ -29,7 +29,7 @@ modifyAddBluetoothDialog(BuildContext context) {
             content: Container(
               height: 292,
               decoration:
-                  BoxDecoration(color: Theme.of(context).colorScheme.surface),
+                  BoxDecoration(color: Theme.of(context).colorScheme.surfaceBright),
               child: Column(
                 children: [
                   const SizedBox(height: 2),
@@ -123,7 +123,7 @@ modifyAddBluetoothDialog(BuildContext context) {
                       child: const Text("OK"),
                       onPressed: () {
                         connectionType =
-                            deviceName.text.toString() + ",Icons.bluetooth";
+                            "${deviceName.text},Icons.bluetooth";
                         Navigator.of(context).pop(
                             connectionType); // to go back to screen after submitting
                       }),

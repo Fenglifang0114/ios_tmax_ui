@@ -7,12 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:t_max/data/timer_manager.dart';
 import 'package:t_max/functions/methods.dart';
+
 import '../data/downloadresponse.dart';
 import '../data/manager_scale_channel.dart';
 import '../data/download_prt_fmt.dart';
 import '../data/language.dart';
 import '../data/parse_log.dart';
-import '../data/scale_info_from_scale.dart';
+
 import '../data/scalecmd_data.dart';
 import '../data/screen_mgr.dart';
 import '../data/writelog.dart';
@@ -31,7 +32,7 @@ const int setStaticIpIndex = 5;
 const int connectApIndex = 6;
 
 class BatchDeliveryPage extends StatefulWidget {
-  const BatchDeliveryPage({Key? key}) : super(key: key);
+  const BatchDeliveryPage({super.key});
 
   @override
   State<BatchDeliveryPage> createState() => _BatchDeliveryPageState();
@@ -103,7 +104,6 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
   dynamic _eventbus5;
   dynamic _eventbus6;
   dynamic _eventbus7;
-  dynamic _eventbus8;
   dynamic _eventbus9;
   dynamic _eventbus10;
   dynamic _eventbus11;
@@ -228,12 +228,8 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
         setState(() {
           myRespDataFromScale = event.obj;
           if (myRespDataFromScale.msgBody.isNotEmpty) {
-            outputData.add(getDateTime() +
-                ':' +
-                'Download Serial OutPut' +
-                '\r\n' +
-                myRespDataFromScale.msgBody +
-                '\r\n');
+            outputData.add(
+                '${getDateTime()}:Download Serial OutPut\r\n${myRespDataFromScale.msgBody}\r\n');
           }
         });
 
@@ -245,12 +241,8 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
         setState(() {
           myRespDataFromScale = event.obj;
           if (myRespDataFromScale.msgBody.isNotEmpty) {
-            outputData.add(getDateTime() +
-                ':' +
-                'Download Print Format' +
-                '\r\n' +
-                myRespDataFromScale.msgBody +
-                '\r\n');
+            outputData.add(
+                '${getDateTime()}:Download Print Format\r\n${myRespDataFromScale.msgBody}\r\n');
           }
         });
         performNextDask();
@@ -263,12 +255,8 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
           myRespDataFromScale = event.obj;
 
           if (myRespDataFromScale.msgBody.isNotEmpty) {
-            outputData.add(getDateTime() +
-                ':' +
-                'Modify Bluetooth Name' +
-                '\r\n' +
-                myRespDataFromScale.msgBody +
-                '\r\n');
+            outputData.add(
+                '${getDateTime()}:Modify Bluetooth Name\r\n${myRespDataFromScale.msgBody}\r\n');
           }
         });
         performNextDask();
@@ -280,12 +268,8 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
           myRespDataFromScale = event.obj;
 
           if (myRespDataFromScale.msgBody.isNotEmpty) {
-            outputData.add(getDateTime() +
-                ':' +
-                'Modify Emission Power' +
-                '\r\n' +
-                myRespDataFromScale.msgBody +
-                '\r\n');
+            outputData.add(
+                '${getDateTime()}:Modify Emission Power\r\n${myRespDataFromScale.msgBody}\r\n');
           }
         });
         performNextDask();
@@ -296,12 +280,8 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
         setState(() {
           myRespDataFromScale = event.obj;
           if (myRespDataFromScale.msgBody.isNotEmpty) {
-            outputData.add(getDateTime() +
-                ':' +
-                'Connect Ap' +
-                '\r\n' +
-                'The setup is complete.' +
-                '\r\n');
+            outputData.add(
+                '${getDateTime()}:Connect Ap\r\nThe setup is complete.\r\n');
           }
         });
         performNextDask();
@@ -313,12 +293,8 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
         setState(() {
           myRespDataFromScale = event.obj;
           if (myRespDataFromScale.msgBody.isNotEmpty) {
-            outputData.add(getDateTime() +
-                ':' +
-                'Connect Static Ip' +
-                '\r\n' +
-                myRespDataFromScale.msgBody +
-                '\r\n');
+            outputData.add(
+                '${getDateTime()}:Connect Static Ip\r\n${myRespDataFromScale.msgBody}\r\n');
           }
         });
         performNextDask();
@@ -329,44 +305,36 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
         setState(() {
           myRespDataFromScale = event.obj;
           if (myRespDataFromScale.msgBody.isNotEmpty) {
-            outputData.add(getDateTime() +
-                ':' +
-                'Connect Dynamic Ip' +
-                '\r\n' +
-                myRespDataFromScale.msgBody +
-                '\r\n');
+            outputData.add(
+                '${getDateTime()}:Connect Dynamic Ip\r\n${myRespDataFromScale.msgBody}\r\n');
           }
         });
         performNextDask();
       }
     });
-    _eventbus8 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
-      if (mounted) {
-        setState(() {
-          myFactoryInfoFromScale = event.obj;
-          if (myFactoryInfoFromScale.modelName != '') {
-            myScreenMgr.serialPortST = true;
-            if (downOtherFunc && isDownloading) {
-              downOtherFunc = false;
-              performNextDask();
-            }
-          } else {
-            myScreenMgr.serialPortST = false;
-          }
-        });
-      }
-    });
+    // _eventbus8 = eventBus.on<EventRespCheckNetScale>().listen((event) {
+    //   if (mounted) {
+    //     setState(() {
+    //       myFactoryInfoFromScale = event.obj;
+    //       if (myFactoryInfoFromScale.modelName != '') {
+    //         myComScaleInfo.isOnline = true;
+    //         if (downOtherFunc && isDownloading) {
+    //           downOtherFunc = false;
+    //           performNextDask();
+    //         }
+    //       } else {
+    //         myComScaleInfo.isOnline = false;
+    //       }
+    //     });
+    //   }
+    // });
 
     _eventbus9 = eventBus.on<EventRespUpdateFirmware>().listen((event) {
       if (mounted) {
         myRespDataFromScale = event.obj;
         setState(() {
-          outputData.add(getDateTime() +
-              ':' +
-              'Update Firmware Result' +
-              '\r\n' +
-              myRespDataFromScale.msgBody +
-              '\r\n');
+          outputData.add(
+              '${getDateTime()}:Update Firmware Result\r\n${myRespDataFromScale.msgBody}\r\n');
           scrollToBottom();
         });
         if (myRespDataFromScale.msgBody.contains('ok')) {
@@ -399,10 +367,9 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
               if (outputData[outputData.length - 1]
                   .contains('Update Progress')) {
                 outputData[outputData.length - 1] =
-                    'Update Progress: ' + numericValue.toString() + '%';
+                    'Update Progress: $numericValue%';
               } else {
-                outputData
-                    .add('Update Progress: ' + numericValue.toString() + '%');
+                outputData.add('Update Progress: $numericValue%');
               }
               scrollToBottom();
             });
@@ -436,8 +403,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
     if (myScreenMgr.wifiOrBt == 'off') {
       if (btDownloading) {
         setState(() {
-          outputData.add(
-              getDateTime() + ':' + 'There is no bluetooth device' + '\r\n');
+          outputData.add('${getDateTime()}:There is no bluetooth device\r\n');
           btDownloading = false;
           scrollToBottom();
         });
@@ -446,8 +412,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
         performNextDask();
       } else if (wifiCnting || wifiDhcp || wifiStatic) {
         setState(() {
-          outputData
-              .add(getDateTime() + ':' + 'There is no wifi device' + '\r\n');
+          outputData.add('${getDateTime()}:There is no wifi device\r\n');
           scrollToBottom();
         });
 
@@ -459,11 +424,11 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
       }
     } else if (myScreenMgr.wifiOrBt == 'bt' && btDownloading) {
       btDownloading = false;
-      PublicFunctions.modifyBtName(btNameCtl.text, defaultScaleId);
+      PublicFunctions.modifyBtName(btNameCtl.text, myDefScaleInfo.defScaleId!);
       downLoadIndex++;
     } else if (myScreenMgr.wifiOrBt == 'wifi' && wifiDhcp) {
       wifiDhcp = false;
-      PublicFunctions.setWifiDynamicMode(defaultScaleId);
+      PublicFunctions.setWifiDynamicMode(myDefScaleInfo.defScaleId!);
       downLoadIndex++;
     } else if (myScreenMgr.wifiOrBt == 'wifi' && wifiStatic) {
       wifiStatic = false;
@@ -475,7 +440,8 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
             jsonDecode((filteredList[0])['ReqData']);
         jsonWifi['ip'] = ipAddrCtl.text;
         filteredList[0]['ReqData'] = jsonEncode(jsonWifi);
-        PublicFunctions.sendMsg(defaultScaleId, jsonEncode(filteredList[0]));
+        PublicFunctions.sendMsg(
+            myDefScaleInfo.defScaleId!, jsonEncode(filteredList[0]));
         writelog(jsonEncode(filteredList[0]));
       }
       downLoadIndex++;
@@ -486,18 +452,17 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
 
       if (filteredList.isNotEmpty) {
         filteredList[0]['Req'] = "connect_ap_one_key";
-        PublicFunctions.sendMsg(defaultScaleId, jsonEncode(filteredList[0]));
+        PublicFunctions.sendMsg(
+            myDefScaleInfo.defScaleId!, jsonEncode(filteredList[0]));
         filteredList[0]['Req'] = "connect_ap";
         writelog(jsonEncode(filteredList[0]));
       }
       downLoadIndex++;
     } else {
       if (myScreenMgr.wifiOrBt == 'wifi') {
-        outputData
-            .add(getDateTime() + ':' + 'There is no bluetooth device' + '\r\n');
+        outputData.add('${getDateTime()}:There is no bluetooth device\r\n');
       } else {
-        outputData
-            .add(getDateTime() + ':' + 'There is no wifi device' + '\r\n');
+        outputData.add('${getDateTime()}:There is no wifi device\r\n');
       }
       scrollToBottom();
       downLoadIndex++;
@@ -540,7 +505,6 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
     _eventbus5.cancel();
     _eventbus6.cancel();
     _eventbus7.cancel();
-    _eventbus8.cancel();
     _eventbus9.cancel();
     _eventbus10.cancel();
     _eventbus11.cancel();
@@ -937,7 +901,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                         ),
                         titleStyle('Print Format:'),
                         Container(
-                          color: colorScheme.surface,
+                          color: colorScheme.surfaceBright,
                           height: 35,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -953,7 +917,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                             children: [
                               outputCtlText(prnFmt1Ctl),
                               Container(
-                                color: colorScheme.surface,
+                                color: colorScheme.surfaceBright,
                                 height: 35,
                                 child: Row(
                                   mainAxisAlignment:
@@ -967,7 +931,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                               ),
                               outputCtlText(prnFmt2Ctl),
                               Container(
-                                color: colorScheme.surface,
+                                color: colorScheme.surfaceBright,
                                 height: 35,
                                 child: Row(
                                   mainAxisAlignment:
@@ -981,7 +945,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                               ),
                               outputCtlText(prnFmt3Ctl),
                               Container(
-                                color: colorScheme.surface,
+                                color: colorScheme.surfaceBright,
                                 height: 35,
                                 child: Row(
                                   mainAxisAlignment:
@@ -1132,7 +1096,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
   void performExport(String folderPath) {
     String appDirectory = Platform.resolvedExecutable;
     var directory = p.dirname(appDirectory);
-    var sourcedir = directory + '\\' + myLogDir;
+    var sourcedir = '$directory\\$myLogDir';
     if (importFlag) {
       copyIpListToLocal();
     }
@@ -1148,7 +1112,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
     copySerialToLocal(serialOutput5Ctl, sourcedir);
     copySerialToLocal(serialOutput6Ctl, sourcedir);
     Directory(folderPath).createSync(recursive: true); // 创建目标文件夹（如果它不存在）
-    String zipPath = folderPath + '\\' + 'backup.zip';
+    String zipPath = '$folderPath\\backup.zip';
     Archive archive = createArchiveFromPath(sourcedir);
     saveArchiveToPath(archive, zipPath);
   }
@@ -1204,7 +1168,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
 
   void copyPrnFmtToLocal(
       TextEditingController fmtCtl, String destDir, String secendFile) {
-    destDir = destDir + '\\' + myPrnFormatDir + '\\' + secendFile;
+    destDir = '$destDir\\$myPrnFormatDir\\$secendFile';
     if (fmtCtl.text.isNotEmpty) {
       var str = fmtCtl.text;
       bool isFirstCharDigit = isDigit(str[0]);
@@ -1229,7 +1193,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
   }
 
   void copySerialToLocal(TextEditingController textCtl, String destDir) {
-    destDir = destDir + '\\' + mySerialOutput;
+    destDir = '$destDir\\$mySerialOutput';
     if (textCtl.text.isNotEmpty) {
       var str = textCtl.text;
       bool isFirstCharDigit = isDigit(str[0]);
@@ -1242,7 +1206,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
   }
 
   void copyFirmwareToLocal(TextEditingController textCtl, String destDir) {
-    destDir = destDir + '\\' + myFirmwareDir;
+    destDir = '$destDir\\$myFirmwareDir';
     if (textCtl.text.isNotEmpty) {
       var str = textCtl.text;
       bool isFirstCharDigit = isDigit(str[0]);
@@ -1622,10 +1586,10 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
         : OutlinedButton.styleFrom(
             side: BorderSide(
               width: 1,
-              color: colorScheme.background,
+              color: colorScheme.secondaryFixed,
             ),
             foregroundColor: Theme.of(context).colorScheme.onPrimary,
-            backgroundColor: colorScheme.background, // 设置按钮的背景色
+            backgroundColor: colorScheme.secondaryFixed, // 设置按钮的背景色
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
             ),
@@ -1812,7 +1776,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
     File(ipFilePath).writeAsStringSync('');
     for (int i = 0; i < ipListNew.length; i++) {
       File(ipFilePath)
-          .writeAsStringSync(ipListNew[i] + '\r\n', mode: FileMode.append);
+          .writeAsStringSync('${ipListNew[i]}\r\n', mode: FileMode.append);
     }
     if (ipListNew.isNotEmpty) {
       ipIsUsedUp = false;
@@ -1899,7 +1863,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
   void sendFormatToScale(String firmwarePathStr) {
     myScaleCmd.cmdMode = "update_firmware";
     myScaleCmd.cmdData = firmwarePathStr;
-    PublicFunctions.sendMsg(defaultScaleId, jsonEncode(myScaleCmd));
+    PublicFunctions.sendMsg(myDefScaleInfo.defScaleId!, jsonEncode(myScaleCmd));
     writelog(jsonEncode(myScaleCmd));
     setState(() {
       outputData.add(localizedStrings.update_firmware_wait);
@@ -1940,7 +1904,8 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
       myDownLoadPrtFmt.filePaths = paths;
 
       myScaleCmd.cmdData = json.encode(myDownLoadPrtFmt);
-      PublicFunctions.sendMsg(defaultScaleId, jsonEncode(myScaleCmd));
+      PublicFunctions.sendMsg(
+          myDefScaleInfo.defScaleId!, jsonEncode(myScaleCmd));
     }
     writelog(jsonEncode(myScaleCmd));
   }
@@ -1962,11 +1927,12 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
       }
       File file = File(filePath);
       if (await file.exists()) {
-        jsonFilesList.add('$i' + filePath);
+        jsonFilesList.add('$i$filePath');
       }
     }
     if (jsonFilesList.isNotEmpty) {
-      PublicFunctions.sendOutputFmtToScale(jsonFilesList, defaultScaleId);
+      PublicFunctions.sendOutputFmtToScale(
+          jsonFilesList, myDefScaleInfo.defScaleId!);
     }
   }
 
@@ -1975,14 +1941,14 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
       if (downLoadIndex == updateFirmwareIndex &&
           isUpdateFirmwareSelect &&
           firmwarePathCtl.text.isNotEmpty) {
-        outputData.add(getDateTime() + ':' + 'Now update firmware' + '\r\n');
+        outputData.add('${getDateTime()}:Now update firmware\r\n');
         sendFormatToScale(firmwarePathCtl.text);
         scrollToBottom();
         downLoadIndex++;
         return;
       }
       if (downLoadIndex == downPrintFormatIndex && isPrnFmtSelect) {
-        outputData.add(getDateTime() + ':' + 'Now set print format' + '\r\n');
+        outputData.add('${getDateTime()}:Now set print format\r\n');
         sendPrnFmtToScale();
         scrollToBottom();
         downLoadIndex++;
@@ -1990,7 +1956,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
       }
 
       if (downLoadIndex == downOutputFormatIndex && isSerialOutput) {
-        outputData.add(getDateTime() + ':' + 'Now set output format' + '\r\n');
+        outputData.add('${getDateTime()}:Now set output format\r\n');
         sendSerialToScale();
         downLoadIndex++;
         return;
@@ -2000,17 +1966,18 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
           isBtSelect &&
           isModifyBtName &&
           btNameCtl.text.isNotEmpty) {
-        PublicFunctions.getOneEepromInfo('wifi_or_bt', defaultScaleId);
+        PublicFunctions.getOneEepromInfo(
+            'wifi_or_bt', myDefScaleInfo.defScaleId!);
         btDownloading = true;
-        outputData.add(
-            getDateTime() + ':' + 'Now modify the Bluetooth name' + '\r\n');
+        outputData.add('${getDateTime()}:Now modify the Bluetooth name\r\n');
         return;
       }
 
       if (downLoadIndex == setDhcpIndex && isWifiSelect && isConnectDhcp) {
-        outputData.add(getDateTime() + ':' + 'Now set DHCP' + '\r\n');
+        outputData.add('${getDateTime()}:Now set DHCP\r\n');
         wifiDhcp = true;
-        PublicFunctions.getOneEepromInfo('wifi_or_bt', defaultScaleId);
+        PublicFunctions.getOneEepromInfo(
+            'wifi_or_bt', myDefScaleInfo.defScaleId!);
         return;
       }
 
@@ -2018,8 +1985,9 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
           isWifiSelect &&
           isConnectStaticIp) {
         wifiStatic = true;
-        PublicFunctions.getOneEepromInfo('wifi_or_bt', defaultScaleId);
-        outputData.add(getDateTime() + ':' + 'Now set static ip' + '\r\n');
+        PublicFunctions.getOneEepromInfo(
+            'wifi_or_bt', myDefScaleInfo.defScaleId!);
+        outputData.add('${getDateTime()}:Now set static ip\r\n');
         if (importFlag) {
           copyIpListToLocal();
         }
@@ -2029,8 +1997,9 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
 
       if (downLoadIndex == connectApIndex && isWifiSelect && isConnectAp) {
         wifiCnting = true;
-        PublicFunctions.getOneEepromInfo('wifi_or_bt', defaultScaleId);
-        outputData.add(getDateTime() + ':' + 'Now set AP info ' + '\r\n');
+        PublicFunctions.getOneEepromInfo(
+            'wifi_or_bt', myDefScaleInfo.defScaleId!);
+        outputData.add('${getDateTime()}:Now set AP info \r\n');
 
         return;
       }
@@ -2086,7 +2055,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
     return Container(
       alignment: Alignment.centerLeft,
       height: 30,
-      color: colorScheme.surface,
+      color: colorScheme.surfaceBright,
       child: Text(
         title,
         textAlign: TextAlign.left,

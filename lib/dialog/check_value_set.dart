@@ -13,10 +13,10 @@ class CheckValueSetDialog extends StatefulWidget {
   const CheckValueSetDialog(
       {required this.initialHigh, required this.initialLow, super.key});
   @override
-  _CheckValueSetDialogState createState() => _CheckValueSetDialogState();
+  CheckValueSetDialogState createState() => CheckValueSetDialogState();
 }
 
-class _CheckValueSetDialogState extends State<CheckValueSetDialog> {
+class CheckValueSetDialogState extends State<CheckValueSetDialog> {
   TextEditingController maxValueCtl = TextEditingController(text: '');
   TextEditingController minValueCtl = TextEditingController(text: '');
   TextEditingController errorText = TextEditingController();
@@ -54,7 +54,7 @@ class _CheckValueSetDialogState extends State<CheckValueSetDialog> {
       content: Container(
           height: 200,
           decoration:
-              BoxDecoration(color: Theme.of(context).colorScheme.surface),
+              BoxDecoration(color: Theme.of(context).colorScheme.surfaceBright),
           child: SingleChildScrollView(
             child: Column(
               children: [

@@ -1,0 +1,73 @@
+顺序往下
+e1 09 开结账
+ 0a关结账
+设置计价
+设置计重
+清除上下限
+设置上下限
+发送切换上下限
+发送结账头
+发送结账PLU
+发送结账尾
+
+
+var1:123,var2:abc,
+-----------------头
+流水号
+settle_account_times
+本次打印总数
+total_count
+付款总额
+pay_price
+商品总价
+total_price
+税类型 0-off 1-include 2-exclude
+tax_kind
+
+
+-----------------中间
+settle_account_times
+第几个PLU
+plu_index
+
+plu号
+plu_num
+
+plu总价
+plu_total_price
+
+plu单价
+plu_unit_price
+
+总重
+plu_total_weight
+
+扣重
+plu_tare
+
+数量pcs
+plu_quantity
+
+单位 0-kg 1-100g 2-pcs
+plu_unit
+
+税类型 0-tax1 1-tax2 2-tax3
+plu_tax_type
+
+
+退货标志位 0-正常 1-退货 2-取消
+plu_return_flag
+
+plu_year
+plu_month
+plu_day
+税价
+plu_tax_price
+找零类型 0-cash 1-card
+plu_change_type
+
+plu_name
+-----------------尾
+settle_account_times
+
+

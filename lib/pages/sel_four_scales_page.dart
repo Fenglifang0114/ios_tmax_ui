@@ -4,7 +4,6 @@ import '../../eventbus/eventbus.dart';
 import '../data/comscaleinfo_data.dart';
 import '../data/downloadresponse.dart';
 import '../data/language.dart';
-import '../data/scale_info_from_scale.dart';
 import '../data/screen_mgr.dart';
 import '../widget/custom_button.dart';
 import 'four_weightings.dart';
@@ -155,11 +154,11 @@ class SltFourScalesPageState extends State<SltFourScalesPage> {
       }
     });
 
-    _eventbus6 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
+    _eventbus6 = eventBus.on<EventRespCheckNetScale>().listen((event) {
       if (mounted) {
-        setState(() {
-          myFactoryInfoFromScale = event.obj;
-        });
+        // setState(() {
+        //   myFactoryInfoFromScale = event.obj;
+        // });
       }
     });
 
@@ -270,7 +269,7 @@ class SltFourScalesPageState extends State<SltFourScalesPage> {
     return DataTable(
       headingTextStyle: TextStyle(
           fontWeight: FontWeight.bold,
-          color: Theme.of(context).colorScheme.onBackground),
+          color: Theme.of(context).colorScheme.onSurface),
       columns: const [
         DataColumn(label: Text('Select')),
         DataColumn(
@@ -288,7 +287,7 @@ class SltFourScalesPageState extends State<SltFourScalesPage> {
       rows: List.generate(
         1,
         (index) => DataRow(
-          color: MaterialStateProperty.all(getResBackColor(comScale.scaleId)),
+          color: WidgetStateProperty.all(getResBackColor(comScale.scaleId)),
           cells: [
             DataCell(Checkbox(
               value: isSelectCom,
@@ -339,7 +338,7 @@ class SltFourScalesPageState extends State<SltFourScalesPage> {
     return DataTable(
       headingTextStyle: TextStyle(
           fontWeight: FontWeight.bold,
-          color: Theme.of(context).colorScheme.onBackground),
+          color: Theme.of(context).colorScheme.onSurface),
       columns: const [
         DataColumn(label: Text('Select')),
         DataColumn(
@@ -357,7 +356,7 @@ class SltFourScalesPageState extends State<SltFourScalesPage> {
       rows: List.generate(
         scaleNum,
         (index) => DataRow(
-          color: MaterialStateProperty.all(
+          color: WidgetStateProperty.all(
               getResBackColor(scaleNetItems[index].scaleId!)),
           cells: [
             DataCell(Checkbox(
@@ -429,7 +428,7 @@ class SltFourScalesPageState extends State<SltFourScalesPage> {
 
   Color getResBackColor(int id) {
     return getResStr(id).contains('ok')
-        ? Theme.of(context).colorScheme.outline
+        ? Theme.of(context).colorScheme.surfaceContainerHigh
         : Theme.of(context).colorScheme.surfaceTint;
   }
 
@@ -438,7 +437,7 @@ class SltFourScalesPageState extends State<SltFourScalesPage> {
         ? Theme.of(context).colorScheme.onPrimary
         : getResStr(id) != ""
             ? Theme.of(context).colorScheme.error
-            : Theme.of(context).colorScheme.onBackground;
+            : Theme.of(context).colorScheme.onSurface;
   }
 
   String getResStr(int id) {
@@ -488,7 +487,7 @@ class SltFourScalesPageState extends State<SltFourScalesPage> {
     fourScaleList.clear();
     for (var map in scaleResMap) {
       map.forEach((key, value) {
-        print(key);
+        // print(key);
         NetScaleInfoLocal tempScale =
             NetScaleListMgr.findScaleInfo(myNetScaleList, key);
         fourScaleList.add(tempScale);

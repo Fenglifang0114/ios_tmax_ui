@@ -161,7 +161,7 @@ registerDialog(BuildContext context) {
                   ),
                   const SizedBox(height: 30),
                   Divider(
-                    color: Theme.of(context).colorScheme.background,
+                    color: Theme.of(context).colorScheme.secondaryFixed,
                     height: 0,
                     thickness: 1,
                     indent: 0.0,

@@ -72,8 +72,10 @@ class _DownReciptPageState extends State<DownReciptPage> {
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(50),
           child: Container(
-            child: pageHeadDesign(context,
-                localizedStrings.receipt_format_download, [defaultScaleId]),
+            child: pageHeadDesign(
+                context,
+                localizedStrings.receipt_format_download,
+                [myDefScaleInfo.defScaleId!]),
           ),
         ),
         body: Container(
@@ -323,10 +325,10 @@ class _DownReciptPageState extends State<DownReciptPage> {
               style: const TextStyle(
                   fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
           duration: const Duration(seconds: 3),
-          backgroundColor: Theme.of(context).colorScheme.outline));
+          backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh));
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('fail' + e.toString(),
+          content: Text('fail$e',
               style: const TextStyle(
                   fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
           duration: const Duration(seconds: 3),
@@ -334,21 +336,21 @@ class _DownReciptPageState extends State<DownReciptPage> {
     }
   }
 
-  void _startTimer(int time) {
-    _downloadTimer = Timer(Duration(seconds: time), () {
-      setState(() {
-        isDownloadClicked = false;
-      });
-      _stopTimer();
+  // void _startTimer(int time) {
+  //   _downloadTimer = Timer(Duration(seconds: time), () {
+  //     setState(() {
+  //       isDownloadClicked = false;
+  //     });
+  //     _stopTimer();
 
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(localizedStrings.download_result_fail,
-              style: const TextStyle(
-                  fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
-          duration: const Duration(seconds: 3),
-          backgroundColor: Theme.of(context).colorScheme.error));
-    });
-  }
+  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //         content: Text(localizedStrings.download_result_fail,
+  //             style: const TextStyle(
+  //                 fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
+  //         duration: const Duration(seconds: 3),
+  //         backgroundColor: Theme.of(context).colorScheme.error));
+  //   });
+  // }
 
   void _stopTimer() {
     _downloadTimer?.cancel(); // 停止计时器
@@ -405,16 +407,16 @@ class _DownReciptPageState extends State<DownReciptPage> {
     myScaleCmd.cmdMode = "down_print_format_to_scale";
     paths.clear();
     if (weightModeController.text.isNotEmpty) {
-      paths.add('1' + weightModeController.text);
+      paths.add('1${weightModeController.text}');
     }
     if (accModeController.text.isNotEmpty) {
-      paths.add('2' + accModeController.text);
+      paths.add('2${accModeController.text}');
     }
     if (pcsModeController.text.isNotEmpty) {
-      paths.add('3' + pcsModeController.text);
+      paths.add('3${pcsModeController.text}');
     }
     if (pctModeController.text.isNotEmpty) {
-      paths.add('4' + pctModeController.text);
+      paths.add('4${pctModeController.text}');
     }
     if (paths.isEmpty) {
       return "";
@@ -434,16 +436,16 @@ class _DownReciptPageState extends State<DownReciptPage> {
     paths.clear();
 
     if (weightModeController.text.isNotEmpty) {
-      paths.add('1' + weightModeController.text);
+      paths.add('1${weightModeController.text}');
     }
     if (accModeController.text.isNotEmpty) {
-      paths.add('2' + accModeController.text);
+      paths.add('2${accModeController.text}');
     }
     if (pcsModeController.text.isNotEmpty) {
-      paths.add('3' + pcsModeController.text);
+      paths.add('3${pcsModeController.text}');
     }
     if (pctModeController.text.isNotEmpty) {
-      paths.add('4' + pctModeController.text);
+      paths.add('4${pctModeController.text}');
     }
     if (paths.isNotEmpty) {
       myDownLoadPrtFmt.scaleModel = 'TMax';
@@ -452,7 +454,8 @@ class _DownReciptPageState extends State<DownReciptPage> {
       myDownLoadPrtFmt.filePaths = paths;
 
       myScaleCmd.cmdData = json.encode(myDownLoadPrtFmt);
-      PublicFunctions.sendMsg(defaultScaleId, jsonEncode(myScaleCmd));
+      PublicFunctions.sendMsg(
+          myDefScaleInfo.defScaleId!, jsonEncode(myScaleCmd));
     }
     writelog(jsonEncode(myScaleCmd));
   }

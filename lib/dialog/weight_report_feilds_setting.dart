@@ -7,8 +7,8 @@ import '../widget/custom_button.dart';
 class ReportFeildsSettingDialog extends StatefulWidget {
   const ReportFeildsSettingDialog({super.key});
   @override
-  _ReportFeildsSettingDialogState createState() =>
-      _ReportFeildsSettingDialogState();
+  ReportFeildsSettingDialogState createState() =>
+      ReportFeildsSettingDialogState();
 }
 
 List<String> allFieldSList = [
@@ -25,7 +25,7 @@ List<String> allFieldSList = [
   'Scale Model'
 ];
 
-class _ReportFeildsSettingDialogState extends State<ReportFeildsSettingDialog> {
+class ReportFeildsSettingDialogState extends State<ReportFeildsSettingDialog> {
   List<bool?> checkboxList = [
     false, // _isDateTimeChecked
     false, // _isPluNoChecked
@@ -61,7 +61,7 @@ class _ReportFeildsSettingDialogState extends State<ReportFeildsSettingDialog> {
       content: Container(
           height: 350,
           decoration:
-              BoxDecoration(color: Theme.of(context).colorScheme.surface),
+              BoxDecoration(color: Theme.of(context).colorScheme.surfaceBright),
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -168,7 +168,7 @@ class _ReportFeildsSettingDialogState extends State<ReportFeildsSettingDialog> {
 
   Widget checkBoxSetting(
       String str, bool? isChecked, Function(bool?) onChanged) {
-    str = str + ':';
+    str = '$str:';
     return Row(
       children: [
         SizedBox(

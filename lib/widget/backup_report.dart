@@ -265,7 +265,7 @@
 //         style: TextStyle(
 //             fontSize: 18.0,
 //             color: (dialogString == "Success!")
-//                 ? Theme.of(context).colorScheme.outline
+//                 ? Theme.of(context).colorScheme.surfaceContainerHigh
 //                 : Theme.of(context).colorScheme.error.shade900),
 //       ),
 //     );
@@ -301,7 +301,7 @@
 //                       child: Row(
 //                         children: [
 //                           (myDevicedata.type == "Icons.usb")
-//                               ? Icon(Icons.usb, color: Theme.of(context).colorScheme.outline)
+//                               ? Icon(Icons.usb, color: Theme.of(context).colorScheme.surfaceContainerHigh)
 //                               : (myDevicedata.type == "Icons.usb_off")
 //                                   ? Icon(Icons.usb, color: Theme.of(context).colorScheme.error.shade900)
 //                                   : (myDevicedata.type ==
@@ -433,7 +433,7 @@
 //                       color: (myReqWeightCountine.msgBody == null)
 //                           ? (Theme.of(context).colorScheme.primary)
 //                           : (myReqWeightCountine.msgBody!.isStable == true)
-//                               ? (Theme.of(context).colorScheme.outline)
+//                               ? (Theme.of(context).colorScheme.surfaceContainerHigh)
 //                               : (Theme.of(context).colorScheme.error.shade900),
 //                       // alignment: Alignment.bottomRight, //设置控件内容的位置
 //                       child: Row(
@@ -461,7 +461,7 @@
 //                     color: (myReqWeightCountine.msgBody == null)
 //                         ? (Theme.of(context).colorScheme.primary)
 //                         : (myReqWeightCountine.msgBody!.isStable == true)
-//                             ? (Theme.of(context).colorScheme.outline)
+//                             ? (Theme.of(context).colorScheme.surfaceContainerHigh)
 //                             : (Theme.of(context).colorScheme.error.shade900),
 //                     alignment: Alignment.center, //设置控件内容的位置
 //                     child: Expanded(

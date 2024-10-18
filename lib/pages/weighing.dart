@@ -5,15 +5,15 @@ import '../../data/reqweightdata_data.dart';
 import '../../data/weight_data.dart';
 import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
+import '../data/comscaleinfo_data.dart';
 import '../data/downloadresponse.dart';
 import '../data/manager_scale_channel.dart';
 import '../data/language.dart';
 import '../data/scalelist_data.dart';
-import '../data/screen_mgr.dart';
 import '../widget/page_head.dart';
 
 class WeightModePage extends StatefulWidget {
-  const WeightModePage({Key? key}) : super(key: key);
+  const WeightModePage({super.key});
   @override
   State<WeightModePage> createState() => WeightModePageState();
 }
@@ -24,7 +24,7 @@ class WeightModePageState extends State<WeightModePage> {
 
   late ScrollController _reportScrollerController;
   late String lastWeight;
-  bool isStart = false;
+
   String productNameValue = "";
   String userNameValue = "";
   List<String> productNameList = [];
@@ -36,6 +36,7 @@ class WeightModePageState extends State<WeightModePage> {
   late int dateformat;
   late double zeroRange;
   bool isCnting = false;
+  bool isStart = false;
 
   dynamic eventBus1;
   dynamic eventBus2;
@@ -68,10 +69,10 @@ class WeightModePageState extends State<WeightModePage> {
         setState(() {
           ReqWeightCountine tempWeight = ReqWeightCountine();
           tempWeight = event.obj;
-          if (tempWeight.scaleId == defaultScaleId) {
+          if (tempWeight.scaleId == myDefScaleInfo.defScaleId!) {
             myReqWeightCountine = tempWeight;
-            isStart = true;
-            myScreenMgr.serialPortST = true;
+
+            myComScaleInfo.isOnline = true;
             isCnting = true;
           }
         });
@@ -97,25 +98,14 @@ class WeightModePageState extends State<WeightModePage> {
       if (mounted) {
         myRespDataFromScale = event.obj;
         if (myRespDataFromScale.msgBody.contains('ok')) {
-          setState(() {
-            isStart = true;
-          });
-        } else {
-          setState(() {
-            isStart = false;
-          });
-        }
+        } else {}
       }
     });
 
     eventBus6 = eventBus.on<EventUnregWeightResp>().listen((event) {
       if (mounted) {
         myRespDataFromScale = event.obj;
-        if (myRespDataFromScale.msgBody.contains('ok')) {
-          setState(() {
-            isStart = false;
-          });
-        }
+        if (myRespDataFromScale.msgBody.contains('ok')) {}
       }
     });
   }
@@ -136,23 +126,24 @@ class WeightModePageState extends State<WeightModePage> {
 
   @override
   Widget build(BuildContext context) {
-    final _width = MediaQuery.of(context).size.width;
+    final width = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: firstLayout(context, _width),
+      body: firstLayout(context, width),
     );
   }
 
-  Widget firstLayout(context, _width) {
+  Widget firstLayout(context, width) {
     return Container(
-        width: _width,
-        decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
+        width: width,
+        decoration:
+            BoxDecoration(color: Theme.of(context).colorScheme.surfaceBright),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           // mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
-              width: _width,
+              width: width,
               height: 50,
               child: pageHeadDefScale(
                 context,
@@ -256,20 +247,6 @@ class WeightModePageState extends State<WeightModePage> {
                           return Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              buildStartIcon(50, 30, constraints,
-                                  Theme.of(context).colorScheme.primary),
-                              buildStopIcon(50, 30, constraints,
-                                  Theme.of(context).colorScheme.primary)
-                            ],
-                          );
-                        })),
-                    Expanded(
-                        flex: 1,
-                        child: LayoutBuilder(builder:
-                            (BuildContext context, BoxConstraints constraints) {
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
                               _buildFlexibleButtonAndText(
                                   width: 150,
                                   buttonText: localizedStrings.button_tare,
@@ -299,53 +276,6 @@ class WeightModePageState extends State<WeightModePage> {
             ),
           ],
         ));
-  }
-
-  Widget buildStartIcon(double width, double? iconSize,
-      BoxConstraints constraints, Color? color) {
-    width = width * constraints.maxWidth / 100;
-    iconSize = iconSize! * constraints.maxHeight / 100;
-
-    return SizedBox(
-      width: width,
-      child: IconButton(
-        //开始按钮
-        icon: const Icon(Icons.play_arrow),
-        iconSize: iconSize,
-        color: (isStart) ? (Theme.of(context).colorScheme.background) : (color),
-        onPressed: () {
-          setState(() {
-            if (!isStart) {
-              isStart = true;
-              PublicFunctions.getWeight(defaultScaleId);
-            }
-          });
-        },
-      ),
-    );
-  }
-
-  Widget buildStopIcon(double width, double? iconSize,
-      BoxConstraints constraints, Color? color) {
-    width = width * constraints.maxWidth / 100;
-    iconSize = iconSize! * constraints.maxHeight / 100;
-
-    return SizedBox(
-      width: width,
-      child: IconButton(
-        onPressed: () {
-          if (isStart) {
-            setState(() {
-              isStart = false;
-              PublicFunctions.stopWeight(defaultScaleId);
-            });
-          }
-        },
-        icon: const Icon(Icons.pause),
-        iconSize: iconSize,
-        color: (!isStart) ? (Theme.of(context).colorScheme.background) : color,
-      ),
-    );
   }
 
   Widget buildTextWithWeight(double width, double height, String text,
@@ -458,12 +388,12 @@ class WeightModePageState extends State<WeightModePage> {
             color: color,
             textColor: Theme.of(context).colorScheme.onPrimary,
             elevation: 5.0,
+            onPressed: onPressed,
             child: Text(text,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                    fontSize: fontSize, fontWeight: FontWeight.normal)),
-            onPressed: onPressed));
+                    fontSize: fontSize, fontWeight: FontWeight.normal))));
   }
 
   Widget buildTextString(
@@ -498,7 +428,8 @@ class WeightModePageState extends State<WeightModePage> {
     required IconData icon,
   }) {
     double buttonWidth = width * (constraints.maxWidth / 400); // 自适应按钮宽度
-    double fontSize = 14 * (constraints.maxWidth / 260); // 自适应字体大小
+    double buttonHeight = (constraints.maxHeight / 2); // 自适应按钮宽度
+    double fontSize = (constraints.maxHeight) / 4; // 自适应字体大小
 
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
@@ -519,7 +450,7 @@ class WeightModePageState extends State<WeightModePage> {
           const SizedBox(width: 4),
           SizedBox(
             width: buttonWidth,
-            height: 80,
+            height: buttonHeight,
             child: Center(
               child: Text(
                 buttonText,

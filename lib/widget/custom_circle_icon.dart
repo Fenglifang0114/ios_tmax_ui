@@ -7,12 +7,12 @@ class CustomCircleIcon extends StatelessWidget {
   final IconData icon;
 
   const CustomCircleIcon({
-    Key? key,
+    super.key,
     required this.outerColor,
     required this.innerColor,
     this.size = 20.0,
     required this.icon,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

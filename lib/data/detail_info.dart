@@ -83,14 +83,36 @@ class Detail {
         pluTotalWeight: json["PluTotalWeight"],
         pluTare: json["PluTare"],
         pluQuantity: json["PluQuantity"],
-        pluUnit: json["PluUnit"],
-        pluTaxType: json["PluTaxType"],
-        pluReturnFlag: json["PluReturnFlag"],
+        pluUnit: json["PluUnit"] == "0"
+            ? "kg"
+            : json["PluUnit"] == "1"
+                ? "100g"
+                : json["PluUnit"] == "2"
+                    ? "pcs"
+                    : json["PluUnit"],
+        pluTaxType: json["PluTaxType"] == "0"
+            ? "Tax1"
+            : json["PluTaxType"] == "1"
+                ? "Tax2"
+                : json["PluTaxType"] == "1"
+                    ? "Tax2"
+                    : json["PluTaxType"],
+        pluReturnFlag: json["PluReturnFlag"] == "0"
+            ? "Normal"
+            : json["PluReturnFlag"] == "1"
+                ? "Return"
+                : json["PluReturnFlag"] == "2"
+                    ? "Cancel"
+                    : json["PluReturnFlag"],
         pluYear: json["PluYear"],
         pluMonth: json["PluMonth"],
         pluDay: json["PluDay"],
         pluTaxPrice: json["PluTaxPrice"],
-        pluChangeType: json["PluChangeType"],
+        pluChangeType: json["PluChangeType"] == "0"
+            ? "Cash"
+            : json["PluChangeType"] == "1"
+                ? "Card"
+                : json["PluChangeType"],
         pluName: json["PluName"],
         createdAt: DateTime.parse(json["CreatedAt"]),
       );
@@ -127,7 +149,13 @@ class Total {
         totalCount: json["TotalCount"],
         payPrice: json["PayPrice"],
         totalPrice: json["TotalPrice"],
-        taxKind: json["TaxKind"],
+        taxKind: json["TaxKind"] == "0"
+            ? "Off"
+            : json["TaxKind"] == "1"
+                ? "Include"
+                : json["TaxKind"] == "1"
+                    ? "Exclude"
+                    : json["TaxKind"],
         createdAt: DateTime.parse(json["CreatedAt"]),
       );
 }

@@ -58,7 +58,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
           child: pageHeadDesign(
             context,
             localizedStrings.plu_download_title,
-            [defaultScaleId],
+            [myDefScaleInfo.defScaleId!],
           ),
         ),
         body: Container(
@@ -403,7 +403,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
     myDownLoadPluFile.filePath = fmtPath;
     myDownLoadPluFile.nameMaxLen = 30;
     myScaleCmd.cmdData = json.encode(myDownLoadPluFile);
-    PublicFunctions.sendMsg(defaultScaleId, jsonEncode(myScaleCmd));
+    PublicFunctions.sendMsg(myDefScaleInfo.defScaleId!, jsonEncode(myScaleCmd));
   }
 
   String getSendMsg() {
@@ -428,7 +428,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
     myDelPlu.scaleModel = 'TMax';
     myDelPlu.pluId = pluList;
     myScaleCmd.cmdData = json.encode(myDelPlu);
-    PublicFunctions.sendMsg(defaultScaleId, jsonEncode(myScaleCmd));
+    PublicFunctions.sendMsg(myDefScaleInfo.defScaleId!, jsonEncode(myScaleCmd));
   }
 
   Future pickFiles(TextEditingController showFilePath) async {

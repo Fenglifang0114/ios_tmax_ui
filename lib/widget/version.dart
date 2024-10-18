@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/data/company_info.dart';
@@ -6,7 +7,7 @@ import 'package:t_max/data/company_info.dart';
 import '../data/encrypt_data.dart';
 
 String getVersion() {
-  return "V1.33";
+  return "V1.35";
 }
 
 const String companyImage = 'assets/images/company.png';
@@ -28,7 +29,9 @@ Future openAppJson() async {
     Map<String, dynamic> jsonMap = jsonDecode(decryptData);
     myCompanyInfo = CompanyInfo.fromJson(jsonMap);
   } catch (e) {
-    print('Failed to parse JSON: $e');
+    if (kDebugMode) {
+      print('Failed to parse JSON: $e');
+    }
   }
 }
 

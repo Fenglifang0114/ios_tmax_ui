@@ -116,6 +116,18 @@ class PublicFunctions {
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
 
+  static void getWifiPwdList() {
+    myScaleCmd.cmdMode = "get_wifi_pwd_list";
+    myScaleCmd.cmdData = "";
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  static void addWifiPwd(String wifiStr) {
+    myScaleCmd.cmdMode = "add_wifi_pwd";
+    myScaleCmd.cmdData = wifiStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
   static void updateLicense(String license) {
     myScaleCmd.cmdMode = "update_license";
     myScaleCmd.cmdData = license;
@@ -240,14 +252,14 @@ class PublicFunctions {
   static performZero() {
     myScaleCmd.cmdMode = "zero";
     myScaleCmd.cmdData = "";
-    sendMsg(defaultScaleId, jsonEncode(myScaleCmd));
+    sendMsg(myDefScaleInfo.defScaleId!, jsonEncode(myScaleCmd));
     writelog(jsonEncode(myScaleCmd));
   }
 
   static performTare() {
     myScaleCmd.cmdMode = "tare";
     myScaleCmd.cmdData = "";
-    sendMsg(defaultScaleId, jsonEncode(myScaleCmd));
+    sendMsg(myDefScaleInfo.defScaleId!, jsonEncode(myScaleCmd));
     writelog(jsonEncode(myScaleCmd));
   }
 
@@ -260,13 +272,8 @@ class PublicFunctions {
 
   static void getRecords(int scaleId, String mode) {
     myScaleCmd.cmdMode = "get_recs";
-    myScaleCmd.cmdData = mode +
-        ',' +
-        defaultScaleModel +
-        ',' +
-        defaultScaleSn +
-        ',' +
-        defaultScaleModel; //根据scale model scale sn  scale name(别名)
+    myScaleCmd.cmdData =
+        '$mode,$myDefScaleInfo.defScaleModel,$myDefScaleInfo.defScaleSn,$myDefScaleInfo.defScaleModel'; //根据scale model scale sn  scale name(别名)
     sendMsg(scaleId, jsonEncode(myScaleCmd));
   }
 
@@ -348,7 +355,7 @@ class PublicFunctions {
     myScaleCmd.cmdMode = "set_server_ip";
     myScaleCmd.cmdData = str;
     sendMsg(scaleId, jsonEncode(myScaleCmd));
-    print(jsonEncode(myScaleCmd));
+    // print(jsonEncode(myScaleCmd));
   }
 
   static void checkSerialPort(int scaleId) {
@@ -404,6 +411,22 @@ class PublicFunctions {
     }
   }
 
+  static void closewifiPassth(int scaleId) {
+    if (scaleId == 1) {
+      myScaleCmd.cmdMode = "dis_passth_mode";
+      myScaleCmd.cmdData = '';
+      sendMsg(scaleId, jsonEncode(myScaleCmd));
+    }
+  }
+
+  static void enUserContinue(int scaleId) {
+    if (scaleId == 1) {
+      myScaleCmd.cmdMode = "en_user_cont";
+      myScaleCmd.cmdData = '';
+      sendMsg(scaleId, jsonEncode(myScaleCmd));
+    }
+  }
+
   static void getFactoryInfo(int scaleId) {
     myScaleCmd.cmdMode = "get_factory_info";
     myScaleCmd.cmdData = '';
@@ -418,7 +441,7 @@ class PublicFunctions {
         ? ''
         : myFactoryInfoFromScale.scaleSn!;
     myScaleCmd.cmdMode = "del_rec";
-    myScaleCmd.cmdData = '999999999,0,' + modelName + ',' + scaleSn;
+    myScaleCmd.cmdData = '999999999,0,$modelName,$scaleSn';
     sendMsg(scaleId, jsonEncode(myScaleCmd));
   }
 
@@ -430,7 +453,7 @@ class PublicFunctions {
         ? ''
         : myFactoryInfoFromScale.scaleSn!;
     myScaleCmd.cmdMode = "del_rec";
-    myScaleCmd.cmdData = '999999999,1,' + modelName + ',' + scaleSn;
+    myScaleCmd.cmdData = '999999999,1,$modelName,$scaleSn';
     sendMsg(scaleId, jsonEncode(myScaleCmd));
   }
 
@@ -442,7 +465,7 @@ class PublicFunctions {
         ? ''
         : myFactoryInfoFromScale.scaleSn!;
     myScaleCmd.cmdMode = "del_rec";
-    myScaleCmd.cmdData = '999999999,2,' + modelName + ',' + scaleSn;
+    myScaleCmd.cmdData = '999999999,2,$modelName,$scaleSn';
     sendMsg(scaleId, jsonEncode(myScaleCmd));
   }
 
@@ -454,7 +477,7 @@ class PublicFunctions {
         ? ''
         : myFactoryInfoFromScale.scaleSn!;
     myScaleCmd.cmdMode = "del_rec";
-    myScaleCmd.cmdData = '999999999,3,' + modelName + ',' + scaleSn;
+    myScaleCmd.cmdData = '999999999,3,$modelName,$scaleSn';
     sendMsg(scaleId, jsonEncode(myScaleCmd));
   }
 }

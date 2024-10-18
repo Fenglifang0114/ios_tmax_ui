@@ -2,19 +2,18 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import '../data/comscaleinfo_data.dart';
 import '../data/downloadresponse.dart';
 import '../data/manager_scale_channel.dart';
 import 'package:t_max/data/eeprom_info.dart';
 import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
 import '../data/language.dart';
-import '../data/scale_info_from_scale.dart';
-import '../data/screen_mgr.dart';
 import '../data/timer_manager.dart';
 import '../widget/page_head.dart';
 
 class SetParameterPage extends StatefulWidget {
-  const SetParameterPage({Key? key}) : super(key: key);
+  const SetParameterPage({super.key});
   @override
   State<SetParameterPage> createState() => SetParameterPageState();
 }
@@ -57,21 +56,21 @@ class SetParameterPageState extends State<SetParameterPage> {
   void initState() {
     super.initState();
     cntScaleTimerMgr.stopCntScaleTimer();
-    PublicFunctions.getAllEepromInfo(defaultScaleId);
+    PublicFunctions.getAllEepromInfo(myDefScaleInfo.defScaleId!);
 
-    eventBus1 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
+    eventBus1 = eventBus.on<EventRespCheckNetScale>().listen((event) {
       if (mounted) {
-        setState(() {
-          myFactoryInfoFromScale = event.obj;
-          if (myFactoryInfoFromScale.modelName != '') {
-            myScreenMgr.serialPortST = true;
-          } else {
-            myScreenMgr.serialPortST = false;
+        // setState(() {
+        //   myFactoryInfoFromScale = event.obj;
+        //   if (myFactoryInfoFromScale.modelName != '') {
+        //     myComScaleInfo.isOnline = true;
+        //   } else {
+        //     myComScaleInfo.isOnline = false;
 
-            myFactoryInfoFromScale.modelName = '';
-            myFactoryInfoFromScale.scaleSn = '';
-          }
-        });
+        //     myFactoryInfoFromScale.modelName = '';
+        //     myFactoryInfoFromScale.scaleSn = '';
+        //   }
+        // });
       }
     });
 
@@ -96,7 +95,7 @@ class SetParameterPageState extends State<SetParameterPage> {
             }
             cntScaleTimerMgr.startCntScaleTimer(1);
           } else {
-            myScreenMgr.serialPortST = false;
+            myComScaleInfo.isOnline = false;
           }
         });
       }
@@ -117,13 +116,13 @@ class SetParameterPageState extends State<SetParameterPage> {
                         fontWeight: FontWeight.normal)), ////此处需要秤回复
                 duration: const Duration(seconds: 3),
                 backgroundColor: (myRespDataFromScale.msgBody.contains('ok'))
-                    ? Theme.of(context).colorScheme.outline
+                    ? Theme.of(context).colorScheme.surfaceContainerHigh
                     : Theme.of(context).colorScheme.error));
           }
         });
         groupedData.clear();
         cntScaleTimerMgr.stopCntScaleTimer();
-        PublicFunctions.getAllEepromInfo(defaultScaleId);
+        PublicFunctions.getAllEepromInfo(myDefScaleInfo.defScaleId!);
       }
     });
   }
@@ -159,13 +158,13 @@ class SetParameterPageState extends State<SetParameterPage> {
   void submitParameter(List<EepromInfo> changedEepromInfos) {
     cntScaleTimerMgr.stopCntScaleTimer();
     var jsonStr = jsonEncode(changedEepromInfos);
-    PublicFunctions.modifyEepromInfo(jsonStr, defaultScaleId);
+    PublicFunctions.modifyEepromInfo(jsonStr, myDefScaleInfo.defScaleId!);
   }
 
   @override
   Widget build(BuildContext context) {
     // final _width = MediaQuery.of(context).size.width;
-    final _height = MediaQuery.of(context).size.height;
+    final height = MediaQuery.of(context).size.height;
 
     return Scaffold(
       appBar: PreferredSize(
@@ -259,7 +258,7 @@ class SetParameterPageState extends State<SetParameterPage> {
             ),
           ),
           SizedBox(
-            height: _height - 100,
+            height: height - 100,
             child: ListView.builder(
               itemCount: groupedData.length, // 每个分类一个ExpansionTile
               itemBuilder: (context, index) {
@@ -275,7 +274,7 @@ class SetParameterPageState extends State<SetParameterPage> {
                         decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.onPrimary,
                           // border: Border(
-                          //   bottom: BorderSide(color: Theme.of(context).colorScheme.background),
+                          //   bottom: BorderSide(color: Theme.of(context).colorScheme.secondaryFixed),
                           // ),
                         ),
                         child: Row(
@@ -284,9 +283,7 @@ class SetParameterPageState extends State<SetParameterPage> {
                             Expanded(
                               flex: 2,
                               child: Text(
-                                ((item.comment.toString()).replaceAll('/', ''))
-                                        .replaceAll('*', '') +
-                                    ': ',
+                                '${((item.comment.toString()).replaceAll('/', '')).replaceAll('*', '')}: ',
                                 textAlign: TextAlign.center,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -357,6 +354,7 @@ class SetParameterPageState extends State<SetParameterPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).colorScheme.primary,
         onPressed: () {
           var changedEepromInfos = checkParameter();
           if (changedEepromInfos.isNotEmpty) {
@@ -432,8 +430,13 @@ class SetParameterPageState extends State<SetParameterPage> {
           ),
           content: Text(title),
           actions: <Widget>[
-            changedEepromInfos.length > 0
+            changedEepromInfos.isNotEmpty
                 ? OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(4.0), // 这里的10.0是圆角半径，可以根据需要调整
+                    )),
                     child: Text(localizedStrings.button_cancel),
                     onPressed: () {
                       Navigator.of(context).pop(false); // 不跳转
@@ -441,6 +444,11 @@ class SetParameterPageState extends State<SetParameterPage> {
                   )
                 : const SizedBox(),
             OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.circular(4.0), // 这里的10.0是圆角半径，可以根据需要调整
+              )),
               child: Text(localizedStrings.confirm_btn),
               onPressed: () {
                 Navigator.of(context).pop(true); // 跳转
@@ -451,7 +459,7 @@ class SetParameterPageState extends State<SetParameterPage> {
       },
     ).then((confirmed) {
       if (confirmed) {
-        if (changedEepromInfos.length > 0) {
+        if (changedEepromInfos.isNotEmpty) {
           submitParameter(changedEepromInfos);
         }
       }
@@ -512,7 +520,7 @@ class SetParameterPageState extends State<SetParameterPage> {
       },
     ).then((confirmed) {
       if (confirmed) {
-        PublicFunctions.deleteAllRecordsTakeOut(defaultScaleId);
+        PublicFunctions.deleteAllRecordsTakeOut(myDefScaleInfo.defScaleId!);
       }
     });
   }

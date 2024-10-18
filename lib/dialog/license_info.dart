@@ -15,10 +15,10 @@ class LicenseInfoDialog extends StatefulWidget {
   const LicenseInfoDialog({super.key});
 
   @override
-  _LicenseInfoDialogState createState() => _LicenseInfoDialogState();
+  LicenseInfoDialogState createState() => LicenseInfoDialogState();
 }
 
-class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
+class LicenseInfoDialogState extends State<LicenseInfoDialog> {
   final TextEditingController pidController = TextEditingController();
   TextEditingController licenseController = TextEditingController();
 
@@ -88,7 +88,7 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
             findLicType(moduleName);
           } else {
             errMessage = 'Invalid license';
-            _showConfirmationDialog(context, licList[0] + '\r\n' + errMessage);
+            _showConfirmationDialog(context, '${licList[0]}\r\n$errMessage');
           }
         });
       }
@@ -102,7 +102,7 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
           }
         });
 
-        _showConfirmationDialog(context, licList[0] + '\r\n' + errMessage);
+        _showConfirmationDialog(context, '${licList[0]}\r\n$errMessage');
       }
     });
 
@@ -122,7 +122,7 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
   @override
   void dispose() {
     _eventbus1.cancel();
-    _eventbus2..cancel();
+    _eventbus2.cancel();
     pidController.dispose();
 
     licenseController.dispose();
@@ -135,17 +135,17 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
     pidController.text = systemId + pId;
     return AlertDialog(
       title: getDialogTitle(
-          context, localizedStrings.license_title, Icons.key, 400),
+          context, localizedStrings.license_title, Icons.key, 420),
       content: Container(
         height: 360,
-        width: 400,
+        width: 420,
         decoration:
             BoxDecoration(color: Theme.of(context).colorScheme.surfaceTint),
         child: ListView(
           children: [
             SizedBox(
-              width: 400,
-              height: 66,
+              width: 420,
+              height: 50,
               child: TextField(
                 controller: pidController,
                 readOnly: true,
@@ -154,11 +154,9 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
                     fontSize: 16, color: Theme.of(context).colorScheme.primary),
               ),
             ),
-            const SizedBox(
-              height: 10,
-            ),
+             
             (mySystemVersion != 1)
-                ? SizedBox()
+                ? const SizedBox()
                 : SizedBox(
                     height: 50,
                     child: Text(
@@ -174,7 +172,7 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
             Row(
               children: [
                 (mySystemVersion != 1)
-                    ? SizedBox()
+                    ? const SizedBox()
                     : SizedBox(
                         width: 200,
                         child: Text(localizedStrings.expiration_date,
@@ -185,20 +183,20 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
                             )),
                       ),
                 (mySystemVersion != 1)
-                    ? SizedBox()
+                    ? const SizedBox()
                     : SizedBox(
                         width: 200,
                         child: Text(myTConLicInfo.liceseDate,
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 16,
-                              color: Theme.of(context).colorScheme.outline,
+                              color: Theme.of(context).colorScheme.surfaceContainerHigh,
                             )),
                       ),
               ],
             ),
             const SizedBox(
-              height: 20,
+              height: 10,
             ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -344,7 +342,8 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
         }
         licList = tmpList;
       } catch (e) {
-        print('读取文件时出错: $e');
+        // print('读取文件时出错: $e');
+        return;
       }
     }
   }
@@ -362,7 +361,7 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
             updateLicenseInfo();
           } else {
             errMessage = 'The new period is not the latest.';
-            _showConfirmationDialog(context, licList[0] + '\r\n' + errMessage);
+            _showConfirmationDialog(context, '${licList[0]}\r\n$errMessage');
           }
         } else {
           myTConLicInfo = newLicInfo;
@@ -377,7 +376,7 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
             updateLicenseInfo();
           } else {
             errMessage = 'The new period is not the latest.';
-            _showConfirmationDialog(context, licList[0] + '\r\n' + errMessage);
+            _showConfirmationDialog(context, '${licList[0]}\r\n$errMessage');
           }
         } else {
           myRedeLicInfo = newLicInfo;
@@ -392,7 +391,7 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
             updateLicenseInfo();
           } else {
             errMessage = 'The new period is not the latest.';
-            _showConfirmationDialog(context, licList[0] + '\r\n' + errMessage);
+            _showConfirmationDialog(context, '${licList[0]}\r\n$errMessage');
           }
         } else {
           myWedaLicInfo = newLicInfo;
@@ -407,7 +406,7 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
             updateLicenseInfo();
           } else {
             errMessage = 'The new period is not the latest.';
-            _showConfirmationDialog(context, licList[0] + '\r\n' + errMessage);
+            _showConfirmationDialog(context, '${licList[0]}\r\n$errMessage');
           }
         } else {
           myChweLicInfo = newLicInfo;
@@ -422,7 +421,7 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
             updateLicenseInfo();
           } else {
             errMessage = 'The new period is not the latest.';
-            _showConfirmationDialog(context, licList[0] + '\r\n' + errMessage);
+            _showConfirmationDialog(context, '${licList[0]}\r\n$errMessage');
           }
         } else {
           myInWeLicInfo = newLicInfo;
@@ -437,7 +436,7 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
             updateLicenseInfo();
           } else {
             errMessage = 'The new period is not the latest.';
-            _showConfirmationDialog(context, licList[0] + '\r\n' + errMessage);
+            _showConfirmationDialog(context, '${licList[0]}\r\n$errMessage');
           }
         } else {
           myTaouLicInfo = newLicInfo;

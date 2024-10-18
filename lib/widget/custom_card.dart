@@ -8,19 +8,19 @@ class CustomCard extends StatefulWidget {
   // final String image;
 
   const CustomCard({
-    Key? key,
+    super.key,
     required this.onTap,
     required this.cardColor,
     required this.textColor,
     required this.title,
     // required this.image,
-  }) : super(key: key);
+  });
 
   @override
-  _CustomCardState createState() => _CustomCardState();
+  CustomCardState createState() => CustomCardState();
 }
 
-class _CustomCardState extends State<CustomCard> {
+class CustomCardState extends State<CustomCard> {
   bool isHovered = false;
 
   @override

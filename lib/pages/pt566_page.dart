@@ -25,7 +25,7 @@ import '../widget/line_painter.dart';
 import '../widget/textlist_item.dart';
 
 class PT566Page extends StatefulWidget {
-  const PT566Page({Key? key}) : super(key: key);
+  const PT566Page({super.key});
 
   @override
   State<PT566Page> createState() => _PT566PageState();
@@ -360,7 +360,7 @@ class _PT566PageState extends State<PT566Page> {
                           fontWeight: FontWeight.bold)), ////此处需要秤回复
                   duration: const Duration(seconds: 3),
                   backgroundColor: (myRespDataFromScale.msgBody.contains('ok'))
-                      ? Theme.of(context).colorScheme.outline
+                      ? Theme.of(context).colorScheme.surfaceContainerHigh
                       : Theme.of(context).colorScheme.error));
             });
           }
@@ -496,7 +496,7 @@ class _PT566PageState extends State<PT566Page> {
                             ),
                             DropdownButton<String>(
                               dropdownColor:
-                                  Theme.of(context).colorScheme.background,
+                                  Theme.of(context).colorScheme.secondaryFixed,
                               style: TextStyle(
                                   color:
                                       Theme.of(context).colorScheme.onPrimary,
@@ -548,7 +548,7 @@ class _PT566PageState extends State<PT566Page> {
                             ),
                             DropdownButton<String>(
                               dropdownColor:
-                                  Theme.of(context).colorScheme.background,
+                                  Theme.of(context).colorScheme.secondaryFixed,
                               style: TextStyle(
                                   color:
                                       Theme.of(context).colorScheme.onPrimary,
@@ -599,7 +599,7 @@ class _PT566PageState extends State<PT566Page> {
                         ),
                         DropdownButton<String>(
                           dropdownColor:
-                              Theme.of(context).colorScheme.background,
+                              Theme.of(context).colorScheme.secondaryFixed,
                           style: TextStyle(
                               color: Theme.of(context).colorScheme.onPrimary,
                               fontSize: 20,
@@ -853,7 +853,7 @@ class _PT566PageState extends State<PT566Page> {
                         : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: downloadStatus
-                          ? Theme.of(context).colorScheme.outline
+                          ? Theme.of(context).colorScheme.surfaceContainerHigh
                           : Theme.of(context).colorScheme.onPrimary, // 设置按钮的背景色
                       elevation: 10, // 设置按钮的阴影
                       shape: RoundedRectangleBorder(
@@ -890,7 +890,7 @@ class _PT566PageState extends State<PT566Page> {
             child: Container(
               height: 1200,
               decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
+                  color: Theme.of(context).colorScheme.surfaceBright,
                   border: Border.all(
                       width: 0.2,
                       color: Theme.of(context).colorScheme.onSurface)),
@@ -1068,7 +1068,7 @@ class _PT566PageState extends State<PT566Page> {
   void sendFormatToScale(String modifyString) {
     myScaleCmd.cmdMode = "down_print_format_to_scale";
     myScaleCmd.cmdData = modifyString;
-    PublicFunctions.sendMsg(defaultScaleId, jsonEncode(myScaleCmd));
+    PublicFunctions.sendMsg(myDefScaleInfo.defScaleId!, jsonEncode(myScaleCmd));
   }
 
   int _getRotation(int rotation) {
@@ -1592,7 +1592,7 @@ class _PT566PageState extends State<PT566Page> {
               border: Border(
                   bottom: BorderSide(
                       width: 0.2,
-                      color: Theme.of(context).colorScheme.background))),
+                      color: Theme.of(context).colorScheme.secondaryFixed))),
           alignment: Alignment.center,
           child: TextButton(
             onPressed: () {
@@ -2131,7 +2131,7 @@ class _PT566PageState extends State<PT566Page> {
       const SizedBox(height: 100),
       Container(
         height: 50,
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: Text(
           "You haven't selected any element.",
           style: TextStyle(
@@ -2142,7 +2142,7 @@ class _PT566PageState extends State<PT566Page> {
       ),
       Container(
         height: 50,
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: const Text(
           "Operation Steps:",
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -2150,7 +2150,7 @@ class _PT566PageState extends State<PT566Page> {
       ),
       Container(
         height: 50,
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: const Text(
           "1. Please click on one or more elements on the left side; ",
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -2158,7 +2158,7 @@ class _PT566PageState extends State<PT566Page> {
       ),
       Container(
         height: 80,
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: const Text(
           "2. The selected elements will be displayed in the center of the page, and you can edit their attributes here. ",
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -2290,7 +2290,7 @@ class _PT566PageState extends State<PT566Page> {
       const SizedBox(height: 20),
       Container(
         height: 30,
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: const Text(
           "------------------Attribute------------------",
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -2318,7 +2318,7 @@ class _PT566PageState extends State<PT566Page> {
       ),
       Container(
         height: 30,
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: const Text("----------Position--------------",
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
       ),
@@ -2348,7 +2348,7 @@ class _PT566PageState extends State<PT566Page> {
       ),
       Container(
         height: 30,
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: const Text("----------Editor-----------------",
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
       ),
@@ -2450,7 +2450,7 @@ class _PT566PageState extends State<PT566Page> {
       const SizedBox(height: 20),
       Container(
         height: 30,
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: const Text(
           "------------------Attribute------------------",
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -2480,7 +2480,7 @@ class _PT566PageState extends State<PT566Page> {
       const SizedBox(height: 20),
       Container(
         height: 30,
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: const Text("----------Position--------------",
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
       ),
@@ -2582,7 +2582,7 @@ class _PT566PageState extends State<PT566Page> {
       const SizedBox(height: 20),
       Container(
         height: 30,
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: const Text(
           "------------------Attribute------------------",
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -2612,7 +2612,7 @@ class _PT566PageState extends State<PT566Page> {
       const SizedBox(height: 20),
       Container(
         height: 30,
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: const Text("----------Position--------------",
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
       ),
@@ -2637,7 +2637,7 @@ class _PT566PageState extends State<PT566Page> {
       const SizedBox(height: 20),
       Container(
         height: 30,
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: const Text(
           "------------------Attribute------------------",
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -2667,7 +2667,7 @@ class _PT566PageState extends State<PT566Page> {
       const SizedBox(height: 20),
       Container(
         height: 30,
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: const Text("----------Position--------------",
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
       ),
@@ -2746,7 +2746,7 @@ class _PT566PageState extends State<PT566Page> {
       const SizedBox(height: 20),
       Container(
         height: 30,
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: const Text(
           "------------------Attribute------------------",
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -2776,7 +2776,7 @@ class _PT566PageState extends State<PT566Page> {
       const SizedBox(height: 20),
       Container(
         height: 30,
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         child: const Text("----------Position--------------",
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
       ),

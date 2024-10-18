@@ -73,16 +73,13 @@ Future<String> readIpAddr() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp(this.savedLanguage, this.ipAddr, {Key? key}) : super(key: key);
+  const MyApp(this.savedLanguage, this.ipAddr, {super.key});
   final String savedLanguage;
   final String ipAddr;
-
-  // static late WebSocketScaleChannel webchannel1;
 
   // 重写build 方法，build 方法返回值为Widget类型，返回内容为屏幕上显示内容。
   @override
   Widget build(BuildContext context) {
-    // webchannel1 = WebSocketScaleChannel('ws://$ipAddr:7878/tmax?scaleid=1');
     webchannel = WebSocketChannel('ws://$ipAddr:7878/tmax?scaleid=0');
     webchannel.connect();
     PublicFunctions.getLicense();
@@ -92,10 +89,10 @@ class MyApp extends StatelessWidget {
         // 国际化
         localizationsDelegates: const [
           // 本地化的代理类
+          S.delegate,
           GlobalMaterialLocalizations.delegate, //为使material组件支持多语言
           GlobalCupertinoLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate, // 定义组件默认的文本方向，从左到右或从右到左
-          S.delegate,
         ],
         // 应用支持的语言列表
         supportedLocales: S.delegate.supportedLocales,

@@ -9,8 +9,7 @@ class RowDataWidget extends StatefulWidget {
   final List<BarCodeRowData> rowDataList;
 
   const RowDataWidget(
-      {Key? key, required this.rowData, required this.rowDataList})
-      : super(key: key);
+      {super.key, required this.rowData, required this.rowDataList});
 
   @override
   RowDataWidgetState createState() => RowDataWidgetState();

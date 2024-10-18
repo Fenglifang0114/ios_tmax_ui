@@ -33,3 +33,18 @@ class FactoryInfoFromScale {
 }
 
 FactoryInfoFromScale myFactoryInfoFromScale = FactoryInfoFromScale('', '');
+FactoryInfoFromScale myComScaleSn = FactoryInfoFromScale('', '');
+
+class OnlineInfo {
+  int? scaleId;
+  FactoryInfoFromScale? factInfo;
+
+  OnlineInfo(this.scaleId, this.factInfo);
+
+  OnlineInfo.fromJson(Map<String, dynamic> json) {
+    scaleId = json['ScaleId'];
+    factInfo = json['FactInfo'];
+  }
+}
+
+OnlineInfo myOnlineInfo = OnlineInfo(0, FactoryInfoFromScale('', ''));

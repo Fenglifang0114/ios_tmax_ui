@@ -11,7 +11,7 @@ import '../widget/custom_button.dart';
 import '../widget/page_head.dart';
 
 class HeaderFooterPage extends StatefulWidget {
-  const HeaderFooterPage({Key? key}) : super(key: key);
+  const HeaderFooterPage({super.key});
 
   @override
   State<HeaderFooterPage> createState() => HeaderFooterPageState();
@@ -64,8 +64,10 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),
-        child: pageHeadDesign(context,
-            localizedStrings.variable_value_setting_title, [defaultScaleId]),
+        child: pageHeadDesign(
+            context,
+            localizedStrings.variable_value_setting_title,
+            [myDefScaleInfo.defScaleId!]),
       ),
       body: Column(
         children: [
@@ -289,39 +291,39 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
   }
 
 // 按钮部分
-  Widget _buildButtonSection() {
-    return SizedBox(
-      width: 120,
-      height: 50,
-      child: ElevatedButton(
-        style: ButtonStyle(
-          shape: MaterialStateProperty.all(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(4),
-            ),
-          ),
-        ),
-        onPressed: (!isDownloadClicked) &&
-                (header1Ctl.text.isNotEmpty ||
-                    header2Ctl.text.isNotEmpty ||
-                    header3Ctl.text.isNotEmpty ||
-                    footer1Ctl.text.isNotEmpty ||
-                    footer2Ctl.text.isNotEmpty ||
-                    footer3Ctl.text.isNotEmpty ||
-                    operator1Ctl.text.isNotEmpty ||
-                    operator2Ctl.text.isNotEmpty ||
-                    operator3Ctl.text.isNotEmpty ||
-                    operator4Ctl.text.isNotEmpty)
-            ? () {
-                _showConfirmationDialog(context);
-              }
-            : null,
-        child: Text(
-          localizedStrings.download,
-        ),
-      ),
-    );
-  }
+  // Widget _buildButtonSection() {
+  //   return SizedBox(
+  //     width: 120,
+  //     height: 50,
+  //     child: ElevatedButton(
+  //       style: ButtonStyle(
+  //         shape: WidgetStateProperty.all(
+  //           RoundedRectangleBorder(
+  //             borderRadius: BorderRadius.circular(4),
+  //           ),
+  //         ),
+  //       ),
+  //       onPressed: (!isDownloadClicked) &&
+  //               (header1Ctl.text.isNotEmpty ||
+  //                   header2Ctl.text.isNotEmpty ||
+  //                   header3Ctl.text.isNotEmpty ||
+  //                   footer1Ctl.text.isNotEmpty ||
+  //                   footer2Ctl.text.isNotEmpty ||
+  //                   footer3Ctl.text.isNotEmpty ||
+  //                   operator1Ctl.text.isNotEmpty ||
+  //                   operator2Ctl.text.isNotEmpty ||
+  //                   operator3Ctl.text.isNotEmpty ||
+  //                   operator4Ctl.text.isNotEmpty)
+  //           ? () {
+  //               _showConfirmationDialog(context);
+  //             }
+  //           : null,
+  //       child: Text(
+  //         localizedStrings.download,
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildTextTitle(String title) {
     return SizedBox(

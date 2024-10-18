@@ -2,13 +2,14 @@ import 'dart:async';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+
 import 'package:t_max/data/comscaleinfo_data.dart';
 import 'package:t_max/data/timer_manager.dart';
 import '../../data/reqweightdata_data.dart';
 import '../../data/weight_data.dart';
 import '../../eventbus/eventbus.dart';
 import '../data/downloadresponse.dart';
-import '../data/high_low_weight.dart';
+
 import '../dialog/mult_limit_setting.dart';
 import '../functions/methods.dart';
 import '../widget/custom_button.dart';
@@ -18,6 +19,18 @@ class TableData {
   int index;
   List<String> values;
   TableData(this.index, this.values);
+}
+
+class TableDataValided {
+  int index;
+  List<bool> isOkValues;
+  TableDataValided(this.index, this.isOkValues);
+}
+
+class HighLowValue {
+  double high;
+  double low;
+  HighLowValue(this.high, this.low);
 }
 
 class ScaleSortInfo {
@@ -42,20 +55,27 @@ class ScaleWgt {
 }
 
 class ProductionLinePage extends StatefulWidget {
-  const ProductionLinePage({Key? key}) : super(key: key);
+  const ProductionLinePage({super.key});
   @override
   State<ProductionLinePage> createState() => ProductionLinePageState();
 }
 
 class ProductionLinePageState extends State<ProductionLinePage> {
-  List<AddScaleInfo> scaleNetItems = [];
-  List<String> addedScales = [];
-  List<TableData> tableDataList = [];
+  final ScrollController _scrollController = ScrollController();
 
+  List<AddScaleInfo> scaleNetItems = [];
+  List<TableData> tableDataList = [];
+  List<TableDataValided> validGapList = [];
+  List<HighLowValue> highLowList = []; //存储差值的上下限
   List<ScaleSortInfo> scaleInfos = []; //存储ID，序号，存储名字,存储重量值
+  List<String> addedScales = [];
+  List<int> scaleIds = [];
+
   Map<int, ScaleWgt> scaleWgtMap = {};
 
-  List<int> scaleIds = [];
+  double widthTable = 0.0;
+  Timer? timerSetScaleFalse;
+  Timer? timerOpenCunt;
 
   dynamic eventBus1;
   dynamic eventBus2;
@@ -69,7 +89,8 @@ class ProductionLinePageState extends State<ProductionLinePage> {
   @override
   void initState() {
     super.initState();
-    var fn = CheckWeightFunc();
+    cntScaleTimerMgr.stopCntScaleTimer();
+
     performOpenCunt();
     for (NetScaleInfoLocal netScaleInfo in myNetScaleList) {
       AddScaleInfo addScaleInfo = AddScaleInfo(
@@ -90,13 +111,12 @@ class ProductionLinePageState extends State<ProductionLinePage> {
       scaleIds.add(netScaleInfo.scaleId!);
     }
 
-    cntScaleTimerMgr.stopCntScaleTimer();
-    Timer.periodic(const Duration(seconds: 30), (timer) {
+    timerSetScaleFalse = Timer.periodic(const Duration(seconds: 30), (timer) {
       scaleWgtMap.forEach((key, value) {
         value.isStart = false;
       });
     });
-    Timer.periodic(const Duration(seconds: 115), (timer) {
+    timerOpenCunt = Timer.periodic(const Duration(seconds: 115), (timer) {
       scaleWgtMap.forEach((key, value) {
         if (!value.isStart) {
           PublicFunctions.getWeight(key);
@@ -181,10 +201,11 @@ class ProductionLinePageState extends State<ProductionLinePage> {
           if (weightValue > 0) {
             scaleWgt.wgts.add(data.msgBody!.weightVal);
             scaleWgt.units.add(data.msgBody!.weightUnit);
-
             scaleWgt.isPassZero = false;
+
             setState(() {
               tableDataList = [];
+              validGapList = [];
               resortScaleWgt();
             });
           }
@@ -215,16 +236,18 @@ class ProductionLinePageState extends State<ProductionLinePage> {
     eventBus4.cancel();
     eventBus5.cancel();
     eventBus6.cancel();
-
+    _scrollController.dispose();
     cntScaleTimerMgr.stopPortOffTimer();
+    timerSetScaleFalse?.cancel();
+    timerOpenCunt?.cancel();
 
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final _width = MediaQuery.of(context).size.width;
-    final _height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),
@@ -235,9 +258,9 @@ class ProductionLinePageState extends State<ProductionLinePage> {
         ),
       ),
       body: Container(
-        width: _width,
-        height: _height,
-        decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
+        width: width,
+        height: height,
+        decoration: BoxDecoration(color: Theme.of(context).colorScheme.surfaceBright),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -250,107 +273,48 @@ class ProductionLinePageState extends State<ProductionLinePage> {
               flex: 8,
               child: Column(
                 children: [
-                  SizedBox(
-                    height: 80,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        CustomOutlinedButton(
-                            btnWidth: 200,
-                            btnHeight: 50,
-                            icon: Icons.save,
-                            text: "Export CSV ",
-                            onPressed: exportCSV),
-                        // CustomOutlinedButton(
-                        //     btnWidth: 200,
-                        //     btnHeight: 50,
-                        //     icon: Icons.settings,
-                        //     text: "Set ∆ Range",
-                        //     onPressed: () {
-                        //       highLowSettingDialog(context);
-                        //     }),
-                        CustomOutlinedButton(
-                            btnWidth: 100,
-                            btnHeight: 50,
-                            icon: Icons.settings,
-                            text: "New Cycle",
-                            onPressed: () {
-                              addDashesToScaleWgtMap();
-                              setState(() {
-                                tableDataList = [];
-                                resortScaleWgt();
-                              });
-                            }),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 80,
-                    child: ListView.builder(
-                      itemCount: 1,
-                      itemBuilder: (context, index) {
-                        return SizedBox(
-                          height: 40,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: addedScales
-                                    .map((value) => Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: SizedBox(
-                                            width: 100,
-                                            child: Text(value),
-                                          ),
-                                        ))
-                                    .toList(),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ),
+                  buildButtonRow(),
                   Expanded(
-                    child: ListView.builder(
-                      itemCount: tableDataList.length,
-                      itemBuilder: (context, index) {
-                        tableDataList.sort((a, b) => b.index - a.index);
-                        return SizedBox(
-                          height: 40,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if (index == 0)
-                                Container(
-                                  height: 1,
-                                  color: Theme.of(context).colorScheme.primary,
-                                  // margin: EdgeInsets.symmetric(vertical: 4),
+                    child: LayoutBuilder(
+                      builder:
+                          (BuildContext context, BoxConstraints constraints) {
+                        return Row(
+                          children: [
+                            Expanded(
+                              child: Scrollbar(
+                                controller: _scrollController,
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  controller: _scrollController,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(10),
+                                    width: widthTable > constraints.maxWidth
+                                        ? widthTable
+                                        : constraints.maxWidth,
+                                    height: constraints.maxHeight,
+                                    decoration: BoxDecoration(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .surface,
+                                        border: Border.all(
+                                            width: 0.2,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface)),
+                                    child: SizedBox(
+                                        width: constraints.maxWidth,
+                                        child: Column(
+                                          children: [
+                                            buildSelScales(),
+                                            buildTableData(
+                                                constraints.maxHeight - 110),
+                                          ],
+                                        )),
+                                  ),
                                 ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: tableDataList[index]
-                                    .values
-                                    .map((value) => Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: SizedBox(
-                                            width: 100,
-                                            child: Text(value),
-                                          ),
-                                        ))
-                                    .toList(),
                               ),
-                              if (index < tableDataList.length - 1)
-                                Container(
-                                  height: 1,
-                                  color: Theme.of(context).colorScheme.primary,
-                                  // margin: EdgeInsets.symmetric(vertical: 4),
-                                )
-                            ],
-                          ),
+                            ),
+                          ],
                         );
                       },
                     ),
@@ -364,6 +328,169 @@ class ProductionLinePageState extends State<ProductionLinePage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget buildTableData(double height) {
+    tableDataList.sort((a, b) => b.index - a.index);
+    validGapList.sort((a, b) => b.index - a.index);
+    return SizedBox(
+      height: height,
+      child: ListView.builder(
+        cacheExtent: 1000,
+        itemCount: tableDataList.length,
+        itemBuilder: (context, index) {
+          return SizedBox(
+            height: 40,
+            width: (100 * 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (index == 0)
+                  Container(
+                    height: 1,
+                    color: Theme.of(context).colorScheme.primary,
+                    // margin: EdgeInsets.symmetric(vertical: 4),
+                  ),
+                buildTableValues(tableDataList[index].values, index),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                //   children: tableDataList[index]
+                //       .values
+                //       .map((value) => Padding(
+                //             padding: const EdgeInsets.all(8.0),
+                //             child: SizedBox(
+                //                 width: 100,
+                //                 child: Text(
+                //                   value,
+                //                   style: TextStyle(
+                //                       color: Theme.of(context)
+                //                           .colorScheme
+                //                           .outline),
+                //                 )),
+                //           ))
+                //       .toList(),
+                // ),
+                if (index < tableDataList.length - 1)
+                  Container(
+                    height: 1,
+                    color: Theme.of(context).colorScheme.primary,
+                    // margin: EdgeInsets.symmetric(vertical: 4),
+                  )
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget buildTableValues(List<String> values, int index) {
+    List<Widget> widgets = [];
+
+    for (int i = 0; i < values.length; i++) {
+      String value = values[i];
+      widgets.add(
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SizedBox(
+            width: 100,
+            child: Text(
+              value,
+              style: TextStyle(
+                  fontWeight: validGapList[index].isOkValues[i]
+                      ? FontWeight.bold
+                      : FontWeight.normal,
+                  color: validGapList[index].isOkValues[i]
+                      ? Theme.of(context).colorScheme.surfaceContainerHigh
+                      : Theme.of(context).colorScheme.onSurface),
+            ),
+          ),
+        ),
+      );
+    }
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: widgets,
+    );
+  }
+
+  Widget buildSelScales() {
+    return SizedBox(
+      height: 80,
+      child: ListView.builder(
+        itemCount: 1,
+        itemBuilder: (context, index) {
+          return SizedBox(
+            height: 40,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: addedScales
+                      .map((value) => Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SizedBox(
+                              width: 100,
+                              child: Text(
+                                value,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color:
+                                        Theme.of(context).colorScheme.primary),
+                              ),
+                            ),
+                          ))
+                      .toList(),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  double a = 0.55;
+
+  Widget buildButtonRow() {
+    return SizedBox(
+      height: 80,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          CustomOutlinedButton(
+              btnWidth: 200,
+              btnHeight: 50,
+              icon: Icons.save,
+              text: "Export CSV ",
+              onPressed: exportCSV),
+          CustomOutlinedButton(
+              btnWidth: 200,
+              btnHeight: 50,
+              icon: Icons.settings,
+              text: "Set ∆ Range",
+              onPressed: () {
+                highLowSettingDialog(context);
+              }),
+          CustomOutlinedButton(
+              btnWidth: 100,
+              btnHeight: 50,
+              icon: Icons.settings,
+              text: "New Cycle",
+              onPressed: () {
+                addDashesToScaleWgtMap();
+                setState(() {
+                  tableDataList = [];
+                  validGapList = [];
+                  resortScaleWgt();
+                });
+              }),
+        ],
       ),
     );
   }
@@ -425,12 +552,14 @@ class ProductionLinePageState extends State<ProductionLinePage> {
     int tableIndex = 1;
     for (int i = 0; i < maxWgtLength; i++) {
       List<String> values = [];
+      List<bool> isOkValues = [];
       for (int j = 0; j < scaleInfos.length; j++) {
         ScaleWgt? currentScaleWgt = scaleWgtMap[scaleInfos[j].scaleId];
         if (currentScaleWgt != null) {
           if (i < currentScaleWgt.wgts.length) {
             if (j == 0) {
               values.add(currentScaleWgt.wgts[i] + currentScaleWgt.units[i]);
+              isOkValues.add(false);
             } else {
               ScaleWgt? previousScaleWgt =
                   scaleWgtMap[scaleInfos[j - 1].scaleId];
@@ -439,6 +568,7 @@ class ProductionLinePageState extends State<ProductionLinePage> {
                 if (currentScaleWgt.wgts[i] == "-" ||
                     previousScaleWgt.wgts[i] == "-") {
                   values.add("-");
+                  isOkValues.add(false);
                 } else {
                   try {
                     double diff;
@@ -448,18 +578,24 @@ class ProductionLinePageState extends State<ProductionLinePage> {
                           double.parse(previousScaleWgt.wgts[i]);
                       // 使用 toStringAsFixed 方法保留三位小数
                       values.add(diff.toStringAsFixed(3));
+                      isOkValues.add(getValidGapValue(
+                          j, double.parse(diff.toStringAsFixed(3))));
                     } else {
                       // 处理无法转换为 double 的情况，例如可以设为 0 或者其他默认值
                       values.add('-');
+                      isOkValues.add(false);
                     }
                   } catch (e) {
                     values.add('-');
+                    isOkValues.add(false);
                   }
                 }
               } else {
                 values.add("-");
+                isOkValues.add(false);
               }
               values.add(currentScaleWgt.wgts[i] + currentScaleWgt.units[i]);
+              isOkValues.add(false);
             }
           } else {
             // 如果当前 scale 没有数据，则补 '-'
@@ -470,17 +606,23 @@ class ProductionLinePageState extends State<ProductionLinePage> {
                   i < previousScaleWgt.wgts.length) {
                 values.add("-");
                 values.add("-");
+                isOkValues.add(false);
+                isOkValues.add(false);
               } else {
                 values.add("-");
                 values.add("-");
+                isOkValues.add(false);
+                isOkValues.add(false);
               }
             } else {
               values.add('-');
+              isOkValues.add(false);
             }
           }
         }
       }
       tableDataList.add(TableData(tableIndex, values));
+      validGapList.add(TableDataValided(tableIndex, isOkValues));
       tableIndex++;
     }
 
@@ -488,6 +630,16 @@ class ProductionLinePageState extends State<ProductionLinePage> {
     // for (TableData tableData in tableDataList) {
     //   print('Index: ${tableData.index}, Values: ${tableData.values}');
     // }
+  }
+
+  bool getValidGapValue(int scaleIndex, double gapValue) {
+    if (scaleIndex - 1 >= 0 && scaleIndex - 1 < highLowList.length) {
+      if (gapValue >= highLowList[scaleIndex - 1].low &&
+          gapValue <= highLowList[scaleIndex - 1].high) {
+        return true;
+      }
+    }
+    return false;
   }
 
   int getMaxLenth() {
@@ -519,18 +671,18 @@ class ProductionLinePageState extends State<ProductionLinePage> {
       IOSink sink = file.openWrite();
       // 写入 addedScales 作为第一行
       if (addedScales.isNotEmpty) {
-        sink.write(addedScales.join(',') + '\n');
+        sink.write('${addedScales.join(',')}\n');
       }
       // 写入 tableDataList 中的数据
       for (var tableData in tableDataList) {
-        sink.write(tableData.values.join(',') + '\n');
+        sink.write('${tableData.values.join(',')}\n');
       }
       await sink.close();
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
             content: Text('OK    ${file.path}'),
-            backgroundColor: Theme.of(context).colorScheme.outline),
+            backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -548,7 +700,7 @@ class ProductionLinePageState extends State<ProductionLinePage> {
         itemCount: scaleNetItems.length,
         itemBuilder: (context, index) {
           return Container(
-            color: Theme.of(context).colorScheme.surface,
+            color: Theme.of(context).colorScheme.surfaceBright,
             height: 60,
             child: Column(
               children: [
@@ -556,16 +708,7 @@ class ProductionLinePageState extends State<ProductionLinePage> {
                   // selected: selScaleId == scaleNetItems[index].scaleId,
                   dense: true,
                   title: Tooltip(
-                    message: scaleNetItems[index].scaleModel! +
-                        '\r\n' +
-                        'SN:' +
-                        scaleNetItems[index].scaleSn! +
-                        '\r\n' +
-                        'IP:' +
-                        scaleNetItems[index].ip! +
-                        '\r\n'
-                            'Port:' +
-                        scaleNetItems[index].port!.toString(),
+                    message: '${scaleNetItems[index].scaleModel!}\r\nSN:${scaleNetItems[index].scaleSn!}\r\nIP:${scaleNetItems[index].ip!}\r\nPort:${scaleNetItems[index].port!}',
                     child: Text(
                       scaleNetItems[index].scaleName!,
                       maxLines: 1, // 设置文本最大行数为1
@@ -585,7 +728,7 @@ class ProductionLinePageState extends State<ProductionLinePage> {
                     style: TextStyle(
                         color:
                             scaleWgtMap[scaleNetItems[index].scaleId]!.isStart
-                                ? Theme.of(context).colorScheme.outline
+                                ? Theme.of(context).colorScheme.surfaceContainerHigh
                                 : Theme.of(context).colorScheme.error),
                   ),
 
@@ -604,6 +747,7 @@ class ProductionLinePageState extends State<ProductionLinePage> {
                           scaleNetItems[index].isAdd =
                               !scaleNetItems[index].isAdd;
                           tableDataList = [];
+                          validGapList = [];
                           if (scaleNetItems[index].isAdd) {
                             ScaleSortInfo scaleTmp = ScaleSortInfo(
                                 scaleNetItems[index].scaleName!,
@@ -630,6 +774,7 @@ class ProductionLinePageState extends State<ProductionLinePage> {
                             }
                           }
                           toggleScale(scaleNetItems[index].scaleName!);
+                          widthTable = addedScales.length * 150;
                           resortScaleWgt();
                         });
                       },
@@ -652,17 +797,15 @@ class ProductionLinePageState extends State<ProductionLinePage> {
       ),
     );
   }
-  //进来就把所有的秤打开连续发送
 
+  //进来就把所有的秤打开连续发送
   void performOpenCunt() {
     for (NetScaleInfoLocal netScaleInfo in myNetScaleList) {
       PublicFunctions.getWeight(netScaleInfo.scaleId!);
     }
   }
 
-//获取连续发送
-//停止连续发送              PublicFunctions.stopWeight(scaleId);
-
+//获取差值有几个
   int getScaleGapNum() {
     int count = 0;
     for (String scale in addedScales) {
@@ -682,8 +825,13 @@ class ProductionLinePageState extends State<ProductionLinePage> {
     }
     if (highValueList.length < count) {
       for (int i = highValueList.length; i < count; i++) {
-        highValueList.add(0.0);
-        lowValueList.add(0.0);
+        if (highLowList.length > i) {
+          highValueList.add(highLowList[i].high);
+          lowValueList.add(highLowList[i].low);
+        } else {
+          highValueList.add(0.0);
+          lowValueList.add(0.0);
+        }
       }
     }
     // var fn = CheckWeightFunc();
@@ -697,9 +845,18 @@ class ProductionLinePageState extends State<ProductionLinePage> {
           numGroups: count),
     ).then((values) {
       if (values != null) {
+        highLowList = []; //清空
         highValueList = values[0];
         lowValueList = values[1];
-        setState(() {});
+        for (int i = 0; i < highValueList.length; i++) {
+          HighLowValue temp = HighLowValue(highValueList[i], lowValueList[i]);
+          highLowList.add(temp);
+        }
+        setState(() {
+          tableDataList = [];
+          validGapList = [];
+          resortScaleWgt();
+        });
 
         // fn.updateHighLow(myCheckWeightSetList, setValueInfo);
       }

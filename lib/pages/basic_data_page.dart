@@ -1,25 +1,25 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/olul_err_data.dart';
-import 'package:t_max/data/scale_info_from_scale.dart';
+
 import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
+
 import '../data/manager_scale_channel.dart';
 import '../data/language.dart';
-import '../data/screen_mgr.dart';
+
 import '../data/timer_manager.dart';
 import '../widget/custom_button.dart';
 import '../widget/page_head.dart';
 
 class BasicDataPage extends StatefulWidget {
-  const BasicDataPage({Key? key}) : super(key: key);
+  const BasicDataPage({super.key});
   @override
   State<BasicDataPage> createState() => BasicDataPageState();
 }
 
 class BasicDataPageState extends State<BasicDataPage> {
   dynamic eventBus1;
-  dynamic eventBus2;
 
   bool isWeightDataBtn = true;
 
@@ -29,7 +29,7 @@ class BasicDataPageState extends State<BasicDataPage> {
   void initState() {
     super.initState();
     cntScaleTimerMgr.stopCntScaleTimer();
-    PublicFunctions.getBasicData(defaultScaleId);
+    PublicFunctions.getBasicData(myDefScaleInfo.defScaleId!);
 
     isWeightDataBtn = false;
 
@@ -57,7 +57,8 @@ class BasicDataPageState extends State<BasicDataPage> {
                           fontSize: 20,
                           fontWeight: FontWeight.normal)), ////此处需要秤回复
                   duration: const Duration(seconds: 3),
-                  backgroundColor: Theme.of(context).colorScheme.outline));
+                  backgroundColor:
+                      Theme.of(context).colorScheme.surfaceContainerHigh));
             } catch (e) {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text(jsonString,
@@ -71,37 +72,24 @@ class BasicDataPageState extends State<BasicDataPage> {
         });
       }
     });
-
-    eventBus2 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
-      if (mounted) {
-        setState(() {
-          myFactoryInfoFromScale = event.obj;
-          if (myFactoryInfoFromScale.modelName != '') {
-            myScreenMgr.serialPortST = true;
-          } else {
-            myScreenMgr.serialPortST = false;
-          }
-        });
-      }
-    });
   }
 
   @override
   void dispose() {
     eventBus1.cancel();
-    eventBus2.cancel();
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final _width = MediaQuery.of(context).size.width;
-    return Scaffold(body: firstLayout(context, _width));
+    final width = MediaQuery.of(context).size.width;
+    return Scaffold(body: firstLayout(context, width));
   }
 
-  Widget firstLayout(context, _width) {
+  Widget firstLayout(context, width) {
     return Container(
-        width: _width,
+        width: width,
         // decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceTint,
         // ),
@@ -125,7 +113,8 @@ class BasicDataPageState extends State<BasicDataPage> {
                 text: localizedStrings.abnormal_weight,
                 onPressed: isWeightDataBtn
                     ? () {
-                        PublicFunctions.getBasicData(defaultScaleId);
+                        PublicFunctions.getBasicData(
+                            myDefScaleInfo.defScaleId!);
                         setState(() {
                           isWeightDataBtn = false;
                         });
@@ -135,7 +124,7 @@ class BasicDataPageState extends State<BasicDataPage> {
             )),
             Expanded(
               child: SizedBox(
-                width: _width,
+                width: width,
                 child: ListView(
                   children: [
                     const SizedBox(
@@ -145,12 +134,12 @@ class BasicDataPageState extends State<BasicDataPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         SizedBox(
-                          width: _width / 3,
+                          width: width / 3,
                           child: customCard(context, 'Power-On Count:',
                               myBasicErrInfo.powerOnCnt.toString()),
                         ),
                         SizedBox(
-                          width: _width / 3,
+                          width: width / 3,
                           child: customCard(context, 'Running Time(mins):',
                               myBasicErrInfo.runningTime.toString()),
                         ),
@@ -160,14 +149,14 @@ class BasicDataPageState extends State<BasicDataPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         SizedBox(
-                          width: _width / 3,
+                          width: width / 3,
                           child: customCard(
                               context,
                               'Abnormal Power-Off Count:',
                               myBasicErrInfo.forcedShutdownCnt.toString()),
                         ),
                         SizedBox(
-                          width: _width / 3,
+                          width: width / 3,
                           child: customCard(context, 'Weighing Count:',
                               myBasicErrInfo.wgtCnt.toString()),
                         ),
@@ -177,12 +166,12 @@ class BasicDataPageState extends State<BasicDataPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         SizedBox(
-                          width: _width / 3,
+                          width: width / 3,
                           child: customCard(context, 'OL Time(mins):',
                               myBasicErrInfo.olTime.toString()),
                         ),
                         SizedBox(
-                          width: _width / 3,
+                          width: width / 3,
                           child: customCard(context, 'UL Time(mins):',
                               myBasicErrInfo.ulTime.toString()),
                         ),
@@ -192,12 +181,12 @@ class BasicDataPageState extends State<BasicDataPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         SizedBox(
-                          width: _width / 3,
+                          width: width / 3,
                           child: customCard(context, 'Err4 Count:',
                               myBasicErrInfo.err4Cnt.toString()),
                         ),
                         SizedBox(
-                          width: _width / 3,
+                          width: width / 3,
                           child: customCard(context, 'Err19 Count:',
                               myBasicErrInfo.err19Cnt.toString()),
                         ),
@@ -207,14 +196,14 @@ class BasicDataPageState extends State<BasicDataPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         SizedBox(
-                          width: _width / 3,
+                          width: width / 3,
                           child: customCard(
                               context,
                               'Calibration Switch Count:',
                               myBasicErrInfo.calSwitchCnt.toString()),
                         ),
                         SizedBox(
-                          width: _width / 3,
+                          width: width / 3,
                           child: customCard(context, 'Calibration Count:',
                               myBasicErrInfo.caliCnt.toString()),
                         ),

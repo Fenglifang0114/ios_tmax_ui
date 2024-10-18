@@ -15,6 +15,7 @@ import '../../data/userinfo_data.dart';
 import '../../data/weight_data.dart';
 import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
+import '../data/comscaleinfo_data.dart';
 import '../data/downloadresponse.dart';
 import '../data/manager_scale_channel.dart';
 import '../data/language.dart';
@@ -22,7 +23,6 @@ import '../data/record_data.dart';
 import '../data/scale_info_from_scale.dart';
 import '../data/scalecmd_data.dart';
 import '../data/scalelist_data.dart';
-import '../data/screen_mgr.dart';
 import '../data/weight_report_data.dart';
 import '../dialog/addproduct_dialog.dart';
 import '../dialog/adduser_dialog.dart';
@@ -33,7 +33,7 @@ import '../widget/custom_button.dart';
 import '../widget/page_head.dart';
 
 class WeightDataCollectionPage extends StatefulWidget {
-  const WeightDataCollectionPage({Key? key}) : super(key: key);
+  const WeightDataCollectionPage({super.key});
   @override
   State<WeightDataCollectionPage> createState() =>
       _WeightDataCollectionPageState();
@@ -144,7 +144,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     _weightReportDataSource = WeightReportDataSource(_weightReportDatas);
     PublicFunctions.getUserList();
     PublicFunctions.getProductList();
-    PublicFunctions.getRecords(defaultScaleId, weighingMode);
+    PublicFunctions.getRecords(myDefScaleInfo.defScaleId!, weighingMode);
 
     eventBus1 = eventBus.on<EventDeviceName>().listen((event) {
       if (mounted) {
@@ -171,10 +171,10 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
         setState(() {
           ReqWeightCountine tempWeight = ReqWeightCountine();
           tempWeight = event.obj;
-          if (tempWeight.scaleId == defaultScaleId) {
+          if (tempWeight.scaleId == myDefScaleInfo.defScaleId!) {
             myReqWeightCountine = tempWeight;
             isStart = true;
-            myScreenMgr.serialPortST = true;
+            myComScaleInfo.isOnline = true;
             isCnting = true;
 
             switch (weightMode) {
@@ -315,7 +315,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     eventBus11 = eventBus.on<EventDeleteRec>().listen((event) {
       if (mounted) {
         setState(() {
-          PublicFunctions.getRecords(defaultScaleId, weighingMode);
+          PublicFunctions.getRecords(myDefScaleInfo.defScaleId!, weighingMode);
         });
       }
     });
@@ -323,7 +323,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     eventBus12 = eventBus.on<EventUpdateSettingParam>().listen((event) {
       if (mounted) {
         setState(() {
-          PublicFunctions.getUIConfTakeOut(defaultScaleId);
+          PublicFunctions.getUIConfTakeOut(myDefScaleInfo.defScaleId!);
         });
       }
     });
@@ -397,7 +397,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
 
   @override
   Widget build(BuildContext context) {
-    final _width = MediaQuery.of(context).size.width;
+    final width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),
@@ -406,13 +406,13 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
           localizedStrings.weight_collection_title,
         ),
       ),
-      body: firstLayout(context, _width),
+      body: firstLayout(context, width),
     );
   }
 
-  Widget firstLayout(BuildContext context, double _width) {
+  Widget firstLayout(BuildContext context, double width) {
     return Container(
-        width: _width,
+        width: width,
         decoration:
             BoxDecoration(color: Theme.of(context).colorScheme.surfaceTint),
         child: Column(
@@ -572,13 +572,14 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                           icon: const Icon(Icons.play_arrow),
                           iconSize: 30,
                           color: (isStart)
-                              ? (Theme.of(context).colorScheme.background)
+                              ? (Theme.of(context).colorScheme.secondaryFixed)
                               : (Theme.of(context).colorScheme.primary),
                           onPressed: () {
                             setState(() {
                               if (!isStart) {
                                 isStart = true;
-                                PublicFunctions.getWeight(defaultScaleId);
+                                PublicFunctions.getWeight(
+                                    myDefScaleInfo.defScaleId!);
                               }
                             });
                           },
@@ -591,14 +592,15 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                             if (isStart) {
                               setState(() {
                                 isStart = false;
-                                PublicFunctions.stopWeight(defaultScaleId);
+                                PublicFunctions.stopWeight(
+                                    myDefScaleInfo.defScaleId!);
                               });
                             }
                           },
                           icon: const Icon(Icons.pause),
                           iconSize: 30,
                           color: (!isStart)
-                              ? (Theme.of(context).colorScheme.background)
+                              ? (Theme.of(context).colorScheme.secondaryFixed)
                               : (Theme.of(context).colorScheme.primary),
                         ),
                       ),
@@ -703,6 +705,9 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                         ),
                       ),
                       Container(
+                        height: 53,
+                        width: constraints.maxWidth / 10,
+                        padding: const EdgeInsets.all(0),
                         child: DropdownButtonFormField<String>(
                           itemHeight: 50.0,
                           isExpanded: true,
@@ -734,9 +739,6 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                                     overflow: TextOverflow.ellipsis));
                           }).toList(),
                         ),
-                        height: 53,
-                        width: constraints.maxWidth / 10,
-                        padding: const EdgeInsets.all(0),
                       ),
                       CustomElevatedButton(
                         btnWidth: constraints.maxWidth / 10 - 30,
@@ -768,6 +770,9 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                                     fontWeight: FontWeight.normal))),
                       ),
                       Container(
+                        height: 53,
+                        width: constraints.maxWidth / 10,
+                        padding: const EdgeInsets.all(0),
                         child: DropdownButtonFormField<String>(
                           itemHeight: 50.0,
                           isExpanded: true,
@@ -795,9 +800,6 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                                     overflow: TextOverflow.ellipsis));
                           }).toList(),
                         ),
-                        height: 53,
-                        width: constraints.maxWidth / 10,
-                        padding: const EdgeInsets.all(0),
                       ),
                       CustomElevatedButton(
                         btnWidth: constraints.maxWidth / 10 - 30,
@@ -905,7 +907,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
       },
     ).then((confirmed) {
       if (confirmed) {
-        PublicFunctions.deleteAllRecords(defaultScaleId);
+        PublicFunctions.deleteAllRecords(myDefScaleInfo.defScaleId!);
       }
     });
   }
@@ -1068,7 +1070,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     Sheet sh = excel['Sheet1'];
     for (var i = 0; i < title.length; i++) {
       sh.cell(CellIndex.indexByColumnRow(rowIndex: 0, columnIndex: i)).value =
-          title[i];
+          title[i] as CellValue?;
     }
 
     for (int row = 1; row <= myWeightReportData.length; row++) {
@@ -1078,73 +1080,73 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].id;
+                .value = myWeightReportData[row - 1].id as CellValue?;
             break;
           case 'Date Time':
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].dateTime;
+                .value = myWeightReportData[row - 1].dateTime as CellValue?;
             break;
           case 'Weight':
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].weight;
+                .value = myWeightReportData[row - 1].weight as CellValue?;
             break;
           case 'Weight Unit':
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].weightUnit;
+                .value = myWeightReportData[row - 1].weightUnit as CellValue?;
             break;
           case 'PLU NO.':
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].plu;
+                .value = myWeightReportData[row - 1].plu as CellValue?;
             break;
           case 'PLU Name':
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].pluName;
+                .value = myWeightReportData[row - 1].pluName as CellValue?;
             break;
           case 'PLU Remarks':
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].pluRemarks;
+                .value = myWeightReportData[row - 1].pluRemarks as CellValue?;
             break;
           case 'Pretare':
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].pretare;
+                .value = myWeightReportData[row - 1].pretare as CellValue?;
             break;
           case 'User Name':
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].userName;
+                .value = myWeightReportData[row - 1].userName as CellValue?;
             break;
           case 'User Remarks':
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].userRemarks;
+                .value = myWeightReportData[row - 1].userRemarks as CellValue?;
             break;
           case 'User NO.':
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].userNo;
+                .value = myWeightReportData[row - 1].userNo as CellValue?;
             break;
           case 'Scale Model':
             sh
                 .cell(
                     CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].scaleName;
+                .value = myWeightReportData[row - 1].scaleName as CellValue?;
             break;
 
           default:
@@ -1173,12 +1175,12 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
   void sendReportDataToDB() {
     var currentData = myWeightReportData[myWeightReportData.length - 1];
     myScaleCmd.cmdMode = "add_rec";
-    myAddScaleRecord.scaleId = defaultScaleId;
+    myAddScaleRecord.scaleId = myDefScaleInfo.defScaleId!;
     myAddScaleRecord.price = '0.0';
     myAddScaleRecord.scaleMode = weighingMode;
-    myAddScaleRecord.scaleModel = defaultScaleModel;
-    myAddScaleRecord.scaleSn = defaultScaleSn;
-    myAddScaleRecord.scaleName = defaultScaleModel;
+    myAddScaleRecord.scaleModel = myDefScaleInfo.defScaleModel;
+    myAddScaleRecord.scaleSn = myDefScaleInfo.defScaleSn;
+    myAddScaleRecord.scaleName = myDefScaleInfo.defScaleModel;
 
     myAddScaleRecord.product = currentData.pluName;
     myAddScaleRecord.weight = currentData.weight.toString();
@@ -1190,7 +1192,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     myAddScaleRecord.userName = currentData.userName;
     myAddScaleRecord.userRemarks = currentData.userRemarks;
     myScaleCmd.cmdData = jsonEncode(myAddScaleRecord);
-    PublicFunctions.sendMsg(defaultScaleId, jsonEncode(myScaleCmd));
+    PublicFunctions.sendMsg(myDefScaleInfo.defScaleId!, jsonEncode(myScaleCmd));
   }
 
   void _addWeightToReport() {

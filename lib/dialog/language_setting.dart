@@ -7,10 +7,10 @@ class LanguageSettingPage extends StatefulWidget {
   const LanguageSettingPage({super.key});
 
   @override
-  _LanguageSettingPageState createState() => _LanguageSettingPageState();
+  LanguageSettingPageState createState() => LanguageSettingPageState();
 }
 
-class _LanguageSettingPageState extends State<LanguageSettingPage> {
+class LanguageSettingPageState extends State<LanguageSettingPage> {
   List<String> languageList = [
     '中文',
     'English',

@@ -53,7 +53,7 @@ class WebSocketScaleChannel {
   void onData(event) {
     if (event != null) {
       if (kDebugMode) {
-        print('$scaleId 收到消息:' + event);
+        print('$scaleId 收到消息: + $event');
       }
       paster(event);
     }
@@ -102,8 +102,8 @@ class WebSocketScaleChannel {
       try {
         Map<String, dynamic> map = json.decode(data);
         if (RespMsgType.handlers.containsKey(map['MsgType'])) {
-          var _handler = RespMsgType.handlers[map['MsgType']];
-          await _handler!(map);
+          var handler = RespMsgType.handlers[map['MsgType']];
+          await handler!(map);
         }
       } catch (e) {
         if (kDebugMode) {

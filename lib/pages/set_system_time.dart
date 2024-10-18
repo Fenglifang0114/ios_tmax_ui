@@ -7,13 +7,11 @@ import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
 import '../data/common.dart';
 import '../data/language.dart';
-import '../data/scale_info_from_scale.dart';
-import '../data/screen_mgr.dart';
 import '../data/timer_manager.dart';
 import '../widget/page_head.dart';
 
 class SetSystemTimePage extends StatefulWidget {
-  const SetSystemTimePage({Key? key}) : super(key: key);
+  const SetSystemTimePage({super.key});
   @override
   State<SetSystemTimePage> createState() => SetSystemTimePageState();
 }
@@ -37,7 +35,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
   void initState() {
     super.initState();
     cntScaleTimerMgr.stopCntScaleTimer();
-    PublicFunctions.getScaleTime(defaultScaleId);
+    PublicFunctions.getScaleTime(myDefScaleInfo.defScaleId!);
 
     eventBus1 = eventBus.on<EventSetScaleTime>().listen((event) {
       if (mounted) {
@@ -45,7 +43,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
         if (myRespDataFromScale.msgBody.isNotEmpty) {
           if (myRespDataFromScale.msgBody.contains('ok')) {
             cntScaleTimerMgr.stopCntScaleTimer();
-            PublicFunctions.getScaleTime(defaultScaleId);
+            PublicFunctions.getScaleTime(myDefScaleInfo.defScaleId!);
           } else {
             stopTimer();
             cntScaleTimerMgr.startCntScaleTimer(5);
@@ -59,7 +57,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                       fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
               duration: const Duration(seconds: 3),
               backgroundColor: (myRespDataFromScale.msgBody.contains('ok'))
-                  ? Theme.of(context).colorScheme.outline
+                  ? Theme.of(context).colorScheme.surfaceContainerHigh
                   : Theme.of(context).colorScheme.error));
         }
       }
@@ -115,16 +113,16 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
       }
     });
 
-    eventbus3 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
+    eventbus3 = eventBus.on<EventRespCheckNetScale>().listen((event) {
       if (mounted) {
-        setState(() {
-          myFactoryInfoFromScale = event.obj;
-          if (myFactoryInfoFromScale.modelName != '') {
-            myScreenMgr.serialPortST = true;
-          } else {
-            myScreenMgr.serialPortST = false;
-          }
-        });
+        // setState(() {
+        //   myFactoryInfoFromScale = event.obj;
+        //   if (myFactoryInfoFromScale.modelName != '') {
+        //     myComScaleInfo.isOnline = true;
+        //   } else {
+        //     myComScaleInfo.isOnline = false;
+        //   }
+        // });
       }
     });
   }
@@ -153,15 +151,15 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
 
   @override
   Widget build(BuildContext context) {
-    final _width = MediaQuery.of(context).size.width;
-    return Scaffold(body: firstLayout(context, _width));
+    final width = MediaQuery.of(context).size.width;
+    return Scaffold(body: firstLayout(context, width));
   }
 
-  Widget firstLayout(context, _width) {
+  Widget firstLayout(context, width) {
     return Container(
-        width: _width,
+        width: width,
         decoration:
-            BoxDecoration(color: Theme.of(context).colorScheme.background),
+            BoxDecoration(color: Theme.of(context).colorScheme.secondaryFixed),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           // mainAxisSize: MainAxisSize.max,
@@ -228,7 +226,8 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                                     .truncate();
                                 cntScaleTimerMgr.stopCntScaleTimer();
                                 PublicFunctions.setScaleTime(
-                                    timestamp.toString(), defaultScaleId);
+                                    timestamp.toString(),
+                                    myDefScaleInfo.defScaleId!);
                               },
                               child: btnStyle('Sync PC Time'),
                             ),
@@ -296,7 +295,8 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                                     cntScaleTimerMgr.stopCntScaleTimer();
 
                                     PublicFunctions.setScaleTime(
-                                        timestamp.toString(), defaultScaleId);
+                                        timestamp.toString(),
+                                        myDefScaleInfo.defScaleId!);
                                   },
                                   child: btnStyle('Sync Time')),
                             ],
@@ -425,7 +425,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
       },
     ).then((confirmed) {
       if (confirmed) {
-        PublicFunctions.deleteAllRecordsTakeOut(defaultScaleId);
+        PublicFunctions.deleteAllRecordsTakeOut(myDefScaleInfo.defScaleId!);
       }
     });
   }

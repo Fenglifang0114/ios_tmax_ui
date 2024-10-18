@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import '../data/company_info.dart';
 import '../data/language.dart';
-import '../data/scale_info_from_scale.dart';
-import '../data/screen_mgr.dart';
 import '../data/timer_manager.dart';
 import '../dialog/language_setting.dart';
 import '../eventbus/eventbus.dart';
@@ -12,7 +10,7 @@ import '../widget/home_page_widget.dart';
 import '../widget/page_head.dart';
 
 class SystemSettingPage extends StatefulWidget {
-  const SystemSettingPage({Key? key}) : super(key: key);
+  const SystemSettingPage({super.key});
 
   @override
   State<SystemSettingPage> createState() => _SystemSettingPageState();
@@ -36,16 +34,16 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
     super.initState();
     _pageScrollerController = ScrollController();
     cntScaleTimerMgr.stopCntScaleTimer();
-    eventBus1 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
+    eventBus1 = eventBus.on<EventRespCheckNetScale>().listen((event) {
       if (mounted) {
-        setState(() {
-          myFactoryInfoFromScale = event.obj;
-          if (myFactoryInfoFromScale.modelName != '') {
-            myScreenMgr.serialPortST = true;
-          } else {
-            myScreenMgr.serialPortST = false;
-          }
-        });
+        // setState(() {
+        //   myFactoryInfoFromScale = event.obj;
+        //   if (myFactoryInfoFromScale.modelName != '') {
+        //     myComScaleInfo.isOnline = true;
+        //   } else {
+        //     myComScaleInfo.isOnline = false;
+        //   }
+        // });
       }
     });
   }
@@ -68,7 +66,7 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
         ),
       ),
       body: Container(
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 30.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

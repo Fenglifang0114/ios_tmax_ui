@@ -443,24 +443,22 @@ class RespMsgType {
       myFactoryInfoFromScale =
           FactoryInfoFromScale.fromJson(json.decode(jsonStrings));
     } else {
-      myFactoryInfoFromScale = FactoryInfoFromScale(
-        "",
-        "",
-      );
+      myFactoryInfoFromScale = FactoryInfoFromScale("", "");
+      if (id == 1) {
+        myComScaleSn = myFactoryInfoFromScale;
+        return eventBus.fire(EventRespCheckComPort(myComScaleSn));
+      }
     }
 
     if (myFactoryInfoFromScale.modelName != '') {
       if (id == 1) {
         myComScaleInfo.scaleSn = myFactoryInfoFromScale.scaleSn!;
         myComScaleInfo.scaleModel = myFactoryInfoFromScale.modelName!;
-        defaultScaleModel = myComScaleInfo.scaleModel;
-        defaultScaleSn = myComScaleInfo.scaleSn;
-        myComScaleInfo.portName + ":" + myComScaleInfo.baudRate.toString();
-        if (defaultScaleId == 1) {
-          defaultScaleModel = myComScaleInfo.scaleModel;
-          defaultScaleSn = myComScaleInfo.scaleSn;
-          myComScaleInfo.portName + ":" + myComScaleInfo.baudRate.toString();
+        myComScaleSn = myFactoryInfoFromScale;
+        if (myDefScaleInfo.defScaleId == id) {
+          DefScaleInfo.getDefScaleInfo(id);
         }
+        return eventBus.fire(EventRespCheckComPort(myComScaleSn));
       } else {
         NetScaleInfoLocal tempScale = NetScaleInfoLocal();
         tempScale = NetScaleListMgr.findScaleInfo(myNetScaleList, id);
@@ -469,18 +467,18 @@ class RespMsgType {
           tempScale.scaleSn = myFactoryInfoFromScale.scaleSn;
           NetScaleListMgr.updateScale(myNetScaleList, tempScale);
         }
-        if (defaultScaleId == id) {
-          var tempscale =
-              NetScaleListMgr.findScaleInfo(myNetScaleList, defaultScaleId);
-          defaultScaleModel = tempscale.scaleModel!;
-          defaultScaleSn = tempscale.scaleSn!;
-          myComScaleInfo.portName + ":" + myComScaleInfo.baudRate.toString();
-          defscaleMedia = tempscale.ip! + ":" + tempscale.port!.toString();
+        if (myDefScaleInfo.defScaleId == id) {
+          DefScaleInfo.getDefScaleInfo(id);
         }
+        myOnlineInfo.factInfo = myFactoryInfoFromScale;
+        myOnlineInfo.scaleId = id;
+        return eventBus.fire(EventRespCheckNetScale(myOnlineInfo));
       }
     }
+    myOnlineInfo.factInfo = myFactoryInfoFromScale;
+    myOnlineInfo.scaleId = id;
 
-    eventBus.fire(EventRespCheckSerialPort(myFactoryInfoFromScale));
+    return eventBus.fire(EventRespCheckNetScale(myOnlineInfo));
   }
 
   static void handleRespTareCmd(dynamic data) {}

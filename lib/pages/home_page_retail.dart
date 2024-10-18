@@ -1,7 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:t_max/pages/scale_manager.dart';
+import 'package:t_max/pages/scale_manager_page.dart';
+import '../data/comscaleinfo_data.dart';
 import '../data/manager_scale_channel.dart';
 import 'package:t_max/data/dialog_data.dart';
 import 'package:t_max/data/license_data.dart';
@@ -37,18 +38,23 @@ import 'receipt_design_page.dart';
 import 'retail_report_page.dart';
 
 class RetailHomePage extends StatefulWidget {
-  const RetailHomePage({Key? key}) : super(key: key);
+  const RetailHomePage({super.key});
 
   @override
   State<RetailHomePage> createState() => _RetailHomePageState();
 }
 
-class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
+class _RetailHomePageState extends State<RetailHomePage>
+    with TrayListener, WindowListener {
   List<String> items = [];
+
   TextEditingController weightController = TextEditingController();
   TextEditingController repsController = TextEditingController();
 
   late ScrollController _pageScrollerController;
+  final ScrollController _scrollController1 = ScrollController();
+  final ScrollController _scrollController2 = ScrollController();
+
   dynamic _eventbus1;
   dynamic _eventbus3;
   dynamic _eventbus4;
@@ -56,8 +62,13 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
 
   String groupValue = 'zh';
   DateTime now = DateTime.now();
+
   bool isCardHovered = false;
   bool isCardClicked = false;
+  bool showHint1 = true;
+  bool showHint2 = true;
+
+  bool isResize = false;
 
   Future<void> _handleSetIcon() async {
     String iconPath =
@@ -79,14 +90,43 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
   }
 
   @override
+  void onWindowResize() {
+    isResize = true;
+  }
+
+  @override
+  void onWindowMaximize() {
+    isResize = true;
+  }
+
+  @override
+  void onWindowUnmaximize() {
+    isResize = true;
+  }
+
+  @override
+  void onWindowMinimize() {
+    isResize = true;
+  }
+
+  @override
+  void onWindowClose() {
+    // 关闭工厂模式（所有秤都关闭吗？）
+  }
+
+  @override
   void initState() {
     trayManager.addListener(this);
+    windowManager.addListener(this);
+    _scrollController2.addListener(_checkScrollPosition2);
+    _scrollController1.addListener(_checkScrollPosition1);
+
     _init();
     _handleSetIcon();
     super.initState();
     _pageScrollerController = ScrollController();
     // cntScaleTimerMgr.stopCntScaleTimer();
-    // cntScaleTimerMgr.startCntScaleTimer(5);
+    cntScaleTimerMgr.startCntScaleTimer(1);
     // _checkTimerFuc(5);
     _eventbus1 = eventBus.on<EventDialogData>().listen((event) {
       if (mounted) {
@@ -98,17 +138,22 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
     setState(() {
       now = DateTime.now();
     });
-
-    _eventbus3 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
+    _eventbus3 = eventBus.on<EventRespCheckComPort>().listen((event) {
       if (mounted) {
-        setState(() {
-          myFactoryInfoFromScale = event.obj;
-          if (myFactoryInfoFromScale.modelName != '') {
-            myScreenMgr.serialPortST = true;
-          } else {
-            myScreenMgr.serialPortST = false;
-          }
-        });
+        if (myScreenMgr.isMainScreen) {
+          setState(() {
+            myComScaleSn = event.obj;
+            if (myComScaleSn.modelName != '') {
+              myComScaleInfo.isOnline = true;
+              myComScaleInfo.isOnline = true;
+            } else {
+              myComScaleInfo.isOnline = false;
+              myComScaleSn.modelName = '';
+              myComScaleSn.scaleSn = '';
+              myComScaleInfo.isOnline = false;
+            }
+          });
+        }
       }
     });
 
@@ -149,11 +194,18 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
     _eventbus5.cancel();
     _pageScrollerController.dispose();
     cntScaleTimerMgr.stopCntScaleTimer();
+    windowManager.removeListener(this);
+    trayManager.removeListener(this);
+    _scrollController2.dispose();
+    _scrollController1.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (isResize) {
+      _checkInitialVisibility();
+    }
     return Scaffold(
       appBar: PreferredSize(
           preferredSize: const Size.fromHeight(50),
@@ -229,7 +281,7 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
                           const SizedBox(
                             width: 20,
                           ),
-                          (myScreenMgr.serialPortST)
+                          (myComScaleInfo.isOnline)
                               ? CustomCircleIcon(
                                   outerColor:
                                       Theme.of(context).colorScheme.primary,
@@ -261,7 +313,7 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
               //     Container(decoration: BoxDecoration(gradient: boxGradient())),
               )),
       body: Container(
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 30.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -317,283 +369,147 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
 
   Widget firstCard() {
     return Expanded(
-      flex: 4,
-      child: Container(
+        flex: 4,
+        child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15), // 根据实际需要设置圆角半径
             color: Theme.of(context).colorScheme.primaryContainer,
           ),
           margin: const EdgeInsets.only(right: 20), // 根据实际需要设置容器间距
-          child: Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 10.0, horizontal: 20.0),
-                child: functionTitle(
-                    localizedStrings.device_configuration_title,
-                    Icons.settings),
-              ),
-              Expanded(
-                child: ListView(children: [
-                  (myFactoryInfoFromScale.modelName != null)
-                      ? SizedBox(
-                          height: 80,
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  const SizedBox(
-                                    width: 30,
-                                  ),
-                                  Flexible(
-                                    child: Text(
-                                      localizedStrings.scale_name,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    const SizedBox(
-                                      width: 30,
-                                    ),
-                                    Flexible(
-                                      child: Text(
-                                        myFactoryInfoFromScale.modelName!,
-                                        maxLines: 1,
-                                        textAlign: TextAlign.start,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ]),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  const SizedBox(
-                                    width: 30,
-                                  ),
-                                  Flexible(
-                                    child: Text(
-                                      localizedStrings.scale_sn,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    const SizedBox(
-                                      width: 30,
-                                    ),
-                                    Flexible(
-                                      child: Text(
-                                        myFactoryInfoFromScale.scaleSn!,
-                                        maxLines: 1,
-                                        textAlign: TextAlign.start,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ]),
-                            ],
-                          ),
-                        )
-                      : const SizedBox(),
-                  MouseRegion(
-                    cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                    child: GestureDetector(
-                      onTap: () {
-                        stopCheckSerialPort();
-                        setState(() {
-                          PublicFunctions.getProductList();
-                          PublicFunctions.getPortList();
-                          showComPortDialog(context);
-                        });
-                      },
-                      child: customFunctionCard(
-                        context,
-                        localizedStrings.title_serial_port_connection,
-                        Icons.cable,
-                        true,
-                      ),
-                    ),
-                  ),
-                  MouseRegion(
-                    cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                    child: GestureDetector(
-                      onTap: () {
-                        stopCheckSerialPort();
-                        setState(() {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const ScaleManagerPage()),
-                          ).then((value) => _updateStatus());
-                        });
-                      },
-                      child: customFunctionCard(
-                          context,
-                          localizedStrings.m_scale_title,
-                          Icons.schema_outlined,
-                          true),
-                    ),
-                  ),
-                  MouseRegion(
-                      cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                      child: GestureDetector(
-                        onTap: () {
-                          //wifi页面
-
-                          setState(() {
-                            stopCheckSerialPort();
-
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const CableIpSettingPage(),
-                              ),
-                            ).then((value) => _updateStatus());
-                          });
-                        },
-                        child: customFunctionCard(
-                          context,
-                          localizedStrings.set_ethernet_ip_title,
-                          Icons.settings_ethernet,
-                          true,
-                        ),
-                      )),
-                  MouseRegion(
-                    cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          stopCheckSerialPort();
-                          showUpdateFirmWareDialog(context);
-                        });
-                      },
-                      child: customFunctionCard(context,
-                          localizedStrings.update_firmware, Icons.update, true),
-                    ),
-                  ),
-                  MouseRegion(
-                    cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          stopCheckSerialPort();
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const FirmwareDownPage()),
-                          ).then((value) => _updateStatus());
-                        });
-                      },
-                      child: customFunctionCard(
-                          context,
-                          localizedStrings.firm_down_online,
-                          Icons.cloud_upload_outlined,
-                          true),
-                    ),
-                  ),
-                  MouseRegion(
-                    cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          showBuildInfo();
-                        });
-                      },
-                      child: customFunctionCard(
-                        context,
-                        localizedStrings.get_build_info,
-                        Icons.privacy_tip,
-                        true,
-                      ),
-                    ),
-                  ),
-                ]),
-              ),
-            ],
-          )),
-    );
-  }
-
-  Widget secondCard() {
-    return Expanded(
-      flex: 8, // 设置一个容器的flex为2，在剩余空间中占用更多的比例
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15), // 根据实际需要设置圆角半径
-          color: Theme.of(context).colorScheme.primaryContainer,
-        ),
-        child: Column(
-          children: [
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
             Container(
               padding:
                   const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-              child: functionTitle(localizedStrings.customization_setting_title,
-                  Icons.app_registration),
+              child: functionTitle(
+                  localizedStrings.device_configuration_title, Icons.settings),
             ),
             Expanded(
-              child: ListView(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 10.0, horizontal: 20.0),
-                  children: [
-                    MouseRegion(
-                      cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                      child: GestureDetector(
-                        onTap: () {
-                          stopCheckSerialPort();
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const TransactionReportPage()),
-                          ).then((value) => _updateStatus());
-                        },
-                        child: appCard(
-                            context,
-                            localizedStrings.re_detail_report_title,
-                            Icons.data_thresholding_outlined,
-                            true,
-                            'This app is used to display sales detail data.',
-                            ''),
-                      ),
-                    ),
-                    MouseRegion(
-                      cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                      child: GestureDetector(
-                        onTap: () {
-                          stopCheckSerialPort();
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const DownloadLabelPage()),
-                          ).then((value) => _updateStatus());
-                        },
-                        child: appCard(
-                            context,
-                            localizedStrings.label_fmt_download,
-                            Icons.arrow_circle_down_outlined,
-                            true,
-                            'This application is used to download print format.',
-                            ''),
-                      ),
-                    ),
-                    MouseRegion(
-                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                        child: GestureDetector(
+                child: Stack(
+              children: [
+                SingleChildScrollView(
+                    controller: _scrollController1,
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10.0, horizontal: 20.0),
+                    child: Column(
+                      children: [
+                        (myComScaleSn.modelName != null)
+                            ? SizedBox(
+                                height: 90,
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        const SizedBox(
+                                          width: 30,
+                                        ),
+                                        Flexible(
+                                          child: Text(
+                                            localizedStrings.scale_name,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          const SizedBox(
+                                            width: 30,
+                                          ),
+                                          Flexible(
+                                            child: Text(
+                                              myComScaleSn.modelName!,
+                                              maxLines: 1,
+                                              textAlign: TextAlign.start,
+                                              style: const TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ]),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        const SizedBox(
+                                          width: 30,
+                                        ),
+                                        Flexible(
+                                          child: Text(
+                                            localizedStrings.scale_sn,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          const SizedBox(
+                                            width: 30,
+                                          ),
+                                          Flexible(
+                                            child: Text(
+                                              myComScaleSn.scaleSn!,
+                                              maxLines: 1,
+                                              textAlign: TextAlign.start,
+                                              style: const TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ]),
+                                  ],
+                                ),
+                              )
+                            : const SizedBox(),
+                        GestureDetector(
+                          onTap: () {
+                            stopCheckSerialPort();
+                            setState(() {
+                              PublicFunctions.getProductList();
+                              PublicFunctions.getPortList();
+                              showComPortDialog(context);
+                            });
+                          },
+                          child: MouseRegion(
+                            cursor: SystemMouseCursors.click,
+                            child: customFunctionCard(
+                              context,
+                              localizedStrings.title_serial_port_connection,
+                              Icons.cable,
+                              true,
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            stopCheckSerialPort();
+                            setState(() {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ScaleManagerPage()),
+                              ).then((value) => _updateStatus());
+                            });
+                          },
+                          child: MouseRegion(
+                            cursor: SystemMouseCursors.click,
+                            child: customFunctionCard(
+                                context,
+                                localizedStrings.m_scale_title,
+                                Icons.schema_outlined,
+                                true),
+                          ),
+                        ),
+                        GestureDetector(
                           onTap: () {
                             setState(() {
                               stopCheckSerialPort();
@@ -601,34 +517,207 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      const HeaderFooterPage(),
+                                      const CableIpSettingPage(),
                                 ),
                               ).then((value) => _updateStatus());
                             });
                           },
-                          child: appCard(
+                          child: MouseRegion(
+                            cursor: SystemMouseCursors.click,
+                            child: customFunctionCard(
                               context,
-                              localizedStrings.variable_value_setting_title,
-                              Icons.edit_attributes_outlined,
+                              localizedStrings.set_ethernet_ip_title,
+                              Icons.settings_ethernet,
                               true,
-                              'This application is used to distribute various variable information, such as headers and footers.',
-                              ''),
-                        )),
-                    MouseRegion(
-                      cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            stopCheckSerialPort();
-                            PublicFunctions.stopWeight(defaultScaleId);
-                            Navigator.push(
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              stopCheckSerialPort();
+                              showUpdateFirmWareDialog(context);
+                            });
+                          },
+                          child: MouseRegion(
+                            cursor: SystemMouseCursors.click,
+                            child: customFunctionCard(
+                                context,
+                                localizedStrings.update_firmware,
+                                Icons.update,
+                                true),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              stopCheckSerialPort();
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const FirmwareDownPage()),
+                              ).then((value) => _updateStatus());
+                            });
+                          },
+                          child: MouseRegion(
+                            cursor: SystemMouseCursors.click,
+                            child: customFunctionCard(
+                                context,
+                                localizedStrings.firm_down_online,
+                                Icons.cloud_upload_outlined,
+                                true),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              showBuildInfo();
+                            });
+                          },
+                          child: MouseRegion(
+                            cursor: SystemMouseCursors.click,
+                            child: customFunctionCard(
                               context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const ProductDownloadPage()),
-                            ).then((value) => _updateStatus());
-                          });
-                        },
+                              localizedStrings.get_build_info,
+                              Icons.privacy_tip,
+                              true,
+                            ),
+                          ),
+                        ),
+                      ],
+                    )),
+                if (showHint1)
+                  Positioned(
+                    bottom: 30,
+                    left: 0,
+                    right: 0,
+                    child: Center(
+                        child: IconButton(
+                      iconSize: 40,
+                      color: Theme.of(context).colorScheme.primary,
+                      icon: const Icon(Icons.expand_circle_down),
+                      onPressed: () {
+                        _scrollController1.animateTo(
+                          _scrollController1.position.maxScrollExtent,
+                          duration: const Duration(milliseconds: 100),
+                          curve: Curves.easeInOut,
+                        );
+                      },
+                    )),
+                  ),
+              ],
+            )),
+          ]),
+        ));
+  }
+
+  Widget secondCard() {
+    return Expanded(
+      flex: 8,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+          color: Theme.of(context).colorScheme.primaryContainer,
+        ),
+        child: Column(
+          children: [
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+              child: functionTitle(localizedStrings.customization_setting_title,
+                  Icons.app_registration),
+            ),
+            Expanded(
+                child: Stack(children: [
+              SingleChildScrollView(
+                controller: _scrollController2,
+                padding: const EdgeInsets.symmetric(
+                    vertical: 10.0, horizontal: 20.0),
+                child: Column(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        stopCheckSerialPort();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  const TransactionReportPage()),
+                        ).then((value) => _updateStatus());
+                      },
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        child: appCard(
+                          context,
+                          localizedStrings.rDetailRptTitle,
+                          Icons.data_thresholding_outlined,
+                          true,
+                          'This app is used to display sales detail data.',
+                          '',
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        stopCheckSerialPort();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const DownloadLabelPage()),
+                        ).then((value) => _updateStatus());
+                      },
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        child: appCard(
+                          context,
+                          localizedStrings.label_fmt_download,
+                          Icons.arrow_circle_down_outlined,
+                          true,
+                          'This application is used to download print format.',
+                          '',
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          stopCheckSerialPort();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const HeaderFooterPage(),
+                            ),
+                          ).then((value) => _updateStatus());
+                        });
+                      },
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        child: appCard(
+                            context,
+                            localizedStrings.variable_value_setting_title,
+                            Icons.edit_attributes_outlined,
+                            true,
+                            'This application is used to distribute various variable information, such as headers and footers.',
+                            ''),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          stopCheckSerialPort();
+                          PublicFunctions.stopWeight(
+                              myDefScaleInfo.defScaleId!);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const ProductDownloadPage()),
+                          ).then((value) => _updateStatus());
+                        });
+                      },
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.click,
                         child: appCard(
                             context,
                             localizedStrings.plu_download_title,
@@ -638,17 +727,17 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
                             ''),
                       ),
                     ),
-                    MouseRegion(
-                      cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                      child: GestureDetector(
-                        onTap: () {
-                          stopCheckSerialPort();
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const DownReciptPage()),
-                          ).then((value) => _updateStatus());
-                        },
+                    GestureDetector(
+                      onTap: () {
+                        stopCheckSerialPort();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const DownReciptPage()),
+                        ).then((value) => _updateStatus());
+                      },
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.click,
                         child: appCard(
                             context,
                             localizedStrings.receipt_format_download,
@@ -658,14 +747,14 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
                             ''),
                       ),
                     ),
-                    MouseRegion(
-                      cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                      child: GestureDetector(
-                        onTap: myRedeLicInfo.isValid
-                            ? () {
-                                showReceiptDesign(myRedeLicInfo.isValid);
-                              }
-                            : null,
+                    GestureDetector(
+                      onTap: myRedeLicInfo.isValid
+                          ? () {
+                              showReceiptDesign(myRedeLicInfo.isValid);
+                            }
+                          : null,
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.click,
                         child: appCard(
                             context,
                             localizedStrings.receipt_design_title,
@@ -677,18 +766,104 @@ class _RetailHomePageState extends State<RetailHomePage> with TrayListener {
                                 : myRedeLicInfo.liceseDate),
                       ),
                     ),
-                  ]),
-            ),
+                  ],
+                ),
+              ),
+              if (showHint2)
+                Positioned(
+                  bottom: 30,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                      child: IconButton(
+                    iconSize: 40,
+                    color: Theme.of(context).colorScheme.primary,
+                    icon: const Icon(Icons.expand_circle_down),
+                    onPressed: () {
+                      _scrollController2.animateTo(
+                        _scrollController2.position.maxScrollExtent,
+                        duration: const Duration(milliseconds: 100),
+                        curve: Curves.easeInOut,
+                      );
+                    },
+                  )),
+                ),
+            ])),
           ],
         ),
       ),
     );
   }
 
+//窗口发生变化时判断一下是否要显示浮动图标
+  void _checkInitialVisibility() {
+    isResize = false;
+    setState(() {
+      setState(() {
+        showHint1 = false;
+        showHint2 = false;
+      });
+    });
+    final viewportDimension = MediaQuery.of(context).size.height;
+    if (viewportDimension > 820) {
+      setState(() {
+        showHint1 = false;
+        showHint2 = false;
+      });
+    } else {
+      _scrollController2.animateTo(
+        _scrollController2.position.minScrollExtent,
+        duration: const Duration(milliseconds: 100),
+        curve: Curves.easeInOut,
+      );
+      _scrollController1.animateTo(
+        _scrollController2.position.minScrollExtent,
+        duration: const Duration(milliseconds: 100),
+        curve: Curves.easeInOut,
+      );
+
+      setState(() {
+        showHint1 = true;
+        showHint2 = true;
+      });
+    }
+  }
+
+  void _checkScrollPosition1() {
+    final maxScroll = _scrollController1.position.maxScrollExtent;
+    final currentScroll = _scrollController1.position.pixels;
+//露出最后半个功能的时候，就不显示了
+
+    if (currentScroll >= maxScroll - 30 && showHint1) {
+      setState(() {
+        showHint1 = false;
+      });
+    } else if (currentScroll < maxScroll && !showHint1) {
+      setState(() {
+        showHint1 = true;
+      });
+    }
+  }
+
+  void _checkScrollPosition2() {
+    final maxScroll = _scrollController2.position.maxScrollExtent;
+    final currentScroll = _scrollController2.position.pixels;
+//露出最后半个功能的时候，就不显示了
+    if (currentScroll >= maxScroll - 50 && showHint2) {
+      setState(() {
+        showHint2 = false;
+      });
+    } else if (currentScroll < maxScroll && !showHint2) {
+      setState(() {
+        showHint2 = true;
+      });
+    }
+  }
+
   void _updateStatus() {
     setState(() {});
     cntScaleTimerMgr.stopCntScaleTimer();
-    // cntScaleTimerMgr.startCntScaleTimer(5);
+    cntScaleTimerMgr.startCntScaleTimer(5);
   }
 
   void showBuildInfo() {

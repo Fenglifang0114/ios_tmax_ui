@@ -1020,10 +1020,10 @@ class S {
     );
   }
 
-  /// `PLU pretare cannot be empty .`
+  /// `PLU pretare cannot be empty.`
   String get plu_error_message {
     return Intl.message(
-      'PLU pretare cannot be empty .',
+      'PLU pretare cannot be empty.',
       name: 'plu_error_message',
       desc: '',
       args: [],
@@ -2440,6 +2440,46 @@ class S {
     );
   }
 
+  /// `Model Name`
+  String get p_model_name_var {
+    return Intl.message(
+      'Model Name',
+      name: 'p_model_name_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Scale Name`
+  String get p_scale_name_var {
+    return Intl.message(
+      'Scale Name',
+      name: 'p_scale_name_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tax Name.`
+  String get p_tax_name_var {
+    return Intl.message(
+      'Tax Name.',
+      name: 'p_tax_name_var',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Settle Account Times.`
+  String get p_settle_account_times_var {
+    return Intl.message(
+      'Settle Account Times.',
+      name: 'p_settle_account_times_var',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `PLU Tax`
   String get p_plu_tax_var {
     return Intl.message(
@@ -2770,10 +2810,10 @@ class S {
     );
   }
 
-  /// `Tax Model,tax included or  tax external.`
+  /// `Tax Model,tax included or tax external.`
   String get p_tax_model_expl {
     return Intl.message(
-      'Tax Model,tax included or  tax external.',
+      'Tax Model,tax included or tax external.',
       name: 'p_tax_model_expl',
       desc: '',
       args: [],
@@ -2825,6 +2865,46 @@ class S {
     return Intl.message(
       'Copy Times.',
       name: 'p_copy_times_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Scale Model Name.`
+  String get p_model_name_expl {
+    return Intl.message(
+      'Scale Model Name.',
+      name: 'p_model_name_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Scale Name.`
+  String get p_scale_name_expl {
+    return Intl.message(
+      'Scale Name.',
+      name: 'p_scale_name_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tax Name.`
+  String get p_tax_name_expl {
+    return Intl.message(
+      'Tax Name.',
+      name: 'p_tax_name_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Settle Account Times.`
+  String get p_settle_account_times_expl {
+    return Intl.message(
+      'Settle Account Times.',
+      name: 'p_settle_account_times_expl',
       desc: '',
       args: [],
     );
@@ -3650,12 +3730,83 @@ class S {
     );
   }
 
+  /// `Add`
+  String get scale_mgr_btn_add {
+    return Intl.message(
+      'Add',
+      name: 'scale_mgr_btn_add',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete`
+  String get scale_mgr_btn_dlt {
+    return Intl.message(
+      'Delete',
+      name: 'scale_mgr_btn_dlt',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Rename`
+  String get scale_mgr_btn_rename {
+    return Intl.message(
+      'Rename',
+      name: 'scale_mgr_btn_rename',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Set Default`
+  String get scale_mgr_btn_def {
+    return Intl.message(
+      'Set Default',
+      name: 'scale_mgr_btn_def',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Test Connect`
+  String get scale_mgr_btn_test {
+    return Intl.message(
+      'Test Connect',
+      name: 'scale_mgr_btn_test',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Scale Name`
+  String get scale_mgr_scale_name {
+    return Intl.message(
+      'Scale Name',
+      name: 'scale_mgr_scale_name',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Scale Model:`
+  String get scale_mgr_scale_model {
+    return Intl.message(
+      'Scale Model:',
+      name: 'scale_mgr_scale_model',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Retail Detail Report`
-  String get re_detail_report_title {
+  String get rDetailRptTitle {
     return Intl.message(
       'Retail Detail Report',
-      name: 're_detail_report_title',
-      desc: '',
+      name: 'rDetailRptTitle',
+      desc:
+          'This is the title of the retail detail report page in the retail app.',
       args: [],
     );
   }

@@ -31,24 +31,23 @@ import 'firmware_down_wifi.dart';
 import 'modify_com_port_page.dart';
 import 'product_download_page.dart';
 import 'production_line_page.dart';
-import 'scale_manager.dart';
+import 'scale_manager_page.dart';
 import 'take_in_page.dart';
 import 'take_out_page.dart';
 import 'weighing.dart';
 import 'weight_mode_page.dart';
 
 class IndustryHomePage extends StatefulWidget {
-  const IndustryHomePage({Key? key}) : super(key: key);
+  const IndustryHomePage({super.key});
 
   @override
   State<IndustryHomePage> createState() => IndustryHomePageState();
 }
 
-class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
-  List<String> items = [];
-  TextEditingController weightController = TextEditingController();
-  TextEditingController repsController = TextEditingController();
-  // TextEditingController _scaleNameCtl = TextEditingController();
+class IndustryHomePageState extends State<IndustryHomePage>
+    with TrayListener, WindowListener {
+  final ScrollController _scrollController1 = ScrollController();
+  final ScrollController _scrollController2 = ScrollController();
 
   late ScrollController _pageScrollerController;
   dynamic _eventbus1;
@@ -63,6 +62,9 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
   bool isCardHovered = false;
   bool isCardClicked = false;
   bool editScaleNameFlag = false;
+  bool showHint1 = true;
+  bool showHint2 = true;
+  bool isResize = false;
 
   Future<void> _handleSetIcon() async {
     String iconPath =
@@ -84,8 +86,36 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
   }
 
   @override
+  void onWindowResize() {
+    isResize = true;
+  }
+
+  @override
+  void onWindowMaximize() {
+    isResize = true;
+  }
+
+  @override
+  void onWindowUnmaximize() {
+    isResize = true;
+  }
+
+  @override
+  void onWindowMinimize() {
+    isResize = true;
+  }
+
+  @override
+  void onWindowClose() {
+    // 关闭工厂模式（所有秤都关闭吗？）
+  }
+
+  @override
   void initState() {
     trayManager.addListener(this);
+    windowManager.addListener(this);
+    _scrollController2.addListener(_checkScrollPosition2);
+    _scrollController1.addListener(_checkScrollPosition1);
     _init();
     _handleSetIcon();
     super.initState();
@@ -102,17 +132,17 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
       now = DateTime.now();
     });
 
-    _eventbus3 = eventBus.on<EventRespCheckSerialPort>().listen((event) {
+    _eventbus3 = eventBus.on<EventRespCheckNetScale>().listen((event) {
       if (mounted) {
         if (myScreenMgr.isMainScreen) {
-          setState(() {
-            myFactoryInfoFromScale = event.obj;
-            if (myFactoryInfoFromScale.modelName != '') {
-              myScreenMgr.serialPortST = true;
-            } else {
-              myScreenMgr.serialPortST = false;
-            }
-          });
+          // setState(() {
+          //   myFactoryInfoFromScale = event.obj;
+          //   if (myFactoryInfoFromScale.modelName != '') {
+          //     myComScaleInfo.isOnline = true;
+          //   } else {
+          //     myComScaleInfo.isOnline = false;
+          //   }
+          // });
         }
       }
     });
@@ -146,7 +176,7 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
 
     _eventbus6 = eventBus.on<EventCloseScalePassthResp>().listen((event) {
       if (mounted) {
-        PublicFunctions.stopWeight(defaultScaleId);
+        PublicFunctions.stopWeight(myDefScaleInfo.defScaleId!);
       }
     });
   }
@@ -160,7 +190,11 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
     _eventbus5.cancel();
     _eventbus6.cancel();
     _pageScrollerController.dispose();
+    _scrollController1.dispose();
+    _scrollController2.dispose();
     cntScaleTimerMgr.stopCntScaleTimer();
+    trayManager.removeListener(this);
+    windowManager.removeListener(this);
     super.dispose();
   }
 
@@ -168,6 +202,9 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
   Widget build(BuildContext context) {
     // final _width = MediaQuery.of(context).size.width;
     // final _height = MediaQuery.of(context).size.height;
+    if (isResize) {
+      _checkInitialVisibility();
+    }
     return Scaffold(
       appBar: PreferredSize(
           preferredSize: const Size.fromHeight(50),
@@ -253,7 +290,7 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                           // const SizedBox(
                           //   width: 20,
                           // ),
-                          // (myScreenMgr.serialPortST)
+                          // (myComScaleInfo.isOnline)
                           //     ? CustomCircleIcon(
                           //         outerColor:
                           //             Theme.of(context).colorScheme.primary,
@@ -284,7 +321,7 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
               //     Container(decoration: BoxDecoration(gradient: boxGradient())),
               )),
       body: Container(
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceBright,
         padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 30.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -340,15 +377,14 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
 
   Widget firstCard() {
     return Expanded(
-      flex: 4,
-      child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15), // 根据实际需要设置圆角半径
-            color: Theme.of(context).colorScheme.primaryContainer,
-          ),
-          margin: const EdgeInsets.only(right: 20), // 根据实际需要设置容器间距
-          child: Column(
-            children: [
+        flex: 4,
+        child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15), // 根据实际需要设置圆角半径
+              color: Theme.of(context).colorScheme.primaryContainer,
+            ),
+            margin: const EdgeInsets.only(right: 20), // 根据实际需要设置容器间距
+            child: Column(children: [
               Container(
                 padding: const EdgeInsets.symmetric(
                     vertical: 10.0, horizontal: 20.0),
@@ -356,212 +392,241 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                     localizedStrings.device_configuration_title, Icons.link),
               ),
               Expanded(
-                child: ListView(children: [
-                  // (myFactoryInfoFromScale.modelName != null)
-                  //     ? SizedBox(
-                  //         height: 80,
-                  //         child: Column(
-                  //           children: [
-                  //             Row(
-                  //               mainAxisAlignment: MainAxisAlignment.start,
-                  //               children: [
-                  //                 const SizedBox(
-                  //                   width: 30,
-                  //                 ),
-                  //                 Flexible(
-                  //                   child: Text(
-                  //                     localizedStrings.scale_model,
-                  //                     maxLines: 1,
-                  //                     overflow: TextOverflow.ellipsis,
-                  //                   ),
-                  //                 ),
-                  //               ],
-                  //             ),
-                  //             Row(
-                  //                 mainAxisAlignment: MainAxisAlignment.start,
-                  //                 children: [
-                  //                   const SizedBox(
-                  //                     width: 30,
-                  //                   ),
-                  //                   Flexible(
-                  //                     child: Text(
-                  //                       myFactoryInfoFromScale.modelName!,
-                  //                       maxLines: 1,
-                  //                       textAlign: TextAlign.start,
-                  //                       style: const TextStyle(
-                  //                           fontWeight: FontWeight.bold),
-                  //                       overflow: TextOverflow.ellipsis,
-                  //                     ),
-                  //                   ),
-                  //                 ]),
-                  //             Row(
-                  //               mainAxisAlignment: MainAxisAlignment.start,
-                  //               children: [
-                  //                 const SizedBox(
-                  //                   width: 30,
-                  //                 ),
-                  //                 Flexible(
-                  //                   child: Text(
-                  //                     localizedStrings.scale_sn,
-                  //                     maxLines: 1,
-                  //                     overflow: TextOverflow.ellipsis,
-                  //                   ),
-                  //                 ),
-                  //               ],
-                  //             ),
-                  //             Row(
-                  //                 mainAxisAlignment: MainAxisAlignment.start,
-                  //                 children: [
-                  //                   const SizedBox(
-                  //                     width: 30,
-                  //                   ),
-                  //                   Flexible(
-                  //                     child: Text(
-                  //                       myFactoryInfoFromScale.scaleSn!,
-                  //                       maxLines: 1,
-                  //                       textAlign: TextAlign.start,
-                  //                       style: const TextStyle(
-                  //                           fontWeight: FontWeight.bold),
-                  //                       overflow: TextOverflow.ellipsis,
-                  //                     ),
-                  //                   ),
-                  //                 ]),
-                  //           ],
-                  //         ),
-                  //       )
-                  //     : const SizedBox(),
-                  MouseRegion(
-                    cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                    child: GestureDetector(
-                      onTap: () {
-                        stopCheckSerialPort();
-                        setState(() {
-                          PublicFunctions.getProductList();
-                          PublicFunctions.getPortList();
-                          showComPortDialog(context);
-                        });
-                      },
-                      child: customFunctionCard(
-                          context,
-                          localizedStrings.title_serial_port_connection,
-                          Icons.cable,
-                          true),
-                    ),
-                  ),
-                  MouseRegion(
-                    cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                    child: GestureDetector(
-                      onTap: () {
-                        stopCheckSerialPort();
-                        setState(() {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const ScaleManagerPage()),
-                          ).then((value) => _updateStatus());
-                        });
-                      },
-                      child: customFunctionCard(
-                          context,
-                          localizedStrings.m_scale_title,
-                          Icons.schema_outlined,
-                          true),
-                    ),
-                  ),
-                  MouseRegion(
-                    cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                    child: GestureDetector(
-                      onTap: () {
-                        if (myFactoryInfoFromScale.modelName == null ||
-                            (!myFactoryInfoFromScale.modelName!
-                                .contains('2200'))) {
-                          setState(() {
+                  child: Stack(
+                children: [
+                  SingleChildScrollView(
+                    controller: _scrollController1,
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10.0, horizontal: 20.0),
+                    child: Column(children: [
+                      // (myFactoryInfoFromScale.modelName != null)
+                      //     ? SizedBox(
+                      //         height: 80,
+                      //         child: Column(
+                      //           children: [
+                      //             Row(
+                      //               mainAxisAlignment: MainAxisAlignment.start,
+                      //               children: [
+                      //                 const SizedBox(
+                      //                   width: 30,
+                      //                 ),
+                      //                 Flexible(
+                      //                   child: Text(
+                      //                     localizedStrings.scale_model,
+                      //                     maxLines: 1,
+                      //                     overflow: TextOverflow.ellipsis,
+                      //                   ),
+                      //                 ),
+                      //               ],
+                      //             ),
+                      //             Row(
+                      //                 mainAxisAlignment: MainAxisAlignment.start,
+                      //                 children: [
+                      //                   const SizedBox(
+                      //                     width: 30,
+                      //                   ),
+                      //                   Flexible(
+                      //                     child: Text(
+                      //                       myFactoryInfoFromScale.modelName!,
+                      //                       maxLines: 1,
+                      //                       textAlign: TextAlign.start,
+                      //                       style: const TextStyle(
+                      //                           fontWeight: FontWeight.bold),
+                      //                       overflow: TextOverflow.ellipsis,
+                      //                     ),
+                      //                   ),
+                      //                 ]),
+                      //             Row(
+                      //               mainAxisAlignment: MainAxisAlignment.start,
+                      //               children: [
+                      //                 const SizedBox(
+                      //                   width: 30,
+                      //                 ),
+                      //                 Flexible(
+                      //                   child: Text(
+                      //                     localizedStrings.scale_sn,
+                      //                     maxLines: 1,
+                      //                     overflow: TextOverflow.ellipsis,
+                      //                   ),
+                      //                 ),
+                      //               ],
+                      //             ),
+                      //             Row(
+                      //                 mainAxisAlignment: MainAxisAlignment.start,
+                      //                 children: [
+                      //                   const SizedBox(
+                      //                     width: 30,
+                      //                   ),
+                      //                   Flexible(
+                      //                     child: Text(
+                      //                       myFactoryInfoFromScale.scaleSn!,
+                      //                       maxLines: 1,
+                      //                       textAlign: TextAlign.start,
+                      //                       style: const TextStyle(
+                      //                           fontWeight: FontWeight.bold),
+                      //                       overflow: TextOverflow.ellipsis,
+                      //                     ),
+                      //                   ),
+                      //                 ]),
+                      //           ],
+                      //         ),
+                      //       )
+                      //     : const SizedBox(),
+                      MouseRegion(
+                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                        child: GestureDetector(
+                          onTap: () {
                             stopCheckSerialPort();
-                            Navigator.push(
+                            setState(() {
+                              PublicFunctions.getProductList();
+                              PublicFunctions.getPortList();
+                              showComPortDialog(context);
+                            });
+                          },
+                          child: customFunctionCard(
                               context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const ProductDownloadPage()),
-                            ).then((value) => _updateStatus());
-                          });
-                        }
-                      },
-                      child: customFunctionCard(
-                          context,
-                          localizedStrings.plu_download_title,
-                          Icons.shopping_bag,
-                          myFactoryInfoFromScale.modelName == null
-                              ? true
-                              : !myFactoryInfoFromScale.modelName!
-                                  .contains('2200')),
-                    ),
+                              localizedStrings.title_serial_port_connection,
+                              Icons.cable,
+                              true),
+                        ),
+                      ),
+                      MouseRegion(
+                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                        child: GestureDetector(
+                          onTap: () {
+                            stopCheckSerialPort();
+                            setState(() {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ScaleManagerPage()),
+                              ).then((value) => _updateStatus());
+                            });
+                          },
+                          child: customFunctionCard(
+                              context,
+                              localizedStrings.m_scale_title,
+                              Icons.schema_outlined,
+                              true),
+                        ),
+                      ),
+                      MouseRegion(
+                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                        child: GestureDetector(
+                          onTap: () {
+                            if (myFactoryInfoFromScale.modelName == null ||
+                                (!myFactoryInfoFromScale.modelName!
+                                    .contains('2200'))) {
+                              setState(() {
+                                stopCheckSerialPort();
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const ProductDownloadPage()),
+                                ).then((value) => _updateStatus());
+                              });
+                            }
+                          },
+                          child: customFunctionCard(
+                              context,
+                              localizedStrings.plu_download_title,
+                              Icons.shopping_bag,
+                              myFactoryInfoFromScale.modelName == null
+                                  ? true
+                                  : !myFactoryInfoFromScale.modelName!
+                                      .contains('2200')),
+                        ),
+                      ),
+                      MouseRegion(
+                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              stopCheckSerialPort();
+                              showUpdateFirmWareDialog(context);
+                            });
+                          },
+                          child: customFunctionCard(
+                              context,
+                              localizedStrings.firmware_update,
+                              Icons.update,
+                              true),
+                        ),
+                      ),
+                      MouseRegion(
+                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              stopCheckSerialPort();
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const FirmwareDownPage()),
+                              ).then((value) => _updateStatus());
+                            });
+                          },
+                          child: customFunctionCard(
+                              context,
+                              localizedStrings.firm_down_online,
+                              Icons.cloud_upload_outlined,
+                              true),
+                        ),
+                      ),
+                      MouseRegion(
+                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              showBuildInfo();
+                            });
+                          },
+                          child: customFunctionCard(
+                              context,
+                              localizedStrings.get_build_info,
+                              Icons.privacy_tip,
+                              true),
+                        ),
+                      ),
+                    ]),
                   ),
-                  MouseRegion(
-                    cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          stopCheckSerialPort();
-                          showUpdateFirmWareDialog(context);
-                        });
-                      },
-                      child: customFunctionCard(context,
-                          localizedStrings.firmware_update, Icons.update, true),
+                  if (showHint1)
+                    Positioned(
+                      bottom: 30,
+                      left: 0,
+                      right: 0,
+                      child: Center(
+                          child: IconButton(
+                        iconSize: 40,
+                        color: Theme.of(context).colorScheme.primary,
+                        icon: const Icon(Icons.expand_circle_down),
+                        onPressed: () {
+                          _scrollController1.animateTo(
+                            _scrollController1.position.maxScrollExtent,
+                            duration: const Duration(milliseconds: 100),
+                            curve: Curves.easeInOut,
+                          );
+                        },
+                      )),
                     ),
-                  ),
-                  MouseRegion(
-                    cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          stopCheckSerialPort();
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const FirmwareDownPage()),
-                          ).then((value) => _updateStatus());
-                        });
-                      },
-                      child: customFunctionCard(
-                          context,
-                          localizedStrings.firm_down_online,
-                          Icons.cloud_upload_outlined,
-                          true),
-                    ),
-                  ),
-                  MouseRegion(
-                    cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          showBuildInfo();
-                        });
-                      },
-                      child: customFunctionCard(
-                          context,
-                          localizedStrings.get_build_info,
-                          Icons.privacy_tip,
-                          true),
-                    ),
-                  ),
-                ]),
-              ),
-            ],
-          )),
-    );
+                ],
+              )),
+            ])));
   }
 
   Widget secondCard() {
     return Expanded(
-      flex: 8,
-      child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15), // 根据实际需要设置圆角半径
-            color: Theme.of(context).colorScheme.primaryContainer,
-          ),
-          margin: const EdgeInsets.only(right: 20), // 根据实际需要设置容器间距
-          child: Column(
-            children: [
+        flex: 8,
+        child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15), // 根据实际需要设置圆角半径
+              color: Theme.of(context).colorScheme.primaryContainer,
+            ),
+            margin: const EdgeInsets.only(right: 20), // 根据实际需要设置容器间距
+            child: Column(children: [
               Container(
                 padding: const EdgeInsets.symmetric(
                     vertical: 10.0, horizontal: 20.0),
@@ -570,10 +635,13 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                     Icons.settings),
               ),
               Expanded(
-                child: ListView(
+                  child: Stack(
+                children: [
+                  SingleChildScrollView(
+                    controller: _scrollController2,
                     padding: const EdgeInsets.symmetric(
                         vertical: 10.0, horizontal: 20.0),
-                    children: [
+                    child: Column(children: [
                       MouseRegion(
                         cursor: SystemMouseCursors.click, // 设置光标为手的形状
                         child: GestureDetector(
@@ -764,10 +832,101 @@ class IndustryHomePageState extends State<IndustryHomePage> with TrayListener {
                                     : myTaouLicInfo.liceseDate),
                           )),
                     ]),
-              ),
-            ],
-          )),
-    );
+                  ),
+                  if (showHint2)
+                    Positioned(
+                      bottom: 30,
+                      left: 0,
+                      right: 0,
+                      child: Center(
+                          child: IconButton(
+                        iconSize: 40,
+                        color: Theme.of(context).colorScheme.primary,
+                        icon: const Icon(Icons.expand_circle_down),
+                        onPressed: () {
+                          _scrollController2.animateTo(
+                            _scrollController2.position.maxScrollExtent,
+                            duration: const Duration(milliseconds: 100),
+                            curve: Curves.easeInOut,
+                          );
+                        },
+                      )),
+                    ),
+                ],
+              )),
+            ])));
+  }
+
+  //窗口发生变化时判断一下是否要显示浮动图标
+  void _checkInitialVisibility() {
+    isResize = false;
+    setState(() {
+      setState(() {
+        showHint1 = false;
+        showHint2 = false;
+      });
+    });
+    final viewportDimension = MediaQuery.of(context).size.height;
+
+    if (viewportDimension > 900) {
+      setState(() {
+        showHint1 = false;
+        showHint2 = false;
+      });
+    } else {
+      _scrollController2.animateTo(
+        _scrollController2.position.minScrollExtent,
+        duration: const Duration(milliseconds: 100),
+        curve: Curves.easeInOut,
+      );
+      _scrollController1.animateTo(
+        _scrollController2.position.minScrollExtent,
+        duration: const Duration(milliseconds: 100),
+        curve: Curves.easeInOut,
+      );
+
+      setState(() {
+        showHint1 = true;
+        showHint2 = true;
+      });
+    }
+
+    if (viewportDimension > 700) {
+      setState(() {
+        showHint1 = false;
+      });
+    }
+  }
+
+  void _checkScrollPosition1() {
+    final maxScroll = _scrollController1.position.maxScrollExtent;
+    final currentScroll = _scrollController1.position.pixels;
+//露出最后半个功能的时候，就不显示了
+
+    if (currentScroll >= maxScroll - 30 && showHint1) {
+      setState(() {
+        showHint1 = false;
+      });
+    } else if (currentScroll < maxScroll && !showHint1) {
+      setState(() {
+        showHint1 = true;
+      });
+    }
+  }
+
+  void _checkScrollPosition2() {
+    final maxScroll = _scrollController2.position.maxScrollExtent;
+    final currentScroll = _scrollController2.position.pixels;
+//露出最后半个功能的时候，就不显示了
+    if (currentScroll >= maxScroll - 50 && showHint2) {
+      setState(() {
+        showHint2 = false;
+      });
+    } else if (currentScroll < maxScroll && !showHint2) {
+      setState(() {
+        showHint2 = true;
+      });
+    }
   }
 
   void showSelFourScaleDialog() {

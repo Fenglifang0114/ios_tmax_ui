@@ -107,6 +107,11 @@ class EventRespDetailInfo {
   EventRespDetailInfo(this.obj);
 }
 
+class EventRespWifiPwdInfo {
+  dynamic obj;
+  EventRespWifiPwdInfo(this.obj);
+}
+
 class EventRecData {
   dynamic obj;
   EventRecData(this.obj);
@@ -327,9 +332,14 @@ class EventRespUpdateFirmware {
   EventRespUpdateFirmware(this.obj);
 }
 
-class EventRespCheckSerialPort {
+class EventRespCheckNetScale {
   dynamic obj;
-  EventRespCheckSerialPort(this.obj);
+  EventRespCheckNetScale(this.obj);
+}
+
+class EventRespCheckComPort {
+  dynamic obj;
+  EventRespCheckComPort(this.obj);
 }
 
 class EventRespUpdateFirmwareProcess {

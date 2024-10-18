@@ -3,6 +3,7 @@ import 'package:t_max/functions/methods.dart';
 import '../data/downloadresponse.dart';
 import '../data/language.dart';
 import '../data/manager_scale_channel.dart';
+import '../data/screen_mgr.dart';
 import '../eventbus/eventbus.dart';
 import '../widget/custom_button.dart';
 
@@ -10,10 +11,10 @@ class GetBuildInfoPage extends StatefulWidget {
   const GetBuildInfoPage({super.key});
 
   @override
-  _GetBuildInfoPageState createState() => _GetBuildInfoPageState();
+  GetBuildInfoPageState createState() => GetBuildInfoPageState();
 }
 
-class _GetBuildInfoPageState extends State<GetBuildInfoPage> {
+class GetBuildInfoPageState extends State<GetBuildInfoPage> {
   dynamic eventbus1;
   TextEditingController buildInfoController = TextEditingController();
 
@@ -21,7 +22,7 @@ class _GetBuildInfoPageState extends State<GetBuildInfoPage> {
   void initState() {
     buildInfoController.text = '';
     super.initState();
-    PublicFunctions.getBuildInfo(defaultScaleId);
+    PublicFunctions.getBuildInfo(myDefScaleInfo.defScaleId!);
     eventbus1 = eventBus.on<EventGetBuildInfo>().listen((event) {
       if (mounted) {
         setState(() {
@@ -89,6 +90,7 @@ class _GetBuildInfoPageState extends State<GetBuildInfoPage> {
               icon: Icons.exit_to_app,
               text: localizedStrings.button_exit,
               onPressed: () {
+                myScreenMgr.isMainScreen = true;
                 Navigator.of(context).pop();
               },
             ),

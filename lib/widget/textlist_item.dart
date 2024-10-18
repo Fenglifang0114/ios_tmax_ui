@@ -11,7 +11,7 @@ import 'rectangle_painter.dart';
 class TextItem extends StatefulWidget {
   // ignore: prefer_const_constructors_in_immutables
   TextItem({
-    Key? key,
+    super.key,
     required this.index,
     required this.type,
     required this.xPos,
@@ -41,7 +41,7 @@ class TextItem extends StatefulWidget {
     required this.qrcodeType,
     required this.fontBold,
     required this.fontReverse,
-  }) : super(key: key);
+  });
   late int index;
   late String type;
   late int xPos;
