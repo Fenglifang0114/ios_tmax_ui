@@ -1,42 +1,34 @@
 import 'package:flutter/material.dart';
 
-confirmDialog(BuildContext context, String message) {
-  return showDialog(
-    barrierDismissible: false, //设置为false，点击空白处弹窗不关闭
+import '../data/language.dart';
+import '../widget/custom_button.dart';
+
+void showConfirmationDialog(BuildContext context, String message) {
+  showDialog(
+    barrierDismissible: false,
     context: context,
     builder: (context) {
       return AlertDialog(
-        content: Row(
-          children: [
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
-                fontSize: 14,
-              ),
-            ),
-          ],
+        title: Text(
+          localizedStrings.confirm_title,
+          style: TextStyle(color: Theme.of(context).colorScheme.primary),
         ),
+        content: Text(message),
         actions: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              OutlinedButton(
-                child: const Text("Cancel"),
+              CustomOutlinedButton(
+                btnWidth: 120,
+                btnHeight: 40,
+                icon: Icons.check_circle,
+                text: localizedStrings.button_ok,
                 onPressed: () {
-                  Navigator.of(context).pop(); // 退出当前页面
-                },
-              ),
-              const SizedBox(width: 20),
-              OutlinedButton(
-                child: const Text("Confirm"),
-                onPressed: () async {
                   Navigator.of(context).pop();
                 },
               ),
             ],
-          ),
+          )
         ],
       );
     },

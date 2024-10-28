@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
@@ -20,14 +19,14 @@ import '../data/manager_scale_channel.dart';
 import '../data/downloadresponse.dart';
 import '../data/language.dart';
 import '../data/record_data.dart';
-import '../data/scale_info_from_scale.dart';
-import '../data/scalecmd_data.dart';
 import '../data/scalelist_data.dart';
-
 import '../data/timer_manager.dart';
 import '../data/weight_report_data.dart';
+import '../data/weight_rpt.dart';
+import '../data/wgt_rpt_data_source.dart';
 import '../dialog/addproduct_dialog.dart';
 import '../dialog/adduser_dialog.dart';
+import '../dialog/conform_dialog.dart';
 import '../dialog/high_low_setting.dart';
 import '../dialog/setting_dialog.dart';
 import 'package:path/path.dart';
@@ -56,7 +55,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
   List<WeightReportData> myWeightReportData = [];
 
   late ScrollController _reportScrollerController;
-  final TextEditingController _errorText = TextEditingController();
+  String errorText = "";
   late WeightReportDataSource _weightReportDataSource;
   final DataGridController _dataGridController = DataGridController();
 
@@ -67,7 +66,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
   late int weightMode; //0,手动保存，1，连续保存，2，稳定保存
   late int dateformat;
 
-  late Timer _saveTimer;
+  Timer? _saveTimer;
 
   String productNameValue = "";
   String userNameValue = "";
@@ -99,6 +98,9 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
   dynamic eventBus13;
   dynamic eventBus14;
 
+  Timer? startTimer;
+  Timer? innerTimer;
+
   void updateTableData(List<WeightReportData> newReportData) {
     _weightReportDataSource.updateData(newReportData);
   }
@@ -114,7 +116,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
         _isTiming = true;
         _performSaveTimer();
       } else if (!isStable && _isTiming) {
-        _saveTimer.cancel();
+        _saveTimer?.cancel();
         _isTiming = false;
       }
     }
@@ -157,11 +159,12 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
   @override
   void initState() {
     super.initState();
+    cntScaleTimerMgr.stopCntScaleTimer();
     _reportScrollerController = ScrollController();
     lastWeight = "*";
     dateformat = 1;
     zeroRange = 0;
-    _errorText.text = '';
+
     if (myModeSettingCheck.recMode == "manual") {
       weightMode = 1;
       _isSaveButtonDisabled = false;
@@ -181,10 +184,9 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     PublicFunctions.getProductList();
     PublicFunctions.getRecords(myDefScaleInfo.defScaleId!, weighingCheckMode);
 
-    if (!isStart) {
-      cntScaleTimerMgr.stopCntScaleTimer();
-      cntScaleTimerMgr.startCntScaleTimer(5);
-    }
+    PublicFunctions.getWeight(myDefScaleInfo.defScaleId!);
+
+    onStartTimer();
     eventBus1 = eventBus.on<EventDeviceName>().listen((event) {
       if (mounted) {
         setState(() {
@@ -418,8 +420,6 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
         } else {
           setState(() {
             isStart = false;
-            cntScaleTimerMgr.stopCntScaleTimer();
-            cntScaleTimerMgr.startCntScaleTimer(5);
           });
         }
       }
@@ -453,32 +453,13 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
   }
 
   void _addDBdataToReport() {
-    List<WeightRecords>? dbRecs = myGetScaleRecords.weightRecords;
-    for (var i = 0; i < dbRecs!.length; i++) {
-      myWeightReportData.add(WeightReportData(
-        (dbRecs[i].recId).toString(),
-        convertDateTime(dbRecs[i].createdAt!, myModeSettingCheck.dateSeparator),
-        (dbRecs[i].weight == null) ? '' : dbRecs[i].weight!,
-        (dbRecs[i].weightUnit == null) ? '' : dbRecs[i].weightUnit!, //重量单位
-        (myProductRecInfo.id == null) ? "" : myProductRecInfo.id.toString(),
-        (dbRecs[i].product == null) ? '' : dbRecs[i].product!,
-        (dbRecs[i].pluRemarks == null) ? '' : dbRecs[i].pluRemarks!,
-        (dbRecs[i].pretare == null) ? '' : dbRecs[i].pretare!,
-        (dbRecs[i].userName == null) ? '' : dbRecs[i].userName!,
-        (dbRecs[i].userNo == null) ? '' : dbRecs[i].userNo!,
-        (dbRecs[i].userRemarks == null)
-            ? ''
-            : dbRecs[i].userRemarks!, //userremarks
-        (dbRecs[i].scaleModel == null) ? '' : dbRecs[i].scaleModel!,
-      ));
-    }
+    addDBdataToReport(myWeightReportData, myModeSettingCheck, dateformat);
     setState(() {
       _weightReportDataSource = WeightReportDataSource(_weightReportDatas);
       Future.delayed(const Duration(milliseconds: 100), () {
         _dataGridController
             .scrollToRow(_weightReportDataSource.rows.length - 0);
       });
-      // _dataGridController.scrollToRow(_weightReportDataSource.rows.length - 1);
     });
   }
 
@@ -500,8 +481,22 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     eventBus13.cancel();
     eventBus14.cancel();
     cntScaleTimerMgr.stopPortOffTimer();
+    _saveTimer?.cancel();
 
     super.dispose();
+  }
+
+  void onStartTimer() {
+    startTimer = Timer.periodic(Duration(seconds: 3), (timer) {
+      isCnting = false;
+      innerTimer = Timer(Duration(seconds: 1), () {
+        if (!isCnting && mounted && isStart) {
+          setState(() {
+            isStart = false;
+          });
+        }
+      });
+    });
   }
 
   @override
@@ -548,7 +543,6 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               buildTextAndImage(
-                                  50,
                                   localizedStrings.stable,
                                   (myReqWeightCountine.msgBody == null)
                                       ? ("assets/images/gray.png")
@@ -559,7 +553,6 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                                           : ("assets/images/gray.png"),
                                   constraints),
                               buildTextAndImage(
-                                  50,
                                   localizedStrings.net,
                                   (myReqWeightCountine.msgBody == null)
                                       ? ("assets/images/gray.png")
@@ -569,7 +562,6 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                                           : ("assets/images/gray.png"),
                                   constraints),
                               buildTextAndImage(
-                                  50,
                                   localizedStrings.zero,
                                   (myReqWeightCountine.msgBody == null)
                                       ? ("assets/images/gray.png")
@@ -583,7 +575,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                     ),
 
                     Expanded(
-                        flex: 5,
+                        flex: 6,
                         child: LayoutBuilder(builder:
                             (BuildContext context, BoxConstraints constraints) {
                           return Row(
@@ -591,40 +583,18 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                             children: [
                               buildTextWithWeight(
                                   Theme.of(context).colorScheme,
-                                  280,
-                                  70,
-                                  (myReqWeightCountine.msgBody == null)
-                                      ? ("-----")
+                                  (myReqWeightCountine.msgBody == null ||
+                                          !isStart)
+                                      ? ("--------")
                                       : myReqWeightCountine.msgBody!.weightVal,
-                                  55,
                                   constraints,
                                   Theme.of(context).colorScheme.primary),
                               buildTextWithUnit(
                                 Theme.of(context).colorScheme,
-                                100,
-                                70,
-                                (myReqWeightCountine.msgBody == null)
-                                    ? ("kg")
+                                (myReqWeightCountine.msgBody == null ||
+                                        !isStart)
+                                    ? ("---")
                                     : myReqWeightCountine.msgBody!.weightUnit,
-                                30,
-                                constraints,
-                              )
-                            ],
-                          );
-                        })),
-                    Expanded(
-                        flex: 2,
-                        child: LayoutBuilder(builder:
-                            (BuildContext context, BoxConstraints constraints) {
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              buildStartIcon(Theme.of(context).colorScheme, 50,
-                                  30, constraints),
-                              buildStopIcon(
-                                Theme.of(context).colorScheme,
-                                50,
-                                30,
                                 constraints,
                               )
                             ],
@@ -642,28 +612,24 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     _buildFlexibleButtonAndText(
-                        width: 80,
                         buttonText: localizedStrings.button_tare,
                         onPressed: PublicFunctions.performTare,
                         constraints: constraints,
-                        isTrue: true,
+                        isTrue: isStart,
                         icon: Icons.title),
                     _buildFlexibleButtonAndText(
-                        width: 80,
                         buttonText: localizedStrings.button_zero,
                         onPressed: PublicFunctions.performZero,
                         constraints: constraints,
-                        isTrue: true,
+                        isTrue: isStart,
                         icon: Icons.exposure_zero),
                     _buildFlexibleButtonAndText(
-                        width: 80,
                         buttonText: localizedStrings.button_save,
                         onPressed: _changeSaveButton,
                         constraints: constraints,
                         isTrue: !_isSaveButtonDisabled && isStart,
                         icon: Icons.save_outlined),
                     _buildFlexibleButtonAndText(
-                        width: 80,
                         buttonText: 'Edit',
                         onPressed: () {
                           highLowSettingDialog(context);
@@ -672,7 +638,6 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                         isTrue: true,
                         icon: Icons.mode_edit),
                     _buildFlexibleButtonAndText(
-                        width: 80,
                         buttonText: localizedStrings.button_setting,
                         onPressed: () {
                           mySettingParam = myModeSettingCheck;
@@ -951,88 +916,14 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     );
   }
 
-  void performStart() {
-    setState(() {
-      if (!isStart) {
-        isStart = true;
-        PublicFunctions.getWeight(myDefScaleInfo.defScaleId!);
-      }
-      cntScaleTimerMgr.stopPortOffTimer();
-      cntScaleTimerMgr.startPortOffTimer(2, () {
-        if (!isCnting) {
-          setState(() {
-            myComScaleInfo.isOnline = false;
-          });
-        }
-        isCnting = false;
-      });
-      cntScaleTimerMgr.stopCntScaleTimer();
-    });
-  }
+  Widget buildTextWithWeight(ColorScheme colorScheme, String text,
+      BoxConstraints constraints, Color? color) {
+    double width = constraints.maxWidth / 10 * 7;
+    double height = constraints.maxHeight / 1.1;
+    double fontSize = width / 10 / 0.6;
 
-  void performStop() {
-    if (isStart) {
-      setState(() {
-        isStart = false;
-        PublicFunctions.stopWeight((myDefScaleInfo.defScaleId!));
-      });
-      cntScaleTimerMgr.stopCntScaleTimer();
-      cntScaleTimerMgr.startCntScaleTimer(5);
-      cntScaleTimerMgr.stopPortOffTimer();
-    }
-  }
-
-  Widget buildStartIcon(ColorScheme colorScheme, double width, double? iconSize,
-      BoxConstraints constraints) {
-    width = width * constraints.maxWidth / 100;
-    iconSize = iconSize! * constraints.maxHeight / 100;
-
-    return SizedBox(
-      width: width,
-      child: IconButton(
-        //开始按钮
-        icon: const Icon(Icons.play_arrow),
-        iconSize: iconSize,
-        color: (isStart) ? (colorScheme.secondaryFixed) : (colorScheme.primary),
-        onPressed: () {
-          performStart();
-        },
-      ),
-    );
-  }
-
-  Widget buildStopIcon(ColorScheme colorScheme, double width, double? iconSize,
-      BoxConstraints constraints) {
-    width = width * constraints.maxWidth / 100;
-    iconSize = iconSize! * constraints.maxHeight / 100;
-
-    return SizedBox(
-      width: width,
-      child: IconButton(
-        onPressed: () {
-          performStop();
-        },
-        icon: const Icon(Icons.pause),
-        iconSize: iconSize,
-        color: (!isStart) ? (colorScheme.secondaryFixed) : colorScheme.primary,
-      ),
-    );
-  }
-
-  Widget buildTextWithWeight(
-      ColorScheme colorScheme,
-      double width,
-      double height,
-      String text,
-      double? fontSize,
-      BoxConstraints constraints,
-      Color? color) {
-    width = width * constraints.maxWidth / 400;
-    height = height * constraints.maxHeight / 80;
-    fontSize = fontSize! * constraints.maxHeight / 120;
-    fontSize = constraints.maxHeight / 1.6;
-    if (fontSize > constraints.maxWidth / 6) {
-      fontSize = constraints.maxWidth / 6;
+    if (fontSize > 109) {
+      fontSize = 109;
     }
     return Container(
       width: width,
@@ -1054,13 +945,14 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     );
   }
 
-  Widget buildTextWithUnit(ColorScheme colorScheme, double width, double height,
-      String text, double? fontSize, BoxConstraints constraints) {
-    width = width * constraints.maxWidth / 400;
-    height = height * constraints.maxHeight / 80;
-    fontSize = constraints.maxHeight / 3;
-    if (fontSize > constraints.maxWidth / 11) {
-      fontSize = constraints.maxWidth / 11;
+  Widget buildTextWithUnit(
+      ColorScheme colorScheme, String text, BoxConstraints constraints) {
+    double width = constraints.maxWidth / 10 * 2;
+    double height = constraints.maxHeight / 1.1;
+    double fontSize = width / 5 / 0.6;
+
+    if (fontSize > 109) {
+      fontSize = 109;
     }
 
     return Container(
@@ -1084,10 +976,13 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
   }
 
   Widget buildTextAndImage(
-      double width, String text, String imageName, BoxConstraints constraints) {
+      String text, String imageName, BoxConstraints constraints) {
     var imageSize = constraints.maxHeight / 5;
-    width = 25 * constraints.maxHeight / 30;
+    double width = constraints.maxWidth / 1.5;
     var fontSize = 16 * constraints.maxHeight / 150;
+    if (imageSize > 60) {
+      imageSize = 60;
+    }
     return Row(
       children: [
         SizedBox(
@@ -1111,18 +1006,27 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
   }
 
   Widget _buildFlexibleButtonAndText({
-    required double width,
     required String buttonText,
     required VoidCallback onPressed,
     required BoxConstraints constraints,
     required bool isTrue,
     required IconData icon,
   }) {
-    double buttonWidth = width * (constraints.maxWidth / 600); // 自适应按钮宽度
-    double fontSize = 14 * (constraints.maxWidth / 600); // 自适应字体大小
+    double buttonWidth = (constraints.maxWidth / 8); // 自适应按钮宽度
+    double buttonH = (constraints.maxHeight / 2); // 自适应按钮宽度
+    double fontSize = (buttonWidth / 10 / 0.6); // 自适应字体大小
+    if (fontSize > 34) {
+      fontSize = 34;
+    }
 
     return SizedBox(
       child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          elevation: 5, // 设置按钮的阴影
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
+          ),
+        ),
         onPressed: isTrue ? onPressed : null,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -1134,7 +1038,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
             const SizedBox(width: 4),
             SizedBox(
               width: buttonWidth,
-              height: buttonWidth / 3,
+              height: buttonH,
               child: Center(
                 child: Text(
                   buttonText,
@@ -1177,10 +1081,10 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                           SizedBox(
                             width: 200,
                             child: Text(
-                              _errorText.text, //报错信息
+                              errorText, //报错信息
                               maxLines: 1,
                               style: TextStyle(
-                                color: (_errorText.text).contains('succeed')
+                                color: (errorText).contains('succeed')
                                     ? Theme.of(context)
                                         .colorScheme
                                         .surfaceContainerHigh
@@ -1295,7 +1199,8 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                               Expanded(
                                 child: Text(
                                   textAlign: TextAlign.right,
-                                  (myReqWeightCountine.msgBody == null)
+                                  (myReqWeightCountine.msgBody == null ||
+                                          !isStart)
                                       ? ("-----")
                                       : myReqWeightCountine.msgBody!.weightVal,
                                   style: TextStyle(
@@ -1320,8 +1225,8 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                             Expanded(
                                 child: Text(
                               textAlign: TextAlign.center,
-                              (myReqWeightCountine.msgBody == null)
-                                  ? ("kg")
+                              (myReqWeightCountine.msgBody == null || !isStart)
+                                  ? ("--")
                                   : myReqWeightCountine.msgBody!.weightUnit,
                               style: TextStyle(
                                 color: Theme.of(context).colorScheme.onPrimary,
@@ -1333,38 +1238,6 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                           ],
                         ),
                         //设置控件内容的位置
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      SizedBox(
-                        width: 50,
-                        child: IconButton(
-                          //开始按钮
-                          icon: const Icon(Icons.play_arrow),
-                          iconSize: 30,
-                          color: (isStart)
-                              ? (Theme.of(context).colorScheme.secondaryFixed)
-                              : (Theme.of(context).colorScheme.primary),
-                          onPressed: () {
-                            performStart();
-                          },
-                        ),
-                      ),
-                      SizedBox(
-                        width: 50,
-                        child: IconButton(
-                          onPressed: () {
-                            performStop();
-                          },
-                          icon: const Icon(Icons.pause),
-                          iconSize: 30,
-                          color: (!isStart)
-                              ? (Theme.of(context).colorScheme.secondaryFixed)
-                              : (Theme.of(context).colorScheme.primary),
-                        ),
                       ),
                     ],
                   ),
@@ -1382,18 +1255,22 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                                 btnHeight: 40,
                                 icon: Icons.title,
                                 text: localizedStrings.button_tare,
-                                onPressed: () {
-                                  PublicFunctions.performTare();
-                                },
+                                onPressed: !isStart
+                                    ? null
+                                    : () {
+                                        PublicFunctions.performTare();
+                                      },
                               ),
                               CustomElevatedButton(
                                 btnWidth: constraints.maxWidth / 5,
                                 btnHeight: 40,
                                 icon: Icons.exposure_zero,
                                 text: localizedStrings.button_zero,
-                                onPressed: () {
-                                  PublicFunctions.performZero();
-                                },
+                                onPressed: !isStart
+                                    ? null
+                                    : () {
+                                        PublicFunctions.performZero();
+                                      },
                               ),
                               CustomElevatedButton(
                                 btnWidth: constraints.maxWidth / 5,
@@ -1449,6 +1326,10 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                                     ));
                                     if (outputFile != null) {
                                       _creatFile(outputFile);
+                                      if (mounted && context.mounted) {
+                                        showConfirmationDialog(
+                                            context, errorText);
+                                      }
                                     }
                                   }),
                             ],
@@ -1668,14 +1549,16 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
             ),
 
             Expanded(
-              child: SfDataGrid(
-                source: _weightReportDataSource,
-                columns: getColumns(),
-                columnWidthMode: ColumnWidthMode.fill,
-                frozenRowsCount: 0,
-                controller: _dataGridController,
-                allowSorting: true,
-              ),
+              child: Container(
+                  padding: EdgeInsets.all(10),
+                  child: SfDataGrid(
+                    source: _weightReportDataSource,
+                    columns: getColumns(),
+                    columnWidthMode: ColumnWidthMode.fill,
+                    frozenRowsCount: 0,
+                    controller: _dataGridController,
+                    allowSorting: true,
+                  )),
             )
           ],
         ));
@@ -1785,198 +1668,31 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     }
   }
 
-  String pad0(int num) {
-    if (num < 10) {
-      return '0${num.toString()}';
-    }
-    return num.toString();
-  }
-
-  String convertDateTime(String timestamp, String dateSeparator) {
-    // 1 yymmdd   2 ddmmyy 3 mmddyy
-    if (timestamp.length < 30) {
-      return '';
-    }
-
-    timestamp = removeFractionalSeconds(timestamp);
-    DateTime currTime = DateTime.parse(timestamp).toLocal();
-    String format = '';
-    if (dateformat == 1) {
-      format =
-          "${currTime.year}$dateSeparator${pad0(currTime.month)}$dateSeparator${pad0(currTime.day)} ${pad0(currTime.hour)}:${pad0(currTime.minute)}:${pad0(currTime.second)}";
-    } else if (dateformat == 2) {
-      format =
-          "${pad0(currTime.day)}$dateSeparator${pad0(currTime.month)}$dateSeparator${currTime.year} ${pad0(currTime.hour)}:${pad0(currTime.minute)}:${pad0(currTime.second)}";
-    } else if (dateformat == 3) {
-      format =
-          "${pad0(currTime.month)}$dateSeparator${pad0(currTime.day)}$dateSeparator${currTime.year} ${pad0(currTime.hour)}:${pad0(currTime.minute)}:${pad0(currTime.second)}";
-    }
-    return format;
-  }
-
-  String removeFractionalSeconds(String timestamp) {
-    int dotIndex = timestamp.indexOf('.');
-    int plusIndex = timestamp.indexOf('+');
-    String prefix = timestamp.substring(0, dotIndex);
-    String suffix = timestamp.substring(plusIndex);
-    String newTimestamp = prefix + suffix;
-    return newTimestamp;
-  }
-
-  String getDateTime(String dateSeparator) {
-    // 1 yymmdd   2 ddmmyy 3 mmddyy
-    var currTime = DateTime.now();
-    String format = '';
-    if (dateformat == 1) {
-      format =
-          "${currTime.year}$dateSeparator${pad0(currTime.month)}$dateSeparator${pad0(currTime.day)} ${pad0(currTime.hour)}:${pad0(currTime.minute)}:${pad0(currTime.second)}";
-    } else if (dateformat == 2) {
-      format =
-          "${pad0(currTime.day)}$dateSeparator${pad0(currTime.month)}$dateSeparator${currTime.year} ${pad0(currTime.hour)}:${pad0(currTime.minute)}:${pad0(currTime.second)}";
-    } else if (dateformat == 3) {
-      format =
-          "${pad0(currTime.month)}$dateSeparator${pad0(currTime.day)}$dateSeparator${currTime.year} ${pad0(currTime.hour)}:${pad0(currTime.minute)}:${pad0(currTime.second)}";
-    }
-    return format;
-  }
-
   _creatFile(String path) {
-    List<String> title = [];
-    title.add('RecId');
-    title.addAll(myReportFields.filedsList);
-
     Excel excel = Excel.createExcel();
-    Sheet sh = excel['Sheet1'];
-    for (var i = 0; i < title.length; i++) {
-      sh.cell(CellIndex.indexByColumnRow(rowIndex: 0, columnIndex: i)).value =
-          title[i] as CellValue?;
-    }
-
-    for (int row = 1; row <= myWeightReportData.length; row++) {
-      for (int col = 0; col < title.length; col++) {
-        switch (title[col]) {
-          case 'RecId':
-            sh
-                .cell(
-                    CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].id as CellValue?;
-            break;
-          case 'Date Time':
-            sh
-                .cell(
-                    CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].dateTime as CellValue?;
-            break;
-          case 'Weight':
-            sh
-                .cell(
-                    CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].weight as CellValue?;
-            break;
-          case 'Weight Unit':
-            sh
-                .cell(
-                    CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].weightUnit as CellValue?;
-            break;
-          case 'PLU NO.':
-            sh
-                .cell(
-                    CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].plu as CellValue?;
-            break;
-          case 'PLU Name':
-            sh
-                .cell(
-                    CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].pluName as CellValue?;
-            break;
-          case 'PLU Remarks':
-            sh
-                .cell(
-                    CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].pluRemarks as CellValue?;
-            break;
-          case 'Pretare':
-            sh
-                .cell(
-                    CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].pretare as CellValue?;
-            break;
-          case 'User Name':
-            sh
-                .cell(
-                    CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].userName as CellValue?;
-            break;
-          case 'User Remarks':
-            sh
-                .cell(
-                    CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].userRemarks as CellValue?;
-            break;
-          case 'User NO.':
-            sh
-                .cell(
-                    CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].userNo as CellValue?;
-            break;
-          case 'Scale Model':
-            sh
-                .cell(
-                    CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].scaleName as CellValue?;
-            break;
-
-          default:
-        }
-
-        //'value ${row}_$col';
-      }
-    }
+    creatExcelFile(path, myWeightReportData, excel);
 
     try {
       var onValue = excel.encode();
       File(join(path))
         ..createSync(recursive: true)
         ..writeAsBytesSync(onValue!);
-      setState(() {
-        _errorText.text = "Excel save succeed!";
-      });
+
+      errorText = "Excel save successful!";
     } catch (ex) {
-      setState(() {
-        _errorText.text = "Excel save fail!";
-      });
+      errorText = "Excel save failed!";
     }
   }
 
 // "ReqData":"{\"ScaleId\": 2, \"Product\": \"Apple\", \"Weight\": \"1.230\", \"Price\": \"3.25\"}"}
   void sendReportDataToDB() {
-    var currentData = myWeightReportData[myWeightReportData.length - 1];
-    myScaleCmd.cmdMode = "add_rec";
-    myAddScaleRecord.scaleId = myDefScaleInfo.defScaleId!;
-    myAddScaleRecord.price = '0.0';
-    myAddScaleRecord.scaleMode = weighingCheckMode;
-    myAddScaleRecord.scaleModel = myDefScaleInfo.defScaleModel;
-    myAddScaleRecord.scaleSn = myDefScaleInfo.defScaleSn;
-    myAddScaleRecord.scaleName = myDefScaleInfo.defScaleModel;
-    myAddScaleRecord.product = currentData.pluName;
-    myAddScaleRecord.weight = currentData.weight.toString();
-    myAddScaleRecord.pluNo = currentData.plu;
-    myAddScaleRecord.pluRemarks = currentData.pluRemarks;
-    myAddScaleRecord.weightUnit = currentData.weightUnit;
-    myAddScaleRecord.pretare = currentData.pretare;
-    myAddScaleRecord.userNo = currentData.userNo;
-    myAddScaleRecord.userName = currentData.userName;
-    myAddScaleRecord.userRemarks = currentData.userRemarks;
-    myScaleCmd.cmdData = jsonEncode(myAddScaleRecord);
-    PublicFunctions.sendMsg(myDefScaleInfo.defScaleId!, jsonEncode(myScaleCmd));
+    sendRptDataToDB(myWeightReportData, weighingCheckMode);
   }
 
   void _addWeightToReport() {
     myWeightReportData.add(WeightReportData(
       (myWeightReportData.length + 1).toString(),
-      getDateTime(myModeSettingCheck.dateSeparator),
+      getDateTime(myModeSettingCheck.dateSeparator, dateformat),
       (myReqWeightCountine.msgBody?.weightVal == null)
           ? (" ")
           : (myReqWeightCountine.msgBody!.weightVal),
@@ -2006,9 +1722,9 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
               ? ""
               : myUserInfo.id.toString()),
       (myUserInfo.remarks == null) ? "" : myUserInfo.remarks.toString(),
-      myFactoryInfoFromScale.modelName == null
+      myDefScaleInfo.defScaleName == null
           ? ''
-          : myFactoryInfoFromScale.modelName!, //此处应该是秤机种名
+          : myDefScaleInfo.defScaleName!, //此处应该是秤机种名
     ));
 
     _weightReportDatas = myWeightReportData;
@@ -2035,134 +1751,5 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
 
   List<WeightReportData> getWeightReportData() {
     return myWeightReportData;
-  }
-}
-
-List<GridColumn> getColumns() {
-  List<GridColumn> columns = [];
-  List<String> columnNames = myReportFields.filedsList;
-  columns.add(GridColumn(
-      columnName: 'NO',
-      label: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          alignment: Alignment.center,
-          child: const Text(
-            'NO',
-            overflow: TextOverflow.ellipsis,
-          ))));
-
-  for (String columnName in columnNames) {
-    columns.add(
-      GridColumn(
-        columnName: columnName,
-        label: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          alignment: Alignment.center,
-          child: Text(
-            columnName,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-        allowSorting: true,
-      ),
-    );
-  }
-  return columns;
-}
-
-class WeightReportDataSource extends DataGridSource {
-  List<WeightReportData> weightReportData;
-  WeightReportDataSource(this.weightReportData) {
-    buildDataGridRow();
-  }
-  void updateData(List<WeightReportData> newReportData) {
-    weightReportData = newReportData;
-    buildDataGridRow();
-    notifyListeners();
-  }
-
-  void sortData(String columnName) {
-    weightReportData.sort((WeightReportData a, WeightReportData b) {
-      if (columnName == 'Date Time') {
-        return a.dateTime.compareTo(b.dateTime);
-      }
-      // 如果有其他需要比较的字段，请在这里添加适当的逻辑
-      return 0;
-    });
-  }
-
-  void sortDataGrid(String columnName, DataGridSortDirection sortDirection) {
-    sortData(columnName);
-    if (sortDirection == DataGridSortDirection.descending) {
-      reverseData();
-    }
-  }
-
-  void reverseData() {
-    weightReportData = weightReportData.reversed.toList();
-  }
-
-  List<DataGridRow> dataGridRow = <DataGridRow>[];
-  void buildDataGridRow() {
-    List<GridColumn> columns = getColumns();
-    dataGridRow = weightReportData.map<DataGridRow>((reportData) {
-      List<DataGridCell<dynamic>> cells = [];
-      for (GridColumn column in columns) {
-        String columnName = column.columnName;
-        cells.add(DataGridCell<String>(
-          columnName: columnName,
-          value: getValueForColumn(reportData, columnName),
-        ));
-      }
-      return DataGridRow(cells: cells);
-    }).toList();
-  }
-
-  // 根据列名获取对应的数据
-  dynamic getValueForColumn(WeightReportData reportData, String columnName) {
-    switch (columnName) {
-      case 'NO':
-        return reportData.id;
-      case 'Date Time':
-        return reportData.dateTime;
-      case 'Weight':
-        return reportData.weight;
-      case 'Weight Unit':
-        return reportData.weightUnit;
-      case 'PLU NO.':
-        return reportData.plu;
-      case 'PLU Name':
-        return reportData.pluName;
-      case 'PLU Remarks':
-        return reportData.pluRemarks;
-      case 'Pretare':
-        return reportData.pretare;
-      case 'User NO.':
-        return reportData.userNo;
-      case 'User Name':
-        return reportData.userName;
-      case 'User Remarks':
-        return reportData.userRemarks;
-      case 'Scale Model':
-        return reportData.scaleName;
-      // 其他属性的处理类似
-      default:
-        return '';
-    }
-  }
-
-  @override
-  List<DataGridRow> get rows => dataGridRow.isEmpty ? [] : dataGridRow;
-
-  @override
-  DataGridRowAdapter? buildRow(DataGridRow row) {
-    return DataGridRowAdapter(
-        cells: row.getCells().map<Widget>((dataGridCell) {
-      return Container(
-        alignment: Alignment.center,
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: Text(dataGridCell.value.toString()),
-      );
-    }).toList());
   }
 }

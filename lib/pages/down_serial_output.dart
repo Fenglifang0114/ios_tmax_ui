@@ -220,11 +220,15 @@ class _DownReciptPageState extends State<DownSerialOutputPage> {
               ? () async {
                   await generateFileList(folderCtl.text);
                   if (jsonFilesList.isEmpty) {
-                    _showConfirmationDialog(
-                        context, localizedStrings.output_no_file);
+                    if (mounted && context.mounted) {
+                      _showConfirmationDialog(
+                          context, localizedStrings.output_no_file);
+                    }
                   } else {
-                    _showConfirmationDialog(
-                        context, localizedStrings.output_confirm_info);
+                    if (mounted && context.mounted) {
+                      _showConfirmationDialog(
+                          context, localizedStrings.output_confirm_info);
+                    }
                   }
                 }
               : null,

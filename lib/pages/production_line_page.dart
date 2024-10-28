@@ -260,7 +260,8 @@ class ProductionLinePageState extends State<ProductionLinePage> {
       body: Container(
         width: width,
         height: height,
-        decoration: BoxDecoration(color: Theme.of(context).colorScheme.surfaceBright),
+        decoration:
+            BoxDecoration(color: Theme.of(context).colorScheme.surfaceBright),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -678,18 +679,22 @@ class ProductionLinePageState extends State<ProductionLinePage> {
         sink.write('${tableData.values.join(',')}\n');
       }
       await sink.close();
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text('OK    ${file.path}'),
-            backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh),
-      );
+      if (mounted && context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('OK    ${file.path}'),
+              backgroundColor:
+                  Theme.of(context).colorScheme.surfaceContainerHigh),
+        );
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text(e.toString()),
-            backgroundColor: Theme.of(context).colorScheme.error),
-      );
+      if (mounted && context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(e.toString()),
+              backgroundColor: Theme.of(context).colorScheme.error),
+        );
+      }
     }
   }
 
@@ -708,7 +713,8 @@ class ProductionLinePageState extends State<ProductionLinePage> {
                   // selected: selScaleId == scaleNetItems[index].scaleId,
                   dense: true,
                   title: Tooltip(
-                    message: '${scaleNetItems[index].scaleModel!}\r\nSN:${scaleNetItems[index].scaleSn!}\r\nIP:${scaleNetItems[index].ip!}\r\nPort:${scaleNetItems[index].port!}',
+                    message:
+                        '${scaleNetItems[index].scaleModel!}\r\nSN:${scaleNetItems[index].scaleSn!}\r\nIP:${scaleNetItems[index].ip!}\r\nPort:${scaleNetItems[index].port!}',
                     child: Text(
                       scaleNetItems[index].scaleName!,
                       maxLines: 1, // 设置文本最大行数为1
@@ -726,10 +732,10 @@ class ProductionLinePageState extends State<ProductionLinePage> {
                         ? 'Online'
                         : 'Off-line',
                     style: TextStyle(
-                        color:
-                            scaleWgtMap[scaleNetItems[index].scaleId]!.isStart
-                                ? Theme.of(context).colorScheme.surfaceContainerHigh
-                                : Theme.of(context).colorScheme.error),
+                        color: scaleWgtMap[scaleNetItems[index].scaleId]!
+                                .isStart
+                            ? Theme.of(context).colorScheme.surfaceContainerHigh
+                            : Theme.of(context).colorScheme.error),
                   ),
 
                   selectedTileColor: Theme.of(context).colorScheme.primary,

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:t_max/data/timer_manager.dart';
 import '../../data/device_data.dart';
@@ -22,7 +24,6 @@ class WeightModePageState extends State<WeightModePage> {
   String dialogString = " ";
   List<String> items = [];
 
-  late ScrollController _reportScrollerController;
   late String lastWeight;
 
   String productNameValue = "";
@@ -30,13 +31,14 @@ class WeightModePageState extends State<WeightModePage> {
   List<String> productNameList = [];
   List<String> userNameList = [];
 
-  ///创建文本控制器实例
-  final TextEditingController _errorText = TextEditingController();
   late int weightMode; //0,手动保存，1，连续保存，2，稳定保存
   late int dateformat;
   late double zeroRange;
   bool isCnting = false;
   bool isStart = false;
+
+  Timer? startTimer;
+  Timer? innerTimer;
 
   dynamic eventBus1;
   dynamic eventBus2;
@@ -48,13 +50,14 @@ class WeightModePageState extends State<WeightModePage> {
   @override
   void initState() {
     super.initState();
-    _reportScrollerController = ScrollController();
     lastWeight = "*";
     dateformat = 1;
     zeroRange = 0;
-    _errorText.text = '';
+
+    onStartTimer();
 
     cntScaleTimerMgr.stopCntScaleTimer();
+    PublicFunctions.getWeight(myDefScaleInfo.defScaleId!);
 
     eventBus1 = eventBus.on<EventDeviceName>().listen((event) {
       if (mounted) {
@@ -74,6 +77,7 @@ class WeightModePageState extends State<WeightModePage> {
 
             myComScaleInfo.isOnline = true;
             isCnting = true;
+            isStart = true;
           }
         });
       }
@@ -112,16 +116,30 @@ class WeightModePageState extends State<WeightModePage> {
 
   @override
   void dispose() {
-    _reportScrollerController.dispose();
     eventBus1.cancel();
     eventBus2.cancel();
     eventBus3.cancel();
     eventBus4.cancel();
     eventBus5.cancel();
     eventBus6.cancel();
+    startTimer?.cancel();
+    innerTimer?.cancel();
 
     cntScaleTimerMgr.stopPortOffTimer();
     super.dispose();
+  }
+
+  void onStartTimer() {
+    startTimer = Timer.periodic(Duration(seconds: 3), (timer) {
+      isCnting = false;
+      innerTimer = Timer(Duration(seconds: 1), () {
+        if (!isCnting) {
+          setState(() {
+            isStart = false;
+          });
+        }
+      });
+    });
   }
 
   @override
@@ -211,8 +229,9 @@ class WeightModePageState extends State<WeightModePage> {
                               buildTextWithWeight(
                                   280,
                                   70,
-                                  (myReqWeightCountine.msgBody == null)
-                                      ? ("-----")
+                                  (myReqWeightCountine.msgBody == null ||
+                                          !isStart)
+                                      ? '---------'
                                       : myReqWeightCountine.msgBody!.weightVal,
                                   55,
                                   constraints,
@@ -220,8 +239,9 @@ class WeightModePageState extends State<WeightModePage> {
                               buildTextWithUnit(
                                   100,
                                   70,
-                                  (myReqWeightCountine.msgBody == null)
-                                      ? ("kg")
+                                  (myReqWeightCountine.msgBody == null ||
+                                          !isStart)
+                                      ? ("----")
                                       : myReqWeightCountine.msgBody!.weightUnit,
                                   30,
                                   constraints,
@@ -280,13 +300,14 @@ class WeightModePageState extends State<WeightModePage> {
 
   Widget buildTextWithWeight(double width, double height, String text,
       double? fontSize, BoxConstraints constraints, Color? color) {
-    width = width * constraints.maxWidth / 400;
-    height = height * constraints.maxHeight / 80;
-    fontSize = fontSize! * constraints.maxHeight / 120;
-    fontSize = constraints.maxHeight / 1.6;
-    if (fontSize > constraints.maxWidth / 6) {
-      fontSize = constraints.maxWidth / 6;
+    width = constraints.maxWidth / 1.5;
+    height = constraints.maxHeight / 1.2;
+    fontSize = constraints.maxHeight / 2;
+    fontSize = width / 5;
+    if (fontSize > 160) {
+      fontSize = 160;
     }
+
     return Container(
       width: width,
       height: height,
@@ -309,23 +330,14 @@ class WeightModePageState extends State<WeightModePage> {
     );
   }
 
-  Widget buildTextWithNOUnit(double width, double height, String text,
-      double? fontSize, BoxConstraints constraints, Color? color) {
-    width = width * constraints.maxWidth / 400;
-    height = height * constraints.maxHeight / 80;
-    return SizedBox(
-      width: width,
-      height: height,
-    );
-  }
-
   Widget buildTextWithUnit(double width, double height, String text,
       double? fontSize, BoxConstraints constraints, Color? color) {
-    width = width * constraints.maxWidth / 400;
-    height = height * constraints.maxHeight / 80;
-    fontSize = constraints.maxHeight / 2;
-    if (fontSize > constraints.maxWidth / 10) {
-      fontSize = constraints.maxWidth / 10;
+    width = constraints.maxWidth / 4;
+    height = constraints.maxHeight / 1.2;
+    fontSize = constraints.maxHeight / 5;
+    fontSize = width / 2;
+    if (fontSize > 80) {
+      fontSize = 80;
     }
 
     return Container(
@@ -352,9 +364,13 @@ class WeightModePageState extends State<WeightModePage> {
 
   Widget buildTextAndImage(
       double width, String text, String imageName, BoxConstraints constraints) {
-    var imageSize = constraints.maxHeight / 5;
-    width = 25 * constraints.maxHeight / 30;
-    var fontSize = 16 * constraints.maxHeight / 150;
+    var imageSize = constraints.maxHeight / 6;
+    width = constraints.maxWidth / 2;
+    var fontSize = constraints.maxHeight / 12;
+    if (constraints.maxHeight > constraints.maxWidth) {
+      imageSize = constraints.maxWidth / 6;
+      fontSize = constraints.maxWidth / 12;
+    }
     return Row(
       children: [
         SizedBox(
@@ -400,6 +416,9 @@ class WeightModePageState extends State<WeightModePage> {
       String text, BoxConstraints constraints, BuildContext context) {
     var fontSize = 14 * constraints.maxHeight / 60;
     var width = constraints.maxWidth / 10;
+    if (constraints.maxHeight > constraints.maxWidth) {
+      fontSize = 14 * constraints.maxWidth / 60;
+    }
     return SizedBox(
         width: width,
         child: Text(text,
@@ -446,6 +465,7 @@ class WeightModePageState extends State<WeightModePage> {
           Icon(
             icon,
             size: fontSize,
+            color: Theme.of(context).colorScheme.onPrimary,
           ),
           const SizedBox(width: 4),
           SizedBox(
@@ -457,6 +477,7 @@ class WeightModePageState extends State<WeightModePage> {
                 maxLines: 1,
                 textAlign: TextAlign.left,
                 style: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimary,
                   fontSize: fontSize,
                   overflow: TextOverflow.ellipsis,
                 ),

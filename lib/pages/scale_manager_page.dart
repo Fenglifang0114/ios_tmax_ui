@@ -916,7 +916,7 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
           children: <InlineSpan>[
             TextSpan(
               text:
-                  'Model:${myComScaleInfo.scaleModel}\r\nSN:${myComScaleInfo.scaleSn}\r\nPort:${myComScaleInfo.baudRate}',
+                  'Model:${myComScaleInfo.scaleModel == "TMax" ? "" : myComScaleInfo.scaleModel}\r\nSN:${myComScaleInfo.scaleModel == "TMax" ? "" : myComScaleInfo.scaleSn}\r\nPort:${myComScaleInfo.baudRate}',
               style:
                   const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
             ),
@@ -997,7 +997,7 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
                       children: <InlineSpan>[
                         TextSpan(
                           text:
-                              'Model:${scaleNetItems[index].scaleModel!}\r\nSN:${scaleNetItems[index].scaleSn!}\r\nPort:${scaleNetItems[index].port!}',
+                              'Model:${scaleNetItems[index].scaleModel! == "TMax" ? "" : scaleNetItems[index].scaleModel!}\r\nSN:${scaleNetItems[index].scaleModel! == "TMax" ? "" : scaleNetItems[index].scaleSn!}\r\nPort:${scaleNetItems[index].port!}',
                           style: const TextStyle(
                               fontSize: 14, fontWeight: FontWeight.normal),
                         ),

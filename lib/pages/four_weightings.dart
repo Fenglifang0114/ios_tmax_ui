@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -36,6 +37,16 @@ class FourWeightsPageState extends State<FourWeightsPage> {
   String scaleInfo3 = '';
   String scaleInfo4 = '';
 
+  Timer? startTimer1;
+  Timer? startTimer2;
+  Timer? startTimer3;
+  Timer? startTimer4;
+
+  Timer? innerTimer1;
+  Timer? innerTimer2;
+  Timer? innerTimer3;
+  Timer? innerTimer4;
+
   dynamic eventBus1;
   dynamic eventBus2;
   dynamic eventBus3;
@@ -47,27 +58,38 @@ class FourWeightsPageState extends State<FourWeightsPage> {
   void initState() {
     super.initState();
     for (int i = 0; i < fourScaleList.length; i++) {
+      String model = fourScaleList[i].scaleModel!;
+      String sn = fourScaleList[i].scaleSn!;
+      if (model == "TMax") {
+        sn = "";
+        model = "";
+      }
       var scaleInfo =
-          "${fourScaleList[i].scaleModel!}    Sn:${fourScaleList[i].scaleSn!}    Ip:${fourScaleList[i].ip!}:${fourScaleList[i].port!}";
+          "$model    Sn:$sn    Ip:${fourScaleList[i].ip!}:${fourScaleList[i].port!}";
       if (i == 0) {
         scaleId1 = fourScaleList[i].scaleId!;
         scaleInfo1 = scaleInfo;
         scaleList.add(scaleId1);
+        onStartTimer(i, startTimer1, innerTimer1);
       } else if (i == 1) {
         scaleId2 = fourScaleList[i].scaleId!;
         scaleInfo2 = scaleInfo;
         scaleList.add(scaleId2);
+        onStartTimer(i, startTimer2, innerTimer2);
       } else if (i == 2) {
         scaleId3 = fourScaleList[i].scaleId!;
         scaleInfo3 = scaleInfo;
         scaleList.add(scaleId3);
+        onStartTimer(i, startTimer3, innerTimer3);
       } else if (i == 3) {
         scaleId4 = fourScaleList[i].scaleId!;
         scaleInfo4 = scaleInfo;
         scaleList.add(scaleId4);
+        onStartTimer(i, startTimer4, innerTimer4);
       }
     }
 
+    startWgtCnt();
     cntScaleTimerMgr.stopCntScaleTimer();
     eventBus1 = eventBus.on<EventDeviceName>().listen((event) {
       if (mounted) {
@@ -177,9 +199,38 @@ class FourWeightsPageState extends State<FourWeightsPage> {
     eventBus5.cancel();
     eventBus6.cancel();
 
+    startTimer1?.cancel();
+    startTimer2?.cancel();
+    startTimer3?.cancel();
+    startTimer4?.cancel();
+
+    innerTimer1?.cancel();
+    innerTimer2?.cancel();
+    innerTimer3?.cancel();
+    innerTimer4?.cancel();
+
     cntScaleTimerMgr.stopPortOffTimer();
 
     super.dispose();
+  }
+
+  void startWgtCnt() {
+    for (int i = 0; i < fourScaleList.length; i++) {
+      PublicFunctions.getWeight(fourScaleList[i].scaleId!);
+    }
+  }
+
+  void onStartTimer(int index, Timer? timer1, Timer? inner) {
+    timer1 = Timer.periodic(Duration(seconds: 3), (timer) {
+      isCntingList[index] = false;
+      inner = Timer(Duration(seconds: 1), () {
+        if (!isCntingList[index] && mounted) {
+          setState(() {
+            isStartList[index] = false;
+          });
+        }
+      });
+    });
   }
 
   @override
@@ -196,73 +247,88 @@ class FourWeightsPageState extends State<FourWeightsPage> {
         ),
       ),
       body: Container(
-          width: width,
-          height: height,
-          decoration:
-              BoxDecoration(color: Theme.of(context).colorScheme.surfaceBright),
-          child: Column(
+        width: width,
+        height: height - 50,
+        decoration:
+            BoxDecoration(color: Theme.of(context).colorScheme.surfaceBright),
+        child: buildScales(width, height - 50),
+      ),
+    );
+  }
+
+  Widget buildScales(double width, double height) {
+    int selectedOption = fourScaleList.length;
+    switch (selectedOption) {
+      //选择一个时
+      case 1:
+        return Row(
+          children: [
+            Expanded(
+              child: Center(
+                child: buildOneScale(
+                    context, width, height, 0, myWgtCnt1, scaleId1, scaleInfo1),
+              ),
+            ),
+          ],
+        );
+      //选择2个时
+      case 2:
+        return Row(
+          children: [
+            Expanded(
+              child: Center(
+                child: buildOneScale(context, width / 2, height, 0, myWgtCnt1,
+                    scaleId1, scaleInfo1),
+              ),
+            ),
+            Expanded(
+              child: Center(
+                child: buildOneScale(context, width / 2, height, 1, myWgtCnt2,
+                    scaleId2, scaleInfo2),
+              ),
+            ),
+          ],
+        );
+      //选择3个时
+      default:
+        return Column(
             mainAxisAlignment: MainAxisAlignment.start,
-            // mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                flex: 5,
-                child: Container(
-                  color: Theme.of(context).colorScheme.surfaceTint,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // const SizedBox(width: 20),
-                      Expanded(
-                        flex: 5,
-                        child: buildOneScale(context, width / 2, height / 2, 0,
-                            myWgtCnt1, scaleId1, scaleInfo1),
-                      ),
-                      Container(
-                        color: Theme.of(context).colorScheme.primary,
-                        width: 2,
-                      ),
-
-                      Expanded(
-                          flex: 5,
-                          child: buildOneScale(context, width / 2, height / 2,
-                              1, myWgtCnt2, scaleId2, scaleInfo2)),
-                    ],
+              Row(
+                children: [
+                  Expanded(
+                    child: Center(
+                      child: buildOneScale(context, width / 2, height / 2, 0,
+                          myWgtCnt1, scaleId1, scaleInfo1),
+                    ),
                   ),
-                ),
-              ),
-              Container(
-                color: Theme.of(context).colorScheme.primary,
-                height: 2,
-              ),
-              Expanded(
-                flex: 5,
-                child: Container(
-                  color: Theme.of(context).colorScheme.surfaceTint,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // const SizedBox(width: 20),
-                      Expanded(
-                        flex: 5,
-                        child: buildOneScale(context, width / 2, height / 2, 2,
-                            myWgtCnt3, scaleId3, scaleInfo3),
-                      ),
-                      Container(
-                        color: Theme.of(context).colorScheme.primary,
-                        width: 2,
-                      ),
-                      Expanded(
-                          flex: 5,
-                          child: buildOneScale(context, width / 2, height / 2,
-                              3, myWgtCnt4, scaleId4, scaleInfo4)),
-                    ],
+                  Expanded(
+                    child: Center(
+                      child: buildOneScale(context, width / 2, height / 2, 1,
+                          myWgtCnt2, scaleId2, scaleInfo2),
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
-          )),
-    );
+              Row(
+                children: [
+                  Expanded(
+                    child: Center(
+                      child: buildOneScale(context, width / 2, height / 2, 2,
+                          myWgtCnt3, scaleId3, scaleInfo3),
+                    ),
+                  ),
+                  Expanded(
+                    child: Center(
+                      child: buildOneScale(context, width / 2, height / 2, 3,
+                          myWgtCnt4, scaleId4, scaleInfo4),
+                    ),
+                  ),
+                ],
+              )
+            ]);
+    }
   }
 
   Widget buildOneScale(dynamic context, double width, double height,
@@ -310,7 +376,6 @@ class FourWeightsPageState extends State<FourWeightsPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               buildTextAndImage(
-                                  50,
                                   localizedStrings.stable,
                                   (reqWgt.msgBody == null)
                                       ? ("assets/images/gray.png")
@@ -320,7 +385,6 @@ class FourWeightsPageState extends State<FourWeightsPage> {
                                           : ("assets/images/gray.png"),
                                   constraints),
                               buildTextAndImage(
-                                  50,
                                   localizedStrings.net,
                                   (reqWgt.msgBody == null)
                                       ? ("assets/images/gray.png")
@@ -330,7 +394,6 @@ class FourWeightsPageState extends State<FourWeightsPage> {
                                           : ("assets/images/gray.png"),
                                   constraints),
                               buildTextAndImage(
-                                  50,
                                   localizedStrings.zero,
                                   (reqWgt.msgBody == null)
                                       ? ("assets/images/gray.png")
@@ -351,21 +414,17 @@ class FourWeightsPageState extends State<FourWeightsPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               buildTextWithWeight(
-                                  280,
-                                  70,
-                                  (reqWgt.msgBody == null)
-                                      ? ("-----")
+                                  (reqWgt.msgBody == null ||
+                                          !isStartList[scaleNo])
+                                      ? ("--------")
                                       : reqWgt.msgBody!.weightVal,
-                                  55,
                                   constraints,
                                   Theme.of(context).colorScheme.primary),
                               buildTextWithUnit(
-                                  100,
-                                  70,
-                                  (reqWgt.msgBody == null)
-                                      ? ("kg")
+                                  (reqWgt.msgBody == null ||
+                                          !isStartList[scaleNo])
+                                      ? ("---")
                                       : reqWgt.msgBody!.weightUnit,
-                                  30,
                                   constraints,
                                   Theme.of(context).colorScheme.primary)
                             ],
@@ -382,54 +441,18 @@ class FourWeightsPageState extends State<FourWeightsPage> {
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Expanded(
-                        flex: 1,
-                        child: LayoutBuilder(builder:
-                            (BuildContext context, BoxConstraints constraints) {
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              buildStartIcon(
-                                  50,
-                                  30,
-                                  constraints,
-                                  Theme.of(context).colorScheme.primary,
-                                  scaleNo,
-                                  scaleId),
-                              buildStopIcon(
-                                  50,
-                                  30,
-                                  constraints,
-                                  Theme.of(context).colorScheme.primary,
-                                  scaleNo,
-                                  scaleId)
-                            ],
-                          );
-                        })),
-                    Expanded(
-                        flex: 1,
-                        child: LayoutBuilder(builder:
-                            (BuildContext context, BoxConstraints constraints) {
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              _buildFlexibleButtonAndTextT(
-                                  width: 150,
-                                  buttonText: localizedStrings.button_tare,
-                                  scaleId: scaleId,
-                                  constraints: constraints,
-                                  isTrue: isStartList[scaleNo],
-                                  icon: Icons.title),
-                              _buildFlexibleButtonAndTextZ(
-                                  width: 150,
-                                  buttonText: localizedStrings.button_zero,
-                                  scaleId: scaleId,
-                                  constraints: constraints,
-                                  isTrue: isStartList[scaleNo],
-                                  icon: Icons.exposure_zero),
-                            ],
-                          );
-                        })),
+                    _buildFlexibleButtonAndTextT(
+                        buttonText: localizedStrings.button_tare,
+                        scaleId: scaleId,
+                        constraints: constraints,
+                        isTrue: isStartList[scaleNo],
+                        icon: Icons.title),
+                    _buildFlexibleButtonAndTextZ(
+                        buttonText: localizedStrings.button_zero,
+                        scaleId: scaleId,
+                        constraints: constraints,
+                        isTrue: isStartList[scaleNo],
+                        icon: Icons.exposure_zero),
                   ],
                 );
               }),
@@ -450,66 +473,17 @@ class FourWeightsPageState extends State<FourWeightsPage> {
     PublicFunctions.sendMsg(scaleId, jsonEncode(myScaleCmd));
   }
 
-  Widget buildStartIcon(double width, double? iconSize,
-      BoxConstraints constraints, Color? color, int scaleNo, int scaleId) {
-    width = width * constraints.maxWidth / 100;
-    iconSize = iconSize! * constraints.maxHeight / 100;
+  Widget buildTextWithWeight(
+      String text, BoxConstraints constraints, Color? color) {
+    double width = constraints.maxWidth / 10 * 7;
+    double height = constraints.maxHeight / 1.2;
+    double fontSize = 0;
 
-    return SizedBox(
-      width: width,
-      child: IconButton(
-        //开始按钮
-        icon: const Icon(Icons.play_arrow),
-        iconSize: iconSize,
-        color: (isStartList[scaleNo])
-            ? (Theme.of(context).colorScheme.secondaryFixed)
-            : (color),
-        onPressed: () {
-          setState(() {
-            if (!isStartList[scaleNo]) {
-              isStartList[scaleNo] = true;
-              PublicFunctions.getWeight(scaleId);
-            }
-          });
-        },
-      ),
-    );
-  }
-
-  Widget buildStopIcon(double width, double? iconSize,
-      BoxConstraints constraints, Color? color, int scaleNo, int scaleId) {
-    width = width * constraints.maxWidth / 100;
-    iconSize = iconSize! * constraints.maxHeight / 100;
-
-    return SizedBox(
-      width: width,
-      child: IconButton(
-        onPressed: () {
-          if (isStartList[scaleNo]) {
-            setState(() {
-              isStartList[scaleNo] = false;
-              PublicFunctions.stopWeight(scaleId);
-            });
-          }
-        },
-        icon: const Icon(Icons.pause),
-        iconSize: iconSize,
-        color: (!isStartList[scaleNo])
-            ? (Theme.of(context).colorScheme.secondaryFixed)
-            : color,
-      ),
-    );
-  }
-
-  Widget buildTextWithWeight(double width, double height, String text,
-      double? fontSize, BoxConstraints constraints, Color? color) {
-    width = width * constraints.maxWidth / 400;
-    height = height * constraints.maxHeight / 80;
-    fontSize = fontSize! * constraints.maxHeight / 150;
-    fontSize = constraints.maxHeight / 2;
-    if (fontSize > constraints.maxWidth / 7) {
-      fontSize = constraints.maxWidth / 7;
+    fontSize = width / 9 / 0.6;
+    if (fontSize > 180) {
+      fontSize = 180;
     }
+
     return Container(
       width: width,
       height: height,
@@ -542,15 +516,15 @@ class FourWeightsPageState extends State<FourWeightsPage> {
     );
   }
 
-  Widget buildTextWithUnit(double width, double height, String text,
-      double? fontSize, BoxConstraints constraints, Color? color) {
-    width = width * constraints.maxWidth / 400;
-    height = height * constraints.maxHeight / 80;
-    fontSize = constraints.maxHeight / 2;
-    if (fontSize > constraints.maxWidth / 10) {
-      fontSize = constraints.maxWidth / 10;
+  Widget buildTextWithUnit(
+      String text, BoxConstraints constraints, Color? color) {
+    double width = constraints.maxWidth / 10 * 2;
+    double height = constraints.maxHeight / 1.2;
+    double fontSize = 0;
+    fontSize = width / 4 / 0.6; //一个字号占0.6
+    if (fontSize > 180) {
+      fontSize = 180;
     }
-
     return Container(
       width: width,
       height: height,
@@ -574,10 +548,25 @@ class FourWeightsPageState extends State<FourWeightsPage> {
   }
 
   Widget buildTextAndImage(
-      double width, String text, String imageName, BoxConstraints constraints) {
-    var imageSize = constraints.maxHeight / 5;
-    width = 25 * constraints.maxHeight / 30;
-    var fontSize = 16 * constraints.maxHeight / 150;
+      String text, String imageName, BoxConstraints constraints) {
+    double width = 0;
+    double fontSize = 0;
+
+    fontSize = constraints.maxHeight / 10;
+    width = constraints.maxWidth / 1.5;
+    if (fontSize > 40) {
+      fontSize = 40;
+    }
+    if (fontSize > width / 10 / 0.6) {
+      fontSize = width / 10 / 0.6;
+    }
+    double imageSize = constraints.maxHeight / 5;
+    if (imageSize > 60) {
+      imageSize = 60;
+    }
+    if (imageSize > width / 3) {
+      imageSize = width / 3;
+    }
     return Row(
       children: [
         SizedBox(
@@ -631,15 +620,18 @@ class FourWeightsPageState extends State<FourWeightsPage> {
   }
 
   Widget _buildFlexibleButtonAndTextT({
-    required double width,
     required String buttonText,
     required int scaleId,
     required BoxConstraints constraints,
     required bool isTrue,
     required IconData icon,
   }) {
-    double buttonWidth = width * (constraints.maxWidth / 600); // 自适应按钮宽度
-    double fontSize = 14 * (constraints.maxWidth / 200); // 自适应字体大小
+    double buttonWidth = (constraints.maxWidth / 3); // 自适应按钮宽度
+    double buttonH = (constraints.maxHeight / 2); // 自适应按钮宽度
+    double fontSize = (buttonWidth / 10 / 0.6); // 自适应字体大小
+    if (fontSize > 60) {
+      fontSize = 60;
+    }
 
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
@@ -664,7 +656,7 @@ class FourWeightsPageState extends State<FourWeightsPage> {
           const SizedBox(width: 4),
           SizedBox(
             width: buttonWidth,
-            height: 80,
+            height: buttonH,
             child: Center(
               child: Text(
                 buttonText,
@@ -683,15 +675,18 @@ class FourWeightsPageState extends State<FourWeightsPage> {
   }
 
   Widget _buildFlexibleButtonAndTextZ({
-    required double width,
     required String buttonText,
     required int scaleId,
     required BoxConstraints constraints,
     required bool isTrue,
     required IconData icon,
   }) {
-    double buttonWidth = width * (constraints.maxWidth / 600); // 自适应按钮宽度
-    double fontSize = 14 * (constraints.maxWidth / 200); // 自适应字体大小
+    double buttonWidth = (constraints.maxWidth / 3); // 自适应按钮宽度
+    double buttonH = (constraints.maxHeight / 2); // 自适应按钮宽度
+    double fontSize = (buttonWidth / 10 / 0.6); // 自适应字体大小
+    if (fontSize > 60) {
+      fontSize = 60;
+    }
 
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
@@ -716,7 +711,7 @@ class FourWeightsPageState extends State<FourWeightsPage> {
           const SizedBox(width: 4),
           SizedBox(
             width: buttonWidth,
-            height: 80,
+            height: buttonH,
             child: Center(
               child: Text(
                 buttonText,

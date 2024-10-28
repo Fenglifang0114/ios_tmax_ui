@@ -22,77 +22,92 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-        "Parity": MessageLookupByLibrary.simpleMessage("校验位："),
-        "abnormal_data_title": MessageLookupByLibrary.simpleMessage("基础数据"),
+        "Parity": MessageLookupByLibrary.simpleMessage("Parity:"),
+        "abnormal_data_title":
+            MessageLookupByLibrary.simpleMessage("Basic Data"),
         "abnormal_weight":
             MessageLookupByLibrary.simpleMessage("Get Basic Data"),
-        "about_title": MessageLookupByLibrary.simpleMessage("信息"),
-        "advanced_setting_title": MessageLookupByLibrary.simpleMessage("高级设置"),
-        "alignment": MessageLookupByLibrary.simpleMessage("对齐方式："),
-        "app_address_title": MessageLookupByLibrary.simpleMessage("地址:"),
-        "app_company_title": MessageLookupByLibrary.simpleMessage("公司:"),
-        "app_email_title": MessageLookupByLibrary.simpleMessage("邮箱:"),
-        "app_models": MessageLookupByLibrary.simpleMessage("适用机种:"),
-        "app_tel_title": MessageLookupByLibrary.simpleMessage("电话:"),
-        "app_version_title": MessageLookupByLibrary.simpleMessage("版本:"),
-        "app_web_title": MessageLookupByLibrary.simpleMessage("网址:"),
-        "application_title": MessageLookupByLibrary.simpleMessage("应用"),
-        "attribute": MessageLookupByLibrary.simpleMessage("属性"),
-        "auto": MessageLookupByLibrary.simpleMessage("自动"),
-        "barcode_edit": MessageLookupByLibrary.simpleMessage("条码编辑"),
-        "barcode_height": MessageLookupByLibrary.simpleMessage("条码高度："),
-        "batch_delivery_title": MessageLookupByLibrary.simpleMessage("批量下发"),
+        "about_title": MessageLookupByLibrary.simpleMessage("Information"),
+        "advanced_setting_title":
+            MessageLookupByLibrary.simpleMessage("Advanced"),
+        "alignment": MessageLookupByLibrary.simpleMessage("Alignment:"),
+        "app_address_title": MessageLookupByLibrary.simpleMessage("Address:"),
+        "app_company_title": MessageLookupByLibrary.simpleMessage("Company:"),
+        "app_email_title": MessageLookupByLibrary.simpleMessage("Email:"),
+        "app_models":
+            MessageLookupByLibrary.simpleMessage("Applicable Models:"),
+        "app_tel_title": MessageLookupByLibrary.simpleMessage("Tel:"),
+        "app_version_title": MessageLookupByLibrary.simpleMessage("Version:"),
+        "app_web_title":
+            MessageLookupByLibrary.simpleMessage("Website Address:"),
+        "application_title":
+            MessageLookupByLibrary.simpleMessage("Applications"),
+        "attribute": MessageLookupByLibrary.simpleMessage("Attribute"),
+        "auto": MessageLookupByLibrary.simpleMessage("Auto"),
+        "barcode_edit": MessageLookupByLibrary.simpleMessage("BarCode Edit"),
+        "barcode_height":
+            MessageLookupByLibrary.simpleMessage("BarCode Height:"),
+        "batch_delivery_title":
+            MessageLookupByLibrary.simpleMessage("Batch Delivery"),
         "batch_down_export": MessageLookupByLibrary.simpleMessage("Export"),
         "batch_down_import": MessageLookupByLibrary.simpleMessage("Import"),
         "batch_down_slt_folder":
             MessageLookupByLibrary.simpleMessage("Select Folder"),
-        "baud_rate": MessageLookupByLibrary.simpleMessage("波特率："),
+        "baud_rate": MessageLookupByLibrary.simpleMessage("Baud rate:"),
         "bluetooth_modification":
-            MessageLookupByLibrary.simpleMessage("蓝牙信息修改"),
-        "bluetooth_modify_error":
-            MessageLookupByLibrary.simpleMessage("修改蓝牙名称失败"),
-        "bluetooth_modify_ok": MessageLookupByLibrary.simpleMessage("修改蓝牙名称成功"),
-        "bt_emission_power": MessageLookupByLibrary.simpleMessage("信号强度:"),
-        "bt_modify_emission": MessageLookupByLibrary.simpleMessage("修改信号强度"),
-        "bt_setting_title": MessageLookupByLibrary.simpleMessage("蓝牙设置"),
+            MessageLookupByLibrary.simpleMessage("Bluetooth Configurations"),
+        "bluetooth_modify_error": MessageLookupByLibrary.simpleMessage(
+            "Error: Cannot modify  bluetooth name ."),
+        "bluetooth_modify_ok":
+            MessageLookupByLibrary.simpleMessage("Bluetooth name modified."),
+        "bt_emission_power":
+            MessageLookupByLibrary.simpleMessage("Emission Power:"),
+        "bt_modify_emission":
+            MessageLookupByLibrary.simpleMessage("Modify emission power"),
+        "bt_setting_title":
+            MessageLookupByLibrary.simpleMessage("Bluetooth Setting"),
         "btn_add_lic_file":
             MessageLookupByLibrary.simpleMessage("Select License File"),
-        "button_add": MessageLookupByLibrary.simpleMessage("增加"),
-        "button_add_license": MessageLookupByLibrary.simpleMessage("添加授权"),
-        "button_back": MessageLookupByLibrary.simpleMessage("返回"),
-        "button_cancel": MessageLookupByLibrary.simpleMessage("取消"),
-        "button_connect": MessageLookupByLibrary.simpleMessage("连接"),
-        "button_delete": MessageLookupByLibrary.simpleMessage("删除"),
-        "button_dynamic": MessageLookupByLibrary.simpleMessage("动态"),
-        "button_edit": MessageLookupByLibrary.simpleMessage("编辑"),
-        "button_exit": MessageLookupByLibrary.simpleMessage("退出"),
-        "button_export_report": MessageLookupByLibrary.simpleMessage("导出报表"),
-        "button_get_ip": MessageLookupByLibrary.simpleMessage("获取IP"),
-        "button_home": MessageLookupByLibrary.simpleMessage("主页"),
-        "button_ok": MessageLookupByLibrary.simpleMessage("确定"),
-        "button_save": MessageLookupByLibrary.simpleMessage("保存"),
-        "button_select_format": MessageLookupByLibrary.simpleMessage("选择打印格式"),
-        "button_set": MessageLookupByLibrary.simpleMessage("连接"),
-        "button_setting": MessageLookupByLibrary.simpleMessage("设置"),
-        "button_start": MessageLookupByLibrary.simpleMessage("开始"),
-        "button_static": MessageLookupByLibrary.simpleMessage("静态"),
-        "button_tare": MessageLookupByLibrary.simpleMessage("扣重"),
-        "button_zero": MessageLookupByLibrary.simpleMessage("归零"),
-        "checkweigher_title": MessageLookupByLibrary.simpleMessage("检重秤"),
+        "button_add": MessageLookupByLibrary.simpleMessage("Add"),
+        "button_add_license":
+            MessageLookupByLibrary.simpleMessage("Add License"),
+        "button_back": MessageLookupByLibrary.simpleMessage("Back"),
+        "button_cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+        "button_connect": MessageLookupByLibrary.simpleMessage("Connect"),
+        "button_delete": MessageLookupByLibrary.simpleMessage("Delete"),
+        "button_dynamic": MessageLookupByLibrary.simpleMessage("Dynamic"),
+        "button_edit": MessageLookupByLibrary.simpleMessage("Edit"),
+        "button_exit": MessageLookupByLibrary.simpleMessage("Exit"),
+        "button_export_report": MessageLookupByLibrary.simpleMessage("Export"),
+        "button_get_ip": MessageLookupByLibrary.simpleMessage("Get IP Address"),
+        "button_home": MessageLookupByLibrary.simpleMessage("Home"),
+        "button_ok": MessageLookupByLibrary.simpleMessage("Confirm"),
+        "button_save": MessageLookupByLibrary.simpleMessage("Save"),
+        "button_select_format":
+            MessageLookupByLibrary.simpleMessage("Select Format"),
+        "button_set": MessageLookupByLibrary.simpleMessage("Connect"),
+        "button_setting": MessageLookupByLibrary.simpleMessage("Setting"),
+        "button_start": MessageLookupByLibrary.simpleMessage("Start"),
+        "button_static": MessageLookupByLibrary.simpleMessage("Static"),
+        "button_tare": MessageLookupByLibrary.simpleMessage("Tare"),
+        "button_zero": MessageLookupByLibrary.simpleMessage("Zero"),
+        "checkweigher_title":
+            MessageLookupByLibrary.simpleMessage("Check Weighing"),
         "choose_json_file": MessageLookupByLibrary.simpleMessage("Choose json"),
-        "clear_btn": MessageLookupByLibrary.simpleMessage("清空"),
-        "close_preview": MessageLookupByLibrary.simpleMessage("关闭预览"),
-        "com_port": MessageLookupByLibrary.simpleMessage("串口"),
-        "confirm_btn": MessageLookupByLibrary.simpleMessage("确定"),
-        "confirm_info": MessageLookupByLibrary.simpleMessage("请确认打印格式的顺序."),
-        "confirm_title": MessageLookupByLibrary.simpleMessage("确认"),
+        "clear_btn": MessageLookupByLibrary.simpleMessage("Clear"),
+        "close_preview": MessageLookupByLibrary.simpleMessage("Close preview"),
+        "com_port": MessageLookupByLibrary.simpleMessage("Serial port"),
+        "confirm_btn": MessageLookupByLibrary.simpleMessage("Confirm"),
+        "confirm_info": MessageLookupByLibrary.simpleMessage(
+            "Please confirm the order of the printing formats."),
+        "confirm_title": MessageLookupByLibrary.simpleMessage("Confirmation"),
         "current_language": MessageLookupByLibrary.simpleMessage("中文"),
         "customization_setting_title":
-            MessageLookupByLibrary.simpleMessage("APP"),
-        "data_bits": MessageLookupByLibrary.simpleMessage("数据位："),
+            MessageLookupByLibrary.simpleMessage("Applications"),
+        "data_bits": MessageLookupByLibrary.simpleMessage("Data bits:"),
         "data_delete_confirm":
-            MessageLookupByLibrary.simpleMessage("是否删除所有数据?"),
-        "date_format": MessageLookupByLibrary.simpleMessage("日期格式"),
+            MessageLookupByLibrary.simpleMessage("Whether to delete all data?"),
+        "date_format": MessageLookupByLibrary.simpleMessage("Date Format:"),
         "def_fmt_file_title": MessageLookupByLibrary.simpleMessage("File Path"),
         "def_fmt_no_file_tip":
             MessageLookupByLibrary.simpleMessage("No data yet"),
@@ -103,22 +118,27 @@ class MessageLookup extends MessageLookupByLibrary {
         "def_fmt_sel_tip": MessageLookupByLibrary.simpleMessage(
             "Please select 1-10 print formats."),
         "device_configuration_title":
-            MessageLookupByLibrary.simpleMessage("设备基础设定"),
+            MessageLookupByLibrary.simpleMessage("Device Configuration"),
         "device_connection_title":
-            MessageLookupByLibrary.simpleMessage("设备信息与连接"),
-        "device_name": MessageLookupByLibrary.simpleMessage("设备名称："),
-        "device_setting_title": MessageLookupByLibrary.simpleMessage("基础设定"),
-        "device_time_title": MessageLookupByLibrary.simpleMessage("设备时间"),
-        "download": MessageLookupByLibrary.simpleMessage("下载"),
-        "download_default": MessageLookupByLibrary.simpleMessage("默认打印格式"),
-        "download_result_fail": MessageLookupByLibrary.simpleMessage("下发失败!"),
-        "download_result_ok": MessageLookupByLibrary.simpleMessage("下发成功!"),
-        "editor": MessageLookupByLibrary.simpleMessage("编辑器"),
-        "element_type": MessageLookupByLibrary.simpleMessage("类型："),
+            MessageLookupByLibrary.simpleMessage("Device Info & Connection"),
+        "device_name": MessageLookupByLibrary.simpleMessage("Device name:"),
+        "device_setting_title": MessageLookupByLibrary.simpleMessage("Basics"),
+        "device_time_title":
+            MessageLookupByLibrary.simpleMessage("Device Time"),
+        "download": MessageLookupByLibrary.simpleMessage("Download"),
+        "download_default":
+            MessageLookupByLibrary.simpleMessage("Default Format"),
+        "download_result_fail":
+            MessageLookupByLibrary.simpleMessage("Download failed!"),
+        "download_result_ok":
+            MessageLookupByLibrary.simpleMessage("Download is successful!"),
+        "editor": MessageLookupByLibrary.simpleMessage("Editor"),
+        "element_type": MessageLookupByLibrary.simpleMessage("Type:"),
         "error_ip_tip": MessageLookupByLibrary.simpleMessage(
-            "错误的地址格式! 例如： xxx.xxx.xxx.xxx"),
-        "expiration_date": MessageLookupByLibrary.simpleMessage("有效期："),
-        "find_ssid": MessageLookupByLibrary.simpleMessage("查找 SSID"),
+            "Incorrect address! e.g. xxx.xxx.xxx.xxx"),
+        "expiration_date":
+            MessageLookupByLibrary.simpleMessage("Expiration date:"),
+        "find_ssid": MessageLookupByLibrary.simpleMessage("Discover SSID"),
         "firm_cfm_msg": MessageLookupByLibrary.simpleMessage(
             "Please confirm the file correct."),
         "firm_down_online":
@@ -126,23 +146,28 @@ class MessageLookup extends MessageLookupByLibrary {
         "firm_zip_file": MessageLookupByLibrary.simpleMessage("Firmware Zip:"),
         "firm_zip_file_sel":
             MessageLookupByLibrary.simpleMessage("Select Firmware Zip"),
-        "firmware_update": MessageLookupByLibrary.simpleMessage("更新固件"),
-        "font_bold": MessageLookupByLibrary.simpleMessage("字体加粗："),
-        "font_reverse": MessageLookupByLibrary.simpleMessage("字体反显:"),
-        "free_fmt1_txt": MessageLookupByLibrary.simpleMessage("自定义打印格式 1:"),
-        "free_fmt2_txt": MessageLookupByLibrary.simpleMessage("自定义打印格式 2:"),
-        "free_fmt3_txt": MessageLookupByLibrary.simpleMessage("自定义打印格式 3:"),
-        "gateway": MessageLookupByLibrary.simpleMessage("网关:"),
+        "firmware_update":
+            MessageLookupByLibrary.simpleMessage("Update Firmware Serial"),
+        "font_bold": MessageLookupByLibrary.simpleMessage("Bold:"),
+        "font_reverse":
+            MessageLookupByLibrary.simpleMessage("Reverse Contrast:"),
+        "free_fmt1_txt": MessageLookupByLibrary.simpleMessage("Free format 1:"),
+        "free_fmt2_txt": MessageLookupByLibrary.simpleMessage("Free format 2:"),
+        "free_fmt3_txt": MessageLookupByLibrary.simpleMessage("Free format 3:"),
+        "gateway": MessageLookupByLibrary.simpleMessage("Gateway:"),
         "general_configuration_title":
-            MessageLookupByLibrary.simpleMessage("通用配置"),
-        "get_bt_name": MessageLookupByLibrary.simpleMessage("获取名称"),
-        "get_build_info": MessageLookupByLibrary.simpleMessage("软件信息"),
-        "go_home": MessageLookupByLibrary.simpleMessage("确定返回主页?"),
-        "header_confirm_info": MessageLookupByLibrary.simpleMessage("请确认输入信息."),
-        "hr_alignment": MessageLookupByLibrary.simpleMessage("文字对齐方式"),
-        "ip_address": MessageLookupByLibrary.simpleMessage("IP地址:"),
-        "jump_confirm_info":
-            MessageLookupByLibrary.simpleMessage("请确认跳转到默认打印格式下发页面."),
+            MessageLookupByLibrary.simpleMessage("General Configuration"),
+        "get_bt_name": MessageLookupByLibrary.simpleMessage("Get name"),
+        "get_build_info":
+            MessageLookupByLibrary.simpleMessage("Software Information"),
+        "go_home": MessageLookupByLibrary.simpleMessage(
+            "Confirm to return to hompage?"),
+        "header_confirm_info": MessageLookupByLibrary.simpleMessage(
+            "Please confirm the information."),
+        "hr_alignment": MessageLookupByLibrary.simpleMessage("HRI Alignment:"),
+        "ip_address": MessageLookupByLibrary.simpleMessage("IPv4:"),
+        "jump_confirm_info": MessageLookupByLibrary.simpleMessage(
+            "Please confirm to go to the default print format page."),
         "l_barcode_expl": MessageLookupByLibrary.simpleMessage("BarCode"),
         "l_barcode_title":
             MessageLookupByLibrary.simpleMessage("BarCode Variable"),
@@ -184,31 +209,42 @@ class MessageLookup extends MessageLookupByLibrary {
         "l_unit_wgt_expl": MessageLookupByLibrary.simpleMessage("UnitWeight"),
         "l_unit_wgt_var": MessageLookupByLibrary.simpleMessage("UnitWeight"),
         "l_uwgt_expl": MessageLookupByLibrary.simpleMessage("Universal weight"),
+        "l_uwgt_var": MessageLookupByLibrary.simpleMessage("U.WGT"),
         "l_uwu_expl":
             MessageLookupByLibrary.simpleMessage("Universal weight unit"),
+        "l_uwu_var": MessageLookupByLibrary.simpleMessage("U.WU"),
         "l_var_title": MessageLookupByLibrary.simpleMessage("Variable"),
         "l_wgt_unit_expl": MessageLookupByLibrary.simpleMessage("WeightUnit"),
         "l_wgt_unit_var": MessageLookupByLibrary.simpleMessage("WeightUnit"),
-        "label_design_title": MessageLookupByLibrary.simpleMessage("标签设置"),
-        "label_fmt_download": MessageLookupByLibrary.simpleMessage("标签打印格式下发"),
+        "label_design_title":
+            MessageLookupByLibrary.simpleMessage("Label Design"),
+        "label_fmt_download": MessageLookupByLibrary.simpleMessage(
+            "Download Label Printing Formats"),
         "language": MessageLookupByLibrary.simpleMessage("语言"),
-        "language_setting_title": MessageLookupByLibrary.simpleMessage("语言设置"),
-        "license_info_title": MessageLookupByLibrary.simpleMessage("授权信息"),
-        "license_title": MessageLookupByLibrary.simpleMessage("认证信息"),
+        "language_setting_title":
+            MessageLookupByLibrary.simpleMessage("Language Setting"),
+        "license_info_title":
+            MessageLookupByLibrary.simpleMessage("License Info"),
+        "license_title":
+            MessageLookupByLibrary.simpleMessage("License information"),
         "m_scale_title":
             MessageLookupByLibrary.simpleMessage("Multi-scale Management"),
-        "manual": MessageLookupByLibrary.simpleMessage("手动"),
-        "max_length": MessageLookupByLibrary.simpleMessage("最大长度："),
-        "modify_bt_name": MessageLookupByLibrary.simpleMessage("修改名称"),
-        "net": MessageLookupByLibrary.simpleMessage("净重："),
-        "netmask": MessageLookupByLibrary.simpleMessage("子网掩码:"),
-        "network_setting": MessageLookupByLibrary.simpleMessage("无线网络设置"),
-        "new_format": MessageLookupByLibrary.simpleMessage("新建格式"),
-        "new_license_text": MessageLookupByLibrary.simpleMessage("新授权码:"),
-        "no_element": MessageLookupByLibrary.simpleMessage("没有选择任何元素"),
-        "open_file": MessageLookupByLibrary.simpleMessage("打开文件(json)"),
-        "open_preview": MessageLookupByLibrary.simpleMessage("打开预览"),
-        "operation_steps": MessageLookupByLibrary.simpleMessage("操作步骤："),
+        "manual": MessageLookupByLibrary.simpleMessage("Manual"),
+        "max_length": MessageLookupByLibrary.simpleMessage("Max Length:"),
+        "modify_bt_name": MessageLookupByLibrary.simpleMessage("Modify name"),
+        "net": MessageLookupByLibrary.simpleMessage("Net:"),
+        "netmask": MessageLookupByLibrary.simpleMessage("NetMask:"),
+        "network_setting":
+            MessageLookupByLibrary.simpleMessage("Wireless network settings"),
+        "new_format": MessageLookupByLibrary.simpleMessage("New Format"),
+        "new_license_text":
+            MessageLookupByLibrary.simpleMessage("New License:"),
+        "no_element":
+            MessageLookupByLibrary.simpleMessage("No element selected."),
+        "open_file": MessageLookupByLibrary.simpleMessage("Open File (json)"),
+        "open_preview": MessageLookupByLibrary.simpleMessage("Open preview"),
+        "operation_steps":
+            MessageLookupByLibrary.simpleMessage("Operation Steps:"),
         "output_confirm_info": MessageLookupByLibrary.simpleMessage(
             "Please confirm the folder name!"),
         "output_no_file":
@@ -283,9 +319,9 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Scale Name."),
         "p_scale_name_var": MessageLookupByLibrary.simpleMessage("Scale Name"),
         "p_settle_account_times_expl":
-            MessageLookupByLibrary.simpleMessage("Settle Account Times"),
+            MessageLookupByLibrary.simpleMessage("Settle Account Times."),
         "p_settle_account_times_var":
-            MessageLookupByLibrary.simpleMessage("Settle Account Times"),
+            MessageLookupByLibrary.simpleMessage("Settle Account Times."),
         "p_subtotal_expl": MessageLookupByLibrary.simpleMessage("Subtotal."),
         "p_subtotal_var": MessageLookupByLibrary.simpleMessage("Subtotal"),
         "p_tare_expl": MessageLookupByLibrary.simpleMessage("Tare value."),
@@ -309,10 +345,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "p_tax_base3_expl": MessageLookupByLibrary.simpleMessage("Tax Base 3."),
         "p_tax_base3_var": MessageLookupByLibrary.simpleMessage("Tax Base3"),
         "p_tax_model_expl": MessageLookupByLibrary.simpleMessage(
-            "Tax Model,tax included or  tax external."),
+            "Tax Model,tax included or tax external."),
         "p_tax_model_var": MessageLookupByLibrary.simpleMessage("Tax Model"),
         "p_tax_name_expl": MessageLookupByLibrary.simpleMessage("Tax Name."),
-        "p_tax_name_var": MessageLookupByLibrary.simpleMessage("Tax Name"),
+        "p_tax_name_var": MessageLookupByLibrary.simpleMessage("Tax Name."),
         "p_tax_type1_expl": MessageLookupByLibrary.simpleMessage("Tax Type 1."),
         "p_tax_type1_var": MessageLookupByLibrary.simpleMessage("Tax Type1"),
         "p_tax_type2_expl": MessageLookupByLibrary.simpleMessage("Tax Type 2."),
@@ -321,6 +357,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "p_tax_type3_var": MessageLookupByLibrary.simpleMessage("Tax Type3"),
         "p_text_expl": MessageLookupByLibrary.simpleMessage("Free text."),
         "p_text_title": MessageLookupByLibrary.simpleMessage("Free Text"),
+        "p_text_var": MessageLookupByLibrary.simpleMessage("Text"),
         "p_time_expl": MessageLookupByLibrary.simpleMessage("Time."),
         "p_time_var": MessageLookupByLibrary.simpleMessage("Time"),
         "p_total_no_tax_expl":
@@ -339,13 +376,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "p_weight_pcs_expl":
             MessageLookupByLibrary.simpleMessage("Weight or Pcs."),
         "p_weight_pcs_var": MessageLookupByLibrary.simpleMessage("Weight Pcs"),
-        "parameter_set_title": MessageLookupByLibrary.simpleMessage("参数设置"),
+        "parameter_set_title":
+            MessageLookupByLibrary.simpleMessage("Parameter Setting"),
         "parameter_settings_title":
-            MessageLookupByLibrary.simpleMessage("参数设置"),
-        "passed_fail_message":
-            MessageLookupByLibrary.simpleMessage("没有认证。请发送上方的ID给我们。"),
-        "passed_message": MessageLookupByLibrary.simpleMessage("认证通过.\r\n"),
-        "password": MessageLookupByLibrary.simpleMessage("密码:"),
+            MessageLookupByLibrary.simpleMessage("Parameter settings"),
+        "passed_fail_message": MessageLookupByLibrary.simpleMessage(
+            "Not authenticed. Please send the ID to us."),
+        "passed_message":
+            MessageLookupByLibrary.simpleMessage("Authentication passed.\r\n"),
+        "password": MessageLookupByLibrary.simpleMessage("Password:"),
         "plu_all_plu_title":
             MessageLookupByLibrary.simpleMessage("All Products:"),
         "plu_btn_clear": MessageLookupByLibrary.simpleMessage("Clear"),
@@ -358,26 +397,31 @@ class MessageLookup extends MessageLookupByLibrary {
             "Only one PLU file can be selected"),
         "plu_choose_file":
             MessageLookupByLibrary.simpleMessage("Choose Product Excel"),
-        "plu_download_title": MessageLookupByLibrary.simpleMessage("PLU 下发"),
-        "plu_edit": MessageLookupByLibrary.simpleMessage("PLU 编辑"),
-        "plu_error_message": MessageLookupByLibrary.simpleMessage("预扣重不能为空."),
-        "plu_error_message1":
-            MessageLookupByLibrary.simpleMessage("PLU序号或PLU名称不能为空."),
-        "plu_error_message2":
-            MessageLookupByLibrary.simpleMessage("PLU序号或PLU名称已经存在."),
-        "plu_name": MessageLookupByLibrary.simpleMessage("PLU 名称："),
+        "plu_download_title":
+            MessageLookupByLibrary.simpleMessage("PLU Download"),
+        "plu_edit": MessageLookupByLibrary.simpleMessage("PLU Edit"),
+        "plu_error_message": MessageLookupByLibrary.simpleMessage(
+            "PLU pretare cannot be empty."),
+        "plu_error_message1": MessageLookupByLibrary.simpleMessage(
+            "PLU ID or PLU name cannot be empty."),
+        "plu_error_message2": MessageLookupByLibrary.simpleMessage(
+            "PLU ID or PLU name already exists."),
+        "plu_name": MessageLookupByLibrary.simpleMessage("PLU Name:"),
         "plu_name_length":
             MessageLookupByLibrary.simpleMessage("Product name max length:"),
         "plu_partial_plu_title":
             MessageLookupByLibrary.simpleMessage("Partial Products:"),
-        "plu_remarks": MessageLookupByLibrary.simpleMessage("PLU 备注"),
-        "position": MessageLookupByLibrary.simpleMessage("位置"),
-        "pretare": MessageLookupByLibrary.simpleMessage("预扣重"),
-        "print_direction": MessageLookupByLibrary.simpleMessage("打印方向："),
-        "print_page": MessageLookupByLibrary.simpleMessage("纸张大小："),
-        "printer": MessageLookupByLibrary.simpleMessage("打印机："),
-        "product_information": MessageLookupByLibrary.simpleMessage("产品信息"),
-        "qrcode_edit": MessageLookupByLibrary.simpleMessage("二维码编辑"),
+        "plu_remarks": MessageLookupByLibrary.simpleMessage("PLu Remarks:"),
+        "position": MessageLookupByLibrary.simpleMessage("Position"),
+        "pretare": MessageLookupByLibrary.simpleMessage("Pretare:"),
+        "print_direction": MessageLookupByLibrary.simpleMessage("Direction:"),
+        "print_page": MessageLookupByLibrary.simpleMessage("Page:"),
+        "printer": MessageLookupByLibrary.simpleMessage("Printer:"),
+        "product_information":
+            MessageLookupByLibrary.simpleMessage("Product Information"),
+        "qrcode_edit": MessageLookupByLibrary.simpleMessage("Qrcode Edit"),
+        "rDetailRptTitle":
+            MessageLookupByLibrary.simpleMessage("Retail Detail Report"),
         "receipt_design_title":
             MessageLookupByLibrary.simpleMessage("Receipt Design"),
         "receipt_format1_item":
@@ -387,17 +431,18 @@ class MessageLookup extends MessageLookupByLibrary {
         "receipt_format3_item":
             MessageLookupByLibrary.simpleMessage("Receipt Format3:"),
         "receipt_format_download":
-            MessageLookupByLibrary.simpleMessage("票据打印格式下发"),
-        "refresh_port": MessageLookupByLibrary.simpleMessage("刷新串口"),
-        "refresh_tip": MessageLookupByLibrary.simpleMessage("刷新"),
-        "report_delete_btn": MessageLookupByLibrary.simpleMessage("删除所有"),
-        "report_hide_btn": MessageLookupByLibrary.simpleMessage("隐藏报表"),
-        "report_set_btn": MessageLookupByLibrary.simpleMessage("报表设置"),
-        "report_show_btn": MessageLookupByLibrary.simpleMessage("显示报表"),
-        "save_as": MessageLookupByLibrary.simpleMessage("另存为"),
-        "save_csv": MessageLookupByLibrary.simpleMessage("保存 csv"),
-        "save_file": MessageLookupByLibrary.simpleMessage("保存文件(json)"),
-        "save_mode": MessageLookupByLibrary.simpleMessage("保存模式："),
+            MessageLookupByLibrary.simpleMessage("Receipt Format Download"),
+        "refresh_port": MessageLookupByLibrary.simpleMessage("Refresh port"),
+        "refresh_tip": MessageLookupByLibrary.simpleMessage("Refresh"),
+        "report_delete_btn": MessageLookupByLibrary.simpleMessage("Delete All"),
+        "report_hide_btn": MessageLookupByLibrary.simpleMessage("Hide Report"),
+        "report_set_btn":
+            MessageLookupByLibrary.simpleMessage("Report Setting"),
+        "report_show_btn": MessageLookupByLibrary.simpleMessage("Show Reports"),
+        "save_as": MessageLookupByLibrary.simpleMessage("Save as"),
+        "save_csv": MessageLookupByLibrary.simpleMessage("Save as CSV"),
+        "save_file": MessageLookupByLibrary.simpleMessage("Save File (json)"),
+        "save_mode": MessageLookupByLibrary.simpleMessage("Save Mode:"),
         "scale_mgr_btn_add": MessageLookupByLibrary.simpleMessage("Add"),
         "scale_mgr_btn_def":
             MessageLookupByLibrary.simpleMessage("Set Default"),
@@ -408,88 +453,111 @@ class MessageLookup extends MessageLookupByLibrary {
         "scale_mgr_scale_model":
             MessageLookupByLibrary.simpleMessage("Scale Model:"),
         "scale_mgr_scale_name":
-            MessageLookupByLibrary.simpleMessage("Scale Name:"),
-        "scale_model": MessageLookupByLibrary.simpleMessage("机种:"),
-        "scale_name": MessageLookupByLibrary.simpleMessage("秤名称:"),
-        "scale_sn": MessageLookupByLibrary.simpleMessage("序列号:"),
-        "select_barcode": MessageLookupByLibrary.simpleMessage("条码："),
-        "select_firmware_btn": MessageLookupByLibrary.simpleMessage("选择固件"),
-        "select_fontsize": MessageLookupByLibrary.simpleMessage("字体大小："),
-        "select_qrcode": MessageLookupByLibrary.simpleMessage("二维码："),
-        "select_qrcode_width": MessageLookupByLibrary.simpleMessage("二维码宽度："),
-        "select_rotation": MessageLookupByLibrary.simpleMessage("旋转角度："),
-        "serial_error": MessageLookupByLibrary.simpleMessage("串口失去连接，请检查设置。"),
-        "serial_modify_title": MessageLookupByLibrary.simpleMessage("串口信息修改"),
+            MessageLookupByLibrary.simpleMessage("Scale Name"),
+        "scale_model": MessageLookupByLibrary.simpleMessage("Scale Model:"),
+        "scale_name": MessageLookupByLibrary.simpleMessage("Scale Name:"),
+        "scale_sn": MessageLookupByLibrary.simpleMessage("SN#:"),
+        "select_barcode": MessageLookupByLibrary.simpleMessage("BarCode:"),
+        "select_firmware_btn":
+            MessageLookupByLibrary.simpleMessage("Select Firmware"),
+        "select_fontsize": MessageLookupByLibrary.simpleMessage("Font Size:"),
+        "select_qrcode": MessageLookupByLibrary.simpleMessage("QRcode:"),
+        "select_qrcode_width":
+            MessageLookupByLibrary.simpleMessage("Qrcode Width:"),
+        "select_rotation": MessageLookupByLibrary.simpleMessage("Rotation:"),
+        "serial_error": MessageLookupByLibrary.simpleMessage(
+            "Serial port has been disconnected. Please check the settings."),
+        "serial_modify_title": MessageLookupByLibrary.simpleMessage(
+            "Serial port information modification"),
         "serial_output_design":
-            MessageLookupByLibrary.simpleMessage("串口协议输出设置"),
+            MessageLookupByLibrary.simpleMessage("Serial Output Design"),
         "serial_output_download":
-            MessageLookupByLibrary.simpleMessage("串口协议下发"),
-        "serial_page_ol": MessageLookupByLibrary.simpleMessage("OL 模式"),
-        "serial_page_pcs": MessageLookupByLibrary.simpleMessage("计数模式"),
-        "serial_page_percent": MessageLookupByLibrary.simpleMessage("百分比模式"),
-        "serial_page_price": MessageLookupByLibrary.simpleMessage("计价模式"),
-        "serial_page_ul": MessageLookupByLibrary.simpleMessage("UL 模式"),
-        "serial_page_weight": MessageLookupByLibrary.simpleMessage("重量模式"),
-        "serial_port": MessageLookupByLibrary.simpleMessage("串口："),
+            MessageLookupByLibrary.simpleMessage("Serial Output Download"),
+        "serial_page_ol": MessageLookupByLibrary.simpleMessage("OL mode"),
+        "serial_page_pcs":
+            MessageLookupByLibrary.simpleMessage("Counting mode"),
+        "serial_page_percent":
+            MessageLookupByLibrary.simpleMessage("Percent mode"),
+        "serial_page_price":
+            MessageLookupByLibrary.simpleMessage("Price Computing mode"),
+        "serial_page_ul": MessageLookupByLibrary.simpleMessage("UL mode"),
+        "serial_page_weight":
+            MessageLookupByLibrary.simpleMessage("Weight mode"),
+        "serial_port": MessageLookupByLibrary.simpleMessage("Serial port:"),
         "serial_port_output_preview":
-            MessageLookupByLibrary.simpleMessage("串口输出预览"),
-        "serial_port_status": MessageLookupByLibrary.simpleMessage("串口连接状态:"),
-        "server_ip": MessageLookupByLibrary.simpleMessage("服务器 Ip:"),
-        "server_port": MessageLookupByLibrary.simpleMessage("服务器端口号:"),
-        "set_ethernet_ip_title": MessageLookupByLibrary.simpleMessage("有线网络设置"),
-        "set_language_title": MessageLookupByLibrary.simpleMessage("设置语言"),
-        "set_wifi_success": MessageLookupByLibrary.simpleMessage("设置Wifi成功!"),
-        "show_current_weight": MessageLookupByLibrary.simpleMessage("当前重量:"),
-        "show_increment_weight": MessageLookupByLibrary.simpleMessage("增加重量:"),
-        "show_reduced_weight": MessageLookupByLibrary.simpleMessage("减少重量:"),
-        "stable": MessageLookupByLibrary.simpleMessage("稳定："),
-        "stable_time": MessageLookupByLibrary.simpleMessage("稳定时间"),
-        "stable_time_error_tip":
-            MessageLookupByLibrary.simpleMessage("稳定时间不能大于20秒."),
-        "step1": MessageLookupByLibrary.simpleMessage("1. 请在左侧点击一个或者多个元素;"),
+            MessageLookupByLibrary.simpleMessage("Serial port output preview"),
+        "serial_port_status":
+            MessageLookupByLibrary.simpleMessage("Serial port status:"),
+        "server_ip": MessageLookupByLibrary.simpleMessage("Server Ip:"),
+        "server_port": MessageLookupByLibrary.simpleMessage("Server Port:"),
+        "set_ethernet_ip_title":
+            MessageLookupByLibrary.simpleMessage("Ethernet IP Setting"),
+        "set_language_title":
+            MessageLookupByLibrary.simpleMessage("Set Language"),
+        "set_wifi_success": MessageLookupByLibrary.simpleMessage(
+            "Wi-Fi configured successfully!"),
+        "show_current_weight":
+            MessageLookupByLibrary.simpleMessage("Current weight:"),
+        "show_increment_weight":
+            MessageLookupByLibrary.simpleMessage("Increment weight:"),
+        "show_reduced_weight":
+            MessageLookupByLibrary.simpleMessage("Reduced weight:"),
+        "stable": MessageLookupByLibrary.simpleMessage("Stable:"),
+        "stable_time": MessageLookupByLibrary.simpleMessage("Stable Time"),
+        "stable_time_error_tip": MessageLookupByLibrary.simpleMessage(
+            "The value must be under 20 seconds."),
+        "step1": MessageLookupByLibrary.simpleMessage(
+            "1. Please click on one or more elements on the left panel;"),
         "step2": MessageLookupByLibrary.simpleMessage(
-            "2. 选择的元素会显示在画面上，可以在这里编辑他们的属性。 "),
-        "stop_bits": MessageLookupByLibrary.simpleMessage("停止位："),
-        "system_id": MessageLookupByLibrary.simpleMessage("系统唯一ID:  "),
-        "system_setting_title": MessageLookupByLibrary.simpleMessage("系统设置"),
-        "tab_order": MessageLookupByLibrary.simpleMessage("序号："),
-        "take_in_title": MessageLookupByLibrary.simpleMessage("加法秤"),
-        "take_out_title": MessageLookupByLibrary.simpleMessage("减法秤"),
-        "tare": MessageLookupByLibrary.simpleMessage("扣重："),
-        "text_content": MessageLookupByLibrary.simpleMessage("文本内容："),
+            "2. The selected elements will be displayed in the center of the page, and you can edit their attributes here. "),
+        "stop_bits": MessageLookupByLibrary.simpleMessage("Stop bits:"),
+        "system_id":
+            MessageLookupByLibrary.simpleMessage("System Unique ID:  "),
+        "system_setting_title":
+            MessageLookupByLibrary.simpleMessage("System Setting"),
+        "tab_order": MessageLookupByLibrary.simpleMessage("Layer order:"),
+        "take_in_title":
+            MessageLookupByLibrary.simpleMessage("Increment Weighing"),
+        "take_out_title":
+            MessageLookupByLibrary.simpleMessage("Take Out Scale"),
+        "tare": MessageLookupByLibrary.simpleMessage("Tare:"),
+        "text_content": MessageLookupByLibrary.simpleMessage("Text Content:"),
         "title_serial_port_connection":
-            MessageLookupByLibrary.simpleMessage("串口连接"),
-        "total_fmt_txt": MessageLookupByLibrary.simpleMessage("累加总计打印格式:"),
+            MessageLookupByLibrary.simpleMessage("Serial Port Connection"),
+        "total_fmt_txt": MessageLookupByLibrary.simpleMessage("Total format:"),
         "txt_serial_port_connected":
-            MessageLookupByLibrary.simpleMessage("串口已连接"),
+            MessageLookupByLibrary.simpleMessage("Serial port connected"),
         "txt_serial_port_connected_fail":
-            MessageLookupByLibrary.simpleMessage("串口连接失败"),
-        "update_firmware": MessageLookupByLibrary.simpleMessage("串口更新固件"),
-        "update_firmware_info":
-            MessageLookupByLibrary.simpleMessage("更新过程不能取消.\r\n请确认更新."),
-        "update_firmware_reboot":
-            MessageLookupByLibrary.simpleMessage("请重启设备后等待更新..."),
-        "update_firmware_wait": MessageLookupByLibrary.simpleMessage("请等待..."),
-        "user_edit": MessageLookupByLibrary.simpleMessage("用户编辑"),
-        "user_error_message1":
-            MessageLookupByLibrary.simpleMessage("用户ID和用户名字不能为空!"),
-        "user_error_message2":
-            MessageLookupByLibrary.simpleMessage("用户ID或者用户名称不能重复 !"),
+            MessageLookupByLibrary.simpleMessage("Unable to connect"),
+        "update_firmware":
+            MessageLookupByLibrary.simpleMessage("Update Firmware By Serial "),
+        "update_firmware_info": MessageLookupByLibrary.simpleMessage(
+            "The update process can not be canceled.\r\nPress confirm to continue."),
+        "update_firmware_reboot": MessageLookupByLibrary.simpleMessage(
+            "Please reboot the device to begin update..."),
+        "update_firmware_wait":
+            MessageLookupByLibrary.simpleMessage("Please wait..."),
+        "user_edit": MessageLookupByLibrary.simpleMessage("User Edit"),
+        "user_error_message1": MessageLookupByLibrary.simpleMessage(
+            "The User Id and Username cannot be empty!"),
+        "user_error_message2": MessageLookupByLibrary.simpleMessage(
+            "User ID or Username cannot be the same!"),
         "user_error_message3":
-            MessageLookupByLibrary.simpleMessage("用户记录没有找到 !"),
-        "user_id": MessageLookupByLibrary.simpleMessage("用户ID："),
-        "user_info": MessageLookupByLibrary.simpleMessage("用户信息"),
-        "user_name": MessageLookupByLibrary.simpleMessage("用户名称："),
-        "user_phone": MessageLookupByLibrary.simpleMessage("电话:"),
-        "user_remarks": MessageLookupByLibrary.simpleMessage("用户备注："),
-        "user_sex": MessageLookupByLibrary.simpleMessage("性别："),
+            MessageLookupByLibrary.simpleMessage("The User is not found!"),
+        "user_id": MessageLookupByLibrary.simpleMessage("User ID:"),
+        "user_info": MessageLookupByLibrary.simpleMessage("User Info"),
+        "user_name": MessageLookupByLibrary.simpleMessage("User Name:"),
+        "user_phone": MessageLookupByLibrary.simpleMessage("Phone:"),
+        "user_remarks": MessageLookupByLibrary.simpleMessage("User Notes:"),
+        "user_sex": MessageLookupByLibrary.simpleMessage("Gender:"),
         "variable_value_setting_title":
-            MessageLookupByLibrary.simpleMessage("变量值设置"),
-        "weighing_title": MessageLookupByLibrary.simpleMessage("称重"),
+            MessageLookupByLibrary.simpleMessage("Variable Value Setting"),
+        "weighing_title": MessageLookupByLibrary.simpleMessage("Weighing"),
         "weight_collection_title":
-            MessageLookupByLibrary.simpleMessage("重量数据收集"),
-        "wifi_setting_title": MessageLookupByLibrary.simpleMessage("Wi-Fi 设置"),
-        "zero": MessageLookupByLibrary.simpleMessage("零点："),
-        "zero_range": MessageLookupByLibrary.simpleMessage("零点范围")
+            MessageLookupByLibrary.simpleMessage("Weight Data Collection"),
+        "wifi_setting_title":
+            MessageLookupByLibrary.simpleMessage("Wi-Fi Setting"),
+        "zero": MessageLookupByLibrary.simpleMessage("Zero:"),
+        "zero_range": MessageLookupByLibrary.simpleMessage("Zero Range:")
       };
 }

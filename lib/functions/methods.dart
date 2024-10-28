@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:t_max/data/comscaleinfo_data.dart';
 import 'package:t_max/data/writelog.dart';
 
 import '../common/web_socket_channel.dart';
@@ -273,7 +274,7 @@ class PublicFunctions {
   static void getRecords(int scaleId, String mode) {
     myScaleCmd.cmdMode = "get_recs";
     myScaleCmd.cmdData =
-        '$mode,$myDefScaleInfo.defScaleModel,$myDefScaleInfo.defScaleSn,$myDefScaleInfo.defScaleModel'; //根据scale model scale sn  scale name(别名)
+        '$mode,${myDefScaleInfo.defScaleModel},${myDefScaleInfo.defScaleSn},${myDefScaleInfo.defScaleModel}'; //根据scale model scale sn  scale name(别名)
     sendMsg(scaleId, jsonEncode(myScaleCmd));
   }
 
@@ -419,14 +420,6 @@ class PublicFunctions {
     }
   }
 
-  static void enUserContinue(int scaleId) {
-    if (scaleId == 1) {
-      myScaleCmd.cmdMode = "en_user_cont";
-      myScaleCmd.cmdData = '';
-      sendMsg(scaleId, jsonEncode(myScaleCmd));
-    }
-  }
-
   static void getFactoryInfo(int scaleId) {
     myScaleCmd.cmdMode = "get_factory_info";
     myScaleCmd.cmdData = '';
@@ -434,12 +427,20 @@ class PublicFunctions {
   }
 
   static void deleteAllRecords(int scaleId) {
-    String modelName = myFactoryInfoFromScale.modelName == null
-        ? ''
-        : myFactoryInfoFromScale.modelName!;
-    String scaleSn = myFactoryInfoFromScale.scaleSn == null
-        ? ''
-        : myFactoryInfoFromScale.scaleSn!;
+    String modelName = "";
+    String scaleSn = "";
+    if (scaleId == 1) {
+      modelName = myComScaleInfo.scaleModel;
+      scaleSn = myComScaleInfo.scaleSn;
+    } else {
+      var netScale = NetScaleListMgr.findScaleInfo(myNetScaleList, scaleId);
+      if (netScale.scaleModel == null) {
+        return;
+      }
+      modelName = netScale.scaleModel!;
+      scaleSn = netScale.scaleSn!;
+    }
+
     myScaleCmd.cmdMode = "del_rec";
     myScaleCmd.cmdData = '999999999,0,$modelName,$scaleSn';
     sendMsg(scaleId, jsonEncode(myScaleCmd));

@@ -1480,12 +1480,14 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       String jsonString = await file.readAsString();
       readTextInfoListFromStr(jsonString);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(e.toString(),
-              style:
-                  const TextStyle(fontSize: 20, fontWeight: FontWeight.normal)),
-          duration: const Duration(seconds: 1),
-          backgroundColor: Theme.of(context).colorScheme.error));
+      if (mounted && context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(e.toString(),
+                style: const TextStyle(
+                    fontSize: 20, fontWeight: FontWeight.normal)),
+            duration: const Duration(seconds: 1),
+            backgroundColor: Theme.of(context).colorScheme.error));
+      }
     }
   }
 

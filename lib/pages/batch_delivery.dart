@@ -701,10 +701,15 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                                   getImportFileName();
                                   _getImportLog();
                                   importFlag = true;
-                                  _showErrorDialog(context, 'Import complete!');
+                                  if (context.mounted) {
+                                    _showErrorDialog(
+                                        context, 'Import complete!');
+                                  }
                                 } else {
-                                  _showErrorDialog(context,
-                                      'The exported backup is modified. Not recognizable.');
+                                  if (context.mounted) {
+                                    _showErrorDialog(context,
+                                        'The exported backup is modified. Not recognizable.');
+                                  }
                                 }
                               },
                             ),

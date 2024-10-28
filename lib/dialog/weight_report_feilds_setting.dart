@@ -22,7 +22,7 @@ List<String> allFieldSList = [
   'User NO.',
   'User Name',
   'User Remarks',
-  'Scale Model'
+  'Scale Name'
 ];
 
 class ReportFeildsSettingDialogState extends State<ReportFeildsSettingDialog> {

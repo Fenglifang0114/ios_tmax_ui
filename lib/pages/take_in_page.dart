@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
@@ -19,13 +18,14 @@ import '../data/downloadresponse.dart';
 import '../data/manager_scale_channel.dart';
 import '../data/language.dart';
 import '../data/record_data.dart';
-import '../data/scale_info_from_scale.dart';
-import '../data/scalecmd_data.dart';
 import '../data/scalelist_data.dart';
 import '../data/timer_manager.dart';
 import '../data/weight_report_data.dart';
+import '../data/weight_rpt.dart';
+import '../data/wgt_rpt_data_source.dart';
 import '../dialog/addproduct_dialog.dart';
 import '../dialog/adduser_dialog.dart';
+import '../dialog/conform_dialog.dart';
 import '../dialog/setting_dialog.dart';
 import 'package:path/path.dart';
 import '../dialog/show_warning.dart';
@@ -48,7 +48,7 @@ class TakeInPageState extends State<TakeInPage> {
   List<double> weightValueList = [];
 
   final DataGridController _dataGridController = DataGridController();
-  final TextEditingController _errorText = TextEditingController();
+  String errorText = '';
 
   late ScrollController _reportScrollerController;
   late String lastWeight;
@@ -77,11 +77,14 @@ class TakeInPageState extends State<TakeInPage> {
 
   String showTakeInWeight = '';
   String diffWeightVal = '0.000'; //差值
-  String takeInWeightValue = '0.000';
+  String takeInWeightValue = '-----';
   String dialogString = " ";
   String productNameValue = "";
   String userNameValue = "";
-  String startWeightUnit = "";
+  String startWeightUnit = "--";
+
+  Timer? startTimer;
+  Timer? innerTimer;
 
   void updateTableData(List<WeightReportData> newReportData) {
     _weightReportDataSource.updateData(newReportData);
@@ -154,7 +157,7 @@ class TakeInPageState extends State<TakeInPage> {
     lastWeight = "*";
     dateformat = 1;
     zeroRange = 0;
-    _errorText.text = '';
+
     String timeString = (myModeSettingTakeIn.stableTime == "")
         ? "0"
         : myModeSettingTakeIn.stableTime.toString();
@@ -178,10 +181,9 @@ class TakeInPageState extends State<TakeInPage> {
     PublicFunctions.getProductList();
     PublicFunctions.getRecords(myDefScaleInfo.defScaleId!, weighingTakeInMode);
 
-    if (!isStart) {
-      cntScaleTimerMgr.stopCntScaleTimer();
-      cntScaleTimerMgr.startCntScaleTimer(5);
-    }
+    cntScaleTimerMgr.stopCntScaleTimer();
+    PublicFunctions.getWeight(myDefScaleInfo.defScaleId!);
+    onStartTimer();
 
     eventBus1 = eventBus.on<EventDeviceName>().listen((event) {
       if (mounted) {
@@ -311,8 +313,6 @@ class TakeInPageState extends State<TakeInPage> {
         } else {
           setState(() {
             isStart = false;
-            cntScaleTimerMgr.stopCntScaleTimer();
-            cntScaleTimerMgr.startCntScaleTimer(5);
           });
         }
       }
@@ -444,33 +444,13 @@ class TakeInPageState extends State<TakeInPage> {
   }
 
   void _addDBdataToReport() {
-    List<WeightRecords>? dbRecs = myGetScaleRecords.weightRecords;
-    for (var i = 0; i < dbRecs!.length; i++) {
-      myWeightReportData.add(WeightReportData(
-        (dbRecs[i].recId).toString(),
-        convertDateTime(
-            dbRecs[i].createdAt!, myModeSettingTakeIn.dateSeparator),
-        (dbRecs[i].weight == null) ? '' : dbRecs[i].weight!,
-        (dbRecs[i].weightUnit == null) ? '' : dbRecs[i].weightUnit!, //重量单位
-        (myProductRecInfo.id == null) ? "" : myProductRecInfo.id.toString(),
-        (dbRecs[i].product == null) ? '' : dbRecs[i].product!,
-        (dbRecs[i].pluRemarks == null) ? '' : dbRecs[i].pluRemarks!,
-        (dbRecs[i].pretare == null) ? '' : dbRecs[i].pretare!,
-        (dbRecs[i].userName == null) ? '' : dbRecs[i].userName!,
-        (dbRecs[i].userNo == null) ? '' : dbRecs[i].userNo!,
-        (dbRecs[i].userRemarks == null)
-            ? ''
-            : dbRecs[i].userRemarks!, //userremarks
-        (dbRecs[i].scaleModel == null) ? '' : dbRecs[i].scaleModel!,
-      ));
-    }
+    addDBdataToReport(myWeightReportData, myModeSettingTakeIn, dateformat);
     setState(() {
       _weightReportDataSource = WeightReportDataSource(_weightReportDatas);
       Future.delayed(const Duration(milliseconds: 100), () {
         _dataGridController
             .scrollToRow(_weightReportDataSource.rows.length - 0);
       });
-      // _dataGridController.scrollToRow(_weightReportDataSource.rows.length - 1);
     });
   }
 
@@ -495,6 +475,19 @@ class TakeInPageState extends State<TakeInPage> {
     cntScaleTimerMgr.stopPortOffTimer();
 
     super.dispose();
+  }
+
+  void onStartTimer() {
+    startTimer = Timer.periodic(Duration(seconds: 3), (timer) {
+      isCnting = false;
+      innerTimer = Timer(Duration(seconds: 1), () {
+        if (!isCnting && mounted && isStart) {
+          setState(() {
+            isStart = false;
+          });
+        }
+      });
+    });
   }
 
   @override
@@ -532,37 +525,6 @@ class TakeInPageState extends State<TakeInPage> {
           // mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              color: Theme.of(context).colorScheme.surfaceTint,
-              child: Row(
-                children: [
-                  Container(
-                      // width: _width,
-                      height: 20,
-                      margin: const EdgeInsets.only(left: 5, top: 2),
-                      alignment: Alignment.center, //设置控件内容的位置
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            width: 200,
-                            child: Text(
-                              _errorText.text, //报错信息
-                              maxLines: 1,
-                              style: TextStyle(
-                                color: (_errorText.text).contains('succeed')
-                                    ? Theme.of(context)
-                                        .colorScheme
-                                        .surfaceContainerHigh
-                                    : Theme.of(context).colorScheme.error,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ),
-                        ],
-                      )),
-                ],
-              ),
-            ),
             const SizedBox(height: 5),
             Expanded(
               flex: 3,
@@ -580,7 +542,6 @@ class TakeInPageState extends State<TakeInPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               buildTextAndImage(
-                                  50,
                                   localizedStrings.stable,
                                   (myReqWeightCountine.msgBody == null)
                                       ? ("assets/images/gray.png")
@@ -591,7 +552,6 @@ class TakeInPageState extends State<TakeInPage> {
                                           : ("assets/images/gray.png"),
                                   constraints),
                               buildTextAndImage(
-                                  50,
                                   localizedStrings.net,
                                   (myReqWeightCountine.msgBody == null)
                                       ? ("assets/images/gray.png")
@@ -601,7 +561,6 @@ class TakeInPageState extends State<TakeInPage> {
                                           : ("assets/images/gray.png"),
                                   constraints),
                               buildTextAndImage(
-                                  50,
                                   localizedStrings.zero,
                                   (myReqWeightCountine.msgBody == null)
                                       ? ("assets/images/gray.png")
@@ -618,7 +577,6 @@ class TakeInPageState extends State<TakeInPage> {
                         child: LayoutBuilder(builder:
                             (BuildContext context, BoxConstraints constraints) {
                           return buildWeightNameText(
-                              50,
                               localizedStrings.show_current_weight,
                               constraints);
                         })),
@@ -632,41 +590,19 @@ class TakeInPageState extends State<TakeInPage> {
                             children: [
                               buildTextWithWeight(
                                   Theme.of(context).colorScheme,
-                                  280,
-                                  70,
-                                  (myReqWeightCountine.msgBody == null)
+                                  (myReqWeightCountine.msgBody == null ||
+                                          !isStart)
                                       ? ("-----")
                                       : myReqWeightCountine.msgBody!.weightVal,
-                                  55,
                                   constraints,
                                   Theme.of(context).colorScheme.primary),
                               buildTextWithUnit(
                                   Theme.of(context).colorScheme,
-                                  100,
-                                  70,
-                                  (myReqWeightCountine.msgBody == null)
-                                      ? ("kg")
+                                  (myReqWeightCountine.msgBody == null ||
+                                          !isStart)
+                                      ? ("--")
                                       : myReqWeightCountine.msgBody!.weightUnit,
-                                  30,
                                   constraints)
-                            ],
-                          );
-                        })),
-                    Expanded(
-                        flex: 2,
-                        child: LayoutBuilder(builder:
-                            (BuildContext context, BoxConstraints constraints) {
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              buildStartIcon(Theme.of(context).colorScheme, 50,
-                                  30, constraints),
-                              buildStopIcon(
-                                Theme.of(context).colorScheme,
-                                50,
-                                30,
-                                constraints,
-                              )
                             ],
                           );
                         })),
@@ -690,7 +626,6 @@ class TakeInPageState extends State<TakeInPage> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               buildWeightNameText(
-                                  400,
                                   _isTakeInStart
                                       ? localizedStrings.show_increment_weight
                                       : '',
@@ -709,28 +644,16 @@ class TakeInPageState extends State<TakeInPage> {
                               _isTakeInStart
                                   ? buildTextWithWeight(
                                       Theme.of(context).colorScheme,
-                                      280,
-                                      70,
                                       (takeInWeightValue == '-0.000')
                                           ? '0.000'
                                           : isPcsTakeInVal(),
-                                      55,
                                       constraints,
                                       Theme.of(context).colorScheme.primary)
                                   : const SizedBox(),
-                              buildTextWithNOUnit(
-                                  100,
-                                  70,
-                                  (myReqWeightCountine.msgBody == null)
-                                      ? ("kg")
-                                      : myReqWeightCountine.msgBody!.weightUnit,
-                                  30,
-                                  constraints,
-                                  Theme.of(context).colorScheme.primary)
+                              buildTextWithNoUnit(constraints)
                             ],
                           );
                         })),
-                    const Expanded(flex: 2, child: SizedBox()),
                   ],
                 ),
               ),
@@ -743,21 +666,18 @@ class TakeInPageState extends State<TakeInPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     _buildFlexibleButtonAndText(
-                        width: 80,
                         buttonText: localizedStrings.button_tare,
                         onPressed: PublicFunctions.performTare,
                         constraints: constraints,
                         isTrue: isStart && !_isTakeInStart,
                         icon: Icons.title),
                     _buildFlexibleButtonAndText(
-                        width: 80,
                         buttonText: localizedStrings.button_zero,
                         onPressed: PublicFunctions.performZero,
                         constraints: constraints,
                         isTrue: isStart && !_isTakeInStart,
                         icon: Icons.exposure_zero),
                     _buildFlexibleButtonAndText(
-                        width: 80,
                         buttonText: (myReqWeightCountine.msgBody == null)
                             ? 'Start'
                             : (myReqWeightCountine.msgBody!.isStable &&
@@ -785,14 +705,12 @@ class TakeInPageState extends State<TakeInPage> {
                         isTrue: isStartButtonEnable(),
                         icon: Icons.swipe_right_outlined),
                     _buildFlexibleButtonAndText(
-                        width: 80,
                         buttonText: localizedStrings.button_save,
                         onPressed: _changeSaveButton,
                         constraints: constraints,
                         isTrue: !_isSaveButtonDisabled && isStart,
                         icon: Icons.save_outlined),
                     _buildFlexibleButtonAndText(
-                        width: 80,
                         buttonText: localizedStrings.button_setting,
                         onPressed: () {
                           mySettingParam = myModeSettingTakeIn;
@@ -973,8 +891,8 @@ class TakeInPageState extends State<TakeInPage> {
 
   String isPcsTakeInVal() {
     var takeInValue = '0.000';
-    if (myReqWeightCountine.msgBody == null) {
-      takeInValue = '0.000';
+    if (myReqWeightCountine.msgBody == null || !isStart) {
+      takeInValue = '-----';
     } else if (myReqWeightCountine.msgBody!.weightUnit == 'PCS') {
       double? result = double.tryParse(takeInWeightValue);
 
@@ -1000,62 +918,16 @@ class TakeInPageState extends State<TakeInPage> {
     return true;
   }
 
-  Widget buildStartIcon(ColorScheme colorScheme, double width, double? iconSize,
-      BoxConstraints constraints) {
-    width = width * constraints.maxWidth / 100;
-    iconSize = iconSize! * constraints.maxHeight / 100;
+  Widget buildTextWithWeight(ColorScheme colorScheme, String text,
+      BoxConstraints constraints, Color? color) {
+    double width = constraints.maxWidth / 10 * 7;
+    double height = constraints.maxHeight / 1.1;
+    double fontSize = width / 10 / 0.6;
 
-    return SizedBox(
-      width: width,
-      child: IconButton(
-        //开始按钮
-        icon: const Icon(Icons.play_arrow),
-        iconSize: iconSize,
-        color: (isStart) ? (colorScheme.secondaryFixed) : (colorScheme.primary),
-        onPressed: () {
-          performStart();
-        },
-      ),
-    );
-  }
-
-  Widget buildStopIcon(
-    ColorScheme colorScheme,
-    double width,
-    double? iconSize,
-    BoxConstraints constraints,
-  ) {
-    width = width * constraints.maxWidth / 100;
-    iconSize = iconSize! * constraints.maxHeight / 100;
-
-    return SizedBox(
-      width: width,
-      child: IconButton(
-        onPressed: () {
-          performStop();
-        },
-        icon: const Icon(Icons.pause),
-        iconSize: iconSize,
-        color: (!isStart) ? (colorScheme.secondaryFixed) : colorScheme.primary,
-      ),
-    );
-  }
-
-  Widget buildTextWithWeight(
-      ColorScheme colorScheme,
-      double width,
-      double height,
-      String text,
-      double? fontSize,
-      BoxConstraints constraints,
-      Color? color) {
-    width = width * constraints.maxWidth / 400;
-    height = height * constraints.maxHeight / 80;
-    fontSize = fontSize! * constraints.maxHeight / 120;
-    fontSize = constraints.maxHeight / 1.6;
-    if (fontSize > constraints.maxWidth / 6) {
-      fontSize = constraints.maxWidth / 6;
+    if (height - 80 < fontSize && fontSize > 110) {
+      fontSize = height - 80;
     }
+
     return Container(
       width: width,
       height: height,
@@ -1076,23 +948,23 @@ class TakeInPageState extends State<TakeInPage> {
     );
   }
 
-  Widget buildTextWithNOUnit(double width, double height, String text,
-      double? fontSize, BoxConstraints constraints, Color? color) {
-    width = width * constraints.maxWidth / 400;
-    height = height * constraints.maxHeight / 80;
+  Widget buildTextWithNoUnit(BoxConstraints constraints) {
+    double width = constraints.maxWidth / 10 * 2;
+    double height = constraints.maxHeight / 1.1;
     return SizedBox(
       width: width,
       height: height,
     );
   }
 
-  Widget buildTextWithUnit(ColorScheme colorScheme, double width, double height,
-      String text, double? fontSize, BoxConstraints constraints) {
-    width = width * constraints.maxWidth / 400;
-    height = height * constraints.maxHeight / 80;
-    fontSize = constraints.maxHeight / 3;
-    if (fontSize > constraints.maxWidth / 11) {
-      fontSize = constraints.maxWidth / 11;
+  Widget buildTextWithUnit(
+      ColorScheme colorScheme, String text, BoxConstraints constraints) {
+    double width = constraints.maxWidth / 10 * 2;
+    double height = constraints.maxHeight / 1.1;
+    double fontSize = width / 5 / 0.6;
+
+    if (height - 80 < fontSize && fontSize > 110) {
+      fontSize = height - 80;
     }
 
     return Container(
@@ -1115,9 +987,8 @@ class TakeInPageState extends State<TakeInPage> {
     );
   }
 
-  Widget buildWeightNameText(
-      double width, String text, BoxConstraints constraints) {
-    width = 25 * constraints.maxHeight / 30;
+  Widget buildWeightNameText(String text, BoxConstraints constraints) {
+    double width = constraints.maxWidth / 1.2;
     var fontSize = 16 * constraints.maxHeight / 150;
     return SizedBox(
       width: width,
@@ -1132,14 +1003,21 @@ class TakeInPageState extends State<TakeInPage> {
   }
 
   Widget buildTextAndImage(
-      double width, String text, String imageName, BoxConstraints constraints) {
-    var imageSize = constraints.maxHeight / 5;
-    width = 25 * constraints.maxHeight / 30;
-    var fontSize = 16 * constraints.maxHeight / 150;
+      String text, String imageName, BoxConstraints constraints) {
+    var imageSize = constraints.maxHeight / 4;
+    double width = constraints.maxWidth / 10 * 9;
+    var fontSize = width / 30 / 0.6;
+    if (imageSize > 60) {
+      imageSize = 60;
+    }
+    if (fontSize > 35) {
+      fontSize = 35;
+    }
+
     return Row(
       children: [
         SizedBox(
-          width: width,
+          width: width - imageSize - 10,
           child: Text(
             text,
             maxLines: 1,
@@ -1289,18 +1167,27 @@ class TakeInPageState extends State<TakeInPage> {
   }
 
   Widget _buildFlexibleButtonAndText({
-    required double width,
     required String buttonText,
     required VoidCallback onPressed,
     required BoxConstraints constraints,
     required bool isTrue,
     required IconData icon,
   }) {
-    double buttonWidth = width * (constraints.maxWidth / 600); // 自适应按钮宽度
-    double fontSize = 14 * (constraints.maxWidth / 600); // 自适应字体大小
+    double buttonWidth = (constraints.maxWidth / 8); // 自适应按钮宽度
+    double fontSize = (buttonWidth / 15 / 0.6); // 自适应字体大小
+    double btnH = (constraints.maxHeight / 2); // 自适应按钮宽度
+    if (fontSize > 40) {
+      fontSize = 40;
+    }
 
     return SizedBox(
       child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          elevation: 5, // 设置按钮的阴影
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
+          ),
+        ),
         onPressed: isTrue ? onPressed : null,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -1312,7 +1199,7 @@ class TakeInPageState extends State<TakeInPage> {
             const SizedBox(width: 4),
             SizedBox(
               width: buttonWidth,
-              height: buttonWidth / 3,
+              height: btnH,
               child: Center(
                 child: Text(
                   buttonText,
@@ -1348,38 +1235,6 @@ class TakeInPageState extends State<TakeInPage> {
           // mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              color: Theme.of(context).colorScheme.onPrimary,
-              child: Row(
-                children: [
-                  Container(
-                      // width: _width,
-                      height: 20,
-                      margin: const EdgeInsets.only(left: 5, top: 2),
-                      alignment: Alignment.center, //设置控件内容的位置
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            width: 200,
-                            child: Text(
-                              _errorText.text, //报错信息
-                              maxLines: 1,
-                              style: TextStyle(
-                                color: (_errorText.text).contains('succeed')
-                                    ? Theme.of(context)
-                                        .colorScheme
-                                        .surfaceContainerHigh
-                                    : Theme.of(context).colorScheme.error,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ),
-                        ],
-                      )),
-                ],
-              ),
-            ),
-            //////////////////////////////////
             const SizedBox(height: 5),
             Container(
               height: 120,
@@ -1394,7 +1249,7 @@ class TakeInPageState extends State<TakeInPage> {
                       Row(
                         children: [
                           SizedBox(
-                            width: 50,
+                            width: 120,
                             child: Text(
                               localizedStrings.stable,
                               textAlign: TextAlign.right,
@@ -1417,7 +1272,7 @@ class TakeInPageState extends State<TakeInPage> {
                       Row(
                         children: [
                           SizedBox(
-                            width: 50,
+                            width: 120,
                             child: Text(
                               localizedStrings.net,
                               textAlign: TextAlign.right,
@@ -1440,7 +1295,7 @@ class TakeInPageState extends State<TakeInPage> {
                       Row(
                         children: [
                           SizedBox(
-                            width: 50,
+                            width: 120,
                             child: Text(
                               localizedStrings.zero,
                               textAlign: TextAlign.right,
@@ -1474,7 +1329,8 @@ class TakeInPageState extends State<TakeInPage> {
                               Expanded(
                                 child: Text(
                                   textAlign: TextAlign.right,
-                                  (myReqWeightCountine.msgBody == null)
+                                  (myReqWeightCountine.msgBody == null ||
+                                          !isStart)
                                       ? ("-----")
                                       : myReqWeightCountine.msgBody!.weightVal,
                                   style: TextStyle(
@@ -1499,8 +1355,8 @@ class TakeInPageState extends State<TakeInPage> {
                             Expanded(
                                 child: Text(
                               textAlign: TextAlign.center,
-                              (myReqWeightCountine.msgBody == null)
-                                  ? ("kg")
+                              (myReqWeightCountine.msgBody == null || !isStart)
+                                  ? ("--")
                                   : myReqWeightCountine.msgBody!.weightUnit,
                               style: TextStyle(
                                 color: Theme.of(context).colorScheme.onPrimary,
@@ -1515,39 +1371,8 @@ class TakeInPageState extends State<TakeInPage> {
                       ),
                     ],
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      SizedBox(
-                        width: 50,
-                        child: IconButton(
-                          //开始按钮
-                          icon: const Icon(Icons.play_arrow),
-                          iconSize: 30,
-                          color: (isStart)
-                              ? (Theme.of(context).colorScheme.secondaryFixed)
-                              : (Theme.of(context).colorScheme.primary),
-                          onPressed: () {
-                            performStart();
-                          },
-                        ),
-                      ),
-                      SizedBox(
-                        width: 50,
-                        child: IconButton(
-                          onPressed: () {
-                            myReqWeightCountine.msgBody = null;
-                            performStop();
-                          },
-                          icon: const Icon(Icons.pause),
-                          iconSize: 30,
-                          color: (!isStart)
-                              ? (Theme.of(context).colorScheme.secondaryFixed)
-                              : (Theme.of(context).colorScheme.primary),
-                        ),
-                      ),
-                    ],
-                  ),
+                  const SizedBox(width: 10),
+
                   _isTakeInStart
                       ? Row(
                           children: [
@@ -1693,8 +1518,13 @@ class TakeInPageState extends State<TakeInPage> {
                                       allowedExtensions: ["xlsx"],
                                       fileName: 'report.xlsx',
                                     ));
+
                                     if (outputFile != null) {
                                       _creatFile(outputFile);
+                                      if (mounted && context.mounted) {
+                                        showConfirmationDialog(
+                                            context, errorText);
+                                      }
                                     }
                                   }),
                             ],
@@ -1711,37 +1541,6 @@ class TakeInPageState extends State<TakeInPage> {
             displayGrid(),
           ],
         ));
-  }
-
-  void performStart() {
-    setState(() {
-      if (!isStart) {
-        isStart = true;
-        PublicFunctions.getWeight(myDefScaleInfo.defScaleId!);
-      }
-      cntScaleTimerMgr.stopPortOffTimer();
-      cntScaleTimerMgr.startPortOffTimer(2, () {
-        if (!isCnting) {
-          setState(() {
-            myComScaleInfo.isOnline = false;
-          });
-        }
-        isCnting = false;
-      });
-      cntScaleTimerMgr.stopCntScaleTimer();
-    });
-  }
-
-  void performStop() {
-    if (isStart) {
-      setState(() {
-        isStart = false;
-        PublicFunctions.stopWeight(myDefScaleInfo.defScaleId!);
-      });
-      cntScaleTimerMgr.stopCntScaleTimer();
-      cntScaleTimerMgr.startCntScaleTimer(5);
-      cntScaleTimerMgr.stopPortOffTimer();
-    }
   }
 
   void isWeightStable() {
@@ -1928,6 +1727,8 @@ class TakeInPageState extends State<TakeInPage> {
 
   Widget displayGrid() {
     return Expanded(
+        child: Container(
+      padding: EdgeInsets.all(10),
       child: SfDataGrid(
         source: _weightReportDataSource,
         columns: getColumns(),
@@ -1936,7 +1737,7 @@ class TakeInPageState extends State<TakeInPage> {
         controller: _dataGridController,
         allowSorting: true,
       ),
-    );
+    ));
   }
 
   _showConfirmationDialog(BuildContext context) {
@@ -2079,192 +1880,42 @@ class TakeInPageState extends State<TakeInPage> {
     }
   }
 
-  String pad0(int num) {
-    if (num < 10) {
-      return '0${num.toString()}';
-    }
-    return num.toString();
-  }
-
-  String convertDateTime(String timestamp, String dateSeparator) {
-    // 1 yymmdd   2 ddmmyy 3 mmddyy
-    if (timestamp.length < 30) {
-      return '';
-    }
-
-    timestamp = removeFractionalSeconds(timestamp);
-    DateTime currTime = DateTime.parse(timestamp).toLocal();
-    String format = '';
-    if (dateformat == 1) {
-      format =
-          "${currTime.year}$dateSeparator${pad0(currTime.month)}$dateSeparator${pad0(currTime.day)} ${pad0(currTime.hour)}:${pad0(currTime.minute)}:${pad0(currTime.second)}";
-    } else if (dateformat == 2) {
-      format =
-          "${pad0(currTime.day)}$dateSeparator${pad0(currTime.month)}$dateSeparator${currTime.year} ${pad0(currTime.hour)}:${pad0(currTime.minute)}:${pad0(currTime.second)}";
-    } else if (dateformat == 3) {
-      format =
-          "${pad0(currTime.month)}$dateSeparator${pad0(currTime.day)}$dateSeparator${currTime.year} ${pad0(currTime.hour)}:${pad0(currTime.minute)}:${pad0(currTime.second)}";
-    }
-    return format;
-  }
-
-  String removeFractionalSeconds(String timestamp) {
-    int dotIndex = timestamp.indexOf('.');
-    int plusIndex = timestamp.indexOf('+');
-    String prefix = timestamp.substring(0, dotIndex);
-    String suffix = timestamp.substring(plusIndex);
-    String newTimestamp = prefix + suffix;
-    return newTimestamp;
-  }
-
-  String getDateTime(String dateSeparator) {
-    // 1 yymmdd   2 ddmmyy 3 mmddyy
-    var currTime = DateTime.now();
-    String format = '';
-    if (dateformat == 1) {
-      format =
-          "${currTime.year}$dateSeparator${pad0(currTime.month)}$dateSeparator${pad0(currTime.day)} ${pad0(currTime.hour)}:${pad0(currTime.minute)}:${pad0(currTime.second)}";
-    } else if (dateformat == 2) {
-      format =
-          "${pad0(currTime.day)}$dateSeparator${pad0(currTime.month)}$dateSeparator${currTime.year} ${pad0(currTime.hour)}:${pad0(currTime.minute)}:${pad0(currTime.second)}";
-    } else if (dateformat == 3) {
-      format =
-          "${pad0(currTime.month)}$dateSeparator${pad0(currTime.day)}$dateSeparator${currTime.year} ${pad0(currTime.hour)}:${pad0(currTime.minute)}:${pad0(currTime.second)}";
-    }
-    return format;
-  }
-
   _creatFile(String path) {
-    List<String> title = [];
-    title.add('RecId');
-    title.addAll(myReportFields.filedsList);
-
     Excel excel = Excel.createExcel();
-    Sheet sh = excel['Sheet1'];
-    for (var i = 0; i < title.length; i++) {
-      sh.cell(CellIndex.indexByColumnRow(rowIndex: 0, columnIndex: i)).value =
-          title[i] as CellValue?;
-    }
-
-    for (int row = 1; row <= myWeightReportData.length; row++) {
-      for (int col = 0; col < title.length; col++) {
-        switch (title[col]) {
-          case 'RecId':
-            sh
-                .cell(
-                    CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].id as CellValue?;
-            break;
-          case 'Date Time':
-            sh
-                .cell(
-                    CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].dateTime as CellValue?;
-            break;
-          case 'Weight':
-            sh
-                .cell(
-                    CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].weight as CellValue?;
-            break;
-          case 'Weight Unit':
-            sh
-                .cell(
-                    CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].weightUnit as CellValue?;
-            break;
-          case 'PLU NO.':
-            sh
-                .cell(
-                    CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].plu as CellValue?;
-            break;
-          case 'PLU Name':
-            sh
-                .cell(
-                    CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].pluName as CellValue?;
-            break;
-          case 'PLU Remarks':
-            sh
-                .cell(
-                    CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].pluRemarks as CellValue?;
-            break;
-          case 'Pretare':
-            sh
-                .cell(
-                    CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].pretare as CellValue?;
-            break;
-          case 'User Name':
-            sh
-                .cell(
-                    CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].userName as CellValue?;
-            break;
-          case 'User Remarks':
-            sh
-                .cell(
-                    CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].userRemarks as CellValue?;
-            break;
-          case 'User NO.':
-            sh
-                .cell(
-                    CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].userNo as CellValue?;
-            break;
-          case 'Scale Model':
-            sh
-                .cell(
-                    CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-                .value = myWeightReportData[row - 1].scaleName as CellValue?;
-            break;
-
-          default:
-        }
-
-        //'value ${row}_$col';
-      }
-    }
+    creatExcelFile(path, myWeightReportData, excel);
 
     try {
       var onValue = excel.encode();
       File(join(path))
         ..createSync(recursive: true)
         ..writeAsBytesSync(onValue!);
-      setState(() {
-        _errorText.text = "Excel save succeed!";
-      });
+      errorText = "Excel save successful!";
     } catch (ex) {
-      setState(() {
-        _errorText.text = "Excel save fail!";
-      });
+      errorText = "Excel save fail!";
     }
+  }
+
+  buildShowDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext innerContext) => AlertDialog(
+        title: Text('导出结果'),
+        content: Text('Excel 保存成功！'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(innerContext).pop();
+            },
+            child: Text('确定'),
+          ),
+        ],
+      ),
+    );
   }
 
 // "ReqData":"{\"ScaleId\": 2, \"Product\": \"Apple\", \"Weight\": \"1.230\", \"Price\": \"3.25\"}"}
   void sendReportDataToDB() {
-    var currentData = myWeightReportData[myWeightReportData.length - 1];
-    myScaleCmd.cmdMode = "add_rec";
-    myAddScaleRecord.scaleId = myDefScaleInfo.defScaleId!;
-    myAddScaleRecord.price = '0.0';
-    myAddScaleRecord.scaleMode = weighingTakeInMode;
-    myAddScaleRecord.scaleModel = myDefScaleInfo.defScaleModel;
-    myAddScaleRecord.scaleSn = myDefScaleInfo.defScaleSn;
-    myAddScaleRecord.scaleName = myDefScaleInfo.defScaleModel;
-    myAddScaleRecord.product = currentData.pluName;
-    myAddScaleRecord.weight = currentData.weight.toString();
-    myAddScaleRecord.pluNo = currentData.plu;
-    myAddScaleRecord.pluRemarks = currentData.pluRemarks;
-    myAddScaleRecord.weightUnit = currentData.weightUnit;
-    myAddScaleRecord.pretare = currentData.pretare;
-    myAddScaleRecord.userNo = currentData.userNo;
-    myAddScaleRecord.userName = currentData.userName;
-    myAddScaleRecord.userRemarks = currentData.userRemarks;
-    myScaleCmd.cmdData = jsonEncode(myAddScaleRecord);
-    PublicFunctions.sendMsg(myDefScaleInfo.defScaleId!, jsonEncode(myScaleCmd));
+    sendRptDataToDB(myWeightReportData, weighingTakeInMode);
   }
 
   bool isWeightValue() {
@@ -2356,7 +2007,7 @@ class TakeInPageState extends State<TakeInPage> {
   void performAddToReport() {
     myWeightReportData.add(WeightReportData(
       (myWeightReportData.length + 1).toString(),
-      getDateTime(myModeSettingTakeIn.dateSeparator),
+      getDateTime(myModeSettingTakeIn.dateSeparator, dateformat),
       (_isTakeInStart)
           ? diffWeightVal.toString()
           : (myReqWeightCountine.msgBody?.weightVal == null)
@@ -2388,9 +2039,9 @@ class TakeInPageState extends State<TakeInPage> {
               ? ""
               : myUserInfo.id.toString()),
       (myUserInfo.remarks == null) ? "" : myUserInfo.remarks.toString(),
-      myFactoryInfoFromScale.modelName == null
+      myDefScaleInfo.defScaleName == null
           ? ''
-          : myFactoryInfoFromScale.modelName!, //此处应该是秤机种名
+          : myDefScaleInfo.defScaleName!, //此处应该是秤机种名
     ));
 
     setState(() {
@@ -2416,112 +2067,5 @@ class TakeInPageState extends State<TakeInPage> {
 
   List<WeightReportData> getWeightReportData() {
     return myWeightReportData;
-  }
-}
-
-List<GridColumn> getColumns() {
-  List<GridColumn> columns = [];
-  List<String> columnNames = myReportFields.filedsList;
-  columns.add(GridColumn(
-      columnName: 'NO',
-      label: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          alignment: Alignment.center,
-          child: const Text(
-            'NO',
-            overflow: TextOverflow.ellipsis,
-          ))));
-
-  for (String columnName in columnNames) {
-    columns.add(
-      GridColumn(
-        columnName: columnName,
-        label: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          alignment: Alignment.center,
-          child: Text(
-            columnName,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-      ),
-    );
-  }
-  return columns;
-}
-
-class WeightReportDataSource extends DataGridSource {
-  List<WeightReportData> weightReportData;
-  WeightReportDataSource(this.weightReportData) {
-    buildDataGridRow();
-  }
-  void updateData(List<WeightReportData> newReportData) {
-    weightReportData = newReportData;
-    buildDataGridRow();
-    notifyListeners();
-  }
-
-  List<DataGridRow> dataGridRow = <DataGridRow>[];
-  void buildDataGridRow() {
-    List<GridColumn> columns = getColumns();
-    dataGridRow = weightReportData.map<DataGridRow>((reportData) {
-      List<DataGridCell<dynamic>> cells = [];
-      for (GridColumn column in columns) {
-        String columnName = column.columnName;
-        cells.add(DataGridCell<String>(
-          columnName: columnName,
-          value: getValueForColumn(reportData, columnName),
-        ));
-      }
-      return DataGridRow(cells: cells);
-    }).toList();
-  }
-
-  // 根据列名获取对应的数据
-  dynamic getValueForColumn(WeightReportData reportData, String columnName) {
-    switch (columnName) {
-      case 'NO':
-        return reportData.id;
-      case 'Date Time':
-        return reportData.dateTime;
-      case 'Weight':
-        return reportData.weight;
-      case 'Weight Unit':
-        return reportData.weightUnit;
-      case 'PLU NO.':
-        return reportData.plu;
-      case 'PLU Name':
-        return reportData.pluName;
-      case 'PLU Remarks':
-        return reportData.pluRemarks;
-      case 'Pretare':
-        return reportData.pretare;
-      case 'User NO.':
-        return reportData.userNo;
-      case 'User Name':
-        return reportData.userName;
-      case 'User Remarks':
-        return reportData.userRemarks;
-      case 'Scale Model':
-        return reportData.scaleName;
-      // 其他属性的处理类似
-      default:
-        return '';
-    }
-  }
-
-  @override
-  List<DataGridRow> get rows => dataGridRow.isEmpty ? [] : dataGridRow;
-
-  @override
-  DataGridRowAdapter? buildRow(DataGridRow row) {
-    return DataGridRowAdapter(
-        cells: row.getCells().map<Widget>((dataGridCell) {
-      return Container(
-        alignment: Alignment.center,
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: Text(dataGridCell.value.toString()),
-      );
-    }).toList());
   }
 }

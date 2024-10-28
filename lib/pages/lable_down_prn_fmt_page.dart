@@ -469,10 +469,12 @@ class _DownloadPageState extends State<DownloadLabelPage> {
       },
     ).then((confirmed) {
       if (confirmed) {
-        Navigator.of(context).pop();
-        Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return const DefaultPrnFmtPage();
-        }));
+        if (mounted && context.mounted) {
+          Navigator.of(context).pop();
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return const DefaultPrnFmtPage();
+          }));
+        }
       }
     });
   }

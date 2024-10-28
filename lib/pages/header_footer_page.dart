@@ -432,12 +432,16 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
       if (confirmed) {
         getJsonString();
         if (myHeaderFooterList.listData.isEmpty) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: const Text('Data error !',
-                  style: TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
-              duration: const Duration(seconds: 3),
-              backgroundColor: Theme.of(context).colorScheme.error));
+          if (mounted && context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: const Text('Data error !',
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.normal)), ////此处需要秤回复
+                duration: const Duration(seconds: 3),
+                backgroundColor: Theme.of(context).colorScheme.error));
+          }
+
           return;
         }
         myScaleCmd.cmdMode = 'modify_var_value';

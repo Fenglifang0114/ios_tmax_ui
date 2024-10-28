@@ -213,15 +213,19 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
                 }
               });
               if (result!.count > 10) {
-                _showErrorDialog(context, localizedStrings.def_fmt_sel_tip);
+                if (mounted && context.mounted) {
+                  _showErrorDialog(context, localizedStrings.def_fmt_sel_tip);
+                }
               }
               int totalLen = 0;
               for (int i = 0; i < result!.count; i++) {
                 totalLen += result!.files[i].size;
               }
               if (totalLen > maxDefFmtLen) {
-                _showErrorDialog(
-                    context, localizedStrings.def_fmt_out_range_tip);
+                if (mounted && context.mounted) {
+                  _showErrorDialog(
+                      context, localizedStrings.def_fmt_out_range_tip);
+                }
                 setState(() {
                   dataRows.clear();
                 });

@@ -54,7 +54,7 @@ class WebSocketScaleManager {
 
   // 接受数据，数据 json字符串，然后转成 Map
   void onData(int scaleId, event) {
-    if (event != null) {
+    if (event != null && event != "null") {
       if (kDebugMode) {
         print('$scaleId 收到消息:$event');
       }

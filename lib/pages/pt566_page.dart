@@ -1362,12 +1362,14 @@ class _PT566PageState extends State<PT566Page> {
         redrawInterface(textInfoList);
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(e.toString(),
-              style: const TextStyle(
-                  fontSize: 20, fontWeight: FontWeight.bold)), ////此处需要秤回复
-          duration: const Duration(seconds: 1),
-          backgroundColor: Theme.of(context).colorScheme.error));
+      if (mounted && context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(e.toString(),
+                style: const TextStyle(
+                    fontSize: 20, fontWeight: FontWeight.bold)), ////此处需要秤回复
+            duration: const Duration(seconds: 1),
+            backgroundColor: Theme.of(context).colorScheme.error));
+      }
     }
     return textInfoList;
   }

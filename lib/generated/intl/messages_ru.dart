@@ -22,7 +22,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-        "Parity": MessageLookupByLibrary.simpleMessage("Четность:"),
+        "Parity": MessageLookupByLibrary.simpleMessage("Parity:"),
         "abnormal_data_title":
             MessageLookupByLibrary.simpleMessage("Basic Data"),
         "abnormal_weight":
@@ -30,7 +30,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "about_title": MessageLookupByLibrary.simpleMessage("Information"),
         "advanced_setting_title":
             MessageLookupByLibrary.simpleMessage("Advanced"),
-        "alignment": MessageLookupByLibrary.simpleMessage("Выравнивание:"),
+        "alignment": MessageLookupByLibrary.simpleMessage("Alignment:"),
         "app_address_title": MessageLookupByLibrary.simpleMessage("Address:"),
         "app_company_title": MessageLookupByLibrary.simpleMessage("Company:"),
         "app_email_title": MessageLookupByLibrary.simpleMessage("Email:"),
@@ -42,74 +42,72 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Website Address:"),
         "application_title":
             MessageLookupByLibrary.simpleMessage("Applications"),
-        "attribute": MessageLookupByLibrary.simpleMessage("Атрибут"),
-        "auto": MessageLookupByLibrary.simpleMessage("Автоматический"),
-        "barcode_edit":
-            MessageLookupByLibrary.simpleMessage("Редактирование штрих-кода"),
+        "attribute": MessageLookupByLibrary.simpleMessage("Attribute"),
+        "auto": MessageLookupByLibrary.simpleMessage("Auto"),
+        "barcode_edit": MessageLookupByLibrary.simpleMessage("BarCode Edit"),
         "barcode_height":
-            MessageLookupByLibrary.simpleMessage("Высота штрих-кода:"),
+            MessageLookupByLibrary.simpleMessage("BarCode Height:"),
         "batch_delivery_title":
             MessageLookupByLibrary.simpleMessage("Batch Delivery"),
         "batch_down_export": MessageLookupByLibrary.simpleMessage("Export"),
         "batch_down_import": MessageLookupByLibrary.simpleMessage("Import"),
         "batch_down_slt_folder":
             MessageLookupByLibrary.simpleMessage("Select Folder"),
-        "baud_rate": MessageLookupByLibrary.simpleMessage("Скорость передачи:"),
-        "bluetooth_modification": MessageLookupByLibrary.simpleMessage(
-            "Изменение информации о Bluetooth"),
+        "baud_rate": MessageLookupByLibrary.simpleMessage("Baud rate:"),
+        "bluetooth_modification":
+            MessageLookupByLibrary.simpleMessage("Bluetooth Configurations"),
         "bluetooth_modify_error": MessageLookupByLibrary.simpleMessage(
-            "Ошибка изменения имени Bluetooth."),
-        "bluetooth_modify_ok": MessageLookupByLibrary.simpleMessage(
-            "Успешное изменение имени Bluetooth."),
+            "Error: Cannot modify  bluetooth name ."),
+        "bluetooth_modify_ok":
+            MessageLookupByLibrary.simpleMessage("Bluetooth name modified."),
         "bt_emission_power":
             MessageLookupByLibrary.simpleMessage("Emission Power:"),
         "bt_modify_emission":
-            MessageLookupByLibrary.simpleMessage("modify emission power"),
+            MessageLookupByLibrary.simpleMessage("Modify emission power"),
         "bt_setting_title":
-            MessageLookupByLibrary.simpleMessage("Настройка Bluetooth"),
+            MessageLookupByLibrary.simpleMessage("Bluetooth Setting"),
         "btn_add_lic_file":
             MessageLookupByLibrary.simpleMessage("Select License File"),
-        "button_add": MessageLookupByLibrary.simpleMessage("Добавить"),
+        "button_add": MessageLookupByLibrary.simpleMessage("Add"),
         "button_add_license":
-            MessageLookupByLibrary.simpleMessage("Добавить лицензию"),
-        "button_back": MessageLookupByLibrary.simpleMessage("Назад"),
-        "button_cancel": MessageLookupByLibrary.simpleMessage("Отмена"),
-        "button_connect": MessageLookupByLibrary.simpleMessage("Подключить"),
-        "button_delete": MessageLookupByLibrary.simpleMessage("Удалить"),
-        "button_dynamic": MessageLookupByLibrary.simpleMessage("Динамический"),
-        "button_edit": MessageLookupByLibrary.simpleMessage("Редактировать"),
-        "button_exit": MessageLookupByLibrary.simpleMessage("Выход"),
-        "button_export_report": MessageLookupByLibrary.simpleMessage("Экспорт"),
-        "button_get_ip": MessageLookupByLibrary.simpleMessage("Получить IP"),
-        "button_home": MessageLookupByLibrary.simpleMessage("Главная"),
-        "button_ok": MessageLookupByLibrary.simpleMessage("ОК"),
-        "button_save": MessageLookupByLibrary.simpleMessage("Сохранить"),
+            MessageLookupByLibrary.simpleMessage("Add License"),
+        "button_back": MessageLookupByLibrary.simpleMessage("Back"),
+        "button_cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+        "button_connect": MessageLookupByLibrary.simpleMessage("Connect"),
+        "button_delete": MessageLookupByLibrary.simpleMessage("Delete"),
+        "button_dynamic": MessageLookupByLibrary.simpleMessage("Dynamic"),
+        "button_edit": MessageLookupByLibrary.simpleMessage("Edit"),
+        "button_exit": MessageLookupByLibrary.simpleMessage("Exit"),
+        "button_export_report": MessageLookupByLibrary.simpleMessage("Export"),
+        "button_get_ip": MessageLookupByLibrary.simpleMessage("Get IP Address"),
+        "button_home": MessageLookupByLibrary.simpleMessage("Home"),
+        "button_ok": MessageLookupByLibrary.simpleMessage("Confirm"),
+        "button_save": MessageLookupByLibrary.simpleMessage("Save"),
         "button_select_format":
-            MessageLookupByLibrary.simpleMessage("Выбрать формат"),
-        "button_set": MessageLookupByLibrary.simpleMessage("Подключить"),
-        "button_setting": MessageLookupByLibrary.simpleMessage("Настройка"),
-        "button_start": MessageLookupByLibrary.simpleMessage("Старт"),
-        "button_static": MessageLookupByLibrary.simpleMessage("Статический"),
-        "button_tare": MessageLookupByLibrary.simpleMessage("Установить тару"),
-        "button_zero": MessageLookupByLibrary.simpleMessage("Ноль"),
+            MessageLookupByLibrary.simpleMessage("Select Format"),
+        "button_set": MessageLookupByLibrary.simpleMessage("Connect"),
+        "button_setting": MessageLookupByLibrary.simpleMessage("Setting"),
+        "button_start": MessageLookupByLibrary.simpleMessage("Start"),
+        "button_static": MessageLookupByLibrary.simpleMessage("Static"),
+        "button_tare": MessageLookupByLibrary.simpleMessage("Tare"),
+        "button_zero": MessageLookupByLibrary.simpleMessage("Zero"),
         "checkweigher_title":
-            MessageLookupByLibrary.simpleMessage("Checkweigher"),
+            MessageLookupByLibrary.simpleMessage("Check Weighing"),
         "choose_json_file": MessageLookupByLibrary.simpleMessage("Choose json"),
-        "clear_btn": MessageLookupByLibrary.simpleMessage("Очистить"),
-        "close_preview": MessageLookupByLibrary.simpleMessage(
-            "Закрыть предварительный просмотр"),
-        "com_port": MessageLookupByLibrary.simpleMessage("COM-порт"),
+        "clear_btn": MessageLookupByLibrary.simpleMessage("Clear"),
+        "close_preview": MessageLookupByLibrary.simpleMessage("Close preview"),
+        "com_port": MessageLookupByLibrary.simpleMessage("Serial port"),
         "confirm_btn": MessageLookupByLibrary.simpleMessage("Confirm"),
         "confirm_info": MessageLookupByLibrary.simpleMessage(
-            "Please confirm the order of the printing format."),
+            "Please confirm the order of the printing formats."),
         "confirm_title": MessageLookupByLibrary.simpleMessage("Confirmation"),
         "current_language": MessageLookupByLibrary.simpleMessage("Русский"),
         "customization_setting_title":
             MessageLookupByLibrary.simpleMessage("Applications"),
-        "data_bits": MessageLookupByLibrary.simpleMessage("Биты данных:"),
+        "data_bits": MessageLookupByLibrary.simpleMessage("Data bits:"),
         "data_delete_confirm":
             MessageLookupByLibrary.simpleMessage("Whether to delete all data?"),
-        "date_format": MessageLookupByLibrary.simpleMessage("Формат даты:"),
+        "date_format": MessageLookupByLibrary.simpleMessage("Date Format:"),
         "def_fmt_file_title": MessageLookupByLibrary.simpleMessage("File Path"),
         "def_fmt_no_file_tip":
             MessageLookupByLibrary.simpleMessage("No data yet"),
@@ -123,24 +121,24 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Device Configuration"),
         "device_connection_title":
             MessageLookupByLibrary.simpleMessage("Device Info & Connection"),
-        "device_name": MessageLookupByLibrary.simpleMessage("Имя устройства:"),
+        "device_name": MessageLookupByLibrary.simpleMessage("Device name:"),
         "device_setting_title": MessageLookupByLibrary.simpleMessage("Basics"),
         "device_time_title":
             MessageLookupByLibrary.simpleMessage("Device Time"),
-        "download": MessageLookupByLibrary.simpleMessage("Загрузить"),
+        "download": MessageLookupByLibrary.simpleMessage("Download"),
         "download_default":
             MessageLookupByLibrary.simpleMessage("Default Format"),
         "download_result_fail":
-            MessageLookupByLibrary.simpleMessage("Download fail!"),
+            MessageLookupByLibrary.simpleMessage("Download failed!"),
         "download_result_ok":
-            MessageLookupByLibrary.simpleMessage("Download successful!"),
-        "editor": MessageLookupByLibrary.simpleMessage("Редактор"),
-        "element_type": MessageLookupByLibrary.simpleMessage("Тип:"),
+            MessageLookupByLibrary.simpleMessage("Download is successful!"),
+        "editor": MessageLookupByLibrary.simpleMessage("Editor"),
+        "element_type": MessageLookupByLibrary.simpleMessage("Type:"),
         "error_ip_tip": MessageLookupByLibrary.simpleMessage(
             "Incorrect address! e.g. xxx.xxx.xxx.xxx"),
         "expiration_date":
-            MessageLookupByLibrary.simpleMessage("Срок действия:"),
-        "find_ssid": MessageLookupByLibrary.simpleMessage("Найти SSID"),
+            MessageLookupByLibrary.simpleMessage("Expiration date:"),
+        "find_ssid": MessageLookupByLibrary.simpleMessage("Discover SSID"),
         "firm_cfm_msg": MessageLookupByLibrary.simpleMessage(
             "Please confirm the file correct."),
         "firm_down_online":
@@ -149,24 +147,24 @@ class MessageLookup extends MessageLookupByLibrary {
         "firm_zip_file_sel":
             MessageLookupByLibrary.simpleMessage("Select Firmware Zip"),
         "firmware_update":
-            MessageLookupByLibrary.simpleMessage("Обновление прошивки"),
-        "font_bold": MessageLookupByLibrary.simpleMessage("Полужирный шрифт:"),
-        "font_reverse": MessageLookupByLibrary.simpleMessage("Обратный шрифт:"),
+            MessageLookupByLibrary.simpleMessage("Update Firmware Serial"),
+        "font_bold": MessageLookupByLibrary.simpleMessage("Bold:"),
+        "font_reverse":
+            MessageLookupByLibrary.simpleMessage("Reverse Contrast:"),
         "free_fmt1_txt": MessageLookupByLibrary.simpleMessage("Free format 1:"),
         "free_fmt2_txt": MessageLookupByLibrary.simpleMessage("Free format 2:"),
         "free_fmt3_txt": MessageLookupByLibrary.simpleMessage("Free format 3:"),
-        "gateway": MessageLookupByLibrary.simpleMessage("Шлюз:"),
+        "gateway": MessageLookupByLibrary.simpleMessage("Gateway:"),
         "general_configuration_title":
             MessageLookupByLibrary.simpleMessage("General Configuration"),
-        "get_bt_name": MessageLookupByLibrary.simpleMessage("get name"),
-        "get_build_info": MessageLookupByLibrary.simpleMessage(
-            "Информация о программном обеспечении"),
+        "get_bt_name": MessageLookupByLibrary.simpleMessage("Get name"),
+        "get_build_info":
+            MessageLookupByLibrary.simpleMessage("Software Information"),
         "go_home": MessageLookupByLibrary.simpleMessage(
             "Confirm to return to hompage?"),
         "header_confirm_info": MessageLookupByLibrary.simpleMessage(
             "Please confirm the information."),
-        "hr_alignment": MessageLookupByLibrary.simpleMessage(
-            "Выравнивание горизонтальной черты:"),
+        "hr_alignment": MessageLookupByLibrary.simpleMessage("HRI Alignment:"),
         "ip_address": MessageLookupByLibrary.simpleMessage("IPv4:"),
         "jump_confirm_info": MessageLookupByLibrary.simpleMessage(
             "Please confirm to go to the default print format page."),
@@ -219,37 +217,34 @@ class MessageLookup extends MessageLookupByLibrary {
         "l_wgt_unit_expl": MessageLookupByLibrary.simpleMessage("WeightUnit"),
         "l_wgt_unit_var": MessageLookupByLibrary.simpleMessage("WeightUnit"),
         "label_design_title":
-            MessageLookupByLibrary.simpleMessage("Дизайн этикетки"),
+            MessageLookupByLibrary.simpleMessage("Label Design"),
         "label_fmt_download": MessageLookupByLibrary.simpleMessage(
             "Download Label Printing Formats"),
-        "language": MessageLookupByLibrary.simpleMessage("Язык"),
+        "language": MessageLookupByLibrary.simpleMessage("Language"),
         "language_setting_title":
-            MessageLookupByLibrary.simpleMessage("Настройка языка"),
+            MessageLookupByLibrary.simpleMessage("Language Setting"),
         "license_info_title":
-            MessageLookupByLibrary.simpleMessage("Информация о лицензии"),
+            MessageLookupByLibrary.simpleMessage("License Info"),
         "license_title":
-            MessageLookupByLibrary.simpleMessage("Информация о лицензии"),
+            MessageLookupByLibrary.simpleMessage("License information"),
         "m_scale_title":
             MessageLookupByLibrary.simpleMessage("Multi-scale Management"),
-        "manual": MessageLookupByLibrary.simpleMessage("Ручной"),
-        "max_length":
-            MessageLookupByLibrary.simpleMessage("Максимальная длина:"),
-        "modify_bt_name": MessageLookupByLibrary.simpleMessage("modify name"),
-        "net": MessageLookupByLibrary.simpleMessage("Нетто:"),
-        "netmask": MessageLookupByLibrary.simpleMessage("Маска подсети:"),
+        "manual": MessageLookupByLibrary.simpleMessage("Manual"),
+        "max_length": MessageLookupByLibrary.simpleMessage("Max Length:"),
+        "modify_bt_name": MessageLookupByLibrary.simpleMessage("Modify name"),
+        "net": MessageLookupByLibrary.simpleMessage("Net:"),
+        "netmask": MessageLookupByLibrary.simpleMessage("NetMask:"),
         "network_setting":
-            MessageLookupByLibrary.simpleMessage("Настройки беспроводной сети"),
-        "new_format": MessageLookupByLibrary.simpleMessage("Новый формат"),
+            MessageLookupByLibrary.simpleMessage("Wireless network settings"),
+        "new_format": MessageLookupByLibrary.simpleMessage("New Format"),
         "new_license_text":
-            MessageLookupByLibrary.simpleMessage("Новая лицензия:"),
-        "no_element": MessageLookupByLibrary.simpleMessage(
-            "Вы не выбрали ни одного элемента."),
-        "open_file":
-            MessageLookupByLibrary.simpleMessage("Открыть файл (json)"),
-        "open_preview": MessageLookupByLibrary.simpleMessage(
-            "Открыть предварительный просмотр"),
+            MessageLookupByLibrary.simpleMessage("New License:"),
+        "no_element":
+            MessageLookupByLibrary.simpleMessage("No element selected."),
+        "open_file": MessageLookupByLibrary.simpleMessage("Open File (json)"),
+        "open_preview": MessageLookupByLibrary.simpleMessage("Open preview"),
         "operation_steps":
-            MessageLookupByLibrary.simpleMessage("Шаги операции:"),
+            MessageLookupByLibrary.simpleMessage("Operation Steps:"),
         "output_confirm_info": MessageLookupByLibrary.simpleMessage(
             "Please confirm the folder name!"),
         "output_no_file":
@@ -324,9 +319,9 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Scale Name."),
         "p_scale_name_var": MessageLookupByLibrary.simpleMessage("Scale Name"),
         "p_settle_account_times_expl":
-            MessageLookupByLibrary.simpleMessage("Settle Account Times"),
+            MessageLookupByLibrary.simpleMessage("Settle Account Times."),
         "p_settle_account_times_var":
-            MessageLookupByLibrary.simpleMessage("Settle Account Times"),
+            MessageLookupByLibrary.simpleMessage("Settle Account Times."),
         "p_subtotal_expl": MessageLookupByLibrary.simpleMessage("Subtotal."),
         "p_subtotal_var": MessageLookupByLibrary.simpleMessage("Subtotal"),
         "p_tare_expl": MessageLookupByLibrary.simpleMessage("Tare value."),
@@ -350,10 +345,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "p_tax_base3_expl": MessageLookupByLibrary.simpleMessage("Tax Base 3."),
         "p_tax_base3_var": MessageLookupByLibrary.simpleMessage("Tax Base3"),
         "p_tax_model_expl": MessageLookupByLibrary.simpleMessage(
-            "Tax Model,tax included or  tax external."),
+            "Tax Model,tax included or tax external."),
         "p_tax_model_var": MessageLookupByLibrary.simpleMessage("Tax Model"),
         "p_tax_name_expl": MessageLookupByLibrary.simpleMessage("Tax Name."),
-        "p_tax_name_var": MessageLookupByLibrary.simpleMessage("Tax Name"),
+        "p_tax_name_var": MessageLookupByLibrary.simpleMessage("Tax Name."),
         "p_tax_type1_expl": MessageLookupByLibrary.simpleMessage("Tax Type 1."),
         "p_tax_type1_var": MessageLookupByLibrary.simpleMessage("Tax Type1"),
         "p_tax_type2_expl": MessageLookupByLibrary.simpleMessage("Tax Type 2."),
@@ -362,6 +357,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "p_tax_type3_var": MessageLookupByLibrary.simpleMessage("Tax Type3"),
         "p_text_expl": MessageLookupByLibrary.simpleMessage("Free text."),
         "p_text_title": MessageLookupByLibrary.simpleMessage("Free Text"),
+        "p_text_var": MessageLookupByLibrary.simpleMessage("Text"),
         "p_time_expl": MessageLookupByLibrary.simpleMessage("Time."),
         "p_time_var": MessageLookupByLibrary.simpleMessage("Time"),
         "p_total_no_tax_expl":
@@ -383,12 +379,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "parameter_set_title":
             MessageLookupByLibrary.simpleMessage("Parameter Setting"),
         "parameter_settings_title":
-            MessageLookupByLibrary.simpleMessage("Настройки параметров"),
+            MessageLookupByLibrary.simpleMessage("Parameter settings"),
         "passed_fail_message": MessageLookupByLibrary.simpleMessage(
-            "Не пройдена аутентификация. Пожалуйста, отправьте нам идентификатор выше."),
-        "passed_message": MessageLookupByLibrary.simpleMessage(
-            "Аутентификация пройдена.\r\n"),
-        "password": MessageLookupByLibrary.simpleMessage("Пароль:"),
+            "Not authenticed. Please send the ID to us."),
+        "passed_message":
+            MessageLookupByLibrary.simpleMessage("Authentication passed.\r\n"),
+        "password": MessageLookupByLibrary.simpleMessage("Password:"),
         "plu_all_plu_title":
             MessageLookupByLibrary.simpleMessage("All Products:"),
         "plu_btn_clear": MessageLookupByLibrary.simpleMessage("Clear"),
@@ -403,29 +399,29 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Choose Product Excel"),
         "plu_download_title":
             MessageLookupByLibrary.simpleMessage("PLU Download"),
-        "plu_edit": MessageLookupByLibrary.simpleMessage("Редактирование PLU"),
+        "plu_edit": MessageLookupByLibrary.simpleMessage("PLU Edit"),
         "plu_error_message": MessageLookupByLibrary.simpleMessage(
-            "Предварительная тара PLU не может быть пустой."),
+            "PLU pretare cannot be empty."),
         "plu_error_message1": MessageLookupByLibrary.simpleMessage(
-            "PLU ID или имя PLU не может быть пустым."),
+            "PLU ID or PLU name cannot be empty."),
         "plu_error_message2": MessageLookupByLibrary.simpleMessage(
-            "PLU ID или имя PLU уже существует."),
-        "plu_name": MessageLookupByLibrary.simpleMessage("Имя PLU:"),
+            "PLU ID or PLU name already exists."),
+        "plu_name": MessageLookupByLibrary.simpleMessage("PLU Name:"),
         "plu_name_length":
             MessageLookupByLibrary.simpleMessage("Product name max length:"),
         "plu_partial_plu_title":
             MessageLookupByLibrary.simpleMessage("Partial Products:"),
-        "plu_remarks": MessageLookupByLibrary.simpleMessage("Примечания PLU:"),
-        "position": MessageLookupByLibrary.simpleMessage("Позиция"),
-        "pretare":
-            MessageLookupByLibrary.simpleMessage("Предварительная тара:"),
-        "print_direction": MessageLookupByLibrary.simpleMessage("Направление:"),
-        "print_page": MessageLookupByLibrary.simpleMessage("Страница:"),
-        "printer": MessageLookupByLibrary.simpleMessage("Принтер:"),
+        "plu_remarks": MessageLookupByLibrary.simpleMessage("PLu Remarks:"),
+        "position": MessageLookupByLibrary.simpleMessage("Position"),
+        "pretare": MessageLookupByLibrary.simpleMessage("Pretare:"),
+        "print_direction": MessageLookupByLibrary.simpleMessage("Direction:"),
+        "print_page": MessageLookupByLibrary.simpleMessage("Page:"),
+        "printer": MessageLookupByLibrary.simpleMessage("Printer:"),
         "product_information":
-            MessageLookupByLibrary.simpleMessage("Информация о продукте"),
-        "qrcode_edit":
-            MessageLookupByLibrary.simpleMessage("Редактирование QR-кода"),
+            MessageLookupByLibrary.simpleMessage("Product Information"),
+        "qrcode_edit": MessageLookupByLibrary.simpleMessage("Qrcode Edit"),
+        "rDetailRptTitle":
+            MessageLookupByLibrary.simpleMessage("Retail Detail Report"),
         "receipt_design_title":
             MessageLookupByLibrary.simpleMessage("Receipt Design"),
         "receipt_format1_item":
@@ -436,18 +432,17 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Receipt Format3:"),
         "receipt_format_download":
             MessageLookupByLibrary.simpleMessage("Receipt Format Download"),
-        "refresh_port": MessageLookupByLibrary.simpleMessage("Обновить порт"),
-        "refresh_tip": MessageLookupByLibrary.simpleMessage("Обновить"),
+        "refresh_port": MessageLookupByLibrary.simpleMessage("Refresh port"),
+        "refresh_tip": MessageLookupByLibrary.simpleMessage("Refresh"),
         "report_delete_btn": MessageLookupByLibrary.simpleMessage("Delete All"),
         "report_hide_btn": MessageLookupByLibrary.simpleMessage("Hide Report"),
         "report_set_btn":
             MessageLookupByLibrary.simpleMessage("Report Setting"),
-        "report_show_btn": MessageLookupByLibrary.simpleMessage("Show Report"),
-        "save_as": MessageLookupByLibrary.simpleMessage("Parameter Setting"),
-        "save_csv": MessageLookupByLibrary.simpleMessage("Сохранить csv"),
-        "save_file":
-            MessageLookupByLibrary.simpleMessage("Сохранить файл (json)"),
-        "save_mode": MessageLookupByLibrary.simpleMessage("Режим сохранения:"),
+        "report_show_btn": MessageLookupByLibrary.simpleMessage("Show Reports"),
+        "save_as": MessageLookupByLibrary.simpleMessage("Save as"),
+        "save_csv": MessageLookupByLibrary.simpleMessage("Save as CSV"),
+        "save_file": MessageLookupByLibrary.simpleMessage("Save File (json)"),
+        "save_mode": MessageLookupByLibrary.simpleMessage("Save Mode:"),
         "scale_mgr_btn_add": MessageLookupByLibrary.simpleMessage("Add"),
         "scale_mgr_btn_def":
             MessageLookupByLibrary.simpleMessage("Set Default"),
@@ -459,112 +454,110 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Scale Model:"),
         "scale_mgr_scale_name":
             MessageLookupByLibrary.simpleMessage("Scale Name"),
-        "scale_model": MessageLookupByLibrary.simpleMessage("Модель весов"),
+        "scale_model": MessageLookupByLibrary.simpleMessage("Scale Model:"),
         "scale_name": MessageLookupByLibrary.simpleMessage("Scale Name:"),
-        "scale_sn": MessageLookupByLibrary.simpleMessage("SN:"),
-        "select_barcode": MessageLookupByLibrary.simpleMessage("Штрих-код:"),
+        "scale_sn": MessageLookupByLibrary.simpleMessage("SN#:"),
+        "select_barcode": MessageLookupByLibrary.simpleMessage("BarCode:"),
         "select_firmware_btn":
             MessageLookupByLibrary.simpleMessage("Select Firmware"),
-        "select_fontsize":
-            MessageLookupByLibrary.simpleMessage("Размер шрифта:"),
-        "select_qrcode": MessageLookupByLibrary.simpleMessage("QR-код:"),
+        "select_fontsize": MessageLookupByLibrary.simpleMessage("Font Size:"),
+        "select_qrcode": MessageLookupByLibrary.simpleMessage("QRcode:"),
         "select_qrcode_width":
-            MessageLookupByLibrary.simpleMessage("Ширина QR-кода:"),
-        "select_rotation": MessageLookupByLibrary.simpleMessage("Поворот:"),
+            MessageLookupByLibrary.simpleMessage("Qrcode Width:"),
+        "select_rotation": MessageLookupByLibrary.simpleMessage("Rotation:"),
         "serial_error": MessageLookupByLibrary.simpleMessage(
-            "Потеряно соединение с последовательным портом. Проверьте настройки."),
+            "Serial port has been disconnected. Please check the settings."),
         "serial_modify_title": MessageLookupByLibrary.simpleMessage(
-            "Изменение информации о последовательном порту"),
+            "Serial port information modification"),
         "serial_output_design":
             MessageLookupByLibrary.simpleMessage("Serial Output Design"),
         "serial_output_download":
             MessageLookupByLibrary.simpleMessage("Serial Output Download"),
-        "serial_page_ol": MessageLookupByLibrary.simpleMessage("Режим OL"),
-        "serial_page_pcs": MessageLookupByLibrary.simpleMessage("Режим Pcs"),
+        "serial_page_ol": MessageLookupByLibrary.simpleMessage("OL mode"),
+        "serial_page_pcs":
+            MessageLookupByLibrary.simpleMessage("Counting mode"),
         "serial_page_percent":
-            MessageLookupByLibrary.simpleMessage("Режим Процент"),
-        "serial_page_price": MessageLookupByLibrary.simpleMessage("Режим Цена"),
-        "serial_page_ul": MessageLookupByLibrary.simpleMessage("Режим UL"),
-        "serial_page_weight": MessageLookupByLibrary.simpleMessage("Режим Вес"),
-        "serial_port":
-            MessageLookupByLibrary.simpleMessage("Последовательный порт:"),
-        "serial_port_output_preview": MessageLookupByLibrary.simpleMessage(
-            "Предварительный просмотр вывода на последовательный порт"),
-        "serial_port_status": MessageLookupByLibrary.simpleMessage(
-            "Состояние последовательного порта:"),
+            MessageLookupByLibrary.simpleMessage("Percent mode"),
+        "serial_page_price":
+            MessageLookupByLibrary.simpleMessage("Price Computing mode"),
+        "serial_page_ul": MessageLookupByLibrary.simpleMessage("UL mode"),
+        "serial_page_weight":
+            MessageLookupByLibrary.simpleMessage("Weight mode"),
+        "serial_port": MessageLookupByLibrary.simpleMessage("Serial port:"),
+        "serial_port_output_preview":
+            MessageLookupByLibrary.simpleMessage("Serial port output preview"),
+        "serial_port_status":
+            MessageLookupByLibrary.simpleMessage("Serial port status:"),
         "server_ip": MessageLookupByLibrary.simpleMessage("Server Ip:"),
         "server_port": MessageLookupByLibrary.simpleMessage("Server Port:"),
         "set_ethernet_ip_title":
             MessageLookupByLibrary.simpleMessage("Ethernet IP Setting"),
         "set_language_title":
-            MessageLookupByLibrary.simpleMessage("Установить язык"),
+            MessageLookupByLibrary.simpleMessage("Set Language"),
         "set_wifi_success": MessageLookupByLibrary.simpleMessage(
-            "Установлено успешное подключение к Wi-Fi!"),
+            "Wi-Fi configured successfully!"),
         "show_current_weight":
             MessageLookupByLibrary.simpleMessage("Current weight:"),
         "show_increment_weight":
             MessageLookupByLibrary.simpleMessage("Increment weight:"),
         "show_reduced_weight":
             MessageLookupByLibrary.simpleMessage("Reduced weight:"),
-        "stable": MessageLookupByLibrary.simpleMessage("Стабильный:"),
-        "stable_time":
-            MessageLookupByLibrary.simpleMessage("Время стабилизации"),
+        "stable": MessageLookupByLibrary.simpleMessage("Stable:"),
+        "stable_time": MessageLookupByLibrary.simpleMessage("Stable Time"),
         "stable_time_error_tip": MessageLookupByLibrary.simpleMessage(
-            "Время стабилизации не может превышать 20 секунд."),
+            "The value must be under 20 seconds."),
         "step1": MessageLookupByLibrary.simpleMessage(
-            "1. Пожалуйста, щелкните на один или несколько элементов слева;"),
+            "1. Please click on one or more elements on the left panel;"),
         "step2": MessageLookupByLibrary.simpleMessage(
-            "2. Выбранные элементы будут отображаться по центру страницы, и вы можете редактировать их атрибуты здесь."),
-        "stop_bits": MessageLookupByLibrary.simpleMessage("Стоп-биты:"),
-        "system_id": MessageLookupByLibrary.simpleMessage(
-            "Уникальный идентификатор системы: "),
+            "2. The selected elements will be displayed in the center of the page, and you can edit their attributes here. "),
+        "stop_bits": MessageLookupByLibrary.simpleMessage("Stop bits:"),
+        "system_id":
+            MessageLookupByLibrary.simpleMessage("System Unique ID:  "),
         "system_setting_title":
-            MessageLookupByLibrary.simpleMessage("Настройки системы"),
-        "tab_order": MessageLookupByLibrary.simpleMessage("Порядок вкладок:"),
-        "take_in_title": MessageLookupByLibrary.simpleMessage("Take In Scale"),
+            MessageLookupByLibrary.simpleMessage("System Setting"),
+        "tab_order": MessageLookupByLibrary.simpleMessage("Layer order:"),
+        "take_in_title":
+            MessageLookupByLibrary.simpleMessage("Increment Weighing"),
         "take_out_title":
             MessageLookupByLibrary.simpleMessage("Take Out Scale"),
-        "tare": MessageLookupByLibrary.simpleMessage("Тара:"),
-        "text_content": MessageLookupByLibrary.simpleMessage("Текст:"),
+        "tare": MessageLookupByLibrary.simpleMessage("Tare:"),
+        "text_content": MessageLookupByLibrary.simpleMessage("Text Content:"),
         "title_serial_port_connection":
-            MessageLookupByLibrary.simpleMessage("Подключение через COM-порт"),
+            MessageLookupByLibrary.simpleMessage("Serial Port Connection"),
         "total_fmt_txt": MessageLookupByLibrary.simpleMessage("Total format:"),
-        "txt_serial_port_connected": MessageLookupByLibrary.simpleMessage(
-            "Подключение последовательного порта"),
-        "txt_serial_port_connected_fail": MessageLookupByLibrary.simpleMessage(
-            "Ошибка подключения последовательного порта"),
+        "txt_serial_port_connected":
+            MessageLookupByLibrary.simpleMessage("Serial port connected"),
+        "txt_serial_port_connected_fail":
+            MessageLookupByLibrary.simpleMessage("Unable to connect"),
         "update_firmware":
-            MessageLookupByLibrary.simpleMessage("Обновление прошивки"),
+            MessageLookupByLibrary.simpleMessage("Update Firmware By Serial "),
         "update_firmware_info": MessageLookupByLibrary.simpleMessage(
-            "The update process can not be canceled.\r\nPlease make sure the update."),
+            "The update process can not be canceled.\r\nPress confirm to continue."),
         "update_firmware_reboot": MessageLookupByLibrary.simpleMessage(
-            "Please reboot the device and waiting..."),
+            "Please reboot the device to begin update..."),
         "update_firmware_wait":
             MessageLookupByLibrary.simpleMessage("Please wait..."),
-        "user_edit":
-            MessageLookupByLibrary.simpleMessage("Редактирование пользователя"),
+        "user_edit": MessageLookupByLibrary.simpleMessage("User Edit"),
         "user_error_message1": MessageLookupByLibrary.simpleMessage(
-            "Идентификатор и имя пользователя не могут быть пустыми!"),
+            "The User Id and Username cannot be empty!"),
         "user_error_message2": MessageLookupByLibrary.simpleMessage(
-            "Идентификатор или имя пользователя не могут повторяться!"),
-        "user_error_message3": MessageLookupByLibrary.simpleMessage(
-            "Запись о пользователе не найдена!"),
-        "user_id": MessageLookupByLibrary.simpleMessage("Номер пользователя:"),
-        "user_info":
-            MessageLookupByLibrary.simpleMessage("Информация о пользователе"),
-        "user_name": MessageLookupByLibrary.simpleMessage("Имя пользователя:"),
-        "user_phone": MessageLookupByLibrary.simpleMessage("Телефон:"),
-        "user_remarks":
-            MessageLookupByLibrary.simpleMessage("Примечания пользователя:"),
-        "user_sex": MessageLookupByLibrary.simpleMessage("Пол:"),
+            "User ID or Username cannot be the same!"),
+        "user_error_message3":
+            MessageLookupByLibrary.simpleMessage("The User is not found!"),
+        "user_id": MessageLookupByLibrary.simpleMessage("User ID:"),
+        "user_info": MessageLookupByLibrary.simpleMessage("User Info"),
+        "user_name": MessageLookupByLibrary.simpleMessage("User Name:"),
+        "user_phone": MessageLookupByLibrary.simpleMessage("Phone:"),
+        "user_remarks": MessageLookupByLibrary.simpleMessage("User Notes:"),
+        "user_sex": MessageLookupByLibrary.simpleMessage("Gender:"),
         "variable_value_setting_title":
             MessageLookupByLibrary.simpleMessage("Variable Value Setting"),
         "weighing_title": MessageLookupByLibrary.simpleMessage("Weighing"),
         "weight_collection_title":
             MessageLookupByLibrary.simpleMessage("Weight Data Collection"),
         "wifi_setting_title":
-            MessageLookupByLibrary.simpleMessage("Настройка Wi-Fi"),
-        "zero": MessageLookupByLibrary.simpleMessage("Ноль:"),
-        "zero_range": MessageLookupByLibrary.simpleMessage("Диапазон ноля:")
+            MessageLookupByLibrary.simpleMessage("Wi-Fi Setting"),
+        "zero": MessageLookupByLibrary.simpleMessage("Zero:"),
+        "zero_range": MessageLookupByLibrary.simpleMessage("Zero Range:")
       };
 }

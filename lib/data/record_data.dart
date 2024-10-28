@@ -27,6 +27,7 @@ class WeightRecords {
   String? userNo;
   String? userName;
   String? userRemarks;
+  String? scaleName;
 
   WeightRecords(
       {this.recId,
@@ -42,7 +43,8 @@ class WeightRecords {
       this.pretare,
       this.userNo,
       this.userName,
-      this.userRemarks});
+      this.userRemarks,
+      this.scaleName});
 
   WeightRecords.fromJson(Map<String, dynamic> json) {
     recId = json['RecId'];
@@ -59,6 +61,7 @@ class WeightRecords {
     userNo = json['UserNo'];
     userName = json['UserName'];
     userRemarks = json['UserRemarks'];
+    scaleName = json['ScaleName'];
   }
 
   Map<String, dynamic> toJson() {
@@ -77,6 +80,7 @@ class WeightRecords {
     data['UserNo'] = userNo;
     data['UserName'] = userName;
     data['UserRemarks'] = userRemarks;
+    data['ScaleName'] = scaleName;
     return data;
   }
 }

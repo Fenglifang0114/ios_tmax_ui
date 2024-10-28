@@ -306,10 +306,14 @@ class SltFourScalesPageState extends State<SltFourScalesPage> {
             DataCell(Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  buildDataCellInfo(150, comScale.scaleModel,
+                  buildDataCellInfo(
+                      150,
+                      comScale.scaleModel == "TMax" ? "" : comScale.scaleModel,
                       getResTextColor(comScale.scaleId)),
                   buildDataCellInfo(
-                      150, comScale.scaleSn, getResTextColor(comScale.scaleId)),
+                      150,
+                      comScale.scaleModel == "TMax" ? "" : comScale.scaleSn,
+                      getResTextColor(comScale.scaleId)),
                 ])),
             DataCell(buildDataCellInfo(
                 150, comScale.portName, getResTextColor(comScale.scaleId))),
@@ -376,13 +380,19 @@ class SltFourScalesPageState extends State<SltFourScalesPage> {
                 children: [
                   SizedBox(
                       width: 150,
-                      child: Text(scaleNetItems[index].scaleModel!,
+                      child: Text(
+                          scaleNetItems[index].scaleModel! == "TMax"
+                              ? ""
+                              : scaleNetItems[index].scaleModel!,
                           style: TextStyle(
                               color: getResTextColor(
                                   scaleNetItems[index].scaleId!)))),
                   SizedBox(
                       width: 150,
-                      child: Text(scaleNetItems[index].scaleSn!,
+                      child: Text(
+                          scaleNetItems[index].scaleModel! == "TMax"
+                              ? ""
+                              : scaleNetItems[index].scaleSn!,
                           style: TextStyle(
                               color: getResTextColor(
                                   scaleNetItems[index].scaleId!)))),

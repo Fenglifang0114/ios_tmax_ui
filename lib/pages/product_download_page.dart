@@ -472,9 +472,13 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
       try {
         await output.writeAsBytes(
             buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes));
-        _showFileSaveCfmDialog(context, outputFile);
+        if (mounted && context.mounted) {
+          _showFileSaveCfmDialog(context, outputFile);
+        }
       } catch (e) {
-        _showFileSaveCfmDialog(context, e.toString());
+        if (mounted && context.mounted) {
+          _showFileSaveCfmDialog(context, e.toString());
+        }
       }
     }
   }

@@ -64,8 +64,8 @@ NetInfo netInfoFromJson(String str) => NetInfo.fromJson(json.decode(str));
 String netInfoToJson(NetInfo data) => json.encode(data.toJson());
 
 class NetInfo {
-  String ip;
-  int port;
+  String? ip;
+  int? port;
 
   NetInfo({
     required this.ip,

@@ -183,7 +183,10 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
 
     _eventbus5 = eventBus.on<EventRegWeightResp>().listen((event) {
       if (mounted) {
-        myRespDataFromScale = event.obj;
+        // myRespDataFromScale = event.obj;
+        if (!serialPreview) {
+          PublicFunctions.stopWeight(1);
+        }
       }
     });
 
@@ -208,8 +211,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
             if (!serialPreview) {
               PublicFunctions.stopWeight(1);
             } else {
-              // PublicFunctions.openScalePassth(1);
-              PublicFunctions.enUserContinue(1);
+              PublicFunctions.openScalePassth(1);
             }
           }
         });
@@ -423,7 +425,8 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                                       await generateFileList();
                                       if (jsonFilesList.isNotEmpty) {
                                         PublicFunctions.sendOutputFmtToScale(
-                                            jsonFilesList, 1);
+                                            jsonFilesList,
+                                            myDefScaleInfo.defScaleId!);
                                       }
                                       setState(() {
                                         _downloading = true;
@@ -718,8 +721,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       _isHexDisplay = false;
       outputData.clear();
     });
-    // PublicFunctions.getWeight(1);
-    PublicFunctions.enUserContinue(1);
+    PublicFunctions.getWeight(1);
   }
 
   String getTitleName(int pageId) {

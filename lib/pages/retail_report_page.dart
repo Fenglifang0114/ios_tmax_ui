@@ -51,7 +51,6 @@ class TransactionReportPageState extends State<TransactionReportPage> {
                 details: detail.details,
               );
             }).toList();
-            for (int i = 0; i < transactions.length; i++) {}
           } catch (e) {
             if (kDebugMode) {
               print(e);
@@ -176,7 +175,10 @@ class TransactionReportPageState extends State<TransactionReportPage> {
 
   Widget buildCardDetail(TransactionWithExpansion tran) {
     return Column(
-      children: tran.details.map((detail) {
+      // children: tran.details.map((detail) {
+      children: tran.details
+          .where((detail) => detail.pluReturnFlag != "Cancel")
+          .map((detail) {
         return Card(
           elevation: 1,
           child: ListTile(
@@ -299,6 +301,7 @@ class TransactionReportPageState extends State<TransactionReportPage> {
       'Tare',
       'Tax Type',
       'Tax Price',
+      'Return Flag',
       'Change Type',
       'Total Amount',
     ];
@@ -327,34 +330,38 @@ class TransactionReportPageState extends State<TransactionReportPage> {
         '',
         '',
         '',
+        '',
         ''
       ];
       data.add(row);
 
       for (var detail in transaction.details) {
-        row = [
-          '',
-          '',
-          '',
-          '',
-          '',
-          '',
-          '',
-          '',
-          detail.pluIndex,
-          detail.pluNum,
-          detail.pluName,
-          detail.pluTotalWeight,
-          detail.pluQuantity,
-          detail.pluUnit,
-          detail.pluUnitPrice,
-          detail.pluTare,
-          detail.pluTaxType,
-          detail.pluTaxPrice,
-          detail.pluChangeType,
-          detail.pluTotalPrice,
-        ];
-        data.add(row);
+        if (detail.pluReturnFlag != "Cancel") {
+          row = [
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            detail.pluIndex,
+            detail.pluNum,
+            detail.pluName,
+            detail.pluTotalWeight,
+            detail.pluQuantity,
+            detail.pluUnit,
+            detail.pluUnitPrice,
+            detail.pluTare,
+            detail.pluTaxType,
+            detail.pluTaxPrice,
+            detail.pluReturnFlag,
+            detail.pluChangeType,
+            detail.pluTotalPrice,
+          ];
+          data.add(row);
+        }
       }
     }
 
@@ -376,19 +383,22 @@ class TransactionReportPageState extends State<TransactionReportPage> {
           List.generate(data.length, (index) => data[index].join(','))
               .join('\n'),
         );
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text('OK    ${file.path}'),
-              backgroundColor:
-                  Theme.of(context).colorScheme.surfaceContainerHigh),
-        );
+        if (mounted && context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text('OK    ${file.path}'),
+                backgroundColor:
+                    Theme.of(context).colorScheme.surfaceContainerHigh),
+          );
+        }
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(e.toString()),
-              backgroundColor: Theme.of(context).colorScheme.error),
-        );
+        if (mounted && context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text(e.toString()),
+                backgroundColor: Theme.of(context).colorScheme.error),
+          );
+        }
       }
     }
     exportFlag = true;
