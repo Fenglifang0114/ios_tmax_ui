@@ -19,8 +19,9 @@ class LicenseInfoDialog extends StatefulWidget {
 }
 
 class LicenseInfoDialogState extends State<LicenseInfoDialog> {
-  final TextEditingController pidController = TextEditingController();
-  TextEditingController licenseController = TextEditingController();
+  final TextEditingController pidCtl = TextEditingController();
+  TextEditingController licCtl = TextEditingController();
+  TextEditingController resCtl = TextEditingController();
 
   String pId = '';
   String dueDate = '';
@@ -39,8 +40,8 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
   void initState() {
     super.initState();
 
-    pidController.text = systemId;
-    licenseController.text = '';
+    pidCtl.text = systemId;
+    licCtl.text = '';
     if (mySystemVersion == 1) {
       //t-config
       if (myTConLicInfo.isValid) {
@@ -88,7 +89,7 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
             findLicType(moduleName);
           } else {
             errMessage = 'Invalid license';
-            _showConfirmationDialog(context, '${licList[0]}\r\n$errMessage');
+            updateResCtl();
           }
         });
       }
@@ -101,13 +102,14 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
             errMessage = jsonStr;
           }
         });
-
-        _showConfirmationDialog(context, '${licList[0]}\r\n$errMessage');
+        updateResCtl();
       }
     });
+  }
 
-    //初始化
-    // WebsocketManager.init();
+  void updateResCtl() {
+    resCtl.text = '${resCtl.text}${licList[0]}\r\n$errMessage\r\n';
+    nextLicCheck();
   }
 
   void nextLicCheck() {
@@ -123,60 +125,51 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
   void dispose() {
     _eventbus1.cancel();
     _eventbus2.cancel();
-    pidController.dispose();
-
-    licenseController.dispose();
+    pidCtl.dispose();
+    licCtl.dispose();
+    resCtl.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     systemId = localizedStrings.system_id;
-    pidController.text = systemId + pId;
+    pidCtl.text = systemId + pId;
     return AlertDialog(
       title: getDialogTitle(
           context, localizedStrings.license_title, Icons.key, 420),
       content: Container(
-        height: 360,
-        width: 420,
+        height: 600,
+        width: 800,
         decoration:
             BoxDecoration(color: Theme.of(context).colorScheme.surfaceTint),
         child: ListView(
           children: [
             SizedBox(
               width: 420,
-              height: 50,
+              height: 40,
               child: TextField(
-                controller: pidController,
+                controller: pidCtl,
                 readOnly: true,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 16, color: Theme.of(context).colorScheme.primary),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Theme.of(context).colorScheme.primary),
               ),
             ),
-             
-            (mySystemVersion != 1)
-                ? const SizedBox()
-                : SizedBox(
-                    height: 50,
-                    child: Text(
-                        (isPass)
-                            ? localizedStrings.passed_message
-                            : localizedStrings.passed_fail_message,
-                        style: TextStyle(
-                            fontSize: 16,
-                            color: (isPass)
-                                ? Theme.of(context).colorScheme.primary
-                                : Theme.of(context).colorScheme.error)),
-                  ),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const SizedBox(
+                  width: 18,
+                ),
                 (mySystemVersion != 1)
                     ? const SizedBox()
                     : SizedBox(
                         width: 200,
                         child: Text(localizedStrings.expiration_date,
-                            textAlign: TextAlign.right,
+                            textAlign: TextAlign.left,
                             style: TextStyle(
                               fontSize: 16,
                               color: Theme.of(context).colorScheme.primary,
@@ -190,7 +183,9 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 16,
-                              color: Theme.of(context).colorScheme.surfaceContainerHigh,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainerHigh,
                             )),
                       ),
               ],
@@ -199,6 +194,7 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
               height: 10,
             ),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
@@ -213,7 +209,7 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
                       )),
                 ),
                 CustomElevatedButton(
-                  btnWidth: 164,
+                  btnWidth: 200,
                   btnHeight: 40,
                   icon: Icons.file_open_outlined,
                   text: localizedStrings.btn_add_lic_file,
@@ -230,7 +226,7 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
                       }
                       setState(() {
                         if (filePath != '') {
-                          licenseController.text = filePath;
+                          licCtl.text = filePath;
                         }
                       });
                     } catch (e) {
@@ -245,9 +241,22 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
                                 Theme.of(context).colorScheme.error));
                       });
                     }
-
-                    // PublicFunctions.checkLicenseKey(licenseController.text);
                   },
+                ),
+                CustomElevatedButton(
+                  btnWidth: 200,
+                  btnHeight: 40,
+                  icon: Icons.add_box_outlined,
+                  text: localizedStrings.button_add_license,
+                  onPressed: (licCtl.text.isNotEmpty)
+                      ? () async {
+                          resCtl.text = "";
+                          await validLicense();
+                          if (licList.isNotEmpty) {
+                            PublicFunctions.checkLicenseKey(licList[0]);
+                          }
+                        }
+                      : null,
                 ),
               ],
             ),
@@ -258,10 +267,10 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
               width: 400,
               child: TextField(
                 readOnly: true,
-                controller: licenseController,
+                controller: licCtl,
                 textAlign: TextAlign.start,
                 textAlignVertical: TextAlignVertical.center,
-                maxLines: 3,
+                maxLines: 2,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(4)),
@@ -272,24 +281,29 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
             const SizedBox(
               height: 20,
             ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                CustomElevatedButton(
-                  btnWidth: 360,
-                  btnHeight: 40,
-                  icon: Icons.add_box_outlined,
-                  text: localizedStrings.button_add_license,
-                  onPressed: (licenseController.text.isNotEmpty)
-                      ? () async {
-                          await validLicense();
-                          if (licList.isNotEmpty) {
-                            PublicFunctions.checkLicenseKey(licList[0]);
-                          }
-                        }
-                      : null,
+            SizedBox(
+              width: 200,
+              child: Text("Result",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  )),
+            ),
+            SizedBox(
+              width: 400,
+              child: TextField(
+                readOnly: true,
+                controller: resCtl,
+                textAlign: TextAlign.start,
+                textAlignVertical: TextAlignVertical.center,
+                maxLines: 8,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(4)),
+                  ),
                 ),
-              ],
+              ),
             ),
           ],
         ),
@@ -328,7 +342,7 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
   }
 
   Future validLicense() async {
-    String dataStr = licenseController.text;
+    String dataStr = licCtl.text;
     if (dataStr.isNotEmpty) {
       try {
         File file = File(dataStr);
@@ -361,7 +375,8 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
             updateLicenseInfo();
           } else {
             errMessage = 'The new period is not the latest.';
-            _showConfirmationDialog(context, '${licList[0]}\r\n$errMessage');
+
+            updateResCtl();
           }
         } else {
           myTConLicInfo = newLicInfo;
@@ -376,7 +391,8 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
             updateLicenseInfo();
           } else {
             errMessage = 'The new period is not the latest.';
-            _showConfirmationDialog(context, '${licList[0]}\r\n$errMessage');
+
+            updateResCtl();
           }
         } else {
           myRedeLicInfo = newLicInfo;
@@ -391,7 +407,8 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
             updateLicenseInfo();
           } else {
             errMessage = 'The new period is not the latest.';
-            _showConfirmationDialog(context, '${licList[0]}\r\n$errMessage');
+
+            updateResCtl();
           }
         } else {
           myWedaLicInfo = newLicInfo;
@@ -406,7 +423,8 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
             updateLicenseInfo();
           } else {
             errMessage = 'The new period is not the latest.';
-            _showConfirmationDialog(context, '${licList[0]}\r\n$errMessage');
+
+            updateResCtl();
           }
         } else {
           myChweLicInfo = newLicInfo;
@@ -421,7 +439,8 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
             updateLicenseInfo();
           } else {
             errMessage = 'The new period is not the latest.';
-            _showConfirmationDialog(context, '${licList[0]}\r\n$errMessage');
+
+            updateResCtl();
           }
         } else {
           myInWeLicInfo = newLicInfo;
@@ -436,7 +455,8 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
             updateLicenseInfo();
           } else {
             errMessage = 'The new period is not the latest.';
-            _showConfirmationDialog(context, '${licList[0]}\r\n$errMessage');
+
+            updateResCtl();
           }
         } else {
           myTaouLicInfo = newLicInfo;
@@ -446,32 +466,5 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
       default:
         break;
     }
-  }
-
-  void _showConfirmationDialog(BuildContext context, String msg) {
-    showDialog(
-      context: context,
-      builder: (BuildContext ctx) {
-        return AlertDialog(
-          title: Text(
-            localizedStrings.confirm_title,
-            style: TextStyle(color: Theme.of(context).colorScheme.primary),
-          ),
-          content: Text(msg),
-          actions: <Widget>[
-            OutlinedButton(
-              child: Text(localizedStrings.confirm_btn),
-              onPressed: () {
-                Navigator.of(context).pop(true); // 跳转
-              },
-            ),
-          ],
-        );
-      },
-    ).then((confirmed) {
-      if (confirmed) {
-        nextLicCheck();
-      }
-    });
   }
 }

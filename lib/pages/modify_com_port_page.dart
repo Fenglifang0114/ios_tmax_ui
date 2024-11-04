@@ -138,11 +138,11 @@ class ModifyComPortPageState extends State<ModifyComPortPage> {
     tempCurrentPort = myCurrentPort;
 
     refresh = localizedStrings.refresh_port;
-    return AlertDialog(      
+    return AlertDialog(
       title: getDialogTitle(
           context, localizedStrings.serial_modify_title, Icons.usb, 400),
       content: Container(
-        height: 356,     
+        height: 356,
         decoration:
             BoxDecoration(color: Theme.of(context).colorScheme.surfaceTint),
         child: Column(

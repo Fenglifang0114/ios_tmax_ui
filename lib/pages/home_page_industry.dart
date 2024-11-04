@@ -30,7 +30,6 @@ import 'check_weighers_page.dart';
 import 'firmware_down_wifi.dart';
 import 'modify_com_port_page.dart';
 import 'product_download_page.dart';
-import 'production_line_page.dart';
 import 'scale_manager_page.dart';
 import 'take_in_page.dart';
 import 'take_out_page.dart';
@@ -667,51 +666,51 @@ class IndustryHomePageState extends State<IndustryHomePage>
                               ''),
                         ),
                       ),
-                      MouseRegion(
-                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              stopCheckSerialPort();
-                              setState(() {
-                                showSelFourScaleDialog();
-                              });
-                            });
-                          },
-                          child: appCard(
-                              context,
-                              'Four Weightings',
-                              Icons.monitor_weight,
-                              true,
-                              'This application is used to display the weighing data in real time.',
-                              ''),
-                        ),
-                      ),
-                      MouseRegion(
-                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              stopCheckSerialPort();
-                              setState(() {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const ProductionLinePage()),
-                                );
-                              });
-                            });
-                          },
-                          child: appCard(
-                              context,
-                              'Real-time Production Line',
-                              Icons.checklist_rtl,
-                              true,
-                              'This application is used to check the weighing data in real time.',
-                              ''),
-                        ),
-                      ),
+                      // MouseRegion(
+                      //   cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                      //   child: GestureDetector(
+                      //     onTap: () {
+                      //       setState(() {
+                      //         stopCheckSerialPort();
+                      //         setState(() {
+                      //           showSelFourScaleDialog();
+                      //         });
+                      //       });
+                      //     },
+                      //     child: appCard(
+                      //         context,
+                      //         'Four Weightings',
+                      //         Icons.monitor_weight,
+                      //         true,
+                      //         'This application is used to display the weighing data in real time.',
+                      //         ''),
+                      //   ),
+                      // ),
+                      // MouseRegion(
+                      //   cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                      //   child: GestureDetector(
+                      //     onTap: () {
+                      //       setState(() {
+                      //         stopCheckSerialPort();
+                      //         setState(() {
+                      //           Navigator.push(
+                      //             context,
+                      //             MaterialPageRoute(
+                      //                 builder: (context) =>
+                      //                     const ProductionLinePage()),
+                      //           );
+                      //         });
+                      //       });
+                      //     },
+                      //     child: appCard(
+                      //         context,
+                      //         'Real-time Production Line',
+                      //         Icons.checklist_rtl,
+                      //         true,
+                      //         'This application is used to check the weighing data in real time.',
+                      //         ''),
+                      //   ),
+                      // ),
                       MouseRegion(
                         cursor: SystemMouseCursors.click, // 设置光标为手的形状
                         child: GestureDetector(
@@ -868,7 +867,7 @@ class IndustryHomePageState extends State<IndustryHomePage>
     });
     final viewportDimension = MediaQuery.of(context).size.height;
 
-    if (viewportDimension > 900) {
+    if (viewportDimension > 700) {
       setState(() {
         showHint1 = false;
         showHint2 = false;
