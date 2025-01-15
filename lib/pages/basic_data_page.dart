@@ -5,9 +5,11 @@ import 'package:t_max/data/olul_err_data.dart';
 import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
 
+import '../data/comscaleinfo_data.dart';
 import '../data/manager_scale_channel.dart';
 import '../data/language.dart';
 
+import '../data/scale_list_data.dart';
 import '../data/timer_manager.dart';
 import '../widget/custom_button.dart';
 import '../widget/page_head.dart';
@@ -20,14 +22,28 @@ class BasicDataPage extends StatefulWidget {
 
 class BasicDataPageState extends State<BasicDataPage> {
   dynamic eventBus1;
+  dynamic eventBus2;
 
   bool isWeightDataBtn = true;
 
   TextEditingController olCntCtl = TextEditingController(text: '');
+  List<NetScaleInfoLocal> scaleNetItems = [];
+  NetScaleInfoLocal defNetScaleInfo = NetScaleInfoLocal();
+  int selScaleId = -1;
+
+  void initScaleList() {
+    scaleNetItems = myNetScaleList;
+    selScaleId = myDefScaleInfo.defScaleId!;
+    if (myNetScaleList.isNotEmpty) {
+      defNetScaleInfo = NetScaleListMgr.findScaleInfo(
+          myNetScaleList, myDefScaleInfo.defScaleId!);
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+    initScaleList();
     cntScaleTimerMgr.stopCntScaleTimer();
     PublicFunctions.getBasicData(myDefScaleInfo.defScaleId!);
 
@@ -72,11 +88,26 @@ class BasicDataPageState extends State<BasicDataPage> {
         });
       }
     });
+    eventBus2 = eventBus.on<EventSelWeighingScaleId>().listen((event) {
+      //修改了ScaleId
+      if (mounted) {
+        int scaleId = event.obj;
+
+        if (scaleId != selScaleId) {
+          setState(() {
+            selScaleId = scaleId;
+            DefScaleInfo.getDefScaleInfo(scaleId);
+            PublicFunctions.getBasicData(myDefScaleInfo.defScaleId!);
+          });
+        }
+      }
+    });
   }
 
   @override
   void dispose() {
     eventBus1.cancel();
+    eventBus2.cancel();
 
     super.dispose();
   }
@@ -84,7 +115,33 @@ class BasicDataPageState extends State<BasicDataPage> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    return Scaffold(body: firstLayout(context, width));
+    return Scaffold(
+      appBar: AppBar(
+          title: Container(
+            child:
+                pageHeadDefScale(context, localizedStrings.abnormal_data_title),
+          ),
+          leading: IconTheme(
+              data: IconThemeData(
+                  color: Theme.of(context).colorScheme.primary // 设置抽屉图标颜色
+                  ),
+              child: Builder(builder: (BuildContext context) {
+                return IconButton(
+                  icon: const Icon(Icons.menu),
+                  onPressed: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                );
+              }))),
+      body: firstLayout(context, width),
+      drawer: Drawer(
+          child: myWeighingScaleListDrawer(
+              context,
+              localizedStrings.gTipScaleList,
+              scaleNetItems,
+              selScaleId) // showNetScaleList(),
+          ),
+    );
   }
 
   Widget firstLayout(context, width) {
@@ -98,11 +155,6 @@ class BasicDataPageState extends State<BasicDataPage> {
           // mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            pageHeadDefScale(
-              context,
-              localizedStrings.abnormal_data_title,
-            ),
-            const SizedBox(height: 20),
             Center(
                 child: SizedBox(
               width: 300,

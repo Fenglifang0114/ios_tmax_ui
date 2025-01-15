@@ -133,11 +133,11 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
 
   @override
   Widget build(BuildContext context) {
-    systemId = localizedStrings.system_id;
+    systemId = localizedStrings.gSystemId;
     pidCtl.text = systemId + pId;
     return AlertDialog(
       title: getDialogTitle(
-          context, localizedStrings.license_title, Icons.key, 420),
+          context, localizedStrings.gTitleLicense, Icons.key, 420),
       content: Container(
         height: 600,
         width: 800,
@@ -168,7 +168,7 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
                     ? const SizedBox()
                     : SizedBox(
                         width: 200,
-                        child: Text(localizedStrings.expiration_date,
+                        child: Text(localizedStrings.gExpirationDate,
                             textAlign: TextAlign.left,
                             style: TextStyle(
                               fontSize: 16,
@@ -317,7 +317,7 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
               btnWidth: 120,
               btnHeight: 40,
               icon: Icons.exit_to_app,
-              text: localizedStrings.button_exit,
+              text: localizedStrings.gBtnExit,
               onPressed: () {
                 myScreenMgr.isMainScreen = true;
                 Navigator.of(context).pop();

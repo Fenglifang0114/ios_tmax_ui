@@ -5,6 +5,7 @@ import 'package:csv/csv.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../data/downloadresponse.dart';
+import '../data/language.dart';
 import '../data/manager_scale_channel.dart';
 import '../data/barcoderowdata.dart';
 import '../data/formatdata.dart';
@@ -683,6 +684,9 @@ class _PT566PageState extends State<PT566Page> {
                             fileName: 'formatdata1.json',
                           ));
                           if (outputFile != null) {
+                            if (!outputFile.contains(".json")) {
+                              outputFile = "$outputFile.json";
+                            }
                             _saveFormatToJson(outputFile);
                           }
                         },
@@ -2807,9 +2811,9 @@ class _PT566PageState extends State<PT566Page> {
         focusNode: _focusNodeyPos, // 将FocusNode对象绑定到TextField
       ),
       const SizedBox(height: 20),
-      const Text(
-        'Select QRcode:      ',
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      Text(
+        localizedStrings.gQrcodeWidth,
+        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
       buildDropdownButton(
         value: _selectedQrcode,
@@ -2818,14 +2822,14 @@ class _PT566PageState extends State<PT566Page> {
         onSelect: _handleQrcodeSelected,
       ),
       const SizedBox(height: 20),
-      const Text(
-        'Select Qrcode Width:      ',
+      Text(
+        localizedStrings.gQrcodeWidth,
         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
       buildDropdownButton(
         value: _selectedQr,
         items: _qrWidths,
-        hintText: 'Qrcode Width',
+        hintText: localizedStrings.gQrcodeWidth,
         onSelect: _handleQrWidthSelected,
       ),
       const SizedBox(height: 20),

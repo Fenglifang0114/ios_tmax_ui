@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:t_max/data/timer_manager.dart';
 import '../../data/device_data.dart';
@@ -11,6 +10,7 @@ import '../data/comscaleinfo_data.dart';
 import '../data/downloadresponse.dart';
 import '../data/manager_scale_channel.dart';
 import '../data/language.dart';
+import '../data/scale_list_data.dart';
 import '../data/scalelist_data.dart';
 import '../widget/page_head.dart';
 
@@ -21,22 +21,12 @@ class WeightModePage extends StatefulWidget {
 }
 
 class WeightModePageState extends State<WeightModePage> {
-  String dialogString = " ";
-  List<String> items = [];
-
   late String lastWeight;
-
-  String productNameValue = "";
-  String userNameValue = "";
-  List<String> productNameList = [];
-  List<String> userNameList = [];
-
-  late int weightMode; //0,手动保存，1，连续保存，2，稳定保存
-  late int dateformat;
-  late double zeroRange;
+  List<NetScaleInfoLocal> scaleNetItems = [];
+  NetScaleInfoLocal defNetScaleInfo = NetScaleInfoLocal();
+  int selScaleId = -1;
   bool isCnting = false;
   bool isStart = false;
-
   Timer? startTimer;
   Timer? innerTimer;
 
@@ -46,17 +36,26 @@ class WeightModePageState extends State<WeightModePage> {
   dynamic eventBus4;
   dynamic eventBus5;
   dynamic eventBus6;
+  dynamic eventBus7;
+
+  void initScaleList() {
+    scaleNetItems = myNetScaleList;
+    selScaleId = myDefScaleInfo.defScaleId!;
+    if (myNetScaleList.isNotEmpty) {
+      defNetScaleInfo = NetScaleListMgr.findScaleInfo(
+          myNetScaleList, myDefScaleInfo.defScaleId!);
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     lastWeight = "*";
-    dateformat = 1;
-    zeroRange = 0;
 
     onStartTimer();
+    initScaleList();
 
-    cntScaleTimerMgr.stopCntScaleTimer();
+    cntScaleTimerMgr.startCntScaleTimer(10);
     PublicFunctions.getWeight(myDefScaleInfo.defScaleId!);
 
     eventBus1 = eventBus.on<EventDeviceName>().listen((event) {
@@ -74,7 +73,6 @@ class WeightModePageState extends State<WeightModePage> {
           tempWeight = event.obj;
           if (tempWeight.scaleId == myDefScaleInfo.defScaleId!) {
             myReqWeightCountine = tempWeight;
-
             myComScaleInfo.isOnline = true;
             isCnting = true;
             isStart = true;
@@ -112,6 +110,22 @@ class WeightModePageState extends State<WeightModePage> {
         if (myRespDataFromScale.msgBody.contains('ok')) {}
       }
     });
+
+    eventBus7 = eventBus.on<EventSelWeighingScaleId>().listen((event) {
+      //修改了ScaleId
+      if (mounted) {
+        int scaleId = event.obj;
+        //不需要去拿数据
+        if (scaleId != selScaleId) {
+          setState(() {
+            PublicFunctions.stopWeight(selScaleId);
+            selScaleId = scaleId;
+            PublicFunctions.getWeight(selScaleId);
+            DefScaleInfo.getDefScaleInfo(scaleId);
+          });
+        }
+      }
+    });
   }
 
   @override
@@ -122,10 +136,12 @@ class WeightModePageState extends State<WeightModePage> {
     eventBus4.cancel();
     eventBus5.cancel();
     eventBus6.cancel();
+    eventBus7.cancel();
     startTimer?.cancel();
     innerTimer?.cancel();
 
     cntScaleTimerMgr.stopPortOffTimer();
+    cntScaleTimerMgr.stopCntScaleTimer();
     super.dispose();
   }
 
@@ -146,7 +162,30 @@ class WeightModePageState extends State<WeightModePage> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
+      appBar: AppBar(
+          title: Container(
+            child: pageHeadDefScale(context, localizedStrings.iTitleWeighting),
+          ),
+          leading: IconTheme(
+              data: IconThemeData(
+                  color: Theme.of(context).colorScheme.primary // 设置抽屉图标颜色
+                  ),
+              child: Builder(builder: (BuildContext context) {
+                return IconButton(
+                  icon: const Icon(Icons.menu),
+                  onPressed: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                );
+              }))),
       body: firstLayout(context, width),
+      drawer: Drawer(
+          child: myWeighingScaleListDrawer(
+              context,
+              localizedStrings.gTipScaleList,
+              scaleNetItems,
+              selScaleId) // showNetScaleList(),
+          ),
     );
   }
 
@@ -160,14 +199,6 @@ class WeightModePageState extends State<WeightModePage> {
           // mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              width: width,
-              height: 50,
-              child: pageHeadDefScale(
-                context,
-                localizedStrings.weighing_title,
-              ),
-            ),
             const SizedBox(height: 5),
             Expanded(
               flex: 3,
@@ -186,7 +217,7 @@ class WeightModePageState extends State<WeightModePage> {
                             children: [
                               buildTextAndImage(
                                   50,
-                                  localizedStrings.stable,
+                                  localizedStrings.iStable,
                                   (myReqWeightCountine.msgBody == null)
                                       ? ("assets/images/gray.png")
                                       : (myReqWeightCountine
@@ -197,7 +228,7 @@ class WeightModePageState extends State<WeightModePage> {
                                   constraints),
                               buildTextAndImage(
                                   50,
-                                  localizedStrings.net,
+                                  localizedStrings.iTextNet,
                                   (myReqWeightCountine.msgBody == null)
                                       ? ("assets/images/gray.png")
                                       : (myReqWeightCountine.msgBody!.isNet &&
@@ -207,7 +238,7 @@ class WeightModePageState extends State<WeightModePage> {
                                   constraints),
                               buildTextAndImage(
                                   50,
-                                  localizedStrings.zero,
+                                  localizedStrings.iTextZero,
                                   (myReqWeightCountine.msgBody == null)
                                       ? ("assets/images/gray.png")
                                       : (myReqWeightCountine.msgBody!.isZero &&
@@ -269,14 +300,14 @@ class WeightModePageState extends State<WeightModePage> {
                             children: [
                               _buildFlexibleButtonAndText(
                                   width: 150,
-                                  buttonText: localizedStrings.button_tare,
+                                  buttonText: localizedStrings.gBtnTare,
                                   onPressed: PublicFunctions.performTare,
                                   constraints: constraints,
                                   isTrue: isStart,
                                   icon: Icons.title),
                               _buildFlexibleButtonAndText(
                                   width: 150,
-                                  buttonText: localizedStrings.button_zero,
+                                  buttonText: localizedStrings.iBtnZero,
                                   onPressed: PublicFunctions.performZero,
                                   constraints: constraints,
                                   isTrue: isStart,

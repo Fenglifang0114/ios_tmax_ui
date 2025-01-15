@@ -115,7 +115,7 @@ void _showConfirmationDialog(BuildContext context, List<int> scaleList) {
     builder: (BuildContext ctx) {
       return AlertDialog(
         title: Text(
-          'Confirmation',
+          localizedStrings.gTitleConfirm,
           style: TextStyle(color: Theme.of(context).colorScheme.primary),
         ),
         content: Text(localizedStrings.go_home),
@@ -126,7 +126,7 @@ void _showConfirmationDialog(BuildContext context, List<int> scaleList) {
                 btnWidth: 100,
                 btnHeight: 40,
                 icon: Icons.check_circle,
-                text: localizedStrings.confirm_btn,
+                text: localizedStrings.gBtnConfirm,
                 onPressed: () {
                   Navigator.of(context).pop(true);
                 },
@@ -136,7 +136,7 @@ void _showConfirmationDialog(BuildContext context, List<int> scaleList) {
                 btnWidth: 100,
                 btnHeight: 40,
                 icon: Icons.cancel,
-                text: localizedStrings.button_cancel,
+                text: localizedStrings.gBtnCancel,
                 onPressed: () {
                   Navigator.of(context).pop(false);
                 },
@@ -150,12 +150,13 @@ void _showConfirmationDialog(BuildContext context, List<int> scaleList) {
     if (confirmed) {
       myScreenMgr.isMainScreen = true;
       cntScaleTimerMgr.stopCntScaleTimer();
-      PublicFunctions.closewifiPassth(1);
+      // PublicFunctions.closewifiPassth(1);
       if (scaleList.isNotEmpty) {
         for (int i = 0; i < scaleList.length; i++) {
-          PublicFunctions.stopWeight(scaleList[i]);
+          // PublicFunctions.stopWeight(scaleList[i]);
         }
       }
+      PublicFunctions.closeScalePassth(1);
       if (context.mounted) {
         Navigator.of(context).pop();
       }

@@ -1,3 +1,47 @@
+Title:SoftWare For T-Max
+Version: V1.43
+Author: FLF
+Date: 2024-12-31
+Verify Platform: Windows
+Fixed Issues:
+1.retail 接收账单，后台卡住问题。
+---------------------------------------------------------------------------------------
+Title:SoftWare For T-Max
+Version: V1.42
+Author: FLF
+Date: 2024-12-23
+Verify Platform: Windows
+Fixed Issues:
+1.修改PLU都是全部下发的问题
+2.修改串口名字无法修改的问题
+3.修改软件关闭变慢的问题。 
+
+---------------------------------------------------------------------------------------
+Title:SoftWare For T-Max
+Version: V1.41
+Author: FLF
+Date: 2024-12-17
+Verify Platform: Windows
+Fixed Issues:
+1.修改PLU1-9999改为99999
+2.Retail修改PLU下发变量不对的问题
+3.修改选择激活后，退出再打开软件，发现需要激活的还是灰色不能使用
+4.修改下发PLU的时候，com口下方显示的波特率不对的问题
+5.串口连接里面的波特率少了一个1200和38400的波特率
+
+---------------------------------------------------------------------------------------
+
+Title:SoftWare For T-Max
+Version: V1.40
+Author: FLF
+Date: 2024-12-06
+Verify Platform: Windows
+Fixed Issues:
+1.增加PLU编辑页面，兼备下发功能
+2.Retail里面做成服务，与服务沟通通过主服务沟通
+3.删除PLU下发功能
+4.将串口和网络更新软件功能合并，zip也合并
+
 ---------------------------------------------------------------------------------------
 Title:SoftWare For T-Max
 Version: V1.36

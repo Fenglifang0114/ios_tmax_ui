@@ -96,7 +96,9 @@ class Detail {
                 ? "Tax2"
                 : json["PluTaxType"] == "2"
                     ? "Tax3"
-                    : json["PluTaxType"],
+                    : json["PluTaxType"] == "9"
+                        ? " "
+                        : json["PluTaxType"],
         pluReturnFlag: json["PluReturnFlag"] == "0"
             ? "Normal"
             : json["PluReturnFlag"] == "1"

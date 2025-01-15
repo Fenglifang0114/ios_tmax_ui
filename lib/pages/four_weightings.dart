@@ -242,7 +242,7 @@ class FourWeightsPageState extends State<FourWeightsPage> {
         preferredSize: const Size.fromHeight(50),
         child: pageHeadDesign(
           context,
-          localizedStrings.weighing_title,
+          localizedStrings.iTitleWeighting,
           scaleList,
         ),
       ),
@@ -376,7 +376,7 @@ class FourWeightsPageState extends State<FourWeightsPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               buildTextAndImage(
-                                  localizedStrings.stable,
+                                  localizedStrings.iStable,
                                   (reqWgt.msgBody == null)
                                       ? ("assets/images/gray.png")
                                       : (reqWgt.msgBody!.isStable &&
@@ -385,7 +385,7 @@ class FourWeightsPageState extends State<FourWeightsPage> {
                                           : ("assets/images/gray.png"),
                                   constraints),
                               buildTextAndImage(
-                                  localizedStrings.net,
+                                  localizedStrings.iTextNet,
                                   (reqWgt.msgBody == null)
                                       ? ("assets/images/gray.png")
                                       : (reqWgt.msgBody!.isNet &&
@@ -394,7 +394,7 @@ class FourWeightsPageState extends State<FourWeightsPage> {
                                           : ("assets/images/gray.png"),
                                   constraints),
                               buildTextAndImage(
-                                  localizedStrings.zero,
+                                  localizedStrings.iTextZero,
                                   (reqWgt.msgBody == null)
                                       ? ("assets/images/gray.png")
                                       : (reqWgt.msgBody!.isZero &&
@@ -442,13 +442,13 @@ class FourWeightsPageState extends State<FourWeightsPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     _buildFlexibleButtonAndTextT(
-                        buttonText: localizedStrings.button_tare,
+                        buttonText: localizedStrings.gBtnTare,
                         scaleId: scaleId,
                         constraints: constraints,
                         isTrue: isStartList[scaleNo],
                         icon: Icons.title),
                     _buildFlexibleButtonAndTextZ(
-                        buttonText: localizedStrings.button_zero,
+                        buttonText: localizedStrings.iBtnZero,
                         scaleId: scaleId,
                         constraints: constraints,
                         isTrue: isStartList[scaleNo],

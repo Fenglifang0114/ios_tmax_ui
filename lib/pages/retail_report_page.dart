@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -10,7 +12,16 @@ import 'package:t_max/widget/custom_button.dart';
 import '../data/comscaleinfo_data.dart';
 import '../data/detail_info.dart';
 import '../data/downloadresponse.dart';
+import '../data/language.dart';
+import '../data/manager_scale_channel.dart';
+import '../data/pak_info_data.dart';
+import '../data/scalelist_data.dart';
+import '../data/service_status_data.dart';
 import '../widget/page_head.dart';
+
+const String srvUninstalled = "status1"; //服务未安装
+const String srvinstalled = "status2"; //服务已安装  服务未启动
+const String srvStarted = "status3"; //服务已安装 服务已启动
 
 class TransactionReportPage extends StatefulWidget {
   const TransactionReportPage({super.key});
@@ -24,26 +35,57 @@ class TransactionReportPageState extends State<TransactionReportPage> {
   late final ScrollController _scrollController1 = ScrollController();
 
   List<TransactionWithExpansion> transactions = [];
-
+  List<NetScaleInfoLocal> scaleNetItems = [];
+  NetScaleInfoLocal defNetScaleInfo = NetScaleInfoLocal();
+  int selScaleId = -1;
   dynamic eventBus1;
   dynamic eventBus2;
+  dynamic eventBus3;
+  dynamic eventBus4;
+  dynamic eventBus5;
+  dynamic eventBus6;
+
   bool exportFlag = true;
-  bool isRefresh = false;
+  bool isRefresh = true;
+  final int serviceId = 999999999;
+  String srvStatus = "";
+  String srvStatusMsg = "";
+
+  Timer? _statusTimer;
+
+  // 开始定时器
+  void startTimer() {
+    if (_statusTimer == null || !_statusTimer!.isActive) {
+      _statusTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+        getServiceStatus();
+      });
+    }
+  }
+
+  // 停止定时器
+  void stopTimer() {
+    _statusTimer?.cancel();
+    _statusTimer = null;
+  }
 
   @override
   void initState() {
+    initScaleList();
+
+    srvStatusMsg = localizedStrings.gTipWait;
+
+    PublicFunctions.getScaleSrvList(999999999);
     netScaleOpenBill();
-    PublicFunctions.getDetailList();
+    // PublicFunctions.getDetailList();
     isRefresh = true;
+    startTimer();
     eventBus1 = eventBus.on<EventRespDetailInfo>().listen((event) {
-      String detailStr = event.obj;
-      if (detailStr == "null") {
-        return;
-      }
       if (mounted) {
-        isRefresh = false;
+        isRefresh = true;
         setState(() {
           try {
+            String detailStr = myDetailRevPak.msgBody.toString();
+            myDetailRevPak = RevPakInfo(msgBody: StringBuffer());
             final detailInfoRev = detailInfoRevFromJson(detailStr);
             transactions = detailInfoRev.map((detail) {
               return TransactionWithExpansion(
@@ -62,14 +104,128 @@ class TransactionReportPageState extends State<TransactionReportPage> {
     eventBus2 = eventBus.on<EventRevDetailTail>().listen((event) {
       if (mounted) {
         myRespDataFromScale = event.obj;
-        if (myRespDataFromScale.msgBody.contains('ok')) {
-          PublicFunctions.getDetailList();
-          isRefresh = true;
+        // if (myRespDataFromScale.msgBody.contains('ok')) {
+        //   PublicFunctions.getDetailList();
+        //   isRefresh = true;
+        // }
+      }
+    });
+    eventBus3 = eventBus.on<EventRespDetailAdd>().listen((event) {
+      if (mounted) {
+        PublicFunctions.getNewDetailFormSrv1();
+        isRefresh = true;
+      }
+    });
+
+    eventBus4 = eventBus.on<EventRespScaleSrvList>().listen((event) {
+      if (mounted) {
+        String dataString = event.obj;
+        try {
+          mySrvScaleList = srvScaleListFromJson(dataString);
+          setState(() {});
+        } catch (e) {
+          return;
         }
       }
     });
 
+    eventBus4 = eventBus.on<EventRespScaleOnline>().listen((event) {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+
+    eventBus5 = eventBus.on<EventRespDoSrvAction>().listen((event) {
+      if (mounted) {
+        String msgStr = event.obj;
+
+        const String srvUninstalled = "status1"; //服务未安装
+        const String srvinstalled = "status2"; //服务已安装  服务未启动
+        const String srvStarted = "status3"; //服务已安装 服务已启
+
+        if (msgStr.contains("Status:")) {
+          final splitted = msgStr.split("Status:");
+          if (splitted.isNotEmpty) {
+            setState(() {
+              srvStatus = splitted[1];
+              switch (srvStatus) {
+                case srvUninstalled:
+                  srvStatusMsg = localizedStrings.gTipServiceUninstalled;
+
+                  break;
+                case srvinstalled:
+                  srvStatusMsg = localizedStrings.gTipServiceStoped;
+
+                  break;
+                case srvStarted:
+                  srvStatusMsg = localizedStrings.gTipServiceStarted;
+
+                  break;
+              }
+            });
+          }
+        } else {
+          switch (msgStr) {
+            case srvUninstalled:
+              msgStr = localizedStrings.gTipServiceUninstalled;
+
+              break;
+            case srvinstalled:
+              msgStr = localizedStrings.gTipServiceStoped;
+
+              break;
+            case srvStarted:
+              msgStr = localizedStrings.gTipServiceStarted;
+
+              break;
+          }
+          _showErrorDialog(context, msgStr);
+        }
+      }
+    });
+
+    eventBus6 = eventBus.on<EventRespNewDetailInfo>().listen((event) {
+      if (mounted) {
+        isRefresh = true;
+        setState(() {
+          try {
+            String detailStr = myDetailRevPak.msgBody.toString();
+            myDetailRevPak = RevPakInfo(msgBody: StringBuffer());
+            final detailInfoRev = detailInfoRevFromJson(detailStr);
+            for (int i = 0; i < detailInfoRev.length; i++) {
+              var res = checkDetailExist(detailInfoRev[i].total.recId);
+              if (!res) {
+                var newDetailInfo = TransactionWithExpansion(
+                  total: detailInfoRev[i].total,
+                  details: detailInfoRev[i].details,
+                );
+                transactions.add(newDetailInfo);
+              }
+            }
+          } catch (e) {
+            if (kDebugMode) {
+              print(e);
+            }
+          }
+        });
+      }
+    });
+
     super.initState();
+  }
+
+  bool checkDetailExist(int recId) {
+    bool res = false;
+    if (transactions.isEmpty) {
+      return res;
+    }
+
+    for (int i = 0; i < transactions.length; i++) {
+      if (transactions[i].total.recId == recId) {
+        return true;
+      }
+    }
+    return res;
   }
 
   void netScaleOpenBill() {
@@ -80,10 +236,24 @@ class TransactionReportPageState extends State<TransactionReportPage> {
     }
   }
 
+  void initScaleList() {
+    scaleNetItems = myNetScaleList;
+    selScaleId = myDefScaleInfo.defScaleId!;
+    if (myNetScaleList.isNotEmpty) {
+      defNetScaleInfo = NetScaleListMgr.findScaleInfo(
+          myNetScaleList, myDefScaleInfo.defScaleId!);
+    }
+  }
+
   @override
   void dispose() {
     eventBus1.cancel();
     eventBus2.cancel();
+    eventBus3.cancel();
+    eventBus4.cancel();
+    eventBus5.cancel();
+    eventBus6.cancel();
+    _statusTimer?.cancel();
     super.dispose();
   }
 
@@ -93,45 +263,136 @@ class TransactionReportPageState extends State<TransactionReportPage> {
     double maxheight = MediaQuery.of(context).size.height;
 
     transactions.sort((a, b) => b.total.createdAt.compareTo(a.total.createdAt));
+
     return Scaffold(
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(50),
-          child: Container(
-            child: pageHeadDesign(context, 'Retail Detail Report', []),
+      appBar: AppBar(
+          title: Container(
+            child:
+                pageHeadDesign(context, localizedStrings.rDetailRptTitle, []),
           ),
-        ),
-        body: Column(
+          leading: IconTheme(
+              data: IconThemeData(
+                  color: Theme.of(context).colorScheme.primary // 设置抽屉图标颜色为红色
+                  ),
+              child: Builder(builder: (BuildContext context) {
+                return IconButton(
+                  icon: const Icon(Icons.menu),
+                  onPressed: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                );
+              }))),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+        child: Column(
           children: [
-            const SizedBox(
-              height: 10,
-            ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 200,
+                      child: Text(
+                        "Service Status:",
+                        textAlign: TextAlign.right,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    SizedBox(
+                      width: 200,
+                      child: Text(srvStatusMsg,
+                          style: TextStyle(
+                              color: srvStatus.contains(srvStarted)
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context).colorScheme.error),
+                          overflow: TextOverflow.ellipsis),
+                    )
+                  ],
+                ),
                 CustomOutlinedButton(
-                    btnWidth: 200,
+                    btnWidth: 100,
                     btnHeight: 50,
                     icon: Icons.refresh,
-                    text: "Refresh ",
-                    onPressed: isRefresh
-                        ? null
-                        : () {
-                            PublicFunctions.getDetailList();
-                            isRefresh = true;
-                          }),
+                    text: localizedStrings.rRefreshListBtn,
+                    onPressed: () {
+                      PublicFunctions.getDetailListSrv1();
+                    }),
                 const SizedBox(
                   width: 20,
                 ),
                 CustomOutlinedButton(
-                    btnWidth: 200,
+                    btnWidth: 100,
                     btnHeight: 50,
                     icon: Icons.save,
-                    text: "Export CSV ",
-                    onPressed: exportFlag ? exportToCsv : null)
+                    text: localizedStrings.gBtnExport,
+                    onPressed: exportFlag ? exportToCsv : null),
+                const SizedBox(
+                  width: 20,
+                ),
+                PopupMenuButton<String>(
+                    onSelected: _performActionForOption,
+                    tooltip: '',
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    itemBuilder: (BuildContext context) {
+                      return [
+                        PopupMenuItem<String>(
+                          value: 'Install',
+                          child: Text(
+                            localizedStrings.gTipInstallService,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        PopupMenuItem<String>(
+                          value: 'Start',
+                          child: Text(
+                            localizedStrings.gTipStartService,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        PopupMenuItem<String>(
+                          value: 'Stop',
+                          child: Text(
+                            localizedStrings.gTipStopService,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        PopupMenuItem<String>(
+                          value: 'Uninstall',
+                          child: Text(
+                            localizedStrings.gTipUninstallService,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ];
+                    },
+                    child: Container(
+                      width: 120,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Center(
+                        child: Text(
+                          localizedStrings.gTipService,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.onPrimary),
+                        ),
+                      ),
+                    ))
               ],
             ),
             SizedBox(
-              width: maxWidth,
+              width: maxWidth - 20,
               height: maxheight - 110,
               child: Scrollbar(
                 controller: _scrollController,
@@ -170,7 +431,239 @@ class TransactionReportPageState extends State<TransactionReportPage> {
               ),
             ),
           ],
-        ));
+        ),
+      ),
+      drawer: Drawer(child: myDrawer() // showNetScaleList(),
+          ),
+    );
+  }
+
+  void _performActionForOption(String option) {
+    switch (option) {
+      case 'Install':
+        if (srvStatus.contains(srvUninstalled)) {
+          ServiceAction mySrvAct =
+              ServiceAction(action: "Install", serviceId: serviceId);
+
+          PublicFunctions.sendServiceAction(serviceActionToJson(mySrvAct));
+          srvStatus = "";
+          srvStatusMsg = localizedStrings.gTipWait;
+        } else {
+          _showErrorDialog(context, srvStatusMsg);
+        }
+
+        break;
+      case 'Start':
+        if (srvStatus.contains(srvinstalled)) {
+          ServiceAction mySrvAct =
+              ServiceAction(action: "Start", serviceId: serviceId);
+          PublicFunctions.sendServiceAction(serviceActionToJson(mySrvAct));
+          srvStatus = "";
+          srvStatusMsg = localizedStrings.gTipWait;
+        } else {
+          _showErrorDialog(context, srvStatusMsg);
+        }
+        break;
+      case 'Stop':
+        if (srvStatus.contains(srvStarted)) {
+          ServiceAction mySrvAct =
+              ServiceAction(action: "Stop", serviceId: serviceId);
+          PublicFunctions.sendServiceAction(serviceActionToJson(mySrvAct));
+          srvStatus = "";
+          srvStatusMsg = localizedStrings.gTipWait;
+        } else {
+          _showErrorDialog(context, srvStatusMsg);
+        }
+        break;
+      case 'Uninstall':
+        if (srvStatus.contains(srvinstalled)) {
+          ServiceAction mySrvAct =
+              ServiceAction(action: "Uninstall", serviceId: serviceId);
+          PublicFunctions.sendServiceAction(serviceActionToJson(mySrvAct));
+          srvStatus = "";
+
+          srvStatusMsg = localizedStrings.gTipWait;
+        } else {
+          _showErrorDialog(context, srvStatusMsg);
+        }
+
+        break;
+    }
+  }
+
+  void getServiceStatus() {
+    ServiceAction mySrvAct =
+        ServiceAction(action: "Status", serviceId: serviceId);
+    PublicFunctions.sendServiceAction(serviceActionToJson(mySrvAct));
+  }
+
+  void setScaleRelStatus(int scaleId, bool status) {
+    for (int i = 0; i < mySrvScaleList.length; i++) {
+      if (mySrvScaleList[i].scaleId == scaleId &&
+          mySrvScaleList[i].srvId == serviceId) {
+        mySrvScaleList[i].isUsed = !status;
+      }
+    }
+    SrvScaleInfo srvInfo =
+        SrvScaleInfo(scaleId: scaleId, srvId: serviceId, isUsed: !status);
+    String dataStr = json.encode(srvInfo);
+    PublicFunctions.setScaleSrvStatus(dataStr);
+    setState(() {});
+  }
+
+  bool getStatus(int scaleId) {
+    if (mySrvScaleList.isEmpty) {
+      return false;
+    }
+    for (int i = 0; i < mySrvScaleList.length; i++) {
+      if (mySrvScaleList[i].scaleId == scaleId &&
+          mySrvScaleList[i].srvId == serviceId) {
+        return mySrvScaleList[i].isUsed;
+      }
+    }
+    return false;
+  }
+
+  Widget myDrawer() {
+    return Column(
+      children: [
+        SizedBox(
+          height: 50, // 设置抽屉头部高度为100像素
+          child: Container(
+            color: Theme.of(context).colorScheme.primary,
+            child: Center(
+              child: Text(
+                localizedStrings.gTipScaleList,
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ),
+        showNetScaleList()
+        // 抽屉其他内容
+      ],
+    );
+  }
+
+  Widget showNetScaleList() {
+    return Expanded(
+      child: ListView.builder(
+        itemCount: scaleNetItems.length,
+        itemBuilder: (context, index) {
+          return SizedBox(
+            child: Column(
+              children: [
+                ListTile(
+                  selected: selScaleId == scaleNetItems[index].scaleId,
+                  dense: true,
+                  title: Tooltip(
+                    richMessage: TextSpan(
+                      text: '${scaleNetItems[index].ip!}\r\n\r\n',
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
+                      children: <InlineSpan>[
+                        TextSpan(
+                          text:
+                              'Model:${scaleNetItems[index].scaleModel! == "TMax" ? "" : scaleNetItems[index].scaleModel!}\r\nSN:${scaleNetItems[index].scaleModel! == "TMax" ? "" : scaleNetItems[index].scaleSn!}\r\nPort:${scaleNetItems[index].port!}',
+                          style: const TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.normal),
+                        ),
+                      ],
+                    ),
+                    child: Text(
+                      scaleNetItems[index].scaleName!,
+                      maxLines: 1, // 设置文本最大行数为1
+                      style: const TextStyle(
+                        fontSize: 16,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
+                  subtitle: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(
+                        width: 100,
+                        child: Text(
+                          scaleNetItems[index].isOnline!
+                              ? localizedStrings.gOnlineTip
+                              : localizedStrings.gOfflineTip,
+                          maxLines: 1, // 设置文本最大行数为1
+                          style: TextStyle(
+                            fontSize: 14,
+                            overflow: TextOverflow.ellipsis,
+                            color: scaleNetItems[index].isOnline!
+                                ? Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainerHigh
+                                : Theme.of(context).colorScheme.error,
+                          ),
+                        ),
+                      ),
+                      const Icon(Icons.wifi)
+                    ],
+                  ),
+                  selectedTileColor: Theme.of(context).colorScheme.primary,
+                  trailing: Tooltip(
+                    message: localizedStrings.rJoinManagementTip,
+                    child: IconButton(
+                        onPressed: () {
+                          setScaleRelStatus(scaleNetItems[index].scaleId!,
+                              getStatus(scaleNetItems[index].scaleId!));
+                        },
+                        icon: Icon(
+                          getStatus(scaleNetItems[index].scaleId!)
+                              ? Icons.check_box
+                              : Icons.check_box_outline_blank,
+                          color: Theme.of(context).colorScheme.primary,
+                        )),
+                  ),
+                  onTap: () {},
+                )
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  void _showErrorDialog(BuildContext context, String tipStr) {
+    showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          title: Text(
+            localizedStrings.gTitleConfirm,
+            style: TextStyle(color: Theme.of(context).colorScheme.primary),
+          ),
+          content: SizedBox(
+            width: 300,
+            height: 70,
+            child: Text(
+              tipStr,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          actions: <Widget>[
+            SizedBox(
+              height: 30,
+              child: OutlinedButton(
+                child: Text(localizedStrings.gBtnConfirm),
+                onPressed: () {
+                  Navigator.of(context).pop(true); // 跳转
+                },
+              ),
+            )
+          ],
+        );
+      },
+    ).then((confirmed) {
+      if (confirmed) {}
+    });
   }
 
   Widget buildCardDetail(TransactionWithExpansion tran) {
@@ -376,6 +869,9 @@ class TransactionReportPageState extends State<TransactionReportPage> {
       fileName: 'report.csv',
     ));
     if (outputFile != null) {
+      if (!outputFile.contains(".csv")) {
+        outputFile = "$outputFile.csv";
+      }
       final filePath = outputFile;
       File file = File(filePath);
       try {

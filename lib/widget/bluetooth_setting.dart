@@ -81,8 +81,8 @@ class BluetoothDialogState extends State<BluetoothDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: getDialogTitle(context, localizedStrings.bluetooth_modification,
-          Icons.bluetooth, 400),
+      title: getDialogTitle(
+          context, localizedStrings.gTitleBtSetting, Icons.bluetooth, 400),
       content: Container(
         height: 310,
         decoration:
@@ -102,7 +102,7 @@ class BluetoothDialogState extends State<BluetoothDialog> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(localizedStrings.device_name),
+                          Text(localizedStrings.gDeviceName),
                           const SizedBox(height: 10),
                           SizedBox(
                             width: 400,
@@ -163,8 +163,8 @@ class BluetoothDialogState extends State<BluetoothDialog> {
                                             });
                                           } catch (e) {
                                             setState(() {
-                                              _errorMessage =
-                                                  localizedStrings.serial_error;
+                                              _errorMessage = localizedStrings
+                                                  .gMsgSerialError;
                                             });
                                           }
                                         }),
@@ -275,7 +275,7 @@ class BluetoothDialogState extends State<BluetoothDialog> {
               btnWidth: 120,
               btnHeight: 40,
               icon: Icons.exit_to_app,
-              text: localizedStrings.button_exit,
+              text: localizedStrings.gBtnExit,
               onPressed: () {
                 myScreenMgr.isMainScreen = true;
                 Navigator.of(context).pop();
@@ -296,7 +296,7 @@ class BluetoothDialogState extends State<BluetoothDialog> {
       _startTimer(15);
     } else {
       setState(() {
-        _errorMessage = 'Device name can not be empty! error';
+        _errorMessage = localizedStrings.gTipDeviceNameEmpty;
       });
     }
   }
@@ -310,7 +310,7 @@ class BluetoothDialogState extends State<BluetoothDialog> {
     _timer = Timer(Duration(seconds: time), () {
       setState(() {
         isSetting = false;
-        _errorMessage = 'Time out!';
+        _errorMessage = localizedStrings.gTipTimeOut;
       });
     });
   }

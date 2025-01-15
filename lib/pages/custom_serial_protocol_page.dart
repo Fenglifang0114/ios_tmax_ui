@@ -120,6 +120,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     super.initState();
     initOutputList();
     cntScaleTimerMgr.stopCntScaleTimer();
+    DefScaleInfo.getDefScaleInfo(1);
     // cntScaleTimerMgr.startCntScaleTimer(5);
     _eventbus1 = eventBus.on<EventSerialOutputResp>().listen((event) {
       if (mounted) {
@@ -282,8 +283,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
           height: 50,
           width: screenSize.width - 10,
           color: colorScheme.primary,
-          child:
-              pageHeadDefScale(context, localizedStrings.serial_output_design),
+          child: pageHeadDefScale(context, localizedStrings.gTitleSerialOutput),
         ),
       ),
       body: Row(
@@ -410,7 +410,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                               btnWidth: buttonWidth,
                               btnHeight: 40,
                               icon: Icons.download_rounded,
-                              text: localizedStrings.download,
+                              text: localizedStrings.gBtnDownload,
                               onPressed: (!serialPreview &&
                                       isListEmpty() &&
                                       !_downloading)
@@ -439,7 +439,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                               btnWidth: buttonWidth,
                               btnHeight: buttonHeight,
                               icon: Icons.visibility_outlined,
-                              text: localizedStrings.open_preview,
+                              text: localizedStrings.cBtnOpenPreview,
                               onPressed: !serialPreview &&
                                       (myDefScaleInfo.defScaleId! == 1)
                                   ? handleButtonPress
@@ -449,7 +449,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                               btnWidth: buttonWidth,
                               btnHeight: buttonHeight,
                               icon: Icons.visibility_off_outlined,
-                              text: localizedStrings.close_preview,
+                              text: localizedStrings.cBtnClosePreview,
                               onPressed: () async {
                                 setState(() {
                                   serialPreview = false;
@@ -547,7 +547,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                                                 });
                                               },
                                               child: Text(
-                                                localizedStrings.clear_btn,
+                                                localizedStrings.gBtnClear,
                                                 overflow: TextOverflow.ellipsis,
                                               )),
                                           OutlinedButton(
@@ -635,6 +635,9 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     ));
 
     if (outputFile != null) {
+      if (!outputFile.contains(".zip")) {
+        outputFile = "$outputFile.zip";
+      }
       final serialOutputPath = await getJsonFileDir();
       if (!await serialOutputPath.exists()) {
         await serialOutputPath.create(recursive: true);
@@ -794,7 +797,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
             color: colorScheme.primary,
             child: Center(
               child: Text(
-                localizedStrings.serial_port_output_preview,
+                localizedStrings.cBtnOpenPreview,
                 style: TextStyle(
                   color: colorScheme.onPrimary,
                   fontWeight: FontWeight.bold,
@@ -1949,13 +1952,13 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       builder: (BuildContext ctx) {
         return AlertDialog(
           title: Text(
-            localizedStrings.confirm_title,
+            localizedStrings.gTitleConfirm,
             style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
           content: Text(msg),
           actions: <Widget>[
             OutlinedButton(
-              child: Text(localizedStrings.confirm_btn),
+              child: Text(localizedStrings.gBtnConfirm),
               onPressed: () {
                 Navigator.of(context).pop(true); // 跳转
               },

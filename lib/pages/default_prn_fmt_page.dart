@@ -73,7 +73,7 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
         child: Container(
           child: pageHeadDesign(
             context,
-            localizedStrings.label_fmt_download,
+            localizedStrings.gTitleLabelFmtDownload,
             [myDefScaleInfo.defScaleId!],
           ),
         ),
@@ -255,7 +255,7 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
                   }
                 : null,
             child: Text(
-              localizedStrings.download,
+              localizedStrings.gBtnDownload,
             ),
           ),
         ),
@@ -271,7 +271,7 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
   //     _stopTimer();
 
   //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-  //         content: Text(localizedStrings.download_result_fail,
+  //         content: Text(localizedStrings.gBtnDownload_result_fail,
   //             style: const TextStyle(
   //                 fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
   //         duration: const Duration(seconds: 3),
@@ -289,7 +289,7 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
       builder: (BuildContext ctx) {
         return AlertDialog(
           title: Text(
-            localizedStrings.confirm_title,
+            localizedStrings.gTitleConfirm,
             style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
           content: Text(error),
@@ -300,7 +300,7 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
                   btnWidth: 100,
                   btnHeight: 40,
                   icon: Icons.check_circle,
-                  text: localizedStrings.confirm_btn,
+                  text: localizedStrings.gBtnConfirm,
                   onPressed: () {
                     Navigator.of(context).pop(true);
                   },
@@ -319,10 +319,10 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
       builder: (BuildContext ctx) {
         return AlertDialog(
           title: Text(
-            localizedStrings.confirm_title,
+            localizedStrings.gTitleConfirm,
             style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
-          content: Text(localizedStrings.confirm_info),
+          content: Text(localizedStrings.gConfirmPrnFmtOrderTip),
           actions: <Widget>[
             Row(
               children: [
@@ -330,7 +330,7 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
                   btnWidth: 100,
                   btnHeight: 40,
                   icon: Icons.check_circle,
-                  text: localizedStrings.confirm_btn,
+                  text: localizedStrings.gBtnConfirm,
                   onPressed: () {
                     Navigator.of(context).pop(true);
                   },
@@ -340,7 +340,7 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
                   btnWidth: 100,
                   btnHeight: 40,
                   icon: Icons.cancel,
-                  text: localizedStrings.button_cancel,
+                  text: localizedStrings.gBtnCancel,
                   onPressed: () {
                     Navigator.of(context).pop(false);
                   },

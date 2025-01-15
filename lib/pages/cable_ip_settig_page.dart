@@ -81,7 +81,7 @@ class CableIpSettingPageState extends State<CableIpSettingPage> {
                               btnWidth: 150,
                               btnHeight: 50,
                               icon: Icons.download_rounded,
-                              text: localizedStrings.download,
+                              text: localizedStrings.gBtnDownload,
                               onPressed:
                                   (!isDownloadClicked) && (downloadFlag())
                                       ? () {
@@ -93,7 +93,7 @@ class CableIpSettingPageState extends State<CableIpSettingPage> {
                         ),
                         const SizedBox(height: 40), // 顶部间距
                         buildCommonRow(
-                          localizedStrings.ip_address,
+                          localizedStrings.gIpAddress,
                           15,
                           ipaddressRegex,
                           _isValidIP,
@@ -107,7 +107,7 @@ class CableIpSettingPageState extends State<CableIpSettingPage> {
                           _isStatic,
                         ),
                         buildCommonRow(
-                          localizedStrings.netmask,
+                          localizedStrings.gNetmask,
                           15,
                           ipaddressRegex,
                           _isValidMask,
@@ -121,7 +121,7 @@ class CableIpSettingPageState extends State<CableIpSettingPage> {
                           _isStatic,
                         ),
                         buildCommonRow(
-                          localizedStrings.gateway,
+                          localizedStrings.gGateway,
                           15,
                           ipaddressRegex,
                           _isValidGateway,
@@ -224,7 +224,7 @@ class CableIpSettingPageState extends State<CableIpSettingPage> {
   //             }
   //           : null,
   //       child: Text(
-  //         localizedStrings.download,
+  //         localizedStrings.gBtnDownload,
   //       ),
   //     ),
   //   );
@@ -315,10 +315,10 @@ class CableIpSettingPageState extends State<CableIpSettingPage> {
       builder: (BuildContext ctx) {
         return AlertDialog(
           title: Text(
-            localizedStrings.confirm_title,
+            localizedStrings.gTitleConfirm,
             style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
-          content: Text(localizedStrings.header_confirm_info),
+          content: Text(localizedStrings.gTipConfirmInfo),
           actions: <Widget>[
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -327,7 +327,7 @@ class CableIpSettingPageState extends State<CableIpSettingPage> {
                   btnWidth: 120,
                   btnHeight: 40,
                   icon: Icons.check_circle,
-                  text: localizedStrings.button_ok,
+                  text: localizedStrings.gBtnConfirm,
                   onPressed: () {
                     Navigator.of(context).pop(true);
                   },
@@ -337,7 +337,7 @@ class CableIpSettingPageState extends State<CableIpSettingPage> {
                   btnWidth: 120,
                   btnHeight: 40,
                   icon: Icons.cancel,
-                  text: localizedStrings.button_cancel,
+                  text: localizedStrings.gBtnCancel,
                   onPressed: () {
                     Navigator.of(context).pop(false);
                   },

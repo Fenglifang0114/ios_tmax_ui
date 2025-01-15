@@ -10,7 +10,7 @@ void showConfirmationDialog(BuildContext context, String message) {
     builder: (context) {
       return AlertDialog(
         title: Text(
-          localizedStrings.confirm_title,
+          localizedStrings.gTitleConfirm,
           style: TextStyle(color: Theme.of(context).colorScheme.primary),
         ),
         content: Text(message),
@@ -22,7 +22,7 @@ void showConfirmationDialog(BuildContext context, String message) {
                 btnWidth: 120,
                 btnHeight: 40,
                 icon: Icons.check_circle,
-                text: localizedStrings.button_ok,
+                text: localizedStrings.gBtnConfirm,
                 onPressed: () {
                   Navigator.of(context).pop();
                 },

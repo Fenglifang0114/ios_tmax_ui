@@ -612,7 +612,8 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                                     });
                                   },
                                 ),
-                                textStyle(localizedStrings.label_fmt_download,
+                                textStyle(
+                                    localizedStrings.gTitleLabelFmtDownload,
                                     constraints),
                                 // 省略部分代码
                               ],
@@ -628,7 +629,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                                   },
                                 ),
                                 textStyle(
-                                    localizedStrings.serial_output_download,
+                                    localizedStrings.gTitleSerialOutputDownload,
                                     constraints),
                               ],
                             ),
@@ -649,7 +650,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                               btnWidth: 120,
                               btnHeight: 50,
                               icon: Icons.download_outlined,
-                              text: localizedStrings.download,
+                              text: localizedStrings.gBtnDownload,
                               onPressed: isDownloading
                                   ? null
                                   : () {
@@ -688,7 +689,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                               btnWidth: 120,
                               btnHeight: 50,
                               icon: Icons.drive_file_move_rtl_outlined,
-                              text: localizedStrings.batch_down_import,
+                              text: localizedStrings.gBtnImport,
                               onPressed: () async {
                                 String str = await pickZipFiles();
                                 bool res;
@@ -911,7 +912,8 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              title2ndStyle(localizedStrings.free_fmt1_txt),
+                              title2ndStyle(
+                                  localizedStrings.gTipFreeFormat + " 1:"),
                               buildSelectBtn(prnFmt1Ctl),
                             ],
                           ),
@@ -929,7 +931,8 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     title2ndStyle(
-                                        localizedStrings.free_fmt2_txt),
+                                        localizedStrings.gTipFreeFormat +
+                                            " 2:"),
                                     buildSelectBtn(prnFmt2Ctl),
                                   ],
                                 ),
@@ -943,7 +946,8 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     title2ndStyle(
-                                        localizedStrings.free_fmt3_txt),
+                                        localizedStrings.gTipFreeFormat +
+                                            " 3:"),
                                     buildSelectBtn(prnFmt3Ctl),
                                   ],
                                 ),
@@ -956,8 +960,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    title2ndStyle(
-                                        localizedStrings.total_fmt_txt),
+                                    title2ndStyle(localizedStrings.gTotalFmt),
                                     buildSelectBtn(prnFmt4Ctl),
                                   ],
                                 ),
@@ -1657,7 +1660,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
       builder: (BuildContext ctx) {
         return AlertDialog(
           title: Text(
-            localizedStrings.confirm_title,
+            localizedStrings.gTitleConfirm,
             style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
           content: SizedBox(
@@ -1673,7 +1676,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
             SizedBox(
               height: 30,
               child: OutlinedButton(
-                child: Text(localizedStrings.confirm_btn),
+                child: Text(localizedStrings.gBtnConfirm),
                 onPressed: () {
                   Navigator.of(context).pop(true); // 跳转
                 },
@@ -1721,7 +1724,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
               )),
           actions: <Widget>[
             OutlinedButton(
-              child: Text(localizedStrings.button_cancel),
+              child: Text(localizedStrings.gBtnCancel),
               onPressed: () {
                 setState(() {
                   isIpListSelect = false;
@@ -1731,7 +1734,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
               },
             ),
             OutlinedButton(
-              child: Text(localizedStrings.confirm_btn),
+              child: Text(localizedStrings.gBtnConfirm),
               onPressed: () {
                 if (generateIpList()) {
                   Navigator.of(context).pop(true);
@@ -1871,13 +1874,13 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
     PublicFunctions.sendMsg(myDefScaleInfo.defScaleId!, jsonEncode(myScaleCmd));
     writelog(jsonEncode(myScaleCmd));
     setState(() {
-      outputData.add(localizedStrings.update_firmware_wait);
+      outputData.add(localizedStrings.gTipWait);
       scrollToBottom();
     });
     Timer(const Duration(seconds: 5), () {
       if (!(updateProcess > 0)) {
         setState(() {
-          outputData.add(localizedStrings.update_firmware_reboot);
+          outputData.add(localizedStrings.gTipRebootForUpdate);
         });
       }
     });

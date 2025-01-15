@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/pages/home_page_config.dart';
 import 'package:t_max/pages/home_page_industry.dart';
-import '../functions/methods.dart';
 import '../pages/home_page_retail.dart';
 import 'company_info.dart';
 import 'encrypt_data.dart';
@@ -19,7 +18,6 @@ const String appTRetail = "T-RETAIL";
 
 class SystemVersionInfo {
   Widget getHomePage() {
-    PublicFunctions.getScaleList();
     if (mySystemVersion == tConfig) {
       return const HomePage();
     } else if (mySystemVersion == tIndustry) {

@@ -446,6 +446,7 @@ class RespMsgType {
       myFactoryInfoFromScale = FactoryInfoFromScale("", "");
       if (id == 1) {
         myComScaleSn = myFactoryInfoFromScale;
+        myComScaleInfo.isOnline = false;
         return eventBus.fire(EventRespCheckComPort(myComScaleSn));
       }
     }
@@ -455,6 +456,7 @@ class RespMsgType {
         myComScaleInfo.scaleSn = myFactoryInfoFromScale.scaleSn!;
         myComScaleInfo.scaleModel = myFactoryInfoFromScale.modelName!;
         myComScaleSn = myFactoryInfoFromScale;
+        myComScaleInfo.isOnline = true;
         if (myDefScaleInfo.defScaleId == id) {
           DefScaleInfo.getDefScaleInfo(id);
         }

@@ -14,16 +14,19 @@ import '../../data/weight_data.dart';
 import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
 import '../data/comscaleinfo_data.dart';
+import '../data/const_var_data.dart';
 import '../data/downloadresponse.dart';
 import '../data/manager_scale_channel.dart';
 import '../data/language.dart';
+import '../data/plu_data_source.dart';
+import '../data/plu_info_list_data.dart';
 import '../data/record_data.dart';
+import '../data/scale_list_data.dart';
 import '../data/scalelist_data.dart';
 import '../data/timer_manager.dart';
 import '../data/weight_report_data.dart';
 import '../data/weight_rpt.dart';
 import '../data/wgt_rpt_data_source.dart';
-import '../dialog/addproduct_dialog.dart';
 import '../dialog/adduser_dialog.dart';
 import '../dialog/conform_dialog.dart';
 import '../dialog/setting_dialog.dart';
@@ -46,6 +49,9 @@ class TakeInPageState extends State<TakeInPage> {
   List<WeightReportData> _weightReportDatas = <WeightReportData>[];
   List<WeightReportData> myWeightReportData = [];
   List<double> weightValueList = [];
+  List<NetScaleInfoLocal> scaleNetItems = [];
+  NetScaleInfoLocal defNetScaleInfo = NetScaleInfoLocal();
+  int selScaleId = -1;
 
   final DataGridController _dataGridController = DataGridController();
   String errorText = '';
@@ -60,6 +66,8 @@ class TakeInPageState extends State<TakeInPage> {
   late bool _isTakeInStart = false;
   late bool _isSaveButtonDisabled;
   late WeightReportDataSource _weightReportDataSource;
+  List<PluData> myPluInfoList = [];
+  PluData? selectedPluData; // 用于存储选中的PluData
 
   bool isStart = false;
   bool lastStableStatus = false;
@@ -147,11 +155,22 @@ class TakeInPageState extends State<TakeInPage> {
   dynamic eventBus13;
   dynamic eventBus14;
   dynamic eventBus15;
+  dynamic eventBus16;
+
   bool isCnting = false;
+  void initScaleList() {
+    scaleNetItems = myNetScaleList;
+    selScaleId = myDefScaleInfo.defScaleId!;
+    if (myNetScaleList.isNotEmpty) {
+      defNetScaleInfo = NetScaleListMgr.findScaleInfo(
+          myNetScaleList, myDefScaleInfo.defScaleId!);
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+    initScaleList();
     _reportScrollerController = ScrollController();
 
     lastWeight = "*";
@@ -162,7 +181,7 @@ class TakeInPageState extends State<TakeInPage> {
         ? "0"
         : myModeSettingTakeIn.stableTime.toString();
     _stableSaveTime = int.parse(timeString);
-    if (myModeSettingTakeIn.recMode == "manual") {
+    if (myModeSettingTakeIn.recMode == msgManual) {
       weightMode = 1;
       _isSaveButtonDisabled = false;
     } else {
@@ -174,14 +193,14 @@ class TakeInPageState extends State<TakeInPage> {
     }
 
     _isStableStatusJudge = false;
-    getProductNameList();
+    // getProductNameList();
     _weightReportDatas = getWeightReportData();
     _weightReportDataSource = WeightReportDataSource(_weightReportDatas);
     PublicFunctions.getUserList();
     PublicFunctions.getProductList();
     PublicFunctions.getRecords(myDefScaleInfo.defScaleId!, weighingTakeInMode);
 
-    cntScaleTimerMgr.stopCntScaleTimer();
+    cntScaleTimerMgr.startCntScaleTimer(10);
     PublicFunctions.getWeight(myDefScaleInfo.defScaleId!);
     onStartTimer();
 
@@ -195,8 +214,29 @@ class TakeInPageState extends State<TakeInPage> {
     eventBus2 = eventBus.on<EventProductRecList>().listen((event) {
       if (mounted) {
         setState(() {
-          myProductRecList = event.obj;
-          getProductNameList();
+          List<PluInfoList> pluInfoList = event.obj;
+          for (int i = 0; i < pluInfoList.length; i++) {
+            PluData newPlu =
+                PluData(0, 0, 0, 0, '', '', 0, 0, 0, 0, 0, 0, 0, '');
+            newPlu.recId = pluInfoList[i].recId;
+            newPlu.plu = int.tryParse(pluInfoList[i].plu) ?? 0;
+            newPlu.productCode = int.tryParse(pluInfoList[i].productCode) ?? 0;
+            newPlu.itemCode = int.tryParse(pluInfoList[i].itemCode) ?? 0;
+            newPlu.category = pluInfoList[i].category;
+            newPlu.productName = pluInfoList[i].productName;
+            newPlu.price = double.tryParse(pluInfoList[i].price) ?? 0;
+            newPlu.taxType = int.tryParse(pluInfoList[i].taxType) ?? 0;
+            newPlu.generalUnit = int.tryParse(pluInfoList[i].generalUnit) ?? 0;
+            newPlu.unitWeight = double.tryParse(pluInfoList[i].unitWeight) ?? 0;
+            newPlu.pretare = double.tryParse(pluInfoList[i].pretare) ?? 0;
+            newPlu.limitHigh = double.tryParse(pluInfoList[i].limitHigh) ?? 0;
+            newPlu.limitLow = double.tryParse(pluInfoList[i].limitLow) ?? 0;
+            newPlu.creatAt = pluInfoList[i].creatAt ?? " ";
+            myPluInfoList.add(newPlu);
+          }
+
+          // getWeight();
+          // getRecords();
         });
       }
     });
@@ -256,9 +296,9 @@ class TakeInPageState extends State<TakeInPage> {
       if (mounted) {
         setState(() {
           myModeSettingTakeIn = event.obj;
-          weightMode = (myModeSettingTakeIn.recMode == "manual")
+          weightMode = (myModeSettingTakeIn.recMode == msgManual)
               ? 1
-              : (myModeSettingTakeIn.recMode == "auto")
+              : (myModeSettingTakeIn.recMode == msgAuto)
                   ? 2
                   : 1;
           dateformat = int.parse(myModeSettingTakeIn.dateFormat);
@@ -306,7 +346,7 @@ class TakeInPageState extends State<TakeInPage> {
     eventBus11 = eventBus.on<EventRegWeightResp>().listen((event) {
       if (mounted) {
         myRespDataFromScale = event.obj;
-        if (myRespDataFromScale.msgBody.contains('ok')) {
+        if (myRespDataFromScale.msgBody.contains(msgOk)) {
           setState(() {
             isStart = true;
           });
@@ -321,7 +361,7 @@ class TakeInPageState extends State<TakeInPage> {
     eventBus12 = eventBus.on<EventUnregWeightResp>().listen((event) {
       if (mounted) {
         myRespDataFromScale = event.obj;
-        if (myRespDataFromScale.msgBody.contains('ok')) {
+        if (myRespDataFromScale.msgBody.contains(msgOk)) {
           setState(() {
             isStart = false;
           });
@@ -367,6 +407,25 @@ class TakeInPageState extends State<TakeInPage> {
         //     myComScaleInfo.isOnline = false;
         //   }
         // });
+      }
+    });
+    eventBus16 = eventBus.on<EventSelWeighingScaleId>().listen((event) {
+      //修改了ScaleId
+      if (mounted) {
+        int scaleId = event.obj;
+
+        if (scaleId != selScaleId) {
+          setState(() {
+            PublicFunctions.stopWeight(selScaleId);
+            selScaleId = scaleId;
+            PublicFunctions.getWeight(selScaleId);
+            DefScaleInfo.getDefScaleInfo(scaleId);
+            myWeightReportData.clear();
+            updateTableData(getWeightReportData());
+            PublicFunctions.getRecords(
+                myDefScaleInfo.defScaleId!, weighingTakeInMode);
+          });
+        }
       }
     });
   }
@@ -472,6 +531,7 @@ class TakeInPageState extends State<TakeInPage> {
     eventBus13.cancel();
     eventBus14.cancel();
     eventBus15.cancel();
+    eventBus16.cancel();
     cntScaleTimerMgr.stopPortOffTimer();
 
     super.dispose();
@@ -494,13 +554,33 @@ class TakeInPageState extends State<TakeInPage> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(50),
-        child: pageHeadDefScale(context, localizedStrings.take_in_title),
-      ),
+      appBar: AppBar(
+          title: Container(
+            child: pageHeadDefScale(
+                context, localizedStrings.iTitleIncrementWeighting),
+          ),
+          leading: IconTheme(
+              data: IconThemeData(
+                  color: Theme.of(context).colorScheme.primary // 设置抽屉图标颜色
+                  ),
+              child: Builder(builder: (BuildContext context) {
+                return IconButton(
+                  icon: const Icon(Icons.menu),
+                  onPressed: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                );
+              }))),
       body: _isFirstLayout
           ? firstLayout(context, width)
           : secondLayout(context, width),
+      drawer: Drawer(
+          child: myWeighingScaleListDrawer(
+              context,
+              localizedStrings.gTipScaleList,
+              scaleNetItems,
+              selScaleId) // showNetScaleList(),
+          ),
     );
   }
 
@@ -542,7 +622,7 @@ class TakeInPageState extends State<TakeInPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               buildTextAndImage(
-                                  localizedStrings.stable,
+                                  localizedStrings.iStable,
                                   (myReqWeightCountine.msgBody == null)
                                       ? ("assets/images/gray.png")
                                       : (myReqWeightCountine
@@ -552,7 +632,7 @@ class TakeInPageState extends State<TakeInPage> {
                                           : ("assets/images/gray.png"),
                                   constraints),
                               buildTextAndImage(
-                                  localizedStrings.net,
+                                  localizedStrings.iTextNet,
                                   (myReqWeightCountine.msgBody == null)
                                       ? ("assets/images/gray.png")
                                       : (myReqWeightCountine.msgBody!.isNet &&
@@ -561,7 +641,7 @@ class TakeInPageState extends State<TakeInPage> {
                                           : ("assets/images/gray.png"),
                                   constraints),
                               buildTextAndImage(
-                                  localizedStrings.zero,
+                                  localizedStrings.iTextZero,
                                   (myReqWeightCountine.msgBody == null)
                                       ? ("assets/images/gray.png")
                                       : (myReqWeightCountine.msgBody!.isZero &&
@@ -666,13 +746,13 @@ class TakeInPageState extends State<TakeInPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     _buildFlexibleButtonAndText(
-                        buttonText: localizedStrings.button_tare,
+                        buttonText: localizedStrings.gBtnTare,
                         onPressed: PublicFunctions.performTare,
                         constraints: constraints,
                         isTrue: isStart && !_isTakeInStart,
                         icon: Icons.title),
                     _buildFlexibleButtonAndText(
-                        buttonText: localizedStrings.button_zero,
+                        buttonText: localizedStrings.iBtnZero,
                         onPressed: PublicFunctions.performZero,
                         constraints: constraints,
                         isTrue: isStart && !_isTakeInStart,
@@ -705,13 +785,13 @@ class TakeInPageState extends State<TakeInPage> {
                         isTrue: isStartButtonEnable(),
                         icon: Icons.swipe_right_outlined),
                     _buildFlexibleButtonAndText(
-                        buttonText: localizedStrings.button_save,
+                        buttonText: localizedStrings.gBtnSave,
                         onPressed: _changeSaveButton,
                         constraints: constraints,
                         isTrue: !_isSaveButtonDisabled && isStart,
                         icon: Icons.save_outlined),
                     _buildFlexibleButtonAndText(
-                        buttonText: localizedStrings.button_setting,
+                        buttonText: localizedStrings.gBtnSetting,
                         onPressed: () {
                           mySettingParam = myModeSettingTakeIn;
                           paramSettingDialog(context);
@@ -733,131 +813,107 @@ class TakeInPageState extends State<TakeInPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           buildTextString(
-                              localizedStrings.plu_name, constraints, context),
+                              localizedStrings.gPluName, constraints, context),
+                          SizedBox(
+                            width: 10,
+                          ),
                           Container(
                             height: 53,
-                            width: 150,
+                            width: constraints.maxWidth / 5,
                             padding: const EdgeInsets.all(0),
-                            child: DropdownButtonFormField<String>(
-                              itemHeight: 50.0,
-                              isExpanded: true,
-                              // decoration: const InputDecoration(border: OutlineInputBorder()),
-                              value: productNameValue,
-                              onChanged: (String? newPosition) {
-                                setState(() {
-                                  productNameValue = newPosition.toString();
-                                  for (var i = 0;
-                                      i <
-                                          myProductRecList
-                                              .productRecInfo!.length;
-                                      i++) {
-                                    if (productNameValue ==
-                                        myProductRecList
-                                            .productRecInfo![i].product) {
-                                      myProductRecInfo =
-                                          myProductRecList.productRecInfo![i];
-                                      eventBus.fire(EventProductRecInfo(
-                                          myProductRecInfo));
-                                    }
-                                  }
-                                });
-                              },
-
-                              items: productNameList
-                                  .map<DropdownMenuItem<String>>(
-                                      (String value) {
-                                return DropdownMenuItem(
-                                    value: value,
-                                    child: Text(value,
-                                        overflow: TextOverflow.ellipsis));
-                              }).toList(),
-                            ),
-                          ),
-                          CustomElevatedButton(
-                            btnWidth: constraints.maxWidth / 10 - 50,
-                            btnHeight: 40,
-                            icon: Icons.edit_note_outlined,
-                            text: localizedStrings.plu_edit,
-                            onPressed: () {
-                              PublicFunctions.getProductList();
-                              addProductDialog(context).then((onvalue) {
-                                if (!productNameList
-                                    .contains(productNameValue)) {
-                                  myProductRecInfo.product = "";
-                                  productNameValue = "";
-                                  myProductRecInfo.id = "";
-                                  myProductRecInfo.withPretare = false;
-                                  myProductRecInfo.remarks = "";
+                            child: Autocomplete<PluData>(
+                              optionsBuilder:
+                                  (TextEditingValue textEditingValue) {
+                                if (textEditingValue.text == '') {
+                                  return const Iterable<PluData>.empty();
                                 }
-                              });
-                            },
-                          ),
-                          buildTextString(
-                              localizedStrings.user_name, constraints, context),
-                          Container(
-                            height: 53,
-                            width: 150,
-                            padding: const EdgeInsets.all(0),
-                            child: DropdownButtonFormField<String>(
-                              itemHeight: 50.0,
-                              isExpanded: true,
-                              // decoration: const InputDecoration(border: OutlineInputBorder()),
-                              value: userNameValue,
-                              onChanged: (String? newPosition) {
+                                return myPluInfoList.where((PluData data) {
+                                  // 进行模糊查找，这里同时匹配productName和plu转成字符串后的内容
+                                  return data.productName!
+                                          .toLowerCase()
+                                          .contains(textEditingValue.text
+                                              .toLowerCase()) ||
+                                      data.plu
+                                          .toString()
+                                          .contains(textEditingValue.text);
+                                }).toList()
+                                  ..sort((a, b) => a.plu!.compareTo(b.plu!));
+                              },
+                              onSelected: (PluData selection) {
                                 setState(() {
-                                  userNameValue = newPosition.toString();
-                                  for (var i = 0;
-                                      i < myUserInfoList.userInfo!.length;
-                                      i++) {
-                                    if (userNameValue ==
-                                        myUserInfoList.userInfo![i].name) {
-                                      myUserInfo = myUserInfoList.userInfo![i];
-                                      eventBus.fire(EventUserInfo(myUserInfo));
-                                    }
-                                  }
+                                  selectedPluData = selection;
                                 });
                               },
-                              items: userNameList.map<DropdownMenuItem<String>>(
-                                  (String value) {
-                                return DropdownMenuItem(
-                                    value: value,
-                                    child: Text(value,
-                                        overflow: TextOverflow.ellipsis));
-                              }).toList(),
+                              displayStringForOption: (PluData option) =>
+                                  '${option.plu}:${option.productName}',
                             ),
                           ),
-                          CustomElevatedButton(
-                            btnWidth: constraints.maxWidth / 10 - 50,
-                            btnHeight: 40,
-                            icon: Icons.edit_note_outlined,
-                            text: localizedStrings.user_edit,
-                            onPressed: () {
-                              PublicFunctions.getUserList();
-                              getUserNameList();
-                              if (!userNameList.contains(userNameValue)) {
-                                myUserInfo.name = "";
-                                userNameValue = "";
-                                myUserInfo.id = "";
-                                myUserInfo.isFemale = true;
-                                myUserInfo.phone = "";
-                                myUserInfo.remarks = "";
-                              }
-                              addUserDialog(context).then((onvalue) {
-                                setState(() {
-                                  PublicFunctions.getUserList();
-                                  getUserNameList();
-                                  if (!userNameList.contains(userNameValue)) {
-                                    myUserInfo.name = "";
-                                    userNameValue = "";
-                                    myUserInfo.id = "";
-                                    myUserInfo.isFemale = true;
-                                    myUserInfo.phone = "";
-                                    myUserInfo.remarks = "";
-                                  }
-                                });
-                              });
-                            },
-                          ),
+                          // buildTextString(
+                          //     localizedStrings.user_name, constraints, context),
+                          // Container(
+                          //   height: 53,
+                          //   width: 150,
+                          //   padding: const EdgeInsets.all(0),
+                          //   child: DropdownButtonFormField<String>(
+                          //     itemHeight: 50.0,
+                          //     isExpanded: true,
+                          //     // decoration: const InputDecoration(border: OutlineInputBorder()),
+                          //     value: userNameValue,
+                          //     onChanged: (String? newPosition) {
+                          //       setState(() {
+                          //         userNameValue = newPosition.toString();
+                          //         for (var i = 0;
+                          //             i < myUserInfoList.userInfo!.length;
+                          //             i++) {
+                          //           if (userNameValue ==
+                          //               myUserInfoList.userInfo![i].name) {
+                          //             myUserInfo = myUserInfoList.userInfo![i];
+                          //             eventBus.fire(EventUserInfo(myUserInfo));
+                          //           }
+                          //         }
+                          //       });
+                          //     },
+                          //     items: userNameList.map<DropdownMenuItem<String>>(
+                          //         (String value) {
+                          //       return DropdownMenuItem(
+                          //           value: value,
+                          //           child: Text(value,
+                          //               overflow: TextOverflow.ellipsis));
+                          //     }).toList(),
+                          //   ),
+                          // ),
+                          // CustomElevatedButton(
+                          //   btnWidth: constraints.maxWidth / 10 - 50,
+                          //   btnHeight: 40,
+                          //   icon: Icons.edit_note_outlined,
+                          //   text: localizedStrings.user_edit,
+                          //   onPressed: () {
+                          //     PublicFunctions.getUserList();
+                          //     getUserNameList();
+                          //     if (!userNameList.contains(userNameValue)) {
+                          //       myUserInfo.name = "";
+                          //       userNameValue = "";
+                          //       myUserInfo.id = "";
+                          //       myUserInfo.isFemale = true;
+                          //       myUserInfo.phone = "";
+                          //       myUserInfo.remarks = "";
+                          //     }
+                          //     addUserDialog(context).then((onvalue) {
+                          //       setState(() {
+                          //         PublicFunctions.getUserList();
+                          //         getUserNameList();
+                          //         if (!userNameList.contains(userNameValue)) {
+                          //           myUserInfo.name = "";
+                          //           userNameValue = "";
+                          //           myUserInfo.id = "";
+                          //           myUserInfo.isFemale = true;
+                          //           myUserInfo.phone = "";
+                          //           myUserInfo.remarks = "";
+                          //         }
+                          //       });
+                          //     });
+                          //   },
+                          // ),
                           CustomOutlinedButton(
                             btnWidth: constraints.maxWidth / 10 - 50,
                             btnHeight: 40,
@@ -1115,33 +1171,6 @@ class TakeInPageState extends State<TakeInPage> {
             }));
   }
 
-  Widget buildPluEditButton(Color? color, String text,
-      BoxConstraints constraints, BuildContext context) {
-    var fontSize = 14 * constraints.maxHeight / 60;
-    var width = constraints.maxWidth / 10;
-    return SizedBox(
-        width: width,
-        child: MaterialButton(
-            color: color,
-            textColor: Theme.of(context).colorScheme.onPrimary,
-            elevation: 5.0,
-            child: Text(text,
-                style: TextStyle(
-                    fontSize: fontSize, fontWeight: FontWeight.normal)),
-            onPressed: () {
-              PublicFunctions.getProductList();
-              addProductDialog(context).then((onvalue) {
-                if (!productNameList.contains(productNameValue)) {
-                  myProductRecInfo.product = "";
-                  productNameValue = "";
-                  myProductRecInfo.id = "";
-                  myProductRecInfo.withPretare = false;
-                  myProductRecInfo.remarks = "";
-                }
-              });
-            }));
-  }
-
   Widget buildTextString(
       String text, BoxConstraints constraints, BuildContext context) {
     var fontSize = 14 * constraints.maxHeight / 60;
@@ -1251,7 +1280,7 @@ class TakeInPageState extends State<TakeInPage> {
                           SizedBox(
                             width: 120,
                             child: Text(
-                              localizedStrings.stable,
+                              localizedStrings.iStable,
                               textAlign: TextAlign.right,
                             ),
                           ),
@@ -1274,7 +1303,7 @@ class TakeInPageState extends State<TakeInPage> {
                           SizedBox(
                             width: 120,
                             child: Text(
-                              localizedStrings.net,
+                              localizedStrings.iTextNet,
                               textAlign: TextAlign.right,
                             ),
                           ),
@@ -1297,7 +1326,7 @@ class TakeInPageState extends State<TakeInPage> {
                           SizedBox(
                             width: 120,
                             child: Text(
-                              localizedStrings.zero,
+                              localizedStrings.iTextZero,
                               textAlign: TextAlign.right,
                             ),
                           ),
@@ -1419,7 +1448,7 @@ class TakeInPageState extends State<TakeInPage> {
                                 btnWidth: constraints.maxWidth / 5,
                                 btnHeight: 40,
                                 icon: Icons.title,
-                                text: localizedStrings.button_tare,
+                                text: localizedStrings.gBtnTare,
                                 onPressed: (isStart && !_isTakeInStart)
                                     ? () {
                                         PublicFunctions.performTare();
@@ -1430,7 +1459,7 @@ class TakeInPageState extends State<TakeInPage> {
                                 btnWidth: constraints.maxWidth / 5,
                                 btnHeight: 40,
                                 icon: Icons.exposure_zero,
-                                text: localizedStrings.button_zero,
+                                text: localizedStrings.iBtnZero,
                                 onPressed: () {
                                   PublicFunctions.performZero();
                                 },
@@ -1439,7 +1468,7 @@ class TakeInPageState extends State<TakeInPage> {
                                   btnWidth: constraints.maxWidth / 5,
                                   btnHeight: 40,
                                   icon: Icons.save_outlined,
-                                  text: localizedStrings.button_save,
+                                  text: localizedStrings.gBtnSave,
                                   onPressed: (!_isSaveButtonDisabled && isStart)
                                       ? _changeSaveButton
                                       : null),
@@ -1497,7 +1526,7 @@ class TakeInPageState extends State<TakeInPage> {
                                 btnWidth: constraints.maxWidth / 5,
                                 btnHeight: 40,
                                 icon: Icons.settings_outlined,
-                                text: localizedStrings.button_setting,
+                                text: localizedStrings.gBtnSetting,
                                 onPressed: () {
                                   mySettingParam = myModeSettingTakeIn;
                                   paramSettingDialog(context);
@@ -1507,7 +1536,7 @@ class TakeInPageState extends State<TakeInPage> {
                                   btnWidth: constraints.maxWidth / 5,
                                   btnHeight: 40,
                                   icon: Icons.outbox,
-                                  text: localizedStrings.button_export_report,
+                                  text: localizedStrings.gBtnExport,
                                   onPressed: () async {
                                     final directory = Directory.current.path;
                                     String? outputFile =
@@ -1520,6 +1549,9 @@ class TakeInPageState extends State<TakeInPage> {
                                     ));
 
                                     if (outputFile != null) {
+                                      if (!outputFile.contains(".xlsx")) {
+                                        outputFile = "$outputFile.xlsx";
+                                      }
                                       _creatFile(outputFile);
                                       if (mounted && context.mounted) {
                                         showConfirmationDialog(
@@ -1567,131 +1599,111 @@ class TakeInPageState extends State<TakeInPage> {
             SizedBox(
               width: constraints.maxWidth / 10,
               child: Text(
-                localizedStrings.plu_name,
+                localizedStrings.gPluName,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            Container(
-              height: 53,
-              width: constraints.maxWidth / 10,
-              padding: const EdgeInsets.all(0),
-              child: DropdownButtonFormField<String>(
-                itemHeight: 50.0,
-                isExpanded: true,
-                // decoration: const InputDecoration(border: OutlineInputBorder()),
-                value: productNameValue,
-                onChanged: (String? newPosition) {
-                  setState(() {
-                    productNameValue = newPosition.toString();
-                    for (var i = 0;
-                        i < myProductRecList.productRecInfo!.length;
-                        i++) {
-                      if (productNameValue ==
-                          myProductRecList.productRecInfo![i].product) {
-                        myProductRecInfo = myProductRecList.productRecInfo![i];
-                        eventBus.fire(EventProductRecInfo(myProductRecInfo));
-                      }
-                    }
-                  });
-                },
-
-                items: productNameList
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem(
-                      value: value,
-                      child: Text(value, overflow: TextOverflow.ellipsis));
-                }).toList(),
-              ),
-            ),
-            CustomElevatedButton(
-              btnWidth: constraints.maxWidth / 10 - 50,
-              btnHeight: 40,
-              icon: Icons.edit_note_outlined,
-              text: localizedStrings.plu_edit,
-              onPressed: () {
-                PublicFunctions.getProductList();
-                addProductDialog(context).then((onvalue) {
-                  if (!productNameList.contains(productNameValue)) {
-                    myProductRecInfo.product = "";
-                    productNameValue = "";
-                    myProductRecInfo.id = "";
-                    myProductRecInfo.withPretare = false;
-                    myProductRecInfo.remarks = "";
-                  }
-                });
-              },
-            ),
             SizedBox(
-              width: constraints.maxWidth / 10,
-              child: TextButton(
-                  onPressed: () {},
-                  child: Text(localizedStrings.user_name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                          fontSize: 14, fontWeight: FontWeight.normal))),
+              width: 10,
             ),
             Container(
               height: 53,
-              width: constraints.maxWidth / 10,
+              width: constraints.maxWidth / 5,
               padding: const EdgeInsets.all(0),
-              child: DropdownButtonFormField<String>(
-                itemHeight: 50.0,
-                isExpanded: true,
-                // decoration: const InputDecoration(border: OutlineInputBorder()),
-                value: userNameValue,
-                onChanged: (String? newPosition) {
+              child: Autocomplete<PluData>(
+                optionsBuilder: (TextEditingValue textEditingValue) {
+                  if (textEditingValue.text == '') {
+                    return const Iterable<PluData>.empty();
+                  }
+                  return myPluInfoList.where((PluData data) {
+                    // 进行模糊查找，这里同时匹配productName和plu转成字符串后的内容
+                    return data.productName!
+                            .toLowerCase()
+                            .contains(textEditingValue.text.toLowerCase()) ||
+                        data.plu.toString().contains(textEditingValue.text);
+                  }).toList()
+                    ..sort((a, b) => a.plu!.compareTo(b.plu!));
+                },
+                onSelected: (PluData selection) {
                   setState(() {
-                    userNameValue = newPosition.toString();
-                    for (var i = 0; i < myUserInfoList.userInfo!.length; i++) {
-                      if (userNameValue == myUserInfoList.userInfo![i].name) {
-                        myUserInfo = myUserInfoList.userInfo![i];
-                        eventBus.fire(EventUserInfo(myUserInfo));
-                      }
-                    }
+                    selectedPluData = selection;
                   });
                 },
-                items:
-                    userNameList.map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem(
-                      value: value,
-                      child: Text(value, overflow: TextOverflow.ellipsis));
-                }).toList(),
+                displayStringForOption: (PluData option) =>
+                    '${option.plu}:${option.productName}',
               ),
             ),
-            CustomElevatedButton(
-              btnWidth: constraints.maxWidth / 10 - 50,
-              btnHeight: 40,
-              icon: Icons.edit_note_outlined,
-              text: localizedStrings.user_edit,
-              onPressed: () {
-                PublicFunctions.getUserList();
-                getUserNameList();
-                if (!userNameList.contains(userNameValue)) {
-                  myUserInfo.name = "";
-                  userNameValue = "";
-                  myUserInfo.id = "";
-                  myUserInfo.isFemale = true;
-                  myUserInfo.phone = "";
-                  myUserInfo.remarks = "";
-                }
-                addUserDialog(context).then((onvalue) {
-                  setState(() {
-                    PublicFunctions.getUserList();
-                    getUserNameList();
-                    if (!userNameList.contains(userNameValue)) {
-                      myUserInfo.name = "";
-                      userNameValue = "";
-                      myUserInfo.id = "";
-                      myUserInfo.isFemale = true;
-                      myUserInfo.phone = "";
-                      myUserInfo.remarks = "";
-                    }
-                  });
-                });
-              },
-            ),
+            // SizedBox(
+            //   width: constraints.maxWidth / 10,
+            //   child: TextButton(
+            //       onPressed: () {},
+            //       child: Text(localizedStrings.user_name,
+            //           maxLines: 1,
+            //           overflow: TextOverflow.ellipsis,
+            //           style: const TextStyle(
+            //               fontSize: 14, fontWeight: FontWeight.normal))),
+            // ),
+            // Container(
+            //   height: 53,
+            //   width: constraints.maxWidth / 10,
+            //   padding: const EdgeInsets.all(0),
+            //   child: DropdownButtonFormField<String>(
+            //     itemHeight: 50.0,
+            //     isExpanded: true,
+            //     // decoration: const InputDecoration(border: OutlineInputBorder()),
+            //     value: userNameValue,
+            //     onChanged: (String? newPosition) {
+            //       setState(() {
+            //         userNameValue = newPosition.toString();
+            //         for (var i = 0; i < myUserInfoList.userInfo!.length; i++) {
+            //           if (userNameValue == myUserInfoList.userInfo![i].name) {
+            //             myUserInfo = myUserInfoList.userInfo![i];
+            //             eventBus.fire(EventUserInfo(myUserInfo));
+            //           }
+            //         }
+            //       });
+            //     },
+            //     items:
+            //         userNameList.map<DropdownMenuItem<String>>((String value) {
+            //       return DropdownMenuItem(
+            //           value: value,
+            //           child: Text(value, overflow: TextOverflow.ellipsis));
+            //     }).toList(),
+            //   ),
+            // ),
+            // CustomElevatedButton(
+            //   btnWidth: constraints.maxWidth / 10 - 50,
+            //   btnHeight: 40,
+            //   icon: Icons.edit_note_outlined,
+            //   text: localizedStrings.user_edit,
+            //   onPressed: () {
+            //     PublicFunctions.getUserList();
+            //     getUserNameList();
+            //     if (!userNameList.contains(userNameValue)) {
+            //       myUserInfo.name = "";
+            //       userNameValue = "";
+            //       myUserInfo.id = "";
+            //       myUserInfo.isFemale = true;
+            //       myUserInfo.phone = "";
+            //       myUserInfo.remarks = "";
+            //     }
+            //     addUserDialog(context).then((onvalue) {
+            //       setState(() {
+            //         PublicFunctions.getUserList();
+            //         getUserNameList();
+            //         if (!userNameList.contains(userNameValue)) {
+            //           myUserInfo.name = "";
+            //           userNameValue = "";
+            //           myUserInfo.id = "";
+            //           myUserInfo.isFemale = true;
+            //           myUserInfo.phone = "";
+            //           myUserInfo.remarks = "";
+            //         }
+            //       });
+            //     });
+            //   },
+            // ),
             CustomOutlinedButton(
               btnWidth: constraints.maxWidth / 10 - 50,
               btnHeight: 40,
@@ -1746,7 +1758,7 @@ class TakeInPageState extends State<TakeInPage> {
       builder: (BuildContext ctx) {
         return AlertDialog(
           title: Text(
-            localizedStrings.confirm_title,
+            localizedStrings.gTitleConfirm,
             style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
           content: Text(localizedStrings.data_delete_confirm),
@@ -1757,7 +1769,7 @@ class TakeInPageState extends State<TakeInPage> {
                   btnWidth: 120,
                   btnHeight: 40,
                   icon: Icons.cancel,
-                  text: localizedStrings.button_cancel,
+                  text: localizedStrings.gBtnCancel,
                   onPressed: () {
                     Navigator.of(context).pop(false);
                   },
@@ -1769,7 +1781,7 @@ class TakeInPageState extends State<TakeInPage> {
                   btnWidth: 120,
                   btnHeight: 40,
                   icon: Icons.check_circle,
-                  text: localizedStrings.confirm_btn,
+                  text: localizedStrings.gBtnConfirm,
                   onPressed: () {
                     Navigator.of(context).pop(true);
                   },
@@ -1810,40 +1822,6 @@ class TakeInPageState extends State<TakeInPage> {
         });
       }
     });
-  }
-
-  void getProductNameList() {
-    if (myProductRecList.productRecInfo == null ||
-        myProductRecList.productRecInfo!.isEmpty) {
-      productNameList.clear();
-      productNameValue = '';
-      productNameList.add("Please select Plu");
-      productNameValue = "Please select Plu";
-      myProductRecInfo = ProductRecInfo();
-    } else if (myProductRecList.productRecInfo!.isNotEmpty) {
-      String? name;
-      String? id;
-      productNameList.clear();
-      for (var i = 0; i < myProductRecList.productRecInfo!.length; i++) {
-        name = myProductRecList.productRecInfo![i].product;
-        id = myProductRecList.productRecInfo![i].id;
-        name ??= "";
-        id ??= "";
-        productNameList.add(name);
-      }
-      if (!productNameList.contains(productNameValue)) {
-        productNameValue = productNameList[0];
-        myProductRecInfo = myProductRecList.productRecInfo![0];
-        eventBus.fire(EventProductRecInfo(myProductRecInfo));
-      } else {
-        for (var i = 0; i < myProductRecList.productRecInfo!.length; i++) {
-          if (productNameValue == myProductRecList.productRecInfo![i].product) {
-            myProductRecInfo = myProductRecList.productRecInfo![i];
-            eventBus.fire(EventProductRecInfo(myProductRecInfo));
-          }
-        }
-      }
-    }
   }
 
   void getUserNameList() {
@@ -2005,9 +1983,38 @@ class TakeInPageState extends State<TakeInPage> {
   }
 
   void performAddToReport() {
-    myWeightReportData.add(WeightReportData(
+    PluData? tempPlu = PluData(null, null, null, null, null, null, null, null,
+        null, null, null, null, null, null);
+    if (selectedPluData != null) {
+      tempPlu = selectedPluData;
+    }
+    WeightReportData addData = WeightReportData(
       (myWeightReportData.length + 1).toString(),
-      getDateTime(myModeSettingTakeIn.dateSeparator, dateformat),
+      myDefScaleInfo.defScaleModel == null ? '' : myDefScaleInfo.defScaleModel!,
+      myDefScaleInfo.defScaleSn == null ? '' : myDefScaleInfo.defScaleSn!,
+      (tempPlu!.plu == null) ? "" : tempPlu.plu.toString(),
+      (tempPlu.productCode == null) ? "" : tempPlu.productCode.toString(),
+
+      (tempPlu.itemCode == null) ? "" : tempPlu.itemCode.toString(),
+
+      (tempPlu.category == null) ? "" : tempPlu.category.toString(),
+
+      (tempPlu.productName == null) ? "" : tempPlu.productName.toString(),
+
+      (tempPlu.generalUnit == null) ? "" : tempPlu.generalUnit.toString(),
+
+      (tempPlu.taxType == null) ? "" : tempPlu.taxType.toString(),
+
+      (tempPlu.price == null) ? "" : tempPlu.price.toString(),
+
+      (tempPlu.unitWeight == null) ? "" : tempPlu.unitWeight.toString(),
+
+      (tempPlu.pretare == null) ? "" : tempPlu.pretare.toString(),
+
+      (tempPlu.limitHigh == null) ? "" : tempPlu.limitHigh.toString(),
+
+      (tempPlu.limitLow == null) ? "" : tempPlu.limitLow.toString(),
+
       (_isTakeInStart)
           ? diffWeightVal.toString()
           : (myReqWeightCountine.msgBody?.weightVal == null)
@@ -2016,33 +2023,24 @@ class TakeInPageState extends State<TakeInPage> {
       (myReqWeightCountine.msgBody?.weightUnit == null)
           ? (" ")
           : (myReqWeightCountine.msgBody!.weightUnit),
-      (myProductRecInfo.id == null) ? "" : myProductRecInfo.id.toString(),
-      (myProductRecInfo.product == null)
-          ? ""
-          : (myProductRecInfo.product.toString().contains("Please"))
-              ? ""
-              : myProductRecInfo.product.toString(),
-      (myProductRecInfo.remarks == null)
-          ? ""
-          : myProductRecInfo.remarks.toString(),
-      (myProductRecInfo.pretare == null)
-          ? ""
-          : myProductRecInfo.pretare.toString(),
-      (myUserInfo.name == null)
-          ? ""
-          : (myUserInfo.name.toString().contains("Please")
-              ? ""
-              : myUserInfo.name.toString()),
       (myUserInfo.id == null)
           ? ""
           : (myUserInfo.id.toString().contains("Please")
               ? ""
               : myUserInfo.id.toString()),
-      (myUserInfo.remarks == null) ? "" : myUserInfo.remarks.toString(),
+      (myUserInfo.name == null)
+          ? ""
+          : (myUserInfo.name.toString().contains("Please")
+              ? ""
+              : myUserInfo.name.toString()),
+
       myDefScaleInfo.defScaleName == null
           ? ''
           : myDefScaleInfo.defScaleName!, //此处应该是秤机种名
-    ));
+      getDateTime(myModeSettingNormal.dateSeparator, dateformat),
+    );
+
+    myWeightReportData.add(addData);
 
     setState(() {
       String sortColName = 'Date Time';

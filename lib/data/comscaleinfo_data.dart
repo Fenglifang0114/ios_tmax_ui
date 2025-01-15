@@ -235,3 +235,23 @@ class DelScaleInfo {
 getDefScaleInfo(int defId) {
   if (defId == 1) {}
 }
+
+class ScaleIsOnline {
+  int? scaleId;
+  bool? isOnline;
+
+  ScaleIsOnline({
+    this.scaleId,
+    this.isOnline,
+  });
+
+  factory ScaleIsOnline.fromJson(Map<String, dynamic> json) => ScaleIsOnline(
+        scaleId: json["scaleId"],
+        isOnline: json["isOnline"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "scaleId": scaleId,
+        "isOnline": isOnline,
+      };
+}

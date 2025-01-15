@@ -2,8 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:t_max/pages/scale_manager_page.dart';
+
 import '../data/comscaleinfo_data.dart';
-import '../data/manager_scale_channel.dart';
+
 import 'package:t_max/data/dialog_data.dart';
 import 'package:t_max/data/license_data.dart';
 import 'package:t_max/data/scale_info_from_scale.dart';
@@ -15,7 +16,7 @@ import '../data/company_info.dart';
 import '../data/language.dart';
 import '../data/screen_mgr.dart';
 import '../data/timer_manager.dart';
-import '../dialog/get_build_info_dialog.dart';
+import '../dialog/exit_app_dialog.dart';
 import '../dialog/language_setting.dart';
 import '../functions/methods.dart';
 import '../generated/l10n.dart';
@@ -26,16 +27,15 @@ import '../widget/custom_circle_icon.dart';
 import '../widget/custom_setting.dart';
 import '../dialog/license_info.dart';
 import '../widget/home_page_widget.dart';
-import '../widget/update_firmware.dart';
 import '../widget/version.dart';
-import 'cable_ip_settig_page.dart';
-import 'firmware_down_wifi.dart';
+
 import 'header_footer_page.dart';
-import 'lable_down_prn_fmt_page.dart';
-import 'modify_com_port_page.dart';
-import 'product_download_page.dart';
+import 'plu_edit_page.dart';
+
 import 'receipt_design_page.dart';
 import 'retail_report_page.dart';
+import 'update_firmware_page.dart';
+import 'wifisetting_page.dart';
 
 class RetailHomePage extends StatefulWidget {
   const RetailHomePage({super.key});
@@ -59,14 +59,15 @@ class _RetailHomePageState extends State<RetailHomePage>
   dynamic _eventbus3;
   dynamic _eventbus4;
   dynamic _eventbus5;
+  dynamic _eventbus6;
 
   String groupValue = 'zh';
   DateTime now = DateTime.now();
 
   bool isCardHovered = false;
   bool isCardClicked = false;
-  bool showHint1 = true;
-  bool showHint2 = true;
+  bool showHint1 = false;
+  bool showHint2 = false;
 
   bool isResize = false;
 
@@ -81,6 +82,35 @@ class _RetailHomePageState extends State<RetailHomePage>
       Platform.isWindows ? 'assets/images/app.ico' : 'assets/images/app.png',
     );
     setState(() {});
+    await windowManager.setPreventClose(true); //关闭前确认
+    setState(() {});
+  }
+
+  @override
+  void onWindowClose() async {
+    bool isPreventClose = await windowManager.isPreventClose();
+    if (isPreventClose) {
+      showDialog(
+        context: context,
+        barrierDismissible: false, // 允许点击空白处关闭对话框
+        builder: (context) {
+          return CustomAlertDialog(
+            titleText: localizedStrings.gTipExitApp,
+            onNoPressed: () {
+              Navigator.of(context).pop();
+            },
+            onYesPressed: () {
+              Navigator.of(context).pop();
+              // await windowManager.destroy();
+              dispose();
+              // await windowManager.destroy();
+              exit(0);
+              // windowManager.destroy();
+            },
+          );
+        },
+      );
+    }
   }
 
   @override
@@ -110,11 +140,6 @@ class _RetailHomePageState extends State<RetailHomePage>
   }
 
   @override
-  void onWindowClose() {
-    // 关闭工厂模式（所有秤都关闭吗？）
-  }
-
-  @override
   void initState() {
     trayManager.addListener(this);
     windowManager.addListener(this);
@@ -123,10 +148,11 @@ class _RetailHomePageState extends State<RetailHomePage>
 
     _init();
     _handleSetIcon();
+
     super.initState();
     _pageScrollerController = ScrollController();
     // cntScaleTimerMgr.stopCntScaleTimer();
-    cntScaleTimerMgr.startCntScaleTimer(1);
+    // cntScaleTimerMgr.startCntScaleTimer(1);
     // _checkTimerFuc(5);
     _eventbus1 = eventBus.on<EventDialogData>().listen((event) {
       if (mounted) {
@@ -184,6 +210,12 @@ class _RetailHomePageState extends State<RetailHomePage>
         });
       }
     });
+    _eventbus6 = eventBus.on<EventServiceOff>().listen((event) {
+      setState(() {
+        showServiceErrorDialog(context, localizedStrings.gTipServiceOff,
+            localizedStrings.gTitleConfirm);
+      });
+    });
   }
 
   @override
@@ -192,6 +224,7 @@ class _RetailHomePageState extends State<RetailHomePage>
     _eventbus3.cancel();
     _eventbus4.cancel();
     _eventbus5.cancel();
+    _eventbus6.cancel();
     _pageScrollerController.dispose();
     cntScaleTimerMgr.stopCntScaleTimer();
     windowManager.removeListener(this);
@@ -206,6 +239,7 @@ class _RetailHomePageState extends State<RetailHomePage>
     if (isResize) {
       _checkInitialVisibility();
     }
+
     return Scaffold(
       appBar: PreferredSize(
           preferredSize: const Size.fromHeight(50),
@@ -254,6 +288,7 @@ class _RetailHomePageState extends State<RetailHomePage>
                       width: 360,
                       height: 50,
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           CustomSettingButton(onRefresh: () {
                             setState(() {});
@@ -267,37 +302,37 @@ class _RetailHomePageState extends State<RetailHomePage>
                           const SizedBox(
                             width: 20,
                           ),
-                          Expanded(
-                            child: Text(localizedStrings.serial_port_status,
-                                overflow: TextOverflow.ellipsis,
-                                textAlign: TextAlign.right,
-                                maxLines: 1,
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onPrimary)),
-                          ),
-                          const SizedBox(
-                            width: 20,
-                          ),
-                          (myComScaleInfo.isOnline)
-                              ? CustomCircleIcon(
-                                  outerColor:
-                                      Theme.of(context).colorScheme.primary,
-                                  innerColor:
-                                      Theme.of(context).colorScheme.onPrimary,
-                                  icon: Icons.check_circle,
-                                  size: 24.0,
-                                )
-                              : CustomCircleIcon(
-                                  outerColor:
-                                      Theme.of(context).colorScheme.error,
-                                  innerColor:
-                                      Theme.of(context).colorScheme.onPrimary,
-                                  icon: Icons.cancel,
-                                  size: 24.0,
-                                ),
+                          // Expanded(
+                          //   child: Text(localizedStrings.gSerialPortStatus,
+                          //       overflow: TextOverflow.ellipsis,
+                          //       textAlign: TextAlign.right,
+                          //       maxLines: 1,
+                          //       style: TextStyle(
+                          //           fontSize: 20,
+                          //           color: Theme.of(context)
+                          //               .colorScheme
+                          //               .onPrimary)),
+                          // ),
+                          // const SizedBox(
+                          //   width: 20,
+                          // ),
+                          // (myComScaleInfo.isOnline)
+                          //     ? CustomCircleIcon(
+                          //         outerColor:
+                          //             Theme.of(context).colorScheme.primary,
+                          //         innerColor:
+                          //             Theme.of(context).colorScheme.onPrimary,
+                          //         icon: Icons.check_circle,
+                          //         size: 24.0,
+                          //       )
+                          //     : CustomCircleIcon(
+                          //         outerColor:
+                          //             Theme.of(context).colorScheme.error,
+                          //         innerColor:
+                          //             Theme.of(context).colorScheme.onPrimary,
+                          //         icon: Icons.cancel,
+                          //         size: 24.0,
+                          //       ),
                           const SizedBox(
                             width: 20,
                           ),
@@ -341,7 +376,8 @@ class _RetailHomePageState extends State<RetailHomePage>
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                SizedBox(width: 100, child: Image.asset(companyImage)),
+                SizedBox(
+                    width: 100, height: 30, child: Image.asset(companyImage)),
               ],
             ),
           ],
@@ -392,102 +428,102 @@ class _RetailHomePageState extends State<RetailHomePage>
                         vertical: 10.0, horizontal: 20.0),
                     child: Column(
                       children: [
-                        (myComScaleSn.modelName != null)
-                            ? SizedBox(
-                                height: 90,
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        const SizedBox(
-                                          width: 30,
-                                        ),
-                                        Flexible(
-                                          child: Text(
-                                            localizedStrings.scale_name,
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          const SizedBox(
-                                            width: 30,
-                                          ),
-                                          Flexible(
-                                            child: Text(
-                                              myComScaleSn.modelName!,
-                                              maxLines: 1,
-                                              textAlign: TextAlign.start,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                        ]),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        const SizedBox(
-                                          width: 30,
-                                        ),
-                                        Flexible(
-                                          child: Text(
-                                            localizedStrings.scale_sn,
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          const SizedBox(
-                                            width: 30,
-                                          ),
-                                          Flexible(
-                                            child: Text(
-                                              myComScaleSn.scaleSn!,
-                                              maxLines: 1,
-                                              textAlign: TextAlign.start,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                        ]),
-                                  ],
-                                ),
-                              )
-                            : const SizedBox(),
-                        GestureDetector(
-                          onTap: () {
-                            stopCheckSerialPort();
-                            setState(() {
-                              PublicFunctions.getProductList();
-                              PublicFunctions.getPortList();
-                              showComPortDialog(context);
-                            });
-                          },
-                          child: MouseRegion(
-                            cursor: SystemMouseCursors.click,
-                            child: customFunctionCard(
-                              context,
-                              localizedStrings.title_serial_port_connection,
-                              Icons.cable,
-                              true,
-                            ),
-                          ),
-                        ),
+                        // (myComScaleSn.modelName != null)
+                        //     ? SizedBox(
+                        //         height: 90,
+                        //         child: Column(
+                        //           children: [
+                        //             Row(
+                        //               mainAxisAlignment:
+                        //                   MainAxisAlignment.start,
+                        //               children: [
+                        //                 const SizedBox(
+                        //                   width: 30,
+                        //                 ),
+                        //                 Flexible(
+                        //                   child: Text(
+                        //                     localizedStrings.gModelName,
+                        //                     maxLines: 1,
+                        //                     overflow: TextOverflow.ellipsis,
+                        //                   ),
+                        //                 ),
+                        //               ],
+                        //             ),
+                        //             Row(
+                        //                 mainAxisAlignment:
+                        //                     MainAxisAlignment.start,
+                        //                 children: [
+                        //                   const SizedBox(
+                        //                     width: 30,
+                        //                   ),
+                        //                   Flexible(
+                        //                     child: Text(
+                        //                       myComScaleSn.modelName!,
+                        //                       maxLines: 1,
+                        //                       textAlign: TextAlign.start,
+                        //                       style: const TextStyle(
+                        //                           fontWeight: FontWeight.bold),
+                        //                       overflow: TextOverflow.ellipsis,
+                        //                     ),
+                        //                   ),
+                        //                 ]),
+                        //             Row(
+                        //               mainAxisAlignment:
+                        //                   MainAxisAlignment.start,
+                        //               children: [
+                        //                 const SizedBox(
+                        //                   width: 30,
+                        //                 ),
+                        //                 Flexible(
+                        //                   child: Text(
+                        //                     localizedStrings.gScaleSn,
+                        //                     maxLines: 1,
+                        //                     overflow: TextOverflow.ellipsis,
+                        //                   ),
+                        //                 ),
+                        //               ],
+                        //             ),
+                        //             Row(
+                        //                 mainAxisAlignment:
+                        //                     MainAxisAlignment.start,
+                        //                 children: [
+                        //                   const SizedBox(
+                        //                     width: 30,
+                        //                   ),
+                        //                   Flexible(
+                        //                     child: Text(
+                        //                       myComScaleSn.scaleSn!,
+                        //                       maxLines: 1,
+                        //                       textAlign: TextAlign.start,
+                        //                       style: const TextStyle(
+                        //                           fontWeight: FontWeight.bold),
+                        //                       overflow: TextOverflow.ellipsis,
+                        //                     ),
+                        //                   ),
+                        //                 ]),
+                        //           ],
+                        //         ),
+                        //       )
+                        //     : const SizedBox(),
+                        // GestureDetector(
+                        //   onTap: () {
+                        //     stopCheckSerialPort();
+                        //     setState(() {
+                        //       PublicFunctions.getProductList();
+                        //       PublicFunctions.getPortList();
+                        //       showComPortDialog(context);
+                        //     });
+                        //   },
+                        //   child: MouseRegion(
+                        //     cursor: SystemMouseCursors.click,
+                        //     child: customFunctionCard(
+                        //       context,
+                        //       localizedStrings.gTitleSerialPortConnection,
+                        //       Icons.cable,
+                        //       true,
+                        //     ),
+                        //   ),
+                        // ),
                         GestureDetector(
                           onTap: () {
                             stopCheckSerialPort();
@@ -509,6 +545,29 @@ class _RetailHomePageState extends State<RetailHomePage>
                                 true),
                           ),
                         ),
+                        // GestureDetector(
+                        //   onTap: () {
+                        //     setState(() {
+                        //       stopCheckSerialPort();
+                        //       Navigator.push(
+                        //         context,
+                        //         MaterialPageRoute(
+                        //           builder: (context) =>
+                        //               const CableIpSettingPage(),
+                        //         ),
+                        //       ).then((value) => _updateStatus());
+                        //     });
+                        //   },
+                        //   child: MouseRegion(
+                        //     cursor: SystemMouseCursors.click,
+                        //     child: customFunctionCard(
+                        //       context,
+                        //       localizedStrings.set_ethernet_ip_title,
+                        //       Icons.settings_ethernet,
+                        //       true,
+                        //     ),
+                        //   ),
+                        // ),
                         GestureDetector(
                           onTap: () {
                             setState(() {
@@ -516,47 +575,7 @@ class _RetailHomePageState extends State<RetailHomePage>
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      const CableIpSettingPage(),
-                                ),
-                              ).then((value) => _updateStatus());
-                            });
-                          },
-                          child: MouseRegion(
-                            cursor: SystemMouseCursors.click,
-                            child: customFunctionCard(
-                              context,
-                              localizedStrings.set_ethernet_ip_title,
-                              Icons.settings_ethernet,
-                              true,
-                            ),
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              stopCheckSerialPort();
-                              showUpdateFirmWareDialog(context);
-                            });
-                          },
-                          child: MouseRegion(
-                            cursor: SystemMouseCursors.click,
-                            child: customFunctionCard(
-                                context,
-                                localizedStrings.update_firmware,
-                                Icons.update,
-                                true),
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              stopCheckSerialPort();
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const FirmwareDownPage()),
+                                    builder: (context) => UpdateFirmwarePage()),
                               ).then((value) => _updateStatus());
                             });
                           },
@@ -564,7 +583,7 @@ class _RetailHomePageState extends State<RetailHomePage>
                             cursor: SystemMouseCursors.click,
                             child: customFunctionCard(
                                 context,
-                                localizedStrings.firm_down_online,
+                                localizedStrings.gTitleUpdateFirmware,
                                 Icons.cloud_upload_outlined,
                                 true),
                           ),
@@ -572,17 +591,64 @@ class _RetailHomePageState extends State<RetailHomePage>
                         GestureDetector(
                           onTap: () {
                             setState(() {
-                              showBuildInfo();
+                              stopCheckSerialPort();
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => PluEidtPage()),
+                              ).then((value) => _updateStatus());
                             });
                           },
                           child: MouseRegion(
                             cursor: SystemMouseCursors.click,
                             child: customFunctionCard(
-                              context,
-                              localizedStrings.get_build_info,
-                              Icons.privacy_tip,
-                              true,
-                            ),
+                                context,
+                                localizedStrings.plu_edit,
+                                Icons.import_export,
+                                true),
+                          ),
+                        ),
+
+                        GestureDetector(
+                          onTap: () {
+                            //蓝牙页面
+
+                            setState(() {
+                              stopCheckSerialPort();
+                              showBluetoothDialog(context);
+                            });
+                          },
+                          child: MouseRegion(
+                            cursor: SystemMouseCursors.click,
+                            child: customFunctionCard(
+                                context,
+                                localizedStrings.bt_setting_title,
+                                Icons.bluetooth,
+                                (myScreenMgr.wifiOrBt.contains('bt'))),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            //wifi页面
+
+                            setState(() {
+                              stopCheckSerialPort();
+                              PublicFunctions.changeWifiMode(1);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const WifiSettingPage(),
+                                ),
+                              ).then((value) => _updateStatus());
+                            });
+                          },
+                          child: MouseRegion(
+                            cursor: SystemMouseCursors.click,
+                            child: customFunctionCard(
+                                context,
+                                localizedStrings.wifi_setting_title,
+                                Icons.wifi,
+                                (myScreenMgr.wifiOrBt.contains('wifi'))),
                           ),
                         ),
                       ],
@@ -653,32 +719,33 @@ class _RetailHomePageState extends State<RetailHomePage>
                           localizedStrings.rDetailRptTitle,
                           Icons.data_thresholding_outlined,
                           true,
-                          'This app is used to display sales detail data.',
+                          localizedStrings.rTipDetailRpt,
                           '',
                         ),
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        stopCheckSerialPort();
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const DownloadLabelPage()),
-                        ).then((value) => _updateStatus());
-                      },
-                      child: MouseRegion(
-                        cursor: SystemMouseCursors.click,
-                        child: appCard(
-                          context,
-                          localizedStrings.label_fmt_download,
-                          Icons.arrow_circle_down_outlined,
-                          true,
-                          'This application is used to download print format.',
-                          '',
-                        ),
-                      ),
-                    ),
+                    //业务要求屏蔽
+                    // GestureDetector(
+                    //   onTap: () {
+                    //     stopCheckSerialPort();
+                    //     Navigator.push(
+                    //       context,
+                    //       MaterialPageRoute(
+                    //           builder: (context) => const DownloadLabelPage()),
+                    //     ).then((value) => _updateStatus());
+                    //   },
+                    //   child: MouseRegion(
+                    //     cursor: SystemMouseCursors.click,
+                    //     child: appCard(
+                    //       context,
+                    //       localizedStrings.gTitleLabelFmtDownload,
+                    //       Icons.design_services,
+                    //       true,
+                    //       localizedStrings.gTipLabelFmtDownload ,
+                    //       '',
+                    //     ),
+                    //   ),
+                    // ),
                     GestureDetector(
                       onTap: () {
                         setState(() {
@@ -695,38 +762,38 @@ class _RetailHomePageState extends State<RetailHomePage>
                         cursor: SystemMouseCursors.click,
                         child: appCard(
                             context,
-                            localizedStrings.variable_value_setting_title,
+                            localizedStrings.rTitleSetVariableValues,
                             Icons.edit_attributes_outlined,
                             true,
-                            'This application is used to distribute various variable information, such as headers and footers.',
+                            localizedStrings.rTipSetVariableValues,
                             ''),
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          stopCheckSerialPort();
-                          PublicFunctions.stopWeight(
-                              myDefScaleInfo.defScaleId!);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const ProductDownloadPage()),
-                          ).then((value) => _updateStatus());
-                        });
-                      },
-                      child: MouseRegion(
-                        cursor: SystemMouseCursors.click,
-                        child: appCard(
-                            context,
-                            localizedStrings.plu_download_title,
-                            Icons.shopping_bag,
-                            true,
-                            'This application is used to download product information.',
-                            ''),
-                      ),
-                    ),
+                    // GestureDetector(
+                    //   onTap: () {
+                    //     setState(() {
+                    //       stopCheckSerialPort();
+                    //       PublicFunctions.stopWeight(
+                    //           myDefScaleInfo.defScaleId!);
+                    //       Navigator.push(
+                    //         context,
+                    //         MaterialPageRoute(
+                    //             builder: (context) =>
+                    //                 const ProductDownloadPage()),
+                    //       ).then((value) => _updateStatus());
+                    //     });
+                    //   },
+                    //   child: MouseRegion(
+                    //     cursor: SystemMouseCursors.click,
+                    //     child: appCard(
+                    //         context,
+                    //         localizedStrings.gTitlePluDownload,
+                    //         Icons.shopping_bag,
+                    //         true,
+                    //         localizedStrings.gTipPluDownload,
+                    //         ''),
+                    //   ),
+                    // ),
                     GestureDetector(
                       onTap: () {
                         stopCheckSerialPort();
@@ -740,10 +807,10 @@ class _RetailHomePageState extends State<RetailHomePage>
                         cursor: SystemMouseCursors.click,
                         child: appCard(
                             context,
-                            localizedStrings.receipt_format_download,
-                            Icons.receipt_long_outlined,
+                            localizedStrings.gTitleReceiptDownload,
+                            Icons.receipt,
                             true,
-                            'This application is used to download the print format of the receipt.',
+                            localizedStrings.gTipReceiptDownload,
                             ''),
                       ),
                     ),
@@ -757,10 +824,10 @@ class _RetailHomePageState extends State<RetailHomePage>
                         cursor: SystemMouseCursors.click,
                         child: appCard(
                             context,
-                            localizedStrings.receipt_design_title,
+                            localizedStrings.gTitleReceiptDesign,
                             Icons.receipt,
                             myRedeLicInfo.isValid,
-                            'This application is designed for the printing format of the receipt.',
+                            localizedStrings.gTipReceiptDesign,
                             myRedeLicInfo.liceseDate == "2299-01-01"
                                 ? 'Perpetual'
                                 : myRedeLicInfo.liceseDate),
@@ -805,7 +872,7 @@ class _RetailHomePageState extends State<RetailHomePage>
       });
     });
     final viewportDimension = MediaQuery.of(context).size.height;
-    if (viewportDimension > 820) {
+    if (viewportDimension > 300) {
       setState(() {
         showHint1 = false;
         showHint2 = false;
@@ -825,6 +892,12 @@ class _RetailHomePageState extends State<RetailHomePage>
       setState(() {
         showHint1 = true;
         showHint2 = true;
+      });
+    }
+    if (viewportDimension > 300) {
+      setState(() {
+        showHint1 = false;
+        showHint2 = false;
       });
     }
   }
@@ -863,18 +936,7 @@ class _RetailHomePageState extends State<RetailHomePage>
   void _updateStatus() {
     setState(() {});
     cntScaleTimerMgr.stopCntScaleTimer();
-    cntScaleTimerMgr.startCntScaleTimer(5);
-  }
-
-  void showBuildInfo() {
-    stopCheckSerialPort();
-    showDialog(
-      context: context,
-      barrierDismissible: false, // 允许点击空白处关闭对话框
-      builder: (context) {
-        return const GetBuildInfoPage();
-      },
-    ).then((value) => _updateStatus());
+    // cntScaleTimerMgr.startCntScaleTimer(5);
   }
 
   void showReceiptDesign(bool isValid) {
@@ -898,25 +960,15 @@ class _RetailHomePageState extends State<RetailHomePage>
     ).then((value) => _updateStatus());
   }
 
-  void showUpdateFirmWareDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: false, // 允许点击空白处关闭对话框
-      builder: (context) {
-        return const UpdateFirmWareDialog();
-      },
-    ).then((value) => _updateStatus());
-  }
-
-  void showComPortDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: false, // 允许点击空白处关闭对话框
-      builder: (context) {
-        return const ModifyComPortPage();
-      },
-    ).then((value) => _updateStatus());
-  }
+  // void showComPortDialog(BuildContext context) {
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: false, // 允许点击空白处关闭对话框
+  //     builder: (context) {
+  //       return const ModifyComPortPage();
+  //     },
+  //   ).then((value) => _updateStatus());
+  // }
 
   void showLicenseDialog(BuildContext context) {
     showDialog(

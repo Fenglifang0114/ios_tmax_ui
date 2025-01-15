@@ -96,7 +96,7 @@ class _DownReciptPageState extends State<DownSerialOutputPage> {
           child: Container(
             child: pageHeadDefScale(
               context,
-              localizedStrings.serial_output_download,
+              localizedStrings.gTitleSerialOutputDownload,
             ),
           ),
         ),
@@ -215,7 +215,7 @@ class _DownReciptPageState extends State<DownSerialOutputPage> {
           btnWidth: 150,
           btnHeight: 50,
           icon: Icons.download_outlined,
-          text: localizedStrings.download,
+          text: localizedStrings.gBtnDownload,
           onPressed: (!isDownloadClicked) && (folderCtl.text.isNotEmpty)
               ? () async {
                   await generateFileList(folderCtl.text);
@@ -247,7 +247,7 @@ class _DownReciptPageState extends State<DownSerialOutputPage> {
       _stopTimer();
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(localizedStrings.download_result_fail,
+          content: Text(localizedStrings.gBtnDownload_result_fail,
               style: const TextStyle(
                   fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
           duration: const Duration(seconds: 3),
@@ -265,7 +265,7 @@ class _DownReciptPageState extends State<DownSerialOutputPage> {
       builder: (BuildContext ctx) {
         return AlertDialog(
           title: Text(
-            localizedStrings.confirm_title,
+            localizedStrings.gTitleConfirm,
             style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
           content: Text(msg),
@@ -277,7 +277,7 @@ class _DownReciptPageState extends State<DownSerialOutputPage> {
                         btnWidth: 100,
                         btnHeight: 40,
                         icon: Icons.check_circle,
-                        text: localizedStrings.confirm_btn,
+                        text: localizedStrings.gBtnConfirm,
                         onPressed: () {
                           Navigator.of(context).pop(true);
                         },
@@ -290,7 +290,7 @@ class _DownReciptPageState extends State<DownSerialOutputPage> {
                   btnWidth: 100,
                   btnHeight: 40,
                   icon: Icons.cancel,
-                  text: localizedStrings.button_cancel,
+                  text: localizedStrings.gBtnCancel,
                   onPressed: () {
                     Navigator.of(context).pop(false);
                   },

@@ -49,9 +49,40 @@ class PublicFunctions {
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
 
+  static void getScaleSrvList(int srvId) {
+    myScaleCmd.cmdMode = "get_scale_srv_list";
+    myScaleCmd.cmdData = srvId.toString();
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  static void setScaleSrvStatus(String dataStr) {
+    myScaleCmd.cmdMode = "set_scale_srv_val";
+    myScaleCmd.cmdData = dataStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
   static void getDetailList() {
     myScaleCmd.cmdMode = "get_detail_list";
+    myScaleCmd.cmdData = '';
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  static void getDetailListSrv1() {
+    myScaleCmd.cmdMode = "get_detail_list";
     myScaleCmd.cmdData = "";
+    String infoStr = jsonEncode(myScaleCmd);
+    myScaleCmd.cmdMode = "send_to_srv1";
+    myScaleCmd.cmdData = infoStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+//获取最新的一条信息，不要全部列表
+  static void getNewDetailFormSrv1() {
+    myScaleCmd.cmdMode = "get_new_detail";
+    myScaleCmd.cmdData = "";
+    String infoStr = jsonEncode(myScaleCmd);
+    myScaleCmd.cmdMode = "send_to_srv1";
+    myScaleCmd.cmdData = infoStr;
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
 
@@ -85,6 +116,12 @@ class PublicFunctions {
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
 
+  static void delAllProduct() {
+    myScaleCmd.cmdMode = "del_all_product";
+    myScaleCmd.cmdData = '';
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
   static void sendModifyInfo(String modifyString) {
     myScaleCmd.cmdMode = "modify_scale";
     myScaleCmd.cmdData = modifyString;
@@ -101,6 +138,12 @@ class PublicFunctions {
   static void sendModifyScaleName(String scaleName) {
     myScaleCmd.cmdMode = "modify_scale_name";
     myScaleCmd.cmdData = scaleName;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  static void sendServiceAction(String actionStr) {
+    myScaleCmd.cmdMode = "do_service_action";
+    myScaleCmd.cmdData = actionStr;
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
 
@@ -157,6 +200,25 @@ class PublicFunctions {
     } else if (mySettingParam.scaleMode == 3) {
       PublicFunctions.getUIConfTakeOut(scaleId);
     }
+  }
+
+  static void closeSerialPort(int scaleId) {
+    myScaleCmd.cmdMode = "close_serial_port";
+    myScaleCmd.cmdData = '';
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
+  static void openSerialPort(int scaleId) {
+    myScaleCmd.cmdMode = "open_serial_port";
+    myScaleCmd.cmdData = '';
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
+  static void sendFormatToScale(String firmwarePathStr) {
+    myScaleCmd.cmdMode = "update_firmware";
+    myScaleCmd.cmdData = firmwarePathStr;
+    sendMsg(1, jsonEncode(myScaleCmd));
+    writelog(jsonEncode(myScaleCmd));
   }
 
   static void updateFirmWareOnline(String str, int scaleId) {
@@ -344,6 +406,7 @@ class PublicFunctions {
   }
 
   static void sendOutputFmtToScale(List<String> list, int scaleId) async {
+    scaleId = 1;
     myDownLoadSetOutputFmt.filePath = list;
     String json = jsonEncode(myDownLoadSetOutputFmt);
     myScaleCmd.cmdMode = "set_output_format";

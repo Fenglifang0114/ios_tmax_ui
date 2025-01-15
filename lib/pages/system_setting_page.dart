@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../data/company_info.dart';
 import '../data/language.dart';
 import '../data/timer_manager.dart';
+import '../dialog/get_build_info_dialog.dart';
 import '../dialog/language_setting.dart';
 import '../eventbus/eventbus.dart';
 import '../widget/custom_circle_icon.dart';
@@ -161,8 +162,7 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
             padding:
                 const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
             children: [
-              functionTitle(
-                  localizedStrings.system_setting_title, Icons.settings),
+              functionTitle(localizedStrings.gSystemSetting, Icons.settings),
               const SizedBox(
                 height: 10,
               ),
@@ -173,7 +173,7 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
                     setLanguageDialog(context);
                   },
                   child: settingCard(
-                      localizedStrings.set_language_title, Icons.language),
+                      localizedStrings.gTitleSetLanguage, Icons.language),
                 ),
               ),
               const SizedBox(
@@ -186,7 +186,24 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
                     showLicenseDialog(context);
                   },
                   child: settingCard(
-                    localizedStrings.license_info_title,
+                    localizedStrings.gTitleLicenseInfo,
+                    Icons.key,
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              MouseRegion(
+                cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      showBuildInfo();
+                    });
+                  },
+                  child: settingCard(
+                    localizedStrings.gTitleGetBuildInfo,
                     Icons.key,
                   ),
                 ),
@@ -194,6 +211,16 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
             ]),
       ),
     );
+  }
+
+  void showBuildInfo() {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 允许点击空白处关闭对话框
+      builder: (context) {
+        return const GetBuildInfoPage();
+      },
+    ).then((value) => setState(() {}));
   }
 
   void showLicenseDialog(BuildContext context) {

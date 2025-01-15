@@ -231,7 +231,7 @@ class SltFourScalesPageState extends State<SltFourScalesPage> {
               btnWidth: 120,
               btnHeight: 40,
               icon: Icons.check_circle,
-              text: localizedStrings.button_ok,
+              text: localizedStrings.gBtnConfirm,
               onPressed: isDownloading || !checkSelect()
                   ? null
                   : () {
@@ -250,7 +250,7 @@ class SltFourScalesPageState extends State<SltFourScalesPage> {
               btnWidth: 120,
               btnHeight: 40,
               icon: Icons.cancel,
-              text: localizedStrings.button_cancel,
+              text: localizedStrings.gBtnCancel,
               onPressed: isDownloading
                   ? null
                   : () {

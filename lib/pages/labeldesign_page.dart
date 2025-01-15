@@ -431,9 +431,9 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                               child: Row(
                                 children: [
                                   SizedBox(
-                                    width: 80,
+                                    width: 150,
                                     child: Text(
-                                      localizedStrings.printer,
+                                      localizedStrings.gPrinter,
                                       textAlign: TextAlign.right,
                                       style: TextStyle(
                                           color: Theme.of(context)
@@ -447,7 +447,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                                     width: 10,
                                   ),
                                   SizedBox(
-                                    width: 100, // 设置固定宽度
+                                    width: 200, // 设置固定宽度
                                     child: DropdownButton<String>(
                                       alignment:
                                           AlignmentDirectional.centerStart,
@@ -461,7 +461,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                                           fontSize: 14,
                                           fontWeight: FontWeight.normal),
                                       hint: Text(
-                                        localizedStrings.printer,
+                                        localizedStrings.gPrinter,
                                         style: TextStyle(
                                             color: Theme.of(context)
                                                 .colorScheme
@@ -496,9 +496,9 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                               child: Row(
                                 children: [
                                   SizedBox(
-                                    width: 80,
+                                    width: 150,
                                     child: Text(
-                                      localizedStrings.print_direction,
+                                      localizedStrings.gPrintDirection,
                                       textAlign: TextAlign.right,
                                       style: TextStyle(
                                           color: Theme.of(context)
@@ -512,7 +512,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                                     width: 10,
                                   ),
                                   SizedBox(
-                                    width: 100, // 设置固定宽度
+                                    width: 200, // 设置固定宽度
                                     child: DropdownButton<String>(
                                       dropdownColor: Theme.of(context)
                                           .colorScheme
@@ -524,7 +524,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                                           fontSize: 14,
                                           fontWeight: FontWeight.normal),
                                       hint: Text(
-                                        localizedStrings.print_direction,
+                                        localizedStrings.gPrintDirection,
                                         style: TextStyle(
                                             color: Theme.of(context)
                                                 .colorScheme
@@ -660,7 +660,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                           child: OutlinedButton(
                             style: buildBtnStyle(),
                             child: Text(
-                              localizedStrings.save_csv,
+                              localizedStrings.gSaveFormat,
                               style: TextStyle(
                                   color: Theme.of(context).colorScheme.primary,
                                   fontSize: 14,
@@ -686,6 +686,9 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                                 fileName: 'format.fmt',
                               ));
                               if (outputFile != null) {
+                                if (!outputFile.contains(".fmt")) {
+                                  outputFile = "$outputFile.fmt";
+                                }
                                 _exportCSV();
                                 _saveFormatToCsv(csv, outputFile);
 
@@ -748,7 +751,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                                 }
                               },
                               child: Text(
-                                localizedStrings.open_file,
+                                localizedStrings.gOpenJson,
                                 style: TextStyle(
                                     color:
                                         Theme.of(context).colorScheme.primary,
@@ -766,7 +769,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                           child: OutlinedButton(
                             style: buildBtnStyle(),
                             child: Text(
-                              localizedStrings.barcode_edit,
+                              localizedStrings.gBarcodeEdit,
                               style: TextStyle(
                                   color: Theme.of(context).colorScheme.primary,
                                   fontSize: 14,
@@ -793,7 +796,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                           child: OutlinedButton(
                             style: buildBtnStyle(),
                             child: Text(
-                              localizedStrings.qrcode_edit,
+                              localizedStrings.gQrcodeEdit,
                               style: TextStyle(
                                   color: Theme.of(context).colorScheme.primary,
                                   fontSize: 14,
@@ -828,7 +831,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                                 deleteAllItem();
                               },
                               child: Text(
-                                localizedStrings.new_format,
+                                localizedStrings.gBtnNewFormat,
                                 style: TextStyle(
                                     color:
                                         Theme.of(context).colorScheme.primary,
@@ -2428,7 +2431,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         height: 50,
         color: Theme.of(context).colorScheme.surfaceBright,
         child: Text(
-          localizedStrings.no_element,
+          localizedStrings.gMsgNoElement,
           style: TextStyle(
               fontSize: 20,
               color: Theme.of(context).colorScheme.error,
@@ -2439,7 +2442,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         height: 50,
         color: Theme.of(context).colorScheme.surfaceBright,
         child: Text(
-          localizedStrings.operation_steps,
+          localizedStrings.gOperationSteps,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
         ),
       ),
@@ -2447,7 +2450,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         height: 50,
         color: Theme.of(context).colorScheme.surfaceBright,
         child: Text(
-          localizedStrings.step1,
+          localizedStrings.gMsgStep1,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
         ),
       ),
@@ -2455,7 +2458,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         height: 80,
         color: Theme.of(context).colorScheme.surfaceBright,
         child: Text(
-          localizedStrings.step2,
+          localizedStrings.gMsgStep2,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
         ),
       ),
@@ -2595,7 +2598,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         child: Column(
           children: [
             Text(
-              localizedStrings.attribute,
+              localizedStrings.gAttribute,
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: 20,
@@ -2616,7 +2619,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           ),
           SizedBox(
             width: 100,
-            child: Text(localizedStrings.tab_order,
+            child: Text(localizedStrings.gTabOrder,
                 textAlign: TextAlign.left,
                 style: const TextStyle(
                   fontSize: 14,
@@ -2637,7 +2640,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         children: [
           SizedBox(
             width: 100,
-            child: Text(localizedStrings.element_type,
+            child: Text(localizedStrings.gTipItemType,
                 textAlign: TextAlign.left,
                 style: const TextStyle(
                   fontSize: 14,
@@ -2654,7 +2657,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       Container(
         height: 20,
         color: Theme.of(context).colorScheme.surfaceBright,
-        child: Text(localizedStrings.position,
+        child: Text(localizedStrings.gPosition,
             textAlign: TextAlign.center,
             style: TextStyle(
                 fontSize: 14,
@@ -2725,7 +2728,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       Container(
         height: 20,
         color: Theme.of(context).colorScheme.surfaceBright,
-        child: Text(localizedStrings.editor,
+        child: Text(localizedStrings.gEditor,
             textAlign: TextAlign.center,
             style: TextStyle(
                 fontSize: 14,
@@ -2735,7 +2738,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
 
       SizedBox(
         width: 100,
-        child: Text(localizedStrings.text_content,
+        child: Text(localizedStrings.gTextContent,
             textAlign: TextAlign.left,
             style: const TextStyle(
               fontSize: 14,
@@ -2744,7 +2747,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
 
       buildTextField(textvariable, "", myTextData.content.toString(), 0),
       Text(
-        localizedStrings.select_fontsize,
+        localizedStrings.gFontSize,
         style: const TextStyle(
           fontSize: 14,
         ),
@@ -2756,7 +2759,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         onSelect: _handleFontSizeSelected,
       ),
       Text(
-        localizedStrings.select_rotation,
+        localizedStrings.gRotation,
         style: const TextStyle(
           fontSize: 14,
         ),
@@ -2770,7 +2773,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       // buildTextField(
       //     fontsizevar, "Font Size", myTextData.fontSize.toString(), 1),
       Text(
-        localizedStrings.font_bold,
+        localizedStrings.gFontBold,
         style: const TextStyle(
           fontSize: 14,
         ),
@@ -2778,11 +2781,11 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       buildDropdownButton(
         value: _selectFontBold,
         items: _fontBoldReverse,
-        hintText: localizedStrings.font_bold,
+        hintText: localizedStrings.gFontBold,
         onSelect: _handleFontBoldSelected,
       ),
       Text(
-        localizedStrings.font_reverse,
+        localizedStrings.gFontReverse,
         style: const TextStyle(
           fontSize: 14,
         ),
@@ -2790,7 +2793,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       buildDropdownButton(
         value: _selectFontReverse,
         items: _fontBoldReverse,
-        hintText: localizedStrings.font_reverse,
+        hintText: localizedStrings.gFontReverse,
         onSelect: _handleFontReverseSelected,
       ),
     ];
@@ -2874,7 +2877,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         child: Column(
           children: [
             Text(
-              localizedStrings.attribute,
+              localizedStrings.gAttribute,
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: 20,
@@ -2895,7 +2898,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           ),
           SizedBox(
             width: 100,
-            child: Text(localizedStrings.tab_order,
+            child: Text(localizedStrings.gTabOrder,
                 textAlign: TextAlign.left,
                 style: const TextStyle(
                   fontSize: 14,
@@ -2916,7 +2919,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         children: [
           SizedBox(
             width: 100,
-            child: Text(localizedStrings.element_type,
+            child: Text(localizedStrings.gTipItemType,
                 textAlign: TextAlign.left,
                 style: const TextStyle(
                   fontSize: 14,
@@ -2933,7 +2936,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       Container(
         height: 20,
         color: Theme.of(context).colorScheme.surfaceBright,
-        child: Text(localizedStrings.position,
+        child: Text(localizedStrings.gPosition,
             textAlign: TextAlign.center,
             style: TextStyle(
                 fontSize: 14,
@@ -3000,7 +3003,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       const SizedBox(height: 20),
       SizedBox(
         width: 100,
-        child: Text(localizedStrings.max_length,
+        child: Text(localizedStrings.gAlignment,
             textAlign: TextAlign.left,
             style: const TextStyle(
               fontSize: 14,
@@ -3009,56 +3012,56 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       buildTextField(maxLenthvar, "", myTextData.maxLength.toString(), 4),
       const SizedBox(width: 10),
       Text(
-        localizedStrings.alignment,
+        localizedStrings.gAlignment,
         style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
       ),
       buildDropdownButton(
         value: _selectedAlignment,
         items: _alignments,
-        hintText: localizedStrings.alignment,
+        hintText: localizedStrings.gAlignment,
         onSelect: _handleAlignmentSelected,
       ),
 
       Text(
-        localizedStrings.select_rotation,
+        localizedStrings.gRotation,
         style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
       ),
       buildDropdownButton(
         value: _selectedRotation,
         items: _rotations,
-        hintText: localizedStrings.select_rotation,
+        hintText: localizedStrings.gRotation,
         onSelect: _handleRotationSelected,
       ),
       Text(
-        localizedStrings.select_fontsize,
+        localizedStrings.gFontSize,
         style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
       ),
       buildDropdownButton(
         value: _selectFontsize,
         items: _fontSizes,
-        hintText: localizedStrings.select_fontsize,
+        hintText: localizedStrings.gFontSize,
         onSelect: _handleFontSizeSelected,
       ),
       // buildTextField(
       //     fontsizevar, "Font Size", myTextData.fontSize.toString(), 1),
       Text(
-        localizedStrings.font_bold,
+        localizedStrings.gFontBold,
         style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
       ),
       buildDropdownButton(
         value: _selectFontBold,
         items: _fontBoldReverse,
-        hintText: localizedStrings.font_bold,
+        hintText: localizedStrings.gFontBold,
         onSelect: _handleFontBoldSelected,
       ),
       Text(
-        localizedStrings.font_reverse,
+        localizedStrings.gFontReverse,
         style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
       ),
       buildDropdownButton(
         value: _selectFontReverse,
         items: _fontBoldReverse,
-        hintText: localizedStrings.font_reverse,
+        hintText: localizedStrings.gFontReverse,
         onSelect: _handleFontReverseSelected,
       ),
       const SizedBox(height: 5),
@@ -3079,7 +3082,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
             _deleteTextItem(myTextData.tabOrder);
           });
         },
-        child: Text(localizedStrings.button_delete,
+        child: Text(localizedStrings.gBtnDelete,
             style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.normal,
@@ -3097,7 +3100,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         child: Column(
           children: [
             Text(
-              localizedStrings.attribute,
+              localizedStrings.gAttribute,
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: 20,
@@ -3118,7 +3121,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           ),
           SizedBox(
             width: 100,
-            child: Text(localizedStrings.tab_order,
+            child: Text(localizedStrings.gTabOrder,
                 textAlign: TextAlign.left,
                 style: const TextStyle(
                   fontSize: 14,
@@ -3139,7 +3142,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         children: [
           SizedBox(
             width: 100,
-            child: Text(localizedStrings.element_type,
+            child: Text(localizedStrings.gTipItemType,
                 textAlign: TextAlign.left,
                 style: const TextStyle(
                   fontSize: 14,
@@ -3156,7 +3159,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       Container(
         height: 20,
         color: Theme.of(context).colorScheme.surfaceBright,
-        child: Text(localizedStrings.position,
+        child: Text(localizedStrings.gPosition,
             textAlign: TextAlign.center,
             style: TextStyle(
                 fontSize: 14,
@@ -3184,7 +3187,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         child: Column(
           children: [
             Text(
-              localizedStrings.attribute,
+              localizedStrings.gAttribute,
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: 20,
@@ -3205,7 +3208,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           ),
           SizedBox(
             width: 100,
-            child: Text(localizedStrings.tab_order,
+            child: Text(localizedStrings.gTabOrder,
                 textAlign: TextAlign.left,
                 style: const TextStyle(
                   fontSize: 14,
@@ -3226,7 +3229,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         children: [
           SizedBox(
             width: 100,
-            child: Text(localizedStrings.element_type,
+            child: Text(localizedStrings.gTipItemType,
                 textAlign: TextAlign.left,
                 style: const TextStyle(
                   fontSize: 14,
@@ -3243,7 +3246,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       Container(
         height: 20,
         color: Theme.of(context).colorScheme.surfaceBright,
-        child: Text(localizedStrings.position,
+        child: Text(localizedStrings.gPosition,
             textAlign: TextAlign.center,
             style: TextStyle(
                 fontSize: 14,
@@ -3309,39 +3312,39 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       ),
       const SizedBox(height: 20),
       Text(
-        localizedStrings.select_barcode,
+        localizedStrings.gBarcode,
         style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
       ),
       buildDropdownButton(
         value: _selectedBarcode,
         items: _savedBarCodeNames,
-        hintText: localizedStrings.select_barcode,
+        hintText: localizedStrings.gBarcode,
         onSelect: _handleBarcodeSelected,
       ),
       Text(
-        localizedStrings.barcode_height,
+        localizedStrings.gBarcodeHeight,
         style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
       ),
       buildTextField(barcodeHeight, "", myTextData.height.toString(), 7),
       const SizedBox(height: 20),
       Text(
-        localizedStrings.hr_alignment,
+        localizedStrings.gHrAlignment,
         style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
       ),
       buildDropdownButton(
         value: _selectedHRAlignment,
         items: _hralignments,
-        hintText: localizedStrings.hr_alignment,
+        hintText: localizedStrings.gHrAlignment,
         onSelect: _handleHrAlignmentSelected,
       ),
       Text(
-        localizedStrings.select_rotation,
+        localizedStrings.gRotation,
         style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
       ),
       buildDropdownButton(
         value: _selectedRotation,
         items: _rotations,
-        hintText: localizedStrings.select_rotation,
+        hintText: localizedStrings.gRotation,
         onSelect: _handleRotationSelected,
       ),
       const SizedBox(height: 5),
@@ -3359,7 +3362,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         child: Column(
           children: [
             Text(
-              localizedStrings.attribute,
+              localizedStrings.gAttribute,
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: 20,
@@ -3380,7 +3383,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           ),
           SizedBox(
             width: 100,
-            child: Text(localizedStrings.tab_order,
+            child: Text(localizedStrings.gTabOrder,
                 textAlign: TextAlign.left,
                 style: const TextStyle(
                   fontSize: 14,
@@ -3401,7 +3404,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         children: [
           SizedBox(
             width: 100,
-            child: Text(localizedStrings.element_type,
+            child: Text(localizedStrings.gTipItemType,
                 textAlign: TextAlign.left,
                 style: const TextStyle(
                   fontSize: 14,
@@ -3418,7 +3421,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       Container(
         height: 20,
         color: Theme.of(context).colorScheme.surfaceBright,
-        child: Text(localizedStrings.position,
+        child: Text(localizedStrings.gPosition,
             textAlign: TextAlign.center,
             style: TextStyle(
                 fontSize: 14,
@@ -3484,24 +3487,24 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       ),
       const SizedBox(height: 20),
       Text(
-        localizedStrings.select_qrcode,
+        localizedStrings.gQrcode,
         style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
       ),
       buildDropdownButton(
         value: _selectedQrcode,
         items: _savedQrcodeNames,
-        hintText: localizedStrings.select_qrcode,
+        hintText: localizedStrings.gQrcode,
         onSelect: _handleQrcodeSelected,
       ),
       const SizedBox(height: 20),
       Text(
-        localizedStrings.select_qrcode_width,
+        localizedStrings.gQrcodeWidth,
         style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
       ),
       buildDropdownButton(
         value: _selectedQr,
         items: _qrWidths,
-        hintText: localizedStrings.select_qrcode_width,
+        hintText: localizedStrings.gQrcodeWidth,
         onSelect: _handleQrWidthSelected,
       ),
       const SizedBox(height: 5),

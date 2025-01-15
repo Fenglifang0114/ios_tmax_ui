@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:t_max/data/dialog_data.dart';
 import 'package:t_max/data/license_data.dart';
 import 'package:t_max/data/scale_info_from_scale.dart';
@@ -14,27 +15,29 @@ import '../data/language.dart';
 import '../data/manager_scale_channel.dart';
 import '../data/screen_mgr.dart';
 import '../data/timer_manager.dart';
-import '../dialog/get_build_info_dialog.dart';
+import '../dialog/exit_app_dialog.dart';
 import '../dialog/language_setting.dart';
 import '../functions/methods.dart';
 import '../generated/l10n.dart';
 import '../widget/app_info.dart';
+import '../widget/bluetooth_setting.dart';
 import '../widget/box_gradient.dart';
 import '../widget/custom_circle_icon.dart';
 import '../widget/custom_setting.dart';
 import '../dialog/license_info.dart';
 import '../widget/home_page_widget.dart';
-import '../widget/update_firmware.dart';
 import '../widget/version.dart';
 import 'check_weighers_page.dart';
-import 'firmware_down_wifi.dart';
-import 'modify_com_port_page.dart';
+import 'plu_edit_page.dart';
 import 'product_download_page.dart';
 import 'scale_manager_page.dart';
+
 import 'take_in_page.dart';
 import 'take_out_page.dart';
+import 'update_firmware_page.dart';
 import 'weighing.dart';
 import 'weight_mode_page.dart';
+import 'wifisetting_page.dart';
 
 class IndustryHomePage extends StatefulWidget {
   const IndustryHomePage({super.key});
@@ -55,13 +58,14 @@ class IndustryHomePageState extends State<IndustryHomePage>
   dynamic _eventbus4;
   dynamic _eventbus5;
   dynamic _eventbus6;
+  dynamic _eventbus7;
 
   String groupValue = 'zh';
   DateTime now = DateTime.now();
   bool isCardHovered = false;
   bool isCardClicked = false;
   bool editScaleNameFlag = false;
-  bool showHint1 = true;
+  bool showHint1 = false;
   bool showHint2 = true;
   bool isResize = false;
 
@@ -75,6 +79,8 @@ class IndustryHomePageState extends State<IndustryHomePage>
     await trayManager.setIcon(
       Platform.isWindows ? 'assets/images/app.ico' : 'assets/images/app.png',
     );
+    setState(() {});
+    await windowManager.setPreventClose(true); //关闭前确认
     setState(() {});
   }
 
@@ -105,8 +111,35 @@ class IndustryHomePageState extends State<IndustryHomePage>
   }
 
   @override
-  void onWindowClose() {
-    // 关闭工厂模式（所有秤都关闭吗？）
+  void onWindowClose() async {
+    bool isPreventClose = await windowManager.isPreventClose();
+    if (isPreventClose) {
+      showDialog(
+        context: context,
+        barrierDismissible: false, // 允许点击空白处关闭对话框
+        builder: (context) {
+          return CustomAlertDialog(
+            titleText: localizedStrings.gTipExitApp,
+            onNoPressed: () {
+              Navigator.of(context).pop();
+            },
+            onYesPressed: () {
+              Navigator.of(context).pop();
+              // await windowManager.destroy();
+              dispose();
+              // await windowManager.destroy();
+              exit(0);
+              // TrayManager.instance.remove();
+              // windowManager.destroy();
+            },
+          );
+        },
+      );
+    }
+  }
+
+  static Future<void> pop() async {
+    await SystemChannels.platform.invokeMethod('SystemNavigator.pop');
   }
 
   @override
@@ -178,16 +211,22 @@ class IndustryHomePageState extends State<IndustryHomePage>
         PublicFunctions.stopWeight(myDefScaleInfo.defScaleId!);
       }
     });
+    _eventbus7 = eventBus.on<EventServiceOff>().listen((event) {
+      setState(() {
+        showServiceErrorDialog(context, localizedStrings.gTipServiceOff,
+            localizedStrings.gTitleConfirm);
+      });
+    });
   }
 
   @override
   void dispose() {
     _eventbus1.cancel();
-
     _eventbus3.cancel();
     _eventbus4.cancel();
     _eventbus5.cancel();
     _eventbus6.cancel();
+    _eventbus7.cancel();
     _pageScrollerController.dispose();
     _scrollController1.dispose();
     _scrollController2.dispose();
@@ -261,6 +300,7 @@ class IndustryHomePageState extends State<IndustryHomePage>
                       width: 360,
                       height: 50,
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           CustomSettingButton(onRefresh: () {
                             setState(() {});
@@ -276,7 +316,7 @@ class IndustryHomePageState extends State<IndustryHomePage>
                           ),
 
                           // Expanded(
-                          //   child: Text(localizedStrings.serial_port_status,
+                          //   child: Text(localizedStrings.gSerialPort_status,
                           //       overflow: TextOverflow.ellipsis,
                           //       textAlign: TextAlign.right,
                           //       maxLines: 1,
@@ -348,7 +388,8 @@ class IndustryHomePageState extends State<IndustryHomePage>
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                SizedBox(width: 100, child: Image.asset(companyImage)),
+                SizedBox(
+                    width: 100, height: 30, child: Image.asset(companyImage)),
               ],
             ),
           ],
@@ -443,7 +484,7 @@ class IndustryHomePageState extends State<IndustryHomePage>
                       //                 ),
                       //                 Flexible(
                       //                   child: Text(
-                      //                     localizedStrings.scale_sn,
+                      //                     localizedStrings.gScaleSn,
                       //                     maxLines: 1,
                       //                     overflow: TextOverflow.ellipsis,
                       //                   ),
@@ -471,24 +512,24 @@ class IndustryHomePageState extends State<IndustryHomePage>
                       //         ),
                       //       )
                       //     : const SizedBox(),
-                      MouseRegion(
-                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                        child: GestureDetector(
-                          onTap: () {
-                            stopCheckSerialPort();
-                            setState(() {
-                              PublicFunctions.getProductList();
-                              PublicFunctions.getPortList();
-                              showComPortDialog(context);
-                            });
-                          },
-                          child: customFunctionCard(
-                              context,
-                              localizedStrings.title_serial_port_connection,
-                              Icons.cable,
-                              true),
-                        ),
-                      ),
+                      // MouseRegion(
+                      //   cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                      //   child: GestureDetector(
+                      //     onTap: () {
+                      //       stopCheckSerialPort();
+                      //       setState(() {
+                      //         PublicFunctions.getProductList();
+                      //         PublicFunctions.getPortList();
+                      //         showComPortDialog(context);
+                      //       });
+                      //     },
+                      //     child: customFunctionCard(
+                      //         context,
+                      //         localizedStrings.gTitleSerialPortConnection,
+                      //         Icons.cable,
+                      //         true),
+                      //   ),
+                      // ),
                       MouseRegion(
                         cursor: SystemMouseCursors.click, // 设置光标为手的形状
                         child: GestureDetector(
@@ -514,46 +555,97 @@ class IndustryHomePageState extends State<IndustryHomePage>
                         cursor: SystemMouseCursors.click, // 设置光标为手的形状
                         child: GestureDetector(
                           onTap: () {
-                            if (myFactoryInfoFromScale.modelName == null ||
-                                (!myFactoryInfoFromScale.modelName!
-                                    .contains('2200'))) {
-                              setState(() {
-                                stopCheckSerialPort();
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const ProductDownloadPage()),
-                                ).then((value) => _updateStatus());
-                              });
-                            }
+                            setState(() {
+                              stopCheckSerialPort();
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const PluEidtPage()),
+                              ).then((value) => _updateStatus());
+                            });
                           },
                           child: customFunctionCard(
                               context,
-                              localizedStrings.plu_download_title,
-                              Icons.shopping_bag,
+                              localizedStrings.gTitlePluEdit,
+                              Icons.edit_road,
                               myFactoryInfoFromScale.modelName == null
                                   ? true
                                   : !myFactoryInfoFromScale.modelName!
                                       .contains('2200')),
                         ),
                       ),
-                      MouseRegion(
-                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              stopCheckSerialPort();
-                              showUpdateFirmWareDialog(context);
-                            });
-                          },
+                      // MouseRegion(
+                      //   cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                      //   child: GestureDetector(
+                      //     onTap: () {
+                      //       if (myFactoryInfoFromScale.modelName == null ||
+                      //           (!myFactoryInfoFromScale.modelName!
+                      //               .contains('2200'))) {
+                      //         setState(() {
+                      //           stopCheckSerialPort();
+                      //           Navigator.push(
+                      //             context,
+                      //             MaterialPageRoute(
+                      //                 builder: (context) =>
+                      //                     const ProductDownloadPage()),
+                      //           ).then((value) => _updateStatus());
+                      //         });
+                      //       }
+                      //     },
+                      //     child: customFunctionCard(
+                      //         context,
+                      //         localizedStrings.gTitlePluDownload,
+                      //         Icons.shopping_bag,
+                      //         myFactoryInfoFromScale.modelName == null
+                      //             ? true
+                      //             : !myFactoryInfoFromScale.modelName!
+                      //                 .contains('2200')),
+                      //   ),
+                      // ),
+
+                      GestureDetector(
+                        onTap: () {
+                          //蓝牙页面
+
+                          setState(() {
+                            stopCheckSerialPort();
+                            showBluetoothDialog(context);
+                          });
+                        },
+                        child: MouseRegion(
+                          cursor: SystemMouseCursors.click,
                           child: customFunctionCard(
                               context,
-                              localizedStrings.firmware_update,
-                              Icons.update,
-                              true),
+                              localizedStrings.bt_setting_title,
+                              Icons.bluetooth,
+                              (myScreenMgr.wifiOrBt.contains('bt'))),
                         ),
                       ),
+                      GestureDetector(
+                        onTap: () {
+                          //wifi页面
+
+                          setState(() {
+                            stopCheckSerialPort();
+                            PublicFunctions.changeWifiMode(1);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const WifiSettingPage(),
+                              ),
+                            ).then((value) => _updateStatus());
+                          });
+                        },
+                        child: MouseRegion(
+                          cursor: SystemMouseCursors.click,
+                          child: customFunctionCard(
+                              context,
+                              localizedStrings.wifi_setting_title,
+                              Icons.wifi,
+                              (myScreenMgr.wifiOrBt.contains('wifi'))),
+                        ),
+                      ),
+
                       MouseRegion(
                         cursor: SystemMouseCursors.click, // 设置光标为手的形状
                         child: GestureDetector(
@@ -564,29 +656,14 @@ class IndustryHomePageState extends State<IndustryHomePage>
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        const FirmwareDownPage()),
+                                        const UpdateFirmwarePage()),
                               ).then((value) => _updateStatus());
                             });
                           },
                           child: customFunctionCard(
                               context,
-                              localizedStrings.firm_down_online,
+                              localizedStrings.gTitleUpdateFirmware,
                               Icons.cloud_upload_outlined,
-                              true),
-                        ),
-                      ),
-                      MouseRegion(
-                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              showBuildInfo();
-                            });
-                          },
-                          child: customFunctionCard(
-                              context,
-                              localizedStrings.get_build_info,
-                              Icons.privacy_tip,
                               true),
                         ),
                       ),
@@ -614,6 +691,16 @@ class IndustryHomePageState extends State<IndustryHomePage>
                 ],
               )),
             ])));
+  }
+
+  void showBluetoothDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 允许点击空白处关闭对话框
+      builder: (context) {
+        return const BluetoothDialog();
+      },
+    ).then((value) => _updateStatus());
   }
 
   Widget secondCard() {
@@ -659,7 +746,7 @@ class IndustryHomePageState extends State<IndustryHomePage>
                           },
                           child: appCard(
                               context,
-                              localizedStrings.weighing_title,
+                              localizedStrings.iTitleWeighting,
                               Icons.monitor_weight_outlined,
                               true,
                               'This application is used to display the weighing data in real time.',
@@ -732,10 +819,10 @@ class IndustryHomePageState extends State<IndustryHomePage>
                               : null,
                           child: appCard(
                               context,
-                              localizedStrings.weight_collection_title,
+                              localizedStrings.iTitleWeightCollection,
                               Icons.save_as,
                               myWedaLicInfo.isValid,
-                              'This application is used to collect weighing data in real time',
+                              localizedStrings.iTipWeightCollection,
                               myWedaLicInfo.liceseDate == "2299-01-01"
                                   ? 'Perpetual'
                                   : myWedaLicInfo.liceseDate),
@@ -763,7 +850,7 @@ class IndustryHomePageState extends State<IndustryHomePage>
                                 : null,
                             child: appCard(
                                 context,
-                                localizedStrings.checkweigher_title,
+                                localizedStrings.iTitleCheckWeigher,
                                 Icons.scale,
                                 myChweLicInfo.isValid,
                                 'This application is used to check weighing data in real time',
@@ -793,10 +880,10 @@ class IndustryHomePageState extends State<IndustryHomePage>
                                 : null,
                             child: appCard(
                                 context,
-                                localizedStrings.take_in_title,
+                                localizedStrings.iTitleIncrementWeighting,
                                 Icons.add,
                                 myInWeLicInfo.isValid,
-                                'This app is used to implement the increment scale.',
+                                localizedStrings.iTipIncrementWeighting,
                                 myInWeLicInfo.liceseDate == "2299-01-01"
                                     ? 'Perpetual'
                                     : myInWeLicInfo.liceseDate),
@@ -822,10 +909,10 @@ class IndustryHomePageState extends State<IndustryHomePage>
                                 : null,
                             child: appCard(
                                 context,
-                                localizedStrings.take_out_title,
+                                localizedStrings.gTitleTakeOut,
                                 Icons.remove,
                                 myTaouLicInfo.isValid,
-                                'This app is used to implement the take out scale.',
+                                localizedStrings.gTipTakeOut,
                                 myTaouLicInfo.liceseDate == "2299-01-01"
                                     ? 'Perpetual'
                                     : myTaouLicInfo.liceseDate),
@@ -890,7 +977,7 @@ class IndustryHomePageState extends State<IndustryHomePage>
       });
     }
 
-    if (viewportDimension > 700) {
+    if (viewportDimension > 300) {
       setState(() {
         showHint1 = false;
       });
@@ -938,17 +1025,6 @@ class IndustryHomePageState extends State<IndustryHomePage>
     );
   }
 
-  void showBuildInfo() {
-    stopCheckSerialPort();
-    showDialog(
-      context: context,
-      barrierDismissible: false, // 允许点击空白处关闭对话框
-      builder: (context) {
-        return const GetBuildInfoPage();
-      },
-    ).then((value) => _updateStatus());
-  }
-
   void showLabelDesign(bool isValid) {
     if (isValid) {
       stopCheckSerialPort();
@@ -960,25 +1036,15 @@ class IndustryHomePageState extends State<IndustryHomePage>
     }
   }
 
-  void showUpdateFirmWareDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: false, // 允许点击空白处关闭对话框
-      builder: (context) {
-        return const UpdateFirmWareDialog();
-      },
-    ).then((value) => _updateStatus());
-  }
-
-  void showComPortDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: false, // 允许点击空白处关闭对话框
-      builder: (context) {
-        return const ModifyComPortPage();
-      },
-    ).then((value) => _updateStatus());
-  }
+  // void showComPortDialog(BuildContext context) {
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: false, // 允许点击空白处关闭对话框
+  //     builder: (context) {
+  //       return const ModifyComPortPage();
+  //     },
+  //   ).then((value) => _updateStatus());
+  // }
 
   void showLicenseDialog(BuildContext context) {
     showDialog(

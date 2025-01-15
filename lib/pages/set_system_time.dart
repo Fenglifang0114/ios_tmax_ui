@@ -403,19 +403,19 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
       builder: (BuildContext ctx) {
         return AlertDialog(
           title: Text(
-            localizedStrings.confirm_title,
+            localizedStrings.gTitleConfirm,
             style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
           content: Text(localizedStrings.data_delete_confirm),
           actions: <Widget>[
             OutlinedButton(
-              child: Text(localizedStrings.button_cancel),
+              child: Text(localizedStrings.gBtnCancel),
               onPressed: () {
                 Navigator.of(context).pop(false); // 不跳转
               },
             ),
             OutlinedButton(
-              child: Text(localizedStrings.confirm_btn),
+              child: Text(localizedStrings.gBtnConfirm),
               onPressed: () {
                 Navigator.of(context).pop(true); // 跳转
               },

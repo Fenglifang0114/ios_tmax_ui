@@ -47,6 +47,11 @@ class EventDialogData {
   EventDialogData(this.obj);
 }
 
+class EventPLuDataSavedOK {
+  dynamic obj;
+  EventPLuDataSavedOK(this.obj);
+}
+
 class EventReportData {
   dynamic obj;
   EventReportData(this.obj);
@@ -107,6 +112,31 @@ class EventRespDetailInfo {
   EventRespDetailInfo(this.obj);
 }
 
+class EventRespNewDetailInfo {
+  dynamic obj;
+  EventRespNewDetailInfo(this.obj);
+}
+
+class EventRespScaleOnline {
+  dynamic obj;
+  EventRespScaleOnline(this.obj);
+}
+
+class EventRespScaleSrvList {
+  dynamic obj;
+  EventRespScaleSrvList(this.obj);
+}
+
+class EventRespDoSrvAction {
+  dynamic obj;
+  EventRespDoSrvAction(this.obj);
+}
+
+class EventRespDetailAdd {
+  dynamic obj;
+  EventRespDetailAdd(this.obj);
+}
+
 class EventRespWifiPwdInfo {
   dynamic obj;
   EventRespWifiPwdInfo(this.obj);
@@ -145,6 +175,11 @@ class EventComScaleList {
 class EventCurrentPort {
   dynamic obj;
   EventCurrentPort(this.obj);
+}
+
+class EventSelWeighingScaleId {
+  dynamic obj;
+  EventSelWeighingScaleId(this.obj);
 }
 
 class EventGetScaleRecords {
@@ -280,6 +315,11 @@ class EventSerialPortStatus {
 class EventLicenseData {
   dynamic obj;
   EventLicenseData(this.obj);
+}
+
+class EventServiceOff {
+  dynamic obj;
+  EventServiceOff(this.obj);
 }
 
 class EventCheckLicenseKey {

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../data/language.dart';
 import '../data/weight_report_data.dart';
 import '../widget/custom_button.dart';
@@ -11,41 +10,17 @@ class ReportFeildsSettingDialog extends StatefulWidget {
       ReportFeildsSettingDialogState();
 }
 
-List<String> allFieldSList = [
-  'Date Time',
-  'PLU NO.',
-  'PLU Name',
-  'PLU Remarks',
-  'Weight',
-  'Weight Unit',
-  'Pretare',
-  'User NO.',
-  'User Name',
-  'User Remarks',
-  'Scale Name'
-];
-
 class ReportFeildsSettingDialogState extends State<ReportFeildsSettingDialog> {
-  List<bool?> checkboxList = [
-    false, // _isDateTimeChecked
-    false, // _isPluNoChecked
-    false, // _isPluNameChecked
-    false, // _isPluRemarksChecked
-    false, // _isWeightChecked
-    false, // _isWeightUnitChecked
-    false, // _isPretareChecked
-    false, // _isUserNoChecked
-    false, // _isUserNameChecked
-    false, //  _isUserRemarksChecked
-    false, // _isScaleNameChecked
-  ];
-
   TextEditingController errorText = TextEditingController();
+  Map<String, ReportShowName> tempFeildMap = {};
 
   @override
   void initState() {
+    myReportFeildsMap.forEach((key, value) {
+      tempFeildMap[key] = ReportShowName(
+          myReportFeildsMap[key]!.showName, myReportFeildsMap[key]!.isSelect);
+    });
     super.initState();
-    fieldsInit();
   }
 
   @override
@@ -69,43 +44,27 @@ class ReportFeildsSettingDialogState extends State<ReportFeildsSettingDialog> {
                   decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.onPrimary),
                   child: Column(
-                    children: [
-                      buildCheckBox(0),
-                      buildCheckBox(1),
-                      buildCheckBox(2),
-                      buildCheckBox(3),
-                      buildCheckBox(4),
-                      buildCheckBox(5),
-                      buildCheckBox(6),
-                      buildCheckBox(7),
-                      buildCheckBox(8),
-                      buildCheckBox(9),
-                      buildCheckBox(10),
-                      SizedBox(
-                        width: 400,
-                        height: 36,
-                        child: TextField(
-                          enabled: false,
-                          controller: errorText,
-                          maxLength: 100,
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.error),
-                          maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                          maxLines: 1,
-                          textAlignVertical: TextAlignVertical.bottom,
-                          decoration: InputDecoration(
-                            border: const OutlineInputBorder(
-                                borderSide: BorderSide.none),
-                            counterText: "",
-                            focusColor: Theme.of(context)
-                                .colorScheme
-                                .error, // hintText: "请输入机种类型，如：ztp",
-                            // border: OutlineInputBorder(),
-                          ),
-                          onChanged: (value) {},
+                    children: tempFeildMap.values
+                        .map((ReportShowName reportShowName) {
+                      return CheckboxListTile(
+                        title: Text(
+                          reportShowName.showName,
+                          style: TextStyle(overflow: TextOverflow.ellipsis),
                         ),
-                      ),
-                    ],
+                        value: reportShowName.isSelect,
+                        onChanged: (bool? newValue) {
+                          setState(() {
+                            for (var key in tempFeildMap.keys) {
+                              if (tempFeildMap[key]!.showName ==
+                                  reportShowName.showName) {
+                                tempFeildMap[key]!.isSelect = newValue!;
+                                break;
+                              }
+                            }
+                          });
+                        },
+                      );
+                    }).toList(),
                   ),
                 )
               ],
@@ -119,9 +78,11 @@ class ReportFeildsSettingDialogState extends State<ReportFeildsSettingDialog> {
               btnWidth: 120,
               btnHeight: 40,
               icon: Icons.check_circle,
-              text: localizedStrings.button_ok,
+              text: localizedStrings.gBtnConfirm,
               onPressed: () {
-                creatFieldList();
+                tempFeildMap.forEach((key, value) {
+                  myReportFeildsMap[key]!.isSelect = value.isSelect;
+                });
                 Navigator.of(context).pop(true);
               },
             ),
@@ -130,63 +91,13 @@ class ReportFeildsSettingDialogState extends State<ReportFeildsSettingDialog> {
               btnWidth: 120,
               btnHeight: 40,
               icon: Icons.cancel,
-              text: localizedStrings.button_cancel,
+              text: localizedStrings.gBtnCancel,
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
             ),
           ],
         )
-      ],
-    );
-  }
-
-  Widget buildCheckBox(int i) {
-    return checkBoxSetting(allFieldSList[i], checkboxList[i], (value) {
-      setState(() {
-        checkboxList[i] = value!;
-      });
-    });
-  }
-
-  void fieldsInit() {
-    for (int i = 0; i < 11; i++) {
-      if (myReportFields.filedsList.contains(allFieldSList[i])) {
-        checkboxList[i] = true;
-      }
-    }
-  }
-
-  void creatFieldList() {
-    myReportFields.filedsList.clear();
-    for (int i = 0; i < 11; i++) {
-      if (checkboxList[i]!) {
-        myReportFields.filedsList.add(allFieldSList[i]);
-      }
-    }
-  }
-
-  Widget checkBoxSetting(
-      String str, bool? isChecked, Function(bool?) onChanged) {
-    str = '$str:';
-    return Row(
-      children: [
-        SizedBox(
-          width: 150,
-          child: Text(
-            str,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.right,
-          ),
-        ),
-        const SizedBox(
-          width: 50,
-        ),
-        Checkbox(
-          value: isChecked,
-          onChanged: onChanged,
-        ),
       ],
     );
   }

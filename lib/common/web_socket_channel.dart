@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:t_max/data/cominfoslist_data.dart';
 import 'package:t_max/data/comscaleinfo_data.dart';
 
 import 'package:t_max/data/modifyresult_data.dart';
-import 'package:t_max/data/productlist_data.dart';
+import 'package:t_max/data/pak_info_data.dart';
+import 'package:t_max/data/plu_info_list_data.dart';
 
 import 'package:t_max/data/scalelist_data.dart';
 import 'package:t_max/data/userinfo_data.dart';
@@ -32,7 +34,6 @@ class WebSocketChannel {
   void connect() async {
     heartStatus = true;
     channel = IOWebSocketChannel.connect(url);
-
     channel.stream.listen(onData, onError: onError, onDone: onDone);
 
     // heartPacket();
@@ -40,13 +41,18 @@ class WebSocketChannel {
 
   // 发送消息
   void sendMessage(String s) {
-    channel.sink.add(s);
+    if (heartStatus) {
+      channel.sink.add(s);
+    }
   }
 
   // 断连，然后执行重连
   void onDone() {
     debugPrint("Socket0 onDone");
-    reconnectSocket();
+    Future.delayed(const Duration(seconds: 5), () {
+      reconnectSocket();
+    });
+    // reconnectSocket();
     // debugPrint("Socket is closed");
     // channel = IOWebSocketChannel.connect(url);
     // heartStatus = true;
@@ -70,6 +76,9 @@ class WebSocketChannel {
     WebSocketChannelException ex = err;
     debugPrint(ex.message);
     heartStatus = false;
+
+    // eventBus.fire(EventServiceOff(""));
+    // reconnectSocket();
   }
 
   // 接受数据，数据json字符串，然后转成Map
@@ -93,7 +102,9 @@ class WebSocketChannel {
   /// 重新连接socket
   void reconnectSocket() {
     destoryHeart();
-    connect();
+    connectService();
+
+    // connect();
   }
 
   void dispose() {
@@ -115,6 +126,37 @@ class WebSocketChannel {
       //   // connect();
       // });
       // sendHeartPacket();
+    }
+  }
+
+  Future<bool> checkServerExists() async {
+    try {
+      var channel = await Socket.connect('127.0.0.1', 7878);
+      channel.close();
+      return true;
+    } catch (e) {
+      // print("检查WebSocket服务器是否启动时出错: $e");
+
+      return false;
+    }
+  }
+
+  Future<void> connectService() async {
+    bool res = await checkServerExists();
+    if (!res) {
+      eventBus.fire(EventServiceOff(''));
+    } else {
+      try {
+        // 进行连接操作
+        // connect();
+        channel = IOWebSocketChannel.connect(url);
+        channel.stream.listen(onData, onError: onError, onDone: onDone);
+      } catch (e) {
+        // 如果连接失败，继续延迟5秒后重连
+        Future.delayed(const Duration(seconds: 5), () {
+          reconnectSocket();
+        });
+      }
     }
   }
 
@@ -143,7 +185,7 @@ class WebSocketChannel {
   void getNetScaleList(ScaleDataInfo scaleInfo, NetInfo netInfo) {
     NetScaleInfoLocal newNetScale = NetScaleInfoLocal();
     newNetScale.scaleModel = scaleInfo.scaleModel!;
-    newNetScale.isOnline = false; // scaleInfo.isOnline!;
+    newNetScale.isOnline = scaleInfo.isOnline!;
     newNetScale.scaleId = scaleInfo.scaleId!;
     newNetScale.scaleSn = scaleInfo.scaleSn!;
     newNetScale.tMedia = scaleInfo.tMedia!;
@@ -260,12 +302,83 @@ class WebSocketChannel {
         eventBus.fire(EventRespAddScale(dataString));
       } else if (jsonData['MsgType'] == "resp_detail_list") {
         var dataString = jsonData['MsgBody'];
-        eventBus.fire(EventRespDetailInfo(dataString));
+
+        try {
+          PakInfo pakInfo = pakInfoFromJson(dataString);
+          if (pakInfo.pagId == 1) {
+            myDetailPakList = [];
+          }
+          if (pakInfo.msgBody == "null") {
+            return;
+          }
+          myDetailPakList.add(pakInfo);
+          if (pakInfo.pakCount == myDetailPakList.length) {
+            //先把包排序
+            myDetailPakList.sort((a, b) => a.pagId.compareTo(b.pagId));
+            for (int i = 0; i < myDetailPakList.length; i++) {
+              myDetailRevPak.msgBody.write(myDetailPakList[i].msgBody);
+            }
+            eventBus.fire(EventRespDetailInfo(''));
+            myDetailPakList = [];
+          }
+        } catch (e) {
+          return;
+        }
+      } else if (jsonData['MsgType'] == "resp_new_detail") {
+        var dataString = jsonData['MsgBody'];
+
+        try {
+          PakInfo pakInfo = pakInfoFromJson(dataString);
+          if (pakInfo.pagId == 1) {
+            myDetailPakList = [];
+          }
+          if (pakInfo.msgBody == "null") {
+            return;
+          }
+          myDetailPakList.add(pakInfo);
+          if (pakInfo.pakCount == myDetailPakList.length) {
+            //先把包排序
+            myDetailPakList.sort((a, b) => a.pagId.compareTo(b.pagId));
+            for (int i = 0; i < myDetailPakList.length; i++) {
+              myDetailRevPak.msgBody.write(myDetailPakList[i].msgBody);
+            }
+            eventBus.fire(EventRespNewDetailInfo(''));
+            myDetailPakList = [];
+          }
+        } catch (e) {
+          return;
+        }
+      } else if (jsonData['MsgType'] == "resp_detail_add") {
+        var dataString = jsonData['MsgBody'];
+        eventBus.fire(EventRespDetailAdd(dataString));
       } else if (jsonData['MsgType'] == "resp_wifi_pwd_list") {
         String dataString = jsonData['MsgBody'];
         if (dataString.isNotEmpty) {
           myWifiPwdInfoList = wifiPwdInfoListFromJson(dataString);
         }
+      } else if (jsonData['MsgType'] == "resp_scale_online") {
+        String dataString = jsonData['MsgBody'];
+        try {
+          final jsonInfo = json.decode(dataString);
+          ScaleIsOnline scaleOnline;
+          scaleOnline = ScaleIsOnline.fromJson(jsonInfo);
+          NetScaleInfoLocal newScale;
+          newScale = NetScaleListMgr.findScaleInfo(
+              myNetScaleList, scaleOnline.scaleId!);
+          if (newScale.isOnline != scaleOnline.isOnline) {
+            newScale.isOnline = scaleOnline.isOnline;
+            NetScaleListMgr.updateScale(myNetScaleList, newScale);
+            eventBus.fire(EventRespScaleOnline(''));
+          }
+        } catch (e) {
+          return;
+        }
+      } else if (jsonData['MsgType'] == "resp_get_scale_srv_list") {
+        String dataString = jsonData['MsgBody'];
+        eventBus.fire(EventRespScaleSrvList(dataString));
+      } else if (jsonData['MsgType'] == "resp_do_service_action") {
+        String dataString = jsonData['MsgBody'];
+        eventBus.fire(EventRespDoSrvAction(dataString));
       } else {}
     } catch (e) {
       if (kDebugMode) {
@@ -282,15 +395,28 @@ class WebSocketChannel {
     eventBus.fire(EventCheckLicenseKey(jsonDataString));
   }
 
+  // Future pasterProductList(String jsonDataString) async {
+  //   String jsonStrings = jsonDataString;
+  //   final jsonResponse = json.decode(jsonStrings);
+  //   myProductRecList = ProductRecList.fromJson(jsonResponse);
+  //   if (myProductRecList.productRecInfo!.isNotEmpty) {
+  //     eventBus.fire(EventProductRecList(myProductRecList));
+  //   } else {
+  //     myProductRecList.productRecInfo?.clear();
+  //     eventBus.fire(EventProductRecList(myProductRecList));
+  //   }
+  // }
+
   Future pasterProductList(String jsonDataString) async {
     String jsonStrings = jsonDataString;
-    final jsonResponse = json.decode(jsonStrings);
-    myProductRecList = ProductRecList.fromJson(jsonResponse);
-    if (myProductRecList.productRecInfo!.isNotEmpty) {
-      eventBus.fire(EventProductRecList(myProductRecList));
+    // final jsonResponse = json.decode(jsonStrings);
+
+    myPluListFormDb = pluInfoListFromJson(jsonStrings);
+    if (myPluListFormDb.isNotEmpty) {
+      eventBus.fire(EventProductRecList(myPluListFormDb));
     } else {
-      myProductRecList.productRecInfo?.clear();
-      eventBus.fire(EventProductRecList(myProductRecList));
+      myPluListFormDb.clear();
+      eventBus.fire(EventProductRecList(myPluListFormDb));
     }
   }
 

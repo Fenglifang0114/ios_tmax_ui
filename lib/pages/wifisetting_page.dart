@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../data/comscaleinfo_data.dart';
+import '../data/const_var_data.dart';
 import '../data/downloadresponse.dart';
 import 'package:t_max/data/respdata_data.dart';
 import 'package:t_max/data/scalecmd_data.dart';
@@ -52,6 +53,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
   String connectedMac = '';
   bool isConnecting = false;
   bool alreadyConnected = false;
+  bool firstGetApList = true; //WIFI列表进来只获取一次
 
   Timer? getIpTimer;
 
@@ -98,14 +100,12 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     return tempValid;
   }
 
-  var errorMessage = 'Obtaining AP list and Ip info,please wait...';
-
-  String setMessage = '';
+  var errorMessage = '';
 
   @override
   void initState() {
-    // super.initState();
     cntScaleTimerMgr.stopCntScaleTimer();
+    errorMessage = localizedStrings.gTipGetApListAndIP;
 
     if (myWifiListInfo.wifidatalist!.isNotEmpty) {
       for (var i = 0; i < myWifiListInfo.wifidatalist!.length; i++) {
@@ -157,9 +157,9 @@ class WifiSettingPageState extends State<WifiSettingPage> {
         setState(() {
           myRespDataFromScale = event.obj;
           if (myRespDataFromScale.msgBody.isNotEmpty) {
-            if (myRespDataFromScale.msgBody.contains('ok')) {
+            if (myRespDataFromScale.msgBody.contains(msgOk)) {
               isConnecting = false;
-              errorMessage = 'Obtaining IP, please wait...';
+              errorMessage = localizedStrings.gTipGetIP;
               // cntScaleTimerMgr.stopCntScaleTimer();
               _startGetIP(2);
             } else {
@@ -177,10 +177,10 @@ class WifiSettingPageState extends State<WifiSettingPage> {
         setState(() {
           myRespDataFromScale = event.obj;
           if (myRespDataFromScale.msgBody.isNotEmpty) {
-            if (myRespDataFromScale.msgBody.contains('ok')) {
+            if (myRespDataFromScale.msgBody.contains(msgOk)) {
               isConnecting = false;
               if (alreadyConnected) {
-                errorMessage = 'Obtaining IP, please wait...';
+                errorMessage = localizedStrings.gTipGetIP;
                 // cntScaleTimerMgr.stopCntScaleTimer();
               } else {
                 // cntScaleTimerMgr.stopCntScaleTimer();
@@ -191,7 +191,10 @@ class WifiSettingPageState extends State<WifiSettingPage> {
             }
           }
         });
-        PublicFunctions.getApInfo(1);
+        if (firstGetApList) {
+          PublicFunctions.getApInfo(1);
+          firstGetApList = false;
+        }
       }
     });
 
@@ -206,9 +209,9 @@ class WifiSettingPageState extends State<WifiSettingPage> {
               ipController.text = myIpInfoData.iP!;
               gateWayController.text = myIpInfoData.gateway!;
               netMaskController.text = myIpInfoData.netmask!;
-              errorMessage = 'Get Ip OK !';
+              errorMessage = localizedStrings.gTipGetIpOk;
             } else {
-              errorMessage = 'Get ip fail !';
+              errorMessage = localizedStrings.gTipGetIpFail;
             }
             // cntScaleTimerMgr.stopCntScaleTimer();
             PublicFunctions.getIpMode(1);
@@ -221,7 +224,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
       if (mounted) {
         setState(() {
           myMessageError = event.obj;
-          if (!errorMessage.contains('ok')) {
+          if (!errorMessage.contains(msgOk)) {
             errorMessage = myMessageError.messagedata!;
           }
         });
@@ -232,7 +235,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
       if (mounted) {
         setState(() {
           myGetIpError = event.obj;
-          if (!myGetIpError.messagedata!.contains('ok')) {
+          if (!myGetIpError.messagedata!.contains(msgOk)) {
             errorMessage = myGetIpError.messagedata!;
           }
           // cntScaleTimerMgr.stopCntScaleTimer();
@@ -247,9 +250,9 @@ class WifiSettingPageState extends State<WifiSettingPage> {
         setState(() {
           myRespGetIpMode = event.obj;
           if (myRespGetIpMode.messagedata!.isNotEmpty) {
-            if (myRespGetIpMode.messagedata == 'dhcp') {
+            if (myRespGetIpMode.messagedata == wifiDhcp) {
               _isStatic = false;
-            } else if (myRespGetIpMode.messagedata == 'static') {
+            } else if (myRespGetIpMode.messagedata == wifiStatic) {
               _isStatic = true;
             }
           }
@@ -303,9 +306,9 @@ class WifiSettingPageState extends State<WifiSettingPage> {
         setState(() {
           myRespDataFromScale = event.obj;
           if (myRespDataFromScale.msgBody.isNotEmpty) {
-            if (myRespDataFromScale.msgBody.contains('ok')) {
+            if (myRespDataFromScale.msgBody.contains(msgOk)) {
               isConnecting = false;
-              errorMessage = 'Obtaining IP, please wait...';
+              errorMessage = localizedStrings.gTipGetIP;
               cntScaleTimerMgr.stopCntScaleTimer();
             } else {
               isConnecting = false;
@@ -322,7 +325,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
       if (mounted) {
         setState(() {
           myRespDataFromScale = event.obj;
-          if (myRespDataFromScale.msgBody.contains('ok')) {
+          if (myRespDataFromScale.msgBody.contains(msgOk)) {
             myComScaleInfo.isOnline = true;
             cntScaleTimerMgr.stopCntScaleTimer();
             // PublicFunctions.getWifiList(1);
@@ -372,7 +375,6 @@ class WifiSettingPageState extends State<WifiSettingPage> {
 
   @override
   Widget build(BuildContext context) {
-    setMessage = localizedStrings.set_wifi_success;
     // final _width = MediaQuery.of(context).size.width;
     // final _height = MediaQuery.of(context).size.height;
 
@@ -402,7 +404,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                               SizedBox(
                                 width: 40, // 为Container指定一个固定的宽度
                                 child: Tooltip(
-                                  message: localizedStrings.refresh_tip,
+                                  message: localizedStrings.gMsgRefresh,
                                   child: IconButton(
                                     splashRadius: 20,
                                     onPressed: _enableRefresh
@@ -458,7 +460,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                       color:
                                           Theme.of(context).colorScheme.primary,
                                     ),
-                                    labelText: localizedStrings.find_ssid,
+                                    labelText: localizedStrings.gFindSsid,
                                     floatingLabelBehavior:
                                         FloatingLabelBehavior.never,
                                     border: OutlineInputBorder(
@@ -602,7 +604,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                         ),
                                         Center(
                                           child: Text(
-                                            localizedStrings.network_setting,
+                                            localizedStrings.gNetworkSetting,
                                             style: TextStyle(
                                               fontSize: 40,
                                               color: Theme.of(context)
@@ -628,7 +630,8 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                                   alignment:
                                                       Alignment.centerLeft,
                                                   child: Text(
-                                                    "Connected AP Info:",
+                                                    localizedStrings
+                                                        .gTipConnectedInfo,
                                                     textAlign: TextAlign.right,
                                                     style: TextStyle(
                                                       fontSize: 14,
@@ -694,14 +697,14 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: [
-                                            const SizedBox(
+                                            SizedBox(
                                               height: 40,
                                               width: 200,
                                               child: Align(
                                                 alignment:
                                                     Alignment.centerRight,
                                                 child: Text(
-                                                  "SSID:",
+                                                  localizedStrings.gTipSSID,
                                                   textAlign: TextAlign.right,
                                                   style: TextStyle(
                                                     fontSize: 20,
@@ -770,7 +773,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                                 alignment:
                                                     Alignment.centerRight,
                                                 child: Text(
-                                                  localizedStrings.password,
+                                                  localizedStrings.gPassword,
                                                   textAlign: TextAlign.right,
                                                   style: const TextStyle(
                                                     fontSize: 20,
@@ -834,7 +837,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                           height: 20,
                                         ),
                                         buildCommonRow(
-                                          localizedStrings.ip_address,
+                                          localizedStrings.gIpAddress,
                                           15,
                                           ipaddressRegex,
                                           _isValidIP,
@@ -849,7 +852,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                           _isStatic,
                                         ),
                                         buildCommonRow(
-                                          localizedStrings.netmask,
+                                          localizedStrings.gNetmask,
                                           15,
                                           ipaddressRegex,
                                           _isValidMask,
@@ -864,7 +867,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                           _isStatic,
                                         ),
                                         buildCommonRow(
-                                          localizedStrings.gateway,
+                                          localizedStrings.gGateway,
                                           15,
                                           ipaddressRegex,
                                           _isValidGateway,
@@ -898,7 +901,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                                     fontSize: 20,
                                                     color: (errorMessage
                                                                 .contains(
-                                                                    'ok') ||
+                                                                    msgOk) ||
                                                             errorMessage
                                                                 .contains('OK'))
                                                         ? Theme.of(context)
@@ -946,8 +949,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                               btnHeight: 40,
                                               icon:
                                                   Icons.check_box_outline_blank,
-                                              text: localizedStrings
-                                                  .button_static,
+                                              text: localizedStrings.gBtnStatic,
                                               onPressed:
                                                   (_isStatic || isConnecting)
                                                       ? null
@@ -955,7 +957,8 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                                           setState(() {
                                                             _isStatic = true;
                                                             errorMessage =
-                                                                'Enter IP information and click the connect button!';
+                                                                localizedStrings
+                                                                    .gTipConnectStaticIp;
                                                           });
 
                                                           // sendDataToWifi();
@@ -969,8 +972,8 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                               btnHeight: 40,
                                               icon: Icons
                                                   .wifi_protected_setup_outlined,
-                                              text: localizedStrings
-                                                  .button_dynamic,
+                                              text:
+                                                  localizedStrings.gBtnDynamic,
                                               onPressed:
                                                   (_isStatic && !isConnecting)
                                                       ? () {
@@ -994,13 +997,15 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                               btnWidth: 120,
                                               btnHeight: 40,
                                               icon: Icons.wifi,
-                                              text: localizedStrings.button_set,
+                                              text:
+                                                  localizedStrings.gBtnConnect,
                                               onPressed: (isValidData() &&
                                                       !isConnecting)
                                                   ? () {
                                                       setState(() {
                                                         errorMessage =
-                                                            'Connecting...';
+                                                            localizedStrings
+                                                                .gTipConnecting;
                                                       });
                                                       isConnecting = true;
                                                       cntScaleTimerMgr
@@ -1091,13 +1096,18 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     myWifiPwdInfo.pwd = passwordController.text;
     String wifiStr = jsonEncode(myWifiPwdInfo).toString();
     PublicFunctions.addWifiPwd(wifiStr);
+    WifiPwdInfoList wifiInfo = WifiPwdInfoList(
+        id: myWifiPwdInfoList.length,
+        ssid: myWifiPwdInfo.ssid!,
+        pwd: myWifiPwdInfo.pwd!);
+    myWifiPwdInfoList.add(wifiInfo);
   }
 
   void connectDynamicIp() {
     if (myWiFiAPInfo.ssid == ssidController.text &&
         myWiFiAPInfo.bssid == bssId) {
       isConnecting = false;
-      errorMessage = 'You are already connected!';
+      errorMessage = localizedStrings.gTipConnected;
     } else {
       myRespDataFromScale.msgBody = '';
       connectAp();

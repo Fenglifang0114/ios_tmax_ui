@@ -6,7 +6,6 @@ import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 import '../functions/methods.dart';
 import 'manager_scale_channel.dart';
-import 'productlist_data.dart';
 import 'record_data.dart';
 import 'scalecmd_data.dart';
 import 'settingparam_data.dart';
@@ -17,22 +16,28 @@ void addDBdataToReport(List<WeightReportData> myWeightReportData,
   List<WeightRecords>? dbRecs = myGetScaleRecords.weightRecords;
   for (var i = 0; i < dbRecs!.length; i++) {
     myWeightReportData.add(WeightReportData(
-      (dbRecs[i].recId).toString(),
-      convertDateTime(
-          dbRecs[i].createdAt!, myModeSetting.dateSeparator, dateformat),
-      (dbRecs[i].weight == null) ? '' : dbRecs[i].weight!,
-      (dbRecs[i].weightUnit == null) ? '' : dbRecs[i].weightUnit!, //重量单位
-      (myProductRecInfo.id == null) ? "" : myProductRecInfo.id.toString(),
-      (dbRecs[i].product == null) ? '' : dbRecs[i].product!,
-      (dbRecs[i].pluRemarks == null) ? '' : dbRecs[i].pluRemarks!,
-      (dbRecs[i].pretare == null) ? '' : dbRecs[i].pretare!,
-      (dbRecs[i].userName == null) ? '' : dbRecs[i].userName!,
-      (dbRecs[i].userNo == null) ? '' : dbRecs[i].userNo!,
-      (dbRecs[i].userRemarks == null)
-          ? ''
-          : dbRecs[i].userRemarks!, //userremarks
-      (dbRecs[i].scaleName == null) ? '' : dbRecs[i].scaleName!,
-    ));
+        (dbRecs[i].id == null) ? "" : dbRecs[i].id!,
+        (dbRecs[i].scaleModel == null) ? '' : dbRecs[i].scaleModel!,
+        (dbRecs[i].scaleSn == null) ? '' : dbRecs[i].scaleSn!,
+        (dbRecs[i].plu == null) ? '' : dbRecs[i].plu!,
+        (dbRecs[i].productCode == null) ? '' : dbRecs[i].productCode!,
+        (dbRecs[i].itemCode == null) ? '' : dbRecs[i].itemCode!,
+        (dbRecs[i].category == null) ? '' : dbRecs[i].category!,
+        (dbRecs[i].productName == null) ? '' : dbRecs[i].productName!,
+        (dbRecs[i].generalUnit == null) ? '' : dbRecs[i].generalUnit!,
+        (dbRecs[i].taxType == null) ? '' : dbRecs[i].taxType!,
+        (dbRecs[i].price == null) ? '' : dbRecs[i].price!,
+        (dbRecs[i].unitWeight == null) ? '' : dbRecs[i].unitWeight!,
+        (dbRecs[i].pretare == null) ? '' : dbRecs[i].pretare!,
+        (dbRecs[i].limitHigh == null) ? '' : dbRecs[i].limitHigh!,
+        (dbRecs[i].limitLow == null) ? '' : dbRecs[i].limitLow!,
+        (dbRecs[i].weight == null) ? '' : dbRecs[i].weight!,
+        (dbRecs[i].weightUnit == null) ? '' : dbRecs[i].weightUnit!,
+        (dbRecs[i].userNo == null) ? '' : dbRecs[i].userNo!,
+        (dbRecs[i].userName == null) ? '' : dbRecs[i].userName!,
+        (dbRecs[i].scaleName == null) ? '' : dbRecs[i].scaleName!,
+        convertDateTime(
+            dbRecs[i].createdAt!, myModeSetting.dateSeparator, dateformat)));
   }
 }
 
@@ -93,28 +98,40 @@ String getDateTime(String dateSeparator, int dateformat) {
 // 根据列名获取对应的数据
 dynamic getValueForColumn(WeightReportData reportData, String columnName) {
   switch (columnName) {
-    case 'NO':
+    case 'Id':
       return reportData.id;
     case 'Date Time':
-      return reportData.dateTime;
+      return reportData.createdAt;
+    case 'PLU':
+      return reportData.plu;
+    case 'Product Code':
+      return reportData.productCode;
+    case 'Item Code':
+      return reportData.itemCode;
+    case 'PLU Name':
+      return reportData.productName;
+    case 'Price':
+      return reportData.price;
+    case 'GeneralUnit':
+      return reportData.generalUnit;
+    case 'TaxType':
+      return reportData.taxType;
+    case 'UnitWeight':
+      return reportData.unitWeight;
+    case 'LimitHigh':
+      return reportData.limitHigh;
+    case 'LimitLow':
+      return reportData.limitLow;
     case 'Weight':
       return reportData.weight;
     case 'Weight Unit':
       return reportData.weightUnit;
-    case 'PLU NO.':
-      return reportData.plu;
-    case 'PLU Name':
-      return reportData.pluName;
-    case 'PLU Remarks':
-      return reportData.pluRemarks;
     case 'Pretare':
       return reportData.pretare;
     case 'User NO.':
       return reportData.userNo;
     case 'User Name':
       return reportData.userName;
-    case 'User Remarks':
-      return reportData.userRemarks;
     case 'Scale Name':
       return reportData.scaleName;
     // 其他属性的处理类似
@@ -126,8 +143,12 @@ dynamic getValueForColumn(WeightReportData reportData, String columnName) {
 creatExcelFile(
     String path, List<WeightReportData> myWeightReportData, Excel excel) {
   List<String> title = [];
-  title.add('RecId');
-  title.addAll(myReportFields.filedsList);
+  List<String> selectedShowNameList = myReportFeildsMap.values
+      .where((ReportShowName reportShowName) => reportShowName.isSelect)
+      .map((ReportShowName reportShowName) => reportShowName.showName)
+      .toList();
+
+  title.addAll(selectedShowNameList);
   Sheet sh = excel['Sheet1'];
   for (var i = 0; i < title.length; i++) {
     sh.cell(CellIndex.indexByColumnRow(rowIndex: 0, columnIndex: i)).value =
@@ -137,7 +158,7 @@ creatExcelFile(
   for (int row = 1; row <= myWeightReportData.length; row++) {
     for (int col = 0; col < title.length; col++) {
       switch (title[col]) {
-        case 'RecId':
+        case 'Id':
           sh
               .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
               .value = TextCellValue(myWeightReportData[row - 1].id);
@@ -145,7 +166,57 @@ creatExcelFile(
         case 'Date Time':
           sh
               .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-              .value = TextCellValue(myWeightReportData[row - 1].dateTime);
+              .value = TextCellValue(myWeightReportData[row - 1].createdAt);
+          break;
+        case 'PLU':
+          sh
+              .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+              .value = TextCellValue(myWeightReportData[row - 1].plu);
+          break;
+        case 'Product Code':
+          sh
+              .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+              .value = TextCellValue(myWeightReportData[row - 1].productCode);
+          break;
+        case 'Item Code':
+          sh
+              .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+              .value = TextCellValue(myWeightReportData[row - 1].itemCode);
+          break;
+        case 'PLU Name':
+          sh
+              .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+              .value = TextCellValue(myWeightReportData[row - 1].productName);
+          break;
+        case 'Price':
+          sh
+              .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+              .value = TextCellValue(myWeightReportData[row - 1].price);
+          break;
+        case 'GeneralUnit':
+          sh
+              .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+              .value = TextCellValue(myWeightReportData[row - 1].generalUnit);
+          break;
+        case 'TaxType':
+          sh
+              .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+              .value = TextCellValue(myWeightReportData[row - 1].taxType);
+          break;
+        case 'UnitWeight':
+          sh
+              .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+              .value = TextCellValue(myWeightReportData[row - 1].unitWeight);
+          break;
+        case 'LimitHigh':
+          sh
+              .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+              .value = TextCellValue(myWeightReportData[row - 1].limitHigh);
+          break;
+        case 'LimitLow':
+          sh
+              .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+              .value = TextCellValue(myWeightReportData[row - 1].limitLow);
           break;
         case 'Weight':
           sh
@@ -157,40 +228,20 @@ creatExcelFile(
               .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
               .value = TextCellValue(myWeightReportData[row - 1].weightUnit);
           break;
-        case 'PLU NO.':
-          sh
-              .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-              .value = TextCellValue(myWeightReportData[row - 1].plu);
-          break;
-        case 'PLU Name':
-          sh
-              .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-              .value = TextCellValue(myWeightReportData[row - 1].pluName);
-          break;
-        case 'PLU Remarks':
-          sh
-              .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-              .value = TextCellValue(myWeightReportData[row - 1].pluRemarks);
-          break;
         case 'Pretare':
           sh
               .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
               .value = TextCellValue(myWeightReportData[row - 1].pretare);
           break;
-        case 'User Name':
-          sh
-              .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-              .value = TextCellValue(myWeightReportData[row - 1].userName);
-          break;
-        case 'User Remarks':
-          sh
-              .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-              .value = TextCellValue(myWeightReportData[row - 1].userRemarks);
-          break;
         case 'User NO.':
           sh
               .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
               .value = TextCellValue(myWeightReportData[row - 1].userNo);
+          break;
+        case 'User Name':
+          sh
+              .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+              .value = TextCellValue(myWeightReportData[row - 1].userName);
           break;
         case 'Scale Name':
           sh
@@ -208,16 +259,20 @@ creatExcelFile(
 
 List<GridColumn> getColumns() {
   List<GridColumn> columns = [];
-  List<String> columnNames = myReportFields.filedsList;
-  columns.add(GridColumn(
-      columnName: 'NO',
-      label: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          alignment: Alignment.center,
-          child: const Text(
-            'NO',
-            overflow: TextOverflow.ellipsis,
-          ))));
+  List<String> columnNames = myReportFeildsMap.values
+      .where((ReportShowName reportShowName) => reportShowName.isSelect)
+      .map((ReportShowName reportShowName) => reportShowName.showName)
+      .toList();
+
+  // columns.add(GridColumn(
+  //     columnName: 'NO',
+  //     label: Container(
+  //         padding: const EdgeInsets.symmetric(horizontal: 8.0),
+  //         alignment: Alignment.center,
+  //         child: const Text(
+  //           'NO',
+  //           overflow: TextOverflow.ellipsis,
+  //         ))));
 
   for (String columnName in columnNames) {
     columns.add(
@@ -242,20 +297,28 @@ void sendRptDataToDB(
   var currentData = myWeightReportData[myWeightReportData.length - 1];
   myScaleCmd.cmdMode = "add_rec";
   myAddScaleRecord.scaleId = myDefScaleInfo.defScaleId!;
-  myAddScaleRecord.price = '0.0';
-  myAddScaleRecord.scaleMode = weighingTakeInMode;
-  myAddScaleRecord.scaleModel = myDefScaleInfo.defScaleModel;
-  myAddScaleRecord.scaleSn = myDefScaleInfo.defScaleSn;
-  myAddScaleRecord.scaleName = myDefScaleInfo.defScaleName;
-  myAddScaleRecord.product = currentData.pluName;
-  myAddScaleRecord.weight = currentData.weight.toString();
-  myAddScaleRecord.pluNo = currentData.plu;
-  myAddScaleRecord.pluRemarks = currentData.pluRemarks;
-  myAddScaleRecord.weightUnit = currentData.weightUnit;
+  myAddScaleRecord.id = currentData.id;
+  myAddScaleRecord.scaleModel = currentData.scaleModel;
+  myAddScaleRecord.scaleSn = currentData.scaleSn;
+  myAddScaleRecord.plu = currentData.plu;
+  myAddScaleRecord.productCode = currentData.productCode;
+  myAddScaleRecord.itemCode = currentData.itemCode;
+  myAddScaleRecord.category = currentData.category;
+  myAddScaleRecord.productName = currentData.productName;
+  myAddScaleRecord.generalUnit = currentData.generalUnit;
+  myAddScaleRecord.taxType = currentData.taxType;
+  myAddScaleRecord.price = currentData.price;
+  myAddScaleRecord.unitWeight = currentData.unitWeight;
   myAddScaleRecord.pretare = currentData.pretare;
+  myAddScaleRecord.limitHigh = currentData.limitHigh;
+  myAddScaleRecord.limitLow = currentData.limitLow;
+  myAddScaleRecord.weight = currentData.weight;
+  myAddScaleRecord.weightUnit = currentData.weightUnit;
   myAddScaleRecord.userNo = currentData.userNo;
   myAddScaleRecord.userName = currentData.userName;
-  myAddScaleRecord.userRemarks = currentData.userRemarks;
+  myAddScaleRecord.scaleName = currentData.scaleName;
+  myAddScaleRecord.scaleMode = wgtMode;
+
   myScaleCmd.cmdData = jsonEncode(myAddScaleRecord);
   PublicFunctions.sendMsg(myDefScaleInfo.defScaleId!, jsonEncode(myScaleCmd));
 }

@@ -140,7 +140,12 @@ class HighLowSettingDialogState extends State<HighLowSettingDialog> {
                         ],
                       ),
                       const SizedBox(
-                        height: 60,
+                        height: 20,
+                      ),
+                      Text('The unit of weight is the same as scale..',
+                          textAlign: TextAlign.right),
+                      const SizedBox(
+                        height: 30,
                       ),
                       SizedBox(
                         width: 400,
@@ -180,7 +185,7 @@ class HighLowSettingDialogState extends State<HighLowSettingDialog> {
                 btnWidth: 120,
                 btnHeight: 40,
                 icon: Icons.check_circle,
-                text: localizedStrings.button_ok,
+                text: localizedStrings.gBtnConfirm,
                 onPressed: () {
                   Navigator.of(context).pop();
                 }),
@@ -189,7 +194,7 @@ class HighLowSettingDialogState extends State<HighLowSettingDialog> {
                 btnWidth: 120,
                 btnHeight: 40,
                 icon: Icons.cancel,
-                text: localizedStrings.button_cancel,
+                text: localizedStrings.gBtnCancel,
                 onPressed: () {
                   Navigator.of(context).pop();
                 })

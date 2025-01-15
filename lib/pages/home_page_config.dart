@@ -16,7 +16,8 @@ import '../data/downloadresponse.dart';
 import '../data/language.dart';
 import '../data/screen_mgr.dart';
 import '../data/timer_manager.dart';
-import '../dialog/get_build_info_dialog.dart';
+
+import '../dialog/exit_app_dialog.dart';
 import '../dialog/language_setting.dart';
 import '../functions/methods.dart';
 import '../generated/l10n.dart';
@@ -27,21 +28,19 @@ import '../widget/custom_circle_icon.dart';
 import '../widget/custom_setting.dart';
 import '../dialog/license_info.dart';
 import '../widget/home_page_widget.dart';
-import '../widget/update_firmware.dart';
 import '../widget/version.dart';
 import 'basic_data_page.dart';
-import 'batch_delivery.dart';
 import 'custom_serial_protocol_page.dart';
 import 'down_recipt_fmt_page.dart';
 import 'down_serial_output.dart';
-import 'firmware_down_wifi.dart';
 import 'lable_down_prn_fmt_page.dart';
-import 'modify_com_port_page.dart';
 import 'receipt_design_page.dart';
 import 'scale_manager_page.dart';
 import 'set_system_parameter.dart';
 import 'set_system_time.dart';
 import 'package:tray_manager/tray_manager.dart';
+
+import 'update_firmware_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -65,9 +64,10 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
   dynamic _eventbus6;
   dynamic _eventbus7;
   dynamic _eventbus8;
+  dynamic _eventbus9;
 
-  bool showHint1 = true;
-  bool showHint2 = true;
+  bool showHint1 = false;
+  bool showHint2 = false;
 
   bool isResize = false;
 
@@ -85,6 +85,8 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
       Platform.isWindows ? 'assets/images/app.ico' : 'assets/images/app.png',
     );
     setState(() {});
+    await windowManager.setPreventClose(true); //关闭前确认
+    setState(() {});
   }
 
   @override
@@ -96,6 +98,33 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
   @override
   void onWindowResize() {
     isResize = true;
+  }
+
+  @override
+  void onWindowClose() async {
+    bool isPreventClose = await windowManager.isPreventClose();
+    if (isPreventClose) {
+      showDialog(
+        context: context,
+        barrierDismissible: false, // 允许点击空白处关闭对话框
+        builder: (context) {
+          return CustomAlertDialog(
+            titleText: localizedStrings.gTipExitApp,
+            onNoPressed: () {
+              Navigator.of(context).pop();
+            },
+            onYesPressed: () {
+              Navigator.of(context).pop();
+              // await windowManager.destroy();
+              dispose();
+              // await windowManager.destroy();
+              exit(0);
+              // windowManager.destroy();
+            },
+          );
+        },
+      );
+    }
   }
 
   @override
@@ -114,11 +143,6 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
   }
 
   @override
-  void onWindowClose() {
-    // 关闭工厂模式（所有秤都关闭吗？）
-  }
-
-  @override
   void initState() {
     trayManager.addListener(this);
     windowManager.addListener(this);
@@ -130,7 +154,6 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
     super.initState();
     _pageScrollerController = ScrollController();
     cntScaleTimerMgr.startCntScaleTimer(5);
-    PublicFunctions.getWifiPwdList();
 
     _eventbus1 = eventBus.on<EventDialogData>().listen((event) {
       if (mounted) {
@@ -232,6 +255,13 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
         }
       }
     });
+
+    _eventbus9 = eventBus.on<EventServiceOff>().listen((event) {
+      setState(() {
+        showServiceErrorDialog(context, localizedStrings.gTipServiceOff,
+            localizedStrings.gTitleConfirm);
+      });
+    });
   }
 
   @override
@@ -243,6 +273,7 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
     _eventbus6.cancel();
     _eventbus7.cancel();
     _eventbus8.cancel();
+    _eventbus9.cancel();
 
     _pageScrollerController.dispose();
     cntScaleTimerMgr.stopCntScaleTimer();
@@ -319,6 +350,7 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
                       width: 360,
                       height: 50,
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           CustomSettingButton(onRefresh: () {
                             setState(() {});
@@ -332,37 +364,37 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
                           const SizedBox(
                             width: 20,
                           ),
-                          Expanded(
-                            child: Text(localizedStrings.serial_port_status,
-                                overflow: TextOverflow.ellipsis,
-                                textAlign: TextAlign.right,
-                                maxLines: 1,
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onPrimary)),
-                          ),
-                          const SizedBox(
-                            width: 20,
-                          ),
-                          (myComScaleInfo.isOnline)
-                              ? CustomCircleIcon(
-                                  outerColor:
-                                      Theme.of(context).colorScheme.primary,
-                                  innerColor:
-                                      Theme.of(context).colorScheme.onPrimary,
-                                  icon: Icons.check_circle,
-                                  size: 24.0,
-                                )
-                              : CustomCircleIcon(
-                                  outerColor:
-                                      Theme.of(context).colorScheme.error,
-                                  innerColor:
-                                      Theme.of(context).colorScheme.onPrimary,
-                                  icon: Icons.cancel,
-                                  size: 24.0,
-                                ),
+                          // Expanded(
+                          //   child: Text(localizedStrings.gSerialPortStatus,
+                          //       overflow: TextOverflow.ellipsis,
+                          //       textAlign: TextAlign.right,
+                          //       maxLines: 1,
+                          //       style: TextStyle(
+                          //           fontSize: 20,
+                          //           color: Theme.of(context)
+                          //               .colorScheme
+                          //               .onPrimary)),
+                          // ),
+                          // const SizedBox(
+                          //   width: 20,
+                          // ),
+                          // (myComScaleInfo.isOnline)
+                          //     ? CustomCircleIcon(
+                          //         outerColor:
+                          //             Theme.of(context).colorScheme.primary,
+                          //         innerColor:
+                          //             Theme.of(context).colorScheme.onPrimary,
+                          //         icon: Icons.check_circle,
+                          //         size: 24.0,
+                          //       )
+                          //     : CustomCircleIcon(
+                          //         outerColor:
+                          //             Theme.of(context).colorScheme.error,
+                          //         innerColor:
+                          //             Theme.of(context).colorScheme.onPrimary,
+                          //         icon: Icons.cancel,
+                          //         size: 24.0,
+                          //       ),
                           const SizedBox(
                             width: 20,
                           ),
@@ -406,7 +438,8 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                SizedBox(width: 100, child: Image.asset(companyImage)),
+                SizedBox(
+                    width: 100, height: 30, child: Image.asset(companyImage)),
               ],
             ),
           ],
@@ -451,96 +484,96 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
               ),
               Expanded(
                 child: ListView(children: [
-                  (myComScaleSn.modelName != null)
-                      ? SizedBox(
-                          height: 90,
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  const SizedBox(
-                                    width: 30,
-                                  ),
-                                  Flexible(
-                                    child: Text(
-                                      localizedStrings.scale_name,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    const SizedBox(
-                                      width: 30,
-                                    ),
-                                    Flexible(
-                                      child: Text(
-                                        myComScaleSn.modelName!,
-                                        maxLines: 1,
-                                        textAlign: TextAlign.start,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ]),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  const SizedBox(
-                                    width: 30,
-                                  ),
-                                  Flexible(
-                                    child: Text(
-                                      localizedStrings.scale_sn,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    const SizedBox(
-                                      width: 30,
-                                    ),
-                                    Flexible(
-                                      child: Text(
-                                        myComScaleSn.scaleSn!,
-                                        maxLines: 1,
-                                        textAlign: TextAlign.start,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ]),
-                            ],
-                          ),
-                        )
-                      : const SizedBox(),
-                  MouseRegion(
-                    cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                    child: GestureDetector(
-                      onTap: () {
-                        stopCheckSerialPort();
-                        setState(() {
-                          PublicFunctions.getPortList();
-                          showComPortDialog(context);
-                        });
-                      },
-                      child: customFunctionCard(
-                          context,
-                          localizedStrings.title_serial_port_connection,
-                          Icons.cable,
-                          true),
-                    ),
-                  ),
+                  // (myComScaleSn.modelName != null)
+                  //     ? SizedBox(
+                  //         height: 90,
+                  //         child: Column(
+                  //           children: [
+                  //             Row(
+                  //               mainAxisAlignment: MainAxisAlignment.start,
+                  //               children: [
+                  //                 const SizedBox(
+                  //                   width: 30,
+                  //                 ),
+                  //                 Flexible(
+                  //                   child: Text(
+                  //                     localizedStrings.gModelName,
+                  //                     maxLines: 1,
+                  //                     overflow: TextOverflow.ellipsis,
+                  //                   ),
+                  //                 ),
+                  //               ],
+                  //             ),
+                  //             Row(
+                  //                 mainAxisAlignment: MainAxisAlignment.start,
+                  //                 children: [
+                  //                   const SizedBox(
+                  //                     width: 30,
+                  //                   ),
+                  //                   Flexible(
+                  //                     child: Text(
+                  //                       myComScaleSn.modelName!,
+                  //                       maxLines: 1,
+                  //                       textAlign: TextAlign.start,
+                  //                       style: const TextStyle(
+                  //                           fontWeight: FontWeight.bold),
+                  //                       overflow: TextOverflow.ellipsis,
+                  //                     ),
+                  //                   ),
+                  //                 ]),
+                  //             Row(
+                  //               mainAxisAlignment: MainAxisAlignment.start,
+                  //               children: [
+                  //                 const SizedBox(
+                  //                   width: 30,
+                  //                 ),
+                  //                 Flexible(
+                  //                   child: Text(
+                  //                     localizedStrings.gScaleSn,
+                  //                     maxLines: 1,
+                  //                     overflow: TextOverflow.ellipsis,
+                  //                   ),
+                  //                 ),
+                  //               ],
+                  //             ),
+                  //             Row(
+                  //                 mainAxisAlignment: MainAxisAlignment.start,
+                  //                 children: [
+                  //                   const SizedBox(
+                  //                     width: 30,
+                  //                   ),
+                  //                   Flexible(
+                  //                     child: Text(
+                  //                       myComScaleSn.scaleSn!,
+                  //                       maxLines: 1,
+                  //                       textAlign: TextAlign.start,
+                  //                       style: const TextStyle(
+                  //                           fontWeight: FontWeight.bold),
+                  //                       overflow: TextOverflow.ellipsis,
+                  //                     ),
+                  //                   ),
+                  //                 ]),
+                  //           ],
+                  //         ),
+                  //       )
+                  //     : const SizedBox(),
+                  // MouseRegion(
+                  //   cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                  //   child: GestureDetector(
+                  //     onTap: () {
+                  //       stopCheckSerialPort();
+                  //       setState(() {
+                  //         PublicFunctions.getPortList();
+                  //         showComPortDialog(context);
+                  //       });
+                  //     },
+                  //     child: customFunctionCard(
+                  //         context,
+                  //         localizedStrings.gTitleSerialPortConnection,
+                  //         Icons.cable,
+                  //         true),
+                  //   ),
+                  // ),
                   MouseRegion(
                     cursor: SystemMouseCursors.click, // 设置光标为手的形状
                     child: GestureDetector(
@@ -664,33 +697,17 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
                           onTap: () {
                             setState(() {
                               stopCheckSerialPort();
-                              showUpdateFirmWareDialog(context);
-                            });
-                          },
-                          child: customFunctionCard(
-                              context,
-                              localizedStrings.update_firmware,
-                              Icons.update,
-                              true),
-                        ),
-                      ),
-                      MouseRegion(
-                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              stopCheckSerialPort();
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        const FirmwareDownPage()),
+                                        const UpdateFirmwarePage()),
                               ).then((value) => _updateStatus());
                             });
                           },
                           child: customFunctionCard(
                               context,
-                              localizedStrings.firm_down_online,
+                              localizedStrings.gTitleUpdateFirmware,
                               Icons.cloud_upload_outlined,
                               true),
                         ),
@@ -709,8 +726,8 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
                           },
                           child: customFunctionCard(
                               context,
-                              localizedStrings.label_fmt_download,
-                              Icons.arrow_circle_down_outlined,
+                              localizedStrings.gTitleLabelFmtDownload,
+                              Icons.design_services,
                               true),
                         ),
                       ),
@@ -727,46 +744,31 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
                           },
                           child: customFunctionCard(
                             context,
-                            localizedStrings.receipt_format_download,
-                            Icons.receipt_long_outlined,
+                            localizedStrings.gTitleReceiptDownload,
+                            Icons.receipt,
                             true,
                           ),
                         ),
                       ),
-                      MouseRegion(
-                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                        child: GestureDetector(
-                          onTap: () {
-                            stopCheckSerialPort();
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const DownSerialOutputPage()),
-                            ).then((value) => _updateStatus());
-                          },
-                          child: customFunctionCard(
-                              context,
-                              localizedStrings.serial_output_download,
-                              Icons.file_download_outlined,
-                              true),
-                        ),
-                      ),
-                      MouseRegion(
-                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              showBuildInfo();
-                            });
-                          },
-                          child: customFunctionCard(
-                              context,
-                              localizedStrings.get_build_info,
-                              Icons.privacy_tip,
-                              true),
-                        ),
-                      ),
+                      // MouseRegion(
+                      //   cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                      //   child: GestureDetector(
+                      //     onTap: () {
+                      //       stopCheckSerialPort();
+                      //       Navigator.push(
+                      //         context,
+                      //         MaterialPageRoute(
+                      //             builder: (context) =>
+                      //                 const DownSerialOutputPage()),
+                      //       ).then((value) => _updateStatus());
+                      //     },
+                      //     child: customFunctionCard(
+                      //         context,
+                      //         localizedStrings.gTitleSerialOutputDownload,
+                      //         Icons.file_download_outlined,
+                      //         true),
+                      //   ),
+                      // ),
                     ]),
                   ),
                   if (showHint1)
@@ -841,33 +843,33 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
                                 : null,
                             child: customFunctionCard(
                               context,
-                              localizedStrings.receipt_design_title,
+                              localizedStrings.gTitleReceiptDesign,
                               Icons.receipt,
                               myTConLicInfo.isValid,
                             ),
                           ),
                         ),
-                        MouseRegion(
-                          cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                          child: GestureDetector(
-                            onTap: myTConLicInfo.isValid
-                                ? () {
-                                    stopCheckSerialPort();
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const BatchDeliveryPage()),
-                                    ).then((value) => _updateStatus());
-                                  }
-                                : null,
-                            child: customFunctionCard(
-                                context,
-                                localizedStrings.batch_delivery_title,
-                                Icons.system_update_alt,
-                                myTConLicInfo.isValid),
-                          ),
-                        ),
+                        // MouseRegion(
+                        //   cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                        //   child: GestureDetector(
+                        //     onTap: myTConLicInfo.isValid
+                        //         ? () {
+                        //             stopCheckSerialPort();
+                        //             Navigator.push(
+                        //               context,
+                        //               MaterialPageRoute(
+                        //                   builder: (context) =>
+                        //                       const BatchDeliveryPage()),
+                        //             ).then((value) => _updateStatus());
+                        //           }
+                        //         : null,
+                        //     child: customFunctionCard(
+                        //         context,
+                        //         localizedStrings.batch_delivery_title,
+                        //         Icons.system_update_alt,
+                        //         myTConLicInfo.isValid),
+                        //   ),
+                        // ),
                         MouseRegion(
                           cursor: SystemMouseCursors.click, // 设置光标为手的形状
                           child: GestureDetector(
@@ -884,7 +886,7 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
                                 : null,
                             child: customFunctionCard(
                                 context,
-                                localizedStrings.serial_output_design,
+                                localizedStrings.gTitleSerialOutput,
                                 Icons.usb_sharp,
                                 myTConLicInfo.isValid),
                           ),
@@ -975,7 +977,7 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
     });
     final viewportDimension = MediaQuery.of(context).size.height;
 
-    if (viewportDimension > 880) {
+    if (viewportDimension > 300) {
       setState(() {
         showHint1 = false;
         showHint2 = false;
@@ -998,7 +1000,7 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
       });
     }
 
-    if (viewportDimension > 700) {
+    if (viewportDimension > 300) {
       setState(() {
         showHint2 = false;
       });
@@ -1047,17 +1049,6 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
     }
   }
 
-  void showBuildInfo() {
-    stopCheckSerialPort();
-    showDialog(
-      context: context,
-      barrierDismissible: false, // 允许点击空白处关闭对话框
-      builder: (context) {
-        return const GetBuildInfoPage();
-      },
-    ).then((value) => _updateStatus());
-  }
-
   void showLabelDesign(bool isValid) {
     if (isValid) {
       stopCheckSerialPort();
@@ -1079,25 +1070,15 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
     ).then((value) => _updateStatus());
   }
 
-  void showUpdateFirmWareDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: false, // 允许点击空白处关闭对话框
-      builder: (context) {
-        return const UpdateFirmWareDialog();
-      },
-    ).then((value) => _updateStatus());
-  }
-
-  void showComPortDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: false, // 允许点击空白处关闭对话框
-      builder: (context) {
-        return const ModifyComPortPage();
-      },
-    ).then((value) => _updateStatus());
-  }
+  // void showComPortDialog(BuildContext context) {
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: false, // 允许点击空白处关闭对话框
+  //     builder: (context) {
+  //       return const ModifyComPortPage();
+  //     },
+  //   ).then((value) => _updateStatus());
+  // }
 
   void _updateStatus() {
     setState(() {});

@@ -215,7 +215,7 @@ class SelectScalesPageState extends State<SelectScalesPage> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: getDialogTitle(
-          context, localizedStrings.download, Icons.download, 800),
+          context, localizedStrings.gBtnDownload, Icons.download, 800),
       contentPadding: const EdgeInsets.fromLTRB(24, 5, 24, 5),
       content: Container(
           height: 500,
@@ -255,7 +255,7 @@ class SelectScalesPageState extends State<SelectScalesPage> {
               btnWidth: 120,
               btnHeight: 40,
               icon: Icons.check_circle,
-              text: localizedStrings.button_ok,
+              text: localizedStrings.gBtnConfirm,
               onPressed: !isDownloading && checkSelect()
                   ? () {
                       setState(() {
@@ -273,7 +273,7 @@ class SelectScalesPageState extends State<SelectScalesPage> {
               btnWidth: 120,
               btnHeight: 40,
               icon: Icons.cancel,
-              text: localizedStrings.button_cancel,
+              text: localizedStrings.gBtnCancel,
               onPressed: isDownloading
                   ? null
                   : () {

@@ -74,7 +74,7 @@ class _DownReciptPageState extends State<DownReciptPage> {
           child: Container(
             child: pageHeadDesign(
                 context,
-                localizedStrings.receipt_format_download,
+                localizedStrings.gTitleReceiptDownload,
                 [myDefScaleInfo.defScaleId!]),
           ),
         ),
@@ -121,7 +121,7 @@ class _DownReciptPageState extends State<DownReciptPage> {
                         SizedBox(
                           width: 200,
                           child: Text(
-                            localizedStrings.receipt_format1_item,
+                            localizedStrings.gReceiptFormat + " 1:",
                             textAlign: TextAlign.right,
                           ),
                         ),
@@ -169,7 +169,7 @@ class _DownReciptPageState extends State<DownReciptPage> {
                         SizedBox(
                           width: 200,
                           child: Text(
-                            localizedStrings.receipt_format2_item,
+                            localizedStrings.gReceiptFormat + " 2:",
                             textAlign: TextAlign.right,
                           ),
                         ),
@@ -216,7 +216,7 @@ class _DownReciptPageState extends State<DownReciptPage> {
                         SizedBox(
                           width: 200,
                           child: Text(
-                            localizedStrings.receipt_format3_item,
+                            localizedStrings.gReceiptFormat + " 3:",
                             textAlign: TextAlign.right,
                           ),
                         ),
@@ -291,7 +291,7 @@ class _DownReciptPageState extends State<DownReciptPage> {
           btnWidth: 150,
           btnHeight: 50,
           icon: Icons.download_outlined,
-          text: localizedStrings.download,
+          text: localizedStrings.gBtnDownload,
           onPressed: (!isDownloadClicked) &&
                   (weightModeController.text.isNotEmpty ||
                       accModeController.text.isNotEmpty ||
@@ -344,7 +344,7 @@ class _DownReciptPageState extends State<DownReciptPage> {
   //     _stopTimer();
 
   //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-  //         content: Text(localizedStrings.download_result_fail,
+  //         content: Text(localizedStrings.gBtnDownload_result_fail,
   //             style: const TextStyle(
   //                 fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
   //         duration: const Duration(seconds: 3),
@@ -362,19 +362,19 @@ class _DownReciptPageState extends State<DownReciptPage> {
       builder: (BuildContext ctx) {
         return AlertDialog(
           title: Text(
-            localizedStrings.confirm_title,
+            localizedStrings.gTitleConfirm,
             style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
-          content: Text(localizedStrings.confirm_info),
+          content: Text(localizedStrings.gConfirmPrnFmtOrderTip),
           actions: <Widget>[
             OutlinedButton(
-              child: Text(localizedStrings.button_cancel),
+              child: Text(localizedStrings.gBtnCancel),
               onPressed: () {
                 Navigator.of(context).pop(false); // 不跳转
               },
             ),
             OutlinedButton(
-              child: Text(localizedStrings.confirm_btn),
+              child: Text(localizedStrings.gBtnConfirm),
               onPressed: () {
                 Navigator.of(context).pop(true); // 跳转
               },

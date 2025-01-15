@@ -253,7 +253,7 @@ class ProductionLinePageState extends State<ProductionLinePage> {
         preferredSize: const Size.fromHeight(50),
         child: pageHeadDesign(
           context,
-          // localizedStrings.weighing_title,
+          // localizedStrings.iTitleWeighting,
           'Production Line', scaleIds,
         ),
       ),
@@ -665,6 +665,9 @@ class ProductionLinePageState extends State<ProductionLinePage> {
     ));
     if (outputFile == null) {
       return;
+    }
+    if (!outputFile.contains(".csv")) {
+      outputFile = "$outputFile.csv";
     }
     final filePath = outputFile;
     File file = File(filePath);

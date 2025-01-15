@@ -40,7 +40,7 @@ addUserDialog(BuildContext context) {
       builder: (context) {
         return StatefulBuilder(builder: ((context, setState) {
           return AlertDialog(
-            title: getDialogTitle(context, localizedStrings.user_info,
+            title: getDialogTitle(context, localizedStrings.gPluField,
                 Icons.edit_note_outlined, 400),
             content: Container(
               height: 440,
@@ -250,7 +250,7 @@ addUserDialog(BuildContext context) {
                           btnWidth: 130,
                           btnHeight: 40,
                           icon: Icons.add,
-                          text: localizedStrings.button_add,
+                          text: localizedStrings.gBtnAdd,
                           onPressed: () {
                             errorText.text = '';
                             PublicFunctions.getUserList();
@@ -285,7 +285,7 @@ addUserDialog(BuildContext context) {
                           btnWidth: 130,
                           btnHeight: 40,
                           icon: Icons.delete,
-                          text: localizedStrings.button_delete,
+                          text: localizedStrings.gBtnDelete,
                           onPressed: () {
                             if (userId.text.isNotEmpty ||
                                 userName.text.isNotEmpty) {
@@ -305,7 +305,7 @@ addUserDialog(BuildContext context) {
                           btnWidth: 130,
                           btnHeight: 40,
                           icon: Icons.exit_to_app,
-                          text: localizedStrings.button_exit,
+                          text: localizedStrings.gBtnExit,
                           onPressed: () {
                             PublicFunctions.getUserList();
                             Navigator.of(context).pop();

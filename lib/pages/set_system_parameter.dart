@@ -9,6 +9,7 @@ import 'package:t_max/data/eeprom_info.dart';
 import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
 import '../data/language.dart';
+import '../data/scale_list_data.dart';
 import '../data/timer_manager.dart';
 import '../widget/page_head.dart';
 
@@ -22,6 +23,7 @@ class SetParameterPageState extends State<SetParameterPage> {
   dynamic eventBus1;
   dynamic eventBus2;
   dynamic eventBus3;
+  dynamic eventBus4;
 
   bool isManaul = false;
 
@@ -32,6 +34,18 @@ class SetParameterPageState extends State<SetParameterPage> {
   List<EepromInfo> editInfoList = [];
 
   Map<String, List<EepromInfo>> groupedData = {};
+  List<NetScaleInfoLocal> scaleNetItems = [];
+  NetScaleInfoLocal defNetScaleInfo = NetScaleInfoLocal();
+  int selScaleId = -1;
+
+  void initScaleList() {
+    scaleNetItems = myNetScaleList;
+    selScaleId = myDefScaleInfo.defScaleId!;
+    if (myNetScaleList.isNotEmpty) {
+      defNetScaleInfo = NetScaleListMgr.findScaleInfo(
+          myNetScaleList, myDefScaleInfo.defScaleId!);
+    }
+  }
 
   void generateCategoryList(List<EepromInfo> dataList) {
     setState(() {
@@ -55,6 +69,7 @@ class SetParameterPageState extends State<SetParameterPage> {
   @override
   void initState() {
     super.initState();
+    initScaleList();
     cntScaleTimerMgr.stopCntScaleTimer();
     PublicFunctions.getAllEepromInfo(myDefScaleInfo.defScaleId!);
 
@@ -125,6 +140,21 @@ class SetParameterPageState extends State<SetParameterPage> {
         PublicFunctions.getAllEepromInfo(myDefScaleInfo.defScaleId!);
       }
     });
+    eventBus4 = eventBus.on<EventSelWeighingScaleId>().listen((event) {
+      //修改了ScaleId
+      if (mounted) {
+        int scaleId = event.obj;
+
+        if (scaleId != selScaleId) {
+          setState(() {
+            selScaleId = scaleId;
+            DefScaleInfo.getDefScaleInfo(scaleId);
+            groupedData.clear();
+            PublicFunctions.getAllEepromInfo(myDefScaleInfo.defScaleId!);
+          });
+        }
+      }
+    });
   }
 
   @override
@@ -167,17 +197,27 @@ class SetParameterPageState extends State<SetParameterPage> {
     final height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(50),
-        child: pageHeadDefScale(
-          context,
-          localizedStrings.parameter_set_title,
-        ),
-      ),
+      appBar: AppBar(
+          title: Container(
+            child:
+                pageHeadDefScale(context, localizedStrings.parameter_set_title),
+          ),
+          leading: IconTheme(
+              data: IconThemeData(
+                  color: Theme.of(context).colorScheme.primary // 设置抽屉图标颜色
+                  ),
+              child: Builder(builder: (BuildContext context) {
+                return IconButton(
+                  icon: const Icon(Icons.menu),
+                  onPressed: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                );
+              }))),
       body: Column(
         children: [
           Container(
-            height: 50,
+            height: 40,
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.scrim,
               border: Border(
@@ -353,6 +393,13 @@ class SetParameterPageState extends State<SetParameterPage> {
           )
         ],
       ),
+      drawer: Drawer(
+          child: myWeighingScaleListDrawer(
+              context,
+              localizedStrings.gTipScaleList,
+              scaleNetItems,
+              selScaleId) // showNetScaleList(),
+          ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).colorScheme.primary,
         onPressed: () {
@@ -425,7 +472,7 @@ class SetParameterPageState extends State<SetParameterPage> {
       builder: (BuildContext ctx) {
         return AlertDialog(
           title: Text(
-            localizedStrings.confirm_title,
+            localizedStrings.gTitleConfirm,
             style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
           content: Text(title),
@@ -437,7 +484,7 @@ class SetParameterPageState extends State<SetParameterPage> {
                       borderRadius:
                           BorderRadius.circular(4.0), // 这里的10.0是圆角半径，可以根据需要调整
                     )),
-                    child: Text(localizedStrings.button_cancel),
+                    child: Text(localizedStrings.gBtnCancel),
                     onPressed: () {
                       Navigator.of(context).pop(false); // 不跳转
                     },
@@ -449,7 +496,7 @@ class SetParameterPageState extends State<SetParameterPage> {
                 borderRadius:
                     BorderRadius.circular(4.0), // 这里的10.0是圆角半径，可以根据需要调整
               )),
-              child: Text(localizedStrings.confirm_btn),
+              child: Text(localizedStrings.gBtnConfirm),
               onPressed: () {
                 Navigator.of(context).pop(true); // 跳转
               },
@@ -498,19 +545,19 @@ class SetParameterPageState extends State<SetParameterPage> {
       builder: (BuildContext ctx) {
         return AlertDialog(
           title: Text(
-            localizedStrings.confirm_title,
+            localizedStrings.gTitleConfirm,
             style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
           content: Text(localizedStrings.data_delete_confirm),
           actions: <Widget>[
             OutlinedButton(
-              child: Text(localizedStrings.button_cancel),
+              child: Text(localizedStrings.gBtnCancel),
               onPressed: () {
                 Navigator.of(context).pop(false); // 不跳转
               },
             ),
             OutlinedButton(
-              child: Text(localizedStrings.confirm_btn),
+              child: Text(localizedStrings.gBtnConfirm),
               onPressed: () {
                 Navigator.of(context).pop(true); // 跳转
               },

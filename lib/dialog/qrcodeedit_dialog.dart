@@ -133,7 +133,7 @@ class MyQrcodeDialogState extends State<MyQrcodeDialog> {
                       btnWidth: 150,
                       btnHeight: 40,
                       icon: Icons.add,
-                      text: localizedStrings.button_add,
+                      text: localizedStrings.gBtnAdd,
                       onPressed: _addRowData),
                   const SizedBox(
                     width: 10,
@@ -142,7 +142,7 @@ class MyQrcodeDialogState extends State<MyQrcodeDialog> {
                       btnWidth: 150,
                       btnHeight: 40,
                       icon: Icons.save,
-                      text: localizedStrings.button_save,
+                      text: localizedStrings.gBtnSave,
                       onPressed: _saveRowData),
                   const SizedBox(
                     width: 10,
@@ -236,7 +236,7 @@ class MyQrcodeDialogState extends State<MyQrcodeDialog> {
               btnWidth: 150,
               btnHeight: 40,
               icon: Icons.exit_to_app,
-              text: localizedStrings.button_exit,
+              text: localizedStrings.gBtnExit,
               onPressed: () {
                 myBarCodeRowDataList.barCodeRowDataList.clear();
                 Navigator.of(context).pop();

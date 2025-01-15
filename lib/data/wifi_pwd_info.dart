@@ -12,13 +12,13 @@ class WifiPwdInfoList {
   int id;
   String ssid;
   String pwd;
-  DateTime createdAt;
+  DateTime? createdAt;
 
   WifiPwdInfoList({
     required this.id,
     required this.ssid,
     required this.pwd,
-    required this.createdAt,
+    this.createdAt,
   });
 
   factory WifiPwdInfoList.fromJson(Map<String, dynamic> json) =>

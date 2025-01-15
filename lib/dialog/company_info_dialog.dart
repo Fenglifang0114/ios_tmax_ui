@@ -138,7 +138,7 @@ class CompanyInfoDialogState extends State<CompanyInfoDialog> {
               btnWidth: 120,
               btnHeight: 40,
               icon: Icons.exit_to_app,
-              text: localizedStrings.button_exit,
+              text: localizedStrings.gBtnExit,
               onPressed: () {
                 myScreenMgr.isMainScreen = true;
                 Navigator.of(context).pop();

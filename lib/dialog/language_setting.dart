@@ -29,11 +29,11 @@ class LanguageSettingPageState extends State<LanguageSettingPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     localizedStrings = S.of(context);
-    if (localizedStrings.current_language == 'Chinese') {
+    if (localizedStrings.gLanguage == 'Chinese') {
       language = 'English';
-    } else if ((localizedStrings.current_language == 'Русский')) {
+    } else if ((localizedStrings.gLanguage == 'Русский')) {
       language = 'Русский';
-    } else if (localizedStrings.current_language == '中文') {
+    } else if (localizedStrings.gLanguage == '中文') {
       language = '中文';
     } else {
       language = 'English';
@@ -61,7 +61,7 @@ class LanguageSettingPageState extends State<LanguageSettingPage> {
       title: getDialogTitle(context, localizedStrings.language_setting_title,
           Icons.language, 400),
       content: Container(
-        height: 356,
+        height: 120,
         decoration:
             BoxDecoration(color: Theme.of(context).colorScheme.surfaceTint),
         child: Column(
@@ -112,7 +112,7 @@ class LanguageSettingPageState extends State<LanguageSettingPage> {
               btnWidth: 120,
               btnHeight: 40,
               icon: Icons.exit_to_app,
-              text: localizedStrings.button_exit,
+              text: localizedStrings.gBtnExit,
               onPressed: () {
                 setState(() {});
                 Navigator.of(context).pop();
@@ -137,6 +137,18 @@ class LanguageSettingPageState extends State<LanguageSettingPage> {
         } else if (value == "Русский") {
           S.load(const Locale('ru', 'RU'));
           saveLanguageSetting('ru_RU');
+        } else if (value == "日本語") {
+          S.load(const Locale('ja', 'JP'));
+          saveLanguageSetting('ja_JP');
+        } else if (value == "Italiano") {
+          S.load(const Locale('it', 'IT'));
+          saveLanguageSetting('it_IT');
+        } else if (value == "Português") {
+          S.load(const Locale('pt', 'PT'));
+          saveLanguageSetting('pt_PT');
+        } else if (value == "Français") {
+          S.load(const Locale('fr', 'FR'));
+          saveLanguageSetting('fr_FR');
         }
       });
     }

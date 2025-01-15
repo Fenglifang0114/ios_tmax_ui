@@ -18,7 +18,7 @@ class WeightReportDataSource extends DataGridSource {
   void sortData(String columnName) {
     weightReportData.sort((WeightReportData a, WeightReportData b) {
       if (columnName == 'Date Time') {
-        return a.dateTime.compareTo(b.dateTime);
+        return a.createdAt.compareTo(b.createdAt);
       }
       // 如果有其他需要比较的字段，请在这里添加适当的逻辑
       return 0;

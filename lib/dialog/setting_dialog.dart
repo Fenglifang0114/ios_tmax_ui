@@ -7,6 +7,7 @@ import '../../data/device_data.dart';
 import '../../data/scalecmd_data.dart';
 import '../../data/settingparam_data.dart';
 import '../../functions/methods.dart';
+import '../data/const_var_data.dart';
 import '../data/language.dart';
 import '../data/manager_scale_channel.dart';
 import '../data/scalelist_data.dart';
@@ -42,9 +43,9 @@ class ParamSettingDialogState extends State<ParamSettingDialog> {
     super.initState();
     _checkSaveMode = ((mySettingParam.recMode.isEmpty)
         ? 1
-        : (mySettingParam.recMode == "auto")
+        : (mySettingParam.recMode == msgAuto)
             ? 2
-            : (mySettingParam.recMode == "manual")
+            : (mySettingParam.recMode == msgManual)
                 ? 1
                 : 1);
     _checkDateSeparator = ((mySettingParam.dateSeparator.isEmpty)
@@ -70,7 +71,7 @@ class ParamSettingDialogState extends State<ParamSettingDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: getDialogTitle(context, localizedStrings.serial_modify_title,
+      title: getDialogTitle(context, localizedStrings.parameter_settings_title,
           Icons.settings_outlined, 400),
       content: Container(
           height: 350,
@@ -188,40 +189,40 @@ class ParamSettingDialogState extends State<ParamSettingDialog> {
                                 ],
                               ),
                               const SizedBox(height: 5),
-                              Row(
-                                children: [
-                                  SizedBox(
-                                    width: 200,
-                                    child: Text(
-                                      localizedStrings.zero_range,
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 200,
-                                    height: 40,
-                                    child: TextField(
-                                      controller: zeroRange,
-                                      maxLength: 8,
-                                      maxLengthEnforcement:
-                                          MaxLengthEnforcement.enforced,
-                                      maxLines: 1,
-                                      inputFormatters: [
-                                        FilteringTextInputFormatter.allow(
-                                            RegExp(r'^\d+(\.)?[0-9]{0,7}'))
-                                      ], //数字包括小数,
-                                      textAlignVertical: TextAlignVertical.top,
-                                      decoration: const InputDecoration(
-                                        counterText: "",
-                                        // hintText: "请输入机种类型，如：ztp",
-                                        // border: OutlineInputBorder(),
-                                      ),
-                                      onChanged: (value) {},
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              // Row(
+                              //   children: [
+                              //     SizedBox(
+                              //       width: 200,
+                              //       child: Text(
+                              //         localizedStrings.zero_range,
+                              //         overflow: TextOverflow.ellipsis,
+                              //         maxLines: 1,
+                              //       ),
+                              //     ),
+                              //     SizedBox(
+                              //       width: 200,
+                              //       height: 40,
+                              //       child: TextField(
+                              //         controller: zeroRange,
+                              //         maxLength: 8,
+                              //         maxLengthEnforcement:
+                              //             MaxLengthEnforcement.enforced,
+                              //         maxLines: 1,
+                              //         inputFormatters: [
+                              //           FilteringTextInputFormatter.allow(
+                              //               RegExp(r'^\d+(\.)?[0-9]{0,7}'))
+                              //         ], //数字包括小数,
+                              //         textAlignVertical: TextAlignVertical.top,
+                              //         decoration: const InputDecoration(
+                              //           counterText: "",
+                              //           // hintText: "请输入机种类型，如：ztp",
+                              //           // border: OutlineInputBorder(),
+                              //         ),
+                              //         onChanged: (value) {},
+                              //       ),
+                              //     ),
+                              //   ],
+                              // ),
                               const SizedBox(height: 5),
                               (mySettingParam.scaleMode == 1)
                                   ? Row(
@@ -285,7 +286,7 @@ class ParamSettingDialogState extends State<ParamSettingDialog> {
               btnWidth: 120,
               btnHeight: 40,
               icon: Icons.check_circle,
-              text: localizedStrings.button_ok,
+              text: localizedStrings.gBtnConfirm,
               onPressed: () {
                 updateUIConf();
                 Navigator.of(context).pop(connectionType);
@@ -296,7 +297,7 @@ class ParamSettingDialogState extends State<ParamSettingDialog> {
               btnWidth: 120,
               btnHeight: 40,
               icon: Icons.cancel,
-              text: localizedStrings.button_cancel,
+              text: localizedStrings.gBtnCancel,
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -310,7 +311,7 @@ class ParamSettingDialogState extends State<ParamSettingDialog> {
   void updateUIConf() {
     myScaleCmd.cmdMode = "update_ui_conf";
     mySettingParam.dateFormat = _checkDateMode.toString();
-    mySettingParam.recMode = (_checkSaveMode == 2) ? "auto" : "manual";
+    mySettingParam.recMode = (_checkSaveMode == 2) ? msgAuto : msgManual;
     mySettingParam.dateSeparator = (_checkDateSeparator == 1)
         ? "."
         : (_checkDateSeparator == 2)

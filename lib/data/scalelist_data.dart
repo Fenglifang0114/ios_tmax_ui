@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class ScaleTotalInfo {
   List<ScaleDataInfo>? scaleDataList;
 
@@ -97,3 +99,32 @@ class CurrentPort {
 
 CurrentPort myCurrentPort = CurrentPort();
 CurrentPort tempCurrentPort = CurrentPort();
+
+List<SrvScaleInfo> srvScaleListFromJson(String str) => List<SrvScaleInfo>.from(
+    json.decode(str).map((x) => SrvScaleInfo.fromJson(x)));
+
+class SrvScaleInfo {
+  int scaleId;
+  int srvId;
+  bool isUsed;
+
+  SrvScaleInfo({
+    required this.scaleId,
+    required this.srvId,
+    required this.isUsed,
+  });
+
+  factory SrvScaleInfo.fromJson(Map<String, dynamic> json) => SrvScaleInfo(
+        scaleId: json["ScaleId"],
+        srvId: json["SrvId"],
+        isUsed: json["IsUsed"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "ScaleId": scaleId,
+        "SrvId": srvId,
+        "IsUsed": isUsed,
+      };
+}
+
+List<SrvScaleInfo> mySrvScaleList = [];

@@ -64,9 +64,7 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),
-        child: pageHeadDesign(
-            context,
-            localizedStrings.variable_value_setting_title,
+        child: pageHeadDesign(context, localizedStrings.rTitleSetVariableValues,
             [myDefScaleInfo.defScaleId!]),
       ),
       body: Column(
@@ -87,7 +85,7 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
                     btnWidth: 150,
                     btnHeight: 50,
                     icon: Icons.download_rounded,
-                    text: localizedStrings.download,
+                    text: localizedStrings.gBtnDownload,
                     onPressed: (!isDownloadClicked) &&
                             (header1Ctl.text.isNotEmpty ||
                                 header2Ctl.text.isNotEmpty ||
@@ -113,34 +111,9 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(
-                  flex: 5,
-                  child: Container(
-                    color: Theme.of(context).colorScheme.surfaceTint,
-                    child: ListView(
-                      children: [
-                        const SizedBox(height: 40), // 顶部间距
-                        _buildHeaderSection(), // 头部信息部分
-                        const SizedBox(height: 20), // 间距
-                        _buildFooterSection(), // 尾部信息部分
-                        const SizedBox(height: 40), // 底部间距
-                      ],
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 5,
-                  child: Container(
-                    color: Theme.of(context).colorScheme.surfaceTint,
-                    child: ListView(
-                      children: [
-                        const SizedBox(height: 40), // 顶部间距
-                        _buildOperatorSection(), // 头部信息部分
-                        const SizedBox(height: 20), // 间距
-                      ],
-                    ),
-                  ),
-                ),
+                _buildHeaderExpanded(),
+                _buildFooterExpanded(),
+                _buildOperatorExpanded(),
               ],
             ),
           ),
@@ -149,196 +122,260 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
     );
   }
 
-  // 操作员部信息部分
-  Widget _buildOperatorSection() {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildTextTitle("Operator1:"),
-            const SizedBox(width: 40),
-            SizedBox(
-              width: 300,
-              child: _buildOperatorEditFeild(operator1Ctl),
-            )
-          ],
-        ),
-        const SizedBox(height: 20),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildTextTitle("Operator2:"),
-            const SizedBox(width: 40),
-            SizedBox(
-              width: 300,
-              child: _buildOperatorEditFeild(operator2Ctl),
-            )
-          ],
-        ),
-        const SizedBox(height: 20),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildTextTitle("Operator3:"),
-            const SizedBox(width: 40),
-            SizedBox(
-              width: 300,
-              child: _buildOperatorEditFeild(operator3Ctl),
-            )
-          ],
-        ),
-        const SizedBox(height: 20),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildTextTitle("Operator4:"),
-            const SizedBox(width: 40),
-            SizedBox(
-              width: 300,
-              child: _buildOperatorEditFeild(operator4Ctl),
-            )
-          ],
-        ),
-      ],
+  Widget _buildHeaderExpanded() {
+    return Expanded(
+      flex: 3,
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          return Container(
+            color: Theme.of(context).colorScheme.surfaceTint,
+            child: ListView(
+              children: [
+                const SizedBox(height: 40),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [_buildTextTotalTitle(localizedStrings.rTipHeader)],
+                ),
+                const SizedBox(height: 20),
+                _buildHeaderSection(constraints.maxWidth),
+                const SizedBox(height: 20),
+                // 尾部信息部分
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 
-  // 头部信息部分
-  Widget _buildHeaderSection() {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildTextTitle("Header1:"),
-            const SizedBox(width: 40),
-            SizedBox(
-              width: 300,
-              child: _buildEditFeild(header1Ctl),
-            )
-          ],
-        ),
-        const SizedBox(height: 20),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildTextTitle("Header2:"),
-            const SizedBox(width: 40),
-            SizedBox(
-              width: 300,
-              child: _buildEditFeild(header2Ctl),
-            )
-          ],
-        ),
-        const SizedBox(height: 20),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildTextTitle("Header3:"),
-            const SizedBox(width: 40),
-            SizedBox(
-              width: 300,
-              child: _buildEditFeild(header3Ctl),
-            )
-          ],
-        ),
-      ],
+  Widget _buildFooterExpanded() {
+    return Expanded(
+      flex: 3,
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          return Container(
+            color: Theme.of(context).colorScheme.surfaceTint,
+            child: ListView(
+              children: [
+                const SizedBox(height: 40),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [_buildTextTotalTitle(localizedStrings.rTipFooter)],
+                ),
+                const SizedBox(height: 20),
+                _buildFooterSection(constraints.maxWidth),
+                const SizedBox(height: 20),
+                // 尾部信息部分
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 
-// 尾部信息部分
-  Widget _buildFooterSection() {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildTextTitle("Footer1:"),
-            const SizedBox(width: 40),
-            SizedBox(
-              width: 300,
-              child: _buildEditFeild(footer1Ctl),
-            )
-          ],
-        ),
-        const SizedBox(height: 20),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildTextTitle("Footer2:"),
-            const SizedBox(width: 40),
-            SizedBox(
-              width: 300,
-              child: _buildEditFeild(footer2Ctl),
-            )
-          ],
-        ),
-        const SizedBox(height: 20),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildTextTitle("Footer3:"),
-            const SizedBox(width: 40),
-            SizedBox(
-              width: 300,
-              child: _buildEditFeild(footer3Ctl),
-            )
-          ],
-        ),
-      ],
+  Widget _buildOperatorExpanded() {
+    return Expanded(
+      flex: 3,
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          return Container(
+            color: Theme.of(context).colorScheme.surfaceTint,
+            child: ListView(
+              children: [
+                const SizedBox(height: 40),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildTextTotalTitle(localizedStrings.rTipOperator)
+                  ],
+                ),
+                const SizedBox(height: 20),
+                _buildOperatorSection(constraints.maxWidth),
+                const SizedBox(height: 20),
+                // 尾部信息部分
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 
-// 按钮部分
-  // Widget _buildButtonSection() {
-  //   return SizedBox(
-  //     width: 120,
-  //     height: 50,
-  //     child: ElevatedButton(
-  //       style: ButtonStyle(
-  //         shape: WidgetStateProperty.all(
-  //           RoundedRectangleBorder(
-  //             borderRadius: BorderRadius.circular(4),
-  //           ),
-  //         ),
-  //       ),
-  //       onPressed: (!isDownloadClicked) &&
-  //               (header1Ctl.text.isNotEmpty ||
-  //                   header2Ctl.text.isNotEmpty ||
-  //                   header3Ctl.text.isNotEmpty ||
-  //                   footer1Ctl.text.isNotEmpty ||
-  //                   footer2Ctl.text.isNotEmpty ||
-  //                   footer3Ctl.text.isNotEmpty ||
-  //                   operator1Ctl.text.isNotEmpty ||
-  //                   operator2Ctl.text.isNotEmpty ||
-  //                   operator3Ctl.text.isNotEmpty ||
-  //                   operator4Ctl.text.isNotEmpty)
-  //           ? () {
-  //               _showConfirmationDialog(context);
-  //             }
-  //           : null,
-  //       child: Text(
-  //         localizedStrings.download,
-  //       ),
-  //     ),
-  //   );
-  // }
+  Widget _buildHeaderSection(double width) {
+    return SizedBox(
+        height: 300,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                _buildTextTitle(localizedStrings.rTipHeader + ' 1:', width / 4),
+                Expanded(
+                  child: _buildEditFeild(header1Ctl),
+                ),
+                SizedBox(
+                  width: 20,
+                )
+              ],
+            ),
+            Row(
+              children: [
+                _buildTextTitle(localizedStrings.rTipHeader + ' 2:', width / 4),
+                Expanded(
+                  child: _buildEditFeild(header2Ctl),
+                ),
+                SizedBox(
+                  width: 20,
+                )
+              ],
+            ),
+            Row(
+              children: [
+                _buildTextTitle(localizedStrings.rTipHeader + ' 3:', width / 4),
+                Expanded(
+                  child: _buildEditFeild(header3Ctl),
+                ),
+                SizedBox(
+                  width: 20,
+                )
+              ],
+            ),
+          ],
+        ));
+  }
 
-  Widget _buildTextTitle(String title) {
+  Widget _buildFooterSection(double width) {
+    return SizedBox(
+        height: 300,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                _buildTextTitle(localizedStrings.rTipFooter + ' 1:', width / 4),
+                Expanded(
+                  child: _buildEditFeild(footer1Ctl),
+                ),
+                SizedBox(
+                  width: 20,
+                )
+              ],
+            ),
+            Row(
+              children: [
+                _buildTextTitle(localizedStrings.rTipFooter + ' 2:', width / 4),
+                Expanded(
+                  child: _buildEditFeild(footer2Ctl),
+                ),
+                SizedBox(
+                  width: 20,
+                )
+              ],
+            ),
+            Row(
+              children: [
+                _buildTextTitle(localizedStrings.rTipFooter + ' 3:', width / 4),
+                Expanded(
+                  child: _buildEditFeild(footer3Ctl),
+                ),
+                SizedBox(
+                  width: 20,
+                )
+              ],
+            ),
+          ],
+        ));
+  }
+
+  Widget _buildOperatorSection(double width) {
+    return SizedBox(
+        height: 300,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                _buildTextTitle(
+                    localizedStrings.rTipOperator + ' 1:', width / 4),
+                Expanded(
+                  child: _buildOperatorEditFeild(operator1Ctl),
+                ),
+                SizedBox(
+                  width: 20,
+                )
+              ],
+            ),
+            Row(
+              children: [
+                _buildTextTitle(
+                    localizedStrings.rTipOperator + ' 2:', width / 4),
+                Expanded(
+                  child: _buildOperatorEditFeild(operator2Ctl),
+                ),
+                SizedBox(
+                  width: 20,
+                )
+              ],
+            ),
+            Row(
+              children: [
+                _buildTextTitle(
+                    localizedStrings.rTipOperator + ' 3: ', width / 4),
+                Expanded(
+                  child: _buildOperatorEditFeild(operator3Ctl),
+                ),
+                SizedBox(
+                  width: 20,
+                )
+              ],
+            ),
+            Row(
+              children: [
+                _buildTextTitle(
+                    localizedStrings.rTipOperator + ' 4: ', width / 4),
+                Expanded(
+                  child: _buildOperatorEditFeild(operator4Ctl),
+                ),
+                SizedBox(
+                  width: 20,
+                )
+              ],
+            ),
+          ],
+        ));
+  }
+
+  Widget _buildTextTotalTitle(String title) {
     return SizedBox(
       height: 40,
-      width: 200,
+      width: 300,
       child: Align(
-        alignment: Alignment.centerRight,
+        alignment: Alignment.center,
         child: Text(
           title,
           textAlign: TextAlign.right,
-          style: const TextStyle(
-            fontSize: 20,
-          ),
+          style: TextStyle(
+              fontSize: 20, color: Theme.of(context).colorScheme.primary),
+          overflow: TextOverflow.ellipsis,
         ),
       ),
+    );
+  }
+
+  Widget _buildTextTitle(String title, double width) {
+    return SizedBox(
+      width: width,
+      child: Align(
+          alignment: Alignment.centerRight,
+          child: Padding(
+            padding: EdgeInsets.all(10),
+            child: Text(
+              title,
+              textAlign: TextAlign.right,
+              style: const TextStyle(),
+            ),
+          )),
     );
   }
 
@@ -349,7 +386,8 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
         overflow: TextOverflow.ellipsis,
       ),
       controller: editTextCtl,
-      maxLines: 1,
+      maxLines: 3,
+      minLines: 1,
       onChanged: (value) {
         setState(() {});
       },
@@ -373,7 +411,8 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
         overflow: TextOverflow.ellipsis,
       ),
       controller: editTextCtl,
-      maxLines: 1,
+      maxLines: 3,
+      minLines: 1,
       onChanged: (value) {
         setState(() {});
       },
@@ -396,10 +435,10 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
       builder: (BuildContext ctx) {
         return AlertDialog(
           title: Text(
-            localizedStrings.confirm_title,
+            localizedStrings.gTitleConfirm,
             style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
-          content: Text(localizedStrings.header_confirm_info),
+          content: Text(localizedStrings.gTipConfirmInfo),
           actions: <Widget>[
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -408,7 +447,7 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
                   btnWidth: 120,
                   btnHeight: 40,
                   icon: Icons.check_circle,
-                  text: localizedStrings.button_ok,
+                  text: localizedStrings.gBtnConfirm,
                   onPressed: () {
                     Navigator.of(context).pop(true);
                   },
@@ -418,7 +457,7 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
                   btnWidth: 120,
                   btnHeight: 40,
                   icon: Icons.cancel,
-                  text: localizedStrings.button_cancel,
+                  text: localizedStrings.gBtnCancel,
                   onPressed: () {
                     Navigator.of(context).pop(false);
                   },
@@ -434,10 +473,9 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
         if (myHeaderFooterList.listData.isEmpty) {
           if (mounted && context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: const Text('Data error !',
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.normal)), ////此处需要秤回复
+                content: Text(localizedStrings.gTipDataError,
+                    style:
+                        TextStyle(fontWeight: FontWeight.normal)), ////此处需要秤回复
                 duration: const Duration(seconds: 3),
                 backgroundColor: Theme.of(context).colorScheme.error));
           }

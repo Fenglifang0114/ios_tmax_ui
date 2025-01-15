@@ -10,6 +10,7 @@ import 'data/get_theme_color.dart';
 import 'data/manager_scale_channel.dart';
 import 'data/parse_log.dart';
 import 'data/setting_version_info.dart';
+import 'eventbus/eventbus.dart';
 import 'generated/l10n.dart';
 import 'widget/theme_color.dart';
 
@@ -24,9 +25,26 @@ Future<void> main() async {
   if (ipAddress.isEmpty) {
     ipAddress = '127.0.0.1';
   }
-  await ensureInitialized();
 
-  runApp(MyApp(savedLanguage, ipAddress));
+  await ensureInitialized();
+  bool isPortAvailable = await checkAndBindPort();
+  if (isPortAvailable) {
+    runApp(MyApp(savedLanguage, ipAddress));
+  } else {
+    exit(0);
+  }
+}
+
+Future<bool> checkAndBindPort() async {
+  ServerSocket? serverSocket;
+  try {
+    // 尝试创建ServerSocket来绑定端口20015
+    serverSocket = await ServerSocket.bind(InternetAddress.anyIPv4, 58581);
+
+    return true; // 成功绑定端口，说明应用之前没开启，现在可以占用该端口继续
+  } catch (e) {
+    return false; // 端口已被占用，推测应用已在运行
+  }
 }
 
 //初始化
@@ -80,9 +98,9 @@ class MyApp extends StatelessWidget {
   // 重写build 方法，build 方法返回值为Widget类型，返回内容为屏幕上显示内容。
   @override
   Widget build(BuildContext context) {
-    webchannel = WebSocketChannel('ws://$ipAddr:7878/tmax?scaleid=0');
-    webchannel.connect();
-    PublicFunctions.getLicense();
+    connectService();
+
+    print('savedLanguage value: $savedLanguage');
     return MaterialApp(
         //自定义主题
         theme: themeColor(colorTheme),
@@ -96,10 +114,41 @@ class MyApp extends StatelessWidget {
         ],
         // 应用支持的语言列表
         supportedLocales: S.delegate.supportedLocales,
+        // locale: Locale('en', 'US'),
         locale:
             Locale(savedLanguage.split('_')[0], savedLanguage.split('_')[1]),
         //去掉右上角debug图标
         debugShowCheckedModeBanner: false,
         home: mySystemVersionInfo.getHomePage()); //const TrialPage());
+  }
+
+  Future<bool> checkServerExists() async {
+    try {
+      var channel = await Socket.connect('127.0.0.1', 7878);
+      channel.close();
+      return true;
+    } catch (e) {
+      // print("检查WebSocket服务器是否启动时出错: $e");
+
+      return false;
+    }
+  }
+
+  void connectChannel0() {
+    webchannel = WebSocketChannel('ws://127.0.0.1:7878/tmax?scaleid=0');
+    webchannel.connect();
+
+    PublicFunctions.getLicense();
+    PublicFunctions.getScaleList();
+    PublicFunctions.getWifiPwdList();
+  }
+
+  Future<void> connectService() async {
+    bool res = await checkServerExists();
+    if (!res) {
+      eventBus.fire(EventServiceOff(''));
+    } else {
+      connectChannel0();
+    }
   }
 }

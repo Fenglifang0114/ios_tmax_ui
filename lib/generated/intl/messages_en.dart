@@ -22,7 +22,6 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-        "Parity": MessageLookupByLibrary.simpleMessage("Parity:"),
         "abnormal_data_title":
             MessageLookupByLibrary.simpleMessage("Basic Data"),
         "abnormal_weight":
@@ -30,7 +29,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "about_title": MessageLookupByLibrary.simpleMessage("Information"),
         "advanced_setting_title":
             MessageLookupByLibrary.simpleMessage("Advanced"),
-        "alignment": MessageLookupByLibrary.simpleMessage("Alignment:"),
         "app_address_title": MessageLookupByLibrary.simpleMessage("Address:"),
         "app_company_title": MessageLookupByLibrary.simpleMessage("Company:"),
         "app_email_title": MessageLookupByLibrary.simpleMessage("Email:"),
@@ -42,24 +40,12 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Website Address:"),
         "application_title":
             MessageLookupByLibrary.simpleMessage("Applications"),
-        "attribute": MessageLookupByLibrary.simpleMessage("Attribute"),
         "auto": MessageLookupByLibrary.simpleMessage("Auto"),
-        "barcode_edit": MessageLookupByLibrary.simpleMessage("BarCode Edit"),
-        "barcode_height":
-            MessageLookupByLibrary.simpleMessage("BarCode Height:"),
         "batch_delivery_title":
             MessageLookupByLibrary.simpleMessage("Batch Delivery"),
         "batch_down_export": MessageLookupByLibrary.simpleMessage("Export"),
-        "batch_down_import": MessageLookupByLibrary.simpleMessage("Import"),
         "batch_down_slt_folder":
             MessageLookupByLibrary.simpleMessage("Select Folder"),
-        "baud_rate": MessageLookupByLibrary.simpleMessage("Baud rate:"),
-        "bluetooth_modification":
-            MessageLookupByLibrary.simpleMessage("Bluetooth Configurations"),
-        "bluetooth_modify_error": MessageLookupByLibrary.simpleMessage(
-            "Error: Cannot modify  bluetooth name ."),
-        "bluetooth_modify_ok":
-            MessageLookupByLibrary.simpleMessage("Bluetooth name modified."),
         "bt_emission_power":
             MessageLookupByLibrary.simpleMessage("Emission Power:"),
         "bt_modify_emission":
@@ -68,43 +54,19 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Bluetooth Setting"),
         "btn_add_lic_file":
             MessageLookupByLibrary.simpleMessage("Select License File"),
-        "button_add": MessageLookupByLibrary.simpleMessage("Add"),
         "button_add_license":
             MessageLookupByLibrary.simpleMessage("Add License"),
         "button_back": MessageLookupByLibrary.simpleMessage("Back"),
-        "button_cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
-        "button_connect": MessageLookupByLibrary.simpleMessage("Connect"),
-        "button_delete": MessageLookupByLibrary.simpleMessage("Delete"),
-        "button_dynamic": MessageLookupByLibrary.simpleMessage("Dynamic"),
         "button_edit": MessageLookupByLibrary.simpleMessage("Edit"),
-        "button_exit": MessageLookupByLibrary.simpleMessage("Exit"),
-        "button_export_report": MessageLookupByLibrary.simpleMessage("Export"),
         "button_get_ip": MessageLookupByLibrary.simpleMessage("Get IP Address"),
-        "button_home": MessageLookupByLibrary.simpleMessage("Home"),
-        "button_ok": MessageLookupByLibrary.simpleMessage("Confirm"),
-        "button_save": MessageLookupByLibrary.simpleMessage("Save"),
         "button_select_format":
             MessageLookupByLibrary.simpleMessage("Select Format"),
-        "button_set": MessageLookupByLibrary.simpleMessage("Connect"),
-        "button_setting": MessageLookupByLibrary.simpleMessage("Setting"),
-        "button_start": MessageLookupByLibrary.simpleMessage("Start"),
-        "button_static": MessageLookupByLibrary.simpleMessage("Static"),
-        "button_tare": MessageLookupByLibrary.simpleMessage("Tare"),
-        "button_zero": MessageLookupByLibrary.simpleMessage("Zero"),
-        "checkweigher_title":
-            MessageLookupByLibrary.simpleMessage("Check Weighing"),
+        "cBtnClosePreview":
+            MessageLookupByLibrary.simpleMessage("Close preview"),
+        "cBtnOpenPreview": MessageLookupByLibrary.simpleMessage("Open preview"),
         "choose_json_file": MessageLookupByLibrary.simpleMessage("Choose json"),
-        "clear_btn": MessageLookupByLibrary.simpleMessage("Clear"),
-        "close_preview": MessageLookupByLibrary.simpleMessage("Close preview"),
-        "com_port": MessageLookupByLibrary.simpleMessage("Serial port"),
-        "confirm_btn": MessageLookupByLibrary.simpleMessage("Confirm"),
-        "confirm_info": MessageLookupByLibrary.simpleMessage(
-            "Please confirm the order of the printing formats."),
-        "confirm_title": MessageLookupByLibrary.simpleMessage("Confirmation"),
-        "current_language": MessageLookupByLibrary.simpleMessage("Chinese"),
         "customization_setting_title":
             MessageLookupByLibrary.simpleMessage("Applications"),
-        "data_bits": MessageLookupByLibrary.simpleMessage("Data bits:"),
         "data_delete_confirm":
             MessageLookupByLibrary.simpleMessage("Whether to delete all data?"),
         "date_format": MessageLookupByLibrary.simpleMessage("Date Format:"),
@@ -121,51 +83,280 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Device Configuration"),
         "device_connection_title":
             MessageLookupByLibrary.simpleMessage("Device Info & Connection"),
-        "device_name": MessageLookupByLibrary.simpleMessage("Device name:"),
         "device_setting_title": MessageLookupByLibrary.simpleMessage("Basics"),
         "device_time_title":
             MessageLookupByLibrary.simpleMessage("Device Time"),
-        "download": MessageLookupByLibrary.simpleMessage("Download"),
-        "download_default":
-            MessageLookupByLibrary.simpleMessage("Default Format"),
         "download_result_fail":
             MessageLookupByLibrary.simpleMessage("Download failed!"),
         "download_result_ok":
             MessageLookupByLibrary.simpleMessage("Download is successful!"),
-        "editor": MessageLookupByLibrary.simpleMessage("Editor"),
-        "element_type": MessageLookupByLibrary.simpleMessage("Type:"),
         "error_ip_tip": MessageLookupByLibrary.simpleMessage(
             "Incorrect address! e.g. xxx.xxx.xxx.xxx"),
-        "expiration_date":
-            MessageLookupByLibrary.simpleMessage("Expiration date:"),
-        "find_ssid": MessageLookupByLibrary.simpleMessage("Discover SSID"),
-        "firm_cfm_msg": MessageLookupByLibrary.simpleMessage(
-            "Please confirm the file correct."),
-        "firm_down_online":
-            MessageLookupByLibrary.simpleMessage("Firmware Download Online"),
-        "firm_zip_file": MessageLookupByLibrary.simpleMessage("Firmware Zip:"),
-        "firm_zip_file_sel":
-            MessageLookupByLibrary.simpleMessage("Select Firmware Zip"),
         "firmware_update":
             MessageLookupByLibrary.simpleMessage("Update Firmware Serial"),
-        "font_bold": MessageLookupByLibrary.simpleMessage("Bold:"),
-        "font_reverse":
+        "gAlignment": MessageLookupByLibrary.simpleMessage("Alignment:"),
+        "gAttribute": MessageLookupByLibrary.simpleMessage("Attribute"),
+        "gBarcode": MessageLookupByLibrary.simpleMessage("BarCode:"),
+        "gBarcodeEdit": MessageLookupByLibrary.simpleMessage("BarCode Edit"),
+        "gBarcodeHeight":
+            MessageLookupByLibrary.simpleMessage("BarCode Height:"),
+        "gBaudRate": MessageLookupByLibrary.simpleMessage("Baud rate:"),
+        "gBtnAdd": MessageLookupByLibrary.simpleMessage("Add"),
+        "gBtnCancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+        "gBtnClear": MessageLookupByLibrary.simpleMessage("Clear"),
+        "gBtnCloseSerialPort":
+            MessageLookupByLibrary.simpleMessage("Close Port"),
+        "gBtnConfirm": MessageLookupByLibrary.simpleMessage("Confirm"),
+        "gBtnConnect": MessageLookupByLibrary.simpleMessage("Connect"),
+        "gBtnDelete": MessageLookupByLibrary.simpleMessage("Delete"),
+        "gBtnDownload": MessageLookupByLibrary.simpleMessage("Download"),
+        "gBtnDownloadDefaultFormat":
+            MessageLookupByLibrary.simpleMessage("Default Format"),
+        "gBtnDynamic": MessageLookupByLibrary.simpleMessage("Dynamic"),
+        "gBtnExit": MessageLookupByLibrary.simpleMessage("Exit"),
+        "gBtnExport": MessageLookupByLibrary.simpleMessage("Export"),
+        "gBtnGetDataFormDb":
+            MessageLookupByLibrary.simpleMessage("Get Data From DB"),
+        "gBtnGetPluTemplate":
+            MessageLookupByLibrary.simpleMessage("Get PLU Template"),
+        "gBtnImport": MessageLookupByLibrary.simpleMessage("Import"),
+        "gBtnModify": MessageLookupByLibrary.simpleMessage("Modify"),
+        "gBtnNewFormat": MessageLookupByLibrary.simpleMessage("New Format"),
+        "gBtnOpenSerialPort": MessageLookupByLibrary.simpleMessage("Open Port"),
+        "gBtnSave": MessageLookupByLibrary.simpleMessage("Save"),
+        "gBtnSaveDataBase": MessageLookupByLibrary.simpleMessage("Save To DB"),
+        "gBtnSaveExcel": MessageLookupByLibrary.simpleMessage("Save To Excel"),
+        "gBtnSelectPluFile":
+            MessageLookupByLibrary.simpleMessage("Select Product Excel"),
+        "gBtnSelectZipFirmware":
+            MessageLookupByLibrary.simpleMessage("Select Firmware Zip"),
+        "gBtnSetting": MessageLookupByLibrary.simpleMessage("Setting"),
+        "gBtnStart": MessageLookupByLibrary.simpleMessage("Start"),
+        "gBtnStatic": MessageLookupByLibrary.simpleMessage("Static"),
+        "gBtnTare": MessageLookupByLibrary.simpleMessage("Tare"),
+        "gBtnViaNetworkUpdate": MessageLookupByLibrary.simpleMessage("Network"),
+        "gBtnViaSerialUpdate":
+            MessageLookupByLibrary.simpleMessage("Serial Port"),
+        "gBuildInfoTip": MessageLookupByLibrary.simpleMessage(
+            "This ID is only to be used by device developers."),
+        "gConfirmFileTip": MessageLookupByLibrary.simpleMessage(
+            "Please confirm the file correct."),
+        "gConfirmPrnFmtOrderTip": MessageLookupByLibrary.simpleMessage(
+            "Please confirm the order of the printing formats."),
+        "gDataBits": MessageLookupByLibrary.simpleMessage("Data bits:"),
+        "gDeviceName": MessageLookupByLibrary.simpleMessage("Device name:"),
+        "gEditor": MessageLookupByLibrary.simpleMessage("Editor"),
+        "gElementType": MessageLookupByLibrary.simpleMessage("Type:"),
+        "gExpirationDate":
+            MessageLookupByLibrary.simpleMessage("Expiration date:"),
+        "gFindSsid": MessageLookupByLibrary.simpleMessage("Discover SSID"),
+        "gFontBold": MessageLookupByLibrary.simpleMessage("Bold:"),
+        "gFontReverse":
             MessageLookupByLibrary.simpleMessage("Reverse Contrast:"),
-        "free_fmt1_txt": MessageLookupByLibrary.simpleMessage("Free format 1:"),
-        "free_fmt2_txt": MessageLookupByLibrary.simpleMessage("Free format 2:"),
-        "free_fmt3_txt": MessageLookupByLibrary.simpleMessage("Free format 3:"),
-        "gateway": MessageLookupByLibrary.simpleMessage("Gateway:"),
+        "gFontSize": MessageLookupByLibrary.simpleMessage("Font Size:"),
+        "gGateway": MessageLookupByLibrary.simpleMessage("Gateway:"),
+        "gHrAlignment": MessageLookupByLibrary.simpleMessage("HRI Alignment:"),
+        "gIpAddress": MessageLookupByLibrary.simpleMessage("IPv4:"),
+        "gLanguage": MessageLookupByLibrary.simpleMessage("EngLish"),
+        "gMaxLength": MessageLookupByLibrary.simpleMessage("Max Length:"),
+        "gModelName": MessageLookupByLibrary.simpleMessage("Model Name:"),
+        "gMsgAuthorityFail": MessageLookupByLibrary.simpleMessage(
+            "Not authenticed. Please send the ID to us."),
+        "gMsgAuthorityPassed":
+            MessageLookupByLibrary.simpleMessage("Authentication passed.\r\n"),
+        "gMsgNoElement":
+            MessageLookupByLibrary.simpleMessage("No element selected."),
+        "gMsgRefresh": MessageLookupByLibrary.simpleMessage("Refresh"),
+        "gMsgSerialError": MessageLookupByLibrary.simpleMessage(
+            "Serial port has been disconnected. Please check the settings."),
+        "gMsgStep1": MessageLookupByLibrary.simpleMessage(
+            "1. Please click on one or more elements on the left panel;"),
+        "gMsgStep2": MessageLookupByLibrary.simpleMessage(
+            "2. The selected elements will be displayed in the center of the page, and you can edit their attributes here. "),
+        "gNetmask": MessageLookupByLibrary.simpleMessage("NetMask:"),
+        "gNetworkSetting":
+            MessageLookupByLibrary.simpleMessage("Wireless network settings"),
+        "gOfflineTip": MessageLookupByLibrary.simpleMessage("offline"),
+        "gOnlineTip": MessageLookupByLibrary.simpleMessage("online"),
+        "gOpenJson": MessageLookupByLibrary.simpleMessage("Open Json"),
+        "gOperationSteps":
+            MessageLookupByLibrary.simpleMessage("Operation Steps:"),
+        "gPassword": MessageLookupByLibrary.simpleMessage("Password:"),
+        "gPluCategory": MessageLookupByLibrary.simpleMessage("Category"),
+        "gPluField": MessageLookupByLibrary.simpleMessage("PLU Field"),
+        "gPluItemCode": MessageLookupByLibrary.simpleMessage("Item Code"),
+        "gPluLimitHigh": MessageLookupByLibrary.simpleMessage("Limit High"),
+        "gPluLimitLow": MessageLookupByLibrary.simpleMessage("Limit Low"),
+        "gPluName": MessageLookupByLibrary.simpleMessage("PLU Name:"),
+        "gPluNameLength":
+            MessageLookupByLibrary.simpleMessage("Product name max length:"),
+        "gPluPlu": MessageLookupByLibrary.simpleMessage("PLU"),
+        "gPluPluCode": MessageLookupByLibrary.simpleMessage("Product Code"),
+        "gPluPluName": MessageLookupByLibrary.simpleMessage("Product Name"),
+        "gPluPretare": MessageLookupByLibrary.simpleMessage("Pretare"),
+        "gPluPrice": MessageLookupByLibrary.simpleMessage("Price"),
+        "gPluTaxType": MessageLookupByLibrary.simpleMessage("Tax Type"),
+        "gPluUnitWgt": MessageLookupByLibrary.simpleMessage("Unit Wight"),
+        "gPluWgtUnit": MessageLookupByLibrary.simpleMessage("Unit"),
+        "gPosition": MessageLookupByLibrary.simpleMessage("Position"),
+        "gPrintDirection": MessageLookupByLibrary.simpleMessage("Direction:"),
+        "gPrinter": MessageLookupByLibrary.simpleMessage("Printer Protocol:"),
+        "gQrcode": MessageLookupByLibrary.simpleMessage("QRcode:"),
+        "gQrcodeEdit": MessageLookupByLibrary.simpleMessage("Qrcode Edit"),
+        "gQrcodeWidth": MessageLookupByLibrary.simpleMessage("Qrcode Width:"),
+        "gReceiptFormat":
+            MessageLookupByLibrary.simpleMessage("Receipt Format"),
+        "gRefreshPort": MessageLookupByLibrary.simpleMessage("Refresh port"),
+        "gRotation": MessageLookupByLibrary.simpleMessage("Rotation:"),
+        "gSaveFormat": MessageLookupByLibrary.simpleMessage("Save Format"),
+        "gScaleSn": MessageLookupByLibrary.simpleMessage("SN#:"),
+        "gSerialParity": MessageLookupByLibrary.simpleMessage("Parity:"),
+        "gSerialPort": MessageLookupByLibrary.simpleMessage("Serial port:"),
+        "gSerialPortStatus":
+            MessageLookupByLibrary.simpleMessage("Serial Port Status:"),
+        "gStopBits": MessageLookupByLibrary.simpleMessage("Stop bits:"),
+        "gSystemId":
+            MessageLookupByLibrary.simpleMessage("System Unique ID:  "),
+        "gSystemSetting":
+            MessageLookupByLibrary.simpleMessage("System Setting"),
+        "gTabOrder": MessageLookupByLibrary.simpleMessage("Layer order:"),
+        "gTextContent": MessageLookupByLibrary.simpleMessage("Text Content:"),
+        "gTipConfirmInfo": MessageLookupByLibrary.simpleMessage(
+            "Please confirm the information."),
+        "gTipConnectStaticIp": MessageLookupByLibrary.simpleMessage(
+            "Enter IP information and click the connect button!"),
+        "gTipConnected":
+            MessageLookupByLibrary.simpleMessage("You are already connected!"),
+        "gTipConnectedInfo":
+            MessageLookupByLibrary.simpleMessage("Connected AP Info:"),
+        "gTipConnecting": MessageLookupByLibrary.simpleMessage("Connecting..."),
+        "gTipDataError": MessageLookupByLibrary.simpleMessage("Data Error !"),
+        "gTipDeviceNameEmpty": MessageLookupByLibrary.simpleMessage(
+            "Device name can not be empty,error."),
+        "gTipDownloadAllPlu":
+            MessageLookupByLibrary.simpleMessage("Clear all then download"),
+        "gTipExitApp": MessageLookupByLibrary.simpleMessage(
+            "Are you sure to exit the system?"),
+        "gTipFirmwareZipFile":
+            MessageLookupByLibrary.simpleMessage("Firmware Zip:"),
+        "gTipFolderNoSelected": MessageLookupByLibrary.simpleMessage(
+            "No folder has been selected, so the file cannot be saved."),
+        "gTipFreeFormat": MessageLookupByLibrary.simpleMessage("Free format"),
+        "gTipGetApListAndIP": MessageLookupByLibrary.simpleMessage(
+            "Obtaining AP list and Ip info,please wait..."),
+        "gTipGetIP": MessageLookupByLibrary.simpleMessage(
+            "Obtaining IP, please wait..."),
+        "gTipGetIpFail": MessageLookupByLibrary.simpleMessage("Get Ip Fail !"),
+        "gTipGetIpOk": MessageLookupByLibrary.simpleMessage("Get Ip OK !"),
+        "gTipImportPluOK": MessageLookupByLibrary.simpleMessage(
+            "Note: When the cell is empty, it will be written as 0 or - ."),
+        "gTipInstallService":
+            MessageLookupByLibrary.simpleMessage("Install Service"),
+        "gTipItemType": MessageLookupByLibrary.simpleMessage("Type:"),
+        "gTipLabelFmtDownload": MessageLookupByLibrary.simpleMessage(
+            "This application is used to download print format."),
+        "gTipNoData": MessageLookupByLibrary.simpleMessage("No data"),
+        "gTipNoDataSelected":
+            MessageLookupByLibrary.simpleMessage("No data selected."),
+        "gTipPluDownload": MessageLookupByLibrary.simpleMessage(
+            "This application is used to download product information."),
+        "gTipPluDuplicated": MessageLookupByLibrary.simpleMessage("Duplicated"),
+        "gTipRebootForUpdate": MessageLookupByLibrary.simpleMessage(
+            "Please reboot the device to begin update..."),
+        "gTipReceiptDesign": MessageLookupByLibrary.simpleMessage(
+            "This application is designed for the printing format of the receipt."),
+        "gTipReceiptDownload": MessageLookupByLibrary.simpleMessage(
+            "This application is used to download the print format of the receipt."),
+        "gTipSSID": MessageLookupByLibrary.simpleMessage("SSID:"),
+        "gTipSaveDbOk": MessageLookupByLibrary.simpleMessage("Save Data OK."),
+        "gTipSaveFail":
+            MessageLookupByLibrary.simpleMessage("Save data failed !"),
+        "gTipSaveSuccess": MessageLookupByLibrary.simpleMessage(
+            "Save successfully. The path is:"),
+        "gTipSavingData": MessageLookupByLibrary.simpleMessage(
+            "The data is being saved. Please wait a moment."),
+        "gTipScaleList": MessageLookupByLibrary.simpleMessage("Scale List"),
+        "gTipSelectOnePluFile": MessageLookupByLibrary.simpleMessage(
+            "Only one PLU file can be selected"),
+        "gTipSelectUpdateWay": MessageLookupByLibrary.simpleMessage(
+            "Please select the way to update the firmware."),
+        "gTipService": MessageLookupByLibrary.simpleMessage("Service"),
+        "gTipServiceOff": MessageLookupByLibrary.simpleMessage(
+            "Service stoped,please start service."),
+        "gTipServiceStarted":
+            MessageLookupByLibrary.simpleMessage("Service is running"),
+        "gTipServiceStoped":
+            MessageLookupByLibrary.simpleMessage("Service Stoped"),
+        "gTipServiceUninstalled":
+            MessageLookupByLibrary.simpleMessage("Service not installed"),
+        "gTipStartService":
+            MessageLookupByLibrary.simpleMessage("Start Service"),
+        "gTipStopService": MessageLookupByLibrary.simpleMessage("Stop Service"),
+        "gTipTakeOut": MessageLookupByLibrary.simpleMessage(
+            "This app is used to implement the take out scale."),
+        "gTipTimeOut": MessageLookupByLibrary.simpleMessage("Time out!"),
+        "gTipUninstallService":
+            MessageLookupByLibrary.simpleMessage("Uninstall Service"),
+        "gTipUpdatePlu":
+            MessageLookupByLibrary.simpleMessage("Update Products"),
+        "gTipWait": MessageLookupByLibrary.simpleMessage("Please wait..."),
+        "gTitleBtSetting":
+            MessageLookupByLibrary.simpleMessage("Bluetooth Configurations"),
+        "gTitleConfirm": MessageLookupByLibrary.simpleMessage("Confirmation"),
+        "gTitleGetBuildInfo":
+            MessageLookupByLibrary.simpleMessage("Software Information"),
+        "gTitleLabelFmtDownload": MessageLookupByLibrary.simpleMessage(
+            "Download Label Printing Formats"),
+        "gTitleLicense":
+            MessageLookupByLibrary.simpleMessage("License information"),
+        "gTitleLicenseInfo":
+            MessageLookupByLibrary.simpleMessage("License Info"),
+        "gTitlePluDownload":
+            MessageLookupByLibrary.simpleMessage("PLU Download"),
+        "gTitlePluEdit": MessageLookupByLibrary.simpleMessage("PLU Edit"),
+        "gTitleReceiptDesign":
+            MessageLookupByLibrary.simpleMessage("Receipt Design"),
+        "gTitleReceiptDownload":
+            MessageLookupByLibrary.simpleMessage("Receipt Format Download"),
+        "gTitleSerialModify": MessageLookupByLibrary.simpleMessage(
+            "Serial port information modification"),
+        "gTitleSerialOutput":
+            MessageLookupByLibrary.simpleMessage("Serial Output Design"),
+        "gTitleSerialOutputDownload":
+            MessageLookupByLibrary.simpleMessage("Serial Output Download"),
+        "gTitleSerialPortConnection":
+            MessageLookupByLibrary.simpleMessage("Serial Port Connection"),
+        "gTitleSetLanguage":
+            MessageLookupByLibrary.simpleMessage("Set Language"),
+        "gTitleTakeOut":
+            MessageLookupByLibrary.simpleMessage("Take Out Scale(Single)"),
+        "gTitleUpdateFirmware":
+            MessageLookupByLibrary.simpleMessage("Update Firmware"),
+        "gTotalFmt": MessageLookupByLibrary.simpleMessage("Total format:"),
         "general_configuration_title":
             MessageLookupByLibrary.simpleMessage("General Configuration"),
         "get_bt_name": MessageLookupByLibrary.simpleMessage("Get name"),
-        "get_build_info":
-            MessageLookupByLibrary.simpleMessage("Software Information"),
         "go_home": MessageLookupByLibrary.simpleMessage(
             "Confirm to return to hompage?"),
-        "header_confirm_info": MessageLookupByLibrary.simpleMessage(
-            "Please confirm the information."),
-        "hr_alignment": MessageLookupByLibrary.simpleMessage("HRI Alignment:"),
-        "ip_address": MessageLookupByLibrary.simpleMessage("IPv4:"),
+        "iBtnZero": MessageLookupByLibrary.simpleMessage("Zero"),
+        "iStable": MessageLookupByLibrary.simpleMessage("Stable:"),
+        "iTextNet": MessageLookupByLibrary.simpleMessage("Net:"),
+        "iTextZero": MessageLookupByLibrary.simpleMessage("Zero:"),
+        "iTipCheckWeigher": MessageLookupByLibrary.simpleMessage(
+            "This application is used to check weighing data in real time"),
+        "iTipIncrementWeighting": MessageLookupByLibrary.simpleMessage(
+            "This app is used to implement the increment scale."),
+        "iTipWeightCollection": MessageLookupByLibrary.simpleMessage(
+            "This application is used to collect weighing data in real time"),
+        "iTitleCheckWeigher":
+            MessageLookupByLibrary.simpleMessage("Check Weighing(Single)"),
+        "iTitleIncrementWeighting":
+            MessageLookupByLibrary.simpleMessage("Increment Weighing(Single)"),
+        "iTitleWeightCollection": MessageLookupByLibrary.simpleMessage(
+            "Weighing Data Collection(Single)"),
+        "iTitleWeighting":
+            MessageLookupByLibrary.simpleMessage("Weighing(Single)"),
+        "iUserInfo": MessageLookupByLibrary.simpleMessage("User Info"),
         "jump_confirm_info": MessageLookupByLibrary.simpleMessage(
             "Please confirm to go to the default print format page."),
         "l_barcode_expl": MessageLookupByLibrary.simpleMessage("BarCode"),
@@ -218,33 +409,14 @@ class MessageLookup extends MessageLookupByLibrary {
         "l_wgt_unit_var": MessageLookupByLibrary.simpleMessage("WeightUnit"),
         "label_design_title":
             MessageLookupByLibrary.simpleMessage("Label Design"),
-        "label_fmt_download": MessageLookupByLibrary.simpleMessage(
-            "Download Label Printing Formats"),
-        "language": MessageLookupByLibrary.simpleMessage("Language"),
         "language_setting_title":
             MessageLookupByLibrary.simpleMessage("Language Setting"),
-        "license_info_title":
-            MessageLookupByLibrary.simpleMessage("License Info"),
-        "license_title":
-            MessageLookupByLibrary.simpleMessage("License information"),
         "m_scale_title":
             MessageLookupByLibrary.simpleMessage("Multi-scale Management"),
         "manual": MessageLookupByLibrary.simpleMessage("Manual"),
-        "max_length": MessageLookupByLibrary.simpleMessage("Max Length:"),
         "modify_bt_name": MessageLookupByLibrary.simpleMessage("Modify name"),
-        "net": MessageLookupByLibrary.simpleMessage("Net:"),
-        "netmask": MessageLookupByLibrary.simpleMessage("NetMask:"),
-        "network_setting":
-            MessageLookupByLibrary.simpleMessage("Wireless network settings"),
-        "new_format": MessageLookupByLibrary.simpleMessage("New Format"),
         "new_license_text":
             MessageLookupByLibrary.simpleMessage("New License:"),
-        "no_element":
-            MessageLookupByLibrary.simpleMessage("No element selected."),
-        "open_file": MessageLookupByLibrary.simpleMessage("Open File (json)"),
-        "open_preview": MessageLookupByLibrary.simpleMessage("Open preview"),
-        "operation_steps":
-            MessageLookupByLibrary.simpleMessage("Operation Steps:"),
         "output_confirm_info": MessageLookupByLibrary.simpleMessage(
             "Please confirm the folder name!"),
         "output_no_file":
@@ -380,25 +552,6 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Parameter Setting"),
         "parameter_settings_title":
             MessageLookupByLibrary.simpleMessage("Parameter settings"),
-        "passed_fail_message": MessageLookupByLibrary.simpleMessage(
-            "Not authenticed. Please send the ID to us."),
-        "passed_message":
-            MessageLookupByLibrary.simpleMessage("Authentication passed.\r\n"),
-        "password": MessageLookupByLibrary.simpleMessage("Password:"),
-        "plu_all_plu_title":
-            MessageLookupByLibrary.simpleMessage("All Products:"),
-        "plu_btn_clear": MessageLookupByLibrary.simpleMessage("Clear"),
-        "plu_btn_download": MessageLookupByLibrary.simpleMessage("Download"),
-        "plu_btn_get_template":
-            MessageLookupByLibrary.simpleMessage("Get Product Template"),
-        "plu_cfm_file": MessageLookupByLibrary.simpleMessage(
-            "Please confirm the PLU file."),
-        "plu_cfm_one_file": MessageLookupByLibrary.simpleMessage(
-            "Only one PLU file can be selected"),
-        "plu_choose_file":
-            MessageLookupByLibrary.simpleMessage("Choose Product Excel"),
-        "plu_download_title":
-            MessageLookupByLibrary.simpleMessage("PLU Download"),
         "plu_edit": MessageLookupByLibrary.simpleMessage("PLU Edit"),
         "plu_error_message": MessageLookupByLibrary.simpleMessage(
             "PLU pretare cannot be empty."),
@@ -406,47 +559,38 @@ class MessageLookup extends MessageLookupByLibrary {
             "PLU ID or PLU name cannot be empty."),
         "plu_error_message2": MessageLookupByLibrary.simpleMessage(
             "PLU ID or PLU name already exists."),
-        "plu_name": MessageLookupByLibrary.simpleMessage("PLU Name:"),
-        "plu_name_length":
-            MessageLookupByLibrary.simpleMessage("Product name max length:"),
-        "plu_partial_plu_title":
-            MessageLookupByLibrary.simpleMessage("Partial Products:"),
         "plu_remarks": MessageLookupByLibrary.simpleMessage("PLu Remarks:"),
-        "position": MessageLookupByLibrary.simpleMessage("Position"),
         "pretare": MessageLookupByLibrary.simpleMessage("Pretare:"),
-        "print_direction": MessageLookupByLibrary.simpleMessage("Direction:"),
-        "print_page": MessageLookupByLibrary.simpleMessage("Page:"),
-        "printer": MessageLookupByLibrary.simpleMessage("Printer:"),
         "product_information":
             MessageLookupByLibrary.simpleMessage("Product Information"),
-        "qrcode_edit": MessageLookupByLibrary.simpleMessage("Qrcode Edit"),
         "rDetailRptTitle":
             MessageLookupByLibrary.simpleMessage("Retail Detail Report"),
-        "receipt_design_title":
-            MessageLookupByLibrary.simpleMessage("Receipt Design"),
-        "receipt_format1_item":
-            MessageLookupByLibrary.simpleMessage("Receipt Format1:"),
-        "receipt_format2_item":
-            MessageLookupByLibrary.simpleMessage("Receipt Format2:"),
-        "receipt_format3_item":
-            MessageLookupByLibrary.simpleMessage("Receipt Format3:"),
-        "receipt_format_download":
-            MessageLookupByLibrary.simpleMessage("Receipt Format Download"),
-        "refresh_port": MessageLookupByLibrary.simpleMessage("Refresh port"),
-        "refresh_tip": MessageLookupByLibrary.simpleMessage("Refresh"),
+        "rHideScaleListBtn":
+            MessageLookupByLibrary.simpleMessage("Hide Scales"),
+        "rJoinManagementTip": MessageLookupByLibrary.simpleMessage(
+            "Whether to join the management"),
+        "rRefreshListBtn": MessageLookupByLibrary.simpleMessage("Refresh List"),
+        "rShowScaleListBtn":
+            MessageLookupByLibrary.simpleMessage("Show Scales"),
+        "rTipDetailRpt": MessageLookupByLibrary.simpleMessage(
+            "This app is used to display sales detail data."),
+        "rTipFooter": MessageLookupByLibrary.simpleMessage("Footer"),
+        "rTipHeader": MessageLookupByLibrary.simpleMessage("Header"),
+        "rTipOperator": MessageLookupByLibrary.simpleMessage("Operator"),
+        "rTipSetVariableValues": MessageLookupByLibrary.simpleMessage(
+            "This application is used to distribute various variable information, such as headers and footers."),
+        "rTitleSetVariableValues":
+            MessageLookupByLibrary.simpleMessage("Variable Value Setting"),
         "report_delete_btn": MessageLookupByLibrary.simpleMessage("Delete All"),
         "report_hide_btn": MessageLookupByLibrary.simpleMessage("Hide Report"),
         "report_set_btn":
             MessageLookupByLibrary.simpleMessage("Report Setting"),
         "report_show_btn": MessageLookupByLibrary.simpleMessage("Show Reports"),
         "save_as": MessageLookupByLibrary.simpleMessage("Save as"),
-        "save_csv": MessageLookupByLibrary.simpleMessage("Save as CSV"),
-        "save_file": MessageLookupByLibrary.simpleMessage("Save File (json)"),
         "save_mode": MessageLookupByLibrary.simpleMessage("Save Mode:"),
         "scale_mgr_btn_add": MessageLookupByLibrary.simpleMessage("Add"),
         "scale_mgr_btn_def":
             MessageLookupByLibrary.simpleMessage("Set Default"),
-        "scale_mgr_btn_dlt": MessageLookupByLibrary.simpleMessage("Delete"),
         "scale_mgr_btn_rename": MessageLookupByLibrary.simpleMessage("Rename"),
         "scale_mgr_btn_test":
             MessageLookupByLibrary.simpleMessage("Test Connect"),
@@ -455,24 +599,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "scale_mgr_scale_name":
             MessageLookupByLibrary.simpleMessage("Scale Name"),
         "scale_model": MessageLookupByLibrary.simpleMessage("Scale Model:"),
-        "scale_name": MessageLookupByLibrary.simpleMessage("Scale Name:"),
-        "scale_sn": MessageLookupByLibrary.simpleMessage("SN#:"),
-        "select_barcode": MessageLookupByLibrary.simpleMessage("BarCode:"),
         "select_firmware_btn":
             MessageLookupByLibrary.simpleMessage("Select Firmware"),
-        "select_fontsize": MessageLookupByLibrary.simpleMessage("Font Size:"),
-        "select_qrcode": MessageLookupByLibrary.simpleMessage("QRcode:"),
-        "select_qrcode_width":
-            MessageLookupByLibrary.simpleMessage("Qrcode Width:"),
-        "select_rotation": MessageLookupByLibrary.simpleMessage("Rotation:"),
-        "serial_error": MessageLookupByLibrary.simpleMessage(
-            "Serial port has been disconnected. Please check the settings."),
-        "serial_modify_title": MessageLookupByLibrary.simpleMessage(
-            "Serial port information modification"),
-        "serial_output_design":
-            MessageLookupByLibrary.simpleMessage("Serial Output Design"),
-        "serial_output_download":
-            MessageLookupByLibrary.simpleMessage("Serial Output Download"),
         "serial_page_ol": MessageLookupByLibrary.simpleMessage("OL mode"),
         "serial_page_pcs":
             MessageLookupByLibrary.simpleMessage("Counting mode"),
@@ -483,60 +611,23 @@ class MessageLookup extends MessageLookupByLibrary {
         "serial_page_ul": MessageLookupByLibrary.simpleMessage("UL mode"),
         "serial_page_weight":
             MessageLookupByLibrary.simpleMessage("Weight mode"),
-        "serial_port": MessageLookupByLibrary.simpleMessage("Serial port:"),
-        "serial_port_output_preview":
-            MessageLookupByLibrary.simpleMessage("Serial port output preview"),
-        "serial_port_status":
-            MessageLookupByLibrary.simpleMessage("Serial port status:"),
         "server_ip": MessageLookupByLibrary.simpleMessage("Server Ip:"),
         "server_port": MessageLookupByLibrary.simpleMessage("Server Port:"),
         "set_ethernet_ip_title":
             MessageLookupByLibrary.simpleMessage("Ethernet IP Setting"),
-        "set_language_title":
-            MessageLookupByLibrary.simpleMessage("Set Language"),
-        "set_wifi_success": MessageLookupByLibrary.simpleMessage(
-            "Wi-Fi configured successfully!"),
         "show_current_weight":
             MessageLookupByLibrary.simpleMessage("Current weight:"),
         "show_increment_weight":
             MessageLookupByLibrary.simpleMessage("Increment weight:"),
         "show_reduced_weight":
             MessageLookupByLibrary.simpleMessage("Reduced weight:"),
-        "stable": MessageLookupByLibrary.simpleMessage("Stable:"),
-        "stable_time": MessageLookupByLibrary.simpleMessage("Stable Time"),
+        "stable_time": MessageLookupByLibrary.simpleMessage("Stable Time (s)"),
         "stable_time_error_tip": MessageLookupByLibrary.simpleMessage(
             "The value must be under 20 seconds."),
-        "step1": MessageLookupByLibrary.simpleMessage(
-            "1. Please click on one or more elements on the left panel;"),
-        "step2": MessageLookupByLibrary.simpleMessage(
-            "2. The selected elements will be displayed in the center of the page, and you can edit their attributes here. "),
-        "stop_bits": MessageLookupByLibrary.simpleMessage("Stop bits:"),
-        "system_id":
-            MessageLookupByLibrary.simpleMessage("System Unique ID:  "),
-        "system_setting_title":
-            MessageLookupByLibrary.simpleMessage("System Setting"),
-        "tab_order": MessageLookupByLibrary.simpleMessage("Layer order:"),
-        "take_in_title":
-            MessageLookupByLibrary.simpleMessage("Increment Weighing"),
-        "take_out_title":
-            MessageLookupByLibrary.simpleMessage("Take Out Scale"),
-        "tare": MessageLookupByLibrary.simpleMessage("Tare:"),
-        "text_content": MessageLookupByLibrary.simpleMessage("Text Content:"),
-        "title_serial_port_connection":
-            MessageLookupByLibrary.simpleMessage("Serial Port Connection"),
-        "total_fmt_txt": MessageLookupByLibrary.simpleMessage("Total format:"),
         "txt_serial_port_connected":
             MessageLookupByLibrary.simpleMessage("Serial port connected"),
         "txt_serial_port_connected_fail":
             MessageLookupByLibrary.simpleMessage("Unable to connect"),
-        "update_firmware":
-            MessageLookupByLibrary.simpleMessage("Update Firmware By Serial "),
-        "update_firmware_info": MessageLookupByLibrary.simpleMessage(
-            "The update process can not be canceled.\r\nPress confirm to continue."),
-        "update_firmware_reboot": MessageLookupByLibrary.simpleMessage(
-            "Please reboot the device to begin update..."),
-        "update_firmware_wait":
-            MessageLookupByLibrary.simpleMessage("Please wait..."),
         "user_edit": MessageLookupByLibrary.simpleMessage("User Edit"),
         "user_error_message1": MessageLookupByLibrary.simpleMessage(
             "The User Id and Username cannot be empty!"),
@@ -545,19 +636,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "user_error_message3":
             MessageLookupByLibrary.simpleMessage("The User is not found!"),
         "user_id": MessageLookupByLibrary.simpleMessage("User ID:"),
-        "user_info": MessageLookupByLibrary.simpleMessage("User Info"),
         "user_name": MessageLookupByLibrary.simpleMessage("User Name:"),
         "user_phone": MessageLookupByLibrary.simpleMessage("Phone:"),
         "user_remarks": MessageLookupByLibrary.simpleMessage("User Notes:"),
         "user_sex": MessageLookupByLibrary.simpleMessage("Gender:"),
-        "variable_value_setting_title":
-            MessageLookupByLibrary.simpleMessage("Variable Value Setting"),
-        "weighing_title": MessageLookupByLibrary.simpleMessage("Weighing"),
-        "weight_collection_title":
-            MessageLookupByLibrary.simpleMessage("Weight Data Collection"),
         "wifi_setting_title":
             MessageLookupByLibrary.simpleMessage("Wi-Fi Setting"),
-        "zero": MessageLookupByLibrary.simpleMessage("Zero:"),
         "zero_range": MessageLookupByLibrary.simpleMessage("Zero Range:")
       };
 }

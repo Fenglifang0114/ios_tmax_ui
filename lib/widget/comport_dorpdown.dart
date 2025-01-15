@@ -4,7 +4,8 @@ import '../data/scalelist_data.dart';
 
 // ignore: must_be_immutable
 class ComPortDropdown extends StatefulWidget {
-  ComPortDropdown(this.index, this.dropDownList, this.defaultValue, {super.key});
+  ComPortDropdown(this.index, this.dropDownList, this.defaultValue,
+      {super.key});
   late int index;
   late List<String> dropDownList = [];
   late var defaultValue = '';
@@ -25,7 +26,7 @@ class DropdownState extends State<ComPortDropdown> {
       padding: const EdgeInsets.all(0),
       child: DropdownButtonFormField<String>(
         isExpanded: true,
-        // decoration: const InputDecoration(border: OutlineInputBorder()),
+        decoration: const InputDecoration(border: OutlineInputBorder()),
         // 设置默认值
 
         value: (widget.defaultValue != '')
@@ -35,10 +36,6 @@ class DropdownState extends State<ComPortDropdown> {
         onChanged: (String? newPosition) {
           myDialogData.msg = newPosition.toString();
           currentValue(widget.index, newPosition.toString());
-          // print(myDialogData.msg);
-          // setState(() {
-          //   eventBus.fire(EventDialogData(myDialogData));
-          // });
         },
         // 传入可选的数组
         items: dropDownList.map<DropdownMenuItem<String>>((String value) {

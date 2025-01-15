@@ -5,14 +5,19 @@ import 'package:flutter/services.dart';
 import 'package:t_max/data/comscaleinfo_data.dart';
 import 'package:t_max/data/scalecmd_data.dart';
 import 'package:t_max/data/writelog.dart';
+import '../data/cominfoslist_data.dart';
+import '../data/device_data.dart';
 import '../data/downloadresponse.dart';
 import '../data/ipinfodata.dart';
 import '../data/language.dart';
 import '../data/manager_scale_channel.dart';
+import '../data/modifyresult_data.dart';
 import '../data/modifyscale_data.dart';
 import '../data/scale_info_from_scale.dart';
+import '../data/scalelist_data.dart';
 import '../eventbus/eventbus.dart';
 import '../functions/methods.dart';
+import '../widget/comport_dorpdown.dart';
 import '../widget/custom_button.dart';
 import '../widget/page_head.dart';
 
@@ -53,9 +58,45 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
   dynamic _eventbus3;
   dynamic _eventbus4;
   dynamic _eventbus5;
+  dynamic _eventbus6;
+  dynamic _eventbus7;
+  dynamic _eventbus8;
+  dynamic _eventbus9;
+  // dynamic _eventbus10;
 
   Timer? checkIsOnlineTimer;
   Timer? _debounceTimer;
+
+  ///////////////////
+  List<String> comLists = [];
+  String comPort = "";
+
+  List<String> baudRateList = [
+    '115200',
+    '57600',
+    '38400',
+    '19200',
+    '14400',
+    '9600',
+    '4800',
+    '2400',
+    '1200'
+  ];
+  List<String> scaleModelList = ['TMax'];
+  String scaleModel = myModifyScale.scaleModel.toString();
+  List<String> dataBitsList = ['8']; //去掉5,6,7,8
+  List<String> stopBitsList = ['1']; //, '1.5', '2'
+  List<String> checkBitsList = ['None']; //, 'Odd', 'Even'
+  List<String> protocolList = [
+    'None'
+  ]; //'Xon/Xoff', 'None', 'Rts/Cts', 'Dsr/Dtr'
+  String dialogtype = "com";
+  String refresh = " ";
+  String serialPortConnect = " ";
+  bool isComSetting = false;
+  bool isClosePort = false;
+
+  /////////////////////
 
   RegExp ipaddressRegex = RegExp(r'[0-9.]');
 
@@ -80,6 +121,10 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
     super.initState();
     initScaleList();
     initEventBus();
+    PublicFunctions.getPortList();
+    PublicFunctions.openSerialPort(1);
+    DefScaleInfo.getDefScaleInfo(1);
+    checkPortList();
 
     scaleNameCtl.addListener(_onScaleNameChanged);
     ipCtl.addListener(_onIpChanged);
@@ -274,6 +319,55 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
         });
       }
     });
+
+    _eventbus6 = eventBus.on<EventRespScaleModify>().listen((event) {
+      if (mounted) {
+        myModifyAck = event.obj;
+        isComSetting = false;
+        PublicFunctions.checkSerialPort(1);
+        isTesting = true;
+      }
+    });
+
+    _eventbus7 = eventBus.on<EventComInfoList>().listen((event) {
+      if (mounted) {
+        setState(() {
+          myComInfoList = event.obj;
+          checkPortList();
+        });
+      }
+    });
+
+    _eventbus8 = eventBus.on<EventDeviceName>().listen((event) {
+      if (mounted) {
+        setState(() {
+          myDevicedata = event.obj;
+        });
+      }
+    });
+    _eventbus9 = eventBus.on<EventCurrentPort>().listen((event) {
+      if (mounted) {
+        setState(() {
+          myCurrentPort = event.obj;
+        });
+      }
+    });
+
+    // _eventbus10 = eventBus.on<EventRespCheckComPort>().listen((event) {
+    //   if (mounted) {
+    //     setState(() {
+    //       // isSetting = false;
+    //       myComScaleSn = event.obj;
+    //       if (myComScaleSn.modelName != '') {
+    //         serialPortConnect = localizedStrings.txt_serial_port_connected;
+    //         myComScaleInfo.isOnline = true;
+    //       } else {
+    //         serialPortConnect = localizedStrings.txt_serial_port_connected_fail;
+    //         myComScaleInfo.isOnline = false;
+    //       }
+    //     });
+    //   }
+    // });
   }
 
   void _onPortChanged() {
@@ -342,6 +436,11 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
     _eventbus3.cancel();
     _eventbus4.cancel();
     _eventbus5.cancel();
+    _eventbus7.cancel();
+    _eventbus8.cancel();
+    _eventbus9.cancel();
+    _eventbus6.cancel();
+    // _eventbus10.cancel();
     _stopTimer();
     scaleNameCtl.dispose();
     _debounceTimer?.cancel();
@@ -352,7 +451,7 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
   Widget build(BuildContext context) {
     // final _width = MediaQuery.of(context).size.width;
     // final _height = MediaQuery.of(context).size.height;
-
+    tempCurrentPort = myCurrentPort;
     return Scaffold(
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(50),
@@ -371,6 +470,66 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Tooltip(
+                        message: localizedStrings.scale_mgr_btn_add,
+                        child: CustomOutlinedButton(
+                          btnWidth: 0,
+                          btnHeight: 40,
+                          icon: Icons.add_circle_outline,
+                          text: '', // localizedStrings.scale_mgr_btn_add,
+                          onPressed: isTesting ||
+                                  isRename ||
+                                  isDel ||
+                                  isComSetting ||
+                                  isAddScale
+                              ? null
+                              : () {
+                                  setState(() {
+                                    selScaleId = -1;
+                                    isRename = false;
+                                    isAddScale = true;
+                                    ipCtl.text = "";
+                                    snCtl.text = "";
+                                    portCtl.text = "";
+                                  });
+                                },
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Tooltip(
+                        message: localizedStrings.gBtnDelete,
+                        child: CustomOutlinedButton(
+                          btnWidth: 0,
+                          btnHeight: 40,
+                          icon: Icons.delete_outline,
+                          text: '', //localizedStrings.gBtnDelete,
+                          onPressed: (isAddScale || isTesting) ||
+                                  (selScaleId == myDefScaleInfo.defScaleId!) ||
+                                  selScaleId == 1 ||
+                                  isRename ||
+                                  isDel
+                              ? null
+                              : () {
+                                  setState(() {
+                                    isDel = true;
+                                    delScale();
+                                  });
+                                },
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
                   showComScale(),
                   showNetScaleList(),
                 ],
@@ -378,79 +537,416 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
             ),
           ),
           Expanded(
-              flex: 7,
-              child: Container(
-                  color: Theme.of(context).colorScheme.surfaceTint,
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 2,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .primary, // 蓝色分隔条颜色
-                            ),
-                            showDetailScaleInfo(),
-                          ],
-                        ),
-                      )
-                    ],
-                  ))),
+            flex: 7,
+            child: Row(
+              children: [
+                Container(
+                  width: 2,
+                  color: Theme.of(context).colorScheme.primary, // 蓝色分隔条颜色
+                ),
+                selScaleId == 1
+                    ? showSerialScaleInfo()
+                    : showDetailScaleInfo(), //网络秤
+              ],
+            ),
+          ),
         ]));
+  }
+
+  Widget showSerialScaleInfo() {
+    return Expanded(
+      child: SizedBox(
+        width: double.infinity,
+        child: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+          return ListView(
+            children: [
+              SizedBox(
+                height: 20,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CustomOutlinedButton(
+                    btnWidth: constraints.maxWidth / 10,
+                    btnHeight: 40,
+                    icon: Icons.close_sharp,
+                    text: localizedStrings.gBtnCloseSerialPort,
+                    onPressed: isClosePort || isComSetting || comPort == refresh
+                        ? null
+                        : () {
+                            PublicFunctions.closeSerialPort(1);
+                            setState(() {
+                              isClosePort = true;
+                            });
+                          },
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  CustomOutlinedButton(
+                    btnWidth: constraints.maxWidth / 10,
+                    btnHeight: 40,
+                    icon: Icons.check_circle_outline,
+                    text: localizedStrings.gBtnOpenSerialPort,
+                    onPressed:
+                        !isClosePort || isComSetting || comPort == refresh
+                            ? null
+                            : () {
+                                PublicFunctions.openSerialPort(1);
+                                setState(() {
+                                  isClosePort = false;
+                                });
+                              },
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  CustomOutlinedButton(
+                    btnWidth: constraints.maxWidth / 10,
+                    btnHeight: 40,
+                    icon: Icons.arrow_forward_ios,
+                    text: localizedStrings.gBtnConnect,
+                    onPressed: isClosePort || isComSetting || comPort == refresh
+                        ? null
+                        : () {
+                            if (myCurrentPort.devPath != '') {
+                              setState(() {
+                                serialPortConnect = '';
+                                isComSetting = true;
+                              });
+                              modifyComInfo();
+                            }
+                          },
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  CustomOutlinedButton(
+                    btnWidth: constraints.maxWidth / 10,
+                    btnHeight: 40,
+                    icon: Icons.edit,
+                    text: localizedStrings.scale_mgr_btn_rename,
+                    onPressed: isClosePort ||
+                            isAddScale ||
+                            isTesting ||
+                            isDel ||
+                            isComSetting
+                        ? null
+                        : () {
+                            setState(() {
+                              isRename = true;
+                              isAddScale = false;
+                              isComSetting = true;
+                            });
+                          },
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              showScaleName(constraints.maxWidth),
+              const SizedBox(
+                height: 10,
+              ),
+              showModelName(constraints.maxWidth),
+              const SizedBox(
+                height: 10,
+              ),
+              showScaleSn(constraints.maxWidth),
+              const SizedBox(
+                height: 10,
+              ),
+              showPortInfo(constraints.maxWidth),
+              const SizedBox(
+                height: 10,
+              ),
+              showBaudInfo(constraints.maxWidth),
+              const SizedBox(
+                height: 10,
+              ),
+              showParityInfo(constraints.maxWidth),
+              const SizedBox(
+                height: 10,
+              ),
+              showStopBitsInfo(constraints.maxWidth),
+              const SizedBox(
+                height: 10,
+              ),
+              showDataBitsInfo(constraints.maxWidth),
+              const SizedBox(
+                height: 10,
+              ),
+              showConfirmRow(),
+            ],
+          );
+        }),
+      ),
+    );
+  }
+
+  void modifyComInfo() {
+    _stopTimer();
+
+    String infoString = jsonEncode(tempCurrentPort);
+    myMediaConf.mediaInfoJson = infoString;
+    myMediaConf.type = myDevicedata.mediaType;
+    myModifyScale.scaleId = 1;
+    myModifyScale.scaleModel = scaleModel;
+    myModifyScale.mediaConf = myMediaConf;
+    PublicFunctions.sendModifyInfo(jsonEncode(myModifyScale));
+    myCurrentPort.devPath = tempCurrentPort.devPath;
+    myCurrentPort.baud = tempCurrentPort.baud;
+    myCurrentPort.dataBits = tempCurrentPort.dataBits;
+    myCurrentPort.parity = tempCurrentPort.parity;
+    myCurrentPort.stopBits = tempCurrentPort.stopBits;
+    myComScaleInfo.baudRate = tempCurrentPort.baud!;
+    myComScaleInfo.portName = tempCurrentPort.devPath!;
+  }
+
+  Widget showDataBitsInfo(double width) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(
+          height: 45,
+          width: width / 4,
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              localizedStrings.gDataBits,
+              textAlign: TextAlign.right,
+              style: TextStyle(overflow: TextOverflow.ellipsis),
+            ),
+          ),
+        ),
+        const SizedBox(
+          width: 20,
+        ),
+        SizedBox(
+          width: width / 3,
+          height: 45,
+          child: ComPortDropdown(
+              1, dataBitsList, myCurrentPort.dataBits.toString()),
+        )
+      ],
+    );
+  }
+
+  Widget showStopBitsInfo(double width) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(
+          height: 45,
+          width: width / 4,
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              localizedStrings.gStopBits,
+              textAlign: TextAlign.right,
+              style: TextStyle(overflow: TextOverflow.ellipsis),
+            ),
+          ),
+        ),
+        const SizedBox(
+          width: 20,
+        ),
+        SizedBox(
+          width: width / 3,
+          height: 45,
+          child: ComPortDropdown(2, stopBitsList, stopBitsList[0]),
+        )
+      ],
+    );
+  }
+
+  Widget showParityInfo(double width) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(
+          height: 45,
+          width: width / 4,
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              localizedStrings.gSerialParity,
+              textAlign: TextAlign.right,
+              style: TextStyle(overflow: TextOverflow.ellipsis),
+            ),
+          ),
+        ),
+        const SizedBox(
+          width: 20,
+        ),
+        SizedBox(
+          width: width / 3,
+          height: 45,
+          child: ComPortDropdown(
+              4,
+              checkBitsList,
+              (myCurrentPort.parity == 0)
+                  ? (checkBitsList[0])
+                  : (myCurrentPort.parity == 1)
+                      ? (checkBitsList[1])
+                      : (myCurrentPort.parity == 2)
+                          ? (checkBitsList[2])
+                          : checkBitsList[0]),
+        )
+      ],
+    );
+  }
+
+  Widget showBaudInfo(double width) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(
+          height: 45,
+          width: width / 4,
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              localizedStrings.gBaudRate,
+              textAlign: TextAlign.right,
+              style: TextStyle(overflow: TextOverflow.ellipsis),
+            ),
+          ),
+        ),
+        const SizedBox(
+          width: 20,
+        ),
+        SizedBox(
+            width: width / 3,
+            height: 45,
+            child:
+                ComPortDropdown(3, baudRateList, myCurrentPort.baud.toString()))
+      ],
+    );
+  }
+
+  Widget showPortInfo(double width) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(
+          height: 45,
+          width: width / 4,
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              localizedStrings.gSerialPort,
+              textAlign: TextAlign.right,
+              style: TextStyle(overflow: TextOverflow.ellipsis),
+            ),
+          ),
+        ),
+        const SizedBox(
+          width: 20,
+        ),
+        SizedBox(
+          width: width / 3,
+          height: 45,
+          child: DropdownButtonFormField<String>(
+            isExpanded: true,
+            decoration: const InputDecoration(border: OutlineInputBorder()),
+            // 设置默认值
+            value: (comLists.isEmpty) ? refresh : comPort,
+            // 选择回调
+            onChanged: (String? newPosition) {
+              PublicFunctions.getPortList();
+              checkPortList();
+              comPort = newPosition.toString();
+              if (comPort != localizedStrings.gRefreshPort) {
+                tempCurrentPort.devPath = comPort;
+              } else {
+                tempCurrentPort.devPath = '';
+              }
+            },
+            // 传入可选的数组
+            items: (comLists.isEmpty)
+                ? [refresh].map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem(value: value, child: Text(value));
+                  }).toList()
+                : comLists.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem(value: value, child: Text(value));
+                  }).toList(),
+          ),
+        )
+      ],
+    );
   }
 
   Widget showDetailScaleInfo() {
     return Expanded(
-      child: SizedBox(
-        width: double.infinity,
-        child: Align(
-          alignment: Alignment.center,
-          child: Center(
-            child: ListView(
-              children: [
-                const SizedBox(
-                  height: 20,
-                ),
-                buttonRow(),
-                const SizedBox(
-                  height: 20,
-                ),
-                _buildProcess(),
-                const SizedBox(
-                  height: 50,
-                ),
-                if (!isAddScale) showScaleName(),
-                const SizedBox(
-                  height: 20,
-                ),
-                showModelName(),
-                const SizedBox(
-                  height: 20,
-                ),
-                showScaleSn(),
-                const SizedBox(
-                  height: 20,
-                ),
-                if (selScaleId != 1) showIpAddr(),
-                if (selScaleId != 1)
+        child: SizedBox(
+            width: double.infinity,
+            child: LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) {
+              return ListView(
+                children: [
                   const SizedBox(
                     height: 20,
                   ),
-                if (selScaleId != 1) showPort(),
-                if (selScaleId != 1)
+                  buttonRow(),
                   const SizedBox(
                     height: 20,
                   ),
-                showConfirmRow(),
-              ],
-            ),
-          ),
-        ),
-        // 右侧剩余部分分配给此Container
-      ),
-    );
+                  _buildProcess(),
+                  const SizedBox(
+                    height: 50,
+                  ),
+                  if (!isAddScale) showScaleName(constraints.maxWidth),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  showModelName(constraints.maxWidth),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  showScaleSn(constraints.maxWidth),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  if (selScaleId != 1) showIpAddr(constraints.maxWidth),
+                  if (selScaleId != 1)
+                    const SizedBox(
+                      height: 20,
+                    ),
+                  if (selScaleId != 1) showPort(constraints.maxWidth),
+                  if (selScaleId != 1)
+                    const SizedBox(
+                      height: 20,
+                    ),
+                  showConfirmRow(),
+                ],
+              );
+            })));
+  }
+
+  void checkPortList() {
+    if (myComInfoList.msgBody!.isEmpty) {
+      comLists = [];
+      comPort = refresh;
+      // tempCurrentPort.devPath = '';
+    } else {
+      comLists = myComInfoList.msgBody!.toList();
+
+      for (var i = 0; i < comLists.length; i++) {
+        if (comLists[i] == myCurrentPort.devPath) {
+          comPort = myCurrentPort.devPath!;
+          return;
+        }
+      }
+
+      comPort = comLists[0];
+      myCurrentPort.devPath = comPort; //20240221@F
+    }
   }
 
   bool validateIpFlag(String value) {
@@ -476,7 +972,7 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
                 btnWidth: 120,
                 btnHeight: 40,
                 icon: Icons.arrow_forward_ios,
-                text: localizedStrings.button_ok,
+                text: localizedStrings.gBtnConfirm,
                 onPressed: (isAddScale &&
                             ipCtl.text.isNotEmpty &&
                             portCtl.text.isNotEmpty &&
@@ -497,7 +993,7 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
                 btnWidth: 120,
                 btnHeight: 40,
                 icon: Icons.exit_to_app,
-                text: localizedStrings.button_cancel,
+                text: localizedStrings.gBtnCancel,
                 onPressed: () {
                   setState(() {
                     isAddScale = false;
@@ -510,6 +1006,9 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
                           myNetScaleList, myDefScaleInfo.defScaleId!);
                       scaleNameCtl.text = defNetScaleInfo.scaleName!;
                     }
+                    if (isComSetting) {
+                      isComSetting = false;
+                    }
                   });
                 },
               ),
@@ -518,21 +1017,19 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
         : const SizedBox();
   }
 
-  Widget showPort() {
+  Widget showPort(double width) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const SizedBox(
-          height: 60,
-          width: 200,
+        SizedBox(
+          height: 45,
+          width: width / 4,
           child: Align(
             alignment: Alignment.centerRight,
             child: Text(
               'Port:',
               textAlign: TextAlign.right,
-              style: TextStyle(
-                fontSize: 20,
-              ),
+              style: TextStyle(overflow: TextOverflow.ellipsis),
             ),
           ),
         ),
@@ -540,8 +1037,8 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
           width: 20,
         ),
         SizedBox(
-          width: 300,
-          height: 40,
+          width: width / 3,
+          height: 45,
           child: TextField(
             enabled: isAddScale ? true : false,
             controller: portCtl,
@@ -564,21 +1061,19 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
     );
   }
 
-  Widget showIpAddr() {
+  Widget showIpAddr(double width) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SizedBox(
-          height: 60,
-          width: 200,
+          height: 45,
+          width: width / 4,
           child: Align(
             alignment: Alignment.centerRight,
             child: Text(
-              localizedStrings.ip_address,
+              localizedStrings.gIpAddress,
               textAlign: TextAlign.right,
-              style: const TextStyle(
-                fontSize: 20,
-              ),
+              style: const TextStyle(overflow: TextOverflow.ellipsis),
             ),
           ),
         ),
@@ -586,8 +1081,8 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
           width: 20,
         ),
         SizedBox(
-          width: 300,
-          height: 40,
+          width: width / 3,
+          height: 45,
           child: TextField(
             enabled: isAddScale ? true : false,
             controller: ipCtl,
@@ -605,23 +1100,21 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
     );
   }
 
-  Widget showScaleSn() {
+  Widget showScaleSn(double width) {
     return isAddScale
         ? const SizedBox()
         : Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(
-                height: 60,
-                width: 200,
+              SizedBox(
+                height: 45,
+                width: width / 4,
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: Text(
                     'SN:',
                     textAlign: TextAlign.right,
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),
+                    style: TextStyle(overflow: TextOverflow.ellipsis),
                   ),
                 ),
               ),
@@ -629,8 +1122,8 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
                 width: 20,
               ),
               SizedBox(
-                width: 300,
-                height: 40,
+                width: width / 3,
+                height: 45,
                 child: TextField(
                   enabled: false,
                   controller: snCtl,
@@ -653,23 +1146,21 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
           );
   }
 
-  Widget showModelName() {
+  Widget showModelName(double width) {
     return isAddScale
         ? const SizedBox()
         : Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
-                height: 40,
-                width: 200,
+                height: 45,
+                width: (width / 4),
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: Text(
                     localizedStrings.scale_mgr_scale_model,
                     textAlign: TextAlign.right,
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),
+                    style: TextStyle(overflow: TextOverflow.ellipsis),
                   ),
                 ),
               ),
@@ -677,8 +1168,8 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
                 width: 20,
               ),
               SizedBox(
-                width: 300,
-                height: 40,
+                width: width / 3,
+                height: 45,
                 child: TextField(
                   enabled: false,
                   style: const TextStyle(
@@ -698,21 +1189,19 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
           );
   }
 
-  Widget showScaleName() {
+  Widget showScaleName(double width) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SizedBox(
-          height: 40,
-          width: 200,
+          height: 45,
+          width: width / 4,
           child: Align(
             alignment: Alignment.centerRight,
             child: Text(
               localizedStrings.scale_mgr_scale_name,
               textAlign: TextAlign.right,
-              style: TextStyle(
-                fontSize: 20,
-              ),
+              style: TextStyle(overflow: TextOverflow.ellipsis),
             ),
           ),
         ),
@@ -720,14 +1209,15 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
           width: 20,
         ),
         SizedBox(
-          width: 300,
-          height: 80,
+          width: width / 3,
+          height: 45,
           child: TextField(
             style: const TextStyle(
               overflow: TextOverflow.ellipsis,
             ),
             controller: scaleNameCtl,
-            maxLines: 2,
+            maxLines: 1,
+            minLines: 1,
             inputFormatters: [
               LengthLimitingTextInputFormatter(30),
             ],
@@ -750,53 +1240,11 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         CustomOutlinedButton(
-          btnWidth: 60,
-          btnHeight: 40,
-          icon: Icons.add_circle_outline,
-          text: localizedStrings.scale_mgr_btn_add,
-          onPressed: isTesting || isRename || isDel
-              ? null
-              : () {
-                  setState(() {
-                    selScaleId = -1;
-                    isRename = false;
-                    isAddScale = true;
-                    ipCtl.text = "";
-                    snCtl.text = "";
-                    portCtl.text = "";
-                  });
-                },
-        ),
-        const SizedBox(
-          width: 20,
-        ),
-        CustomOutlinedButton(
-          btnWidth: 80,
-          btnHeight: 40,
-          icon: Icons.delete_outline,
-          text: localizedStrings.scale_mgr_btn_dlt,
-          onPressed: (isAddScale || isTesting) ||
-                  (selScaleId == myDefScaleInfo.defScaleId!) ||
-                  selScaleId == 1 ||
-                  isRename ||
-                  isDel
-              ? null
-              : () {
-                  setState(() {
-                    isDel = true;
-                    delScale();
-                  });
-                },
-        ),
-        const SizedBox(
-          width: 20,
-        ),
-        CustomOutlinedButton(
           btnWidth: 80,
           btnHeight: 40,
           icon: Icons.edit,
           text: localizedStrings.scale_mgr_btn_rename,
-          onPressed: (isAddScale || isTesting) || isDel
+          onPressed: isAddScale || isTesting || isDel || isComSetting
               ? null
               : () {
                   setState(() {
@@ -808,30 +1256,30 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
         const SizedBox(
           width: 20,
         ),
-        CustomOutlinedButton(
-          btnWidth: 120,
-          btnHeight: 40,
-          icon: Icons.scale_outlined,
-          text: "Set Default",
-          onPressed: (selScaleId == myDefScaleInfo.defScaleId! ||
-                  selScaleId == -1 ||
-                  isDel)
-              ? null
-              : () {
-                  setState(() {
-                    DefScaleInfo.getDefScaleInfo(selScaleId);
-                  });
-                },
-        ),
-        const SizedBox(
-          width: 20,
-        ),
+        // CustomOutlinedButton(
+        //   btnWidth: 120,
+        //   btnHeight: 40,
+        //   icon: Icons.scale_outlined,
+        //   text: "Set Default",
+        //   onPressed: (selScaleId == myDefScaleInfo.defScaleId! ||
+        //           selScaleId == -1 ||
+        //           isDel)
+        //       ? null
+        //       : () {
+        //           setState(() {
+        //             DefScaleInfo.getDefScaleInfo(selScaleId);
+        //           });
+        //         },
+        // ),
+        // const SizedBox(
+        //   width: 20,
+        // ),
         CustomElevatedButton(
           btnWidth: 120,
           btnHeight: 40,
           icon: Icons.connect_without_contact,
-          text: 'Test Connect',
-          onPressed: !isAddScale && !isTesting && !isDel
+          text: localizedStrings.scale_mgr_btn_test,
+          onPressed: !isAddScale && !isTesting && !isDel && !isComSetting
               ? () {
                   PublicFunctions.checkSerialPort(selScaleId);
                   setState(() {
@@ -937,7 +1385,9 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
           SizedBox(
               width: 100,
               child: Text(
-                myComScaleInfo.isOnline ? "online" : "offline",
+                myComScaleInfo.isOnline
+                    ? localizedStrings.gOnlineTip
+                    : localizedStrings.gOfflineTip,
                 maxLines: 1, // 设置文本最大行数为1
                 style: TextStyle(
                   fontSize: 14,
@@ -947,25 +1397,25 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
                       : Theme.of(context).colorScheme.error,
                 ),
               )),
-          SizedBox(
-            width: 100,
-            child: Text(
-              myComScaleInfo.scaleId == myDefScaleInfo.defScaleId!
-                  ? "Default"
-                  : "",
-              maxLines: 1, // 设置文本最大行数为1
-              style: const TextStyle(
-                fontSize: 14,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          )
+          // SizedBox(
+          //   width: 100,
+          //   child: Text(
+          //     myComScaleInfo.scaleId == myDefScaleInfo.defScaleId!
+          //         ? "Default"
+          //         : "",
+          //     maxLines: 1, // 设置文本最大行数为1
+          //     style: const TextStyle(
+          //       fontSize: 14,
+          //       overflow: TextOverflow.ellipsis,
+          //     ),
+          //   ),
+          // )
         ],
       ),
       selectedTileColor: Theme.of(context).colorScheme.primary,
       trailing: const Icon(Icons.cable),
       onTap: () {
-        if (!isTesting) {
+        if (!isTesting && !isAddScale && !isDel && !isComSetting && !isRename) {
           setState(() {
             selScaleId = myComScaleInfo.scaleId;
             scaleModelCtl.text = myComScaleInfo.scaleModel;
@@ -1018,7 +1468,9 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
                       SizedBox(
                         width: 100,
                         child: Text(
-                          scaleNetItems[index].isOnline! ? "online" : "offline",
+                          scaleNetItems[index].isOnline!
+                              ? localizedStrings.gOnlineTip
+                              : localizedStrings.gOfflineTip,
                           maxLines: 1, // 设置文本最大行数为1
                           style: TextStyle(
                             fontSize: 14,
@@ -1031,26 +1483,30 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
                           ),
                         ),
                       ),
-                      SizedBox(
-                        width: 100,
-                        child: Text(
-                          scaleNetItems[index].scaleId ==
-                                  myDefScaleInfo.defScaleId!
-                              ? "Default"
-                              : "",
-                          maxLines: 1, // 设置文本最大行数为1
-                          style: const TextStyle(
-                            fontSize: 14,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      )
+                      // SizedBox(
+                      //   width: 100,
+                      //   child: Text(
+                      //     scaleNetItems[index].scaleId ==
+                      //             myDefScaleInfo.defScaleId!
+                      //         ? "Default"
+                      //         : "",
+                      //     maxLines: 1, // 设置文本最大行数为1
+                      //     style: const TextStyle(
+                      //       fontSize: 14,
+                      //       overflow: TextOverflow.ellipsis,
+                      //     ),
+                      //   ),
+                      // )
                     ],
                   ),
                   selectedTileColor: Theme.of(context).colorScheme.primary,
                   trailing: const Icon(Icons.wifi),
                   onTap: () {
-                    if (!isTesting && !isAddScale && !isDel) {
+                    if (!isTesting &&
+                        !isAddScale &&
+                        !isDel &&
+                        !isComSetting &&
+                        !isRename) {
                       setState(() {
                         selScaleId = scaleNetItems[index].scaleId!;
                         scaleModelCtl.text = scaleNetItems[index].scaleModel!;

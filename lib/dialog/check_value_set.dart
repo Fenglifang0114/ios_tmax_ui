@@ -190,7 +190,7 @@ class CheckValueSetDialogState extends State<CheckValueSetDialog> {
                 btnWidth: 120,
                 btnHeight: 40,
                 icon: Icons.check_circle,
-                text: localizedStrings.button_ok,
+                text: localizedStrings.gBtnConfirm,
                 onPressed: (lowValue > highValue)
                     ? null
                     : () {
@@ -201,7 +201,7 @@ class CheckValueSetDialogState extends State<CheckValueSetDialog> {
                 btnWidth: 120,
                 btnHeight: 40,
                 icon: Icons.cancel,
-                text: localizedStrings.button_cancel,
+                text: localizedStrings.gBtnCancel,
                 onPressed: () {
                   Navigator.of(context)
                       .pop([widget.initialHigh, widget.initialLow]);
