@@ -164,7 +164,8 @@ class WeightModePageState extends State<WeightModePage> {
     return Scaffold(
       appBar: AppBar(
           title: Container(
-            child: pageHeadDefScale(context, localizedStrings.iTitleWeighting),
+            child: pageHeadDefScale(context, localizedStrings.iTitleWeighting,
+                localizedStrings.gTipWeighingPageHelp),
           ),
           leading: IconTheme(
               data: IconThemeData(

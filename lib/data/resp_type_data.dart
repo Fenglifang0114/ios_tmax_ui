@@ -78,6 +78,7 @@ class RespMsgType {
   static const String respSetLimit = 'resp_set_limit_to_scale';
   static const String respSwitchLimit = 'resp_switch_limit_from_scale';
   static const String respRevDetailTail = 'resp_rev_detail_tail';
+  static const String resp_export_recs = 'resp_export_recs';
 
   static final Map<String, Function> handlers = {
     RespMsgType.respGetUIConf: handleGetUIConf,
@@ -126,6 +127,7 @@ class RespMsgType {
     RespMsgType.respSetLimit: handleRespSetLimit,
     RespMsgType.respSwitchLimit: handleRespSwitchLimit,
     RespMsgType.respRevDetailTail: handleRespRevDetailTail,
+    RespMsgType.resp_export_recs: handleRespExportRecs,
   };
   static void handleGetUIConf(dynamic data) {
     final jsonResponse = json.decode(data['MsgBody']);
@@ -380,20 +382,37 @@ class RespMsgType {
   }
 
   static void pasterGetRecords(String jsonDataString) {
-    if (jsonDataString == '[]') {
-      if (myGetScaleRecords.weightRecords != null) {
-        myGetScaleRecords.weightRecords!.clear();
-      }
-    } else if (jsonDataString.isNotEmpty) {
-      myGetScaleRecords = GetScaleRecords.fromJson(json.decode(jsonDataString));
-    } else {
-      if (myGetScaleRecords.weightRecords != null) {
-        myGetScaleRecords.weightRecords!.clear();
+    if (myGetScaleRecords.weightRecords != null) {
+      myGetScaleRecords.weightRecords!.clear();
+    }
+    if (jsonDataString.isNotEmpty) {
+      var newData = GetScaleRecords.fromJson(json.decode(jsonDataString));
+      if (newData.weightRecords != null) {
+        if (myGetScaleRecords.weightRecords == null) {
+          myGetScaleRecords.weightRecords = newData.weightRecords;
+        } else {
+          myGetScaleRecords.weightRecords!.addAll(newData.weightRecords!);
+        }
       }
     }
-
     eventBus.fire(EventGetScaleRecords(myGetScaleRecords));
   }
+
+  // static void pasterGetRecords(String jsonDataString) {
+  //   if (jsonDataString == '[]') {
+  //     if (myGetScaleRecords.weightRecords != null) {
+  //       myGetScaleRecords.weightRecords!.clear();
+  //     }
+  //   } else if (jsonDataString.isNotEmpty) {
+  //     myGetScaleRecords = GetScaleRecords.fromJson(json.decode(jsonDataString));
+  //   } else {
+  //     if (myGetScaleRecords.weightRecords != null) {
+  //       myGetScaleRecords.weightRecords!.clear();
+  //     }
+  //   }
+
+  //   eventBus.fire(EventGetScaleRecords(myGetScaleRecords));
+  // }
 
   static void handleRespGetfactoryInfo(dynamic data) {
     final jsonStrings = data['MsgBody'];
@@ -429,6 +448,11 @@ class RespMsgType {
   static void handleRespRevDetailTail(dynamic data) {
     dynamic mobj = ChannelResponse.fromJson(data);
     eventBus.fire(EventRevDetailTail(mobj));
+  }
+
+  static void handleRespExportRecs(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventRevExportRecs(mobj));
   }
 
   static void handleRespUpdateFirmwareNet(dynamic data) {

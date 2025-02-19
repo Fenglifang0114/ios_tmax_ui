@@ -51,8 +51,8 @@ class CableIpSettingPageState extends State<CableIpSettingPage> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),
-        child:
-            pageHeadDefScale(context, localizedStrings.set_ethernet_ip_title),
+        child: pageHeadDefScale(
+            context, localizedStrings.set_ethernet_ip_title, ''),
       ),
       body: Container(
         color: Theme.of(context).colorScheme.surfaceTint,

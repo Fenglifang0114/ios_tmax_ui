@@ -46,7 +46,7 @@ class CheckValueSetDialogState extends State<CheckValueSetDialog> {
           child: Row(
             children: [
               Icon(Icons.edit, color: Theme.of(context).colorScheme.onPrimary),
-              Text('High/Low Setting',
+              Text(localizedStrings.iTitleHLSetting,
                   style:
                       TextStyle(color: Theme.of(context).colorScheme.onPrimary))
             ],

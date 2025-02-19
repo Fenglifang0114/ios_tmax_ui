@@ -75,6 +75,7 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
             context,
             localizedStrings.gTitleLabelFmtDownload,
             [myDefScaleInfo.defScaleId!],
+            '',
           ),
         ),
       ),

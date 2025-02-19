@@ -267,8 +267,8 @@ class TransactionReportPageState extends State<TransactionReportPage> {
     return Scaffold(
       appBar: AppBar(
           title: Container(
-            child:
-                pageHeadDesign(context, localizedStrings.rDetailRptTitle, []),
+            child: pageHeadDesign(context, localizedStrings.rDetailRptTitle, [],
+                localizedStrings.gTipRetailDetailPageHelp),
           ),
           leading: IconTheme(
               data: IconThemeData(
@@ -294,7 +294,7 @@ class TransactionReportPageState extends State<TransactionReportPage> {
                     SizedBox(
                       width: 200,
                       child: Text(
-                        "Service Status:",
+                        localizedStrings.gTipServiceStatus,
                         textAlign: TextAlign.right,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -597,7 +597,7 @@ class TransactionReportPageState extends State<TransactionReportPage> {
                             color: scaleNetItems[index].isOnline!
                                 ? Theme.of(context)
                                     .colorScheme
-                                    .surfaceContainerHigh
+                                    .onTertiaryFixedVariant
                                 : Theme.of(context).colorScheme.error,
                           ),
                         ),
@@ -884,7 +884,7 @@ class TransactionReportPageState extends State<TransactionReportPage> {
             SnackBar(
                 content: Text('OK    ${file.path}'),
                 backgroundColor:
-                    Theme.of(context).colorScheme.surfaceContainerHigh),
+                    Theme.of(context).colorScheme.onTertiaryFixedVariant),
           );
         }
       } catch (e) {

@@ -18,7 +18,7 @@ class BluetoothDialog extends StatefulWidget {
 
 class BluetoothDialogState extends State<BluetoothDialog> {
   final TextEditingController _deviceNameController = TextEditingController();
-  List<String> emissionPowerList = ['Strong', 'Normal', 'Weak'];
+  // List<String> emissionPowerList = ['Strong', 'Normal', 'Weak'];
   String emissionPowerVale = '';
   Timer? _timer;
 
@@ -26,9 +26,16 @@ class BluetoothDialogState extends State<BluetoothDialog> {
   bool isSetting = false;
   dynamic _eventbus1;
   dynamic _eventbus2;
+  Map<String, String> emissionPowerMap = {};
+
   @override
   void initState() {
     super.initState();
+    emissionPowerMap = {
+      "Strong": localizedStrings.gEPStrong,
+      "Normal": localizedStrings.gEPNormal,
+      "Weak": localizedStrings.gEPWeak,
+    };
     _deviceNameController.text = '';
     emissionPowerVale = 'Strong';
     _eventbus1 = eventBus.on<EventConnectBTResponse>().listen((event) {
@@ -188,11 +195,13 @@ class BluetoothDialogState extends State<BluetoothDialog> {
                                 });
                               },
                               // 传入可选的数组
-                              items: emissionPowerList
-                                  .map<DropdownMenuItem<String>>(
-                                      (String value) {
+
+                              items: emissionPowerMap.entries
+                                  .map<DropdownMenuItem<String>>((entry) {
                                 return DropdownMenuItem(
-                                    value: value, child: Text(value));
+                                  value: entry.key,
+                                  child: Text(entry.value),
+                                );
                               }).toList(),
                             ),
                           ),
@@ -237,7 +246,7 @@ class BluetoothDialogState extends State<BluetoothDialog> {
                                         _errorMessage.contains('OK'))
                                     ? Theme.of(context)
                                         .colorScheme
-                                        .surfaceContainerHigh
+                                        .onTertiaryFixedVariant
                                     : Theme.of(context).colorScheme.error),
                           ),
                         ],

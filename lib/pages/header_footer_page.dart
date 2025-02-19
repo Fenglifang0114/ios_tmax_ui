@@ -64,8 +64,11 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),
-        child: pageHeadDesign(context, localizedStrings.rTitleSetVariableValues,
-            [myDefScaleInfo.defScaleId!]),
+        child: pageHeadDesign(
+            context,
+            localizedStrings.rTitleSetVariableValues,
+            [myDefScaleInfo.defScaleId!],
+            localizedStrings.gTipVarSettingPageHelp),
       ),
       body: Column(
         children: [

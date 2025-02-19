@@ -1,3 +1,5 @@
+import 'package:t_max/data/language.dart';
+
 class WeightReportData {
   WeightReportData(
     this.id,
@@ -57,21 +59,21 @@ Map<String, ReportShowName> myReportFeildsMap = {
   'Id': ReportShowName('Id', true),
   'Date Time': ReportShowName('Date Time', true),
   'PLU': ReportShowName('PLU', true),
-  'Product Code': ReportShowName('Product Code', false),
-  'Item Code': ReportShowName('Item Code', false),
-  'PLU Name': ReportShowName('PLU Name', true),
-  'Price': ReportShowName('Price', false),
-  'GeneralUnit': ReportShowName('GeneralUnit', false),
-  'TaxType': ReportShowName('TaxType', false),
-  'UnitWeight': ReportShowName('UnitWeight', false),
-  'LimitHigh': ReportShowName('LimitHigh', false),
-  'LimitLow': ReportShowName('LimitLow', false),
+  'Product Code': ReportShowName(localizedStrings.gPluPluCode, false),
+  'Item Code': ReportShowName(localizedStrings.gPluItemCode, false),
+  'PLU Name': ReportShowName(localizedStrings.gPluPluName, true),
+  'Price': ReportShowName(localizedStrings.gPluPrice, false),
+  'GeneralUnit': ReportShowName(localizedStrings.gPluWgtUnit, false),
+  'TaxType': ReportShowName(localizedStrings.gPluTaxType, false),
+  'UnitWeight': ReportShowName(localizedStrings.gPluUnitWgt, false),
+  'LimitHigh': ReportShowName(localizedStrings.gPluLimitHigh, false),
+  'LimitLow': ReportShowName(localizedStrings.gPluLimitLow, false),
   'Weight': ReportShowName('Weight', true),
   'Weight Unit': ReportShowName('Weight Unit', true),
-  'Pretare': ReportShowName('Pretare', false),
+  'Pretare': ReportShowName(localizedStrings.gPluPretare, false),
   'User NO.': ReportShowName('User NO.', false),
   'User Name': ReportShowName('User Name', true),
-  'Scale Name': ReportShowName('Scale Name', true),
+  'Scale Name': ReportShowName(localizedStrings.gScaleName, true),
 };
 
 class ReportShowName {
@@ -81,3 +83,45 @@ class ReportShowName {
 }
 
 // ReportFields myReportFields = ReportFields([]);
+
+// 更新 myReportFeildsMap 的函数
+void updateMyReportFeildsMap() {
+  myReportFeildsMap.updateAll((key, value) {
+    switch (key) {
+      case 'Product Code':
+        value.showName = localizedStrings.gPluPluCode;
+        break;
+      case 'Item Code':
+        value.showName = localizedStrings.gPluItemCode;
+        break;
+      case 'PLU Name':
+        value.showName = localizedStrings.gPluPluName;
+        break;
+      case 'Price':
+        value.showName = localizedStrings.gPluPrice;
+        break;
+      case 'GeneralUnit':
+        value.showName = localizedStrings.gPluWgtUnit;
+        break;
+      case 'TaxType':
+        value.showName = localizedStrings.gPluTaxType;
+        break;
+      case 'UnitWeight':
+        value.showName = localizedStrings.gPluUnitWgt;
+        break;
+      case 'LimitHigh':
+        value.showName = localizedStrings.gPluLimitHigh;
+        break;
+      case 'LimitLow':
+        value.showName = localizedStrings.gPluLimitLow;
+        break;
+      case 'Pretare':
+        value.showName = localizedStrings.gPluPretare;
+        break;
+      case 'Scale Name':
+        value.showName = localizedStrings.gScaleName;
+        break;
+    }
+    return value;
+  });
+}

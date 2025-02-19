@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:t_max/data/language.dart';
 
 import '../widget/custom_button.dart';
 
@@ -56,7 +57,7 @@ class MultLimitSettingDialogState extends State<MultLimitSettingDialog> {
           child: Row(
             children: [
               Icon(Icons.edit, color: Theme.of(context).colorScheme.onPrimary),
-              Text('High/Low Setting',
+              Text(localizedStrings.iTitleHLSetting,
                   style:
                       TextStyle(color: Theme.of(context).colorScheme.onPrimary))
             ],

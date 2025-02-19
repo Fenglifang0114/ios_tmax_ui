@@ -17,6 +17,7 @@ class MultiSelectDialogState extends State<MultiSelectDialog> {
   final List<String> _selectedOptions = [];
 
   bool _closeButtonEnabled = true;
+  bool isSelectAll = false;
 
   void _toggleOption(String option) {
     setState(() {
@@ -46,6 +47,23 @@ class MultiSelectDialogState extends State<MultiSelectDialog> {
     }
   }
 
+  // 全选方法
+  void selectAll(bool value) {
+    setState(() {
+      _selectedOptions.clear();
+      if (!value) {
+        _selectedOptions.add('plu');
+        _selectedOptions.add('productName');
+      }
+
+      for (var entry in widget.options.entries) {
+        if (value) {
+          _selectedOptions.add(entry.key);
+        }
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -54,25 +72,41 @@ class MultiSelectDialogState extends State<MultiSelectDialog> {
       content: SizedBox(
         height: 400,
         child: SingleChildScrollView(
-          child: Column(
-            children: widget.options.entries.map((entry) {
-              return CheckboxListTile(
-                title: SizedBox(
-                  width: 300,
-                  child: Text(
-                    entry.value.field,
-                    style: TextStyle(fontSize: 14),
-                    overflow: TextOverflow.ellipsis,
+            child: Column(
+          children: [
+            CheckboxListTile(
+              title: Text(
+                localizedStrings.gSelectAll,
+                style: TextStyle(overflow: TextOverflow.ellipsis),
+              ),
+              value: isSelectAll,
+              onChanged: (bool? newValue) {
+                setState(() {
+                  isSelectAll = newValue!;
+                  selectAll(newValue);
+                });
+              },
+            ),
+            Column(
+              children: widget.options.entries.map((entry) {
+                return CheckboxListTile(
+                  title: SizedBox(
+                    width: 300,
+                    child: Text(
+                      entry.value.field,
+                      style: TextStyle(fontSize: 14),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                ),
-                value: _selectedOptions.contains(entry.key),
-                onChanged: _closeButtonEnabled
-                    ? (value) => _toggleOption(entry.key)
-                    : null,
-              );
-            }).toList(),
-          ),
-        ),
+                  value: _selectedOptions.contains(entry.key),
+                  onChanged: _closeButtonEnabled
+                      ? (value) => _toggleOption(entry.key)
+                      : null,
+                );
+              }).toList(),
+            ),
+          ],
+        )),
       ),
       actions: [
         Row(

@@ -63,7 +63,49 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Select Format"),
         "cBtnClosePreview":
             MessageLookupByLibrary.simpleMessage("Close preview"),
+        "cBtnCommit": MessageLookupByLibrary.simpleMessage("Click to submit"),
         "cBtnOpenPreview": MessageLookupByLibrary.simpleMessage("Open preview"),
+        "cBtnSelectDate": MessageLookupByLibrary.simpleMessage("Select Date"),
+        "cBtnSelectTime": MessageLookupByLibrary.simpleMessage("Select Time"),
+        "cBtnSetTime": MessageLookupByLibrary.simpleMessage("Set Date/Time"),
+        "cBtnSyncPcTime": MessageLookupByLibrary.simpleMessage("Sync PC Time"),
+        "cBtnSyncTime": MessageLookupByLibrary.simpleMessage("Sync Time"),
+        "cTipCalCnt":
+            MessageLookupByLibrary.simpleMessage("Calibration Count:"),
+        "cTipCalswitchCnt":
+            MessageLookupByLibrary.simpleMessage("Calibration Switch Count:"),
+        "cTipCheckValue": MessageLookupByLibrary.simpleMessage("Please check"),
+        "cTipConfigurationName":
+            MessageLookupByLibrary.simpleMessage("Configuration name"),
+        "cTipConfirmModified": MessageLookupByLibrary.simpleMessage(
+            "Please make sure the values are correct, continue?"),
+        "cTipEditable": MessageLookupByLibrary.simpleMessage("Editable"),
+        "cTipErr19Cnt": MessageLookupByLibrary.simpleMessage("Err19 Count:"),
+        "cTipErr4Cnt": MessageLookupByLibrary.simpleMessage("Err4 Count:"),
+        "cTipFailedGetTime":
+            MessageLookupByLibrary.simpleMessage("failed to get time"),
+        "cTipNotModified": MessageLookupByLibrary.simpleMessage(
+            "No parameters have been modified!"),
+        "cTipOlTime": MessageLookupByLibrary.simpleMessage("OL Time(mins):"),
+        "cTipParameterDesp":
+            MessageLookupByLibrary.simpleMessage("Description"),
+        "cTipParameterSize": MessageLookupByLibrary.simpleMessage("Size"),
+        "cTipParameterTyppe":
+            MessageLookupByLibrary.simpleMessage("Parameter Type"),
+        "cTipParameterValue":
+            MessageLookupByLibrary.simpleMessage("Parameter Value"),
+        "cTipPowerOffCnt":
+            MessageLookupByLibrary.simpleMessage("Abnormal Power-Off Count:"),
+        "cTipPowerOnCnt":
+            MessageLookupByLibrary.simpleMessage("Power-On Count:"),
+        "cTipRunningTime":
+            MessageLookupByLibrary.simpleMessage("Running Time(mins):"),
+        "cTipUlTime": MessageLookupByLibrary.simpleMessage("UL Time(mins):"),
+        "cTipWeighingCount":
+            MessageLookupByLibrary.simpleMessage("Weighing Count:"),
+        "cTitleDeviceTime": MessageLookupByLibrary.simpleMessage("Device Time"),
+        "cTitleParameterSet":
+            MessageLookupByLibrary.simpleMessage("Parameter Setting"),
         "choose_json_file": MessageLookupByLibrary.simpleMessage("Choose json"),
         "customization_setting_title":
             MessageLookupByLibrary.simpleMessage("Applications"),
@@ -84,8 +126,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "device_connection_title":
             MessageLookupByLibrary.simpleMessage("Device Info & Connection"),
         "device_setting_title": MessageLookupByLibrary.simpleMessage("Basics"),
-        "device_time_title":
-            MessageLookupByLibrary.simpleMessage("Device Time"),
         "download_result_fail":
             MessageLookupByLibrary.simpleMessage("Download failed!"),
         "download_result_ok":
@@ -145,6 +185,9 @@ class MessageLookup extends MessageLookupByLibrary {
             "Please confirm the order of the printing formats."),
         "gDataBits": MessageLookupByLibrary.simpleMessage("Data bits:"),
         "gDeviceName": MessageLookupByLibrary.simpleMessage("Device name:"),
+        "gEPNormal": MessageLookupByLibrary.simpleMessage("Normal"),
+        "gEPStrong": MessageLookupByLibrary.simpleMessage("Strong"),
+        "gEPWeak": MessageLookupByLibrary.simpleMessage("Weak"),
         "gEditor": MessageLookupByLibrary.simpleMessage("Editor"),
         "gElementType": MessageLookupByLibrary.simpleMessage("Type:"),
         "gExpirationDate":
@@ -159,7 +202,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "gIpAddress": MessageLookupByLibrary.simpleMessage("IPv4:"),
         "gLanguage": MessageLookupByLibrary.simpleMessage("EngLish"),
         "gMaxLength": MessageLookupByLibrary.simpleMessage("Max Length:"),
-        "gModelName": MessageLookupByLibrary.simpleMessage("Model Name:"),
+        "gModelName": MessageLookupByLibrary.simpleMessage("Model Name"),
         "gMsgAuthorityFail": MessageLookupByLibrary.simpleMessage(
             "Not authenticed. Please send the ID to us."),
         "gMsgAuthorityPassed":
@@ -181,6 +224,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "gOpenJson": MessageLookupByLibrary.simpleMessage("Open Json"),
         "gOperationSteps":
             MessageLookupByLibrary.simpleMessage("Operation Steps:"),
+        "gPageHeight": MessageLookupByLibrary.simpleMessage("Height"),
+        "gPageWidth": MessageLookupByLibrary.simpleMessage("Width"),
         "gPassword": MessageLookupByLibrary.simpleMessage("Password:"),
         "gPluCategory": MessageLookupByLibrary.simpleMessage("Category"),
         "gPluField": MessageLookupByLibrary.simpleMessage("PLU Field"),
@@ -201,6 +246,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "gPosition": MessageLookupByLibrary.simpleMessage("Position"),
         "gPrintDirection": MessageLookupByLibrary.simpleMessage("Direction:"),
         "gPrinter": MessageLookupByLibrary.simpleMessage("Printer Protocol:"),
+        "gProgress": MessageLookupByLibrary.simpleMessage("Progress"),
         "gQrcode": MessageLookupByLibrary.simpleMessage("QRcode:"),
         "gQrcodeEdit": MessageLookupByLibrary.simpleMessage("Qrcode Edit"),
         "gQrcodeWidth": MessageLookupByLibrary.simpleMessage("Qrcode Width:"),
@@ -209,11 +255,14 @@ class MessageLookup extends MessageLookupByLibrary {
         "gRefreshPort": MessageLookupByLibrary.simpleMessage("Refresh port"),
         "gRotation": MessageLookupByLibrary.simpleMessage("Rotation:"),
         "gSaveFormat": MessageLookupByLibrary.simpleMessage("Save Format"),
+        "gScaleName": MessageLookupByLibrary.simpleMessage("Scale Name"),
         "gScaleSn": MessageLookupByLibrary.simpleMessage("SN#:"),
+        "gSelectAll": MessageLookupByLibrary.simpleMessage("select all"),
         "gSerialParity": MessageLookupByLibrary.simpleMessage("Parity:"),
         "gSerialPort": MessageLookupByLibrary.simpleMessage("Serial port:"),
         "gSerialPortStatus":
             MessageLookupByLibrary.simpleMessage("Serial Port Status:"),
+        "gStatus": MessageLookupByLibrary.simpleMessage("Status"),
         "gStopBits": MessageLookupByLibrary.simpleMessage("Stop bits:"),
         "gSystemId":
             MessageLookupByLibrary.simpleMessage("System Unique ID:  "),
@@ -221,6 +270,10 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("System Setting"),
         "gTabOrder": MessageLookupByLibrary.simpleMessage("Layer order:"),
         "gTextContent": MessageLookupByLibrary.simpleMessage("Text Content:"),
+        "gTipBasicDataPageHelp": MessageLookupByLibrary.simpleMessage(
+            "1. Click [Get Basic Data];\n2. T-Config will automatically collect basic data from the scale and display it synchronously on the interface.\n3. You can click the menu bar button in the upper left corner to select the device you want to switch to."),
+        "gTipCheckWgtPageHelp": MessageLookupByLibrary.simpleMessage(
+            "1. Click [Edit] to set the upper and lower limits (the judgment is based on the upper and lower limits set in the background, not on the scale). After setting, place the weight and the corresponding alarm light will light up;\n2. Click [Save] to save the current weighing record;\n3. Click [Show Reports] to display the report;\n4. Click [Setting] to set automatic saving. (Can be set to save when OK, HIGH, LOW, ALL.)\n5. You can also set the date format and delimiter for data export;\n6. Enter the PLU number or name in the [PLU Name] column to call the PLU in the backend database; (The PLU here is not the PLU on the scale)\n7. Click [Report Setting] to select the information displayed for weighing data; (Currently, there are no functional variables available: Product Code, Item Code, User Name, User NO）\n8. Click the arrow in a column of the report title row will sort the report in ascending/descending order.\n9.Click [Export] to export all saved data (xlsx).\n\nNote:\n1. The units for the upper and lower limits are the currently selected units on the scale. After setting the upper and lower limits in the software, the values of the upper and lower limits will not undergo unit conversion when switching units through the scale.\n2. At present, the software determines the upper and lower limits from zero, while on the scale, it starts from 20d.\n"),
         "gTipConfirmInfo": MessageLookupByLibrary.simpleMessage(
             "Please confirm the information."),
         "gTipConnectStaticIp": MessageLookupByLibrary.simpleMessage(
@@ -233,6 +286,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "gTipDataError": MessageLookupByLibrary.simpleMessage("Data Error !"),
         "gTipDeviceNameEmpty": MessageLookupByLibrary.simpleMessage(
             "Device name can not be empty,error."),
+        "gTipDeviceTimePageHelp": MessageLookupByLibrary.simpleMessage(
+            "1. Click [Set Date/Time].\n2. Manually set or synchronize the date and time of the PC device.\n"),
         "gTipDownloadAllPlu":
             MessageLookupByLibrary.simpleMessage("Clear all then download"),
         "gTipExitApp": MessageLookupByLibrary.simpleMessage(
@@ -248,25 +303,44 @@ class MessageLookup extends MessageLookupByLibrary {
             "Obtaining IP, please wait..."),
         "gTipGetIpFail": MessageLookupByLibrary.simpleMessage("Get Ip Fail !"),
         "gTipGetIpOk": MessageLookupByLibrary.simpleMessage("Get Ip OK !"),
+        "gTipHelp": MessageLookupByLibrary.simpleMessage("Help"),
         "gTipImportPluOK": MessageLookupByLibrary.simpleMessage(
             "Note: When the cell is empty, it will be written as 0 or - ."),
+        "gTipIncrementWgtPageHelp": MessageLookupByLibrary.simpleMessage(
+            "1. Click [Start] to activate increment weighing function. (Only record the increment of the weighing value during loading.)\n2. Click [Save] to save the current weighing record;\n3. Click [Show Reports] to display the report;\n4. Click [Setting] to set automatic saving.\n5. You can also set the date format and delimiter for data export;\n6. Enter the PLU number or name in the PLU Name column to call the PLU in the backend database; (The PLU here is not the PLU on the scale)\n7. Click [Report Setting] to select the information displayed for weighing data; (Currently, there are no functional variables available: Product Code, Item Code, User Name, User NO）\n8. Click the arrow in a column of the report title row will sort the report in ascending/descending order.\n9.Click [Export] to export all saved data (xlsx).\n10.Click [End] to stop the function.\n\nNote: \nThe weight in the report refers to the increment rather than all the weight on the scale.\n"),
         "gTipInstallService":
             MessageLookupByLibrary.simpleMessage("Install Service"),
         "gTipItemType": MessageLookupByLibrary.simpleMessage("Type:"),
+        "gTipLabelDesignPageHelp": MessageLookupByLibrary.simpleMessage(
+            "1. Select printer protocol, length and width of the ticket, printing direction and other information;\n2. When editing the print format, there are 4 variables to choose from in the left menu bar: Free Text, BarCode Variable, QrCode Variable, Variable;\n3. BarCode Edit: Click [BarCode Edit] and then Click [Add]; Select format information such as data type, content, length, etc; Enter the format name and click [Save]; You can select the edited barcode format from the left menu bar.\n4. Qrcode Edit: Same as Barcode.\n5. After editing the format, click [Save Format] to save the print format.\n"),
+        "gTipLabelFmtDownPageHelp": MessageLookupByLibrary.simpleMessage(
+            "1. Follow the prompts to select the corresponding print format for uploading;\n2. Click [Download] to download the format(.fmt);\n3. If multiple networks are connected, you need to select the corresponding network before downloading.\n"),
         "gTipLabelFmtDownload": MessageLookupByLibrary.simpleMessage(
             "This application is used to download print format."),
         "gTipNoData": MessageLookupByLibrary.simpleMessage("No data"),
         "gTipNoDataSelected":
             MessageLookupByLibrary.simpleMessage("No data selected."),
+        "gTipParameterSettingPageHelp": MessageLookupByLibrary.simpleMessage(
+            "1. There are 5 parameter settings: Weighing, Factory, Serial Port, Price, Other;\n2. The editable parameters can be set in Value column based on the content in Description column;\n3. After setting all parameters, click the button in the bottom right corner to submit.\n"),
+        "gTipPerpetual": MessageLookupByLibrary.simpleMessage("Perpetual"),
         "gTipPluDownload": MessageLookupByLibrary.simpleMessage(
             "This application is used to download product information."),
         "gTipPluDuplicated": MessageLookupByLibrary.simpleMessage("Duplicated"),
+        "gTipPlueditPageHelp": MessageLookupByLibrary.simpleMessage(
+            "1. Create a new PLU: Click [+] to create a default data PLU.\n2. Import PLU: Click [Import] to select the data sheet, and all PLU data in the sheet will be displayed.\n3. Import PLU from the database: Click [Get Data From DB] will display all PLU data in the database.\n\nNote: \nThe PLU in the database is not the PLU on the scale, but the database in the software backend. The software currently does not have the function to read PLU information from the scale.\n4. Click the [Setting button] to select the PLU information that needs to be displayed.\n5. If you need to modify PLU information, you can directly modify it in the corresponding cell. (Hovering over a cell will display the range of parameters that can be entered.)\n6. Select the PLU to be download and click [Download].\n7. Choose to clear all PLUs on the scale before downloading, or update the corresponding PLUs, and then click [Confirm].\n8. Export in sheet format: Select the PLU to export, click [Export] and choose the folder to export.\n9. Save to backend database: Select the PLU that needs to be saved and then click [Save to DB], choose to clear all PLUs in the backend database before saving, or update the corresponding PLUs, click [Confirm].\n10. Get PLU Template: Click [Get PLU Template] and select the download path to obtain a form template that can be filled out with PLU.\n"),
         "gTipRebootForUpdate": MessageLookupByLibrary.simpleMessage(
             "Please reboot the device to begin update..."),
         "gTipReceiptDesign": MessageLookupByLibrary.simpleMessage(
             "This application is designed for the printing format of the receipt."),
+        "gTipReceiptDesignPageHelp": MessageLookupByLibrary.simpleMessage(
+            "1. Select printer protocol, length and width of the ticket, printing direction and other information;\n2. When editing the print format, there are 4 variables to choose from in the left menu bar;\n Free Text: Text variables that can be freely inputted\n Dividing Line: A horizontal line used for segmentation (after selecting this variable twice, the content in the middle of the variable can appear repeatedly, such as the accumulated content each time)\n Variable: Variables required for weighing scales\n Price Variable: Variables required for the price computing scale\n3. After editing the format, click [Save Format] to save the print format.\n\nNote:\n The weighing scale and pricing scale cannot use the wrong variable, otherwise the printed output will be empty.\n"),
         "gTipReceiptDownload": MessageLookupByLibrary.simpleMessage(
             "This application is used to download the print format of the receipt."),
+        "gTipReceiptFmtDownPageHelp": MessageLookupByLibrary.simpleMessage(
+            "1. Follow the prompts to select the corresponding print format for uploading;\n2. Click [Download] to download the format(.fmt);\n3. If multiple networks are connected, you need to select the corresponding network before downloading.\n"),
+        "gTipResult": MessageLookupByLibrary.simpleMessage("Result"),
+        "gTipRetailDetailPageHelp": MessageLookupByLibrary.simpleMessage(
+            "1. This function interface can display the data printed after each checkout;\nIf the service is not installed, you need to click [Service] on the right and click [Install Service]; When prompted that the service has stopped, click [Start Service] and it will prompt that it is running. Finally, click [Confirm] to complete the process;\n2. After the balance is printed, the printing content of each order will be displayed on this interface, click [Refresh List] and you can get the latest records;\n3. Click [Export] and you can download the report.\n\nNote: \nThis function can be used via Ethernet / WiFi, and cannot be used via serial port."),
         "gTipSSID": MessageLookupByLibrary.simpleMessage("SSID:"),
         "gTipSaveDbOk": MessageLookupByLibrary.simpleMessage("Save Data OK."),
         "gTipSaveFail":
@@ -276,15 +350,21 @@ class MessageLookup extends MessageLookupByLibrary {
         "gTipSavingData": MessageLookupByLibrary.simpleMessage(
             "The data is being saved. Please wait a moment."),
         "gTipScaleList": MessageLookupByLibrary.simpleMessage("Scale List"),
+        "gTipScaleMgrPageHelp": MessageLookupByLibrary.simpleMessage(
+            "Connect via serial port\n1. Connect the scale to the PC device with a serial port cable;\n2. Enter the correct serial port information;\n3. Click [Connect];\n4. If the connection is successful,the left status bar will display Online.\n5. Click [Close Port] to disconnect the serial port connection; Click [Open Port] to open the serial port connection;\n6. If you want to change the scale name, click [Rename] to enter it and click [Confirm].\n\nConnect via Ethernet/Wi-Fi\n1. Click [+] at the top of the left status bar;\n2. Enter the IPv4 (IP Address) and Port (Port Number);\n3. Click [Confirm] to complete the connection.\n\n  (1) Get IP Address\nWi-Fi: Click [Wi-Fi Setting] on the main interface, select the Wi-Fi you want to connect to in the left column, enter the password and click [Connect]. If the connection is successful, the IP Address will be displayed.\nEthernet: After connecting the network cable, enter the scale menu to get the IP Address. (For T-Max, F3-3 COM3 SHOW.)\n  (2) Get Port Number\nWi-Fi: Enter the scale menu to get. (For T-Max, F3-2 COM2 MODE, press the TARE key three times to view the port number.)\nEthernet: Enter the scale menu to get. (For T-Max, F3-3 COM3 PORT, press the TARE key once to view the port number.)\n\nNote:\nTo use Wi-Fi connection, you need to turn on the scale\'s Wi-Fi function and connect the device running the software to the target Wi-Fi as well.\nTo use Ethernet connection, you need to turn on the network port function of the scale and connect the device running the software to the target Wi-Fi as well.\n"),
         "gTipSelectOnePluFile": MessageLookupByLibrary.simpleMessage(
             "Only one PLU file can be selected"),
         "gTipSelectUpdateWay": MessageLookupByLibrary.simpleMessage(
             "Please select the way to update the firmware."),
+        "gTipSerialDesignPageHelp": MessageLookupByLibrary.simpleMessage(
+            "1. The top menu bar has modes such as weighing, counting, price computing, etc, which can be edited by selecting different modes based on the connected scale;\n2. The left menu bar is for variables, which can be selected according to your needs;\n3. You can click [Open Review] to preview the output results;\n4. After editing the format, click [Download]. Once successful, use the serial port tool to test it.\n\nNote: \nThis function can only be used in serial port connection mode.\n"),
         "gTipService": MessageLookupByLibrary.simpleMessage("Service"),
         "gTipServiceOff": MessageLookupByLibrary.simpleMessage(
             "Service stoped,please start service."),
         "gTipServiceStarted":
             MessageLookupByLibrary.simpleMessage("Service is running"),
+        "gTipServiceStatus":
+            MessageLookupByLibrary.simpleMessage("Service Status:"),
         "gTipServiceStoped":
             MessageLookupByLibrary.simpleMessage("Service Stoped"),
         "gTipServiceUninstalled":
@@ -294,19 +374,31 @@ class MessageLookup extends MessageLookupByLibrary {
         "gTipStopService": MessageLookupByLibrary.simpleMessage("Stop Service"),
         "gTipTakeOut": MessageLookupByLibrary.simpleMessage(
             "This app is used to implement the take out scale."),
+        "gTipTakeOutPageHelp": MessageLookupByLibrary.simpleMessage(
+            "1. The condition is that there must be weight on the scale. Click [Start] to activate take out scale function. (Only record the decrement of the weighing value during unloading.)\n2. Click [Save] to save the current weighing record;\n3. Click [Show Reports] to display the report;\n4. Click [Setting] to set automatic saving.\n5. In [Setting], you can also set the date format and delimiter for data export;\n6. Enter the PLU number or name in the PLU Name column to call the PLU in the backend database; (The PLU here is not the PLU on the scale)\n7. Click [Report Setting] to select the information displayed for weighing data; (Currently, there are no functional variables available: Product Code, Item Code, User Name, User NO）\n8. Click the arrow in a column of the report title row will sort the report in ascending/descending order.\n9.Click [Export] to export all saved data (xlsx).\n10.Click [End] to stop the function.\n\nNote: \nThe weight in the report refers to the decrement rather than all the weight on the scale.\n"),
         "gTipTimeOut": MessageLookupByLibrary.simpleMessage("Time out!"),
         "gTipUninstallService":
             MessageLookupByLibrary.simpleMessage("Uninstall Service"),
+        "gTipUpdateFirmwarePageHelp": MessageLookupByLibrary.simpleMessage(
+            "1. Click [Select Firmware Zip] to upload the file(.zip);\n2. Click [Download];\n3. Select the way to update the firmware: Serial Port or Network(Wi-Fi, Ethernet).\n\nNote: \nUpdate via serial port , the scale will automatically restart;\nUpdate via Wi-Fi or Ethernet, the scale will not automatically restart. You need to manually restart the scale, and the firmware will update. (This method supports selecting multi-scales to update together.)\n"),
         "gTipUpdatePlu":
             MessageLookupByLibrary.simpleMessage("Update Products"),
+        "gTipVarSettingPageHelp": MessageLookupByLibrary.simpleMessage(
+            "1. Edit header, footer, and operator information;\n2. Click [Download] to send to the scale.\n"),
         "gTipWait": MessageLookupByLibrary.simpleMessage("Please wait..."),
+        "gTipWeighingPageHelp": MessageLookupByLibrary.simpleMessage(
+            "1. Real time display of weighing data on the scale (supporting all units including PCS and PCT);\n2. Click [TARE] and [ZERO] allows for weighing and zeroing operations on the scale;\n3. Click the List button in the upper left corner to view the list of connected devices and make changes.\n\nNote：\n1.This function can be used by connecting to a serial port, Ethernet, or WiFi.\n2.Switching units is done on the scale.\n"),
+        "gTipWgtDataCollectionHelp": MessageLookupByLibrary.simpleMessage(
+            "1. Click [Save] to manually save the current weighing data (with no quantity limit); Click [Export] to export all saved data (xlsx);\n2. Click [Setting] and select Save Mode to Auto, it can be set to auto save mode;\n3. You can also set the date format and delimiter for data export;\n4. Enter the PLU number or name in the PLU Name column to call the PLU in the backend database; (The PLU here is not the PLU on the scale)\n5. Click [Report Setting] to select the information displayed for weighing data; (Currently, there are no functional variables available: Product Code、Item Code、User Name、User NO）\n6. Click the arrow in column of the report title row will sort the report in ascending/descending order.\n\nNote: \n1. To save data, you need to clear the scale before saving the next transaction. Zero point will not be saved.\n2. The upper and lower limit variables are the upper and lower limits set in the backend PLU, not the upper and lower limits set on the scale.\n3. The saved data will not be cleared after closing/restarting the software.\n"),
+        "gTipWifiSettingPageHelp": MessageLookupByLibrary.simpleMessage(
+            "1. Select the Wi-Fi you want to connect to from the left menu bar;\n2. Enter the password and click [Connect] to obtain the IP address;\n3. Return to the main interface and enter [Multi-scale Management];\n4. Click [+] at the top of the left status bar, enter the IP address and serial port number;\n5. Click [Confirm] to connect.\n"),
         "gTitleBtSetting":
             MessageLookupByLibrary.simpleMessage("Bluetooth Configurations"),
         "gTitleConfirm": MessageLookupByLibrary.simpleMessage("Confirmation"),
         "gTitleGetBuildInfo":
             MessageLookupByLibrary.simpleMessage("Software Information"),
-        "gTitleLabelFmtDownload": MessageLookupByLibrary.simpleMessage(
-            "Download Label Printing Formats"),
+        "gTitleLabelFmtDownload":
+            MessageLookupByLibrary.simpleMessage("Label Format Download"),
         "gTitleLicense":
             MessageLookupByLibrary.simpleMessage("License information"),
         "gTitleLicenseInfo":
@@ -344,12 +436,16 @@ class MessageLookup extends MessageLookupByLibrary {
         "iTextZero": MessageLookupByLibrary.simpleMessage("Zero:"),
         "iTipCheckWeigher": MessageLookupByLibrary.simpleMessage(
             "This application is used to check weighing data in real time"),
+        "iTipHLUnit": MessageLookupByLibrary.simpleMessage(
+            "The unit of weight is the same as scale.."),
         "iTipIncrementWeighting": MessageLookupByLibrary.simpleMessage(
             "This app is used to implement the increment scale."),
         "iTipWeightCollection": MessageLookupByLibrary.simpleMessage(
             "This application is used to collect weighing data in real time"),
         "iTitleCheckWeigher":
             MessageLookupByLibrary.simpleMessage("Check Weighing(Single)"),
+        "iTitleHLSetting":
+            MessageLookupByLibrary.simpleMessage("High/Low Setting"),
         "iTitleIncrementWeighting":
             MessageLookupByLibrary.simpleMessage("Increment Weighing(Single)"),
         "iTitleWeightCollection": MessageLookupByLibrary.simpleMessage(
@@ -548,8 +644,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "p_weight_pcs_expl":
             MessageLookupByLibrary.simpleMessage("Weight or Pcs."),
         "p_weight_pcs_var": MessageLookupByLibrary.simpleMessage("Weight Pcs"),
-        "parameter_set_title":
-            MessageLookupByLibrary.simpleMessage("Parameter Setting"),
         "parameter_settings_title":
             MessageLookupByLibrary.simpleMessage("Parameter settings"),
         "plu_edit": MessageLookupByLibrary.simpleMessage("PLU Edit"),
@@ -594,10 +688,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "scale_mgr_btn_rename": MessageLookupByLibrary.simpleMessage("Rename"),
         "scale_mgr_btn_test":
             MessageLookupByLibrary.simpleMessage("Test Connect"),
-        "scale_mgr_scale_model":
-            MessageLookupByLibrary.simpleMessage("Scale Model:"),
-        "scale_mgr_scale_name":
-            MessageLookupByLibrary.simpleMessage("Scale Name"),
         "scale_model": MessageLookupByLibrary.simpleMessage("Scale Model:"),
         "select_firmware_btn":
             MessageLookupByLibrary.simpleMessage("Select Firmware"),

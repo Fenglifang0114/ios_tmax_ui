@@ -167,7 +167,7 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
                         fontWeight: FontWeight.normal)), ////此处需要秤回复
                 duration: const Duration(seconds: 3),
                 backgroundColor: (dataStr.contains('ok'))
-                    ? Theme.of(context).colorScheme.surfaceContainerHigh
+                    ? Theme.of(context).colorScheme.onTertiaryFixedVariant
                     : Theme.of(context).colorScheme.error));
             if (dataStr.contains('ok') && isDel) {
               NetScaleListMgr.delScaleById(myNetScaleList, selScaleId);
@@ -207,7 +207,7 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
                         fontWeight: FontWeight.normal)), ////此处需要秤回复
                 duration: const Duration(seconds: 3),
                 backgroundColor: (dataStr.contains('ok'))
-                    ? Theme.of(context).colorScheme.surfaceContainerHigh
+                    ? Theme.of(context).colorScheme.onTertiaryFixedVariant
                     : Theme.of(context).colorScheme.error));
           }
 
@@ -242,7 +242,7 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
                           fontWeight: FontWeight.normal)), ////此处需要秤回复
                   duration: const Duration(seconds: 3),
                   backgroundColor:
-                      Theme.of(context).colorScheme.surfaceContainerHigh));
+                      Theme.of(context).colorScheme.onTertiaryFixedVariant));
             }
           } else {
             setNetScaleStatus(myOnlineInfo.scaleId!, false);
@@ -276,7 +276,7 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
                           fontWeight: FontWeight.normal)), ////此处需要秤回复
                   duration: const Duration(seconds: 3),
                   backgroundColor:
-                      Theme.of(context).colorScheme.surfaceContainerHigh));
+                      Theme.of(context).colorScheme.onTertiaryFixedVariant));
             }
           } else {
             myComScaleInfo.isOnline = false;
@@ -459,6 +459,7 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
             context,
             localizedStrings.m_scale_title,
             [myDefScaleInfo.defScaleId!],
+            localizedStrings.gTipScaleMgrPageHelp,
           ),
         ),
         body: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -1158,7 +1159,7 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: Text(
-                    localizedStrings.scale_mgr_scale_model,
+                    localizedStrings.gModelName + ":",
                     textAlign: TextAlign.right,
                     style: TextStyle(overflow: TextOverflow.ellipsis),
                   ),
@@ -1199,7 +1200,7 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
           child: Align(
             alignment: Alignment.centerRight,
             child: Text(
-              localizedStrings.scale_mgr_scale_name,
+              localizedStrings.gScaleName + ":",
               textAlign: TextAlign.right,
               style: TextStyle(overflow: TextOverflow.ellipsis),
             ),
@@ -1393,7 +1394,7 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
                   fontSize: 14,
                   overflow: TextOverflow.ellipsis,
                   color: myComScaleInfo.isOnline
-                      ? Theme.of(context).colorScheme.surfaceContainerHigh
+                      ? Theme.of(context).colorScheme.onTertiaryFixedVariant
                       : Theme.of(context).colorScheme.error,
                 ),
               )),
@@ -1478,7 +1479,7 @@ class ScaleManagerPageState extends State<ScaleManagerPage> {
                             color: scaleNetItems[index].isOnline!
                                 ? Theme.of(context)
                                     .colorScheme
-                                    .surfaceContainerHigh
+                                    .onTertiaryFixedVariant
                                 : Theme.of(context).colorScheme.error,
                           ),
                         ),

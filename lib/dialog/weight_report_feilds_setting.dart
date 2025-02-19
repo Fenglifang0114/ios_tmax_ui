@@ -13,6 +13,7 @@ class ReportFeildsSettingDialog extends StatefulWidget {
 class ReportFeildsSettingDialogState extends State<ReportFeildsSettingDialog> {
   TextEditingController errorText = TextEditingController();
   Map<String, ReportShowName> tempFeildMap = {};
+  bool isSelectAll = false;
 
   @override
   void initState() {
@@ -28,6 +29,15 @@ class ReportFeildsSettingDialogState extends State<ReportFeildsSettingDialog> {
     super.dispose();
   }
 
+  // 全选方法
+  void selectAll(bool value) {
+    setState(() {
+      tempFeildMap.forEach((key, reportShowName) {
+        reportShowName.isSelect = value;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -40,6 +50,19 @@ class ReportFeildsSettingDialogState extends State<ReportFeildsSettingDialog> {
           child: SingleChildScrollView(
             child: Column(
               children: [
+                CheckboxListTile(
+                  title: Text(
+                    localizedStrings.gSelectAll,
+                    style: TextStyle(overflow: TextOverflow.ellipsis),
+                  ),
+                  value: isSelectAll,
+                  onChanged: (bool? newValue) {
+                    setState(() {
+                      isSelectAll = newValue!;
+                      selectAll(newValue);
+                    });
+                  },
+                ),
                 Container(
                   decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.onPrimary),

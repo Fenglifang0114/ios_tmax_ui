@@ -139,14 +139,14 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
       title: getDialogTitle(
           context, localizedStrings.gTitleLicense, Icons.key, 420),
       content: Container(
-        height: 600,
-        width: 800,
+        height: 400,
+        width: 300,
         decoration:
             BoxDecoration(color: Theme.of(context).colorScheme.surfaceTint),
         child: ListView(
           children: [
             SizedBox(
-              width: 420,
+              width: 300,
               height: 40,
               child: TextField(
                 controller: pidCtl,
@@ -185,7 +185,7 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
                               fontSize: 16,
                               color: Theme.of(context)
                                   .colorScheme
-                                  .surfaceContainerHigh,
+                                  .onTertiaryFixedVariant,
                             )),
                       ),
               ],
@@ -193,72 +193,60 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
             const SizedBox(
               height: 10,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: 200,
-                  child: Text(localizedStrings.new_license_text,
-                      textAlign: TextAlign.left,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Theme.of(context).colorScheme.primary,
-                      )),
-                ),
-                CustomElevatedButton(
-                  btnWidth: 200,
-                  btnHeight: 40,
-                  icon: Icons.file_open_outlined,
-                  text: localizedStrings.btn_add_lic_file,
-                  onPressed: () async {
-                    String filePath = '';
-                    try {
-                      FilePickerResult? result =
-                          await FilePicker.platform.pickFiles(
-                        type: FileType.custom,
-                        allowedExtensions: ['txt'],
-                      );
-                      if (result != null && result.files.isNotEmpty) {
-                        filePath = result.files.single.path!;
-                      }
-                      setState(() {
-                        if (filePath != '') {
-                          licCtl.text = filePath;
-                        }
-                      });
-                    } catch (e) {
-                      setState(() {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: const Text('Open fail',
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold)), ////此处需要秤回复
-                            duration: const Duration(seconds: 5),
-                            backgroundColor:
-                                Theme.of(context).colorScheme.error));
-                      });
+            const SizedBox(
+              height: 10,
+            ),
+            CustomElevatedButton(
+              btnWidth: 200,
+              btnHeight: 40,
+              icon: Icons.file_open_outlined,
+              text: localizedStrings.btn_add_lic_file,
+              onPressed: () async {
+                String filePath = '';
+                try {
+                  FilePickerResult? result =
+                      await FilePicker.platform.pickFiles(
+                    type: FileType.custom,
+                    allowedExtensions: ['txt'],
+                  );
+                  if (result != null && result.files.isNotEmpty) {
+                    filePath = result.files.single.path!;
+                  }
+                  setState(() {
+                    if (filePath != '') {
+                      licCtl.text = filePath;
                     }
-                  },
-                ),
-                CustomElevatedButton(
-                  btnWidth: 200,
-                  btnHeight: 40,
-                  icon: Icons.add_box_outlined,
-                  text: localizedStrings.button_add_license,
-                  onPressed: (licCtl.text.isNotEmpty)
-                      ? () async {
-                          resCtl.text = "";
-                          await validLicense();
-                          if (licList.isNotEmpty) {
-                            PublicFunctions.checkLicenseKey(licList[0]);
-                          }
-                        }
-                      : null,
-                ),
-              ],
+                  });
+                } catch (e) {
+                  setState(() {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: const Text('Open fail',
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold)), ////此处需要秤回复
+                        duration: const Duration(seconds: 5),
+                        backgroundColor: Theme.of(context).colorScheme.error));
+                  });
+                }
+              },
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            CustomElevatedButton(
+              btnWidth: 200,
+              btnHeight: 40,
+              icon: Icons.add_box_outlined,
+              text: localizedStrings.button_add_license,
+              onPressed: (licCtl.text.isNotEmpty)
+                  ? () async {
+                      resCtl.text = "";
+                      await validLicense();
+                      if (licList.isNotEmpty) {
+                        PublicFunctions.checkLicenseKey(licList[0]);
+                      }
+                    }
+                  : null,
             ),
             const SizedBox(
               height: 10,
@@ -283,7 +271,7 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
             ),
             SizedBox(
               width: 200,
-              child: Text("Result",
+              child: Text(localizedStrings.gTipResult,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,

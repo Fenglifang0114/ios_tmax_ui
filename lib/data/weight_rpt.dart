@@ -1,9 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-
 import '../functions/methods.dart';
 import 'manager_scale_channel.dart';
 import 'record_data.dart';
@@ -140,128 +140,206 @@ dynamic getValueForColumn(WeightReportData reportData, String columnName) {
   }
 }
 
-creatExcelFile(
-    String path, List<WeightReportData> myWeightReportData, Excel excel) {
-  List<String> title = [];
-  List<String> selectedShowNameList = myReportFeildsMap.values
-      .where((ReportShowName reportShowName) => reportShowName.isSelect)
-      .map((ReportShowName reportShowName) => reportShowName.showName)
+Future<void> creatCsvFile(
+    String path, List<WeightReportData> myWeightReportData) async {
+  // 获取选中的字段名称列表
+  List<String> selectedShowNameList = myReportFeildsMap.entries
+      .where((entry) => entry.value.isSelect)
+      .map((entry) => entry.key)
       .toList();
 
-  title.addAll(selectedShowNameList);
-  Sheet sh = excel['Sheet1'];
-  for (var i = 0; i < title.length; i++) {
-    sh.cell(CellIndex.indexByColumnRow(rowIndex: 0, columnIndex: i)).value =
-        TextCellValue(title[i]);
-  }
+  // 创建CSV文件
+  var file = File(path);
+  var sink = file.openWrite();
 
-  for (int row = 1; row <= myWeightReportData.length; row++) {
-    for (int col = 0; col < title.length; col++) {
-      switch (title[col]) {
+  // 写入标题行
+  sink.write(selectedShowNameList
+      .map((key) => myReportFeildsMap[key]!.showName)
+      .join(','));
+  sink.writeln();
+
+  // 写入数据行
+  for (var data in myWeightReportData) {
+    var row = selectedShowNameList.map((key) {
+      switch (key) {
         case 'Id':
-          sh
-              .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-              .value = TextCellValue(myWeightReportData[row - 1].id);
-          break;
+          return data.id;
         case 'Date Time':
-          sh
-              .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-              .value = TextCellValue(myWeightReportData[row - 1].createdAt);
-          break;
+          return data.createdAt;
         case 'PLU':
-          sh
-              .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-              .value = TextCellValue(myWeightReportData[row - 1].plu);
-          break;
+          return data.plu;
         case 'Product Code':
-          sh
-              .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-              .value = TextCellValue(myWeightReportData[row - 1].productCode);
-          break;
+          return data.productCode;
         case 'Item Code':
-          sh
-              .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-              .value = TextCellValue(myWeightReportData[row - 1].itemCode);
-          break;
+          return data.itemCode;
         case 'PLU Name':
-          sh
-              .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-              .value = TextCellValue(myWeightReportData[row - 1].productName);
-          break;
+          return data.productName;
         case 'Price':
-          sh
-              .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-              .value = TextCellValue(myWeightReportData[row - 1].price);
-          break;
+          return data.price;
         case 'GeneralUnit':
-          sh
-              .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-              .value = TextCellValue(myWeightReportData[row - 1].generalUnit);
-          break;
+          return data.generalUnit;
         case 'TaxType':
-          sh
-              .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-              .value = TextCellValue(myWeightReportData[row - 1].taxType);
-          break;
+          return data.taxType;
         case 'UnitWeight':
-          sh
-              .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-              .value = TextCellValue(myWeightReportData[row - 1].unitWeight);
-          break;
+          return data.unitWeight;
         case 'LimitHigh':
-          sh
-              .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-              .value = TextCellValue(myWeightReportData[row - 1].limitHigh);
-          break;
+          return data.limitHigh;
         case 'LimitLow':
-          sh
-              .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-              .value = TextCellValue(myWeightReportData[row - 1].limitLow);
-          break;
+          return data.limitLow;
         case 'Weight':
-          sh
-              .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-              .value = TextCellValue(myWeightReportData[row - 1].weight);
-          break;
+          return data.weight;
         case 'Weight Unit':
-          sh
-              .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-              .value = TextCellValue(myWeightReportData[row - 1].weightUnit);
-          break;
+          return data.weightUnit;
         case 'Pretare':
-          sh
-              .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-              .value = TextCellValue(myWeightReportData[row - 1].pretare);
-          break;
+          return data.pretare;
         case 'User NO.':
-          sh
-              .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-              .value = TextCellValue(myWeightReportData[row - 1].userNo);
-          break;
+          return data.userNo;
         case 'User Name':
-          sh
-              .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-              .value = TextCellValue(myWeightReportData[row - 1].userName);
-          break;
+          return data.userName;
         case 'Scale Name':
-          sh
-              .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
-              .value = TextCellValue(myWeightReportData[row - 1].scaleName);
-          break;
-
+          return data.scaleName;
         default:
+          return '';
       }
+    }).join(',');
 
-      //'value ${row}_$col';
-    }
+    sink.writeln(row);
   }
+
+  // 关闭文件
+  await sink.close();
+
+  print('CSV文件已保存到: $path');
 }
+
+// /////////////////
+// creatExcelFile(
+//     String path, List<WeightReportData> myWeightReportData, Excel excel) {
+//   // 获取选中的字段名称列表
+//   List<String> selectedShowNameList = myReportFeildsMap.entries
+//       .where((entry) => entry.value.isSelect)
+//       .map((entry) => entry.key)
+//       .toList();
+
+//   // 创建标题行
+//   Sheet sh = excel['Sheet1'];
+//   for (int i = 0; i < selectedShowNameList.length; i++) {
+//     sh.cell(CellIndex.indexByColumnRow(rowIndex: 0, columnIndex: i)).value =
+//         TextCellValue(myReportFeildsMap[selectedShowNameList[i]]!.showName);
+//   }
+
+//   // 填充数据行
+//   for (int row = 1; row <= myWeightReportData.length; row++) {
+//     WeightReportData data = myWeightReportData[row - 1];
+//     for (int col = 0; col < selectedShowNameList.length; col++) {
+//       String key = selectedShowNameList[col];
+//       switch (key) {
+//         case 'Id':
+//           sh
+//               .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+//               .value = TextCellValue(data.id);
+//           break;
+//         case 'Date Time':
+//           sh
+//               .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+//               .value = TextCellValue(data.createdAt);
+//           break;
+//         case 'PLU':
+//           sh
+//               .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+//               .value = TextCellValue(data.plu);
+//           break;
+//         case 'Product Code':
+//           sh
+//               .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+//               .value = TextCellValue(data.productCode);
+//           break;
+//         case 'Item Code':
+//           sh
+//               .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+//               .value = TextCellValue(data.itemCode);
+//           break;
+//         case 'PLU Name':
+//           sh
+//               .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+//               .value = TextCellValue(data.productName);
+//           break;
+//         case 'Price':
+//           sh
+//               .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+//               .value = TextCellValue(data.price);
+//           break;
+//         case 'GeneralUnit':
+//           sh
+//               .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+//               .value = TextCellValue(data.generalUnit);
+//           break;
+//         case 'TaxType':
+//           sh
+//               .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+//               .value = TextCellValue(data.taxType);
+//           break;
+//         case 'UnitWeight':
+//           sh
+//               .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+//               .value = TextCellValue(data.unitWeight);
+//           break;
+//         case 'LimitHigh':
+//           sh
+//               .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+//               .value = TextCellValue(data.limitHigh);
+//           break;
+//         case 'LimitLow':
+//           sh
+//               .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+//               .value = TextCellValue(data.limitLow);
+//           break;
+//         case 'Weight':
+//           sh
+//               .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+//               .value = TextCellValue(data.weight);
+//           break;
+//         case 'Weight Unit':
+//           sh
+//               .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+//               .value = TextCellValue(data.weightUnit);
+//           break;
+//         case 'Pretare':
+//           sh
+//               .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+//               .value = TextCellValue(data.pretare);
+//           break;
+//         case 'User NO.':
+//           sh
+//               .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+//               .value = TextCellValue(data.userNo);
+//           break;
+//         case 'User Name':
+//           sh
+//               .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+//               .value = TextCellValue(data.userName);
+//           break;
+//         case 'Scale Name':
+//           sh
+//               .cell(CellIndex.indexByColumnRow(rowIndex: row, columnIndex: col))
+//               .value = TextCellValue(data.scaleName);
+//           break;
+//         default:
+//       }
+//     }
+//   }
+// }
+/////////////////////
 
 List<GridColumn> getColumns() {
   List<GridColumn> columns = [];
-  List<String> columnNames = myReportFeildsMap.values
-      .where((ReportShowName reportShowName) => reportShowName.isSelect)
-      .map((ReportShowName reportShowName) => reportShowName.showName)
+  // List<String> columnNames = myReportFeildsMap.values
+  //     .where((ReportShowName reportShowName) => reportShowName.isSelect)
+  //     .map((ReportShowName reportShowName) => reportShowName.showName)
+  //     .toList();
+  List<String> columnNames = myReportFeildsMap.entries
+      .where((entry) => entry.value.isSelect)
+      .map((entry) => entry.key)
       .toList();
 
   // columns.add(GridColumn(
@@ -282,7 +360,7 @@ List<GridColumn> getColumns() {
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           alignment: Alignment.center,
           child: Text(
-            columnName,
+            myReportFeildsMap[columnName]!.showName,
             overflow: TextOverflow.ellipsis,
           ),
         ),

@@ -213,7 +213,7 @@ class MyQrcodeDialogState extends State<MyQrcodeDialog> {
             controller: _errorController,
             style: TextStyle(
                 color: (_errorController.text.contains("successfully"))
-                    ? Theme.of(context).colorScheme.surfaceContainerHigh
+                    ? Theme.of(context).colorScheme.onTertiaryFixedVariant
                     : Theme.of(context).colorScheme.error,
                 fontWeight: FontWeight.bold),
             decoration: const InputDecoration(

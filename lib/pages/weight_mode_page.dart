@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
@@ -28,7 +27,6 @@ import '../data/weight_rpt.dart';
 import '../data/wgt_rpt_data_source.dart';
 import '../dialog/conform_dialog.dart';
 import '../dialog/setting_dialog.dart';
-import 'package:path/path.dart';
 import '../dialog/weight_report_feilds_setting.dart';
 import '../widget/custom_button.dart';
 import '../widget/page_head.dart';
@@ -74,6 +72,8 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
   bool _isPassZero = false;
   bool isCnting = false;
   bool isStart = false;
+  int maxRecId = 0;
+  bool firstGetRec = true;
 
   Timer? startTimer;
   Timer? innerTimer;
@@ -83,6 +83,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
   List<WeightReportData> myWeightReportData = [];
   final DataGridController _dataGridController = DataGridController();
 
+  int _currentPage = 1;
   void updateTableData(List<WeightReportData> newReportData) {
     _weightReportDataSource.updateData(newReportData);
   }
@@ -136,6 +137,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
   dynamic eventBus12;
   dynamic eventBus13;
   dynamic eventBus14;
+  dynamic eventBus15;
 
   void onStartTimer() {
     startTimer = Timer.periodic(Duration(seconds: 3), (timer) {
@@ -163,11 +165,15 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
   void initState() {
     super.initState();
     initScaleList();
+    updateMyReportFeildsMap();
     cntScaleTimerMgr.startCntScaleTimer(10);
     _reportScrollerController = ScrollController();
+
     lastWeight = "*";
     dateformat = 1;
     zeroRange = 0;
+    sortColumnName = 'Id';
+    sortDirectValue = DataGridSortDirection.descending;
 
     PublicFunctions.getWeight(myDefScaleInfo.defScaleId!);
     if (myModeSettingNormal.recMode == msgManual) {
@@ -180,12 +186,15 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     _isStableStatusJudge = false;
     // getProductNameList();
     _weightReportDatas = getWeightReportData();
-    _weightReportDataSource = WeightReportDataSource(_weightReportDatas);
+    _weightReportDataSource =
+        WeightReportDataSource(_weightReportDatas, weighingMode);
+    _weightReportDataSource.loadPage(_currentPage);
+
     PublicFunctions.getUserList();
     PublicFunctions.getProductList();
-    PublicFunctions.getRecords(myDefScaleInfo.defScaleId!, weighingMode);
+    // PublicFunctions.getRecords(myDefScaleInfo.defScaleId!, weighingMode);
 
-    onStartTimer();
+    // onStartTimer();
 
     eventBus1 = eventBus.on<EventDeviceName>().listen((event) {
       if (mounted) {
@@ -268,14 +277,14 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                 if (myReqWeightCountine.msgBody!.isStable == true &&
                     !_isZero &&
                     _isPassZero &&
-                    _isStableStatusJudge) {
-                  {
-                    _isPassZero = false;
-                    _isTiming = false;
-                    _isStableStatusJudge = false;
-                    _addWeightToReport();
-                    sendReportDataToDB();
-                  }
+                    _isStableStatusJudge &&
+                    checkWgtValue(myReqWeightCountine.msgBody!.weightVal)) {
+                  _isPassZero = false;
+                  _isTiming = false;
+                  _isStableStatusJudge = false;
+                  _addWeightToReport();
+                  sendReportDataToDB();
+
                   lastWeight = myReqWeightCountine.msgBody!.weightVal;
                 }
 
@@ -359,6 +368,19 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
           if (myGetScaleRecords.weightRecords!.isNotEmpty) {
             _addDBdataToReport();
             getWeightReportData();
+            if (firstGetRec) {
+              int maxId = int.parse(myGetScaleRecords.weightRecords![0].id!);
+              maxRecId = maxId;
+
+              // 遍历 weightRecords 列表
+              for (var record in myGetScaleRecords.weightRecords!) {
+                int currentId = int.parse(record.id!);
+                if (currentId > maxId) {
+                  maxId = currentId;
+                  maxRecId = maxId;
+                }
+              }
+            }
           } else {
             myWeightReportData.clear();
             updateTableData(getWeightReportData());
@@ -369,7 +391,9 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     eventBus11 = eventBus.on<EventDeleteRec>().listen((event) {
       if (mounted) {
         setState(() {
-          PublicFunctions.getRecords(myDefScaleInfo.defScaleId!, weighingMode);
+          maxRecId = 0;
+          _weightReportDatas.clear();
+          _weightReportDataSource.updateData(_weightReportDatas);
         });
       }
     });
@@ -410,9 +434,23 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
             DefScaleInfo.getDefScaleInfo(scaleId);
             myWeightReportData.clear();
             updateTableData(getWeightReportData());
-            PublicFunctions.getRecords(
-                myDefScaleInfo.defScaleId!, weighingMode);
+            sortColumnName = 'Id';
+            maxRecId = 0;
+            firstGetRec = true;
+            sortDirectValue = DataGridSortDirection.descending;
+            _weightReportDataSource.loadPage(_currentPage);
           });
+        }
+      }
+    });
+
+    eventBus15 = eventBus.on<EventRevExportRecs>().listen((event) {
+      if (mounted) {
+        myRespDataFromScale = event.obj;
+        if (myRespDataFromScale.msgBody != "") {
+          if (mounted && context.mounted) {
+            showConfirmationDialog(context, myRespDataFromScale.msgBody);
+          }
         }
       }
     });
@@ -421,7 +459,8 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
   void _addDBdataToReport() {
     addDBdataToReport(myWeightReportData, myModeSettingNormal, dateformat);
     setState(() {
-      _weightReportDataSource = WeightReportDataSource(_weightReportDatas);
+      _weightReportDataSource =
+          WeightReportDataSource(_weightReportDatas, weighingMode);
       Future.delayed(const Duration(milliseconds: 100), () {
         _dataGridController
             .scrollToRow(_weightReportDataSource.rows.length - 0);
@@ -446,11 +485,16 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     eventBus12.cancel();
     eventBus13.cancel();
     eventBus14.cancel();
+    eventBus15.cancel();
 
     startTimer?.cancel();
     innerTimer?.cancel();
     productNameList.clear();
-
+    myGetScaleRecords.weightRecords?.clear();
+    myWeightReportData.clear();
+    _dataGridController.dispose();
+    _weightReportDataSource.dispose();
+    _weightReportDatas.clear();
     super.dispose();
   }
 
@@ -461,7 +505,9 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
       appBar: AppBar(
           title: Container(
             child: pageHeadDefScale(
-                context, localizedStrings.iTitleWeightCollection),
+                context,
+                localizedStrings.iTitleWeightCollection,
+                localizedStrings.gTipWgtDataCollectionHelp),
           ),
           leading: IconTheme(
               data: IconThemeData(
@@ -702,18 +748,22 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                                     initialDirectory: directory,
                                     type: FileType.custom,
                                     dialogTitle: 'Output file:',
-                                    allowedExtensions: ["xlsx"],
-                                    fileName: 'report.xlsx',
+                                    allowedExtensions: ["csv"],
+                                    fileName: 'report.csv',
                                   ));
                                   if (outputFile != null) {
-                                    if (!outputFile.contains(".xlsx")) {
-                                      outputFile = "$outputFile.xlsx";
+                                    if (!outputFile.contains(".csv")) {
+                                      outputFile = "$outputFile.csv";
                                     }
-                                    _creatFile(outputFile);
-                                    if (mounted && context.mounted) {
-                                      showConfirmationDialog(
-                                          context, errorText);
-                                    }
+                                    PublicFunctions.exportRecords(
+                                        myDefScaleInfo.defScaleId!,
+                                        weighingMode,
+                                        outputFile);
+                                    // await _creatFile(outputFile);
+                                    // if (mounted && context.mounted) {
+                                    //   showConfirmationDialog(
+                                    //       context, errorText);
+                                    // }
                                   }
                                 }),
                             const SizedBox(
@@ -750,7 +800,6 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                       SizedBox(
                         width: 10,
                       ),
-
                       Container(
                         height: 53,
                         width: constraints.maxWidth / 5,
@@ -779,82 +828,6 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                               '${option.plu}:${option.productName}',
                         ),
                       ),
-
-                      // SizedBox(
-                      //   width: constraints.maxWidth / 10,
-                      //   child: TextButton(
-                      //       onPressed: () {},
-                      //       child: Text(localizedStrings.user_name,
-                      //           maxLines: 1,
-                      //           overflow: TextOverflow.ellipsis,
-                      //           style: const TextStyle(
-                      //               fontSize: 14,
-                      //               fontWeight: FontWeight.normal))),
-                      // ),
-                      // Container(
-                      //   height: 53,
-                      //   width: constraints.maxWidth / 5,
-                      //   padding: const EdgeInsets.all(0),
-                      //   child: DropdownButtonFormField<String>(
-                      //     itemHeight: 50.0,
-                      //     isExpanded: true,
-                      //     // decoration: const InputDecoration(border: OutlineInputBorder()),
-                      //     value: userNameValue,
-                      //     onChanged: (String? newPosition) {
-                      //       setState(() {
-                      //         userNameValue = newPosition.toString();
-                      //         for (var i = 0;
-                      //             i < myUserInfoList.userInfo!.length;
-                      //             i++) {
-                      //           if (userNameValue ==
-                      //               myUserInfoList.userInfo![i].name) {
-                      //             myUserInfo = myUserInfoList.userInfo![i];
-                      //             eventBus.fire(EventUserInfo(myUserInfo));
-                      //           }
-                      //         }
-                      //       });
-                      //     },
-                      //     items: userNameList
-                      //         .map<DropdownMenuItem<String>>((String value) {
-                      //       return DropdownMenuItem(
-                      //           value: value,
-                      //           child: Text(value,
-                      //               overflow: TextOverflow.ellipsis));
-                      //     }).toList(),
-                      //   ),
-                      // ),
-                      // CustomElevatedButton(
-                      //   btnWidth: constraints.maxWidth / 10 - 30,
-                      //   btnHeight: 40,
-                      //   icon: Icons.myPluInfoList_note_outlined,
-                      //   text: localizedStrings.user_edit,
-                      //   onPressed: () {
-                      //     PublicFunctions.getUserList();
-                      //     getUserNameList();
-                      //     if (!userNameList.contains(userNameValue)) {
-                      //       myUserInfo.name = "";
-                      //       userNameValue = "";
-                      //       myUserInfo.id = "";
-                      //       myUserInfo.isFemale = true;
-                      //       myUserInfo.phone = "";
-                      //       myUserInfo.remarks = "";
-                      //     }
-                      //     addUserDialog(context).then((onvalue) {
-                      //       setState(() {
-                      //         PublicFunctions.getUserList();
-                      //         getUserNameList();
-                      //         if (!userNameList.contains(userNameValue)) {
-                      //           myUserInfo.name = "";
-                      //           userNameValue = "";
-                      //           myUserInfo.id = "";
-                      //           myUserInfo.isFemale = true;
-                      //           myUserInfo.phone = "";
-                      //           myUserInfo.remarks = "";
-                      //         }
-                      //       });
-                      //     });
-                      //   },
-                      // ),
                       SizedBox(
                         width: 10,
                       ),
@@ -883,19 +856,103 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                   );
                 })),
             Expanded(
-                child: Container(
-              padding: EdgeInsets.all(10),
-              child: SfDataGrid(
-                source: _weightReportDataSource,
-                columns: getColumns(),
-                columnWidthMode: ColumnWidthMode.fill,
-                frozenRowsCount: 0,
-                controller: _dataGridController,
-                allowSorting: true,
+              child: Container(
+                padding: EdgeInsets.all(10),
+                child: SfDataGrid(
+                  source: _weightReportDataSource,
+                  columns: getColumns().map((column) {
+                    return GridColumn(
+                      columnName: column.columnName,
+                      label: Container(
+                        padding: EdgeInsets.all(2),
+                        alignment: Alignment.center,
+                        child: GestureDetector(
+                          onTap: () {
+                            final currentSortDirection = _weightReportDataSource
+                                .sortDirectionForColumn(column.columnName);
+                            final newSortDirection = currentSortDirection ==
+                                    DataGridSortDirection.ascending
+                                ? DataGridSortDirection.descending
+                                : DataGridSortDirection.ascending;
+                            _weightReportDataSource.sortDataGrid(
+                              column.columnName,
+                              newSortDirection,
+                            );
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  myReportFeildsMap[column.columnName]!
+                                      .showName,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              _getSortIconForColumn(column.columnName),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  columnWidthMode: ColumnWidthMode.fill,
+                  frozenRowsCount: 0,
+                  // controller: null,
+                  allowSorting: false,
+                ),
               ),
-            ))
+            ),
+
+            // 分页控件
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: _currentPage > 1
+                      ? () {
+                          setState(() {
+                            _currentPage--;
+                            _weightReportDataSource.loadPage(_currentPage);
+                          });
+                        }
+                      : null,
+                ),
+                Text('Page $_currentPage'),
+                IconButton(
+                  icon: Icon(Icons.arrow_forward),
+                  onPressed: () {
+                    setState(() {
+                      _currentPage++;
+                      _weightReportDataSource.loadPage(_currentPage);
+                    });
+                  },
+                ),
+              ],
+            ),
           ],
         ));
+  }
+
+  Widget _getSortIconForColumn(String columnName) {
+    if (!_weightReportDataSource.isColumnSorted(columnName)) {
+      return SizedBox.shrink();
+    }
+    final sortDirection =
+        _weightReportDataSource.sortDirectionForColumn(columnName);
+    switch (sortDirection) {
+      case DataGridSortDirection.ascending:
+        return Icon(
+          Icons.arrow_upward,
+          size: 18,
+        );
+      case DataGridSortDirection.descending:
+        return Icon(
+          Icons.arrow_downward,
+          size: 18,
+        );
+    }
   }
 
   _showConfirmationDialog(BuildContext context) {
@@ -1035,14 +1092,15 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     }
   }
 
-  _creatFile(String path) {
-    Excel excel = Excel.createExcel();
-    creatExcelFile(path, myWeightReportData, excel);
+  _creatFile(String path) async {
+    // Excel excel = Excel.createExcel();
+    // await creatExcelFile(path, myWeightReportData, excel);
+    await creatCsvFile(path, myWeightReportData);
     try {
-      var onValue = excel.encode();
-      File(join(path))
-        ..createSync(recursive: true)
-        ..writeAsBytesSync(onValue!);
+      // var onValue = excel.encode();
+      // File(join(path))
+      //   ..createSync(recursive: true)
+      //   ..writeAsBytesSync(onValue!);
 
       errorText = "Excel save succeed!";
     } catch (ex) {
@@ -1055,15 +1113,30 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     sendRptDataToDB(myWeightReportData, weighingMode);
   }
 
+  bool checkWgtValue(String str) {
+    if (str.isEmpty) {
+      return false;
+    }
+    // 尝试将字符串转换为 double 类型
+    double? numValue = double.tryParse(str);
+
+    if (numValue != null && numValue > 0) {
+      return true;
+    }
+
+    return false;
+  }
+
   void _addWeightToReport() {
     PluData? tempPlu = PluData(null, null, null, null, null, null, null, null,
         null, null, null, null, null, null);
     if (selectedPluData != null) {
       tempPlu = selectedPluData;
     }
-    print(myWeightReportData.length);
+
+    maxRecId++;
     WeightReportData addData = WeightReportData(
-      (myWeightReportData.length + 1).toString(),
+      (maxRecId).toString(),
       myDefScaleInfo.defScaleModel == null ? '' : myDefScaleInfo.defScaleModel!,
       myDefScaleInfo.defScaleSn == null ? '' : myDefScaleInfo.defScaleSn!,
       (tempPlu!.plu == null) ? "" : tempPlu.plu.toString(),
@@ -1114,12 +1187,14 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     myWeightReportData.add(addData);
     setState(() {
       String sortColName = 'Date Time';
+      sortColumnName = "";
       DataGridSortDirection sortDirec = DataGridSortDirection.descending;
       if (_weightReportDataSource.sortedColumns.isNotEmpty) {
         sortColName = _weightReportDataSource.sortedColumns[0].name;
         sortDirec = _weightReportDataSource.sortedColumns[0].sortDirection;
       }
-      _weightReportDataSource = WeightReportDataSource(_weightReportDatas);
+      _weightReportDataSource =
+          WeightReportDataSource(_weightReportDatas, weighingMode);
       _weightReportDataSource.sortedColumns
           .add(SortColumnDetails(name: sortColName, sortDirection: sortDirec));
       Future.delayed(const Duration(milliseconds: 100), () {

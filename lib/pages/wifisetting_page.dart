@@ -381,8 +381,8 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     return Scaffold(
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(50),
-          child:
-              pageHeadDesign(context, localizedStrings.wifi_setting_title, [1]),
+          child: pageHeadDesign(context, localizedStrings.wifi_setting_title,
+              [1], localizedStrings.gTipWifiSettingPageHelp),
         ),
         body: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Expanded(

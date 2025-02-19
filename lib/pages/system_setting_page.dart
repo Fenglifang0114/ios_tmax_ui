@@ -64,6 +64,7 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
         child: pageHeadDefScale(
           context,
           myAppName.appName!,
+          '',
         ),
       ),
       body: Container(
@@ -155,7 +156,7 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15), // 根据实际需要设置圆角半径
-          color: Theme.of(context).colorScheme.primaryContainer,
+          color: Theme.of(context).colorScheme.tertiaryContainer,
         ),
         margin: const EdgeInsets.only(right: 20), // 根据实际需要设置容器间距
         child: ListView(
@@ -204,7 +205,7 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
                   },
                   child: settingCard(
                     localizedStrings.gTitleGetBuildInfo,
-                    Icons.key,
+                    Icons.privacy_tip,
                   ),
                 ),
               ),

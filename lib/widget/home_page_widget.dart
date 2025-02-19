@@ -12,7 +12,7 @@ Widget appCard(BuildContext context, String titleName, IconData iconInfo,
           ? Theme.of(context).colorScheme.surfaceTint
           : Theme.of(context).colorScheme.secondaryFixed,
       child: SizedBox(
-        height: 100,
+        height: 80,
         child: Row(
           children: [
             Container(
@@ -48,24 +48,9 @@ Widget appCard(BuildContext context, String titleName, IconData iconInfo,
                   Expanded(
                     flex: 5, // 上下分割比例
                     child: Align(
-                      alignment: Alignment.bottomLeft,
+                      alignment: Alignment.centerLeft,
                       child: Text(
                         titleName,
-                        overflow: TextOverflow.visible,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Expanded(
-                    flex: 5, // 上下分割比例
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        explanation,
-                        style: TextStyle(fontStyle: FontStyle.italic),
                         overflow: TextOverflow.visible,
                       ),
                     ),
@@ -81,7 +66,7 @@ Widget appCard(BuildContext context, String titleName, IconData iconInfo,
                   validDate,
                   overflow: TextOverflow.visible,
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,
+                    // fontWeight: FontWeight.bold,
                     color: Theme.of(context).colorScheme.primary,
                   ),
                 ),

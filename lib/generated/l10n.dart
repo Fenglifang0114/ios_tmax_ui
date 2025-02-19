@@ -60,10 +60,10 @@ class S {
     );
   }
 
-  /// `Model Name:`
+  /// `Model Name`
   String get gModelName {
     return Intl.message(
-      'Model Name:',
+      'Model Name',
       name: 'gModelName',
       desc: 'This is a prompt for model name.',
       args: [],
@@ -76,6 +76,16 @@ class S {
       'SN#:',
       name: 'gScaleSn',
       desc: 'This is a prompt for sn.',
+      args: [],
+    );
+  }
+
+  /// `Perpetual`
+  String get gTipPerpetual {
+    return Intl.message(
+      'Perpetual',
+      name: 'gTipPerpetual',
+      desc: 'This is a tip of the certification expiration date.',
       args: [],
     );
   }
@@ -473,6 +483,36 @@ class S {
     );
   }
 
+  /// `Strong`
+  String get gEPStrong {
+    return Intl.message(
+      'Strong',
+      name: 'gEPStrong',
+      desc: 'This is a prompt for the Bluetooth signal strength.',
+      args: [],
+    );
+  }
+
+  /// `Normal`
+  String get gEPNormal {
+    return Intl.message(
+      'Normal',
+      name: 'gEPNormal',
+      desc: 'This is a prompt for the Bluetooth signal strength.',
+      args: [],
+    );
+  }
+
+  /// `Weak`
+  String get gEPWeak {
+    return Intl.message(
+      'Weak',
+      name: 'gEPWeak',
+      desc: 'This is a prompt for the Bluetooth signal strength.',
+      args: [],
+    );
+  }
+
   /// `Device name can not be empty,error.`
   String get gTipDeviceNameEmpty {
     return Intl.message(
@@ -659,6 +699,26 @@ class S {
       '2. The selected elements will be displayed in the center of the page, and you can edit their attributes here. ',
       name: 'gMsgStep2',
       desc: 'This is a prompt about operation step 2.',
+      args: [],
+    );
+  }
+
+  /// `Width`
+  String get gPageWidth {
+    return Intl.message(
+      'Width',
+      name: 'gPageWidth',
+      desc: 'This is a prompt about the page width.',
+      args: [],
+    );
+  }
+
+  /// `Height`
+  String get gPageHeight {
+    return Intl.message(
+      'Height',
+      name: 'gPageHeight',
+      desc: 'This is a prompt about the page height.',
       args: [],
     );
   }
@@ -879,6 +939,16 @@ class S {
       'Export',
       name: 'gBtnExport',
       desc: 'This is a export button.',
+      args: [],
+    );
+  }
+
+  /// `select all`
+  String get gSelectAll {
+    return Intl.message(
+      'select all',
+      name: 'gSelectAll',
+      desc: 'This is a prompt for selecting all items.',
       args: [],
     );
   }
@@ -1243,6 +1313,16 @@ class S {
     );
   }
 
+  /// `Result`
+  String get gTipResult {
+    return Intl.message(
+      'Result',
+      name: 'gTipResult',
+      desc: 'This is a tip of add license result.',
+      args: [],
+    );
+  }
+
   /// `Serial port connected`
   String get txt_serial_port_connected {
     return Intl.message(
@@ -1443,10 +1523,10 @@ class S {
     );
   }
 
-  /// `Download Label Printing Formats`
+  /// `Label Format Download`
   String get gTitleLabelFmtDownload {
     return Intl.message(
-      'Download Label Printing Formats',
+      'Label Format Download',
       name: 'gTitleLabelFmtDownload',
       desc: 'This is a title about downloading label printing Formats app.',
       args: [],
@@ -1898,11 +1978,71 @@ class S {
   }
 
   /// `Device Time`
-  String get device_time_title {
+  String get cTitleDeviceTime {
     return Intl.message(
       'Device Time',
-      name: 'device_time_title',
-      desc: '',
+      name: 'cTitleDeviceTime',
+      desc: 'This is a title about device time.',
+      args: [],
+    );
+  }
+
+  /// `Sync PC Time`
+  String get cBtnSyncPcTime {
+    return Intl.message(
+      'Sync PC Time',
+      name: 'cBtnSyncPcTime',
+      desc: 'This is a button about sync pc time.',
+      args: [],
+    );
+  }
+
+  /// `Set Date/Time`
+  String get cBtnSetTime {
+    return Intl.message(
+      'Set Date/Time',
+      name: 'cBtnSetTime',
+      desc: 'This is a button about set date/time.',
+      args: [],
+    );
+  }
+
+  /// `Sync Time`
+  String get cBtnSyncTime {
+    return Intl.message(
+      'Sync Time',
+      name: 'cBtnSyncTime',
+      desc: 'This is a button about sync time.',
+      args: [],
+    );
+  }
+
+  /// `Select Time`
+  String get cBtnSelectTime {
+    return Intl.message(
+      'Select Time',
+      name: 'cBtnSelectTime',
+      desc: 'This is a button about select time.',
+      args: [],
+    );
+  }
+
+  /// `Select Date`
+  String get cBtnSelectDate {
+    return Intl.message(
+      'Select Date',
+      name: 'cBtnSelectDate',
+      desc: 'This is a button about select date.',
+      args: [],
+    );
+  }
+
+  /// `failed to get time`
+  String get cTipFailedGetTime {
+    return Intl.message(
+      'failed to get time',
+      name: 'cTipFailedGetTime',
+      desc: 'This is a tip about failed to get time.',
       args: [],
     );
   }
@@ -1918,11 +2058,111 @@ class S {
   }
 
   /// `Parameter Setting`
-  String get parameter_set_title {
+  String get cTitleParameterSet {
     return Intl.message(
       'Parameter Setting',
-      name: 'parameter_set_title',
-      desc: '',
+      name: 'cTitleParameterSet',
+      desc: 'This is a title about parameter setting.',
+      args: [],
+    );
+  }
+
+  /// `Configuration name`
+  String get cTipConfigurationName {
+    return Intl.message(
+      'Configuration name',
+      name: 'cTipConfigurationName',
+      desc: 'This is a tip about configuration name.',
+      args: [],
+    );
+  }
+
+  /// `Editable`
+  String get cTipEditable {
+    return Intl.message(
+      'Editable',
+      name: 'cTipEditable',
+      desc: 'This is a tip about whether editing is enabled.',
+      args: [],
+    );
+  }
+
+  /// `Size`
+  String get cTipParameterSize {
+    return Intl.message(
+      'Size',
+      name: 'cTipParameterSize',
+      desc: 'This is a tip about parameter size.',
+      args: [],
+    );
+  }
+
+  /// `Parameter Type`
+  String get cTipParameterTyppe {
+    return Intl.message(
+      'Parameter Type',
+      name: 'cTipParameterTyppe',
+      desc: 'This is a tip about parameter type.',
+      args: [],
+    );
+  }
+
+  /// `Parameter Value`
+  String get cTipParameterValue {
+    return Intl.message(
+      'Parameter Value',
+      name: 'cTipParameterValue',
+      desc: 'This is a title about parameter value.',
+      args: [],
+    );
+  }
+
+  /// `Description`
+  String get cTipParameterDesp {
+    return Intl.message(
+      'Description',
+      name: 'cTipParameterDesp',
+      desc: 'This is a title about parameter description.',
+      args: [],
+    );
+  }
+
+  /// `Click to submit`
+  String get cBtnCommit {
+    return Intl.message(
+      'Click to submit',
+      name: 'cBtnCommit',
+      desc: 'This is a button for submitting parameter modifications.',
+      args: [],
+    );
+  }
+
+  /// `No parameters have been modified!`
+  String get cTipNotModified {
+    return Intl.message(
+      'No parameters have been modified!',
+      name: 'cTipNotModified',
+      desc: 'This is a tip: No parameter modifications.',
+      args: [],
+    );
+  }
+
+  /// `Please make sure the values are correct, continue?`
+  String get cTipConfirmModified {
+    return Intl.message(
+      'Please make sure the values are correct, continue?',
+      name: 'cTipConfirmModified',
+      desc: 'This is a tip: Please make sure the values are correct, continue?',
+      args: [],
+    );
+  }
+
+  /// `Please check`
+  String get cTipCheckValue {
+    return Intl.message(
+      'Please check',
+      name: 'cTipCheckValue',
+      desc: 'This is a tip: Please check',
       args: [],
     );
   }
@@ -3699,21 +3939,31 @@ class S {
   }
 
   /// `Scale Name`
-  String get scale_mgr_scale_name {
+  String get gScaleName {
     return Intl.message(
       'Scale Name',
-      name: 'scale_mgr_scale_name',
+      name: 'gScaleName',
       desc: '',
       args: [],
     );
   }
 
-  /// `Scale Model:`
-  String get scale_mgr_scale_model {
+  /// `Status`
+  String get gStatus {
     return Intl.message(
-      'Scale Model:',
-      name: 'scale_mgr_scale_model',
-      desc: '',
+      'Status',
+      name: 'gStatus',
+      desc: 'This is the prompt for the scale status.',
+      args: [],
+    );
+  }
+
+  /// `Progress`
+  String get gProgress {
+    return Intl.message(
+      'Progress',
+      name: 'gProgress',
+      desc: 'This is the prompt for the download progress.',
       args: [],
     );
   }
@@ -4290,6 +4540,16 @@ class S {
     );
   }
 
+  /// `Service Status:`
+  String get gTipServiceStatus {
+    return Intl.message(
+      'Service Status:',
+      name: 'gTipServiceStatus',
+      desc: 'This is prompt for service status.',
+      args: [],
+    );
+  }
+
   /// `Service not installed`
   String get gTipServiceUninstalled {
     return Intl.message(
@@ -4367,6 +4627,326 @@ class S {
       'Open Port',
       name: 'gBtnOpenSerialPort',
       desc: 'This is a button to open serial port.',
+      args: [],
+    );
+  }
+
+  /// `Weighing Count:`
+  String get cTipWeighingCount {
+    return Intl.message(
+      'Weighing Count:',
+      name: 'cTipWeighingCount',
+      desc: 'This is a tip for weighing count.',
+      args: [],
+    );
+  }
+
+  /// `Abnormal Power-Off Count:`
+  String get cTipPowerOffCnt {
+    return Intl.message(
+      'Abnormal Power-Off Count:',
+      name: 'cTipPowerOffCnt',
+      desc: 'This is a tip for abnormal power-off count.',
+      args: [],
+    );
+  }
+
+  /// `Running Time(mins):`
+  String get cTipRunningTime {
+    return Intl.message(
+      'Running Time(mins):',
+      name: 'cTipRunningTime',
+      desc: 'This is a tip for running time.',
+      args: [],
+    );
+  }
+
+  /// `Power-On Count:`
+  String get cTipPowerOnCnt {
+    return Intl.message(
+      'Power-On Count:',
+      name: 'cTipPowerOnCnt',
+      desc: 'This is a tip for power-on count.',
+      args: [],
+    );
+  }
+
+  /// `OL Time(mins):`
+  String get cTipOlTime {
+    return Intl.message(
+      'OL Time(mins):',
+      name: 'cTipOlTime',
+      desc: 'This is a tip for ol time.',
+      args: [],
+    );
+  }
+
+  /// `UL Time(mins):`
+  String get cTipUlTime {
+    return Intl.message(
+      'UL Time(mins):',
+      name: 'cTipUlTime',
+      desc: 'This is a tip for ul time.',
+      args: [],
+    );
+  }
+
+  /// `Err4 Count:`
+  String get cTipErr4Cnt {
+    return Intl.message(
+      'Err4 Count:',
+      name: 'cTipErr4Cnt',
+      desc: 'This is a tip for err4 count.',
+      args: [],
+    );
+  }
+
+  /// `Err19 Count:`
+  String get cTipErr19Cnt {
+    return Intl.message(
+      'Err19 Count:',
+      name: 'cTipErr19Cnt',
+      desc: 'This is a tip for err19 count.',
+      args: [],
+    );
+  }
+
+  /// `Calibration Switch Count:`
+  String get cTipCalswitchCnt {
+    return Intl.message(
+      'Calibration Switch Count:',
+      name: 'cTipCalswitchCnt',
+      desc: 'This is a tip for cal switch count.',
+      args: [],
+    );
+  }
+
+  /// `Calibration Count:`
+  String get cTipCalCnt {
+    return Intl.message(
+      'Calibration Count:',
+      name: 'cTipCalCnt',
+      desc: 'This is a tip for calibration count.',
+      args: [],
+    );
+  }
+
+  /// `High/Low Setting`
+  String get iTitleHLSetting {
+    return Intl.message(
+      'High/Low Setting',
+      name: 'iTitleHLSetting',
+      desc: 'This is the title for the upper and lower limits setting.',
+      args: [],
+    );
+  }
+
+  /// `The unit of weight is the same as scale..`
+  String get iTipHLUnit {
+    return Intl.message(
+      'The unit of weight is the same as scale..',
+      name: 'iTipHLUnit',
+      desc: 'This is a prompt for the unit of checking weight.',
+      args: [],
+    );
+  }
+
+  /// `Help`
+  String get gTipHelp {
+    return Intl.message(
+      'Help',
+      name: 'gTipHelp',
+      desc: 'This is a tip for help info.',
+      args: [],
+    );
+  }
+
+  /// `Connect via serial port\n1. Connect the scale to the PC device with a serial port cable;\n2. Enter the correct serial port information;\n3. Click [Connect];\n4. If the connection is successful,the left status bar will display Online.\n5. Click [Close Port] to disconnect the serial port connection; Click [Open Port] to open the serial port connection;\n6. If you want to change the scale name, click [Rename] to enter it and click [Confirm].\n\nConnect via Ethernet/Wi-Fi\n1. Click [+] at the top of the left status bar;\n2. Enter the IPv4 (IP Address) and Port (Port Number);\n3. Click [Confirm] to complete the connection.\n\n  (1) Get IP Address\nWi-Fi: Click [Wi-Fi Setting] on the main interface, select the Wi-Fi you want to connect to in the left column, enter the password and click [Connect]. If the connection is successful, the IP Address will be displayed.\nEthernet: After connecting the network cable, enter the scale menu to get the IP Address. (For T-Max, F3-3 COM3 SHOW.)\n  (2) Get Port Number\nWi-Fi: Enter the scale menu to get. (For T-Max, F3-2 COM2 MODE, press the TARE key three times to view the port number.)\nEthernet: Enter the scale menu to get. (For T-Max, F3-3 COM3 PORT, press the TARE key once to view the port number.)\n\nNote:\nTo use Wi-Fi connection, you need to turn on the scale's Wi-Fi function and connect the device running the software to the target Wi-Fi as well.\nTo use Ethernet connection, you need to turn on the network port function of the scale and connect the device running the software to the target Wi-Fi as well.\n`
+  String get gTipScaleMgrPageHelp {
+    return Intl.message(
+      'Connect via serial port\n1. Connect the scale to the PC device with a serial port cable;\n2. Enter the correct serial port information;\n3. Click [Connect];\n4. If the connection is successful,the left status bar will display Online.\n5. Click [Close Port] to disconnect the serial port connection; Click [Open Port] to open the serial port connection;\n6. If you want to change the scale name, click [Rename] to enter it and click [Confirm].\n\nConnect via Ethernet/Wi-Fi\n1. Click [+] at the top of the left status bar;\n2. Enter the IPv4 (IP Address) and Port (Port Number);\n3. Click [Confirm] to complete the connection.\n\n  (1) Get IP Address\nWi-Fi: Click [Wi-Fi Setting] on the main interface, select the Wi-Fi you want to connect to in the left column, enter the password and click [Connect]. If the connection is successful, the IP Address will be displayed.\nEthernet: After connecting the network cable, enter the scale menu to get the IP Address. (For T-Max, F3-3 COM3 SHOW.)\n  (2) Get Port Number\nWi-Fi: Enter the scale menu to get. (For T-Max, F3-2 COM2 MODE, press the TARE key three times to view the port number.)\nEthernet: Enter the scale menu to get. (For T-Max, F3-3 COM3 PORT, press the TARE key once to view the port number.)\n\nNote:\nTo use Wi-Fi connection, you need to turn on the scale\'s Wi-Fi function and connect the device running the software to the target Wi-Fi as well.\nTo use Ethernet connection, you need to turn on the network port function of the scale and connect the device running the software to the target Wi-Fi as well.\n',
+      name: 'gTipScaleMgrPageHelp',
+      desc: 'This is the help info for the multi-scale management page.',
+      args: [],
+    );
+  }
+
+  /// `1. Select the Wi-Fi you want to connect to from the left menu bar;\n2. Enter the password and click [Connect] to obtain the IP address;\n3. Return to the main interface and enter [Multi-scale Management];\n4. Click [+] at the top of the left status bar, enter the IP address and serial port number;\n5. Click [Confirm] to connect.\n`
+  String get gTipWifiSettingPageHelp {
+    return Intl.message(
+      '1. Select the Wi-Fi you want to connect to from the left menu bar;\n2. Enter the password and click [Connect] to obtain the IP address;\n3. Return to the main interface and enter [Multi-scale Management];\n4. Click [+] at the top of the left status bar, enter the IP address and serial port number;\n5. Click [Confirm] to connect.\n',
+      name: 'gTipWifiSettingPageHelp',
+      desc: 'This is the help info for the wifi setting page.',
+      args: [],
+    );
+  }
+
+  /// `1. Click [Select Firmware Zip] to upload the file(.zip);\n2. Click [Download];\n3. Select the way to update the firmware: Serial Port or Network(Wi-Fi, Ethernet).\n\nNote: \nUpdate via serial port , the scale will automatically restart;\nUpdate via Wi-Fi or Ethernet, the scale will not automatically restart. You need to manually restart the scale, and the firmware will update. (This method supports selecting multi-scales to update together.)\n`
+  String get gTipUpdateFirmwarePageHelp {
+    return Intl.message(
+      '1. Click [Select Firmware Zip] to upload the file(.zip);\n2. Click [Download];\n3. Select the way to update the firmware: Serial Port or Network(Wi-Fi, Ethernet).\n\nNote: \nUpdate via serial port , the scale will automatically restart;\nUpdate via Wi-Fi or Ethernet, the scale will not automatically restart. You need to manually restart the scale, and the firmware will update. (This method supports selecting multi-scales to update together.)\n',
+      name: 'gTipUpdateFirmwarePageHelp',
+      desc: 'This is the help info for the update firmware page.',
+      args: [],
+    );
+  }
+
+  /// `1. Follow the prompts to select the corresponding print format for uploading;\n2. Click [Download] to download the format(.fmt);\n3. If multiple networks are connected, you need to select the corresponding network before downloading.\n`
+  String get gTipReceiptFmtDownPageHelp {
+    return Intl.message(
+      '1. Follow the prompts to select the corresponding print format for uploading;\n2. Click [Download] to download the format(.fmt);\n3. If multiple networks are connected, you need to select the corresponding network before downloading.\n',
+      name: 'gTipReceiptFmtDownPageHelp',
+      desc: 'This is the help info for the receipt format download page.',
+      args: [],
+    );
+  }
+
+  /// `1. Select printer protocol, length and width of the ticket, printing direction and other information;\n2. When editing the print format, there are 4 variables to choose from in the left menu bar;\n Free Text: Text variables that can be freely inputted\n Dividing Line: A horizontal line used for segmentation (after selecting this variable twice, the content in the middle of the variable can appear repeatedly, such as the accumulated content each time)\n Variable: Variables required for weighing scales\n Price Variable: Variables required for the price computing scale\n3. After editing the format, click [Save Format] to save the print format.\n\nNote:\n The weighing scale and pricing scale cannot use the wrong variable, otherwise the printed output will be empty.\n`
+  String get gTipReceiptDesignPageHelp {
+    return Intl.message(
+      '1. Select printer protocol, length and width of the ticket, printing direction and other information;\n2. When editing the print format, there are 4 variables to choose from in the left menu bar;\n Free Text: Text variables that can be freely inputted\n Dividing Line: A horizontal line used for segmentation (after selecting this variable twice, the content in the middle of the variable can appear repeatedly, such as the accumulated content each time)\n Variable: Variables required for weighing scales\n Price Variable: Variables required for the price computing scale\n3. After editing the format, click [Save Format] to save the print format.\n\nNote:\n The weighing scale and pricing scale cannot use the wrong variable, otherwise the printed output will be empty.\n',
+      name: 'gTipReceiptDesignPageHelp',
+      desc: 'This is the help info for the Receipt Design page.',
+      args: [],
+    );
+  }
+
+  /// `1. Create a new PLU: Click [+] to create a default data PLU.\n2. Import PLU: Click [Import] to select the data sheet, and all PLU data in the sheet will be displayed.\n3. Import PLU from the database: Click [Get Data From DB] will display all PLU data in the database.\n\nNote: \nThe PLU in the database is not the PLU on the scale, but the database in the software backend. The software currently does not have the function to read PLU information from the scale.\n4. Click the [Setting button] to select the PLU information that needs to be displayed.\n5. If you need to modify PLU information, you can directly modify it in the corresponding cell. (Hovering over a cell will display the range of parameters that can be entered.)\n6. Select the PLU to be download and click [Download].\n7. Choose to clear all PLUs on the scale before downloading, or update the corresponding PLUs, and then click [Confirm].\n8. Export in sheet format: Select the PLU to export, click [Export] and choose the folder to export.\n9. Save to backend database: Select the PLU that needs to be saved and then click [Save to DB], choose to clear all PLUs in the backend database before saving, or update the corresponding PLUs, click [Confirm].\n10. Get PLU Template: Click [Get PLU Template] and select the download path to obtain a form template that can be filled out with PLU.\n`
+  String get gTipPlueditPageHelp {
+    return Intl.message(
+      '1. Create a new PLU: Click [+] to create a default data PLU.\n2. Import PLU: Click [Import] to select the data sheet, and all PLU data in the sheet will be displayed.\n3. Import PLU from the database: Click [Get Data From DB] will display all PLU data in the database.\n\nNote: \nThe PLU in the database is not the PLU on the scale, but the database in the software backend. The software currently does not have the function to read PLU information from the scale.\n4. Click the [Setting button] to select the PLU information that needs to be displayed.\n5. If you need to modify PLU information, you can directly modify it in the corresponding cell. (Hovering over a cell will display the range of parameters that can be entered.)\n6. Select the PLU to be download and click [Download].\n7. Choose to clear all PLUs on the scale before downloading, or update the corresponding PLUs, and then click [Confirm].\n8. Export in sheet format: Select the PLU to export, click [Export] and choose the folder to export.\n9. Save to backend database: Select the PLU that needs to be saved and then click [Save to DB], choose to clear all PLUs in the backend database before saving, or update the corresponding PLUs, click [Confirm].\n10. Get PLU Template: Click [Get PLU Template] and select the download path to obtain a form template that can be filled out with PLU.\n',
+      name: 'gTipPlueditPageHelp',
+      desc: 'This is the help info for the plu edit page.',
+      args: [],
+    );
+  }
+
+  /// `1. Edit header, footer, and operator information;\n2. Click [Download] to send to the scale.\n`
+  String get gTipVarSettingPageHelp {
+    return Intl.message(
+      '1. Edit header, footer, and operator information;\n2. Click [Download] to send to the scale.\n',
+      name: 'gTipVarSettingPageHelp',
+      desc: 'This is the help info for the variable value setting page.',
+      args: [],
+    );
+  }
+
+  /// `1. This function interface can display the data printed after each checkout;\nIf the service is not installed, you need to click [Service] on the right and click [Install Service]; When prompted that the service has stopped, click [Start Service] and it will prompt that it is running. Finally, click [Confirm] to complete the process;\n2. After the balance is printed, the printing content of each order will be displayed on this interface, click [Refresh List] and you can get the latest records;\n3. Click [Export] and you can download the report.\n\nNote: \nThis function can be used via Ethernet / WiFi, and cannot be used via serial port.`
+  String get gTipRetailDetailPageHelp {
+    return Intl.message(
+      '1. This function interface can display the data printed after each checkout;\nIf the service is not installed, you need to click [Service] on the right and click [Install Service]; When prompted that the service has stopped, click [Start Service] and it will prompt that it is running. Finally, click [Confirm] to complete the process;\n2. After the balance is printed, the printing content of each order will be displayed on this interface, click [Refresh List] and you can get the latest records;\n3. Click [Export] and you can download the report.\n\nNote: \nThis function can be used via Ethernet / WiFi, and cannot be used via serial port.',
+      name: 'gTipRetailDetailPageHelp',
+      desc: 'This is the help info for the retail detail report page.',
+      args: [],
+    );
+  }
+
+  /// `1. Click [Set Date/Time].\n2. Manually set or synchronize the date and time of the PC device.\n`
+  String get gTipDeviceTimePageHelp {
+    return Intl.message(
+      '1. Click [Set Date/Time].\n2. Manually set or synchronize the date and time of the PC device.\n',
+      name: 'gTipDeviceTimePageHelp',
+      desc: 'This is the help info for the device time setting page.',
+      args: [],
+    );
+  }
+
+  /// `1. Follow the prompts to select the corresponding print format for uploading;\n2. Click [Download] to download the format(.fmt);\n3. If multiple networks are connected, you need to select the corresponding network before downloading.\n`
+  String get gTipLabelFmtDownPageHelp {
+    return Intl.message(
+      '1. Follow the prompts to select the corresponding print format for uploading;\n2. Click [Download] to download the format(.fmt);\n3. If multiple networks are connected, you need to select the corresponding network before downloading.\n',
+      name: 'gTipLabelFmtDownPageHelp',
+      desc: 'This is the help info for the label format download page.',
+      args: [],
+    );
+  }
+
+  /// `1. Select printer protocol, length and width of the ticket, printing direction and other information;\n2. When editing the print format, there are 4 variables to choose from in the left menu bar: Free Text, BarCode Variable, QrCode Variable, Variable;\n3. BarCode Edit: Click [BarCode Edit] and then Click [Add]; Select format information such as data type, content, length, etc; Enter the format name and click [Save]; You can select the edited barcode format from the left menu bar.\n4. Qrcode Edit: Same as Barcode.\n5. After editing the format, click [Save Format] to save the print format.\n`
+  String get gTipLabelDesignPageHelp {
+    return Intl.message(
+      '1. Select printer protocol, length and width of the ticket, printing direction and other information;\n2. When editing the print format, there are 4 variables to choose from in the left menu bar: Free Text, BarCode Variable, QrCode Variable, Variable;\n3. BarCode Edit: Click [BarCode Edit] and then Click [Add]; Select format information such as data type, content, length, etc; Enter the format name and click [Save]; You can select the edited barcode format from the left menu bar.\n4. Qrcode Edit: Same as Barcode.\n5. After editing the format, click [Save Format] to save the print format.\n',
+      name: 'gTipLabelDesignPageHelp',
+      desc: 'This is the help info for the label design page.',
+      args: [],
+    );
+  }
+
+  /// `1. The top menu bar has modes such as weighing, counting, price computing, etc, which can be edited by selecting different modes based on the connected scale;\n2. The left menu bar is for variables, which can be selected according to your needs;\n3. You can click [Open Review] to preview the output results;\n4. After editing the format, click [Download]. Once successful, use the serial port tool to test it.\n\nNote: \nThis function can only be used in serial port connection mode.\n`
+  String get gTipSerialDesignPageHelp {
+    return Intl.message(
+      '1. The top menu bar has modes such as weighing, counting, price computing, etc, which can be edited by selecting different modes based on the connected scale;\n2. The left menu bar is for variables, which can be selected according to your needs;\n3. You can click [Open Review] to preview the output results;\n4. After editing the format, click [Download]. Once successful, use the serial port tool to test it.\n\nNote: \nThis function can only be used in serial port connection mode.\n',
+      name: 'gTipSerialDesignPageHelp',
+      desc: 'This is the help info for the derial output design page.',
+      args: [],
+    );
+  }
+
+  /// `1. Click [Get Basic Data];\n2. T-Config will automatically collect basic data from the scale and display it synchronously on the interface.\n3. You can click the menu bar button in the upper left corner to select the device you want to switch to.`
+  String get gTipBasicDataPageHelp {
+    return Intl.message(
+      '1. Click [Get Basic Data];\n2. T-Config will automatically collect basic data from the scale and display it synchronously on the interface.\n3. You can click the menu bar button in the upper left corner to select the device you want to switch to.',
+      name: 'gTipBasicDataPageHelp',
+      desc: 'This is the help info for the basic data page.',
+      args: [],
+    );
+  }
+
+  /// `1. There are 5 parameter settings: Weighing, Factory, Serial Port, Price, Other;\n2. The editable parameters can be set in Value column based on the content in Description column;\n3. After setting all parameters, click the button in the bottom right corner to submit.\n`
+  String get gTipParameterSettingPageHelp {
+    return Intl.message(
+      '1. There are 5 parameter settings: Weighing, Factory, Serial Port, Price, Other;\n2. The editable parameters can be set in Value column based on the content in Description column;\n3. After setting all parameters, click the button in the bottom right corner to submit.\n',
+      name: 'gTipParameterSettingPageHelp',
+      desc: 'This is the help info for the parameter setting page.',
+      args: [],
+    );
+  }
+
+  /// `1. The condition is that there must be weight on the scale. Click [Start] to activate take out scale function. (Only record the decrement of the weighing value during unloading.)\n2. Click [Save] to save the current weighing record;\n3. Click [Show Reports] to display the report;\n4. Click [Setting] to set automatic saving.\n5. In [Setting], you can also set the date format and delimiter for data export;\n6. Enter the PLU number or name in the PLU Name column to call the PLU in the backend database; (The PLU here is not the PLU on the scale)\n7. Click [Report Setting] to select the information displayed for weighing data; (Currently, there are no functional variables available: Product Code, Item Code, User Name, User NO）\n8. Click the arrow in a column of the report title row will sort the report in ascending/descending order.\n9.Click [Export] to export all saved data (xlsx).\n10.Click [End] to stop the function.\n\nNote: \nThe weight in the report refers to the decrement rather than all the weight on the scale.\n`
+  String get gTipTakeOutPageHelp {
+    return Intl.message(
+      '1. The condition is that there must be weight on the scale. Click [Start] to activate take out scale function. (Only record the decrement of the weighing value during unloading.)\n2. Click [Save] to save the current weighing record;\n3. Click [Show Reports] to display the report;\n4. Click [Setting] to set automatic saving.\n5. In [Setting], you can also set the date format and delimiter for data export;\n6. Enter the PLU number or name in the PLU Name column to call the PLU in the backend database; (The PLU here is not the PLU on the scale)\n7. Click [Report Setting] to select the information displayed for weighing data; (Currently, there are no functional variables available: Product Code, Item Code, User Name, User NO）\n8. Click the arrow in a column of the report title row will sort the report in ascending/descending order.\n9.Click [Export] to export all saved data (xlsx).\n10.Click [End] to stop the function.\n\nNote: \nThe weight in the report refers to the decrement rather than all the weight on the scale.\n',
+      name: 'gTipTakeOutPageHelp',
+      desc: 'This is the help info for the take out scale page.',
+      args: [],
+    );
+  }
+
+  /// `1. Click [Start] to activate increment weighing function. (Only record the increment of the weighing value during loading.)\n2. Click [Save] to save the current weighing record;\n3. Click [Show Reports] to display the report;\n4. Click [Setting] to set automatic saving.\n5. You can also set the date format and delimiter for data export;\n6. Enter the PLU number or name in the PLU Name column to call the PLU in the backend database; (The PLU here is not the PLU on the scale)\n7. Click [Report Setting] to select the information displayed for weighing data; (Currently, there are no functional variables available: Product Code, Item Code, User Name, User NO）\n8. Click the arrow in a column of the report title row will sort the report in ascending/descending order.\n9.Click [Export] to export all saved data (xlsx).\n10.Click [End] to stop the function.\n\nNote: \nThe weight in the report refers to the increment rather than all the weight on the scale.\n`
+  String get gTipIncrementWgtPageHelp {
+    return Intl.message(
+      '1. Click [Start] to activate increment weighing function. (Only record the increment of the weighing value during loading.)\n2. Click [Save] to save the current weighing record;\n3. Click [Show Reports] to display the report;\n4. Click [Setting] to set automatic saving.\n5. You can also set the date format and delimiter for data export;\n6. Enter the PLU number or name in the PLU Name column to call the PLU in the backend database; (The PLU here is not the PLU on the scale)\n7. Click [Report Setting] to select the information displayed for weighing data; (Currently, there are no functional variables available: Product Code, Item Code, User Name, User NO）\n8. Click the arrow in a column of the report title row will sort the report in ascending/descending order.\n9.Click [Export] to export all saved data (xlsx).\n10.Click [End] to stop the function.\n\nNote: \nThe weight in the report refers to the increment rather than all the weight on the scale.\n',
+      name: 'gTipIncrementWgtPageHelp',
+      desc: 'This is the help info for the increment weighing page.',
+      args: [],
+    );
+  }
+
+  /// `1. Click [Edit] to set the upper and lower limits (the judgment is based on the upper and lower limits set in the background, not on the scale). After setting, place the weight and the corresponding alarm light will light up;\n2. Click [Save] to save the current weighing record;\n3. Click [Show Reports] to display the report;\n4. Click [Setting] to set automatic saving. (Can be set to save when OK, HIGH, LOW, ALL.)\n5. You can also set the date format and delimiter for data export;\n6. Enter the PLU number or name in the [PLU Name] column to call the PLU in the backend database; (The PLU here is not the PLU on the scale)\n7. Click [Report Setting] to select the information displayed for weighing data; (Currently, there are no functional variables available: Product Code, Item Code, User Name, User NO）\n8. Click the arrow in a column of the report title row will sort the report in ascending/descending order.\n9.Click [Export] to export all saved data (xlsx).\n\nNote:\n1. The units for the upper and lower limits are the currently selected units on the scale. After setting the upper and lower limits in the software, the values of the upper and lower limits will not undergo unit conversion when switching units through the scale.\n2. At present, the software determines the upper and lower limits from zero, while on the scale, it starts from 20d.\n`
+  String get gTipCheckWgtPageHelp {
+    return Intl.message(
+      '1. Click [Edit] to set the upper and lower limits (the judgment is based on the upper and lower limits set in the background, not on the scale). After setting, place the weight and the corresponding alarm light will light up;\n2. Click [Save] to save the current weighing record;\n3. Click [Show Reports] to display the report;\n4. Click [Setting] to set automatic saving. (Can be set to save when OK, HIGH, LOW, ALL.)\n5. You can also set the date format and delimiter for data export;\n6. Enter the PLU number or name in the [PLU Name] column to call the PLU in the backend database; (The PLU here is not the PLU on the scale)\n7. Click [Report Setting] to select the information displayed for weighing data; (Currently, there are no functional variables available: Product Code, Item Code, User Name, User NO）\n8. Click the arrow in a column of the report title row will sort the report in ascending/descending order.\n9.Click [Export] to export all saved data (xlsx).\n\nNote:\n1. The units for the upper and lower limits are the currently selected units on the scale. After setting the upper and lower limits in the software, the values of the upper and lower limits will not undergo unit conversion when switching units through the scale.\n2. At present, the software determines the upper and lower limits from zero, while on the scale, it starts from 20d.\n',
+      name: 'gTipCheckWgtPageHelp',
+      desc: 'This is the help info for the check weighing page.',
+      args: [],
+    );
+  }
+
+  /// `1. Click [Save] to manually save the current weighing data (with no quantity limit); Click [Export] to export all saved data (xlsx);\n2. Click [Setting] and select Save Mode to Auto, it can be set to auto save mode;\n3. You can also set the date format and delimiter for data export;\n4. Enter the PLU number or name in the PLU Name column to call the PLU in the backend database; (The PLU here is not the PLU on the scale)\n5. Click [Report Setting] to select the information displayed for weighing data; (Currently, there are no functional variables available: Product Code、Item Code、User Name、User NO）\n6. Click the arrow in column of the report title row will sort the report in ascending/descending order.\n\nNote: \n1. To save data, you need to clear the scale before saving the next transaction. Zero point will not be saved.\n2. The upper and lower limit variables are the upper and lower limits set in the backend PLU, not the upper and lower limits set on the scale.\n3. The saved data will not be cleared after closing/restarting the software.\n`
+  String get gTipWgtDataCollectionHelp {
+    return Intl.message(
+      '1. Click [Save] to manually save the current weighing data (with no quantity limit); Click [Export] to export all saved data (xlsx);\n2. Click [Setting] and select Save Mode to Auto, it can be set to auto save mode;\n3. You can also set the date format and delimiter for data export;\n4. Enter the PLU number or name in the PLU Name column to call the PLU in the backend database; (The PLU here is not the PLU on the scale)\n5. Click [Report Setting] to select the information displayed for weighing data; (Currently, there are no functional variables available: Product Code、Item Code、User Name、User NO）\n6. Click the arrow in column of the report title row will sort the report in ascending/descending order.\n\nNote: \n1. To save data, you need to clear the scale before saving the next transaction. Zero point will not be saved.\n2. The upper and lower limit variables are the upper and lower limits set in the backend PLU, not the upper and lower limits set on the scale.\n3. The saved data will not be cleared after closing/restarting the software.\n',
+      name: 'gTipWgtDataCollectionHelp',
+      desc: 'This is the help info for the weighing data collection page.',
+      args: [],
+    );
+  }
+
+  /// `1. Real time display of weighing data on the scale (supporting all units including PCS and PCT);\n2. Click [TARE] and [ZERO] allows for weighing and zeroing operations on the scale;\n3. Click the List button in the upper left corner to view the list of connected devices and make changes.\n\nNote：\n1.This function can be used by connecting to a serial port, Ethernet, or WiFi.\n2.Switching units is done on the scale.\n`
+  String get gTipWeighingPageHelp {
+    return Intl.message(
+      '1. Real time display of weighing data on the scale (supporting all units including PCS and PCT);\n2. Click [TARE] and [ZERO] allows for weighing and zeroing operations on the scale;\n3. Click the List button in the upper left corner to view the list of connected devices and make changes.\n\nNote：\n1.This function can be used by connecting to a serial port, Ethernet, or WiFi.\n2.Switching units is done on the scale.\n',
+      name: 'gTipWeighingPageHelp',
+      desc: 'This is the help info for the weighing page.',
       args: [],
     );
   }

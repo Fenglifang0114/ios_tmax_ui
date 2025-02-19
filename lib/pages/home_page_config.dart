@@ -16,7 +16,6 @@ import '../data/downloadresponse.dart';
 import '../data/language.dart';
 import '../data/screen_mgr.dart';
 import '../data/timer_manager.dart';
-
 import '../dialog/exit_app_dialog.dart';
 import '../dialog/language_setting.dart';
 import '../functions/methods.dart';
@@ -32,14 +31,12 @@ import '../widget/version.dart';
 import 'basic_data_page.dart';
 import 'custom_serial_protocol_page.dart';
 import 'down_recipt_fmt_page.dart';
-import 'down_serial_output.dart';
 import 'lable_down_prn_fmt_page.dart';
 import 'receipt_design_page.dart';
 import 'scale_manager_page.dart';
 import 'set_system_parameter.dart';
 import 'set_system_time.dart';
 import 'package:tray_manager/tray_manager.dart';
-
 import 'update_firmware_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -113,13 +110,12 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
             onNoPressed: () {
               Navigator.of(context).pop();
             },
-            onYesPressed: () {
+            onYesPressed: () async {
               Navigator.of(context).pop();
-              // await windowManager.destroy();
               dispose();
-              // await windowManager.destroy();
+              await trayManager.destroy(); //退出系统托盘
+              await windowManager.destroy();
               exit(0);
-              // windowManager.destroy();
             },
           );
         },
@@ -471,7 +467,7 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
       child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15), // 根据实际需要设置圆角半径
-            color: Theme.of(context).colorScheme.primaryContainer,
+            color: Theme.of(context).colorScheme.tertiaryContainer,
           ),
           margin: const EdgeInsets.only(right: 20), // 根据实际需要设置容器间距
           child: Column(
@@ -612,7 +608,7 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
                         },
                         child: customFunctionCard(
                             context,
-                            localizedStrings.device_time_title,
+                            localizedStrings.cTitleDeviceTime,
                             Icons.date_range,
                             true),
                       )),
@@ -629,7 +625,7 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
         child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15), // 根据实际需要设置圆角半径
-              color: Theme.of(context).colorScheme.primaryContainer,
+              color: Theme.of(context).colorScheme.tertiaryContainer,
             ),
             margin: const EdgeInsets.only(right: 20), // 根据实际需要设置容器间距
             child: Column(children: [
@@ -801,7 +797,7 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
         child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15), // 根据实际需要设置圆角半径
-              color: Theme.of(context).colorScheme.primaryContainer,
+              color: Theme.of(context).colorScheme.tertiaryContainer,
             ),
             child: Column(children: [
               Container(
@@ -935,7 +931,7 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
                                   : null,
                               child: customFunctionCard(
                                   context,
-                                  localizedStrings.parameter_set_title,
+                                  localizedStrings.cTitleParameterSet,
                                   Icons.tune_outlined,
                                   myTConLicInfo.isValid),
                             )),

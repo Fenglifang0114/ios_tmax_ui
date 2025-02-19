@@ -254,7 +254,7 @@ class ProductionLinePageState extends State<ProductionLinePage> {
         child: pageHeadDesign(
           context,
           // localizedStrings.iTitleWeighting,
-          'Production Line', scaleIds,
+          'Production Line', scaleIds, '',
         ),
       ),
       body: Container(
@@ -404,7 +404,7 @@ class ProductionLinePageState extends State<ProductionLinePage> {
                       ? FontWeight.bold
                       : FontWeight.normal,
                   color: validGapList[index].isOkValues[i]
-                      ? Theme.of(context).colorScheme.surfaceContainerHigh
+                      ? Theme.of(context).colorScheme.onTertiaryFixedVariant
                       : Theme.of(context).colorScheme.onSurface),
             ),
           ),
@@ -687,7 +687,7 @@ class ProductionLinePageState extends State<ProductionLinePage> {
           SnackBar(
               content: Text('OK    ${file.path}'),
               backgroundColor:
-                  Theme.of(context).colorScheme.surfaceContainerHigh),
+                  Theme.of(context).colorScheme.onTertiaryFixedVariant),
         );
       }
     } catch (e) {
@@ -735,10 +735,12 @@ class ProductionLinePageState extends State<ProductionLinePage> {
                         ? 'Online'
                         : 'Off-line',
                     style: TextStyle(
-                        color: scaleWgtMap[scaleNetItems[index].scaleId]!
-                                .isStart
-                            ? Theme.of(context).colorScheme.surfaceContainerHigh
-                            : Theme.of(context).colorScheme.error),
+                        color:
+                            scaleWgtMap[scaleNetItems[index].scaleId]!.isStart
+                                ? Theme.of(context)
+                                    .colorScheme
+                                    .onTertiaryFixedVariant
+                                : Theme.of(context).colorScheme.error),
                   ),
 
                   selectedTileColor: Theme.of(context).colorScheme.primary,

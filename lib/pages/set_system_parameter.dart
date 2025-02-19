@@ -131,7 +131,7 @@ class SetParameterPageState extends State<SetParameterPage> {
                         fontWeight: FontWeight.normal)), ////此处需要秤回复
                 duration: const Duration(seconds: 3),
                 backgroundColor: (myRespDataFromScale.msgBody.contains('ok'))
-                    ? Theme.of(context).colorScheme.surfaceContainerHigh
+                    ? Theme.of(context).colorScheme.onTertiaryFixedVariant
                     : Theme.of(context).colorScheme.error));
           }
         });
@@ -199,8 +199,10 @@ class SetParameterPageState extends State<SetParameterPage> {
     return Scaffold(
       appBar: AppBar(
           title: Container(
-            child:
-                pageHeadDefScale(context, localizedStrings.parameter_set_title),
+            child: pageHeadDefScale(
+                context,
+                localizedStrings.cTitleParameterSet,
+                localizedStrings.gTipParameterSettingPageHelp),
           ),
           leading: IconTheme(
               data: IconThemeData(
@@ -225,13 +227,13 @@ class SetParameterPageState extends State<SetParameterPage> {
                     BorderSide(color: Theme.of(context).colorScheme.primary),
               ),
             ),
-            child: const Row(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Expanded(
                   flex: 2,
                   child: Text(
-                    'Configuration name',
+                    localizedStrings.cTipConfigurationName,
                     style: TextStyle(
                       fontSize: 18,
                     ),
@@ -242,7 +244,7 @@ class SetParameterPageState extends State<SetParameterPage> {
                 Expanded(
                   flex: 2,
                   child: Text(
-                    'Editable',
+                    localizedStrings.cTipEditable,
                     style: TextStyle(
                       fontSize: 18,
                     ),
@@ -253,7 +255,7 @@ class SetParameterPageState extends State<SetParameterPage> {
                 Expanded(
                   flex: 2,
                   child: Text(
-                    'Size',
+                    localizedStrings.cTipParameterSize,
                     style: TextStyle(
                       fontSize: 18,
                     ),
@@ -264,7 +266,7 @@ class SetParameterPageState extends State<SetParameterPage> {
                 Expanded(
                   flex: 2,
                   child: Text(
-                    'Type',
+                    localizedStrings.cTipParameterTyppe,
                     style: TextStyle(
                       fontSize: 18,
                     ),
@@ -275,7 +277,7 @@ class SetParameterPageState extends State<SetParameterPage> {
                 Expanded(
                   flex: 2,
                   child: Text(
-                    'Value',
+                    localizedStrings.cTipParameterValue,
                     style: TextStyle(
                       fontSize: 18,
                     ),
@@ -286,7 +288,7 @@ class SetParameterPageState extends State<SetParameterPage> {
                 Expanded(
                   flex: 2,
                   child: Text(
-                    'Description',
+                    localizedStrings.cTipParameterDesp,
                     style: TextStyle(
                       fontSize: 18,
                     ),
@@ -408,19 +410,18 @@ class SetParameterPageState extends State<SetParameterPage> {
             String checkStr = checkEepromData(changedEepromInfos);
             if (checkStr != '') {
               changedEepromInfos.clear();
-              var title = '''Please check $checkStr!''';
+              var title = localizedStrings.cTipCheckValue + '$checkStr!';
               _showConfirmationDialog(context, changedEepromInfos, title);
             } else {
-              var title =
-                  '''Please make sure the values are correct, continue?''';
+              var title = localizedStrings.cTipConfirmModified;
               _showConfirmationDialog(context, changedEepromInfos, title);
             }
           } else {
-            var title = '''No parameters have been modified!''';
+            var title = localizedStrings.cTipNotModified;
             _showConfirmationDialog(context, changedEepromInfos, title);
           }
         },
-        tooltip: 'Click to submit',
+        tooltip: localizedStrings.cBtnCommit,
         child: const Icon(Icons.upload_file_outlined),
       ),
     );

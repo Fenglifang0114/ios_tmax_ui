@@ -441,9 +441,9 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
     ScrollController scrollController1 = ScrollController();
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(50),
-        child: pageHeadDefScale(context, localizedStrings.gTitleReceiptDesign),
-      ),
+          preferredSize: const Size.fromHeight(50),
+          child: pageHeadDesign(context, localizedStrings.gTitleReceiptDesign,
+              [], localizedStrings.gTipReceiptDesignPageHelp)),
       body: Column(
         children: [
           Container(
@@ -782,7 +782,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
               height: 40,
               child: Row(
                 children: [
-                  buildBtnText('Width(mm):'),
+                  buildBtnText(localizedStrings.gPageWidth + '(mm):'),
                   const SizedBox(
                     width: 10,
                   ),
@@ -822,7 +822,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
               height: 40,
               child: Row(
                 children: [
-                  buildBtnText('Height(mm):'),
+                  buildBtnText(localizedStrings.gPageHeight + '(mm):'),
                   const SizedBox(
                     width: 10,
                   ),

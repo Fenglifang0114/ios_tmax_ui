@@ -29,7 +29,6 @@ import '../widget/home_page_widget.dart';
 import '../widget/version.dart';
 import 'check_weighers_page.dart';
 import 'plu_edit_page.dart';
-import 'product_download_page.dart';
 import 'scale_manager_page.dart';
 
 import 'take_in_page.dart';
@@ -66,7 +65,7 @@ class IndustryHomePageState extends State<IndustryHomePage>
   bool isCardClicked = false;
   bool editScaleNameFlag = false;
   bool showHint1 = false;
-  bool showHint2 = true;
+  bool showHint2 = false;
   bool isResize = false;
 
   Future<void> _handleSetIcon() async {
@@ -123,14 +122,12 @@ class IndustryHomePageState extends State<IndustryHomePage>
             onNoPressed: () {
               Navigator.of(context).pop();
             },
-            onYesPressed: () {
+            onYesPressed: () async {
               Navigator.of(context).pop();
-              // await windowManager.destroy();
               dispose();
-              // await windowManager.destroy();
+              await trayManager.destroy(); //退出系统托盘
+              await windowManager.destroy();
               exit(0);
-              // TrayManager.instance.remove();
-              // windowManager.destroy();
             },
           );
         },
@@ -417,11 +414,11 @@ class IndustryHomePageState extends State<IndustryHomePage>
 
   Widget firstCard() {
     return Expanded(
-        flex: 4,
+        flex: 6,
         child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15), // 根据实际需要设置圆角半径
-              color: Theme.of(context).colorScheme.primaryContainer,
+              color: Theme.of(context).colorScheme.tertiaryContainer,
             ),
             margin: const EdgeInsets.only(right: 20), // 根据实际需要设置容器间距
             child: Column(children: [
@@ -709,7 +706,7 @@ class IndustryHomePageState extends State<IndustryHomePage>
         child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15), // 根据实际需要设置圆角半径
-              color: Theme.of(context).colorScheme.primaryContainer,
+              color: Theme.of(context).colorScheme.tertiaryContainer,
             ),
             margin: const EdgeInsets.only(right: 20), // 根据实际需要设置容器间距
             child: Column(children: [
@@ -824,7 +821,7 @@ class IndustryHomePageState extends State<IndustryHomePage>
                               myWedaLicInfo.isValid,
                               localizedStrings.iTipWeightCollection,
                               myWedaLicInfo.liceseDate == "2299-01-01"
-                                  ? 'Perpetual'
+                                  ? localizedStrings.gTipPerpetual
                                   : myWedaLicInfo.liceseDate),
                         ),
                       ),
@@ -855,7 +852,7 @@ class IndustryHomePageState extends State<IndustryHomePage>
                                 myChweLicInfo.isValid,
                                 'This application is used to check weighing data in real time',
                                 myChweLicInfo.liceseDate == "2299-01-01"
-                                    ? 'Perpetual'
+                                    ? localizedStrings.gTipPerpetual
                                     : myChweLicInfo.liceseDate),
                           )),
                       MouseRegion(
@@ -885,7 +882,7 @@ class IndustryHomePageState extends State<IndustryHomePage>
                                 myInWeLicInfo.isValid,
                                 localizedStrings.iTipIncrementWeighting,
                                 myInWeLicInfo.liceseDate == "2299-01-01"
-                                    ? 'Perpetual'
+                                    ? localizedStrings.gTipPerpetual
                                     : myInWeLicInfo.liceseDate),
                           )),
                       MouseRegion(
@@ -914,7 +911,7 @@ class IndustryHomePageState extends State<IndustryHomePage>
                                 myTaouLicInfo.isValid,
                                 localizedStrings.gTipTakeOut,
                                 myTaouLicInfo.liceseDate == "2299-01-01"
-                                    ? 'Perpetual'
+                                    ? localizedStrings.gTipPerpetual
                                     : myTaouLicInfo.liceseDate),
                           )),
                     ]),
@@ -980,6 +977,7 @@ class IndustryHomePageState extends State<IndustryHomePage>
     if (viewportDimension > 300) {
       setState(() {
         showHint1 = false;
+        showHint2 = false;
       });
     }
   }

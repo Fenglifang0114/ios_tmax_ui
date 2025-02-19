@@ -1,1808 +1,1955 @@
 {
-	"@@locale": "en",
-	"gLanguage": "EngLish",
-	"@gLanguage": {
-		"description": "This is a prompt for the current language."
-	},	
-	"gModelName": "Model Name:",
-	"@gModelName": {
-		"description": "This is a prompt for model name."
-	},
-	"gScaleSn": "SN#:",
-	"@gScaleSn": {
-		"description": "This is a prompt for sn."
-	},
-	"gBtnConnect": "Connect",
-	"@gBtnConnect": {
-		"description": "This is a button for testing the connection with the device."
-	},
-	"gBtnTare": "Tare",
-	"@gBtnTare": {
-		"description": "This is a button for tare weight."
-	},
-	"gBtnSave": "Save",
-	"@gBtnSave": {
-		"description": "This is a button for saving."
-	},
-	"gTitleSerialPortConnection": "Serial Port Connection",
-	"@gTitleSerialPortConnection": {
-		"description": "This is the title of the serial port connection."
-	},
-	"gMsgAuthorityPassed": "Authentication passed.\r\n",
-	"@gMsgAuthorityPassed": {
-		"description": "This is the prompt indicating that the authentication has been passed."
-	},
-	"gMsgAuthorityFail": "Not authenticed. Please send the ID to us.",
-	"@gMsgAuthorityFail": {
-		"description": "This is the prompt indicating that the authentication has failed."
-	},
-	"gBtnStart": "Start",
-	"@gBtnStart": {
-		"description": "This is a button to start."
-	},
-	"gBtnExit": "Exit",
-	"@gBtnExit": {
-		"description": "This is a button to exit."
-	},
-	"gSystemId": "System Unique ID:  ",
-	"@gSystemId": {
-		"description": "This is the prompt for the system authentication ID."
-	},
-	"gExpirationDate": "Expiration date:",
-	"@gExpirationDate": {
-		"description": "This is the prompt for the expiration date."
-	},
-	"gTitleSerialModify": "Serial port information modification",
-	"@gTitleSerialModify": {
-		"description": "This is the title for modifying serial port information."
-	},
-	"gSerialPortStatus": "Serial Port Status:",
-	"@gSerialPortStatus": {
-		"description": "This is the title for serial port status."
-	},
-	"gSerialPort": "Serial port:",
-	"@gSerialPort": {
-		"description": "This is the prompt for serial port."
-	},
-	"gRefreshPort": "Refresh port",
-	"@gRefreshPort": {
-		"description": "This is the prompt to refresh port."
-	},
-	"gDataBits": "Data bits:",
-	"@gDataBits": {
-		"description": "This is the prompt for data bits."
-	},
-	"gBaudRate": "Baud rate:",
-	"@gBaudRate": {
-		"description": "This is the prompt for baud rate."
-	},
-	"gSerialParity": "Parity:",
-	"@gSerialParity": {
-		"description": "This is the prompt for parity."
-	},
-	"gStopBits": "Stop bits:",
-	"@gStopBits": {
-		"description": "This is the prompt for stop bits."
-	},
-	"gBtnConfirm": "Confirm",
-	"@gBtnConfirm": {
-		"description": "This is a confirmation button."
-	},
-	"gBtnCancel": "Cancel",
-	"@gBtnCancel": {
-		"description": "This is a button to cancel"
-	},	
-	"gMsgRefresh": "Refresh",
-	"@gMsgRefresh": {
-		"description": "This is a button to refresh."
-	},
-	"gFindSsid": "Discover SSID",
-	"@gFindSsid": {
-		"description": "This is a prompt for discover ssid."
-	},
-	"gNetworkSetting": "Wireless network settings",
-	"@gNetworkSetting": {
-		"description": ""
-	},
-	"gPassword": "Password:",
-	"@gPassword": {
-		"description": "This is a prompt for password."
-	},
-	"gIpAddress": "IPv4:",
-	"@gIpAddress": {
-		"description": "This is a prompt for IPv4."
-	},
-	"gNetmask": "NetMask:",
-	"@gNetmask": {
-		"description": "This is a prompt for NetMask."
-	},
-	"gGateway": "Gateway:",
-	"@gGateway": {
-		"description": "This is a prompt for Gateway."
-	},	
-	"gBtnStatic": "Static",
-	"@gBtnStatic": {
-		"description": "This is a prompt for static IP."
-	},
-	"gBtnDynamic": "Dynamic",
-	"@gBtnDynamic": {
-		"description": "This is a prompt for dynamic IP."
-	},
-	"gTipConnectStaticIp": "Enter IP information and click the connect button!",
-	"@gTipConnectStaticIp": {
-		"description": "This is a prompt for connnecting static ip."
-	},
-	"gTipConnecting": "Connecting...",
-	"@gTipConnecting": {
-		"description": "This is a prompt for connnecting."
-	},
-	"gTipConnected": "You are already connected!",
-	"@gTipConnected": {
-		"description": "This is a prompt for already connected ."
-	},
-	"gTipConnectedInfo": "Connected AP Info:",
-	"@gTipConnectedInfo": {
-		"description": "This is a prompt for connected info ."
-	},
-	"gTipGetApListAndIP": "Obtaining AP list and Ip info,please wait...",
-	"@gTipGetApListAndIP": {
-		"description": "This is a prompt for obtaining AP list and Ip info."
-	},
-	"gTipGetIP": "Obtaining IP, please wait...",
-	"@gTipGetIP": {
-		"description": "This is a prompt for obtaining Ip info."
-	},
-	"gTipGetIpOk": "Get Ip OK !",
-	"@gTipGetIpOk": {
-		"description": "This is a prompt indicating that the IP information has been successfully obtained."
-	},
-	"gTipGetIpFail": "Get Ip Fail !",
-	"@gTipGetIpFail": {
-		"description": "This is a prompt indicating that the attempt to obtain IP information has failed."
-	},
-	"gTipSSID": "SSID:",
-	"@gTipSSID": {
-		"description": "This is a prompt for SSID."
-	},	
-	"gTitleBtSetting": "Bluetooth Configurations",
-	"@gTitleBtSetting": {
-		"description": "This is a title for bluetooth configurations."
-	},
-	"gTipDeviceNameEmpty": "Device name can not be empty,error.",
-	"@gTipDeviceNameEmpty": {
-		"description": "This is a prompt for empty device name."
-	}, 
-	"gTipTimeOut": "Time out!",
-	"@gTipTimeOut": {
-		"description": "This is a prompt for time out."
-	},
-	"gDeviceName": "Device name:",
-	"@gDeviceName": {
-		"description": "This is a prompt for device name."
-	},
-	"gMsgSerialError": "Serial port has been disconnected. Please check the settings.",
-	"@gMsgSerialError": {
-		"description": "This is a prompt for serial port has been disconnected."
-	},	 
-	"gTitleLicense": "License information",
-	"@gTitleLicense": {
-		"description": "This is a title for license information"
-	},
-	"gPrinter": "Printer Protocol:",
-	"@gPrinter": {
-		"description": "This is a prompt for printer protocol."
-	},
-	"gPrintDirection": "Direction:",
-	"@gPrintDirection": {
-		"description": "This is a prompt regarding the printing direction."
-	},	 
-	"gOpenJson": "Open Json",
-	"@gOpenJson": {
-		"description": "This is a button about open print format. "
-	},
-	"gBarcodeEdit": "BarCode Edit",
-	"@gBarcodeEdit": {
-		"description": "This is a button about barcode edit."
-	},
-	"gQrcodeEdit": "Qrcode Edit",
-	"@gQrcodeEdit": {
-		"description": "This is a button about qrcode edit."
-	},
-	"gSaveFormat": "Save Format",
-	"@gSaveFormat": {
-		"description": "This is a button to save format."
-	},
-	"gBtnDownload": "Download",
-	"@gBtnDownload": {
-		"description": "This is a button for downloading."
-	},	
-	"gBtnDownloadDefaultFormat": "Default Format",
-	"@gBtnDownloadDefaultFormat": {
-		"description": "This is a button for downloading default format. "
-	},
-	"gAttribute": "Attribute",
-	"@gAttribute": {
-		"description": "This is a prompt about the attributes."
-	},
-	"gTabOrder": "Layer order:",
-	"@gTabOrder": {
-		"description": "This is a prompt about the order of items in the printing format."
-	},
-	"gMsgNoElement": "No element selected.",
-	"@gMsgNoElement": {
-		"description": "This is a prompt regarding no item being selected."
-	},
-	"gOperationSteps": "Operation Steps:",
-	"@gOperationSteps": {
-		"description": "This is a prompt about operation steps."
-	},
-	"gMsgStep1": "1. Please click on one or more elements on the left panel;",
-	"@gMsgStep1": {
-		"description": "This is a prompt about operation step 1."
-	},
-	"gMsgStep2": "2. The selected elements will be displayed in the center of the page, and you can edit their attributes here. ",
-	"@gMsgStep2": {
-		"description": "This is a prompt about operation step 2."
-	},
-	"gEditor": "Editor",
-	"@gEditor": {
-		"description": "This is a prompt about editor."
-	},
-	"gTextContent": "Text Content:",
-	"@gTextContent": {
-		"description": "This is a prompt about text content."
-	},
-	"gFontSize": "Font Size:",
-	"@gFontSize": {
-		"description": "This is a prompt about font size."
-	},
-	"gRotation": "Rotation:",
-	"@gRotation": {
-		"description": "This is a prompt about rotation."
-	},
-	"gFontReverse": "Reverse Contrast:",
-	"@gFontReverse": {
-		"description": "This is a prompt about reverse contrast."
-	},
-	"gHrAlignment": "HRI Alignment:",
-	"@gHrAlignment": {
-		"description": "This is a prompt about HRI alignment."
-	},
-	"gBtnDelete": "Delete",
-	"@gBtnDelete": {
-		"description": "This is a delete button."
-	},
-	"gQrcode": "QRcode:",
-	"@gQrcode": {
-		"description": "This is a prompt about QRcode"
-	},
-	"gQrcodeWidth": "Qrcode Width:",
-	"@gQrcodeWidth": {
-		"description": "This is a prompt about QRcode width."
-	},
-	"gPosition": "Position",
-	"@gPosition": {
-		"description": "This is a prompt about position."
-	},
-	"gFontBold": "Bold:",
-	"@gFontBold": {
-		"description": "This is a prompt about font bold."
-	},
-	"gAlignment": "Alignment:",
-	"@gAlignment": {
-		"description": "This is a prompt about alignment."
-	},
-	"gMaxLength": "Max Length:",
-	"@gMaxLength": {
-		"description": "This is a prompt about max length."
-	},
-	"gElementType": "Type:",
-	"@gElementType": {
-		"description": "This is a prompt about item type in print format."
-	},
-	"gBarcode": "BarCode:",
-	"@gBarcode": {
-		"description": "This is a prompt about BarCode."
-	},
-	"gBarcodeHeight": "BarCode Height:",
-	"@gBarcodeHeight": {
-		"description": "This is a prompt about Barcode height."
-	},
-	"iBtnZero": "Zero",
-	"@iBtnZero": {
-		"description": "This is a zeroing button in T-Industry,"
-	},
-	"iTextZero": "Zero:",
-	"@iTextZero": {
-		"description": "This is a prompt about zero weight in T-Industry,"
-	},	
-	"iTextNet": "Net:",
-	"@iTextNet": {
-		"description": "This is a prompt about net weight in T-Industry,"
-	},
-	"iStable": "Stable:",
-	"@iStable": {
-		"description": "This is a prompt about stable weight in T-Industry,"
-	},
-	"gBtnSetting": "Setting",
-	"@gBtnSetting": {
-		"description": "This is a button about setting."
-	},
-	"gBtnExport": "Export",
-	"@gBtnExport": {
-		"description": "This is a export button."
-	},
-	"gPluName": "PLU Name:",
-	"@gPluName": {
-		"description": "This is a prompt about PLU name."
-	},
-	"plu_edit": "PLU Edit",
-	"@plu_edit": {
-		"description": "This is a prompt about PLU edit."
-	},
-	"user_name": "User Name:",
-	"@user_name": {
-		"description": "This is a prompt about user name."
-	},
-	"user_edit": "User Edit",
-	"@user_edit": {
-		"description": "This is a prompt about user edit."
-	},
-	"parameter_settings_title": "Parameter settings",
-	"@parameter_settings_title": {
-		"description": "This is a prompt about parameter settings."
-	},
-	"save_mode": "Save Mode:",
-	"@save_mode": {
-		"description": "This is a prompt about saving mode."
-	},
-	"manual": "Manual",
-	"@manual": {
-		"description": "This is a prompt about manual mode."
-	},
-	"auto": "Auto",
-	"@auto": {
-		"description": "This is a prompt about auto mode."
-	},
-	"stable_time": "Stable Time (s)",
-	"@stable_time": {
-		"description": "This is a prompt about stable time."
-	},
-	"stable_time_error_tip": "The value must be under 20 seconds.",
-	"@stable_time_error_tip": {
-		"description": ""
-	},
-	"date_format": "Date Format:",
-	"@date_format": {
-		"description": ""
-	},
-	"zero_range": "Zero Range:",
-	"@zero_range": {
-		"description": ""
-	},
-	"product_information": "Product Information",
-	"@product_information": {
-		"description": ""
-	},
-	"pretare": "Pretare:",
-	"@pretare": {
-		"description": ""
-	},
-	"plu_remarks": "PLu Remarks:",
-	"@plu_remarks": {
-		"description": ""
-	},
-	"gBtnAdd": "Add",
-	"@gBtnAdd": {
-		"description": ""
-	},
-	"button_edit": "Edit",
-	"@button_edit": {
-		"description": ""
-	},
-	"plu_error_message": "PLU pretare cannot be empty.",
-	"@plu_error_message": {
-		"description": ""
-	},
-	"plu_error_message1": "PLU ID or PLU name cannot be empty.",
-	"@plu_error_message1": {
-		"description": ""
-	},
-	"plu_error_message2": "PLU ID or PLU name already exists.",
-	"@plu_error_message2": {
-		"description": ""
-	},
-	"iUserInfo": "User Info",
-	"@iUserInfo": {
-		"description": "This is prompt for user info ,in T-Industry."
-	},
-	"user_id": "User ID:",
-	"@user_id": {
-		"description": ""
-	},
-	"user_sex": "Gender:",
-	"@user_sex": {
-		"description": ""
-	},
-	"user_phone": "Phone:",
-	"@user_phone": {
-		"description": ""
-	},
-	"user_remarks": "User Notes:",
-	"@user_remarks": {
-		"description": ""
-	},
-	"user_error_message1": "The User Id and Username cannot be empty!",
-	"@user_error_message1": {
-		"description": ""
-	},
-	"user_error_message2": "User ID or Username cannot be the same!",
-	"@user_error_message2": {
-		"description": ""
-	},
-	"user_error_message3": "The User is not found!",
-	"@user_error_message3": {
-		"description": ""
-	},
-	"language_setting_title": "Language Setting",
-	"@language_setting_title": {
-		"description": ""
-	},
-	"button_back": "Back",
-	"@button_back": {
-		"description": ""
-	},
-	"button_select_format": "Select Format",
-	"@button_select_format": {
-		"description": ""
-	},
-	"scale_model": "Scale Model:",
-	"@scale_model": {
-		"description": ""
-	},
-	"button_get_ip": "Get IP Address",
-	"@button_get_ip": {
-		"description": ""
-	},
-	"firmware_update": "Update Firmware Serial",
-	"@firmware_update": {
-		"description": ""
-	},
-	"button_add_license": "Add License",
-	"@button_add_license": {
-		"description": ""
-	},
-	"new_license_text": "New License:",
-	"@new_license_text": {
-		"description": ""
-	},
-	"txt_serial_port_connected": "Serial port connected",
-	"@txt_serial_port_connected": {
-		"description": ""
-	},
-	"txt_serial_port_connected_fail": "Unable to connect",
-	"@txt_serial_port_connected_fail": {
-		"description": ""
-	},
-	"gTitleGetBuildInfo": "Software Information",
-	"@gTitleGetBuildInfo": {
-		"description": ""
-	},	
-	"gBuildInfoTip": "This ID is only to be used by device developers.",
-	"@gBuildInfoTip": {
-		"description": "This is a tip for build info."
-	},	
-	"serial_page_ol": "OL mode",
-	"@serial_page_ol": {
-		"description": ""
-	},
-	"serial_page_ul": "UL mode",
-	"@serial_page_ul": {
-		"description": ""
-	},
-	"serial_page_weight": "Weight mode",
-	"@serial_page_weight": {
-		"description": ""
-	},
-	"serial_page_pcs": "Counting mode",
-	"@serial_page_pcs": {
-		"description": ""
-	},
-	"serial_page_price": "Price Computing mode",
-	"@serial_page_price": {
-		"description": ""
-	},
-	"serial_page_percent": "Percent mode",
-	"@serial_page_percent": {
-		"description": ""
-	},
-	"device_connection_title": "Device Info & Connection",
-	"@device_connection_title": {
-		"description": ""
-	},
-	"device_setting_title": "Basics",
-	"@device_setting_title": {
-		"description": ""
-	},
-	"device_configuration_title": "Device Configuration",
-	"@device_configuration_title": {
-		"description": ""
-	},
-	"bt_setting_title": "Bluetooth Setting",
-	"@bt_setting_title": {
-		"description": ""
-	},
-	"wifi_setting_title": "Wi-Fi Setting",
-	"@wifi_setting_title": {
-		"description": ""
-	},
-	"customization_setting_title": "Applications",
-	"@customization_setting_title": {
-		"description": ""
-	},
-	"advanced_setting_title": "Advanced",
-	"@advanced_setting_title": {
-		"description": ""
-	},
-	"label_design_title": "Label Design",
-	"@label_design_title": {
-		"description": ""
-	},
-	"gTitleReceiptDesign": "Receipt Design",
-	"@gTitleReceiptDesign": {
-		"description": "This is a title about receipt design app."
-	},
-	"gTipReceiptDesign": "This application is designed for the printing format of the receipt.",
-	"@gTipReceiptDesign": {
-		"description": "This is a prompt about receipt design app."
-	},	 
-	"gTitleLabelFmtDownload": "Download Label Printing Formats",
-	"@gTitleLabelFmtDownload": {
-		"description": "This is a title about downloading label printing Formats app."
-	},
-	"gTipLabelFmtDownload": "This application is used to download print format.",
-	"@gTipLabelFmtDownload": {
-		"description": "This is a prompt about downloading label printing Formats app."
-	},	
-	"gTitleSerialOutput": "Serial Output Design",
-	"@gTitleSerialOutput": {
-		"description": "This is a title about serial output design"
-	},
-	"gTitleSerialOutputDownload": "Serial Output Download",
-	"@gTitleSerialOutputDownload": {
-		"description": "This is a title about serial output download."
-	},	 
-	"gSystemSetting": "System Setting",
-	"@gSystemSetting": {
-		"description": "This is a title about system setting."
-	},
-	"gTitleSetLanguage": "Set Language",
-	"@gTitleSetLanguage": {
-		"description": "This is a title about language setting."
-	},
-	"gTitleLicenseInfo": "License Info",
-	"@gTitleLicenseInfo": {
-		"description": "This is a title about license info."
-	},
-	"cBtnOpenPreview": "Open preview",
-	"@cBtnOpenPreview": {
-		"description": " This is a button about open preview in T-Config."
-	},
-	"cBtnClosePreview": "Close preview",
-	"@cBtnClosePreview": {
-		"description": "This is a button about close preview in T-Config."
-	},
-	"gBtnClear": "Clear",
-	"@gBtnClear": {
-		"description": "This is a button for clearing."
-	},	 
-	"gTipFreeFormat": "Free format",
-	"@gTipFreeFormat": {
-		"description": "This is a prompt for free format."
-	},	
-	"gTotalFmt": "Total format:",
-	"@gTotalFmt": {
-		"description": "This is a prompt for total format."
-	},	
-	"gTitlePluDownload": "PLU Download",
-	"@gTitlePluDownload": {
-		"description": "This is a title about downloading plu."
-	},
-	"gTipPluDownload": "This application is used to download product information.",
-	"@gTipPluDownload": {
-		"description": "This is a tip about downloading plu."
-	}, 
-	"iTitleWeighting": "Weighing(Single)",
-	"@iTitleWeighting": {
-		"description": "This is a title about weighting,support one scale."
-	},
-	"iTitleWeightCollection": "Weighing Data Collection(Single)",
-	"@iTitleWeightCollection": {
-		"description": "This is a title about collect weight data,support one scale,in T-Industry"
-	},
-	"iTipWeightCollection": "This application is used to collect weighing data in real time",
-	"@iTipWeightCollection": {
-		"description": "This is a prompt about collect weight data,in T-Industry"
-	},
-	"iTitleCheckWeigher": "Check Weighing(Single)",
-	"@iTitleCheckWeigher": {
-		"description": "This is a title about check weighing,support one scale,in T-Industry"
-	},
-	"iTipCheckWeigher": "This application is used to check weighing data in real time",
-	"@iTipCheckWeigher": {
-		"description": "This is a prompt about check weighing,in T-Industry"
-	},
-	"iTitleIncrementWeighting": "Increment Weighing(Single)",
-	"@iTitleIncrementWeighting": {
-		"description": "This is a title about Increment Weighing,support one scale,in T-Industry"
-	},
-	"iTipIncrementWeighting": "This app is used to implement the increment scale.",
-	"@iTipIncrementWeighting": {
-		"description": "This is a prompt about Increment Weighing,in T-Industry"
-	},
-	"gTitleTakeOut": "Take Out Scale(Single)",
-	"@gTitleTakeOut": {
-		"description": "This is a title about take out scale,support one scale,in T-Industry"
-	},
-	"gTipTakeOut": "This app is used to implement the take out scale.",
-	"@gTipTakeOut": {
-		"description": "This is a prompt about take out scale,in T-Industry"
-	},
-	"get_bt_name": "Get name",
-	"@get_bt_name": {
-		"description": ""
-	},
-	"modify_bt_name": "Modify name",
-	"@modify_bt_name": {
-		"description": ""
-	},
-	"bt_emission_power": "Emission Power:",
-	"@bt_emission_power": {
-		"description": ""
-	},
-	"bt_modify_emission": "Modify emission power",
-	"@bt_modify_emission": {
-		"description": ""
-	},
-	"gTitleConfirm": "Confirmation",
-	"@gTitleConfirm": {
-		"description": "This is the title of the confirmation."
-	},
-	"gConfirmPrnFmtOrderTip": "Please confirm the order of the printing formats.",
-	"@gConfirmPrnFmtOrderTip": {
-		"description": "This is the prompt to confirm the order of the printing format."
-	},
-	"jump_confirm_info": "Please confirm to go to the default print format page.",
-	"@jump_confirm_info": {
-		"description": ""
-	},
-	"download_result_ok": "Download is successful!",
-	"@download_result_ok": {
-		"description": ""
-	},
-	"download_result_fail": "Download failed!",
-	"@download_result_fail": {
-		"description": ""
-	},
-	"select_firmware_btn": "Select Firmware",
-	"@select_firmware_btn": {
-		"description": ""
-	},	
-	"report_set_btn": "Report Setting",
-	"@report_set_btn": {
-		"description": ""
-	},
-	"report_show_btn": "Show Reports",
-	"@report_show_btn": {
-		"description": ""
-	},
-	"report_delete_btn": "Delete All",
-	"@report_delete_btn": {
-		"description": ""
-	},
-	"report_hide_btn": "Hide Report",
-	"@report_hide_btn": {
-		"description": ""
-	},
-	"data_delete_confirm": "Whether to delete all data?",
-	"@data_delete_confirm": {
-		"description": ""
-	},
-	"show_current_weight": "Current weight:",
-	"@show_current_weight": {
-		"description": ""
-	},
-	"show_increment_weight": "Increment weight:",
-	"@show_increment_weight": {
-		"description": ""
-	},
-	"show_reduced_weight": "Reduced weight:",
-	"@show_reduced_weight": {
-		"description": ""
-	},
-	"general_configuration_title": "General Configuration",
-	"@general_configuration_title": {
-		"description": ""
-	},
-	"application_title": "Applications",
-	"@application_title": {
-		"description": ""
-	},
-	"choose_json_file": "Choose json",
-	"@choose_json_file": {
-		"description": ""
-	},
-	"abnormal_data_title": "Basic Data",
-	"@abnormal_data_title": {
-		"description": ""
-	},
-	"device_time_title": "Device Time",
-	"@device_time_title": {
-		"description": ""
-	},
-	"batch_delivery_title": "Batch Delivery",
-	"@batch_delivery_title": {
-		"description": ""
-	},
-	"parameter_set_title": "Parameter Setting",
-	"@parameter_set_title": {
-		"description": ""
-	},
-	"save_as": "Save as",
-	"@save_as": {
-		"description": ""
-	},
-	"gTipConfirmInfo": "Please confirm the information.",
-	"@gTipConfirmInfo": {
-		"description": "This is the prompt asking you to confirm the information."
-	},
-	"server_ip": "Server Ip:",
-	"@server_ip": {
-		"description": ""
-	},
-	"server_port": "Server Port:",
-	"@server_port": {
-		"description": ""
-	},
-	"error_ip_tip": "Incorrect address! e.g. xxx.xxx.xxx.xxx",
-	"@error_ip_tip": {
-		"description": ""
-	},
-	"set_ethernet_ip_title": "Ethernet IP Setting",
-	"@set_ethernet_ip_title": {
-		"description": ""
-	},
-	"go_home": "Confirm to return to hompage?",
-	"@go_home": {
-		"description": ""
-	},
-	"gTitleReceiptDownload": "Receipt Format Download",
-	"@gTitleReceiptDownload": {
-		"description": "This is a title about receipt format download."
-	},
-	"gTipReceiptDownload": "This application is used to download the print format of the receipt.",
-	"@gTipReceiptDownload": {
-		"description": "This is a prompt about receipt format download."
-	},	 
-	"about_title": "Information",
-	"@about_title": {
-		"description": ""
-	},
-	"app_version_title": "Version:",
-	"@app_version_title": {
-		"description": ""
-	},
-	"app_company_title": "Company:",
-	"@app_company_title": {
-		"description": ""
-	},
-	"app_tel_title": "Tel:",
-	"@app_tel_title": {
-		"description": ""
-	},
-	"app_email_title": "Email:",
-	"@app_email_title": {
-		"description": ""
-	},
-	"app_address_title": "Address:",
-	"@app_address_title": {
-		"description": ""
-	},
-	"app_web_title": "Website Address:",
-	"@app_web_title": {
-		"description": ""
-	},
-	"app_models": "Applicable Models:",
-	"@app_models": {
-		"description": ""
-	},
-	"p_text_title": "Free Text",
-	"@p_text_title": {
-		"description": ""
-	},
-	"p_line_title": "Dividing Line",
-	"@p_line_title": {
-		"description": ""
-	},
-	"p_price_title": "Price Variable",
-	"@p_price_title": {
-		"description": ""
-	},
-	"p_text_var": "Text",
-	"@p_text_var": {
-		"description": ""
-	},
-	"p_div_line_var": "Line",
-	"@p_div_line_var": {
-		"description": ""
-	},
-	"p_no_var": "NO.",
-	"@p_no_var": {
-		"description": ""
-	},
-	"p_header1_var": "Header1",
-	"@p_header1_var": {
-		"description": ""
-	},
-	"p_Header2_var": "Header2",
-	"@p_Header2_var": {
-		"description": ""
-	},
-	"p_header3_var": "Header3",
-	"@p_header3_var": {
-		"description": ""
-	},
-	"p_footer1_var": "Footer1",
-	"@p_footer1_var": {
-		"description": ""
-	},
-	"p_footer2_var": "Footer2",
-	"@p_footer2_var": {
-		"description": ""
-	},
-	"p_footer3_var": "Footer3",
-	"@p_footer3_var": {
-		"description": ""
-
-	},
-	"p_plu_id_var": "PLU_ID",
-	"@p_plu_id_var": {
-		"description": ""
-
-	},
-	"p_plu_name_var": "PLU_Name",
-	"@p_plu_name_var": {
-		"description": ""
-	},
-	"p_order_number_var": "Order Number",
-	"@p_order_number_var": {
-		"description": ""
-
-	},
-	"p_unit_price_var": "Unit Price",
-	"@p_unit_price_var": {
-		"description": ""
-
-	},
-	"p_price_unit_var": "Price Unit",
-	"@p_price_unit_var": {
-		"description": ""
-
-	},
-	"p_pre_tare_var": "PreTare",
-	"@p_pre_tare_var": {
-		"description": ""
-
-	},
-	"p_unit_var": "Unit",
-	"@p_unit_var": {
-		"description": ""
-
-	},
-	"p_date_var": "Date",
-	"@p_date_var": {
-		"description": ""
-
-	},
-	"p_tax_type1_var": "Tax Type1",
-	"@p_tax_type1_var": {
-		"description": ""
-
-	},
-	"p_tax_type2_var": "Tax Type2",
-	"@p_tax_type2_var": {
-		"description": ""
-
-	},
-	"p_tax_type3_var": "Tax Type3",
-	"@p_tax_type3_var": {
-		"description": ""
-
-	},
-	"p_tax_base1_var": "Tax Base1",
-	"@p_tax_base1_var": {
-		"description": ""
-
-	},
-	"p_tax_base2_var": "Tax Base2",
-	"@p_tax_base2_var": {
-		"description": ""
-
-	},
-	"p_tax_base3_var": "Tax Base3",
-	"@p_tax_base3_var": {
-		"description": ""
-
-	},
-	"p_tax_amount1_var": "Tax Amount1",
-	"@p_tax_amount1_var": {
-		"description": ""
-
-	},
-	"p_tax_amount2_var": "Tax Amount2",
-	"@p_tax_amount2_var": {
-		"description": ""
-
-	},
-	"p_tax_amount3_var": "Tax Amount3",
-	"@p_tax_amount3_var": {
-		"description": ""
-
-	},
-	"p_tax_model_var": "Tax Model",
-	"@p_tax_model_var": {
-		"description": ""
-
-	},
-	"p_total_tax_amount_var": "Total Tax Amount",
-	"@p_total_tax_amount_var": {
-		"description": ""
-
-	},
-	"p_payment_amount_P_var": "Payment Amount",
-	"@p_payment_amount_P_var": {
-		"description": ""
-
-	},
-	"p_subtotal_var": "Subtotal",
-	"@p_subtotal_var": {
-		"description": ""
-
-	},
-	"p_currency_var": "Currency",
-	"@p_currency_var": {
-		"description": ""
-
-	},
-	"p_copy_times_var": "Copy Times",
-	"@p_copy_times_var": {
-		"description": ""
-
-	},
-	"p_model_name_var": "Model Name",
-	"@p_model_name_var": {
-		"description": ""
-
-	},
-	"p_scale_name_var": "Scale Name",
-	"@p_scale_name_var": {
-		"description": ""
-
-	},
-	"p_tax_name_var": "Tax Name.",
-	"@p_tax_name_var": {
-		"description": ""
-
-	},
-	"p_settle_account_times_var": "Settle Account Times.",
-	"@p_settle_account_times_var": {
-		"description": ""
-
-	},
-	"p_plu_tax_var": "PLU Tax",
-	"@p_plu_tax_var": {
-		"description": ""
-
-	},
-	"p_total_no_tax_var": "Total No Tax",
-	"@p_total_no_tax_var": {
-		"description": ""
-
-	},
-	"p_weight_pcs_var": "Weight Pcs",
-	"@p_weight_pcs_var": {
-		"description": ""
-
-	},
-	"p_tare_var": "Tare",
-	"@p_tare_var": {
-		"description": ""
-
-	},
-	"p_time_var": "Time",
-	"@p_time_var": {
-		"description": ""
-
-	},
-	"p_change_amount_var": "Change Amount",
-	"@p_change_amount_var": {
-		"description": ""
-
-	},
-	"p_price_var": "Price",
-	"@p_price_var": {
-		"description": ""
-	},
-	"p_text_expl": "Free text.",
-	"@p_text_expl": {
-		"description": ""
-
-	},
-	"p_div_line_expl": "Loop divider line.",
-	"@p_div_line_expl": {
-		"description": ""
-
-	},
-	"p_no_expl": "Sequence number value.",
-	"@p_no_expl": {
-		"description": ""
-
-	},
-	"p_header1_expl": "The first page header.",
-	"@p_header1_expl": {
-		"description": ""
-
-	},
-	"p_Header2_expl": "The secend page header.",
-	"@p_Header2_expl": {
-		"description": ""
-	},
-	"p_header3_expl": "The third page header.",
-	"@p_header3_expl": {
-		"description": ""
-
-	},
-	"p_footer1_expl": "The first page footer.",
-	"@p_footer1_expl": {
-		"description": ""
-
-	},
-	"p_footer2_expl": "The secend page footer.",
-	"@p_footer2_expl": {
-		"description": ""
-
-	},
-	"p_footer3_expl": "The third page footer.",
-	"@p_footer3_expl": {
-		"description": ""
-
-	},
-	"p_plu_id_expl": "PLU_ID.",
-	"@p_plu_id_expl": {
-		"description": ""
-
-	},
-	"p_plu_name_expl": "PLU_Name.",
-	"@p_plu_name_expl": {
-		"description": ""
-
-	},
-	"p_order_number_expl": "The serial number of the pending order.",
-	"@p_order_number_expl": {
-		"description": ""
-
-	},
-	"p_unit_price_expl": "Unit Price.",
-	"@p_unit_price_expl": {
-		"description": ""
-
-	},
-	"p_price_unit_expl": "Price Unit.",
-	"@p_price_unit_expl": {
-		"description": ""
-
-	},
-	"p_pre_tare_expl": "PreTare.",
-	"@p_pre_tare_expl": {
-		"description": ""
-
-	},
-	"p_unit_expl": "Weight Unit.",
-	"@p_unit_expl": {
-		"description": ""
-
-	},
-	"p_date_expl": "Date.",
-	"@p_date_expl": {
-		"description": ""
-
-	},
-	"p_tax_type1_expl": "Tax Type 1.",
-	"@p_tax_type1_expl": {
-		"description": ""
-
-	},
-	"p_tax_type2_expl": "Tax Type 2.",
-	"@p_tax_type2_expl": {
-		"description": ""
-
-	},
-	"p_tax_type3_expl": "Tax Type 3.",
-	"@p_tax_type3_expl": {
-		"description": ""
-
-	},
-	"p_tax_base1_expl": "Tax Base 1.",
-	"@p_tax_base1_expl": {
-		"description": ""
-	},
-	"p_tax_base2_expl": "Tax Base 2.",
-	"@p_tax_base2_expl": {
-		"description": ""
-
-	},
-	"p_tax_base3_expl": "Tax Base 3.",
-	"@p_tax_base3_expl": {
-		"description": ""
-
-	},
-	"p_tax_amount1_expl": "Tax Amount 1.",
-	"@p_tax_amount1_expl": {
-		"description": ""
-
-	},
-	"p_tax_amount2_expl": "Tax Amount 2.",
-	"@p_tax_amount2_expl": {
-		"description": ""
-
-	},
-	"p_tax_amount3_expl": "Tax Amount 3.",
-	"@p_tax_amount3_expl": {
-		"description": ""
-
-	},
-	"p_tax_model_expl": "Tax Model,tax included or tax external.",
-	"@p_tax_model_expl": {
-		"description": ""
-
-	},
-	"p_total_tax_amount_expl": "Total Tax Amount.",
-	"@p_total_tax_amount_expl": {
-		"description": ""
-
-	},
-	"p_payment_amount_P_expl": "Payment Amount.",
-	"@p_payment_amount_P_expl": {
-		"description": ""
-
-	},
-	"p_subtotal_expl": "Subtotal.",
-	"@p_subtotal_expl": {
-		"description": ""
-
-	},
-	"p_currency_expl": "Currency.",
-	"@p_currency_expl": {
-		"description": ""
-
-	},
-	"p_copy_times_expl": "Copy Times.",
-	"@p_copy_times_expl": {
-		"description": ""
-	},
-	"p_model_name_expl": "Scale Model Name.",
-	"@p_model_name_expl": {
-		"description": ""
-	},
-	"p_scale_name_expl": "Scale Name.",
-	"@p_scale_name_expl": {
-		"description": ""
-	},
-	"p_tax_name_expl": "Tax Name.",
-	"@p_tax_name_expl": {
-		"description": ""
-	},
-	"p_settle_account_times_expl": "Settle Account Times.",
-	"@p_settle_account_times_expl": {
-		"description": ""
-	},
-	"p_plu_tax_expl": "PLU Tax Value.",
-	"@p_plu_tax_expl": {
-		"description": ""
-	},
-	"p_total_no_tax_expl": "Total No Tax.",
-	"@p_total_no_tax_expl": {
-		"description": ""
-	},
-	"p_weight_pcs_expl": "Weight or Pcs.",
-	"@p_weight_pcs_expl": {
-		"description": ""
-	},
-	"p_tare_expl": "Tare value.",
-	"@p_tare_expl": {
-		"description": ""
-	},
-	"p_time_expl": "Time.",
-	"@p_time_expl": {
-		"description": ""
-	},
-	"p_change_amount_expl": "Change Amount.",
-	"@p_change_amount_expl": {
-		"description": ""
-	},
-	"p_price_expl": "Price value.",
-	"@p_price_expl": {
-		"description": ""
-	},
-	"l_var_title": "Variable",
-	"@l_var_title": {
-		"description": ""
-
-	},
-	"l_text_title": "Free Text",
-	"@l_text_title": {
-		"description": ""
-
-	},
-	"l_barcode_title": "BarCode Variable",
-	"@l_barcode_title": {
-		"description": ""
-	},
-	"l_qrcode_title": "Qrcode Variable",
-	"@l_qrcode_title": {
-		"description": ""
-	},
-	"l_shape_title": "Shape",
-	"@l_shape_title": {
-		"description": ""
-	},
-	"l_line_var": "Line",
-	"@l_line_var": {
-		"description": ""
-	},
-	"l_text_var": "Text",
-	"@l_text_var": {
-		"description": ""
-	},
-	"l_barcode_var": "BarCode",
-	"@l_barcode_var": {
-		"description": ""
-	},
-	"l_qrcode_var": "Qrcode",
-	"@l_qrcode_var": {
-		"description": ""
-	},
-	"l_no_var": "NO.",
-	"@l_no_var": {
-		"description": ""
-	},
-	"l_gross_var": "Gross",
-	"@l_gross_var": {
-		"description": ""
-	},
-	"l_tare_var": "Tare",
-	"@l_tare_var": {
-		"description": ""
-	},
-	"l_net_var": "Net",
-	"@l_net_var": {
-		"description": ""
-	},
-	"l_pcs_var": "PCS",
-	"@l_pcs_var": {
-		"description": ""
-	},
-	"l_wgt_unit_var": "WeightUnit",
-	"@l_wgt_unit_var": {
-		"description": ""
-	},
-	"l_date_var": "Date",
-	"@l_date_var": {
-		"description": ""
-	},
-	"l_time_var": "Time",
-	"@l_time_var": {
-		"description": ""
-	},
-	"l_uwgt_var": "U.WGT",
-	"@l_uwgt_var": {
-		"description": ""
-	},
-	"l_uwu_var": "U.WU",
-	"@l_uwu_var": {
-		"description": ""
-	},
-	"l_unit_wgt_var": "UnitWeight",
-	"@l_unit_wgt_var": {
-		"description": ""
-	},
-	"l_percent_var": "Percent",
-	"@l_percent_var": {
-		"description": ""
-	},
-	"l_total_wgt_var": "TotalWeight",
-	"@l_total_wgt_var": {
-		"description": ""
-	},
-	"l_total_cnt_var": "TotalCount",
-	"@l_total_cnt_var": {
-		"description": ""
-	},
-	"l_line_expl": "Line",
-	"@l_line_expl": {
-		"description": ""
-	},
-	"l_text_expl": "Text",
-	"@l_text_expl": {
-		"description": ""
-	},
-	"l_barcode_expl": "BarCode",
-	"@l_barcode_expl": {
-		"description": ""
-	},
-	"l_qrcode_expl": "Qrcode",
-	"@l_qrcode_expl": {
-		"description": ""
-	},
-	"l_no_expl": "NO.",
-	"@l_no_expl": {
-		"description": ""
-	},
-	"l_gross_expl": "Gross",
-	"@l_gross_expl": {
-		"description": ""
-	},
-	"l_tare_expl": "Tare",
-	"@l_tare_expl": {
-		"description": ""
-	},
-	"l_net_expl": "Net",
-	"@l_net_expl": {
-		"description": ""
-	},
-	"l_pcs_expl": "PCS",
-	"@l_pcs_expl": {
-		"description": ""
-	},
-	"l_wgt_unit_expl": "WeightUnit",
-	"@l_wgt_unit_expl": {
-		"description": ""
-	},
-	"l_date_expl": "Date",
-	"@l_date_expl": {
-		"description": ""
-	},
-	"l_time_expl": "Time",
-	"@l_time_expl": {
-		"description": ""
-	},
-	"l_uwgt_expl": "Universal weight",
-	"@l_uwgt_expl": {
-		"description": ""
-	},
-	"l_uwu_expl": "Universal weight unit",
-	"@l_uwu_expl": {
-		"description": ""
-	},
-	"l_unit_wgt_expl": "UnitWeight",
-	"@l_unit_wgt_expl": {
-		"description": ""
-	},
-	"l_percent_expl": "Percent",
-	"@l_percent_expl": {
-		"description": ""
-	},
-	"l_total_wgt_expl": "TotalWeight",
-	"@l_total_wgt_expl": {
-		"description": ""
-	},
-	"l_total_cnt_expl": "TotalCount",
-	"@l_total_cnt_expl": {
-		"description": ""
-	},
-	"l_line_width_txt": "Line Width",
-	"@l_line_width_txt": {
-		"description": ""
-	},
-	"l_line_lenth_txt": "Line Length",
-	"@l_line_lenth_txt": {
-		"description": ""
-	},
-	"l_open_fmt_err": "Please select the correct print format",
-	"@l_open_fmt_err": {
-		"description": ""
-	},
-	"gReceiptFormat": "Receipt Format",
-	"@gReceiptFormat": {
-		"description": "This is the prompt for receipt format."
-	},
-	"batch_down_export": "Export",
-	"@batch_down_export": {
-		"description": ""
-	},
-	"gBtnImport": "Import",
-	"@gBtnImport": {
-		"description": ""
-	},
-	"gBtnGetDataFormDb": "Get Data From DB",
-	"@gBtnGetDataFormDb": {
-		"description": ""
-	},
-	"batch_down_slt_folder": "Select Folder",
-	"@batch_down_slt_folder": {
-		"description": ""
-	},
-	"abnormal_weight": "Get Basic Data",
-	"@abnormal_weight": {
-		"description": ""
-	},
-	"gBtnSelectPluFile": "Select Product Excel",
-	"@gBtnSelectPluFile": {
-		"description": "This is a button for selecting the PLU file."
-	},
-	"gBtnGetPluTemplate": "Get PLU Template",
-	"@gBtnGetPluTemplate": {
-		"description": "This is a button for getting the product template."
-	},
-	"gTipSelectOnePluFile": "Only one PLU file can be selected",
-	"@gTipSelectOnePluFile": {
-		"description": "This is a prompt for only one PLU file can be selected for downloading"
-	},
-	"gPluNameLength": "Product name max length:",
-	"@gPluNameLength": {
-		"description": ""
-	},
-	"gTipDownloadAllPlu": "Clear all then download",
-	"@gTipDownloadAllPlu": {
-		"description": "This is the prompt to clear all product data before issuing."
-
-	},
-	"gTipUpdatePlu": "Update Products",
-	"@gTipUpdatePlu": {
-		"description": "This is the prompt to update products."
-
-	},
-	"btn_add_lic_file": "Select License File",
-	"@btn_add_lic_file": {
-		"description": ""
-	},
-	"output_res_folder": "Resource Folder",
-	"@output_res_folder": {
-		"description": ""
-
-	},
-	"output_select_folder": "Select Folder",
-	"@output_select_folder": {
-		"description": ""
-
-	},
-	"output_confirm_info": "Please confirm the folder name!",
-	"@output_confirm_info": {
-		"description": ""
-
-	},
-	"output_no_file": "No files were matched!",
-	"@output_no_file": {
-		"description": ""
-
-	},
-	"def_fmt_sel_tip": "Please select 1-10 print formats.",
-	"@def_fmt_sel_tip": {
-		"description": ""
-
-	},
-	"def_fmt_no_title": "Default Number",
-	"@def_fmt_no_title": {
-		"description": ""
-
-	},
-	"def_fmt_file_title": "File Path",
-	"@def_fmt_file_title": {
-		"description": ""
-
-	},
-	"def_fmt_no_file_tip": "No data yet",
-	"@def_fmt_no_file_tip": {
-		"description": ""
-
-	},
-	"def_fmt_out_range_tip": "The overall print format content is out of scope",
-	"@def_fmt_out_range_tip": {
-		"description": ""
-
-	},
-	"m_scale_title": "Multi-scale Management",
-	"@m_scale_title": {
-		"description": ""
-
-	},	
-	"scale_mgr_btn_add": "Add",
-	"@scale_mgr_btn_add": {
-		"description": ""
-
-	},
-	"scale_mgr_btn_rename": "Rename",
-	"@scale_mgr_btn_rename": {
-		"description": ""
-
-	},
-	"scale_mgr_btn_def": "Set Default",
-	"@scale_mgr_btn_def": {
-		"description": ""
-
-	},
-	"scale_mgr_btn_test": "Test Connect",
-	"@scale_mgr_btn_test": {
-		"description": ""
-
-	},
-	"scale_mgr_scale_name": "Scale Name",
-	"@scale_mgr_scale_name": {
-		"description": ""
-	},
-	"scale_mgr_scale_model": "Scale Model:",
-	"@scale_mgr_scale_model": {
-		"description": ""
-	},
-	"rDetailRptTitle": "Retail Detail Report",
-	"@rDetailRptTitle": {
-		"description": "This is the title of the retail detail report page in the retail app."
-	},
-	"rTipDetailRpt": "This app is used to display sales detail data.",
-	"@rTipDetailRpt": {
-		"description": "This is the prompt for the retail detail report in the retail app."
-	}, 
-	"gTitlePluEdit": "PLU Edit",
-	"@gTitlePluEdit": {
-		"description": "This is the title of the PLU edit page."
-	},
-	"rShowScaleListBtn": "Show Scales",
-	"@rShowScaleListBtn": {
-		"description": "This is the name of the button for displaying the list of scales in the retail app."
-	},
-	"rHideScaleListBtn": "Hide Scales",
-	"@rHideScaleListBtn": {
-		"description": "This is the name of the button for hiding the list of scales in the retail app."
-	},
-	"rRefreshListBtn": "Refresh List",
-	"@rRefreshListBtn": {
-		"description": "This is the name of the button for refreshing the retail list in the retail app."
-	},
-	"gOnlineTip": "online",
-	"@gOnlineTip": {
-		"description": "This is a prompt for online information."
-	},
-	"gOfflineTip": "offline",
-	"@gOfflineTip": {
-		"description": "This is a prompt for offline information."
-	},
-	"rJoinManagementTip": "Whether to join the management",
-	"@rJoinManagementTip": {
-		"description": "This is a prompt about whether to join the management in the retail app."
-	},
-	"gTitleUpdateFirmware": "Update Firmware",
-	"@gTitleUpdateFirmware": {
-		"description": "This is the title for updating the firmware."
-
-	},
-	"gTipFirmwareZipFile": "Firmware Zip:",
-	"@gTipFirmwareZipFile": {
-		"description": "This is the prompt for the Firmware zip file."
-
-	},
-	"gBtnSelectZipFirmware": "Select Firmware Zip",
-	"@gBtnSelectZipFirmware": {
-		"description": "This is the button for selecting the Firmware zip file."
-
-	},
-	"gConfirmFileTip": "Please confirm the file correct.",
-	"@gConfirmFileTip": {
-		"description": "This is the prompt to confirm whether the file is correct when downloading."
-
-	},
-	"gBtnViaSerialUpdate": "Serial Port",
-	"@gBtnViaSerialUpdate": {
-		"description": "This is the button for switching to serial port update when updating the firmware."
-	},
-	"gBtnViaNetworkUpdate": "Network",
-	"@gBtnViaNetworkUpdate": {
-		"description": "This is the button for switching to network update when updating the firmware."
-	},
-	"gTipSelectUpdateWay": "Please select the way to update the firmware.",
-	"@gTipSelectUpdateWay": {
-		"description": "This is the prompt to select the way when update firmware."
-	},
-	"gTipWait": "Please wait...",
-	"@gTipWait": {
-		"description": "This is the prompt for waiting."
-	},		
-	"gTipRebootForUpdate": "Please reboot the device to begin update...",
-	"@gTipRebootForUpdate": {
-		"description": "This is the prompt restarting the device for the automatic update."
-	},	
-	"rTitleSetVariableValues": "Variable Value Setting",
-	"@rTitleSetVariableValues": {
-		"description": "This is the title for setting the values of variables, such as the header and footer,in the retail app."
-	},	
-	"rTipSetVariableValues": "This application is used to distribute various variable information, such as headers and footers.",
-	"@rTipSetVariableValues": {
-		"description": "This is the explanation for applying the setting of variable values."
-	},	
-	"rTipHeader": "Header",
-	"@rTipHeader": {
-		"description": "This is the prompt for Header."
-	},
-	"rTipFooter": "Footer",
-	"@rTipFooter": {
-		"description": "This is the prompt for Footer."
-	},
-	"rTipOperator": "Operator",
-	"@rTipOperator": {
-		"description": "This is the prompt for Operator."
-	},
-	"gTipDataError": "Data Error !",
-	"@gTipDataError": {
-		"description": "This is the prompt for data error."
-	},	
-	"gBtnNewFormat": "New Format",
-	"@gBtnNewFormat": {
-		"description": "This is a button for creating a new printing format."
-	},	
-	"gTipItemType": "Type:",
-	"@gTipItemType": {
-		"description": "This is the name of an item type,in the printing format page."
-	},	
-	"gTipFolderNoSelected": "No folder has been selected, so the file cannot be saved.",
-	"@gTipFolderNoSelected": {
-		"description": "This is the prompt for saving flie."
-	},
-	"gTipSaveFail": "Save data failed !",
-	"@gTipSaveFail": {
-		"description": "This is the prompt for saving flie failed."
-	},
-	"gTipSaveSuccess": "Save successfully. The path is:",
-	"@gTipSaveSuccess": {
-		"description": "This is the prompt for flie saved ok."
-	},
-	"gBtnSaveExcel": "Save To Excel",
-	"@gBtnSaveExcel": {
-		"description": "This is the button to save excel."
-	},	 
-	"gBtnSaveDataBase": "Save To DB",
-	"@gBtnSaveDataBase": {
-		"description": "This is the button to save database."
-	},	 	
-	"gPluPlu": "PLU",
-	"@gPluPlu": {
-		"description": "This is prompt for product edit."
-	},
-	"gPluPluCode": "Product Code",
-	"@gPluPluCode": {
-		"description": "This is prompt for product edit."
-	},
-	"gPluItemCode": "Item Code",
-	"@gPluItemCode": {
-		"description": "This is prompt for product edit."
-	},
-	"gPluCategory": "Category",
-	"@gPluCategory": {
-		"description": "This is prompt for product edit."
-	},
-	"gPluPluName": "Product Name",
-	"@gPluPluName": {
-		"description": "This is prompt for product edit."
-	},
-	"gPluWgtUnit": "Unit",
-	"@gPluWgtUnit": {
-		"description": "This is prompt for product edit."
-	},
-	"gPluTaxType": "Tax Type",
-	"@gPluTaxType": {
-		"description": "This is prompt for product edit."
-	}, 
-	"gPluPrice": "Price",
-	"@gPluPrice": {
-		"description": "This is prompt for product edit."
-	},
-	"gPluUnitWgt": "Unit Wight",
-	"@gPluUnitWgt": {
-		"description": "This is prompt for product edit."
-	},
-	"gPluPretare": "Pretare",
-	"@gPluPretare": {
-		"description": "This is prompt for product edit."
-	},
-	"gPluLimitHigh": "Limit High",
-	"@gPluLimitHigh": {
-		"description": "This is prompt for product edit."
-	},
-	"gPluLimitLow": "Limit Low",
-	"@gPluLimitLow": {
-		"description": "This is prompt for product edit."
-	},
-	"gPluField": "PLU Field",
-	"@gPluField": {
-		"description": "This is prompt for PLU field select."
-	},
-	"gTipImportPluOK": "Note: When the cell is empty, it will be written as 0 or - .",
-	"@gTipImportPluOK": {
-		"description": "This is prompt for PLU import."
-	},
-	"gTipNoData": "No data",
-	"@gTipNoData": {
-		"description": "This is prompt for no data."
-	},
-	"gTipNoDataSelected": "No data selected.",
-	"@gTipNoDataSelected": {
-		"description": "This is prompt for no data selected."
-	},
-	"gTipPluDuplicated": "Duplicated",
-	"@gTipPluDuplicated": {
-		"description": "This is prompt for plu duplicated."
-	},
-	"gTipSaveDbOk": "Save Data OK.",
-	"@gTipSaveDbOk": {
-		"description": "This is prompt for plu saved."
-	},
-	"gTipSavingData": "The data is being saved. Please wait a moment.",
-	"@gTipSavingData": {
-		"description": "This is prompt for saving data."
-	},
-	"gTipInstallService": "Install Service",
-	"@gTipInstallService": {
-		"description": "This is prompt to install service."
-	},
-	"gTipStartService": "Start Service",
-	"@gTipStartService": {
-		"description": "This is prompt to start service."
-	},
-	"gTipStopService": "Stop Service",
-	"@gTipStopService": {
-		"description": "This is prompt to stop service."
-	},
-	"gTipUninstallService": "Uninstall Service",
-	"@gTipUninstallService": {
-		"description": "This is prompt to uninstall service."
-	},
-	"gTipScaleList": "Scale List",
-	"@gTipScaleList": {
-		"description": "This is prompt for scale list."
-	},
-	"gTipService": "Service",
-	"@gTipService": {
-		"description": "This is prompt for app service."
-	},
-	"gTipServiceUninstalled": "Service not installed",
-	"@gTipServiceUninstalled": {
-		"description": "This is prompt for service status."
-	},
-	"gTipServiceStoped": "Service Stoped",
-	"@gTipServiceStoped": {
-		"description": "This is prompt for service status."
-	},
-	"gTipServiceStarted": "Service is running",
-	"@gTipServiceStarted": {
-		"description": "This is prompt for service status."
-	},
-	"gTipServiceOff": "Service stoped,please start service.",
-	"@gTipServiceOff": {
-		"description": "This is prompt for service stoped."
-	},
-	"gBtnModify": "Modify",
-	"@gBtnModify": {
-		"description": "This button is used for modifying serial ports or performing other operations."
-	},
-	"gTipExitApp": "Are you sure to exit the system?",
-	"@gTipExitApp": {
-		"description": "This is prompt to exit the system."
-	},
-	"gBtnCloseSerialPort": "Close Port",
-	"@gBtnCloseSerialPort": {
-		"description": "This is a button to close serial port."
-	},
-	"gBtnOpenSerialPort": "Open Port",
-	"@gBtnOpenSerialPort": {
-		"description": "This is a button to open serial port."
-	}
-
+    "@@locale": "en",
+    "gLanguage": "EngLish",
+    "@gLanguage": {
+        "description": "This is a prompt for the current language."
+    },
+    "gModelName": "Model Name",
+    "@gModelName": {
+        "description": "This is a prompt for model name."
+    },
+    "gScaleSn": "SN#:",
+    "@gScaleSn": {
+        "description": "This is a prompt for sn."
+    },
+    "gTipPerpetual": "Perpetual",
+    "@gTipPerpetual": {
+        "description": "This is a tip of the certification expiration date."
+    },
+    "gBtnConnect": "Connect",
+    "@gBtnConnect": {
+        "description": "This is a button for testing the connection with the device."
+    },
+    "gBtnTare": "Tare",
+    "@gBtnTare": {
+        "description": "This is a button for tare weight."
+    },
+    "gBtnSave": "Save",
+    "@gBtnSave": {
+        "description": "This is a button for saving."
+    },
+    "gTitleSerialPortConnection": "Serial Port Connection",
+    "@gTitleSerialPortConnection": {
+        "description": "This is the title of the serial port connection."
+    },
+    "gMsgAuthorityPassed": "Authentication passed.\r\n",
+    "@gMsgAuthorityPassed": {
+        "description": "This is the prompt indicating that the authentication has been passed."
+    },
+    "gMsgAuthorityFail": "Not authenticed. Please send the ID to us.",
+    "@gMsgAuthorityFail": {
+        "description": "This is the prompt indicating that the authentication has failed."
+    },
+    "gBtnStart": "Start",
+    "@gBtnStart": {
+        "description": "This is a button to start."
+    },
+    "gBtnExit": "Exit",
+    "@gBtnExit": {
+        "description": "This is a button to exit."
+    },
+    "gSystemId": "System Unique ID:  ",
+    "@gSystemId": {
+        "description": "This is the prompt for the system authentication ID."
+    },
+    "gExpirationDate": "Expiration date:",
+    "@gExpirationDate": {
+        "description": "This is the prompt for the expiration date."
+    },
+    "gTitleSerialModify": "Serial port information modification",
+    "@gTitleSerialModify": {
+        "description": "This is the title for modifying serial port information."
+    },
+    "gSerialPortStatus": "Serial Port Status:",
+    "@gSerialPortStatus": {
+        "description": "This is the title for serial port status."
+    },
+    "gSerialPort": "Serial port:",
+    "@gSerialPort": {
+        "description": "This is the prompt for serial port."
+    },
+    "gRefreshPort": "Refresh port",
+    "@gRefreshPort": {
+        "description": "This is the prompt to refresh port."
+    },
+    "gDataBits": "Data bits:",
+    "@gDataBits": {
+        "description": "This is the prompt for data bits."
+    },
+    "gBaudRate": "Baud rate:",
+    "@gBaudRate": {
+        "description": "This is the prompt for baud rate."
+    },
+    "gSerialParity": "Parity:",
+    "@gSerialParity": {
+        "description": "This is the prompt for parity."
+    },
+    "gStopBits": "Stop bits:",
+    "@gStopBits": {
+        "description": "This is the prompt for stop bits."
+    },
+    "gBtnConfirm": "Confirm",
+    "@gBtnConfirm": {
+        "description": "This is a confirmation button."
+    },
+    "gBtnCancel": "Cancel",
+    "@gBtnCancel": {
+        "description": "This is a button to cancel"
+    },
+    "gMsgRefresh": "Refresh",
+    "@gMsgRefresh": {
+        "description": "This is a button to refresh."
+    },
+    "gFindSsid": "Discover SSID",
+    "@gFindSsid": {
+        "description": "This is a prompt for discover ssid."
+    },
+    "gNetworkSetting": "Wireless network settings",
+    "@gNetworkSetting": {
+        "description": ""
+    },
+    "gPassword": "Password:",
+    "@gPassword": {
+        "description": "This is a prompt for password."
+    },
+    "gIpAddress": "IPv4:",
+    "@gIpAddress": {
+        "description": "This is a prompt for IPv4."
+    },
+    "gNetmask": "NetMask:",
+    "@gNetmask": {
+        "description": "This is a prompt for NetMask."
+    },
+    "gGateway": "Gateway:",
+    "@gGateway": {
+        "description": "This is a prompt for Gateway."
+    },
+    "gBtnStatic": "Static",
+    "@gBtnStatic": {
+        "description": "This is a prompt for static IP."
+    },
+    "gBtnDynamic": "Dynamic",
+    "@gBtnDynamic": {
+        "description": "This is a prompt for dynamic IP."
+    },
+    "gTipConnectStaticIp": "Enter IP information and click the connect button!",
+    "@gTipConnectStaticIp": {
+        "description": "This is a prompt for connnecting static ip."
+    },
+    "gTipConnecting": "Connecting...",
+    "@gTipConnecting": {
+        "description": "This is a prompt for connnecting."
+    },
+    "gTipConnected": "You are already connected!",
+    "@gTipConnected": {
+        "description": "This is a prompt for already connected ."
+    },
+    "gTipConnectedInfo": "Connected AP Info:",
+    "@gTipConnectedInfo": {
+        "description": "This is a prompt for connected info ."
+    },
+    "gTipGetApListAndIP": "Obtaining AP list and Ip info,please wait...",
+    "@gTipGetApListAndIP": {
+        "description": "This is a prompt for obtaining AP list and Ip info."
+    },
+    "gTipGetIP": "Obtaining IP, please wait...",
+    "@gTipGetIP": {
+        "description": "This is a prompt for obtaining Ip info."
+    },
+    "gTipGetIpOk": "Get Ip OK !",
+    "@gTipGetIpOk": {
+        "description": "This is a prompt indicating that the IP information has been successfully obtained."
+    },
+    "gTipGetIpFail": "Get Ip Fail !",
+    "@gTipGetIpFail": {
+        "description": "This is a prompt indicating that the attempt to obtain IP information has failed."
+    },
+    "gTipSSID": "SSID:",
+    "@gTipSSID": {
+        "description": "This is a prompt for SSID."
+    },
+    "gTitleBtSetting": "Bluetooth Configurations",
+    "@gTitleBtSetting": {
+        "description": "This is a title for bluetooth configurations."
+    },
+    "gEPStrong": "Strong",
+    "@gEPStrong": {
+        "description": "This is a prompt for the Bluetooth signal strength."
+    },
+    "gEPNormal": "Normal",
+    "@gEPNormal": {
+        "description": "This is a prompt for the Bluetooth signal strength."
+    },
+    "gEPWeak": "Weak",
+    "@gEPWeak": {
+        "description": "This is a prompt for the Bluetooth signal strength."
+    },
+    "gTipDeviceNameEmpty": "Device name can not be empty,error.",
+    "@gTipDeviceNameEmpty": {
+        "description": "This is a prompt for empty device name."
+    },
+    "gTipTimeOut": "Time out!",
+    "@gTipTimeOut": {
+        "description": "This is a prompt for time out."
+    },
+    "gDeviceName": "Device name:",
+    "@gDeviceName": {
+        "description": "This is a prompt for device name."
+    },
+    "gMsgSerialError": "Serial port has been disconnected. Please check the settings.",
+    "@gMsgSerialError": {
+        "description": "This is a prompt for serial port has been disconnected."
+    },
+    "gTitleLicense": "License information",
+    "@gTitleLicense": {
+        "description": "This is a title for license information"
+    },
+    "gPrinter": "Printer Protocol:",
+    "@gPrinter": {
+        "description": "This is a prompt for printer protocol."
+    },
+    "gPrintDirection": "Direction:",
+    "@gPrintDirection": {
+        "description": "This is a prompt regarding the printing direction."
+    },
+    "gOpenJson": "Open Json",
+    "@gOpenJson": {
+        "description": "This is a button about open print format. "
+    },
+    "gBarcodeEdit": "BarCode Edit",
+    "@gBarcodeEdit": {
+        "description": "This is a button about barcode edit."
+    },
+    "gQrcodeEdit": "Qrcode Edit",
+    "@gQrcodeEdit": {
+        "description": "This is a button about qrcode edit."
+    },
+    "gSaveFormat": "Save Format",
+    "@gSaveFormat": {
+        "description": "This is a button to save format."
+    },
+    "gBtnDownload": "Download",
+    "@gBtnDownload": {
+        "description": "This is a button for downloading."
+    },
+    "gBtnDownloadDefaultFormat": "Default Format",
+    "@gBtnDownloadDefaultFormat": {
+        "description": "This is a button for downloading default format. "
+    },
+    "gAttribute": "Attribute",
+    "@gAttribute": {
+        "description": "This is a prompt about the attributes."
+    },
+    "gTabOrder": "Layer order:",
+    "@gTabOrder": {
+        "description": "This is a prompt about the order of items in the printing format."
+    },
+    "gMsgNoElement": "No element selected.",
+    "@gMsgNoElement": {
+        "description": "This is a prompt regarding no item being selected."
+    },
+    "gOperationSteps": "Operation Steps:",
+    "@gOperationSteps": {
+        "description": "This is a prompt about operation steps."
+    },
+    "gMsgStep1": "1. Please click on one or more elements on the left panel;",
+    "@gMsgStep1": {
+        "description": "This is a prompt about operation step 1."
+    },
+    "gMsgStep2": "2. The selected elements will be displayed in the center of the page, and you can edit their attributes here. ",
+    "@gMsgStep2": {
+        "description": "This is a prompt about operation step 2."
+    },
+    "gPageWidth": "Width",
+    "@gPageWidth": {
+        "description": "This is a prompt about the page width."
+    },
+    "gPageHeight": "Height",
+    "@gPageHeight": {
+        "description": "This is a prompt about the page height."
+    },
+    "gEditor": "Editor",
+    "@gEditor": {
+        "description": "This is a prompt about editor."
+    },
+    "gTextContent": "Text Content:",
+    "@gTextContent": {
+        "description": "This is a prompt about text content."
+    },
+    "gFontSize": "Font Size:",
+    "@gFontSize": {
+        "description": "This is a prompt about font size."
+    },
+    "gRotation": "Rotation:",
+    "@gRotation": {
+        "description": "This is a prompt about rotation."
+    },
+    "gFontReverse": "Reverse Contrast:",
+    "@gFontReverse": {
+        "description": "This is a prompt about reverse contrast."
+    },
+    "gHrAlignment": "HRI Alignment:",
+    "@gHrAlignment": {
+        "description": "This is a prompt about HRI alignment."
+    },
+    "gBtnDelete": "Delete",
+    "@gBtnDelete": {
+        "description": "This is a delete button."
+    },
+    "gQrcode": "QRcode:",
+    "@gQrcode": {
+        "description": "This is a prompt about QRcode"
+    },
+    "gQrcodeWidth": "Qrcode Width:",
+    "@gQrcodeWidth": {
+        "description": "This is a prompt about QRcode width."
+    },
+    "gPosition": "Position",
+    "@gPosition": {
+        "description": "This is a prompt about position."
+    },
+    "gFontBold": "Bold:",
+    "@gFontBold": {
+        "description": "This is a prompt about font bold."
+    },
+    "gAlignment": "Alignment:",
+    "@gAlignment": {
+        "description": "This is a prompt about alignment."
+    },
+    "gMaxLength": "Max Length:",
+    "@gMaxLength": {
+        "description": "This is a prompt about max length."
+    },
+    "gElementType": "Type:",
+    "@gElementType": {
+        "description": "This is a prompt about item type in print format."
+    },
+    "gBarcode": "BarCode:",
+    "@gBarcode": {
+        "description": "This is a prompt about BarCode."
+    },
+    "gBarcodeHeight": "BarCode Height:",
+    "@gBarcodeHeight": {
+        "description": "This is a prompt about Barcode height."
+    },
+    "iBtnZero": "Zero",
+    "@iBtnZero": {
+        "description": "This is a zeroing button in T-Industry,"
+    },
+    "iTextZero": "Zero:",
+    "@iTextZero": {
+        "description": "This is a prompt about zero weight in T-Industry,"
+    },
+    "iTextNet": "Net:",
+    "@iTextNet": {
+        "description": "This is a prompt about net weight in T-Industry,"
+    },
+    "iStable": "Stable:",
+    "@iStable": {
+        "description": "This is a prompt about stable weight in T-Industry,"
+    },
+    "gBtnSetting": "Setting",
+    "@gBtnSetting": {
+        "description": "This is a button about setting."
+    },
+    "gBtnExport": "Export",
+    "@gBtnExport": {
+        "description": "This is a export button."
+    },    
+    "gSelectAll": "select all",
+    "@gSelectAll": {
+        "description": "This is a prompt for selecting all items."
+    },
+    "gPluName": "PLU Name:",
+    "@gPluName": {
+        "description": "This is a prompt about PLU name."
+    },
+    "plu_edit": "PLU Edit",
+    "@plu_edit": {
+        "description": "This is a prompt about PLU edit."
+    },
+    "user_name": "User Name:",
+    "@user_name": {
+        "description": "This is a prompt about user name."
+    },
+    "user_edit": "User Edit",
+    "@user_edit": {
+        "description": "This is a prompt about user edit."
+    },
+    "parameter_settings_title": "Parameter settings",
+    "@parameter_settings_title": {
+        "description": "This is a prompt about parameter settings."
+    },
+    "save_mode": "Save Mode:",
+    "@save_mode": {
+        "description": "This is a prompt about saving mode."
+    },
+    "manual": "Manual",
+    "@manual": {
+        "description": "This is a prompt about manual mode."
+    },
+    "auto": "Auto",
+    "@auto": {
+        "description": "This is a prompt about auto mode."
+    },
+    "stable_time": "Stable Time (s)",
+    "@stable_time": {
+        "description": "This is a prompt about stable time."
+    },
+    "stable_time_error_tip": "The value must be under 20 seconds.",
+    "@stable_time_error_tip": {
+        "description": ""
+    },
+    "date_format": "Date Format:",
+    "@date_format": {
+        "description": ""
+    },
+    "zero_range": "Zero Range:",
+    "@zero_range": {
+        "description": ""
+    },
+    "product_information": "Product Information",
+    "@product_information": {
+        "description": ""
+    },
+    "pretare": "Pretare:",
+    "@pretare": {
+        "description": ""
+    },
+    "plu_remarks": "PLu Remarks:",
+    "@plu_remarks": {
+        "description": ""
+    },
+    "gBtnAdd": "Add",
+    "@gBtnAdd": {
+        "description": ""
+    },
+    "button_edit": "Edit",
+    "@button_edit": {
+        "description": ""
+    },
+    "plu_error_message": "PLU pretare cannot be empty.",
+    "@plu_error_message": {
+        "description": ""
+    },
+    "plu_error_message1": "PLU ID or PLU name cannot be empty.",
+    "@plu_error_message1": {
+        "description": ""
+    },
+    "plu_error_message2": "PLU ID or PLU name already exists.",
+    "@plu_error_message2": {
+        "description": ""
+    },
+    "iUserInfo": "User Info",
+    "@iUserInfo": {
+        "description": "This is prompt for user info ,in T-Industry."
+    },
+    "user_id": "User ID:",
+    "@user_id": {
+        "description": ""
+    },
+    "user_sex": "Gender:",
+    "@user_sex": {
+        "description": ""
+    },
+    "user_phone": "Phone:",
+    "@user_phone": {
+        "description": ""
+    },
+    "user_remarks": "User Notes:",
+    "@user_remarks": {
+        "description": ""
+    },
+    "user_error_message1": "The User Id and Username cannot be empty!",
+    "@user_error_message1": {
+        "description": ""
+    },
+    "user_error_message2": "User ID or Username cannot be the same!",
+    "@user_error_message2": {
+        "description": ""
+    },
+    "user_error_message3": "The User is not found!",
+    "@user_error_message3": {
+        "description": ""
+    },
+    "language_setting_title": "Language Setting",
+    "@language_setting_title": {
+        "description": ""
+    },
+    "button_back": "Back",
+    "@button_back": {
+        "description": ""
+    },
+    "button_select_format": "Select Format",
+    "@button_select_format": {
+        "description": ""
+    },
+    "scale_model": "Scale Model:",
+    "@scale_model": {
+        "description": ""
+    },
+    "button_get_ip": "Get IP Address",
+    "@button_get_ip": {
+        "description": ""
+    },
+    "firmware_update": "Update Firmware Serial",
+    "@firmware_update": {
+        "description": ""
+    },
+    "button_add_license": "Add License",
+    "@button_add_license": {
+        "description": ""
+    },
+    "new_license_text": "New License:",
+    "@new_license_text": {
+        "description": ""
+    },
+    "gTipResult": "Result",
+    "@gTipResult": {
+        "description": "This is a tip of add license result."
+    },
+    "txt_serial_port_connected": "Serial port connected",
+    "@txt_serial_port_connected": {
+        "description": ""
+    },
+    "txt_serial_port_connected_fail": "Unable to connect",
+    "@txt_serial_port_connected_fail": {
+        "description": ""
+    },
+    "gTitleGetBuildInfo": "Software Information",
+    "@gTitleGetBuildInfo": {
+        "description": ""
+    },
+    "gBuildInfoTip": "This ID is only to be used by device developers.",
+    "@gBuildInfoTip": {
+        "description": "This is a tip for build info."
+    },
+    "serial_page_ol": "OL mode",
+    "@serial_page_ol": {
+        "description": ""
+    },
+    "serial_page_ul": "UL mode",
+    "@serial_page_ul": {
+        "description": ""
+    },
+    "serial_page_weight": "Weight mode",
+    "@serial_page_weight": {
+        "description": ""
+    },
+    "serial_page_pcs": "Counting mode",
+    "@serial_page_pcs": {
+        "description": ""
+    },
+    "serial_page_price": "Price Computing mode",
+    "@serial_page_price": {
+        "description": ""
+    },
+    "serial_page_percent": "Percent mode",
+    "@serial_page_percent": {
+        "description": ""
+    },
+    "device_connection_title": "Device Info & Connection",
+    "@device_connection_title": {
+        "description": ""
+    },
+    "device_setting_title": "Basics",
+    "@device_setting_title": {
+        "description": ""
+    },
+    "device_configuration_title": "Device Configuration",
+    "@device_configuration_title": {
+        "description": ""
+    },
+    "bt_setting_title": "Bluetooth Setting",
+    "@bt_setting_title": {
+        "description": ""
+    },
+    "wifi_setting_title": "Wi-Fi Setting",
+    "@wifi_setting_title": {
+        "description": ""
+    },
+    "customization_setting_title": "Applications",
+    "@customization_setting_title": {
+        "description": ""
+    },
+    "advanced_setting_title": "Advanced",
+    "@advanced_setting_title": {
+        "description": ""
+    },
+    "label_design_title": "Label Design",
+    "@label_design_title": {
+        "description": ""
+    },
+    "gTitleReceiptDesign": "Receipt Design",
+    "@gTitleReceiptDesign": {
+        "description": "This is a title about receipt design app."
+    },
+    "gTipReceiptDesign": "This application is designed for the printing format of the receipt.",
+    "@gTipReceiptDesign": {
+        "description": "This is a prompt about receipt design app."
+    },
+    "gTitleLabelFmtDownload": "Label Format Download",
+    "@gTitleLabelFmtDownload": {
+        "description": "This is a title about downloading label printing Formats app."
+    },
+    "gTipLabelFmtDownload": "This application is used to download print format.",
+    "@gTipLabelFmtDownload": {
+        "description": "This is a prompt about downloading label printing Formats app."
+    },
+    "gTitleSerialOutput": "Serial Output Design",
+    "@gTitleSerialOutput": {
+        "description": "This is a title about serial output design"
+    },
+    "gTitleSerialOutputDownload": "Serial Output Download",
+    "@gTitleSerialOutputDownload": {
+        "description": "This is a title about serial output download."
+    },
+    "gSystemSetting": "System Setting",
+    "@gSystemSetting": {
+        "description": "This is a title about system setting."
+    },
+    "gTitleSetLanguage": "Set Language",
+    "@gTitleSetLanguage": {
+        "description": "This is a title about language setting."
+    },
+    "gTitleLicenseInfo": "License Info",
+    "@gTitleLicenseInfo": {
+        "description": "This is a title about license info."
+    },
+    "cBtnOpenPreview": "Open preview",
+    "@cBtnOpenPreview": {
+        "description": " This is a button about open preview in T-Config."
+    },
+    "cBtnClosePreview": "Close preview",
+    "@cBtnClosePreview": {
+        "description": "This is a button about close preview in T-Config."
+    },
+    "gBtnClear": "Clear",
+    "@gBtnClear": {
+        "description": "This is a button for clearing."
+    },
+    "gTipFreeFormat": "Free format",
+    "@gTipFreeFormat": {
+        "description": "This is a prompt for free format."
+    },
+    "gTotalFmt": "Total format:",
+    "@gTotalFmt": {
+        "description": "This is a prompt for total format."
+    },
+    "gTitlePluDownload": "PLU Download",
+    "@gTitlePluDownload": {
+        "description": "This is a title about downloading plu."
+    },
+    "gTipPluDownload": "This application is used to download product information.",
+    "@gTipPluDownload": {
+        "description": "This is a tip about downloading plu."
+    },
+    "iTitleWeighting": "Weighing(Single)",
+    "@iTitleWeighting": {
+        "description": "This is a title about weighting,support one scale."
+    },
+    "iTitleWeightCollection": "Weighing Data Collection(Single)",
+    "@iTitleWeightCollection": {
+        "description": "This is a title about collect weight data,support one scale,in T-Industry"
+    },
+    "iTipWeightCollection": "This application is used to collect weighing data in real time",
+    "@iTipWeightCollection": {
+        "description": "This is a prompt about collect weight data,in T-Industry"
+    },
+    "iTitleCheckWeigher": "Check Weighing(Single)",
+    "@iTitleCheckWeigher": {
+        "description": "This is a title about check weighing,support one scale,in T-Industry"
+    },
+    "iTipCheckWeigher": "This application is used to check weighing data in real time",
+    "@iTipCheckWeigher": {
+        "description": "This is a prompt about check weighing,in T-Industry"
+    },
+    "iTitleIncrementWeighting": "Increment Weighing(Single)",
+    "@iTitleIncrementWeighting": {
+        "description": "This is a title about Increment Weighing,support one scale,in T-Industry"
+    },
+    "iTipIncrementWeighting": "This app is used to implement the increment scale.",
+    "@iTipIncrementWeighting": {
+        "description": "This is a prompt about Increment Weighing,in T-Industry"
+    },
+    "gTitleTakeOut": "Take Out Scale(Single)",
+    "@gTitleTakeOut": {
+        "description": "This is a title about take out scale,support one scale,in T-Industry"
+    },
+    "gTipTakeOut": "This app is used to implement the take out scale.",
+    "@gTipTakeOut": {
+        "description": "This is a prompt about take out scale,in T-Industry"
+    },
+    "get_bt_name": "Get name",
+    "@get_bt_name": {
+        "description": ""
+    },
+    "modify_bt_name": "Modify name",
+    "@modify_bt_name": {
+        "description": ""
+    },
+    "bt_emission_power": "Emission Power:",
+    "@bt_emission_power": {
+        "description": ""
+    },
+    "bt_modify_emission": "Modify emission power",
+    "@bt_modify_emission": {
+        "description": ""
+    },
+    "gTitleConfirm": "Confirmation",
+    "@gTitleConfirm": {
+        "description": "This is the title of the confirmation."
+    },
+    "gConfirmPrnFmtOrderTip": "Please confirm the order of the printing formats.",
+    "@gConfirmPrnFmtOrderTip": {
+        "description": "This is the prompt to confirm the order of the printing format."
+    },
+    "jump_confirm_info": "Please confirm to go to the default print format page.",
+    "@jump_confirm_info": {
+        "description": ""
+    },
+    "download_result_ok": "Download is successful!",
+    "@download_result_ok": {
+        "description": ""
+    },
+    "download_result_fail": "Download failed!",
+    "@download_result_fail": {
+        "description": ""
+    },
+    "select_firmware_btn": "Select Firmware",
+    "@select_firmware_btn": {
+        "description": ""
+    },
+    "report_set_btn": "Report Setting",
+    "@report_set_btn": {
+        "description": ""
+    },
+    "report_show_btn": "Show Reports",
+    "@report_show_btn": {
+        "description": ""
+    },
+    "report_delete_btn": "Delete All",
+    "@report_delete_btn": {
+        "description": ""
+    },
+    "report_hide_btn": "Hide Report",
+    "@report_hide_btn": {
+        "description": ""
+    },
+    "data_delete_confirm": "Whether to delete all data?",
+    "@data_delete_confirm": {
+        "description": ""
+    },
+    "show_current_weight": "Current weight:",
+    "@show_current_weight": {
+        "description": ""
+    },
+    "show_increment_weight": "Increment weight:",
+    "@show_increment_weight": {
+        "description": ""
+    },
+    "show_reduced_weight": "Reduced weight:",
+    "@show_reduced_weight": {
+        "description": ""
+    },
+    "general_configuration_title": "General Configuration",
+    "@general_configuration_title": {
+        "description": ""
+    },
+    "application_title": "Applications",
+    "@application_title": {
+        "description": ""
+    },
+    "choose_json_file": "Choose json",
+    "@choose_json_file": {
+        "description": ""
+    },
+    "abnormal_data_title": "Basic Data",
+    "@abnormal_data_title": {
+        "description": ""
+    },
+    "cTitleDeviceTime": "Device Time",
+    "@cTitleDeviceTime": {
+        "description": "This is a title about device time."
+    },
+    "cBtnSyncPcTime": "Sync PC Time",
+    "@cBtnSyncPcTime": {
+        "description": "This is a button about sync pc time."
+    },
+    "cBtnSetTime": "Set Date/Time",
+    "@cBtnSetTime": {
+        "description": "This is a button about set date/time."
+    },
+    "cBtnSyncTime": "Sync Time",
+    "@cBtnSyncTime": {
+        "description": "This is a button about sync time."
+    },
+    "cBtnSelectTime": "Select Time",
+    "@cBtnSelectTime": {
+        "description": "This is a button about select time."
+    },
+    "cBtnSelectDate": "Select Date",
+    "@cBtnSelectDate": {
+        "description": "This is a button about select date."
+    },
+    "cTipFailedGetTime": "failed to get time",
+    "@cTipFailedGetTime": {
+        "description": "This is a tip about failed to get time."
+    },
+    "batch_delivery_title": "Batch Delivery",
+    "@batch_delivery_title": {
+        "description": ""
+    },
+    "cTitleParameterSet": "Parameter Setting",
+    "@cTitleParameterSet": {
+        "description": "This is a title about parameter setting."
+    },
+    "cTipConfigurationName": "Configuration name",
+    "@cTipConfigurationName": {
+        "description": "This is a tip about configuration name."
+    },
+    "cTipEditable": "Editable",
+    "@cTipEditable": {
+        "description": "This is a tip about whether editing is enabled."
+    },
+    "cTipParameterSize": "Size",
+    "@cTipParameterSize": {
+        "description": "This is a tip about parameter size."
+    },
+    "cTipParameterTyppe": "Parameter Type",
+    "@cTipParameterTyppe": {
+        "description": "This is a tip about parameter type."
+    },
+    "cTipParameterValue": "Parameter Value",
+    "@cTipParameterValue": {
+        "description": "This is a title about parameter value."
+    },
+    "cTipParameterDesp": "Description",
+    "@cTipParameterDesp": {
+        "description": "This is a title about parameter description."
+    },
+    "cBtnCommit": "Click to submit",
+    "@cBtnCommit": {
+        "description": "This is a button for submitting parameter modifications."
+    },
+    "cTipNotModified": "No parameters have been modified!",
+    "@cTipNotModified": {
+        "description": "This is a tip: No parameter modifications."
+    },
+    "cTipConfirmModified": "Please make sure the values are correct, continue?",
+    "@cTipConfirmModified": {
+        "description": "This is a tip: Please make sure the values are correct, continue?"
+    },
+    "cTipCheckValue": "Please check",
+    "@cTipCheckValue": {
+        "description": "This is a tip: Please check"
+    },
+    "save_as": "Save as",
+    "@save_as": {
+        "description": ""
+    },
+    "gTipConfirmInfo": "Please confirm the information.",
+    "@gTipConfirmInfo": {
+        "description": "This is the prompt asking you to confirm the information."
+    },
+    "server_ip": "Server Ip:",
+    "@server_ip": {
+        "description": ""
+    },
+    "server_port": "Server Port:",
+    "@server_port": {
+        "description": ""
+    },
+    "error_ip_tip": "Incorrect address! e.g. xxx.xxx.xxx.xxx",
+    "@error_ip_tip": {
+        "description": ""
+    },
+    "set_ethernet_ip_title": "Ethernet IP Setting",
+    "@set_ethernet_ip_title": {
+        "description": ""
+    },
+    "go_home": "Confirm to return to hompage?",
+    "@go_home": {
+        "description": ""
+    },
+    "gTitleReceiptDownload": "Receipt Format Download",
+    "@gTitleReceiptDownload": {
+        "description": "This is a title about receipt format download."
+    },
+    "gTipReceiptDownload": "This application is used to download the print format of the receipt.",
+    "@gTipReceiptDownload": {
+        "description": "This is a prompt about receipt format download."
+    },
+    "about_title": "Information",
+    "@about_title": {
+        "description": ""
+    },
+    "app_version_title": "Version:",
+    "@app_version_title": {
+        "description": ""
+    },
+    "app_company_title": "Company:",
+    "@app_company_title": {
+        "description": ""
+    },
+    "app_tel_title": "Tel:",
+    "@app_tel_title": {
+        "description": ""
+    },
+    "app_email_title": "Email:",
+    "@app_email_title": {
+        "description": ""
+    },
+    "app_address_title": "Address:",
+    "@app_address_title": {
+        "description": ""
+    },
+    "app_web_title": "Website Address:",
+    "@app_web_title": {
+        "description": ""
+    },
+    "app_models": "Applicable Models:",
+    "@app_models": {
+        "description": ""
+    },
+    "p_text_title": "Free Text",
+    "@p_text_title": {
+        "description": ""
+    },
+    "p_line_title": "Dividing Line",
+    "@p_line_title": {
+        "description": ""
+    },
+    "p_price_title": "Price Variable",
+    "@p_price_title": {
+        "description": ""
+    },
+    "p_text_var": "Text",
+    "@p_text_var": {
+        "description": ""
+    },
+    "p_div_line_var": "Line",
+    "@p_div_line_var": {
+        "description": ""
+    },
+    "p_no_var": "NO.",
+    "@p_no_var": {
+        "description": ""
+    },
+    "p_header1_var": "Header1",
+    "@p_header1_var": {
+        "description": ""
+    },
+    "p_Header2_var": "Header2",
+    "@p_Header2_var": {
+        "description": ""
+    },
+    "p_header3_var": "Header3",
+    "@p_header3_var": {
+        "description": ""
+    },
+    "p_footer1_var": "Footer1",
+    "@p_footer1_var": {
+        "description": ""
+    },
+    "p_footer2_var": "Footer2",
+    "@p_footer2_var": {
+        "description": ""
+    },
+    "p_footer3_var": "Footer3",
+    "@p_footer3_var": {
+        "description": ""
+    },
+    "p_plu_id_var": "PLU_ID",
+    "@p_plu_id_var": {
+        "description": ""
+    },
+    "p_plu_name_var": "PLU_Name",
+    "@p_plu_name_var": {
+        "description": ""
+    },
+    "p_order_number_var": "Order Number",
+    "@p_order_number_var": {
+        "description": ""
+    },
+    "p_unit_price_var": "Unit Price",
+    "@p_unit_price_var": {
+        "description": ""
+    },
+    "p_price_unit_var": "Price Unit",
+    "@p_price_unit_var": {
+        "description": ""
+    },
+    "p_pre_tare_var": "PreTare",
+    "@p_pre_tare_var": {
+        "description": ""
+    },
+    "p_unit_var": "Unit",
+    "@p_unit_var": {
+        "description": ""
+    },
+    "p_date_var": "Date",
+    "@p_date_var": {
+        "description": ""
+    },
+    "p_tax_type1_var": "Tax Type1",
+    "@p_tax_type1_var": {
+        "description": ""
+    },
+    "p_tax_type2_var": "Tax Type2",
+    "@p_tax_type2_var": {
+        "description": ""
+    },
+    "p_tax_type3_var": "Tax Type3",
+    "@p_tax_type3_var": {
+        "description": ""
+    },
+    "p_tax_base1_var": "Tax Base1",
+    "@p_tax_base1_var": {
+        "description": ""
+    },
+    "p_tax_base2_var": "Tax Base2",
+    "@p_tax_base2_var": {
+        "description": ""
+    },
+    "p_tax_base3_var": "Tax Base3",
+    "@p_tax_base3_var": {
+        "description": ""
+    },
+    "p_tax_amount1_var": "Tax Amount1",
+    "@p_tax_amount1_var": {
+        "description": ""
+    },
+    "p_tax_amount2_var": "Tax Amount2",
+    "@p_tax_amount2_var": {
+        "description": ""
+    },
+    "p_tax_amount3_var": "Tax Amount3",
+    "@p_tax_amount3_var": {
+        "description": ""
+    },
+    "p_tax_model_var": "Tax Model",
+    "@p_tax_model_var": {
+        "description": ""
+    },
+    "p_total_tax_amount_var": "Total Tax Amount",
+    "@p_total_tax_amount_var": {
+        "description": ""
+    },
+    "p_payment_amount_P_var": "Payment Amount",
+    "@p_payment_amount_P_var": {
+        "description": ""
+    },
+    "p_subtotal_var": "Subtotal",
+    "@p_subtotal_var": {
+        "description": ""
+    },
+    "p_currency_var": "Currency",
+    "@p_currency_var": {
+        "description": ""
+    },
+    "p_copy_times_var": "Copy Times",
+    "@p_copy_times_var": {
+        "description": ""
+    },
+    "p_model_name_var": "Model Name",
+    "@p_model_name_var": {
+        "description": ""
+    },
+    "p_scale_name_var": "Scale Name",
+    "@p_scale_name_var": {
+        "description": ""
+    },
+    "p_tax_name_var": "Tax Name.",
+    "@p_tax_name_var": {
+        "description": ""
+    },
+    "p_settle_account_times_var": "Settle Account Times.",
+    "@p_settle_account_times_var": {
+        "description": ""
+    },
+    "p_plu_tax_var": "PLU Tax",
+    "@p_plu_tax_var": {
+        "description": ""
+    },
+    "p_total_no_tax_var": "Total No Tax",
+    "@p_total_no_tax_var": {
+        "description": ""
+    },
+    "p_weight_pcs_var": "Weight Pcs",
+    "@p_weight_pcs_var": {
+        "description": ""
+    },
+    "p_tare_var": "Tare",
+    "@p_tare_var": {
+        "description": ""
+    },
+    "p_time_var": "Time",
+    "@p_time_var": {
+        "description": ""
+    },
+    "p_change_amount_var": "Change Amount",
+    "@p_change_amount_var": {
+        "description": ""
+    },
+    "p_price_var": "Price",
+    "@p_price_var": {
+        "description": ""
+    },
+    "p_text_expl": "Free text.",
+    "@p_text_expl": {
+        "description": ""
+    },
+    "p_div_line_expl": "Loop divider line.",
+    "@p_div_line_expl": {
+        "description": ""
+    },
+    "p_no_expl": "Sequence number value.",
+    "@p_no_expl": {
+        "description": ""
+    },
+    "p_header1_expl": "The first page header.",
+    "@p_header1_expl": {
+        "description": ""
+    },
+    "p_Header2_expl": "The secend page header.",
+    "@p_Header2_expl": {
+        "description": ""
+    },
+    "p_header3_expl": "The third page header.",
+    "@p_header3_expl": {
+        "description": ""
+    },
+    "p_footer1_expl": "The first page footer.",
+    "@p_footer1_expl": {
+        "description": ""
+    },
+    "p_footer2_expl": "The secend page footer.",
+    "@p_footer2_expl": {
+        "description": ""
+    },
+    "p_footer3_expl": "The third page footer.",
+    "@p_footer3_expl": {
+        "description": ""
+    },
+    "p_plu_id_expl": "PLU_ID.",
+    "@p_plu_id_expl": {
+        "description": ""
+    },
+    "p_plu_name_expl": "PLU_Name.",
+    "@p_plu_name_expl": {
+        "description": ""
+    },
+    "p_order_number_expl": "The serial number of the pending order.",
+    "@p_order_number_expl": {
+        "description": ""
+    },
+    "p_unit_price_expl": "Unit Price.",
+    "@p_unit_price_expl": {
+        "description": ""
+    },
+    "p_price_unit_expl": "Price Unit.",
+    "@p_price_unit_expl": {
+        "description": ""
+    },
+    "p_pre_tare_expl": "PreTare.",
+    "@p_pre_tare_expl": {
+        "description": ""
+    },
+    "p_unit_expl": "Weight Unit.",
+    "@p_unit_expl": {
+        "description": ""
+    },
+    "p_date_expl": "Date.",
+    "@p_date_expl": {
+        "description": ""
+    },
+    "p_tax_type1_expl": "Tax Type 1.",
+    "@p_tax_type1_expl": {
+        "description": ""
+    },
+    "p_tax_type2_expl": "Tax Type 2.",
+    "@p_tax_type2_expl": {
+        "description": ""
+    },
+    "p_tax_type3_expl": "Tax Type 3.",
+    "@p_tax_type3_expl": {
+        "description": ""
+    },
+    "p_tax_base1_expl": "Tax Base 1.",
+    "@p_tax_base1_expl": {
+        "description": ""
+    },
+    "p_tax_base2_expl": "Tax Base 2.",
+    "@p_tax_base2_expl": {
+        "description": ""
+    },
+    "p_tax_base3_expl": "Tax Base 3.",
+    "@p_tax_base3_expl": {
+        "description": ""
+    },
+    "p_tax_amount1_expl": "Tax Amount 1.",
+    "@p_tax_amount1_expl": {
+        "description": ""
+    },
+    "p_tax_amount2_expl": "Tax Amount 2.",
+    "@p_tax_amount2_expl": {
+        "description": ""
+    },
+    "p_tax_amount3_expl": "Tax Amount 3.",
+    "@p_tax_amount3_expl": {
+        "description": ""
+    },
+    "p_tax_model_expl": "Tax Model,tax included or tax external.",
+    "@p_tax_model_expl": {
+        "description": ""
+    },
+    "p_total_tax_amount_expl": "Total Tax Amount.",
+    "@p_total_tax_amount_expl": {
+        "description": ""
+    },
+    "p_payment_amount_P_expl": "Payment Amount.",
+    "@p_payment_amount_P_expl": {
+        "description": ""
+    },
+    "p_subtotal_expl": "Subtotal.",
+    "@p_subtotal_expl": {
+        "description": ""
+    },
+    "p_currency_expl": "Currency.",
+    "@p_currency_expl": {
+        "description": ""
+    },
+    "p_copy_times_expl": "Copy Times.",
+    "@p_copy_times_expl": {
+        "description": ""
+    },
+    "p_model_name_expl": "Scale Model Name.",
+    "@p_model_name_expl": {
+        "description": ""
+    },
+    "p_scale_name_expl": "Scale Name.",
+    "@p_scale_name_expl": {
+        "description": ""
+    },
+    "p_tax_name_expl": "Tax Name.",
+    "@p_tax_name_expl": {
+        "description": ""
+    },
+    "p_settle_account_times_expl": "Settle Account Times.",
+    "@p_settle_account_times_expl": {
+        "description": ""
+    },
+    "p_plu_tax_expl": "PLU Tax Value.",
+    "@p_plu_tax_expl": {
+        "description": ""
+    },
+    "p_total_no_tax_expl": "Total No Tax.",
+    "@p_total_no_tax_expl": {
+        "description": ""
+    },
+    "p_weight_pcs_expl": "Weight or Pcs.",
+    "@p_weight_pcs_expl": {
+        "description": ""
+    },
+    "p_tare_expl": "Tare value.",
+    "@p_tare_expl": {
+        "description": ""
+    },
+    "p_time_expl": "Time.",
+    "@p_time_expl": {
+        "description": ""
+    },
+    "p_change_amount_expl": "Change Amount.",
+    "@p_change_amount_expl": {
+        "description": ""
+    },
+    "p_price_expl": "Price value.",
+    "@p_price_expl": {
+        "description": ""
+    },
+    "l_var_title": "Variable",
+    "@l_var_title": {
+        "description": ""
+    },
+    "l_text_title": "Free Text",
+    "@l_text_title": {
+        "description": ""
+    },
+    "l_barcode_title": "BarCode Variable",
+    "@l_barcode_title": {
+        "description": ""
+    },
+    "l_qrcode_title": "Qrcode Variable",
+    "@l_qrcode_title": {
+        "description": ""
+    },
+    "l_shape_title": "Shape",
+    "@l_shape_title": {
+        "description": ""
+    },
+    "l_line_var": "Line",
+    "@l_line_var": {
+        "description": ""
+    },
+    "l_text_var": "Text",
+    "@l_text_var": {
+        "description": ""
+    },
+    "l_barcode_var": "BarCode",
+    "@l_barcode_var": {
+        "description": ""
+    },
+    "l_qrcode_var": "Qrcode",
+    "@l_qrcode_var": {
+        "description": ""
+    },
+    "l_no_var": "NO.",
+    "@l_no_var": {
+        "description": ""
+    },
+    "l_gross_var": "Gross",
+    "@l_gross_var": {
+        "description": ""
+    },
+    "l_tare_var": "Tare",
+    "@l_tare_var": {
+        "description": ""
+    },
+    "l_net_var": "Net",
+    "@l_net_var": {
+        "description": ""
+    },
+    "l_pcs_var": "PCS",
+    "@l_pcs_var": {
+        "description": ""
+    },
+    "l_wgt_unit_var": "WeightUnit",
+    "@l_wgt_unit_var": {
+        "description": ""
+    },
+    "l_date_var": "Date",
+    "@l_date_var": {
+        "description": ""
+    },
+    "l_time_var": "Time",
+    "@l_time_var": {
+        "description": ""
+    },
+    "l_uwgt_var": "U.WGT",
+    "@l_uwgt_var": {
+        "description": ""
+    },
+    "l_uwu_var": "U.WU",
+    "@l_uwu_var": {
+        "description": ""
+    },
+    "l_unit_wgt_var": "UnitWeight",
+    "@l_unit_wgt_var": {
+        "description": ""
+    },
+    "l_percent_var": "Percent",
+    "@l_percent_var": {
+        "description": ""
+    },
+    "l_total_wgt_var": "TotalWeight",
+    "@l_total_wgt_var": {
+        "description": ""
+    },
+    "l_total_cnt_var": "TotalCount",
+    "@l_total_cnt_var": {
+        "description": ""
+    },
+    "l_line_expl": "Line",
+    "@l_line_expl": {
+        "description": ""
+    },
+    "l_text_expl": "Text",
+    "@l_text_expl": {
+        "description": ""
+    },
+    "l_barcode_expl": "BarCode",
+    "@l_barcode_expl": {
+        "description": ""
+    },
+    "l_qrcode_expl": "Qrcode",
+    "@l_qrcode_expl": {
+        "description": ""
+    },
+    "l_no_expl": "NO.",
+    "@l_no_expl": {
+        "description": ""
+    },
+    "l_gross_expl": "Gross",
+    "@l_gross_expl": {
+        "description": ""
+    },
+    "l_tare_expl": "Tare",
+    "@l_tare_expl": {
+        "description": ""
+    },
+    "l_net_expl": "Net",
+    "@l_net_expl": {
+        "description": ""
+    },
+    "l_pcs_expl": "PCS",
+    "@l_pcs_expl": {
+        "description": ""
+    },
+    "l_wgt_unit_expl": "WeightUnit",
+    "@l_wgt_unit_expl": {
+        "description": ""
+    },
+    "l_date_expl": "Date",
+    "@l_date_expl": {
+        "description": ""
+    },
+    "l_time_expl": "Time",
+    "@l_time_expl": {
+        "description": ""
+    },
+    "l_uwgt_expl": "Universal weight",
+    "@l_uwgt_expl": {
+        "description": ""
+    },
+    "l_uwu_expl": "Universal weight unit",
+    "@l_uwu_expl": {
+        "description": ""
+    },
+    "l_unit_wgt_expl": "UnitWeight",
+    "@l_unit_wgt_expl": {
+        "description": ""
+    },
+    "l_percent_expl": "Percent",
+    "@l_percent_expl": {
+        "description": ""
+    },
+    "l_total_wgt_expl": "TotalWeight",
+    "@l_total_wgt_expl": {
+        "description": ""
+    },
+    "l_total_cnt_expl": "TotalCount",
+    "@l_total_cnt_expl": {
+        "description": ""
+    },
+    "l_line_width_txt": "Line Width",
+    "@l_line_width_txt": {
+        "description": ""
+    },
+    "l_line_lenth_txt": "Line Length",
+    "@l_line_lenth_txt": {
+        "description": ""
+    },
+    "l_open_fmt_err": "Please select the correct print format",
+    "@l_open_fmt_err": {
+        "description": ""
+    },
+    "gReceiptFormat": "Receipt Format",
+    "@gReceiptFormat": {
+        "description": "This is the prompt for receipt format."
+    },
+    "batch_down_export": "Export",
+    "@batch_down_export": {
+        "description": ""
+    },
+    "gBtnImport": "Import",
+    "@gBtnImport": {
+        "description": ""
+    },
+    "gBtnGetDataFormDb": "Get Data From DB",
+    "@gBtnGetDataFormDb": {
+        "description": ""
+    },
+    "batch_down_slt_folder": "Select Folder",
+    "@batch_down_slt_folder": {
+        "description": ""
+    },
+    "abnormal_weight": "Get Basic Data",
+    "@abnormal_weight": {
+        "description": ""
+    },
+    "gBtnSelectPluFile": "Select Product Excel",
+    "@gBtnSelectPluFile": {
+        "description": "This is a button for selecting the PLU file."
+    },
+    "gBtnGetPluTemplate": "Get PLU Template",
+    "@gBtnGetPluTemplate": {
+        "description": "This is a button for getting the product template."
+    },
+    "gTipSelectOnePluFile": "Only one PLU file can be selected",
+    "@gTipSelectOnePluFile": {
+        "description": "This is a prompt for only one PLU file can be selected for downloading"
+    },
+    "gPluNameLength": "Product name max length:",
+    "@gPluNameLength": {
+        "description": ""
+    },
+    "gTipDownloadAllPlu": "Clear all then download",
+    "@gTipDownloadAllPlu": {
+        "description": "This is the prompt to clear all product data before issuing."
+    },
+    "gTipUpdatePlu": "Update Products",
+    "@gTipUpdatePlu": {
+        "description": "This is the prompt to update products."
+    },
+    "btn_add_lic_file": "Select License File",
+    "@btn_add_lic_file": {
+        "description": ""
+    },
+    "output_res_folder": "Resource Folder",
+    "@output_res_folder": {
+        "description": ""
+    },
+    "output_select_folder": "Select Folder",
+    "@output_select_folder": {
+        "description": ""
+    },
+    "output_confirm_info": "Please confirm the folder name!",
+    "@output_confirm_info": {
+        "description": ""
+    },
+    "output_no_file": "No files were matched!",
+    "@output_no_file": {
+        "description": ""
+    },
+    "def_fmt_sel_tip": "Please select 1-10 print formats.",
+    "@def_fmt_sel_tip": {
+        "description": ""
+    },
+    "def_fmt_no_title": "Default Number",
+    "@def_fmt_no_title": {
+        "description": ""
+    },
+    "def_fmt_file_title": "File Path",
+    "@def_fmt_file_title": {
+        "description": ""
+    },
+    "def_fmt_no_file_tip": "No data yet",
+    "@def_fmt_no_file_tip": {
+        "description": ""
+    },
+    "def_fmt_out_range_tip": "The overall print format content is out of scope",
+    "@def_fmt_out_range_tip": {
+        "description": ""
+    },
+    "m_scale_title": "Multi-scale Management",
+    "@m_scale_title": {
+        "description": ""
+    },
+    "scale_mgr_btn_add": "Add",
+    "@scale_mgr_btn_add": {
+        "description": ""
+    },
+    "scale_mgr_btn_rename": "Rename",
+    "@scale_mgr_btn_rename": {
+        "description": ""
+    },
+    "scale_mgr_btn_def": "Set Default",
+    "@scale_mgr_btn_def": {
+        "description": ""
+    },
+    "scale_mgr_btn_test": "Test Connect",
+    "@scale_mgr_btn_test": {
+        "description": ""
+    },
+    "gScaleName": "Scale Name",
+    "@gScaleName": {
+        "description": ""
+    },
+    "gStatus": "Status",
+    "@gStatus": {
+        "description": "This is the prompt for the scale status."
+    },
+    "gProgress": "Progress",
+    "@gProgress": {
+        "description": "This is the prompt for the download progress."
+    },
+    "rDetailRptTitle": "Retail Detail Report",
+    "@rDetailRptTitle": {
+        "description": "This is the title of the retail detail report page in the retail app."
+    },
+    "rTipDetailRpt": "This app is used to display sales detail data.",
+    "@rTipDetailRpt": {
+        "description": "This is the prompt for the retail detail report in the retail app."
+    },
+    "gTitlePluEdit": "PLU Edit",
+    "@gTitlePluEdit": {
+        "description": "This is the title of the PLU edit page."
+    },
+    "rShowScaleListBtn": "Show Scales",
+    "@rShowScaleListBtn": {
+        "description": "This is the name of the button for displaying the list of scales in the retail app."
+    },
+    "rHideScaleListBtn": "Hide Scales",
+    "@rHideScaleListBtn": {
+        "description": "This is the name of the button for hiding the list of scales in the retail app."
+    },
+    "rRefreshListBtn": "Refresh List",
+    "@rRefreshListBtn": {
+        "description": "This is the name of the button for refreshing the retail list in the retail app."
+    },
+    "gOnlineTip": "online",
+    "@gOnlineTip": {
+        "description": "This is a prompt for online information."
+    },
+    "gOfflineTip": "offline",
+    "@gOfflineTip": {
+        "description": "This is a prompt for offline information."
+    },
+    "rJoinManagementTip": "Whether to join the management",
+    "@rJoinManagementTip": {
+        "description": "This is a prompt about whether to join the management in the retail app."
+    },
+    "gTitleUpdateFirmware": "Update Firmware",
+    "@gTitleUpdateFirmware": {
+        "description": "This is the title for updating the firmware."
+    },
+    "gTipFirmwareZipFile": "Firmware Zip:",
+    "@gTipFirmwareZipFile": {
+        "description": "This is the prompt for the Firmware zip file."
+    },
+    "gBtnSelectZipFirmware": "Select Firmware Zip",
+    "@gBtnSelectZipFirmware": {
+        "description": "This is the button for selecting the Firmware zip file."
+    },
+    "gConfirmFileTip": "Please confirm the file correct.",
+    "@gConfirmFileTip": {
+        "description": "This is the prompt to confirm whether the file is correct when downloading."
+    },
+    "gBtnViaSerialUpdate": "Serial Port",
+    "@gBtnViaSerialUpdate": {
+        "description": "This is the button for switching to serial port update when updating the firmware."
+    },
+    "gBtnViaNetworkUpdate": "Network",
+    "@gBtnViaNetworkUpdate": {
+        "description": "This is the button for switching to network update when updating the firmware."
+    },
+    "gTipSelectUpdateWay": "Please select the way to update the firmware.",
+    "@gTipSelectUpdateWay": {
+        "description": "This is the prompt to select the way when update firmware."
+    },
+    "gTipWait": "Please wait...",
+    "@gTipWait": {
+        "description": "This is the prompt for waiting."
+    },
+    "gTipRebootForUpdate": "Please reboot the device to begin update...",
+    "@gTipRebootForUpdate": {
+        "description": "This is the prompt restarting the device for the automatic update."
+    },
+    "rTitleSetVariableValues": "Variable Value Setting",
+    "@rTitleSetVariableValues": {
+        "description": "This is the title for setting the values of variables, such as the header and footer,in the retail app."
+    },
+    "rTipSetVariableValues": "This application is used to distribute various variable information, such as headers and footers.",
+    "@rTipSetVariableValues": {
+        "description": "This is the explanation for applying the setting of variable values."
+    },
+    "rTipHeader": "Header",
+    "@rTipHeader": {
+        "description": "This is the prompt for Header."
+    },
+    "rTipFooter": "Footer",
+    "@rTipFooter": {
+        "description": "This is the prompt for Footer."
+    },
+    "rTipOperator": "Operator",
+    "@rTipOperator": {
+        "description": "This is the prompt for Operator."
+    },
+    "gTipDataError": "Data Error !",
+    "@gTipDataError": {
+        "description": "This is the prompt for data error."
+    },
+    "gBtnNewFormat": "New Format",
+    "@gBtnNewFormat": {
+        "description": "This is a button for creating a new printing format."
+    },
+    "gTipItemType": "Type:",
+    "@gTipItemType": {
+        "description": "This is the name of an item type,in the printing format page."
+    },
+    "gTipFolderNoSelected": "No folder has been selected, so the file cannot be saved.",
+    "@gTipFolderNoSelected": {
+        "description": "This is the prompt for saving flie."
+    },
+    "gTipSaveFail": "Save data failed !",
+    "@gTipSaveFail": {
+        "description": "This is the prompt for saving flie failed."
+    },
+    "gTipSaveSuccess": "Save successfully. The path is:",
+    "@gTipSaveSuccess": {
+        "description": "This is the prompt for flie saved ok."
+    },
+    "gBtnSaveExcel": "Save To Excel",
+    "@gBtnSaveExcel": {
+        "description": "This is the button to save excel."
+    },
+    "gBtnSaveDataBase": "Save To DB",
+    "@gBtnSaveDataBase": {
+        "description": "This is the button to save database."
+    },
+    "gPluPlu": "PLU",
+    "@gPluPlu": {
+        "description": "This is prompt for product edit."
+    },
+    "gPluPluCode": "Product Code",
+    "@gPluPluCode": {
+        "description": "This is prompt for product edit."
+    },
+    "gPluItemCode": "Item Code",
+    "@gPluItemCode": {
+        "description": "This is prompt for product edit."
+    },
+    "gPluCategory": "Category",
+    "@gPluCategory": {
+        "description": "This is prompt for product edit."
+    },
+    "gPluPluName": "Product Name",
+    "@gPluPluName": {
+        "description": "This is prompt for product edit."
+    },
+    "gPluWgtUnit": "Unit",
+    "@gPluWgtUnit": {
+        "description": "This is prompt for product edit."
+    },
+    "gPluTaxType": "Tax Type",
+    "@gPluTaxType": {
+        "description": "This is prompt for product edit."
+    },
+    "gPluPrice": "Price",
+    "@gPluPrice": {
+        "description": "This is prompt for product edit."
+    },
+    "gPluUnitWgt": "Unit Wight",
+    "@gPluUnitWgt": {
+        "description": "This is prompt for product edit."
+    },
+    "gPluPretare": "Pretare",
+    "@gPluPretare": {
+        "description": "This is prompt for product edit."
+    },
+    "gPluLimitHigh": "Limit High",
+    "@gPluLimitHigh": {
+        "description": "This is prompt for product edit."
+    },
+    "gPluLimitLow": "Limit Low",
+    "@gPluLimitLow": {
+        "description": "This is prompt for product edit."
+    },
+    "gPluField": "PLU Field",
+    "@gPluField": {
+        "description": "This is prompt for PLU field select."
+    },
+    "gTipImportPluOK": "Note: When the cell is empty, it will be written as 0 or - .",
+    "@gTipImportPluOK": {
+        "description": "This is prompt for PLU import."
+    },
+    "gTipNoData": "No data",
+    "@gTipNoData": {
+        "description": "This is prompt for no data."
+    },
+    "gTipNoDataSelected": "No data selected.",
+    "@gTipNoDataSelected": {
+        "description": "This is prompt for no data selected."
+    },
+    "gTipPluDuplicated": "Duplicated",
+    "@gTipPluDuplicated": {
+        "description": "This is prompt for plu duplicated."
+    },
+    "gTipSaveDbOk": "Save Data OK.",
+    "@gTipSaveDbOk": {
+        "description": "This is prompt for plu saved."
+    },
+    "gTipSavingData": "The data is being saved. Please wait a moment.",
+    "@gTipSavingData": {
+        "description": "This is prompt for saving data."
+    },
+    "gTipInstallService": "Install Service",
+    "@gTipInstallService": {
+        "description": "This is prompt to install service."
+    },
+    "gTipStartService": "Start Service",
+    "@gTipStartService": {
+        "description": "This is prompt to start service."
+    },
+    "gTipStopService": "Stop Service",
+    "@gTipStopService": {
+        "description": "This is prompt to stop service."
+    },
+    "gTipUninstallService": "Uninstall Service",
+    "@gTipUninstallService": {
+        "description": "This is prompt to uninstall service."
+    },
+    "gTipScaleList": "Scale List",
+    "@gTipScaleList": {
+        "description": "This is prompt for scale list."
+    },
+    "gTipService": "Service",
+    "@gTipService": {
+        "description": "This is prompt for app service."
+    },
+    "gTipServiceStatus": "Service Status:",
+    "@gTipServiceStatus": {
+        "description": "This is prompt for service status."
+    },
+    "gTipServiceUninstalled": "Service not installed",
+    "@gTipServiceUninstalled": {
+        "description": "This is prompt for service status."
+    },
+    "gTipServiceStoped": "Service Stoped",
+    "@gTipServiceStoped": {
+        "description": "This is prompt for service status."
+    },
+    "gTipServiceStarted": "Service is running",
+    "@gTipServiceStarted": {
+        "description": "This is prompt for service status."
+    },
+    "gTipServiceOff": "Service stoped,please start service.",
+    "@gTipServiceOff": {
+        "description": "This is prompt for service stoped."
+    },
+    "gBtnModify": "Modify",
+    "@gBtnModify": {
+        "description": "This button is used for modifying serial ports or performing other operations."
+    },
+    "gTipExitApp": "Are you sure to exit the system?",
+    "@gTipExitApp": {
+        "description": "This is prompt to exit the system."
+    },
+    "gBtnCloseSerialPort": "Close Port",
+    "@gBtnCloseSerialPort": {
+        "description": "This is a button to close serial port."
+    },
+    "gBtnOpenSerialPort": "Open Port",
+    "@gBtnOpenSerialPort": {
+        "description": "This is a button to open serial port."
+    },
+    "cTipWeighingCount": "Weighing Count:",
+    "@cTipWeighingCount": {
+        "description": "This is a tip for weighing count."
+    },
+    "cTipPowerOffCnt": "Abnormal Power-Off Count:",
+    "@cTipPowerOffCnt": {
+        "description": "This is a tip for abnormal power-off count."
+    },
+    "cTipRunningTime": "Running Time(mins):",
+    "@cTipRunningTime": {
+        "description": "This is a tip for running time."
+    },
+    "cTipPowerOnCnt": "Power-On Count:",
+    "@cTipPowerOnCnt": {
+        "description": "This is a tip for power-on count."
+    },
+    "cTipOlTime": "OL Time(mins):",
+    "@cTipOlTime": {
+        "description": "This is a tip for ol time."
+    },
+    "cTipUlTime": "UL Time(mins):",
+    "@cTipUlTime": {
+        "description": "This is a tip for ul time."
+    },
+    "cTipErr4Cnt": "Err4 Count:",
+    "@cTipErr4Cnt": {
+        "description": "This is a tip for err4 count."
+    },
+    "cTipErr19Cnt": "Err19 Count:",
+    "@cTipErr19Cnt": {
+        "description": "This is a tip for err19 count."
+    },
+    "cTipCalswitchCnt": "Calibration Switch Count:",
+    "@cTipCalswitchCnt": {
+        "description": "This is a tip for cal switch count."
+    },
+    "cTipCalCnt": "Calibration Count:",
+    "@cTipCalCnt": {
+        "description": "This is a tip for calibration count."
+    },
+    "iTitleHLSetting": "High/Low Setting",
+    "@iTitleHLSetting": {
+        "description": "This is the title for the upper and lower limits setting."
+    },
+    "iTipHLUnit": "The unit of weight is the same as scale..",
+    "@iTipHLUnit": {
+        "description": "This is a prompt for the unit of checking weight."
+    },    
+    "gTipHelp": "Help",
+    "@gTipHelp": {
+        "description": "This is a tip for help info."
+    },
+    "gTipScaleMgrPageHelp": "Connect via serial port\n1. Connect the scale to the PC device with a serial port cable;\n2. Enter the correct serial port information;\n3. Click [Connect];\n4. If the connection is successful,the left status bar will display Online.\n5. Click [Close Port] to disconnect the serial port connection; Click [Open Port] to open the serial port connection;\n6. If you want to change the scale name, click [Rename] to enter it and click [Confirm].\n\nConnect via Ethernet/Wi-Fi\n1. Click [+] at the top of the left status bar;\n2. Enter the IPv4 (IP Address) and Port (Port Number);\n3. Click [Confirm] to complete the connection.\n\n  (1) Get IP Address\nWi-Fi: Click [Wi-Fi Setting] on the main interface, select the Wi-Fi you want to connect to in the left column, enter the password and click [Connect]. If the connection is successful, the IP Address will be displayed.\nEthernet: After connecting the network cable, enter the scale menu to get the IP Address. (For T-Max, F3-3 COM3 SHOW.)\n  (2) Get Port Number\nWi-Fi: Enter the scale menu to get. (For T-Max, F3-2 COM2 MODE, press the TARE key three times to view the port number.)\nEthernet: Enter the scale menu to get. (For T-Max, F3-3 COM3 PORT, press the TARE key once to view the port number.)\n\nNote:\nTo use Wi-Fi connection, you need to turn on the scale's Wi-Fi function and connect the device running the software to the target Wi-Fi as well.\nTo use Ethernet connection, you need to turn on the network port function of the scale and connect the device running the software to the target Wi-Fi as well.\n",
+    "@gTipScaleMgrPageHelp": {
+        "description": "This is the help info for the multi-scale management page."
+    },
+    "gTipWifiSettingPageHelp": "1. Select the Wi-Fi you want to connect to from the left menu bar;\n2. Enter the password and click [Connect] to obtain the IP address;\n3. Return to the main interface and enter [Multi-scale Management];\n4. Click [+] at the top of the left status bar, enter the IP address and serial port number;\n5. Click [Confirm] to connect.\n",
+    "@gTipWifiSettingPageHelp": {
+        "description": "This is the help info for the wifi setting page."
+    },
+    "gTipUpdateFirmwarePageHelp": "1. Click [Select Firmware Zip] to upload the file(.zip);\n2. Click [Download];\n3. Select the way to update the firmware: Serial Port or Network(Wi-Fi, Ethernet).\n\nNote: \nUpdate via serial port , the scale will automatically restart;\nUpdate via Wi-Fi or Ethernet, the scale will not automatically restart. You need to manually restart the scale, and the firmware will update. (This method supports selecting multi-scales to update together.)\n",
+    "@gTipUpdateFirmwarePageHelp": {
+        "description": "This is the help info for the update firmware page."
+    },
+    "gTipReceiptFmtDownPageHelp": "1. Follow the prompts to select the corresponding print format for uploading;\n2. Click [Download] to download the format(.fmt);\n3. If multiple networks are connected, you need to select the corresponding network before downloading.\n",
+    "@gTipReceiptFmtDownPageHelp": {
+        "description": "This is the help info for the receipt format download page."
+    },
+    "gTipReceiptDesignPageHelp": "1. Select printer protocol, length and width of the ticket, printing direction and other information;\n2. When editing the print format, there are 4 variables to choose from in the left menu bar;\n Free Text: Text variables that can be freely inputted\n Dividing Line: A horizontal line used for segmentation (after selecting this variable twice, the content in the middle of the variable can appear repeatedly, such as the accumulated content each time)\n Variable: Variables required for weighing scales\n Price Variable: Variables required for the price computing scale\n3. After editing the format, click [Save Format] to save the print format.\n\nNote:\n The weighing scale and pricing scale cannot use the wrong variable, otherwise the printed output will be empty.\n",
+    "@gTipReceiptDesignPageHelp": {
+        "description": "This is the help info for the Receipt Design page."
+    },
+    "gTipPlueditPageHelp": "1. Create a new PLU: Click [+] to create a default data PLU.\n2. Import PLU: Click [Import] to select the data sheet, and all PLU data in the sheet will be displayed.\n3. Import PLU from the database: Click [Get Data From DB] will display all PLU data in the database.\n\nNote: \nThe PLU in the database is not the PLU on the scale, but the database in the software backend. The software currently does not have the function to read PLU information from the scale.\n4. Click the [Setting button] to select the PLU information that needs to be displayed.\n5. If you need to modify PLU information, you can directly modify it in the corresponding cell. (Hovering over a cell will display the range of parameters that can be entered.)\n6. Select the PLU to be download and click [Download].\n7. Choose to clear all PLUs on the scale before downloading, or update the corresponding PLUs, and then click [Confirm].\n8. Export in sheet format: Select the PLU to export, click [Export] and choose the folder to export.\n9. Save to backend database: Select the PLU that needs to be saved and then click [Save to DB], choose to clear all PLUs in the backend database before saving, or update the corresponding PLUs, click [Confirm].\n10. Get PLU Template: Click [Get PLU Template] and select the download path to obtain a form template that can be filled out with PLU.\n",
+    "@gTipPlueditPageHelp": {
+        "description": "This is the help info for the plu edit page."
+    },
+    "gTipVarSettingPageHelp": "1. Edit header, footer, and operator information;\n2. Click [Download] to send to the scale.\n",
+    "@gTipVarSettingPageHelp": {
+        "description": "This is the help info for the variable value setting page."
+    },
+    "gTipRetailDetailPageHelp": "1. This function interface can display the data printed after each checkout;\nIf the service is not installed, you need to click [Service] on the right and click [Install Service]; When prompted that the service has stopped, click [Start Service] and it will prompt that it is running. Finally, click [Confirm] to complete the process;\n2. After the balance is printed, the printing content of each order will be displayed on this interface, click [Refresh List] and you can get the latest records;\n3. Click [Export] and you can download the report.\n\nNote: \nThis function can be used via Ethernet / WiFi, and cannot be used via serial port.",
+    "@gTipRetailDetailPageHelp": {
+        "description": "This is the help info for the retail detail report page."
+    },
+    "gTipDeviceTimePageHelp": "1. Click [Set Date/Time].\n2. Manually set or synchronize the date and time of the PC device.\n",
+    "@gTipDeviceTimePageHelp": {
+        "description": "This is the help info for the device time setting page."
+    },
+    "gTipLabelFmtDownPageHelp": "1. Follow the prompts to select the corresponding print format for uploading;\n2. Click [Download] to download the format(.fmt);\n3. If multiple networks are connected, you need to select the corresponding network before downloading.\n",
+    "@gTipLabelFmtDownPageHelp": {
+        "description": "This is the help info for the label format download page."
+    },
+    "gTipLabelDesignPageHelp": "1. Select printer protocol, length and width of the ticket, printing direction and other information;\n2. When editing the print format, there are 4 variables to choose from in the left menu bar: Free Text, BarCode Variable, QrCode Variable, Variable;\n3. BarCode Edit: Click [BarCode Edit] and then Click [Add]; Select format information such as data type, content, length, etc; Enter the format name and click [Save]; You can select the edited barcode format from the left menu bar.\n4. Qrcode Edit: Same as Barcode.\n5. After editing the format, click [Save Format] to save the print format.\n",
+    "@gTipLabelDesignPageHelp": {
+        "description": "This is the help info for the label design page."
+    },
+    "gTipSerialDesignPageHelp": "1. The top menu bar has modes such as weighing, counting, price computing, etc, which can be edited by selecting different modes based on the connected scale;\n2. The left menu bar is for variables, which can be selected according to your needs;\n3. You can click [Open Review] to preview the output results;\n4. After editing the format, click [Download]. Once successful, use the serial port tool to test it.\n\nNote: \nThis function can only be used in serial port connection mode.\n",
+    "@gTipSerialDesignPageHelp": {
+        "description": "This is the help info for the derial output design page."
+    },
+    "gTipBasicDataPageHelp": "1. Click [Get Basic Data];\n2. T-Config will automatically collect basic data from the scale and display it synchronously on the interface.\n3. You can click the menu bar button in the upper left corner to select the device you want to switch to.",
+    "@gTipBasicDataPageHelp": {
+        "description": "This is the help info for the basic data page."
+    },
+    "gTipParameterSettingPageHelp": "1. There are 5 parameter settings: Weighing, Factory, Serial Port, Price, Other;\n2. The editable parameters can be set in Value column based on the content in Description column;\n3. After setting all parameters, click the button in the bottom right corner to submit.\n",
+    "@gTipParameterSettingPageHelp": {
+        "description": "This is the help info for the parameter setting page."
+    },
+    "gTipTakeOutPageHelp": "1. The condition is that there must be weight on the scale. Click [Start] to activate take out scale function. (Only record the decrement of the weighing value during unloading.)\n2. Click [Save] to save the current weighing record;\n3. Click [Show Reports] to display the report;\n4. Click [Setting] to set automatic saving.\n5. In [Setting], you can also set the date format and delimiter for data export;\n6. Enter the PLU number or name in the PLU Name column to call the PLU in the backend database; (The PLU here is not the PLU on the scale)\n7. Click [Report Setting] to select the information displayed for weighing data; (Currently, there are no functional variables available: Product Code, Item Code, User Name, User NO）\n8. Click the arrow in a column of the report title row will sort the report in ascending/descending order.\n9.Click [Export] to export all saved data (xlsx).\n10.Click [End] to stop the function.\n\nNote: \nThe weight in the report refers to the decrement rather than all the weight on the scale.\n",
+    "@gTipTakeOutPageHelp": {
+        "description": "This is the help info for the take out scale page."
+    },
+    "gTipIncrementWgtPageHelp": "1. Click [Start] to activate increment weighing function. (Only record the increment of the weighing value during loading.)\n2. Click [Save] to save the current weighing record;\n3. Click [Show Reports] to display the report;\n4. Click [Setting] to set automatic saving.\n5. You can also set the date format and delimiter for data export;\n6. Enter the PLU number or name in the PLU Name column to call the PLU in the backend database; (The PLU here is not the PLU on the scale)\n7. Click [Report Setting] to select the information displayed for weighing data; (Currently, there are no functional variables available: Product Code, Item Code, User Name, User NO）\n8. Click the arrow in a column of the report title row will sort the report in ascending/descending order.\n9.Click [Export] to export all saved data (xlsx).\n10.Click [End] to stop the function.\n\nNote: \nThe weight in the report refers to the increment rather than all the weight on the scale.\n",
+    "@gTipIncrementWgtPageHelp": {
+        "description": "This is the help info for the increment weighing page."
+    },
+    "gTipCheckWgtPageHelp": "1. Click [Edit] to set the upper and lower limits (the judgment is based on the upper and lower limits set in the background, not on the scale). After setting, place the weight and the corresponding alarm light will light up;\n2. Click [Save] to save the current weighing record;\n3. Click [Show Reports] to display the report;\n4. Click [Setting] to set automatic saving. (Can be set to save when OK, HIGH, LOW, ALL.)\n5. You can also set the date format and delimiter for data export;\n6. Enter the PLU number or name in the [PLU Name] column to call the PLU in the backend database; (The PLU here is not the PLU on the scale)\n7. Click [Report Setting] to select the information displayed for weighing data; (Currently, there are no functional variables available: Product Code, Item Code, User Name, User NO）\n8. Click the arrow in a column of the report title row will sort the report in ascending/descending order.\n9.Click [Export] to export all saved data (xlsx).\n\nNote:\n1. The units for the upper and lower limits are the currently selected units on the scale. After setting the upper and lower limits in the software, the values of the upper and lower limits will not undergo unit conversion when switching units through the scale.\n2. At present, the software determines the upper and lower limits from zero, while on the scale, it starts from 20d.\n",
+    "@gTipCheckWgtPageHelp": {
+        "description": "This is the help info for the check weighing page."
+    },
+    "gTipWgtDataCollectionHelp": "1. Click [Save] to manually save the current weighing data (with no quantity limit); Click [Export] to export all saved data (xlsx);\n2. Click [Setting] and select Save Mode to Auto, it can be set to auto save mode;\n3. You can also set the date format and delimiter for data export;\n4. Enter the PLU number or name in the PLU Name column to call the PLU in the backend database; (The PLU here is not the PLU on the scale)\n5. Click [Report Setting] to select the information displayed for weighing data; (Currently, there are no functional variables available: Product Code、Item Code、User Name、User NO）\n6. Click the arrow in column of the report title row will sort the report in ascending/descending order.\n\nNote: \n1. To save data, you need to clear the scale before saving the next transaction. Zero point will not be saved.\n2. The upper and lower limit variables are the upper and lower limits set in the backend PLU, not the upper and lower limits set on the scale.\n3. The saved data will not be cleared after closing/restarting the software.\n",
+    "@gTipWgtDataCollectionHelp": {
+        "description": "This is the help info for the weighing data collection page."
+    },
+    "gTipWeighingPageHelp": "1. Real time display of weighing data on the scale (supporting all units including PCS and PCT);\n2. Click [TARE] and [ZERO] allows for weighing and zeroing operations on the scale;\n3. Click the List button in the upper left corner to view the list of connected devices and make changes.\n\nNote：\n1.This function can be used by connecting to a serial port, Ethernet, or WiFi.\n2.Switching units is done on the scale.\n",
+    "@gTipWeighingPageHelp": {
+        "description": "This is the help info for the weighing page."
+    }
 }

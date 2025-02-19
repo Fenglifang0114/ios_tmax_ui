@@ -11,7 +11,7 @@ import 'encrypt_data.dart';
 const int tConfig = 1;
 const int tIndustry = 2;
 const int tRetail = 3;
-int mySystemVersion = tIndustry;
+int mySystemVersion = 2;
 const String appTConfig = "T-CONFIG";
 const String appTIndustrial = "T-Industry";
 const String appTRetail = "T-RETAIL";

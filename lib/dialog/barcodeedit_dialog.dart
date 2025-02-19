@@ -257,7 +257,7 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
             controller: _errorController,
             style: TextStyle(
                 color: (_errorController.text.contains("successfully"))
-                    ? Theme.of(context).colorScheme.surfaceContainerHigh
+                    ? Theme.of(context).colorScheme.onTertiaryFixedVariant
                     : Theme.of(context).colorScheme.error,
                 fontSize: 14,
                 fontWeight: FontWeight.bold),

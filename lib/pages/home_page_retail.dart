@@ -99,13 +99,12 @@ class _RetailHomePageState extends State<RetailHomePage>
             onNoPressed: () {
               Navigator.of(context).pop();
             },
-            onYesPressed: () {
+            onYesPressed: () async {
               Navigator.of(context).pop();
-              // await windowManager.destroy();
               dispose();
-              // await windowManager.destroy();
+              await trayManager.destroy(); //退出系统托盘
+              await windowManager.destroy();
               exit(0);
-              // windowManager.destroy();
             },
           );
         },
@@ -405,11 +404,11 @@ class _RetailHomePageState extends State<RetailHomePage>
 
   Widget firstCard() {
     return Expanded(
-        flex: 4,
+        flex: 6,
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15), // 根据实际需要设置圆角半径
-            color: Theme.of(context).colorScheme.primaryContainer,
+            color: Theme.of(context).colorScheme.tertiaryContainer,
           ),
           margin: const EdgeInsets.only(right: 20), // 根据实际需要设置容器间距
           child: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -603,7 +602,7 @@ class _RetailHomePageState extends State<RetailHomePage>
                             cursor: SystemMouseCursors.click,
                             child: customFunctionCard(
                                 context,
-                                localizedStrings.plu_edit,
+                                localizedStrings.gTitlePluEdit,
                                 Icons.import_export,
                                 true),
                           ),
@@ -684,7 +683,7 @@ class _RetailHomePageState extends State<RetailHomePage>
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
-          color: Theme.of(context).colorScheme.primaryContainer,
+          color: Theme.of(context).colorScheme.tertiaryContainer,
         ),
         child: Column(
           children: [
@@ -829,7 +828,7 @@ class _RetailHomePageState extends State<RetailHomePage>
                             myRedeLicInfo.isValid,
                             localizedStrings.gTipReceiptDesign,
                             myRedeLicInfo.liceseDate == "2299-01-01"
-                                ? 'Perpetual'
+                                ? localizedStrings.gTipPerpetual
                                 : myRedeLicInfo.liceseDate),
                       ),
                     ),

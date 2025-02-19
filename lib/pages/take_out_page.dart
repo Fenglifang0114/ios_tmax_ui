@@ -1,15 +1,9 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import '../data/comscaleinfo_data.dart';
-import '../data/const_var_data.dart';
-import '../data/downloadresponse.dart';
-import '../data/manager_scale_channel.dart';
 import '../../data/device_data.dart';
-import '../../data/productlist_data.dart';
 import '../../data/report_data.dart';
 import '../../data/reqweightdata_data.dart';
 import '../../data/settingparam_data.dart';
@@ -17,9 +11,14 @@ import '../../data/userinfo_data.dart';
 import '../../data/weight_data.dart';
 import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
+import '../data/comscaleinfo_data.dart';
+import '../data/const_var_data.dart';
+import '../data/downloadresponse.dart';
+import '../data/manager_scale_channel.dart';
 import '../data/language.dart';
 import '../data/plu_data_source.dart';
 import '../data/plu_info_list_data.dart';
+import '../data/productlist_data.dart';
 import '../data/record_data.dart';
 import '../data/scale_list_data.dart';
 import '../data/scalelist_data.dart';
@@ -27,13 +26,12 @@ import '../data/timer_manager.dart';
 import '../data/weight_report_data.dart';
 import '../data/weight_rpt.dart';
 import '../data/wgt_rpt_data_source.dart';
-import '../dialog/addproduct_dialog.dart';
-import '../dialog/adduser_dialog.dart';
 import '../dialog/conform_dialog.dart';
+import '../dialog/high_low_setting.dart';
 import '../dialog/setting_dialog.dart';
-import 'package:path/path.dart';
 import '../dialog/show_warning.dart';
 import '../dialog/weight_report_feilds_setting.dart';
+import '../functions/weight_funcs.dart';
 import '../widget/custom_button.dart';
 import '../widget/page_head.dart';
 
@@ -93,6 +91,11 @@ class TakeOutPageState extends State<TakeOutPage> {
   Timer? startTimer;
   Timer? innerTimer;
 
+  int maxRecId = 0;
+  bool firstGetRec = true;
+
+  int _currentPage = 1;
+
   dynamic eventBus1;
   dynamic eventBus2;
   dynamic eventBus3;
@@ -109,6 +112,7 @@ class TakeOutPageState extends State<TakeOutPage> {
   dynamic eventBus14;
   dynamic eventBus15;
   dynamic eventBus16;
+  dynamic eventBus17;
 
   void updateTableData(List<WeightReportData> newReportData) {
     _weightReportDataSource.updateData(newReportData);
@@ -171,10 +175,13 @@ class TakeOutPageState extends State<TakeOutPage> {
   void initState() {
     super.initState();
     initScaleList();
+    updateMyReportFeildsMap();
     _reportScrollerController = ScrollController();
     lastWeight = "*";
     dateformat = 1;
     zeroRange = 0;
+    sortColumnName = 'Id';
+    sortDirectValue = DataGridSortDirection.descending;
 
     if (myModeSettingTakeOut.recMode == msgManual) {
       weightMode = 1;
@@ -193,11 +200,14 @@ class TakeOutPageState extends State<TakeOutPage> {
 
     _isStableStatusJudge = false;
     // getProductNameList();
+
     _weightReportDatas = getWeightReportData();
-    _weightReportDataSource = WeightReportDataSource(_weightReportDatas);
+    _weightReportDataSource =
+        WeightReportDataSource(_weightReportDatas, weighingTakeOutMode);
+    _weightReportDataSource.loadPage(_currentPage);
+
     PublicFunctions.getUserList();
     PublicFunctions.getProductList();
-    PublicFunctions.getRecords(myDefScaleInfo.defScaleId!, weighingTakeOutMode);
 
     cntScaleTimerMgr.startCntScaleTimer(10);
     PublicFunctions.getWeight(myDefScaleInfo.defScaleId!);
@@ -338,6 +348,19 @@ class TakeOutPageState extends State<TakeOutPage> {
         if (weightRecordsLength != 0) {
           _addDBdataToReport();
           getWeightReportData();
+          if (firstGetRec) {
+            int maxId = int.parse(myGetScaleRecords.weightRecords![0].id!);
+            maxRecId = maxId;
+
+            // 遍历 weightRecords 列表
+            for (var record in myGetScaleRecords.weightRecords!) {
+              int currentId = int.parse(record.id!);
+              if (currentId > maxId) {
+                maxId = currentId;
+                maxRecId = maxId;
+              }
+            }
+          }
         } else {
           myWeightReportData.clear();
           updateTableData(getWeightReportData());
@@ -373,8 +396,9 @@ class TakeOutPageState extends State<TakeOutPage> {
     eventBus13 = eventBus.on<EventDeleteRec>().listen((event) {
       if (mounted) {
         setState(() {
-          PublicFunctions.getRecords(
-              myDefScaleInfo.defScaleId!, weighingTakeOutMode);
+          maxRecId = 0;
+          _weightReportDatas.clear();
+          _weightReportDataSource.updateData(_weightReportDatas);
         });
       }
     });
@@ -426,9 +450,22 @@ class TakeOutPageState extends State<TakeOutPage> {
             DefScaleInfo.getDefScaleInfo(scaleId);
             myWeightReportData.clear();
             updateTableData(getWeightReportData());
-            PublicFunctions.getRecords(
-                myDefScaleInfo.defScaleId!, weighingTakeOutMode);
+            sortColumnName = 'Id';
+            maxRecId = 0;
+            firstGetRec = true;
+            sortDirectValue = DataGridSortDirection.descending;
+            _weightReportDataSource.loadPage(_currentPage);
           });
+        }
+      }
+    });
+    eventBus17 = eventBus.on<EventRevExportRecs>().listen((event) {
+      if (mounted) {
+        myRespDataFromScale = event.obj;
+        if (myRespDataFromScale.msgBody != "") {
+          if (mounted) {
+            showConfirmationDialog(context, myRespDataFromScale.msgBody);
+          }
         }
       }
     });
@@ -514,7 +551,8 @@ class TakeOutPageState extends State<TakeOutPage> {
   void _addDBdataToReport() {
     addDBdataToReport(myWeightReportData, myModeSettingTakeOut, dateformat);
     setState(() {
-      _weightReportDataSource = WeightReportDataSource(_weightReportDatas);
+      _weightReportDataSource =
+          WeightReportDataSource(_weightReportDatas, weighingTakeOutMode);
       Future.delayed(const Duration(milliseconds: 100), () {
         _dataGridController
             .scrollToRow(_weightReportDataSource.rows.length - 0);
@@ -541,8 +579,10 @@ class TakeOutPageState extends State<TakeOutPage> {
     eventBus14.cancel();
     eventBus15.cancel();
     eventBus16.cancel();
+    eventBus17.cancel();
     cntScaleTimerMgr.stopPortOffTimer();
-
+    myGetScaleRecords.weightRecords?.clear();
+    myWeightReportData.clear();
     super.dispose();
   }
 
@@ -565,7 +605,8 @@ class TakeOutPageState extends State<TakeOutPage> {
     return Scaffold(
       appBar: AppBar(
           title: Container(
-            child: pageHeadDefScale(context, localizedStrings.gTitleTakeOut),
+            child: pageHeadDefScale(context, localizedStrings.gTitleTakeOut,
+                localizedStrings.gTipTakeOutPageHelp),
           ),
           leading: IconTheme(
               data: IconThemeData(
@@ -633,7 +674,7 @@ class TakeOutPageState extends State<TakeOutPage> {
                                 color: (errorText).contains('succeed')
                                     ? Theme.of(context)
                                         .colorScheme
-                                        .surfaceContainerHigh
+                                        .onTertiaryFixedVariant
                                     : Theme.of(context).colorScheme.error,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -1682,18 +1723,17 @@ class TakeOutPageState extends State<TakeOutPage> {
                                       initialDirectory: directory,
                                       type: FileType.custom,
                                       dialogTitle: 'Output file:',
-                                      allowedExtensions: ["xlsx"],
-                                      fileName: 'report.xlsx',
+                                      allowedExtensions: ["csv"],
+                                      fileName: 'report.csv',
                                     ));
                                     if (outputFile != null) {
-                                      if (!outputFile.contains(".xlsx")) {
-                                        outputFile = "$outputFile.xlsx";
+                                      if (!outputFile.contains(".csv")) {
+                                        outputFile = "$outputFile.csv";
                                       }
-                                      _creatFile(outputFile);
-                                      if (mounted && context.mounted) {
-                                        showConfirmationDialog(
-                                            context, errorText);
-                                      }
+                                      PublicFunctions.exportRecords(
+                                          myDefScaleInfo.defScaleId!,
+                                          weighingTakeOutMode,
+                                          outputFile);
                                     }
                                   }),
                             ],
@@ -1707,9 +1747,105 @@ class TakeOutPageState extends State<TakeOutPage> {
             ),
             const SizedBox(height: 5),
             buttonRow(context),
-            displayGrid(),
+            // displayGrid(),
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.all(10),
+                child: SfDataGrid(
+                  source: _weightReportDataSource,
+                  columns: getColumns().map((column) {
+                    return GridColumn(
+                      columnName: column.columnName,
+                      label: Container(
+                        padding: EdgeInsets.all(2),
+                        alignment: Alignment.center,
+                        child: GestureDetector(
+                          onTap: () {
+                            final currentSortDirection = _weightReportDataSource
+                                .sortDirectionForColumn(column.columnName);
+                            final newSortDirection = currentSortDirection ==
+                                    DataGridSortDirection.ascending
+                                ? DataGridSortDirection.descending
+                                : DataGridSortDirection.ascending;
+                            _weightReportDataSource.sortDataGrid(
+                              column.columnName,
+                              newSortDirection,
+                            );
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  myReportFeildsMap[column.columnName]!
+                                      .showName,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              _getSortIconForColumn(column.columnName),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  columnWidthMode: ColumnWidthMode.fill,
+                  frozenRowsCount: 0,
+                  // controller: null,
+                  allowSorting: false,
+                ),
+              ),
+            ),
+
+            // 分页控件
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: _currentPage > 1
+                      ? () {
+                          setState(() {
+                            _currentPage--;
+                            _weightReportDataSource.loadPage(_currentPage);
+                          });
+                        }
+                      : null,
+                ),
+                Text('Page $_currentPage'),
+                IconButton(
+                  icon: Icon(Icons.arrow_forward),
+                  onPressed: () {
+                    setState(() {
+                      _currentPage++;
+                      _weightReportDataSource.loadPage(_currentPage);
+                    });
+                  },
+                ),
+              ],
+            ),
           ],
         ));
+  }
+
+  Widget _getSortIconForColumn(String columnName) {
+    if (!_weightReportDataSource.isColumnSorted(columnName)) {
+      return SizedBox.shrink();
+    }
+    final sortDirection =
+        _weightReportDataSource.sortDirectionForColumn(columnName);
+    switch (sortDirection) {
+      case DataGridSortDirection.ascending:
+        return Icon(
+          Icons.arrow_upward,
+          size: 18,
+        );
+      case DataGridSortDirection.descending:
+        return Icon(
+          Icons.arrow_downward,
+          size: 18,
+        );
+    }
   }
 
   bool checkStartButton() {
@@ -1967,20 +2103,21 @@ class TakeOutPageState extends State<TakeOutPage> {
     }
   }
 
-  _creatFile(String path) {
-    Excel excel = Excel.createExcel();
-    creatExcelFile(path, myWeightReportData, excel);
+  // _creatFile(String path) async {
+  //   Excel excel = Excel.createExcel();
+  //   // await creatExcelFile(path, myWeightReportData, excel);
+  //   await creatCsvFile(path, myWeightReportData);
 
-    try {
-      var onValue = excel.encode();
-      File(join(path))
-        ..createSync(recursive: true)
-        ..writeAsBytesSync(onValue!);
-      errorText = "Excel save succeed!";
-    } catch (ex) {
-      errorText = "Excel save fail!";
-    }
-  }
+  //   try {
+  //     var onValue = excel.encode();
+  //     File(join(path))
+  //       ..createSync(recursive: true)
+  //       ..writeAsBytesSync(onValue!);
+  //     errorText = "Excel save succeed!";
+  //   } catch (ex) {
+  //     errorText = "Excel save fail!";
+  //   }
+  // }
 
 // "ReqData":"{\"ScaleId\": 2, \"Product\": \"Apple\", \"Weight\": \"1.230\", \"Price\": \"3.25\"}"}
   void sendReportDataToDB() {
@@ -2101,8 +2238,9 @@ class TakeOutPageState extends State<TakeOutPage> {
     if (selectedPluData != null) {
       tempPlu = selectedPluData;
     }
+    maxRecId++;
     WeightReportData addData = WeightReportData(
-      (myWeightReportData.length + 1).toString(),
+      (maxRecId).toString(),
       myDefScaleInfo.defScaleModel == null ? '' : myDefScaleInfo.defScaleModel!,
       myDefScaleInfo.defScaleSn == null ? '' : myDefScaleInfo.defScaleSn!,
       (tempPlu!.plu == null) ? "" : tempPlu.plu.toString(),
@@ -2157,12 +2295,14 @@ class TakeOutPageState extends State<TakeOutPage> {
 
     setState(() {
       String sortColName = 'Date Time';
+      sortColumnName = "";
       DataGridSortDirection sortDirec = DataGridSortDirection.descending;
       if (_weightReportDataSource.sortedColumns.isNotEmpty) {
         sortColName = _weightReportDataSource.sortedColumns[0].name;
         sortDirec = _weightReportDataSource.sortedColumns[0].sortDirection;
       }
-      _weightReportDataSource = WeightReportDataSource(_weightReportDatas);
+      _weightReportDataSource =
+          WeightReportDataSource(_weightReportDatas, weighingTakeOutMode);
       _weightReportDataSource.sortedColumns
           .add(SortColumnDetails(name: sortColName, sortDirection: sortDirec));
       Future.delayed(const Duration(milliseconds: 100), () {

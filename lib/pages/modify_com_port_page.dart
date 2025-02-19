@@ -245,7 +245,7 @@
 //                       color: (serialPortConnect.contains('fail') ||
 //                               serialPortConnect.contains('Unable'))
 //                           ? Theme.of(context).colorScheme.error
-//                           : Theme.of(context).colorScheme.surfaceContainerHigh),
+//                           : Theme.of(context).colorScheme.onTertiaryFixedVariant),
 //                 )
 //               ],
 //             )

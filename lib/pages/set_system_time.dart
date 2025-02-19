@@ -57,7 +57,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                       fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
               duration: const Duration(seconds: 3),
               backgroundColor: (myRespDataFromScale.msgBody.contains('ok'))
-                  ? Theme.of(context).colorScheme.surfaceContainerHigh
+                  ? Theme.of(context).colorScheme.onTertiaryFixedVariant
                   : Theme.of(context).colorScheme.error));
         }
       }
@@ -167,7 +167,8 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
           children: [
             pageHeadDefScale(
               context,
-              localizedStrings.device_time_title,
+              localizedStrings.cTitleDeviceTime,
+              localizedStrings.gTipDeviceTimePageHelp,
             ),
             const SizedBox(height: 5),
             Expanded(
@@ -176,20 +177,8 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                 color: Theme.of(context).colorScheme.surfaceTint,
                 child: Column(
                   children: [
-                    const Row(
-                      children: [
-                        SizedBox(
-                          width: 20,
-                        ),
-                        SizedBox(
-                          width: 400,
-                          child: Text(
-                            'Device time:',
-                            style: TextStyle(
-                                fontSize: 18, overflow: TextOverflow.ellipsis),
-                          ),
-                        ),
-                      ],
+                    SizedBox(
+                      height: 20,
                     ),
                     Container(
                         height: 50,
@@ -201,7 +190,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                               width: 20,
                             ),
                             SizedBox(
-                              width: 300,
+                              width: 400,
                               child: Text.rich(
                                 TextSpan(
                                     text:
@@ -229,7 +218,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                                     timestamp.toString(),
                                     myDefScaleInfo.defScaleId!);
                               },
-                              child: btnStyle('Sync PC Time'),
+                              child: btnStyle(localizedStrings.cBtnSyncPcTime),
                             ),
                           ],
                         )),
@@ -256,7 +245,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                                       manualTimeCtl.text = formattedDateTime;
                                     });
                                   },
-                                  child: btnStyle('Set Date/Time'),
+                                  child: btnStyle(localizedStrings.cBtnSetTime),
                                 ),
                               ],
                             ),
@@ -274,7 +263,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                                 width: 20,
                               ),
                               SizedBox(
-                                width: 300,
+                                width: 400,
                                 child: TextField(
                                   controller: manualTimeCtl,
                                   readOnly: true,
@@ -298,7 +287,8 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                                         timestamp.toString(),
                                         myDefScaleInfo.defScaleId!);
                                   },
-                                  child: btnStyle('Sync Time')),
+                                  child:
+                                      btnStyle(localizedStrings.cBtnSyncTime)),
                             ],
                           )
                         : const SizedBox(),
@@ -338,7 +328,9 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                                   }
                                 },
                                 child: SizedBox(
-                                    width: 200, child: btnStyle('Select Date')),
+                                    width: 200,
+                                    child: btnStyle(
+                                        localizedStrings.cBtnSelectDate)),
                               ),
                               const SizedBox(
                                 width: 20,
@@ -372,7 +364,8 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                                       manualTimeCtl.text = formattedTime;
                                     }
                                   },
-                                  child: btnStyle('Select Time')),
+                                  child: btnStyle(
+                                      localizedStrings.cBtnSelectTime)),
                               const SizedBox(
                                 width: 20,
                               ),

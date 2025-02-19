@@ -45,10 +45,11 @@ class SelectScalesPageState extends State<SelectScalesPage> {
   dynamic _eventbus6;
   dynamic _eventbus7;
   dynamic _eventbus8;
+  dynamic _eventbus9;
 
-  List<bool> checkboxStates = [];
+  // List<bool> checkboxStates = [];
+  Map<int, bool> checkboxStatesMap = {};
   List<NetScaleInfoLocal> scaleNetItems = [];
-  int scaleNum = 0;
   Map<int, ScaleDownRes> scaleResMap = {};
   Map<int, Timer?> scaleTimerMap = {};
 
@@ -60,13 +61,11 @@ class SelectScalesPageState extends State<SelectScalesPage> {
   void initState() {
     super.initState();
 
-    scaleNum = (myNetScaleList.length);
-    if (scaleNum > 0) {
-      checkboxStates = List.filled(scaleNum, false);
-    }
-
     _deviceNameController.text = '';
     scaleNetItems = myNetScaleList;
+    for (var item in scaleNetItems) {
+      checkboxStatesMap[item.scaleId!] = false;
+    }
     _eventbus1 = eventBus.on<EventDownPrnFmtResp>().listen((event) {
       if (mounted) {
         setState(() {
@@ -178,6 +177,11 @@ class SelectScalesPageState extends State<SelectScalesPage> {
         });
       }
     });
+    _eventbus9 = eventBus.on<EventRespScaleOnline>().listen((event) {
+      if (mounted) {
+        setState(() {});
+      }
+    });
   }
 
 //根据收到的结果处理
@@ -203,6 +207,7 @@ class SelectScalesPageState extends State<SelectScalesPage> {
     _eventbus6.cancel();
     _eventbus7.cancel();
     _eventbus8.cancel();
+    _eventbus9.cancel();
     if (scaleTimerMap.isNotEmpty) {
       scaleTimerMap.forEach((int key, Timer? timer) {
         timer!.cancel();
@@ -235,7 +240,9 @@ class SelectScalesPageState extends State<SelectScalesPage> {
               Expanded(
                 child: SingleChildScrollView(
                   scrollDirection: Axis.vertical,
-                  child: buildNetScaleInfo(),
+                  child: scaleNetItems.isNotEmpty
+                      ? buildNetScaleInfo()
+                      : SizedBox(),
                 ),
               ),
             ],
@@ -293,20 +300,21 @@ class SelectScalesPageState extends State<SelectScalesPage> {
       headingTextStyle: TextStyle(
           fontWeight: FontWeight.bold,
           color: Theme.of(context).colorScheme.onSurface),
-      columns: const [
-        DataColumn(label: Text('Select')),
-        // DataColumn(label: Text('Status')),
+      columns: [
+        DataColumn(label: Text('')),
+        DataColumn(label: Text(localizedStrings.gStatus)),
+        DataColumn(label: Text(localizedStrings.gScaleName)),
         DataColumn(
             label: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Text('ModelName'),
+            Text(localizedStrings.gModelName),
             Text('Sn'),
           ],
         )),
         DataColumn(label: Text('COM')),
-        DataColumn(label: Text('Progress')),
-        DataColumn(label: Text('Result')),
+        DataColumn(label: Text(localizedStrings.gProgress)),
+        DataColumn(label: Text(localizedStrings.gTipResult)),
       ],
       rows: List.generate(
         1,
@@ -321,48 +329,63 @@ class SelectScalesPageState extends State<SelectScalesPage> {
                       setState(() {
                         isSelectCom = value!;
                         scaleResMap.clear();
-                        if (scaleNum > 0 && isSelectCom) {
-                          checkboxStates = List.filled(scaleNum, false);
+                        if (checkboxStatesMap.isNotEmpty && isSelectCom) {
+                          for (var item in scaleNetItems) {
+                            checkboxStatesMap[item.scaleId!] = false;
+                          }
                         }
                       });
                     },
             )),
-            // DataCell(
-            //   SizedBox(
-            //     width: 50,
-            //     child: Text('online',
-            //         maxLines: 2,
-            //         style: TextStyle(
-            //             color: getResTextColor(comScale.scaleId),
-            //             overflow: TextOverflow.ellipsis)),
-            //   ),
-            // ),
+            DataCell(
+              SizedBox(
+                width: 50,
+                child: Text(
+                    comScale.isOnline
+                        ? localizedStrings.gOnlineTip
+                        : localizedStrings.gOfflineTip,
+                    maxLines: 2,
+                    style: TextStyle(
+                        color: getResTextColor(comScale.scaleId),
+                        overflow: TextOverflow.ellipsis)),
+              ),
+            ),
+            DataCell(
+              SizedBox(
+                width: 150,
+                child: Text(comScale.scaleName,
+                    maxLines: 2,
+                    style: TextStyle(
+                        color: getResTextColor(comScale.scaleId),
+                        overflow: TextOverflow.ellipsis)),
+              ),
+            ),
             DataCell(Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  buildDataCellInfo(150, comScale.scaleModel,
+                  buildDataCellInfo(120, comScale.scaleModel,
                       getResTextColor(comScale.scaleId)),
                   buildDataCellInfo(
-                      150, comScale.scaleSn, getResTextColor(comScale.scaleId)),
+                      120, comScale.scaleSn, getResTextColor(comScale.scaleId)),
                 ])),
             DataCell(
               Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    buildDataCellInfo(150, comScale.portName,
+                    buildDataCellInfo(100, comScale.portName,
                         getResTextColor(comScale.scaleId)),
-                    buildDataCellInfo(150, comScale.baudRate.toString(),
+                    buildDataCellInfo(100, comScale.baudRate.toString(),
                         getResTextColor(comScale.scaleId))
                   ]),
             ),
             DataCell(
               SizedBox(
-                width: 150,
+                width: 80,
                 child: buildProgess(comScale.scaleId),
               ),
             ),
             DataCell(
-              buildDataCellInfo(300, getResStr(comScale.scaleId),
+              buildDataCellInfo(400, getResStr(comScale.scaleId),
                   getResTextColor(comScale.scaleId)),
             ),
           ],
@@ -385,54 +408,69 @@ class SelectScalesPageState extends State<SelectScalesPage> {
       headingTextStyle: TextStyle(
           fontWeight: FontWeight.bold,
           color: Theme.of(context).colorScheme.onSurface),
-      columns: const [
-        DataColumn(label: Text('Select')),
-        // DataColumn(label: Text('Status')),
+      columns: [
+        DataColumn(label: Text('')),
+        DataColumn(label: Text(localizedStrings.gStatus)),
+        DataColumn(label: Text(localizedStrings.gScaleName)),
         DataColumn(
             label: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Text('ModelName'),
+            Text(localizedStrings.gModelName),
             Text('Sn'),
           ],
         )),
         DataColumn(label: Text('Ip')),
-        DataColumn(label: Text('Progress')),
-        DataColumn(label: Text('Result')),
+        DataColumn(label: Text(localizedStrings.gProgress)),
+        DataColumn(label: Text(localizedStrings.gTipResult)),
       ],
       rows: List.generate(
-        scaleNum,
+        scaleNetItems.length,
         (index) => DataRow(
           color: WidgetStateProperty.all(
               getResBackColor(scaleNetItems[index].scaleId!)),
           cells: [
             DataCell(Checkbox(
-              value: checkboxStates[index],
+              value: checkboxStatesMap[scaleNetItems[index].scaleId!],
               onChanged: isDownloading
                   ? null
                   : (value) {
                       setState(() {
-                        checkboxStates[index] = value!;
+                        checkboxStatesMap[scaleNetItems[index].scaleId!] =
+                            value!;
                         isSelectCom = false;
                         scaleResMap.clear();
                       });
                     },
             )),
-            // DataCell(
-            //   SizedBox(
-            //     width: 50,
-            //     child: Text('online',
-            //         maxLines: 2,
-            //         style: TextStyle(
-            //             color: getResTextColor(scaleNetItems[index].scaleId!),
-            //             overflow: TextOverflow.ellipsis)),
-            //   ),
-            // ),
+            DataCell(
+              SizedBox(
+                width: 50,
+                child: Text(
+                    scaleNetItems[index].isOnline!
+                        ? localizedStrings.gOnlineTip
+                        : localizedStrings.gOfflineTip,
+                    maxLines: 2,
+                    style: TextStyle(
+                        color: getResTextColor(scaleNetItems[index].scaleId!),
+                        overflow: TextOverflow.ellipsis)),
+              ),
+            ),
+            DataCell(
+              SizedBox(
+                width: 150,
+                child: Text(scaleNetItems[index].scaleName!,
+                    maxLines: 2,
+                    style: TextStyle(
+                        color: getResTextColor(scaleNetItems[index].scaleId!),
+                        overflow: TextOverflow.ellipsis)),
+              ),
+            ),
             DataCell(Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   SizedBox(
-                      width: 150,
+                      width: 120,
                       child: Text(
                           scaleNetItems[index].scaleModel! == "TMax"
                               ? ""
@@ -441,7 +479,7 @@ class SelectScalesPageState extends State<SelectScalesPage> {
                               color: getResTextColor(
                                   scaleNetItems[index].scaleId!)))),
                   SizedBox(
-                      width: 150,
+                      width: 120,
                       child: Text(
                           scaleNetItems[index].scaleModel! == "TMax"
                               ? ""
@@ -455,13 +493,13 @@ class SelectScalesPageState extends State<SelectScalesPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     SizedBox(
-                        width: 150,
+                        width: 100,
                         child: Text(scaleNetItems[index].ip!,
                             style: TextStyle(
                                 color: getResTextColor(
                                     scaleNetItems[index].scaleId!)))),
                     SizedBox(
-                        width: 150,
+                        width: 100,
                         child: Text(scaleNetItems[index].port!.toString(),
                             style: TextStyle(
                                 color: getResTextColor(
@@ -470,13 +508,13 @@ class SelectScalesPageState extends State<SelectScalesPage> {
             ),
             DataCell(
               SizedBox(
-                width: 150,
+                width: 80,
                 child: buildProgess(scaleNetItems[index].scaleId!),
               ),
             ),
             DataCell(
               SizedBox(
-                width: 300,
+                width: 400,
                 child: Text(getResStr(scaleNetItems[index].scaleId!),
                     maxLines: 2,
                     style: TextStyle(
@@ -502,7 +540,7 @@ class SelectScalesPageState extends State<SelectScalesPage> {
 //根据结果显示整个行的颜色
   Color getResBackColor(int id) {
     return getResStr(id).contains('ok')
-        ? Theme.of(context).colorScheme.surfaceContainerHigh
+        ? Theme.of(context).colorScheme.onTertiaryFixedVariant
         : Theme.of(context).colorScheme.surfaceTint;
   }
 
@@ -569,16 +607,17 @@ class SelectScalesPageState extends State<SelectScalesPage> {
       scaleResMap[id] = newMap;
       return true;
     }
-    if (checkboxStates.isEmpty) {
+    if (checkboxStatesMap.isEmpty) {
       return false;
     }
-    for (int i = 0; i < checkboxStates.length; i++) {
-      if (checkboxStates[i]) {
-        int id = scaleNetItems[i].scaleId!;
+
+    checkboxStatesMap.forEach((scaleId, selected) {
+      if (selected) {
+        int id = scaleId;
         ScaleDownRes newMap = ScaleDownRes(id, '', 0.0);
         scaleResMap[id] = newMap;
       }
-    }
+    });
     if (scaleResMap.isEmpty) {
       return false;
     }

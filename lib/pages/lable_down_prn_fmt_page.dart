@@ -77,6 +77,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
               context,
               localizedStrings.gTitleLabelFmtDownload,
               [myDefScaleInfo.defScaleId!],
+              localizedStrings.gTipLabelFmtDownPageHelp,
             ),
           ),
         ),
@@ -399,7 +400,8 @@ class _DownloadPageState extends State<DownloadLabelPage> {
               style: const TextStyle(
                   fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
           duration: const Duration(seconds: 3),
-          backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh));
+          backgroundColor:
+              Theme.of(context).colorScheme.onTertiaryFixedVariant));
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('fail$e',

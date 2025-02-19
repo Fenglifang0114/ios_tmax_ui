@@ -74,7 +74,7 @@ class BasicDataPageState extends State<BasicDataPage> {
                           fontWeight: FontWeight.normal)), ////此处需要秤回复
                   duration: const Duration(seconds: 3),
                   backgroundColor:
-                      Theme.of(context).colorScheme.surfaceContainerHigh));
+                      Theme.of(context).colorScheme.onTertiaryFixedVariant));
             } catch (e) {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text(jsonString,
@@ -118,8 +118,10 @@ class BasicDataPageState extends State<BasicDataPage> {
     return Scaffold(
       appBar: AppBar(
           title: Container(
-            child:
-                pageHeadDefScale(context, localizedStrings.abnormal_data_title),
+            child: pageHeadDefScale(
+                context,
+                localizedStrings.abnormal_data_title,
+                localizedStrings.gTipBasicDataPageHelp),
           ),
           leading: IconTheme(
               data: IconThemeData(
@@ -187,12 +189,16 @@ class BasicDataPageState extends State<BasicDataPage> {
                       children: [
                         SizedBox(
                           width: width / 3,
-                          child: customCard(context, 'Power-On Count:',
+                          child: customCard(
+                              context,
+                              localizedStrings.cTipPowerOnCnt,
                               myBasicErrInfo.powerOnCnt.toString()),
                         ),
                         SizedBox(
                           width: width / 3,
-                          child: customCard(context, 'Running Time(mins):',
+                          child: customCard(
+                              context,
+                              localizedStrings.cTipRunningTime,
                               myBasicErrInfo.runningTime.toString()),
                         ),
                       ],
@@ -204,12 +210,14 @@ class BasicDataPageState extends State<BasicDataPage> {
                           width: width / 3,
                           child: customCard(
                               context,
-                              'Abnormal Power-Off Count:',
+                              localizedStrings.cTipPowerOffCnt,
                               myBasicErrInfo.forcedShutdownCnt.toString()),
                         ),
                         SizedBox(
                           width: width / 3,
-                          child: customCard(context, 'Weighing Count:',
+                          child: customCard(
+                              context,
+                              localizedStrings.cTipWeighingCount,
                               myBasicErrInfo.wgtCnt.toString()),
                         ),
                       ],
@@ -219,12 +227,16 @@ class BasicDataPageState extends State<BasicDataPage> {
                       children: [
                         SizedBox(
                           width: width / 3,
-                          child: customCard(context, 'OL Time(mins):',
+                          child: customCard(
+                              context,
+                              localizedStrings.cTipOlTime,
                               myBasicErrInfo.olTime.toString()),
                         ),
                         SizedBox(
                           width: width / 3,
-                          child: customCard(context, 'UL Time(mins):',
+                          child: customCard(
+                              context,
+                              localizedStrings.cTipUlTime,
                               myBasicErrInfo.ulTime.toString()),
                         ),
                       ],
@@ -234,12 +246,16 @@ class BasicDataPageState extends State<BasicDataPage> {
                       children: [
                         SizedBox(
                           width: width / 3,
-                          child: customCard(context, 'Err4 Count:',
+                          child: customCard(
+                              context,
+                              localizedStrings.cTipErr4Cnt,
                               myBasicErrInfo.err4Cnt.toString()),
                         ),
                         SizedBox(
                           width: width / 3,
-                          child: customCard(context, 'Err19 Count:',
+                          child: customCard(
+                              context,
+                              localizedStrings.cTipErr19Cnt,
                               myBasicErrInfo.err19Cnt.toString()),
                         ),
                       ],
@@ -251,12 +267,14 @@ class BasicDataPageState extends State<BasicDataPage> {
                           width: width / 3,
                           child: customCard(
                               context,
-                              'Calibration Switch Count:',
+                              localizedStrings.cTipCalswitchCnt,
                               myBasicErrInfo.calSwitchCnt.toString()),
                         ),
                         SizedBox(
                           width: width / 3,
-                          child: customCard(context, 'Calibration Count:',
+                          child: customCard(
+                              context,
+                              localizedStrings.cTipCalCnt,
                               myBasicErrInfo.caliCnt.toString()),
                         ),
                       ],

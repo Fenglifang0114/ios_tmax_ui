@@ -87,8 +87,11 @@ class _UpdateFirmwarePageState extends State<UpdateFirmwarePage> {
     return Scaffold(
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(50),
-          child: pageHeadDesign(context, localizedStrings.gTitleUpdateFirmware,
-              [myDefScaleInfo.defScaleId!]),
+          child: pageHeadDesign(
+              context,
+              localizedStrings.gTitleUpdateFirmware,
+              [myDefScaleInfo.defScaleId!],
+              localizedStrings.gTipUpdateFirmwarePageHelp),
         ),
         body: Container(
           color: Theme.of(context).colorScheme.surfaceTint,
@@ -188,7 +191,9 @@ class _UpdateFirmwarePageState extends State<UpdateFirmwarePage> {
                         color: (_errMsgSerial.contains('ok') ||
                                 _errMsgSerial.contains('OK') ||
                                 _errMsgSerial.contains('started'))
-                            ? Theme.of(context).colorScheme.surfaceContainerHigh
+                            ? Theme.of(context)
+                                .colorScheme
+                                .onTertiaryFixedVariant
                             : Theme.of(context).colorScheme.error),
                   ),
                   const SizedBox(

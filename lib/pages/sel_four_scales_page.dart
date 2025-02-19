@@ -438,7 +438,7 @@ class SltFourScalesPageState extends State<SltFourScalesPage> {
 
   Color getResBackColor(int id) {
     return getResStr(id).contains('ok')
-        ? Theme.of(context).colorScheme.surfaceContainerHigh
+        ? Theme.of(context).colorScheme.onTertiaryFixedVariant
         : Theme.of(context).colorScheme.surfaceTint;
   }
 

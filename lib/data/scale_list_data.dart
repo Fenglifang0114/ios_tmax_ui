@@ -70,7 +70,7 @@ Widget showComScale(BuildContext context, int selScaleId) {
                 fontSize: 14,
                 overflow: TextOverflow.ellipsis,
                 color: myComScaleInfo.isOnline
-                    ? Theme.of(context).colorScheme.surfaceContainerHigh
+                    ? Theme.of(context).colorScheme.onTertiaryFixedVariant
                     : Theme.of(context).colorScheme.error,
               ),
             )),
@@ -143,7 +143,7 @@ Widget showNetScaleList(List<NetScaleInfoLocal> scaleNetItems, int selScaleId) {
                           color: scaleNetItems[index].isOnline!
                               ? Theme.of(context)
                                   .colorScheme
-                                  .surfaceContainerHigh
+                                  .onTertiaryFixedVariant
                               : Theme.of(context).colorScheme.error,
                         ),
                       ),

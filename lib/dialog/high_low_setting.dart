@@ -38,7 +38,7 @@ class HighLowSettingDialogState extends State<HighLowSettingDialog> {
           child: Row(
             children: [
               Icon(Icons.edit, color: Theme.of(context).colorScheme.onPrimary),
-              Text('High/Low Setting',
+              Text(localizedStrings.iTitleHLSetting,
                   style:
                       TextStyle(color: Theme.of(context).colorScheme.onPrimary))
             ],
@@ -142,7 +142,7 @@ class HighLowSettingDialogState extends State<HighLowSettingDialog> {
                       const SizedBox(
                         height: 20,
                       ),
-                      Text('The unit of weight is the same as scale..',
+                      Text(localizedStrings.iTipHLUnit,
                           textAlign: TextAlign.right),
                       const SizedBox(
                         height: 30,

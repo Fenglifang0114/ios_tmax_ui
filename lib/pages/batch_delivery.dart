@@ -526,6 +526,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
           child: pageHeadDefScale(
             context,
             'Batch Delivery',
+            '',
           ),
         ),
       ),

@@ -361,7 +361,7 @@ class _PT566PageState extends State<PT566Page> {
                           fontWeight: FontWeight.bold)), ////此处需要秤回复
                   duration: const Duration(seconds: 3),
                   backgroundColor: (myRespDataFromScale.msgBody.contains('ok'))
-                      ? Theme.of(context).colorScheme.surfaceContainerHigh
+                      ? Theme.of(context).colorScheme.onTertiaryFixedVariant
                       : Theme.of(context).colorScheme.error));
             });
           }
@@ -857,7 +857,7 @@ class _PT566PageState extends State<PT566Page> {
                         : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: downloadStatus
-                          ? Theme.of(context).colorScheme.surfaceContainerHigh
+                          ? Theme.of(context).colorScheme.onTertiaryFixedVariant
                           : Theme.of(context).colorScheme.onPrimary, // 设置按钮的背景色
                       elevation: 10, // 设置按钮的阴影
                       shape: RoundedRectangleBorder(

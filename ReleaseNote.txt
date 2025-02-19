@@ -1,3 +1,28 @@
+
+Title:SoftWare For T-Max
+Version: V1.45
+Author: FLF
+Date: 2025-02-19
+Verify Platform: Windows
+Fixed Issues:
+1.T-industry 数据记录显示、导出，优化。
+2.停止串口服务停止BUG修复；
+3.T-industry 增加翻译字段；
+4.检重的上下限，有商品的时候根据商品变化，没有商品需手动设置。
+
+---------------------------------------------------------------------------------------
+Title:SoftWare For T-Max
+Version: V1.44
+Author: FLF
+Date: 2025-01-20
+Verify Platform: Windows
+Fixed Issues:
+1.retail 按照业务需求将首页调整一下；
+2.翻译调整，补充翻译
+3.增加说明页面；
+4.0重量不保存；
+5.打包优化；
+---------------------------------------------------------------------------------------
 Title:SoftWare For T-Max
 Version: V1.43
 Author: FLF

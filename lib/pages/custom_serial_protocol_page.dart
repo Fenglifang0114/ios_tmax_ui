@@ -140,7 +140,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                         fontWeight: FontWeight.normal)), ////此处需要秤回复
                 duration: const Duration(seconds: 3),
                 backgroundColor: (myRespDataFromScale.msgBody.contains('ok'))
-                    ? Theme.of(context).colorScheme.surfaceContainerHigh
+                    ? Theme.of(context).colorScheme.onTertiaryFixedVariant
                     : Theme.of(context).colorScheme.error));
           }
         });
@@ -283,7 +283,8 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
           height: 50,
           width: screenSize.width - 10,
           color: colorScheme.primary,
-          child: pageHeadDefScale(context, localizedStrings.gTitleSerialOutput),
+          child: pageHeadDefScale(context, localizedStrings.gTitleSerialOutput,
+              localizedStrings.gTipSerialDesignPageHelp),
         ),
       ),
       body: Row(
@@ -664,7 +665,8 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
           content: const Text(('There are no files to save.'),
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal)),
           duration: const Duration(seconds: 3),
-          backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh));
+          backgroundColor:
+              Theme.of(context).colorScheme.onTertiaryFixedVariant));
     }
 
     for (var file in files) {
@@ -713,7 +715,8 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
               style: const TextStyle(
                   fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
           duration: const Duration(seconds: 3),
-          backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh));
+          backgroundColor:
+              Theme.of(context).colorScheme.onTertiaryFixedVariant));
     }
   }
 
@@ -994,7 +997,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     return [
       Container(
         height: 40,
-        color: colorScheme.primaryContainer,
+        color: colorScheme.tertiaryContainer,
         child: Center(
           child: Text(
             'Enter Property',
@@ -1178,7 +1181,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     return [
       Container(
         height: 40,
-        color: colorScheme.primaryContainer,
+        color: colorScheme.tertiaryContainer,
         child: Center(
           child: Text(
             'Text Property',
@@ -1234,7 +1237,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     return [
       Container(
         height: 40,
-        color: colorScheme.primaryContainer,
+        color: colorScheme.tertiaryContainer,
         child: Center(
           child: Text(
             'Text Hex Property',
@@ -1297,7 +1300,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     return [
       Container(
         height: 40,
-        color: colorScheme.primaryContainer,
+        color: colorScheme.tertiaryContainer,
         child: Center(
           child: Text(
             'String Property',
@@ -1468,7 +1471,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     return [
       Container(
         height: 40,
-        color: colorScheme.primaryContainer,
+        color: colorScheme.tertiaryContainer,
         child: Center(
           child: Text(
             'Float Property',
@@ -1549,7 +1552,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     return [
       Container(
         height: 40,
-        color: colorScheme.primaryContainer,
+        color: colorScheme.tertiaryContainer,
         child: Center(
           child: Text(
             'Integer Property',

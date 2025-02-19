@@ -9,20 +9,21 @@ themeColor(Map<String, dynamic> colorTheme) {
         tertiary: Color(int.parse(colorTheme['tertiary'])),
         surfaceTint: Color(int.parse(colorTheme['background'])), //主要的背景色
         error: Color(int.parse(colorTheme['error'])),
-        surfaceContainerHigh:Color(int.parse(colorTheme['success'])),
+        onTertiaryFixedVariant: Color(int.parse(colorTheme['success'])),
         outline: const Color.fromARGB(255, 191, 191, 191),
         surfaceBright: const Color.fromARGB(255, 239, 243, 246),
-        surface:Color(int.parse(colorTheme['background'])),  //0xFFEFF3F6
+        surface: Color(int.parse(colorTheme['background'])), //0xFFEFF3F6
         brightness: Brightness.light,
-        
-     
+        surfaceContainerHigh: Colors.white,
         onError: Colors.white,
         onPrimary: Colors.white, //字体颜色
         onSecondary: Colors.white,
         onSurface: Colors.black,
         secondaryFixed: const Color.fromARGB(255, 191, 191, 191), //0xFFBFBFBFF
         onTertiary: Colors.white,
-        primaryContainer: const Color.fromARGB(255, 251, 253, 248), //0xFFF8F9FD
+        tertiaryContainer:
+            const Color.fromARGB(255, 251, 253, 248), //0xFFF8F9FD
+        primaryContainer: Color(int.parse(colorTheme['primary'])), //0xFFF8F9FD
         scrim: const Color.fromARGB(255, 204, 224, 239), //0xCCE0EF
         shadow: const Color.fromARGB(255, 115, 238, 207), //0xFF73EECF
         // surfaceTint: Colors.white, //主要的背景色

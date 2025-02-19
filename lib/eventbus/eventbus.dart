@@ -507,6 +507,11 @@ class EventRevDetailTail {
   EventRevDetailTail(this.obj);
 }
 
+class EventRevExportRecs {
+  dynamic obj;
+  EventRevExportRecs(this.obj);
+}
+
 class EventDeleteRec {
   dynamic obj;
   EventDeleteRec(this.obj);

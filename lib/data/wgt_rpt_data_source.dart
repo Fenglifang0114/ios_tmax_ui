@@ -1,39 +1,70 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import 'weight_report_data.dart';
-import 'weight_rpt.dart';
+import 'package:t_max/data/manager_scale_channel.dart';
+import 'package:t_max/data/weight_report_data.dart';
+import 'package:t_max/data/weight_rpt.dart';
+import 'package:t_max/functions/methods.dart';
 
-//工业中报表的源  共用
+String sortColumnName = 'Id';
+DataGridSortDirection sortDirectValue = DataGridSortDirection.descending;
+
 class WeightReportDataSource extends DataGridSource {
-  List<WeightReportData> weightReportData;
-  WeightReportDataSource(this.weightReportData) {
+  List<WeightReportData> weightReportData = [];
+  final String wgtMode;
+  WeightReportDataSource(this.weightReportData, this.wgtMode) {
     buildDataGridRow();
-  }
-  void updateData(List<WeightReportData> newReportData) {
-    weightReportData = newReportData;
-    buildDataGridRow();
-    notifyListeners();
   }
 
-  void sortData(String columnName) {
-    weightReportData.sort((WeightReportData a, WeightReportData b) {
-      if (columnName == 'Date Time') {
-        return a.createdAt.compareTo(b.createdAt);
-      }
-      // 如果有其他需要比较的字段，请在这里添加适当的逻辑
-      return 0;
-    });
+  int _page = 1;
+  final int _pageSize = 100; // 每页 100 条数据
+  bool _isLoading = false;
+
+  void loadPage(int page) {
+    if (_isLoading) return;
+    _isLoading = true;
+
+    // 清空当前数据
+    weightReportData.clear();
+    notifyListeners();
+
+    // 通过接口获取新一页数据，同时传递排序信息
+    PublicFunctions.getRecords(
+      myDefScaleInfo.defScaleId!,
+      wgtMode,
+      page,
+      _pageSize,
+      sortColumnName.toString(),
+      sortDirectValue.name,
+    );
+
+    // 更新页码
+    _page = page;
+  }
+
+  void updateData(List<WeightReportData> newReportData) {
+    weightReportData = newReportData; // 更新数据
+    buildDataGridRow(); // 重新构建 DataGridRow
+    notifyListeners(); // 通知表格更新
+    _isLoading = false;
   }
 
   void sortDataGrid(String columnName, DataGridSortDirection sortDirection) {
-    sortData(columnName);
-    if (sortDirection == DataGridSortDirection.descending) {
-      reverseData();
-    }
+    sortColumnName = columnName;
+    sortDirectValue = sortDirection;
+    loadPage(1); // 排序后重新加载第一页数据
+    notifyListeners(); // 通知表格更新
   }
 
-  void reverseData() {
-    weightReportData = weightReportData.reversed.toList();
+  bool isColumnSorted(String columnName) {
+    return sortColumnName == columnName;
+  }
+
+  DataGridSortDirection sortDirectionForColumn(String columnName) {
+    if (sortColumnName == columnName) {
+      return sortDirectValue;
+    }
+    // 这里可以根据具体情况返回一个默认值，比如 ascending
+    return DataGridSortDirection.ascending;
   }
 
   List<DataGridRow> dataGridRow = <DataGridRow>[];
@@ -44,7 +75,7 @@ class WeightReportDataSource extends DataGridSource {
       for (GridColumn column in columns) {
         String columnName = column.columnName;
         cells.add(DataGridCell<String>(
-          columnName: columnName,
+          columnName: myReportFeildsMap[columnName]!.showName,
           value: getValueForColumn(reportData, columnName),
         ));
       }

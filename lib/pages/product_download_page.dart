@@ -59,6 +59,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
             context,
             localizedStrings.gTitlePluDownload,
             [myDefScaleInfo.defScaleId!],
+            '',
           ),
         ),
         body: Container(

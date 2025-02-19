@@ -1,1812 +1,1955 @@
 {
-	"@@locale": "zh",
-	"gLanguage": "中文",
-	"@gLanguage": {
-		"description": "This is a prompt for the current language."
-	},
-	"gModelName": "机型:",
-	"@gModelName": {
-		"description": "This is a prompt for model name."
-	},
-	"gScaleSn": "SN#:",
-	"@gScaleSn": {
-		"description": "This is a prompt for sn."
-	},
-	"gBtnConnect": "连接",
-	"@gBtnConnect": {
-		"description": "This is a button for testing the connection with the device."
-	},
-	"gBtnTare": "扣重",
-	"@gBtnTare": {
-		"description": "This is a button for tare weight."
-	},
-	"gBtnSave": "保存",
-	"@gBtnSave": {
-		"description": "This is a button for saving."
-	},
-	"gTitleSerialPortConnection": "串口连接",
-	"@gTitleSerialPortConnection": {
-		"description": "This is the title of the serial port connection."
-	},
-	"gMsgAuthorityPassed": "认证通过.\r\n",
-	"@gMsgAuthorityPassed": {
-		"description": "This is the prompt indicating that the authentication has been passed."
-	},
-	"gMsgAuthorityFail": "没有认证. 请将ID发送给我们.",
-	"@gMsgAuthorityFail": {
-		"description": "This is the prompt indicating that the authentication has failed."
-	},
-	"gBtnStart": "开始",
-	"@gBtnStart": {
-		"description": "This is a button to start."
-	},
-	"gBtnExit": "退出",
-	"@gBtnExit": {
-		"description": "This is a button to exit."
-	},
-	"gSystemId": "系统ID:  ",
-	"@gSystemId": {
-		"description": "This is the prompt for the system authentication ID."
-	},
-	"gExpirationDate": "到期日期:",
-	"@gExpirationDate": {
-		"description": "This is the prompt for the expiration date."
-	},
-	"gTitleSerialModify": "串口信息修改",
-	"@gTitleSerialModify": {
-		"description": "This is the title for modifying serial port information."
-	},
-	"gSerialPortStatus": "串口状态:",
-	"@gSerialPortStatus": {
-		"description": "This is the title for serial port status."
-	},
-	"gSerialPort": "串口:",
-	"@gSerialPort": {
-		"description": "This is the prompt for serial port."
-	},
-	"gRefreshPort": "刷新串口",
-	"@gRefreshPort": {
-		"description": "This is the prompt to refresh port."
-	},
-	"gDataBits": "数据位:",
-	"@gDataBits": {
-		"description": "This is the prompt for data bits."
-	},
-	"gBaudRate": "波特率:",
-	"@gBaudRate": {
-		"description": "This is the prompt for baud rate."
-	},
-	"gSerialParity": "校验位:",
-	"@gSerialParity": {
-		"description": "This is the prompt for parity."
-	},
-	"gStopBits": "停止位:",
-	"@gStopBits": {
-		"description": "This is the prompt for stop bits."
-	},
-	"gBtnConfirm": "确认",
-	"@gBtnConfirm": {
-		"description": "This is a confirmation button."
-	},
-	"gBtnCancel": "取消",
-	"@gBtnCancel": {
-		"description": "This is a button to cancel"
-	},	
-	"gMsgRefresh": "刷新",
-	"@gMsgRefresh": {
-		"description": "This is a button to refresh."
-	},
-	"gFindSsid": "SSID",
-	"@gFindSsid": {
-		"description": "This is a prompt for discover ssid."
-	},
-	"gNetworkSetting": "无线网设置",
-	"@gNetworkSetting": {
-		"description": ""
-	},
-	"gPassword": "密码:",
-	"@gPassword": {
-		"description": "This is a prompt for password."
-	},
-	"gIpAddress": "IPv4:",
-	"@gIpAddress": {
-		"description": "This is a prompt for IPv4."
-	},
-	"gNetmask": "子网掩码:",
-	"@gNetmask": {
-		"description": "This is a prompt for NetMask."
-	},
-	"gGateway": "网关:",
-	"@gGateway": {
-		"description": "This is a prompt for Gateway."
-	},	
-	"gBtnStatic": "静态",
-	"@gBtnStatic": {
-		"description": "This is a prompt for static IP."
-	},
-	"gBtnDynamic": "动态",
-	"@gBtnDynamic": {
-		"description": "This is a prompt for dynamic IP."
-	},
-	"gTipConnectStaticIp": "输入IP信息后点击连接按钮!",
-	"@gTipConnectStaticIp": {
-		"description": "This is a prompt for connnecting static ip."
-	},
-	"gTipConnecting": "连接中...",
-	"@gTipConnecting": {
-		"description": "This is a prompt for connnecting."
-	},
-	"gTipConnected": "已经连接网络!",
-	"@gTipConnected": {
-		"description": "This is a prompt for already connected ."
-	},
-	"gTipConnectedInfo": "已连接AP信息:",
-	"@gTipConnectedInfo": {
-		"description": "This is a prompt for connected info ."
-	},
-	"gTipGetApListAndIP": "获取AP列表和IP信息中，请稍后...",
-	"@gTipGetApListAndIP": {
-		"description": "This is a prompt for obtaining AP list and Ip info."
-	},
-	"gTipGetIP": "获取IP中，请稍后...",
-	"@gTipGetIP": {
-		"description": "This is a prompt for obtaining Ip info."
-	},
-	"gTipGetIpOk": "获取IP成功！",
-	"@gTipGetIpOk": {
-		"description": "This is a prompt indicating that the IP information has been successfully obtained."
-	},
-	"gTipGetIpFail": "获取IP失败!",
-	"@gTipGetIpFail": {
-		"description": "This is a prompt indicating that the attempt to obtain IP information has failed."
-	},
-	"gTipSSID": "SSID:",
-	"@gTipSSID": {
-		"description": "This is a prompt for SSID."
-	},	
-	"gTitleBtSetting": "蓝牙配置",
-	"@gTitleBtSetting": {
-		"description": "This is a title for bluetooth configurations."
-	},
-	"gTipDeviceNameEmpty": "设备名称不能为空,error.",
-	"@gTipDeviceNameEmpty": {
-		"description": "This is a prompt for empty device name."
-	}, 
-	"gTipTimeOut": "超时!",
-	"@gTipTimeOut": {
-		"description": "This is a prompt for time out."
-	},
-	"gDeviceName": "设备名称:",
-	"@gDeviceName": {
-		"description": "This is a prompt for device name."
-	},
-	"gMsgSerialError": "串口连接已断开，请检查设置.",
-	"@gMsgSerialError": {
-		"description": "This is a prompt for serial port has been disconnected."
-	},	 
-	"gTitleLicense": "认证信息",
-	"@gTitleLicense": {
-		"description": "This is a title for license information"
-	},
-	"gPrinter": "打印机协议:",
-	"@gPrinter": {
-		"description": "This is a prompt for printer protocol."
-	},
-	"gPrintDirection": "方向:",
-	"@gPrintDirection": {
-		"description": "This is a prompt regarding the printing direction."
-	},	 
-	"gOpenJson": "打开 Json",
-	"@gOpenJson": {
-		"description": "This is a button about open print format. "
-	},
-	"gBarcodeEdit": "条码编辑",
-	"@gBarcodeEdit": {
-		"description": "This is a button about barcode edit."
-	},
-	"gQrcodeEdit": "二维码编辑",
-	"@gQrcodeEdit": {
-		"description": "This is a button about qrcode edit."
-	},
-	"gSaveFormat": "保存格式",
-	"@gSaveFormat": {
-		"description": "This is a button to save format."
-	},
-	"gBtnDownload": "下发",
-	"@gBtnDownload": {
-		"description": "This is a button for downloading."
-	},	
-	"gBtnDownloadDefaultFormat": "默认格式",
-	"@gBtnDownloadDefaultFormat": {
-		"description": "This is a button for downloading default format. "
-	},
-	"gAttribute": "属性",
-	"@gAttribute": {
-		"description": "This is a prompt about the attributes."
-	},
-	"gTabOrder": "顺序:",
-	"@gTabOrder": {
-		"description": "This is a prompt about the order of items in the printing format."
-	},
-	"gMsgNoElement": "没有选择元素.",
-	"@gMsgNoElement": {
-		"description": "This is a prompt regarding no item being selected."
-	},
-	"gOperationSteps": "操作步骤:",
-	"@gOperationSteps": {
-		"description": "This is a prompt about operation steps."
-	},
-	"gMsgStep1": "1. 请在左侧点击一个或者多个元素;",
-	"@gMsgStep1": {
-		"description": "This is a prompt about operation step 1."
-	},
-	"gMsgStep2": "2. 选择的元素会显示在画面上，可以在这里编辑他们的属性。",
-	"@gMsgStep2": {
-		"description": "This is a prompt about operation step 2."
-	},
-	"gEditor": "编辑器",
-	"@gEditor": {
-		"description": "This is a prompt about editor."
-	},
-	"gTextContent": "文本内容:",
-	"@gTextContent": {
-		"description": "This is a prompt about text content."
-	},
-	"gFontSize": "字体大小:",
-	"@gFontSize": {
-		"description": "This is a prompt about font size."
-	},
-	"gRotation": "旋转角度:",
-	"@gRotation": {
-		"description": "This is a prompt about rotation."
-	},
-	"gFontReverse": "字体反显:",
-	"@gFontReverse": {
-		"description": "This is a prompt about reverse contrast."
-	},
-	"gHrAlignment": "文字对齐方式:",
-	"@gHrAlignment": {
-		"description": "This is a prompt about HRI alignment."
-	},
-	"gBtnDelete": "删除",
-	"@gBtnDelete": {
-		"description": "This is a delete button."
-	},
-	"gQrcode": "二维码:",
-	"@gQrcode": {
-		"description": "This is a prompt about QRcode"
-	},
-	"gQrcodeWidth": "二维码宽度:",
-	"@gQrcodeWidth": {
-		"description": "This is a prompt about QRcode width."
-	},
-	"gPosition": "位置",
-	"@gPosition": {
-		"description": "This is a prompt about position."
-	},
-	"gFontBold": "加粗:",
-	"@gFontBold": {
-		"description": "This is a prompt about font bold."
-	},
-	"gAlignment": "对齐方式:",
-	"@gAlignment": {
-		"description": "This is a prompt about alignment."
-	},
-	"gMaxLength": "最大长度:",
-	"@gMaxLength": {
-		"description": "This is a prompt about max length."
-	},
-	"gElementType": "类型:",
-	"@gElementType": {
-		"description": "This is a prompt about item type in print format."
-	},
-	"gBarcode": "条码:",
-	"@gBarcode": {
-		"description": "This is a prompt about BarCode."
-	},
-	"gBarcodeHeight": "条码高度:",
-	"@gBarcodeHeight": {
-		"description": "This is a prompt about Barcode height."
-	},
-	"iBtnZero": "归零",
-	"@iBtnZero": {
-		"description": "This is a zeroing button in T-Industry,"
-	},
-	"iTextZero": "零点:",
-	"@iTextZero": {
-		"description": "This is a prompt about zero weight in T-Industry,"
-	},
-	"iTextNet": "净重:",
-	"@iTextNet": {
-		"description": "This is a prompt about net weight in T-Industry,"
-	},
-	"iStable": "稳定:",
-	"@iStable": {
-		"description": "This is a prompt about stable weight in T-Industry,"
-	},
-	"gBtnSetting": "设置",
-	"@gBtnSetting": {
-		"description": "This is a button about setting."
-	},
-	"gBtnExport": "导出",
-	"@gBtnExport": {
-		"description": "This is a export button."
-	},
-	"gPluName": "PLU 名字:",
-	"@gPluName": {
-		"description": "This is a prompt about PLU name."
-	},
-	"plu_edit": "PLU 编辑",
-	"@plu_edit": {
-		"description": "This is a prompt about PLU edit."
-	},
-	"user_name": "用户名:",
-	"@user_name": {
-		"description": "This is a prompt about user name."
-	},
-	"user_edit": "用户编辑",
-	"@user_edit": {
-		"description": "This is a prompt about user edit."
-	},
-	"parameter_settings_title": "参数设置",
-	"@parameter_settings_title": {
-		"description": "This is a prompt about parameter settings."
-	},
-	"save_mode": "保存模式:",
-	"@save_mode": {
-		"description": "This is a prompt about saving mode."
-	},
-	"manual": "手动",
-	"@manual": {
-		"description": "This is a prompt about manual mode."
-	},
-	"auto": "自动",
-	"@auto": {
-		"description": "This is a prompt about auto mode."
-	},
-	"stable_time": "稳定时间(s)",
-	"@stable_time": {
-		"description": "This is a prompt about stable time."
-	},
-	"stable_time_error_tip": "20秒以内.",
-	"@stable_time_error_tip": {
-		"description": ""
-	},
-	"date_format": "日期格式:",
-	"@date_format": {
-		"description": ""
-	},
-	"zero_range": "零点范围:",
-	"@zero_range": {
-		"description": ""
-	},
-	"product_information": "产品信息",
-	"@product_information": {
-		"description": ""
-	},
-	"pretare": "预扣重:",
-	"@pretare": {
-		"description": ""
-	},
-	"plu_remarks": "PLu 备注:",
-	"@plu_remarks": {
-		"description": ""
-	},
-	"gBtnAdd": "添加",
-	"@gBtnAdd": {
-		"description": ""
-	},
-	"button_edit": "编辑",
-	"@button_edit": {
-		"description": ""
-	},
-	"plu_error_message": "PLU 预扣重不能为空.",
-	"@plu_error_message": {
-		"description": ""
-	},
-	"plu_error_message1": "PLU ID 或 PLU 名字不能为空.",
-	"@plu_error_message1": {
-		"description": ""
-	},
-	"plu_error_message2": "PLU ID or PLU 名字已经存在.",
-	"@plu_error_message2": {
-		"description": ""
-	},
-	"iUserInfo": "用户信息",
-	"@iUserInfo": {
-		"description": "This is prompt for user info ,in T-Industry."
-	},
-	"user_id": "用户 ID:",
-	"@user_id": {
-		"description": ""
-	},
-	"user_sex": "性别:",
-	"@user_sex": {
-		"description": ""
-	},
-	"user_phone": "电话:",
-	"@user_phone": {
-		"description": ""
-	},
-	"user_remarks": "用户备注:",
-	"@user_remarks": {
-		"description": ""
-	},
-	"user_error_message1": "用户ID和用户名不能为空.",
-	"@user_error_message1": {
-		"description": ""
-	},
-	"user_error_message2": "用户ID或者用户名不能一样!",
-	"@user_error_message2": {
-		"description": ""
-	},
-	"user_error_message3": "用户没有找到!",
-	"@user_error_message3": {
-		"description": ""
-	},
-	"language_setting_title": "语言设置",
-	"@language_setting_title": {
-		"description": ""
-	},
-	"button_back": "返回",
-	"@button_back": {
-		"description": ""
-	},
-	"button_select_format": "选择格式",
-	"@button_select_format": {
-		"description": ""
-	},
-	"scale_model": "选择机型:",
-	"@scale_model": {
-		"description": ""
-	},
-	"button_get_ip": "获取IP",
-	"@button_get_ip": {
-		"description": ""
-	},
-	"firmware_update": "串口更新软件",
-	"@firmware_update": {
-		"description": ""
-	},
-	"button_add_license": "添加认证",
-	"@button_add_license": {
-		"description": ""
-	},
-	"new_license_text": "新认证:",
-	"@new_license_text": {
-		"description": ""
-	},
-	"txt_serial_port_connected": "串口已连接",
-	"@txt_serial_port_connected": {
-		"description": ""
-	},
-	"txt_serial_port_connected_fail": "无法连接",
-	"@txt_serial_port_connected_fail": {
-		"description": ""
-	},
-	"gTitleGetBuildInfo": "软件信息",
-	"@gTitleGetBuildInfo": {
-		"description": ""
-	},	
-	"gBuildInfoTip": "此ID仅供开发者使用.",
-	"@gBuildInfoTip": {
-		"description": "This is a tip for build info."
-	},	
-	"serial_page_ol": "OL 模式",
-	"@serial_page_ol": {
-		"description": ""
-	},
-	"serial_page_ul": "UL 模式",
-	"@serial_page_ul": {
-		"description": ""
-	},
-	"serial_page_weight": "计重模式",
-	"@serial_page_weight": {
-		"description": ""
-	},
-	"serial_page_pcs": "计数模式",
-	"@serial_page_pcs": {
-		"description": ""
-	},
-	"serial_page_price": "计价模式",
-	"@serial_page_price": {
-		"description": ""
-	},
-	"serial_page_percent": "百分比模式",
-	"@serial_page_percent": {
-		"description": ""
-	},
-	"device_connection_title": "设备信息 & 连接",
-	"@device_connection_title": {
-		"description": ""
-	},
-	"device_setting_title": "基本信息",
-	"@device_setting_title": {
-		"description": ""
-	},
-	"device_configuration_title": "设备配置",
-	"@device_configuration_title": {
-		"description": ""
-	},
-	"bt_setting_title": "蓝牙设置",
-	"@bt_setting_title": {
-		"description": ""
-	},
-	"wifi_setting_title": "Wi-Fi 设置",
-	"@wifi_setting_title": {
-		"description": ""
-	},
-	"customization_setting_title": "应用",
-	"@customization_setting_title": {
-		"description": ""
-	},
-	"advanced_setting_title": "高级",
-	"@advanced_setting_title": {
-		"description": ""
-	},
-	"label_design_title": "标签设计",
-	"@label_design_title": {
-		"description": ""
-	},
-	"gTitleReceiptDesign": "票据设计",
-	"@gTitleReceiptDesign": {
-		"description": "This is a title about receipt design app."
-	},
-	"gTipReceiptDesign": "此应用是用来设计票据打印格式.",
-	"@gTipReceiptDesign": {
-		"description": "This is a prompt about receipt design app."
-	},	 
-	"gTitleLabelFmtDownload": "下发标签打印格式",
-	"@gTitleLabelFmtDownload": {
-		"description": "This is a title about downloading label printing Formats app."
-	},
-	"gTipLabelFmtDownload": "此应用时用来下发打印格式.",
-	"@gTipLabelFmtDownload": {
-		"description": "This is a prompt about downloading label printing Formats app."
-	},	
-	"gTitleSerialOutput": "串口输出设计",
-	"@gTitleSerialOutput": {
-		"description": "This is a title about serial output design"
-	},
-	"gTitleSerialOutputDownload": "串口输出下发",
-	"@gTitleSerialOutputDownload": {
-		"description": "This is a title about serial output download."
-	},	 
-	"gSystemSetting": "系统设置",
-	"@gSystemSetting": {
-		"description": "This is a title about system setting."
-	},
-	"gTitleSetLanguage": "设置语言",
-	"@gTitleSetLanguage": {
-		"description": "This is a title about language setting."
-	},
-	"gTitleLicenseInfo": "认证信息",
-	"@gTitleLicenseInfo": {
-		"description": "This is a title about license info."
-	},
-	"cBtnOpenPreview": "打开预览",
-	"@cBtnOpenPreview": {
-		"description": " This is a button about open preview in T-Config."
-	},
-	"cBtnClosePreview": "关闭预览",
-	"@cBtnClosePreview": {
-		"description": "This is a button about close preview in T-Config."
-	},
-	"gBtnClear": "清除",
-	"@gBtnClear": {
-		"description": "This is a button for clearing."
-	},	 
-	"gTipFreeFormat": "自定义格式",
-	"@gTipFreeFormat": {
-		"description": "This is a prompt for free format."
-	},	
-	"gTotalFmt": "累加格式:",
-	"@gTotalFmt": {
-		"description": "This is a prompt for total format."
-	},	
-	"gTitlePluDownload": "PLU 下发",
-	"@gTitlePluDownload": {
-		"description": "This is a title about downloading plu."
-	},
-	"gTipPluDownload": "此应用时用于下发产品信息.",
-	"@gTipPluDownload": {
-		"description": "This is a tip about downloading plu."
-	}, 
-	"iTitleWeighting": "称重模式(单秤)",
-	"@iTitleWeighting": {
-		"description": "This is a title about weighting,support one scale."
-	},
-	"iTitleWeightCollection": "重量收集模式(单秤)",
-	"@iTitleWeightCollection": {
-		"description": "This is a title about collect weight data,support one scale,in T-Industry"
-	},
-	"iTipWeightCollection": "此应用是用来实时收集重量.",
-	"@iTipWeightCollection": {
-		"description": "This is a prompt about collect weight data,in T-Industry"
-	},
-	"iTitleCheckWeigher": "检重秤模式(单秤)",
-	"@iTitleCheckWeigher": {
-		"description": "This is a title about check weighing,support one scale,in T-Industry"
-	},
-	"iTipCheckWeigher": "此应用是用来实时记录检重重量.",
-	"@iTipCheckWeigher": {
-		"description": "This is a prompt about check weighing,in T-Industry"
-	},
-	"iTitleIncrementWeighting": "加法秤模式(单重)",
-	"@iTitleIncrementWeighting": {
-		"description": "This is a title about Increment Weighing,support one scale,in T-Industry"
-	},
-	"iTipIncrementWeighting": "此应用是用来实现加法秤.",
-	"@iTipIncrementWeighting": {
-		"description": "This is a prompt about Increment Weighing,in T-Industry"
-	},
-	"gTitleTakeOut": "减法秤(Single)",
-	"@gTitleTakeOut": {
-		"description": "This is a title about take out scale,support one scale,in T-Industry"
-	},
-	"gTipTakeOut": "此应用是用来实现减法秤.",
-	"@gTipTakeOut": {
-		"description": "This is a prompt about take out scale,in T-Industry"
-	},
-	"get_bt_name": "获取名字",
-	"@get_bt_name": {
-		"description": ""
-	},
-	"modify_bt_name": "修改名字",
-	"@modify_bt_name": {
-		"description": ""
-	},
-	"bt_emission_power": "信号强度:",
-	"@bt_emission_power": {
-		"description": ""
-	},
-	"bt_modify_emission": "修改信号强度",
-	"@bt_modify_emission": {
-		"description": ""
-	},
-	"gTitleConfirm": "确认",
-	"@gTitleConfirm": {
-		"description": "This is the title of the confirmation."
-	},
-	"gConfirmPrnFmtOrderTip": "Please confirm the order of the printing formats.",
-	"@gConfirmPrnFmtOrderTip": {
-		"description": "This is the prompt to confirm the order of the printing format."
-	},
-	"jump_confirm_info": "Please confirm to go to the default print format page.",
-	"@jump_confirm_info": {
-		"description": ""
-	},
-	"download_result_ok": "下发成功!",
-	"@download_result_ok": {
-		"description": ""
-	},
-	"download_result_fail": "下发失败!",
-	"@download_result_fail": {
-		"description": ""
-	},
-	"select_firmware_btn": "Select Firmware",
-	"@select_firmware_btn": {
-		"description": ""
-	},	
-	"report_set_btn": "Report Setting",
-	"@report_set_btn": {
-		"description": ""
-	},
-	"report_show_btn": "Show Reports",
-	"@report_show_btn": {
-		"description": ""
-	},
-	"report_delete_btn": "Delete All",
-	"@report_delete_btn": {
-		"description": ""
-	},
-	"report_hide_btn": "Hide Report",
-	"@report_hide_btn": {
-		"description": ""
-	},
-	"data_delete_confirm": "是否删除所有数据?",
-	"@data_delete_confirm": {
-		"description": ""
-	},
-	"show_current_weight": "Current weight:",
-	"@show_current_weight": {
-		"description": ""
-	},
-	"show_increment_weight": "Increment weight:",
-	"@show_increment_weight": {
-		"description": ""
-	},
-	"show_reduced_weight": "Reduced weight:",
-	"@show_reduced_weight": {
-		"description": ""
-	},
-	"general_configuration_title": "General Configuration",
-	"@general_configuration_title": {
-		"description": ""
-	},
-	"application_title": "应用",
-	"@application_title": {
-		"description": ""
-	},
-	"choose_json_file": "选择 json",
-	"@choose_json_file": {
-		"description": ""
-	},
-	"abnormal_data_title": "基础数据",
-	"@abnormal_data_title": {
-		"description": ""
-	},
-	"device_time_title": "设备时间",
-	"@device_time_title": {
-		"description": ""
-	},
-	"batch_delivery_title": "批量下发",
-	"@batch_delivery_title": {
-		"description": ""
-	},
-	"parameter_set_title": "参数设置",
-	"@parameter_set_title": {
-		"description": ""
-	},
-	"save_as": "另存为",
-	"@save_as": {
-		"description": ""
-	},
-	"gTipConfirmInfo": "Please confirm the information.",
-	"@gTipConfirmInfo": {
-		"description": "This is the prompt asking you to confirm the information."
-	},
-	"server_ip": "Server Ip:",
-	"@server_ip": {
-		"description": ""
-	},
-	"server_port": "Server Port:",
-	"@server_port": {
-		"description": ""
-	},
-	"error_ip_tip": "Incorrect address! e.g. xxx.xxx.xxx.xxx",
-	"@error_ip_tip": {
-		"description": ""
-	},
-	"set_ethernet_ip_title": "Ethernet IP Setting",
-	"@set_ethernet_ip_title": {
-		"description": ""
-	},
-	"go_home": "确定返回主页?",
-	"@go_home": {
-		"description": ""
-	},
-	"gTitleReceiptDownload": "下发票据打印格式",
-	"@gTitleReceiptDownload": {
-		"description": "This is a title about receipt format download."
-	},
-	"gTipReceiptDownload": "此应用是用来下发票据打印格式.",
-	"@gTipReceiptDownload": {
-		"description": "This is a prompt about receipt format download."
-	},	 
-	"about_title": "信息",
-	"@about_title": {
-		"description": ""
-	},
-	"app_version_title": "版本:",
-	"@app_version_title": {
-		"description": ""
-	},
-	"app_company_title": "公司:",
-	"@app_company_title": {
-		"description": ""
-	},
-	"app_tel_title": "电话:",
-	"@app_tel_title": {
-		"description": ""
-	},
-	"app_email_title": "邮箱:",
-	"@app_email_title": {
-		"description": ""
-	},
-	"app_address_title": "地址:",
-	"@app_address_title": {
-		"description": ""
-	},
-	"app_web_title": "网址:",
-	"@app_web_title": {
-		"description": ""
-	},
-	"app_models": "适用机型:",
-	"@app_models": {
-		"description": ""
-	},
-	"p_text_title": "Free Text",
-	"@p_text_title": {
-		"description": ""
-	},
-	"p_line_title": "Dividing Line",
-	"@p_line_title": {
-		"description": ""
-	},
-	"p_price_title": "Price Variable",
-	"@p_price_title": {
-		"description": ""
-	},
-	"p_text_var": "Text",
-	"@p_text_var": {
-		"description": ""
-	},
-	"p_div_line_var": "Line",
-	"@p_div_line_var": {
-		"description": ""
-	},
-	"p_no_var": "NO.",
-	"@p_no_var": {
-		"description": ""
-	},
-	"p_header1_var": "Header1",
-	"@p_header1_var": {
-		"description": ""
-	},
-	"p_Header2_var": "Header2",
-	"@p_Header2_var": {
-		"description": ""
-	},
-	"p_header3_var": "Header3",
-	"@p_header3_var": {
-		"description": ""
-	},
-	"p_footer1_var": "Footer1",
-	"@p_footer1_var": {
-		"description": ""
-	},
-	"p_footer2_var": "Footer2",
-	"@p_footer2_var": {
-		"description": ""
-	},
-	"p_footer3_var": "Footer3",
-	"@p_footer3_var": {
-		"description": ""
-
-	},
-	"p_plu_id_var": "PLU_ID",
-	"@p_plu_id_var": {
-		"description": ""
-
-	},
-	"p_plu_name_var": "PLU_Name",
-	"@p_plu_name_var": {
-		"description": ""
-	},
-	"p_order_number_var": "Order Number",
-	"@p_order_number_var": {
-		"description": ""
-
-	},
-	"p_unit_price_var": "Unit Price",
-	"@p_unit_price_var": {
-		"description": ""
-
-	},
-	"p_price_unit_var": "Price Unit",
-	"@p_price_unit_var": {
-		"description": ""
-
-	},
-	"p_pre_tare_var": "PreTare",
-	"@p_pre_tare_var": {
-		"description": ""
-
-	},
-	"p_unit_var": "Unit",
-	"@p_unit_var": {
-		"description": ""
-
-	},
-	"p_date_var": "Date",
-	"@p_date_var": {
-		"description": ""
-
-	},
-	"p_tax_type1_var": "Tax Type1",
-	"@p_tax_type1_var": {
-		"description": ""
-
-	},
-	"p_tax_type2_var": "Tax Type2",
-	"@p_tax_type2_var": {
-		"description": ""
-
-	},
-	"p_tax_type3_var": "Tax Type3",
-	"@p_tax_type3_var": {
-		"description": ""
-
-	},
-	"p_tax_base1_var": "Tax Base1",
-	"@p_tax_base1_var": {
-		"description": ""
-
-	},
-	"p_tax_base2_var": "Tax Base2",
-	"@p_tax_base2_var": {
-		"description": ""
-
-	},
-	"p_tax_base3_var": "Tax Base3",
-	"@p_tax_base3_var": {
-		"description": ""
-
-	},
-	"p_tax_amount1_var": "Tax Amount1",
-	"@p_tax_amount1_var": {
-		"description": ""
-
-	},
-	"p_tax_amount2_var": "Tax Amount2",
-	"@p_tax_amount2_var": {
-		"description": ""
-
-	},
-	"p_tax_amount3_var": "Tax Amount3",
-	"@p_tax_amount3_var": {
-		"description": ""
-
-	},
-	"p_tax_model_var": "Tax Model",
-	"@p_tax_model_var": {
-		"description": ""
-
-	},
-	"p_total_tax_amount_var": "Total Tax Amount",
-	"@p_total_tax_amount_var": {
-		"description": ""
-
-	},
-	"p_payment_amount_P_var": "Payment Amount",
-	"@p_payment_amount_P_var": {
-		"description": ""
-
-	},
-	"p_subtotal_var": "Subtotal",
-	"@p_subtotal_var": {
-		"description": ""
-
-	},
-	"p_currency_var": "Currency",
-	"@p_currency_var": {
-		"description": ""
-
-	},
-	"p_copy_times_var": "Copy Times",
-	"@p_copy_times_var": {
-		"description": ""
-
-	},
-	"p_model_name_var": "Model Name",
-	"@p_model_name_var": {
-		"description": ""
-
-	},
-	"p_scale_name_var": "Scale Name",
-	"@p_scale_name_var": {
-		"description": ""
-
-	},
-	"p_tax_name_var": "Tax Name.",
-	"@p_tax_name_var": {
-		"description": ""
-
-	},
-	"p_settle_account_times_var": "Settle Account Times.",
-	"@p_settle_account_times_var": {
-		"description": ""
-
-	},
-	"p_plu_tax_var": "PLU Tax",
-	"@p_plu_tax_var": {
-		"description": ""
-
-	},
-	"p_total_no_tax_var": "Total No Tax",
-	"@p_total_no_tax_var": {
-		"description": ""
-
-	},
-	"p_weight_pcs_var": "Weight Pcs",
-	"@p_weight_pcs_var": {
-		"description": ""
-
-	},
-	"p_tare_var": "Tare",
-	"@p_tare_var": {
-		"description": ""
-
-	},
-	"p_time_var": "Time",
-	"@p_time_var": {
-		"description": ""
-
-	},
-	"p_change_amount_var": "Change Amount",
-	"@p_change_amount_var": {
-		"description": ""
-
-	},
-	"p_price_var": "Price",
-	"@p_price_var": {
-		"description": ""
-	},
-	"p_text_expl": "Free text.",
-	"@p_text_expl": {
-		"description": ""
-
-	},
-	"p_div_line_expl": "Loop divider line.",
-	"@p_div_line_expl": {
-		"description": ""
-
-	},
-	"p_no_expl": "Sequence number value.",
-	"@p_no_expl": {
-		"description": ""
-
-	},
-	"p_header1_expl": "The first page header.",
-	"@p_header1_expl": {
-		"description": ""
-
-	},
-	"p_Header2_expl": "The secend page header.",
-	"@p_Header2_expl": {
-		"description": ""
-	},
-	"p_header3_expl": "The third page header.",
-	"@p_header3_expl": {
-		"description": ""
-
-	},
-	"p_footer1_expl": "The first page footer.",
-	"@p_footer1_expl": {
-		"description": ""
-
-	},
-	"p_footer2_expl": "The secend page footer.",
-	"@p_footer2_expl": {
-		"description": ""
-
-	},
-	"p_footer3_expl": "The third page footer.",
-	"@p_footer3_expl": {
-		"description": ""
-
-	},
-	"p_plu_id_expl": "PLU_ID.",
-	"@p_plu_id_expl": {
-		"description": ""
-
-	},
-	"p_plu_name_expl": "PLU_Name.",
-	"@p_plu_name_expl": {
-		"description": ""
-
-	},
-	"p_order_number_expl": "The serial number of the pending order.",
-	"@p_order_number_expl": {
-		"description": ""
-
-	},
-	"p_unit_price_expl": "Unit Price.",
-	"@p_unit_price_expl": {
-		"description": ""
-
-	},
-	"p_price_unit_expl": "Price Unit.",
-	"@p_price_unit_expl": {
-		"description": ""
-
-	},
-	"p_pre_tare_expl": "PreTare.",
-	"@p_pre_tare_expl": {
-		"description": ""
-
-	},
-	"p_unit_expl": "Weight Unit.",
-	"@p_unit_expl": {
-		"description": ""
-
-	},
-	"p_date_expl": "Date.",
-	"@p_date_expl": {
-		"description": ""
-
-	},
-	"p_tax_type1_expl": "Tax Type 1.",
-	"@p_tax_type1_expl": {
-		"description": ""
-
-	},
-	"p_tax_type2_expl": "Tax Type 2.",
-	"@p_tax_type2_expl": {
-		"description": ""
-
-	},
-	"p_tax_type3_expl": "Tax Type 3.",
-	"@p_tax_type3_expl": {
-		"description": ""
-
-	},
-	"p_tax_base1_expl": "Tax Base 1.",
-	"@p_tax_base1_expl": {
-		"description": ""
-	},
-	"p_tax_base2_expl": "Tax Base 2.",
-	"@p_tax_base2_expl": {
-		"description": ""
-
-	},
-	"p_tax_base3_expl": "Tax Base 3.",
-	"@p_tax_base3_expl": {
-		"description": ""
-
-	},
-	"p_tax_amount1_expl": "Tax Amount 1.",
-	"@p_tax_amount1_expl": {
-		"description": ""
-
-	},
-	"p_tax_amount2_expl": "Tax Amount 2.",
-	"@p_tax_amount2_expl": {
-		"description": ""
-
-	},
-	"p_tax_amount3_expl": "Tax Amount 3.",
-	"@p_tax_amount3_expl": {
-		"description": ""
-
-	},
-	"p_tax_model_expl": "Tax Model,tax included or tax external.",
-	"@p_tax_model_expl": {
-		"description": ""
-
-	},
-	"p_total_tax_amount_expl": "Total Tax Amount.",
-	"@p_total_tax_amount_expl": {
-		"description": ""
-
-	},
-	"p_payment_amount_P_expl": "Payment Amount.",
-	"@p_payment_amount_P_expl": {
-		"description": ""
-
-	},
-	"p_subtotal_expl": "Subtotal.",
-	"@p_subtotal_expl": {
-		"description": ""
-
-	},
-	"p_currency_expl": "Currency.",
-	"@p_currency_expl": {
-		"description": ""
-
-	},
-	"p_copy_times_expl": "Copy Times.",
-	"@p_copy_times_expl": {
-		"description": ""
-	},
-	"p_model_name_expl": "Scale Model Name.",
-	"@p_model_name_expl": {
-		"description": ""
-	},
-	"p_scale_name_expl": "Scale Name.",
-	"@p_scale_name_expl": {
-		"description": ""
-	},
-	"p_tax_name_expl": "Tax Name.",
-	"@p_tax_name_expl": {
-		"description": ""
-	},
-	"p_settle_account_times_expl": "Settle Account Times.",
-	"@p_settle_account_times_expl": {
-		"description": ""
-	},
-	"p_plu_tax_expl": "PLU Tax Value.",
-	"@p_plu_tax_expl": {
-		"description": ""
-	},
-	"p_total_no_tax_expl": "Total No Tax.",
-	"@p_total_no_tax_expl": {
-		"description": ""
-	},
-	"p_weight_pcs_expl": "Weight or Pcs.",
-	"@p_weight_pcs_expl": {
-		"description": ""
-	},
-	"p_tare_expl": "Tare value.",
-	"@p_tare_expl": {
-		"description": ""
-	},
-	"p_time_expl": "Time.",
-	"@p_time_expl": {
-		"description": ""
-	},
-	"p_change_amount_expl": "Change Amount.",
-	"@p_change_amount_expl": {
-		"description": ""
-	},
-	"p_price_expl": "Price value.",
-	"@p_price_expl": {
-		"description": ""
-	},
-	"l_var_title": "Variable",
-	"@l_var_title": {
-		"description": ""
-
-	},
-	"l_text_title": "Free Text",
-	"@l_text_title": {
-		"description": ""
-
-	},
-	"l_barcode_title": "BarCode Variable",
-	"@l_barcode_title": {
-		"description": ""
-	},
-	"l_qrcode_title": "Qrcode Variable",
-	"@l_qrcode_title": {
-		"description": ""
-	},
-	"l_shape_title": "Shape",
-	"@l_shape_title": {
-		"description": ""
-	},
-	"l_line_var": "Line",
-	"@l_line_var": {
-		"description": ""
-	},
-	"l_text_var": "Text",
-	"@l_text_var": {
-		"description": ""
-	},
-	"l_barcode_var": "BarCode",
-	"@l_barcode_var": {
-		"description": ""
-	},
-	"l_qrcode_var": "Qrcode",
-	"@l_qrcode_var": {
-		"description": ""
-	},
-	"l_no_var": "NO.",
-	"@l_no_var": {
-		"description": ""
-	},
-	"l_gross_var": "Gross",
-	"@l_gross_var": {
-		"description": ""
-	},
-	"l_tare_var": "Tare",
-	"@l_tare_var": {
-		"description": ""
-	},
-	"l_net_var": "Net",
-	"@l_net_var": {
-		"description": ""
-	},
-	"l_pcs_var": "PCS",
-	"@l_pcs_var": {
-		"description": ""
-	},
-	"l_wgt_unit_var": "WeightUnit",
-	"@l_wgt_unit_var": {
-		"description": ""
-	},
-	"l_date_var": "Date",
-	"@l_date_var": {
-		"description": ""
-	},
-	"l_time_var": "Time",
-	"@l_time_var": {
-		"description": ""
-	},
-	"l_uwgt_var": "U.WGT",
-	"@l_uwgt_var": {
-		"description": ""
-	},
-	"l_uwu_var": "U.WU",
-	"@l_uwu_var": {
-		"description": ""
-	},
-	"l_unit_wgt_var": "UnitWeight",
-	"@l_unit_wgt_var": {
-		"description": ""
-	},
-	"l_percent_var": "Percent",
-	"@l_percent_var": {
-		"description": ""
-	},
-	"l_total_wgt_var": "TotalWeight",
-	"@l_total_wgt_var": {
-		"description": ""
-	},
-	"l_total_cnt_var": "TotalCount",
-	"@l_total_cnt_var": {
-		"description": ""
-	},
-	"l_line_expl": "Line",
-	"@l_line_expl": {
-		"description": ""
-	},
-	"l_text_expl": "Text",
-	"@l_text_expl": {
-		"description": ""
-	},
-	"l_barcode_expl": "BarCode",
-	"@l_barcode_expl": {
-		"description": ""
-	},
-	"l_qrcode_expl": "Qrcode",
-	"@l_qrcode_expl": {
-		"description": ""
-	},
-	"l_no_expl": "NO.",
-	"@l_no_expl": {
-		"description": ""
-	},
-	"l_gross_expl": "Gross",
-	"@l_gross_expl": {
-		"description": ""
-	},
-	"l_tare_expl": "Tare",
-	"@l_tare_expl": {
-		"description": ""
-	},
-	"l_net_expl": "Net",
-	"@l_net_expl": {
-		"description": ""
-	},
-	"l_pcs_expl": "PCS",
-	"@l_pcs_expl": {
-		"description": ""
-	},
-	"l_wgt_unit_expl": "WeightUnit",
-	"@l_wgt_unit_expl": {
-		"description": ""
-	},
-	"l_date_expl": "Date",
-	"@l_date_expl": {
-		"description": ""
-	},
-	"l_time_expl": "Time",
-	"@l_time_expl": {
-		"description": ""
-	},
-	"l_uwgt_expl": "Universal weight",
-	"@l_uwgt_expl": {
-		"description": ""
-	},
-	"l_uwu_expl": "Universal weight unit",
-	"@l_uwu_expl": {
-		"description": ""
-	},
-	"l_unit_wgt_expl": "UnitWeight",
-	"@l_unit_wgt_expl": {
-		"description": ""
-	},
-	"l_percent_expl": "Percent",
-	"@l_percent_expl": {
-		"description": ""
-	},
-	"l_total_wgt_expl": "TotalWeight",
-	"@l_total_wgt_expl": {
-		"description": ""
-	},
-	"l_total_cnt_expl": "TotalCount",
-	"@l_total_cnt_expl": {
-		"description": ""
-	},
-	"l_line_width_txt": "Line Width",
-	"@l_line_width_txt": {
-		"description": ""
-	},
-	"l_line_lenth_txt": "Line Length",
-	"@l_line_lenth_txt": {
-		"description": ""
-	},
-	"l_open_fmt_err": "请选择正确的打印格式",
-	"@l_open_fmt_err": {
-		"description": ""
-	},
-	"gReceiptFormat": "票据格式",
-	"@gReceiptFormat": {
-		"description": "This is the prompt for receipt format."
-	},
-	"batch_down_export": "导出",
-	"@batch_down_export": {
-		"description": ""
-	},
-	"gBtnImport": "导入",
-	"@gBtnImport": {
-		"description": ""
-	},
-	"gBtnGetDataFormDb": "从数据库获取数据",
-	"@gBtnGetDataFormDb": {
-		"description": ""
-	},
-	"batch_down_slt_folder": "选择文件夹",
-	"@batch_down_slt_folder": {
-		"description": ""
-	},
-	"abnormal_weight": "获取基本数据",
-	"@abnormal_weight": {
-		"description": ""
-	},
-	"gBtnSelectPluFile": "选择Plu Excel",
-	"@gBtnSelectPluFile": {
-		"description": "This is a button for selecting the PLU file."
-	},
-	"gBtnGetPluTemplate": "获取PLU模版",
-	"@gBtnGetPluTemplate": {
-		"description": "This is a button for getting the product template."
-	},
-	"gTipSelectOnePluFile": "只能选一个文件",
-	"@gTipSelectOnePluFile": {
-		"description": "This is a prompt for only one PLU file can be selected for downloading"
-	},
-	"gPluNameLength": "PLU 名字最大长度:",
-	"@gPluNameLength": {
-		"description": ""
-	},
+    "@@locale": "zh",
+    "gLanguage": "中文",
+    "@gLanguage": {
+        "description": "This is a prompt for the current language."
+    },
+    "gModelName": "机型",
+    "@gModelName": {
+        "description": "This is a prompt for model name."
+    },
+    "gScaleSn": "SN#:",
+    "@gScaleSn": {
+        "description": "This is a prompt for sn."
+    },
+    "gTipPerpetual": "永久",
+    "@gTipPerpetual": {
+        "description": "This is a tip of the certification expiration date."
+    },
+    "gBtnConnect": "连接",
+    "@gBtnConnect": {
+        "description": "This is a button for testing the connection with the device."
+    },
+    "gBtnTare": "扣重",
+    "@gBtnTare": {
+        "description": "This is a button for tare weight."
+    },
+    "gBtnSave": "保存",
+    "@gBtnSave": {
+        "description": "This is a button for saving."
+    },
+    "gTitleSerialPortConnection": "串口连接",
+    "@gTitleSerialPortConnection": {
+        "description": "This is the title of the serial port connection."
+    },
+    "gMsgAuthorityPassed": "认证通过.\r\n",
+    "@gMsgAuthorityPassed": {
+        "description": "This is the prompt indicating that the authentication has been passed."
+    },
+    "gMsgAuthorityFail": "没有认证. 请将ID发送给我们.",
+    "@gMsgAuthorityFail": {
+        "description": "This is the prompt indicating that the authentication has failed."
+    },
+    "gBtnStart": "开始",
+    "@gBtnStart": {
+        "description": "This is a button to start."
+    },
+    "gBtnExit": "退出",
+    "@gBtnExit": {
+        "description": "This is a button to exit."
+    },
+    "gSystemId": "系统ID:  ",
+    "@gSystemId": {
+        "description": "This is the prompt for the system authentication ID."
+    },
+    "gExpirationDate": "到期日期:",
+    "@gExpirationDate": {
+        "description": "This is the prompt for the expiration date."
+    },
+    "gTitleSerialModify": "串口信息修改",
+    "@gTitleSerialModify": {
+        "description": "This is the title for modifying serial port information."
+    },
+    "gSerialPortStatus": "串口状态:",
+    "@gSerialPortStatus": {
+        "description": "This is the title for serial port status."
+    },
+    "gSerialPort": "串口:",
+    "@gSerialPort": {
+        "description": "This is the prompt for serial port."
+    },
+    "gRefreshPort": "刷新串口",
+    "@gRefreshPort": {
+        "description": "This is the prompt to refresh port."
+    },
+    "gDataBits": "数据位:",
+    "@gDataBits": {
+        "description": "This is the prompt for data bits."
+    },
+    "gBaudRate": "波特率:",
+    "@gBaudRate": {
+        "description": "This is the prompt for baud rate."
+    },
+    "gSerialParity": "校验位:",
+    "@gSerialParity": {
+        "description": "This is the prompt for parity."
+    },
+    "gStopBits": "停止位:",
+    "@gStopBits": {
+        "description": "This is the prompt for stop bits."
+    },
+    "gBtnConfirm": "确认",
+    "@gBtnConfirm": {
+        "description": "This is a confirmation button."
+    },
+    "gBtnCancel": "取消",
+    "@gBtnCancel": {
+        "description": "This is a button to cancel"
+    },
+    "gMsgRefresh": "刷新",
+    "@gMsgRefresh": {
+        "description": "This is a button to refresh."
+    },
+    "gFindSsid": "SSID",
+    "@gFindSsid": {
+        "description": "This is a prompt for discover ssid."
+    },
+    "gNetworkSetting": "无线网设置",
+    "@gNetworkSetting": {
+        "description": ""
+    },
+    "gPassword": "密码:",
+    "@gPassword": {
+        "description": "This is a prompt for password."
+    },
+    "gIpAddress": "IPv4:",
+    "@gIpAddress": {
+        "description": "This is a prompt for IPv4."
+    },
+    "gNetmask": "子网掩码:",
+    "@gNetmask": {
+        "description": "This is a prompt for NetMask."
+    },
+    "gGateway": "网关:",
+    "@gGateway": {
+        "description": "This is a prompt for Gateway."
+    },
+    "gBtnStatic": "静态",
+    "@gBtnStatic": {
+        "description": "This is a prompt for static IP."
+    },
+    "gBtnDynamic": "动态",
+    "@gBtnDynamic": {
+        "description": "This is a prompt for dynamic IP."
+    },
+    "gTipConnectStaticIp": "输入IP信息后点击连接按钮!",
+    "@gTipConnectStaticIp": {
+        "description": "This is a prompt for connnecting static ip."
+    },
+    "gTipConnecting": "连接中...",
+    "@gTipConnecting": {
+        "description": "This is a prompt for connnecting."
+    },
+    "gTipConnected": "已经连接网络!",
+    "@gTipConnected": {
+        "description": "This is a prompt for already connected ."
+    },
+    "gTipConnectedInfo": "已连接AP信息:",
+    "@gTipConnectedInfo": {
+        "description": "This is a prompt for connected info ."
+    },
+    "gTipGetApListAndIP": "获取AP列表和IP信息中，请稍后...",
+    "@gTipGetApListAndIP": {
+        "description": "This is a prompt for obtaining AP list and Ip info."
+    },
+    "gTipGetIP": "获取IP中，请稍后...",
+    "@gTipGetIP": {
+        "description": "This is a prompt for obtaining Ip info."
+    },
+    "gTipGetIpOk": "获取IP成功！",
+    "@gTipGetIpOk": {
+        "description": "This is a prompt indicating that the IP information has been successfully obtained."
+    },
+    "gTipGetIpFail": "获取IP失败!",
+    "@gTipGetIpFail": {
+        "description": "This is a prompt indicating that the attempt to obtain IP information has failed."
+    },
+    "gTipSSID": "SSID:",
+    "@gTipSSID": {
+        "description": "This is a prompt for SSID."
+    },
+    "gTitleBtSetting": "蓝牙配置",
+    "@gTitleBtSetting": {
+        "description": "This is a title for bluetooth configurations."
+    },
+    "gEPStrong": "强",
+    "@gEPStrong": {
+        "description": "This is a prompt for the Bluetooth signal strength."
+    },
+    "gEPNormal": "正常",
+    "@gEPNormal": {
+        "description": "This is a prompt for the Bluetooth signal strength."
+    },
+    "gEPWeak": "弱",
+    "@gEPWeak": {
+        "description": "This is a prompt for the Bluetooth signal strength."
+    },
+    "gTipDeviceNameEmpty": "设备名称不能为空,error.",
+    "@gTipDeviceNameEmpty": {
+        "description": "This is a prompt for empty device name."
+    },
+    "gTipTimeOut": "超时!",
+    "@gTipTimeOut": {
+        "description": "This is a prompt for time out."
+    },
+    "gDeviceName": "设备名称:",
+    "@gDeviceName": {
+        "description": "This is a prompt for device name."
+    },
+    "gMsgSerialError": "串口连接已断开，请检查设置.",
+    "@gMsgSerialError": {
+        "description": "This is a prompt for serial port has been disconnected."
+    },
+    "gTitleLicense": "认证信息",
+    "@gTitleLicense": {
+        "description": "This is a title for license information"
+    },
+    "gPrinter": "打印机协议:",
+    "@gPrinter": {
+        "description": "This is a prompt for printer protocol."
+    },
+    "gPrintDirection": "方向:",
+    "@gPrintDirection": {
+        "description": "This is a prompt regarding the printing direction."
+    },
+    "gOpenJson": "打开 Json",
+    "@gOpenJson": {
+        "description": "This is a button about open print format. "
+    },
+    "gBarcodeEdit": "条码编辑",
+    "@gBarcodeEdit": {
+        "description": "This is a button about barcode edit."
+    },
+    "gQrcodeEdit": "二维码编辑",
+    "@gQrcodeEdit": {
+        "description": "This is a button about qrcode edit."
+    },
+    "gSaveFormat": "保存格式",
+    "@gSaveFormat": {
+        "description": "This is a button to save format."
+    },
+    "gBtnDownload": "下发",
+    "@gBtnDownload": {
+        "description": "This is a button for downloading."
+    },
+    "gBtnDownloadDefaultFormat": "默认格式",
+    "@gBtnDownloadDefaultFormat": {
+        "description": "This is a button for downloading default format. "
+    },
+    "gAttribute": "属性",
+    "@gAttribute": {
+        "description": "This is a prompt about the attributes."
+    },
+    "gTabOrder": "顺序:",
+    "@gTabOrder": {
+        "description": "This is a prompt about the order of items in the printing format."
+    },
+    "gMsgNoElement": "没有选择元素.",
+    "@gMsgNoElement": {
+        "description": "This is a prompt regarding no item being selected."
+    },
+    "gOperationSteps": "操作步骤:",
+    "@gOperationSteps": {
+        "description": "This is a prompt about operation steps."
+    },
+    "gMsgStep1": "1. 请在左侧点击一个或者多个元素;",
+    "@gMsgStep1": {
+        "description": "This is a prompt about operation step 1."
+    },
+    "gMsgStep2": "2. 选择的元素会显示在画面上，可以在这里编辑他们的属性。",
+    "@gMsgStep2": {
+        "description": "This is a prompt about operation step 2."
+    },
+    "gPageWidth": "宽度",
+    "@gPageWidth": {
+        "description": "This is a prompt about the page width."
+    },
+    "gPageHeight": "高度",
+    "@gPageHeight": {
+        "description": "This is a prompt about the page height."
+    },
+    "gEditor": "编辑器",
+    "@gEditor": {
+        "description": "This is a prompt about editor."
+    },
+    "gTextContent": "文本内容:",
+    "@gTextContent": {
+        "description": "This is a prompt about text content."
+    },
+    "gFontSize": "字体大小:",
+    "@gFontSize": {
+        "description": "This is a prompt about font size."
+    },
+    "gRotation": "旋转角度:",
+    "@gRotation": {
+        "description": "This is a prompt about rotation."
+    },
+    "gFontReverse": "字体反显:",
+    "@gFontReverse": {
+        "description": "This is a prompt about reverse contrast."
+    },
+    "gHrAlignment": "文字对齐方式:",
+    "@gHrAlignment": {
+        "description": "This is a prompt about HRI alignment."
+    },
+    "gBtnDelete": "删除",
+    "@gBtnDelete": {
+        "description": "This is a delete button."
+    },
+    "gQrcode": "二维码:",
+    "@gQrcode": {
+        "description": "This is a prompt about QRcode"
+    },
+    "gQrcodeWidth": "二维码宽度:",
+    "@gQrcodeWidth": {
+        "description": "This is a prompt about QRcode width."
+    },
+    "gPosition": "位置",
+    "@gPosition": {
+        "description": "This is a prompt about position."
+    },
+    "gFontBold": "加粗:",
+    "@gFontBold": {
+        "description": "This is a prompt about font bold."
+    },
+    "gAlignment": "对齐方式:",
+    "@gAlignment": {
+        "description": "This is a prompt about alignment."
+    },
+    "gMaxLength": "最大长度:",
+    "@gMaxLength": {
+        "description": "This is a prompt about max length."
+    },
+    "gElementType": "类型:",
+    "@gElementType": {
+        "description": "This is a prompt about item type in print format."
+    },
+    "gBarcode": "条码:",
+    "@gBarcode": {
+        "description": "This is a prompt about BarCode."
+    },
+    "gBarcodeHeight": "条码高度:",
+    "@gBarcodeHeight": {
+        "description": "This is a prompt about Barcode height."
+    },
+    "iBtnZero": "归零",
+    "@iBtnZero": {
+        "description": "This is a zeroing button in T-Industry,"
+    },
+    "iTextZero": "零点:",
+    "@iTextZero": {
+        "description": "This is a prompt about zero weight in T-Industry,"
+    },
+    "iTextNet": "净重:",
+    "@iTextNet": {
+        "description": "This is a prompt about net weight in T-Industry,"
+    },
+    "iStable": "稳定:",
+    "@iStable": {
+        "description": "This is a prompt about stable weight in T-Industry,"
+    },
+    "gBtnSetting": "设置",
+    "@gBtnSetting": {
+        "description": "This is a button about setting."
+    },
+    "gBtnExport": "导出",
+    "@gBtnExport": {
+        "description": "This is a export button."
+    },
+    "gSelectAll": "全选",
+    "@gSelectAll": {
+        "description": "This is a prompt for selecting all items."
+    },
+    "gPluName": "PLU 名字:",
+    "@gPluName": {
+        "description": "This is a prompt about PLU name."
+    },
+    "plu_edit": "PLU 编辑",
+    "@plu_edit": {
+        "description": "This is a prompt about PLU edit."
+    },
+    "user_name": "用户名:",
+    "@user_name": {
+        "description": "This is a prompt about user name."
+    },
+    "user_edit": "用户编辑",
+    "@user_edit": {
+        "description": "This is a prompt about user edit."
+    },
+    "parameter_settings_title": "参数设置",
+    "@parameter_settings_title": {
+        "description": "This is a prompt about parameter settings."
+    },
+    "save_mode": "保存模式:",
+    "@save_mode": {
+        "description": "This is a prompt about saving mode."
+    },
+    "manual": "手动",
+    "@manual": {
+        "description": "This is a prompt about manual mode."
+    },
+    "auto": "自动",
+    "@auto": {
+        "description": "This is a prompt about auto mode."
+    },
+    "stable_time": "稳定时间(s)",
+    "@stable_time": {
+        "description": "This is a prompt about stable time."
+    },
+    "stable_time_error_tip": "20秒以内.",
+    "@stable_time_error_tip": {
+        "description": ""
+    },
+    "date_format": "日期格式:",
+    "@date_format": {
+        "description": ""
+    },
+    "zero_range": "零点范围:",
+    "@zero_range": {
+        "description": ""
+    },
+    "product_information": "产品信息",
+    "@product_information": {
+        "description": ""
+    },
+    "pretare": "预扣重:",
+    "@pretare": {
+        "description": ""
+    },
+    "plu_remarks": "PLu 备注:",
+    "@plu_remarks": {
+        "description": ""
+    },
+    "gBtnAdd": "添加",
+    "@gBtnAdd": {
+        "description": ""
+    },
+    "button_edit": "编辑",
+    "@button_edit": {
+        "description": ""
+    },
+    "plu_error_message": "PLU 预扣重不能为空.",
+    "@plu_error_message": {
+        "description": ""
+    },
+    "plu_error_message1": "PLU ID 或 PLU 名字不能为空.",
+    "@plu_error_message1": {
+        "description": ""
+    },
+    "plu_error_message2": "PLU ID or PLU 名字已经存在.",
+    "@plu_error_message2": {
+        "description": ""
+    },
+    "iUserInfo": "用户信息",
+    "@iUserInfo": {
+        "description": "This is prompt for user info ,in T-Industry."
+    },
+    "user_id": "用户 ID:",
+    "@user_id": {
+        "description": ""
+    },
+    "user_sex": "性别:",
+    "@user_sex": {
+        "description": ""
+    },
+    "user_phone": "电话:",
+    "@user_phone": {
+        "description": ""
+    },
+    "user_remarks": "用户备注:",
+    "@user_remarks": {
+        "description": ""
+    },
+    "user_error_message1": "用户ID和用户名不能为空.",
+    "@user_error_message1": {
+        "description": ""
+    },
+    "user_error_message2": "用户ID或者用户名不能一样!",
+    "@user_error_message2": {
+        "description": ""
+    },
+    "user_error_message3": "用户没有找到!",
+    "@user_error_message3": {
+        "description": ""
+    },
+    "language_setting_title": "语言设置",
+    "@language_setting_title": {
+        "description": ""
+    },
+    "button_back": "返回",
+    "@button_back": {
+        "description": ""
+    },
+    "button_select_format": "选择格式",
+    "@button_select_format": {
+        "description": ""
+    },
+    "scale_model": "选择机型:",
+    "@scale_model": {
+        "description": ""
+    },
+    "button_get_ip": "获取IP",
+    "@button_get_ip": {
+        "description": ""
+    },
+    "firmware_update": "串口更新软件",
+    "@firmware_update": {
+        "description": ""
+    },
+    "button_add_license": "添加认证",
+    "@button_add_license": {
+        "description": ""
+    },
+    "new_license_text": "新认证:",
+    "@new_license_text": {
+        "description": ""
+    },
+    "gTipResult": "结果",
+    "@gTipResult": {
+        "description": "This is a tip of add license result."
+    },
+    "txt_serial_port_connected": "串口已连接",
+    "@txt_serial_port_connected": {
+        "description": ""
+    },
+    "txt_serial_port_connected_fail": "无法连接",
+    "@txt_serial_port_connected_fail": {
+        "description": ""
+    },
+    "gTitleGetBuildInfo": "软件信息",
+    "@gTitleGetBuildInfo": {
+        "description": ""
+    },
+    "gBuildInfoTip": "此ID仅供开发者使用.",
+    "@gBuildInfoTip": {
+        "description": "This is a tip for build info."
+    },
+    "serial_page_ol": "OL 模式",
+    "@serial_page_ol": {
+        "description": ""
+    },
+    "serial_page_ul": "UL 模式",
+    "@serial_page_ul": {
+        "description": ""
+    },
+    "serial_page_weight": "计重模式",
+    "@serial_page_weight": {
+        "description": ""
+    },
+    "serial_page_pcs": "计数模式",
+    "@serial_page_pcs": {
+        "description": ""
+    },
+    "serial_page_price": "计价模式",
+    "@serial_page_price": {
+        "description": ""
+    },
+    "serial_page_percent": "百分比模式",
+    "@serial_page_percent": {
+        "description": ""
+    },
+    "device_connection_title": "设备信息 & 连接",
+    "@device_connection_title": {
+        "description": ""
+    },
+    "device_setting_title": "基本信息",
+    "@device_setting_title": {
+        "description": ""
+    },
+    "device_configuration_title": "设备配置",
+    "@device_configuration_title": {
+        "description": ""
+    },
+    "bt_setting_title": "蓝牙设置",
+    "@bt_setting_title": {
+        "description": ""
+    },
+    "wifi_setting_title": "Wi-Fi 设置",
+    "@wifi_setting_title": {
+        "description": ""
+    },
+    "customization_setting_title": "应用",
+    "@customization_setting_title": {
+        "description": ""
+    },
+    "advanced_setting_title": "高级",
+    "@advanced_setting_title": {
+        "description": ""
+    },
+    "label_design_title": "标签设计",
+    "@label_design_title": {
+        "description": ""
+    },
+    "gTitleReceiptDesign": "票据设计",
+    "@gTitleReceiptDesign": {
+        "description": "This is a title about receipt design app."
+    },
+    "gTipReceiptDesign": "此应用是用来设计票据打印格式.",
+    "@gTipReceiptDesign": {
+        "description": "This is a prompt about receipt design app."
+    },
+    "gTitleLabelFmtDownload": "下发标签打印格式",
+    "@gTitleLabelFmtDownload": {
+        "description": "This is a title about downloading label printing Formats app."
+    },
+    "gTipLabelFmtDownload": "此应用时用来下发打印格式.",
+    "@gTipLabelFmtDownload": {
+        "description": "This is a prompt about downloading label printing Formats app."
+    },
+    "gTitleSerialOutput": "串口输出设计",
+    "@gTitleSerialOutput": {
+        "description": "This is a title about serial output design"
+    },
+    "gTitleSerialOutputDownload": "串口输出下发",
+    "@gTitleSerialOutputDownload": {
+        "description": "This is a title about serial output download."
+    },
+    "gSystemSetting": "系统设置",
+    "@gSystemSetting": {
+        "description": "This is a title about system setting."
+    },
+    "gTitleSetLanguage": "设置语言",
+    "@gTitleSetLanguage": {
+        "description": "This is a title about language setting."
+    },
+    "gTitleLicenseInfo": "认证信息",
+    "@gTitleLicenseInfo": {
+        "description": "This is a title about license info."
+    },
+    "cBtnOpenPreview": "打开预览",
+    "@cBtnOpenPreview": {
+        "description": " This is a button about open preview in T-Config."
+    },
+    "cBtnClosePreview": "关闭预览",
+    "@cBtnClosePreview": {
+        "description": "This is a button about close preview in T-Config."
+    },
+    "gBtnClear": "清除",
+    "@gBtnClear": {
+        "description": "This is a button for clearing."
+    },
+    "gTipFreeFormat": "自定义格式",
+    "@gTipFreeFormat": {
+        "description": "This is a prompt for free format."
+    },
+    "gTotalFmt": "累加格式:",
+    "@gTotalFmt": {
+        "description": "This is a prompt for total format."
+    },
+    "gTitlePluDownload": "PLU 下发",
+    "@gTitlePluDownload": {
+        "description": "This is a title about downloading plu."
+    },
+    "gTipPluDownload": "此应用时用于下发产品信息.",
+    "@gTipPluDownload": {
+        "description": "This is a tip about downloading plu."
+    },
+    "iTitleWeighting": "称重模式(单秤)",
+    "@iTitleWeighting": {
+        "description": "This is a title about weighting,support one scale."
+    },
+    "iTitleWeightCollection": "重量收集模式(单秤)",
+    "@iTitleWeightCollection": {
+        "description": "This is a title about collect weight data,support one scale,in T-Industry"
+    },
+    "iTipWeightCollection": "此应用是用来实时收集重量.",
+    "@iTipWeightCollection": {
+        "description": "This is a prompt about collect weight data,in T-Industry"
+    },
+    "iTitleCheckWeigher": "检重秤模式(单秤)",
+    "@iTitleCheckWeigher": {
+        "description": "This is a title about check weighing,support one scale,in T-Industry"
+    },
+    "iTipCheckWeigher": "此应用是用来实时记录检重重量.",
+    "@iTipCheckWeigher": {
+        "description": "This is a prompt about check weighing,in T-Industry"
+    },
+    "iTitleIncrementWeighting": "加法秤模式(单秤)",
+    "@iTitleIncrementWeighting": {
+        "description": "This is a title about Increment Weighing,support one scale,in T-Industry"
+    },
+    "iTipIncrementWeighting": "此应用是用来实现加法秤.",
+    "@iTipIncrementWeighting": {
+        "description": "This is a prompt about Increment Weighing,in T-Industry"
+    },
+    "gTitleTakeOut": "减法秤模式(单秤)",
+    "@gTitleTakeOut": {
+        "description": "This is a title about take out scale,support one scale,in T-Industry"
+    },
+    "gTipTakeOut": "此应用是用来实现减法秤.",
+    "@gTipTakeOut": {
+        "description": "This is a prompt about take out scale,in T-Industry"
+    },
+    "get_bt_name": "获取名字",
+    "@get_bt_name": {
+        "description": ""
+    },
+    "modify_bt_name": "修改名字",
+    "@modify_bt_name": {
+        "description": ""
+    },
+    "bt_emission_power": "信号强度:",
+    "@bt_emission_power": {
+        "description": ""
+    },
+    "bt_modify_emission": "修改信号强度",
+    "@bt_modify_emission": {
+        "description": ""
+    },
+    "gTitleConfirm": "确认",
+    "@gTitleConfirm": {
+        "description": "This is the title of the confirmation."
+    },
+    "gConfirmPrnFmtOrderTip": "请确认打印格式的顺序.",
+    "@gConfirmPrnFmtOrderTip": {
+        "description": "This is the prompt to confirm the order of the printing format."
+    },
+    "jump_confirm_info": "请确认跳转默认打印格式下发页面.",
+    "@jump_confirm_info": {
+        "description": ""
+    },
+    "download_result_ok": "下发成功!",
+    "@download_result_ok": {
+        "description": ""
+    },
+    "download_result_fail": "下发失败!",
+    "@download_result_fail": {
+        "description": ""
+    },
+    "select_firmware_btn": "选择 Firmware",
+    "@select_firmware_btn": {
+        "description": ""
+    },
+    "report_set_btn": "报表设计",
+    "@report_set_btn": {
+        "description": ""
+    },
+    "report_show_btn": "显示报表",
+    "@report_show_btn": {
+        "description": ""
+    },
+    "report_delete_btn": "删除所有",
+    "@report_delete_btn": {
+        "description": ""
+    },
+    "report_hide_btn": "隐藏报表",
+    "@report_hide_btn": {
+        "description": ""
+    },
+    "data_delete_confirm": "是否删除所有数据?",
+    "@data_delete_confirm": {
+        "description": ""
+    },
+    "show_current_weight": "当前重量:",
+    "@show_current_weight": {
+        "description": ""
+    },
+    "show_increment_weight": "增量:",
+    "@show_increment_weight": {
+        "description": ""
+    },
+    "show_reduced_weight": "减少量:",
+    "@show_reduced_weight": {
+        "description": ""
+    },
+    "general_configuration_title": "General Configuration",
+    "@general_configuration_title": {
+        "description": ""
+    },
+    "application_title": "应用",
+    "@application_title": {
+        "description": ""
+    },
+    "choose_json_file": "选择 json",
+    "@choose_json_file": {
+        "description": ""
+    },
+    "abnormal_data_title": "基础数据",
+    "@abnormal_data_title": {
+        "description": ""
+    },
+    "cTitleDeviceTime": "设备时间",
+    "@cTitleDeviceTime": {
+        "description": "This is a title about device time."
+    },
+    "cBtnSyncPcTime": "同步PC时间",
+    "@cBtnSyncPcTime": {
+        "description": "This is a button about sync pc time."
+    },
+    "cBtnSetTime": "设置时间日期",
+    "@cBtnSetTime": {
+        "description": "This is a button about set date/time."
+    },
+    "cBtnSyncTime": "同步时间日期",
+    "@cBtnSyncTime": {
+        "description": "This is a button about sync time."
+    },
+    "cBtnSelectTime": "选择时间",
+    "@cBtnSelectTime": {
+        "description": "This is a button about select time."
+    },
+    "cBtnSelectDate": "选择日期",
+    "@cBtnSelectDate": {
+        "description": "This is a button about select date."
+    },
+    "cTipFailedGetTime": "获取设备时间失败",
+    "@cTipFailedGetTime": {
+        "description": "This is a tip about failed to get time."
+    },
+    "batch_delivery_title": "批量下发",
+    "@batch_delivery_title": {
+        "description": ""
+    },
+    "cTitleParameterSet": "参数设置",
+    "@cTitleParameterSet": {
+        "description": "This is a title about parameter setting."
+    },
+    "cTipConfigurationName": "参数名称",
+    "@cTipConfigurationName": {
+        "description": "This is a tip about configuration name."
+    },
+    "cTipEditable": "可编辑",
+    "@cTipEditable": {
+        "description": "This is a tip about whether editing is enabled."
+    },
+    "cTipParameterSize": "大小",
+    "@cTipParameterSize": {
+        "description": "This is a tip about parameter size."
+    },
+    "cTipParameterTyppe": "类型",
+    "@cTipParameterTyppe": {
+        "description": "This is a tip about parameter type."
+    },
+    "cTipParameterValue": "值",
+    "@cTipParameterValue": {
+        "description": "This is a title about parameter value."
+    },
+    "cTipParameterDesp": "说明",
+    "@cTipParameterDesp": {
+        "description": "This is a title about parameter description."
+    },
+    "cBtnCommit": "点击提交",
+    "@cBtnCommit": {
+        "description": "This is a button for submitting parameter modifications."
+    },
+    "cTipNotModified": "没有修改的参数！",
+    "@cTipNotModified": {
+        "description": "This is a tip: No parameter modifications."
+    },
+    "cTipConfirmModified": "请确定参数是正确的，继续？",
+    "@cTipConfirmModified": {
+        "description": "This is a tip: Please make sure the values are correct, continue?"
+    },
+    "cTipCheckValue": "请检查",
+    "@cTipCheckValue": {
+        "description": "This is a tip: Please check"
+    },
+    "save_as": "另存为",
+    "@save_as": {
+        "description": ""
+    },
+    "gTipConfirmInfo": "请确认信息.",
+    "@gTipConfirmInfo": {
+        "description": "This is the prompt asking you to confirm the information."
+    },
+    "server_ip": "Server Ip:",
+    "@server_ip": {
+        "description": ""
+    },
+    "server_port": "Server Port:",
+    "@server_port": {
+        "description": ""
+    },
+    "error_ip_tip": "不正确的地址! e.g. xxx.xxx.xxx.xxx",
+    "@error_ip_tip": {
+        "description": ""
+    },
+    "set_ethernet_ip_title": "有线IP地址设置",
+    "@set_ethernet_ip_title": {
+        "description": ""
+    },
+    "go_home": "确定返回主页?",
+    "@go_home": {
+        "description": ""
+    },
+    "gTitleReceiptDownload": "下发票据打印格式",
+    "@gTitleReceiptDownload": {
+        "description": "This is a title about receipt format download."
+    },
+    "gTipReceiptDownload": "此应用是用来下发票据打印格式.",
+    "@gTipReceiptDownload": {
+        "description": "This is a prompt about receipt format download."
+    },
+    "about_title": "信息",
+    "@about_title": {
+        "description": ""
+    },
+    "app_version_title": "版本:",
+    "@app_version_title": {
+        "description": ""
+    },
+    "app_company_title": "公司:",
+    "@app_company_title": {
+        "description": ""
+    },
+    "app_tel_title": "电话:",
+    "@app_tel_title": {
+        "description": ""
+    },
+    "app_email_title": "邮箱:",
+    "@app_email_title": {
+        "description": ""
+    },
+    "app_address_title": "地址:",
+    "@app_address_title": {
+        "description": ""
+    },
+    "app_web_title": "网址:",
+    "@app_web_title": {
+        "description": ""
+    },
+    "app_models": "适用机型:",
+    "@app_models": {
+        "description": ""
+    },
+    "p_text_title": "Free Text",
+    "@p_text_title": {
+        "description": ""
+    },
+    "p_line_title": "Dividing Line",
+    "@p_line_title": {
+        "description": ""
+    },
+    "p_price_title": "Price Variable",
+    "@p_price_title": {
+        "description": ""
+    },
+    "p_text_var": "Text",
+    "@p_text_var": {
+        "description": ""
+    },
+    "p_div_line_var": "Line",
+    "@p_div_line_var": {
+        "description": ""
+    },
+    "p_no_var": "NO.",
+    "@p_no_var": {
+        "description": ""
+    },
+    "p_header1_var": "Header1",
+    "@p_header1_var": {
+        "description": ""
+    },
+    "p_Header2_var": "Header2",
+    "@p_Header2_var": {
+        "description": ""
+    },
+    "p_header3_var": "Header3",
+    "@p_header3_var": {
+        "description": ""
+    },
+    "p_footer1_var": "Footer1",
+    "@p_footer1_var": {
+        "description": ""
+    },
+    "p_footer2_var": "Footer2",
+    "@p_footer2_var": {
+        "description": ""
+    },
+    "p_footer3_var": "Footer3",
+    "@p_footer3_var": {
+        "description": ""
+    },
+    "p_plu_id_var": "PLU_ID",
+    "@p_plu_id_var": {
+        "description": ""
+    },
+    "p_plu_name_var": "PLU_Name",
+    "@p_plu_name_var": {
+        "description": ""
+    },
+    "p_order_number_var": "Order Number",
+    "@p_order_number_var": {
+        "description": ""
+    },
+    "p_unit_price_var": "Unit Price",
+    "@p_unit_price_var": {
+        "description": ""
+    },
+    "p_price_unit_var": "Price Unit",
+    "@p_price_unit_var": {
+        "description": ""
+    },
+    "p_pre_tare_var": "PreTare",
+    "@p_pre_tare_var": {
+        "description": ""
+    },
+    "p_unit_var": "Unit",
+    "@p_unit_var": {
+        "description": ""
+    },
+    "p_date_var": "Date",
+    "@p_date_var": {
+        "description": ""
+    },
+    "p_tax_type1_var": "Tax Type1",
+    "@p_tax_type1_var": {
+        "description": ""
+    },
+    "p_tax_type2_var": "Tax Type2",
+    "@p_tax_type2_var": {
+        "description": ""
+    },
+    "p_tax_type3_var": "Tax Type3",
+    "@p_tax_type3_var": {
+        "description": ""
+    },
+    "p_tax_base1_var": "Tax Base1",
+    "@p_tax_base1_var": {
+        "description": ""
+    },
+    "p_tax_base2_var": "Tax Base2",
+    "@p_tax_base2_var": {
+        "description": ""
+    },
+    "p_tax_base3_var": "Tax Base3",
+    "@p_tax_base3_var": {
+        "description": ""
+    },
+    "p_tax_amount1_var": "Tax Amount1",
+    "@p_tax_amount1_var": {
+        "description": ""
+    },
+    "p_tax_amount2_var": "Tax Amount2",
+    "@p_tax_amount2_var": {
+        "description": ""
+    },
+    "p_tax_amount3_var": "Tax Amount3",
+    "@p_tax_amount3_var": {
+        "description": ""
+    },
+    "p_tax_model_var": "Tax Model",
+    "@p_tax_model_var": {
+        "description": ""
+    },
+    "p_total_tax_amount_var": "Total Tax Amount",
+    "@p_total_tax_amount_var": {
+        "description": ""
+    },
+    "p_payment_amount_P_var": "Payment Amount",
+    "@p_payment_amount_P_var": {
+        "description": ""
+    },
+    "p_subtotal_var": "Subtotal",
+    "@p_subtotal_var": {
+        "description": ""
+    },
+    "p_currency_var": "Currency",
+    "@p_currency_var": {
+        "description": ""
+    },
+    "p_copy_times_var": "Copy Times",
+    "@p_copy_times_var": {
+        "description": ""
+    },
+    "p_model_name_var": "Model Name",
+    "@p_model_name_var": {
+        "description": ""
+    },
+    "p_scale_name_var": "Scale Name",
+    "@p_scale_name_var": {
+        "description": ""
+    },
+    "p_tax_name_var": "Tax Name.",
+    "@p_tax_name_var": {
+        "description": ""
+    },
+    "p_settle_account_times_var": "Settle Account Times.",
+    "@p_settle_account_times_var": {
+        "description": ""
+    },
+    "p_plu_tax_var": "PLU Tax",
+    "@p_plu_tax_var": {
+        "description": ""
+    },
+    "p_total_no_tax_var": "Total No Tax",
+    "@p_total_no_tax_var": {
+        "description": ""
+    },
+    "p_weight_pcs_var": "Weight Pcs",
+    "@p_weight_pcs_var": {
+        "description": ""
+    },
+    "p_tare_var": "Tare",
+    "@p_tare_var": {
+        "description": ""
+    },
+    "p_time_var": "Time",
+    "@p_time_var": {
+        "description": ""
+    },
+    "p_change_amount_var": "Change Amount",
+    "@p_change_amount_var": {
+        "description": ""
+    },
+    "p_price_var": "Price",
+    "@p_price_var": {
+        "description": ""
+    },
+    "p_text_expl": "自由文本.",
+    "@p_text_expl": {
+        "description": ""
+    },
+    "p_div_line_expl": "循环分割线.",
+    "@p_div_line_expl": {
+        "description": ""
+    },
+    "p_no_expl": "序号值.",
+    "@p_no_expl": {
+        "description": ""
+    },
+    "p_header1_expl": "页眉1.",
+    "@p_header1_expl": {
+        "description": ""
+    },
+    "p_Header2_expl": "页眉2.",
+    "@p_Header2_expl": {
+        "description": ""
+    },
+    "p_header3_expl": "页眉3.",
+    "@p_header3_expl": {
+        "description": ""
+    },
+    "p_footer1_expl": "页脚1.",
+    "@p_footer1_expl": {
+        "description": ""
+    },
+    "p_footer2_expl": "页脚2.",
+    "@p_footer2_expl": {
+        "description": ""
+    },
+    "p_footer3_expl": "页脚3.",
+    "@p_footer3_expl": {
+        "description": ""
+    },
+    "p_plu_id_expl": "PLU_ID.",
+    "@p_plu_id_expl": {
+        "description": ""
+    },
+    "p_plu_name_expl": "PLU_Name.",
+    "@p_plu_name_expl": {
+        "description": ""
+    },
+    "p_order_number_expl": "The serial number of the pending order.",
+    "@p_order_number_expl": {
+        "description": ""
+    },
+    "p_unit_price_expl": "Unit Price.",
+    "@p_unit_price_expl": {
+        "description": ""
+    },
+    "p_price_unit_expl": "Price Unit.",
+    "@p_price_unit_expl": {
+        "description": ""
+    },
+    "p_pre_tare_expl": "PreTare.",
+    "@p_pre_tare_expl": {
+        "description": ""
+    },
+    "p_unit_expl": "Weight Unit.",
+    "@p_unit_expl": {
+        "description": ""
+    },
+    "p_date_expl": "Date.",
+    "@p_date_expl": {
+        "description": ""
+    },
+    "p_tax_type1_expl": "Tax Type 1.",
+    "@p_tax_type1_expl": {
+        "description": ""
+    },
+    "p_tax_type2_expl": "Tax Type 2.",
+    "@p_tax_type2_expl": {
+        "description": ""
+    },
+    "p_tax_type3_expl": "Tax Type 3.",
+    "@p_tax_type3_expl": {
+        "description": ""
+    },
+    "p_tax_base1_expl": "Tax Base 1.",
+    "@p_tax_base1_expl": {
+        "description": ""
+    },
+    "p_tax_base2_expl": "Tax Base 2.",
+    "@p_tax_base2_expl": {
+        "description": ""
+    },
+    "p_tax_base3_expl": "Tax Base 3.",
+    "@p_tax_base3_expl": {
+        "description": ""
+    },
+    "p_tax_amount1_expl": "Tax Amount 1.",
+    "@p_tax_amount1_expl": {
+        "description": ""
+    },
+    "p_tax_amount2_expl": "Tax Amount 2.",
+    "@p_tax_amount2_expl": {
+        "description": ""
+    },
+    "p_tax_amount3_expl": "Tax Amount 3.",
+    "@p_tax_amount3_expl": {
+        "description": ""
+    },
+    "p_tax_model_expl": "Tax Model,tax included or tax external.",
+    "@p_tax_model_expl": {
+        "description": ""
+    },
+    "p_total_tax_amount_expl": "Total Tax Amount.",
+    "@p_total_tax_amount_expl": {
+        "description": ""
+    },
+    "p_payment_amount_P_expl": "Payment Amount.",
+    "@p_payment_amount_P_expl": {
+        "description": ""
+    },
+    "p_subtotal_expl": "Subtotal.",
+    "@p_subtotal_expl": {
+        "description": ""
+    },
+    "p_currency_expl": "Currency.",
+    "@p_currency_expl": {
+        "description": ""
+    },
+    "p_copy_times_expl": "Copy Times.",
+    "@p_copy_times_expl": {
+        "description": ""
+    },
+    "p_model_name_expl": "Scale Model Name.",
+    "@p_model_name_expl": {
+        "description": ""
+    },
+    "p_scale_name_expl": "Scale Name.",
+    "@p_scale_name_expl": {
+        "description": ""
+    },
+    "p_tax_name_expl": "Tax Name.",
+    "@p_tax_name_expl": {
+        "description": ""
+    },
+    "p_settle_account_times_expl": "Settle Account Times.",
+    "@p_settle_account_times_expl": {
+        "description": ""
+    },
+    "p_plu_tax_expl": "PLU Tax Value.",
+    "@p_plu_tax_expl": {
+        "description": ""
+    },
+    "p_total_no_tax_expl": "Total No Tax.",
+    "@p_total_no_tax_expl": {
+        "description": ""
+    },
+    "p_weight_pcs_expl": "Weight or Pcs.",
+    "@p_weight_pcs_expl": {
+        "description": ""
+    },
+    "p_tare_expl": "Tare value.",
+    "@p_tare_expl": {
+        "description": ""
+    },
+    "p_time_expl": "Time.",
+    "@p_time_expl": {
+        "description": ""
+    },
+    "p_change_amount_expl": "Change Amount.",
+    "@p_change_amount_expl": {
+        "description": ""
+    },
+    "p_price_expl": "Price value.",
+    "@p_price_expl": {
+        "description": ""
+    },
+    "l_var_title": "变量",
+    "@l_var_title": {
+        "description": ""
+    },
+    "l_text_title": "自由文本",
+    "@l_text_title": {
+        "description": ""
+    },
+    "l_barcode_title": "条码变量",
+    "@l_barcode_title": {
+        "description": ""
+    },
+    "l_qrcode_title": "二维码变量",
+    "@l_qrcode_title": {
+        "description": ""
+    },
+    "l_shape_title": "Shape",
+    "@l_shape_title": {
+        "description": ""
+    },
+    "l_line_var": "Line",
+    "@l_line_var": {
+        "description": ""
+    },
+    "l_text_var": "Text",
+    "@l_text_var": {
+        "description": ""
+    },
+    "l_barcode_var": "BarCode",
+    "@l_barcode_var": {
+        "description": ""
+    },
+    "l_qrcode_var": "Qrcode",
+    "@l_qrcode_var": {
+        "description": ""
+    },
+    "l_no_var": "NO.",
+    "@l_no_var": {
+        "description": ""
+    },
+    "l_gross_var": "Gross",
+    "@l_gross_var": {
+        "description": ""
+    },
+    "l_tare_var": "Tare",
+    "@l_tare_var": {
+        "description": ""
+    },
+    "l_net_var": "Net",
+    "@l_net_var": {
+        "description": ""
+    },
+    "l_pcs_var": "PCS",
+    "@l_pcs_var": {
+        "description": ""
+    },
+    "l_wgt_unit_var": "WeightUnit",
+    "@l_wgt_unit_var": {
+        "description": ""
+    },
+    "l_date_var": "Date",
+    "@l_date_var": {
+        "description": ""
+    },
+    "l_time_var": "Time",
+    "@l_time_var": {
+        "description": ""
+    },
+    "l_uwgt_var": "U.WGT",
+    "@l_uwgt_var": {
+        "description": ""
+    },
+    "l_uwu_var": "U.WU",
+    "@l_uwu_var": {
+        "description": ""
+    },
+    "l_unit_wgt_var": "UnitWeight",
+    "@l_unit_wgt_var": {
+        "description": ""
+    },
+    "l_percent_var": "Percent",
+    "@l_percent_var": {
+        "description": ""
+    },
+    "l_total_wgt_var": "TotalWeight",
+    "@l_total_wgt_var": {
+        "description": ""
+    },
+    "l_total_cnt_var": "TotalCount",
+    "@l_total_cnt_var": {
+        "description": ""
+    },
+    "l_line_expl": "Line",
+    "@l_line_expl": {
+        "description": ""
+    },
+    "l_text_expl": "文本",
+    "@l_text_expl": {
+        "description": ""
+    },
+    "l_barcode_expl": "条码",
+    "@l_barcode_expl": {
+        "description": ""
+    },
+    "l_qrcode_expl": "二维码",
+    "@l_qrcode_expl": {
+        "description": ""
+    },
+    "l_no_expl": "NO.",
+    "@l_no_expl": {
+        "description": ""
+    },
+    "l_gross_expl": "毛重",
+    "@l_gross_expl": {
+        "description": ""
+    },
+    "l_tare_expl": "扣重",
+    "@l_tare_expl": {
+        "description": ""
+    },
+    "l_net_expl": "净重",
+    "@l_net_expl": {
+        "description": ""
+    },
+    "l_pcs_expl": "PCS",
+    "@l_pcs_expl": {
+        "description": ""
+    },
+    "l_wgt_unit_expl": "重量单位",
+    "@l_wgt_unit_expl": {
+        "description": ""
+    },
+    "l_date_expl": "日期",
+    "@l_date_expl": {
+        "description": ""
+    },
+    "l_time_expl": "时间",
+    "@l_time_expl": {
+        "description": ""
+    },
+    "l_uwgt_expl": "通用重量",
+    "@l_uwgt_expl": {
+        "description": ""
+    },
+    "l_uwu_expl": "通用重量单位",
+    "@l_uwu_expl": {
+        "description": ""
+    },
+    "l_unit_wgt_expl": "单重",
+    "@l_unit_wgt_expl": {
+        "description": ""
+    },
+    "l_percent_expl": "百分比",
+    "@l_percent_expl": {
+        "description": ""
+    },
+    "l_total_wgt_expl": "总重量",
+    "@l_total_wgt_expl": {
+        "description": ""
+    },
+    "l_total_cnt_expl": "总数量",
+    "@l_total_cnt_expl": {
+        "description": ""
+    },
+    "l_line_width_txt": "Line Width",
+    "@l_line_width_txt": {
+        "description": ""
+    },
+    "l_line_lenth_txt": "Line Length",
+    "@l_line_lenth_txt": {
+        "description": ""
+    },
+    "l_open_fmt_err": "请选择正确的打印格式",
+    "@l_open_fmt_err": {
+        "description": ""
+    },
+    "gReceiptFormat": "票据格式",
+    "@gReceiptFormat": {
+        "description": "This is the prompt for receipt format."
+    },
+    "batch_down_export": "导出",
+    "@batch_down_export": {
+        "description": ""
+    },
+    "gBtnImport": "导入",
+    "@gBtnImport": {
+        "description": ""
+    },
+    "gBtnGetDataFormDb": "从数据库获取数据",
+    "@gBtnGetDataFormDb": {
+        "description": ""
+    },
+    "batch_down_slt_folder": "选择文件夹",
+    "@batch_down_slt_folder": {
+        "description": ""
+    },
+    "abnormal_weight": "获取基本数据",
+    "@abnormal_weight": {
+        "description": ""
+    },
+    "gBtnSelectPluFile": "选择Plu Excel",
+    "@gBtnSelectPluFile": {
+        "description": "This is a button for selecting the PLU file."
+    },
+    "gBtnGetPluTemplate": "获取PLU模版",
+    "@gBtnGetPluTemplate": {
+        "description": "This is a button for getting the product template."
+    },
+    "gTipSelectOnePluFile": "只能选一个文件",
+    "@gTipSelectOnePluFile": {
+        "description": "This is a prompt for only one PLU file can be selected for downloading"
+    },
+    "gPluNameLength": "PLU 名字最大长度:",
+    "@gPluNameLength": {
+        "description": ""
+    },
     "gTipDownloadAllPlu": "先清除后下发",
-	"@gTipDownloadAllPlu": {
-		"description": "This is the prompt to clear all product data before issuing."
-
-	},
-	"gTipUpdatePlu": "更新PLU",
-	"@gTipUpdatePlu": {
-		"description": "This is the prompt to update products."
-
-	},
-	"btn_add_lic_file": "选择认证文件",
-	"@btn_add_lic_file": {
-		"description": ""
-	},
-	"output_res_folder": "资源文件夹",
-	"@output_res_folder": {
-		"description": ""
-
-	},
-	"output_select_folder": "选择文件夹",
-	"@output_select_folder": {
-		"description": ""
-
-	},
-	"output_confirm_info": "请确认文件夹的名字!",
-	"@output_confirm_info": {
-		"description": ""
-
-	},
-	"output_no_file": "没有文件匹配!",
-	"@output_no_file": {
-		"description": ""
-
-	},
-	"def_fmt_sel_tip": "请选择1-10个打印格式.",
-	"@def_fmt_sel_tip": {
-		"description": ""
-
-	},
-	"def_fmt_no_title": "默认序号",
-	"@def_fmt_no_title": {
-		"description": ""
-
-	},
-	"def_fmt_file_title": "文件路径",
-	"@def_fmt_file_title": {
-		"description": ""
-
-	},
-	"def_fmt_no_file_tip": "没有数据",
-	"@def_fmt_no_file_tip": {
-		"description": ""
-
-	},
-	"def_fmt_out_range_tip": "The overall print format content is out of scope",
-	"@def_fmt_out_range_tip": {
-		"description": ""
-
-	},
-	"m_scale_title": "多台秤管理",
-	"@m_scale_title": {
-		"description": ""
-
-	},	
-	"scale_mgr_btn_add": "添加",
-	"@scale_mgr_btn_add": {
-		"description": ""
-
-	},
-	"scale_mgr_btn_rename": "重命名",
-	"@scale_mgr_btn_rename": {
-		"description": ""
-
-	},
-	"scale_mgr_btn_def": "设置默认",
-	"@scale_mgr_btn_def": {
-		"description": ""
-
-	},
-	"scale_mgr_btn_test": "测试连接",
-	"@scale_mgr_btn_test": {
-		"description": ""
-
-	},
-	"scale_mgr_scale_name": "秤名",
-	"@scale_mgr_scale_name": {
-		"description": ""
-	},
-	"scale_mgr_scale_model": "机种:",
-	"@scale_mgr_scale_model": {
-		"description": ""
-	},
-	"rDetailRptTitle": "零售详单",
-	"@rDetailRptTitle": {
-		"description": "This is the title of the retail detail report page in the retail app."
-	},
-	"rTipDetailRpt": "此应用是显示零售详单数据.",
-	"@rTipDetailRpt": {
-		"description": "This is the prompt for the retail detail report in the retail app."
-	}, 
-	"gTitlePluEdit": "PLU 编辑",
-	"@gTitlePluEdit": {
-		"description": "This is the title of the PLU edit page."
-	},
-	"rShowScaleListBtn": "显示秤",
-	"@rShowScaleListBtn": {
-		"description": "This is the name of the button for displaying the list of scales in the retail app."
-	},
-	"rHideScaleListBtn": "隐藏列表",
-	"@rHideScaleListBtn": {
-		"description": "This is the name of the button for hiding the list of scales in the retail app."
-	},
-	"rRefreshListBtn": "刷新列表",
-	"@rRefreshListBtn": {
-		"description": "This is the name of the button for refreshing the retail list in the retail app."
-	},
-	"gOnlineTip": "在线",
-	"@gOnlineTip": {
-		"description": "This is a prompt for online information."
-	},
-	"gOfflineTip": "断线",
-	"@gOfflineTip": {
-		"description": "This is a prompt for offline information."
-	},
-	"rJoinManagementTip": "是否加入管理",
-	"@rJoinManagementTip": {
-		"description": "This is a prompt about whether to join the management in the retail app."
-	},
-	"gTitleUpdateFirmware": "更新软件",
-	"@gTitleUpdateFirmware": {
-		"description": "This is the title for updating the firmware."
-
-	},
-	"gTipFirmwareZipFile": "软件Zip:",
-	"@gTipFirmwareZipFile": {
-		"description": "This is the prompt for the Firmware zip file."
-
-	},
-	"gBtnSelectZipFirmware": "请选择更新文件Zip",
-	"@gBtnSelectZipFirmware": {
-		"description": "This is the button for selecting the Firmware zip file."
-
-	},
-	"gConfirmFileTip": "请确定文件无误.",
-	"@gConfirmFileTip": {
-		"description": "This is the prompt to confirm whether the file is correct when downloading."
-
-	},
-	"gBtnViaSerialUpdate": "串口",
-	"@gBtnViaSerialUpdate": {
-		"description": "This is the button for switching to serial port update when updating the firmware."
-	},
-	"gBtnViaNetworkUpdate": "网络",
-	"@gBtnViaNetworkUpdate": {
-		"description": "This is the button for switching to network update when updating the firmware."
-	},
-	"gTipSelectUpdateWay": "请选择更新方式.",
-	"@gTipSelectUpdateWay": {
-		"description": "This is the prompt to select the way when update firmware."
-	},
-	"gTipWait": "请稍等...",
-	"@gTipWait": {
-		"description": "This is the prompt for waiting."
-	},		
-	"gTipRebootForUpdate": "请重启设备后等待更新...",
-	"@gTipRebootForUpdate": {
-		"description": "This is the prompt restarting the device for the automatic update."
-	},	
-	"rTitleSetVariableValues": "变量设置",
-	"@rTitleSetVariableValues": {
-		"description": "This is the title for setting the values of variables, such as the header and footer,in the retail app."
-	},	
-	"rTipSetVariableValues": "此应用是用来下发变量数据,例如页眉、页脚等.",
-	"@rTipSetVariableValues": {
-		"description": "This is the explanation for applying the setting of variable values."
-	},	
-	"rTipHeader": "页眉",
-	"@rTipHeader": {
-		"description": "This is the prompt for Header."
-	},
-	"rTipFooter": "页脚",
-	"@rTipFooter": {
-		"description": "This is the prompt for Footer."
-	},
-	"rTipOperator": "操作员",
-	"@rTipOperator": {
-		"description": "This is the prompt for Operator."
-	},
-	"gTipDataError": "数据错误 !",
-	"@gTipDataError": {
-		"description": "This is the prompt for data error."
-	},	
-	"gBtnNewFormat": "新建",
-	"@gBtnNewFormat": {
-		"description": "This is a button for creating a new printing format."
-	},	
-	"gTipItemType": "类型:",
-	"@gTipItemType": {
-		"description": "This is the name of an item type,in the printing format page."
-	},
-	"gTipFolderNoSelected": "未选择文件夹",
-	"@gTipFolderNoSelected": {
-		"description": "This is the prompt for saving flie."
-	},
-	"gTipSaveFail": "保存失败 !",
-	"@gTipSaveFail": {
-		"description": "This is the prompt for saving flie failed."
-	},
-	"gTipSaveSuccess": "保存成功. 路径是:",
-	"@gTipSaveSuccess": {
-		"description": "This is the prompt for flie saved ok."
-	},
-	"gBtnSaveExcel": "保存Excel",
-	"@gBtnSaveExcel": {
-		"description": "This is the button to save excel."
-	},	 
-	"gBtnSaveDataBase": "保存数据库",
-	"@gBtnSaveDataBase": {
-		"description": "This is the button to save database."
-	},	 	
-	"gPluPlu": "PLU",
-	"@gPluPlu": {
-		"description": "This is prompt for product edit."
-	},
-	"gPluPluCode": "Product Code",
-	"@gPluPluCode": {
-		"description": "This is prompt for product edit."
-	},
-	"gPluItemCode": "Item Code",
-	"@gPluItemCode": {
-		"description": "This is prompt for product edit."
-	},
-	"gPluCategory": "类别",
-	"@gPluCategory": {
-		"description": "This is prompt for product edit."
-	},
-	"gPluPluName": "PLU名字",
-	"@gPluPluName": {
-		"description": "This is prompt for product edit."
-	},
-	"gPluWgtUnit": "单位",
-	"@gPluWgtUnit": {
-		"description": "This is prompt for product edit."
-	},
-	"gPluTaxType": "税类型",
-	"@gPluTaxType": {
-		"description": "This is prompt for product edit."
-	}, 
-	"gPluPrice": "单价",
-	"@gPluPrice": {
-		"description": "This is prompt for product edit."
-	},
-	"gPluUnitWgt": "单重",
-	"@gPluUnitWgt": {
-		"description": "This is prompt for product edit."
-	},
-	"gPluPretare": "预扣重",
-	"@gPluPretare": {
-		"description": "This is prompt for product edit."
-	},
-	"gPluLimitHigh": "上限",
-	"@gPluLimitHigh": {
-		"description": "This is prompt for product edit."
-	},
-	"gPluLimitLow": "下限",
-	"@gPluLimitLow": {
-		"description": "This is prompt for product edit."
-	},
-	"gPluField": "PLU 字段",
-	"@gPluField": {
-		"description": "This is prompt for PLU field select."
-	},
-	"gTipImportPluOK": "注意: 空单元格会被写为 0 或 - ",
-	"@gTipImportPluOK": {
-		"description": "This is prompt for PLU import."
-	},
-	"gTipNoData": "无数据",
-	"@gTipNoData": {
-		"description": "This is prompt for no data."
-	},
-	"gTipNoDataSelected": "未选择数据.",
-	"@gTipNoDataSelected": {
-		"description": "This is prompt for no data selected."
-	},
-	"gTipPluDuplicated": "重复",
-	"@gTipPluDuplicated": {
-		"description": "This is prompt for plu duplicated."
-	},
-	"gTipSaveDbOk": "保存数据OK.",
-	"@gTipSaveDbOk": {
-		"description": "This is prompt for plu saved."
-	},
-	"gTipSavingData": "数据正在保存,请稍等...",
-	"@gTipSavingData": {
-		"description": "This is prompt for saving data."
-	},
-	"gTipInstallService": "安装服务",
-	"@gTipInstallService": {
-		"description": "This is prompt to install service."
-	},
-	"gTipStartService": "开始服务",
-	"@gTipStartService": {
-		"description": "This is prompt to start service."
-	},
-	"gTipStopService": "停止服务",
-	"@gTipStopService": {
-		"description": "This is prompt to stop service."
-	},
-	"gTipUninstallService": "卸载服务",
-	"@gTipUninstallService": {
-		"description": "This is prompt to uninstall service."
-	},
-	"gTipScaleList": "秤列表",
-	"@gTipScaleList": {
-		"description": "This is prompt for scale list."
-	},
-	"gTipService": "服务",
-	"@gTipService": {
-		"description": "This is prompt for app service."
-	},
-	"gTipServiceUninstalled": "服务未安装",
-	"@gTipServiceUninstalled": {
-		"description": "This is prompt for service status."
-	},
-	"gTipServiceStoped": "服务已停止",
-	"@gTipServiceStoped": {
-		"description": "This is prompt for service status."
-	},
-	"gTipServiceStarted": "正在运行...",
-	"@gTipServiceStarted": {
-		"description": "This is prompt for service status."
-	},
-	"gTipServiceOff": "服务未开启,请开启服务.",
-	"@gTipServiceOff": {
-		"description": "This is prompt for service stoped."
-	},
-	"gBtnModify": "修改",
-	"@gBtnModify": {
-		"description": "This button is used for modifying serial ports or performing other operations."
-	},
-	"gTipExitApp": "是否确定退出系统?",
-	"@gTipExitApp": {
-		"description": "This is prompt to exit the system."
-	},
-	"gBtnCloseSerialPort": "关闭串口",
-	"@gBtnCloseSerialPort": {
-		"description": "This is a button to close serial port."
-	},
-	"gBtnOpenSerialPort": "打开串口",
-	"@gBtnOpenSerialPort": {
-		"description": "This is a button to open serial port."
-	}
-
-	
-	
-	
-
+    "@gTipDownloadAllPlu": {
+        "description": "This is the prompt to clear all product data before issuing."
+    },
+    "gTipUpdatePlu": "更新PLU",
+    "@gTipUpdatePlu": {
+        "description": "This is the prompt to update products."
+    },
+    "btn_add_lic_file": "选择认证文件",
+    "@btn_add_lic_file": {
+        "description": ""
+    },
+    "output_res_folder": "资源文件夹",
+    "@output_res_folder": {
+        "description": ""
+    },
+    "output_select_folder": "选择文件夹",
+    "@output_select_folder": {
+        "description": ""
+    },
+    "output_confirm_info": "请确认文件夹的名字!",
+    "@output_confirm_info": {
+        "description": ""
+    },
+    "output_no_file": "没有文件匹配!",
+    "@output_no_file": {
+        "description": ""
+    },
+    "def_fmt_sel_tip": "请选择1-10个打印格式.",
+    "@def_fmt_sel_tip": {
+        "description": ""
+    },
+    "def_fmt_no_title": "默认序号",
+    "@def_fmt_no_title": {
+        "description": ""
+    },
+    "def_fmt_file_title": "文件路径",
+    "@def_fmt_file_title": {
+        "description": ""
+    },
+    "def_fmt_no_file_tip": "没有数据",
+    "@def_fmt_no_file_tip": {
+        "description": ""
+    },
+    "def_fmt_out_range_tip": "The overall print format content is out of scope",
+    "@def_fmt_out_range_tip": {
+        "description": ""
+    },
+    "m_scale_title": "多台秤管理",
+    "@m_scale_title": {
+        "description": ""
+    },
+    "scale_mgr_btn_add": "添加",
+    "@scale_mgr_btn_add": {
+        "description": ""
+    },
+    "scale_mgr_btn_rename": "重命名",
+    "@scale_mgr_btn_rename": {
+        "description": ""
+    },
+    "scale_mgr_btn_def": "设置默认",
+    "@scale_mgr_btn_def": {
+        "description": ""
+    },
+    "scale_mgr_btn_test": "测试连接",
+    "@scale_mgr_btn_test": {
+        "description": ""
+    },
+    "gScaleName": "秤名",
+    "@gScaleName": {
+        "description": ""
+    },
+    "gStatus": "状态",
+    "@gStatus": {
+        "description": "This is the prompt for the scale status."
+    },
+    "gProgress": "进度",
+    "@gProgress": {
+        "description": "This is the prompt for the download progress."
+    },
+    "rDetailRptTitle": "零售详单",
+    "@rDetailRptTitle": {
+        "description": "This is the title of the retail detail report page in the retail app."
+    },
+    "rTipDetailRpt": "此应用是显示零售详单数据.",
+    "@rTipDetailRpt": {
+        "description": "This is the prompt for the retail detail report in the retail app."
+    },
+    "gTitlePluEdit": "PLU 编辑",
+    "@gTitlePluEdit": {
+        "description": "This is the title of the PLU edit page."
+    },
+    "rShowScaleListBtn": "显示秤",
+    "@rShowScaleListBtn": {
+        "description": "This is the name of the button for displaying the list of scales in the retail app."
+    },
+    "rHideScaleListBtn": "隐藏列表",
+    "@rHideScaleListBtn": {
+        "description": "This is the name of the button for hiding the list of scales in the retail app."
+    },
+    "rRefreshListBtn": "刷新列表",
+    "@rRefreshListBtn": {
+        "description": "This is the name of the button for refreshing the retail list in the retail app."
+    },
+    "gOnlineTip": "在线",
+    "@gOnlineTip": {
+        "description": "This is a prompt for online information."
+    },
+    "gOfflineTip": "断线",
+    "@gOfflineTip": {
+        "description": "This is a prompt for offline information."
+    },
+    "rJoinManagementTip": "是否加入管理",
+    "@rJoinManagementTip": {
+        "description": "This is a prompt about whether to join the management in the retail app."
+    },
+    "gTitleUpdateFirmware": "更新软件",
+    "@gTitleUpdateFirmware": {
+        "description": "This is the title for updating the firmware."
+    },
+    "gTipFirmwareZipFile": "软件Zip:",
+    "@gTipFirmwareZipFile": {
+        "description": "This is the prompt for the Firmware zip file."
+    },
+    "gBtnSelectZipFirmware": "请选择更新文件Zip",
+    "@gBtnSelectZipFirmware": {
+        "description": "This is the button for selecting the Firmware zip file."
+    },
+    "gConfirmFileTip": "请确定文件无误.",
+    "@gConfirmFileTip": {
+        "description": "This is the prompt to confirm whether the file is correct when downloading."
+    },
+    "gBtnViaSerialUpdate": "串口",
+    "@gBtnViaSerialUpdate": {
+        "description": "This is the button for switching to serial port update when updating the firmware."
+    },
+    "gBtnViaNetworkUpdate": "网络",
+    "@gBtnViaNetworkUpdate": {
+        "description": "This is the button for switching to network update when updating the firmware."
+    },
+    "gTipSelectUpdateWay": "请选择更新方式.",
+    "@gTipSelectUpdateWay": {
+        "description": "This is the prompt to select the way when update firmware."
+    },
+    "gTipWait": "请稍等...",
+    "@gTipWait": {
+        "description": "This is the prompt for waiting."
+    },
+    "gTipRebootForUpdate": "请重启设备后等待更新...",
+    "@gTipRebootForUpdate": {
+        "description": "This is the prompt restarting the device for the automatic update."
+    },
+    "rTitleSetVariableValues": "变量设置",
+    "@rTitleSetVariableValues": {
+        "description": "This is the title for setting the values of variables, such as the header and footer,in the retail app."
+    },
+    "rTipSetVariableValues": "此应用是用来下发变量数据,例如页眉、页脚等.",
+    "@rTipSetVariableValues": {
+        "description": "This is the explanation for applying the setting of variable values."
+    },
+    "rTipHeader": "页眉",
+    "@rTipHeader": {
+        "description": "This is the prompt for Header."
+    },
+    "rTipFooter": "页脚",
+    "@rTipFooter": {
+        "description": "This is the prompt for Footer."
+    },
+    "rTipOperator": "操作员",
+    "@rTipOperator": {
+        "description": "This is the prompt for Operator."
+    },
+    "gTipDataError": "数据错误 !",
+    "@gTipDataError": {
+        "description": "This is the prompt for data error."
+    },
+    "gBtnNewFormat": "新建",
+    "@gBtnNewFormat": {
+        "description": "This is a button for creating a new printing format."
+    },
+    "gTipItemType": "类型:",
+    "@gTipItemType": {
+        "description": "This is the name of an item type,in the printing format page."
+    },
+    "gTipFolderNoSelected": "未选择文件夹",
+    "@gTipFolderNoSelected": {
+        "description": "This is the prompt for saving flie."
+    },
+    "gTipSaveFail": "保存失败 !",
+    "@gTipSaveFail": {
+        "description": "This is the prompt for saving flie failed."
+    },
+    "gTipSaveSuccess": "保存成功. 路径是:",
+    "@gTipSaveSuccess": {
+        "description": "This is the prompt for flie saved ok."
+    },
+    "gBtnSaveExcel": "保存Excel",
+    "@gBtnSaveExcel": {
+        "description": "This is the button to save excel."
+    },
+    "gBtnSaveDataBase": "保存数据库",
+    "@gBtnSaveDataBase": {
+        "description": "This is the button to save database."
+    },
+    "gPluPlu": "PLU",
+    "@gPluPlu": {
+        "description": "This is prompt for product edit."
+    },
+    "gPluPluCode": "产品 Code",
+    "@gPluPluCode": {
+        "description": "This is prompt for product edit."
+    },
+    "gPluItemCode": "条目 Code",
+    "@gPluItemCode": {
+        "description": "This is prompt for product edit."
+    },
+    "gPluCategory": "类别",
+    "@gPluCategory": {
+        "description": "This is prompt for product edit."
+    },
+    "gPluPluName": "PLU名字",
+    "@gPluPluName": {
+        "description": "This is prompt for product edit."
+    },
+    "gPluWgtUnit": "单位",
+    "@gPluWgtUnit": {
+        "description": "This is prompt for product edit."
+    },
+    "gPluTaxType": "税类型",
+    "@gPluTaxType": {
+        "description": "This is prompt for product edit."
+    },
+    "gPluPrice": "单价",
+    "@gPluPrice": {
+        "description": "This is prompt for product edit."
+    },
+    "gPluUnitWgt": "单重",
+    "@gPluUnitWgt": {
+        "description": "This is prompt for product edit."
+    },
+    "gPluPretare": "预扣重",
+    "@gPluPretare": {
+        "description": "This is prompt for product edit."
+    },
+    "gPluLimitHigh": "上限",
+    "@gPluLimitHigh": {
+        "description": "This is prompt for product edit."
+    },
+    "gPluLimitLow": "下限",
+    "@gPluLimitLow": {
+        "description": "This is prompt for product edit."
+    },
+    "gPluField": "PLU 字段",
+    "@gPluField": {
+        "description": "This is prompt for PLU field select."
+    },
+    "gTipImportPluOK": "注意: 空单元格会被写为 0 或 - ",
+    "@gTipImportPluOK": {
+        "description": "This is prompt for PLU import."
+    },
+    "gTipNoData": "无数据",
+    "@gTipNoData": {
+        "description": "This is prompt for no data."
+    },
+    "gTipNoDataSelected": "未选择数据.",
+    "@gTipNoDataSelected": {
+        "description": "This is prompt for no data selected."
+    },
+    "gTipPluDuplicated": "重复",
+    "@gTipPluDuplicated": {
+        "description": "This is prompt for plu duplicated."
+    },
+    "gTipSaveDbOk": "保存数据OK.",
+    "@gTipSaveDbOk": {
+        "description": "This is prompt for plu saved."
+    },
+    "gTipSavingData": "数据正在保存,请稍等...",
+    "@gTipSavingData": {
+        "description": "This is prompt for saving data."
+    },
+    "gTipInstallService": "安装服务",
+    "@gTipInstallService": {
+        "description": "This is prompt to install service."
+    },
+    "gTipStartService": "开始服务",
+    "@gTipStartService": {
+        "description": "This is prompt to start service."
+    },
+    "gTipStopService": "停止服务",
+    "@gTipStopService": {
+        "description": "This is prompt to stop service."
+    },
+    "gTipUninstallService": "卸载服务",
+    "@gTipUninstallService": {
+        "description": "This is prompt to uninstall service."
+    },
+    "gTipScaleList": "秤列表",
+    "@gTipScaleList": {
+        "description": "This is prompt for scale list."
+    },
+    "gTipService": "服务",
+    "@gTipService": {
+        "description": "This is prompt for app service."
+    },
+    "gTipServiceStatus": "服务状态:",
+    "@gTipServiceStatus": {
+        "description": "This is prompt for service status."
+    },
+    "gTipServiceUninstalled": "服务未安装",
+    "@gTipServiceUninstalled": {
+        "description": "This is prompt for service status."
+    },
+    "gTipServiceStoped": "服务已停止",
+    "@gTipServiceStoped": {
+        "description": "This is prompt for service status."
+    },
+    "gTipServiceStarted": "正在运行...",
+    "@gTipServiceStarted": {
+        "description": "This is prompt for service status."
+    },
+    "gTipServiceOff": "服务未开启,请开启服务.",
+    "@gTipServiceOff": {
+        "description": "This is prompt for service stoped."
+    },
+    "gBtnModify": "修改",
+    "@gBtnModify": {
+        "description": "This button is used for modifying serial ports or performing other operations."
+    },
+    "gTipExitApp": "是否确定退出系统?",
+    "@gTipExitApp": {
+        "description": "This is prompt to exit the system."
+    },
+    "gBtnCloseSerialPort": "关闭串口",
+    "@gBtnCloseSerialPort": {
+        "description": "This is a button to close serial port."
+    },
+    "gBtnOpenSerialPort": "打开串口",
+    "@gBtnOpenSerialPort": {
+        "description": "This is a button to open serial port."
+    },
+    "cTipWeighingCount": "称重次数:",
+    "@cTipWeighingCount": {
+        "description": "This is a tip for weighing count."
+    },
+    "cTipPowerOffCnt": "异常关机次数:",
+    "@cTipPowerOffCnt": {
+        "description": "This is a tip for abnormal power-off count."
+    },
+    "cTipRunningTime": "运行时间(mins):",
+    "@cTipRunningTime": {
+        "description": "This is a tip for running time."
+    },
+    "cTipPowerOnCnt": "开机次数:",
+    "@cTipPowerOnCnt": {
+        "description": "This is a tip for power-on count."
+    },
+    "cTipOlTime": "OL 时间(mins):",
+    "@cTipOlTime": {
+        "description": "This is a tip for ol time."
+    },
+    "cTipUlTime": "UL 时间(mins):",
+    "@cTipUlTime": {
+        "description": "This is a tip for ul time."
+    },
+    "cTipErr4Cnt": "Err4 次数:",
+    "@cTipErr4Cnt": {
+        "description": "This is a tip for err4 count."
+    },
+    "cTipErr19Cnt": "Err19 次数:",
+    "@cTipErr19Cnt": {
+        "description": "This is a tip for err19 count."
+    },
+    "cTipCalswitchCnt": "校正开关次数:",
+    "@cTipCalswitchCnt": {
+        "description": "This is a tip for cal switch count."
+    },
+    "cTipCalCnt": "标定次数:",
+    "@cTipCalCnt": {
+        "description": "This is a tip for calibration count."
+    },
+    "iTitleHLSetting": "上下限设置",
+    "@iTitleHLSetting": {
+        "description": "This is the title for the upper and lower limits setting."
+    },
+    "iTipHLUnit": "重量单位与秤上保持一致..",
+    "@iTipHLUnit": {
+        "description": "This is a prompt for the unit of checking weight."
+    }, 
+    "gTipHelp": "帮助",
+    "@gTipHelp": {
+        "description": "This is a tip for help info."
+    },
+    "gTipScaleMgrPageHelp": "一、通过串口连接\n.通过串口线将设备与电脑连接；\n2.输入正确的串口参数和信息，点击【连接】；\n3.如果连接成功，左侧状态栏将显示设备在线。\n5.点击【关闭串口】，断开串口连接；点击【打开串口】打开串口连接；\n6.如果要更改秤名，请单击【重命名】，输入完后点击【确认】。\n\n二、通过网口/Wi-Fi连接\n1.点击左侧状态栏顶部的【+】按钮；\n2.输入IPv4（IP地址）和Port（端口号）；\n3.点击【确认】完成连接。\n\n获取IP地址\nWi-Fi：在主界面点击【Wi-Fi设置】，在左侧栏中选择要连接的Wi-Fi，输入密码，点击【连接】。如果连接成功，会显示IP地址。\n网口：连接网线后，可以在秤的菜单中查看到IP地址。（以T-Max为例：F3-3 COM3 SHOW，其中F3-3 DHCP要设置为ON）\n\n获取端口号\nWi-Fi：在秤的菜单中获取。（以T-Max为例：F3-2 COM2 MODE，按三次TARE键查看端口号）\n网口：在秤的菜单中获取。（以T-Max为例：F3-3 COM3 PORT，按一次TARE键查看端口号）\n\n注：\n如果要使用Wi-Fi连接T-Config，您需要先打开秤的Wi-Fi功能，并将运行T-Config的设备连接上该Wi-Fi；如果要使用网口连接T-Config，您需要先打开秤的网口功能，并将运行T-Config的设备连接到该网络。\n",
+    "@gTipScaleMgrPageHelp": {
+        "description": "This is the help info for the multi-scale management page."
+    },
+    "gTipWifiSettingPageHelp": "1.从左侧菜单栏中选择要连接的Wi-Fi；\n2.输入密码，点击【连接】获取IP地址（IPv4）；\n3.返回主界面，点击【多台秤管理】；\n4.点击左侧的【+】按钮，输入IP地址和串口号；\n5.点击【确认】连接秤。\n",
+    "@gTipWifiSettingPageHelp": {
+        "description": "This is the help info for the wifi setting page."
+    },
+    "gTipUpdateFirmwarePageHelp": "1.点击【请选择更新文件Zip】并上传文件；\n2.点击【下发】；\n3.选择固件更新方式：串口或网络（Wi-Fi、网口）；\n\n注：\n通过串口下发，秤会自动重启；\n通过Wi-Fi或网口下发，可以批量选择多台秤，下发后秤不会自动重启，需要手动重启后才会更新软件。\n",
+    "@gTipUpdateFirmwarePageHelp": {
+        "description": "This is the help info for the update firmware page."
+    },
+    "gTipReceiptFmtDownPageHelp": "1.根据提示选择相应的票据打印格式并上传；\n2.点击【下发】；\n3.如果连接了多个网络，则需要在下发前选择设备对应的网络。\n",
+    "@gTipReceiptFmtDownPageHelp": {
+        "description": "This is the help info for the receipt format download page."
+    },
+    "gTipReceiptDesignPageHelp": "1.选择打印机协议、票据长度/宽度、打印方向等信息；\n2.编辑打印格式时，左侧菜单栏中有4个变量可供选择；\n自由文本：可以自由输入的文本变量\n分割线：用于分割的水平线（选择该变量两次后，变量中间的内容可以重复出现，比如每次累积的内容）\n变量：计重秤所需的变量\n价格变量：计价秤所需的变量\n3.编辑好票据打印格式后，点击【保存格式】。\n\n注：\n计重秤和计价秤不能使用错误的变量，否则打印出来是空的。\n",
+    "@gTipReceiptDesignPageHelp": {
+        "description": "This is the help info for the Receipt Design page."
+    },
+    "gTipPlueditPageHelp": "1.创建新的PLU：点击【+】按钮创建默认数据的PLU。\n2.导入PLU：点击【+】按钮，选择数据表上传，界面上会显示出所有PLU数据。\n3.从数据库导入PLU：点击【导入】按钮。\n\n注：\n数据库中的PLU指的不是秤上的PLU，而是T-Retail数据库的PLU。（目前软件暂不支持从秤上读取PLU。）\n4.点击【设置】按钮 选择需要显示的PLU信息。\n5.如果需要修改PLU信息，可以直接在相应的单元格中修改。（将鼠标悬停在单元格上将显示可以输入的参数范围。）\n6.选择要下发的PLU，然后点击【下载】按钮。\n7.此时界面会弹出确认框，您可以选择在下发前清除秤上的所有PLU，或是将对应的PLU进行更新。点击【确认】。\n8.以表格格式导出：选择要导出的PLU，点击【导出】，然后选择要输出的文件夹。\n9.保存到T-Retail数据库：选择需要保存的PLU，点击【保存数据库】，此时界面会弹出确认框，您可以选择在保存前清除后台的所有PLU，或是将对应的PLU进行更新。点击【确认】。\n10.下载模板：点击【获取PLU模板】并选择下载路径，获取可以填写PLU的表格模板。\n",
+    "@gTipPlueditPageHelp": {
+        "description": "This is the help info for the plu edit page."
+    },
+    "gTipVarSettingPageHelp": "1.编辑页眉、页脚、操作员信息；\n2.点击【下发】按钮下发至秤。\n",
+    "@gTipVarSettingPageHelp": {
+        "description": "This is the help info for the variable value setting page."
+    },
+    "gTipRetailDetailPageHelp": "1.此功能界面可以显示每次结账打印后的数据；\n\n注：\n如果未安装服务，您需要点击右侧的【服务】-【安装服务】，当系统提示服务已停止时，点击【开始服务】，系统会提示服务正在运行。最后，点击【确认】完成服务的安装；\n2.结账打印后，每笔订单的数据都将显示在此界面上，点击【刷新列表】可以获取最新的订单记录；\n3.点击【导出】，可以将报表下载至本地。\n\n注：\n此功能可以通过网口/Wi-Fi连接使用，不能通过串口使用。",
+    "@gTipRetailDetailPageHelp": {
+        "description": "This is the help info for the retail detail report page."
+    },
+    "gTipDeviceTimePageHelp": "1.点击【设置日期/时间】可以手动设置秤上的日期和时间；\n2.点击【同步PC时间】会自动同步电脑设备上的日期时间。\n",
+    "@gTipDeviceTimePageHelp": {
+        "description": "This is the help info for the device time setting page."
+    },
+    "gTipLabelFmtDownPageHelp": "1.根据提示选择相应的标签打印格式并上传；\n2.点击【下发】；\n3.如果连接了多个网络，则需要在下发前选择设备对应的网络。\n",
+    "@gTipLabelFmtDownPageHelp": {
+        "description": "This is the help info for the label format download page."
+    },
+    "gTipLabelDesignPageHelp": "1.设置打印机协议、标签长度/宽度、打印方向等信息；\n2.编辑打印格式时，左侧菜单栏中有4个变量可供选择：自由文本、条形码变量、二维码变量、变量；\n3.条码编辑：点击【条码编辑】，点击【添加】，选择数据类型、内容、长度等格式信息；输入条码格式名称后，点击【保存】按钮后，可以在左侧菜单栏中选择已保存的条形码格式。\n4.二维码编辑：与条码编辑相同。\n5.编辑好标签打印格式后，点击【保存格式】。\n",
+    "@gTipLabelDesignPageHelp": {
+        "description": "This is the help info for the label design page."
+    },
+    "gTipSerialDesignPageHelp": "1.顶部菜单栏有计重、计数、计价等模式，可以根据连接的秤选择不同的模式进行设置；\n2.左侧菜单栏为变量，可根据需要选择；\n3.点击【打开预览】可以预览输出结果；\n4.编辑好串口输出格式后，点击【下发】。成功后，使用串口工具进行测试。\n\n注：此功能只能在串口连接模式下使用。\n",
+    "@gTipSerialDesignPageHelp": {
+        "description": "This is the help info for the derial output design page."
+    },
+    "gTipBasicDataPageHelp": "1.点击【获取基本数据】；\n2.T-Config会自动收集秤上的基本数据，并在界面上同步显示。\n3.可以点击左上角的菜单栏按钮，选择需要切换的设备。",
+    "@gTipBasicDataPageHelp": {
+        "description": "This is the help info for the basic data page."
+    },
+    "gTipParameterSettingPageHelp": "1.一共有5个参数设置：称重信息、出厂参数、串口参数、价格参数、其他；\n2.“可编辑”列中显示“是”的参数，可以根据“描述”列中的提示内容在“值”列中进行编辑；\n3.设置完所有参数后，点击右下角的按钮确认提交。",
+    "@gTipParameterSettingPageHelp": {
+        "description": "This is the help info for the parameter setting page."
+    },
+    "gTipTakeOutPageHelp": "1.点击【开始】以启动减法秤功能，记录卸载过程中称重值的减量（条件是秤上必须有重量）。\n2.点击【显示报表】，会在界面下方显示已保存的记录；\n3.点击【设置】，可以将【保存模式】切换为【自动】；\n4.在【设置】中，您还可以设置数据导出的日期格式和数据分隔符；\n5.在【PLU名字】中输入PLU编号或名称，以调用T-Industry数据库中的PLU（此处的PLU不是秤上的PLU）；\n6.点击【报表设置】，可以选择称重数据显示的信息；（目前暂无功能的变量：Product Code、Item Code、User Name、User NO）\n7.点击标题行中的上下箭头，可以对报表进行升/降的排序；\n8.点击【导出】按钮，以表格形式导出保存的所有数据；\n9.点击【停止】按钮，可以关闭此功能。\n\n注：\n报表中的重量是指减量，而不是秤盘上的所有重量。\n",
+    "@gTipTakeOutPageHelp": {
+        "description": "This is the help info for the take out scale page."
+    },
+    "gTipIncrementWgtPageHelp": "1.点击【开始】以启动加法秤功能，记录加载过程中称重值的增量。\n2.点击【显示报表】，会在界面下方显示已保存的记录；\n3.点击【设置】，可以将【保存模式】切换为【自动】；\n4.在【设置】中，您还可以设置数据导出的日期格式和数据分隔符；\n5.在【PLU名字】中输入PLU编号或名称，以调用T-Industry数据库中的PLU（此处的PLU不是秤上的PLU）；\n6.点击【报表设置】，可以选择称重数据显示的信息；（目前暂无功能的变量：Product Code、Item Code、User Name、User NO）\n7.点击标题行中的上下箭头，可以对报表进行升/降的排序；\n8.点击【导出】按钮，以表格形式导出保存的所有数据；\n9.点击【停止】按钮，可以关闭此功能。\n\n注：\n报表中的重量是指增量，而不是秤盘上的所有重量。\n",
+    "@gTipIncrementWgtPageHelp": {
+        "description": "This is the help info for the increment weighing page."
+    },
+    "gTipCheckWgtPageHelp": "1.点击【编辑】设置上下限（判断是基于软件设置的上下限，而不是秤）。设置完成后，放置重量，相应的报警灯会亮起；\n2.点击【保存】按钮，保存当前称重记录；\n3.点击【显示报表】，会在界面下方显示已保存的称重记录；\n4.点击【设置】可以切换为自动保存模式，并可以设置为在OK/HIGH/LOW/ALL时保存。\n5.在【PLU名字】中输入PLU编号或名称，以调用T-Industry数据库中的PLU（此处的PLU不是秤上的PLU）；\n6.点击【报表设置】，可以选择称重数据显示的信息；（目前暂无功能的变量：Product Code、Item Code、User Name、User NO）\n7.点击标题行中的上下箭头，可以对报表进行升/降的排序；\n8.点击【导出】按钮，以表格形式导出保存的所有数据；\n\n注：\n1.上下限的单位是当前秤上选择的单位。在软件中设置好上下限后，并通过秤切换单位后，上下限的值不会进行单位换算。\n2.目前软件判断上下限是从大于零点开始（一般秤上是从20d开始）。\n",
+    "@gTipCheckWgtPageHelp": {
+        "description": "This is the help info for the check weighing page."
+    },
+    "gTipWgtDataCollectionHelp": "1.点击【保存】按钮，手动保存当前称重数据（无数量限制）；点击【导出】按钮，以表格形式导出保存的所有数据；\n2.点击【设置】，可以将【保存模式】切换为【自动】；\n3.在【设置】中，您还可以设置数据导出的日期格式和数据分隔符；\n4.在【PLU名字】中输入PLU编号或名称，以调用T-Industry数据库中的PLU（此处的PLU不是秤上的PLU）；\n5.点击【报表设置】，可以选择称重数据显示的信息；（目前暂无功能的变量：Product Code、Item Code、User Name、User NO）\n6.点击标题行中的上下箭头，可以对报表进行升/降的排序。\n\n注：\n1.需要先清空秤盘，才会保存下一条称重的数据（零点不会被保存）。\n2.【报表设置】中的上下限是T-Industry数据中PLU设置的上下限，并非秤上设置的上下限。\n3.关闭/重启软件，已保存的数据不会被清除。\n",
+    "@gTipWgtDataCollectionHelp": {
+        "description": "This is the help info for the weighing data collection page."
+    },
+    "gTipWeighingPageHelp": "1.此功能界面上会实时同步秤上的称重数据（支持所有单位包括PCS、PCT）；\n2.可以点击【扣重】和【归零】对秤执行操作；\n3.点击左上角的列表按钮可以在列表中查看已连接设备的并进行更换。\n\n注：\n1.此功能可以通过连接串口、网口或Wi-Fi使用。\n2.T-Industry的称重单位与秤保持一致，但是切换单位需要在秤上执行。\n",
+    "@gTipWeighingPageHelp": {
+        "description": "This is the help info for the weighing page."
+    }
 }

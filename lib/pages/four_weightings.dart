@@ -244,6 +244,7 @@ class FourWeightsPageState extends State<FourWeightsPage> {
           context,
           localizedStrings.iTitleWeighting,
           scaleList,
+          '',
         ),
       ),
       body: Container(

@@ -333,10 +333,25 @@ class PublicFunctions {
     sendMsg(scaleId, jsonEncode(myScaleCmd));
   }
 
-  static void getRecords(int scaleId, String mode) {
+  // static void getRecords(int scaleId, String mode) {
+  //   myScaleCmd.cmdMode = "get_recs";
+  //   myScaleCmd.cmdData =
+  //       '$mode,${myDefScaleInfo.defScaleModel},${myDefScaleInfo.defScaleSn},${myDefScaleInfo.defScaleModel}'; //根据scale model scale sn  scale name(别名)
+  //   sendMsg(scaleId, jsonEncode(myScaleCmd));
+  // }
+
+  static void exportRecords(int scaleId, String mode, String path) {
+    myScaleCmd.cmdMode = "export_recs";
+    myScaleCmd.cmdData =
+        '$mode,${myDefScaleInfo.defScaleModel},${myDefScaleInfo.defScaleSn},${myDefScaleInfo.defScaleModel},$path'; //根据scale model scale sn  scale name(别名)
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
+  static void getRecords(int scaleId, String mode, int page, int pageSize,
+      String sortColumnName, String direction) {
     myScaleCmd.cmdMode = "get_recs";
     myScaleCmd.cmdData =
-        '$mode,${myDefScaleInfo.defScaleModel},${myDefScaleInfo.defScaleSn},${myDefScaleInfo.defScaleModel}'; //根据scale model scale sn  scale name(别名)
+        '$mode,${myDefScaleInfo.defScaleModel},${myDefScaleInfo.defScaleSn},${myDefScaleInfo.defScaleModel},$page,$pageSize,$sortColumnName,$direction'; //根据scale model scale sn  scale name(别名)
     sendMsg(scaleId, jsonEncode(myScaleCmd));
   }
 

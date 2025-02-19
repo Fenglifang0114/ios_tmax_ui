@@ -7,7 +7,7 @@ import 'package:t_max/data/company_info.dart';
 import '../data/encrypt_data.dart';
 
 String getVersion() {
-  return "V1.43";
+  return "V1.45";
 }
 
 const String companyImage = 'assets/images/company.png';

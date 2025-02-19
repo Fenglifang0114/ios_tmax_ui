@@ -54,7 +54,7 @@ class _DownReciptPageState extends State<DownSerialOutputPage> {
                         fontWeight: FontWeight.normal)), ////此处需要秤回复
                 duration: const Duration(seconds: 3),
                 backgroundColor: (myRespDataFromScale.msgBody.contains('ok'))
-                    ? Theme.of(context).colorScheme.surfaceContainerHigh
+                    ? Theme.of(context).colorScheme.onTertiaryFixedVariant
                     : Theme.of(context).colorScheme.error));
           }
         });
@@ -97,6 +97,7 @@ class _DownReciptPageState extends State<DownSerialOutputPage> {
             child: pageHeadDefScale(
               context,
               localizedStrings.gTitleSerialOutputDownload,
+              '',
             ),
           ),
         ),

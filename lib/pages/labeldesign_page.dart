@@ -408,7 +408,8 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     return Scaffold(
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(50),
-          child: pageHeadDefScale(context, localizedStrings.label_design_title),
+          child: pageHeadDefScale(context, localizedStrings.label_design_title,
+              localizedStrings.gTipLabelDesignPageHelp),
         ),
         body: SizedBox(
           height: height - 50,
@@ -563,7 +564,8 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                               height: 40,
                               child: Row(
                                 children: [
-                                  buildBtnText('Width(mm):'),
+                                  buildBtnText(
+                                      localizedStrings.gPageWidth + '(mm):'),
                                   const SizedBox(
                                     width: 10,
                                   ),
@@ -609,7 +611,8 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                               height: 40,
                               child: Row(
                                 children: [
-                                  buildBtnText('Height(mm):'),
+                                  buildBtnText(
+                                      localizedStrings.gPageHeight + '(mm):'),
                                   const SizedBox(
                                     width: 10,
                                   ),

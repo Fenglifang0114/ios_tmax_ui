@@ -90,6 +90,7 @@ class PluData {
 class PluInfoDataSource extends DataTableSource {
   PluInfoDataSource.empty(this.context) {
     pluInfoList = [];
+    _pluInfos = [];
   }
 
   PluInfoDataSource(this.context,
@@ -313,7 +314,7 @@ class PluInfoDataSource extends DataTableSource {
                 padding: const EdgeInsets.symmetric(horizontal: 0.0),
                 child: Tooltip(
                   message:
-                      "0-g,1-kg,2-lb,3-oz,4-lboz,5-tj,6-gj,7-t \r\n 0-kg,1-100g,2-pcs",
+                      "wgt:0-g,1-kg,2-lb,3-oz,4-lboz,5-tj,6-hj,7-t \r\nprice:0-kg,1-100g,2-pcs",
                   child: TextField(
                     controller: TextEditingController(
                         text: (pluInfo.generalUnit).toString()),

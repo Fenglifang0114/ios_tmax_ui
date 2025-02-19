@@ -1,12 +1,9 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import 'package:t_max/data/high_low_weight.dart';
 import '../../data/device_data.dart';
-import '../../data/productlist_data.dart';
 import '../../data/report_data.dart';
 import '../../data/reqweightdata_data.dart';
 import '../../data/settingparam_data.dart';
@@ -16,11 +13,13 @@ import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
 import '../data/comscaleinfo_data.dart';
 import '../data/const_var_data.dart';
-import '../data/manager_scale_channel.dart';
 import '../data/downloadresponse.dart';
+import '../data/high_low_weight.dart';
+import '../data/manager_scale_channel.dart';
 import '../data/language.dart';
 import '../data/plu_data_source.dart';
 import '../data/plu_info_list_data.dart';
+import '../data/productlist_data.dart';
 import '../data/record_data.dart';
 import '../data/scale_list_data.dart';
 import '../data/scalelist_data.dart';
@@ -31,7 +30,6 @@ import '../data/wgt_rpt_data_source.dart';
 import '../dialog/conform_dialog.dart';
 import '../dialog/high_low_setting.dart';
 import '../dialog/setting_dialog.dart';
-import 'package:path/path.dart';
 import '../dialog/weight_report_feilds_setting.dart';
 import '../functions/weight_funcs.dart';
 import '../widget/custom_button.dart';
@@ -48,8 +46,6 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
   List<String> userNameList = [];
   List<String> items = [];
 
-  List<WeightReportData> _weightReportDatas = <WeightReportData>[];
-  List<WeightReportData> myWeightReportData = [];
   List<PluData> myPluInfoList = [];
   PluData? selectedPluData; // 用于存储选中的PluData
   List<NetScaleInfoLocal> scaleNetItems = [];
@@ -58,6 +54,9 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
 
   late ScrollController _reportScrollerController;
   String errorText = "";
+
+  List<WeightReportData> _weightReportDatas = <WeightReportData>[];
+  List<WeightReportData> myWeightReportData = [];
   late WeightReportDataSource _weightReportDataSource;
   final DataGridController _dataGridController = DataGridController();
 
@@ -100,9 +99,15 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
   dynamic eventBus13;
   dynamic eventBus14;
   dynamic eventBus15;
+  dynamic eventBus16;
 
   Timer? startTimer;
   Timer? innerTimer;
+
+  int maxRecId = 0;
+  bool firstGetRec = true;
+
+  int _currentPage = 1;
 
   void updateTableData(List<WeightReportData> newReportData) {
     _weightReportDataSource.updateData(newReportData);
@@ -172,10 +177,13 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
   void initState() {
     super.initState();
     initScaleList();
+    updateMyReportFeildsMap();
     _reportScrollerController = ScrollController();
     lastWeight = "*";
     dateformat = 1;
     zeroRange = 0;
+    sortColumnName = 'Id';
+    sortDirectValue = DataGridSortDirection.descending;
 
     if (myModeSettingCheck.recMode == msgManual) {
       weightMode = 1;
@@ -190,12 +198,14 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     _stableSaveTime = int.parse(timeString);
     _isStableStatusJudge = false;
     // getProductNameList();
+
     _weightReportDatas = getWeightReportData();
-    _weightReportDataSource = WeightReportDataSource(_weightReportDatas);
+    _weightReportDataSource =
+        WeightReportDataSource(_weightReportDatas, weighingCheckMode);
+    _weightReportDataSource.loadPage(_currentPage);
+
     PublicFunctions.getUserList();
     PublicFunctions.getProductList();
-    PublicFunctions.getRecords(myDefScaleInfo.defScaleId!, weighingCheckMode);
-
     PublicFunctions.getWeight(myDefScaleInfo.defScaleId!);
     cntScaleTimerMgr.startCntScaleTimer(10);
 
@@ -312,35 +322,34 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                 if (myReqWeightCountine.msgBody!.isStable == true &&
                     !_isZero &&
                     _isPassZero &&
-                    _isStableStatusJudge) {
-                  {
-                    if (myModeSettingCheck.saveMode == hiMode && _isHigh) {
-                      _isPassZero = false;
-                      _isTiming = false;
-                      _isStableStatusJudge = false;
-                      _addWeightToReport();
-                      sendReportDataToDB();
-                    } else if (myModeSettingCheck.saveMode == okMode && _isOK) {
-                      _isPassZero = false;
-                      _isTiming = false;
-                      _isStableStatusJudge = false;
-                      _addWeightToReport();
-                      sendReportDataToDB();
-                    } else if (myModeSettingCheck.saveMode == lowMode &&
-                        _isLow) {
-                      _isPassZero = false;
-                      _isTiming = false;
-                      _isStableStatusJudge = false;
-                      _addWeightToReport();
-                      sendReportDataToDB();
-                    } else if (myModeSettingCheck.saveMode == allMode) {
-                      _isPassZero = false;
-                      _isTiming = false;
-                      _isStableStatusJudge = false;
-                      _addWeightToReport();
-                      sendReportDataToDB();
-                    }
+                    _isStableStatusJudge &&
+                    checkWgtValue(myReqWeightCountine.msgBody!.weightVal)) {
+                  if (myModeSettingCheck.saveMode == hiMode && _isHigh) {
+                    _isPassZero = false;
+                    _isTiming = false;
+                    _isStableStatusJudge = false;
+                    _addWeightToReport();
+                    sendReportDataToDB();
+                  } else if (myModeSettingCheck.saveMode == okMode && _isOK) {
+                    _isPassZero = false;
+                    _isTiming = false;
+                    _isStableStatusJudge = false;
+                    _addWeightToReport();
+                    sendReportDataToDB();
+                  } else if (myModeSettingCheck.saveMode == lowMode && _isLow) {
+                    _isPassZero = false;
+                    _isTiming = false;
+                    _isStableStatusJudge = false;
+                    _addWeightToReport();
+                    sendReportDataToDB();
+                  } else if (myModeSettingCheck.saveMode == allMode) {
+                    _isPassZero = false;
+                    _isTiming = false;
+                    _isStableStatusJudge = false;
+                    _addWeightToReport();
+                    sendReportDataToDB();
                   }
+
                   lastWeight = myReqWeightCountine.msgBody!.weightVal;
                 }
 
@@ -414,27 +423,39 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
       }
     });
     eventBus10 = eventBus.on<EventGetScaleRecords>().listen((event) {
-      if (!mounted) {
-        return;
+      if (mounted) {
+        setState(() {
+          myGetScaleRecords = event.obj;
+          if (myGetScaleRecords.weightRecords!.isNotEmpty) {
+            _addDBdataToReport();
+            getWeightReportData();
+            if (firstGetRec) {
+              int maxId = int.parse(myGetScaleRecords.weightRecords![0].id!);
+              maxRecId = maxId;
+
+              // 遍历 weightRecords 列表
+              for (var record in myGetScaleRecords.weightRecords!) {
+                int currentId = int.parse(record.id!);
+                if (currentId > maxId) {
+                  maxId = currentId;
+                  maxRecId = maxId;
+                }
+              }
+            }
+          } else {
+            myWeightReportData.clear();
+            updateTableData(getWeightReportData());
+          }
+        });
       }
-      setState(() {
-        myGetScaleRecords = event.obj;
-        final weightRecordsLength = myGetScaleRecords.weightRecords!.length;
-        if (weightRecordsLength != 0) {
-          _addDBdataToReport();
-          getWeightReportData();
-        } else {
-          myWeightReportData.clear();
-          updateTableData(getWeightReportData());
-        }
-      });
     });
 
     eventBus11 = eventBus.on<EventDeleteRec>().listen((event) {
       if (mounted) {
         setState(() {
-          PublicFunctions.getRecords(
-              myDefScaleInfo.defScaleId!, weighingCheckMode);
+          maxRecId = 0;
+          _weightReportDatas.clear();
+          _weightReportDataSource.updateData(_weightReportDatas);
         });
       }
     });
@@ -501,9 +522,23 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
             DefScaleInfo.getDefScaleInfo(scaleId);
             myWeightReportData.clear();
             updateTableData(getWeightReportData());
-            PublicFunctions.getRecords(
-                myDefScaleInfo.defScaleId!, weighingCheckMode);
+            sortColumnName = 'Id';
+            maxRecId = 0;
+            firstGetRec = true;
+            sortDirectValue = DataGridSortDirection.descending;
+            _weightReportDataSource.loadPage(_currentPage);
           });
+        }
+      }
+    });
+
+    eventBus16 = eventBus.on<EventRevExportRecs>().listen((event) {
+      if (mounted) {
+        myRespDataFromScale = event.obj;
+        if (myRespDataFromScale.msgBody != "") {
+          if (mounted) {
+            showConfirmationDialog(context, myRespDataFromScale.msgBody);
+          }
         }
       }
     });
@@ -512,7 +547,8 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
   void _addDBdataToReport() {
     addDBdataToReport(myWeightReportData, myModeSettingCheck, dateformat);
     setState(() {
-      _weightReportDataSource = WeightReportDataSource(_weightReportDatas);
+      _weightReportDataSource =
+          WeightReportDataSource(_weightReportDatas, weighingCheckMode);
       Future.delayed(const Duration(milliseconds: 100), () {
         _dataGridController
             .scrollToRow(_weightReportDataSource.rows.length - 0);
@@ -538,9 +574,12 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     eventBus13.cancel();
     eventBus14.cancel();
     eventBus15.cancel();
+    eventBus16.cancel();
+
     cntScaleTimerMgr.stopPortOffTimer();
     _saveTimer?.cancel();
-
+    myGetScaleRecords.weightRecords?.clear();
+    myWeightReportData.clear();
     super.dispose();
   }
 
@@ -563,8 +602,10 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     return Scaffold(
       appBar: AppBar(
           title: Container(
-            child:
-                pageHeadDefScale(context, localizedStrings.iTitleCheckWeigher),
+            child: pageHeadDefScale(
+                context,
+                localizedStrings.iTitleCheckWeigher,
+                localizedStrings.gTipCheckWgtPageHelp),
           ),
           leading: IconTheme(
               data: IconThemeData(
@@ -744,6 +785,21 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                               optionsBuilder:
                                   (TextEditingValue textEditingValue) {
                                 if (textEditingValue.text == '') {
+                                  selectedPluData = PluData(
+                                      null,
+                                      null,
+                                      null,
+                                      null,
+                                      null,
+                                      null,
+                                      null,
+                                      null,
+                                      null,
+                                      null,
+                                      null,
+                                      null,
+                                      null,
+                                      null);
                                   return const Iterable<PluData>.empty();
                                 }
                                 return myPluInfoList.where((PluData data) {
@@ -761,6 +817,10 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                               onSelected: (PluData selection) {
                                 setState(() {
                                   selectedPluData = selection;
+                                  myHighLowWeight.highValue =
+                                      selectedPluData!.limitHigh!;
+                                  myHighLowWeight.lowValue =
+                                      selectedPluData!.limitLow!;
                                 });
                               },
                               displayStringForOption: (PluData option) =>
@@ -1136,7 +1196,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                                 color: (errorText).contains('succeed')
                                     ? Theme.of(context)
                                         .colorScheme
-                                        .surfaceContainerHigh
+                                        .onTertiaryFixedVariant
                                     : Theme.of(context).colorScheme.error,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -1370,18 +1430,17 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                                       initialDirectory: directory,
                                       type: FileType.custom,
                                       dialogTitle: 'Output file:',
-                                      allowedExtensions: ["xlsx"],
-                                      fileName: 'report.xlsx',
+                                      allowedExtensions: ["csv"],
+                                      fileName: 'report.csv',
                                     ));
                                     if (outputFile != null) {
-                                      if (!outputFile.contains(".xlsx")) {
-                                        outputFile = "$outputFile.xlsx";
+                                      if (!outputFile.contains(".csv")) {
+                                        outputFile = "$outputFile.csv";
                                       }
-                                      _creatFile(outputFile);
-                                      if (mounted && context.mounted) {
-                                        showConfirmationDialog(
-                                            context, errorText);
-                                      }
+                                      PublicFunctions.exportRecords(
+                                          myDefScaleInfo.defScaleId!,
+                                          weighingCheckMode,
+                                          outputFile);
                                     }
                                   }),
                             ],
@@ -1449,6 +1508,21 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                       child: Autocomplete<PluData>(
                         optionsBuilder: (TextEditingValue textEditingValue) {
                           if (textEditingValue.text == '') {
+                            selectedPluData = PluData(
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null);
                             return const Iterable<PluData>.empty();
                           }
                           return myPluInfoList.where((PluData data) {
@@ -1464,6 +1538,10 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                         onSelected: (PluData selection) {
                           setState(() {
                             selectedPluData = selection;
+                            myHighLowWeight.highValue =
+                                selectedPluData!.limitHigh!;
+                            myHighLowWeight.lowValue =
+                                selectedPluData!.limitLow!;
                           });
                         },
                         displayStringForOption: (PluData option) =>
@@ -1593,21 +1671,117 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                 );
               }),
             ),
-
             Expanded(
               child: Container(
-                  padding: EdgeInsets.all(10),
-                  child: SfDataGrid(
-                    source: _weightReportDataSource,
-                    columns: getColumns(),
-                    columnWidthMode: ColumnWidthMode.fill,
-                    frozenRowsCount: 0,
-                    controller: _dataGridController,
-                    allowSorting: true,
-                  )),
-            )
+                padding: EdgeInsets.all(10),
+                child: SfDataGrid(
+                  source: _weightReportDataSource,
+                  columns: getColumns().map((column) {
+                    return GridColumn(
+                      columnName: column.columnName,
+                      label: Container(
+                        padding: EdgeInsets.all(2),
+                        alignment: Alignment.center,
+                        child: GestureDetector(
+                          onTap: () {
+                            final currentSortDirection = _weightReportDataSource
+                                .sortDirectionForColumn(column.columnName);
+                            final newSortDirection = currentSortDirection ==
+                                    DataGridSortDirection.ascending
+                                ? DataGridSortDirection.descending
+                                : DataGridSortDirection.ascending;
+                            _weightReportDataSource.sortDataGrid(
+                              column.columnName,
+                              newSortDirection,
+                            );
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  myReportFeildsMap[column.columnName]!
+                                      .showName,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              _getSortIconForColumn(column.columnName),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  columnWidthMode: ColumnWidthMode.fill,
+                  frozenRowsCount: 0,
+                  // controller: null,
+                  allowSorting: false,
+                ),
+              ),
+            ),
+
+            // 分页控件
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: _currentPage > 1
+                      ? () {
+                          setState(() {
+                            _currentPage--;
+                            _weightReportDataSource.loadPage(_currentPage);
+                          });
+                        }
+                      : null,
+                ),
+                Text('Page $_currentPage'),
+                IconButton(
+                  icon: Icon(Icons.arrow_forward),
+                  onPressed: () {
+                    setState(() {
+                      _currentPage++;
+                      _weightReportDataSource.loadPage(_currentPage);
+                    });
+                  },
+                ),
+              ],
+            ),
+
+            // Expanded(
+            //   child: Container(
+            //       padding: EdgeInsets.all(10),
+            //       child: SfDataGrid(
+            //         source: _weightReportDataSource,
+            //         columns: getColumns(),
+            //         columnWidthMode: ColumnWidthMode.fill,
+            //         frozenRowsCount: 0,
+            //         controller: _dataGridController,
+            //         allowSorting: true,
+            //       )),
+            // )
           ],
         ));
+  }
+
+  Widget _getSortIconForColumn(String columnName) {
+    if (!_weightReportDataSource.isColumnSorted(columnName)) {
+      return SizedBox.shrink();
+    }
+    final sortDirection =
+        _weightReportDataSource.sortDirectionForColumn(columnName);
+    switch (sortDirection) {
+      case DataGridSortDirection.ascending:
+        return Icon(
+          Icons.arrow_upward,
+          size: 18,
+        );
+      case DataGridSortDirection.descending:
+        return Icon(
+          Icons.arrow_downward,
+          size: 18,
+        );
+    }
   }
 
   void paramSettingDialog(BuildContext context) {
@@ -1680,25 +1854,40 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     }
   }
 
-  _creatFile(String path) {
-    Excel excel = Excel.createExcel();
-    creatExcelFile(path, myWeightReportData, excel);
+  // _creatFile(String path) async {
+  //   Excel excel = Excel.createExcel();
+  //   // await creatExcelFile(path, myWeightReportData, excel);
+  //   await creatCsvFile(path, myWeightReportData);
 
-    try {
-      var onValue = excel.encode();
-      File(join(path))
-        ..createSync(recursive: true)
-        ..writeAsBytesSync(onValue!);
+  //   try {
+  //     var onValue = excel.encode();
+  //     File(join(path))
+  //       ..createSync(recursive: true)
+  //       ..writeAsBytesSync(onValue!);
 
-      errorText = "Excel save successful!";
-    } catch (ex) {
-      errorText = "Excel save failed!";
-    }
-  }
+  //     errorText = "Excel save successful!";
+  //   } catch (ex) {
+  //     errorText = "Excel save failed!";
+  //   }
+  // }
 
 // "ReqData":"{\"ScaleId\": 2, \"Product\": \"Apple\", \"Weight\": \"1.230\", \"Price\": \"3.25\"}"}
   void sendReportDataToDB() {
     sendRptDataToDB(myWeightReportData, weighingCheckMode);
+  }
+
+  bool checkWgtValue(String str) {
+    if (str.isEmpty) {
+      return false;
+    }
+    // 尝试将字符串转换为 double 类型
+    double? numValue = double.tryParse(str);
+
+    if (numValue != null && numValue > 0) {
+      return true;
+    }
+
+    return false;
   }
 
   void _addWeightToReport() {
@@ -1707,8 +1896,9 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     if (selectedPluData != null) {
       tempPlu = selectedPluData;
     }
+    maxRecId++;
     WeightReportData addData = WeightReportData(
-      (myWeightReportData.length + 1).toString(),
+      (maxRecId).toString(),
       myDefScaleInfo.defScaleModel == null ? '' : myDefScaleInfo.defScaleModel!,
       myDefScaleInfo.defScaleSn == null ? '' : myDefScaleInfo.defScaleSn!,
       (tempPlu!.plu == null) ? "" : tempPlu.plu.toString(),
@@ -1762,12 +1952,14 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     _weightReportDatas = myWeightReportData;
     setState(() {
       String sortColName = 'Date Time';
+      sortColumnName = "";
       DataGridSortDirection sortDirec = DataGridSortDirection.descending;
       if (_weightReportDataSource.sortedColumns.isNotEmpty) {
         sortColName = _weightReportDataSource.sortedColumns[0].name;
         sortDirec = _weightReportDataSource.sortedColumns[0].sortDirection;
       }
-      _weightReportDataSource = WeightReportDataSource(_weightReportDatas);
+      _weightReportDataSource =
+          WeightReportDataSource(_weightReportDatas, weighingCheckMode);
       _weightReportDataSource.sortedColumns
           .add(SortColumnDetails(name: sortColName, sortDirection: sortDirec));
       Future.delayed(const Duration(milliseconds: 100), () {

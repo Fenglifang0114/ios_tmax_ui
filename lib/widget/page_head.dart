@@ -8,6 +8,7 @@ import '../functions/methods.dart';
 import 'box_gradient.dart';
 import 'custom_button.dart';
 import 'custom_circle_icon.dart';
+import 'page_info.dart';
 
 Widget pageHead(dynamic context, String pageTitle, String serialPortStatus,
     List<int> scaleList) {
@@ -156,7 +157,7 @@ void _showConfirmationDialog(BuildContext context, List<int> scaleList) {
           // PublicFunctions.stopWeight(scaleList[i]);
         }
       }
-      PublicFunctions.closeScalePassth(1);
+      // PublicFunctions.closeScalePassth(1); //关闭透传
       if (context.mounted) {
         Navigator.of(context).pop();
       }
@@ -164,7 +165,8 @@ void _showConfirmationDialog(BuildContext context, List<int> scaleList) {
   });
 }
 
-Widget pageHeadDesign(dynamic context, String pageTitle, List<int> scaleList) {
+Widget pageHeadDesign(
+    dynamic context, String pageTitle, List<int> scaleList, String helpInfo) {
   return Container(
       color: Theme.of(context).colorScheme.onPrimary,
       child: Container(
@@ -219,12 +221,18 @@ Widget pageHeadDesign(dynamic context, String pageTitle, List<int> scaleList) {
                 ],
               )),
             ),
+            Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+              PageInfoButton(helpInfo: helpInfo, onRefresh: () {}),
+              const SizedBox(
+                width: 50,
+              ),
+            ])
           ],
         ),
       ));
 }
 
-Widget pageHeadDefScale(dynamic context, String pageTitle) {
+Widget pageHeadDefScale(dynamic context, String pageTitle, String helpInfo) {
   List<int> scaleList = [myDefScaleInfo.defScaleId!];
   return Container(
       color: Theme.of(context).colorScheme.onPrimary,
@@ -305,6 +313,17 @@ Widget pageHeadDefScale(dynamic context, String pageTitle) {
                   const SizedBox(
                     width: 20,
                   ),
+                  helpInfo != ''
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                              PageInfoButton(
+                                  helpInfo: helpInfo, onRefresh: () {}),
+                              const SizedBox(
+                                width: 50,
+                              ),
+                            ])
+                      : SizedBox()
                 ],
               ),
             )

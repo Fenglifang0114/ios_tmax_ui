@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:data_table_2/data_table_2.dart';
 import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
@@ -173,6 +172,7 @@ class PluEidtPageState extends State<PluEidtPage> {
 
   @override
   void dispose() {
+    PluInfoDataSource.empty(context);
     _pluInfoDataSource.pluInfoList.clear();
     _pluInfoDataSource.selectedColumns.clear();
     _pluInfoDataSource.removeListener(_updateSelectedDessertRowListener);
@@ -419,6 +419,7 @@ class PluEidtPageState extends State<PluEidtPage> {
           context,
           localizedStrings.gTitlePluEdit,
           [myDefScaleInfo.defScaleId!],
+          localizedStrings.gTipPlueditPageHelp,
         ),
       ),
       body: Padding(
@@ -1250,7 +1251,7 @@ class PluEidtPageState extends State<PluEidtPage> {
               'The length is 30. Characters need scale support for display and only printer support for printing.'),
         if (_pluInfoDataSource.selectedColumns.contains('generalUnit'))
           TextCellValue(
-              '''weighing scale: 0-g 1-kg 2-lb 3-oz 4-lboz 5-tj 6-gj 7-t\r\nprice scale: 0-kg  1-100g  2-pcs'''),
+              '''weighing scale: 0-g 1-kg 2-lb 3-oz 4-lboz 5-tj 6-hj 7-t\r\nprice scale: 0-kg  1-100g  2-pcs'''),
         if (_pluInfoDataSource.selectedColumns.contains('taxType'))
           TextCellValue('0-tax1 1-tax2  2-tax3'),
         if (_pluInfoDataSource.selectedColumns.contains('price'))
@@ -1545,7 +1546,7 @@ class PluEidtPageState extends State<PluEidtPage> {
               )), ////此处需要秤回复
           duration: const Duration(seconds: 6),
           backgroundColor: msg.contains('OK')
-              ? Theme.of(context).colorScheme.surfaceContainerHigh
+              ? Theme.of(context).colorScheme.onTertiaryFixedVariant
               : Theme.of(context).colorScheme.error));
     });
   }
