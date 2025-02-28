@@ -156,7 +156,17 @@ class S {
     return Intl.message(
       'Start',
       name: 'gBtnStart',
-      desc: 'This is a button to start.',
+      desc: 'This is a button for starting.',
+      args: [],
+    );
+  }
+
+  /// `End`
+  String get gBtnEnd {
+    return Intl.message(
+      'End',
+      name: 'gBtnEnd',
+      desc: 'This is a button for endding.',
       args: [],
     );
   }
@@ -603,12 +613,113 @@ class S {
     );
   }
 
+  /// `BarCode Type`
+  String get gBarcodeType {
+    return Intl.message(
+      'BarCode Type',
+      name: 'gBarcodeType',
+      desc: 'This is a button about barcode type.',
+      args: [],
+    );
+  }
+
+  /// `BarCode Name`
+  String get gBarcodeName {
+    return Intl.message(
+      'BarCode Name',
+      name: 'gBarcodeName',
+      desc: 'This is a button about barcode name.',
+      args: [],
+    );
+  }
+
+  /// `Enter name to create/select.`
+  String get gBarcodeSelect {
+    return Intl.message(
+      'Enter name to create/select.',
+      name: 'gBarcodeSelect',
+      desc:
+          'This is a prompt regarding the creation or selection of a barcode or qrcode name.',
+      args: [],
+    );
+  }
+
+  /// `DATA TYPE`
+  String get gBarCodeDataType {
+    return Intl.message(
+      'DATA TYPE',
+      name: 'gBarCodeDataType',
+      desc: 'This is a prompt regarding the data type.',
+      args: [],
+    );
+  }
+
+  /// `Content`
+  String get gBarCodeContent {
+    return Intl.message(
+      'Content',
+      name: 'gBarCodeContent',
+      desc: 'This is a prompt regarding the content.',
+      args: [],
+    );
+  }
+
+  /// `Default Value`
+  String get gBarCodeDefValue {
+    return Intl.message(
+      'Default Value',
+      name: 'gBarCodeDefValue',
+      desc: 'This is a prompt regarding the default value.',
+      args: [],
+    );
+  }
+
+  /// `Alignment`
+  String get gBarCodeAlignment {
+    return Intl.message(
+      'Alignment',
+      name: 'gBarCodeAlignment',
+      desc: 'This is a prompt regarding the alignment.',
+      args: [],
+    );
+  }
+
+  /// `Max Length`
+  String get gBarCodeMaxLength {
+    return Intl.message(
+      'Max Length',
+      name: 'gBarCodeMaxLength',
+      desc: 'This is a prompt regarding the max length.',
+      args: [],
+    );
+  }
+
+  /// `Delete`
+  String get gBarCodeDelete {
+    return Intl.message(
+      'Delete',
+      name: 'gBarCodeDelete',
+      desc: 'This is a prompt to delete.',
+      args: [],
+    );
+  }
+
   /// `Qrcode Edit`
   String get gQrcodeEdit {
     return Intl.message(
       'Qrcode Edit',
       name: 'gQrcodeEdit',
       desc: 'This is a button about qrcode edit.',
+      args: [],
+    );
+  }
+
+  /// `Qrcode Name`
+  String get gQrcodeName {
+    return Intl.message(
+      'Qrcode Name',
+      name: 'gQrcodeName',
+      desc: 'This is a tip about qrcode name.',
       args: [],
     );
   }
@@ -1003,10 +1114,10 @@ class S {
     );
   }
 
-  /// `Save Mode:`
+  /// `Save Mode`
   String get save_mode {
     return Intl.message(
-      'Save Mode:',
+      'Save Mode',
       name: 'save_mode',
       desc: 'This is a prompt about saving mode.',
       args: [],
@@ -1014,20 +1125,20 @@ class S {
   }
 
   /// `Manual`
-  String get manual {
+  String get gTipManual {
     return Intl.message(
       'Manual',
-      name: 'manual',
+      name: 'gTipManual',
       desc: 'This is a prompt about manual mode.',
       args: [],
     );
   }
 
   /// `Auto`
-  String get auto {
+  String get gTipAuto {
     return Intl.message(
       'Auto',
-      name: 'auto',
+      name: 'gTipAuto',
       desc: 'This is a prompt about auto mode.',
       args: [],
     );
@@ -1053,12 +1164,22 @@ class S {
     );
   }
 
-  /// `Date Format:`
+  /// `Date Format`
   String get date_format {
     return Intl.message(
-      'Date Format:',
+      'Date Format',
       name: 'date_format',
       desc: '',
+      args: [],
+    );
+  }
+
+  /// `Date Separator`
+  String get gDateSeparator {
+    return Intl.message(
+      'Date Separator',
+      name: 'gDateSeparator',
+      desc: 'This is a prompt about date separator.',
       args: [],
     );
   }
@@ -1114,10 +1235,10 @@ class S {
   }
 
   /// `Edit`
-  String get button_edit {
+  String get gBtnEdit {
     return Intl.message(
       'Edit',
-      name: 'button_edit',
+      name: 'gBtnEdit',
       desc: '',
       args: [],
     );
@@ -4416,6 +4537,36 @@ class S {
       'PLU Field',
       name: 'gPluField',
       desc: 'This is prompt for PLU field select.',
+      args: [],
+    );
+  }
+
+  /// `Weight`
+  String get gRptWeight {
+    return Intl.message(
+      'Weight',
+      name: 'gRptWeight',
+      desc: 'This is the prompt regarding weight in the report.',
+      args: [],
+    );
+  }
+
+  /// `Weight Unit`
+  String get gRptWeightUnit {
+    return Intl.message(
+      'Weight Unit',
+      name: 'gRptWeightUnit',
+      desc: 'This is the prompt regarding weight unit in the report.',
+      args: [],
+    );
+  }
+
+  /// `Date Time`
+  String get gRptDateTime {
+    return Intl.message(
+      'Date Time',
+      name: 'gRptDateTime',
+      desc: 'This is the prompt regarding date time in the report.',
       args: [],
     );
   }

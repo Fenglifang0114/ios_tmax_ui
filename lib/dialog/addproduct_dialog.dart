@@ -239,7 +239,7 @@
 //                           btnWidth: 130,
 //                           btnHeight: 40,
 //                           icon: Icons.edit_outlined,
-//                           text: localizedStrings.button_edit,
+//                           text: localizedStrings.gBtnEdit,
 //                           onPressed: () {
 //                             errorText.text = '';
 //                             editProductRec();

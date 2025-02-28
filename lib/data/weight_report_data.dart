@@ -57,7 +57,7 @@ class ReportFields {
 
 Map<String, ReportShowName> myReportFeildsMap = {
   'Id': ReportShowName('Id', true),
-  'Date Time': ReportShowName('Date Time', true),
+  'Date Time': ReportShowName(localizedStrings.gRptDateTime, true),
   'PLU': ReportShowName('PLU', true),
   'Product Code': ReportShowName(localizedStrings.gPluPluCode, false),
   'Item Code': ReportShowName(localizedStrings.gPluItemCode, false),
@@ -68,11 +68,11 @@ Map<String, ReportShowName> myReportFeildsMap = {
   'UnitWeight': ReportShowName(localizedStrings.gPluUnitWgt, false),
   'LimitHigh': ReportShowName(localizedStrings.gPluLimitHigh, false),
   'LimitLow': ReportShowName(localizedStrings.gPluLimitLow, false),
-  'Weight': ReportShowName('Weight', true),
-  'Weight Unit': ReportShowName('Weight Unit', true),
+  'Weight': ReportShowName(localizedStrings.gRptWeight, true),
+  'Weight Unit': ReportShowName(localizedStrings.gRptWeightUnit, true),
   'Pretare': ReportShowName(localizedStrings.gPluPretare, false),
-  'User NO.': ReportShowName('User NO.', false),
-  'User Name': ReportShowName('User Name', true),
+  // 'User NO.': ReportShowName('User NO.', false),
+  // 'User Name': ReportShowName('User Name', true),
   'Scale Name': ReportShowName(localizedStrings.gScaleName, true),
 };
 

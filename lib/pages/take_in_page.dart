@@ -134,6 +134,10 @@ class TakeInPageState extends State<TakeInPage> {
       _isSaveButtonDisabled = false;
       _addWeightToReport();
       sendReportDataToDB();
+      _weightReportDataSource.sortDataGrid(
+        "Date Time",
+        DataGridSortDirection.descending,
+      );
     });
   }
 
@@ -530,6 +534,10 @@ class TakeInPageState extends State<TakeInPage> {
             _isStableStatusJudge = false;
             _addWeightToReport();
             sendReportDataToDB();
+            _weightReportDataSource.sortDataGrid(
+              "Date Time",
+              DataGridSortDirection.descending,
+            );
           }
           lastWeight = myReqWeightCountine.msgBody!.weightVal;
         }
@@ -575,6 +583,7 @@ class TakeInPageState extends State<TakeInPage> {
     cntScaleTimerMgr.stopPortOffTimer();
     myGetScaleRecords.weightRecords?.clear();
     myWeightReportData.clear();
+    PublicFunctions.stopWeight(selScaleId);
     super.dispose();
   }
 
@@ -802,11 +811,11 @@ class TakeInPageState extends State<TakeInPage> {
                         icon: Icons.exposure_zero),
                     _buildFlexibleButtonAndText(
                         buttonText: (myReqWeightCountine.msgBody == null)
-                            ? 'Start'
+                            ? localizedStrings.gBtnStart
                             : (myReqWeightCountine.msgBody!.isStable &&
                                     _isTakeInStart)
-                                ? 'End'
-                                : 'Start',
+                                ? localizedStrings.gBtnEnd
+                                : localizedStrings.gBtnStart,
                         onPressed: () {
                           if (_isTakeInStart) {
                             _isTakeInStart = false;
@@ -1528,11 +1537,11 @@ class TakeInPageState extends State<TakeInPage> {
                                 btnHeight: 40,
                                 icon: Icons.swipe_right_outlined,
                                 text: (myReqWeightCountine.msgBody == null)
-                                    ? 'Start'
+                                    ? localizedStrings.gBtnStart
                                     : (myReqWeightCountine.msgBody!.isStable &&
                                             _isTakeInStart)
-                                        ? 'End'
-                                        : 'Start',
+                                        ? localizedStrings.gBtnEnd
+                                        : localizedStrings.gBtnStart,
                                 onPressed: (!isStart ||
                                         myReqWeightCountine.msgBody == null)
                                     ? null
@@ -2117,7 +2126,7 @@ class TakeInPageState extends State<TakeInPage> {
         showTakeInWeight = myReqWeightCountine.msgBody!.weightVal;
       }
     } else {
-      performAddToReport();
+      // performAddToReport();
     }
   }
 
@@ -2177,32 +2186,10 @@ class TakeInPageState extends State<TakeInPage> {
       myDefScaleInfo.defScaleName == null
           ? ''
           : myDefScaleInfo.defScaleName!, //此处应该是秤机种名
-      getDateTime(myModeSettingNormal.dateSeparator, dateformat),
+      getDateTime(myModeSettingTakeIn.dateSeparator, dateformat),
     );
 
     myWeightReportData.add(addData);
-
-    setState(() {
-      String sortColName = 'Date Time';
-      sortColumnName = "";
-      DataGridSortDirection sortDirec = DataGridSortDirection.descending;
-      if (_weightReportDataSource.sortedColumns.isNotEmpty) {
-        sortColName = _weightReportDataSource.sortedColumns[0].name;
-        sortDirec = _weightReportDataSource.sortedColumns[0].sortDirection;
-      }
-      _weightReportDataSource =
-          WeightReportDataSource(_weightReportDatas, weighingTakeInMode);
-      _weightReportDataSource.sortedColumns
-          .add(SortColumnDetails(name: sortColName, sortDirection: sortDirec));
-      Future.delayed(const Duration(milliseconds: 100), () {
-        if (sortDirec == DataGridSortDirection.descending) {
-          _dataGridController.scrollToRow(0);
-        } else {
-          _dataGridController
-              .scrollToRow(_weightReportDataSource.rows.length - 0);
-        }
-      });
-    });
   }
 
   List<WeightReportData> getWeightReportData() {

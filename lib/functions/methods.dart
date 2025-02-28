@@ -443,6 +443,12 @@ class PublicFunctions {
     sendMsg(scaleId, jsonEncode(myScaleCmd));
   }
 
+  static void sendScaleAlive(int scaleId) {
+    myScaleCmd.cmdMode = "send_scale_alive";
+    myScaleCmd.cmdData = '';
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
   static void getBuildInfo(int scaleId) {
     myScaleCmd.cmdMode = "get_build_info";
     myScaleCmd.cmdData = '';

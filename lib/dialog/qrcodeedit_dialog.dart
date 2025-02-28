@@ -55,7 +55,7 @@ class MyQrcodeDialogState extends State<MyQrcodeDialog> {
             children: [
               Icon(Icons.qr_code,
                   color: Theme.of(context).colorScheme.onPrimary),
-              Text("Qrcode Edit",
+              Text(localizedStrings.gQrcodeEdit,
                   style:
                       TextStyle(color: Theme.of(context).colorScheme.onPrimary))
             ],
@@ -73,10 +73,10 @@ class MyQrcodeDialogState extends State<MyQrcodeDialog> {
                   width: 800,
                   child: Row(
                     children: [
-                      const SizedBox(
+                      SizedBox(
                         width: 300,
                         child: Text(
-                          'Qrcode Name:',
+                          localizedStrings.gQrcodeName,
                           textAlign: TextAlign.right,
                           style: TextStyle(
                               fontSize: 14,
@@ -101,7 +101,7 @@ class MyQrcodeDialogState extends State<MyQrcodeDialog> {
                                   .copyWith(fontStyle: FontStyle.italic),
                               decoration: InputDecoration(
                                 border: UnderlineInputBorder(),
-                                hintText: 'Enter name to create/select.',
+                                hintText: localizedStrings.gBarcodeSelect,
                               ),
                             ),
                             itemBuilder: (context, name) => ListTile(
@@ -151,7 +151,7 @@ class MyQrcodeDialogState extends State<MyQrcodeDialog> {
                       btnWidth: 150,
                       btnHeight: 40,
                       icon: Icons.delete,
-                      text: 'Delete All',
+                      text: localizedStrings.gBtnDelete,
                       onPressed: _deleteRowData),
                 ],
               ),
@@ -160,23 +160,23 @@ class MyQrcodeDialogState extends State<MyQrcodeDialog> {
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("DATA TYPE",
+                  Text(localizedStrings.gBarCodeDataType,
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary,
                           fontSize: 14,
                           fontWeight: FontWeight.bold)),
-                  Text("Content",
+                  Text(localizedStrings.gBarCodeContent,
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary,
                           fontSize: 14,
                           fontWeight: FontWeight.bold)),
-                  Text("Default Value",
+                  Text(localizedStrings.gBarCodeDefValue,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                       )),
-                  Text("Alignment",
+                  Text(localizedStrings.gBarCodeAlignment,
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary,
                           fontSize: 14,

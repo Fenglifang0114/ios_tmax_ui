@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:t_max/data/manager_scale_channel.dart';
 
 import '../functions/methods.dart';
@@ -28,6 +29,30 @@ class TimerManager {
   void stopCntScaleTimer() {
     _cntScaleTimer?.cancel();
     _isCntScaleTiming = false;
+  }
+
+//定时发送秤还活着
+  Timer? _cntAliveTimer;
+
+  bool _isCntAliveTiming = false;
+
+  bool get isCntAliveTiming => _isCntAliveTiming;
+
+  void startCntAliveTimer(int time) {
+    if (_cntAliveTimer != null) {
+      _cntAliveTimer!.cancel();
+    }
+
+    _isCntAliveTiming = true;
+    _cntAliveTimer = Timer(Duration(seconds: time), () {
+      PublicFunctions.sendScaleAlive(myDefScaleInfo.defScaleId!); //只管串口
+      startCntAliveTimer(10);
+    });
+  }
+
+  void stopCntAliveTimer() {
+    _cntAliveTimer?.cancel();
+    _isCntAliveTiming = false;
   }
 
   Timer? _portTimer;

@@ -78,7 +78,7 @@ class RespMsgType {
   static const String respSetLimit = 'resp_set_limit_to_scale';
   static const String respSwitchLimit = 'resp_switch_limit_from_scale';
   static const String respRevDetailTail = 'resp_rev_detail_tail';
-  static const String resp_export_recs = 'resp_export_recs';
+  static const String respExportRecs = 'resp_export_recs';
 
   static final Map<String, Function> handlers = {
     RespMsgType.respGetUIConf: handleGetUIConf,
@@ -127,7 +127,7 @@ class RespMsgType {
     RespMsgType.respSetLimit: handleRespSetLimit,
     RespMsgType.respSwitchLimit: handleRespSwitchLimit,
     RespMsgType.respRevDetailTail: handleRespRevDetailTail,
-    RespMsgType.resp_export_recs: handleRespExportRecs,
+    RespMsgType.respExportRecs: handleRespExportRecs,
   };
   static void handleGetUIConf(dynamic data) {
     final jsonResponse = json.decode(data['MsgBody']);

@@ -67,7 +67,7 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
             children: [
               Icon(Icons.qr_code,
                   color: Theme.of(context).colorScheme.onPrimary),
-              Text("BarCode Edit",
+              Text(localizedStrings.gBarcodeEdit,
                   style:
                       TextStyle(color: Theme.of(context).colorScheme.onPrimary))
             ],
@@ -85,8 +85,8 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
                 children: [
                   Row(
                     children: [
-                      const Text(
-                        'Barcode Type:',
+                      Text(
+                        localizedStrings.gBarcodeType,
                         style: TextStyle(
                             fontSize: 14, fontWeight: FontWeight.bold),
                       ),
@@ -100,6 +100,8 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
                           setState(() {
                             _selectBarcode = newValue!;
                             myBarcodetypedata.barcodetype = _selectBarcode;
+                            _onSuggestionSelected("--");
+                            _barCodeNameController.clear();
                             eventBus
                                 .fire(EventBarcodetypedata(myBarcodetypedata));
                           });
@@ -116,10 +118,10 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
                   const SizedBox(
                     width: 10,
                   ),
-                  const SizedBox(
+                  SizedBox(
                     width: 300,
                     child: Text(
-                      'Barcode Name:',
+                      localizedStrings.gBarcodeName,
                       textAlign: TextAlign.right,
                       style: TextStyle(
                           fontSize: 14,
@@ -143,7 +145,7 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
                             .copyWith(fontStyle: FontStyle.italic),
                         decoration: InputDecoration(
                           border: UnderlineInputBorder(),
-                          hintText: 'Enter name to create/select.',
+                          hintText: localizedStrings.gBarcodeSelect,
                         ),
                       ),
                       itemBuilder: (context, name) => ListTile(
@@ -192,7 +194,7 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
                       btnWidth: 150,
                       btnHeight: 40,
                       icon: Icons.delete,
-                      text: 'Delete All',
+                      text: localizedStrings.gBtnDelete,
                       onPressed: _deleteRowData),
                 ],
               ),
@@ -204,33 +206,33 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("DATA TYPE",
+                  Text(localizedStrings.gBarCodeDataType,
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary,
                           fontSize: 14,
                           fontWeight: FontWeight.bold)),
-                  Text("Content",
+                  Text(localizedStrings.gBarCodeContent,
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary,
                           fontSize: 14,
                           fontWeight: FontWeight.bold)),
-                  Text("Default Value",
+                  Text(localizedStrings.gBarCodeDefValue,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                       )),
-                  Text("Alignment",
+                  Text(localizedStrings.gBarCodeAlignment,
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary,
                           fontSize: 14,
                           fontWeight: FontWeight.bold)),
-                  Text("Max Length",
+                  Text(localizedStrings.gBarCodeMaxLength,
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary,
                           fontSize: 14,
                           fontWeight: FontWeight.bold)),
-                  Text("Delete",
+                  Text(localizedStrings.gBarCodeDelete,
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary,
                           fontSize: 14,
@@ -508,7 +510,7 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
 
     for (var i = 0; i < myBarCodeRowDataList.barCodeRowDataList.length; i++) {
       if (myBarCodeRowDataList.barCodeRowDataList[i].type == 'TEXT') {
-        count = myBarCodeRowDataList.barCodeRowDataList[i].content.length;
+        count += myBarCodeRowDataList.barCodeRowDataList[i].content.length;
         isLegal =
             regex.hasMatch(myBarCodeRowDataList.barCodeRowDataList[i].content);
         if (!isLegal) {
@@ -556,7 +558,7 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
 
     for (var i = 0; i < myBarCodeRowDataList.barCodeRowDataList.length; i++) {
       if (myBarCodeRowDataList.barCodeRowDataList[i].type == 'TEXT') {
-        count = myBarCodeRowDataList.barCodeRowDataList[i].content.length;
+        count += myBarCodeRowDataList.barCodeRowDataList[i].content.length;
         isLegal =
             regex.hasMatch(myBarCodeRowDataList.barCodeRowDataList[i].content);
         if (!isLegal) {
@@ -604,7 +606,7 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
 
     for (var i = 0; i < myBarCodeRowDataList.barCodeRowDataList.length; i++) {
       if (myBarCodeRowDataList.barCodeRowDataList[i].type == 'TEXT') {
-        count = myBarCodeRowDataList.barCodeRowDataList[i].content.length;
+        count += myBarCodeRowDataList.barCodeRowDataList[i].content.length;
         isLegal =
             regex.hasMatch(myBarCodeRowDataList.barCodeRowDataList[i].content);
         if (!isLegal) {
@@ -652,7 +654,7 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
 
     for (var i = 0; i < myBarCodeRowDataList.barCodeRowDataList.length; i++) {
       if (myBarCodeRowDataList.barCodeRowDataList[i].type == 'TEXT') {
-        count = myBarCodeRowDataList.barCodeRowDataList[i].content.length;
+        count += myBarCodeRowDataList.barCodeRowDataList[i].content.length;
         isLegal =
             regex.hasMatch(myBarCodeRowDataList.barCodeRowDataList[i].content);
         if (!isLegal) {
@@ -748,7 +750,7 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
 
     for (var i = 0; i < myBarCodeRowDataList.barCodeRowDataList.length; i++) {
       if (myBarCodeRowDataList.barCodeRowDataList[i].type == 'TEXT') {
-        count = myBarCodeRowDataList.barCodeRowDataList[i].content.length;
+        count += myBarCodeRowDataList.barCodeRowDataList[i].content.length;
         isLegal =
             regex.hasMatch(myBarCodeRowDataList.barCodeRowDataList[i].content);
         if (!isLegal) {

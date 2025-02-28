@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:data_table_2/data_table_2.dart';
 import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:t_max/functions/methods.dart';
 import '../data/download_prt_fmt.dart';
@@ -521,12 +522,16 @@ class PluEidtPageState extends State<PluEidtPage> {
                       // and trigger rebuild
                       //setState(() {
                       _rowsPerPage = value!;
-                      print(_rowsPerPage);
+                      if (kDebugMode) {
+                        print(_rowsPerPage);
+                      }
                       //});
                     },
                     initialFirstRowIndex: 0,
                     onPageChanged: (rowIndex) {
-                      print(rowIndex / _rowsPerPage);
+                      if (kDebugMode) {
+                        print(rowIndex / _rowsPerPage);
+                      }
                       setState(() {
                         _isLoading = true;
                       });

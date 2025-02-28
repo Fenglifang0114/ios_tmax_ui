@@ -143,6 +143,10 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
       _isSaveButtonDisabled = false;
       _addWeightToReport();
       sendReportDataToDB();
+      _weightReportDataSource.sortDataGrid(
+        "Date Time",
+        DataGridSortDirection.descending,
+      );
     });
   }
 
@@ -330,24 +334,40 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                     _isStableStatusJudge = false;
                     _addWeightToReport();
                     sendReportDataToDB();
+                    _weightReportDataSource.sortDataGrid(
+                      "Date Time",
+                      DataGridSortDirection.descending,
+                    );
                   } else if (myModeSettingCheck.saveMode == okMode && _isOK) {
                     _isPassZero = false;
                     _isTiming = false;
                     _isStableStatusJudge = false;
                     _addWeightToReport();
                     sendReportDataToDB();
+                    _weightReportDataSource.sortDataGrid(
+                      "Date Time",
+                      DataGridSortDirection.descending,
+                    );
                   } else if (myModeSettingCheck.saveMode == lowMode && _isLow) {
                     _isPassZero = false;
                     _isTiming = false;
                     _isStableStatusJudge = false;
                     _addWeightToReport();
                     sendReportDataToDB();
+                    _weightReportDataSource.sortDataGrid(
+                      "Date Time",
+                      DataGridSortDirection.descending,
+                    );
                   } else if (myModeSettingCheck.saveMode == allMode) {
                     _isPassZero = false;
                     _isTiming = false;
                     _isStableStatusJudge = false;
                     _addWeightToReport();
                     sendReportDataToDB();
+                    _weightReportDataSource.sortDataGrid(
+                      "Date Time",
+                      DataGridSortDirection.descending,
+                    );
                   }
 
                   lastWeight = myReqWeightCountine.msgBody!.weightVal;
@@ -580,6 +600,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     _saveTimer?.cancel();
     myGetScaleRecords.weightRecords?.clear();
     myWeightReportData.clear();
+    PublicFunctions.stopWeight(selScaleId);
     super.dispose();
   }
 
@@ -746,7 +767,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                         isTrue: !_isSaveButtonDisabled && isStart,
                         icon: Icons.save_outlined),
                     _buildFlexibleButtonAndText(
-                        buttonText: 'Edit',
+                        buttonText: localizedStrings.gBtnEdit,
                         onPressed: () {
                           highLowSettingDialog(context);
                         },
@@ -1402,7 +1423,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                                 btnWidth: constraints.maxWidth / 5,
                                 btnHeight: 40,
                                 icon: Icons.edit_sharp,
-                                text: localizedStrings.button_edit,
+                                text: localizedStrings.gBtnEdit,
                                 onPressed: () {
                                   highLowSettingDialog(context);
                                 },
@@ -1883,7 +1904,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     // 尝试将字符串转换为 double 类型
     double? numValue = double.tryParse(str);
 
-    if (numValue != null && numValue > 0) {
+    if (numValue != null && numValue >= 0.02) {
       return true;
     }
 
@@ -1944,33 +1965,11 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
       myDefScaleInfo.defScaleName == null
           ? ''
           : myDefScaleInfo.defScaleName!, //此处应该是秤机种名
-      getDateTime(myModeSettingNormal.dateSeparator, dateformat),
+      getDateTime(myModeSettingCheck.dateSeparator, dateformat),
     );
 
     myWeightReportData.add(addData);
-
     _weightReportDatas = myWeightReportData;
-    setState(() {
-      String sortColName = 'Date Time';
-      sortColumnName = "";
-      DataGridSortDirection sortDirec = DataGridSortDirection.descending;
-      if (_weightReportDataSource.sortedColumns.isNotEmpty) {
-        sortColName = _weightReportDataSource.sortedColumns[0].name;
-        sortDirec = _weightReportDataSource.sortedColumns[0].sortDirection;
-      }
-      _weightReportDataSource =
-          WeightReportDataSource(_weightReportDatas, weighingCheckMode);
-      _weightReportDataSource.sortedColumns
-          .add(SortColumnDetails(name: sortColName, sortDirection: sortDirec));
-      Future.delayed(const Duration(milliseconds: 100), () {
-        if (sortDirec == DataGridSortDirection.descending) {
-          _dataGridController.scrollToRow(0);
-        } else {
-          _dataGridController
-              .scrollToRow(_weightReportDataSource.rows.length - 0);
-        }
-      });
-    });
   }
 
   List<WeightReportData> getWeightReportData() {

@@ -74,19 +74,18 @@ class ParamSettingDialogState extends State<ParamSettingDialog> {
       title: getDialogTitle(context, localizedStrings.parameter_settings_title,
           Icons.settings_outlined, 400),
       content: Container(
-          height: 350,
+          height: 300,
+          width: 440,
           decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.secondaryFixed),
           child: SingleChildScrollView(
             child: Column(
               children: [
-                const SizedBox(height: 2),
                 Container(
                   decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.onPrimary),
                   child: Column(
                     children: [
-                      const SizedBox(height: 5),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -100,7 +99,7 @@ class ParamSettingDialogState extends State<ParamSettingDialog> {
                                   SizedBox(
                                     width: 200,
                                     child: Text(
-                                      localizedStrings.stable_time,
+                                      localizedStrings.stable_time + ":",
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 1,
                                     ),
@@ -154,7 +153,7 @@ class ParamSettingDialogState extends State<ParamSettingDialog> {
                                   SizedBox(
                                       width: 200,
                                       child: Text(
-                                        localizedStrings.date_format,
+                                        localizedStrings.date_format + ":",
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                       )),
@@ -170,10 +169,10 @@ class ParamSettingDialogState extends State<ParamSettingDialog> {
                               const SizedBox(height: 5),
                               Row(
                                 children: [
-                                  const SizedBox(
+                                  SizedBox(
                                       width: 200,
                                       child: Text(
-                                        "Date Separator",
+                                        localizedStrings.gDateSeparator + ":",
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                       )),
@@ -227,10 +226,10 @@ class ParamSettingDialogState extends State<ParamSettingDialog> {
                               (mySettingParam.scaleMode == 1)
                                   ? Row(
                                       children: [
-                                        const SizedBox(
+                                        SizedBox(
                                           width: 200,
                                           child: Text(
-                                            'Save Mode:',
+                                            localizedStrings.save_mode + ":",
                                             overflow: TextOverflow.ellipsis,
                                             maxLines: 1,
                                           ),
@@ -343,15 +342,38 @@ class ParamSettingDialogState extends State<ParamSettingDialog> {
         SizedBox(
             width: 200,
             child: Text(
-              localizedStrings.save_mode,
+              localizedStrings.save_mode + ":",
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             )),
-        saveModeSingleRadio(1),
-        const Text('manual'),
-        const SizedBox(width: 20),
-        saveModeSingleRadio(2),
-        const Text('auto'),
+        Column(
+          children: [
+            Row(
+              children: [
+                saveModeSingleRadio(1),
+                SizedBox(
+                    width: 200,
+                    child: Text(
+                      localizedStrings.gTipManual,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    )),
+              ],
+            ),
+            Row(
+              children: [
+                saveModeSingleRadio(2),
+                SizedBox(
+                    width: 200,
+                    child: Text(
+                      localizedStrings.gTipAuto,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    )),
+              ],
+            )
+          ],
+        )
       ],
     );
   }

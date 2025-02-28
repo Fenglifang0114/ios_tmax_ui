@@ -120,6 +120,10 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
       _isSaveButtonDisabled = false;
       _addWeightToReport();
       sendReportDataToDB();
+      _weightReportDataSource.sortDataGrid(
+        "Date Time",
+        DataGridSortDirection.descending,
+      );
     });
   }
 
@@ -495,6 +499,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     _dataGridController.dispose();
     _weightReportDataSource.dispose();
     _weightReportDatas.clear();
+    PublicFunctions.stopWeight(selScaleId);
     super.dispose();
   }
 
@@ -1092,21 +1097,21 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     }
   }
 
-  _creatFile(String path) async {
-    // Excel excel = Excel.createExcel();
-    // await creatExcelFile(path, myWeightReportData, excel);
-    await creatCsvFile(path, myWeightReportData);
-    try {
-      // var onValue = excel.encode();
-      // File(join(path))
-      //   ..createSync(recursive: true)
-      //   ..writeAsBytesSync(onValue!);
+  // _creatFile(String path) async {
+  //   // Excel excel = Excel.createExcel();
+  //   // await creatExcelFile(path, myWeightReportData, excel);
+  //   await creatCsvFile(path, myWeightReportData);
+  //   try {
+  //     // var onValue = excel.encode();
+  //     // File(join(path))
+  //     //   ..createSync(recursive: true)
+  //     //   ..writeAsBytesSync(onValue!);
 
-      errorText = "Excel save succeed!";
-    } catch (ex) {
-      errorText = "Excel save fail!";
-    }
-  }
+  //     errorText = "Excel save succeed!";
+  //   } catch (ex) {
+  //     errorText = "Excel save fail!";
+  //   }
+  // }
 
 // "ReqData":"{\"ScaleId\": 2, \"Product\": \"Apple\", \"Weight\": \"1.230\", \"Price\": \"3.25\"}"}
   void sendReportDataToDB() {
@@ -1120,7 +1125,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     // 尝试将字符串转换为 double 类型
     double? numValue = double.tryParse(str);
 
-    if (numValue != null && numValue > 0) {
+    if (numValue != null && numValue >= 0.02) {
       return true;
     }
 
@@ -1185,27 +1190,6 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
       getDateTime(myModeSettingNormal.dateSeparator, dateformat),
     );
     myWeightReportData.add(addData);
-    setState(() {
-      String sortColName = 'Date Time';
-      sortColumnName = "";
-      DataGridSortDirection sortDirec = DataGridSortDirection.descending;
-      if (_weightReportDataSource.sortedColumns.isNotEmpty) {
-        sortColName = _weightReportDataSource.sortedColumns[0].name;
-        sortDirec = _weightReportDataSource.sortedColumns[0].sortDirection;
-      }
-      _weightReportDataSource =
-          WeightReportDataSource(_weightReportDatas, weighingMode);
-      _weightReportDataSource.sortedColumns
-          .add(SortColumnDetails(name: sortColName, sortDirection: sortDirec));
-      Future.delayed(const Duration(milliseconds: 100), () {
-        if (sortDirec == DataGridSortDirection.descending) {
-          _dataGridController.scrollToRow(0);
-        } else {
-          _dataGridController
-              .scrollToRow(_weightReportDataSource.rows.length - 0);
-        }
-      });
-    });
   }
 
   List<WeightReportData> getWeightReportData() {

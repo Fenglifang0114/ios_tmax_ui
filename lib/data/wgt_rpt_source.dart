@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:data_table_2/data_table_2.dart';
 
@@ -228,7 +229,9 @@ class WgtInfoDataSource extends DataTableSource {
       }
     }
 
-    print('Cell count for row $index: ${cells.length}'); // 输出单元格数量
+    if (kDebugMode) {
+      print('Cell count for row $index: ${cells.length}');
+    } // 输出单元格数量
 
     return DataRow2.byIndex(
       index: index,

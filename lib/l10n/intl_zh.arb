@@ -44,6 +44,10 @@
     "@gBtnStart": {
         "description": "This is a button to start."
     },
+    "gBtnEnd": "结束",
+    "@gBtnEnd": {
+        "description": "This is a button for endding."
+    },
     "gBtnExit": "退出",
     "@gBtnExit": {
         "description": "This is a button to exit."
@@ -220,9 +224,49 @@
     "@gBarcodeEdit": {
         "description": "This is a button about barcode edit."
     },
+    "gBarcodeType": "条码类型",
+    "@gBarcodeType": {
+        "description": "This is a button about barcode type."
+    },
+    "gBarcodeName": "条码名字",
+    "@gBarcodeName": {
+        "description": "This is a button about barcode name."
+    },
+    "gBarcodeSelect": "输入名字创建或查找",
+    "@gBarcodeSelect": {
+        "description": "This is a prompt regarding the creation or selection of a barcode or qrcode name."
+    },
+    "gBarCodeDataType": "数据类型",
+    "@gBarCodeDataType": {
+        "description": "This is a prompt regarding the data type."
+    },
+    "gBarCodeContent": "内容",
+    "@gBarCodeContent": {
+        "description": "This is a prompt regarding the content."
+    },
+    "gBarCodeDefValue": "默认值",
+    "@gBarCodeDefValue": {
+        "description": "This is a prompt regarding the default value."
+    },
+    "gBarCodeAlignment": "对齐方式",
+    "@gBarCodeAlignment": {
+        "description": "This is a prompt regarding the alignment."
+    },
+    "gBarCodeMaxLength": "最大长度",
+    "@gBarCodeMaxLength": {
+        "description": "This is a prompt regarding the max length."
+    },
+    "gBarCodeDelete": "删除",
+    "@gBarCodeDelete": {
+        "description": "This is a prompt to delete."
+    },
     "gQrcodeEdit": "二维码编辑",
     "@gQrcodeEdit": {
         "description": "This is a button about qrcode edit."
+    },
+    "gQrcodeName": "二维码名字",
+    "@gQrcodeName": {
+        "description": "This is a tip about qrcode name."
     },
     "gSaveFormat": "保存格式",
     "@gSaveFormat": {
@@ -380,16 +424,16 @@
     "@parameter_settings_title": {
         "description": "This is a prompt about parameter settings."
     },
-    "save_mode": "保存模式:",
+    "save_mode": "保存模式",
     "@save_mode": {
         "description": "This is a prompt about saving mode."
     },
-    "manual": "手动",
-    "@manual": {
+    "gTipManual": "手动",
+    "@gTipManual": {
         "description": "This is a prompt about manual mode."
     },
-    "auto": "自动",
-    "@auto": {
+    "gTipAuto": "自动",
+    "@gTipAuto": {
         "description": "This is a prompt about auto mode."
     },
     "stable_time": "稳定时间(s)",
@@ -400,9 +444,13 @@
     "@stable_time_error_tip": {
         "description": ""
     },
-    "date_format": "日期格式:",
+    "date_format": "日期格式",
     "@date_format": {
         "description": ""
+    },
+    "gDateSeparator": "日期分隔符",
+    "@gDateSeparator": {
+        "description": "This is a prompt about date separator."
     },
     "zero_range": "零点范围:",
     "@zero_range": {
@@ -424,8 +472,8 @@
     "@gBtnAdd": {
         "description": ""
     },
-    "button_edit": "编辑",
-    "@button_edit": {
+    "gBtnEdit": "编辑",
+    "@gBtnEdit": {
         "description": ""
     },
     "plu_error_message": "PLU 预扣重不能为空.",
@@ -912,15 +960,15 @@
     "@app_models": {
         "description": ""
     },
-    "p_text_title": "Free Text",
+    "p_text_title": "自由文本",
     "@p_text_title": {
         "description": ""
     },
-    "p_line_title": "Dividing Line",
+    "p_line_title": "分割线",
     "@p_line_title": {
         "description": ""
     },
-    "p_price_title": "Price Variable",
+    "p_price_title": "计价变量",
     "@p_price_title": {
         "description": ""
     },
@@ -1136,123 +1184,123 @@
     "@p_plu_id_expl": {
         "description": ""
     },
-    "p_plu_name_expl": "PLU_Name.",
+    "p_plu_name_expl": "PLU名字",
     "@p_plu_name_expl": {
         "description": ""
     },
-    "p_order_number_expl": "The serial number of the pending order.",
+    "p_order_number_expl": "挂单序列号",
     "@p_order_number_expl": {
         "description": ""
     },
-    "p_unit_price_expl": "Unit Price.",
+    "p_unit_price_expl": "单价",
     "@p_unit_price_expl": {
         "description": ""
     },
-    "p_price_unit_expl": "Price Unit.",
+    "p_price_unit_expl": "价格单位",
     "@p_price_unit_expl": {
         "description": ""
     },
-    "p_pre_tare_expl": "PreTare.",
+    "p_pre_tare_expl": "扣重",
     "@p_pre_tare_expl": {
         "description": ""
     },
-    "p_unit_expl": "Weight Unit.",
+    "p_unit_expl": "重量单位",
     "@p_unit_expl": {
         "description": ""
     },
-    "p_date_expl": "Date.",
+    "p_date_expl": "日期",
     "@p_date_expl": {
         "description": ""
     },
-    "p_tax_type1_expl": "Tax Type 1.",
+    "p_tax_type1_expl": "税类型 1.",
     "@p_tax_type1_expl": {
         "description": ""
     },
-    "p_tax_type2_expl": "Tax Type 2.",
+    "p_tax_type2_expl": "税类型 2.",
     "@p_tax_type2_expl": {
         "description": ""
     },
-    "p_tax_type3_expl": "Tax Type 3.",
+    "p_tax_type3_expl": "税类型 3.",
     "@p_tax_type3_expl": {
         "description": ""
     },
-    "p_tax_base1_expl": "Tax Base 1.",
+    "p_tax_base1_expl": "税基数 1.",
     "@p_tax_base1_expl": {
         "description": ""
     },
-    "p_tax_base2_expl": "Tax Base 2.",
+    "p_tax_base2_expl": "税基数 2.",
     "@p_tax_base2_expl": {
         "description": ""
     },
-    "p_tax_base3_expl": "Tax Base 3.",
+    "p_tax_base3_expl": "税基数 3.",
     "@p_tax_base3_expl": {
         "description": ""
     },
-    "p_tax_amount1_expl": "Tax Amount 1.",
+    "p_tax_amount1_expl": "税额 1.",
     "@p_tax_amount1_expl": {
         "description": ""
     },
-    "p_tax_amount2_expl": "Tax Amount 2.",
+    "p_tax_amount2_expl": "税额 2.",
     "@p_tax_amount2_expl": {
         "description": ""
     },
-    "p_tax_amount3_expl": "Tax Amount 3.",
+    "p_tax_amount3_expl": "税额 3.",
     "@p_tax_amount3_expl": {
         "description": ""
     },
-    "p_tax_model_expl": "Tax Model,tax included or tax external.",
+    "p_tax_model_expl": "外含税或内加税",
     "@p_tax_model_expl": {
         "description": ""
     },
-    "p_total_tax_amount_expl": "Total Tax Amount.",
+    "p_total_tax_amount_expl": "总税额",
     "@p_total_tax_amount_expl": {
         "description": ""
     },
-    "p_payment_amount_P_expl": "Payment Amount.",
+    "p_payment_amount_P_expl": "付款金额",
     "@p_payment_amount_P_expl": {
         "description": ""
     },
-    "p_subtotal_expl": "Subtotal.",
+    "p_subtotal_expl": "总价.",
     "@p_subtotal_expl": {
         "description": ""
     },
-    "p_currency_expl": "Currency.",
+    "p_currency_expl": "货币",
     "@p_currency_expl": {
         "description": ""
     },
-    "p_copy_times_expl": "Copy Times.",
+    "p_copy_times_expl": "拷贝打印次数",
     "@p_copy_times_expl": {
         "description": ""
     },
-    "p_model_name_expl": "Scale Model Name.",
+    "p_model_name_expl": "机种.",
     "@p_model_name_expl": {
         "description": ""
     },
-    "p_scale_name_expl": "Scale Name.",
+    "p_scale_name_expl": "秤名",
     "@p_scale_name_expl": {
         "description": ""
     },
-    "p_tax_name_expl": "Tax Name.",
+    "p_tax_name_expl": "税名",
     "@p_tax_name_expl": {
         "description": ""
     },
-    "p_settle_account_times_expl": "Settle Account Times.",
+    "p_settle_account_times_expl": "结账次数",
     "@p_settle_account_times_expl": {
         "description": ""
     },
-    "p_plu_tax_expl": "PLU Tax Value.",
+    "p_plu_tax_expl": "PLU 税值.",
     "@p_plu_tax_expl": {
         "description": ""
     },
-    "p_total_no_tax_expl": "Total No Tax.",
+    "p_total_no_tax_expl": "不含税总价",
     "@p_total_no_tax_expl": {
         "description": ""
     },
-    "p_weight_pcs_expl": "Weight or Pcs.",
+    "p_weight_pcs_expl": "重量或者pcs.",
     "@p_weight_pcs_expl": {
         "description": ""
     },
-    "p_tare_expl": "Tare value.",
+    "p_tare_expl": "扣重",
     "@p_tare_expl": {
         "description": ""
     },
@@ -1260,11 +1308,11 @@
     "@p_time_expl": {
         "description": ""
     },
-    "p_change_amount_expl": "Change Amount.",
+    "p_change_amount_expl": "找零金额",
     "@p_change_amount_expl": {
         "description": ""
     },
-    "p_price_expl": "Price value.",
+    "p_price_expl": "价格",
     "@p_price_expl": {
         "description": ""
     },
@@ -1739,6 +1787,18 @@
     "gPluField": "PLU 字段",
     "@gPluField": {
         "description": "This is prompt for PLU field select."
+    },
+    "gRptWeight": "重量",
+    "@gRptWeight": {
+        "description": "This is the prompt regarding weight in the report."
+    },
+    "gRptWeightUnit": "重量单位",
+    "@gRptWeightUnit": {
+        "description": "This is the prompt regarding weight unit in the report."
+    },
+    "gRptDateTime": "时间",
+    "@gRptDateTime": {
+        "description": "This is the prompt regarding date time in the report."
     },
     "gTipImportPluOK": "注意: 空单元格会被写为 0 或 - ",
     "@gTipImportPluOK": {

@@ -42,7 +42,11 @@
     },
     "gBtnStart": "Start",
     "@gBtnStart": {
-        "description": "This is a button to start."
+        "description": "This is a button for starting."
+    },
+    "gBtnEnd": "End",
+    "@gBtnEnd": {
+        "description": "This is a button for endding."
     },
     "gBtnExit": "Exit",
     "@gBtnExit": {
@@ -220,9 +224,49 @@
     "@gBarcodeEdit": {
         "description": "This is a button about barcode edit."
     },
+    "gBarcodeType": "BarCode Type",
+    "@gBarcodeType": {
+        "description": "This is a button about barcode type."
+    },
+    "gBarcodeName": "BarCode Name",
+    "@gBarcodeName": {
+        "description": "This is a button about barcode name."
+    },
+    "gBarcodeSelect": "Enter name to create/select.",
+    "@gBarcodeSelect": {
+        "description": "This is a prompt regarding the creation or selection of a barcode or qrcode name."
+    },
+    "gBarCodeDataType": "DATA TYPE",
+    "@gBarCodeDataType": {
+        "description": "This is a prompt regarding the data type."
+    },
+    "gBarCodeContent": "Content",
+    "@gBarCodeContent": {
+        "description": "This is a prompt regarding the content."
+    },
+    "gBarCodeDefValue": "Default Value",
+    "@gBarCodeDefValue": {
+        "description": "This is a prompt regarding the default value."
+    },
+    "gBarCodeAlignment": "Alignment",
+    "@gBarCodeAlignment": {
+        "description": "This is a prompt regarding the alignment."
+    },
+    "gBarCodeMaxLength": "Max Length",
+    "@gBarCodeMaxLength": {
+        "description": "This is a prompt regarding the max length."
+    },
+    "gBarCodeDelete": "Delete",
+    "@gBarCodeDelete": {
+        "description": "This is a prompt to delete."
+    },
     "gQrcodeEdit": "Qrcode Edit",
     "@gQrcodeEdit": {
         "description": "This is a button about qrcode edit."
+    },
+    "gQrcodeName": "Qrcode Name",
+    "@gQrcodeName": {
+        "description": "This is a tip about qrcode name."
     },
     "gSaveFormat": "Save Format",
     "@gSaveFormat": {
@@ -380,16 +424,16 @@
     "@parameter_settings_title": {
         "description": "This is a prompt about parameter settings."
     },
-    "save_mode": "Save Mode:",
+    "save_mode": "Save Mode",
     "@save_mode": {
         "description": "This is a prompt about saving mode."
     },
-    "manual": "Manual",
-    "@manual": {
+    "gTipManual": "Manual",
+    "@gTipManual": {
         "description": "This is a prompt about manual mode."
     },
-    "auto": "Auto",
-    "@auto": {
+    "gTipAuto": "Auto",
+    "@gTipAuto": {
         "description": "This is a prompt about auto mode."
     },
     "stable_time": "Stable Time (s)",
@@ -400,10 +444,14 @@
     "@stable_time_error_tip": {
         "description": ""
     },
-    "date_format": "Date Format:",
+    "date_format": "Date Format",
     "@date_format": {
         "description": ""
     },
+    "gDateSeparator": "Date Separator",
+    "@gDateSeparator": {
+        "description": "This is a prompt about date separator."
+    },  
     "zero_range": "Zero Range:",
     "@zero_range": {
         "description": ""
@@ -424,8 +472,8 @@
     "@gBtnAdd": {
         "description": ""
     },
-    "button_edit": "Edit",
-    "@button_edit": {
+    "gBtnEdit": "Edit",
+    "@gBtnEdit": {
         "description": ""
     },
     "plu_error_message": "PLU pretare cannot be empty.",
@@ -1740,6 +1788,18 @@
     "@gPluField": {
         "description": "This is prompt for PLU field select."
     },
+    "gRptWeight": "Weight",
+    "@gRptWeight": {
+        "description": "This is the prompt regarding weight in the report."
+    },
+    "gRptWeightUnit": "Weight Unit",
+    "@gRptWeightUnit": {
+        "description": "This is the prompt regarding weight unit in the report."
+    },
+    "gRptDateTime": "Date Time",
+    "@gRptDateTime": {
+        "description": "This is the prompt regarding date time in the report."
+    }, 
     "gTipImportPluOK": "Note: When the cell is empty, it will be written as 0 or - .",
     "@gTipImportPluOK": {
         "description": "This is prompt for PLU import."

@@ -40,7 +40,6 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Website Address:"),
         "application_title":
             MessageLookupByLibrary.simpleMessage("Applications"),
-        "auto": MessageLookupByLibrary.simpleMessage("Auto"),
         "batch_delivery_title":
             MessageLookupByLibrary.simpleMessage("Batch Delivery"),
         "batch_down_export": MessageLookupByLibrary.simpleMessage("Export"),
@@ -57,7 +56,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "button_add_license":
             MessageLookupByLibrary.simpleMessage("Add License"),
         "button_back": MessageLookupByLibrary.simpleMessage("Back"),
-        "button_edit": MessageLookupByLibrary.simpleMessage("Edit"),
         "button_get_ip": MessageLookupByLibrary.simpleMessage("Get IP Address"),
         "button_select_format":
             MessageLookupByLibrary.simpleMessage("Select Format"),
@@ -111,7 +109,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Applications"),
         "data_delete_confirm":
             MessageLookupByLibrary.simpleMessage("Whether to delete all data?"),
-        "date_format": MessageLookupByLibrary.simpleMessage("Date Format:"),
+        "date_format": MessageLookupByLibrary.simpleMessage("Date Format"),
         "def_fmt_file_title": MessageLookupByLibrary.simpleMessage("File Path"),
         "def_fmt_no_file_tip":
             MessageLookupByLibrary.simpleMessage("No data yet"),
@@ -136,10 +134,21 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Update Firmware Serial"),
         "gAlignment": MessageLookupByLibrary.simpleMessage("Alignment:"),
         "gAttribute": MessageLookupByLibrary.simpleMessage("Attribute"),
+        "gBarCodeAlignment": MessageLookupByLibrary.simpleMessage("Alignment"),
+        "gBarCodeContent": MessageLookupByLibrary.simpleMessage("Content"),
+        "gBarCodeDataType": MessageLookupByLibrary.simpleMessage("DATA TYPE"),
+        "gBarCodeDefValue":
+            MessageLookupByLibrary.simpleMessage("Default Value"),
+        "gBarCodeDelete": MessageLookupByLibrary.simpleMessage("Delete"),
+        "gBarCodeMaxLength": MessageLookupByLibrary.simpleMessage("Max Length"),
         "gBarcode": MessageLookupByLibrary.simpleMessage("BarCode:"),
         "gBarcodeEdit": MessageLookupByLibrary.simpleMessage("BarCode Edit"),
         "gBarcodeHeight":
             MessageLookupByLibrary.simpleMessage("BarCode Height:"),
+        "gBarcodeName": MessageLookupByLibrary.simpleMessage("BarCode Name"),
+        "gBarcodeSelect": MessageLookupByLibrary.simpleMessage(
+            "Enter name to create/select."),
+        "gBarcodeType": MessageLookupByLibrary.simpleMessage("BarCode Type"),
         "gBaudRate": MessageLookupByLibrary.simpleMessage("Baud rate:"),
         "gBtnAdd": MessageLookupByLibrary.simpleMessage("Add"),
         "gBtnCancel": MessageLookupByLibrary.simpleMessage("Cancel"),
@@ -153,6 +162,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "gBtnDownloadDefaultFormat":
             MessageLookupByLibrary.simpleMessage("Default Format"),
         "gBtnDynamic": MessageLookupByLibrary.simpleMessage("Dynamic"),
+        "gBtnEdit": MessageLookupByLibrary.simpleMessage("Edit"),
+        "gBtnEnd": MessageLookupByLibrary.simpleMessage("End"),
         "gBtnExit": MessageLookupByLibrary.simpleMessage("Exit"),
         "gBtnExport": MessageLookupByLibrary.simpleMessage("Export"),
         "gBtnGetDataFormDb":
@@ -184,6 +195,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "gConfirmPrnFmtOrderTip": MessageLookupByLibrary.simpleMessage(
             "Please confirm the order of the printing formats."),
         "gDataBits": MessageLookupByLibrary.simpleMessage("Data bits:"),
+        "gDateSeparator":
+            MessageLookupByLibrary.simpleMessage("Date Separator"),
         "gDeviceName": MessageLookupByLibrary.simpleMessage("Device name:"),
         "gEPNormal": MessageLookupByLibrary.simpleMessage("Normal"),
         "gEPStrong": MessageLookupByLibrary.simpleMessage("Strong"),
@@ -249,11 +262,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "gProgress": MessageLookupByLibrary.simpleMessage("Progress"),
         "gQrcode": MessageLookupByLibrary.simpleMessage("QRcode:"),
         "gQrcodeEdit": MessageLookupByLibrary.simpleMessage("Qrcode Edit"),
+        "gQrcodeName": MessageLookupByLibrary.simpleMessage("Qrcode Name"),
         "gQrcodeWidth": MessageLookupByLibrary.simpleMessage("Qrcode Width:"),
         "gReceiptFormat":
             MessageLookupByLibrary.simpleMessage("Receipt Format"),
         "gRefreshPort": MessageLookupByLibrary.simpleMessage("Refresh port"),
         "gRotation": MessageLookupByLibrary.simpleMessage("Rotation:"),
+        "gRptDateTime": MessageLookupByLibrary.simpleMessage("Date Time"),
+        "gRptWeight": MessageLookupByLibrary.simpleMessage("Weight"),
+        "gRptWeightUnit": MessageLookupByLibrary.simpleMessage("Weight Unit"),
         "gSaveFormat": MessageLookupByLibrary.simpleMessage("Save Format"),
         "gScaleName": MessageLookupByLibrary.simpleMessage("Scale Name"),
         "gScaleSn": MessageLookupByLibrary.simpleMessage("SN#:"),
@@ -270,6 +287,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("System Setting"),
         "gTabOrder": MessageLookupByLibrary.simpleMessage("Layer order:"),
         "gTextContent": MessageLookupByLibrary.simpleMessage("Text Content:"),
+        "gTipAuto": MessageLookupByLibrary.simpleMessage("Auto"),
         "gTipBasicDataPageHelp": MessageLookupByLibrary.simpleMessage(
             "1. Click [Get Basic Data];\n2. T-Config will automatically collect basic data from the scale and display it synchronously on the interface.\n3. You can click the menu bar button in the upper left corner to select the device you want to switch to."),
         "gTipCheckWgtPageHelp": MessageLookupByLibrary.simpleMessage(
@@ -317,6 +335,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "1. Follow the prompts to select the corresponding print format for uploading;\n2. Click [Download] to download the format(.fmt);\n3. If multiple networks are connected, you need to select the corresponding network before downloading.\n"),
         "gTipLabelFmtDownload": MessageLookupByLibrary.simpleMessage(
             "This application is used to download print format."),
+        "gTipManual": MessageLookupByLibrary.simpleMessage("Manual"),
         "gTipNoData": MessageLookupByLibrary.simpleMessage("No data"),
         "gTipNoDataSelected":
             MessageLookupByLibrary.simpleMessage("No data selected."),
@@ -509,7 +528,6 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Language Setting"),
         "m_scale_title":
             MessageLookupByLibrary.simpleMessage("Multi-scale Management"),
-        "manual": MessageLookupByLibrary.simpleMessage("Manual"),
         "modify_bt_name": MessageLookupByLibrary.simpleMessage("Modify name"),
         "new_license_text":
             MessageLookupByLibrary.simpleMessage("New License:"),
@@ -681,7 +699,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Report Setting"),
         "report_show_btn": MessageLookupByLibrary.simpleMessage("Show Reports"),
         "save_as": MessageLookupByLibrary.simpleMessage("Save as"),
-        "save_mode": MessageLookupByLibrary.simpleMessage("Save Mode:"),
+        "save_mode": MessageLookupByLibrary.simpleMessage("Save Mode"),
         "scale_mgr_btn_add": MessageLookupByLibrary.simpleMessage("Add"),
         "scale_mgr_btn_def":
             MessageLookupByLibrary.simpleMessage("Set Default"),

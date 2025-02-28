@@ -1,5 +1,14 @@
 
 Title:SoftWare For T-Max
+Version: V1.46
+Author: FLF
+Date: 2025-02-28
+Verify Platform: Windows
+Fixed Issues:
+1.T-industry 翻译更新，保存报表更新。
+2.条码二维码翻译更新；
+---------------------------------------------------------------------------------------
+Title:SoftWare For T-Max
 Version: V1.45
 Author: FLF
 Date: 2025-02-19

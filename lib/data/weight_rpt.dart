@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:excel/excel.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import '../functions/methods.dart';
@@ -208,8 +207,9 @@ Future<void> creatCsvFile(
 
   // 关闭文件
   await sink.close();
-
-  print('CSV文件已保存到: $path');
+  if (kDebugMode) {
+    print('CSV文件已保存到: $path');
+  }
 }
 
 // /////////////////
@@ -372,6 +372,10 @@ List<GridColumn> getColumns() {
 
 void sendRptDataToDB(
     List<WeightReportData> myWeightReportData, String wgtMode) {
+  if (myWeightReportData.isEmpty) {
+    return;
+  }
+
   var currentData = myWeightReportData[myWeightReportData.length - 1];
   myScaleCmd.cmdMode = "add_rec";
   myAddScaleRecord.scaleId = myDefScaleInfo.defScaleId!;

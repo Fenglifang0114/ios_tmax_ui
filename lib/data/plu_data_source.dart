@@ -573,12 +573,12 @@ int _selectedCount = 0;
 
 List<PluData> _pluInfos = <PluData>[];
 
-_showSnackbar(BuildContext context, String text, [Color? color]) {
-  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-    backgroundColor: color,
-    duration: const Duration(seconds: 1),
-    content: Text(text),
-  ));
-}
+// _showSnackbar(BuildContext context, String text, [Color? color]) {
+//   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+//     backgroundColor: color,
+//     duration: const Duration(seconds: 1),
+//     content: Text(text),
+//   ));
+// }
 
 const noData = 'No data';

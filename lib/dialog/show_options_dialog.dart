@@ -16,7 +16,7 @@ class MultiSelectDialog extends StatefulWidget {
 class MultiSelectDialogState extends State<MultiSelectDialog> {
   final List<String> _selectedOptions = [];
 
-  bool _closeButtonEnabled = true;
+  bool closeButtonEnabled = true;
   bool isSelectAll = false;
 
   void _toggleOption(String option) {
@@ -99,7 +99,7 @@ class MultiSelectDialogState extends State<MultiSelectDialog> {
                     ),
                   ),
                   value: _selectedOptions.contains(entry.key),
-                  onChanged: _closeButtonEnabled
+                  onChanged: closeButtonEnabled
                       ? (value) => _toggleOption(entry.key)
                       : null,
                 );
@@ -117,7 +117,7 @@ class MultiSelectDialogState extends State<MultiSelectDialog> {
               btnHeight: 40,
               icon: Icons.exit_to_app,
               text: localizedStrings.gBtnExit,
-              onPressed: _closeButtonEnabled ? _closeDialog : null,
+              onPressed: closeButtonEnabled ? _closeDialog : null,
             ),
           ],
         ),

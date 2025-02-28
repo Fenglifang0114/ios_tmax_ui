@@ -55,7 +55,8 @@ class WeightModePageState extends State<WeightModePage> {
     onStartTimer();
     initScaleList();
 
-    cntScaleTimerMgr.startCntScaleTimer(10);
+    // cntScaleTimerMgr.startCntScaleTimer(10);
+    cntScaleTimerMgr.startCntAliveTimer(10);
     PublicFunctions.getWeight(myDefScaleInfo.defScaleId!);
 
     eventBus1 = eventBus.on<EventDeviceName>().listen((event) {
@@ -139,6 +140,7 @@ class WeightModePageState extends State<WeightModePage> {
     eventBus7.cancel();
     startTimer?.cancel();
     innerTimer?.cancel();
+    PublicFunctions.stopWeight(selScaleId);
 
     cntScaleTimerMgr.stopPortOffTimer();
     cntScaleTimerMgr.stopCntScaleTimer();
@@ -148,7 +150,7 @@ class WeightModePageState extends State<WeightModePage> {
   void onStartTimer() {
     startTimer = Timer.periodic(Duration(seconds: 3), (timer) {
       isCnting = false;
-      innerTimer = Timer(Duration(seconds: 1), () {
+      innerTimer = Timer(Duration(milliseconds: 1500), () {
         if (!isCnting) {
           setState(() {
             isStart = false;

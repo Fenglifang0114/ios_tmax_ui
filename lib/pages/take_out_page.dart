@@ -27,11 +27,9 @@ import '../data/weight_report_data.dart';
 import '../data/weight_rpt.dart';
 import '../data/wgt_rpt_data_source.dart';
 import '../dialog/conform_dialog.dart';
-import '../dialog/high_low_setting.dart';
 import '../dialog/setting_dialog.dart';
 import '../dialog/show_warning.dart';
 import '../dialog/weight_report_feilds_setting.dart';
-import '../functions/weight_funcs.dart';
 import '../widget/custom_button.dart';
 import '../widget/page_head.dart';
 
@@ -151,6 +149,10 @@ class TakeOutPageState extends State<TakeOutPage> {
       _isSaveButtonDisabled = false;
       _addWeightToReport();
       sendReportDataToDB();
+      _weightReportDataSource.sortDataGrid(
+        "Date Time",
+        DataGridSortDirection.descending,
+      );
     });
   }
 
@@ -538,6 +540,10 @@ class TakeOutPageState extends State<TakeOutPage> {
             _isStableStatusJudge = false;
             _addWeightToReport();
             sendReportDataToDB();
+            _weightReportDataSource.sortDataGrid(
+              "Date Time",
+              DataGridSortDirection.descending,
+            );
           }
           lastWeight = myReqWeightCountine.msgBody!.weightVal;
         }
@@ -583,6 +589,7 @@ class TakeOutPageState extends State<TakeOutPage> {
     cntScaleTimerMgr.stopPortOffTimer();
     myGetScaleRecords.weightRecords?.clear();
     myWeightReportData.clear();
+    PublicFunctions.stopWeight(selScaleId);
     super.dispose();
   }
 
@@ -832,10 +839,10 @@ class TakeOutPageState extends State<TakeOutPage> {
                         icon: Icons.exposure_zero),
                     _buildFlexibleButtonAndTextEnd(
                         buttonText: (myReqWeightCountine.msgBody == null)
-                            ? 'Start'
+                            ? localizedStrings.gBtnStart
                             : (_isTakeOutStart)
-                                ? 'End'
-                                : 'Start',
+                                ? localizedStrings.gBtnEnd
+                                : localizedStrings.gBtnStart,
                         constraints: constraints,
                         isTrue: isStart && !_isTakeOutStart,
                         icon: Icons.swipe_right_outlined),
@@ -1679,10 +1686,10 @@ class TakeOutPageState extends State<TakeOutPage> {
                                 btnHeight: 40,
                                 icon: Icons.swipe_right_outlined,
                                 text: (myReqWeightCountine.msgBody == null)
-                                    ? 'Start'
+                                    ? localizedStrings.gBtnStart
                                     : (_isTakeOutStart)
-                                        ? 'End'
-                                        : 'Start',
+                                        ? localizedStrings.gBtnEnd
+                                        : localizedStrings.gBtnStart,
                                 onPressed: checkStartButton()
                                     ? () {
                                         if (_isTakeOutStart) {
@@ -2228,7 +2235,7 @@ class TakeOutPageState extends State<TakeOutPage> {
         showTakeOutWeight = myReqWeightCountine.msgBody!.weightVal;
       }
     } else {
-      performAddToReport();
+      // performAddToReport();
     }
   }
 
@@ -2288,32 +2295,10 @@ class TakeOutPageState extends State<TakeOutPage> {
       myDefScaleInfo.defScaleName == null
           ? ''
           : myDefScaleInfo.defScaleName!, //此处应该是秤机种名
-      getDateTime(myModeSettingNormal.dateSeparator, dateformat),
+      getDateTime(myModeSettingTakeOut.dateSeparator, dateformat),
     );
 
     myWeightReportData.add(addData);
-
-    setState(() {
-      String sortColName = 'Date Time';
-      sortColumnName = "";
-      DataGridSortDirection sortDirec = DataGridSortDirection.descending;
-      if (_weightReportDataSource.sortedColumns.isNotEmpty) {
-        sortColName = _weightReportDataSource.sortedColumns[0].name;
-        sortDirec = _weightReportDataSource.sortedColumns[0].sortDirection;
-      }
-      _weightReportDataSource =
-          WeightReportDataSource(_weightReportDatas, weighingTakeOutMode);
-      _weightReportDataSource.sortedColumns
-          .add(SortColumnDetails(name: sortColName, sortDirection: sortDirec));
-      Future.delayed(const Duration(milliseconds: 100), () {
-        if (sortDirec == DataGridSortDirection.descending) {
-          _dataGridController.scrollToRow(0);
-        } else {
-          _dataGridController
-              .scrollToRow(_weightReportDataSource.rows.length - 0);
-        }
-      });
-    });
   }
 
   List<WeightReportData> getWeightReportData() {

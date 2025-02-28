@@ -4,7 +4,6 @@ import '../data/manager_scale_channel.dart';
 import 'package:t_max/data/timer_manager.dart';
 import '../data/language.dart';
 import '../data/screen_mgr.dart';
-import '../functions/methods.dart';
 import 'box_gradient.dart';
 import 'custom_button.dart';
 import 'custom_circle_icon.dart';
