@@ -100,6 +100,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
   dynamic eventBus14;
   dynamic eventBus15;
   dynamic eventBus16;
+  dynamic eventBus18;
 
   Timer? startTimer;
   Timer? innerTimer;
@@ -143,10 +144,6 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
       _isSaveButtonDisabled = false;
       _addWeightToReport();
       sendReportDataToDB();
-      _weightReportDataSource.sortDataGrid(
-        "Date Time",
-        DataGridSortDirection.descending,
-      );
     });
   }
 
@@ -334,40 +331,24 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                     _isStableStatusJudge = false;
                     _addWeightToReport();
                     sendReportDataToDB();
-                    _weightReportDataSource.sortDataGrid(
-                      "Date Time",
-                      DataGridSortDirection.descending,
-                    );
                   } else if (myModeSettingCheck.saveMode == okMode && _isOK) {
                     _isPassZero = false;
                     _isTiming = false;
                     _isStableStatusJudge = false;
                     _addWeightToReport();
                     sendReportDataToDB();
-                    _weightReportDataSource.sortDataGrid(
-                      "Date Time",
-                      DataGridSortDirection.descending,
-                    );
                   } else if (myModeSettingCheck.saveMode == lowMode && _isLow) {
                     _isPassZero = false;
                     _isTiming = false;
                     _isStableStatusJudge = false;
                     _addWeightToReport();
                     sendReportDataToDB();
-                    _weightReportDataSource.sortDataGrid(
-                      "Date Time",
-                      DataGridSortDirection.descending,
-                    );
                   } else if (myModeSettingCheck.saveMode == allMode) {
                     _isPassZero = false;
                     _isTiming = false;
                     _isStableStatusJudge = false;
                     _addWeightToReport();
                     sendReportDataToDB();
-                    _weightReportDataSource.sortDataGrid(
-                      "Date Time",
-                      DataGridSortDirection.descending,
-                    );
                   }
 
                   lastWeight = myReqWeightCountine.msgBody!.weightVal;
@@ -562,6 +543,14 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
         }
       }
     });
+    eventBus18 = eventBus.on<EventRevAddRec>().listen((event) {
+      if (mounted) {
+        _weightReportDataSource.sortDataGrid(
+          "Date Time",
+          DataGridSortDirection.descending,
+        );
+      }
+    });
   }
 
   void _addDBdataToReport() {
@@ -595,6 +584,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     eventBus14.cancel();
     eventBus15.cancel();
     eventBus16.cancel();
+    eventBus18.cancel();
 
     cntScaleTimerMgr.stopPortOffTimer();
     _saveTimer?.cancel();
@@ -1724,6 +1714,8 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
                                   myReportFeildsMap[column.columnName]!
                                       .showName,
                                   overflow: TextOverflow.ellipsis,
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.normal),
                                 ),
                               ),
                               _getSortIconForColumn(column.columnName),

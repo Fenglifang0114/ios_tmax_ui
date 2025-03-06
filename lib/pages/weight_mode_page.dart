@@ -120,10 +120,6 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
       _isSaveButtonDisabled = false;
       _addWeightToReport();
       sendReportDataToDB();
-      _weightReportDataSource.sortDataGrid(
-        "Date Time",
-        DataGridSortDirection.descending,
-      );
     });
   }
 
@@ -142,6 +138,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
   dynamic eventBus13;
   dynamic eventBus14;
   dynamic eventBus15;
+  dynamic eventBus18;
 
   void onStartTimer() {
     startTimer = Timer.periodic(Duration(seconds: 3), (timer) {
@@ -170,7 +167,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     super.initState();
     initScaleList();
     updateMyReportFeildsMap();
-    cntScaleTimerMgr.startCntScaleTimer(10);
+    cntScaleTimerMgr.startCntAliveTimer(10);
     _reportScrollerController = ScrollController();
 
     lastWeight = "*";
@@ -458,6 +455,15 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
         }
       }
     });
+
+    eventBus18 = eventBus.on<EventRevAddRec>().listen((event) {
+      if (mounted) {
+        _weightReportDataSource.sortDataGrid(
+          "Date Time",
+          DataGridSortDirection.descending,
+        );
+      }
+    });
   }
 
   void _addDBdataToReport() {
@@ -490,6 +496,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     eventBus13.cancel();
     eventBus14.cancel();
     eventBus15.cancel();
+    eventBus18.cancel();
 
     startTimer?.cancel();
     innerTimer?.cancel();
@@ -500,6 +507,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     _weightReportDataSource.dispose();
     _weightReportDatas.clear();
     PublicFunctions.stopWeight(selScaleId);
+    cntScaleTimerMgr.stopCntAliveTimer();
     super.dispose();
   }
 
@@ -892,6 +900,8 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                                   myReportFeildsMap[column.columnName]!
                                       .showName,
                                   overflow: TextOverflow.ellipsis,
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.normal),
                                 ),
                               ),
                               _getSortIconForColumn(column.columnName),

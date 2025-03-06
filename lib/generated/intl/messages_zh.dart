@@ -245,6 +245,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "gTipConnectedInfo": MessageLookupByLibrary.simpleMessage("已连接AP信息:"),
         "gTipConnecting": MessageLookupByLibrary.simpleMessage("连接中..."),
         "gTipDataError": MessageLookupByLibrary.simpleMessage("数据错误 !"),
+        "gTipDeviceLost": MessageLookupByLibrary.simpleMessage("是否强制更新?"),
         "gTipDeviceNameEmpty":
             MessageLookupByLibrary.simpleMessage("设备名称不能为空,error."),
         "gTipDeviceTimePageHelp": MessageLookupByLibrary.simpleMessage(
@@ -273,6 +274,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "gTipLabelFmtDownload":
             MessageLookupByLibrary.simpleMessage("此应用时用来下发打印格式."),
         "gTipManual": MessageLookupByLibrary.simpleMessage("手动"),
+        "gTipModelNotMatch":
+            MessageLookupByLibrary.simpleMessage("机种名不匹配. 是否强制更新?"),
         "gTipNoData": MessageLookupByLibrary.simpleMessage("无数据"),
         "gTipNoDataSelected": MessageLookupByLibrary.simpleMessage("未选择数据."),
         "gTipParameterSettingPageHelp": MessageLookupByLibrary.simpleMessage(

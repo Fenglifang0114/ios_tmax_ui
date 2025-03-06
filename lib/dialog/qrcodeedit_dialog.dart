@@ -181,12 +181,12 @@ class MyQrcodeDialogState extends State<MyQrcodeDialog> {
                           color: Theme.of(context).colorScheme.primary,
                           fontSize: 14,
                           fontWeight: FontWeight.bold)),
-                  Text("Max Length",
+                  Text(localizedStrings.gBarCodeMaxLength,
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary,
                           fontSize: 14,
                           fontWeight: FontWeight.bold)),
-                  Text("Delete",
+                  Text(localizedStrings.gBarCodeDelete,
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary,
                           fontSize: 14,

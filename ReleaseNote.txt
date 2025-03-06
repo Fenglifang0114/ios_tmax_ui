@@ -1,5 +1,13 @@
 
 Title:SoftWare For T-Max
+Version: V1.47
+Author: FLF
+Date: 2025-03-06
+Verify Platform: Windows
+Fixed Issues:
+1.串口更新时连不上提示强制更新
+---------------------------------------------------------------------------------------
+Title:SoftWare For T-Max
 Version: V1.46
 Author: FLF
 Date: 2025-02-28

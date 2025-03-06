@@ -1414,6 +1414,26 @@ class S {
     );
   }
 
+  /// `Model name in ZIP doesn't match device's. Force update?`
+  String get gTipModelNotMatch {
+    return Intl.message(
+      'Model name in ZIP doesn\'t match device\'s. Force update?',
+      name: 'gTipModelNotMatch',
+      desc: 'This is a prompt for model mismatch during the update process.',
+      args: [],
+    );
+  }
+
+  /// `Force update?`
+  String get gTipDeviceLost {
+    return Intl.message(
+      'Force update?',
+      name: 'gTipDeviceLost',
+      desc: 'This is a prompt for a forced update.',
+      args: [],
+    );
+  }
+
   /// `Add License`
   String get button_add_license {
     return Intl.message(

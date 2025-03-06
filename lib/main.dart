@@ -40,7 +40,6 @@ Future<bool> checkAndBindPort() async {
   try {
     // 尝试创建ServerSocket来绑定端口20015
     serverSocket = await ServerSocket.bind(InternetAddress.anyIPv4, 58581);
-
     return true; // 成功绑定端口，说明应用之前没开启，现在可以占用该端口继续
   } catch (e) {
     return false; // 端口已被占用，推测应用已在运行
@@ -99,8 +98,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     connectService();
-
-    print('savedLanguage value: $savedLanguage');
     return MaterialApp(
         //自定义主题
         theme: themeColor(colorTheme),

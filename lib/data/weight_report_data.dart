@@ -121,6 +121,15 @@ void updateMyReportFeildsMap() {
       case 'Scale Name':
         value.showName = localizedStrings.gScaleName;
         break;
+      case 'Weight':
+        value.showName = localizedStrings.gRptWeight;
+        break;
+      case 'Weight Unit':
+        value.showName = localizedStrings.gRptWeightUnit;
+        break;
+      case 'Date Time':
+        value.showName = localizedStrings.gRptDateTime;
+        break;
     }
     return value;
   });

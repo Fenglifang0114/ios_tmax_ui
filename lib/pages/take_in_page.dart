@@ -106,18 +106,10 @@ class TakeInPageState extends State<TakeInPage> {
       _isStableStatusJudge = true;
       _isTiming = false;
     }
-    if (_isTakeInStart) {
-      _isPassZero = true;
-    }
-    if (_isPassZero) {
-      if (isStable && _isTiming) {
-      } else if (isStable && !_isTiming && !_isZero) {
-        _isTiming = true;
-        _performSaveTimer();
-      } else if (!isStable && _isTiming) {
-        _saveTimer.cancel();
-        _isTiming = false;
-      }
+
+    if (isStable && !_isTiming && !_isZero) {
+      _isTiming = true;
+      _performSaveTimer();
     }
   }
 
@@ -134,10 +126,6 @@ class TakeInPageState extends State<TakeInPage> {
       _isSaveButtonDisabled = false;
       _addWeightToReport();
       sendReportDataToDB();
-      _weightReportDataSource.sortDataGrid(
-        "Date Time",
-        DataGridSortDirection.descending,
-      );
     });
   }
 
@@ -164,6 +152,7 @@ class TakeInPageState extends State<TakeInPage> {
   dynamic eventBus15;
   dynamic eventBus16;
   dynamic eventBus17;
+  dynamic eventBus18;
 
   bool isCnting = false;
   void initScaleList() {
@@ -215,7 +204,8 @@ class TakeInPageState extends State<TakeInPage> {
     PublicFunctions.getUserList();
     PublicFunctions.getProductList();
 
-    cntScaleTimerMgr.startCntScaleTimer(10);
+    cntScaleTimerMgr.startCntAliveTimer(10);
+
     PublicFunctions.getWeight(myDefScaleInfo.defScaleId!);
     onStartTimer();
 
@@ -470,10 +460,18 @@ class TakeInPageState extends State<TakeInPage> {
         }
       }
     });
+    eventBus18 = eventBus.on<EventRevAddRec>().listen((event) {
+      if (mounted) {
+        _weightReportDataSource.sortDataGrid(
+          "Date Time",
+          DataGridSortDirection.descending,
+        );
+      }
+    });
   }
 
   void takeInModeWeight() {
-    if (_isTakeInStart && myReqWeightCountine.msgBody != null) {
+    if (_isTakeInStart && isStart && myReqWeightCountine.msgBody != null) {
       if (isWeightValue()) {
         showDiffWeightVal();
       } else {
@@ -496,17 +494,22 @@ class TakeInPageState extends State<TakeInPage> {
         isWeightStable();
         break;
       case 2:
+        takeInModeWeight();
         if (!myReqWeightCountine.msgBody!.isStable) {
+          if (_isTiming) {
+            _saveTimer.cancel();
+          }
+          _isPassZero = false;
+          _isTiming = false;
           _isStableStatusJudge = false;
+          return;
         }
-        if (isZeroValue()) {
-          _isZero = true;
-          _isPassZero = true;
-        } else {
-          _isZero = false;
+        if (!_isTakeInStart) {
+          return;
         }
+        _isPassZero = true;
         _saveWeight(myReqWeightCountine.msgBody!.isStable);
-        if (_isTakeInStart && isWeightValue() && _isStableStatusJudge) {
+        if (isWeightValue() && _isStableStatusJudge) {
           double? nowWeightVal =
               double.tryParse(myReqWeightCountine.msgBody!.weightVal);
           if ((nowWeightVal! - basicWeightval) - lastTakeInWeightval > 0.02) {
@@ -524,27 +527,33 @@ class TakeInPageState extends State<TakeInPage> {
           }
           //如果是加法秤，不需要判断是否重新归零
         }
-        if (myReqWeightCountine.msgBody!.isStable == true &&
-            !_isZero &&
-            _isPassZero &&
-            _isStableStatusJudge) {
+        if (_isPassZero && _isStableStatusJudge) {
           {
             _isPassZero = false;
             _isTiming = false;
             _isStableStatusJudge = false;
             _addWeightToReport();
             sendReportDataToDB();
-            _weightReportDataSource.sortDataGrid(
-              "Date Time",
-              DataGridSortDirection.descending,
-            );
+            updateLastWeight();
           }
           lastWeight = myReqWeightCountine.msgBody!.weightVal;
         }
-        takeInModeWeight();
+
         break;
       default:
         break;
+    }
+  }
+
+  void updateLastWeight() {
+    double? nowWeightVal =
+        double.tryParse(myReqWeightCountine.msgBody!.weightVal);
+    if (myReqWeightCountine.msgBody!.weightUnit == 'PCS') {
+      lastTakeInWeightval =
+          double.parse((nowWeightVal! - basicWeightval).toStringAsFixed(0));
+    } else {
+      lastTakeInWeightval =
+          double.parse((nowWeightVal! - basicWeightval).toStringAsFixed(3));
     }
   }
 
@@ -580,10 +589,12 @@ class TakeInPageState extends State<TakeInPage> {
     eventBus15.cancel();
     eventBus16.cancel();
     eventBus17.cancel();
+    eventBus18.cancel();
     cntScaleTimerMgr.stopPortOffTimer();
     myGetScaleRecords.weightRecords?.clear();
     myWeightReportData.clear();
     PublicFunctions.stopWeight(selScaleId);
+    cntScaleTimerMgr.stopCntAliveTimer();
     super.dispose();
   }
 
@@ -840,7 +851,8 @@ class TakeInPageState extends State<TakeInPage> {
                         buttonText: localizedStrings.gBtnSave,
                         onPressed: _changeSaveButton,
                         constraints: constraints,
-                        isTrue: !_isSaveButtonDisabled && isStart,
+                        isTrue:
+                            !_isSaveButtonDisabled && isStart && _isTakeInStart,
                         icon: Icons.save_outlined),
                     _buildFlexibleButtonAndText(
                         buttonText: localizedStrings.gBtnSetting,
@@ -1521,7 +1533,9 @@ class TakeInPageState extends State<TakeInPage> {
                                   btnHeight: 40,
                                   icon: Icons.save_outlined,
                                   text: localizedStrings.gBtnSave,
-                                  onPressed: (!_isSaveButtonDisabled && isStart)
+                                  onPressed: (!_isSaveButtonDisabled &&
+                                          isStart &&
+                                          _isTakeInStart)
                                       ? _changeSaveButton
                                       : null),
                             ],
@@ -1654,6 +1668,8 @@ class TakeInPageState extends State<TakeInPage> {
                                   myReportFeildsMap[column.columnName]!
                                       .showName,
                                   overflow: TextOverflow.ellipsis,
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.normal),
                                 ),
                               ),
                               _getSortIconForColumn(column.columnName),

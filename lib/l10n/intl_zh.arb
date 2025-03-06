@@ -544,6 +544,14 @@
     "@firmware_update": {
         "description": ""
     },
+    "gTipModelNotMatch": "机种名不匹配. 是否强制更新?",
+    "@gTipModelNotMatch": {
+        "description": "This is a prompt for model mismatch during the update process."
+    },
+    "gTipDeviceLost": "是否强制更新?",
+    "@gTipDeviceLost": {
+        "description": "This is a prompt for a forced update."
+    },
     "button_add_license": "添加认证",
     "@button_add_license": {
         "description": ""

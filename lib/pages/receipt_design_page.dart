@@ -2920,7 +2920,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       const SizedBox(height: 20),
       SizedBox(
         width: 100,
-        child: Text(localizedStrings.gAlignment,
+        child: Text(localizedStrings.gMaxLength,
             textAlign: TextAlign.left,
             style: const TextStyle(
               fontSize: 14,

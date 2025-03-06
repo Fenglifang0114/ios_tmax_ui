@@ -544,6 +544,14 @@
     "@firmware_update": {
         "description": ""
     },
+    "gTipModelNotMatch": "Model name in ZIP doesn't match device's. Force update?",
+    "@gTipModelNotMatch": {
+        "description": "This is a prompt for model mismatch during the update process."
+    },
+    "gTipDeviceLost": "Force update?",
+    "@gTipDeviceLost": {
+        "description": "This is a prompt for a forced update."
+    },
     "button_add_license": "Add License",
     "@button_add_license": {
         "description": ""

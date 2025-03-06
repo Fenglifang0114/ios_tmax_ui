@@ -144,6 +144,7 @@ class WeightModePageState extends State<WeightModePage> {
 
     cntScaleTimerMgr.stopPortOffTimer();
     cntScaleTimerMgr.stopCntScaleTimer();
+    cntScaleTimerMgr.stopCntAliveTimer();
     super.dispose();
   }
 

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:t_max/pages/sel_scales_page.dart';
+import 'package:t_max/widget/show_error_dialog.dart';
 import '../data/downloadresponse.dart';
 import '../data/language.dart';
 import '../data/manager_scale_channel.dart';
@@ -43,6 +44,11 @@ class _UpdateFirmwarePageState extends State<UpdateFirmwarePage> {
         setState(() {
           _errMsgSerial = myRespDataFromScale.msgBody;
           isSetting = false;
+          if (myRespDataFromScale.msgBody.contains("connection")) {
+            showForceDialog(context, localizedStrings.gTipDeviceLost);
+          } else if (myRespDataFromScale.msgBody.contains("match")) {
+            showForceDialog(context, localizedStrings.gTipModelNotMatch);
+          }
         });
       }
     });
@@ -224,8 +230,8 @@ class _UpdateFirmwarePageState extends State<UpdateFirmwarePage> {
     );
   }
 
-  void useSerialPortUpdate() {
-    PublicFunctions.sendFormatToScale(zipFileCtl.text);
+  void useSerialPortUpdate(String force) {
+    PublicFunctions.sendFormatToScale("${zipFileCtl.text},$force");
     setState(() {
       _errMsgSerial = localizedStrings.gTipWait;
       isSetting = true;
@@ -277,7 +283,7 @@ class _UpdateFirmwarePageState extends State<UpdateFirmwarePage> {
                         icon: Icons.cable,
                         text: localizedStrings.gBtnViaSerialUpdate,
                         onPressed: () {
-                          useSerialPortUpdate();
+                          useSerialPortUpdate("0");
                           Navigator.of(context).pop();
                         },
                       )
@@ -313,6 +319,60 @@ class _UpdateFirmwarePageState extends State<UpdateFirmwarePage> {
         );
       },
     );
+  }
+
+  void showForceDialog(BuildContext context, String tipStr) {
+    showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          title: Text(
+            localizedStrings.gTitleConfirm,
+            style: TextStyle(color: Theme.of(context).colorScheme.primary),
+          ),
+          content: SizedBox(
+            width: 300,
+            height: 70,
+            child: Text(
+              tipStr,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          actions: <Widget>[
+            Row(
+              children: [
+                CustomElevatedButton(
+                  btnWidth: 100,
+                  btnHeight: 40,
+                  icon: Icons.check_circle,
+                  text: localizedStrings.gBtnConfirm,
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  },
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                CustomOutlinedButton(
+                  btnWidth: 100,
+                  btnHeight: 40,
+                  icon: Icons.cancel,
+                  text: localizedStrings.gBtnCancel,
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    ).then((confirmed) {
+      if (confirmed) {
+        useSerialPortUpdate("1");
+      }
+    });
   }
 
   Widget _buildBtnDownload() {

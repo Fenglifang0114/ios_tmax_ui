@@ -511,19 +511,11 @@ class PublicFunctions {
   }
 
   static void deleteAllRecords(int scaleId) {
-    String modelName = "";
-    String scaleSn = "";
-    if (scaleId == 1) {
-      modelName = myComScaleInfo.scaleModel;
-      scaleSn = myComScaleInfo.scaleSn;
-    } else {
-      var netScale = NetScaleListMgr.findScaleInfo(myNetScaleList, scaleId);
-      if (netScale.scaleModel == null) {
-        return;
-      }
-      modelName = netScale.scaleModel!;
-      scaleSn = netScale.scaleSn!;
-    }
+    String modelName = myDefScaleInfo.defScaleModel == null
+        ? ''
+        : myDefScaleInfo.defScaleModel!;
+    String scaleSn =
+        myDefScaleInfo.defScaleSn == null ? '' : myDefScaleInfo.defScaleSn!;
 
     myScaleCmd.cmdMode = "del_rec";
     myScaleCmd.cmdData = '999999999,0,$modelName,$scaleSn';
@@ -531,36 +523,33 @@ class PublicFunctions {
   }
 
   static void deleteAllRecordsCheck(int scaleId) {
-    String modelName = myFactoryInfoFromScale.modelName == null
+    String modelName = myDefScaleInfo.defScaleModel == null
         ? ''
-        : myFactoryInfoFromScale.modelName!;
-    String scaleSn = myFactoryInfoFromScale.scaleSn == null
-        ? ''
-        : myFactoryInfoFromScale.scaleSn!;
+        : myDefScaleInfo.defScaleModel!;
+    String scaleSn =
+        myDefScaleInfo.defScaleSn == null ? '' : myDefScaleInfo.defScaleSn!;
     myScaleCmd.cmdMode = "del_rec";
     myScaleCmd.cmdData = '999999999,1,$modelName,$scaleSn';
     sendMsg(scaleId, jsonEncode(myScaleCmd));
   }
 
   static void deleteAllRecordsTakeIn(int scaleId) {
-    String modelName = myFactoryInfoFromScale.modelName == null
+    String modelName = myDefScaleInfo.defScaleModel == null
         ? ''
-        : myFactoryInfoFromScale.modelName!;
-    String scaleSn = myFactoryInfoFromScale.scaleSn == null
-        ? ''
-        : myFactoryInfoFromScale.scaleSn!;
+        : myDefScaleInfo.defScaleModel!;
+    String scaleSn =
+        myDefScaleInfo.defScaleSn == null ? '' : myDefScaleInfo.defScaleSn!;
     myScaleCmd.cmdMode = "del_rec";
     myScaleCmd.cmdData = '999999999,2,$modelName,$scaleSn';
     sendMsg(scaleId, jsonEncode(myScaleCmd));
   }
 
   static void deleteAllRecordsTakeOut(int scaleId) {
-    String modelName = myFactoryInfoFromScale.modelName == null
+    String modelName = myDefScaleInfo.defScaleModel == null
         ? ''
-        : myFactoryInfoFromScale.modelName!;
-    String scaleSn = myFactoryInfoFromScale.scaleSn == null
-        ? ''
-        : myFactoryInfoFromScale.scaleSn!;
+        : myDefScaleInfo.defScaleModel!;
+    String scaleSn =
+        myDefScaleInfo.defScaleSn == null ? '' : myDefScaleInfo.defScaleSn!;
     myScaleCmd.cmdMode = "del_rec";
     myScaleCmd.cmdData = '999999999,3,$modelName,$scaleSn';
     sendMsg(scaleId, jsonEncode(myScaleCmd));

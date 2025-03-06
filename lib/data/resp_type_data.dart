@@ -128,6 +128,7 @@ class RespMsgType {
     RespMsgType.respSwitchLimit: handleRespSwitchLimit,
     RespMsgType.respRevDetailTail: handleRespRevDetailTail,
     RespMsgType.respExportRecs: handleRespExportRecs,
+    RespMsgType.respAddRec: handleRespAddRec,
   };
   static void handleGetUIConf(dynamic data) {
     final jsonResponse = json.decode(data['MsgBody']);
@@ -453,6 +454,11 @@ class RespMsgType {
   static void handleRespExportRecs(dynamic data) {
     dynamic mobj = ChannelResponse.fromJson(data);
     eventBus.fire(EventRevExportRecs(mobj));
+  }
+
+  static void handleRespAddRec(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventRevAddRec(mobj));
   }
 
   static void handleRespUpdateFirmwareNet(dynamic data) {

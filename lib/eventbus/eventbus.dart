@@ -512,6 +512,11 @@ class EventRevExportRecs {
   EventRevExportRecs(this.obj);
 }
 
+class EventRevAddRec {
+  dynamic obj;
+  EventRevAddRec(this.obj);
+}
+
 class EventDeleteRec {
   dynamic obj;
   EventDeleteRec(this.obj);

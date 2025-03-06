@@ -302,6 +302,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Connected AP Info:"),
         "gTipConnecting": MessageLookupByLibrary.simpleMessage("Connecting..."),
         "gTipDataError": MessageLookupByLibrary.simpleMessage("Data Error !"),
+        "gTipDeviceLost": MessageLookupByLibrary.simpleMessage("Force update?"),
         "gTipDeviceNameEmpty": MessageLookupByLibrary.simpleMessage(
             "Device name can not be empty,error."),
         "gTipDeviceTimePageHelp": MessageLookupByLibrary.simpleMessage(
@@ -336,6 +337,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "gTipLabelFmtDownload": MessageLookupByLibrary.simpleMessage(
             "This application is used to download print format."),
         "gTipManual": MessageLookupByLibrary.simpleMessage("Manual"),
+        "gTipModelNotMatch": MessageLookupByLibrary.simpleMessage(
+            "Model name in ZIP doesn\'t match device\'s. Force update?"),
         "gTipNoData": MessageLookupByLibrary.simpleMessage("No data"),
         "gTipNoDataSelected":
             MessageLookupByLibrary.simpleMessage("No data selected."),
