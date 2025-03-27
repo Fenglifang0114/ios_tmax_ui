@@ -6,6 +6,7 @@ import 'package:t_max/data/dialog_data.dart';
 import 'package:t_max/data/license_data.dart';
 import 'package:t_max/data/scale_info_from_scale.dart';
 import 'package:t_max/eventbus/eventbus.dart';
+import 'package:t_max/pages/formulation_scale_page.dart';
 import 'package:t_max/pages/labeldesign_page.dart';
 import 'package:t_max/pages/sel_four_scales_page.dart';
 import 'package:tray_manager/tray_manager.dart';
@@ -914,6 +915,36 @@ class IndustryHomePageState extends State<IndustryHomePage>
                                     ? localizedStrings.gTipPerpetual
                                     : myTaouLicInfo.liceseDate),
                           )),
+                      // MouseRegion(
+                      //     cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                      //     child: GestureDetector(
+                      //       onTap: myTaouLicInfo.isValid
+                      //           ? () {
+                      //               setState(() {
+                      //                 PublicFunctions.getUIConfTakeOut(1);
+                      //                 stopCheckSerialPort();
+                      //                 setState(() {
+                      //                   Navigator.push(
+                      //                     context,
+                      //                     MaterialPageRoute(
+                      //                         builder: (context) =>
+                      //                             const FormulationScalePage()),
+                      //                   ).then((value) => _updateStatus());
+                      //                 });
+                      //               });
+                      //             }
+                      //           : null,
+                      //       child: appCard(
+                      //           context,
+                      //           //增加翻译
+                      //           'Formulation Scale',
+                      //           Icons.format_color_fill_outlined,
+                      //           myTaouLicInfo.isValid,
+                      //           'Formulation Scale',
+                      //           myTaouLicInfo.liceseDate == "2299-01-01"
+                      //               ? localizedStrings.gTipPerpetual
+                      //               : myTaouLicInfo.liceseDate),
+                      //     )),
                     ]),
                   ),
                   if (showHint2)
