@@ -18,17 +18,20 @@ class S {
   static S? _current;
 
   static S get current {
-    assert(_current != null,
-        'No instance of S was loaded. Try to initialize the S delegate before accessing S.current.');
+    assert(
+      _current != null,
+      'No instance of S was loaded. Try to initialize the S delegate before accessing S.current.',
+    );
     return _current!;
   }
 
   static const AppLocalizationDelegate delegate = AppLocalizationDelegate();
 
   static Future<S> load(Locale locale) {
-    final name = (locale.countryCode?.isEmpty ?? false)
-        ? locale.languageCode
-        : locale.toString();
+    final name =
+        (locale.countryCode?.isEmpty ?? false)
+            ? locale.languageCode
+            : locale.toString();
     final localeName = Intl.canonicalizedLocale(name);
     return initializeMessages(localeName).then((_) {
       Intl.defaultLocale = localeName;
@@ -41,8 +44,10 @@ class S {
 
   static S of(BuildContext context) {
     final instance = S.maybeOf(context);
-    assert(instance != null,
-        'No instance of S present in the widget tree. Did you add S.delegate in localizationsDelegates?');
+    assert(
+      instance != null,
+      'No instance of S present in the widget tree. Did you add S.delegate in localizationsDelegates?',
+    );
     return instance!;
   }
 
@@ -1166,12 +1171,7 @@ class S {
 
   /// `Date Format`
   String get date_format {
-    return Intl.message(
-      'Date Format',
-      name: 'date_format',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Date Format', name: 'date_format', desc: '', args: []);
   }
 
   /// `Date Separator`
@@ -1186,12 +1186,7 @@ class S {
 
   /// `Zero Range:`
   String get zero_range {
-    return Intl.message(
-      'Zero Range:',
-      name: 'zero_range',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Zero Range:', name: 'zero_range', desc: '', args: []);
   }
 
   /// `Product Information`
@@ -1206,12 +1201,7 @@ class S {
 
   /// `Pretare:`
   String get pretare {
-    return Intl.message(
-      'Pretare:',
-      name: 'pretare',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Pretare:', name: 'pretare', desc: '', args: []);
   }
 
   /// `PLu Remarks:`
@@ -1226,22 +1216,12 @@ class S {
 
   /// `Add`
   String get gBtnAdd {
-    return Intl.message(
-      'Add',
-      name: 'gBtnAdd',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Add', name: 'gBtnAdd', desc: '', args: []);
   }
 
   /// `Edit`
   String get gBtnEdit {
-    return Intl.message(
-      'Edit',
-      name: 'gBtnEdit',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Edit', name: 'gBtnEdit', desc: '', args: []);
   }
 
   /// `PLU pretare cannot be empty.`
@@ -1286,32 +1266,17 @@ class S {
 
   /// `User ID:`
   String get user_id {
-    return Intl.message(
-      'User ID:',
-      name: 'user_id',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('User ID:', name: 'user_id', desc: '', args: []);
   }
 
   /// `Gender:`
   String get user_sex {
-    return Intl.message(
-      'Gender:',
-      name: 'user_sex',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Gender:', name: 'user_sex', desc: '', args: []);
   }
 
   /// `Phone:`
   String get user_phone {
-    return Intl.message(
-      'Phone:',
-      name: 'user_phone',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Phone:', name: 'user_phone', desc: '', args: []);
   }
 
   /// `User Notes:`
@@ -1366,12 +1331,7 @@ class S {
 
   /// `Back`
   String get button_back {
-    return Intl.message(
-      'Back',
-      name: 'button_back',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Back', name: 'button_back', desc: '', args: []);
   }
 
   /// `Select Format`
@@ -1506,22 +1466,12 @@ class S {
 
   /// `OL mode`
   String get serial_page_ol {
-    return Intl.message(
-      'OL mode',
-      name: 'serial_page_ol',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('OL mode', name: 'serial_page_ol', desc: '', args: []);
   }
 
   /// `UL mode`
   String get serial_page_ul {
-    return Intl.message(
-      'UL mode',
-      name: 'serial_page_ul',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('UL mode', name: 'serial_page_ul', desc: '', args: []);
   }
 
   /// `Weight mode`
@@ -1900,12 +1850,7 @@ class S {
 
   /// `Get name`
   String get get_bt_name {
-    return Intl.message(
-      'Get name',
-      name: 'get_bt_name',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Get name', name: 'get_bt_name', desc: '', args: []);
   }
 
   /// `Modify name`
@@ -2310,12 +2255,7 @@ class S {
 
   /// `Save as`
   String get save_as {
-    return Intl.message(
-      'Save as',
-      name: 'save_as',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Save as', name: 'save_as', desc: '', args: []);
   }
 
   /// `Please confirm the information.`
@@ -2330,12 +2270,7 @@ class S {
 
   /// `Server Ip:`
   String get server_ip {
-    return Intl.message(
-      'Server Ip:',
-      name: 'server_ip',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Server Ip:', name: 'server_ip', desc: '', args: []);
   }
 
   /// `Server Port:`
@@ -2400,12 +2335,7 @@ class S {
 
   /// `Information`
   String get about_title {
-    return Intl.message(
-      'Information',
-      name: 'about_title',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Information', name: 'about_title', desc: '', args: []);
   }
 
   /// `Version:`
@@ -2430,22 +2360,12 @@ class S {
 
   /// `Tel:`
   String get app_tel_title {
-    return Intl.message(
-      'Tel:',
-      name: 'app_tel_title',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Tel:', name: 'app_tel_title', desc: '', args: []);
   }
 
   /// `Email:`
   String get app_email_title {
-    return Intl.message(
-      'Email:',
-      name: 'app_email_title',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Email:', name: 'app_email_title', desc: '', args: []);
   }
 
   /// `Address:`
@@ -2480,12 +2400,7 @@ class S {
 
   /// `Free Text`
   String get p_text_title {
-    return Intl.message(
-      'Free Text',
-      name: 'p_text_title',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Free Text', name: 'p_text_title', desc: '', args: []);
   }
 
   /// `Dividing Line`
@@ -2510,112 +2425,57 @@ class S {
 
   /// `Text`
   String get p_text_var {
-    return Intl.message(
-      'Text',
-      name: 'p_text_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Text', name: 'p_text_var', desc: '', args: []);
   }
 
   /// `Line`
   String get p_div_line_var {
-    return Intl.message(
-      'Line',
-      name: 'p_div_line_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Line', name: 'p_div_line_var', desc: '', args: []);
   }
 
   /// `NO.`
   String get p_no_var {
-    return Intl.message(
-      'NO.',
-      name: 'p_no_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('NO.', name: 'p_no_var', desc: '', args: []);
   }
 
   /// `Header1`
   String get p_header1_var {
-    return Intl.message(
-      'Header1',
-      name: 'p_header1_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Header1', name: 'p_header1_var', desc: '', args: []);
   }
 
   /// `Header2`
   String get p_Header2_var {
-    return Intl.message(
-      'Header2',
-      name: 'p_Header2_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Header2', name: 'p_Header2_var', desc: '', args: []);
   }
 
   /// `Header3`
   String get p_header3_var {
-    return Intl.message(
-      'Header3',
-      name: 'p_header3_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Header3', name: 'p_header3_var', desc: '', args: []);
   }
 
   /// `Footer1`
   String get p_footer1_var {
-    return Intl.message(
-      'Footer1',
-      name: 'p_footer1_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Footer1', name: 'p_footer1_var', desc: '', args: []);
   }
 
   /// `Footer2`
   String get p_footer2_var {
-    return Intl.message(
-      'Footer2',
-      name: 'p_footer2_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Footer2', name: 'p_footer2_var', desc: '', args: []);
   }
 
   /// `Footer3`
   String get p_footer3_var {
-    return Intl.message(
-      'Footer3',
-      name: 'p_footer3_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Footer3', name: 'p_footer3_var', desc: '', args: []);
   }
 
   /// `PLU_ID`
   String get p_plu_id_var {
-    return Intl.message(
-      'PLU_ID',
-      name: 'p_plu_id_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('PLU_ID', name: 'p_plu_id_var', desc: '', args: []);
   }
 
   /// `PLU_Name`
   String get p_plu_name_var {
-    return Intl.message(
-      'PLU_Name',
-      name: 'p_plu_name_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('PLU_Name', name: 'p_plu_name_var', desc: '', args: []);
   }
 
   /// `Order Number`
@@ -2650,32 +2510,17 @@ class S {
 
   /// `PreTare`
   String get p_pre_tare_var {
-    return Intl.message(
-      'PreTare',
-      name: 'p_pre_tare_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('PreTare', name: 'p_pre_tare_var', desc: '', args: []);
   }
 
   /// `Unit`
   String get p_unit_var {
-    return Intl.message(
-      'Unit',
-      name: 'p_unit_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Unit', name: 'p_unit_var', desc: '', args: []);
   }
 
   /// `Date`
   String get p_date_var {
-    return Intl.message(
-      'Date',
-      name: 'p_date_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Date', name: 'p_date_var', desc: '', args: []);
   }
 
   /// `Tax Type1`
@@ -2800,22 +2645,12 @@ class S {
 
   /// `Subtotal`
   String get p_subtotal_var {
-    return Intl.message(
-      'Subtotal',
-      name: 'p_subtotal_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Subtotal', name: 'p_subtotal_var', desc: '', args: []);
   }
 
   /// `Currency`
   String get p_currency_var {
-    return Intl.message(
-      'Currency',
-      name: 'p_currency_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Currency', name: 'p_currency_var', desc: '', args: []);
   }
 
   /// `Copy Times`
@@ -2870,12 +2705,7 @@ class S {
 
   /// `PLU Tax`
   String get p_plu_tax_var {
-    return Intl.message(
-      'PLU Tax',
-      name: 'p_plu_tax_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('PLU Tax', name: 'p_plu_tax_var', desc: '', args: []);
   }
 
   /// `Total No Tax`
@@ -2900,22 +2730,12 @@ class S {
 
   /// `Tare`
   String get p_tare_var {
-    return Intl.message(
-      'Tare',
-      name: 'p_tare_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Tare', name: 'p_tare_var', desc: '', args: []);
   }
 
   /// `Time`
   String get p_time_var {
-    return Intl.message(
-      'Time',
-      name: 'p_time_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Time', name: 'p_time_var', desc: '', args: []);
   }
 
   /// `Change Amount`
@@ -2930,22 +2750,12 @@ class S {
 
   /// `Price`
   String get p_price_var {
-    return Intl.message(
-      'Price',
-      name: 'p_price_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Price', name: 'p_price_var', desc: '', args: []);
   }
 
   /// `Free text.`
   String get p_text_expl {
-    return Intl.message(
-      'Free text.',
-      name: 'p_text_expl',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Free text.', name: 'p_text_expl', desc: '', args: []);
   }
 
   /// `Loop divider line.`
@@ -3030,12 +2840,7 @@ class S {
 
   /// `PLU_ID.`
   String get p_plu_id_expl {
-    return Intl.message(
-      'PLU_ID.',
-      name: 'p_plu_id_expl',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('PLU_ID.', name: 'p_plu_id_expl', desc: '', args: []);
   }
 
   /// `PLU_Name.`
@@ -3100,12 +2905,7 @@ class S {
 
   /// `Date.`
   String get p_date_expl {
-    return Intl.message(
-      'Date.',
-      name: 'p_date_expl',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Date.', name: 'p_date_expl', desc: '', args: []);
   }
 
   /// `Tax Type 1.`
@@ -3330,22 +3130,12 @@ class S {
 
   /// `Tare value.`
   String get p_tare_expl {
-    return Intl.message(
-      'Tare value.',
-      name: 'p_tare_expl',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Tare value.', name: 'p_tare_expl', desc: '', args: []);
   }
 
   /// `Time.`
   String get p_time_expl {
-    return Intl.message(
-      'Time.',
-      name: 'p_time_expl',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Time.', name: 'p_time_expl', desc: '', args: []);
   }
 
   /// `Change Amount.`
@@ -3370,22 +3160,12 @@ class S {
 
   /// `Variable`
   String get l_var_title {
-    return Intl.message(
-      'Variable',
-      name: 'l_var_title',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Variable', name: 'l_var_title', desc: '', args: []);
   }
 
   /// `Free Text`
   String get l_text_title {
-    return Intl.message(
-      'Free Text',
-      name: 'l_text_title',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Free Text', name: 'l_text_title', desc: '', args: []);
   }
 
   /// `BarCode Variable`
@@ -3410,102 +3190,52 @@ class S {
 
   /// `Shape`
   String get l_shape_title {
-    return Intl.message(
-      'Shape',
-      name: 'l_shape_title',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Shape', name: 'l_shape_title', desc: '', args: []);
   }
 
   /// `Line`
   String get l_line_var {
-    return Intl.message(
-      'Line',
-      name: 'l_line_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Line', name: 'l_line_var', desc: '', args: []);
   }
 
   /// `Text`
   String get l_text_var {
-    return Intl.message(
-      'Text',
-      name: 'l_text_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Text', name: 'l_text_var', desc: '', args: []);
   }
 
   /// `BarCode`
   String get l_barcode_var {
-    return Intl.message(
-      'BarCode',
-      name: 'l_barcode_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('BarCode', name: 'l_barcode_var', desc: '', args: []);
   }
 
   /// `Qrcode`
   String get l_qrcode_var {
-    return Intl.message(
-      'Qrcode',
-      name: 'l_qrcode_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Qrcode', name: 'l_qrcode_var', desc: '', args: []);
   }
 
   /// `NO.`
   String get l_no_var {
-    return Intl.message(
-      'NO.',
-      name: 'l_no_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('NO.', name: 'l_no_var', desc: '', args: []);
   }
 
   /// `Gross`
   String get l_gross_var {
-    return Intl.message(
-      'Gross',
-      name: 'l_gross_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Gross', name: 'l_gross_var', desc: '', args: []);
   }
 
   /// `Tare`
   String get l_tare_var {
-    return Intl.message(
-      'Tare',
-      name: 'l_tare_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Tare', name: 'l_tare_var', desc: '', args: []);
   }
 
   /// `Net`
   String get l_net_var {
-    return Intl.message(
-      'Net',
-      name: 'l_net_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Net', name: 'l_net_var', desc: '', args: []);
   }
 
   /// `PCS`
   String get l_pcs_var {
-    return Intl.message(
-      'PCS',
-      name: 'l_pcs_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('PCS', name: 'l_pcs_var', desc: '', args: []);
   }
 
   /// `WeightUnit`
@@ -3520,42 +3250,22 @@ class S {
 
   /// `Date`
   String get l_date_var {
-    return Intl.message(
-      'Date',
-      name: 'l_date_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Date', name: 'l_date_var', desc: '', args: []);
   }
 
   /// `Time`
   String get l_time_var {
-    return Intl.message(
-      'Time',
-      name: 'l_time_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Time', name: 'l_time_var', desc: '', args: []);
   }
 
   /// `U.WGT`
   String get l_uwgt_var {
-    return Intl.message(
-      'U.WGT',
-      name: 'l_uwgt_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('U.WGT', name: 'l_uwgt_var', desc: '', args: []);
   }
 
   /// `U.WU`
   String get l_uwu_var {
-    return Intl.message(
-      'U.WU',
-      name: 'l_uwu_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('U.WU', name: 'l_uwu_var', desc: '', args: []);
   }
 
   /// `UnitWeight`
@@ -3570,12 +3280,7 @@ class S {
 
   /// `Percent`
   String get l_percent_var {
-    return Intl.message(
-      'Percent',
-      name: 'l_percent_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Percent', name: 'l_percent_var', desc: '', args: []);
   }
 
   /// `TotalWeight`
@@ -3600,92 +3305,47 @@ class S {
 
   /// `Line`
   String get l_line_expl {
-    return Intl.message(
-      'Line',
-      name: 'l_line_expl',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Line', name: 'l_line_expl', desc: '', args: []);
   }
 
   /// `Text`
   String get l_text_expl {
-    return Intl.message(
-      'Text',
-      name: 'l_text_expl',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Text', name: 'l_text_expl', desc: '', args: []);
   }
 
   /// `BarCode`
   String get l_barcode_expl {
-    return Intl.message(
-      'BarCode',
-      name: 'l_barcode_expl',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('BarCode', name: 'l_barcode_expl', desc: '', args: []);
   }
 
   /// `Qrcode`
   String get l_qrcode_expl {
-    return Intl.message(
-      'Qrcode',
-      name: 'l_qrcode_expl',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Qrcode', name: 'l_qrcode_expl', desc: '', args: []);
   }
 
   /// `NO.`
   String get l_no_expl {
-    return Intl.message(
-      'NO.',
-      name: 'l_no_expl',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('NO.', name: 'l_no_expl', desc: '', args: []);
   }
 
   /// `Gross`
   String get l_gross_expl {
-    return Intl.message(
-      'Gross',
-      name: 'l_gross_expl',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Gross', name: 'l_gross_expl', desc: '', args: []);
   }
 
   /// `Tare`
   String get l_tare_expl {
-    return Intl.message(
-      'Tare',
-      name: 'l_tare_expl',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Tare', name: 'l_tare_expl', desc: '', args: []);
   }
 
   /// `Net`
   String get l_net_expl {
-    return Intl.message(
-      'Net',
-      name: 'l_net_expl',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Net', name: 'l_net_expl', desc: '', args: []);
   }
 
   /// `PCS`
   String get l_pcs_expl {
-    return Intl.message(
-      'PCS',
-      name: 'l_pcs_expl',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('PCS', name: 'l_pcs_expl', desc: '', args: []);
   }
 
   /// `WeightUnit`
@@ -3700,22 +3360,12 @@ class S {
 
   /// `Date`
   String get l_date_expl {
-    return Intl.message(
-      'Date',
-      name: 'l_date_expl',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Date', name: 'l_date_expl', desc: '', args: []);
   }
 
   /// `Time`
   String get l_time_expl {
-    return Intl.message(
-      'Time',
-      name: 'l_time_expl',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Time', name: 'l_time_expl', desc: '', args: []);
   }
 
   /// `Universal weight`
@@ -3750,12 +3400,7 @@ class S {
 
   /// `Percent`
   String get l_percent_expl {
-    return Intl.message(
-      'Percent',
-      name: 'l_percent_expl',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Percent', name: 'l_percent_expl', desc: '', args: []);
   }
 
   /// `TotalWeight`
@@ -3830,12 +3475,7 @@ class S {
 
   /// `Import`
   String get gBtnImport {
-    return Intl.message(
-      'Import',
-      name: 'gBtnImport',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Import', name: 'gBtnImport', desc: '', args: []);
   }
 
   /// `Get Data From DB`
@@ -4041,12 +3681,7 @@ class S {
 
   /// `Add`
   String get scale_mgr_btn_add {
-    return Intl.message(
-      'Add',
-      name: 'scale_mgr_btn_add',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Add', name: 'scale_mgr_btn_add', desc: '', args: []);
   }
 
   /// `Rename`
@@ -4081,12 +3716,7 @@ class S {
 
   /// `Scale Name`
   String get gScaleName {
-    return Intl.message(
-      'Scale Name',
-      name: 'gScaleName',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Scale Name', name: 'gScaleName', desc: '', args: []);
   }
 
   /// `Status`
@@ -5118,6 +4748,1351 @@ class S {
       '1. Real time display of weighing data on the scale (supporting all units including PCS and PCT);\n2. Click [TARE] and [ZERO] allows for weighing and zeroing operations on the scale;\n3. Click the List button in the upper left corner to view the list of connected devices and make changes.\n\nNote：\n1.This function can be used by connecting to a serial port, Ethernet, or WiFi.\n2.Switching units is done on the scale.\n',
       name: 'gTipWeighingPageHelp',
       desc: 'This is the help info for the weighing page.',
+      args: [],
+    );
+  }
+
+  /// `Formula List`
+  String get fFmaListTab {
+    return Intl.message(
+      'Formula List',
+      name: 'fFmaListTab',
+      desc: 'Tab label for formula list',
+      args: [],
+    );
+  }
+
+  /// `Component List`
+  String get fRawMaterialListTab {
+    return Intl.message(
+      'Component List',
+      name: 'fRawMaterialListTab',
+      desc: 'Tab label for raw material list',
+      args: [],
+    );
+  }
+
+  /// `Search by ID or Name`
+  String get fSearchHint {
+    return Intl.message(
+      'Search by ID or Name',
+      name: 'fSearchHint',
+      desc: 'Hint text for search input',
+      args: [],
+    );
+  }
+
+  /// `Please select a category`
+  String get fPleaseSelectCategory {
+    return Intl.message(
+      'Please select a category',
+      name: 'fPleaseSelectCategory',
+      desc: 'Placeholder for category dropdown',
+      args: [],
+    );
+  }
+
+  /// `Add Formula`
+  String get fAddFmaBtn {
+    return Intl.message(
+      'Add Formula',
+      name: 'fAddFmaBtn',
+      desc: 'Button to add a new formula',
+      args: [],
+    );
+  }
+
+  /// `Records`
+  String get fHistoricalWeighingRecordsBtn {
+    return Intl.message(
+      'Records',
+      name: 'fHistoricalWeighingRecordsBtn',
+      desc: 'Button to view historical weighing records',
+      args: [],
+    );
+  }
+
+  /// `Import Formula`
+  String get fImportFmaBtn {
+    return Intl.message(
+      'Import Formula',
+      name: 'fImportFmaBtn',
+      desc: 'Button to import formulas',
+      args: [],
+    );
+  }
+
+  /// `Export Formula`
+  String get fExportFmaBtn {
+    return Intl.message(
+      'Export Formula',
+      name: 'fExportFmaBtn',
+      desc: 'Button to export formulas',
+      args: [],
+    );
+  }
+
+  /// `Name`
+  String get fFmaNameLabel {
+    return Intl.message(
+      'Name',
+      name: 'fFmaNameLabel',
+      desc: 'Label for formula name field',
+      args: [],
+    );
+  }
+
+  /// `ID`
+  String get fFmaIdLabel {
+    return Intl.message(
+      'ID',
+      name: 'fFmaIdLabel',
+      desc: 'Label for formula ID field',
+      args: [],
+    );
+  }
+
+  /// `Quantity`
+  String get fIngredientCountLabel {
+    return Intl.message(
+      'Quantity',
+      name: 'fIngredientCountLabel',
+      desc: 'Label for ingredient count display',
+      args: [],
+    );
+  }
+
+  /// `Total Weight`
+  String get fTotalWeightLabel {
+    return Intl.message(
+      'Total Weight',
+      name: 'fTotalWeightLabel',
+      desc: 'Label for total weight display',
+      args: [],
+    );
+  }
+
+  /// `Start Weighing`
+  String get fStartWeighingBtn {
+    return Intl.message(
+      'Start Weighing',
+      name: 'fStartWeighingBtn',
+      desc: 'Button to start the weighing process',
+      args: [],
+    );
+  }
+
+  /// `Order`
+  String get fIngredientOrder {
+    return Intl.message(
+      'Order',
+      name: 'fIngredientOrder',
+      desc: 'Section title for ingredient order display',
+      args: [],
+    );
+  }
+
+  /// `Component Notes`
+  String get fIngredientRemark {
+    return Intl.message(
+      'Component Notes',
+      name: 'fIngredientRemark',
+      desc: 'Section title for ingredient remarks',
+      args: [],
+    );
+  }
+
+  /// `Formula Notes`
+  String get fFmaRemark {
+    return Intl.message(
+      'Formula Notes',
+      name: 'fFmaRemark',
+      desc: 'Section title for formula remarks',
+      args: [],
+    );
+  }
+
+  /// `Involved Formulas`
+  String get fInvolvedFmas {
+    return Intl.message(
+      'Involved Formulas',
+      name: 'fInvolvedFmas',
+      desc: 'Section title for formulas involving the raw material',
+      args: [],
+    );
+  }
+
+  /// `Scale List`
+  String get fScaleList {
+    return Intl.message(
+      'Scale List',
+      name: 'fScaleList',
+      desc: 'Title for the scale list panel',
+      args: [],
+    );
+  }
+
+  /// `Serial Scale`
+  String get fComScale {
+    return Intl.message(
+      'Serial Scale',
+      name: 'fComScale',
+      desc: 'Label for serial scale in scale list',
+      args: [],
+    );
+  }
+
+  /// `Network Scale`
+  String get fNetScale {
+    return Intl.message(
+      'Network Scale',
+      name: 'fNetScale',
+      desc: 'Label for network scale in scale list',
+      args: [],
+    );
+  }
+
+  /// `Component Category`
+  String get fRawMaterialTypeCol {
+    return Intl.message(
+      'Component Category',
+      name: 'fRawMaterialTypeCol',
+      desc: 'Table column title for raw material category',
+      args: [],
+    );
+  }
+
+  /// `Update Time`
+  String get fCreatedAtCol {
+    return Intl.message(
+      'Update Time',
+      name: 'fCreatedAtCol',
+      desc: 'Table column title for creation time',
+      args: [],
+    );
+  }
+
+  /// `Update Time`
+  String get fUpdatedAtCol {
+    return Intl.message(
+      'Update Time',
+      name: 'fUpdatedAtCol',
+      desc: 'Table column title for last update time',
+      args: [],
+    );
+  }
+
+  /// `Edit`
+  String get fEditBtn {
+    return Intl.message(
+      'Edit',
+      name: 'fEditBtn',
+      desc: 'Button for editing table row',
+      args: [],
+    );
+  }
+
+  /// `Category`
+  String get fFmaCategoryCol {
+    return Intl.message(
+      'Category',
+      name: 'fFmaCategoryCol',
+      desc: 'Table column title for formula category',
+      args: [],
+    );
+  }
+
+  /// `Mode`
+  String get fFmaModeCol {
+    return Intl.message(
+      'Mode',
+      name: 'fFmaModeCol',
+      desc: 'Table column title for formula mode (weight/pct)',
+      args: [],
+    );
+  }
+
+  /// `Component Quantity`
+  String get fMaterialCountCol {
+    return Intl.message(
+      'Component Quantity',
+      name: 'fMaterialCountCol',
+      desc: 'Table column title for number of materials in formula',
+      args: [],
+    );
+  }
+
+  /// `Create Time`
+  String get fCreatedTimeCol {
+    return Intl.message(
+      'Create Time',
+      name: 'fCreatedTimeCol',
+      desc: 'Table column title for formula creation time',
+      args: [],
+    );
+  }
+
+  /// `Update Time`
+  String get fUpdateTimeCol {
+    return Intl.message(
+      'Update Time',
+      name: 'fUpdateTimeCol',
+      desc: 'Table column title for formula last update time',
+      args: [],
+    );
+  }
+
+  /// `Notes`
+  String get fRemarkCol {
+    return Intl.message(
+      'Notes',
+      name: 'fRemarkCol',
+      desc: 'Table column title for formula remarks',
+      args: [],
+    );
+  }
+
+  /// `Confidential`
+  String get fConfidential {
+    return Intl.message(
+      'Confidential',
+      name: 'fConfidential',
+      desc: 'Display text for confidential formula status',
+      args: [],
+    );
+  }
+
+  /// `Public`
+  String get fPublic {
+    return Intl.message(
+      'Public',
+      name: 'fPublic',
+      desc: 'Display text for public formula status',
+      args: [],
+    );
+  }
+
+  /// `Weight`
+  String get fWeightMode {
+    return Intl.message(
+      'Weight',
+      name: 'fWeightMode',
+      desc: 'Display text for weight-based formula mode',
+      args: [],
+    );
+  }
+
+  /// `Percentage`
+  String get fPctMode {
+    return Intl.message(
+      'Percentage',
+      name: 'fPctMode',
+      desc: 'Display text for percentage-based formula mode',
+      args: [],
+    );
+  }
+
+  /// `Formula Records`
+  String get fRecordTitle {
+    return Intl.message(
+      'Formula Records',
+      name: 'fRecordTitle',
+      desc: 'Page title for formula weighing records',
+      args: [],
+    );
+  }
+
+  /// `Export Records`
+  String get fExportRecordsBtn {
+    return Intl.message(
+      'Export Records',
+      name: 'fExportRecordsBtn',
+      desc: 'Button to export selected weighing records',
+      args: [],
+    );
+  }
+
+  /// `No.`
+  String get fOrderNo {
+    return Intl.message(
+      'No.',
+      name: 'fOrderNo',
+      desc: 'Table column title for record number',
+      args: [],
+    );
+  }
+
+  /// `Formula Total Weight`
+  String get fFormulaTotalWeight {
+    return Intl.message(
+      'Formula Total Weight',
+      name: 'fFormulaTotalWeight',
+      desc: 'Table column title for formula total weight',
+      args: [],
+    );
+  }
+
+  /// `Actual Total Weight`
+  String get fActualTotalWeight {
+    return Intl.message(
+      'Actual Total Weight',
+      name: 'fActualTotalWeight',
+      desc: 'Table column title for actual total weight',
+      args: [],
+    );
+  }
+
+  /// `Component Weight`
+  String get fMaterialSingleWeight {
+    return Intl.message(
+      'Component Weight',
+      name: 'fMaterialSingleWeight',
+      desc: 'Table column title for material single weight',
+      args: [],
+    );
+  }
+
+  /// `Actual Component Weight`
+  String get fActualSingleWeight {
+    return Intl.message(
+      'Actual Component Weight',
+      name: 'fActualSingleWeight',
+      desc: 'Table column title for actual single weight',
+      args: [],
+    );
+  }
+
+  /// `Allowable Error`
+  String get fAllowableError {
+    return Intl.message(
+      'Allowable Error',
+      name: 'fAllowableError',
+      desc: 'Table column title for allowable error',
+      args: [],
+    );
+  }
+
+  /// `Actual Error`
+  String get fActualError {
+    return Intl.message(
+      'Actual Error',
+      name: 'fActualError',
+      desc: 'Table column title for actual error',
+      args: [],
+    );
+  }
+
+  /// `Pass`
+  String get fQualificationStatus {
+    return Intl.message(
+      'Pass',
+      name: 'fQualificationStatus',
+      desc: 'Table column title for qualification status',
+      args: [],
+    );
+  }
+
+  /// `Component Name`
+  String get fMaterialNameCol {
+    return Intl.message(
+      'Component Name',
+      name: 'fMaterialNameCol',
+      desc: 'Table column title for material name',
+      args: [],
+    );
+  }
+
+  /// `Component ID`
+  String get fMaterialIdCol {
+    return Intl.message(
+      'Component ID',
+      name: 'fMaterialIdCol',
+      desc: 'Table column title for material ID',
+      args: [],
+    );
+  }
+
+  /// `Edit Component`
+  String get fEditMaterial {
+    return Intl.message(
+      'Edit Component',
+      name: 'fEditMaterial',
+      desc: 'Edit component page',
+      args: [],
+    );
+  }
+
+  /// `Back`
+  String get fBackBtn {
+    return Intl.message(
+      'Back',
+      name: 'fBackBtn',
+      desc: 'Button to navigate back to previous page',
+      args: [],
+    );
+  }
+
+  /// `√`
+  String get fQualified {
+    return Intl.message(
+      '√',
+      name: 'fQualified',
+      desc: 'Display text for qualified status',
+      args: [],
+    );
+  }
+
+  /// `×`
+  String get fUnqualified {
+    return Intl.message(
+      '×',
+      name: 'fUnqualified',
+      desc: 'Display text for unqualified status',
+      args: [],
+    );
+  }
+
+  /// `Weight Unit`
+  String get fWgtUnit {
+    return Intl.message(
+      'Weight Unit',
+      name: 'fWgtUnit',
+      desc: 'Display text for weight unit',
+      args: [],
+    );
+  }
+
+  /// `Add Formula Weight`
+  String get fAddFormulaWeightTitle {
+    return Intl.message(
+      'Add Formula Weight',
+      name: 'fAddFormulaWeightTitle',
+      desc: 'Title of the dialog for adding formula weight',
+      args: [],
+    );
+  }
+
+  /// `Formula Total Weight`
+  String get fFormulaTotalWeightLabel {
+    return Intl.message(
+      'Formula Total Weight',
+      name: 'fFormulaTotalWeightLabel',
+      desc: 'Label for the formula total weight input field',
+      args: [],
+    );
+  }
+
+  /// `Please enter the formula total weight.`
+  String get fInputFormulaTotalWeightHint {
+    return Intl.message(
+      'Please enter the formula total weight.',
+      name: 'fInputFormulaTotalWeightHint',
+      desc: 'Hint text for the formula total weight input field',
+      args: [],
+    );
+  }
+
+  /// `Select Unit`
+  String get fSelectUnitHint {
+    return Intl.message(
+      'Select Unit',
+      name: 'fSelectUnitHint',
+      desc: 'Hint text for the unit selection dropdown',
+      args: [],
+    );
+  }
+
+  /// `Select Component`
+  String get fSelectRawMaterialHint {
+    return Intl.message(
+      'Select Component',
+      name: 'fSelectRawMaterialHint',
+      desc: 'Placeholder or hint for selecting raw material',
+      args: [],
+    );
+  }
+
+  /// `Please enter the formula ID.`
+  String get fInputFormulaIdHint {
+    return Intl.message(
+      'Please enter the formula ID.',
+      name: 'fInputFormulaIdHint',
+      desc: 'Hint text for formula ID input field',
+      args: [],
+    );
+  }
+
+  /// `Please select the formula mode.`
+  String get fSelectFormulaModeHint {
+    return Intl.message(
+      'Please select the formula mode.',
+      name: 'fSelectFormulaModeHint',
+      desc: 'Placeholder for selecting formula mode (weight/pct)',
+      args: [],
+    );
+  }
+
+  /// `Please enter the weight.`
+  String get fInputWeightHint {
+    return Intl.message(
+      'Please enter the weight.',
+      name: 'fInputWeightHint',
+      desc: 'Hint text for weight input field',
+      args: [],
+    );
+  }
+
+  /// `Please enter the percentage.`
+  String get fInputPercentageHint {
+    return Intl.message(
+      'Please enter the percentage.',
+      name: 'fInputPercentageHint',
+      desc: 'Hint text for percentage input field',
+      args: [],
+    );
+  }
+
+  /// `Please enter the error.`
+  String get fInputErrorHint {
+    return Intl.message(
+      'Please enter the error.',
+      name: 'fInputErrorHint',
+      desc: 'Hint text for error input field',
+      args: [],
+    );
+  }
+
+  /// `Clear`
+  String get fClearBtn {
+    return Intl.message(
+      'Clear',
+      name: 'fClearBtn',
+      desc: 'Text on the clear button',
+      args: [],
+    );
+  }
+
+  /// `Please enter the notes.`
+  String get fInputRemarkHint {
+    return Intl.message(
+      'Please enter the notes.',
+      name: 'fInputRemarkHint',
+      desc: 'Hint text for remarks input field',
+      args: [],
+    );
+  }
+
+  /// `Formula ID already exists`
+  String get fFormulaIdDuplicate {
+    return Intl.message(
+      'Formula ID already exists',
+      name: 'fFormulaIdDuplicate',
+      desc: 'Error message for duplicate formula ID',
+      args: [],
+    );
+  }
+
+  /// `Formula name already exists`
+  String get fFormulaNameDuplicate {
+    return Intl.message(
+      'Formula name already exists',
+      name: 'fFormulaNameDuplicate',
+      desc: 'Error message for duplicate formula name',
+      args: [],
+    );
+  }
+
+  /// `Component Id already exists`
+  String get fRawIdDuplicate {
+    return Intl.message(
+      'Component Id already exists',
+      name: 'fRawIdDuplicate',
+      desc: 'Error message for duplicate raw ID',
+      args: [],
+    );
+  }
+
+  /// `Component name already exists`
+  String get fRawNameDuplicate {
+    return Intl.message(
+      'Component name already exists',
+      name: 'fRawNameDuplicate',
+      desc: 'Error message for duplicate raw name',
+      args: [],
+    );
+  }
+
+  /// `Set component`
+  String get fSetRawMaterialBtn {
+    return Intl.message(
+      'Set component',
+      name: 'fSetRawMaterialBtn',
+      desc: 'Text on the button to set raw material',
+      args: [],
+    );
+  }
+
+  /// `Please enter the formula name.`
+  String get fInputFormulaNameHint {
+    return Intl.message(
+      'Please enter the formula name.',
+      name: 'fInputFormulaNameHint',
+      desc: 'Hint text for formula name input field',
+      args: [],
+    );
+  }
+
+  /// `Please enter the formula category.`
+  String get fInputFormulaTypeHint {
+    return Intl.message(
+      'Please enter the formula category.',
+      name: 'fInputFormulaTypeHint',
+      desc: 'Hint text for formula category input field',
+      args: [],
+    );
+  }
+
+  /// `Add category`
+  String get fAddTypeBtn {
+    return Intl.message(
+      'Add category',
+      name: 'fAddTypeBtn',
+      desc: 'Text on the button to add category',
+      args: [],
+    );
+  }
+
+  /// `Add component`
+  String get fAddRawMaterialBtn {
+    return Intl.message(
+      'Add component',
+      name: 'fAddRawMaterialBtn',
+      desc: 'Text on the button to add raw material',
+      args: [],
+    );
+  }
+
+  /// `Please enter the component ID.`
+  String get fInputRawMaterialIdHint {
+    return Intl.message(
+      'Please enter the component ID.',
+      name: 'fInputRawMaterialIdHint',
+      desc: 'Hint text for raw material ID input field',
+      args: [],
+    );
+  }
+
+  /// `Please enter the component name.`
+  String get fInputRawMaterialNameHint {
+    return Intl.message(
+      'Please enter the component name.',
+      name: 'fInputRawMaterialNameHint',
+      desc: 'Hint text for raw material name input field',
+      args: [],
+    );
+  }
+
+  /// `Please enter the component notes.`
+  String get fInputIngredientDescHint {
+    return Intl.message(
+      'Please enter the component notes.',
+      name: 'fInputIngredientDescHint',
+      desc: 'Hint text for ingredient description input field',
+      args: [],
+    );
+  }
+
+  /// `Please enter the component category.`
+  String get fInputRawMaterialTypeHint {
+    return Intl.message(
+      'Please enter the component category.',
+      name: 'fInputRawMaterialTypeHint',
+      desc: 'Hint text for raw material category input field',
+      args: [],
+    );
+  }
+
+  /// `Add Component Category`
+  String get fAddRawMaterialTypeBtn {
+    return Intl.message(
+      'Add Component Category',
+      name: 'fAddRawMaterialTypeBtn',
+      desc: 'Text on the button to add raw material category',
+      args: [],
+    );
+  }
+
+  /// `Formula Details`
+  String get fFormulaDetailsTitle {
+    return Intl.message(
+      'Formula Details',
+      name: 'fFormulaDetailsTitle',
+      desc: 'Title for formula details page or section',
+      args: [],
+    );
+  }
+
+  /// `Prompt`
+  String get fTipTitle {
+    return Intl.message(
+      'Prompt',
+      name: 'fTipTitle',
+      desc: 'Title for prompt dialog',
+      args: [],
+    );
+  }
+
+  /// `Please switch the device unit.`
+  String get fSwitchUnitHint {
+    return Intl.message(
+      'Please switch the device unit.',
+      name: 'fSwitchUnitHint',
+      desc: 'Hint to switch device unit',
+      args: [],
+    );
+  }
+
+  /// `Current weighing data will be cleared. Confirm Continue?`
+  String get fClearWeighingDataMsg {
+    return Intl.message(
+      'Current weighing data will be cleared. Confirm Continue?',
+      name: 'fClearWeighingDataMsg',
+      desc: 'Confirmation message for clearing weighing data',
+      args: [],
+    );
+  }
+
+  /// `Formula not meeting standard. Confirm completion?`
+  String get fFormulaUnqualifiedMsg {
+    return Intl.message(
+      'Formula not meeting standard. Confirm completion?',
+      name: 'fFormulaUnqualifiedMsg',
+      desc: 'Confirmation message for completing unqualified formula',
+      args: [],
+    );
+  }
+
+  /// `Complete`
+  String get fCompleteIngredientsBtn {
+    return Intl.message(
+      'Complete',
+      name: 'fCompleteIngredientsBtn',
+      desc: 'Text on the button to complete ingredient weighing',
+      args: [],
+    );
+  }
+
+  /// `Abandon`
+  String get fAbandonIngredientsBtn {
+    return Intl.message(
+      'Abandon',
+      name: 'fAbandonIngredientsBtn',
+      desc: 'Text on the button to abandon ingredient weighing',
+      args: [],
+    );
+  }
+
+  /// `Record`
+  String get fIngredientsRecordTitle {
+    return Intl.message(
+      'Record',
+      name: 'fIngredientsRecordTitle',
+      desc: 'Title for ingredients weighing record',
+      args: [],
+    );
+  }
+
+  /// `Target Weight`
+  String get fTargetWeightLabel {
+    return Intl.message(
+      'Target Weight',
+      name: 'fTargetWeightLabel',
+      desc: 'Label for target weight field',
+      args: [],
+    );
+  }
+
+  /// `Current Weight`
+  String get fCurrentWeightLabel {
+    return Intl.message(
+      'Current Weight',
+      name: 'fCurrentWeightLabel',
+      desc: 'Label for current weight field',
+      args: [],
+    );
+  }
+
+  /// `Allowable Error`
+  String get fAllowableErrorWeightLabel {
+    return Intl.message(
+      'Allowable Error',
+      name: 'fAllowableErrorWeightLabel',
+      desc: 'Label for allowable error weight field',
+      args: [],
+    );
+  }
+
+  /// `Current Error`
+  String get fCurrentErrorWeightLabel {
+    return Intl.message(
+      'Current Error',
+      name: 'fCurrentErrorWeightLabel',
+      desc: 'Label for current error weight field',
+      args: [],
+    );
+  }
+
+  /// `Current component is overweight, please choose to abandon or correct?`
+  String get fCurrentMaterialOverweightMsg {
+    return Intl.message(
+      'Current component is overweight, please choose to abandon or correct?',
+      name: 'fCurrentMaterialOverweightMsg',
+      desc:
+          'Warning message when current raw material is overweight, asking to abandon or correct',
+      args: [],
+    );
+  }
+
+  /// `The current weight of the component is not qualified!`
+  String get fCurrentMaterialWeightInvalidMsg {
+    return Intl.message(
+      'The current weight of the component is not qualified!',
+      name: 'fCurrentMaterialWeightInvalidMsg',
+      desc: 'Error message when current raw material weight is invalid',
+      args: [],
+    );
+  }
+
+  /// `Operation allowed only after stabilization!`
+  String get fStableOperationHint {
+    return Intl.message(
+      'Operation allowed only after stabilization!',
+      name: 'fStableOperationHint',
+      desc: 'Hint to wait for stability before operation',
+      args: [],
+    );
+  }
+
+  /// `Formula Progress`
+  String get fFormulaProgressLabel {
+    return Intl.message(
+      'Formula Progress',
+      name: 'fFormulaProgressLabel',
+      desc: 'Label for formula progress display',
+      args: [],
+    );
+  }
+
+  /// `Component Weight`
+  String get fRawMaterialWeightLabel {
+    return Intl.message(
+      'Component Weight',
+      name: 'fRawMaterialWeightLabel',
+      desc: 'Label for raw material weight field',
+      args: [],
+    );
+  }
+
+  /// `Formula Data`
+  String get fIngredientsDataLabel {
+    return Intl.message(
+      'Formula Data',
+      name: 'fIngredientsDataLabel',
+      desc: 'Label for ingredient weighing data',
+      args: [],
+    );
+  }
+
+  /// `Incomplete`
+  String get fIncompleteStatus {
+    return Intl.message(
+      'Incomplete',
+      name: 'fIncompleteStatus',
+      desc: 'Display text for incomplete status',
+      args: [],
+    );
+  }
+
+  /// `Completed!`
+  String get fFormulaCompletionMsg {
+    return Intl.message(
+      'Completed!',
+      name: 'fFormulaCompletionMsg',
+      desc: 'Completion message for formula',
+      args: [],
+    );
+  }
+
+  /// `Added successfully!`
+  String get fAddSuccessMsg {
+    return Intl.message(
+      'Added successfully!',
+      name: 'fAddSuccessMsg',
+      desc: 'Success message for adding operation',
+      args: [],
+    );
+  }
+
+  /// `Category already exists!`
+  String get fTypeExistsMsg {
+    return Intl.message(
+      'Category already exists!',
+      name: 'fTypeExistsMsg',
+      desc: 'Error message for existing formula type',
+      args: [],
+    );
+  }
+
+  /// `Formula is in use and cannot be deleted.`
+  String get fFormulaInUseDeleteErrorMsg {
+    return Intl.message(
+      'Formula is in use and cannot be deleted.',
+      name: 'fFormulaInUseDeleteErrorMsg',
+      desc: 'Error message when deleting a formula that is currently in use',
+      args: [],
+    );
+  }
+
+  /// `Deleted successfully`
+  String get fDeleteSuccessMsg {
+    return Intl.message(
+      'Deleted successfully',
+      name: 'fDeleteSuccessMsg',
+      desc: 'Success message for delete operation',
+      args: [],
+    );
+  }
+
+  /// `Success`
+  String get fSuccessMsg {
+    return Intl.message(
+      'Success',
+      name: 'fSuccessMsg',
+      desc: 'General success message',
+      args: [],
+    );
+  }
+
+  /// `Clear search conditions`
+  String get fClearSearchConditionBtn {
+    return Intl.message(
+      'Clear search conditions',
+      name: 'fClearSearchConditionBtn',
+      desc: 'Text on the button to clear all search conditions',
+      args: [],
+    );
+  }
+
+  /// `Formula Scale`
+  String get fFormulaScaleTitle {
+    return Intl.message(
+      'Formula Scale',
+      name: 'fFormulaScaleTitle',
+      desc: 'Title for formula weighing scale device or page',
+      args: [],
+    );
+  }
+
+  /// `Correct`
+  String get fReviseBtn {
+    return Intl.message(
+      'Correct',
+      name: 'fReviseBtn',
+      desc: 'This is a revise button',
+      args: [],
+    );
+  }
+
+  /// `Abandon`
+  String get fAbandonBtn {
+    return Intl.message(
+      'Abandon',
+      name: 'fAbandonBtn',
+      desc: 'This is a abandon button',
+      args: [],
+    );
+  }
+
+  /// `Select Confidentiality Status`
+  String get fSelectConfidentialityStatusMsg {
+    return Intl.message(
+      'Select Confidentiality Status',
+      name: 'fSelectConfidentialityStatusMsg',
+      desc:
+          'This is used to prompt the user to select the confidentiality status of relevant content.',
+      args: [],
+    );
+  }
+
+  /// `Switch mode clears raw materials. Confirm?`
+  String get fSwitchModeClearMsg {
+    return Intl.message(
+      'Switch mode clears raw materials. Confirm?',
+      name: 'fSwitchModeClearMsg',
+      desc:
+          'Confirmation message for mode switch that clears raw material list',
+      args: [],
+    );
+  }
+
+  /// `Save and Exit`
+  String get fSaveAndExitBtn {
+    return Intl.message(
+      'Save and Exit',
+      name: 'fSaveAndExitBtn',
+      desc: 'Button to save and exit',
+      args: [],
+    );
+  }
+
+  /// `Save and New`
+  String get fSaveAndNewBtn {
+    return Intl.message(
+      'Save and New',
+      name: 'fSaveAndNewBtn',
+      desc: 'Button to save and add new',
+      args: [],
+    );
+  }
+
+  /// `Medium Speed`
+  String get fMediumSpeed {
+    return Intl.message(
+      'Medium Speed',
+      name: 'fMediumSpeed',
+      desc: 'Prompt message indicating medium speed',
+      args: [],
+    );
+  }
+
+  /// `High Speed`
+  String get fHighSpeed {
+    return Intl.message(
+      'High Speed',
+      name: 'fHighSpeed',
+      desc: 'Prompt message indicating high speed',
+      args: [],
+    );
+  }
+
+  /// `Low Speed`
+  String get fLowSpeed {
+    return Intl.message(
+      'Low Speed',
+      name: 'fLowSpeed',
+      desc: 'Prompt message indicating low speed',
+      args: [],
+    );
+  }
+
+  /// `Need Container`
+  String get fNeedContainer {
+    return Intl.message(
+      'Need Container',
+      name: 'fNeedContainer',
+      desc: 'Prompt message indicating that a container is needed',
+      args: [],
+    );
+  }
+
+  /// `Container`
+  String get fFmaContainer {
+    return Intl.message(
+      'Container',
+      name: 'fFmaContainer',
+      desc: 'Prompt for container requirement in operations.',
+      args: [],
+    );
+  }
+
+  /// `Next Step`
+  String get fNextStepBtn {
+    return Intl.message(
+      'Next Step',
+      name: 'fNextStepBtn',
+      desc: 'Button to proceed to the next step',
+      args: [],
+    );
+  }
+
+  /// `Device disconnected, please check the connection.`
+  String get fDeviceDisconnected {
+    return Intl.message(
+      'Device disconnected, please check the connection.',
+      name: 'fDeviceDisconnected',
+      desc: 'Prompt when the device is disconnected',
+      args: [],
+    );
+  }
+
+  /// `Save successful`
+  String get fSaveSuccess {
+    return Intl.message(
+      'Save successful',
+      name: 'fSaveSuccess',
+      desc: 'Success message for saving operation, text',
+      args: [],
+    );
+  }
+
+  /// `The data volume is too small to save`
+  String get fDataTooLittle {
+    return Intl.message(
+      'The data volume is too small to save',
+      name: 'fDataTooLittle',
+      desc: 'Prompt when the data is too little to save, text',
+      args: [],
+    );
+  }
+
+  /// `Total weight`
+  String get fTotalWeight {
+    return Intl.message(
+      'Total weight',
+      name: 'fTotalWeight',
+      desc: 'Label for total weight, text',
+      args: [],
+    );
+  }
+
+  /// `Avg.Speed`
+  String get fAverageSpeed {
+    return Intl.message(
+      'Avg.Speed',
+      name: 'fAverageSpeed',
+      desc: 'Label for average speed, text',
+      args: [],
+    );
+  }
+
+  /// `Max.Speed`
+  String get fMaxSpeed {
+    return Intl.message(
+      'Max.Speed',
+      name: 'fMaxSpeed',
+      desc: 'Label for maximum speed, text',
+      args: [],
+    );
+  }
+
+  /// `Min.Speed`
+  String get fMinSpeed {
+    return Intl.message(
+      'Min.Speed',
+      name: 'fMinSpeed',
+      desc: 'Label for minimum speed, text',
+      args: [],
+    );
+  }
+
+  /// `Total time`
+  String get fTotalTime {
+    return Intl.message(
+      'Total time',
+      name: 'fTotalTime',
+      desc: 'Label for total time, text',
+      args: [],
+    );
+  }
+
+  /// `Time`
+  String get fTime {
+    return Intl.message(
+      'Time',
+      name: 'fTime',
+      desc: 'Label for time, text',
+      args: [],
+    );
+  }
+
+  /// `Speed`
+  String get fSpeed {
+    return Intl.message(
+      'Speed',
+      name: 'fSpeed',
+      desc: 'Label for speed, text',
+      args: [],
+    );
+  }
+
+  /// `NO.`
+  String get fNo {
+    return Intl.message(
+      'NO.',
+      name: 'fNo',
+      desc: 'Label for no., text',
+      args: [],
+    );
+  }
+
+  /// `Curve chart`
+  String get fShowCurveChart {
+    return Intl.message(
+      'Curve chart',
+      name: 'fShowCurveChart',
+      desc:
+          'Button or text to show the flow rate curve chart, can be button or text',
+      args: [],
+    );
+  }
+
+  /// `Data table`
+  String get fShowDataTable {
+    return Intl.message(
+      'Data table',
+      name: 'fShowDataTable',
+      desc:
+          'Button or text to show the flow rate data table, can be button or text',
+      args: [],
+    );
+  }
+
+  /// `Liquid Filling Speed`
+  String get fFlowRate {
+    return Intl.message(
+      'Liquid Filling Speed',
+      name: 'fFlowRate',
+      desc: 'Label for flow rate, text',
+      args: [],
+    );
+  }
+
+  /// `Liquid Filling Speed`
+  String get fFlowRateMeasurement {
+    return Intl.message(
+      'Liquid Filling Speed',
+      name: 'fFlowRateMeasurement',
+      desc: 'Label or title for flow rate measurement, text',
+      args: [],
+    );
+  }
+
+  /// `Confirm delete?`
+  String get fConfirmDelete {
+    return Intl.message(
+      'Confirm delete?',
+      name: 'fConfirmDelete',
+      desc: 'Prompt message to confirm deletion',
+      args: [],
+    );
+  }
+
+  /// `No records`
+  String get fNoRecordTip {
+    return Intl.message(
+      'No records',
+      name: 'fNoRecordTip',
+      desc: 'Prompt message indicating there are no records',
+      args: [],
+    );
+  }
+
+  /// `Formula completed`
+  String get fFormulaCompletedTip {
+    return Intl.message(
+      'Formula completed',
+      name: 'fFormulaCompletedTip',
+      desc: 'Prompt message indicating that the formula has been completed',
       args: [],
     );
   }

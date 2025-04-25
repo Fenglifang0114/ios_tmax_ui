@@ -379,6 +379,42 @@ class WebSocketChannel {
       } else if (jsonData['MsgType'] == "resp_do_service_action") {
         String dataString = jsonData['MsgBody'];
         eventBus.fire(EventRespDoSrvAction(dataString));
+      } else if (jsonData['MsgType'] == "resp_raw_type_list") {
+        String dataString = jsonData['MsgBody'];
+        eventBus.fire(EventRespGetRawTypeList(dataString));
+      } else if (jsonData['MsgType'] == "resp_formula_type_list") {
+        String dataString = jsonData['MsgBody'];
+        eventBus.fire(EventRespGetFormulaTypeList(dataString));
+      } else if (jsonData['MsgType'] == "resp_raw_list") {
+        String dataString = jsonData['MsgBody'];
+        eventBus.fire(EventRespGetRawDataList(dataString));
+      } else if (jsonData['MsgType'] == "resp_raw_data_add" ||
+          jsonData['MsgType'] == "resp_raw_data_delete" ||
+          jsonData['MsgType'] == "resp_raw_data_edit") {
+        String dataString = jsonData['MsgBody'];
+        eventBus.fire(EventRespAddRawData(dataString));
+      } else if (jsonData['MsgType'] == "resp_formula_type_add") {
+        String dataString = jsonData['MsgBody'];
+        eventBus.fire(EventRespAddFormulaType(dataString));
+      } else if (jsonData['MsgType'] == "resp_formula_list") {
+        String dataString = jsonData['MsgBody'];
+        eventBus.fire(EventRespFormulaList(dataString));
+      } else if (jsonData['MsgType'] == "resp_formula_add" ||
+          jsonData['MsgType'] == "resp_formula_delete") {
+        String dataString = jsonData['MsgBody'];
+        eventBus.fire(EventRespAddFormula(dataString));
+      } else if (jsonData['MsgType'] == "resp_formula_rec_list") {
+        String dataString = jsonData['MsgBody'];
+        eventBus.fire(EventRespFormulaRecList(dataString));
+      } else if (jsonData['MsgType'] == "resp_formula_rec_add") {
+        eventBus.fire(EventRespFormulaRecAdd(''));
+      } else if (jsonData['MsgType'] == "resp_raw_type_add") {
+        eventBus.fire(EventRespRawTypeAdd(''));
+      } else if (jsonData['MsgType'] == "resp_flow_rate_list") {
+        String dataString = jsonData['MsgBody'];
+        eventBus.fire(EventRespFlowRateList(dataString));
+      } else if (jsonData['MsgType'] == "resp_flow_rate_add") {
+        eventBus.fire(EventRespFlowRateAdd(''));
       } else {}
     } catch (e) {
       if (kDebugMode) {

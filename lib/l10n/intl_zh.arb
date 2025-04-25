@@ -42,7 +42,7 @@
     },
     "gBtnStart": "开始",
     "@gBtnStart": {
-        "description": "This is a button to start."
+        "description": "This is a button for starting."
     },
     "gBtnEnd": "结束",
     "@gBtnEnd": {
@@ -1939,7 +1939,7 @@
     "iTipHLUnit": "重量单位与秤上保持一致..",
     "@iTipHLUnit": {
         "description": "This is a prompt for the unit of checking weight."
-    }, 
+    },
     "gTipHelp": "帮助",
     "@gTipHelp": {
         "description": "This is a tip for help info."
@@ -2019,5 +2019,541 @@
     "gTipWeighingPageHelp": "1.此功能界面上会实时同步秤上的称重数据（支持所有单位包括PCS、PCT）；\n2.可以点击【扣重】和【归零】对秤执行操作；\n3.点击左上角的列表按钮可以在列表中查看已连接设备的并进行更换。\n\n注：\n1.此功能可以通过连接串口、网口或Wi-Fi使用。\n2.T-Industry的称重单位与秤保持一致，但是切换单位需要在秤上执行。\n",
     "@gTipWeighingPageHelp": {
         "description": "This is the help info for the weighing page."
+    },
+    "fFmaListTab": "配方列表",
+    "@fFmaListTab": {
+        "description": "Tab label for formula list"
+    },
+    "fRawMaterialListTab": "原料列表",
+    "@fRawMaterialListTab": {
+        "description": "Tab label for raw material list"
+    },
+    "fSearchHint": "按编号或名称搜索",
+    "@fSearchHint": {
+        "description": "Hint text for search input"
+    },
+    "fPleaseSelectCategory": "请选择类别",
+    "@fPleaseSelectCategory": {
+        "description": "Placeholder for category dropdown"
+    },
+    "fAddFmaBtn": "新增配方",
+    "@fAddFmaBtn": {
+        "description": "Button to add a new formula"
+    },
+    "fHistoricalWeighingRecordsBtn": "称重记录",
+    "@fHistoricalWeighingRecordsBtn": {
+        "description": "Button to view historical weighing records"
+    },
+    "fImportFmaBtn": "导入配方",
+    "@fImportFmaBtn": {
+        "description": "Button to import formulas"
+    },
+    "fExportFmaBtn": "导出配方",
+    "@fExportFmaBtn": {
+        "description": "Button to export formulas"
+    },
+    "fFmaNameLabel": "配方名称",
+    "@fFmaNameLabel": {
+        "description": "Label for formula name field"
+    },
+    "fFmaIdLabel": "配方编号",
+    "@fFmaIdLabel": {
+        "description": "Label for formula ID field"
+    },
+    "fIngredientCountLabel": "原料数量",
+    "@fIngredientCountLabel": {
+        "description": "Label for ingredient count display"
+    },
+    "fTotalWeightLabel": "总重量",
+    "@fTotalWeightLabel": {
+        "description": "Label for total weight display"
+    },
+    "fStartWeighingBtn": "开始称重",
+    "@fStartWeighingBtn": {
+        "description": "Button to start the weighing process"
+    },
+    "fIngredientOrder": "配料顺序",
+    "@fIngredientOrder": {
+        "description": "Section title for ingredient order display"
+    },
+    "fIngredientRemark": "成分说明",
+    "@fIngredientRemark": {
+        "description": "Section title for ingredient remarks"
+    },
+    "fFmaRemark": "配方说明",
+    "@fFmaRemark": {
+        "description": "Section title for formula remarks"
+    },
+    "fInvolvedFmas": "所涉及配方",
+    "@fInvolvedFmas": {
+        "description": "Section title for formulas involving the raw material"
+    },
+    "fScaleList": "秤列表",
+    "@fScaleList": {
+        "description": "Title for the scale list panel"
+    },
+    "fComScale": "串口秤",
+    "@fComScale": {
+        "description": "Label for serial scale in scale list"
+    },
+    "fNetScale": "网络秤",
+    "@fNetScale": {
+        "description": "Label for network scale in scale list"
+    },
+    "fRawMaterialTypeCol": "原料类别",
+    "@fRawMaterialTypeCol": {
+        "description": "Table column title for raw material category"
+    },
+    "fCreatedAtCol": "创建时间",
+    "@fCreatedAtCol": {
+        "description": "Table column title for creation time"
+    },
+    "fUpdatedAtCol": "更新时间",
+    "@fUpdatedAtCol": {
+        "description": "Table column title for last update time"
+    },
+    "fEditBtn": "编辑",
+    "@fEditBtn": {
+        "description": "Button for editing table row"
+    },
+    "fFmaCategoryCol": "类别",
+    "@fFmaCategoryCol": {
+        "description": "Table column title for formula category"
+    },
+    "fFmaModeCol": "配方模式",
+    "@fFmaModeCol": {
+        "description": "Table column title for formula mode (weight/pct)"
+    },
+    "fMaterialCountCol": "原料数量",
+    "@fMaterialCountCol": {
+        "description": "Table column title for number of materials in formula"
+    },
+    "fCreatedTimeCol": "创建时间",
+    "@fCreatedTimeCol": {
+        "description": "Table column title for formula creation time"
+    },
+    "fUpdateTimeCol": "更新时间",
+    "@fUpdateTimeCol": {
+        "description": "Table column title for formula last update time"
+    },
+    "fRemarkCol": "备注",
+    "@fRemarkCol": {
+        "description": "Table column title for formula remarks"
+    },
+    "fConfidential": "保密",
+    "@fConfidential": {
+        "description": "Display text for confidential formula status"
+    },
+    "fPublic": "公开",
+    "@fPublic": {
+        "description": "Display text for public formula status"
+    },
+    "fWeightMode": "重量",
+    "@fWeightMode": {
+        "description": "Display text for weight-based formula mode"
+    },
+    "fPctMode": "百分比",
+    "@fPctMode": {
+        "description": "Display text for percentage-based formula mode"
+    },
+    "fRecordTitle": "配方记录",
+    "@fRecordTitle": {
+        "description": "Page title for formula weighing records"
+    },
+    "fExportRecordsBtn": "导出记录",
+    "@fExportRecordsBtn": {
+        "description": "Button to export selected weighing records"
+    },
+    "fOrderNo": "单号",
+    "@fOrderNo": {
+        "description": "Table column title for record number"
+    },
+    "fFormulaTotalWeight": "配方总重",
+    "@fFormulaTotalWeight": {
+        "description": "Table column title for formula total weight"
+    },
+    "fActualTotalWeight": "实际总重",
+    "@fActualTotalWeight": {
+        "description": "Table column title for actual total weight"
+    },
+    "fMaterialSingleWeight": "原料单重",
+    "@fMaterialSingleWeight": {
+        "description": "Table column title for material single weight"
+    },
+    "fActualSingleWeight": "实际单重",
+    "@fActualSingleWeight": {
+        "description": "Table column title for actual single weight"
+    },
+    "fAllowableError": "允许误差",
+    "@fAllowableError": {
+        "description": "Table column title for allowable error"
+    },
+    "fActualError": "实际误差",
+    "@fActualError": {
+        "description": "Table column title for actual error"
+    },
+    "fQualificationStatus": "是否达标",
+    "@fQualificationStatus": {
+        "description": "Table column title for qualification status"
+    },
+    "fMaterialNameCol": "原料名称",
+    "@fMaterialNameCol": {
+        "description": "Table column title for material name"
+    },
+    "fMaterialIdCol": "原料编号",
+    "@fMaterialIdCol": {
+        "description": "Table column title for material ID"
+    },
+    "fEditMaterial": "编辑原料",
+    "@fEditMaterial": {
+        "description": "Edit component page"
+    },
+    "fBackBtn": "返回",
+    "@fBackBtn": {
+        "description": "Button to navigate back to previous page"
+    },
+    "fQualified": "√",
+    "@fQualified": {
+        "description": "Display text for qualified status"
+    },
+    "fUnqualified": "×",
+    "@fUnqualified": {
+        "description": "Display text for unqualified status"
+    },
+    "fWgtUnit": "重量单位",
+    "@fWgtUnit": {
+        "description": "Display text for weight unit"
+    },
+    "fAddFormulaWeightTitle": "添加配方重量",
+    "@fAddFormulaWeightTitle": {
+        "description": "Title of the dialog for adding formula weight"
+    },
+    "fFormulaTotalWeightLabel": "配方总重量",
+    "@fFormulaTotalWeightLabel": {
+        "description": "Label for the formula total weight input field"
+    },
+    "fInputFormulaTotalWeightHint": "请输入配方总重量",
+    "@fInputFormulaTotalWeightHint": {
+        "description": "Hint text for the formula total weight input field"
+    },
+    "fSelectUnitHint": "选择单位",
+    "@fSelectUnitHint": {
+        "description": "Hint text for the unit selection dropdown"
+    },
+    "fSelectRawMaterialHint": "选择原料",
+    "@fSelectRawMaterialHint": {
+        "description": "Placeholder or hint for selecting raw material"
+    },
+    "fInputFormulaIdHint": "请输入配方编号",
+    "@fInputFormulaIdHint": {
+        "description": "Hint text for formula ID input field"
+    },
+    "fSelectFormulaModeHint": "请选择配方模式",
+    "@fSelectFormulaModeHint": {
+        "description": "Placeholder for selecting formula mode (weight/pct)"
+    },
+    "fInputWeightHint": "请输入重量",
+    "@fInputWeightHint": {
+        "description": "Hint text for weight input field"
+    },
+    "fInputPercentageHint": "请输入百分比",
+    "@fInputPercentageHint": {
+        "description": "Hint text for percentage input field"
+    },
+    "fInputErrorHint": "请输入误差",
+    "@fInputErrorHint": {
+        "description": "Hint text for error input field"
+    },
+    "fClearBtn": "清空",
+    "@fClearBtn": {
+        "description": "Text on the clear button"
+    },
+    "fInputRemarkHint": "请输入备注",
+    "@fInputRemarkHint": {
+        "description": "Hint text for remarks input field"
+    },
+    "fFormulaIdDuplicate": "配方ID重复",
+    "@fFormulaIdDuplicate": {
+        "description": "Error message for duplicate formula ID"
+    },
+    "fFormulaNameDuplicate": "配方名称重复",
+    "@fFormulaNameDuplicate": {
+        "description": "Error message for duplicate formula name"
+    },
+    "fRawIdDuplicate": "原料ID重复",
+    "@fRawIdDuplicate": {
+        "description": "Error message for duplicate raw ID"
+    },
+    "fRawNameDuplicate": "原料名称重复",
+    "@fRawNameDuplicate": {
+        "description": "Error message for duplicate raw name"
+    },
+    "fSetRawMaterialBtn": "设置原料",
+    "@fSetRawMaterialBtn": {
+        "description": "Text on the button to set raw material"
+    },
+    "fInputFormulaNameHint": "请输入配方名称",
+    "@fInputFormulaNameHint": {
+        "description": "Hint text for formula name input field"
+    },
+    "fInputFormulaTypeHint": "请输入配方类型",
+    "@fInputFormulaTypeHint": {
+        "description": "Hint text for formula category input field"
+    },
+    "fAddTypeBtn": "添加类型",
+    "@fAddTypeBtn": {
+        "description": "Text on the button to add category"
+    },
+    "fAddRawMaterialBtn": "新增原料",
+    "@fAddRawMaterialBtn": {
+        "description": "Text on the button to add raw material"
+    },
+    "fInputRawMaterialIdHint": "请输入原料编号",
+    "@fInputRawMaterialIdHint": {
+        "description": "Hint text for raw material ID input field"
+    },
+    "fInputRawMaterialNameHint": "请输入原料名称",
+    "@fInputRawMaterialNameHint": {
+        "description": "Hint text for raw material name input field"
+    },
+    "fInputIngredientDescHint": "请输入成分说明",
+    "@fInputIngredientDescHint": {
+        "description": "Hint text for ingredient description input field"
+    },
+    "fInputRawMaterialTypeHint": "请输入原料类型",
+    "@fInputRawMaterialTypeHint": {
+        "description": "Hint text for raw material category input field"
+    },
+    "fAddRawMaterialTypeBtn": "增加原料类型",
+    "@fAddRawMaterialTypeBtn": {
+        "description": "Text on the button to add raw material category"
+    },
+    "fFormulaDetailsTitle": "配方详情",
+    "@fFormulaDetailsTitle": {
+        "description": "Title for formula details page or section"
+    },
+    "fTipTitle": "提示",
+    "@fTipTitle": {
+        "description": "Title for prompt dialog"
+    },
+    "fSwitchUnitHint": "请切换设备单位",
+    "@fSwitchUnitHint": {
+        "description": "Hint to switch device unit"
+    },
+    "fClearWeighingDataMsg": "称重数据将被清空，请确认是否继续。",
+    "@fClearWeighingDataMsg": {
+        "description": "Confirmation message for clearing weighing data"
+    },
+    "fFormulaUnqualifiedMsg": "配方未达标，请确认是否完成。",
+    "@fFormulaUnqualifiedMsg": {
+        "description": "Confirmation message for completing unqualified formula"
+    },
+    "fCompleteIngredientsBtn": "完成配料",
+    "@fCompleteIngredientsBtn": {
+        "description": "Text on the button to complete ingredient weighing"
+    },
+    "fAbandonIngredientsBtn": "放弃配料",
+    "@fAbandonIngredientsBtn": {
+        "description": "Text on the button to abandon ingredient weighing"
+    },
+    "fIngredientsRecordTitle": "配料记录",
+    "@fIngredientsRecordTitle": {
+        "description": "Title for ingredients weighing record"
+    },
+    "fTargetWeightLabel": "目标重量",
+    "@fTargetWeightLabel": {
+        "description": "Label for target weight field"
+    },
+    "fCurrentWeightLabel": "当前重量",
+    "@fCurrentWeightLabel": {
+        "description": "Label for current weight field"
+    },
+    "fAllowableErrorWeightLabel": "允许误差重量",
+    "@fAllowableErrorWeightLabel": {
+        "description": "Label for allowable error weight field"
+    },
+    "fCurrentErrorWeightLabel": "当前误差重量",
+    "@fCurrentErrorWeightLabel": {
+        "description": "Label for current error weight field"
+    },
+    "fCurrentMaterialOverweightMsg": "当前原料超重，请选择放弃配料还是修正？",
+    "@fCurrentMaterialOverweightMsg": {
+        "description": "Warning message when current raw material is overweight, asking to abandon or correct"
+    },
+    "fCurrentMaterialWeightInvalidMsg": "当前原料重量不合格！",
+    "@fCurrentMaterialWeightInvalidMsg": {
+        "description": "Error message when current raw material weight is invalid"
+    },
+    "fStableOperationHint": "稳定后，才能操作！",
+    "@fStableOperationHint": {
+        "description": "Hint to wait for stability before operation"
+    },
+    "fFormulaProgressLabel": "配方进度",
+    "@fFormulaProgressLabel": {
+        "description": "Label for formula progress display"
+    },
+    "fRawMaterialWeightLabel": "原料重量",
+    "@fRawMaterialWeightLabel": {
+        "description": "Label for raw material weight field"
+    },
+    "fIngredientsDataLabel": "配方数据",
+    "@fIngredientsDataLabel": {
+        "description": "Label for ingredient weighing data"
+    },
+    "fIncompleteStatus": "未完成",
+    "@fIncompleteStatus": {
+        "description": "Display text for incomplete status"
+    },
+    "fFormulaCompletionMsg": "配方完成!",
+    "@fFormulaCompletionMsg": {
+        "description": "Completion message for formula"
+    },
+    "fAddSuccessMsg": "添加成功！",
+    "@fAddSuccessMsg": {
+        "description": "Success message for adding operation"
+    },
+    "fTypeExistsMsg": "类型已存在！",
+    "@fTypeExistsMsg": {
+        "description": "Error message for existing formula type"
+    },
+    "fFormulaInUseDeleteErrorMsg": "已有配方使用，不能删除",
+    "@fFormulaInUseDeleteErrorMsg": {
+        "description": "Error message when deleting a formula that is currently in use"
+    },
+    "fDeleteSuccessMsg": "删除成功",
+    "@fDeleteSuccessMsg": {
+        "description": "Success message for delete operation"
+    },
+    "fSuccessMsg": "成功",
+    "@fSuccessMsg": {
+        "description": "General success message"
+    },
+    "fClearSearchConditionBtn": "清除搜索条件",
+    "@fClearSearchConditionBtn": {
+        "description": "Text on the button to clear all search conditions"
+    },
+    "fFormulaScaleTitle": "配方秤",
+    "@fFormulaScaleTitle": {
+        "description": "Title for formula weighing scale device or page"
+    },
+    "fReviseBtn": "修正",
+    "@fReviseBtn": {
+        "description": "This is a revise button"
+    },
+    "fAbandonBtn": "放弃",
+    "@fAbandonBtn": {
+        "description": "This is a abandon button"
+    },
+    "fSelectConfidentialityStatusMsg": "请选择保密状态",
+    "@fSelectConfidentialityStatusMsg": {
+        "description": "This is used to prompt the user to select the confidentiality status of relevant content."
+    },
+    "fSwitchModeClearMsg": "切换模式会清空原料列表，请确定？",
+    "@fSwitchModeClearMsg": {
+        "description": "Confirmation message for mode switch that clears raw material list"
+    },
+    "fSaveAndExitBtn": "保存并退出",
+    "@fSaveAndExitBtn": {
+        "description": "Button to save and exit"
+    },
+    "fSaveAndNewBtn": "保存并新增",
+    "@fSaveAndNewBtn": {
+        "description": "Button to save and add new"
+    },
+    "fMediumSpeed": "中速",
+    "@fMediumSpeed": {
+        "description": "Prompt message indicating medium speed"
+    },
+    "fHighSpeed": "快速",
+    "@fHighSpeed": {
+        "description": "Prompt message indicating high speed"
+    },
+    "fLowSpeed": "慢速",
+    "@fLowSpeed": {
+        "description": "Prompt message indicating low speed"
+    },
+    "fNeedContainer": "需要容器",
+    "@fNeedContainer": {
+        "description": "Prompt message indicating that a container is needed"
+    },
+    "fFmaContainer": "容器",
+    "@fFmaContainer": {
+        "description": "Prompt for container requirement in operations."
+    },    
+    "fNextStepBtn": "下一步",
+    "@fNextStepBtn": {
+        "description": "Button to proceed to the next step"
+    },
+    "fDeviceDisconnected": "设备断线，请检查连接.",
+    "@fDeviceDisconnected": {
+        "description": "Prompt when the device is disconnected"
+    },
+    "fSaveSuccess": "保存成功",
+    "@fSaveSuccess": {
+        "description": "Success message for saving operation, text"
+    },
+    "fDataTooLittle": "数据量太少，无法保存",
+    "@fDataTooLittle": {
+        "description": "Prompt when the data is too little to save, text"
+    },
+    "fTotalWeight": "总重量",
+    "@fTotalWeight": {
+        "description": "Label for total weight, text"
+    },
+    "fAverageSpeed": "平均速度",
+    "@fAverageSpeed": {
+        "description": "Label for average speed, text"
+    },
+    "fMaxSpeed": "最大速度",
+    "@fMaxSpeed": {
+        "description": "Label for maximum speed, text"
+    },
+    "fMinSpeed": "最小速度",
+    "@fMinSpeed": {
+        "description": "Label for minimum speed, text"
+    },
+    "fTotalTime": "总时间",
+    "@fTotalTime": {
+        "description": "Label for total time, text"
+    },
+    "fTime": "时间",
+    "@fTime": {
+        "description": "Label for time, text"
+    },
+    "fSpeed": "速度",
+    "@fSpeed": {
+        "description": "Label for speed, text"
+    },
+    "fNo": "序号",
+    "@fNo": {
+        "description": "Label for no., text"
+    },
+    "fShowCurveChart": "显示曲线图",
+    "@fShowCurveChart": {
+        "description": "Button or text to show the flow rate curve chart, can be button or text"
+    },
+    "fShowDataTable": "显示数据表",
+    "@fShowDataTable": {
+        "description": "Button or text to show the flow rate data table, can be button or text"
+    },
+    "fFlowRate": "流速",
+    "@fFlowRate": {
+        "description": "Label for flow rate, text"
+    },
+    "fFlowRateMeasurement": "流速",
+    "@fFlowRateMeasurement": {
+        "description": "Label or title for flow rate measurement, text"
+    },
+    "fConfirmDelete": "确定删除？",
+    "@fConfirmDelete": {
+        "description": "Prompt message to confirm deletion"
+    },
+    "fNoRecordTip": "没有记录",
+    "@fNoRecordTip": {
+        "description": "Prompt message indicating there are no records"
+    },
+    "fFormulaCompletedTip": "配方已完成",
+    "@fFormulaCompletedTip": {
+        "description": "Prompt message indicating that the formula has been completed"
     }
 }

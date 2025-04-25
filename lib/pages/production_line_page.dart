@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 import 'package:t_max/data/comscaleinfo_data.dart';
+import 'package:t_max/data/language.dart';
 import 'package:t_max/data/timer_manager.dart';
 import '../../data/reqweightdata_data.dart';
 import '../../data/weight_data.dart';
@@ -732,8 +733,8 @@ class ProductionLinePageState extends State<ProductionLinePage> {
                   ),
                   subtitle: Text(
                     scaleWgtMap[scaleNetItems[index].scaleId]!.isStart
-                        ? 'Online'
-                        : 'Off-line',
+                        ? localizedStrings.gOnlineTip
+                        : localizedStrings.gOfflineTip,
                     style: TextStyle(
                         color:
                             scaleWgtMap[scaleNetItems[index].scaleId]!.isStart

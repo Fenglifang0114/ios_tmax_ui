@@ -8,9 +8,13 @@ boxGradient(BuildContext context) {
         // Color.fromARGB(255, 26, 166, 254),
         // Color.fromARGB(255, 17, 145, 255),
         // Color.fromARGB(255, 10, 124, 255),
+//去掉渐变色
+        // Theme.of(context).colorScheme.tertiary,
+        // Theme.of(context).colorScheme.primary,
+        // Theme.of(context).colorScheme.secondary,
 
-        Theme.of(context).colorScheme.tertiary,
         Theme.of(context).colorScheme.primary,
-        Theme.of(context).colorScheme.secondary,
+        Theme.of(context).colorScheme.primary,
+        Theme.of(context).colorScheme.primary,
       ]);
 }

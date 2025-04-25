@@ -87,6 +87,7 @@ dependencies:
   path: ^1.9.0
   archive: ^3.6.1
   data_table_2: ^2.5.15
+  fl_chart: ^0.71.0
 
 
 
@@ -106,7 +107,7 @@ dev_dependencies:
   #socket_io: any
   build_runner: any
   build_web_compilers: any
-  msix: ^3.16.8  
+  msix: ^3.16.8
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -133,6 +134,10 @@ flutter:
     - family: simsunb
       fonts:    
         - asset: fonts/simsunb.TTF
+    - family: alibaba
+      fonts:
+        - asset: fonts/alibaba.ttf
+      
         
 
   # To add assets to your application, add an assets section, like this:

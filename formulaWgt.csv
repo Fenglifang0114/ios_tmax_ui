@@ -1,0 +1,5 @@
+Order No,Fma Id,Fma Name,Material Name,Material Id,Fma Mode,Confidential,Formula Total Weight,Actual Total Weight,Material Single Weight,Actual Single Weight,Allowable Error,Actual Error,Qualification Status,Created At
+T-Scale-20250423101829,21121,A,,,wgt,Public,200.0 g,203.0 g,,,,,√,2025-04-23 10:22:04
+,,,Container,-,,,,,-,99.0 g,-,-,-,
+,,,jhgjg,545,,,,,100.0 g,109.0 g,10.0 g,9.0 g,√,
+,,,jhgjg,545,,,,,100.0 g,94.0 g,10.0 g,-6.0 g,√,

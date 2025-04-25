@@ -1,4 +1,5 @@
 {
     "C_Cpp.errorSquiggles": "Disabled",
-    "cmake.sourceDirectory": "G:/T-max/20230530/TMaxPcServiceUI/linux"
+    "cmake.sourceDirectory": "G:/T-max/20230530/TMaxPcServiceUI/linux",
+    "marscode.chatLanguage": "cn"
 }

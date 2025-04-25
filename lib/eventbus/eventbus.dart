@@ -541,3 +541,63 @@ class EventRespChangeWiFiMode {
   dynamic obj;
   EventRespChangeWiFiMode(this.obj);
 }
+
+class EventRespGetRawTypeList {
+  dynamic obj;
+  EventRespGetRawTypeList(this.obj);
+}
+
+class EventRespGetFormulaTypeList {
+  dynamic obj;
+  EventRespGetFormulaTypeList(this.obj);
+}
+
+class EventRespGetRawDataList {
+  dynamic obj;
+  EventRespGetRawDataList(this.obj);
+}
+
+class EventRespAddRawData {
+  dynamic obj;
+  EventRespAddRawData(this.obj);
+}
+
+class EventRespAddFormulaType {
+  dynamic obj;
+  EventRespAddFormulaType(this.obj);
+}
+
+class EventRespFormulaList {
+  dynamic obj;
+  EventRespFormulaList(this.obj);
+}
+
+class EventRespAddFormula {
+  dynamic obj;
+  EventRespAddFormula(this.obj);
+}
+
+class EventRespFormulaRecList {
+  dynamic obj;
+  EventRespFormulaRecList(this.obj);
+}
+
+class EventRespFormulaRecAdd {
+  dynamic obj;
+  EventRespFormulaRecAdd(this.obj);
+}
+
+class EventRespRawTypeAdd {
+  dynamic obj;
+  EventRespRawTypeAdd(this.obj);
+}
+
+class EventRespFlowRateAdd {
+  dynamic obj;
+  EventRespFlowRateAdd(this.obj);
+}
+
+class EventRespFlowRateList {
+  dynamic obj;
+  EventRespFlowRateList(this.obj);
+}

@@ -1,0 +1,2443 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:t_max/data/comscaleinfo_data.dart';
+import 'package:t_max/data/fma_rec_list_db_data.dart';
+import 'package:t_max/data/formula_common.dart';
+import 'package:t_max/data/formula_scale_data.dart';
+import 'package:t_max/data/manager_scale_channel.dart';
+import 'package:t_max/data/req_formula_data.dart';
+import 'package:t_max/dialog/add_fma_wgt_dialog.dart';
+import 'package:t_max/dialog/add_raw_info_dialog.dart';
+import 'package:t_max/dialog/custom_dialog_tip.dart';
+import 'package:t_max/dialog/show_fma_detail_dialog.dart';
+import 'package:t_max/eventbus/eventbus.dart';
+import 'package:t_max/functions/methods.dart';
+import 'package:t_max/pages/add_formula_page.dart';
+import 'package:t_max/pages/all_fma_wgt_rec_page.dart';
+import 'package:t_max/pages/fma_wgt_rec_page.dart';
+import 'package:t_max/pages/start_fma_pct_page.dart';
+import 'package:t_max/pages/start_fma_secret_page.dart';
+import 'package:t_max/widget/formula_widget.dart';
+import 'package:t_max/data/formula_from_db_data.dart';
+import 'package:t_max/widget/sticky_table.dart';
+import '../data/language.dart';
+import 'package:t_max/dialog/custom_dialog_tip.dart';
+
+// 定义 EncryptedValue 枚举
+enum EncryptedValue {
+  confidential,
+  public,
+}
+
+// 扩展 EncryptedValue 枚举以添加翻译方法
+extension EncryptedValueExtension on EncryptedValue {
+  String getTranslation(BuildContext context) {
+    switch (this) {
+      case EncryptedValue.confidential:
+        return localizedStrings.fConfidential; // 这里可以替换为翻译函数
+      case EncryptedValue.public:
+        return localizedStrings.fPublic; // 这里可以替换为翻译函数
+    }
+  }
+}
+
+class FormulationScalePage extends StatefulWidget {
+  const FormulationScalePage({super.key});
+  @override
+  State<FormulationScalePage> createState() => FormulationScalePageState();
+}
+
+class FormulationScalePageState extends State<FormulationScalePage>
+    with SingleTickerProviderStateMixin {
+  bool _isLeftPanelExpanded = true;
+  // bool _showBottomSection = false;
+  int _selectedTabIndex = 0;
+  int _selectedScaleIndex = -1; // 用于跟踪选中的秤
+  late TabController _tabController;
+  bool sort = false;
+  final ScrollController _scrollController =
+      ScrollController(); // 添加 ScrollController
+
+  Set<int> selectedRows = {};
+  Set<int> selectedFmaRows = {};
+  bool selectAll = false; // 添加全选状态
+  bool selectFmaAll = false; // 添加全选状态
+  int? clickedRow; // 添加点击行状态
+  int? _selectedRawIndex; // 新增状态，用于记录当前被点击的原料 index
+  // 定义 FocusNode
+  // final FocusNode _searchFocusNode = FocusNode();
+  final TextEditingController _searchFmaIdCtl = TextEditingController();
+  final TextEditingController searchFmaEncryptedCtl = TextEditingController();
+  final TextEditingController isFmaEncryptedCtl = TextEditingController();
+  final TextEditingController searchFmaTypeCtl = TextEditingController();
+  final TextEditingController rawTypeCtl = TextEditingController();
+  final TextEditingController _searchRawIdCtl = TextEditingController();
+
+  FormulaInfoDb? selectedFormula; //选中的配方，用于展示原料列表
+  Detail selectedDetail = Detail(); //配方中选中的原料
+  NetScaleInfoLocal defNetScaleInfo = NetScaleInfoLocal(); //默认秤
+  List<NetScaleInfoLocal> scaleNetItems = []; //秤列表
+  int selScaleId = -1; //选择的秤ID
+  List<FormulaInfoDb> rawFormulaList = []; //原料和配方的关系表
+  // 存储搜索结果
+  List<FormulaInfoDb> searchFmaList = [];
+  // 存储搜索结果
+  List<RawDataInfo> searchRawList = [];
+
+  dynamic _eventbus1;
+  dynamic _eventbus2;
+  dynamic _eventbus3;
+  dynamic _eventbus4;
+  dynamic _eventbus5;
+  dynamic _eventbus6;
+  dynamic _eventbus7;
+  dynamic _eventbus8;
+  dynamic _eventbus9;
+  dynamic _eventbus10;
+
+//初始化秤列表
+  void initScaleList() {
+    scaleNetItems = myNetScaleList;
+    selScaleId = myDefScaleInfo.defScaleId!;
+    if (myNetScaleList.isNotEmpty) {
+      defNetScaleInfo = NetScaleListMgr.findScaleInfo(
+          myNetScaleList, myDefScaleInfo.defScaleId!);
+    }
+  }
+  //myComScaleInfo
+
+  @override
+  void initState() {
+    super.initState();
+    initScaleList();
+    _tabController = TabController(length: 2, vsync: this);
+
+    _eventbus1 = eventBus.on<EventRespGetRawTypeList>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+        if (dataStr != '') {
+          setState(() {
+            rawTypeList = categoryTypeListFromJson(dataStr);
+          });
+        } else {
+          setState(() {
+            rawTypeList = [];
+          });
+        }
+      }
+    });
+    _eventbus2 = eventBus.on<EventRespGetFormulaTypeList>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+        if (dataStr != '') {
+          setState(() {
+            formulaTypeList = categoryTypeListFromJson(dataStr);
+          });
+        } else {
+          setState(() {
+            formulaTypeList = [];
+          });
+        }
+      }
+    });
+    _eventbus3 = eventBus.on<EventRespGetRawDataList>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+        if (dataStr != '' && dataStr != 'null') {
+          setState(() {
+            rawDataList = rawDataInfoFromJson(dataStr);
+            searchRawList = List.from(rawDataList);
+          });
+        } else {
+          setState(() {
+            rawDataList = [];
+            searchRawList = [];
+          });
+        }
+      }
+    });
+    _eventbus4 = eventBus.on<EventRespAddRawData>().listen((event) {
+      if (mounted) {
+        PublicFunctions.getRawList();
+        showTipInfo(localizedStrings.fSuccessMsg, context);
+      }
+    });
+    _eventbus5 = eventBus.on<EventRespAddFormulaType>().listen((event) {
+      if (mounted) {
+        PublicFunctions.getFormulaTypeList();
+      }
+    });
+
+    _eventbus6 = eventBus.on<EventRespFormulaList>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+        if (dataStr != '' && dataStr != 'null') {
+          setState(() {
+            formulaDataList = formulaInfoDbFromJson(dataStr);
+            searchFmaList = List.from(formulaDataList);
+            print(formulaDataList.length);
+          });
+        } else {
+          setState(() {
+            formulaDataList = [];
+            searchFmaList = [];
+          });
+        }
+      }
+    });
+
+    _eventbus7 = eventBus.on<EventRespAddFormula>().listen((event) {
+      if (mounted) {
+        PublicFunctions.getFormulaList();
+      }
+    });
+
+    _eventbus8 = eventBus.on<EventRespFormulaRecList>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+        if (dataStr != '' && dataStr != 'null') {
+          fmaRecFromDbList = fmaRecFromDbFromJson(dataStr);
+          print(fmaRecFromDbList.length);
+        } else {
+          fmaRecFromDbList = [];
+        }
+      }
+    });
+    _eventbus9 = eventBus.on<EventRespFormulaRecAdd>().listen((event) {
+      if (mounted) {
+        PublicFunctions.getFormulaRecList();
+      }
+    });
+    _eventbus10 = eventBus.on<EventRespRawTypeAdd>().listen((event) {
+      if (mounted) {
+        PublicFunctions.getRawTypeList();
+        showTipInfo(localizedStrings.fSuccessMsg, context);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+    _searchFmaIdCtl.dispose();
+    searchFmaEncryptedCtl.dispose();
+    searchFmaTypeCtl.dispose();
+    _searchRawIdCtl.dispose();
+    rawTypeCtl.dispose();
+    isFmaEncryptedCtl.dispose();
+    fmaRecFromDbList.clear();
+    rawDataList.clear();
+    formulaDataList.clear();
+    rawTypeList.clear();
+    formulaTypeList.clear();
+    _eventbus1?.cancel();
+    _eventbus2?.cancel();
+    _eventbus3?.cancel();
+    _eventbus4?.cancel();
+    _eventbus5?.cancel();
+    _eventbus6?.cancel();
+    _eventbus7?.cancel();
+    _eventbus8?.cancel();
+    _eventbus9?.cancel();
+    _eventbus10?.cancel();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // final width = MediaQuery.of(context).size.width;
+    return Scaffold(
+        body: Container(
+      color: bgColor, //对接时修改颜色值
+      child: Padding(
+        padding: const EdgeInsets.all(14.0),
+        child: Row(
+          children: [
+            showScaleList(),
+            SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                children: [
+                  showTabBar(),
+                  Divider(
+                    color: Theme.of(context).colorScheme.outline,
+                    thickness: 1,
+                    height: 1,
+                  ),
+                  if (_selectedTabIndex == 0) showFormulaSearch(),
+                  if (_selectedTabIndex == 1) showRawSearch(),
+                  if (_selectedTabIndex == 0) showFormulaTable(),
+                  if (_selectedTabIndex == 1) showRawTable(),
+                  SizedBox(height: 14),
+                  // _showBottomSection
+                  //     ?
+                  if (_selectedTabIndex == 0) showFormulaBottom(),
+                  if (_selectedTabIndex == 1) showRawBottom(),
+
+                  Container(
+                    height: 14,
+                    color: Theme.of(context).colorScheme.surface,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    ));
+  }
+
+  // 搜索方法
+  void performFmaSearch() {
+    final String keyword = _searchFmaIdCtl.text.trim();
+    final String formulaTypeFilter = searchFmaTypeCtl.text.trim();
+    final String encryptedFilter = searchFmaEncryptedCtl.text.trim();
+
+    setState(() {
+      searchFmaList = formulaDataList.where((formula) {
+        final formulaId = formula.header!.formulaHeader!.formulaId!;
+        final formulaName = formula.header!.formulaHeader!.formulaName!;
+        return formulaId.contains(keyword) || formulaName.contains(keyword);
+      }).where((element) {
+        final formulaType = element.header!.formulaCategoryName!;
+        final formulaEncrypted = element.header!.formulaHeader!.isEncrypted!;
+
+        // 处理配方类别筛选
+        bool typeMatch = formulaTypeFilter.isEmpty ||
+            formulaType.contains(formulaTypeFilter);
+
+        // 处理保密状态筛选
+        bool encryptedMatch = true;
+        if (encryptedFilter.isNotEmpty) {
+          bool isEncrypted = encryptedFilter == localizedStrings.fConfidential;
+          encryptedMatch = formulaEncrypted == isEncrypted;
+        }
+
+        return typeMatch && encryptedMatch;
+      }).toList();
+    });
+  }
+
+  // 搜索方法
+  void performRawSearch() {
+    final String keyword = _searchRawIdCtl.text.trim();
+    final String rawTypeFilter = rawTypeCtl.text.trim();
+
+    setState(() {
+      searchRawList = rawDataList.where((raw) {
+        final rawId = raw.rawMaterial.materialId;
+        final rawName = raw.rawMaterial.materialName;
+        return rawId.contains(keyword) || rawName.contains(keyword);
+      }).where((element) {
+        final rawType = element.rawCategoryName;
+
+        // 处理配方类别筛选
+        bool typeMatch =
+            rawTypeFilter.isEmpty || rawType.contains(rawTypeFilter);
+
+        return typeMatch;
+      }).toList();
+    });
+  }
+
+  // 切换全选状态
+  void toggleSelectAll(bool? value) {
+    setState(() {
+      selectAll = value ?? false;
+      if (selectAll) {
+        selectedRows =
+            Set<int>.from(List.generate(rawDataList.length, (index) => index));
+      } else {
+        selectedRows.clear();
+      }
+    });
+  }
+
+  // 切换选择状态
+  void toggleSelection(int index) {
+    setState(() {
+      if (selectedRows.contains(index)) {
+        selectedRows.remove(index);
+      } else {
+        selectedRows.add(index);
+      }
+    });
+  }
+
+  // 切换全选状态
+  void toggleFmaSelectAll(bool? value) {
+    setState(() {
+      selectFmaAll = value ?? false;
+      if (selectFmaAll) {
+        selectedFmaRows = Set<int>.from(
+            List.generate(formulaDataList.length, (index) => index));
+      } else {
+        selectedFmaRows.clear();
+      }
+    });
+  }
+
+  // 切换选择状态
+  void toggleFmaSelection(int index) {
+    setState(() {
+      if (selectedFmaRows.contains(index)) {
+        selectedFmaRows.remove(index);
+      } else {
+        selectedFmaRows.add(index);
+      }
+    });
+  }
+
+  //原料顺序部分
+  showRawOrder() {
+    return Expanded(
+      flex: 6,
+      child: Container(
+        color: Theme.of(context).colorScheme.surface,
+        child: Column(children: [
+          ShowRawTitleWidget(
+            text: localizedStrings.fIngredientOrder,
+          ),
+          showRawOrderDetail(),
+        ]),
+      ),
+    );
+  }
+
+  Widget showRawWgtAndUnit(int index, Color? textColor) {
+    // ... existing code ...
+    final formulaHeader = selectedFormula?.header?.formulaHeader;
+    final formulaDetail = selectedFormula?.details?[index].formulaDetail;
+
+    if (formulaHeader != null && formulaDetail != null) {
+      final weight = formulaDetail.materialWeight;
+      final unit = formulaHeader.formulaMode == "pct"
+          ? pctStrShow
+          : formulaHeader.formulaUnit;
+      final displayText = '$weight $unit';
+
+      return Text(
+        displayText,
+        style: TextStyle(
+          color: textColor,
+        ),
+      );
+    } else {
+      // 处理数据为空的情况
+      return Text(
+        '',
+        style: TextStyle(
+          color: textColor,
+        ),
+      );
+    }
+  }
+
+  showRawOrderDetail() {
+    return Expanded(
+      child: ListView.separated(
+        // 修改 itemCount
+        itemCount: selectedFormula?.details!.length ?? 0,
+        separatorBuilder: (context, index) => SizedBox(height: 10),
+        itemBuilder: (context, index) {
+          return InkWell(
+            onTap: () {
+              setState(() {
+                _selectedRawIndex = index; // 更新选中的 index
+                selectedDetail = selectedFormula!.details![index];
+              });
+              // 这里添加点击事件的处理逻辑
+              // print('点击了第 $index 项');
+            },
+            child: () {
+              bool isSelected = _selectedRawIndex == index;
+              Color backgroundColor = isSelected
+                  ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
+                  : Color(0xFFF6F6F6);
+              Color innerContainerColor = isSelected
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.surface;
+              Color textColor = isSelected
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.onSurfaceVariant;
+              Color numberTextColor = isSelected
+                  ? Theme.of(context).colorScheme.onPrimary
+                  : Theme.of(context).colorScheme.onSurfaceVariant;
+
+              return Container(
+                height: 32,
+                color: backgroundColor,
+                child: Row(children: [
+                  SizedBox(
+                    width: 2,
+                  ),
+                  Container(
+                    width: 28,
+                    height: 28,
+                    color: innerContainerColor,
+                    child: Center(
+                      child: Text(
+                        '${index + 1}',
+                        style: TextStyle(
+                          color: numberTextColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                    child: Text(
+                      // 修改显示内容
+                      selectedFormula?.details![index].rawMaterialTypeName!
+                              .rawMaterial!.materialName! ??
+                          '',
+                      style: TextStyle(
+                        color: textColor,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  // 修改显示内容
+                  selectedFormula?.header!.formulaHeader!.isEncrypted == true
+                      ? SizedBox()
+                      : showRawWgtAndUnit(index, textColor),
+                  SizedBox(
+                    width: 10,
+                  ),
+                ]),
+              );
+            }(),
+          );
+        },
+      ),
+    );
+  }
+
+  bool checkRawDelete(Object? data) {
+    if (data == null || data is! RawDataInfo) {
+      return false;
+    }
+    final targetMaterialId = data.rawMaterial.materialId;
+    return formulaDataList.every((formula) {
+      return formula.details?.every((detail) {
+            return detail.rawMaterialTypeName!.rawMaterial!.materialId !=
+                targetMaterialId;
+          }) ??
+          true;
+    });
+  }
+
+  showRawTable() {
+    return Expanded(
+      flex: 8,
+      child: Container(
+        padding: const EdgeInsets.only(left: 20, right: 20),
+        color: Theme.of(context).colorScheme.surface,
+        child: StickyTable(
+          controller: _scrollController, // 传递 ScrollController
+          // data: List.generate(50, (index) => sort ? 50 - index : index),
+          data: searchRawList.isEmpty
+              ? []
+              : sort
+                  ? searchRawList.reversed.toList()
+                  : searchRawList,
+          defaultColumnWidth: const FixedColumnWidth(130),
+          titleHeight: 48,
+          cellHeight: 44,
+          clickedRow: clickedRow,
+          onRowClick: (row) {
+            setState(() {
+              clickedRow = row;
+              //选择原料后，找出所有的配方
+              rawFormulaList = [];
+              for (var formula in formulaDataList) {
+                for (var detail in formula.details!) {
+                  if (detail.rawMaterialTypeName!.rawMaterial!.materialId ==
+                      searchRawList[row].rawMaterial.materialId) {
+                    rawFormulaList.add(formula);
+                    break;
+                  }
+                }
+              }
+            });
+          },
+
+          cellDecoration: (context, column, data, row, columnIndex) {
+            // 添加点击行背景色
+            if (row == clickedRow) {
+              return BoxDecoration(
+                color: clickColor,
+                border: Border(
+                  bottom: BorderSide(
+                      color: Theme.of(context).colorScheme.primary, width: 1),
+                ),
+              );
+            }
+            return BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              border: Border(
+                bottom: BorderSide(color: lineColor, width: 1),
+              ),
+            );
+          },
+          columns: [
+            StickyTableColumn(
+              "",
+              fixedStart: true,
+              columnWidth: const FixedColumnWidth(80),
+              renderTitle: (context, title) {
+                // 添加全选复选框
+                return Checkbox(value: selectAll, onChanged: toggleSelectAll);
+              },
+              renderCell: (context, title, data, row, column) {
+                return Checkbox(
+                  value: selectedRows.contains(row),
+                  onChanged: (value) {
+                    toggleSelection(row);
+                  },
+                );
+              },
+            ),
+            StickyTableColumn(
+              localizedStrings.fMaterialIdCol,
+              fixedStart: true,
+              showSort: true,
+              sort: sort,
+              columnWidth: const FixedColumnWidth(120),
+              alignment: Alignment.centerLeft,
+              onTitleClick: (context, title) {
+                // ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                // ScaffoldMessenger.of(
+                //   context,
+                // ).showSnackBar(const SnackBar(content: Text("排序")));
+                // setState(() {
+                //   sort = !(title.sort ?? false);
+                // });
+              },
+              renderCell: (context, title, data, row, column) {
+                return Text((data as RawDataInfo).rawMaterial.materialId);
+              },
+              renderTitle: (context, title) {
+                return Text(
+                  title.title,
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.primary),
+                );
+              },
+            ),
+            StickyTableColumn(
+              localizedStrings.fMaterialNameCol,
+              showSort: true,
+              columnWidth: const FixedColumnWidth(300),
+              alignment: Alignment.centerLeft,
+              sort: false,
+              renderCell: (context, title, data, row, column) {
+                // 显示 materialId 字段
+                return Text((data as RawDataInfo).rawMaterial.materialName);
+              },
+            ),
+            StickyTableColumn(
+              localizedStrings.fRawMaterialTypeCol,
+              showSort: true,
+              sort: false,
+              alignment: Alignment.centerLeft,
+              columnWidth: const FixedColumnWidth(200),
+              renderCell: (context, title, data, row, column) {
+                // 显示 materialId 字段
+                return Text((data as RawDataInfo).rawCategoryName);
+              },
+            ),
+            StickyTableColumn(
+              localizedStrings.fCreatedAtCol,
+              columnWidth: const FixedColumnWidth(200),
+              showSort: true,
+              alignment: Alignment.centerLeft,
+              sort: false,
+              renderCell: (context, title, data, row, column) {
+                // 显示 createdAt 字段
+                return Text(DateFormat('yyyy-MM-dd HH:mm:ss')
+                    .format((data as RawDataInfo).rawMaterial.createdAt));
+              },
+            ),
+            StickyTableColumn(
+              localizedStrings.fUpdatedAtCol,
+              columnWidth: const FixedColumnWidth(200),
+              alignment: Alignment.centerLeft,
+              showSort: true,
+              sort: false,
+              renderCell: (context, title, data, row, column) {
+                // 显示 updatedAt 字段
+                return Text(DateFormat('yyyy-MM-dd HH:mm:ss')
+                    .format((data as RawDataInfo).rawMaterial.updatedAt));
+              },
+            ),
+            StickyTableColumn(
+              localizedStrings.fIngredientRemark,
+              alignment: Alignment.centerLeft,
+              columnWidth: const FixedColumnWidth(400),
+              showSort: true,
+              sort: false,
+              renderCell: (context, title, data, row, column) {
+                // 显示 ingredient 字段
+                return Text(
+                  (data as RawDataInfo).rawMaterial.ingredient,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                );
+              },
+            ),
+
+            // StickyTableColumn(
+            //   "年龄",
+            //   showSort: true,
+            //   sort: false,
+            //   onCellClick: (context, title, data, row, column) {
+            //     ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            //     ScaffoldMessenger.of(
+            //       context,
+            //     ).showSnackBar(SnackBar(content: Text("年龄$data")));
+            //   },
+            //   renderCell: (context, title, data, row, column) {
+            //     return Text("*$data");
+            //   },
+            // ),
+
+            StickyTableColumn(
+              localizedStrings.fEditBtn,
+              fixedEnd: true,
+              columnWidth: const FixedColumnWidth(80),
+              renderCell: (context, title, data, row, column) {
+                return MaterialButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false, // 点击对话框外部不关闭对话框
+                      builder: (BuildContext context) {
+                        return EditRawDialog(
+                          rawData: data as RawDataInfo, // 传递当前行的数据
+                        );
+                      },
+                    ).then((value) {
+                      // 对话框关闭后可以执行一些操作，比如刷新数据
+                      setState(() {});
+                    });
+                  },
+                  // color: Colors.red,
+                  minWidth: 0,
+                  child: Center(
+                      child: Icon(
+                    size: 20,
+                    Icons.edit_outlined,
+                    color: Theme.of(context).colorScheme.primary,
+                  )),
+                );
+              },
+            ),
+            StickyTableColumn(
+              localizedStrings.gBtnDelete,
+              fixedEnd: true,
+              columnWidth: const FixedColumnWidth(80),
+              renderCell: (context, title, data, row, column) {
+                return MaterialButton(
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                    //需要先验证是否有配方使用才能删除。
+                    bool res = checkRawDelete(data);
+                    if (!res) {
+                      showTipInfo(localizedStrings.fFormulaInUseDeleteErrorMsg,
+                          context);
+                      return;
+                    }
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false, // 点击对话框外部不关闭对话框
+                      builder: (BuildContext context) {
+                        return ShowNormalTipDialog(
+                          title: localizedStrings.fTipTitle,
+                          msg: localizedStrings.fConfirmDelete,
+                        );
+                      },
+                    ).then((value) {
+                      if (value) {
+                        PublicFunctions.deleteRawData(
+                            (data as RawDataInfo).rawMaterial.recId);
+
+                        setState(() {
+                          selectAll = false;
+                          selectedRows.clear();
+                        });
+                      } else {
+                        return;
+                      }
+                    });
+                  },
+                  // color: Colors.red,
+                  minWidth: 0,
+                  child: Center(
+                      child: Icon(
+                    size: 20,
+                    Icons.delete_forever_outlined,
+                    color: Theme.of(context).colorScheme.error,
+                  )),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  showFormulaTable() {
+    return Expanded(
+      flex: 7,
+      child: Container(
+        padding: const EdgeInsets.only(left: 20, right: 20),
+        color: Theme.of(context).colorScheme.surface,
+        child: StickyTable(
+          controller: _scrollController, // 传递 ScrollController
+          // 修改 data 属性
+          data: searchFmaList.isEmpty
+              ? []
+              : sort
+                  ? searchFmaList.reversed.toList()
+                  : searchFmaList,
+          defaultColumnWidth: const FixedColumnWidth(130),
+          titleHeight: 48,
+          cellHeight: 44,
+          clickedRow: clickedRow,
+          onRowClick: (row) {
+            setState(() {
+              clickedRow = row;
+              selectedFormula = searchFmaList[row];
+              if (selectedFormula!.details!.isEmpty) {
+                selectedDetail = Detail();
+                _selectedRawIndex = -1;
+              } else {
+                selectedDetail = selectedFormula!.details![0];
+                _selectedRawIndex = 0;
+              }
+            });
+          },
+
+          cellDecoration: (context, column, data, row, columnIndex) {
+            // 添加点击行背景色
+            if (row == clickedRow) {
+              return BoxDecoration(
+                color: clickColor,
+                border: Border(
+                  bottom: BorderSide(
+                      color: Theme.of(context).colorScheme.primary, width: 1),
+                ),
+              );
+            }
+            return BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              border: Border(
+                bottom: BorderSide(color: lineColor, width: 1),
+              ),
+            );
+          },
+          columns: [
+            StickyTableColumn(
+              "",
+              fixedStart: true,
+              columnWidth: const FixedColumnWidth(80),
+              renderTitle: (context, title) {
+                // 添加全选复选框
+                return Checkbox(
+                    value: selectFmaAll, onChanged: toggleFmaSelectAll);
+              },
+              renderCell: (context, title, data, row, column) {
+                return Checkbox(
+                  value: selectedFmaRows.contains(row),
+                  onChanged: (value) {
+                    toggleFmaSelection(row);
+                  },
+                );
+              },
+            ),
+            StickyTableColumn(
+              localizedStrings.fFmaIdLabel,
+              fixedStart: true,
+              showSort: true,
+              sort: sort,
+              columnWidth: const FixedColumnWidth(80),
+              alignment: Alignment.centerLeft,
+              onTitleClick: (context, title) {
+                // ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                // ScaffoldMessenger.of(
+                //   context,
+                // ).showSnackBar(const SnackBar(content: Text("排序")));
+                // setState(() {
+                //   sort = !(title.sort ?? false);
+                // });
+              },
+              // 修改 renderCell 方法
+              renderCell: (context, title, data, row, column) {
+                return Text(
+                    (data as FormulaInfoDb).header!.formulaHeader!.formulaId!);
+              },
+              renderTitle: (context, title) {
+                return Text(
+                  title.title,
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.primary),
+                );
+              },
+            ),
+            StickyTableColumn(
+              localizedStrings.fFmaNameLabel,
+              showSort: true,
+              sort: false,
+              alignment: Alignment.centerLeft,
+              onCellClick: (context, title, data, row, column) {
+                // ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                // ScaffoldMessenger.of(
+                //   context,
+                // ).showSnackBar(SnackBar(content: Text("年龄$data")));
+              },
+              // 修改 renderCell 方法
+              renderCell: (context, title, data, row, column) {
+                return Text((data as FormulaInfoDb)
+                    .header!
+                    .formulaHeader!
+                    .formulaName!);
+              },
+            ),
+            StickyTableColumn(
+              localizedStrings.fFmaCategoryCol,
+              showSort: true,
+              sort: false,
+              alignment: Alignment.centerLeft,
+              onCellClick: (context, title, data, row, column) {
+                // ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                // ScaffoldMessenger.of(
+                //   context,
+                // ).showSnackBar(SnackBar(content: Text("年龄$data")));
+              },
+              // 修改 renderCell 方法
+              renderCell: (context, title, data, row, column) {
+                return Text(
+                    (data as FormulaInfoDb).header!.formulaCategoryName!);
+              },
+            ),
+            StickyTableColumn(
+              localizedStrings.fConfidential,
+              showSort: true,
+              sort: false,
+              alignment: Alignment.centerLeft,
+              onCellClick: (context, title, data, row, column) {
+                // ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                // ScaffoldMessenger.of(
+                //   context,
+                // ).showSnackBar(SnackBar(content: Text("年龄$data")));
+              },
+              // 修改 renderCell 方法
+              renderCell: (context, title, data, row, column) {
+                return Text(
+                    (data as FormulaInfoDb).header!.formulaHeader!.isEncrypted!
+                        ? localizedStrings.fConfidential
+                        : localizedStrings.fPublic,
+                    style: TextStyle(
+                        color: (data).header!.formulaHeader!.isEncrypted!
+                            ? redColor
+                            : greenColor));
+              },
+            ),
+            StickyTableColumn(
+              localizedStrings.fFmaModeCol,
+              showSort: true,
+              sort: false,
+              alignment: Alignment.centerLeft,
+              onCellClick: (context, title, data, row, column) {
+                // ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                // ScaffoldMessenger.of(
+                //   context,
+                // ).showSnackBar(SnackBar(content: Text("年龄$data")));
+              },
+              // 修改 renderCell 方法
+              renderCell: (context, title, data, row, column) {
+                return Text((data as FormulaInfoDb)
+                            .header!
+                            .formulaHeader!
+                            .formulaMode! ==
+                        'pct'
+                    ? localizedStrings.fPctMode
+                    : localizedStrings.fWeightMode);
+              },
+            ),
+            StickyTableColumn(
+              localizedStrings.fIngredientCountLabel,
+              showSort: true,
+              sort: false,
+              alignment: Alignment.centerLeft,
+              onCellClick: (context, title, data, row, column) {
+                // ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                // ScaffoldMessenger.of(
+                //   context,
+                // ).showSnackBar(SnackBar(content: Text("年龄$data")));
+              },
+              // 修改 renderCell 方法
+              renderCell: (context, title, data, row, column) {
+                return Text((data as FormulaInfoDb)
+                    .header!
+                    .formulaHeader!
+                    .materialCount!
+                    .toString());
+              },
+            ),
+            StickyTableColumn(
+              localizedStrings.fConfidential,
+              showSort: true,
+              sort: false,
+              alignment: Alignment.centerLeft,
+              onCellClick: (context, title, data, row, column) {
+                // ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                // ScaffoldMessenger.of(
+                //   context,
+                // ).showSnackBar(SnackBar(content: Text("年龄$data")));
+              },
+              // 修改 renderCell 方法
+              renderCell: (context, title, data, row, column) {
+                return Text(
+                    (data as FormulaInfoDb).header!.formulaHeader!.isEncrypted!
+                        ? localizedStrings.fConfidential
+                        : localizedStrings.fPublic);
+              },
+            ),
+            StickyTableColumn(
+              localizedStrings.fCreatedAtCol,
+              showSort: true,
+              sort: false,
+              alignment: Alignment.centerLeft,
+              columnWidth: FixedColumnWidth(200),
+              onCellClick: (context, title, data, row, column) {
+                // ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                // ScaffoldMessenger.of(
+                //   context,
+                // ).showSnackBar(SnackBar(content: Text("年龄$data")));
+              },
+              // 修改 renderCell 方法
+              renderCell: (context, title, data, row, column) {
+                return Text(DateFormat('yyyy-MM-dd HH:mm:ss').format(
+                    (data as FormulaInfoDb).header!.formulaHeader!.createdAt!));
+              },
+            ),
+            StickyTableColumn(
+              localizedStrings.fUpdatedAtCol,
+              showSort: true,
+              sort: false,
+              alignment: Alignment.centerLeft,
+              columnWidth: FixedColumnWidth(200),
+              onCellClick: (context, title, data, row, column) {
+                // ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                // ScaffoldMessenger.of(
+                //   context,
+                // ).showSnackBar(SnackBar(content: Text("年龄$data")));
+              },
+              // 修改 renderCell 方法
+              renderCell: (context, title, data, row, column) {
+                return Text(DateFormat('yyyy-MM-dd HH:mm:ss').format(
+                    (data as FormulaInfoDb).header!.formulaHeader!.updatedAt!));
+              },
+            ),
+            StickyTableColumn(
+              localizedStrings.fRemarkCol,
+              showSort: true,
+              sort: false,
+              columnWidth: const FixedColumnWidth(500),
+              alignment: Alignment.centerLeft,
+              onCellClick: (context, title, data, row, column) {
+                // ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                // ScaffoldMessenger.of(
+                //   context,
+                // ).showSnackBar(SnackBar(content: Text("年龄$data")));
+              },
+              // 修改 renderCell 方法
+              renderCell: (context, title, data, row, column) {
+                return Text(
+                  (data as FormulaInfoDb).header!.formulaHeader!.remark!,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                );
+              },
+            ),
+            StickyTableColumn(
+              localizedStrings.fHistoricalWeighingRecordsBtn,
+              fixedEnd: true,
+              columnWidth: const FixedColumnWidth(80),
+              renderCell: (context, title, data, row, column) {
+                return MaterialButton(
+                  onPressed: () {
+                    //检查该配方是否有历史称量记录
+
+                    final formulaId = (data as FormulaInfoDb)
+                        .header!
+                        .formulaHeader!
+                        .formulaId!;
+
+                    final formulaName =
+                        (data).header!.formulaHeader!.formulaName!;
+
+                    final hasHistory = fmaRecFromDbList.any((record) =>
+                        record.header?.formulaId == formulaId &&
+                        record.header?.formulaName == formulaName);
+
+                    if (!hasHistory) {
+                      showTipInfo(localizedStrings.fNoRecordTip, context);
+                      return;
+                    } else {
+                      //有历史记录，找出所有的该配方的历史记录列表，跳转到历史记录页面
+                      final List<FmaRecFromDb> formulaHistoryRecords =
+                          fmaRecFromDbList
+                              .where((record) =>
+                                  record.header?.formulaId == formulaId &&
+                                  record.header?.formulaName == formulaName)
+                              .toList();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => OneFmaWgtRecPage(
+                            oneFmaRecList: formulaHistoryRecords,
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                  // color: Colors.red,
+                  minWidth: 0,
+                  child: Center(
+                      child: Icon(Icons.receipt_long_sharp,
+                          size: 20,
+                          color: Theme.of(context).colorScheme.primary)),
+                );
+              },
+            ),
+            // StickyTableColumn(
+            //   localizedStrings.fEditBtn,
+            //   fixedEnd: true,
+            //   columnWidth: const FixedColumnWidth(80),
+            //   renderCell: (context, title, data, row, column) {
+            //     return MaterialButton(
+            //       onPressed: () {
+            //         ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            //         ScaffoldMessenger.of(
+            //           context,
+            //         ).showSnackBar(SnackBar(
+            //             content: Text(localizedStrings.fDeleteSuccessMsg)));
+            //       },
+            //       // color: Colors.red,
+            //       minWidth: 0,
+            //       child: Center(
+            //           child: Icon(
+            //         size: 20,
+            //         Icons.edit_outlined,
+            //         color: Theme.of(context).colorScheme.primary,
+            //       )),
+            //     );
+            //   },
+            // ),
+            StickyTableColumn(
+              localizedStrings.gBtnDelete,
+              fixedEnd: true,
+              columnWidth: const FixedColumnWidth(80),
+              renderCell: (context, title, data, row, column) {
+                return MaterialButton(
+                  onPressed: () {
+                    //删除之前先询问是否确定删除
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false, // 点击对话框外部不关闭对话框
+                      builder: (BuildContext context) {
+                        return ShowNormalTipDialog(
+                          title: localizedStrings.fTipTitle,
+                          msg: localizedStrings.fConfirmDelete,
+                        );
+                      },
+                    ).then((value) {
+                      if (value) {
+                        PublicFunctions.deleteFormulaData(
+                            (data as FormulaInfoDb)
+                                .header!
+                                .formulaHeader!
+                                .recId!);
+                        setState(() {
+                          selectedFmaRows.clear();
+                          selectFmaAll = false;
+                        });
+                        showTipInfo(
+                            localizedStrings.fDeleteSuccessMsg, context);
+                      } else {
+                        return;
+                      }
+                    });
+                  },
+                  // color: Colors.red,
+                  minWidth: 0,
+                  child: Center(
+                      child: Icon(
+                    size: 20,
+                    Icons.delete_forever_outlined,
+                    color: Theme.of(context).colorScheme.error,
+                  )),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  showFormulaBottom() {
+    return Expanded(
+      flex: 4,
+      child: Container(
+        color: const Color.fromARGB(255, 253, 252, 252),
+        child: Column(children: [
+          Container(
+              height: 48,
+              color: const Color.fromARGB(255, 253, 252, 252),
+              child: Row(children: [
+                const SizedBox(
+                  width: 20,
+                ),
+                Text(
+                  localizedStrings.fFmaNameLabel + "：",
+                  style: TextStyle(
+                    fontWeight: FontWeight.normal,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  maxLines: 1,
+                ),
+                // 显示配方名称内容
+                Expanded(
+                  flex: 3,
+                  child: Text(
+                    selectedFormula?.header?.formulaHeader?.formulaName ?? "",
+                    style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      color: Theme.of(context).colorScheme.onSurface,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    maxLines: 1,
+                  ),
+                ),
+                // 显示配方编号标签
+                Text(
+                  localizedStrings.fFmaIdLabel + ": ",
+                  style: TextStyle(
+                    fontWeight: FontWeight.normal,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  maxLines: 1,
+                ),
+                // 显示配方编号内容
+                Expanded(
+                  flex: 1,
+                  child: Text(
+                    selectedFormula?.header?.formulaHeader?.formulaId ?? "",
+                    style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      color: Theme.of(context).colorScheme.onSurface,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    maxLines: 1,
+                  ),
+                ),
+                Text(
+                  localizedStrings.fIngredientCountLabel + ": ",
+                  style: TextStyle(
+                    fontWeight: FontWeight.normal,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  maxLines: 1,
+                ),
+                // 显示配方编号内容
+                Expanded(
+                  flex: 1,
+                  child: Text(
+                    selectedFormula?.header?.formulaHeader?.materialCount
+                            .toString() ??
+                        "",
+                    style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      color: Theme.of(context).colorScheme.onSurface,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    maxLines: 1,
+                  ),
+                ),
+                selectedFormula?.header?.formulaHeader?.formulaMode != "pct"
+                    ? Text(
+                        "  ${localizedStrings.fTotalWeightLabel}: ",
+                        style: TextStyle(
+                          fontWeight: FontWeight.normal,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        maxLines: 1,
+                      )
+                    : SizedBox(),
+                // 显示配方编号内容
+                Expanded(
+                  flex: 1,
+                  child: Text(
+                    selectedFormula?.header?.formulaHeader?.formulaMode == "pct"
+                        ? ""
+                        : selectedFormula?.header?.formulaHeader?.totalWeight !=
+                                    null &&
+                                selectedFormula
+                                        ?.header?.formulaHeader?.formulaUnit !=
+                                    null
+                            ? " ${selectedFormula!.header!.formulaHeader!.totalWeight} ${selectedFormula!.header!.formulaHeader!.formulaUnit}"
+                            : " ",
+                    style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      color: Theme.of(context).colorScheme.onSurface,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    maxLines: 1,
+                  ),
+                ),
+                const SizedBox(
+                  width: 20,
+                ),
+                SizedBox(
+                  width: 200,
+                  height: 36,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                      backgroundColor: greenColor,
+                      fixedSize: const Size(double.infinity, 48),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
+                      ),
+                    ),
+                    onPressed: (selectedFormula == null)
+                        ? null
+                        : () {
+                            //检查配方是保密的，还是公开的
+                            if (selectedFormula
+                                    ?.header?.formulaHeader?.isEncrypted ==
+                                false) {
+                              //检查配方是重量模式还是百分比模式
+                              if (selectedFormula
+                                      ?.header?.formulaHeader?.formulaMode ==
+                                  "pct") {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AddFormulaWgtDialog();
+                                  },
+                                ).then((value) {
+                                  if (value != null &&
+                                      value is Map<String, String>) {
+                                    String formulaWgt =
+                                        value['formulaWgt'] ?? '';
+                                    String formulaUnit =
+                                        value['formulaUnit'] ?? '';
+
+                                    // 先判断这个总重是个数
+                                    if (double.tryParse(formulaWgt) == null) {
+                                      return;
+                                    } else {
+                                      double totalWgt =
+                                          double.parse(formulaWgt);
+                                      String fmaUnit = formulaUnit;
+
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              FormulaPctWeighingPage(
+                                            selectFormula: selectedFormula!,
+                                            selScaleId: selScaleId,
+                                            totalFmaWgt: totalWgt,
+                                            fmaUnit: fmaUnit,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  }
+                                });
+                              } else {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        FormulaPctWeighingPage(
+                                      selectFormula: selectedFormula!,
+                                      selScaleId: selScaleId,
+                                      totalFmaWgt: selectedFormula!
+                                          .header!.formulaHeader!.totalWeight!,
+                                      fmaUnit: selectedFormula!
+                                          .header!.formulaHeader!.formulaUnit!,
+                                    ),
+                                  ),
+                                );
+                              }
+                            } else {
+                              //检查配方是重量模式还是百分比模式
+                              if (selectedFormula
+                                      ?.header?.formulaHeader?.formulaMode ==
+                                  "pct") {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AddFormulaWgtDialog();
+                                  },
+                                ).then((value) {
+                                  if (value != null &&
+                                      value is Map<String, String>) {
+                                    String formulaWgt =
+                                        value['formulaWgt'] ?? '';
+                                    String formulaUnit =
+                                        value['formulaUnit'] ?? '';
+
+                                    // 先判断这个总重是个数
+                                    if (double.tryParse(formulaWgt) == null) {
+                                      return;
+                                    } else {
+                                      double totalWgt =
+                                          double.parse(formulaWgt);
+                                      String fmaUnit = formulaUnit;
+
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              FormulaSecretWeighingPage(
+                                            selectFormula: selectedFormula!,
+                                            selScaleId: selScaleId,
+                                            totalFmaWgt: totalWgt,
+                                            fmaUnit: fmaUnit,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  }
+                                });
+                              } else {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        FormulaSecretWeighingPage(
+                                      selectFormula: selectedFormula!,
+                                      selScaleId: selScaleId,
+                                      totalFmaWgt: selectedFormula!
+                                          .header!.formulaHeader!.totalWeight!,
+                                      fmaUnit: selectedFormula!
+                                          .header!.formulaHeader!.formulaUnit!,
+                                    ),
+                                  ),
+                                );
+                              }
+                            }
+                          },
+                    child: Text(
+                      localizedStrings.fStartWeighingBtn,
+                      style: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  width: 20,
+                ),
+              ])),
+          Divider(
+            color: Theme.of(context).colorScheme.outline,
+            thickness: 1,
+            height: 1,
+          ),
+          Expanded(
+              child: Row(
+            children: [
+              SizedBox(
+                width: 17,
+              ),
+              showRawOrder(),
+              SizedBox(
+                width: 16,
+              ),
+              Expanded(
+                flex: 11,
+                child: Column(children: [
+                  ShowRawTitleWidget(
+                    text: localizedStrings.fIngredientRemark,
+                  ),
+                  RawRemarkTextWidget(
+                    text: selectedDetail.rawMaterialTypeName == null
+                        ? ""
+                        : selectedDetail
+                            .rawMaterialTypeName!.rawMaterial!.ingredient!,
+                  )
+                ]),
+              ),
+              SizedBox(
+                width: 26,
+              ),
+              VerticalDivider(
+                color: Theme.of(context).colorScheme.outline,
+                width: 1,
+              ),
+              SizedBox(
+                width: 26,
+              ),
+              Expanded(
+                flex: 9,
+                child: Column(children: [
+                  ShowRawTitleWidget(
+                    text: localizedStrings.fFmaRemark,
+                  ),
+                  RawRemarkTextWidget(
+                    text: selectedFormula?.header?.formulaHeader?.remark ?? "",
+                  )
+                ]),
+              ),
+              SizedBox(
+                width: 20,
+              ),
+            ],
+          ))
+        ]),
+      ),
+    );
+  }
+
+//原料列表底部
+  showRawBottom() {
+    return Expanded(
+      flex: 2,
+      child: Container(
+        color: Theme.of(context).colorScheme.surface,
+        child: Column(children: [
+          Expanded(
+              child: Row(
+            children: [
+              SizedBox(
+                width: 17,
+              ),
+              Expanded(
+                flex: 11,
+                child: Column(children: [
+                  Row(children: [
+                    Container(
+                      width: 3,
+                      height: 14,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                    SizedBox(
+                      width: 12,
+                    ),
+                    Expanded(
+                      child: ShowRawTitleWidget(
+                        text: localizedStrings.fInvolvedFmas,
+                      ),
+                    )
+                  ]),
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.vertical,
+                        child: Wrap(
+                          alignment: WrapAlignment.start,
+                          spacing: 30,
+                          runSpacing: 10,
+                          children: [
+                            // 遍历 rawFormulaList 展示配方名字并添加点击功能
+                            for (var formula in rawFormulaList)
+                              InkWell(
+                                onTap: () {
+                                  //跳出配方详情
+
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return ShowFormulaDetailDialog(
+                                          selectFormula: formula,
+                                          selectScaleId: selScaleId,
+                                        );
+                                      });
+                                },
+                                child: IntrinsicWidth(
+                                  child: Container(
+                                    padding: EdgeInsets.all(5),
+                                    height: 40,
+                                    constraints: BoxConstraints(
+                                      maxWidth: 300,
+                                      minWidth: 100,
+                                    ),
+                                    color: Color(0xFFE6EEF4),
+                                    child: Center(
+                                      child: Text(
+                                        formula.header?.formulaHeader
+                                                ?.formulaName ??
+                                            "",
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurfaceVariant,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
+                ]),
+              ),
+              SizedBox(
+                width: 20,
+              ),
+            ],
+          ))
+        ]),
+      ),
+    );
+  }
+
+  showComScale() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 14),
+      child: MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  selScaleId = 1;
+                  _selectedScaleIndex = -1;
+                  //串口秤
+                });
+              },
+              child: Container(
+                height: 62,
+                color: (selScaleId != 1)
+                    ? Color(0xFFECF0F3)
+                    : Theme.of(context).colorScheme.primary,
+                child: Row(
+                  children: [
+                    Container(
+                        width: 62,
+                        height: 62,
+                        alignment: Alignment.center,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(4)),
+                            color: (selScaleId != 1)
+                                ? Color(0xFFD5D8DB)
+                                : Color.fromRGBO(255, 255, 255, 0.1),
+                          ),
+                          width: 38,
+                          height: 38,
+                          child: Icon(
+                            size: 20,
+                            Icons.cable_sharp,
+                            color: (selScaleId != 1)
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(context).colorScheme.onPrimary,
+                          ),
+                        )),
+                    if (_isLeftPanelExpanded)
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Text(
+                              myComScaleInfo.scaleName,
+                              style: TextStyle(
+                                  color: (selScaleId != 1)
+                                      ? Theme.of(context).colorScheme.primary
+                                      : Theme.of(context).colorScheme.onPrimary,
+                                  fontSize: 14),
+                            ),
+                            Text(
+                              myComScaleInfo.isOnline
+                                  ? localizedStrings.gOnlineTip
+                                  : localizedStrings.gOfflineTip,
+                              style: TextStyle(
+                                  color: (selScaleId == 1)
+                                      ? Theme.of(context).colorScheme.onPrimary
+                                      : myComScaleInfo.isOnline
+                                          ? Theme.of(context)
+                                              .colorScheme
+                                              .onTertiaryFixedVariant
+                                          : Theme.of(context).colorScheme.error,
+                                  fontSize: 14),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
+              ))),
+    );
+  }
+
+  showScaleListTitle() {
+    return SizedBox(
+        height: 54,
+        width: _isLeftPanelExpanded ? 226 : 62,
+        child: Row(children: [
+          _isLeftPanelExpanded
+              ? Expanded(
+                  child: Text(
+                  localizedStrings.fScaleList,
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      fontSize: 16),
+                ))
+              : SizedBox(
+                  width: 0,
+                ),
+          Center(
+            child: IconButton(
+              iconSize: 24,
+              onPressed: () {
+                setState(() {
+                  _isLeftPanelExpanded = !_isLeftPanelExpanded;
+                });
+              },
+              icon: Icon(_isLeftPanelExpanded
+                  ? Icons.format_indent_decrease_outlined
+                  : Icons.format_indent_increase_outlined),
+            ),
+          ),
+        ]));
+  }
+
+  showScaleList() {
+    return AnimatedContainer(
+      color: Theme.of(context).colorScheme.surface,
+      width: _isLeftPanelExpanded ? 254 : 90,
+      duration: Duration(milliseconds: 300),
+      child: Column(
+        children: [
+          showScaleListTitle(),
+          // 分割线
+          Divider(
+            color: Theme.of(context).colorScheme.outline,
+            thickness: 1,
+            height: 1,
+          ),
+          SizedBox(height: 14),
+          showComScale(),
+          SizedBox(
+            height: 10,
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 14),
+              child: ListView.separated(
+                itemCount: scaleNetItems.length,
+                separatorBuilder: (context, index) =>
+                    const SizedBox(height: 10),
+                itemBuilder: (context, index) {
+                  final scale = scaleNetItems[index];
+                  bool isSelect = (index == _selectedScaleIndex);
+                  return MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _selectedScaleIndex = index;
+                              selScaleId = scale.scaleId!;
+                            });
+                          },
+                          child: Container(
+                            height: 62,
+                            color: !isSelect
+                                ? Color(0xFFECF0F3)
+                                : Theme.of(context).colorScheme.primary,
+                            child: Row(
+                              children: [
+                                Container(
+                                    width: 62,
+                                    height: 62,
+                                    alignment: Alignment.center,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(4)),
+                                        color: !isSelect
+                                            ? Color(0xFFD5D8DB)
+                                            : Color.fromRGBO(
+                                                255, 255, 255, 0.1),
+                                      ),
+                                      width: 38,
+                                      height: 38,
+                                      child: Icon(
+                                        size: 20,
+                                        Icons.wifi,
+                                        color: !isSelect
+                                            ? Theme.of(context)
+                                                .colorScheme
+                                                .primary
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .onPrimary,
+                                      ),
+                                    )),
+                                if (_isLeftPanelExpanded)
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Text(
+                                          scale.scaleName ?? '',
+                                          style: TextStyle(
+                                              color: !isSelect
+                                                  ? Theme.of(context)
+                                                      .colorScheme
+                                                      .primary
+                                                  : Theme.of(context)
+                                                      .colorScheme
+                                                      .onPrimary,
+                                              fontSize: 14),
+                                        ),
+                                        Text(
+                                          scale.isOnline!
+                                              ? localizedStrings.gOnlineTip
+                                              : localizedStrings.gOfflineTip,
+                                          style: TextStyle(
+                                              color: isSelect
+                                                  ? Theme.of(context)
+                                                      .colorScheme
+                                                      .onPrimary
+                                                  : scale.isOnline!
+                                                      ? Theme.of(context)
+                                                          .colorScheme
+                                                          .onTertiaryFixedVariant
+                                                      : Theme.of(context)
+                                                          .colorScheme
+                                                          .error,
+                                              fontSize: 14),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          )));
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  showTabBar() {
+    return Container(
+      height: 54,
+      color: Theme.of(context).colorScheme.surface,
+      child: Row(
+        children: [
+          SizedBox(
+            width: 20,
+          ),
+          IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(Icons.arrow_circle_left_outlined,
+                  size: 28, color: Theme.of(context).colorScheme.primary)),
+          Expanded(
+            child: TabBar(
+              isScrollable: true,
+              tabAlignment: TabAlignment.start,
+              controller: _tabController,
+              onTap: (index) {
+                setState(() {
+                  _selectedTabIndex = index;
+                });
+              },
+              // 自定义 indicator 样式，添加分隔线
+              dividerColor: Colors.transparent,
+              tabs: [
+                Tab(text: localizedStrings.fFmaListTab),
+                Tab(text: localizedStrings.fRawMaterialListTab),
+              ],
+            ),
+          ),
+          Icon(
+            Icons.help,
+            color: Color(0xFFF4B837),
+          ),
+          SizedBox(
+            width: 20,
+          )
+        ],
+      ),
+    );
+  }
+
+  void showAddRawInfoDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 点击对话框外部不关闭对话框
+      builder: (BuildContext context) {
+        return AddRawDialog();
+      },
+    ).then((value) {
+      setState(() {});
+    });
+  }
+
+  showRawSearch() {
+    return Container(
+      height: 70,
+      color: Theme.of(context).colorScheme.surface,
+      child: Row(children: [
+        SizedBox(
+          width: 20,
+        ),
+        SizedBox(
+            width: 260,
+            height: 40,
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: TextField(
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+                controller: _searchRawIdCtl,
+                decoration: InputDecoration(
+                  prefixIcon: Icon(
+                    Icons.search,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  suffixIcon: IconButton(
+                    icon: const Icon(
+                      Icons.clear,
+                      size: 20,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _searchRawIdCtl.clear();
+                        performRawSearch(); // 调用搜索方法
+                      });
+                    },
+                  ),
+                  hintText: localizedStrings.fSearchHint,
+                  hintStyle: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      fontSize: 14,
+                      fontWeight: FontWeight.normal),
+                  border: const OutlineInputBorder(
+                    borderRadius: BorderRadius.zero,
+                  ),
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    performRawSearch();
+                  });
+                },
+              ),
+            )),
+        SizedBox(
+          width: 14,
+        ),
+        Container(
+            width: 260,
+            height: 40,
+            padding: const EdgeInsets.only(left: 16, right: 20),
+            decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius: BorderRadius.circular(0),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 1,
+                )),
+            child: DropdownButton(
+              underline: SizedBox(),
+              isExpanded: true,
+              value: rawTypeCtl.text == "" ? null : rawTypeCtl.text,
+              items: rawTypeList.isEmpty
+                  ? [
+                      DropdownMenuItem<String>(
+                        value: null,
+                        child: Text(localizedStrings.fPleaseSelectCategory),
+                      )
+                    ]
+                  : [
+                      DropdownMenuItem<String>(
+                        value: null,
+                        child: Text(localizedStrings.fPleaseSelectCategory),
+                      ),
+                      ...rawTypeList.map((CategoryTypeList item) {
+                        return DropdownMenuItem<String>(
+                          value: item.categoryName,
+                          child: Text(item.categoryName),
+                        );
+                      })
+                    ],
+              onChanged: (value) {
+                if (value == null) return;
+                setState(() {
+                  rawTypeCtl.text = value.toString();
+                  performRawSearch();
+                });
+              },
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontSize: 14,
+                fontWeight: FontWeight.normal,
+              ),
+            )),
+        SizedBox(
+          width: 14,
+        ),
+        Tooltip(
+            message: localizedStrings.fClearSearchConditionBtn, // 提示信息
+            child: IconButton(
+              icon: Icon(
+                Icons.cleaning_services_outlined,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              onPressed: () {
+                setState(() {
+                  _searchRawIdCtl.clear();
+                  rawTypeCtl.clear();
+                  performRawSearch(); // 调用搜索方法
+                });
+              },
+              iconSize: 24,
+            )),
+        Spacer(),
+        //新增原料按钮
+        IconButton(
+          iconSize: 24,
+          color: Theme.of(context).colorScheme.onPrimary,
+          style: IconButton.styleFrom(
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            shape: RoundedRectangleBorder(
+              // 设置为矩形形状
+              borderRadius: BorderRadius.zero, // 没有圆角，即正方形
+            ),
+            fixedSize: const Size(40, 40), // 设置固定大小
+          ),
+          onPressed: () {
+            showAddRawInfoDialog();
+          },
+          icon: Icon(Icons.add_box_outlined),
+        ),
+        SizedBox(
+          width: 12,
+        ),
+        // IconButton(
+        //   iconSize: 24,
+        //   color: Theme.of(context).colorScheme.onPrimary,
+        //   focusColor: Theme.of(context).colorScheme.outline,
+        //   hoverColor: Theme.of(context).colorScheme.outline,
+        //   style: IconButton.styleFrom(
+        //     backgroundColor: Color(0xFFF3F3F3),
+        //     shape: RoundedRectangleBorder(
+        //       // 设置为矩形形状
+        //       borderRadius: BorderRadius.zero, // 没有圆角，即正方形
+        //     ),
+        //     fixedSize: const Size(40, 40), // 设置固定大小
+        //   ),
+        //   onPressed: () {
+        //     // 在这里添加按钮点击后的逻辑
+        //   },
+        //   icon: Icon(
+        //     Icons.file_download_outlined,
+        //     color: Theme.of(context).colorScheme.primary,
+        //   ),
+        // ),
+        // SizedBox(
+        //   width: 12,
+        // ),
+        IconButton(
+          iconSize: 24,
+          color: Theme.of(context).colorScheme.onPrimary,
+          focusColor: Theme.of(context).colorScheme.outline,
+          hoverColor: Theme.of(context).colorScheme.outline,
+          style: IconButton.styleFrom(
+            backgroundColor: Color(0xFFF3F3F3),
+            shape: RoundedRectangleBorder(
+              // 设置为矩形形状
+              borderRadius: BorderRadius.zero, // 没有圆角，即正方形
+            ),
+            fixedSize: const Size(40, 40), // 设置固定大小
+          ),
+          onPressed: () {
+            exportRaw();
+          },
+          icon: Icon(
+            Icons.file_upload_outlined,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+        SizedBox(
+          width: 20,
+        ),
+      ]),
+    );
+  }
+
+  showAddFormulaIconBtn(String tip, IconData icon, Function() onPressed) {
+    return Tooltip(
+        message: tip, // 提示信息
+        child: IconButton(
+          iconSize: 24,
+          color: Theme.of(context).colorScheme.onPrimary,
+          style: IconButton.styleFrom(
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            shape: RoundedRectangleBorder(
+              // 设置为矩形形状
+              borderRadius: BorderRadius.zero, // 没有圆角，即正方形
+            ),
+            fixedSize: const Size(40, 40), // 设置固定大小
+          ),
+          onPressed: onPressed,
+          icon: Icon(icon),
+        ));
+  }
+
+  showIconButton(String tip, IconData icon, Function() onPressed) {
+    return Tooltip(
+      message: tip, // 提示信息
+      child: IconButton(
+        iconSize: 24,
+        color: Theme.of(context).colorScheme.onPrimary,
+        focusColor: Theme.of(context).colorScheme.outline,
+        hoverColor: Theme.of(context).colorScheme.outline,
+        style: IconButton.styleFrom(
+          backgroundColor: Color(0xFFF3F3F3),
+          shape: RoundedRectangleBorder(
+            // 设置为矩形形状
+            borderRadius: BorderRadius.zero, // 没有圆角，即正方形
+          ),
+          fixedSize: const Size(40, 40), // 设置固定大小
+        ),
+        onPressed: onPressed,
+        icon: Icon(
+          icon,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+      ),
+    );
+  }
+
+  //导出原料的json文件，只要导出勾选的原料
+  exportRaw() async {
+    if (selectedRows.isEmpty) {
+      showTipInfo(localizedStrings.gTipNoDataSelected, context);
+      return;
+    }
+    List<RawDataInfo> exportRawList = [];
+    for (var row in selectedRows) {
+      exportRawList.add(searchRawList[row]);
+    }
+    String jsonString = rawDataInfoToJson(exportRawList);
+
+    final directory = Directory.current.path;
+    String? outputFile = (await FilePicker.platform.saveFile(
+      initialDirectory: directory,
+      type: FileType.custom,
+      dialogTitle: 'Output file:',
+      allowedExtensions: ["json"],
+      fileName: 'components.json',
+    ));
+    if (outputFile != null) {
+      if (!outputFile.contains(".json")) {
+        outputFile = "$outputFile.json";
+      }
+      String filePath = outputFile;
+
+      // 将 CSV 数据写入文件
+      try {
+        // 尝试将数据转换为 CSV 格式
+        String csv = jsonString;
+        File file = File(filePath);
+        await file.writeAsString(csv);
+        // 显示导出成功提示
+        showTipInfo(localizedStrings.fSaveSuccess, context);
+      } catch (e) {
+        // 处理写入文件时可能出现的异常，并显示错误提示
+        showTipInfo('$e', context);
+      }
+    }
+  }
+
+//导出配方的json文件，只要导出勾选的配方
+  exportFormula() async {
+    if (selectedFmaRows.isEmpty) {
+      showTipInfo(localizedStrings.gTipNoDataSelected, context);
+      return;
+    }
+    List<FormulaInfoDb> exportFormulaList = [];
+    for (var row in selectedFmaRows) {
+      exportFormulaList.add(searchFmaList[row]);
+    }
+    String jsonString = formulaInfoDbToJson(exportFormulaList);
+
+    final directory = Directory.current.path;
+    String? outputFile = (await FilePicker.platform.saveFile(
+      initialDirectory: directory,
+      type: FileType.custom,
+      dialogTitle: 'Output file:',
+      allowedExtensions: ["json"],
+      fileName: 'formulas.json',
+    ));
+    if (outputFile != null) {
+      if (!outputFile.contains(".json")) {
+        outputFile = "$outputFile.json";
+      }
+      String filePath = outputFile;
+
+      // 将 CSV 数据写入文件
+      try {
+        // 尝试将数据转换为 CSV 格式
+        String csv = jsonString;
+        File file = File(filePath);
+        await file.writeAsString(csv);
+        // 显示导出成功提示
+        showTipInfo(localizedStrings.fSaveSuccess, context);
+      } catch (e) {
+        // 处理写入文件时可能出现的异常，并显示错误提示
+        showTipInfo('$e', context);
+      }
+    }
+  }
+
+  showFormulaSearch() {
+    return Container(
+      height: 70,
+      color: Theme.of(context).colorScheme.surface,
+      child: Row(children: [
+        SizedBox(
+          width: 20,
+        ),
+        SizedBox(
+            width: 245,
+            height: 40,
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: TextField(
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                  controller: _searchFmaIdCtl,
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    suffixIcon: IconButton(
+                      icon: const Icon(
+                        Icons.clear,
+                        size: 20,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _searchFmaIdCtl.clear();
+                          performFmaSearch();
+                        });
+                      },
+                    ),
+                    hintText: localizedStrings.fSearchHint,
+                    hintStyle: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        fontSize: 14,
+                        fontWeight: FontWeight.normal),
+                    border: const OutlineInputBorder(
+                      borderRadius: BorderRadius.zero,
+                    ),
+                  ),
+                  onChanged: (value) {
+                    setState(() {
+                      // 这里可以添加搜索逻辑
+
+                      performFmaSearch();
+                    });
+                  }),
+            )),
+        SizedBox(
+          width: 14,
+        ),
+        Container(
+          width: 245,
+          height: 40,
+          padding: const EdgeInsets.only(left: 16, right: 20),
+          decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: BorderRadius.circular(0),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 1,
+              )),
+          child: DropdownButton(
+            underline: SizedBox(),
+            isExpanded: true,
+            value: searchFmaTypeCtl.text == "" ? null : searchFmaTypeCtl.text,
+            items: formulaTypeList.isEmpty
+                ? [
+                    DropdownMenuItem<String>(
+                      value: null,
+                      child: Text(localizedStrings.fPleaseSelectCategory),
+                    )
+                  ]
+                : [
+                    DropdownMenuItem<String>(
+                      value: null,
+                      child: Text(localizedStrings.fPleaseSelectCategory),
+                    ),
+                    ...formulaTypeList.map((CategoryTypeList item) {
+                      return DropdownMenuItem<String>(
+                        value: item.categoryName,
+                        child: Text(item.categoryName),
+                      );
+                    })
+                  ],
+            onChanged: (value) {
+              if (value == null) return;
+              setState(() {
+                searchFmaTypeCtl.text = value.toString();
+                performFmaSearch();
+              });
+            },
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 14,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+        ),
+        SizedBox(
+          width: 14,
+        ),
+        Container(
+          width: 245,
+          height: 40,
+          padding: const EdgeInsets.only(left: 16, right: 20),
+          decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: BorderRadius.circular(0),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 1,
+              )),
+          child: DropdownButton<EncryptedValue>(
+            underline: SizedBox(),
+            isExpanded: true,
+            value: searchFmaEncryptedCtl.text == ""
+                ? null
+                : EncryptedValue.values.firstWhere((element) =>
+                    element.getTranslation(context) ==
+                    searchFmaEncryptedCtl.text),
+            // 修改 items 部分，添加空状态提示
+            items: [
+              DropdownMenuItem<EncryptedValue>(
+                value: null,
+                child: Text(localizedStrings.fSelectConfidentialityStatusMsg),
+              ),
+              ...EncryptedValue.values.map((value) {
+                return DropdownMenuItem<EncryptedValue>(
+                  value: value,
+                  child: Text(value.getTranslation(context)),
+                );
+              }).toList(),
+            ],
+
+            onChanged: (value) {
+              if (value == null) return;
+              setState(() {
+                searchFmaEncryptedCtl.text = value.getTranslation(context);
+                isFmaEncryptedCtl.text = value.toString();
+                performFmaSearch();
+              });
+            },
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 14,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+        ),
+        SizedBox(
+          width: 14,
+        ),
+        Tooltip(
+            message: localizedStrings.fClearSearchConditionBtn, // 提示信息
+            child: IconButton(
+              icon: Icon(
+                Icons.cleaning_services_outlined,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              onPressed: () {
+                setState(() {
+                  _searchFmaIdCtl.clear();
+                  searchFmaTypeCtl.clear();
+                  searchFmaEncryptedCtl.clear();
+                  isFmaEncryptedCtl.clear();
+                  performFmaSearch(); // 调用搜索方法
+                });
+              },
+              iconSize: 24,
+            )),
+        Spacer(),
+        showAddFormulaIconBtn(
+            localizedStrings.fAddFmaBtn, Icons.add_box_outlined, () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => AddFormulaPage()));
+        }),
+        SizedBox(
+          width: 12,
+        ),
+        //配方称重记录
+        showIconButton(localizedStrings.fHistoricalWeighingRecordsBtn,
+            Icons.library_books_outlined, () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => AllFmaWgtRecPage()));
+        }),
+        SizedBox(
+          width: 12,
+        ),
+        //导入配方
+        // showIconButton(localizedStrings.fImportFmaBtn,
+        // //     Icons.file_download_outlined, () {}),
+        // SizedBox(
+        //   width: 12,
+        // ),
+        //导出配方
+        showIconButton(
+            localizedStrings.fExportFmaBtn, Icons.file_upload_outlined, () {
+          //导出配方
+          exportFormula();
+        }),
+        SizedBox(
+          width: 20,
+        ),
+      ]),
+    );
+  }
+}

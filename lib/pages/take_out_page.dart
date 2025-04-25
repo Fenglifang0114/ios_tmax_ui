@@ -62,7 +62,7 @@ class TakeOutPageState extends State<TakeOutPage> {
   int _stableSaveTime = 0;
   bool lastStableStatus = false;
   bool _isTiming = false;
-  bool _isZero = false;
+  bool isZeroStatus = false;
   bool _isPassZero = false;
   bool showDialogFlag = false;
   bool _isShowing = false;
@@ -497,10 +497,10 @@ class TakeOutPageState extends State<TakeOutPage> {
     switch (weightMode) {
       case 1:
         if (isZeroValue()) {
-          _isZero = true;
+          isZeroStatus = true;
           _isPassZero = true;
         } else {
-          _isZero = false;
+          isZeroStatus = false;
         }
         takeOutModeWeight();
         isWeightStable();

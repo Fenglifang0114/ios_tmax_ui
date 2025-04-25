@@ -1,0 +1,2146 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:t_max/data/comscaleinfo_data.dart';
+import 'package:t_max/data/formula_common.dart';
+import 'package:t_max/data/formula_scale_data.dart';
+import 'package:t_max/data/formula_wgt_process_data.dart';
+import 'package:t_max/data/manager_scale_channel.dart';
+import 'package:t_max/data/req_add_fma_rec_data.dart';
+import 'package:t_max/data/req_formula_data.dart';
+import 'package:t_max/data/reqweightdata_data.dart';
+import 'package:t_max/data/timer_manager.dart';
+import 'package:t_max/dialog/custom_dialog_tip.dart';
+import 'package:t_max/eventbus/eventbus.dart';
+import 'package:t_max/functions/methods.dart';
+import 'package:t_max/data/formula_from_db_data.dart';
+import 'package:t_max/widget/fma_process_bar.dart';
+import 'package:t_max/widget/sticky_table.dart';
+import '../data/language.dart';
+
+class FormulaPctWeighingPage extends StatefulWidget {
+  const FormulaPctWeighingPage(
+      {super.key,
+      required this.selectFormula,
+      required this.selScaleId,
+      required this.totalFmaWgt,
+      required this.fmaUnit});
+  final FormulaInfoDb selectFormula;
+  final int selScaleId;
+  final double totalFmaWgt;
+  final String fmaUnit;
+  @override
+  State<FormulaPctWeighingPage> createState() => FormulaPctWeighingPageState();
+}
+
+class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  bool sort = false;
+  final ScrollController _scrollController =
+      ScrollController(); // 添加 ScrollController
+
+  bool selectAll = false; // 添加全选状态
+  int clickedRow = 0; // 添加点击行状态
+  final TextEditingController encryptedCtl = TextEditingController();
+  final TextEditingController formulaTypeCtl = TextEditingController();
+  final TextEditingController rawTypeCtl = TextEditingController();
+  List<FormulaWgtProcessData> processWgtList = []; //配方中的原料重量集合
+  FormulaWgtProcessData selectedProcessWgt = FormulaWgtProcessData(); //选中的原料重量
+
+  double initTotalWeight = 1000.0; //总重量百分比模式传入的总重量
+  String totalUnit = 'g'; //总重量百分比模式传入的总重量单位
+  bool isWgtStart = false; //是否开始重量
+  bool isShowTipDialog = false; //是否显示提示对话框
+  bool enableSelRaw = false; //是否启用选择原料  按顺序制作，需要添加补充的时候再去做选择物料
+  bool startFormula = false; //是否开始配方  配方开始后，归零和扣重不能使用
+  String recRecNumber = ''; //配方订单编号
+  double currentRawWgt = 0.000; //当前的原料重量 默认为0
+  String fmaUnit = 'g'; //配方重量单位
+  bool isEnableNext = true; //是否禁用下一个
+  bool isFinish = false; //是否完成
+  double needTotalWgt = 0.000; //需要的总重量 默认为0  这个主要是修正后的重量
+
+  final ValueNotifier<String> currentWgtStrNotifier = ValueNotifier('----');
+
+  dynamic _eventbus1;
+  dynamic _eventbus2;
+  dynamic _eventbus3;
+  dynamic _eventbus4;
+  dynamic _eventbus5;
+  dynamic _eventbus6;
+  dynamic _eventbus7;
+  dynamic _eventbus8;
+
+  Timer? setWgtStartFalseTimer; // 用于每3秒将isWgtStart设置为false的定时器
+  Timer? checkWgtStartTimer; // 用于每5秒检查isWgtStart的定时器
+
+  // 每3秒钟将isWgtStart设置为false
+  void startSetWgtStartFalseTimer() {
+    setWgtStartFalseTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      if (mounted) {
+        setState(() {
+          isWgtStart = false;
+        });
+      }
+    });
+  }
+
+  // 每5秒判断一下isWgtStart是不是false，是false的话，就重新发送请求开启连续发送
+  void startCheckWgtStartTimer() {
+    checkWgtStartTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      if (isWgtStart == false) {
+        // 重新发送请求开启连续发送
+        PublicFunctions.getWeight(widget.selScaleId);
+      }
+    });
+  }
+
+//百分比模式下初始化重量和单位
+  void initTotalWgtUnit() {
+    if (widget.selectFormula.header!.formulaHeader!.formulaMode == 'pct') {
+      initTotalWeight = widget.totalFmaWgt;
+      initTotalWeight = double.parse(initTotalWeight.toStringAsFixed(3));
+      widget.selectFormula.header!.formulaHeader!.formulaUnit = fmaUnit;
+      widget.selectFormula.header!.formulaHeader!.totalWeight = initTotalWeight;
+      needTotalWgt = initTotalWeight;
+    }
+  }
+
+  void initWgtList() {
+    double minValue = 0.0;
+    double maxValue = 0.0;
+    double errorWgt = 0.0; //误差重量值
+    double targetWgt = 0.0; //目标重量值
+    String fmode =
+        widget.selectFormula.header!.formulaHeader!.formulaMode ?? '';
+    needTotalWgt = widget.selectFormula.header!.formulaHeader!.totalWeight!;
+    //如果包含容器，第一个写容器  修改了此处
+    if (widget.selectFormula.header!.formulaHeader!.needContainer!) {
+      FormulaWgtProcessData processWgt = FormulaWgtProcessData(
+        no: 0,
+        rawId: '-',
+        rawName: '-',
+        fmaMode: fmode,
+        targetWgt: 80,
+        targetPct: 80,
+        currentWgt: 0.0,
+        minWgt: 50,
+        maxWgt: 100,
+        errorWgt: 0,
+        errorPct: 0,
+        currentErrorWgt: 0.0,
+        currentErrorPct: 0.0,
+        isOK: 'no', //no 未开始 low: 低，high: 高，ok: 正常 初始值都是 low
+      );
+      processWgtList.add(processWgt);
+    }
+
+    for (var detail in widget.selectFormula.details!) {
+      if (fmode == 'wgt') {
+        minValue = detail.formulaDetail!.materialWeight! -
+            detail.formulaDetail!.allowableError!;
+        maxValue = detail.formulaDetail!.materialWeight! +
+            detail.formulaDetail!.allowableError!;
+        errorWgt = detail.formulaDetail!.allowableError!;
+        targetWgt = detail.formulaDetail!.materialWeight!;
+      } else {
+        minValue = initTotalWeight *
+                (detail.formulaDetail!.materialPercentage! / 100) -
+            detail.formulaDetail!.allowableError! * initTotalWeight / 100;
+        minValue = double.parse(minValue.toStringAsFixed(3));
+        maxValue = initTotalWeight *
+                (detail.formulaDetail!.materialPercentage! / 100) +
+            detail.formulaDetail!.allowableError! * initTotalWeight / 100;
+        maxValue = double.parse(maxValue.toStringAsFixed(3));
+        errorWgt =
+            detail.formulaDetail!.allowableError! * initTotalWeight / 100;
+        errorWgt = double.parse(errorWgt.toStringAsFixed(3));
+        targetWgt =
+            initTotalWeight * (detail.formulaDetail!.materialPercentage! / 100);
+        targetWgt = double.parse(targetWgt.toStringAsFixed(3));
+      }
+      FormulaWgtProcessData processWgt = FormulaWgtProcessData(
+        no: detail.formulaDetail?.sequence,
+        rawId: detail.formulaDetail?.materialId,
+        rawName: detail.rawMaterialTypeName?.rawMaterial!.materialName,
+        fmaMode: fmode,
+        targetWgt: targetWgt,
+        targetPct: detail.formulaDetail?.materialPercentage,
+        currentWgt: 0.0,
+        minWgt: minValue < 0 ? 0 : minValue,
+        maxWgt: maxValue,
+        errorWgt: errorWgt,
+        errorPct: detail.formulaDetail?.allowableError,
+        currentErrorWgt: 0.0,
+        currentErrorPct: 0.0,
+        isOK: 'no', //no 未开始 low: 低，high: 高，ok: 正常 初始值都是 low
+      );
+      processWgtList.add(processWgt);
+    }
+    if (processWgtList.isNotEmpty) {
+      selectedProcessWgt = processWgtList[0]; //默认选中第一个原料重量
+    }
+  }
+
+  getFmaUnit() {
+    fmaUnit = widget.selectFormula.header!.formulaHeader!.formulaUnit ?? '';
+  }
+
+  void getScaleInfo() {
+    PublicFunctions.getWeight(widget.selScaleId);
+    DefScaleInfo.getDefScaleInfo(widget.selScaleId);
+  }
+
+  //生成订单编号
+  void createRecNumber() {
+    String company = "T-Scale"; // 公司名称
+    DateTime now = DateTime.now();
+    String year = now.year.toString(); // 取年份的后两位
+    String month = now.month.toString().padLeft(2, '0'); // 取月份，不足两位时补零
+    String day = now.day.toString().padLeft(2, '0'); // 取日期，不足两位时补零
+    String hour = now.hour.toString().padLeft(2, '0'); // 取小时，不足两位时补零
+    String minute = now.minute.toString().padLeft(2, '0'); // 取分钟，不足两位时补零
+    String second = now.second.toString().padLeft(2, '0'); // 取秒数，不足两位时补零
+// 拼接成订单编号
+    String orderNumber = "$company-$year$month$day$hour$minute$second";
+    recRecNumber = orderNumber;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+    //将传入的配方信息赋值给processWgtList
+    initTotalWgtUnit();
+    initWgtList();
+    getScaleInfo();
+    createRecNumber();
+    getFmaUnit();
+    cntScaleTimerMgr.startCntAliveTimer(10);
+
+    startSetWgtStartFalseTimer();
+    startCheckWgtStartTimer();
+
+    _eventbus1 = eventBus.on<EventRespGetRawTypeList>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+        if (dataStr != '') {
+          setState(() {
+            rawTypeList = categoryTypeListFromJson(dataStr);
+          });
+        } else {
+          setState(() {
+            rawTypeList = [];
+          });
+        }
+      }
+    });
+    _eventbus2 = eventBus.on<EventRespGetFormulaTypeList>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+        if (dataStr != '') {
+          setState(() {
+            formulaTypeList = categoryTypeListFromJson(dataStr);
+          });
+        } else {
+          setState(() {
+            formulaTypeList = [];
+          });
+        }
+      }
+    });
+    _eventbus3 = eventBus.on<EventRespGetRawDataList>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+        if (dataStr != '' && dataStr != 'null') {
+          setState(() {
+            rawDataList = rawDataInfoFromJson(dataStr);
+            // print(rawDataList.length);
+          });
+        } else {
+          setState(() {
+            rawDataList = [];
+          });
+        }
+      }
+    });
+    _eventbus4 = eventBus.on<EventRespAddRawData>().listen((event) {
+      if (mounted) {
+        PublicFunctions.getRawList();
+      }
+    });
+    _eventbus5 = eventBus.on<EventRespAddFormulaType>().listen((event) {
+      if (mounted) {
+        PublicFunctions.getFormulaTypeList();
+      }
+    });
+
+    _eventbus6 = eventBus.on<EventRespFormulaList>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+        if (dataStr != '' && dataStr != 'null') {
+          setState(() {
+            formulaDataList = formulaInfoDbFromJson(dataStr);
+            // print(formulaDataList.length);
+          });
+        } else {
+          setState(() {
+            formulaDataList = [];
+          });
+        }
+      }
+    });
+
+    _eventbus7 = eventBus.on<EventRespFormulaRecAdd>().listen((event) {
+      if (mounted) {
+        PublicFunctions.getFormulaRecList();
+      }
+    });
+
+    _eventbus8 = eventBus.on<EventReqWeightCountine>().listen((event) {
+      if (mounted) {
+        setState(() {
+          ReqWeightCountine tempWeight = ReqWeightCountine();
+          tempWeight = event.obj;
+          if (tempWeight.scaleId == myDefScaleInfo.defScaleId!) {
+            myReqWeightCountine = tempWeight;
+            if (tempWeight.scaleId == 1) {
+              myComScaleInfo.isOnline = true;
+            }
+
+            // isCnting = true;
+            isWgtStart = true;
+            if (myReqWeightCountine.msgBody!.weightUnit !=
+                    widget.selectFormula.header!.formulaHeader!.formulaUnit &&
+                isShowTipDialog == false) {
+              isShowTipDialog = true;
+              showTipDialog();
+            }
+            if (myReqWeightCountine.msgBody != null) {
+              try {
+                currentWgtStrNotifier.value =
+                    myReqWeightCountine.msgBody!.weightVal; // 更新当前重量
+                currentRawWgt =
+                    double.parse(myReqWeightCountine.msgBody!.weightVal);
+                // currentRawWgt =
+                //     double.parse(myReqWeightCountine.msgBody!.weightVal) -
+                //         actualTotalRawWgt;
+                currentRawWgt = double.parse(currentRawWgt.toStringAsFixed(3));
+                // if (currentRawWgt < 0) {
+                //   currentRawWgt = 0.0;
+                // }
+              } catch (e) {
+                // 处理转换失败的情况
+                // print('Failed to parse weight value: $e');
+                currentRawWgt = 0.0;
+              }
+            }
+          }
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+    _eventbus1.cancel();
+    _eventbus2.cancel();
+    _eventbus3.cancel();
+    _eventbus4.cancel();
+    _eventbus5.cancel();
+    _eventbus6.cancel();
+    _eventbus7.cancel();
+    _eventbus8.cancel();
+    cntScaleTimerMgr.stopCntAliveTimer();
+    currentWgtStrNotifier.dispose();
+    setWgtStartFalseTimer?.cancel(); // 取消定时器
+    checkWgtStartTimer?.cancel(); // 取消定时器
+  }
+
+  // 提示切换单位对话框
+  void showTipDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 点击对话框外部不关闭对话框
+      builder: (BuildContext context) {
+        return ShowUnitTipDialog(
+          title: localizedStrings.fTipTitle,
+          msg:
+              '${localizedStrings.fWgtUnit} ${widget.selectFormula.header!.formulaHeader!.formulaUnit!}, ${localizedStrings.fSwitchUnitHint}',
+        );
+      },
+    ).then((value) {
+      Future.delayed(const Duration(seconds: 5), () {
+        if (mounted) {
+          setState(() {
+            isShowTipDialog = false;
+          });
+        }
+      });
+    });
+  }
+
+  // 显示新增配方类型对话框
+  void showDeleteTipDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 点击对话框外部不关闭对话框
+      builder: (BuildContext context) {
+        return ShowDeleteTipDialog(
+          title: localizedStrings.fTipTitle,
+          msg: localizedStrings.fClearWeighingDataMsg,
+        );
+      },
+    ).then((value) {
+      if (value) {
+        setState(() {
+          //清空所有称重数据
+          processWgtList.clear();
+          currentRawWgt = 0.0;
+          clickedRow = 0;
+          startFormula = false;
+          isEnableNext = true;
+
+          initWgtList();
+        });
+      }
+    });
+  }
+
+  //获取原料OK的数量
+  int getOKCount() {
+    int count = 0;
+    for (var wgt in processWgtList) {
+      if (wgt.isOK == okStr) {
+        count++;
+      }
+    }
+    return count;
+  }
+
+  //检查是否全部OK
+  bool checkAllOK() {
+    for (var wgt in processWgtList) {
+      if (wgt.isOK != okStr) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  saveFmaRec(bool isAllOK) {
+    //通过当前原料的重量计算总的原料的实际重量
+    double actualTotalRawWgt = 0.0;
+    for (var wgtRec in processWgtList) {
+      if (wgtRec.currentWgt != null && wgtRec.no != 0) {
+        actualTotalRawWgt += wgtRec.currentWgt!;
+      }
+    }
+    RecHeader recHeader = RecHeader(
+      recordId: recRecNumber, //配方订单编号
+      recHeaderOperator: 'admin', //操作员
+      formulaId: widget.selectFormula.header!.formulaHeader!.formulaId, //配方ID
+      formulaTypeName:
+          widget.selectFormula.header!.formulaHeader!.formulaName, //配方名称
+      totalWeight:
+          widget.selectFormula.header!.formulaHeader!.totalWeight!, //总重量
+      actualFmaTotalWgt: needTotalWgt, //实际配方总重量包括修正的重量
+      actualTotalWeight: actualTotalRawWgt, //实际原料总重量
+      totalWeightUnit:
+          widget.selectFormula.header!.formulaHeader!.formulaUnit, //总重量单位
+
+      totalMaterialWeightUnit:
+          widget.selectFormula.header!.formulaHeader!.formulaUnit, //总原料重量单位
+      isQualified: isAllOK ? 'yes' : 'no', //是否合格
+      scaleId: widget.selScaleId, //秤ID
+      scaleName: myDefScaleInfo.defScaleName, //秤名称
+      scaleModel: myDefScaleInfo.defScaleModel, //秤型号
+      scaleSn: myDefScaleInfo.defScaleSn, //秤SN
+    );
+
+    List<RecDetail>? reqRecDetailList = []; //配方明细集合
+    for (var wgtRec in processWgtList) {
+//计算实际百分比
+      double actualPct = 0.0;
+      if (needTotalWgt != 0) {
+        actualPct = wgtRec.currentWgt! / needTotalWgt * 100;
+        actualPct = double.parse(actualPct.toStringAsFixed(3));
+      }
+
+      RecDetail recDetail = RecDetail(
+        recordId: recRecNumber, //配方订单编号
+        materialId: wgtRec.rawId, //原料ID
+        sequence: wgtRec.no, //顺序
+        allowableError: wgtRec.errorWgt, //允许误差
+        targetWgt: wgtRec.targetWgt, //目标重量
+        actualWeight: wgtRec.currentWgt, //实际重量
+        actualWeightUnit: fmaUnit, //实际重量单位
+        actualPercentage: actualPct, //实际百分比
+        actualErrorWgt: wgtRec.currentErrorWgt, //实际误差重量
+        actualErrorPct: wgtRec.currentErrorPct, //实际误差百分比
+        isQualified: wgtRec.isOK, //是否合格
+      );
+      reqRecDetailList.add(recDetail);
+    }
+
+    ReqAddFmaRec reqAddFmaRec =
+        ReqAddFmaRec(recHeader: recHeader, recDetail: reqRecDetailList); //配方
+
+    PublicFunctions.addFormulaRec(reqAddFmaRecToJson(reqAddFmaRec));
+
+    setState(() {
+      isFinish = true;
+      isEnableNext = false;
+    });
+  }
+
+  showBottomBtn() {
+    return Container(
+        height: 76,
+        color: Theme.of(context).colorScheme.surface,
+        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          SizedBox(
+            width: 200,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                fixedSize: const Size(double.infinity, 48),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
+                ),
+              ),
+              onPressed: !isFinish
+                  ? () {
+                      bool isAllOK = checkAllOK();
+                      if (!isAllOK) {
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false, // 点击对话框外部不关闭对话框
+                          builder: (BuildContext context) {
+                            return ShowNormalTipDialog(
+                              title: localizedStrings.fTipTitle,
+                              msg: localizedStrings.fFormulaUnqualifiedMsg,
+                            );
+                          },
+                        ).then((value) {
+                          if (value) {
+                            // 保存
+                            saveFmaRec(isAllOK);
+                            PublicFunctions.stopWeight(widget.selScaleId);
+                            Navigator.pop(context);
+                          } else {
+                            return;
+                          }
+                        });
+                      } else {
+                        saveFmaRec(isAllOK);
+                        PublicFunctions.stopWeight(widget.selScaleId);
+                        Navigator.pop(context);
+                      }
+                    }
+                  : null,
+              child: Text(
+                localizedStrings.fCompleteIngredientsBtn,
+                style: TextStyle(
+                  fontWeight: FontWeight.normal,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 20,
+          ),
+          SizedBox(
+              width: 200,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor:
+                      Theme.of(context).colorScheme.onSurfaceVariant,
+                  backgroundColor: Theme.of(context).colorScheme.outline,
+                  fixedSize: const Size(double.infinity, 48),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
+                  ),
+                ),
+                onPressed: () {
+                  if (!isFinish) {
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false, // 点击对话框外部不关闭对话框
+                      builder: (BuildContext context) {
+                        return ShowDeleteTipDialog(
+                          title: localizedStrings.fTipTitle,
+                          msg: localizedStrings.fClearWeighingDataMsg,
+                        );
+                      },
+                    ).then((value) {
+                      if (value) {
+                        setState(() {
+                          PublicFunctions.stopWeight(widget.selScaleId);
+                          Navigator.pop(context);
+                        });
+                      }
+                    });
+                  } else {
+                    PublicFunctions.stopWeight(widget.selScaleId);
+                    Navigator.pop(context);
+                  }
+                },
+                child: Text(
+                  localizedStrings.fAbandonIngredientsBtn,
+                  style: TextStyle(
+                    fontWeight: FontWeight.normal,
+                    color: Theme.of(context).colorScheme.onSurface,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              )),
+        ]));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // final width = MediaQuery.of(context).size.width;
+    return Scaffold(
+        body: Container(
+      color: bgColor, //对接时修改颜色值
+      child: Padding(
+        padding: const EdgeInsets.all(14.0),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                children: [
+                  showTitleBar(),
+                  Divider(
+                    color: Theme.of(context).colorScheme.outline,
+                    thickness: 1,
+                    height: 1,
+                  ),
+                  showFormulaInfoAndWgt(),
+                  Divider(
+                    color: Theme.of(context).colorScheme.outline,
+                    thickness: 1,
+                    height: 1,
+                  ),
+                  Container(
+                      height: 42,
+                      color: Theme.of(context).colorScheme.surface,
+                      child: Row(children: [
+                        SizedBox(
+                          width: 17,
+                        ),
+                        Expanded(
+                          child: Text(localizedStrings.fIngredientsRecordTitle),
+                        ),
+                        SizedBox(
+                          width: 100,
+                          child: TextButton(
+                              onPressed: () {
+                                showDeleteTipDialog();
+                              },
+                              child: Text(localizedStrings.fClearBtn)),
+                        )
+                      ])),
+                  showWgtTable(),
+                  Container(
+                    height: 14,
+                    color: Theme.of(context).colorScheme.surface,
+                  ),
+                  showBottomBtn(),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    ));
+  }
+
+  Widget showRawWgtAndUnit(int index, Color? textColor) {
+    // ... existing code ...
+    final formulaHeader = widget.selectFormula.header?.formulaHeader;
+    final formulaDetail = widget.selectFormula.details?[index].formulaDetail;
+
+    if (formulaHeader != null && formulaDetail != null) {
+      final weight = formulaDetail.materialWeight;
+      final unit = formulaHeader.formulaMode == "pct"
+          ? pctStrShow
+          : formulaHeader.formulaUnit;
+      final displayText = '$weight $unit';
+
+      return Text(
+        displayText,
+        style: TextStyle(
+          color: textColor,
+        ),
+      );
+    } else {
+      // 处理数据为空的情况
+      return Text(
+        '未知',
+        style: TextStyle(
+          color: textColor,
+        ),
+      );
+    }
+  }
+
+  bool checkRawDelete(Object? data) {
+    if (data == null || data is! RawDataInfo) {
+      return false;
+    }
+    final targetMaterialId = data.rawMaterial.materialId;
+    return formulaDataList.every((formula) {
+      return formula.details?.every((detail) {
+            return detail.formulaDetail?.materialId != targetMaterialId;
+          }) ??
+          true;
+    });
+  }
+
+  showWgtTable() {
+    return Expanded(
+        flex: 10,
+        child: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+          // 获取表格的最大宽度
+          double maxWidth = constraints.maxWidth;
+          // 计算表格的实际宽度，减去左侧和右侧的边距
+          int columnCount = 7; // 列数
+          if (widget.selectFormula.header!.formulaHeader!.formulaMode ==
+              "pct") {
+            columnCount = 8;
+          }
+          double tableWidth = maxWidth - 45 - 80;
+          //80 序号
+          double columnWidth = tableWidth / columnCount;
+          return Container(
+            padding: const EdgeInsets.only(left: 20, right: 20),
+            color: Theme.of(context).colorScheme.surface,
+            child: StickyTable(
+              controller: _scrollController, // 传递 ScrollController
+              // 修改 data 属性
+              data: processWgtList.isEmpty
+                  ? []
+                  : sort
+                      ? processWgtList.reversed.toList()
+                      : processWgtList,
+              defaultColumnWidth: const FixedColumnWidth(130),
+              titleHeight: 48,
+              cellHeight: 44,
+              clickedRow: clickedRow,
+              onRowClick: (row) {
+                if (enableSelRaw) {
+                  setState(() {
+                    clickedRow = row;
+                    selectedProcessWgt = processWgtList[row];
+                  });
+                }
+              },
+
+              cellDecoration: (context, column, data, row, columnIndex) {
+                // 添加点击行背景色
+                if (row == clickedRow) {
+                  return BoxDecoration(
+                    color: clickColor,
+                    border: Border(
+                      bottom: BorderSide(
+                          color: Theme.of(context).colorScheme.primary,
+                          width: 1),
+                    ),
+                  );
+                }
+                return BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  border: Border(
+                    bottom: BorderSide(color: lineColor, width: 1),
+                  ),
+                );
+              },
+              columns: [
+                StickyTableColumn(
+                  localizedStrings.fIngredientOrder,
+                  fixedStart: true,
+                  showSort: true,
+                  sort: false,
+                  columnWidth: FixedColumnWidth(80),
+                  alignment: Alignment.centerLeft,
+                  onTitleClick: (context, title) {},
+                  // 修改 renderCell 方法
+                  renderCell: (context, title, data, row, column) {
+                    return Text((data as FormulaWgtProcessData).no.toString());
+                  },
+                  renderTitle: (context, title) {
+                    return SizedBox(
+                      width: 80 - 20,
+                      child: Text(
+                        title.title,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                            color: Color.fromARGB(255, 4, 68, 230)),
+                      ),
+                    );
+                  },
+                ),
+                StickyTableColumn(
+                  localizedStrings.fMaterialIdCol,
+                  showSort: true,
+                  sort: false,
+                  columnWidth: FixedColumnWidth(columnWidth),
+                  alignment: Alignment.centerLeft,
+                  onCellClick: (context, title, data, row, column) {
+                    // ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                    // ScaffoldMessenger.of(
+                    //   context,
+                    // ).showSnackBar(SnackBar(content: Text("年龄$data")));
+                  },
+                  // 修改 renderCell 方法
+                  renderCell: (context, title, data, row, column) {
+                    return Text((data as FormulaWgtProcessData).rawId!);
+                  },
+                ),
+                StickyTableColumn(
+                  localizedStrings.fMaterialNameCol,
+                  columnWidth: FixedColumnWidth(columnWidth),
+                  showSort: true,
+                  sort: false,
+                  alignment: Alignment.centerLeft,
+                  onCellClick: (context, title, data, row, column) {
+                    // ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                    // ScaffoldMessenger.of(
+                    //   context,
+                    // ).showSnackBar(SnackBar(content: Text("年龄$data")));
+                  },
+                  // 修改 renderCell 方法
+                  renderCell: (context, title, data, row, column) {
+                    return Text(
+                        //修改了此处
+                        (data as FormulaWgtProcessData).no == 0
+                            ? localizedStrings.fFmaContainer
+                            : (data).rawName!);
+                  },
+                ),
+                if (widget.selectFormula.header!.formulaHeader!.formulaMode ==
+                    "pct")
+                  StickyTableColumn(
+                    localizedStrings.fPctMode,
+                    columnWidth: FixedColumnWidth(columnWidth),
+                    showSort: true,
+                    sort: false,
+                    alignment: Alignment.centerLeft,
+                    onCellClick: (context, title, data, row, column) {
+                      // ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      // ScaffoldMessenger.of(
+                      //   context,
+                      // ).showSnackBar(SnackBar(content: Text("年龄$data")));
+                    },
+                    // 修改 renderCell 方法
+                    renderCell: (context, title, data, row, column) {
+                      return Text(
+                        (data as FormulaWgtProcessData).targetPct.toString(),
+                        overflow: TextOverflow.ellipsis,
+                      );
+                    },
+                  ),
+                StickyTableColumn(
+                  localizedStrings.fTargetWeightLabel,
+                  showSort: true,
+                  sort: false,
+                  columnWidth: FixedColumnWidth(columnWidth),
+                  alignment: Alignment.centerLeft,
+                  onCellClick: (context, title, data, row, column) {
+                    // ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                    // ScaffoldMessenger.of(
+                    //   context,
+                    // ).showSnackBar(SnackBar(content: Text("年龄$data")));
+                  },
+                  // 修改 renderCell 方法
+                  renderCell: (context, title, data, row, column) {
+                    return Text(
+                        //修改了此处
+                        (data as FormulaWgtProcessData).no == 0
+                            ? "-"
+                            : (data).targetWgt.toString());
+                  },
+                ),
+                StickyTableColumn(
+                  localizedStrings.fCurrentWeightLabel,
+                  showSort: true,
+                  sort: false,
+                  columnWidth: FixedColumnWidth(columnWidth),
+                  alignment: Alignment.centerLeft,
+                  onCellClick: (context, title, data, row, column) {
+                    // ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                    // ScaffoldMessenger.of(
+                    //   context,
+                    // ).showSnackBar(SnackBar(content: Text("年龄$data")));
+                  },
+                  // 修改 renderCell 方法
+                  renderCell: (context, title, data, row, column) {
+                    return Text(
+                        (data as FormulaWgtProcessData).currentWgt.toString());
+                  },
+                ),
+                StickyTableColumn(
+                  localizedStrings.fAllowableErrorWeightLabel,
+                  showSort: true,
+                  sort: false,
+                  columnWidth: FixedColumnWidth(columnWidth),
+                  alignment: Alignment.centerLeft,
+                  onCellClick: (context, title, data, row, column) {
+                    // ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                    // ScaffoldMessenger.of(
+                    //   context,
+                    // ).showSnackBar(SnackBar(content: Text("年龄$data")));
+                  },
+                  // 修改 renderCell 方法
+                  renderCell: (context, title, data, row, column) {
+                    return Text(
+                        //修改了此处
+                        (data as FormulaWgtProcessData).no == 0
+                            ? "-"
+                            : (data as FormulaWgtProcessData)
+                                .errorWgt
+                                .toString());
+                  },
+                ),
+                StickyTableColumn(
+                  localizedStrings.fCurrentErrorWeightLabel,
+                  showSort: true,
+                  sort: false,
+                  columnWidth: FixedColumnWidth(columnWidth),
+                  alignment: Alignment.centerLeft,
+                  onCellClick: (context, title, data, row, column) {
+                    // ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                    // ScaffoldMessenger.of(
+                    //   context,
+                    // ).showSnackBar(SnackBar(content: Text("年龄$data")));
+                  },
+                  // 修改 renderCell 方法
+                  renderCell: (context, title, data, row, column) {
+                    return Text(
+                        //修改了此处
+                        (data as FormulaWgtProcessData).no == 0
+                            ? "-"
+                            : (data).currentErrorWgt.toString());
+                  },
+                ),
+                StickyTableColumn(
+                  localizedStrings.fQualificationStatus,
+                  showSort: true,
+                  sort: false,
+                  columnWidth: FixedColumnWidth(columnWidth),
+                  alignment: Alignment.centerLeft,
+                  onCellClick: (context, title, data, row, column) {
+                    // ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                    // ScaffoldMessenger.of(
+                    //   context,
+                    // ).showSnackBar(SnackBar(content: Text("年龄$data")));
+                  },
+                  // 修改 renderCell 方法
+                  renderCell: (context, title, data, row, column) {
+                    return Text(
+                      //修改了此处
+                      (data as FormulaWgtProcessData).no == 0
+                          ? "-"
+                          : (data).isOK! == "no"
+                              ? localizedStrings.fIncompleteStatus
+                              : (data).isOK! == "ok"
+                                  ? localizedStrings.fQualified
+                                  : localizedStrings.fUnqualified,
+                      style: TextStyle(
+                        color: (data).isOK! == "no"
+                            ? Color(0xFF666666)
+                            : (data).isOK! == "ok"
+                                ? greenColor
+                                : redColor,
+                      ),
+                    );
+                  },
+                ),
+                // StickyTableColumn(
+                //   "补充",
+                //   fixedEnd: true,
+                //   columnWidth: const FixedColumnWidth(50),
+                //   renderCell: (context, title, data, row, column) {
+                //     return MaterialButton(
+                //       onPressed: () {
+                //         // ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                //         // ScaffoldMessenger.of(
+                //         //   context,
+                //         // ).showSnackBar(SnackBar(
+                //         //     content: Text(
+                //         //         "删除${(data as FormulaInfoDb)..header!.formulaHeader!.formulaName!}成功")));
+                //       },
+                //       // color: Colors.red,
+                //       minWidth: 0,
+                //       child: Center(
+                //           child: Icon(
+                //         size: 20,
+                //         Icons.add_comment_outlined,
+                //         color: Theme.of(context).colorScheme.primary,
+                //       )),
+                //     );
+                //   },
+                // ),
+              ],
+            ),
+          );
+        }));
+  }
+
+  showFCode() {
+    String id = "";
+    if (widget.selectFormula.header == null ||
+        widget.selectFormula.header!.formulaHeader == null ||
+        widget.selectFormula.header!.formulaHeader!.formulaId == null) {
+      id = "";
+    } else {
+      id = widget.selectFormula.header!.formulaHeader!.formulaId!;
+    }
+    return Expanded(
+      child: Text(
+        id,
+        style: TextStyle(
+          fontSize: 14,
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
+        overflow: TextOverflow.ellipsis,
+        maxLines: 1,
+      ),
+    );
+  }
+
+  showFName() {
+    String name = "";
+    if (widget.selectFormula.header == null ||
+        widget.selectFormula.header!.formulaHeader == null ||
+        widget.selectFormula.header!.formulaHeader!.formulaName == null) {
+      name = "";
+    } else {
+      name = widget.selectFormula.header!.formulaHeader!.formulaName!;
+    }
+    return Expanded(
+      child: Text(
+        name,
+        style: TextStyle(
+          fontSize: 14,
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
+        overflow: TextOverflow.ellipsis,
+        maxLines: 1,
+      ),
+    );
+  }
+
+  showFormulaName() {
+    return Container(
+      height: 28,
+      color: Theme.of(context).colorScheme.surface,
+      alignment: Alignment.centerLeft,
+      child: Row(children: [
+        // 显示标签部分，设置固定宽度
+        ConstrainedBox(
+          constraints: BoxConstraints(
+            minWidth: 0, // 最小宽度为 0
+            maxWidth: 200, // 最大宽度为 200
+          ),
+          child: Text(
+            localizedStrings.fFmaNameLabel + ": ",
+            style: TextStyle(
+              fontSize: 14,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+          ),
+        ),
+        // 显示编号内容部分，用 Expanded 约束宽度
+        showFName()
+      ]),
+    );
+  }
+//显示总重和单位
+
+  showTotalWgtAndUnit() {
+    final header = widget.selectFormula.header;
+    final formulaHeader = header?.formulaHeader;
+    final totalWeight = formulaHeader?.totalWeight;
+    final formulaUnit = formulaHeader?.formulaUnit;
+
+    final displayText = totalWeight != null && formulaUnit != null
+        ? '$totalWeight  $formulaUnit'
+        : '';
+
+    return Expanded(
+      child: Text(
+        displayText,
+        style: TextStyle(
+          fontSize: 14,
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
+        overflow: TextOverflow.ellipsis,
+        maxLines: 1,
+      ),
+    );
+  }
+
+  showFInfo() {
+    return Expanded(
+      flex: 9,
+      child: Column(children: [
+        SizedBox(
+          height: 28,
+          child: Row(children: [
+            Expanded(
+              flex: 1,
+              child: Container(
+                height: 28,
+                color: Theme.of(context).colorScheme.surface,
+                alignment: Alignment.centerLeft,
+                child: Row(children: [
+                  // 显示标签部分
+                  Flexible(
+                    fit: FlexFit.loose,
+                    child: Text(
+                      localizedStrings.fFmaIdLabel + ": ",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                  ),
+                  // 显示编号内容部分，用 Expanded 约束宽度
+                  showFCode()
+                ]),
+              ),
+            ),
+            Expanded(
+              flex: 1,
+              child: Container(
+                height: 28,
+                color: Theme.of(context).colorScheme.surface,
+                alignment: Alignment.centerLeft,
+                child: Row(children: [
+                  Flexible(
+                    fit: FlexFit.loose,
+                    child: Text(
+                      localizedStrings.fTotalWeightLabel + ": ",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                  ),
+                  // 显示编号内容部分，用 Expanded 约束宽度
+                  showTotalWgtAndUnit()
+                ]),
+              ),
+            ),
+          ]),
+        ),
+        showFormulaName(),
+        Container(
+          height: 40,
+          color: Theme.of(context).colorScheme.surface,
+          alignment: Alignment.centerLeft,
+          child: Row(children: [
+            // 显示标签部分，设置固定宽度
+            Expanded(
+              child: Text(
+                localizedStrings.fRemarkCol,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+            ),
+            // 显示编号内容部分，用 Expanded 约束宽度
+          ]),
+        ),
+        Expanded(
+          child: Container(
+            alignment: Alignment.topLeft,
+            child: SelectableText(
+              widget.selectFormula.header == null ||
+                      widget.selectFormula.header!.formulaHeader == null ||
+                      widget.selectFormula.header!.formulaHeader!.remark == null
+                  ? ""
+                  : widget.selectFormula.header!.formulaHeader!.remark!,
+              style: TextStyle(
+                fontSize: 12,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ),
+        )
+      ]),
+    );
+  }
+
+  String checkIsOk(double currValue, double minValue, double maxValue) {
+    //判断当前的值是否达标
+    String isWgtOk = '';
+    if (currValue >= minValue && currValue <= maxValue) {
+      isWgtOk = "ok";
+    } else if (currValue < minValue) {
+      isWgtOk = "low";
+    } else if (currValue > maxValue) {
+      isWgtOk = "high";
+    }
+    return isWgtOk;
+  }
+
+  String checkValueIsOk() {
+    //判断当前的值是否达标
+    String isWgtOk = '';
+    if (currentRawWgt + selectedProcessWgt.currentWgt! >=
+            selectedProcessWgt.minWgt! &&
+        currentRawWgt + selectedProcessWgt.currentWgt! <=
+            selectedProcessWgt.maxWgt!) {
+      isWgtOk = "ok";
+    } else if (currentRawWgt + selectedProcessWgt.currentWgt! <
+        selectedProcessWgt.minWgt!) {
+      isWgtOk = "low";
+    } else if (currentRawWgt + selectedProcessWgt.currentWgt! >
+        selectedProcessWgt.maxWgt!) {
+      isWgtOk = "high";
+    }
+    return isWgtOk;
+  }
+
+  showCompleteStatus() {
+    //显示一张图片
+    return Expanded(
+        flex: 20,
+        child: Container(
+            color: Theme.of(context).colorScheme.surface,
+            alignment: Alignment.center,
+            child: Row(children: [
+              Expanded(
+                child: Container(
+                    alignment: Alignment.center,
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Container(
+                              alignment: Alignment.bottomCenter,
+                              child: Image.asset(
+                                "assets/images/complete.png",
+                                fit: BoxFit.cover,
+                              )),
+                          SizedBox(
+                            height: 14,
+                          ),
+                          Container(
+                            alignment: Alignment.center,
+                            child: Text(
+                              localizedStrings.fFormulaCompletedTip,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ])),
+              )
+            ])));
+  }
+
+  showWgtAndProcess() {
+    return Expanded(
+      flex: 20,
+      child: Column(children: [
+        Container(
+          height: 28,
+          color: Theme.of(context).colorScheme.surface,
+          alignment: Alignment.centerLeft,
+          child: Row(children: [
+            // 显示标签部分，设置固定宽度
+            Expanded(
+              child: Text(
+                localizedStrings.fIngredientsDataLabel,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+            ),
+            // 显示编号内容部分，用 Expanded 约束宽度
+          ]),
+        ),
+        Expanded(
+            child: SizedBox(
+          child: Row(children: [
+            Expanded(
+                flex: 3,
+                child: Container(
+                  color: wgtBgColor,
+                  child: Column(children: [
+                    Expanded(
+                        flex: 3,
+                        child: SizedBox(
+                          child: Row(children: [
+                            Expanded(
+                                child: Container(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                //修改了此处
+                                selectedProcessWgt.no == 0
+                                    ? localizedStrings.fFmaContainer
+                                    : selectedProcessWgt.rawName ?? "",
+                                maxLines: 1,
+                                style: TextStyle(
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.primary,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            )),
+                          ]),
+                        )),
+                    Expanded(
+                        flex: 4,
+                        child: SizedBox(
+                          child: Row(children: [
+                            Expanded(
+                              flex: 4,
+                              child: Container(
+                                  padding: const EdgeInsets.only(left: 8.0),
+                                  alignment: Alignment.centerLeft,
+                                  child: ValueListenableBuilder<String>(
+                                    valueListenable: currentWgtStrNotifier,
+                                    builder: (context, value, child) {
+                                      return FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        alignment:
+                                            Alignment.centerLeft, // 保持文本左对齐
+                                        child: Text(
+                                          value,
+                                          maxLines: 1,
+                                          style: TextStyle(
+                                            fontSize: 48,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            fontWeight: FontWeight.bold,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  )),
+                            ),
+                            Expanded(
+                                flex: 1,
+                                child: Container(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  alignment: Alignment.bottomRight,
+                                  child: Text(
+                                    fmaUnit,
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                )),
+                          ]),
+                        )),
+                  ]),
+                )),
+            SizedBox(
+              width: 14,
+            ),
+            Expanded(
+                flex: 2,
+                child: Container(
+                  color: wgtBgColor,
+                  child: Column(children: [
+                    Expanded(
+                        flex: 1,
+                        child: SizedBox(
+                          child: Row(children: [
+                            Expanded(
+                                flex: 2,
+                                child: Container(
+                                  padding: const EdgeInsets.only(left: 8.0),
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    localizedStrings.fTargetWeightLabel,
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                )),
+                          ]),
+                        )),
+                    Expanded(
+                        flex: 2,
+                        child: SizedBox(
+                          child: Row(children: [
+                            Expanded(
+                              flex: 4,
+                              child: Container(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                alignment: Alignment.centerLeft,
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  alignment: Alignment.centerLeft, // 保持文本左对齐
+                                  child: Text(
+                                    //修改了此处
+                                    selectedProcessWgt.no == 0
+                                        ? "--"
+                                        : double.parse(
+                                                (selectedProcessWgt.targetWgt! -
+                                                        selectedProcessWgt
+                                                            .currentWgt!)
+                                                    .toStringAsFixed(3))
+                                            .toString(),
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                      fontSize: 48,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface,
+                                      fontWeight: FontWeight.bold,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                                flex: 1,
+                                child: Container(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  alignment: Alignment.bottomRight,
+                                  child: Text(
+                                    fmaUnit,
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                )),
+                          ]),
+                        )),
+                  ]),
+                )),
+            SizedBox(
+              width: 14,
+            ),
+            Expanded(
+                flex: 2,
+                child: Container(
+                  color: wgtBgColor,
+                  child: Column(children: [
+                    Expanded(
+                        flex: 1,
+                        child: SizedBox(
+                          child: Row(children: [
+                            Expanded(
+                                child: Container(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                localizedStrings.fAllowableError,
+                                maxLines: 1,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            )),
+                          ]),
+                        )),
+                    Expanded(
+                        flex: 2,
+                        child: SizedBox(
+                          child: Row(children: [
+                            Expanded(
+                              flex: 4,
+                              child: Container(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                alignment: Alignment.centerLeft,
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  alignment: Alignment.centerLeft, // 保持文本左对齐
+                                  child: Text(
+                                    //修改了此处
+                                    selectedProcessWgt.no == 0
+                                        ? "--"
+                                        : '$showErrorStr ${selectedProcessWgt.errorWgt}',
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                      fontSize: 48,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface,
+                                      fontWeight: FontWeight.bold,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                                flex: 1,
+                                child: Container(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  alignment: Alignment.bottomRight,
+                                  child: Text(
+                                    fmaUnit,
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                )),
+                          ]),
+                        )),
+                  ]),
+                )),
+            SizedBox(
+              width: 14,
+            ),
+          ]),
+        )),
+        Expanded(
+            child: SizedBox(
+          child: Row(children: [
+            Expanded(
+                flex: 6,
+                child: Container(
+                  color: wgtBgColor,
+                  child: Column(children: [
+                    Expanded(
+                        flex: 1,
+                        child: SizedBox(
+                            child: Column(children: [
+                          Expanded(
+                              flex: 1,
+                              child: Container(
+                                alignment: Alignment.centerLeft,
+                                color: Color.fromARGB(255, 249, 252, 252),
+                                child: Text(
+                                    localizedStrings.fRawMaterialWeightLabel),
+                              )),
+                          Expanded(
+                            flex: 1,
+                            child: LayoutBuilder(
+                              builder: (BuildContext context,
+                                  BoxConstraints constraints) {
+                                // 获取 Container 的最大宽度
+                                double maxWidth = constraints.maxWidth;
+                                double maxHeight = constraints.maxHeight;
+
+                                return Container(
+                                  // 使用自定义进度条组件
+                                  alignment: Alignment.centerLeft,
+                                  child: CustomProgressBar(
+                                    value: currentRawWgt < 0
+                                        ? 0
+                                        : currentRawWgt, // 传入当前值
+                                    minValue: double.parse(
+                                                (selectedProcessWgt.minWgt! -
+                                                        selectedProcessWgt
+                                                            .currentWgt!)
+                                                    .toStringAsFixed(3)) <
+                                            0
+                                        ? 0.0
+                                        : double.parse((selectedProcessWgt
+                                                    .minWgt! -
+                                                selectedProcessWgt.currentWgt!)
+                                            .toStringAsFixed(3)), // 传入最小值
+
+                                    maxValue: double.parse(
+                                                (selectedProcessWgt.maxWgt! -
+                                                        selectedProcessWgt
+                                                            .currentWgt!)
+                                                    .toStringAsFixed(3)) <
+                                            0
+                                        ? 0.0
+                                        : double.parse((selectedProcessWgt
+                                                    .maxWgt! -
+                                                selectedProcessWgt.currentWgt!)
+                                            .toStringAsFixed(3)), // 传入最大值
+                                    targetValue: double.parse(
+                                                (selectedProcessWgt.targetWgt! -
+                                                        selectedProcessWgt
+                                                            .currentWgt!)
+                                                    .toStringAsFixed(3)) <
+                                            0
+                                        ? 0.0
+                                        : double.parse((selectedProcessWgt
+                                                    .targetWgt! -
+                                                selectedProcessWgt.currentWgt!)
+                                            .toStringAsFixed(3)), // 传入目标值
+                                    maxWidth: maxWidth, // 传递最大宽度
+                                    maxHeight: maxHeight, // 传递最大高度
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ]))),
+                    Expanded(
+                        flex: 1,
+                        child: SizedBox(
+                            child: Column(children: [
+                          Expanded(
+                              flex: 1,
+                              child: Container(
+                                alignment: Alignment.centerLeft,
+                                color: Color.fromARGB(255, 249, 252, 252),
+                                child: Text(
+                                    localizedStrings.fFormulaProgressLabel),
+                              )),
+                          Expanded(
+                            flex: 1,
+                            child: LayoutBuilder(
+                              builder: (BuildContext context,
+                                  BoxConstraints constraints) {
+                                // 获取 Container 的最大宽度
+                                double maxWidth = constraints.maxWidth;
+                                double maxHeight = constraints.maxHeight;
+
+                                return Container(
+                                  // 使用自定义进度条组件
+                                  alignment: Alignment.centerLeft,
+                                  child: CustomFmaProgressBar(
+                                    currentValue: getOKCount(), // 传入当前值
+                                    max: processWgtList.isEmpty
+                                        ? 1
+                                        : processWgtList.length, // 传入最大值
+
+                                    maxWidth: maxWidth, // 传递最大宽度
+                                    maxHeight: maxHeight, // 传递最大高度
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ]))),
+                    SizedBox(
+                      height: 2,
+                    )
+                  ]),
+                )),
+            SizedBox(
+              width: 10,
+            ),
+            Expanded(
+                flex: 1,
+                child: SizedBox(
+                    child: Column(children: [
+                  Expanded(
+                      flex: 1,
+                      child: SizedBox(
+                        child: Row(children: [
+                          Expanded(
+                              child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor:
+                                  Theme.of(context).colorScheme.primary,
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.surface,
+                              fixedSize: const Size(double.infinity, 48),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
+                                  side: BorderSide(
+                                    color: startFormula
+                                        ? Theme.of(context).colorScheme.outline
+                                        : Theme.of(context).colorScheme.primary,
+                                  )),
+                            ),
+                            onPressed: startFormula
+                                ? null
+                                : () {
+                                    PublicFunctions.performZero();
+                                  },
+                            child: Text(
+                              localizedStrings.iBtnZero,
+                              style: TextStyle(
+                                fontWeight: FontWeight.normal,
+                                color: Theme.of(context).colorScheme.primary,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          )),
+                        ]),
+                      )),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Expanded(
+                      flex: 1,
+                      child: SizedBox(
+                        child: Row(children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor:
+                                    Theme.of(context).colorScheme.primary,
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.surface,
+                                fixedSize: const Size(double.infinity, 48),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.zero, // 可以根据需要调整圆角
+                                    side: BorderSide(
+                                      color: startFormula
+                                          ? Theme.of(context)
+                                              .colorScheme
+                                              .outline
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                    )),
+                              ),
+                              onPressed: startFormula
+                                  ? null
+                                  : () {
+                                      PublicFunctions.performTare();
+                                    },
+                              child: Text(
+                                localizedStrings.gBtnTare,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                  color: Theme.of(context).colorScheme.primary,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ]),
+                      )),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Expanded(
+                      flex: 1,
+                      child: SizedBox(
+                        child: Row(children: [
+                          Expanded(
+                              child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor:
+                                  Theme.of(context).colorScheme.onPrimary,
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.primary,
+                              fixedSize: const Size(double.infinity, 48),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
+                              ),
+                            ),
+                            onPressed: isEnableNext
+                                ? () {
+                                    handleNexBtn();
+                                  }
+                                : null,
+                            child: Text(
+                              //下一步  修改了此处
+                              localizedStrings.fNextStepBtn,
+                              style: TextStyle(
+                                fontWeight: FontWeight.normal,
+                                color: Theme.of(context).colorScheme.onPrimary,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          )),
+                        ]),
+                      )),
+                  SizedBox(
+                    height: 2,
+                  )
+                ]))),
+          ]),
+        )),
+      ]),
+    );
+  }
+
+  showFormulaInfoAndWgt() {
+    return Expanded(
+      flex: 9,
+      child: Container(
+        color: const Color.fromARGB(255, 253, 252, 252),
+        child: Column(children: [
+          Expanded(
+              child: Row(
+            children: [
+              SizedBox(
+                width: 17,
+              ),
+              showFInfo(),
+              SizedBox(
+                width: 20,
+              ),
+              VerticalDivider(
+                color: Theme.of(context).colorScheme.outline,
+                width: 1,
+              ),
+              SizedBox(
+                width: 20,
+              ),
+              checkAllOK() ? showCompleteStatus() : showWgtAndProcess(),
+              SizedBox(
+                width: 20,
+              ),
+            ],
+          ))
+        ]),
+      ),
+    );
+  }
+
+  void handleNexBtn() {
+    //判断为空
+    if (myReqWeightCountine.msgBody == null) {
+      showTipInfo(localizedStrings.fDeviceDisconnected, context);
+      return;
+    }
+    //判断当前是否已经稳定
+    if (myReqWeightCountine.msgBody!.isStable == false) {
+      showTipInfo(localizedStrings.fStableOperationHint, context);
+      return;
+    }
+    //判断是否已经开始,开始后就不能再归零扣重了
+    if (!startFormula) {
+      startFormula = true;
+    }
+    if (selectedProcessWgt.no == 0) {
+      //如果是第一个原料，直接赋值，这个原料是容器，直接赋值，执行扣重
+      selectedProcessWgt.currentWgt = currentRawWgt;
+      selectedProcessWgt.isOK = okStr;
+      PublicFunctions.performTare();
+      //然后去找下一个原料
+      findNextRaw();
+      return;
+    }
+    //判断是否合格
+    String isWgtOk = checkValueIsOk();
+
+    //不合格，重量轻了 轻了就不让往下走
+    if (isWgtOk == 'low') {
+      showTipInfo(localizedStrings.fCurrentMaterialWeightInvalidMsg, context);
+      return;
+    } else if (isWgtOk == highStr) {
+      //锁定当前重量
+      double currentTempWgtValue = currentRawWgt;
+      // 提示超重
+      showDialog(
+        context: context,
+        barrierDismissible: false, // 点击对话框外部不关闭对话框
+        builder: (BuildContext context) {
+          return ShowHignWgtTipDialog(
+            title: localizedStrings.fTipTitle,
+            msg: localizedStrings.fCurrentMaterialOverweightMsg,
+          );
+        },
+      ).then((value) {
+        if (value == 1) {
+          //放弃此次配料
+          setState(() {
+            //清空所有称重数据
+            processWgtList.clear();
+
+            currentRawWgt = 0.0;
+            clickedRow = 0;
+            startFormula = false;
+
+            initWgtList();
+          });
+        } else if (value == 2) {
+          //接受修正
+          handleReviseWgt(currentTempWgtValue);
+          PublicFunctions.performTare();
+          setState(() {});
+        } else {
+          return;
+        }
+      });
+    } else {
+      double currentTempWgtValue = currentRawWgt;
+      handleOkStatus(isWgtOk, currentTempWgtValue);
+    }
+  }
+
+  //重新计算需要的重量
+  recalculateWgtList(double lastNeedTotalWgt) {
+    //根据模式计算需要的重量
+    if (widget.selectFormula.header == null ||
+        widget.selectFormula.header!.formulaHeader == null ||
+        widget.selectFormula.header!.formulaHeader!.formulaMode == null) {
+      return;
+    }
+    String fmaMode = widget.selectFormula.header!.formulaHeader!.formulaMode!;
+
+    if (fmaMode == 'wgt') {
+      //按重量
+      for (var item in processWgtList) {
+        //如果第一个是容器，就不用去计算
+        if (item.no == 0) {
+          continue;
+        }
+        item.targetWgt = needTotalWgt * item.targetWgt! / lastNeedTotalWgt;
+        item.targetWgt = double.parse(item.targetWgt!.toStringAsFixed(3));
+        item.minWgt = item.targetWgt! - item.errorWgt!;
+        item.minWgt = double.parse(item.minWgt!.toStringAsFixed(3));
+        item.maxWgt = item.targetWgt! + item.errorWgt!;
+        item.maxWgt = double.parse(item.maxWgt!.toStringAsFixed(3));
+        item.currentErrorWgt = item.currentWgt! - item.targetWgt!;
+        item.currentErrorWgt =
+            double.parse(item.currentErrorWgt!.toStringAsFixed(3));
+        item.isOK = checkIsOk(item.currentWgt!, item.minWgt!, item.maxWgt!);
+      }
+    } else {
+      //按百分比
+      for (var item in processWgtList) {
+        if (item.no == 0) {
+          continue;
+        }
+        item.targetWgt = needTotalWgt * item.targetPct! / 100;
+        item.targetWgt = double.parse(item.targetWgt!.toStringAsFixed(3));
+        item.errorWgt = needTotalWgt * item.errorPct! / 100;
+        item.errorWgt = double.parse(item.errorWgt!.toStringAsFixed(3));
+        item.minWgt = item.targetWgt! - item.errorWgt!;
+        item.minWgt = double.parse(item.minWgt!.toStringAsFixed(3));
+        item.maxWgt = item.targetWgt! + item.errorWgt!;
+        item.maxWgt = double.parse(item.maxWgt!.toStringAsFixed(3));
+        item.currentErrorWgt = item.currentWgt! - item.targetWgt!;
+        item.currentErrorWgt =
+            double.parse(item.currentErrorWgt!.toStringAsFixed(3));
+        item.isOK = checkIsOk(item.currentWgt!, item.minWgt!, item.maxWgt!);
+      }
+    }
+  }
+
+//查找下一个原料
+  void findNextRaw() {
+    //修改了此处
+
+    //重头找第一个不合格的开始处理
+    FormulaWgtProcessData nextItem;
+    // 先查找 isOK 不为 'ok' 的项
+    try {
+      nextItem = processWgtList.firstWhere((item) => item.isOK != 'ok');
+      selectedProcessWgt = nextItem; // 更新选中的原料重量项
+      //如果有容器
+      if (widget.selectFormula.header != null &&
+          widget.selectFormula.header!.formulaHeader != null &&
+          widget.selectFormula.header!.formulaHeader!.needContainer!) {
+        clickedRow = selectedProcessWgt.no!; // 更新点击的行索引
+      } else {
+        clickedRow = selectedProcessWgt.no! - 1; // 更新点击的行索引
+      }
+
+      // print(clickedRow);
+
+      currentRawWgt = 0.000;
+    } catch (e) {
+      // 如果没有 isOK 不为 'ok' 的项，说明配方完成了
+      setState(() {
+        isEnableNext = false; // 禁用按钮
+      });
+      showTipInfo(localizedStrings.fFormulaCompletionMsg, context);
+      return;
+    }
+  }
+
+  handleReviseWgt(double tmpCurrWgt) {
+    //修正重量，将当前的原料重量赋值给目标重量
+    if (processWgtList.isNotEmpty) {
+      try {
+        //先根据当前的重量计算出需要的总重量
+        if (widget.selectFormula.header != null &&
+            widget.selectFormula.header!.formulaHeader != null &&
+            widget.selectFormula.header!.formulaHeader!.totalWeight != null &&
+            selectedProcessWgt.targetWgt != null &&
+            selectedProcessWgt.targetWgt! != 0) {
+          double lastNeedTotalWgt = needTotalWgt;
+          needTotalWgt = needTotalWgt *
+              (tmpCurrWgt + selectedProcessWgt.currentWgt!) /
+              selectedProcessWgt.targetWgt!;
+          needTotalWgt = double.parse(needTotalWgt.toStringAsFixed(3));
+          //赋值给当前的原料重量
+          var targetItem = processWgtList
+              .firstWhere((item) => item.no == selectedProcessWgt.no);
+          targetItem.currentWgt = tmpCurrWgt + targetItem.currentWgt!;
+          targetItem.currentWgt =
+              double.parse(targetItem.currentWgt!.toStringAsFixed(3));
+
+          //重新计算所有的数据
+          recalculateWgtList(lastNeedTotalWgt);
+          findNextRaw();
+        } else {
+          // 处理空值情况
+          needTotalWgt = 0.0;
+          showTipInfo('配方数据错误！', context);
+        }
+      } catch (e) {}
+    }
+  }
+
+  handleOkStatus(String isWgtOk, double currentRawWgt) {
+    //将当前的原料重量赋值给目标重量
+    if (processWgtList.isNotEmpty) {
+      try {
+        //重量模式
+        var targetItem = processWgtList
+            .firstWhere((item) => item.no == selectedProcessWgt.no);
+        targetItem.currentWgt = currentRawWgt + selectedProcessWgt.currentWgt!;
+        targetItem.isOK = isWgtOk;
+        targetItem.currentErrorWgt =
+            (targetItem.currentWgt! - selectedProcessWgt.targetWgt!);
+        targetItem.currentErrorWgt =
+            double.parse(targetItem.currentErrorWgt!.toStringAsFixed(3));
+        //百分比模式算出百分比
+        if (widget.selectFormula.header!.formulaHeader!.formulaMode! == 'pct') {
+          //计算误差的百分比
+          if (needTotalWgt > 0) {
+            targetItem.currentErrorPct =
+                (targetItem.currentErrorWgt! / needTotalWgt) * 100;
+            targetItem.currentErrorPct =
+                double.parse(targetItem.currentErrorPct!.toStringAsFixed(3));
+          }
+        }
+        PublicFunctions.performTare();
+
+        //查找下一个
+        findNextRaw();
+
+        // print(clickedRow);
+      } catch (e) {
+        // 处理未找到匹配项的情况
+        // print('未找到匹配的原料重量项: $e');
+      }
+    }
+  }
+
+//单据编号
+  showTitleBar() {
+    return Container(
+      height: 54,
+      color: Theme.of(context).colorScheme.surface,
+      child: Row(
+        children: [
+          SizedBox(
+            width: 17,
+          ),
+          Expanded(child: Text(localizedStrings.fOrderNo + ': $recRecNumber')),
+          Icon(
+            Icons.help,
+            color: Color(0xFFF4B837),
+          ),
+          SizedBox(
+            width: 20,
+          )
+        ],
+      ),
+    );
+  }
+
+  showAddFormulaIconBtn(String tip, IconData icon, Function() onPressed) {
+    return Tooltip(
+        message: tip, // 提示信息
+        child: IconButton(
+          iconSize: 24,
+          color: Theme.of(context).colorScheme.onPrimary,
+          style: IconButton.styleFrom(
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            shape: RoundedRectangleBorder(
+              // 设置为矩形形状
+              borderRadius: BorderRadius.zero, // 没有圆角，即正方形
+            ),
+            fixedSize: const Size(40, 40), // 设置固定大小
+          ),
+          onPressed: onPressed,
+          icon: Icon(icon),
+        ));
+  }
+
+  showIconButton(String tip, IconData icon, Function() onPressed) {
+    return Tooltip(
+      message: tip, // 提示信息
+      child: IconButton(
+        iconSize: 24,
+        color: Theme.of(context).colorScheme.onPrimary,
+        focusColor: Theme.of(context).colorScheme.outline,
+        hoverColor: Theme.of(context).colorScheme.outline,
+        style: IconButton.styleFrom(
+          backgroundColor: Color(0xFFF3F3F3),
+          shape: RoundedRectangleBorder(
+            // 设置为矩形形状
+            borderRadius: BorderRadius.zero, // 没有圆角，即正方形
+          ),
+          fixedSize: const Size(40, 40), // 设置固定大小
+        ),
+        onPressed: onPressed,
+        icon: Icon(
+          icon,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+      ),
+    );
+  }
+}
+
+class HandlerClearButton extends StatelessWidget {
+  const HandlerClearButton({super.key, required this.controller});
+
+  final TextEditingController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: const Icon(
+        Icons.clear,
+        size: 20,
+      ),
+      onPressed: () => controller.clear(),
+    );
+  }
+}

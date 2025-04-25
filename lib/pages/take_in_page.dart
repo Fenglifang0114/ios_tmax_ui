@@ -2048,7 +2048,7 @@ class TakeInPageState extends State<TakeInPage> {
             onPressed: () {
               Navigator.of(innerContext).pop();
             },
-            child: Text('确定'),
+            child: Text(localizedStrings.gBtnConfirm),
           ),
         ],
       ),

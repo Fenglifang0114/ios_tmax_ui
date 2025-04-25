@@ -205,7 +205,7 @@ class PluEidtPageState extends State<PluEidtPage> {
         .toList();
   }
 
-  void _handleSearchTextChanged(String value) {
+  void handleSearchTextChanged(String value) {
     List<PluData> foundDesserts = findDessertsByName(value);
     setState(() {
       _pluInfoDataSource.pluInfoList = foundDesserts;
@@ -1276,12 +1276,12 @@ class PluEidtPageState extends State<PluEidtPage> {
       // 让用户选择文件夹
       final result = await FilePicker.platform.getDirectoryPath();
       if (result != null) {
-        final filePath = path.join(result, 'ProductTemplate.xlsx');
+        final String filePath = path.join(result, 'ProductTemplate.xlsx');
         final file = File(filePath);
 
         // 将Excel数据保存到文件
         await file.writeAsBytes(excel.save()!);
-        return ('$filePath');
+        return (filePath);
       } else {
         return (localizedStrings.gTipFolderNoSelected);
       }

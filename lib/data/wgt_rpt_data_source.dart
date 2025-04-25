@@ -15,7 +15,7 @@ class WeightReportDataSource extends DataGridSource {
     buildDataGridRow();
   }
 
-  int _page = 1;
+  int pageIndex = 1;
   final int _pageSize = 100; // 每页 100 条数据
   bool _isLoading = false;
 
@@ -38,7 +38,7 @@ class WeightReportDataSource extends DataGridSource {
     );
 
     // 更新页码
-    _page = page;
+    pageIndex = page;
   }
 
   void updateData(List<WeightReportData> newReportData) {

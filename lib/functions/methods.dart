@@ -1,11 +1,10 @@
 import 'dart:convert';
-import 'package:t_max/data/comscaleinfo_data.dart';
+import 'package:t_max/data/req_formula_data.dart';
 import 'package:t_max/data/writelog.dart';
 
 import '../common/web_socket_channel.dart';
 import '../data/download_prt_fmt.dart';
 import '../data/manager_scale_channel.dart';
-import '../data/scale_info_from_scale.dart';
 import '../data/scalecmd_data.dart';
 import '../data/settingparam_data.dart';
 
@@ -186,6 +185,120 @@ class PublicFunctions {
 
   static void getLicense() {
     myScaleCmd.cmdMode = "get_license";
+    myScaleCmd.cmdData = '';
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //增加配方类型
+
+  static void addFormulaType(String formulaType) {
+    myScaleCmd.cmdMode = "add_formula_type";
+    TypeName myTypeName = TypeName(formulaType);
+    String jsonstr = jsonEncode(myTypeName);
+    myScaleCmd.cmdData = jsonstr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //增加原料类型
+
+  static void addRawType(String formulaType) {
+    myScaleCmd.cmdMode = "add_raw_type";
+    TypeName myTypeName = TypeName(formulaType);
+    String jsonstr = jsonEncode(myTypeName);
+    myScaleCmd.cmdData = jsonstr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //获取原料类型
+
+  static void getRawTypeList() {
+    myScaleCmd.cmdMode = "get_raw_type_list";
+    myScaleCmd.cmdData = '';
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  static void getFormulaTypeList() {
+    myScaleCmd.cmdMode = "get_formula_type_list";
+    myScaleCmd.cmdData = '';
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  static void getRawList() {
+    myScaleCmd.cmdMode = "get_raw_data_list";
+    myScaleCmd.cmdData = '';
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  static void addRawData(AddRawData data) {
+    myScaleCmd.cmdMode = "add_raw_data";
+    String jsonStr = addRawDataToJson(data);
+    myScaleCmd.cmdData = jsonStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  static void editRawData(EditRawData data) {
+    myScaleCmd.cmdMode = "edit_raw_data";
+    String jsonStr = editRawDataToJson(data);
+    myScaleCmd.cmdData = jsonStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  static void deleteRawData(int id) {
+    myScaleCmd.cmdMode = "delete_raw_data";
+    DeleteRawDataId data = DeleteRawDataId(recId: id);
+    myScaleCmd.cmdData = jsonEncode(data);
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //删除配方
+
+  static void deleteFormulaData(int id) {
+    myScaleCmd.cmdMode = "delete_formula_data";
+    DeleteRawDataId data = DeleteRawDataId(recId: id);
+    myScaleCmd.cmdData = jsonEncode(data);
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //增加配方
+
+  static void addFormulaData(String jsonStr) {
+    myScaleCmd.cmdMode = "add_formula_data";
+    myScaleCmd.cmdData = jsonStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  static void getFormulaList() {
+    myScaleCmd.cmdMode = "get_formula_list";
+    myScaleCmd.cmdData = '';
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //增加称重记录
+
+  static void addFormulaRec(String jsonStr) {
+    myScaleCmd.cmdMode = "add_formula_rec";
+    myScaleCmd.cmdData = jsonStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //获取称重记录
+
+  static void getFormulaRecList() {
+    myScaleCmd.cmdMode = "get_formula_rec_list";
+    myScaleCmd.cmdData = '';
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  // 增加流速数据
+  static void addFlowRateData(String reqFlowRate) {
+    myScaleCmd.cmdMode = "add_flow_rate";
+    myScaleCmd.cmdData = reqFlowRate;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  // 获取流速数据
+  static void getFlowRateData() {
+    myScaleCmd.cmdMode = "get_flow_rate_list";
     myScaleCmd.cmdData = '';
     sendMsgChan0(jsonEncode(myScaleCmd));
   }

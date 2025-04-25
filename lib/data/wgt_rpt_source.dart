@@ -270,7 +270,7 @@ class WgtInfoDataSource extends DataTableSource {
 int _selectedCount = 0;
 
 // 显示 Snackbar
-_showSnackbar(BuildContext context, String text, [Color? color]) {
+showSnackbar(BuildContext context, String text, [Color? color]) {
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
     backgroundColor: color,
     duration: const Duration(seconds: 1),

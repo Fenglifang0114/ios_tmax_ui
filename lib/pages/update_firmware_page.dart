@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:t_max/pages/sel_scales_page.dart';
-import 'package:t_max/widget/show_error_dialog.dart';
 import '../data/downloadresponse.dart';
 import '../data/language.dart';
 import '../data/manager_scale_channel.dart';

@@ -399,7 +399,7 @@
     "gBtnExport": "Export",
     "@gBtnExport": {
         "description": "This is a export button."
-    },    
+    },
     "gSelectAll": "select all",
     "@gSelectAll": {
         "description": "This is a prompt for selecting all items."
@@ -451,7 +451,7 @@
     "gDateSeparator": "Date Separator",
     "@gDateSeparator": {
         "description": "This is a prompt about date separator."
-    },  
+    },
     "zero_range": "Zero Range:",
     "@zero_range": {
         "description": ""
@@ -1807,7 +1807,7 @@
     "gRptDateTime": "Date Time",
     "@gRptDateTime": {
         "description": "This is the prompt regarding date time in the report."
-    }, 
+    },
     "gTipImportPluOK": "Note: When the cell is empty, it will be written as 0 or - .",
     "@gTipImportPluOK": {
         "description": "This is prompt for PLU import."
@@ -1939,7 +1939,7 @@
     "iTipHLUnit": "The unit of weight is the same as scale..",
     "@iTipHLUnit": {
         "description": "This is a prompt for the unit of checking weight."
-    },    
+    },
     "gTipHelp": "Help",
     "@gTipHelp": {
         "description": "This is a tip for help info."
@@ -2019,5 +2019,541 @@
     "gTipWeighingPageHelp": "1. Real time display of weighing data on the scale (supporting all units including PCS and PCT);\n2. Click [TARE] and [ZERO] allows for weighing and zeroing operations on the scale;\n3. Click the List button in the upper left corner to view the list of connected devices and make changes.\n\nNote：\n1.This function can be used by connecting to a serial port, Ethernet, or WiFi.\n2.Switching units is done on the scale.\n",
     "@gTipWeighingPageHelp": {
         "description": "This is the help info for the weighing page."
+    },
+    "fFmaListTab": "Formula List",
+    "@fFmaListTab": {
+        "description": "Tab label for formula list"
+    },
+    "fRawMaterialListTab": "Component List",
+    "@fRawMaterialListTab": {
+        "description": "Tab label for raw material list"
+    },
+    "fSearchHint": "Search by ID or Name",
+    "@fSearchHint": {
+        "description": "Hint text for search input"
+    },
+    "fPleaseSelectCategory": "Please select a category",
+    "@fPleaseSelectCategory": {
+        "description": "Placeholder for category dropdown"
+    },
+    "fAddFmaBtn": "Add Formula",
+    "@fAddFmaBtn": {
+        "description": "Button to add a new formula"
+    },
+    "fHistoricalWeighingRecordsBtn": "Records",
+    "@fHistoricalWeighingRecordsBtn": {
+        "description": "Button to view historical weighing records"
+    },
+    "fImportFmaBtn": "Import Formula",
+    "@fImportFmaBtn": {
+        "description": "Button to import formulas"
+    },
+    "fExportFmaBtn": "Export Formula",
+    "@fExportFmaBtn": {
+        "description": "Button to export formulas"
+    },
+    "fFmaNameLabel": "Name",
+    "@fFmaNameLabel": {
+        "description": "Label for formula name field"
+    },
+    "fFmaIdLabel": "ID",
+    "@fFmaIdLabel": {
+        "description": "Label for formula ID field"
+    },
+    "fIngredientCountLabel": "Quantity",
+    "@fIngredientCountLabel": {
+        "description": "Label for ingredient count display"
+    },
+    "fTotalWeightLabel": "Total Weight",
+    "@fTotalWeightLabel": {
+        "description": "Label for total weight display"
+    },
+    "fStartWeighingBtn": "Start Weighing",
+    "@fStartWeighingBtn": {
+        "description": "Button to start the weighing process"
+    },
+    "fIngredientOrder": "Order",
+    "@fIngredientOrder": {
+        "description": "Section title for ingredient order display"
+    },
+    "fIngredientRemark": "Component Notes",
+    "@fIngredientRemark": {
+        "description": "Section title for ingredient remarks"
+    },
+    "fFmaRemark": "Formula Notes",
+    "@fFmaRemark": {
+        "description": "Section title for formula remarks"
+    },
+    "fInvolvedFmas": "Involved Formulas",
+    "@fInvolvedFmas": {
+        "description": "Section title for formulas involving the raw material"
+    },
+    "fScaleList": "Scale List",
+    "@fScaleList": {
+        "description": "Title for the scale list panel"
+    },
+    "fComScale": "Serial Scale",
+    "@fComScale": {
+        "description": "Label for serial scale in scale list"
+    },
+    "fNetScale": "Network Scale",
+    "@fNetScale": {
+        "description": "Label for network scale in scale list"
+    },
+    "fRawMaterialTypeCol": "Component Category",
+    "@fRawMaterialTypeCol": {
+        "description": "Table column title for raw material category"
+    },
+    "fCreatedAtCol": "Update Time",
+    "@fCreatedAtCol": {
+        "description": "Table column title for creation time"
+    },
+    "fUpdatedAtCol": "Update Time",
+    "@fUpdatedAtCol": {
+        "description": "Table column title for last update time"
+    },
+    "fEditBtn": "Edit",
+    "@fEditBtn": {
+        "description": "Button for editing table row"
+    },
+    "fFmaCategoryCol": "Category",
+    "@fFmaCategoryCol": {
+        "description": "Table column title for formula category"
+    },
+    "fFmaModeCol": "Mode",
+    "@fFmaModeCol": {
+        "description": "Table column title for formula mode (weight/pct)"
+    },
+    "fMaterialCountCol": "Component Quantity",
+    "@fMaterialCountCol": {
+        "description": "Table column title for number of materials in formula"
+    },
+    "fCreatedTimeCol": "Create Time",
+    "@fCreatedTimeCol": {
+        "description": "Table column title for formula creation time"
+    },
+    "fUpdateTimeCol": "Update Time",
+    "@fUpdateTimeCol": {
+        "description": "Table column title for formula last update time"
+    },
+    "fRemarkCol": "Notes",
+    "@fRemarkCol": {
+        "description": "Table column title for formula remarks"
+    },
+    "fConfidential": "Confidential",
+    "@fConfidential": {
+        "description": "Display text for confidential formula status"
+    },
+    "fPublic": "Public",
+    "@fPublic": {
+        "description": "Display text for public formula status"
+    },
+    "fWeightMode": "Weight",
+    "@fWeightMode": {
+        "description": "Display text for weight-based formula mode"
+    },
+    "fPctMode": "Percentage",
+    "@fPctMode": {
+        "description": "Display text for percentage-based formula mode"
+    },
+    "fRecordTitle": "Formula Records",
+    "@fRecordTitle": {
+        "description": "Page title for formula weighing records"
+    },
+    "fExportRecordsBtn": "Export Records",
+    "@fExportRecordsBtn": {
+        "description": "Button to export selected weighing records"
+    },
+    "fOrderNo": "No.",
+    "@fOrderNo": {
+        "description": "Table column title for record number"
+    },
+    "fFormulaTotalWeight": "Formula Total Weight",
+    "@fFormulaTotalWeight": {
+        "description": "Table column title for formula total weight"
+    },
+    "fActualTotalWeight": "Actual Total Weight",
+    "@fActualTotalWeight": {
+        "description": "Table column title for actual total weight"
+    },
+    "fMaterialSingleWeight": "Component Weight",
+    "@fMaterialSingleWeight": {
+        "description": "Table column title for material single weight"
+    },
+    "fActualSingleWeight": "Actual Component Weight",
+    "@fActualSingleWeight": {
+        "description": "Table column title for actual single weight"
+    },
+    "fAllowableError": "Allowable Error",
+    "@fAllowableError": {
+        "description": "Table column title for allowable error"
+    },
+    "fActualError": "Actual Error",
+    "@fActualError": {
+        "description": "Table column title for actual error"
+    },
+    "fQualificationStatus": "Pass",
+    "@fQualificationStatus": {
+        "description": "Table column title for qualification status"
+    },
+    "fMaterialNameCol": "Component Name",
+    "@fMaterialNameCol": {
+        "description": "Table column title for material name"
+    },
+    "fMaterialIdCol": "Component ID",
+    "@fMaterialIdCol": {
+        "description": "Table column title for material ID"
+    },
+    "fEditMaterial": "Edit Component",
+    "@fEditMaterial": {
+        "description": "Edit component page"
+    },
+    "fBackBtn": "Back",
+    "@fBackBtn": {
+        "description": "Button to navigate back to previous page"
+    },
+    "fQualified": "√",
+    "@fQualified": {
+        "description": "Display text for qualified status"
+    },
+    "fUnqualified": "×",
+    "@fUnqualified": {
+        "description": "Display text for unqualified status"
+    },
+    "fWgtUnit": "Weight Unit",
+    "@fWgtUnit": {
+        "description": "Display text for weight unit"
+    },
+    "fAddFormulaWeightTitle": "Add Formula Weight",
+    "@fAddFormulaWeightTitle": {
+        "description": "Title of the dialog for adding formula weight"
+    },
+    "fFormulaTotalWeightLabel": "Formula Total Weight",
+    "@fFormulaTotalWeightLabel": {
+        "description": "Label for the formula total weight input field"
+    },
+    "fInputFormulaTotalWeightHint": "Please enter the formula total weight.",
+    "@fInputFormulaTotalWeightHint": {
+        "description": "Hint text for the formula total weight input field"
+    },
+    "fSelectUnitHint": "Select Unit",
+    "@fSelectUnitHint": {
+        "description": "Hint text for the unit selection dropdown"
+    },
+    "fSelectRawMaterialHint": "Select Component",
+    "@fSelectRawMaterialHint": {
+        "description": "Placeholder or hint for selecting raw material"
+    },
+    "fInputFormulaIdHint": "Please enter the formula ID.",
+    "@fInputFormulaIdHint": {
+        "description": "Hint text for formula ID input field"
+    },
+    "fSelectFormulaModeHint": "Please select the formula mode.",
+    "@fSelectFormulaModeHint": {
+        "description": "Placeholder for selecting formula mode (weight/pct)"
+    },
+    "fInputWeightHint": "Please enter the weight.",
+    "@fInputWeightHint": {
+        "description": "Hint text for weight input field"
+    },
+    "fInputPercentageHint": "Please enter the percentage.",
+    "@fInputPercentageHint": {
+        "description": "Hint text for percentage input field"
+    },
+    "fInputErrorHint": "Please enter the error.",
+    "@fInputErrorHint": {
+        "description": "Hint text for error input field"
+    },
+    "fClearBtn": "Clear",
+    "@fClearBtn": {
+        "description": "Text on the clear button"
+    },
+    "fInputRemarkHint": "Please enter the notes.",
+    "@fInputRemarkHint": {
+        "description": "Hint text for remarks input field"
+    },
+    "fFormulaIdDuplicate": "Formula ID already exists",
+    "@fFormulaIdDuplicate": {
+        "description": "Error message for duplicate formula ID"
+    },
+    "fFormulaNameDuplicate": "Formula name already exists",
+    "@fFormulaNameDuplicate": {
+        "description": "Error message for duplicate formula name"
+    },
+    "fRawIdDuplicate": "Component Id already exists",
+    "@fRawIdDuplicate": {
+        "description": "Error message for duplicate raw ID"
+    },
+    "fRawNameDuplicate": "Component name already exists",
+    "@fRawNameDuplicate": {
+        "description": "Error message for duplicate raw name"
+    },
+    "fSetRawMaterialBtn": "Set component",
+    "@fSetRawMaterialBtn": {
+        "description": "Text on the button to set raw material"
+    },
+    "fInputFormulaNameHint": "Please enter the formula name.",
+    "@fInputFormulaNameHint": {
+        "description": "Hint text for formula name input field"
+    },
+    "fInputFormulaTypeHint": "Please enter the formula category.",
+    "@fInputFormulaTypeHint": {
+        "description": "Hint text for formula category input field"
+    },
+    "fAddTypeBtn": "Add category",
+    "@fAddTypeBtn": {
+        "description": "Text on the button to add category"
+    },
+    "fAddRawMaterialBtn": "Add component",
+    "@fAddRawMaterialBtn": {
+        "description": "Text on the button to add raw material"
+    },
+    "fInputRawMaterialIdHint": "Please enter the component ID.",
+    "@fInputRawMaterialIdHint": {
+        "description": "Hint text for raw material ID input field"
+    },
+    "fInputRawMaterialNameHint": "Please enter the component name.",
+    "@fInputRawMaterialNameHint": {
+        "description": "Hint text for raw material name input field"
+    },
+    "fInputIngredientDescHint": "Please enter the component notes.",
+    "@fInputIngredientDescHint": {
+        "description": "Hint text for ingredient description input field"
+    },
+    "fInputRawMaterialTypeHint": "Please enter the component category.",
+    "@fInputRawMaterialTypeHint": {
+        "description": "Hint text for raw material category input field"
+    },
+    "fAddRawMaterialTypeBtn": "Add Component Category",
+    "@fAddRawMaterialTypeBtn": {
+        "description": "Text on the button to add raw material category"
+    },
+    "fFormulaDetailsTitle": "Formula Details",
+    "@fFormulaDetailsTitle": {
+        "description": "Title for formula details page or section"
+    },
+    "fTipTitle": "Prompt",
+    "@fTipTitle": {
+        "description": "Title for prompt dialog"
+    },
+    "fSwitchUnitHint": "Please switch the device unit.",
+    "@fSwitchUnitHint": {
+        "description": "Hint to switch device unit"
+    },
+    "fClearWeighingDataMsg": "Current weighing data will be cleared. Confirm Continue?",
+    "@fClearWeighingDataMsg": {
+        "description": "Confirmation message for clearing weighing data"
+    },
+    "fFormulaUnqualifiedMsg": "Formula not meeting standard. Confirm completion?",
+    "@fFormulaUnqualifiedMsg": {
+        "description": "Confirmation message for completing unqualified formula"
+    },
+    "fCompleteIngredientsBtn": "Complete",
+    "@fCompleteIngredientsBtn": {
+        "description": "Text on the button to complete ingredient weighing"
+    },
+    "fAbandonIngredientsBtn": "Abandon",
+    "@fAbandonIngredientsBtn": {
+        "description": "Text on the button to abandon ingredient weighing"
+    },
+    "fIngredientsRecordTitle": "Record",
+    "@fIngredientsRecordTitle": {
+        "description": "Title for ingredients weighing record"
+    },
+    "fTargetWeightLabel": "Target Weight",
+    "@fTargetWeightLabel": {
+        "description": "Label for target weight field"
+    },
+    "fCurrentWeightLabel": "Current Weight",
+    "@fCurrentWeightLabel": {
+        "description": "Label for current weight field"
+    },
+    "fAllowableErrorWeightLabel": "Allowable Error",
+    "@fAllowableErrorWeightLabel": {
+        "description": "Label for allowable error weight field"
+    },
+    "fCurrentErrorWeightLabel": "Current Error",
+    "@fCurrentErrorWeightLabel": {
+        "description": "Label for current error weight field"
+    },
+    "fCurrentMaterialOverweightMsg": "Current component is overweight, please choose to abandon or correct?",
+    "@fCurrentMaterialOverweightMsg": {
+        "description": "Warning message when current raw material is overweight, asking to abandon or correct"
+    },
+    "fCurrentMaterialWeightInvalidMsg": "The current weight of the component is not qualified!",
+    "@fCurrentMaterialWeightInvalidMsg": {
+        "description": "Error message when current raw material weight is invalid"
+    },
+    "fStableOperationHint": "Operation allowed only after stabilization!",
+    "@fStableOperationHint": {
+        "description": "Hint to wait for stability before operation"
+    },
+    "fFormulaProgressLabel": "Formula Progress",
+    "@fFormulaProgressLabel": {
+        "description": "Label for formula progress display"
+    },
+    "fRawMaterialWeightLabel": "Component Weight",
+    "@fRawMaterialWeightLabel": {
+        "description": "Label for raw material weight field"
+    },
+    "fIngredientsDataLabel": "Formula Data",
+    "@fIngredientsDataLabel": {
+        "description": "Label for ingredient weighing data"
+    },
+    "fIncompleteStatus": "Incomplete",
+    "@fIncompleteStatus": {
+        "description": "Display text for incomplete status"
+    },
+    "fFormulaCompletionMsg": "Completed!",
+    "@fFormulaCompletionMsg": {
+        "description": "Completion message for formula"
+    },
+    "fAddSuccessMsg": "Added successfully!",
+    "@fAddSuccessMsg": {
+        "description": "Success message for adding operation"
+    },
+    "fTypeExistsMsg": "Category already exists!",
+    "@fTypeExistsMsg": {
+        "description": "Error message for existing formula type"
+    },
+    "fFormulaInUseDeleteErrorMsg": "Formula is in use and cannot be deleted.",
+    "@fFormulaInUseDeleteErrorMsg": {
+        "description": "Error message when deleting a formula that is currently in use"
+    },
+    "fDeleteSuccessMsg": "Deleted successfully",
+    "@fDeleteSuccessMsg": {
+        "description": "Success message for delete operation"
+    },
+    "fSuccessMsg": "Success",
+    "@fSuccessMsg": {
+        "description": "General success message"
+    },
+    "fClearSearchConditionBtn": "Clear search conditions",
+    "@fClearSearchConditionBtn": {
+        "description": "Text on the button to clear all search conditions"
+    },
+    "fFormulaScaleTitle": "Formula Scale",
+    "@fFormulaScaleTitle": {
+        "description": "Title for formula weighing scale device or page"
+    },
+    "fReviseBtn": "Correct",
+    "@fReviseBtn": {
+        "description": "This is a revise button"
+    },
+    "fAbandonBtn": "Abandon",
+    "@fAbandonBtn": {
+        "description": "This is a abandon button"
+    },
+    "fSelectConfidentialityStatusMsg": "Select Confidentiality Status",
+    "@fSelectConfidentialityStatusMsg": {
+        "description": "This is used to prompt the user to select the confidentiality status of relevant content."
+    },
+    "fSwitchModeClearMsg": "Switch mode clears raw materials. Confirm?",
+    "@fSwitchModeClearMsg": {
+        "description": "Confirmation message for mode switch that clears raw material list"
+    },
+    "fSaveAndExitBtn": "Save and Exit",
+    "@fSaveAndExitBtn": {
+        "description": "Button to save and exit"
+    },
+    "fSaveAndNewBtn": "Save and New",
+    "@fSaveAndNewBtn": {
+        "description": "Button to save and add new"
+    },
+    "fMediumSpeed": "Medium Speed",
+    "@fMediumSpeed": {
+        "description": "Prompt message indicating medium speed"
+    },
+    "fHighSpeed": "High Speed",
+    "@fHighSpeed": {
+        "description": "Prompt message indicating high speed"
+    },
+    "fLowSpeed": "Low Speed",
+    "@fLowSpeed": {
+        "description": "Prompt message indicating low speed"
+    },
+    "fNeedContainer": "Need Container",
+    "@fNeedContainer": {
+        "description": "Prompt message indicating that a container is needed"
+    },
+    "fFmaContainer": "Container",
+    "@fFmaContainer": {
+        "description": "Prompt for container requirement in operations."
+    },    
+    "fNextStepBtn": "Next Step",
+    "@fNextStepBtn": {
+        "description": "Button to proceed to the next step"
+    },
+    "fDeviceDisconnected": "Device disconnected, please check the connection.",
+    "@fDeviceDisconnected": {
+        "description": "Prompt when the device is disconnected"
+    },     
+    "fSaveSuccess": "Save successful",
+    "@fSaveSuccess": {
+        "description": "Success message for saving operation, text"
+    },
+    "fDataTooLittle": "The data volume is too small to save",
+    "@fDataTooLittle": {
+        "description": "Prompt when the data is too little to save, text"
+    },
+    "fTotalWeight": "Total weight",
+    "@fTotalWeight": {
+        "description": "Label for total weight, text"
+    },
+    "fAverageSpeed": "Avg.Speed",
+    "@fAverageSpeed": {
+        "description": "Label for average speed, text"
+    },
+    "fMaxSpeed": "Max.Speed",
+    "@fMaxSpeed": {
+        "description": "Label for maximum speed, text"
+    },
+    "fMinSpeed": "Min.Speed",
+    "@fMinSpeed": {
+        "description": "Label for minimum speed, text"
+    },
+    "fTotalTime": "Total time",
+    "@fTotalTime": {
+        "description": "Label for total time, text"
+    },
+    "fTime": "Time",
+    "@fTime": {
+        "description": "Label for time, text"
+    },
+    "fSpeed": "Speed",
+    "@fSpeed": {
+        "description": "Label for speed, text"
+    },
+    "fNo": "NO.",
+    "@fNo": {
+        "description": "Label for no., text"
+    },
+    "fShowCurveChart": "Curve chart",
+    "@fShowCurveChart": {
+        "description": "Button or text to show the flow rate curve chart, can be button or text"
+    },
+    "fShowDataTable": "Data table",
+    "@fShowDataTable": {
+        "description": "Button or text to show the flow rate data table, can be button or text"
+    },
+    "fFlowRate": "Liquid Filling Speed",
+    "@fFlowRate": {
+        "description": "Label for flow rate, text"
+    },
+    "fFlowRateMeasurement": "Liquid Filling Speed",
+    "@fFlowRateMeasurement": {
+        "description": "Label or title for flow rate measurement, text"
+    },
+    "fConfirmDelete": "Confirm delete?",
+    "@fConfirmDelete": {
+        "description": "Prompt message to confirm deletion"
+    },
+    "fNoRecordTip": "No records",
+    "@fNoRecordTip": {
+        "description": "Prompt message indicating there are no records"
+    },
+    "fFormulaCompletedTip": "Formula completed",
+    "@fFormulaCompletedTip": {
+        "description": "Prompt message indicating that the formula has been completed"
     }
 }
