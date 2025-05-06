@@ -5,17 +5,11 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:t_max/data/comscaleinfo_data.dart';
-import 'package:t_max/data/fma_rec_list_db_data.dart';
 import 'package:t_max/data/formula_common.dart';
-import 'package:t_max/data/formula_scale_data.dart';
 import 'package:t_max/data/language.dart';
 import 'package:t_max/data/manager_scale_channel.dart';
-import 'package:t_max/data/req_formula_data.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
-import 'package:t_max/eventbus/eventbus.dart';
-import 'package:t_max/functions/methods.dart';
 import 'package:t_max/data/formula_from_db_data.dart';
-import 'package:t_max/widget/sticky_table.dart';
 
 // 定义 EncryptedValue 枚举
 enum EncryptedValue {
