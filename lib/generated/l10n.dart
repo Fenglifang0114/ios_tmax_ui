@@ -6951,6 +6951,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Standalone Mode`
+  String get gTipStandaloneMode {
+    return Intl.message(
+      'Standalone Mode',
+      name: 'gTipStandaloneMode',
+      desc: 'This is a tip indicating the standalone operation mode.',
+      args: [],
+    );
+  }
+
+  /// `Weight Summation Mode`
+  String get gTipWeightSummationMode {
+    return Intl.message(
+      'Weight Summation Mode',
+      name: 'gTipWeightSummationMode',
+      desc: 'This is a tip indicating the weight summation operation mode.',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

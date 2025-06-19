@@ -575,6 +575,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "请设置满量程重量，然后点击下一步",
     ),
     "gTipStableText": MessageLookupByLibrary.simpleMessage("稳定文本"),
+    "gTipStandaloneMode": MessageLookupByLibrary.simpleMessage("独立模式"),
     "gTipStartService": MessageLookupByLibrary.simpleMessage("开始服务"),
     "gTipStopService": MessageLookupByLibrary.simpleMessage("停止服务"),
     "gTipStringProperty": MessageLookupByLibrary.simpleMessage("字符串属性"),
@@ -601,6 +602,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipWeighingPageHelp": MessageLookupByLibrary.simpleMessage(
       "1.此功能界面上会实时同步秤上的称重数据（支持所有单位包括PCS、PCT）；\n2.可以点击【扣重】和【归零】对秤执行操作；\n3.点击左上角的列表按钮可以在列表中查看已连接设备的并进行更换。\n\n注：\n1.此功能可以通过连接串口、网口或Wi-Fi使用。\n2.T-Industry的称重单位与秤保持一致，但是切换单位需要在秤上执行。\n",
     ),
+    "gTipWeightSummationMode": MessageLookupByLibrary.simpleMessage("重量汇总模式"),
     "gTipWgtDataCollectionHelp": MessageLookupByLibrary.simpleMessage(
       "1.点击【保存】按钮，手动保存当前称重数据（无数量限制）；点击【导出】按钮，以表格形式导出保存的所有数据；\n2.点击【设置】，可以将【保存模式】切换为【自动】；\n3.在【设置】中，您还可以设置数据导出的日期格式和数据分隔符；\n4.在【PLU名字】中输入PLU编号或名称，以调用T-Industry数据库中的PLU（此处的PLU不是秤上的PLU）；\n5.点击【报表设置】，可以选择称重数据显示的信息；（目前暂无功能的变量：Product Code、Item Code、User Name、User NO）\n6.点击标题行中的上下箭头，可以对报表进行升/降的排序。\n\n注：\n1.需要先清空秤盘，才会保存下一条称重的数据（零点不会被保存）。\n2.【报表设置】中的上下限是T-Industry数据中PLU设置的上下限，并非秤上设置的上下限。\n3.关闭/重启软件，已保存的数据不会被清除。\n",
     ),

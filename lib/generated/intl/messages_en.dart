@@ -808,6 +808,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Please set the full scale weight and click next",
     ),
     "gTipStableText": MessageLookupByLibrary.simpleMessage("Stable Text"),
+    "gTipStandaloneMode": MessageLookupByLibrary.simpleMessage(
+      "Standalone Mode",
+    ),
     "gTipStartService": MessageLookupByLibrary.simpleMessage("Start Service"),
     "gTipStopService": MessageLookupByLibrary.simpleMessage("Stop Service"),
     "gTipStringProperty": MessageLookupByLibrary.simpleMessage(
@@ -841,6 +844,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipWait": MessageLookupByLibrary.simpleMessage("Please wait..."),
     "gTipWeighingPageHelp": MessageLookupByLibrary.simpleMessage(
       "1. Real time display of weighing data on the scale (supporting all units including PCS and PCT);\n2. Click [TARE] and [ZERO] allows for weighing and zeroing operations on the scale;\n3. Click the List button in the upper left corner to view the list of connected devices and make changes.\n\nNote：\n1.This function can be used by connecting to a serial port, Ethernet, or WiFi.\n2.Switching units is done on the scale.\n",
+    ),
+    "gTipWeightSummationMode": MessageLookupByLibrary.simpleMessage(
+      "Weight Summation Mode",
     ),
     "gTipWgtDataCollectionHelp": MessageLookupByLibrary.simpleMessage(
       "1. Click [Save] to manually save the current weighing data (with no quantity limit); Click [Export] to export all saved data (xlsx);\n2. Click [Setting] and select Save Mode to Auto, it can be set to auto save mode;\n3. You can also set the date format and delimiter for data export;\n4. Enter the PLU number or name in the PLU Name column to call the PLU in the backend database; (The PLU here is not the PLU on the scale)\n5. Click [Report Setting] to select the information displayed for weighing data; (Currently, there are no functional variables available: Product Code、Item Code、User Name、User NO）\n6. Click the arrow in column of the report title row will sort the report in ascending/descending order.\n\nNote: \n1. To save data, you need to clear the scale before saving the next transaction. Zero point will not be saved.\n2. The upper and lower limit variables are the upper and lower limits set in the backend PLU, not the upper and lower limits set on the scale.\n3. The saved data will not be cleared after closing/restarting the software.\n",
