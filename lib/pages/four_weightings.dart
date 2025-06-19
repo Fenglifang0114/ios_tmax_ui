@@ -242,7 +242,7 @@ class FourWeightsPageState extends State<FourWeightsPage> {
         preferredSize: const Size.fromHeight(50),
         child: pageHeadDesign(
           context,
-          localizedStrings.iTitleWeighting,
+          localizedStrings.menuWeighing,
           scaleList,
           '',
         ),

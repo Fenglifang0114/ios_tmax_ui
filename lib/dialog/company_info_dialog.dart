@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/license_data.dart';
 import '../data/company_info.dart';
 import '../data/language.dart';
-import '../data/screen_mgr.dart';
-import '../widget/custom_button.dart';
 import '../widget/version.dart';
 
 class CompanyInfoDialog extends StatefulWidget {
@@ -36,115 +35,112 @@ class CompanyInfoDialogState extends State<CompanyInfoDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: getDialogTitle(
-          context, localizedStrings.about_title, Icons.info_outline, 400),
-      content: Container(
-        height: 300,
-        width: 400,
-        decoration:
-            BoxDecoration(color: Theme.of(context).colorScheme.surfaceTint),
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      child: Container(
+        width: 610,
+        height: 493,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(0),
+        ),
         child: ListView(
           children: [
-            Center(
-              child: Text(
-                myAppName.appName!,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary, fontSize: 40),
-              ),
+            Container(
+                height: dialogTitleheight,
+                padding: const EdgeInsets.only(
+                    left: largePadding, right: largePadding),
+                alignment: Alignment.centerLeft,
+                child: Row(children: [
+                  Container(
+                    width: 3,
+                    height: 14,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                  SizedBox(
+                    width: regularPadding,
+                  ),
+                  Expanded(
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        localizedStrings.gAppInformation,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                      icon: Icon(
+                        Icons.cancel,
+                        size: 24,
+                        color: Theme.of(context).colorScheme.secondaryFixed,
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      })
+                ])),
+            // 分割线
+            Divider(
+              height: 1,
+              color: Theme.of(context).colorScheme.surfaceContainerLow,
             ),
+            // Center(
+            //   child: Text(myAppName.appName!,
+            //       style: Theme.of(context).textTheme.titleLarge!.apply(
+            //           color: Theme.of(context).colorScheme.primary,
+            //           fontSizeFactor: 1.5)),
+            // ),
             const SizedBox(
-              height: 20,
+              height: largePadding,
             ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                leftInfoText(localizedStrings.app_version_title),
-                const SizedBox(
-                  width: 10,
-                ),
-                rightInfoText(getVersion()),
-              ],
+            showItemInfo(localizedStrings.appVersionTitle, getVersion()),
+            const SizedBox(
+              height: regularPadding,
             ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                leftInfoText(localizedStrings.app_company_title),
-                const SizedBox(
-                  width: 10,
-                ),
-                rightInfoText(myCompanyInfo.companyName!),
-              ],
+            showItemInfo(
+                localizedStrings.appCompanyTitle, myCompanyInfo.companyName!),
+            const SizedBox(
+              height: regularPadding,
             ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                leftInfoText(localizedStrings.app_tel_title),
-                const SizedBox(
-                  width: 10,
-                ),
-                rightInfoText(myCompanyInfo.tel!),
-              ],
+            showItemInfo(localizedStrings.appTelTitle, myCompanyInfo.tel!),
+            const SizedBox(
+              height: regularPadding,
             ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                leftInfoText(localizedStrings.app_email_title),
-                const SizedBox(
-                  width: 10,
-                ),
-                rightInfoText(myCompanyInfo.email!),
-              ],
+            showItemInfo(localizedStrings.appEmailTitle, myCompanyInfo.email!),
+            const SizedBox(
+              height: regularPadding,
             ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                leftInfoText(localizedStrings.app_address_title),
-                const SizedBox(
-                  width: 10,
-                ),
-                rightInfoText(myCompanyInfo.address!),
-              ],
+            showItemInfo(
+                localizedStrings.appAddressTitle, myCompanyInfo.address!),
+            const SizedBox(
+              height: regularPadding,
             ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                leftInfoText(localizedStrings.app_web_title),
-                const SizedBox(
-                  width: 10,
-                ),
-                rightInfoText(myCompanyInfo.website!),
-              ],
+            showItemInfo(localizedStrings.appWebTitle, myCompanyInfo.website!),
+            const SizedBox(
+              height: regularPadding,
             ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                leftInfoText(localizedStrings.app_models),
-                const SizedBox(
-                  width: 10,
-                ),
-                rightInfoText("T-Max Series"),
-              ],
-            ),
+            showItemInfo(localizedStrings.appModels, "T-Max Series")
           ],
         ),
       ),
-      actions: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            const SizedBox(width: 20),
-            CustomOutlinedButton(
-              btnWidth: 120,
-              btnHeight: 40,
-              icon: Icons.exit_to_app,
-              text: localizedStrings.gBtnExit,
-              onPressed: () {
-                myScreenMgr.isMainScreen = true;
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
+    );
+  }
+
+  Widget showItemInfo(String title, String value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Expanded(child: leftInfoText("$title:")),
+        SizedBox(
+          width: largePadding,
+        ),
+        Expanded(
+          child: rightInfoText(value),
         )
       ],
     );
@@ -163,13 +159,13 @@ class CompanyInfoDialogState extends State<CompanyInfoDialog> {
 
   Widget leftInfoText(String textStr) {
     return SizedBox(
-      width: 150,
-      child: Text(textStr,
-          textAlign: TextAlign.right,
-          overflow: TextOverflow.visible,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurface,
-          )),
-    );
+        child: Text(
+      textStr,
+      textAlign: TextAlign.right,
+      overflow: TextOverflow.visible,
+      style: Theme.of(context).textTheme.bodySmall!.apply(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+    ));
   }
 }

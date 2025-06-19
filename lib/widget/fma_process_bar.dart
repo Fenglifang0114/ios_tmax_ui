@@ -54,9 +54,9 @@ class CustomProgressBar extends StatelessWidget {
       if (val < minValue) {
         return Color(0xFFFFB44A);
       } else if (val <= maxValue) {
-        return greenColor;
+        return Theme.of(context).colorScheme.onTertiaryFixedVariant;
       } else {
-        return redColor;
+        return Theme.of(context).colorScheme.error;
       }
     }
 
@@ -72,7 +72,7 @@ class CustomProgressBar extends StatelessWidget {
           alignment: Alignment.centerLeft,
           height: height,
           width: maxWidth, // 使用最大宽度
-          color: Color(0xFFD9D9D9),
+          color: Theme.of(context).colorScheme.surfaceContainerLow,
         ),
         // 根据当前值绘制进度条
         Container(
@@ -153,7 +153,7 @@ class CustomFmaProgressBar extends StatelessWidget {
           alignment: Alignment.centerLeft,
           height: height,
           width: maxWidth,
-          color: const Color(0xFFD9D9D9),
+          color: Theme.of(context).colorScheme.surfaceContainerLow,
         ),
         // 根据当前份数绘制进度条
         Container(

@@ -51,6 +51,35 @@ class DefScaleInfo {
       }
     }
   }
+
+  static DefScaleInfo getScaleInfoById(int scaleId) {
+    DefScaleInfo tempScaleInfo = DefScaleInfo(1);
+    if (scaleId == 1) {
+      tempScaleInfo.defScaleId = scaleId;
+      tempScaleInfo.defScaleModel = myComScaleInfo.scaleModel;
+      tempScaleInfo.defScaleSn = myComScaleInfo.scaleSn;
+      tempScaleInfo.defScalePort = myComScaleInfo.portName;
+      tempScaleInfo.defScaleBaud = myComScaleInfo.baudRate.toString();
+      tempScaleInfo.defScaleName = myComScaleInfo.scaleName;
+      if (tempScaleInfo.defScaleModel == "TMax") {
+        tempScaleInfo.defScaleModel = "";
+        tempScaleInfo.defScaleSn = "";
+      }
+    } else {
+      tempScaleInfo.defScaleId = scaleId;
+      var tempscale = NetScaleListMgr.findScaleInfo(myNetScaleList, scaleId);
+      tempScaleInfo.defScaleModel = tempscale.scaleModel!;
+      tempScaleInfo.defScaleSn = tempscale.scaleSn!;
+      tempScaleInfo.defScalePort = tempscale.port!.toString();
+      tempScaleInfo.defScaleIp = tempscale.ip;
+      tempScaleInfo.defScaleName = tempscale.scaleName;
+      if (tempScaleInfo.defScaleModel == "TMax") {
+        tempScaleInfo.defScaleModel = "";
+        tempScaleInfo.defScaleSn = "";
+      }
+    }
+    return tempScaleInfo;
+  }
 }
 
 DefScaleInfo myDefScaleInfo = DefScaleInfo(1);

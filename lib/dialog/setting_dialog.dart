@@ -323,7 +323,7 @@ class ParamSettingDialogState extends State<ParamSettingDialog> {
     }
     String updateString = jsonEncode(mySettingParam);
     myScaleCmd.cmdData = updateString;
-    PublicFunctions.sendMsg(myDefScaleInfo.defScaleId!, jsonEncode(myScaleCmd));
+    PublicFunctions.sendMsgChan0(jsonEncode(myScaleCmd));
   }
 
   void modifyComInfo() {

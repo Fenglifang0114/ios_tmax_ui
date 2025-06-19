@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:t_max/data/home_page_common_data.dart';
+import 'package:t_max/dialog/custom_dialog_tip.dart';
+import 'package:t_max/widget/common_widget.dart';
 import '../../generated/l10n.dart';
-import '../widget/custom_button.dart';
 
 class LanguageSettingPage extends StatefulWidget {
   const LanguageSettingPage({super.key});
@@ -23,20 +25,21 @@ class LanguageSettingPageState extends State<LanguageSettingPage> {
     '한국어'
   ];
   dynamic localizedStrings;
-  String language = '';
+
+  TextEditingController languageCtl = TextEditingController();
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     localizedStrings = S.of(context);
     if (localizedStrings.gLanguage == 'Chinese') {
-      language = 'English';
+      languageCtl.text = 'English';
     } else if ((localizedStrings.gLanguage == 'Русский')) {
-      language = 'Русский';
+      languageCtl.text = 'Русский';
     } else if (localizedStrings.gLanguage == '中文') {
-      language = '中文';
+      languageCtl.text = '中文';
     } else {
-      language = 'English';
+      languageCtl.text = 'English';
     }
   }
 
@@ -57,75 +60,63 @@ class LanguageSettingPageState extends State<LanguageSettingPage> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: getDialogTitle(context, localizedStrings.language_setting_title,
-          Icons.language, 400),
-      content: Container(
-        height: 120,
-        decoration:
-            BoxDecoration(color: Theme.of(context).colorScheme.surfaceTint),
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      child: Container(
+        width: 610,
+        height: 260,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(0),
+        ),
         child: Column(
           children: [
-            const SizedBox(height: 2),
-            Container(
-              decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceTint),
-              child: Column(
-                children: [
-                  // const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            width: 360,
-                            height: 100,
-                            child: DropdownButtonFormField(
-                                value: language,
-                                items: languageList
-                                    .map<DropdownMenuItem<String>>(
-                                        (String value) {
-                                  return DropdownMenuItem(
-                                      value: value, child: Text(value));
-                                }).toList(),
-                                onChanged: _changed),
+            ...getCustomDialogTitle(
+                context, localizedStrings.gTitleLanguageSetting),
+            Expanded(
+                child: Container(
+                    padding: EdgeInsets.all(40),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surfaceTint),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: 400,
+                          child: Text(
+                            localizedStrings.gTipSelectLanguage,
+                            textAlign: TextAlign.left,
+                            style: Theme.of(context).textTheme.bodySmall!.apply(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                ),
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          const SizedBox(height: 15),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            )
+                        ),
+                        const SizedBox(
+                          height: regularPadding,
+                        ),
+                        SizedBox(
+                            width: 400,
+                            child: showDropDownButton(
+                              context,
+                              '',
+                              languageCtl,
+                              languageList,
+                              _changed,
+                            )),
+                      ],
+                    )))
           ],
         ),
       ),
-      actions: <Widget>[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            const SizedBox(width: 20),
-            CustomOutlinedButton(
-              btnWidth: 120,
-              btnHeight: 40,
-              icon: Icons.exit_to_app,
-              text: localizedStrings.gBtnExit,
-              onPressed: () {
-                setState(() {});
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        )
-      ],
     );
   }
 
   void _changed(value) {
     if (value != null) {
+      languageCtl.text = value;
       // SpUtil.putString(SpConstant.LANGUAGE, value);
       setState(() {
         if (value == "中文") {

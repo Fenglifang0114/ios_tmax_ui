@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/widget/custom_button.dart';
@@ -265,174 +266,186 @@ class TransactionReportPageState extends State<TransactionReportPage> {
     transactions.sort((a, b) => b.total.createdAt.compareTo(a.total.createdAt));
 
     return Scaffold(
-      appBar: AppBar(
-          title: Container(
-            child: pageHeadDesign(context, localizedStrings.rDetailRptTitle, [],
-                localizedStrings.gTipRetailDetailPageHelp),
-          ),
-          leading: IconTheme(
-              data: IconThemeData(
-                  color: Theme.of(context).colorScheme.primary // 设置抽屉图标颜色为红色
-                  ),
-              child: Builder(builder: (BuildContext context) {
-                return IconButton(
-                  icon: const Icon(Icons.menu),
-                  onPressed: () {
-                    Scaffold.of(context).openDrawer();
-                  },
-                );
-              }))),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-        child: Column(
-          children: [
-            Row(
+      body: Container(
+          width: maxWidth,
+          decoration:
+              BoxDecoration(color: Theme.of(context).colorScheme.surface),
+          child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 200,
-                      child: Text(
-                        localizedStrings.gTipServiceStatus,
-                        textAlign: TextAlign.right,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    SizedBox(
-                      width: 200,
-                      child: Text(srvStatusMsg,
-                          style: TextStyle(
-                              color: srvStatus.contains(srvStarted)
-                                  ? Theme.of(context).colorScheme.primary
-                                  : Theme.of(context).colorScheme.error),
-                          overflow: TextOverflow.ellipsis),
-                    )
-                  ],
-                ),
-                CustomOutlinedButton(
-                    btnWidth: 100,
-                    btnHeight: 50,
-                    icon: Icons.refresh,
-                    text: localizedStrings.rRefreshListBtn,
-                    onPressed: () {
-                      PublicFunctions.getDetailListSrv1();
-                    }),
-                const SizedBox(
-                  width: 20,
-                ),
-                CustomOutlinedButton(
-                    btnWidth: 100,
-                    btnHeight: 50,
-                    icon: Icons.save,
-                    text: localizedStrings.gBtnExport,
-                    onPressed: exportFlag ? exportToCsv : null),
-                const SizedBox(
-                  width: 20,
-                ),
-                PopupMenuButton<String>(
-                    onSelected: _performActionForOption,
-                    tooltip: '',
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    itemBuilder: (BuildContext context) {
-                      return [
-                        PopupMenuItem<String>(
-                          value: 'Install',
-                          child: Text(
-                            localizedStrings.gTipInstallService,
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                pageHeadInfo(
+                    context,
+                    maxWidth - headWidthPadding,
+                    localizedStrings.menuRetailReport,
+                    localizedStrings.gTipRetailDetailPageHelp),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                SizedBox(
+                                  width: 200,
+                                  child: Text(
+                                    localizedStrings.gTipServiceStatus,
+                                    textAlign: TextAlign.right,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                SizedBox(
+                                  width: 200,
+                                  child: Text(srvStatusMsg,
+                                      style: TextStyle(
+                                          color: srvStatus.contains(srvStarted)
+                                              ? Theme.of(context)
+                                                  .colorScheme
+                                                  .primary
+                                              : Theme.of(context)
+                                                  .colorScheme
+                                                  .error),
+                                      overflow: TextOverflow.ellipsis),
+                                )
+                              ],
+                            ),
+                            CustomOutlinedButton(
+                                btnWidth: 100,
+                                btnHeight: 50,
+                                icon: Icons.refresh,
+                                text: localizedStrings.rRefreshListBtn,
+                                onPressed: () {
+                                  PublicFunctions.getDetailListSrv1();
+                                }),
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            CustomOutlinedButton(
+                                btnWidth: 100,
+                                btnHeight: 50,
+                                icon: Icons.save,
+                                text: localizedStrings.gBtnExport,
+                                onPressed: exportFlag ? exportToCsv : null),
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            PopupMenuButton<String>(
+                                onSelected: _performActionForOption,
+                                tooltip: '',
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                itemBuilder: (BuildContext context) {
+                                  return [
+                                    PopupMenuItem<String>(
+                                      value: 'Install',
+                                      child: Text(
+                                        localizedStrings.gTipInstallService,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    PopupMenuItem<String>(
+                                      value: 'Start',
+                                      child: Text(
+                                        localizedStrings.gTipStartService,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    PopupMenuItem<String>(
+                                      value: 'Stop',
+                                      child: Text(
+                                        localizedStrings.gTipStopService,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    PopupMenuItem<String>(
+                                      value: 'Uninstall',
+                                      child: Text(
+                                        localizedStrings.gTipUninstallService,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ];
+                                },
+                                child: Container(
+                                  width: 120,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      localizedStrings.gTipService,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary),
+                                    ),
+                                  ),
+                                ))
+                          ],
                         ),
-                        PopupMenuItem<String>(
-                          value: 'Start',
-                          child: Text(
-                            localizedStrings.gTipStartService,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        PopupMenuItem<String>(
-                          value: 'Stop',
-                          child: Text(
-                            localizedStrings.gTipStopService,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        PopupMenuItem<String>(
-                          value: 'Uninstall',
-                          child: Text(
-                            localizedStrings.gTipUninstallService,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ];
-                    },
-                    child: Container(
-                      width: 120,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primary,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Center(
-                        child: Text(
-                          localizedStrings.gTipService,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.onPrimary),
-                        ),
-                      ),
-                    ))
-              ],
-            ),
-            SizedBox(
-              width: maxWidth - 20,
-              height: maxheight - 110,
-              child: Scrollbar(
-                controller: _scrollController,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  controller: _scrollController,
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.vertical, // 垂直滚动
-                      controller: _scrollController1,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            width: maxWidth < 1000 ? 1000 : maxWidth,
-                            height: maxheight - 110,
-                            child: ListView.builder(
-                              itemCount: transactions.length,
-                              itemBuilder: (context, index) {
-                                return Column(
-                                  children: [
-                                    buildCartTitle(transactions[index]),
-                                    if (transactions[index].isExpanded)
-                                      buildCardDetail(transactions[index]),
-                                  ],
-                                );
-                              },
+                        SizedBox(
+                          width: maxWidth - 20,
+                          height: maxheight - 200,
+                          child: Scrollbar(
+                            controller: _scrollController,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              controller: _scrollController,
+                              child: Container(
+                                padding: const EdgeInsets.all(10),
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.vertical, // 垂直滚动
+                                  controller: _scrollController1,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      SizedBox(
+                                        width:
+                                            maxWidth < 1000 ? 1000 : maxWidth,
+                                        height: maxheight - 110,
+                                        child: ListView.builder(
+                                          itemCount: transactions.length,
+                                          itemBuilder: (context, index) {
+                                            return Column(
+                                              children: [
+                                                buildCartTitle(
+                                                    transactions[index]),
+                                                if (transactions[index]
+                                                    .isExpanded)
+                                                  buildCardDetail(
+                                                      transactions[index]),
+                                              ],
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+                )
+              ])),
       drawer: Drawer(child: myDrawer() // showNetScaleList(),
           ),
     );
@@ -588,8 +601,8 @@ class TransactionReportPageState extends State<TransactionReportPage> {
                         width: 100,
                         child: Text(
                           scaleNetItems[index].isOnline!
-                              ? localizedStrings.gOnlineTip
-                              : localizedStrings.gOfflineTip,
+                              ? localizedStrings.gTipOnline
+                              : localizedStrings.gTipOffline,
                           maxLines: 1, // 设置文本最大行数为1
                           style: TextStyle(
                             fontSize: 14,
@@ -654,7 +667,7 @@ class TransactionReportPageState extends State<TransactionReportPage> {
               child: OutlinedButton(
                 child: Text(localizedStrings.gBtnConfirm),
                 onPressed: () {
-                  Navigator.of(context).pop(true); // 跳转
+                  Navigator.of(ctx).pop(true); // 跳转
                 },
               ),
             )

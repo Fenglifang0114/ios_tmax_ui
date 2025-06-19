@@ -5,7 +5,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gbk_codec/gbk_codec.dart';
+import 'package:t_max/data/home_page_common_data.dart';
+import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/functions/methods.dart';
+import 'package:t_max/widget/common_widget.dart';
+import 'package:t_max/widget/scale_list.dart';
 import '../data/manager_scale_channel.dart';
 import '../data/barcoderowdata.dart';
 import '../data/encrypt_data.dart';
@@ -28,7 +32,8 @@ import '../widget/page_head.dart';
 import '../widget/textlist_item.dart';
 
 class LabelDesignPage extends StatefulWidget {
-  const LabelDesignPage({super.key});
+  final String type;
+  const LabelDesignPage({super.key, required this.type});
 
   @override
   State<LabelDesignPage> createState() => _LabelDesignPageState();
@@ -98,6 +103,11 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   // Offset _offset = const Offset(0, 0);
   // bool _isDragging = false;
   final double btnWidth = 150;
+  final double textWidth = 120;
+  final double topTitleHeight = 300;
+  final double topBtnHeight = 130;
+  final double leftBtnWidth = 280;
+  final double rightBtnWidth = 288;
 
   TextEditingController textvariable = TextEditingController();
   TextEditingController fontsizevar = TextEditingController();
@@ -110,6 +120,9 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   TextEditingController lineWidthVar = TextEditingController();
   TextEditingController pageWidth = TextEditingController();
   TextEditingController pageHeight = TextEditingController();
+  TextEditingController printerCtl = TextEditingController(text: 'EPM205');
+  TextEditingController printDirectionCtl =
+      TextEditingController(text: 'Forward');
 
   var count = 0;
   dynamic _eventbus1;
@@ -399,563 +412,462 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
 
   @override
   Widget build(BuildContext context) {
-    final Size screenSize = MediaQuery.of(context).size;
-
     final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
 
     ScrollController scrollController = ScrollController();
     ScrollController scrollController1 = ScrollController();
     return Scaffold(
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(50),
-          child: pageHeadDefScale(context, localizedStrings.label_design_title,
-              localizedStrings.gTipLabelDesignPageHelp),
-        ),
-        body: SizedBox(
-          height: height - 50,
-          child: Column(
-            children: [
-              Container(
-                height: 80,
-                width: screenSize.width - 10,
-                color: Theme.of(context).colorScheme.onPrimary,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Row(
-                          children: [
-                            SizedBox(
-                              height: 40,
-                              child: Row(
-                                children: [
-                                  SizedBox(
-                                    width: 150,
-                                    child: Text(
-                                      localizedStrings.gPrinter,
-                                      textAlign: TextAlign.right,
-                                      style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  SizedBox(
-                                    width: 200, // 设置固定宽度
-                                    child: DropdownButton<String>(
-                                      alignment:
-                                          AlignmentDirectional.centerStart,
-                                      dropdownColor: Theme.of(context)
-                                          .colorScheme
-                                          .secondaryFixed,
-                                      style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal),
-                                      hint: Text(
-                                        localizedStrings.gPrinter,
-                                        style: TextStyle(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primary,
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.normal),
-                                      ),
-                                      value: _sltPrtName,
-                                      items: _printers
-                                          .map((String value) =>
-                                              DropdownMenuItem<String>(
-                                                value: value,
-                                                child: Text(value),
-                                              ))
-                                          .toList(),
-                                      onChanged: (String? newValue) {
-                                        setState(() {
-                                          _sltPrtName = newValue!;
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            SizedBox(
-                              height: 40,
-                              child: Row(
-                                children: [
-                                  SizedBox(
-                                    width: 150,
-                                    child: Text(
-                                      localizedStrings.gPrintDirection,
-                                      textAlign: TextAlign.right,
-                                      style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  SizedBox(
-                                    width: 200, // 设置固定宽度
-                                    child: DropdownButton<String>(
-                                      dropdownColor: Theme.of(context)
-                                          .colorScheme
-                                          .secondaryFixed,
-                                      style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal),
-                                      hint: Text(
-                                        localizedStrings.gPrintDirection,
-                                        style: TextStyle(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primary,
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.normal),
-                                      ),
-                                      value: _selectedPrintDirection,
-                                      items: _printDirections
-                                          .map((String value) =>
-                                              DropdownMenuItem<String>(
-                                                value: value,
-                                                child: Text(value),
-                                              ))
-                                          .toList(),
-                                      onChanged: (String? newValue) {
-                                        setState(() {
-                                          _selectedPrintDirection = newValue!;
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Row(
-                          children: [
-                            SizedBox(
-                              height: 40,
-                              child: Row(
-                                children: [
-                                  buildBtnText(
-                                      localizedStrings.gPageWidth + '(mm):'),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  SizedBox(
-                                    width: 80, // 设置固定宽度
-                                    height: 30,
-                                    child: TextField(
-                                      textAlign: TextAlign.right,
-                                      textAlignVertical:
-                                          TextAlignVertical.bottom,
-                                      controller: pageWidth,
-                                      decoration: InputDecoration(
-                                          border: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                            width: 1,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primary,
-                                          )),
-                                          labelStyle: TextStyle(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .primary,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight
-                                                  .normal), // 设置label字体大小为20
-                                          hintText: 'Widht'),
-                                      onChanged: (value) {
-                                        setState(() {});
-                                      }, // 点击“完成”按钮后，调用失去焦点方法
-                                      // focusNode:
-                                      //     _focusNodeyPos, // 将FocusNode对象绑定到TextField
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            SizedBox(
-                              height: 40,
-                              child: Row(
-                                children: [
-                                  buildBtnText(
-                                      localizedStrings.gPageHeight + '(mm):'),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  SizedBox(
-                                    width: 80, // 设置固定宽度
-                                    height: 30,
-                                    child: TextField(
-                                      textAlign: TextAlign.right,
-                                      textAlignVertical:
-                                          TextAlignVertical.bottom,
-                                      controller: pageHeight,
-                                      decoration: InputDecoration(
-                                          border: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                            width: 1,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primary,
-                                          )),
-                                          labelStyle: TextStyle(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .primary,
-                                              fontSize: 14,
-                                              overflow: TextOverflow.ellipsis,
-                                              fontWeight: FontWeight
-                                                  .normal), // 设置label字体大小为20
-                                          hintText: 'Height'),
-                                      onChanged: (value) {
-                                        setState(() {});
-                                      }, // 点击“完成”按钮后，调用失去焦点方法
-                                      // focusNode:
-                                      //     _focusNodeyPos, // 将FocusNode对象绑定到TextField
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        SizedBox(
-                          width: 135,
-                          child: OutlinedButton(
-                            style: buildBtnStyle(),
-                            child: Text(
-                              localizedStrings.gSaveFormat,
-                              style: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.normal),
-                            ),
-                            onPressed: () async {
-                              String executablePath =
-                                  Platform.resolvedExecutable;
-                              var directory = p.dirname(executablePath);
-                              final formatfilePath =
-                                  Directory('$directory\\format');
-                              if (!await formatfilePath.exists()) {
-                                await formatfilePath.create(recursive: true);
-                              }
-                              directory = formatfilePath.path;
-
-                              String? outputFile =
-                                  (await FilePicker.platform.saveFile(
-                                initialDirectory: directory,
-                                dialogTitle: 'Output file:',
-                                type: FileType.custom,
-                                allowedExtensions: ['fmt'],
-                                fileName: 'format.fmt',
-                              ));
-                              if (outputFile != null) {
-                                if (!outputFile.contains(".fmt")) {
-                                  outputFile = "$outputFile.fmt";
-                                }
-                                _exportCSV();
-                                _saveFormatToCsv(csv, outputFile);
-
-                                ///保存数据到csv
-                                String jsonFilePath =
-                                    outputFile.replaceAll('.fmt', '.json');
-                                _saveFormatToJson(jsonFilePath); //同时保存一份到json
-                              }
-                              ////添加实现
-                            },
-                          ),
-                        ),
-                        SizedBox(
-                          width: 135,
-                          child: OutlinedButton(
-                              style: buildBtnStyle(),
-                              onPressed: () async {
-                                String filePath = '';
-                                try {
-                                  String executablePath =
-                                      Platform.resolvedExecutable;
-                                  var directory = p.dirname(executablePath);
-
-                                  final formatfilePath =
-                                      Directory('$directory\\format');
-                                  if (!await formatfilePath.exists()) {
-                                    await formatfilePath.create(
-                                        recursive: true);
-                                  }
-                                  directory = formatfilePath.path;
-                                  FilePickerResult? result =
-                                      await FilePicker.platform.pickFiles(
-                                    initialDirectory: directory,
-                                    type: FileType.custom,
-                                    allowedExtensions: ['json'],
-                                  );
-                                  if (result != null &&
-                                      result.files.isNotEmpty) {
-                                    filePath = result.files.single.path!;
-                                  }
-                                } catch (e) {
-                                  setState(() {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                            content: const Text('Open fail',
-                                                style: TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight
-                                                        .bold)), ////此处需要秤回复
-                                            duration:
-                                                const Duration(seconds: 5),
-                                            backgroundColor: Theme.of(context)
-                                                .colorScheme
-                                                .error));
-                                  });
-                                }
-                                if (filePath != '') {
-                                  deleteAllItem();
-                                  _openJsonFile(filePath);
-                                }
-                              },
-                              child: Text(
-                                localizedStrings.gOpenJson,
-                                style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal),
-                              )),
-                        ),
-                      ],
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        SizedBox(
-                          width: btnWidth,
-                          child: OutlinedButton(
-                            style: buildBtnStyle(),
-                            child: Text(
-                              localizedStrings.gBarcodeEdit,
-                              style: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.normal),
-                            ),
-                            onPressed: () async {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return const MyBarCodeDialog();
-                                },
-                              ).then((value) {
-                                if (value != null) {
-                                  setState(() {
-                                    // rowDataList = value;
-                                  });
-                                }
-                              });
-                            },
-                          ),
-                        ),
-                        SizedBox(
-                          width: btnWidth,
-                          child: OutlinedButton(
-                            style: buildBtnStyle(),
-                            child: Text(
-                              localizedStrings.gQrcodeEdit,
-                              style: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.normal),
-                            ),
-                            onPressed: () async {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return const MyQrcodeDialog();
-                                },
-                              ).then((value) {
-                                if (value != null) {
-                                  setState(() {
-                                    // rowDataList = value;
-                                  });
-                                }
-                              });
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        SizedBox(
-                          width: btnWidth,
-                          child: OutlinedButton(
-                              style: buildBtnStyle(),
-                              onPressed: () {
-                                deleteAllItem();
-                              },
-                              child: Text(
-                                localizedStrings.gBtnNewFormat,
-                                style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal),
-                              )),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                height: 2,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              SizedBox(
-                height: height - 50 - 100,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: ListView(
-                        children: _buildList(),
+        body: Container(
+            width: width,
+            decoration:
+                BoxDecoration(color: Theme.of(context).colorScheme.surface),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (widget.type == "app")
+                  pageHeadInfo(
+                      context,
+                      width - headWidthPadding,
+                      localizedStrings.menuLabelDesign,
+                      localizedStrings.gTipLabelDesignPageHelp),
+                Expanded(
+                    child: SizedBox(
+                  height: height - topTitleHeight,
+                  child: Column(
+                    children: [
+                      showHeadWidget(width),
+                      Container(
+                        height: 1,
+                        color: Theme.of(context).colorScheme.outlineVariant,
                       ),
-                    ),
-                    Expanded(
-                      flex: 7,
-                      child: Scrollbar(
-                        controller: scrollController,
-                        // isAlwaysShown: true,
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          controller: scrollController,
-                          child: Container(
-                            padding: const EdgeInsets.all(10),
-                            width: 1700,
-                            height: 1000,
-                            decoration: BoxDecoration(
-                                color:
-                                    Theme.of(context).colorScheme.surfaceBright,
-                                border: Border.all(
-                                    width: 0.2,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurface)),
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.vertical, // 水平滚动
-                              controller: scrollController1,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    //60mmX60
-                                    width: _getPageWidth(),
-                                    height: _getPageHeight(),
-                                    decoration: BoxDecoration(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary,
-                                        border: Border.all(
-                                            width: 0.5,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSurface)),
-                                    child: Stack(
-                                      clipBehavior: Clip.none,
-                                      key: _parentKey,
-                                      children: [
-                                        ...floatButtonList,
-                                        // _buildLines(),//屏蔽横线
-                                      ],
-                                    ),
-                                  )
-                                ],
+                      SizedBox(
+                        height: height - topTitleHeight,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            //左侧变量部分
+                            SizedBox(
+                              width: leftBtnWidth,
+                              child: ListView(
+                                children: _buildList(),
                               ),
                             ),
-                          ),
+                            //中间画布部分
+                            showMiddleLabel(
+                                scrollController, scrollController1),
+                            //右侧属性部分
+                            Container(
+                                width: rightBtnWidth,
+                                alignment: Alignment.topLeft,
+                                padding:
+                                    const EdgeInsets.only(left: 10, right: 10),
+                                child: showAttributePart()),
+                          ],
                         ),
                       ),
-                    ),
-                    Expanded(
-                        flex: 3,
+                    ],
+                  ),
+                ))
+              ],
+            )));
+  }
+
+  Widget showHeadWidget(double width) {
+    return Container(
+      height: topBtnHeight,
+      width: width - 10,
+      color: Theme.of(context).colorScheme.onPrimary,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          SizedBox(
+            child: Row(children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Row(
+                    children: [
+                      SizedBox(
+                        height: 40,
                         child: Row(
                           children: [
-                            const SizedBox(
-                              width: 5,
-                            ),
-                            Expanded(
-                              child: ListView(
-                                children: (myTextData.tabOrder == 9999)
-                                    ? _selectItem()
-                                    : (myTextData.type == 'TEXT')
-                                        ? _textproperties()
-                                        : (myTextData.type == 'DATA')
-                                            ? _varproperties()
-                                            : (myTextData.type == 'BarCode')
-                                                ? _barCodeproperties()
-                                                : (myTextData.type == 'Line')
-                                                    ? _lineproperties()
-                                                    : (myTextData.type ==
-                                                            'Qrcode')
-                                                        ? _qrcodeproperties()
-                                                        : _textproperties(),
+                            SizedBox(
+                              width: 150,
+                              child: Text(
+                                localizedStrings.gPrinter,
+                                textAlign: TextAlign.right,
+                                style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.normal),
                               ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            SizedBox(
+                              width: 150, // 设置固定宽度
+                              child: showDropDownButton(
+                                  context, '', printerCtl, _printers,
+                                  (String? newValue) {
+                                setState(() {
+                                  _sltPrtName = newValue!;
+                                  printerCtl.text = newValue;
+                                });
+                              }),
                             )
                           ],
-                        )),
-                    const SizedBox(width: 10)
+                        ),
+                      )
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      SizedBox(
+                        height: 40,
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: 150,
+                              child: Text(
+                                localizedStrings.gPrintDirection,
+                                textAlign: TextAlign.right,
+                                style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.normal),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            SizedBox(
+                              width: 150, // 设置固定宽度
+                              child: showDropDownButton(
+                                  context,
+                                  '',
+                                  printDirectionCtl,
+                                  _printDirections, (String? newValue) {
+                                setState(() {
+                                  _selectedPrintDirection = newValue!;
+                                  printDirectionCtl.text = newValue;
+                                });
+                              }),
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Row(
+                    children: [
+                      SizedBox(
+                        height: 40,
+                        child: Row(
+                          children: [
+                            buildBtnText(localizedStrings.gPageWidth + '(mm):'),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            SizedBox(
+                                width: 80, // 设置固定宽度
+                                height: 48,
+                                child: showInputBox(context, pageWidth, '',
+                                    (value) {
+                                  setState(() {});
+                                }, true))
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      SizedBox(
+                        height: 40,
+                        child: Row(
+                          children: [
+                            buildBtnText(
+                                localizedStrings.gPageHeight + '(mm):'),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            SizedBox(
+                                width: 80, // 设置固定宽度
+                                height: 48,
+                                child: showInputBox(context, pageHeight, '',
+                                    (value) {
+                                  setState(() {});
+                                }, true))
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            ]),
+          ),
+          Container(
+            padding: const EdgeInsets.only(right: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    SizedBox(
+                      width: btnWidth,
+                      height: 40,
+                    ),
+                    SizedBox(
+                        width: btnWidth,
+                        height: 40,
+                        child: showTextButton(
+                            context, 40, localizedStrings.gBtnNewFormat, () {
+                          deleteAllItem();
+                        },
+                            Theme.of(context).colorScheme.onPrimary,
+                            Theme.of(context).colorScheme.primary,
+                            Theme.of(context).colorScheme.onPrimary)),
                   ],
                 ),
-              ),
-            ],
+                SizedBox(
+                  width: 10,
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    SizedBox(
+                        width: btnWidth,
+                        height: 40,
+                        child: showTextButton(
+                            context, 40, localizedStrings.gBarcodeEdit,
+                            () async {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return const MyBarCodeDialog();
+                            },
+                          ).then((value) {
+                            if (value != null) {
+                              setState(() {
+                                // rowDataList = value;
+                              });
+                            }
+                          });
+                        },
+                            Theme.of(context).colorScheme.onPrimary,
+                            Theme.of(context).colorScheme.primary,
+                            Theme.of(context).colorScheme.onPrimary)),
+                    SizedBox(
+                        width: btnWidth,
+                        height: 40,
+                        child: showTextButton(
+                            context, 40, localizedStrings.gOpenJson, () async {
+                          String filePath = '';
+                          try {
+                            String executablePath = Platform.resolvedExecutable;
+                            var directory = p.dirname(executablePath);
+
+                            final formatfilePath =
+                                Directory('$directory\\format');
+                            if (!await formatfilePath.exists()) {
+                              await formatfilePath.create(recursive: true);
+                            }
+                            directory = formatfilePath.path;
+                            FilePickerResult? result =
+                                await FilePicker.platform.pickFiles(
+                              initialDirectory: directory,
+                              type: FileType.custom,
+                              allowedExtensions: ['json'],
+                            );
+                            if (result != null && result.files.isNotEmpty) {
+                              filePath = result.files.single.path!;
+                            }
+                          } catch (e) {
+                            setState(() {
+                              showTipInfo('Open fail', context);
+                            });
+                          }
+                          if (filePath != '') {
+                            deleteAllItem();
+                            _openJsonFile(filePath);
+                          }
+                        },
+                            Theme.of(context).colorScheme.onPrimary,
+                            Theme.of(context).colorScheme.primary,
+                            Theme.of(context).colorScheme.onPrimary)),
+                  ],
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    SizedBox(
+                        width: btnWidth,
+                        height: 40,
+                        child: showTextButton(
+                            context, 40, localizedStrings.gQrcodeEdit,
+                            () async {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return const MyQrcodeDialog();
+                            },
+                          ).then((value) {
+                            if (value != null) {
+                              setState(() {
+                                // rowDataList = value;
+                              });
+                            }
+                          });
+                        },
+                            Theme.of(context).colorScheme.onPrimary,
+                            Theme.of(context).colorScheme.primary,
+                            Theme.of(context).colorScheme.onPrimary)),
+                    SizedBox(
+                        width: btnWidth,
+                        height: 40,
+                        child: showTextButton(
+                            context, 40, localizedStrings.gSaveFormat,
+                            () async {
+                          String executablePath = Platform.resolvedExecutable;
+                          var directory = p.dirname(executablePath);
+                          final formatfilePath =
+                              Directory('$directory\\format');
+                          if (!await formatfilePath.exists()) {
+                            await formatfilePath.create(recursive: true);
+                          }
+                          directory = formatfilePath.path;
+
+                          String? outputFile =
+                              (await FilePicker.platform.saveFile(
+                            initialDirectory: directory,
+                            dialogTitle: 'Output file:',
+                            type: FileType.custom,
+                            allowedExtensions: ['fmt'],
+                            fileName: 'format.fmt',
+                          ));
+                          if (outputFile != null) {
+                            if (!outputFile.contains(".fmt")) {
+                              outputFile = "$outputFile.fmt";
+                            }
+                            _exportCSV();
+                            _saveFormatToCsv(csv, outputFile);
+
+                            ///保存数据到csv
+                            String jsonFilePath =
+                                outputFile.replaceAll('.fmt', '.json');
+                            _saveFormatToJson(jsonFilePath); //同时保存一份到json
+                          }
+                          ////添加实现
+                        },
+                            Theme.of(context).colorScheme.onPrimary,
+                            Theme.of(context)
+                                .colorScheme
+                                .onTertiaryFixedVariant,
+                            Theme.of(context).colorScheme.onPrimary)),
+                  ],
+                ),
+              ],
+            ),
           ),
-        ));
+        ],
+      ),
+    );
+  }
+
+  Widget showMiddleLabel(
+      ScrollController? scrollController, ScrollController? scrollController1) {
+    return Expanded(
+      child: Scrollbar(
+        controller: scrollController,
+        // isAlwaysShown: true,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          controller: scrollController,
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            width: 1700,
+            height: 1000,
+            decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceBright,
+                border: Border.all(
+                    width: 0.2,
+                    color: Theme.of(context).colorScheme.onSurface)),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical, // 水平滚动
+              controller: scrollController1,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(
+                    //60mmX60
+                    width: _getPageWidth(),
+                    height: _getPageHeight(),
+                    decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        border: Border.all(
+                            width: 0.5,
+                            color: Theme.of(context).colorScheme.onSurface)),
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      key: _parentKey,
+                      children: [
+                        ...floatButtonList,
+                        // _buildLines(),//屏蔽横线
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget showAttributePart() {
+    return Container(
+      width: 260,
+      padding: const EdgeInsets.only(left: 10, right: 10),
+      child: ListView(
+        children: (myTextData.tabOrder == 9999)
+            ? _selectItem()
+            : (myTextData.type == 'TEXT')
+                ? _textproperties()
+                : (myTextData.type == 'DATA')
+                    ? _varproperties()
+                    : (myTextData.type == 'BarCode')
+                        ? _barCodeproperties()
+                        : (myTextData.type == 'Line')
+                            ? _lineproperties()
+                            : (myTextData.type == 'Qrcode')
+                                ? _qrcodeproperties()
+                                : _textproperties(),
+      ),
+    );
   }
 
   Widget buildBtnText(String textStr) {
     return SizedBox(
-      width: btnWidth,
+      width: textWidth,
       child: Text(
         textStr,
         textAlign: TextAlign.right,
@@ -1470,11 +1382,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       }
     } catch (e) {
       setState(() {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('$e Save fail'),
-          ),
-        );
+        showTipInfo('$e Save fail', context);
       });
     }
   }
@@ -1487,12 +1395,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       readTextInfoListFromStr(jsonString);
     } catch (e) {
       if (mounted && context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(e.toString(),
-                style: const TextStyle(
-                    fontSize: 20, fontWeight: FontWeight.normal)),
-            duration: const Duration(seconds: 1),
-            backgroundColor: Theme.of(context).colorScheme.error));
+        showTipInfo(e.toString(), context);
       }
     }
   }
@@ -1503,12 +1406,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     try {
       FormatContent fromatContent = FormatContent.fromJson(jsonDecode(dataStr));
       if (fromatContent.prtType != null && fromatContent.prtType == 'P') {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(localizedStrings.l_open_fmt_err,
-                style: const TextStyle(
-                    fontSize: 20, fontWeight: FontWeight.normal)),
-            duration: const Duration(seconds: 1),
-            backgroundColor: Theme.of(context).colorScheme.error));
+        showTipInfo(localizedStrings.l_open_fmt_err, context);
 
         return;
       }
@@ -1526,10 +1424,12 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
             _printers.any((element) => element == fromatContent.printer);
         if (hasPrint) {
           _sltPrtName = fromatContent.printer.toString();
+          printerCtl.text = _sltPrtName;
         }
 
         if (_printDirections.contains(fromatContent.rotation)) {
           _selectedPrintDirection = fromatContent.rotation;
+          printDirectionCtl.text = _selectedPrintDirection;
         }
       });
       // String jsonItemString = jsonDecode(fromatContent.content);
@@ -1542,12 +1442,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
         redrawInterface(textInfoList);
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(e.toString(),
-              style:
-                  const TextStyle(fontSize: 20, fontWeight: FontWeight.normal)),
-          duration: const Duration(seconds: 5),
-          backgroundColor: Theme.of(context).colorScheme.error));
+      showTipInfo(e.toString(), context);
     }
     return textInfoList;
   }
@@ -1784,7 +1679,9 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   Widget _generateExpansionTileWidget(tittle, List<String>? names) {
     return ExpansionTile(
       title: Text(tittle,
-          style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 14)),
+          style: Theme.of(context).textTheme.bodySmall!.apply(
+                color: Theme.of(context).colorScheme.primary,
+              )),
       children: names!.map((name) => _generateWidget(name)).toList(),
     );
   }
@@ -1805,34 +1702,44 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     return FractionallySizedBox(
         widthFactor: 1,
         child: Container(
-          height: 30,
-          decoration: BoxDecoration(
-              border: Border(
-                  bottom: BorderSide(
-                      width: 0.2,
-                      color: Theme.of(context).colorScheme.secondaryFixed))),
+          padding: const EdgeInsets.only(bottom: 10),
+          height: 46,
           alignment: Alignment.center,
           child: Tooltip(
-              message: expStr,
-              preferBelow: false,
-              verticalOffset: 10.0,
-              waitDuration: const Duration(seconds: 1),
-              child: TextButton(
+            message: expStr,
+            preferBelow: false,
+            verticalOffset: 10.0,
+            waitDuration: const Duration(seconds: 1),
+            child: TextButton(
+                style: ButtonStyle(
+                  side: WidgetStateProperty.all<BorderSide>(BorderSide(
+                      width: 1,
+                      color: Theme.of(context).colorScheme.outlineVariant)),
+                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(0.0),
+                    ),
+                  ),
+                ),
                 onPressed: () {
                   count++;
                   num.add(count);
                   myTextData.tabOrder = count;
                   addfloatbutton(name);
                 },
-                child: Text(
-                  //左侧按钮文本的颜色
-                  text,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Theme.of(context).colorScheme.primary,
+                child: Container(
+                  width: 194, // 固定宽度
+                  height: 36, // 固定高度
+
+                  alignment: Alignment.center,
+                  child: Text(
+                    text,
+                    style: Theme.of(context).textTheme.bodySmall!.apply(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                   ),
-                ),
-              )),
+                )),
+          ),
         ));
   }
 
@@ -2427,7 +2334,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     eventBus.fire(EventSavedQrcodeName(mySavedQrcodeName));
   }
 
-  _selectItem() {
+  List<Widget> _selectItem() {
     return [
       const SizedBox(height: 100),
       Container(
@@ -2590,89 +2497,17 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     });
   }
 
-  _textproperties() {
+  List<Widget> buildXYPosition() {
     return [
-      const SizedBox(height: 10),
-      deleteBtnBuild(),
-      const SizedBox(height: 10),
-      Container(
-        height: 35,
-        color: Theme.of(context).colorScheme.surfaceBright,
-        child: Column(
-          children: [
-            Text(
-              localizedStrings.gAttribute,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.normal,
-                  color: Theme.of(context).colorScheme.primary),
-            ),
-            Divider(
-              height: 2,
-              color: Theme.of(context).colorScheme.primary,
-            )
-          ],
-        ),
-      ),
       Row(
         children: [
-          const SizedBox(
-            height: 5,
-          ),
-          SizedBox(
-            width: 100,
-            child: Text(localizedStrings.gTabOrder,
-                textAlign: TextAlign.left,
-                style: const TextStyle(
-                  fontSize: 14,
-                )),
-          ),
-          const SizedBox(
-            height: 5,
-          ),
-          Text(
-            myTextData.tabOrder.toString(),
-            style: TextStyle(
-                fontSize: 14, color: Theme.of(context).colorScheme.primary),
-          )
-        ],
-      ),
-      const SizedBox(height: 10),
-      Row(
-        children: [
-          SizedBox(
-            width: 100,
-            child: Text(localizedStrings.gTipItemType,
-                textAlign: TextAlign.left,
-                style: const TextStyle(
-                  fontSize: 14,
-                )),
-          ),
-          Text(myTextData.type,
-              style: TextStyle(
-                  fontSize: 14, color: Theme.of(context).colorScheme.primary))
-        ],
-      ),
-      const SizedBox(
-        height: 5,
-      ),
-      Container(
-        height: 20,
-        color: Theme.of(context).colorScheme.surfaceBright,
-        child: Text(localizedStrings.gPosition,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 14,
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.normal)),
-      ),
-      Row(
-        children: [
-          const SizedBox(
-            width: 100,
+          Container(
+            height: 48,
+            width: 50,
+            alignment: Alignment.centerRight,
+            padding: const EdgeInsets.only(right: smallPadding),
             child: Text("X:",
-                textAlign: TextAlign.left,
+                textAlign: TextAlign.right,
                 style: TextStyle(
                   fontSize: 14,
                 )),
@@ -2682,11 +2517,11 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
               enabled: false,
               controller: xPosvar,
               decoration: InputDecoration(
-                hintText: myTextData.content.toString(),
-                hintStyle: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontSize: 14,
-                    fontWeight: FontWeight.normal),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(0.0),
+                  borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.outlineVariant),
+                ),
               ),
               onEditingComplete: () {
                 _onSubmit(xPosvar.text, 2);
@@ -2696,12 +2531,18 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           ),
         ],
       ),
+      SizedBox(
+        height: smallPadding,
+      ),
       Row(
         children: [
-          const SizedBox(
-            width: 100,
+          Container(
+            height: 48,
+            width: 50,
+            alignment: Alignment.centerRight,
+            padding: const EdgeInsets.only(right: smallPadding),
             child: Text("Y:",
-                textAlign: TextAlign.left,
+                textAlign: TextAlign.right,
                 style: TextStyle(
                   fontSize: 14,
                 )),
@@ -2711,11 +2552,12 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
               enabled: false,
               controller: yPosvar,
               decoration: InputDecoration(
-                  labelStyle: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontSize: 14,
-                      fontWeight: FontWeight.normal), // 设置label字体大小为20
-                  hintText: myTextData.yPos.toString()),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(0.0),
+                  borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.outlineVariant),
+                ),
+              ),
               onEditingComplete: () {
                 _onSubmit(yPosvar.text, 3);
               }, // 点击“完成”按钮后，调用失去焦点方法
@@ -2724,81 +2566,75 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
           ),
         ],
       ),
-      const SizedBox(
-        height: 5,
-      ),
+    ];
+  }
 
-      Container(
-        height: 20,
-        color: Theme.of(context).colorScheme.surfaceBright,
-        child: Text(localizedStrings.gEditor,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 14,
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.normal)),
-      ),
+  Widget buildDivider() {
+    return Divider(
+      height: 1,
+      color: Theme.of(context).colorScheme.outlineVariant,
+    );
+  }
 
-      SizedBox(
-        width: 100,
-        child: Text(localizedStrings.gTextContent,
-            textAlign: TextAlign.left,
-            style: const TextStyle(
-              fontSize: 14,
-            )),
+  List<Widget> buildRotation() {
+    return [
+      showRightItemTitleText(context, localizedStrings.gRotation),
+      showDropDownButtonValue(
+        context,
+        _selectedRotation,
+        _rotations,
+        'Rotation',
+        _handleRotationSelected,
       ),
+    ];
+  }
 
-      buildTextField(textvariable, "", myTextData.content.toString(), 0),
-      Text(
-        localizedStrings.gFontSize,
-        style: const TextStyle(
-          fontSize: 14,
-        ),
+  List<Widget> fontInfoWidget() {
+    return [
+      showRightItemTitleText(context, localizedStrings.gFontSize),
+      showDropDownButtonValue(
+        context,
+        _selectFontsize,
+        _fontSizes,
+        'FontSize',
+        _handleFontSizeSelected,
       ),
-      buildDropdownButton(
-        value: _selectFontsize,
-        items: _fontSizes,
-        hintText: 'FontSize',
-        onSelect: _handleFontSizeSelected,
-      ),
-      Text(
-        localizedStrings.gRotation,
-        style: const TextStyle(
-          fontSize: 14,
-        ),
-      ),
-      buildDropdownButton(
-        value: _selectedRotation,
-        items: _rotations,
-        hintText: 'Rotation',
-        onSelect: _handleRotationSelected,
-      ),
-      // buildTextField(
-      //     fontsizevar, "Font Size", myTextData.fontSize.toString(), 1),
-      Text(
+      ...buildRotation(),
+      showRightItemTitleText(context, localizedStrings.gFontBold),
+      showDropDownButtonValue(
+        context,
+        _selectFontBold,
+        _fontBoldReverse,
         localizedStrings.gFontBold,
-        style: const TextStyle(
-          fontSize: 14,
-        ),
+        _handleFontBoldSelected,
       ),
-      buildDropdownButton(
-        value: _selectFontBold,
-        items: _fontBoldReverse,
-        hintText: localizedStrings.gFontBold,
-        onSelect: _handleFontBoldSelected,
-      ),
-      Text(
+      showRightItemTitleText(context, localizedStrings.gFontReverse),
+      showDropDownButtonValue(
+        context,
+        _selectFontReverse,
+        _fontBoldReverse,
         localizedStrings.gFontReverse,
-        style: const TextStyle(
-          fontSize: 14,
-        ),
+        _handleFontReverseSelected,
       ),
-      buildDropdownButton(
-        value: _selectFontReverse,
-        items: _fontBoldReverse,
-        hintText: localizedStrings.gFontReverse,
-        onSelect: _handleFontReverseSelected,
-      ),
+    ];
+  }
+
+  List<Widget> _textproperties() {
+    return [
+      buildAttitudeText(context, localizedStrings.gAttribute),
+      buildDivider(),
+      buildTabOrderAndTyptText(
+          context, localizedStrings.gTabOrder, myTextData.tabOrder.toString()),
+      const SizedBox(height: smallPadding),
+      buildTabOrderAndTyptText(
+          context, localizedStrings.gTipItemType, myTextData.type),
+      showRightItemTitleText(context, localizedStrings.gPosition),
+      ...buildXYPosition(),
+      showRightItemTitleText(context, localizedStrings.gTextContent),
+      buildTextField(textvariable, "", myTextData.content.toString(), 0),
+      ...fontInfoWidget(),
+      const SizedBox(height: 20),
+      deleteBtnBuild(),
     ];
   }
 
@@ -2869,306 +2705,57 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
     myTextData.tabOrder = 9999;
   }
 
-  _varproperties() {
+  List<Widget> _varproperties() {
     return [
-      const SizedBox(height: 10),
-      deleteBtnBuild(),
-      const SizedBox(height: 10),
-      Container(
-        height: 35,
-        color: Theme.of(context).colorScheme.surfaceBright,
-        child: Column(
-          children: [
-            Text(
-              localizedStrings.gAttribute,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.normal,
-                  color: Theme.of(context).colorScheme.primary),
-            ),
-            Divider(
-              height: 2,
-              color: Theme.of(context).colorScheme.primary,
-            )
-          ],
-        ),
-      ),
-      Row(
-        children: [
-          const SizedBox(
-            height: 5,
-          ),
-          SizedBox(
-            width: 100,
-            child: Text(localizedStrings.gTabOrder,
-                textAlign: TextAlign.left,
-                style: const TextStyle(
-                  fontSize: 14,
-                )),
-          ),
-          const SizedBox(
-            height: 5,
-          ),
-          Text(
-            myTextData.tabOrder.toString(),
-            style: TextStyle(
-                fontSize: 14, color: Theme.of(context).colorScheme.primary),
-          )
-        ],
-      ),
-      const SizedBox(height: 10),
-      Row(
-        children: [
-          SizedBox(
-            width: 100,
-            child: Text(localizedStrings.gTipItemType,
-                textAlign: TextAlign.left,
-                style: const TextStyle(
-                  fontSize: 14,
-                )),
-          ),
-          Text(myTextData.type,
-              style: TextStyle(
-                  fontSize: 14, color: Theme.of(context).colorScheme.primary))
-        ],
-      ),
-      const SizedBox(
-        height: 5,
-      ),
-      Container(
-        height: 20,
-        color: Theme.of(context).colorScheme.surfaceBright,
-        child: Text(localizedStrings.gPosition,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 14,
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.normal)),
-      ),
-      Row(
-        children: [
-          const SizedBox(
-            width: 100,
-            child: Text("X:",
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 14,
-                )),
-          ),
-          Expanded(
-            child: TextField(
-              enabled: false,
-              controller: xPosvar,
-              decoration: InputDecoration(
-                hintText: myTextData.content.toString(),
-                hintStyle: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontSize: 14,
-                    fontWeight: FontWeight.normal),
-              ),
-              onEditingComplete: () {
-                _onSubmit(xPosvar.text, 2);
-              }, // 点击“完成”按钮后，调用失去焦点方法
-              focusNode: _focusNodexPos, // 将FocusNode对象绑定到TextField
-            ),
-          ),
-        ],
-      ),
-      Row(
-        children: [
-          const SizedBox(
-            width: 100,
-            child: Text("Y:",
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 14,
-                )),
-          ),
-          Expanded(
-            child: TextField(
-              enabled: false,
-              controller: yPosvar,
-              decoration: InputDecoration(
-                  labelStyle: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontSize: 14,
-                      fontWeight: FontWeight.normal), // 设置label字体大小为20
-                  hintText: myTextData.yPos.toString()),
-              onEditingComplete: () {
-                _onSubmit(yPosvar.text, 3);
-              }, // 点击“完成”按钮后，调用失去焦点方法
-              focusNode: _focusNodeyPos, // 将FocusNode对象绑定到TextField
-            ),
-          ),
-        ],
-      ),
-      const SizedBox(height: 20),
-      SizedBox(
-        width: 100,
-        child: Text(localizedStrings.gMaxLength,
-            textAlign: TextAlign.left,
-            style: const TextStyle(
-              fontSize: 14,
-            )),
-      ),
+      buildAttitudeText(context, localizedStrings.gAttribute),
+      buildDivider(),
+      buildTabOrderAndTyptText(
+          context, localizedStrings.gTabOrder, myTextData.tabOrder.toString()),
+      const SizedBox(height: smallPadding),
+      buildTabOrderAndTyptText(
+          context, localizedStrings.gTipItemType, myTextData.type),
+      showRightItemTitleText(context, localizedStrings.gPosition),
+      ...buildXYPosition(),
+      showRightItemTitleText(context, localizedStrings.gMaxLength),
       buildTextField(maxLenthvar, "", myTextData.maxLength.toString(), 4),
-      const SizedBox(width: 10),
-      Text(
+      showRightItemTitleText(context, localizedStrings.gAlignment),
+      showDropDownButtonValue(
+        context,
+        _selectedAlignment,
+        _alignments,
         localizedStrings.gAlignment,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+        _handleAlignmentSelected,
       ),
-      buildDropdownButton(
-        value: _selectedAlignment,
-        items: _alignments,
-        hintText: localizedStrings.gAlignment,
-        onSelect: _handleAlignmentSelected,
-      ),
-
-      Text(
-        localizedStrings.gRotation,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
-      ),
-      buildDropdownButton(
-        value: _selectedRotation,
-        items: _rotations,
-        hintText: localizedStrings.gRotation,
-        onSelect: _handleRotationSelected,
-      ),
-      Text(
-        localizedStrings.gFontSize,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
-      ),
-      buildDropdownButton(
-        value: _selectFontsize,
-        items: _fontSizes,
-        hintText: localizedStrings.gFontSize,
-        onSelect: _handleFontSizeSelected,
-      ),
-      // buildTextField(
-      //     fontsizevar, "Font Size", myTextData.fontSize.toString(), 1),
-      Text(
-        localizedStrings.gFontBold,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
-      ),
-      buildDropdownButton(
-        value: _selectFontBold,
-        items: _fontBoldReverse,
-        hintText: localizedStrings.gFontBold,
-        onSelect: _handleFontBoldSelected,
-      ),
-      Text(
-        localizedStrings.gFontReverse,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
-      ),
-      buildDropdownButton(
-        value: _selectFontReverse,
-        items: _fontBoldReverse,
-        hintText: localizedStrings.gFontReverse,
-        onSelect: _handleFontReverseSelected,
-      ),
-      const SizedBox(height: 5),
+      ...fontInfoWidget(),
+      const SizedBox(height: 20),
+      deleteBtnBuild(),
     ];
   }
 
   Widget deleteBtnBuild() {
-    return ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0), // 这里的10.0是圆角半径，可以根据需要调整
-          ),
-          backgroundColor: Theme.of(context).colorScheme.primary, // 设置按钮的背景色
-          elevation: 10, // 设置按钮的阴影
-        ),
-        onPressed: () {
+    return SizedBox(
+        width: 200,
+        child: showTextButton(context, btnHeight, localizedStrings.gBtnDelete,
+            () {
           setState(() {
             _deleteTextItem(myTextData.tabOrder);
           });
         },
-        child: Text(localizedStrings.gBtnDelete,
-            style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.normal,
-                color: Theme.of(context).colorScheme.onPrimary)));
+            Theme.of(context).colorScheme.onPrimary,
+            Theme.of(context).colorScheme.error,
+            Theme.of(context).colorScheme.onPrimary));
   }
 
-  _lineproperties() {
+  List<Widget> _lineproperties() {
     return [
-      const SizedBox(height: 10),
-      deleteBtnBuild(),
-      const SizedBox(height: 10),
-      Container(
-        height: 35,
-        color: Theme.of(context).colorScheme.surfaceBright,
-        child: Column(
-          children: [
-            Text(
-              localizedStrings.gAttribute,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.normal,
-                  color: Theme.of(context).colorScheme.primary),
-            ),
-            Divider(
-              height: 2,
-              color: Theme.of(context).colorScheme.primary,
-            )
-          ],
-        ),
-      ),
-      Row(
-        children: [
-          const SizedBox(
-            height: 5,
-          ),
-          SizedBox(
-            width: 100,
-            child: Text(localizedStrings.gTabOrder,
-                textAlign: TextAlign.left,
-                style: const TextStyle(
-                  fontSize: 14,
-                )),
-          ),
-          const SizedBox(
-            height: 5,
-          ),
-          Text(
-            myTextData.tabOrder.toString(),
-            style: TextStyle(
-                fontSize: 14, color: Theme.of(context).colorScheme.primary),
-          )
-        ],
-      ),
-      const SizedBox(height: 10),
-      Row(
-        children: [
-          SizedBox(
-            width: 100,
-            child: Text(localizedStrings.gTipItemType,
-                textAlign: TextAlign.left,
-                style: const TextStyle(
-                  fontSize: 14,
-                )),
-          ),
-          Text(myTextData.type,
-              style: TextStyle(
-                  fontSize: 14, color: Theme.of(context).colorScheme.primary))
-        ],
-      ),
-      const SizedBox(
-        height: 5,
-      ),
-      Container(
-        height: 20,
-        color: Theme.of(context).colorScheme.surfaceBright,
-        child: Text(localizedStrings.gPosition,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 14,
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.normal)),
-      ),
+      buildAttitudeText(context, localizedStrings.gAttribute),
+      buildDivider(),
+      buildTabOrderAndTyptText(
+          context, localizedStrings.gTabOrder, myTextData.tabOrder.toString()),
+      const SizedBox(height: smallPadding),
+      buildTabOrderAndTyptText(
+          context, localizedStrings.gTipItemType, myTextData.type),
+      showRightItemTitleText(context, localizedStrings.gPosition),
       buildTextField(xPosvar, "X1", myTextData.xPos.toString(), 2),
       buildTextField(yPosvar, "Y1", myTextData.yPos.toString(), 3),
       buildTextField(x2Posvar, localizedStrings.l_line_lenth_txt,
@@ -3176,341 +2763,74 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       buildTextField(lineWidthVar, localizedStrings.l_line_width_txt,
           myTextData.lineWidth.toString(), 16),
       const SizedBox(height: 20),
+      deleteBtnBuild(),
     ];
   }
 
-  _barCodeproperties() {
+  List<Widget> _barCodeproperties() {
     return [
-      const SizedBox(height: 10),
-      deleteBtnBuild(),
-      const SizedBox(height: 10),
-      Container(
-        height: 35,
-        color: Theme.of(context).colorScheme.surfaceBright,
-        child: Column(
-          children: [
-            Text(
-              localizedStrings.gAttribute,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.normal,
-                  color: Theme.of(context).colorScheme.primary),
-            ),
-            Divider(
-              height: 2,
-              color: Theme.of(context).colorScheme.primary,
-            )
-          ],
-        ),
-      ),
-      Row(
-        children: [
-          const SizedBox(
-            height: 5,
-          ),
-          SizedBox(
-            width: 100,
-            child: Text(localizedStrings.gTabOrder,
-                textAlign: TextAlign.left,
-                style: const TextStyle(
-                  fontSize: 14,
-                )),
-          ),
-          const SizedBox(
-            height: 5,
-          ),
-          Text(
-            myTextData.tabOrder.toString(),
-            style: TextStyle(
-                fontSize: 14, color: Theme.of(context).colorScheme.primary),
-          )
-        ],
-      ),
-      const SizedBox(height: 10),
-      Row(
-        children: [
-          SizedBox(
-            width: 100,
-            child: Text(localizedStrings.gTipItemType,
-                textAlign: TextAlign.left,
-                style: const TextStyle(
-                  fontSize: 14,
-                )),
-          ),
-          Text(myTextData.type,
-              style: TextStyle(
-                  fontSize: 14, color: Theme.of(context).colorScheme.primary))
-        ],
-      ),
-      const SizedBox(
-        height: 5,
-      ),
-      Container(
-        height: 20,
-        color: Theme.of(context).colorScheme.surfaceBright,
-        child: Text(localizedStrings.gPosition,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 14,
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.normal)),
-      ),
-      Row(
-        children: [
-          const SizedBox(
-            width: 100,
-            child: Text("X:",
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 14,
-                )),
-          ),
-          Expanded(
-            child: TextField(
-              enabled: false,
-              controller: xPosvar,
-              decoration: InputDecoration(
-                hintText: myTextData.content.toString(),
-                hintStyle: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontSize: 14,
-                    fontWeight: FontWeight.normal),
-              ),
-              onEditingComplete: () {
-                _onSubmit(xPosvar.text, 2);
-              }, // 点击“完成”按钮后，调用失去焦点方法
-              focusNode: _focusNodexPos, // 将FocusNode对象绑定到TextField
-            ),
-          ),
-        ],
-      ),
-      Row(
-        children: [
-          const SizedBox(
-            width: 100,
-            child: Text("Y:",
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 14,
-                )),
-          ),
-          Expanded(
-            child: TextField(
-              enabled: false,
-              controller: yPosvar,
-              decoration: InputDecoration(
-                  labelStyle: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontSize: 14,
-                      fontWeight: FontWeight.normal), // 设置label字体大小为20
-                  hintText: myTextData.yPos.toString()),
-              onEditingComplete: () {
-                _onSubmit(yPosvar.text, 3);
-              }, // 点击“完成”按钮后，调用失去焦点方法
-              focusNode: _focusNodeyPos, // 将FocusNode对象绑定到TextField
-            ),
-          ),
-        ],
-      ),
-      const SizedBox(height: 20),
-      Text(
+      buildAttitudeText(context, localizedStrings.gAttribute),
+      buildDivider(),
+      buildTabOrderAndTyptText(
+          context, localizedStrings.gTabOrder, myTextData.tabOrder.toString()),
+      const SizedBox(height: smallPadding),
+      buildTabOrderAndTyptText(
+          context, localizedStrings.gTipItemType, myTextData.type),
+      showRightItemTitleText(context, localizedStrings.gPosition),
+      ...buildXYPosition(),
+      showRightItemTitleText(context, localizedStrings.gBarcode),
+      showDropDownButtonValue(
+        context,
+        _selectedBarcode,
+        _savedBarCodeNames,
         localizedStrings.gBarcode,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+        _handleBarcodeSelected,
       ),
-      buildDropdownButton(
-        value: _selectedBarcode,
-        items: _savedBarCodeNames,
-        hintText: localizedStrings.gBarcode,
-        onSelect: _handleBarcodeSelected,
-      ),
-      Text(
-        localizedStrings.gBarcodeHeight,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
-      ),
+      showRightItemTitleText(context, localizedStrings.gBarcodeHeight),
       buildTextField(barcodeHeight, "", myTextData.height.toString(), 7),
-      const SizedBox(height: 20),
-      Text(
+      showRightItemTitleText(context, localizedStrings.gHrAlignment),
+      showDropDownButtonValue(
+        context,
+        _selectedHRAlignment,
+        _hralignments,
         localizedStrings.gHrAlignment,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+        _handleHrAlignmentSelected,
       ),
-      buildDropdownButton(
-        value: _selectedHRAlignment,
-        items: _hralignments,
-        hintText: localizedStrings.gHrAlignment,
-        onSelect: _handleHrAlignmentSelected,
-      ),
-      Text(
-        localizedStrings.gRotation,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
-      ),
-      buildDropdownButton(
-        value: _selectedRotation,
-        items: _rotations,
-        hintText: localizedStrings.gRotation,
-        onSelect: _handleRotationSelected,
-      ),
-      const SizedBox(height: 5),
+      ...buildRotation(),
+      const SizedBox(height: 20),
+      deleteBtnBuild(),
     ];
   }
 
-  _qrcodeproperties() {
+  List<Widget> _qrcodeproperties() {
     return [
-      const SizedBox(height: 10),
-      deleteBtnBuild(),
-      const SizedBox(height: 10),
-      Container(
-        height: 35,
-        color: Theme.of(context).colorScheme.surfaceBright,
-        child: Column(
-          children: [
-            Text(
-              localizedStrings.gAttribute,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.normal,
-                  color: Theme.of(context).colorScheme.primary),
-            ),
-            Divider(
-              height: 2,
-              color: Theme.of(context).colorScheme.primary,
-            )
-          ],
-        ),
-      ),
-      Row(
-        children: [
-          const SizedBox(
-            height: 5,
-          ),
-          SizedBox(
-            width: 100,
-            child: Text(localizedStrings.gTabOrder,
-                textAlign: TextAlign.left,
-                style: const TextStyle(
-                  fontSize: 14,
-                )),
-          ),
-          const SizedBox(
-            height: 5,
-          ),
-          Text(
-            myTextData.tabOrder.toString(),
-            style: TextStyle(
-                fontSize: 14, color: Theme.of(context).colorScheme.primary),
-          )
-        ],
-      ),
-      const SizedBox(height: 10),
-      Row(
-        children: [
-          SizedBox(
-            width: 100,
-            child: Text(localizedStrings.gTipItemType,
-                textAlign: TextAlign.left,
-                style: const TextStyle(
-                  fontSize: 14,
-                )),
-          ),
-          Text(myTextData.type,
-              style: TextStyle(
-                  fontSize: 14, color: Theme.of(context).colorScheme.primary))
-        ],
-      ),
-      const SizedBox(
-        height: 5,
-      ),
-      Container(
-        height: 20,
-        color: Theme.of(context).colorScheme.surfaceBright,
-        child: Text(localizedStrings.gPosition,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 14,
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.normal)),
-      ),
-      Row(
-        children: [
-          const SizedBox(
-            width: 100,
-            child: Text("X:",
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 14,
-                )),
-          ),
-          Expanded(
-            child: TextField(
-              enabled: false,
-              controller: xPosvar,
-              decoration: InputDecoration(
-                hintText: myTextData.content.toString(),
-                hintStyle: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontSize: 14,
-                    fontWeight: FontWeight.normal),
-              ),
-              onEditingComplete: () {
-                _onSubmit(xPosvar.text, 2);
-              }, // 点击“完成”按钮后，调用失去焦点方法
-              focusNode: _focusNodexPos, // 将FocusNode对象绑定到TextField
-            ),
-          ),
-        ],
-      ),
-      Row(
-        children: [
-          const SizedBox(
-            width: 100,
-            child: Text("Y:",
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 14,
-                )),
-          ),
-          Expanded(
-            child: TextField(
-              enabled: false,
-              controller: yPosvar,
-              decoration: InputDecoration(
-                  labelStyle: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontSize: 14,
-                      fontWeight: FontWeight.normal), // 设置label字体大小为20
-                  hintText: myTextData.yPos.toString()),
-              onEditingComplete: () {
-                _onSubmit(yPosvar.text, 3);
-              }, // 点击“完成”按钮后，调用失去焦点方法
-              focusNode: _focusNodeyPos, // 将FocusNode对象绑定到TextField
-            ),
-          ),
-        ],
-      ),
-      const SizedBox(height: 20),
-      Text(
+      buildAttitudeText(context, localizedStrings.gAttribute),
+      buildDivider(),
+      buildTabOrderAndTyptText(
+          context, localizedStrings.gTabOrder, myTextData.tabOrder.toString()),
+      const SizedBox(height: smallPadding),
+      buildTabOrderAndTyptText(
+          context, localizedStrings.gTipItemType, myTextData.type),
+      showRightItemTitleText(context, localizedStrings.gPosition),
+      ...buildXYPosition(),
+      showRightItemTitleText(context, localizedStrings.gQrcode),
+      showDropDownButtonValue(
+        context,
+        _selectedQrcode,
+        _savedQrcodeNames,
         localizedStrings.gQrcode,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+        _handleQrcodeSelected,
       ),
-      buildDropdownButton(
-        value: _selectedQrcode,
-        items: _savedQrcodeNames,
-        hintText: localizedStrings.gQrcode,
-        onSelect: _handleQrcodeSelected,
+      showRightItemTitleText(context, localizedStrings.gQrcodeWidth),
+      showDropDownButtonValue(
+        context,
+        _selectedQr,
+        _qrWidths,
+        localizedStrings.gQrcodeWidth,
+        _handleQrWidthSelected,
       ),
       const SizedBox(height: 20),
-      Text(
-        localizedStrings.gQrcodeWidth,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
-      ),
-      buildDropdownButton(
-        value: _selectedQr,
-        items: _qrWidths,
-        hintText: localizedStrings.gQrcodeWidth,
-        onSelect: _handleQrWidthSelected,
-      ),
-      const SizedBox(height: 5),
+      deleteBtnBuild(),
     ];
   }
 

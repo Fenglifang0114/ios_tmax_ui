@@ -12,6 +12,7 @@ const String myFirmwareDir = 'firmware';
 const String mySerialOutput = 'serialOutput';
 const String myLastRecName = 'records.txt';
 const String myImportLogName = 'operation.log';
+const String mySelectedPageJson = 'page.json';
 
 List<Map<String, dynamic>> parseLog(String contentStr, String targetStr) {
   RegExp regExp = RegExp(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+){(.+)}');
@@ -150,4 +151,60 @@ Future<String> getAppImportPath(String fileName) async {
   directory = '$directory\\$myImportDir';
   final formatfilePath = Directory('$directory\\$fileName');
   return formatfilePath.path;
+}
+
+/// 将选择的 pageId 列表写入 JSON 文件
+/// [configPageList] 配置页面的 pageId 列表
+/// [appPagedList] 应用页面的 pageId 列表
+/// [defaultPageId] 默认页面的 pageId
+Future<void> writePageIdsToJson(
+    Set<int> configPageList, Set<int> appPagedList, String routeName) async {
+  // 将 Set 转换为 List，确保可以正确进行 JSON 编码
+  final data = {
+    'configPageList': configPageList.toList(),
+    'appPagedList': appPagedList.toList(),
+    'defaultPageId': routeName,
+  };
+
+  // 将 Map 转换为 JSON 字符串
+  final jsonString = jsonEncode(data);
+
+  // 获取应用目录
+  String appDirectory = Platform.resolvedExecutable;
+  var directory = p.dirname(appDirectory);
+  directory = '$directory\\$myLogDir';
+
+  // 确保目录存在
+  await Directory(directory).create(recursive: true);
+
+  // 构建文件路径
+  final filePath = '$directory\\$mySelectedPageJson';
+
+  // 将 JSON 字符串写入文件
+  await File(filePath).writeAsString(jsonString);
+}
+
+Future<Map<String, dynamic>> readPageIdsFromJsonReversed() async {
+  // 获取应用目录
+  String appDirectory = Platform.resolvedExecutable;
+  var directory = p.dirname(appDirectory);
+  directory = '$directory\\$myLogDir';
+
+  // 构建文件路径
+  final filePath = '$directory\\$mySelectedPageJson';
+  final file = File(filePath);
+
+  // 检查文件是否存在
+  if (await file.exists()) {
+    // 读取文件内容
+    final jsonString = await file.readAsString();
+    final data = jsonDecode(jsonString) as Map<String, dynamic>;
+
+    // 倒序处理列表
+    data['configPageList'] = (data['configPageList'] as List).toList();
+    data['appPagedList'] = (data['appPagedList'] as List).toList();
+
+    return data;
+  }
+  return {};
 }

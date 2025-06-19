@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/data/settingparam_data.dart';
 import '../eventbus/eventbus.dart';
 import 'comscaleinfo_data.dart';
@@ -79,6 +80,11 @@ class RespMsgType {
   static const String respSwitchLimit = 'resp_switch_limit_from_scale';
   static const String respRevDetailTail = 'resp_rev_detail_tail';
   static const String respExportRecs = 'resp_export_recs';
+  static const String respImportRecs = 'resp_import_recs';
+  static const String respSetMaxRange = 'resp_set_max_range';
+  static const String respCalValue = 'resp_cal_value';
+  static const String respSetGaduationValue = 'resp_set_gaduation_value';
+  static const String respSetDecimalValue = 'resp_set_decimal_value';
 
   static final Map<String, Function> handlers = {
     RespMsgType.respGetUIConf: handleGetUIConf,
@@ -129,7 +135,12 @@ class RespMsgType {
     RespMsgType.respRevDetailTail: handleRespRevDetailTail,
     RespMsgType.respExportRecs: handleRespExportRecs,
     RespMsgType.respAddRec: handleRespAddRec,
+    RespMsgType.respSetMaxRange: handleSetMaxRange,
+    RespMsgType.respCalValue: handleCalValue,
+    RespMsgType.respSetGaduationValue: handleSetGaduationValue,
+    RespMsgType.respSetDecimalValue: handleSetDecimalValue,
   };
+
   static void handleGetUIConf(dynamic data) {
     final jsonResponse = json.decode(data['MsgBody']);
     mySettingParam = SettingParam.fromJson(jsonResponse);
@@ -461,6 +472,26 @@ class RespMsgType {
     eventBus.fire(EventRevAddRec(mobj));
   }
 
+  static void handleSetMaxRange(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventRevSetMaxRange(mobj));
+  }
+
+  static void handleCalValue(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventRevCalValue(mobj));
+  }
+
+  static void handleSetGaduationValue(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventRevSetGaduationValue(mobj));
+  }
+
+  static void handleSetDecimalValue(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventRevSetDecimalValue(mobj));
+  }
+
   static void handleRespUpdateFirmwareNet(dynamic data) {
     dynamic mobj = ChannelResponse.fromJson(data);
     eventBus.fire(EventUpdateFirmWareNetResp(mobj));
@@ -474,37 +505,20 @@ class RespMsgType {
           FactoryInfoFromScale.fromJson(json.decode(jsonStrings));
     } else {
       myFactoryInfoFromScale = FactoryInfoFromScale("", "");
-      if (id == 1) {
-        myComScaleSn = myFactoryInfoFromScale;
-        myComScaleInfo.isOnline = false;
-        return eventBus.fire(EventRespCheckComPort(myComScaleSn));
-      }
+      myOnlineInfo.factInfo = myFactoryInfoFromScale;
+      myOnlineInfo.scaleId = id;
+
+      return eventBus.fire(EventRespCheckNetScale(myOnlineInfo));
     }
 
     if (myFactoryInfoFromScale.modelName != '') {
-      if (id == 1) {
-        myComScaleInfo.scaleSn = myFactoryInfoFromScale.scaleSn!;
-        myComScaleInfo.scaleModel = myFactoryInfoFromScale.modelName!;
-        myComScaleSn = myFactoryInfoFromScale;
-        myComScaleInfo.isOnline = true;
-        if (myDefScaleInfo.defScaleId == id) {
-          DefScaleInfo.getDefScaleInfo(id);
+      for (var tempScale in myAllScalesList) {
+        if (tempScale.scaleId == id) {
+          tempScale.scaleModel = myFactoryInfoFromScale.modelName!;
+          tempScale.scaleSn = myFactoryInfoFromScale.scaleSn!;
+          tempScale.isOnline = true;
+          break;
         }
-        return eventBus.fire(EventRespCheckComPort(myComScaleSn));
-      } else {
-        NetScaleInfoLocal tempScale = NetScaleInfoLocal();
-        tempScale = NetScaleListMgr.findScaleInfo(myNetScaleList, id);
-        if (tempScale.scaleSn != myFactoryInfoFromScale.scaleSn) {
-          tempScale.scaleModel = myFactoryInfoFromScale.modelName;
-          tempScale.scaleSn = myFactoryInfoFromScale.scaleSn;
-          NetScaleListMgr.updateScale(myNetScaleList, tempScale);
-        }
-        if (myDefScaleInfo.defScaleId == id) {
-          DefScaleInfo.getDefScaleInfo(id);
-        }
-        myOnlineInfo.factInfo = myFactoryInfoFromScale;
-        myOnlineInfo.scaleId = id;
-        return eventBus.fire(EventRespCheckNetScale(myOnlineInfo));
       }
     }
     myOnlineInfo.factInfo = myFactoryInfoFromScale;

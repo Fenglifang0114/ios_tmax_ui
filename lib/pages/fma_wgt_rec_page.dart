@@ -7,13 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:t_max/data/comscaleinfo_data.dart';
 import 'package:t_max/data/fma_rec_list_db_data.dart';
-import 'package:t_max/data/formula_common.dart';
-import 'package:t_max/data/formula_scale_data.dart';
 import 'package:t_max/data/language.dart';
-import 'package:t_max/data/req_formula_data.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
-import 'package:t_max/eventbus/eventbus.dart';
-import 'package:t_max/functions/methods.dart';
 import 'package:t_max/data/formula_from_db_data.dart';
 
 // 定义 EncryptedValue 枚举
@@ -114,7 +109,7 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
     // final width = MediaQuery.of(context).size.width;
     return Scaffold(
         body: Container(
-      color: bgColor, //对接时修改颜色值
+      color: Theme.of(context).colorScheme.surfaceDim, //对接时修改颜色值
       child: Padding(
         padding: const EdgeInsets.all(14.0),
         child: LayoutBuilder(
@@ -182,7 +177,7 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
                     Container(
                       width: 3000,
                       height: 40,
-                      color: const Color(0xFFE6EEF4),
+                      color: Theme.of(context).colorScheme.secondaryContainer,
                       child: Row(
                         children: [
                           Checkbox(
@@ -226,11 +221,11 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
                       ),
                     ),
                     Divider(
-                      color: lineColor,
+                      color: Theme.of(context).colorScheme.outlineVariant,
                       thickness: 1,
                       height: 1,
                     ),
-                    Container(
+                    SizedBox(
                       height: formulaTableHeight,
                       child: ListView.builder(
                         itemCount: fmaRecList.length,
@@ -274,8 +269,12 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
                                           color: rowData.header!.isEncrypted
                                                       .toString() ==
                                                   "false"
-                                              ? greenColor
-                                              : Color(0xFFF13851)),
+                                              ? Theme.of(context)
+                                                  .colorScheme
+                                                  .onTertiaryFixedVariant
+                                              : Theme.of(context)
+                                                  .colorScheme
+                                                  .error),
                                     )),
                                     Expanded(
                                         child: Text(
@@ -298,8 +297,12 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
                                             color: rowData.header!.isQualified
                                                         .toString() ==
                                                     "yes"
-                                                ? greenColor
-                                                : Color(0xFFF13851)),
+                                                ? Theme.of(context)
+                                                    .colorScheme
+                                                    .onTertiaryFixedVariant
+                                                : Theme.of(context)
+                                                    .colorScheme
+                                                    .error),
                                       ),
                                     ),
                                     Expanded(
@@ -331,7 +334,9 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
                                 ),
                               ),
                               Divider(
-                                color: lineColor,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .outlineVariant,
                                 thickness: 1,
                                 height: 1,
                               ),
@@ -447,9 +452,14 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
                                                                             .isQualified
                                                                             .toString() ==
                                                                         "ok"
-                                                                    ? greenColor
-                                                                    : Color(
-                                                                        0xFFF13851)))),
+                                                                    ? Theme.of(
+                                                                            context)
+                                                                        .colorScheme
+                                                                        .onTertiaryFixedVariant
+                                                                    : Theme.of(
+                                                                            context)
+                                                                        .colorScheme
+                                                                        .error))),
                                                     Expanded(child: Text('')),
                                                     SizedBox(
                                                       width: 60,
@@ -464,7 +474,9 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
                                                 (rowData.details?.length ?? 0) -
                                                     1)
                                               Divider(
-                                                color: lineColor,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .outlineVariant,
                                                 thickness: 1,
                                                 height: 1,
                                               )
@@ -670,7 +682,7 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
       showTipInfo(localizedStrings.fSaveSuccess, context);
     } catch (e) {
       // 提示导出失败
-      print("Export failed: $e");
+      // print("Export failed: $e");
     }
   }
 
@@ -686,7 +698,8 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               foregroundColor: Theme.of(context).colorScheme.onPrimary,
-              backgroundColor: greenColor,
+              backgroundColor:
+                  Theme.of(context).colorScheme.onTertiaryFixedVariant,
               fixedSize: const Size(double.infinity, 48),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.zero, // 可以根据需要调整圆角

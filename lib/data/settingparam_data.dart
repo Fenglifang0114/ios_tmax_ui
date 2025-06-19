@@ -8,6 +8,7 @@ class SettingParam {
   int scaleMode;
   String scaleSn;
   String saveMode;
+  int wgtMode;
 
   SettingParam(
       this.id,
@@ -18,7 +19,8 @@ class SettingParam {
       this.dateSeparator,
       this.scaleMode,
       this.scaleSn,
-      this.saveMode);
+      this.saveMode,
+      this.wgtMode);
   SettingParam.fromJson(Map<String, dynamic> json)
       : id = json['Id'],
         recMode = json['RecMode'],
@@ -28,7 +30,8 @@ class SettingParam {
         dateSeparator = json['DateSeparator'],
         scaleMode = json['ScaleMode'],
         scaleSn = json['ScaleSn'],
-        saveMode = json['SaveMode'];
+        saveMode = json['SaveMode'],
+        wgtMode = json['WgtMode'];
 
   Map<String, dynamic> toJson() {
     return {
@@ -41,16 +44,17 @@ class SettingParam {
       'ScaleMode': scaleMode,
       'ScaleSn': scaleSn,
       'SaveMode': saveMode,
+      'WgtMode': wgtMode,
     };
   }
 }
 
-SettingParam mySettingParam = SettingParam(0, "", "", "", "", "", 0, "", "");
+SettingParam mySettingParam = SettingParam(0, "", "", "", "", "", 0, "", "", 0);
 SettingParam myModeSettingNormal =
-    SettingParam(0, "", "", "", "", "", 0, "", "");
+    SettingParam(0, "", "", "", "", "", 0, "", "", 0);
 SettingParam myModeSettingCheck =
-    SettingParam(0, "", "", "", "", "", 0, "", "");
+    SettingParam(0, "", "", "", "", "", 0, "", "", 0);
 SettingParam myModeSettingTakeIn =
-    SettingParam(0, "", "", "", "", "", 0, "", "");
+    SettingParam(0, "", "", "", "", "", 0, "", "", 0);
 SettingParam myModeSettingTakeOut =
-    SettingParam(0, "", "", "", "", "", 0, "", "");
+    SettingParam(0, "", "", "", "", "", 0, "", "", 0);

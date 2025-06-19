@@ -137,7 +137,7 @@
 //   Widget build(BuildContext context) {
 //     tempCurrentPort = myCurrentPort;
 
-//     refresh = localizedStrings.gRefreshPort;
+//     refresh = localizedStrings.gTipRefreshPort;
 //     return AlertDialog(
 //       title: getDialogTitle(
 //           context, localizedStrings.gTitleSerialModify, Icons.usb, 400),
@@ -170,7 +170,7 @@
 //                           PublicFunctions.getPortList();
 //                           checkPortList();
 //                           comPort = newPosition.toString();
-//                           if (comPort != localizedStrings.gRefreshPort) {
+//                           if (comPort != localizedStrings.gTipRefreshPort) {
 //                             tempCurrentPort.devPath = comPort;
 //                           } else {
 //                             tempCurrentPort.devPath = '';

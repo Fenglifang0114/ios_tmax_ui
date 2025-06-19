@@ -44,7 +44,6 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
   int? clickedRow; // 添加点击行状态
   // 定义 FocusNode
   // final FocusNode _searchFocusNode = FocusNode();
-  final TextEditingController _searchCtl = TextEditingController();
   final TextEditingController encryptedCtl = TextEditingController();
   final TextEditingController formulaTypeCtl = TextEditingController();
   final TextEditingController rawTypeCtl = TextEditingController();
@@ -120,7 +119,7 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
     // final width = MediaQuery.of(context).size.width;
     return Scaffold(
         body: Container(
-      color: bgColor, //对接时修改颜色值
+      color: Theme.of(context).colorScheme.surfaceDim, //对接时修改颜色值
       child: Padding(
         padding: const EdgeInsets.all(14.0),
         child: LayoutBuilder(
@@ -188,7 +187,7 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
                     Container(
                       width: 3000,
                       height: 40,
-                      color: const Color(0xFFE6EEF4),
+                      color: Theme.of(context).colorScheme.surfaceDim,
                       child: Row(
                         children: [
                           Checkbox(
@@ -232,7 +231,7 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
                       ),
                     ),
                     Divider(
-                      color: lineColor,
+                      color: Theme.of(context).colorScheme.outlineVariant,
                       thickness: 1,
                       height: 1,
                     ),
@@ -280,8 +279,12 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
                                           color: rowData.header!.isEncrypted
                                                       .toString() ==
                                                   "false"
-                                              ? greenColor
-                                              : Color(0xFFF13851)),
+                                              ? Theme.of(context)
+                                                  .colorScheme
+                                                  .onTertiaryFixedVariant
+                                              : Theme.of(context)
+                                                  .colorScheme
+                                                  .error),
                                     )),
                                     Expanded(
                                         child: Text(
@@ -304,8 +307,12 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
                                             color: rowData.header!.isQualified
                                                         .toString() ==
                                                     "yes"
-                                                ? greenColor
-                                                : Color(0xFFF13851)),
+                                                ? Theme.of(context)
+                                                    .colorScheme
+                                                    .onTertiaryFixedVariant
+                                                : Theme.of(context)
+                                                    .colorScheme
+                                                    .error),
                                       ),
                                     ),
                                     Expanded(
@@ -337,7 +344,9 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
                                 ),
                               ),
                               Divider(
-                                color: lineColor,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .outlineVariant,
                                 thickness: 1,
                                 height: 1,
                               ),
@@ -453,9 +462,14 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
                                                                             .isQualified
                                                                             .toString() ==
                                                                         "ok"
-                                                                    ? greenColor
-                                                                    : Color(
-                                                                        0xFFF13851)))),
+                                                                    ? Theme.of(
+                                                                            context)
+                                                                        .colorScheme
+                                                                        .onTertiaryFixedVariant
+                                                                    : Theme.of(
+                                                                            context)
+                                                                        .colorScheme
+                                                                        .error))),
                                                     Expanded(child: Text('')),
                                                     SizedBox(
                                                       width: 60,
@@ -470,7 +484,9 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
                                                 (rowData.details?.length ?? 0) -
                                                     1)
                                               Divider(
-                                                color: lineColor,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .outlineVariant,
                                                 thickness: 1,
                                                 height: 1,
                                               )
@@ -972,7 +988,8 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               foregroundColor: Theme.of(context).colorScheme.onPrimary,
-              backgroundColor: greenColor,
+              backgroundColor:
+                  Theme.of(context).colorScheme.onTertiaryFixedVariant,
               fixedSize: const Size(double.infinity, 48),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.zero, // 可以根据需要调整圆角

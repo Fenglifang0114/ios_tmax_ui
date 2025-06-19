@@ -580,7 +580,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                                     });
                                   },
                                 ),
-                                textStyle(localizedStrings.wifi_setting_title,
+                                textStyle(localizedStrings.menuWifiSetting,
                                     constraints),
                                 // 省略部分代码
                               ],
@@ -614,7 +614,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                                   },
                                 ),
                                 textStyle(
-                                    localizedStrings.gTitleLabelFmtDownload,
+                                    localizedStrings.menuLabelFormatDownload,
                                     constraints),
                                 // 省略部分代码
                               ],

@@ -5,12 +5,15 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:t_max/data/cominfoslist_data.dart';
 import 'package:t_max/data/comscaleinfo_data.dart';
+import 'package:t_max/data/downloadresponse.dart';
 
 import 'package:t_max/data/modifyresult_data.dart';
 import 'package:t_max/data/pak_info_data.dart';
 import 'package:t_max/data/plu_info_list_data.dart';
+import 'package:t_max/data/scale_info_from_db.dart';
 
 import 'package:t_max/data/scalelist_data.dart';
+import 'package:t_max/data/settingparam_data.dart';
 import 'package:t_max/data/userinfo_data.dart';
 import 'package:t_max/data/wifi_list_info.dart';
 import 'package:web_socket_channel/io.dart';
@@ -161,22 +164,33 @@ class WebSocketChannel {
   }
 
   void getComScaleList(ScaleDataInfo scaleInfo, CurrentPort mediaJson) {
-    myComScaleInfo.scaleModel = scaleInfo.scaleModel!;
+    ComScaleInfo tempScaleInfo =
+        ComScaleInfo(1, 1, true, "", 1, 1, 1, 1, "", "", false, "");
+    tempScaleInfo.scaleModel = scaleInfo.scaleModel!;
 
-    myComScaleInfo.isOnline = scaleInfo.isOnline!;
-    myComScaleInfo.scaleId = scaleInfo.scaleId!;
-    myComScaleInfo.tMedia = scaleInfo.tMedia!;
-    myComScaleInfo.scaleSn = scaleInfo.scaleSn!;
-    myComScaleInfo.isDefault = scaleInfo.isDefault!;
-    myComScaleInfo.scaleName = scaleInfo.scaleName!;
+    tempScaleInfo.isOnline = scaleInfo.isOnline!;
+    tempScaleInfo.scaleId = scaleInfo.scaleId!;
+    tempScaleInfo.tMedia = scaleInfo.tMedia!;
+    tempScaleInfo.scaleSn = scaleInfo.scaleSn!;
+    tempScaleInfo.isDefault = scaleInfo.isDefault!;
+    tempScaleInfo.scaleName = scaleInfo.scaleName!;
 
-    myComScaleInfo.portName = myCurrentPort.devPath!;
-    myComScaleInfo.baudRate = myCurrentPort.baud!;
-    myComScaleInfo.dataBits = myCurrentPort.dataBits!;
-    myComScaleInfo.parity = myCurrentPort.parity!;
-    myComScaleInfo.stopBits = myCurrentPort.stopBits!;
+    tempScaleInfo.portName = myCurrentPort.devPath!;
+    tempScaleInfo.baudRate = myCurrentPort.baud!;
+    tempScaleInfo.dataBits = myCurrentPort.dataBits!;
+    tempScaleInfo.parity = myCurrentPort.parity!;
+    tempScaleInfo.stopBits = myCurrentPort.stopBits!;
+    // 查找是否存在相同 scaleId 的秤信息
+    final existingIndex = myComScaleList
+        .indexWhere((scale) => scale.scaleId == tempScaleInfo.scaleId);
+    if (existingIndex != -1) {
+      return;
+    } else {}
+    myComScaleList.add(tempScaleInfo);
     String url = GetUrl.getUrl(scaleInfo.scaleId!);
+
     manager.connect(scaleInfo.scaleId!, url);
+    //TODO: 这个部分要去的，没有默认的秤
     if (myDefScaleInfo.defScaleId == scaleInfo.scaleId!) {
       DefScaleInfo.getDefScaleInfo(scaleInfo.scaleId!);
     }
@@ -208,18 +222,54 @@ class WebSocketChannel {
     myScaleTotalInfo = ScaleTotalInfo.fromJson(jsonResponse);
 
     if (myScaleTotalInfo.scaleDataList!.isNotEmpty) {
-      var lenth = myScaleTotalInfo.scaleDataList!.length;
-      for (var i = 0; i < lenth; i++) {
-        var scaleInfo = myScaleTotalInfo.scaleDataList![i];
-        var jsonMediaInfoData = scaleInfo.mediaInfo!.mediaInfoJson;
-        if (jsonMediaInfoData == null) {
-          continue;
+      final tempScalesList = ScaleParser.parseScales(jsonStrings);
+
+      for (int i = 0; i < tempScalesList.length; i++) {
+        var tempScale = tempScalesList[i];
+        // 查找 myAllScalesList 中是否存在相同 scaleId 的项
+        final existingIndex = myAllScalesList
+            .indexWhere((scale) => scale.scaleId == tempScale.scaleId);
+        if (existingIndex == -1) {
+          // 若不存在，则添加新项
+          myAllScalesList.add(tempScale);
+          String url = GetUrl.getUrl(tempScale.scaleId);
+          manager.connect(tempScale.scaleId, url);
+        } else {
+          // 若存在，则更新相应项的属性
+          var existingScale = myAllScalesList[existingIndex];
+          tempScale.isOnline = existingScale.isOnline;
+          tempScale.scaleModel = existingScale.scaleModel;
+          tempScale.scaleSn = existingScale.scaleSn;
         }
-        if (scaleInfo.tMedia == 0) {
-          await pasterComMediaInfo(jsonMediaInfoData.toString(), scaleInfo);
-        } else if (scaleInfo.tMedia == 1) {
-          await pasterNetMediaInfo(jsonMediaInfoData.toString(), scaleInfo);
+      }
+      myAllScalesList = List<Scale>.from(tempScalesList);
+
+      for (var key in manager.connections.keys) {
+        final existingIndex =
+            myAllScalesList.indexWhere((scale) => scale.scaleId == key);
+        if (existingIndex == -1) {
+          // 若 myAllScalesList 中不存在该 scaleId，则关闭连接
+          manager.dispose(key);
         }
+      }
+
+      // var lenth = myScaleTotalInfo.scaleDataList!.length;
+      // for (var i = 0; i < lenth; i++) {
+      //   var scaleInfo = myScaleTotalInfo.scaleDataList![i];
+      //   var jsonMediaInfoData = scaleInfo.mediaInfo!.mediaInfoJson;
+      //   if (jsonMediaInfoData == null) {
+      //     continue;
+      //   }
+      //   if (scaleInfo.tMedia == 0) {
+      //     await pasterComMediaInfo(jsonMediaInfoData.toString(), scaleInfo);
+      //   } else if (scaleInfo.tMedia == 1) {
+      //     await pasterNetMediaInfo(jsonMediaInfoData.toString(), scaleInfo);
+      //   }
+      // }
+    } else {
+      myAllScalesList.clear();
+      for (var key in manager.connections.keys) {
+        manager.dispose(key);
       }
     }
     eventBus.fire(EventRespAddScale('ok'));
@@ -362,14 +412,22 @@ class WebSocketChannel {
           final jsonInfo = json.decode(dataString);
           ScaleIsOnline scaleOnline;
           scaleOnline = ScaleIsOnline.fromJson(jsonInfo);
-          NetScaleInfoLocal newScale;
-          newScale = NetScaleListMgr.findScaleInfo(
-              myNetScaleList, scaleOnline.scaleId!);
-          if (newScale.isOnline != scaleOnline.isOnline) {
-            newScale.isOnline = scaleOnline.isOnline;
-            NetScaleListMgr.updateScale(myNetScaleList, newScale);
-            eventBus.fire(EventRespScaleOnline(''));
+          for (var scale in myAllScalesList) {
+            if (scale.scaleId == scaleOnline.scaleId) {
+              // 现在可以正常更新状态
+              scale.isOnline = scaleOnline.isOnline!;
+              eventBus.fire(EventRespScaleOnline(''));
+              break;
+            }
           }
+          // NetScaleInfoLocal newScale;
+          // newScale = NetScaleListMgr.findScaleInfo(
+          //     myNetScaleList, scaleOnline.scaleId!);
+          // if (newScale.isOnline != scaleOnline.isOnline) {
+          //   newScale.isOnline = scaleOnline.isOnline;
+          //   NetScaleListMgr.updateScale(myNetScaleList, newScale);
+          //   eventBus.fire(EventRespScaleOnline(''));
+          // }
         } catch (e) {
           return;
         }
@@ -400,6 +458,7 @@ class WebSocketChannel {
         String dataString = jsonData['MsgBody'];
         eventBus.fire(EventRespFormulaList(dataString));
       } else if (jsonData['MsgType'] == "resp_formula_add" ||
+          jsonData['MsgType'] == "resp_formula_update" ||
           jsonData['MsgType'] == "resp_formula_delete") {
         String dataString = jsonData['MsgBody'];
         eventBus.fire(EventRespAddFormula(dataString));
@@ -415,12 +474,37 @@ class WebSocketChannel {
         eventBus.fire(EventRespFlowRateList(dataString));
       } else if (jsonData['MsgType'] == "resp_flow_rate_add") {
         eventBus.fire(EventRespFlowRateAdd(''));
+      } else if (jsonData['MsgType'] == "resp_get_all_wgt_rec_list") {
+        String dataString = jsonData['MsgBody'];
+        eventBus.fire(EventRespGetAllWgtRecs(dataString));
+      } else if (jsonData['MsgType'] == "resp_get_ui_config") {
+        String dataString = jsonData['MsgBody'];
+        handleGetUIConf(dataString);
+      } else if (jsonData['MsgType'] == "resp_update_ui_config") {
+        eventBus.fire(EventUpdateSettingParam(''));
+      } else if (jsonData['MsgType'] == "resp_del_wgt_rec") {
+        eventBus.fire(EventDelAllWgtRecs(''));
       } else {}
     } catch (e) {
       if (kDebugMode) {
         print(e);
       }
     }
+  }
+
+  static void handleGetUIConf(String data) {
+    var jsonData = json.decode(data);
+    mySettingParam = SettingParam.fromJson(jsonData);
+    if (mySettingParam.scaleMode == 0) {
+      myModeSettingNormal = mySettingParam;
+    } else if (mySettingParam.scaleMode == 1) {
+      myModeSettingCheck = mySettingParam;
+    } else if (mySettingParam.scaleMode == 2) {
+      myModeSettingTakeIn = mySettingParam;
+    } else if (mySettingParam.scaleMode == 3) {
+      myModeSettingTakeOut = mySettingParam;
+    }
+    eventBus.fire(EventSettingParam(mySettingParam));
   }
 
   void pasterLicense(String jsonDataString) {

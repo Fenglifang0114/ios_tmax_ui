@@ -89,7 +89,7 @@ printerDialog(BuildContext context) {
                           Navigator.of(context).pop();
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) {
-                            return const LabelDesignPage();
+                            return const LabelDesignPage(type: "");
                           }));
                         } else {
                           Navigator.of(context).pop();

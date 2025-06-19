@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:t_max/data/home_page_common_data.dart';
+import 'package:t_max/pages/update_firmware_page.dart';
 import '../data/manager_scale_channel.dart';
 import 'package:t_max/functions/methods.dart';
 import '../data/download_prt_fmt.dart';
@@ -66,36 +68,41 @@ class _DownloadPageState extends State<DownloadLabelPage> {
 
   @override
   Widget build(BuildContext context) {
-    // final width = MediaQuery.of(context).size.width;
+    final width = MediaQuery.of(context).size.width;
     // final _height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(50),
-          child: Container(
-            child: pageHeadDesign(
-              context,
-              localizedStrings.gTitleLabelFmtDownload,
-              [myDefScaleInfo.defScaleId!],
-              localizedStrings.gTipLabelFmtDownPageHelp,
-            ),
-          ),
-        ),
-        body: Container(
-          color: Theme.of(context).colorScheme.surfaceTint,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: [
-              _buildMainContent(),
-            ],
-          ),
-        ));
+      body: Container(
+          width: width,
+          decoration:
+              BoxDecoration(color: Theme.of(context).colorScheme.surface),
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // pageHeadInfo(
+                //     context,
+                //     width - headWidthPadding,
+                //     localizedStrings.menuLabelFormatDownload,
+                //     localizedStrings.gTipLabelFmtDownPageHelp),
+                Expanded(
+                    child: Container(
+                  color: Theme.of(context).colorScheme.surfaceTint,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: [
+                      _buildMainContent(width),
+                    ],
+                  ),
+                )),
+              ])),
+    );
   }
 
-  Widget _buildMainContent() {
+  Widget _buildMainContent(double width) {
     return Stack(children: [
       SizedBox(
-        width: MediaQuery.of(context).size.width,
+        width: width - 280,
         child: Column(
           children: [
             const SizedBox(
@@ -322,7 +329,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
       context: context,
       barrierDismissible: false, // 允许点击空白处关闭对话框
       builder: (context) {
-        return SelectScalesPage(
+        return SelectScalesPageNew(
           funcNo: funcNo,
           sendMsgStr: msg,
         );
@@ -451,7 +458,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                   icon: Icons.check_circle,
                   text: localizedStrings.gBtnConfirm,
                   onPressed: () {
-                    Navigator.of(context).pop(true);
+                    Navigator.of(ctx).pop(true);
                   },
                 ),
                 const SizedBox(width: 20),
@@ -461,7 +468,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                   icon: Icons.cancel,
                   text: localizedStrings.gBtnCancel,
                   onPressed: () {
-                    Navigator.of(context).pop(false);
+                    Navigator.of(ctx).pop(false);
                   },
                 ),
               ],
@@ -472,7 +479,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
     ).then((confirmed) {
       if (confirmed) {
         if (mounted && context.mounted) {
-          Navigator.of(context).pop();
+          // Navigator.of(context).pop();
           Navigator.push(context, MaterialPageRoute(builder: (context) {
             return const DefaultPrnFmtPage();
           }));
@@ -500,7 +507,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                   icon: Icons.check_circle,
                   text: localizedStrings.gBtnConfirm,
                   onPressed: () {
-                    Navigator.of(context).pop(true);
+                    Navigator.of(ctx).pop(true);
                   },
                 ),
                 const SizedBox(width: 20),
@@ -510,7 +517,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                   icon: Icons.cancel,
                   text: localizedStrings.gBtnCancel,
                   onPressed: () {
-                    Navigator.of(context).pop(false);
+                    Navigator.of(ctx).pop(false);
                   },
                 ),
               ],

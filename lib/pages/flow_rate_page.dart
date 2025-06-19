@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:t_max/data/comscaleinfo_data.dart';
 import 'package:t_max/data/flow_data_from_db.dart';
 import 'package:t_max/data/flow_rate_data.dart';
-import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/manager_scale_channel.dart';
 import 'package:t_max/data/reqweightdata_data.dart';
 import 'package:t_max/data/timer_manager.dart';
@@ -97,7 +96,7 @@ class FlowRatePageState extends State<FlowRatePage>
   Timer? setWgtStartFalseTimer; // 用于每3秒将isWgtStart设置为false的定时器
   Timer? checkWgtStartTimer; // 用于每5秒检查isWgtStart的定时器
 
-  int _selectedScaleIndex = -1; // 用于跟踪选中的秤
+  int selectedScaleIndex = -1; // 用于跟踪选中的秤
   int clickedRow = -1; //点击的行
   int selScaleId = -1; //选择的秤ID
   int weightCollectionInterval = 1; // 重量采集间隔（秒）
@@ -440,7 +439,7 @@ class FlowRatePageState extends State<FlowRatePage>
             // 添加点击行背景色
             if (row == clickedRow) {
               return BoxDecoration(
-                color: clickColor,
+                color: Theme.of(context).colorScheme.surfaceContainerLow,
                 border: Border(
                   bottom: BorderSide(
                       color: Theme.of(context).colorScheme.primary, width: 1),
@@ -450,7 +449,9 @@ class FlowRatePageState extends State<FlowRatePage>
             return BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
               border: Border(
-                bottom: BorderSide(color: lineColor, width: 1),
+                bottom: BorderSide(
+                    color: Theme.of(context).colorScheme.outlineVariant,
+                    width: 1),
               ),
             );
           },
@@ -636,7 +637,7 @@ class FlowRatePageState extends State<FlowRatePage>
             // 添加点击行背景色
             if (row == -1) {
               return BoxDecoration(
-                color: clickColor,
+                color: Theme.of(context).colorScheme.surfaceContainerLow,
                 border: Border(
                   bottom: BorderSide(
                       color: Theme.of(context).colorScheme.primary, width: 1),
@@ -646,7 +647,9 @@ class FlowRatePageState extends State<FlowRatePage>
             return BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
               border: Border(
-                bottom: BorderSide(color: lineColor, width: 1),
+                bottom: BorderSide(
+                    color: Theme.of(context).colorScheme.outlineVariant,
+                    width: 1),
               ),
             );
           },
@@ -740,7 +743,7 @@ class FlowRatePageState extends State<FlowRatePage>
         flex: 1,
         child: Container(
           padding: EdgeInsets.all(5),
-          color: bgColor,
+          color: Theme.of(context).colorScheme.surfaceDim,
           child: Column(children: [
             LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
@@ -893,7 +896,7 @@ class FlowRatePageState extends State<FlowRatePage>
     // final width = MediaQuery.of(context).size.width;
     return Scaffold(
         body: Container(
-      color: bgColor, //对接时修改颜色值
+      color: Theme.of(context).colorScheme.surfaceDim, //对接时修改颜色值
       child: Padding(
         padding: const EdgeInsets.all(14.0),
         child: Row(
@@ -942,7 +945,9 @@ class FlowRatePageState extends State<FlowRatePage>
                                           Expanded(
                                             flex: 2,
                                             child: Container(
-                                              color: wgtBgColor,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .surfaceDim,
                                               child: Column(
                                                 children: [
                                                   Container(
@@ -958,8 +963,7 @@ class FlowRatePageState extends State<FlowRatePage>
                                                     ),
                                                   ),
                                                   Expanded(
-                                                      child: Container(
-                                                          child: Row(children: [
+                                                      child: Row(children: [
                                                     Expanded(
                                                         flex: 3,
                                                         child: Container(
@@ -1039,7 +1043,7 @@ class FlowRatePageState extends State<FlowRatePage>
                                                             },
                                                           ),
                                                         ))
-                                                  ])))
+                                                  ]))
                                                 ],
                                               ),
                                             ),
@@ -1049,8 +1053,7 @@ class FlowRatePageState extends State<FlowRatePage>
                                           ),
                                           Expanded(
                                             flex: 3,
-                                            child: Container(
-                                                child: Row(children: [
+                                            child: Row(children: [
                                               isStart
                                                   ? Expanded(
                                                       flex: 1,
@@ -1231,7 +1234,7 @@ class FlowRatePageState extends State<FlowRatePage>
                                                       ),
                                                     ),
                                                   )),
-                                            ])),
+                                            ]),
                                           ),
                                           SizedBox(
                                             width: 10,
@@ -1243,8 +1246,7 @@ class FlowRatePageState extends State<FlowRatePage>
                                   ),
                                   Expanded(
                                       flex: 6,
-                                      child: Container(
-                                          child: Row(children: [
+                                      child: Row(children: [
                                         showTotalWeight(
                                             localizedStrings.fTotalWeight,
                                             selectedProcessWgt.flowRateHeader ==
@@ -1316,7 +1318,7 @@ class FlowRatePageState extends State<FlowRatePage>
                                                     null
                                                 ? ""
                                                 : '${selectedProcessWgt.flowRateHeader!.wgtUnit!}/s'),
-                                      ]))),
+                                      ])),
                                   SizedBox(
                                     height: 5,
                                   ),
@@ -1334,10 +1336,8 @@ class FlowRatePageState extends State<FlowRatePage>
                                                   width: 10,
                                                 ),
                                                 Expanded(
-                                                    child: Container(
-                                                  child: Text(localizedStrings
-                                                      .fHistoricalWeighingRecordsBtn),
-                                                )),
+                                                    child: Text(localizedStrings
+                                                        .fHistoricalWeighingRecordsBtn)),
                                                 Expanded(
                                                   flex: 1,
                                                   child: Row(children: [
@@ -1605,7 +1605,7 @@ class FlowRatePageState extends State<FlowRatePage>
               onTap: () {
                 setState(() {
                   // selScaleId = 1;
-                  _selectedScaleIndex = -1;
+                  selectedScaleIndex = -1;
                   //串口秤
                 });
                 changeScale(1);
@@ -1654,8 +1654,8 @@ class FlowRatePageState extends State<FlowRatePage>
                             ),
                             Text(
                               myComScaleInfo.isOnline
-                                  ? localizedStrings.gOnlineTip
-                                  : localizedStrings.gOfflineTip,
+                                  ? localizedStrings.gTipOnline
+                                  : localizedStrings.gTipOffline,
                               style: TextStyle(
                                   color: (selScaleId == 1)
                                       ? Theme.of(context).colorScheme.onPrimary
@@ -1741,7 +1741,7 @@ class FlowRatePageState extends State<FlowRatePage>
                       child: GestureDetector(
                           onTap: () {
                             setState(() {
-                              _selectedScaleIndex = index;
+                              selectedScaleIndex = index;
                               // selScaleId = scale.scaleId!;
                             });
                             changeScale(scale.scaleId!);
@@ -1802,8 +1802,8 @@ class FlowRatePageState extends State<FlowRatePage>
                                         ),
                                         Text(
                                           scale.isOnline!
-                                              ? localizedStrings.gOnlineTip
-                                              : localizedStrings.gOfflineTip,
+                                              ? localizedStrings.gTipOnline
+                                              : localizedStrings.gTipOffline,
                                           style: TextStyle(
                                               color: isSelect
                                                   ? Theme.of(context)
@@ -1842,12 +1842,6 @@ class FlowRatePageState extends State<FlowRatePage>
           SizedBox(
             width: 20,
           ),
-          IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: Icon(Icons.arrow_circle_left_outlined,
-                  size: 28, color: Theme.of(context).colorScheme.primary)),
           Expanded(child: Text(localizedStrings.fFlowRate)),
           Icon(
             Icons.help,
@@ -2028,11 +2022,10 @@ class _LineChartSample5State extends State<LineChartSample5> {
     } else {
       yInterval = (maxYValue / 6).ceilToDouble();
     }
-    print(yInterval);
+
     maxYValue = yInterval * (maxYValue / yInterval).ceilToDouble();
 //最多保留三位小数
     maxYValue = double.parse(maxYValue.toStringAsFixed(2));
-    print(maxYValue);
 
     double xInterval = max(
       1,

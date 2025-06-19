@@ -4,18 +4,6 @@
     "@gLanguage": {
         "description": "This is a prompt for the current language."
     },
-    "gModelName": "Model Name",
-    "@gModelName": {
-        "description": "This is a prompt for model name."
-    },
-    "gScaleSn": "SN#:",
-    "@gScaleSn": {
-        "description": "This is a prompt for sn."
-    },
-    "gTipPerpetual": "Perpetual",
-    "@gTipPerpetual": {
-        "description": "This is a tip of the certification expiration date."
-    },
     "gBtnConnect": "Connect",
     "@gBtnConnect": {
         "description": "This is a button for testing the connection with the device."
@@ -52,14 +40,6 @@
     "@gBtnExit": {
         "description": "This is a button to exit."
     },
-    "gSystemId": "System Unique ID:  ",
-    "@gSystemId": {
-        "description": "This is the prompt for the system authentication ID."
-    },
-    "gExpirationDate": "Expiration date:",
-    "@gExpirationDate": {
-        "description": "This is the prompt for the expiration date."
-    },
     "gTitleSerialModify": "Serial port information modification",
     "@gTitleSerialModify": {
         "description": "This is the title for modifying serial port information."
@@ -67,38 +47,6 @@
     "gSerialPortStatus": "Serial Port Status:",
     "@gSerialPortStatus": {
         "description": "This is the title for serial port status."
-    },
-    "gSerialPort": "Serial port:",
-    "@gSerialPort": {
-        "description": "This is the prompt for serial port."
-    },
-    "gRefreshPort": "Refresh port",
-    "@gRefreshPort": {
-        "description": "This is the prompt to refresh port."
-    },
-    "gDataBits": "Data bits:",
-    "@gDataBits": {
-        "description": "This is the prompt for data bits."
-    },
-    "gBaudRate": "Baud rate:",
-    "@gBaudRate": {
-        "description": "This is the prompt for baud rate."
-    },
-    "gSerialParity": "Parity:",
-    "@gSerialParity": {
-        "description": "This is the prompt for parity."
-    },
-    "gStopBits": "Stop bits:",
-    "@gStopBits": {
-        "description": "This is the prompt for stop bits."
-    },
-    "gBtnConfirm": "Confirm",
-    "@gBtnConfirm": {
-        "description": "This is a confirmation button."
-    },
-    "gBtnCancel": "Cancel",
-    "@gBtnCancel": {
-        "description": "This is a button to cancel"
     },
     "gMsgRefresh": "Refresh",
     "@gMsgRefresh": {
@@ -108,23 +56,19 @@
     "@gFindSsid": {
         "description": "This is a prompt for discover ssid."
     },
-    "gNetworkSetting": "Wireless network settings",
-    "@gNetworkSetting": {
-        "description": ""
-    },
-    "gPassword": "Password:",
+    "gPassword": "Password",
     "@gPassword": {
         "description": "This is a prompt for password."
     },
-    "gIpAddress": "IPv4:",
+    "gIpAddress": "IPv4",
     "@gIpAddress": {
         "description": "This is a prompt for IPv4."
     },
-    "gNetmask": "NetMask:",
+    "gNetmask": "NetMask",
     "@gNetmask": {
         "description": "This is a prompt for NetMask."
     },
-    "gGateway": "Gateway:",
+    "gGateway": "Gateway",
     "@gGateway": {
         "description": "This is a prompt for Gateway."
     },
@@ -148,7 +92,7 @@
     "@gTipConnected": {
         "description": "This is a prompt for already connected ."
     },
-    "gTipConnectedInfo": "Connected AP Info:",
+    "gTipConnectedInfo": "Connected AP Info",
     "@gTipConnectedInfo": {
         "description": "This is a prompt for connected info ."
     },
@@ -172,10 +116,6 @@
     "@gTipSSID": {
         "description": "This is a prompt for SSID."
     },
-    "gTitleBtSetting": "Bluetooth Configurations",
-    "@gTitleBtSetting": {
-        "description": "This is a title for bluetooth configurations."
-    },
     "gEPStrong": "Strong",
     "@gEPStrong": {
         "description": "This is a prompt for the Bluetooth signal strength."
@@ -196,7 +136,7 @@
     "@gTipTimeOut": {
         "description": "This is a prompt for time out."
     },
-    "gDeviceName": "Device name:",
+    "gDeviceName": "Device name",
     "@gDeviceName": {
         "description": "This is a prompt for device name."
     },
@@ -380,15 +320,15 @@
     "@iBtnZero": {
         "description": "This is a zeroing button in T-Industry,"
     },
-    "iTextZero": "Zero:",
+    "iTextZero": "Zero",
     "@iTextZero": {
         "description": "This is a prompt about zero weight in T-Industry,"
     },
-    "iTextNet": "Net:",
+    "iTextNet": "Net",
     "@iTextNet": {
         "description": "This is a prompt about net weight in T-Industry,"
     },
-    "iStable": "Stable:",
+    "iStable": "Stable",
     "@iStable": {
         "description": "This is a prompt about stable weight in T-Industry,"
     },
@@ -468,10 +408,6 @@
     "@plu_remarks": {
         "description": ""
     },
-    "gBtnAdd": "Add",
-    "@gBtnAdd": {
-        "description": ""
-    },
     "gBtnEdit": "Edit",
     "@gBtnEdit": {
         "description": ""
@@ -520,10 +456,6 @@
     "@user_error_message3": {
         "description": ""
     },
-    "language_setting_title": "Language Setting",
-    "@language_setting_title": {
-        "description": ""
-    },
     "button_back": "Back",
     "@button_back": {
         "description": ""
@@ -534,10 +466,6 @@
     },
     "scale_model": "Scale Model:",
     "@scale_model": {
-        "description": ""
-    },
-    "button_get_ip": "Get IP Address",
-    "@button_get_ip": {
         "description": ""
     },
     "firmware_update": "Update Firmware Serial",
@@ -620,20 +548,12 @@
     "@bt_setting_title": {
         "description": ""
     },
-    "wifi_setting_title": "Wi-Fi Setting",
-    "@wifi_setting_title": {
-        "description": ""
-    },
     "customization_setting_title": "Applications",
     "@customization_setting_title": {
         "description": ""
     },
     "advanced_setting_title": "Advanced",
     "@advanced_setting_title": {
-        "description": ""
-    },
-    "label_design_title": "Label Design",
-    "@label_design_title": {
         "description": ""
     },
     "gTitleReceiptDesign": "Receipt Design",
@@ -644,17 +564,9 @@
     "@gTipReceiptDesign": {
         "description": "This is a prompt about receipt design app."
     },
-    "gTitleLabelFmtDownload": "Label Format Download",
-    "@gTitleLabelFmtDownload": {
-        "description": "This is a title about downloading label printing Formats app."
-    },
     "gTipLabelFmtDownload": "This application is used to download print format.",
     "@gTipLabelFmtDownload": {
         "description": "This is a prompt about downloading label printing Formats app."
-    },
-    "gTitleSerialOutput": "Serial Output Design",
-    "@gTitleSerialOutput": {
-        "description": "This is a title about serial output design"
     },
     "gTitleSerialOutputDownload": "Serial Output Download",
     "@gTitleSerialOutputDownload": {
@@ -700,57 +612,21 @@
     "@gTipPluDownload": {
         "description": "This is a tip about downloading plu."
     },
-    "iTitleWeighting": "Weighing(Single)",
-    "@iTitleWeighting": {
-        "description": "This is a title about weighting,support one scale."
-    },
-    "iTitleWeightCollection": "Weighing Data Collection(Single)",
-    "@iTitleWeightCollection": {
-        "description": "This is a title about collect weight data,support one scale,in T-Industry"
-    },
     "iTipWeightCollection": "This application is used to collect weighing data in real time",
     "@iTipWeightCollection": {
         "description": "This is a prompt about collect weight data,in T-Industry"
-    },
-    "iTitleCheckWeigher": "Check Weighing(Single)",
-    "@iTitleCheckWeigher": {
-        "description": "This is a title about check weighing,support one scale,in T-Industry"
     },
     "iTipCheckWeigher": "This application is used to check weighing data in real time",
     "@iTipCheckWeigher": {
         "description": "This is a prompt about check weighing,in T-Industry"
     },
-    "iTitleIncrementWeighting": "Increment Weighing(Single)",
-    "@iTitleIncrementWeighting": {
-        "description": "This is a title about Increment Weighing,support one scale,in T-Industry"
-    },
     "iTipIncrementWeighting": "This app is used to implement the increment scale.",
     "@iTipIncrementWeighting": {
         "description": "This is a prompt about Increment Weighing,in T-Industry"
     },
-    "gTitleTakeOut": "Take Out Scale(Single)",
-    "@gTitleTakeOut": {
-        "description": "This is a title about take out scale,support one scale,in T-Industry"
-    },
     "gTipTakeOut": "This app is used to implement the take out scale.",
     "@gTipTakeOut": {
         "description": "This is a prompt about take out scale,in T-Industry"
-    },
-    "get_bt_name": "Get name",
-    "@get_bt_name": {
-        "description": ""
-    },
-    "modify_bt_name": "Modify name",
-    "@modify_bt_name": {
-        "description": ""
-    },
-    "bt_emission_power": "Emission Power:",
-    "@bt_emission_power": {
-        "description": ""
-    },
-    "bt_modify_emission": "Modify emission power",
-    "@bt_modify_emission": {
-        "description": ""
     },
     "gTitleConfirm": "Confirmation",
     "@gTitleConfirm": {
@@ -762,14 +638,6 @@
     },
     "jump_confirm_info": "Please confirm to go to the default print format page.",
     "@jump_confirm_info": {
-        "description": ""
-    },
-    "download_result_ok": "Download is successful!",
-    "@download_result_ok": {
-        "description": ""
-    },
-    "download_result_fail": "Download failed!",
-    "@download_result_fail": {
         "description": ""
     },
     "select_firmware_btn": "Select Firmware",
@@ -820,45 +688,9 @@
     "@choose_json_file": {
         "description": ""
     },
-    "abnormal_data_title": "Basic Data",
-    "@abnormal_data_title": {
-        "description": ""
-    },
-    "cTitleDeviceTime": "Device Time",
-    "@cTitleDeviceTime": {
-        "description": "This is a title about device time."
-    },
-    "cBtnSyncPcTime": "Sync PC Time",
-    "@cBtnSyncPcTime": {
-        "description": "This is a button about sync pc time."
-    },
-    "cBtnSetTime": "Set Date/Time",
-    "@cBtnSetTime": {
-        "description": "This is a button about set date/time."
-    },
-    "cBtnSyncTime": "Sync Time",
-    "@cBtnSyncTime": {
-        "description": "This is a button about sync time."
-    },
-    "cBtnSelectTime": "Select Time",
-    "@cBtnSelectTime": {
-        "description": "This is a button about select time."
-    },
-    "cBtnSelectDate": "Select Date",
-    "@cBtnSelectDate": {
-        "description": "This is a button about select date."
-    },
-    "cTipFailedGetTime": "failed to get time",
-    "@cTipFailedGetTime": {
-        "description": "This is a tip about failed to get time."
-    },
     "batch_delivery_title": "Batch Delivery",
     "@batch_delivery_title": {
         "description": ""
-    },
-    "cTitleParameterSet": "Parameter Setting",
-    "@cTitleParameterSet": {
-        "description": "This is a title about parameter setting."
     },
     "cTipConfigurationName": "Configuration name",
     "@cTipConfigurationName": {
@@ -916,10 +748,6 @@
     "@server_port": {
         "description": ""
     },
-    "error_ip_tip": "Incorrect address! e.g. xxx.xxx.xxx.xxx",
-    "@error_ip_tip": {
-        "description": ""
-    },
     "set_ethernet_ip_title": "Ethernet IP Setting",
     "@set_ethernet_ip_title": {
         "description": ""
@@ -928,45 +756,37 @@
     "@go_home": {
         "description": ""
     },
-    "gTitleReceiptDownload": "Receipt Format Download",
-    "@gTitleReceiptDownload": {
-        "description": "This is a title about receipt format download."
-    },
     "gTipReceiptDownload": "This application is used to download the print format of the receipt.",
     "@gTipReceiptDownload": {
         "description": "This is a prompt about receipt format download."
     },
-    "about_title": "Information",
-    "@about_title": {
-        "description": ""
+    "appVersionTitle": "Version",
+    "@appVersionTitle": {
+        "description": "Title for the application version information"
     },
-    "app_version_title": "Version:",
-    "@app_version_title": {
-        "description": ""
+    "appCompanyTitle": "Company",
+    "@appCompanyTitle": {
+        "description": "Title for the application company information"
     },
-    "app_company_title": "Company:",
-    "@app_company_title": {
-        "description": ""
+    "appTelTitle": "Tel",
+    "@appTelTitle": {
+        "description": "Title for the application telephone information"
     },
-    "app_tel_title": "Tel:",
-    "@app_tel_title": {
-        "description": ""
+    "appEmailTitle": "Email",
+    "@appEmailTitle": {
+        "description": "Title for the application email information"
     },
-    "app_email_title": "Email:",
-    "@app_email_title": {
-        "description": ""
+    "appAddressTitle": "Address",
+    "@appAddressTitle": {
+        "description": "Title for the application address information"
     },
-    "app_address_title": "Address:",
-    "@app_address_title": {
-        "description": ""
+    "appWebTitle": "Website",
+    "@appWebTitle": {
+        "description": "Title for the application website information"
     },
-    "app_web_title": "Website Address:",
-    "@app_web_title": {
-        "description": ""
-    },
-    "app_models": "Applicable Models:",
-    "@app_models": {
-        "description": ""
+    "appModels": "Applicable Models",
+    "@appModels": {
+        "description": "Title for the models that the application is applicable to"
     },
     "p_text_title": "Free Text",
     "@p_text_title": {
@@ -1520,10 +1340,6 @@
     "@batch_down_slt_folder": {
         "description": ""
     },
-    "abnormal_weight": "Get Basic Data",
-    "@abnormal_weight": {
-        "description": ""
-    },
     "gBtnSelectPluFile": "Select Product Excel",
     "@gBtnSelectPluFile": {
         "description": "This is a button for selecting the PLU file."
@@ -1588,28 +1404,12 @@
     "@def_fmt_out_range_tip": {
         "description": ""
     },
-    "m_scale_title": "Multi-scale Management",
-    "@m_scale_title": {
-        "description": ""
-    },
-    "scale_mgr_btn_add": "Add",
-    "@scale_mgr_btn_add": {
-        "description": ""
-    },
     "scale_mgr_btn_rename": "Rename",
     "@scale_mgr_btn_rename": {
         "description": ""
     },
     "scale_mgr_btn_def": "Set Default",
     "@scale_mgr_btn_def": {
-        "description": ""
-    },
-    "scale_mgr_btn_test": "Test Connect",
-    "@scale_mgr_btn_test": {
-        "description": ""
-    },
-    "gScaleName": "Scale Name",
-    "@gScaleName": {
         "description": ""
     },
     "gStatus": "Status",
@@ -1619,10 +1419,6 @@
     "gProgress": "Progress",
     "@gProgress": {
         "description": "This is the prompt for the download progress."
-    },
-    "rDetailRptTitle": "Retail Detail Report",
-    "@rDetailRptTitle": {
-        "description": "This is the title of the retail detail report page in the retail app."
     },
     "rTipDetailRpt": "This app is used to display sales detail data.",
     "@rTipDetailRpt": {
@@ -1644,21 +1440,9 @@
     "@rRefreshListBtn": {
         "description": "This is the name of the button for refreshing the retail list in the retail app."
     },
-    "gOnlineTip": "online",
-    "@gOnlineTip": {
-        "description": "This is a prompt for online information."
-    },
-    "gOfflineTip": "offline",
-    "@gOfflineTip": {
-        "description": "This is a prompt for offline information."
-    },
     "rJoinManagementTip": "Whether to join the management",
     "@rJoinManagementTip": {
         "description": "This is a prompt about whether to join the management in the retail app."
-    },
-    "gTitleUpdateFirmware": "Update Firmware",
-    "@gTitleUpdateFirmware": {
-        "description": "This is the title for updating the firmware."
     },
     "gTipFirmwareZipFile": "Firmware Zip:",
     "@gTipFirmwareZipFile": {
@@ -1892,43 +1676,43 @@
     "@gBtnOpenSerialPort": {
         "description": "This is a button to open serial port."
     },
-    "cTipWeighingCount": "Weighing Count:",
+    "cTipWeighingCount": "Weighing Count",
     "@cTipWeighingCount": {
         "description": "This is a tip for weighing count."
     },
-    "cTipPowerOffCnt": "Abnormal Power-Off Count:",
+    "cTipPowerOffCnt": "Abnormal Power-Off Count",
     "@cTipPowerOffCnt": {
         "description": "This is a tip for abnormal power-off count."
     },
-    "cTipRunningTime": "Running Time(mins):",
+    "cTipRunningTime": "Running Time(mins)",
     "@cTipRunningTime": {
         "description": "This is a tip for running time."
     },
-    "cTipPowerOnCnt": "Power-On Count:",
+    "cTipPowerOnCnt": "Power-On Count",
     "@cTipPowerOnCnt": {
         "description": "This is a tip for power-on count."
     },
-    "cTipOlTime": "OL Time(mins):",
+    "cTipOlTime": "OL Time(mins)",
     "@cTipOlTime": {
         "description": "This is a tip for ol time."
     },
-    "cTipUlTime": "UL Time(mins):",
+    "cTipUlTime": "UL Time(mins)",
     "@cTipUlTime": {
         "description": "This is a tip for ul time."
     },
-    "cTipErr4Cnt": "Err4 Count:",
+    "cTipErr4Cnt": "Err4 Count",
     "@cTipErr4Cnt": {
         "description": "This is a tip for err4 count."
     },
-    "cTipErr19Cnt": "Err19 Count:",
+    "cTipErr19Cnt": "Err19 Count",
     "@cTipErr19Cnt": {
         "description": "This is a tip for err19 count."
     },
-    "cTipCalswitchCnt": "Calibration Switch Count:",
+    "cTipCalswitchCnt": "Calibration Switch Count",
     "@cTipCalswitchCnt": {
         "description": "This is a tip for cal switch count."
     },
-    "cTipCalCnt": "Calibration Count:",
+    "cTipCalCnt": "Calibration Count",
     "@cTipCalCnt": {
         "description": "This is a tip for calibration count."
     },
@@ -2040,6 +1824,10 @@
     "@fAddFmaBtn": {
         "description": "Button to add a new formula"
     },
+    "fEditFmaBtn": "Edit Formula",
+    "@fEditFmaBtn": {
+        "description": "Button to edit a old formula"
+    },
     "fHistoricalWeighingRecordsBtn": "Records",
     "@fHistoricalWeighingRecordsBtn": {
         "description": "Button to view historical weighing records"
@@ -2104,7 +1892,7 @@
     "@fRawMaterialTypeCol": {
         "description": "Table column title for raw material category"
     },
-    "fCreatedAtCol": "Update Time",
+    "fCreatedAtCol": "Create Time",
     "@fCreatedAtCol": {
         "description": "Table column title for creation time"
     },
@@ -2555,5 +2343,553 @@
     "fFormulaCompletedTip": "Formula completed",
     "@fFormulaCompletedTip": {
         "description": "Prompt message indicating that the formula has been completed"
+    },
+    "menuMultiScaleManagement": "Multi-scale Management",
+    "@menuMultiScaleManagement": {
+        "description": "Menu item for multi-scale management"
+    },
+    "menuDeviceTime": "Device Time",
+    "@menuDeviceTime": {
+        "description": "Menu item for device Time"
+    },
+    "menuBluetoothSetting": "Bluetooth Setting",
+    "@menuBluetoothSetting": {
+        "description": "Menu item for bluetooth setting"
+    },
+    "menuWifiSetting": "Wi-Fi Setting",
+    "@menuWifiSetting": {
+        "description": "Menu item for Wi-Fi setting"
+    },
+    "menuFirmwareUpdate": "Firmware Update",
+    "@menuFirmwareUpdate": {
+        "description": "Menu item for firmware update"
+    },
+    "menuLabelDesign": "Label Design",
+    "@menuLabelDesign": {
+        "description": "Menu item for label design"
+    },
+    "menuReceiptDesign": "Receipt Design",
+    "@menuReceiptDesign": {
+        "description": "Menu item for receipt design"
+    },
+    "menuSerialOutputDesign": "Serial Output Design",
+    "@menuSerialOutputDesign": {
+        "description": "Menu item for serial output design"
+    },
+    "menuBasicDataCollection": "Basic Data Collection",
+    "@menuBasicDataCollection": {
+        "description": "Menu item for basic data collection"
+    },
+    "menuParameterSetting": "Parameter Setting",
+    "@menuParameterSetting": {
+        "description": "Menu item for parameter setting"
+    },
+    "menuWeighing": "Weighing",
+    "@menuWeighing": {
+        "description": "Menu item for weighing"
+    },
+    "menuPluManagement": "PLU Management",
+    "@menuPluManagement": {
+        "description": "Menu item for PLU management"
+    },
+    "menuLabelFormatDownload": "Label Format Download",
+    "@menuLabelFormatDownload": {
+        "description": "Menu item for label format download"
+    },
+    "menuReceiptFormatDownload": "Receipt Format Download",
+    "@menuReceiptFormatDownload": {
+        "description": "Menu item for receipt format download"
+    },
+    "menuRetailReport": "Retail Report",
+    "@menuRetailReport": {
+        "description": "Menu item for retail report"
+    },
+    "menuVariableValueSetting": "Variable Value Setting",
+    "@menuVariableValueSetting": {
+        "description": "Menu item for variable value setting"
+    },
+    "menuWeighingDataCollection": "Weighing Data Collection",
+    "@menuWeighingDataCollection": {
+        "description": "Menu item for weighing data collection"
+    },
+    "menuCheckWeighing": "Check Weighing",
+    "@menuCheckWeighing": {
+        "description": "Menu item for check weighing"
+    },
+    "menuIncrementWeighing": "Increment Weighing",
+    "@menuIncrementWeighing": {
+        "description": "Menu item for increment weighing"
+    },
+    "menuTakeOutScale": "Take Out Scale",
+    "@menuTakeOutScale": {
+        "description": "Menu item for take out scale"
+    },
+    "menuFormula": "Formula",
+    "@menuFormula": {
+        "description": "Menu item for formula"
+    },
+    "menuFlowRate": "Liquid Filling Speed",
+    "@menuFlowRate": {
+        "description": "Menu item for liquid filling speed"
+    },
+    "menuCalibration": "Calibration",
+    "@menuCalibration": {
+        "description": "Menu item for calibration"
+    },
+    "menuLanguageSetting": "Set Language",
+    "@menuLanguageSetting": {
+        "description": "Menu item for language setting"
+    },
+    "menuApplications": "Applications",
+    "@menuApplications": {
+        "description": "Menu item for applications"
+    },   
+    "menuSystemInformation": "System Information",
+    "@menuSystemInformation": {
+        "description": "Menu item for system information"
+    }, 
+    "menuConfiguration": "Configuration",
+    "@menuConfiguration": {
+        "description": "Menu item for configuration"
+    },
+    "gBtnConfirm": "Confirm",
+    "@gBtnConfirm": {
+        "description": "This is a confirmation button."
+    },
+    "gBtnCancel": "Cancel",
+    "@gBtnCancel": {
+        "description": "This is a button to cancel"
+    },
+    "gTipPerpetual": "Perpetual",
+    "@gTipPerpetual": {
+        "description": "This is a tip of the certification expiration date."
+    },
+    "gSystemId": "System Unique ID",
+    "@gSystemId": {
+        "description": "This is the prompt for the system authentication ID."
+    },
+    "gExpirationDate": "Expiration date",
+    "@gExpirationDate": {
+        "description": "This is the prompt for the expiration date."
+    },
+    "gBtnRenew": "Renew",
+    "@gBtnRenew": {
+        "description": "This is the button for renewing the software service."
+    },
+    "gTipUnactivated": "Unactivated",
+    "@gTipUnactivated": {
+        "description": "This is a tip for unactivated status."
+    },
+    "gTipActivated": "Activated",
+    "@gTipActivated": {
+        "description": "This is a tip for activated status."
+    },
+    "gBtnAddApp": "Add App",
+    "@gBtnAddApp": {
+        "description": "This is a button for adding an application."
+    },
+    "gBtnRemove": "Remove",
+    "@gBtnRemove": {
+        "description": "This is a button for removing something."
+    },
+    "gBtnActivate": "Activate",
+    "@gBtnActivate": {
+        "description": "This is a button for activating something."
+    },
+    "gTitleActivationFeedback": "Activation Feedback", 
+    "@gTitleActivationFeedback": {
+        "description": "This is the title for activation feedback."
+    },
+    "gBtnAdded": "Added",
+    "@gBtnAdded": {
+        "description": "This is a button indicating that an item has been added."
+    },
+    "gTitleConfigFunctionCharge": "Configuration Function Charging Method",
+    "@gTitleConfigFunctionCharge": {
+        "description": "This is the title for the configuration function charging method."
+    },
+    "gSubtitleConfigFunctionCharge": "The configuration of the following functions is charged at ￥100/year. After purchase, you can activate the following configuration functions. Please contact the supplier for activation.",
+    "@gSubtitleConfigFunctionCharge": {
+        "description": "This is the subtitle for the configuration function charging method."
+    },
+    "gTitleAddedConfigFunction": "Added Configuration Functions",
+    "@gTitleAddedConfigFunction": {
+        "description": "This is the title for the added configuration functions."
+    },
+    "gSubtitleAddedConfigFunction": "The following applications have been added to the navigation bar. Click the remove button to remove the corresponding function. After removal, you can continue to add applications.",
+    "@gSubtitleAddedConfigFunction": {
+        "description": "This is the subtitle for the added configuration functions."
+    },
+    "gBtnBackToPrevious": "Back to Previous Level",
+    "@gBtnBackToPrevious": {
+        "description": "This is a button to go back to the previous level."
+    },
+    "gTitleActivationMethod": "Activation Method",  
+    "@gTitleActivationMethod": {
+        "description": "This is the title for activation method."
+    },
+    "gSubtitleUploadActivationFile": "Upload the activation file provided by the supplier in the input box below.",  
+    "@gSubtitleUploadActivationFile": {
+        "description": "This is the subtitle for uploading the activation file provided by the supplier in the input box below."
+    },
+    "gTipSelectActivationFile": "Please select an activation file",
+    "@gTipSelectActivationFile": {
+        "description": "This is a tip to select an activation file."
+    },
+    "gBtnSelectFile": "Select File",
+    "@gBtnSelectFile": {
+        "description": "This is a button to select a file."
+    },
+    "gTipAllConfigFunctions": "All configuration functions",
+    "@gTipAllConfigFunctions": {
+        "description": "This is a tip for all configuration functions."
+    },
+    "gTipDateNotUpdated": "Date not updated",
+    "@gTipDateNotUpdated": {
+        "description": "This is a tip indicating that the date has not been updated."
+    },
+    "gTipFree": "Free",
+    "@gTipFree": {
+        "description": "This is a free tip message."
+    },
+    "gTitleAppConfig": "Application Configuration",
+    "@gTitleAppConfig": {
+        "description": "This is the title for application configuration."
+    },
+    "gTipActivationFileError": "The uploaded activation file is incorrect. Please upload it again.",
+    "@gTipActivationFileError": {
+        "description": "This is a tip for an incorrect activation file upload."
+    },
+    "gBtnAdd": "Add",
+    "@gBtnAdd": {
+        "description": "This is a button for adding new items."
+    },
+    "gTipOnline": "online",
+    "@gTipOnline": {
+        "description": "This is a prompt for online information."
+    },
+    "gTipOffline": "offline",
+    "@gTipOffline": {
+        "description": "This is a prompt for offline information."
+    },
+    "gScaleName": "Scale Name",
+    "@gScaleName": {
+        "description": "This is the prompt for the scale name."
+    },
+    "gModelName": "Model Name",
+    "@gModelName": {
+        "description": "This is a prompt for model name."
+    },
+    "gScaleSn": "SN",
+    "@gScaleSn": {
+        "description": "This is a prompt for sn."
+    },
+    "gDataBits": "Data bits",
+    "@gDataBits": {
+        "description": "This is the prompt for data bits."
+    },
+    "gBaudRate": "Baud rate",
+    "@gBaudRate": {
+        "description": "This is the prompt for baud rate."
+    },
+    "gSerialParity": "Parity",
+    "@gSerialParity": {
+        "description": "This is the prompt for parity."
+    },
+    "gStopBits": "Stop bits",
+    "@gStopBits": {
+        "description": "This is the prompt for stop bits."
+    },
+    "gSerialPort": "Serial port",
+    "@gSerialPort": {
+        "description": "This is the prompt for serial port."
+    },
+    "gTipRefreshPort": "Click to refresh",
+    "@gTipRefreshPort": {
+        "description": "This is a tip to click to refresh the list."
+    },
+    "gTipPort": "Port",
+    "@gTipPort": {
+        "description": "This is a prompt for port number."
+    },
+    "gAppInformation": "App Information",
+    "@gAppInformation": {
+        "description": "Title for app-related information"
+    },
+    "gTitleLanguageSetting": "Language Setting",
+    "@gTitleLanguageSetting": {
+        "description": "Title for language setting page"
+    },
+    "gTipSelectLanguage": "Select Language",
+    "@gTipSelectLanguage": {
+        "description": "Prompt for selecting language"
+    },
+    "gTipConnectFail": "Connect fail",
+    "@gTipConnectFail": {
+        "description": "This is a prompt message when the connection fails."
+    },
+    "gTipSerialPortDisconnected": "The serial port disconnected",
+    "@gTipSerialPortDisconnected": {
+        "description": "This is a prompt message when the serial port is disconnected."
+    },
+    "gBtnSyncPcTime": "Sync PC Time",
+    "@gBtnSyncPcTime": {
+        "description": "This is a button about sync pc time."
+    },
+    "gBtnSetTime": "Set Date/Time",
+    "@gBtnSetTime": {
+        "description": "This is a button about set date/time."
+    },
+    "gBtnSyncTime": "Sync Time",
+    "@gBtnSyncTime": {
+        "description": "This is a button about sync time."
+    },
+    "gBtnSelectTime": "Select Time",
+    "@gBtnSelectTime": {
+        "description": "This is a button about select time."
+    },
+    "gBtnSelectDate": "Select Date",
+    "@gBtnSelectDate": {
+        "description": "This is a button about select date."
+    },
+    "gTipFailedGetTime": "failed to get time",
+    "@gTipFailedGetTime": {
+        "description": "This is a tip about failed to get time."
+    },
+    "gGetBluetoothName": "Get name",
+    "@gGetBluetoothName": {
+        "description": "This is a button or action to get the Bluetooth name."
+    },
+    "gModifyBluetoothName": "Modify name",
+    "@gModifyBluetoothName": {
+        "description": "This is a button or action to modify the Bluetooth name."
+    },
+    "gBluetoothEmissionPower": "Emission Power:",
+    "@gBluetoothEmissionPower": {
+        "description": "This is a label indicating the Bluetooth emission power."
+    },
+    "gModifyBluetoothEmission": "Modify emission power",
+    "@gModifyBluetoothEmission": {
+        "description": "This is a button or action to modify the Bluetooth emission power."
+    },
+    "gBtnGetIp": "Get Ip",
+    "@gBtnGetIp": {
+        "description": " This is a button to get the IP address."
+    },
+    "gTipErrorIp": "Incorrect address! e.g. xxx.xxx.xxx.xxx",
+    "@gTipErrorIp": {
+        "description": "This is a tip for an incorrect IP address."
+    },
+    "gTipInformation": "Information",
+    "@gTipInformation": {
+        "description": "This is a prompt for information."
+    },
+    "gTipValue": "Value",
+    "@gTipValue": {
+        "description": "This is a prompt for value."
+    },
+    "gBtnGetBasicData": "Get Basic Data",
+    "@gBtnGetBasicData": {
+        "description": "This is a button to get basic data."
+    },
+    "gTipDownloadOk": "Download is successful!",
+    "@gTipDownloadOk": {
+        "description": "This is a tip indicating that the download was successful."
+    },
+    "gTipDownloadFail": "Download failed!",
+    "@gTipDownloadFail": {
+        "description": "This is a tip indicating that the download failed."
+    },    
+    "gTipDefaultValue": "Default Value",
+    "@gTipDefaultValue": {
+        "description": "This is the prompt for the default value."
+    },
+    "gTipMaxLength": "Max Length",
+    "@gTipMaxLength": {
+        "description": "This is the prompt for the maximum length."
+    },
+    "gTipFilling": "Filling",
+    "@gTipFilling": {
+        "description": "This is the prompt for filling."
+    },
+    "gTipAlignment": "Alignment",
+    "@gTipAlignment": {
+        "description": "This is the prompt for alignment."
+    },
+    "gTipType": "Type",
+    "@gTipType": {
+        "description": "This is the prompt for type."
+    },
+    "gTipStringProperty": "String Property",
+    "@gTipStringProperty": {
+        "description": "This is the title for string property."
+    },
+    "gTipHexInput": "Hexadecimal input, please separate with a space, for example: 31 32 33 34 35 36",
+    "@gTipHexInput": {
+        "description": "This is the prompt for hexadecimal input, separated by spaces."
+    },
+    "gTipHex": "Hexadecimal",
+    "@gTipHex": {
+        "description": "This is the prompt for hexadecimal."
+    },
+    "gTipTextHexProperty": "Text Hexadecimal Property",
+    "@gTipTextHexProperty": {
+        "description": "This is the title for text hexadecimal property."
+    },
+    "gTipContent": "Content",
+    "@gTipContent": {
+        "description": "This is the prompt for content."
+    },
+    "gTipTextProperty": "Text Property",
+    "@gTipTextProperty": {
+        "description": "This is the title for text property."
+    },
+    "gTipEnterProperty": "Enter Property",
+    "@gTipEnterProperty": {
+        "description": "This is the title for enter property."
+    },
+    "gTipUnstableText": "Unstable Text",
+    "@gTipUnstableText": {
+        "description": "This is the prompt for unstable text."
+    },
+    "gTipNetText": "Net Text",
+    "@gTipNetText": {
+        "description": "This is the prompt for net text."
+    },
+    "gTipStableText": "Stable Text",
+    "@gTipStableText": {
+        "description": "This is the prompt for stable text."
+    },
+    "gTipGrossText": "Gross Text",
+    "@gTipGrossText": {
+        "description": "This is the prompt for gross text."
+    },
+    "gTipFloatProperty": "Float Property",
+    "@gTipFloatProperty": {
+        "description": "This is the title for float property."
+    },
+    "gTipDecimal": "Decimal",
+    "@gTipDecimal": {
+        "description": "This is the prompt for decimal places."
+    },
+    "gTitleAddDevice": "Add Device",
+    "@gTitleAddDevice": {
+        "description": "This is the title for adding a device."
+    },
+    "gTipAddDevice": "For serial port connection, a serial cable is required to connect to the PC. For WiFi connection, the device's IP address and port number must be correct.",
+    "@gTipAddDevice": {
+        "description": "This is a tip for adding a device."
+    },
+    "gTipEmptyScalePan": "Empty the scale pan",
+    "@gTipEmptyScalePan": {
+        "description": "This is a tip to empty the scale pan."
+    },
+    "gTipSetFullScale": "Set the full scale",
+    "@gTipSetFullScale": {
+        "description": "This is a tip to set the full scale."
+    },
+    "gTipPlaceWeight": "Place the weight",
+    "@gTipPlaceWeight": {
+        "description": "This is a tip to place the weight."
+    },
+    "gTipCalibrationResult": "Calibration result",
+    "@gTipCalibrationResult": {
+        "description": "This is a tip for the calibration result."
+    },
+    "gBtnCalibration": "Calibrate",
+    "@gBtnCalibration": {
+        "description": "This is a button for calibration."
+    },
+    "gTipEmptyScalePanThenNext": "Please empty the scale pan and click next",
+    "@gTipEmptyScalePanThenNext": {
+        "description": "This is a tip to empty the scale pan and click next."
+    },
+    "gTipSetFullScaleThenNext": "Please set the full scale weight and click next",
+    "@gTipSetFullScaleThenNext": {
+        "description": "This is a tip to set the full scale weight and click next."
+    },
+    "gTipLoadWeightThenNext": "Please load the weight, wait for the green light to turn on and click next",
+    "@gTipLoadWeightThenNext": {
+        "description": "This is a tip to load the weight, wait for the green light to turn on and click next."
+    },
+    "gTipPleaseEmptyScalePan": "Please empty the scale pan",
+    "@gTipPleaseEmptyScalePan": {
+        "description": "This is a tip to ask to empty the scale pan."
+    },
+    "gTipPleaseLoadWeight": "Please load the weight",
+    "@gTipPleaseLoadWeight": {
+        "description": "This is a tip to ask to load the weight."
+    },
+    "gTipCalResult": "If calibration fails, please click 'Recalibrate'.",
+    "@gTipCalResult": { 
+        "description": "This is a tip for calibration result." 
+    },
+    "gTipCalibrationFailed": "Calibration failed",
+    "@gTipCalibrationFailed": {
+        "description": "This is a tip for calibration failure."
+    },
+    "gTipCalibrationSuccess": "Calibration successful",
+    "@gTipCalibrationSuccess": {
+        "description": "This is a tip for successful calibration."
+    },
+    "gTipCalibrationAgain": "Recalibrate",
+    "@gTipCalibrationAgain": {
+        "description": "This is a tip to ask to calibrate again."
+    },
+    "gTipCalibrationWarning": "Calibration is in progress. It is recommended to complete the calibration before switching the scale! Are you sure you want to switch?",
+    "@gTipCalibrationWarning": {
+        "description": "This is a warning message for calibration."
+    },
+    "gBtnPrevious": "Previous Step",
+    "@gBtnPrevious": {
+        "description": "This is a button to go back to the previous step." 
+    },
+    "gBtnNext": "Next Step",
+    "@gBtnNext": {
+        "description": "This is a button to go to the next step."
+    },
+    "gTipInputRange": "Please enter the max range",
+    "@gTipInputRange": {
+        "description": "This is a prompt to ask the user to input the measuring range."
+    },
+    "gTxtDecimal": "Decimal",
+    "@gTxtDecimal": {
+        "description": "This is the prompt for decimal places."
+    },
+    "gTipGaduation": "Gaduation",
+    "@gTipGaduation": {
+        "description": "This is the prompt for graduation."
+    },
+    "gTipRedoLastStep": "Fail,Please redo the last step.",
+    "@gTipRedoLastStep": {
+        "description": "This is a tip to redo the last step."
+    },    
+    "gTipResetMaxRange": "Fail,Please reset the maximum range.",
+    "@gTipResetMaxRange": {
+        "description": "This is a tip to reset the maximum range."
+    },
+    "gTipNoDevice": "No devices found yet, Please add your device",
+    "@gTipNoDevice": {
+        "description": "This is a tip to inform the user that no devices are found."
+    },
+    "gTipPortInUsed": "The port is already in use.",
+    "@gTipPortInUsed": {
+        "description": "This is a tip to inform the user that the port is already in use."
+    },
+    "gTipPerformingOperation": "Performing operation...",
+    "@gTipPerformingOperation": {
+        "description": "This is a tip to inform the user that an operation is being performed."
+    },     
+    "gTitleDeviceList": "Device List",
+    "@gTitleDeviceList": {
+        "description": "This is the title for the device list."
+    },    
+    "gTipStandaloneMode": "Standalone Mode",
+    "@gTipStandaloneMode": {
+        "description": "This is a tip indicating the standalone operation mode."
+    },
+    "gTipWeightSummationMode": "Weight Summation Mode",
+    "@gTipWeightSummationMode": {
+        "description": "This is a tip indicating the weight summation operation mode."
     }
-}
+}    

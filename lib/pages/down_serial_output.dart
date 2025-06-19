@@ -248,7 +248,7 @@ class _DownReciptPageState extends State<DownSerialOutputPage> {
       _stopTimer();
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(localizedStrings.gBtnDownload_result_fail,
+          content: Text(localizedStrings.gTipDownloadFail,
               style: const TextStyle(
                   fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
           duration: const Duration(seconds: 3),

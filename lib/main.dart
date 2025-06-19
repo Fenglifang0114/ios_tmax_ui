@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:window_size/window_size.dart';
@@ -21,17 +22,31 @@ Future<void> main() async {
 
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String savedLanguage = prefs.getString('language') ?? 'en_US';
+  String savedDarkMode = prefs.getString('darkMode') ?? 'false';
   ipAddress = await readIpAddr();
   if (ipAddress.isEmpty) {
     ipAddress = '127.0.0.1';
   }
-
+  await initPageId();
   await ensureInitialized();
   bool isPortAvailable = await checkAndBindPort();
   if (isPortAvailable) {
-    runApp(MyApp(savedLanguage, ipAddress));
+    runApp(MyApp(savedLanguage, ipAddress, savedDarkMode == 'true'));
   } else {
     exit(0);
+  }
+}
+
+//初始化
+Future<void> initPageId() async {
+  Map<String, dynamic> pageIds = await readPageIdsFromJsonReversed();
+  if (pageIds.isNotEmpty) {
+    Set<int> configPages = Set.from(pageIds['configPageList'] ?? []);
+    Set<int> appPages = Set.from(pageIds['appPagedList'] ?? []);
+
+    selectedConfigPaidMenuIds = configPages;
+    selectedAppsPaidMenuIds = appPages;
+    defualtSelectPage = pageIds['defaultPageId'];
   }
 }
 
@@ -90,9 +105,10 @@ Future<String> readIpAddr() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp(this.savedLanguage, this.ipAddr, {super.key});
+  const MyApp(this.savedLanguage, this.ipAddr, this.savedDarkMode, {super.key});
   final String savedLanguage;
   final String ipAddr;
+  final bool savedDarkMode;
 
   // 重写build 方法，build 方法返回值为Widget类型，返回内容为屏幕上显示内容。
   @override
@@ -100,7 +116,7 @@ class MyApp extends StatelessWidget {
     connectService();
     return MaterialApp(
         //自定义主题
-        theme: themeColor(colorTheme),
+        theme: themeColor(colorTheme, savedDarkMode),
         // 国际化
         localizationsDelegates: const [
           // 本地化的代理类

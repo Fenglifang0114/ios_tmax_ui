@@ -12,7 +12,7 @@ const textHeight = 28.0;
 
 class ReceiptItem extends StatefulWidget {
   // ignore: prefer_const_constructors_in_immutables
-  
+
   ReceiptItem({
     super.key,
     required this.index,
@@ -87,7 +87,7 @@ class ReceiptItemState extends State<ReceiptItem> {
   void initState() {
     super.initState();
 
-    _eventbus1 = eventBus.on<EventSelectedControl>().listen((event) {
+    _eventbus1 = eventBus.on<EventRcpSelectedControl>().listen((event) {
       if (mounted) {
         setState(() {
           myReceiptSelCtl = event.obj;
@@ -137,7 +137,7 @@ class ReceiptItemState extends State<ReceiptItem> {
               myReceiptItemData.qrcodeType = widget.qrcodeType;
               myReceiptItemData.fontBold = widget.fontBold;
               myReceiptItemData.fontReverse = widget.fontReverse;
-              eventBus.fire(EventText(myReceiptItemData));
+              eventBus.fire(EventRcpText(myReceiptItemData));
             });
           },
           child: _getWidget(),

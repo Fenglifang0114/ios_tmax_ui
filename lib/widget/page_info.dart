@@ -1,4 +1,8 @@
+//每个页面的关于按钮
+
 import 'package:flutter/material.dart';
+import 'package:t_max/data/home_page_common_data.dart';
+import 'package:t_max/data/icons.dart';
 import '../dialog/page_help_dialog.dart';
 
 class PageInfoButton extends StatefulWidget {
@@ -42,26 +46,8 @@ class PageInfoButtonState extends State<PageInfoButton> {
         });
       },
       child: Container(
-        height: 30.0,
-        width: 30.0,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: isPressed
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.secondaryFixed,
-            width: 1.0,
-          ),
-          color: Theme.of(context).colorScheme.onPrimary,
-        ),
-        child: Icon(
-          Icons.help_outline,
-          color: isHovered || isPressed
-              ? Theme.of(context).colorScheme.primary
-              : Theme.of(context).colorScheme.secondaryFixed,
-          size: 24.0,
-        ),
-      ),
+          child: getSvgIcon(
+              infoSvgIcon(), iconMenuSize, iconMenuSize, Color(0xFFF4B837))),
     );
   }
 }

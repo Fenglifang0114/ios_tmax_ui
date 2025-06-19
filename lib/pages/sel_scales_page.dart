@@ -342,8 +342,8 @@ class SelectScalesPageState extends State<SelectScalesPage> {
                 width: 50,
                 child: Text(
                     comScale.isOnline
-                        ? localizedStrings.gOnlineTip
-                        : localizedStrings.gOfflineTip,
+                        ? localizedStrings.gTipOnline
+                        : localizedStrings.gTipOffline,
                     maxLines: 2,
                     style: TextStyle(
                         color: getResTextColor(comScale.scaleId),
@@ -448,8 +448,8 @@ class SelectScalesPageState extends State<SelectScalesPage> {
                 width: 50,
                 child: Text(
                     scaleNetItems[index].isOnline!
-                        ? localizedStrings.gOnlineTip
-                        : localizedStrings.gOfflineTip,
+                        ? localizedStrings.gTipOnline
+                        : localizedStrings.gTipOffline,
                     maxLines: 2,
                     style: TextStyle(
                         color: getResTextColor(scaleNetItems[index].scaleId!),

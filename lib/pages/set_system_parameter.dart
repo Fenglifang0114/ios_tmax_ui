@@ -2,6 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:t_max/data/home_page_common_data.dart';
+import 'package:t_max/data/scale_info_from_db.dart';
+import 'package:t_max/dialog/custom_dialog_tip.dart';
+import 'package:t_max/widget/scale_list.dart';
 import '../data/comscaleinfo_data.dart';
 import '../data/downloadresponse.dart';
 import '../data/manager_scale_channel.dart';
@@ -9,7 +13,6 @@ import 'package:t_max/data/eeprom_info.dart';
 import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
 import '../data/language.dart';
-import '../data/scale_list_data.dart';
 import '../data/timer_manager.dart';
 import '../widget/page_head.dart';
 
@@ -29,23 +32,13 @@ class SetParameterPageState extends State<SetParameterPage> {
 
   TextEditingController manualTimeCtl = TextEditingController();
 
-  Timer? _timer;
   List<EepromInfo> eepromInfoList = [];
   List<EepromInfo> editInfoList = [];
 
   Map<String, List<EepromInfo>> groupedData = {};
-  List<NetScaleInfoLocal> scaleNetItems = [];
-  NetScaleInfoLocal defNetScaleInfo = NetScaleInfoLocal();
-  int selScaleId = -1;
 
-  void initScaleList() {
-    scaleNetItems = myNetScaleList;
-    selScaleId = myDefScaleInfo.defScaleId!;
-    if (myNetScaleList.isNotEmpty) {
-      defNetScaleInfo = NetScaleListMgr.findScaleInfo(
-          myNetScaleList, myDefScaleInfo.defScaleId!);
-    }
-  }
+  int selScaleId = -1;
+  bool isGettingData = false;
 
   void generateCategoryList(List<EepromInfo> dataList) {
     setState(() {
@@ -69,9 +62,7 @@ class SetParameterPageState extends State<SetParameterPage> {
   @override
   void initState() {
     super.initState();
-    initScaleList();
     cntScaleTimerMgr.stopCntScaleTimer();
-    PublicFunctions.getAllEepromInfo(myDefScaleInfo.defScaleId!);
 
     eventBus1 = eventBus.on<EventRespCheckNetScale>().listen((event) {
       if (mounted) {
@@ -92,6 +83,7 @@ class SetParameterPageState extends State<SetParameterPage> {
     eventBus3 = eventBus.on<EventGetAllEepromDateResp>().listen((event) {
       if (mounted) {
         setState(() {
+          isGettingData = false;
           myRespDataFromScale = event.obj;
           groupedData.clear();
           if (myRespDataFromScale.msgBody.isNotEmpty) {
@@ -108,7 +100,6 @@ class SetParameterPageState extends State<SetParameterPage> {
                 print(e);
               }
             }
-            cntScaleTimerMgr.startCntScaleTimer(1);
           } else {
             myComScaleInfo.isOnline = false;
           }
@@ -119,38 +110,27 @@ class SetParameterPageState extends State<SetParameterPage> {
     eventBus2 = eventBus.on<EventModifyEepromInfoResp>().listen((event) {
       if (mounted) {
         setState(() {
+          isGettingData = false;
           myRespDataFromScale = event.obj;
           if (myRespDataFromScale.msgBody.isNotEmpty) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text(
-                    (myRespDataFromScale.msgBody.contains('ok'))
-                        ? localizedStrings.download_result_ok
-                        : myRespDataFromScale.msgBody,
-                    style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.normal)), ////此处需要秤回复
-                duration: const Duration(seconds: 3),
-                backgroundColor: (myRespDataFromScale.msgBody.contains('ok'))
-                    ? Theme.of(context).colorScheme.onTertiaryFixedVariant
-                    : Theme.of(context).colorScheme.error));
+            myRespDataFromScale.msgBody.contains('ok')
+                ? showTipInfo(localizedStrings.gTipDownloadOk, context)
+                : showTipInfo(localizedStrings.gTipDownloadFail, context);
           }
         });
         groupedData.clear();
         cntScaleTimerMgr.stopCntScaleTimer();
-        PublicFunctions.getAllEepromInfo(myDefScaleInfo.defScaleId!);
+        PublicFunctions.getAllEepromInfo(selScaleId);
+        isGettingData = true;
       }
     });
     eventBus4 = eventBus.on<EventSelWeighingScaleId>().listen((event) {
       //修改了ScaleId
       if (mounted) {
         int scaleId = event.obj;
-
         if (scaleId != selScaleId) {
           setState(() {
-            selScaleId = scaleId;
-            DefScaleInfo.getDefScaleInfo(scaleId);
-            groupedData.clear();
-            PublicFunctions.getAllEepromInfo(myDefScaleInfo.defScaleId!);
+            print('object');
           });
         }
       }
@@ -162,16 +142,9 @@ class SetParameterPageState extends State<SetParameterPage> {
     eventBus1.cancel();
     eventBus2.cancel();
     eventBus3.cancel();
-    _timer?.cancel();
+
+    cntScaleTimerMgr.stopCntScaleTimer();
     super.dispose();
-  }
-
-  void startTimer() {}
-
-  void stopTimer() {
-    setState(() {
-      _timer?.cancel();
-    });
   }
 
   List<EepromInfo> checkParameter() {
@@ -193,238 +166,430 @@ class SetParameterPageState extends State<SetParameterPage> {
 
   @override
   Widget build(BuildContext context) {
-    // final _width = MediaQuery.of(context).size.width;
+    final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      appBar: AppBar(
-          title: Container(
-            child: pageHeadDefScale(
-                context,
-                localizedStrings.cTitleParameterSet,
-                localizedStrings.gTipParameterSettingPageHelp),
-          ),
-          leading: IconTheme(
-              data: IconThemeData(
-                  color: Theme.of(context).colorScheme.primary // 设置抽屉图标颜色
-                  ),
-              child: Builder(builder: (BuildContext context) {
-                return IconButton(
-                  icon: const Icon(Icons.menu),
-                  onPressed: () {
-                    Scaffold.of(context).openDrawer();
-                  },
-                );
-              }))),
-      body: Column(
-        children: [
-          Container(
-            height: 40,
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.scrim,
-              border: Border(
-                bottom:
-                    BorderSide(color: Theme.of(context).colorScheme.primary),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: Text(
-                    localizedStrings.cTipConfigurationName,
-                    style: TextStyle(
-                      fontSize: 18,
-                    ),
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Text(
-                    localizedStrings.cTipEditable,
-                    style: TextStyle(
-                      fontSize: 18,
-                    ),
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Text(
-                    localizedStrings.cTipParameterSize,
-                    style: TextStyle(
-                      fontSize: 18,
-                    ),
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Text(
-                    localizedStrings.cTipParameterTyppe,
-                    style: TextStyle(
-                      fontSize: 18,
-                    ),
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Text(
-                    localizedStrings.cTipParameterValue,
-                    style: TextStyle(
-                      fontSize: 18,
-                    ),
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Text(
-                    localizedStrings.cTipParameterDesp,
-                    style: TextStyle(
-                      fontSize: 18,
-                    ),
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: height - 100,
-            child: ListView.builder(
-              itemCount: groupedData.length, // 每个分类一个ExpansionTile
-              itemBuilder: (context, index) {
-                String category = groupedData.keys.toList()[index];
-                String categoryTitle = category;
+      body: Container(
+          width: width,
+          decoration:
+              BoxDecoration(color: Theme.of(context).colorScheme.surface),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              pageHeadInfo(
+                  context,
+                  width - headWidthPadding,
+                  localizedStrings.menuParameterSetting,
+                  localizedStrings.gTipParameterSettingPageHelp),
+              Expanded(
+                child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: scaleListWidth,
+                        color: Theme.of(context).colorScheme.surfaceTint,
+                        child: SizedBox(
+                          height: MediaQuery.of(context).size.height,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              SizedBox(
+                                height: regularPadding,
+                              ),
+                              Expanded(
+                                child: NewAllScaleListWidget(
+                                  listWidth: scaleListWidth, // 列表宽度
+                                  selScaleId: selScaleId,
+                                  clickScale: (scale) {
+                                    if (isGettingData) {
+                                      showTipInfo(
+                                          localizedStrings
+                                              .gTipPerformingOperation,
+                                          context);
+                                      return;
+                                    }
 
-                return ExpansionTile(
-                  initiallyExpanded: false,
-                  title: Text(categoryTitle,
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
-                  children: groupedData[category]!.map((item) {
-                    return Container(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          // border: Border(
-                          //   bottom: BorderSide(color: Theme.of(context).colorScheme.secondaryFixed),
-                          // ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                '${((item.comment.toString()).replaceAll('/', '')).replaceAll('*', '')}: ',
-                                textAlign: TextAlign.center,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                (item.permission == 1) ? 'No' : 'Yes',
-                                textAlign: TextAlign.center,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                (item.size.toString()),
-                                textAlign: TextAlign.center,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                (item.type.toString()),
-                                textAlign: TextAlign.center,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: TextFormField(
-                                readOnly: (item.permission == 1) ? true : false,
-                                // 根据数据列表设置初始值
-                                maxLines: 1,
-                                decoration: InputDecoration(
-                                  border: (item.permission == 1)
-                                      ? InputBorder.none
-                                      : const UnderlineInputBorder(), // 去掉底部线条
+                                    setState(() {
+                                      changeScale(scale.scaleId);
+                                    });
+                                  },
                                 ),
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                    overflow: TextOverflow.ellipsis),
-                                initialValue: item.currValue,
-                                // 处理每个文本字段的变化
-                                onChanged: (value) {
-                                  setState(() {
-                                    item.currValue = value;
-                                    item.isChanged = true;
-                                  });
-                                },
                               ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                item.description.toString(),
-                                textAlign: TextAlign.center,
-                                overflow: TextOverflow.ellipsis,
+                            ],
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: 1,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .outlineVariant, //  分隔条颜色
+                      ),
+                      myAllScalesList.isEmpty
+                          ? SizedBox()
+                          : Expanded(
+                              child: Container(
+                              padding: const EdgeInsets.all(largePadding),
+                              child: Column(
+                                children: [
+                                  Container(
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .surfaceDim,
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Expanded(
+                                          flex: 2,
+                                          child: Text(
+                                            localizedStrings
+                                                .cTipConfigurationName,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall!
+                                                .apply(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onSurface,
+                                                ),
+                                            textAlign: TextAlign.center,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 2,
+                                          child: Text(
+                                            localizedStrings.cTipEditable,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall!
+                                                .apply(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onSurface,
+                                                ),
+                                            textAlign: TextAlign.center,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 2,
+                                          child: Text(
+                                            localizedStrings.cTipParameterSize,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall!
+                                                .apply(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onSurface,
+                                                ),
+                                            textAlign: TextAlign.center,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 2,
+                                          child: Text(
+                                            localizedStrings.cTipParameterTyppe,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall!
+                                                .apply(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onSurface,
+                                                ),
+                                            textAlign: TextAlign.center,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 2,
+                                          child: Text(
+                                            localizedStrings.cTipParameterValue,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall!
+                                                .apply(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onSurface,
+                                                ),
+                                            textAlign: TextAlign.center,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 2,
+                                          child: Text(
+                                            localizedStrings.cTipParameterDesp,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall!
+                                                .apply(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onSurface,
+                                                ),
+                                            textAlign: TextAlign.center,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: height - 250,
+                                    child: ListView.builder(
+                                      itemCount: groupedData
+                                          .length, // 每个分类一个ExpansionTile
+                                      itemBuilder: (context, index) {
+                                        String category =
+                                            groupedData.keys.toList()[index];
+                                        String categoryTitle = category;
+
+                                        return ExpansionTile(
+                                          initiallyExpanded: false,
+                                          title: Text(
+                                            categoryTitle,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall!
+                                                .apply(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .primary,
+                                                ),
+                                          ),
+                                          children: groupedData[category]!
+                                              .map((item) {
+                                            return Container(
+                                                padding: const EdgeInsets.only(
+                                                    left: regularPadding),
+                                                decoration: BoxDecoration(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onPrimary,
+                                                ),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceEvenly,
+                                                  children: [
+                                                    Expanded(
+                                                      flex: 2,
+                                                      child: Text(
+                                                        '${((item.comment.toString()).replaceAll('/', '')).replaceAll('*', '')}: ',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodySmall!
+                                                            .apply(
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .colorScheme
+                                                                  .onSurfaceVariant,
+                                                            ),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 2,
+                                                      child: Text(
+                                                        (item.permission == 1)
+                                                            ? 'No'
+                                                            : 'Yes',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodySmall!
+                                                            .apply(
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .colorScheme
+                                                                  .onSurfaceVariant,
+                                                            ),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 2,
+                                                      child: Text(
+                                                        (item.size.toString()),
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodySmall!
+                                                            .apply(
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .colorScheme
+                                                                  .onSurfaceVariant,
+                                                            ),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 2,
+                                                      child: Text(
+                                                        (item.type.toString()),
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodySmall!
+                                                            .apply(
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .colorScheme
+                                                                  .onSurfaceVariant,
+                                                            ),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 2,
+                                                      child: TextFormField(
+                                                        readOnly:
+                                                            (item.permission ==
+                                                                    1)
+                                                                ? true
+                                                                : false,
+                                                        // 根据数据列表设置初始值
+                                                        maxLines: 1,
+                                                        decoration:
+                                                            InputDecoration(
+                                                          border: (item
+                                                                      .permission ==
+                                                                  1)
+                                                              ? InputBorder.none
+                                                              : const UnderlineInputBorder(), // 去掉底部线条
+                                                        ),
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodySmall!
+                                                            .apply(
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .colorScheme
+                                                                  .onSurfaceVariant,
+                                                            ),
+
+                                                        initialValue:
+                                                            item.currValue,
+                                                        // 处理每个文本字段的变化
+                                                        onChanged: (value) {
+                                                          setState(() {
+                                                            item.currValue =
+                                                                value;
+                                                            item.isChanged =
+                                                                true;
+                                                          });
+                                                        },
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 2,
+                                                      child: Text(
+                                                        item.description
+                                                            .toString(),
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodySmall!
+                                                            .apply(
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .colorScheme
+                                                                  .onSurfaceVariant,
+                                                            ),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ));
+                                          }).toList(),
+                                        );
+                                      },
+                                    ),
+                                  )
+                                ],
                               ),
-                            ),
-                          ],
-                        ));
-                  }).toList(),
-                );
+                            )),
+                    ]),
+              ),
+            ],
+          )),
+      floatingActionButton: myAllScalesList.isEmpty
+          ? SizedBox()
+          : FloatingActionButton(
+              shape: const BeveledRectangleBorder(),
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              onPressed: () {
+                var changedEepromInfos = checkParameter();
+                if (changedEepromInfos.isNotEmpty) {
+                  String checkStr = checkEepromData(changedEepromInfos);
+                  if (checkStr != '') {
+                    changedEepromInfos.clear();
+                    var title = localizedStrings.cTipCheckValue + '$checkStr!';
+
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false, // 点击对话框外部不关闭对话框
+                      builder: (BuildContext context) {
+                        return ShowNormalTipDialog(
+                          title: localizedStrings.fTipTitle,
+                          msg: title,
+                        );
+                      },
+                    );
+                  } else {
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false, // 点击对话框外部不关闭对话框
+                      builder: (BuildContext context) {
+                        return ShowNormalTipDialog(
+                          title: localizedStrings.fTipTitle,
+                          msg: localizedStrings.cTipConfirmModified,
+                        );
+                      },
+                    ).then((value) {
+                      if (value) {
+                        if (changedEepromInfos.isNotEmpty) {
+                          submitParameter(changedEepromInfos);
+                        }
+                      } else {
+                        return;
+                      }
+                    });
+                  }
+                } else {
+                  showTipInfo(localizedStrings.cTipNotModified, context);
+                }
               },
+              tooltip: localizedStrings.cBtnCommit,
+              child: const Icon(Icons.upload_file_outlined),
             ),
-          )
-        ],
-      ),
-      drawer: Drawer(
-          child: myWeighingScaleListDrawer(
-              context,
-              localizedStrings.gTipScaleList,
-              scaleNetItems,
-              selScaleId) // showNetScaleList(),
-          ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        onPressed: () {
-          var changedEepromInfos = checkParameter();
-          if (changedEepromInfos.isNotEmpty) {
-            String checkStr = checkEepromData(changedEepromInfos);
-            if (checkStr != '') {
-              changedEepromInfos.clear();
-              var title = localizedStrings.cTipCheckValue + '$checkStr!';
-              _showConfirmationDialog(context, changedEepromInfos, title);
-            } else {
-              var title = localizedStrings.cTipConfirmModified;
-              _showConfirmationDialog(context, changedEepromInfos, title);
-            }
-          } else {
-            var title = localizedStrings.cTipNotModified;
-            _showConfirmationDialog(context, changedEepromInfos, title);
-          }
-        },
-        tooltip: localizedStrings.cBtnCommit,
-        child: const Icon(Icons.upload_file_outlined),
-      ),
     );
+  }
+
+  //切换的时候要修改掉秤的信息
+  void changeScale(int scaleId) {
+    // PublicFunctions.stopWeight(selScaleId);
+    setState(() {
+      selScaleId = scaleId;
+      PublicFunctions.getAllEepromInfo(selScaleId);
+      isGettingData = true;
+      groupedData.clear();
+    });
+
+    // PublicFunctions.getWeight(scaleId);
   }
 
   String checkEepromData(List<EepromInfo> dataList) {
@@ -466,54 +631,6 @@ class SetParameterPageState extends State<SetParameterPage> {
     return value.isNotEmpty && value.length <= 20;
   }
 
-  void _showConfirmationDialog(
-      BuildContext context, List<EepromInfo> changedEepromInfos, String title) {
-    showDialog(
-      context: context,
-      builder: (BuildContext ctx) {
-        return AlertDialog(
-          title: Text(
-            localizedStrings.gTitleConfirm,
-            style: TextStyle(color: Theme.of(context).colorScheme.primary),
-          ),
-          content: Text(title),
-          actions: <Widget>[
-            changedEepromInfos.isNotEmpty
-                ? OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(4.0), // 这里的10.0是圆角半径，可以根据需要调整
-                    )),
-                    child: Text(localizedStrings.gBtnCancel),
-                    onPressed: () {
-                      Navigator.of(context).pop(false); // 不跳转
-                    },
-                  )
-                : const SizedBox(),
-            OutlinedButton(
-              style: OutlinedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.circular(4.0), // 这里的10.0是圆角半径，可以根据需要调整
-              )),
-              child: Text(localizedStrings.gBtnConfirm),
-              onPressed: () {
-                Navigator.of(context).pop(true); // 跳转
-              },
-            ),
-          ],
-        );
-      },
-    ).then((confirmed) {
-      if (confirmed) {
-        if (changedEepromInfos.isNotEmpty) {
-          submitParameter(changedEepromInfos);
-        }
-      }
-    });
-  }
-
   bool isNumberInRange1(String input) {
     final regExp = RegExp(r'^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$');
     return regExp.hasMatch(input);
@@ -538,38 +655,5 @@ class SetParameterPageState extends State<SetParameterPage> {
           textAlign: TextAlign.center,
           style: TextStyle(color: Theme.of(context).colorScheme.primary),
         ));
-  }
-
-  void showConfirmationDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext ctx) {
-        return AlertDialog(
-          title: Text(
-            localizedStrings.gTitleConfirm,
-            style: TextStyle(color: Theme.of(context).colorScheme.primary),
-          ),
-          content: Text(localizedStrings.data_delete_confirm),
-          actions: <Widget>[
-            OutlinedButton(
-              child: Text(localizedStrings.gBtnCancel),
-              onPressed: () {
-                Navigator.of(context).pop(false); // 不跳转
-              },
-            ),
-            OutlinedButton(
-              child: Text(localizedStrings.gBtnConfirm),
-              onPressed: () {
-                Navigator.of(context).pop(true); // 跳转
-              },
-            ),
-          ],
-        );
-      },
-    ).then((confirmed) {
-      if (confirmed) {
-        PublicFunctions.deleteAllRecordsTakeOut(myDefScaleInfo.defScaleId!);
-      }
-    });
   }
 }

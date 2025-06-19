@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/license_data.dart';
+import 'package:t_max/dialog/custom_dialog_tip.dart';
 import '../data/help_data.dart';
 import '../data/language.dart';
-import '../data/screen_mgr.dart';
-import '../widget/custom_button.dart';
 import '../widget/version.dart';
 
 class PageHelpInfoDialog extends StatefulWidget {
@@ -39,46 +39,38 @@ class PageHelpInfoDialogState extends State<PageHelpInfoDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: getDialogTitle(
-          context, localizedStrings.gTipHelp, Icons.help_outlined, 400),
-      content: Container(
-        height: 500,
-        width: 600,
-        decoration:
-            BoxDecoration(color: Theme.of(context).colorScheme.surfaceTint),
-        child: ListView(
-          children: [
-            Padding(
-              padding: EdgeInsets.all(10.0),
-              child: RichText(
-                text: TextSpan(
-                  children: TextUtils.generateTextSpans(
-                      widget.helpInfo, Theme.of(context).colorScheme.primary),
-                ),
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      child: Container(
+          width: 610,
+          height: 500,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: BorderRadius.circular(0),
+          ),
+          child: Column(children: [
+            ...getCustomDialogTitle(context, localizedStrings.gTipHelp),
+            Expanded(
+                child: Container(
+              padding: const EdgeInsets.only(
+                  left: largePadding, right: largePadding),
+              child: ListView(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: RichText(
+                      text: TextSpan(
+                        children: TextUtils.generateTextSpans(
+                            context,
+                            widget.helpInfo,
+                            Theme.of(context).colorScheme.primary),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
-      ),
-      actions: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            const SizedBox(width: 20),
-            CustomOutlinedButton(
-              btnWidth: 120,
-              btnHeight: 40,
-              icon: Icons.exit_to_app,
-              text: localizedStrings.gBtnExit,
-              onPressed: () {
-                myScreenMgr.isMainScreen = true;
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        )
-      ],
+            )),
+          ])),
     );
   }
 

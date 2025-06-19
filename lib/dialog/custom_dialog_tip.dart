@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:t_max/data/formula_common.dart';
+import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/language.dart';
 
 void showTipInfo(String message, BuildContext context) {
@@ -209,7 +209,8 @@ class ShowNormalTipDialogState extends State<ShowNormalTipDialog> {
                       style: ElevatedButton.styleFrom(
                         foregroundColor:
                             Theme.of(context).colorScheme.onPrimary,
-                        backgroundColor: Color(0xFFF5F5F5),
+                        backgroundColor:
+                            Theme.of(context).colorScheme.surfaceContainerLow,
                         fixedSize: const Size(double.infinity, 48),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero,
@@ -315,7 +316,8 @@ class ShowDeleteTipDialogState extends State<ShowDeleteTipDialog> {
                 height: 150,
                 width: 380,
                 child: Row(children: [
-                  Icon(Icons.warning, size: 48, color: redColor),
+                  Icon(Icons.warning,
+                      size: 48, color: Theme.of(context).colorScheme.error),
                   Expanded(
                     child: Container(
                       alignment: Alignment.center,
@@ -346,7 +348,7 @@ class ShowDeleteTipDialogState extends State<ShowDeleteTipDialog> {
                       style: ElevatedButton.styleFrom(
                         foregroundColor:
                             Theme.of(context).colorScheme.onPrimary,
-                        backgroundColor: redColor,
+                        backgroundColor: Theme.of(context).colorScheme.error,
                         fixedSize: const Size(double.infinity, 48),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero,
@@ -374,7 +376,9 @@ class ShowDeleteTipDialogState extends State<ShowDeleteTipDialog> {
                       style: ElevatedButton.styleFrom(
                         foregroundColor:
                             Theme.of(context).colorScheme.onPrimary,
-                        backgroundColor: Color(0xFF999999),
+                        backgroundColor: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest,
                         fixedSize: const Size(double.infinity, 48),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero,
@@ -480,7 +484,8 @@ class ShowHignWgtTipDialogState extends State<ShowHignWgtTipDialog> {
                 height: 150,
                 width: 380,
                 child: Row(children: [
-                  Icon(Icons.warning, size: 48, color: redColor),
+                  Icon(Icons.warning,
+                      size: 48, color: Theme.of(context).colorScheme.error),
                   Expanded(
                     child: Container(
                       alignment: Alignment.center,
@@ -511,7 +516,7 @@ class ShowHignWgtTipDialogState extends State<ShowHignWgtTipDialog> {
                       style: ElevatedButton.styleFrom(
                         foregroundColor:
                             Theme.of(context).colorScheme.onPrimary,
-                        backgroundColor: redColor,
+                        backgroundColor: Theme.of(context).colorScheme.error,
                         fixedSize: const Size(double.infinity, 48),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero,
@@ -702,4 +707,54 @@ class ShowUnitTipDialogState extends State<ShowUnitTipDialog> {
       ),
     );
   }
+}
+
+getCustomDialogTitle(
+  BuildContext context,
+  String title,
+) {
+  return [
+    Container(
+        height: dialogTitleheight,
+        padding: const EdgeInsets.only(left: largePadding, right: largePadding),
+        alignment: Alignment.centerLeft,
+        child: Row(children: [
+          Container(
+            width: 3,
+            height: 14,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+          SizedBox(
+            width: regularPadding,
+          ),
+          Expanded(
+            child: Container(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ),
+          IconButton(
+              icon: Icon(
+                Icons.cancel,
+                size: 24,
+                color: Theme.of(context).colorScheme.secondaryFixed,
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              })
+        ])),
+    // 分割线
+    Divider(
+      height: 1,
+      color: Theme.of(context).colorScheme.surfaceContainerLow,
+    )
+  ];
 }

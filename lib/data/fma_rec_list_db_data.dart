@@ -171,6 +171,7 @@ class HeaderRec {
   String? recordId;
   DateTime? recordSaveTime;
   String? headerOperator;
+  int? formulaKey;
   String? formulaId;
   String? formulaName;
   int? formulaTypeId;
@@ -202,6 +203,7 @@ class HeaderRec {
     this.recordId,
     this.recordSaveTime,
     this.headerOperator,
+    this.formulaKey,
     this.formulaId,
     this.formulaName,
     this.formulaTypeId,
@@ -236,6 +238,7 @@ class HeaderRec {
             ? null
             : DateTime.parse(json["RecordSaveTime"]).toLocal(),
         headerOperator: json["Operator"],
+        formulaKey: json["FormulaKey"],
         formulaId: json["FormulaID"],
         formulaName: json["FormulaName"],
         formulaTypeId: json["FormulaTypeId"],
@@ -272,6 +275,7 @@ class HeaderRec {
         "RecordID": recordId,
         "RecordSaveTime": recordSaveTime?.toIso8601String(),
         "Operator": headerOperator,
+        "FormulaKey": formulaKey,
         "FormulaID": formulaId,
         "FormulaName": formulaName,
         "FormulaTypeId": formulaTypeId,

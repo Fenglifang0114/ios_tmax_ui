@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+import 'package:t_max/data/home_page_common_data.dart';
 import '../../data/device_data.dart';
 import '../../data/report_data.dart';
 import '../../data/reqweightdata_data.dart';
@@ -257,11 +258,6 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                   _isZero = false;
                 }
 
-                // if (!_isZero) {
-                //   var weight =
-                //       double.tryParse(myReqWeightCountine.msgBody!.weightVal);
-                // }
-
                 break;
               case 2:
                 if (myReqWeightCountine.msgBody!.isZero) {
@@ -289,10 +285,6 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                   lastWeight = myReqWeightCountine.msgBody!.weightVal;
                 }
 
-                // if (!_isZero) {
-                //   var weight =
-                //       double.tryParse(myReqWeightCountine.msgBody!.weightVal);
-                // }
                 break;
               default:
             }
@@ -402,7 +394,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     eventBus12 = eventBus.on<EventUpdateSettingParam>().listen((event) {
       if (mounted) {
         setState(() {
-          PublicFunctions.getUIConfTakeOut(myDefScaleInfo.defScaleId!);
+          PublicFunctions.getUIConfTakeOut();
         });
       }
     });
@@ -515,26 +507,25 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(
-          title: Container(
-            child: pageHeadDefScale(
-                context,
-                localizedStrings.iTitleWeightCollection,
-                localizedStrings.gTipWgtDataCollectionHelp),
-          ),
-          leading: IconTheme(
-              data: IconThemeData(
-                  color: Theme.of(context).colorScheme.primary // 设置抽屉图标颜色
-                  ),
-              child: Builder(builder: (BuildContext context) {
-                return IconButton(
-                  icon: const Icon(Icons.menu),
-                  onPressed: () {
-                    Scaffold.of(context).openDrawer();
-                  },
-                );
-              }))),
-      body: firstLayout(context, width),
+      body: Container(
+          width: width,
+          decoration:
+              BoxDecoration(color: Theme.of(context).colorScheme.surface),
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                pageHeadInfo(
+                    context,
+                    width - headWidthPadding,
+                    localizedStrings.menuWeighingDataCollection,
+                    localizedStrings.gTipWgtDataCollectionHelp),
+                Expanded(
+                    child: Container(
+                  color: Theme.of(context).colorScheme.surfaceTint,
+                  child: firstLayout(context, width),
+                )),
+              ])),
       drawer: Drawer(
           child: myWeighingScaleListDrawer(
               context,
@@ -570,7 +561,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                       Row(
                         children: [
                           SizedBox(
-                            width: 200,
+                            width: 100,
                             child: Text(
                               localizedStrings.iStable,
                               maxLines: 1,
@@ -595,7 +586,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                       Row(
                         children: [
                           SizedBox(
-                            width: 200,
+                            width: 100,
                             child: Text(
                               localizedStrings.iTextNet,
                               maxLines: 1,
@@ -620,7 +611,7 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                       Row(
                         children: [
                           SizedBox(
-                            width: 200,
+                            width: 100,
                             child: Text(
                               localizedStrings.iTextZero,
                               maxLines: 1,
@@ -1040,39 +1031,6 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     });
   }
 
-  // void getProductNameList() {
-  //   if (myPluInfoList.isEmpty) {
-  //     productNameList.clear();
-  //     productNameValue = '';
-  //     productNameList.add("Please select Plu");
-  //     productNameValue = "Please select Plu";
-  //     selectedPluData = null;
-  //   } else if (myPluInfoList.isNotEmpty) {
-  //     String? name;
-  //     String? id;
-
-  //     for (var i = 0; i < myPluInfoList.length; i++) {
-  //       name = myPluInfoList[i].productName;
-  //       id = myPluInfoList[i].plu.toString();
-  //       name ??= "";
-  //       id ??= "";
-  //       productNameList.add(name);
-  //     }
-  //     if (!productNameList.contains(productNameValue)) {
-  //       productNameValue = productNameList[0];
-  //       selectedPluData = myPluInfoList[0];
-  //       eventBus.fire(EventProductRecInfo(selectedPluData));
-  //     } else {
-  //       for (var i = 0; i < myPluInfoList.length; i++) {
-  //         if (productNameValue == myPluInfoList[i].productName) {
-  //           selectedPluData = myPluInfoList[i];
-  //           eventBus.fire(EventProductRecInfo(selectedPluData));
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
-
   void getUserNameList() {
     if (myUserInfoList.userInfo == null || myUserInfoList.userInfo!.isEmpty) {
       userNameList.clear();
@@ -1107,25 +1065,8 @@ class _WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     }
   }
 
-  // _creatFile(String path) async {
-  //   // Excel excel = Excel.createExcel();
-  //   // await creatExcelFile(path, myWeightReportData, excel);
-  //   await creatCsvFile(path, myWeightReportData);
-  //   try {
-  //     // var onValue = excel.encode();
-  //     // File(join(path))
-  //     //   ..createSync(recursive: true)
-  //     //   ..writeAsBytesSync(onValue!);
-
-  //     errorText = "Excel save succeed!";
-  //   } catch (ex) {
-  //     errorText = "Excel save fail!";
-  //   }
-  // }
-
-// "ReqData":"{\"ScaleId\": 2, \"Product\": \"Apple\", \"Weight\": \"1.230\", \"Price\": \"3.25\"}"}
   void sendReportDataToDB() {
-    sendRptDataToDB(myWeightReportData, weighingMode);
+    sendRptDataToDB(myWeightReportData, weighingMode, 1);
   }
 
   bool checkWgtValue(String str) {

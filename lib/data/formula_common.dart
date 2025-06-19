@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:t_max/data/fma_rec_list_db_data.dart';
 import 'package:t_max/data/formula_from_db_data.dart';
 import 'package:t_max/data/formula_scale_data.dart';
@@ -15,13 +14,6 @@ List<FormulaInfoDb> formulaDataList = [];
 List<FmaRecFromDb> fmaRecFromDbList = [];
 
 //定义常量的颜色
-
-Color bgColor = const Color(0xFFEFEFEF); //灰色
-Color clickColor = const Color(0xFFECECEC); //浅灰色
-Color lineColor = const Color(0xFFEEEEEE); //深灰色
-Color greenColor = const Color(0xFF1EAF81); //绿色
-Color redColor = const Color(0xFFFB4545); //红色
-Color wgtBgColor = const Color(0xFFF4F4F4); //背景色
 
 String noStr = 'no'; //无
 String lowStr = 'low'; //低

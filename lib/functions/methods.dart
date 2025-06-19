@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'package:t_max/data/new_get_recs.dart';
 import 'package:t_max/data/req_formula_data.dart';
+import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/data/writelog.dart';
 
 import '../common/web_socket_channel.dart';
@@ -267,6 +269,14 @@ class PublicFunctions {
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
 
+  //修改配方
+
+  static void editFormulaData(String jsonStr) {
+    myScaleCmd.cmdMode = "edit_formula_data";
+    myScaleCmd.cmdData = jsonStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
   static void getFormulaList() {
     myScaleCmd.cmdMode = "get_formula_list";
     myScaleCmd.cmdData = '';
@@ -303,16 +313,80 @@ class PublicFunctions {
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
 
-  static void getNewUiConf(int scaleId) {
+  //获取称重记录
+  static void newGetRecords(int mode, int page, int pageSize,
+      String sortColumnName, String direction) {
+    ReqGetAllWgtRecs reqGetAllWgtRecs = ReqGetAllWgtRecs(
+      mode: mode,
+      page: page,
+      pageSize: pageSize,
+      columnName: sortColumnName,
+      direction: direction,
+    );
+
+    myScaleCmd.cmdMode = "get_all_wgt_rec_list";
+    myScaleCmd.cmdData = reqGetAllWgtRecsToJson(reqGetAllWgtRecs);
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  static void getUIConfNormal() {
+    myScaleCmd.cmdMode = "get_ui_conf";
+    myScaleCmd.cmdData = "0";
+    // sendMsg(scaleId, jsonEncode(myScaleCmd));
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  static void getUIConfCheck() {
+    myScaleCmd.cmdMode = "get_ui_conf";
+    myScaleCmd.cmdData = "1";
+    // sendMsg(scaleId, jsonEncode(myScaleCmd));
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  static void getUIConfTakeIn() {
+    myScaleCmd.cmdMode = "get_ui_conf";
+    myScaleCmd.cmdData = "2";
+    // sendMsg(scaleId, jsonEncode(myScaleCmd));
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  static void getUIConfTakeOut() {
+    myScaleCmd.cmdMode = "get_ui_conf";
+    myScaleCmd.cmdData = "3";
+    // sendMsg(scaleId, jsonEncode(myScaleCmd));
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  static void getNewUiConf() {
     if (mySettingParam.scaleMode == 0) {
-      PublicFunctions.getUIConfNormal(scaleId);
+      PublicFunctions.getUIConfNormal();
     } else if (mySettingParam.scaleMode == 1) {
-      PublicFunctions.getUIConfCheck(scaleId);
+      PublicFunctions.getUIConfCheck();
     } else if (mySettingParam.scaleMode == 2) {
-      PublicFunctions.getUIConfTakeIn(scaleId);
+      PublicFunctions.getUIConfTakeIn();
     } else if (mySettingParam.scaleMode == 3) {
-      PublicFunctions.getUIConfTakeOut(scaleId);
+      PublicFunctions.getUIConfTakeOut();
     }
+  }
+
+  static void newDeleteAllRecords(int mode) {
+    myScaleCmd.cmdMode = "del_wgt_rec";
+    ReqDelAllWgtRecs reqData = ReqDelAllWgtRecs(mode: mode);
+    String jsonStr = reqDelAllWgtRecsToJson(reqData);
+    myScaleCmd.cmdData = jsonStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  static void deleteAllRecords(int scaleId) {
+    String modelName = myDefScaleInfo.defScaleModel == null
+        ? ''
+        : myDefScaleInfo.defScaleModel!;
+    String scaleSn =
+        myDefScaleInfo.defScaleSn == null ? '' : myDefScaleInfo.defScaleSn!;
+
+    myScaleCmd.cmdMode = "del_rec";
+    myScaleCmd.cmdData = '999999999,0,$modelName,$scaleSn';
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
   }
 
   static void closeSerialPort(int scaleId) {
@@ -337,30 +411,6 @@ class PublicFunctions {
   static void updateFirmWareOnline(String str, int scaleId) {
     myScaleCmd.cmdMode = "update_firmware_wifi";
     myScaleCmd.cmdData = str;
-    sendMsg(scaleId, jsonEncode(myScaleCmd));
-  }
-
-  static void getUIConfNormal(int scaleId) {
-    myScaleCmd.cmdMode = "get_ui_conf";
-    myScaleCmd.cmdData = "0";
-    sendMsg(scaleId, jsonEncode(myScaleCmd));
-  }
-
-  static void getUIConfCheck(int scaleId) {
-    myScaleCmd.cmdMode = "get_ui_conf";
-    myScaleCmd.cmdData = "1";
-    sendMsg(scaleId, jsonEncode(myScaleCmd));
-  }
-
-  static void getUIConfTakeIn(int scaleId) {
-    myScaleCmd.cmdMode = "get_ui_conf";
-    myScaleCmd.cmdData = "2";
-    sendMsg(scaleId, jsonEncode(myScaleCmd));
-  }
-
-  static void getUIConfTakeOut(int scaleId) {
-    myScaleCmd.cmdMode = "get_ui_conf";
-    myScaleCmd.cmdData = "3";
     sendMsg(scaleId, jsonEncode(myScaleCmd));
   }
 
@@ -439,6 +489,20 @@ class PublicFunctions {
     writelog(jsonEncode(myScaleCmd));
   }
 
+  static performZeroWithScaleId(int scaleId) {
+    myScaleCmd.cmdMode = "zero";
+    myScaleCmd.cmdData = "";
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+    writelog(jsonEncode(myScaleCmd));
+  }
+
+  static performTareWithScaleId(int scaleId) {
+    myScaleCmd.cmdMode = "tare";
+    myScaleCmd.cmdData = "";
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+    writelog(jsonEncode(myScaleCmd));
+  }
+
   static void openBillSend(int scaleId) {
     //开启结账发送
     myScaleCmd.cmdMode = 'open_bill_send';
@@ -462,9 +526,20 @@ class PublicFunctions {
 
   static void getRecords(int scaleId, String mode, int page, int pageSize,
       String sortColumnName, String direction) {
+    if (myAllScalesList.isEmpty) {
+      return;
+    }
+    Scale tempScaleInfo = myAllScalesList[0];
+    for (var scale in myAllScalesList) {
+      if (scale.scaleId == scaleId) {
+        tempScaleInfo = scale;
+        break;
+      }
+    }
+
     myScaleCmd.cmdMode = "get_recs";
     myScaleCmd.cmdData =
-        '$mode,${myDefScaleInfo.defScaleModel},${myDefScaleInfo.defScaleSn},${myDefScaleInfo.defScaleModel},$page,$pageSize,$sortColumnName,$direction'; //根据scale model scale sn  scale name(别名)
+        '$mode,${tempScaleInfo.scaleModel},${tempScaleInfo.scaleSn},${tempScaleInfo.scaleModel},$page,$pageSize,$sortColumnName,$direction'; //根据scale model scale sn  scale name(别名)
     sendMsg(scaleId, jsonEncode(myScaleCmd));
   }
 
@@ -623,15 +698,12 @@ class PublicFunctions {
     sendMsg(scaleId, jsonEncode(myScaleCmd));
   }
 
-  static void deleteAllRecords(int scaleId) {
-    String modelName = myDefScaleInfo.defScaleModel == null
-        ? ''
-        : myDefScaleInfo.defScaleModel!;
-    String scaleSn =
-        myDefScaleInfo.defScaleSn == null ? '' : myDefScaleInfo.defScaleSn!;
+  static void deleteAllRecordsById(int scaleId) {
+    DefScaleInfo tempScaleInfo = DefScaleInfo.getScaleInfoById(scaleId);
 
     myScaleCmd.cmdMode = "del_rec";
-    myScaleCmd.cmdData = '999999999,0,$modelName,$scaleSn';
+    myScaleCmd.cmdData =
+        '999999999,0,${tempScaleInfo.defScaleModel},${tempScaleInfo.defScaleSn}';
     sendMsg(scaleId, jsonEncode(myScaleCmd));
   }
 
@@ -665,6 +737,42 @@ class PublicFunctions {
         myDefScaleInfo.defScaleSn == null ? '' : myDefScaleInfo.defScaleSn!;
     myScaleCmd.cmdMode = "del_rec";
     myScaleCmd.cmdData = '999999999,3,$modelName,$scaleSn';
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
+  static void calibrationZero(int scaleId) {
+    myScaleCmd.cmdMode = "cal_zero_range";
+    myScaleCmd.cmdData = '';
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
+  static void calibrationMaxRange(int scaleId) {
+    myScaleCmd.cmdMode = "cal_max_range";
+    myScaleCmd.cmdData = '';
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
+  static void setMaxRange(int scaleId, int value) {
+    myScaleCmd.cmdMode = "set_max_range";
+    myScaleCmd.cmdData = value.toString();
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
+  static void sendCalHeartBeat(int scaleId) {
+    myScaleCmd.cmdMode = "send_cal_heart_beat";
+    myScaleCmd.cmdData = '';
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
+  static void setDecimalValue(int scaleId, String value) {
+    myScaleCmd.cmdMode = "set_decimal_value";
+    myScaleCmd.cmdData = value;
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
+  static void setGaduationValue(int scaleId, String value) {
+    myScaleCmd.cmdMode = "set_gaduation_value";
+    myScaleCmd.cmdData = value;
     sendMsg(scaleId, jsonEncode(myScaleCmd));
   }
 }

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 class TextUtils {
   // 新增 color 参数，默认值为 Colors.blue
-  static List<TextSpan> generateTextSpans(String text, Color color) {
+  static List<TextSpan> generateTextSpans(
+      BuildContext context, String text, Color color) {
     List<TextSpan> spans = [];
     int startIndex = 0;
     while (true) {
@@ -13,7 +14,10 @@ class TextUtils {
       if (openBracketIndex == -1 && openSquareBracketIndex == -1) {
         spans.add(TextSpan(
           text: text.substring(startIndex),
-          style: TextStyle(fontSize: 14, color: Colors.black),
+          style: Theme.of(context)
+              .textTheme
+              .bodySmall!
+              .apply(color: Theme.of(context).colorScheme.onSurface),
         ));
         break;
       } else if (openBracketIndex == -1) {
@@ -28,7 +32,10 @@ class TextUtils {
 
       spans.add(TextSpan(
         text: text.substring(startIndex, actualOpenIndex),
-        style: TextStyle(fontSize: 14, color: Colors.black),
+        style: Theme.of(context)
+            .textTheme
+            .bodySmall!
+            .apply(color: Theme.of(context).colorScheme.onSurface),
       ));
 
       int closeBracketIndex = text.indexOf('】', actualOpenIndex);
@@ -38,7 +45,10 @@ class TextUtils {
       if (closeBracketIndex == -1 && closeSquareBracketIndex == -1) {
         spans.add(TextSpan(
           text: text.substring(actualOpenIndex),
-          style: TextStyle(fontSize: 14, color: Colors.black),
+          style: Theme.of(context)
+              .textTheme
+              .bodySmall!
+              .apply(color: Theme.of(context).colorScheme.onSurface),
         ));
         break;
       } else if (closeBracketIndex == -1) {
@@ -53,7 +63,7 @@ class TextUtils {
 
       spans.add(TextSpan(
         text: text.substring(actualOpenIndex, actualCloseIndex + 1),
-        style: TextStyle(fontSize: 14, color: color),
+        style: Theme.of(context).textTheme.bodySmall!.apply(color: color),
       ));
       startIndex = actualCloseIndex + 1;
     }

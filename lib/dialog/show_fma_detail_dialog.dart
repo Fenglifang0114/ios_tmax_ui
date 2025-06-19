@@ -43,7 +43,8 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
         height: 48,
         padding: const EdgeInsets.only(left: 16, right: 20),
         decoration: BoxDecoration(
-          border: Border.all(color: Color(0xFFCDD4DC)), // 设置边框颜色
+          border: Border.all(
+              color: Theme.of(context).colorScheme.outlineVariant), // 设置边框颜色
           borderRadius: BorderRadius.circular(0), // 设置圆角
         ),
         child: DropdownButton<FormulaWgtUnit>(
@@ -327,7 +328,9 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                                       .colorScheme
                                       .primary
                                       .withOpacity(0.1)
-                                  : Color(0xFFF6F6F6),
+                                  : Theme.of(context)
+                                      .colorScheme
+                                      .surfaceContainerLow,
                               alignment: Alignment.centerLeft,
                               child: Row(
                                 children: [
@@ -435,7 +438,9 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                                   .outline, // 设置边框颜色
                               width: 1, // 设置边框宽度
                             ),
-                            color: Color(0xFFF6F6F6),
+                            color: Theme.of(context)
+                                .colorScheme
+                                .surfaceContainerLow,
                           ),
                           alignment: Alignment.topLeft,
                           child: SelectableText(
@@ -477,7 +482,9 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                                   .outline, // 设置边框颜色
                               width: 1, // 设置边框宽度
                             ),
-                            color: Color(0xFFF6F6F6),
+                            color: Theme.of(context)
+                                .colorScheme
+                                .surfaceContainerLow,
                           ),
                           alignment: Alignment.topLeft,
                           child: SelectableText(
@@ -642,7 +649,9 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                       style: ElevatedButton.styleFrom(
                         foregroundColor:
                             Theme.of(context).colorScheme.onSurfaceVariant,
-                        backgroundColor: Theme.of(context).colorScheme.outline,
+                        backgroundColor: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest,
                         fixedSize: const Size(double.infinity, 48),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero,
@@ -656,7 +665,7 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          color: Theme.of(context).colorScheme.onPrimary,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),

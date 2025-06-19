@@ -142,7 +142,7 @@ class _ReceiptDraggableFloatingState extends State<ReceiptDraggableFloating> {
           _maxOffset = Offset(parentSize.width - size.width - _originOffset.dx,
               parentSize.height - size.height - _originOffset.dy);
         }
-        // eventBus.fire(EventOffset(myReceiptOffsetData));
+        // eventBus.fire(EventRcpOffset(myReceiptOffsetData));
       });
     } catch (e) {
       if (kDebugMode) {
@@ -194,7 +194,7 @@ class _ReceiptDraggableFloatingState extends State<ReceiptDraggableFloating> {
     myReceiptOffsetData.key = widget.key!;
     // myReceiptOffsetDataList.offsetDataList.add(myReceiptOffsetData);
 
-    eventBus.fire(EventOffset(myReceiptOffsetData));
+    eventBus.fire(EventRcpOffset(myReceiptOffsetData));
     checkPosition();
     return Positioned(
       //移动后的X轴坐标
@@ -279,23 +279,17 @@ class _ReceiptDraggableFloatingState extends State<ReceiptDraggableFloating> {
           _minXvalue = checkMinValue(currentX, _sameYValueXList);
           _maxXvalue = checkMaxValue(currentX1, currentX, _sameYValueXList);
           _minYX1value = checkMinValue(currentY, _sameX1ValueYList);
-          _maxYX1value =
-              checkMaxValue(currentY1, currentY, _sameX1ValueYList);
+          _maxYX1value = checkMaxValue(currentY1, currentY, _sameX1ValueYList);
           _minXY1value = checkMinValue(currentX, _sameY1ValueXList);
-          _maxXY1value =
-              checkMaxValue(currentX1, currentX, _sameY1ValueXList);
+          _maxXY1value = checkMaxValue(currentX1, currentX, _sameY1ValueXList);
           _minYY1value = checkMinValue(currentX, _sameYY1ValueXList);
-          _maxYY1value =
-              checkMaxValue(currentX1, currentX, _sameYY1ValueXList);
+          _maxYY1value = checkMaxValue(currentX1, currentX, _sameYY1ValueXList);
           _minXX1value = checkMinValue(currentY, _sameXX1ValueYList);
-          _maxXX1value =
-              checkMaxValue(currentY1, currentY, _sameXX1ValueYList);
+          _maxXX1value = checkMaxValue(currentY1, currentY, _sameXX1ValueYList);
           _minX1Xvalue = checkMinValue(currentY, _sameX1XValueYList);
-          _maxX1Xvalue =
-              checkMaxValue(currentY1, currentY, _sameX1XValueYList);
+          _maxX1Xvalue = checkMaxValue(currentY1, currentY, _sameX1XValueYList);
           _minY1Yvalue = checkMinValue(currentX, _sameY1YValueXList);
-          _maxY1Yvalue =
-              checkMaxValue(currentX1, currentX, _sameY1YValueXList);
+          _maxY1Yvalue = checkMaxValue(currentX1, currentX, _sameY1YValueXList);
         },
         onPointerUp: (PointerUpEvent pointerUpEvent) {
           _offset = Offset(
@@ -304,10 +298,10 @@ class _ReceiptDraggableFloatingState extends State<ReceiptDraggableFloating> {
           myReceiptOffsetData.y = ((_offset.dy).toInt()).roundToDouble();
           myReceiptOffsetData.key = widget.key!;
           // myReceiptOffsetDataList.offsetDataList.add(myReceiptOffsetData);
-          eventBus.fire(EventOffset(myReceiptOffsetData));
+          eventBus.fire(EventRcpOffset(myReceiptOffsetData));
           myReceiptItemData.xPos = myReceiptOffsetData.x.toInt();
           myReceiptItemData.yPos = myReceiptOffsetData.y.toInt();
-          eventBus.fire(EventText(myReceiptItemData));
+          eventBus.fire(EventRcpText(myReceiptItemData));
           checkPosition();
           if (_isDragging) {
             setState(() {

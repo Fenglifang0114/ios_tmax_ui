@@ -63,8 +63,8 @@ Widget showComScale(BuildContext context, int selScaleId) {
             width: 100,
             child: Text(
               myComScaleInfo.isOnline
-                  ? localizedStrings.gOnlineTip
-                  : localizedStrings.gOfflineTip,
+                  ? localizedStrings.gTipOnline
+                  : localizedStrings.gTipOffline,
               maxLines: 1, // 设置文本最大行数为1
               style: TextStyle(
                 fontSize: 14,
@@ -134,8 +134,8 @@ Widget showNetScaleList(List<NetScaleInfoLocal> scaleNetItems, int selScaleId) {
                       width: 100,
                       child: Text(
                         scaleNetItems[index].isOnline!
-                            ? localizedStrings.gOnlineTip
-                            : localizedStrings.gOfflineTip,
+                            ? localizedStrings.gTipOnline
+                            : localizedStrings.gTipOffline,
                         maxLines: 1, // 设置文本最大行数为1
                         style: TextStyle(
                           fontSize: 14,

@@ -38,7 +38,7 @@ class _LoginPageState extends State<LoginPage> {
     final height = MediaQuery.of(context).size.height;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: themeColor(colorTheme),
+      theme: themeColor(colorTheme, false),
       home: Scaffold(
           // AppBar：相当于iOS 的导航栏
           appBar: PreferredSize(
@@ -61,7 +61,8 @@ class _LoginPageState extends State<LoginPage> {
                     SizedBox(
                         width: 400,
                         child: Card(
-                          shadowColor: Theme.of(context).colorScheme.secondaryFixed,
+                          shadowColor:
+                              Theme.of(context).colorScheme.secondaryFixed,
                           elevation: 40,
                           margin: const EdgeInsets.all(10),
                           shape: const RoundedRectangleBorder(

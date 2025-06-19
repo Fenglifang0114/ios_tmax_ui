@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import 'package:t_max/data/manager_scale_channel.dart';
 import 'package:t_max/data/weight_report_data.dart';
 import 'package:t_max/data/weight_rpt.dart';
 import 'package:t_max/functions/methods.dart';
@@ -19,6 +18,28 @@ class WeightReportDataSource extends DataGridSource {
   final int _pageSize = 100; // 每页 100 条数据
   bool _isLoading = false;
 
+  // void loadPage(int page, {int scaleId = 1}) {
+  //   if (_isLoading) return;
+  //   _isLoading = true;
+
+  //   // 清空当前数据
+  //   weightReportData.clear();
+  //   notifyListeners();
+
+  //   // 通过接口获取新一页数据，同时传递排序信息
+  //   PublicFunctions.getRecords(
+  //     scaleId,
+  //     wgtMode,
+  //     page,
+  //     _pageSize,
+  //     sortColumnName.toString(),
+  //     sortDirectValue.name,
+  //   );
+
+  //   // 更新页码
+  //   pageIndex = page;
+  // }
+
   void loadPage(int page) {
     if (_isLoading) return;
     _isLoading = true;
@@ -28,9 +49,8 @@ class WeightReportDataSource extends DataGridSource {
     notifyListeners();
 
     // 通过接口获取新一页数据，同时传递排序信息
-    PublicFunctions.getRecords(
-      myDefScaleInfo.defScaleId!,
-      wgtMode,
+    PublicFunctions.newGetRecords(
+      int.parse(wgtMode),
       page,
       _pageSize,
       sortColumnName.toString(),
@@ -48,7 +68,8 @@ class WeightReportDataSource extends DataGridSource {
     _isLoading = false;
   }
 
-  void sortDataGrid(String columnName, DataGridSortDirection sortDirection) {
+  void sortDataGrid(String columnName, DataGridSortDirection sortDirection,
+      {int scaleId = 1}) {
     sortColumnName = columnName;
     sortDirectValue = sortDirection;
     loadPage(1); // 排序后重新加载第一页数据

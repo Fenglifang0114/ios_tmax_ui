@@ -450,6 +450,37 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
           myTaouLicInfo = newLicInfo;
           updateLicenseInfo();
         }
+
+        break;
+      case faspLic:
+        if (myFaSpInfo.isValid) {
+          if (isLongerValidityPeriod(myFaSpInfo.liceseDate, dueDate)) {
+            myFaSpInfo = newLicInfo;
+            updateLicenseInfo();
+          } else {
+            errMessage = 'The new period is not the latest.';
+
+            updateResCtl();
+          }
+        } else {
+          myFaSpInfo = newLicInfo;
+          updateLicenseInfo();
+        }
+        break;
+      case foscLic:
+        if (myFoScLicInfo.isValid) {
+          if (isLongerValidityPeriod(myFoScLicInfo.liceseDate, dueDate)) {
+            myFoScLicInfo = newLicInfo;
+            updateLicenseInfo();
+          } else {
+            errMessage = 'The new period is not the latest.';
+
+            updateResCtl();
+          }
+        } else {
+          myFoScLicInfo = newLicInfo;
+          updateLicenseInfo();
+        }
         break;
       default:
         break;

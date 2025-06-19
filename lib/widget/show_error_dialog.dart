@@ -26,7 +26,7 @@ void showErrorDialog(BuildContext context, String tipStr) {
             child: OutlinedButton(
               child: Text(localizedStrings.gBtnConfirm),
               onPressed: () {
-                Navigator.of(context).pop(true); // 跳转
+                Navigator.of(ctx).pop(true); // 跳转
               },
             ),
           )

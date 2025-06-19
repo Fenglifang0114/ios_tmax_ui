@@ -254,7 +254,7 @@ class ProductionLinePageState extends State<ProductionLinePage> {
         preferredSize: const Size.fromHeight(50),
         child: pageHeadDesign(
           context,
-          // localizedStrings.iTitleWeighting,
+          // localizedStrings.menuWeighing,
           'Production Line', scaleIds, '',
         ),
       ),
@@ -733,8 +733,8 @@ class ProductionLinePageState extends State<ProductionLinePage> {
                   ),
                   subtitle: Text(
                     scaleWgtMap[scaleNetItems[index].scaleId]!.isStart
-                        ? localizedStrings.gOnlineTip
-                        : localizedStrings.gOfflineTip,
+                        ? localizedStrings.gTipOnline
+                        : localizedStrings.gTipOffline,
                     style: TextStyle(
                         color:
                             scaleWgtMap[scaleNetItems[index].scaleId]!.isStart

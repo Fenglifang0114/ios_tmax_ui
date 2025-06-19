@@ -6,13 +6,13 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import '../data/resp_type_data.dart';
 
 class WebSocketScaleManager {
-  final Map<int, IOWebSocketChannel> _connections = {};
+  Map<int, IOWebSocketChannel> connections = {};
 
   // 开始进行特定 scaleId 的链接
   Future<void> connect(int scaleId, String url) async {
-    if (!_connections.containsKey(scaleId)) {
-      _connections[scaleId] = IOWebSocketChannel.connect(url);
-      _connections[scaleId]!.stream.listen(
+    if (!connections.containsKey(scaleId)) {
+      connections[scaleId] = IOWebSocketChannel.connect(url);
+      connections[scaleId]!.stream.listen(
             (event) => onData(scaleId, event),
             onError: (err) => onError(scaleId, err),
             onDone: () => onDone(scaleId),
@@ -22,8 +22,8 @@ class WebSocketScaleManager {
 
   // 发送消息到特定 scaleId 的连接
   void sendMessage(int scaleId, String s) {
-    if (_connections.containsKey(scaleId)) {
-      _connections[scaleId]!.sink.add(s);
+    if (connections.containsKey(scaleId)) {
+      connections[scaleId]!.sink.add(s);
     }
   }
 
@@ -35,7 +35,7 @@ class WebSocketScaleManager {
 
   /// 发送心跳包到特定 scaleId 的连接
   void sendHeartPacket(int scaleId) {
-    if (_connections.containsKey(scaleId)) {
+    if (connections.containsKey(scaleId)) {
       Map<String, dynamic> data = {
         "code": 9999,
         "msg": "心跳包",
@@ -74,21 +74,22 @@ class WebSocketScaleManager {
   void reconnectSocket(int scaleId) {
     dispose(scaleId);
     destoryHeart(scaleId);
-    if (_connections.containsKey(scaleId)) {
-      connect(scaleId, _connections[scaleId]!.sink.toString());
+    if (connections.containsKey(scaleId)) {
+      connect(scaleId, connections[scaleId]!.sink.toString());
     }
   }
 
   void dispose(int scaleId) {
-    if (_connections.containsKey(scaleId)) {
-      _connections[scaleId]!.sink.close();
+    if (connections.containsKey(scaleId)) {
+      connections[scaleId]!.sink.close();
+      connections.remove(scaleId);
     }
   }
 
   void delete(int scaleId) {
-    if (_connections.containsKey(scaleId)) {
-      _connections[scaleId]!.sink.close();
-      _connections.remove(scaleId);
+    if (connections.containsKey(scaleId)) {
+      connections[scaleId]!.sink.close();
+      connections.remove(scaleId);
     }
   }
 

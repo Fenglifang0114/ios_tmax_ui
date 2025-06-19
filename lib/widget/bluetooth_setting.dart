@@ -89,7 +89,7 @@ class BluetoothDialogState extends State<BluetoothDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: getDialogTitle(
-          context, localizedStrings.gTitleBtSetting, Icons.bluetooth, 400),
+          context, localizedStrings.menuBluetoothSetting, Icons.bluetooth, 400),
       content: Container(
         height: 310,
         decoration:

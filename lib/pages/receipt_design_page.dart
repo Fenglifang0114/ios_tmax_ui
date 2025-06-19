@@ -6,6 +6,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gbk_codec/gbk_codec.dart';
+import 'package:t_max/data/home_page_common_data.dart';
+import 'package:t_max/dialog/custom_dialog_tip.dart';
+import 'package:t_max/widget/common_widget.dart';
 import '../data/manager_scale_channel.dart';
 import '../data/barcoderowdata.dart';
 import '../data/encrypt_data.dart';
@@ -30,7 +33,8 @@ const double receiptLineHeight = 3.9 * 8; //3.9mm *8 个点
 const String recieptMode = "P";
 
 class ReceiptDesignPage extends StatefulWidget {
-  const ReceiptDesignPage({super.key});
+  final String type;
+  const ReceiptDesignPage({super.key, required this.type});
 
   @override
   State<ReceiptDesignPage> createState() => _ReceiptDesignPageState();
@@ -140,6 +144,11 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
   // Offset _offset = const Offset(0, 0);
   // bool _isDragging = false;
   final double btnWidth = 150;
+  final double textWidth = 120;
+  final double topTitleHeight = 300;
+  final double topBtnHeight = 130;
+  final double leftBtnWidth = 280;
+  final double rightBtnWidth = 288;
 
   TextEditingController textvariable = TextEditingController();
   TextEditingController fontsizevar = TextEditingController();
@@ -152,6 +161,9 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
   TextEditingController lineWidthVar = TextEditingController();
   TextEditingController pageWidth = TextEditingController();
   TextEditingController pageHeight = TextEditingController();
+  TextEditingController printDirectionCtl =
+      TextEditingController(text: 'Forward');
+  TextEditingController printerCtl = TextEditingController(text: 'ESC/POS');
 
   var count = 0;
   dynamic _eventbus1;
@@ -215,21 +227,6 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
     'Center',
     'Right',
   ];
-  final List<String> _hralignments = [
-    'None',
-    'Bottom',
-    'Top',
-  ];
-  final List<String> _qrWidths = [
-    '3',
-    '4',
-    '5',
-    '6',
-    '7',
-    '8',
-    '9',
-    '10',
-  ];
 
   final List<String> _fontSizes = [
     '24',
@@ -256,7 +253,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
     openTemplateJson();
     addfloatbutton(name); //暂时屏蔽掉
 
-    _eventbus1 = eventBus.on<EventText>().listen((event) {
+    _eventbus1 = eventBus.on<EventRcpText>().listen((event) {
       if (mounted) {
         setState(() {
           myReceiptItemData = event.obj;
@@ -282,7 +279,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
         });
       }
     });
-    _eventbus2 = eventBus.on<EventOffset>().listen((event) {
+    _eventbus2 = eventBus.on<EventRcpOffset>().listen((event) {
       if (mounted) {
         setState(() {
           myReceiptOffsetData = event.obj;
@@ -329,8 +326,8 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
 
                 myReceiptSelCtl.selectid = myReceiptItemData.tabOrder;
                 myReceiptSelCtl.isSelect = true;
-                eventBus.fire(EventSelectedControl(myReceiptSelCtl));
-                eventBus.fire(EventText(myReceiptItemData));
+                eventBus.fire(EventRcpSelectedControl(myReceiptSelCtl));
+                eventBus.fire(EventRcpText(myReceiptItemData));
                 break;
               }
             }
@@ -435,550 +432,408 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
 
   @override
   Widget build(BuildContext context) {
-    final Size screenSize = MediaQuery.of(context).size;
+    final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
     ScrollController scrollController = ScrollController();
     ScrollController scrollController1 = ScrollController();
     return Scaffold(
-      appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(50),
-          child: pageHeadDesign(context, localizedStrings.gTitleReceiptDesign,
-              [], localizedStrings.gTipReceiptDesignPageHelp)),
-      body: Column(
-        children: [
-          Container(
-            height: 80,
-            width: screenSize.width - 10,
-            color: Theme.of(context).colorScheme.surfaceTint,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                buildColumn1(),
-                buildColumn2(),
-                buildColumn3(),
-                buildColumn4(),
-                // Column(
-                //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                //   children: [
-                //     SizedBox(
-                //       width: 120,
-                //       child: OutlinedButton(
-                //         style: OutlinedButton.styleFrom(
-                //           side: BorderSide(
-                //             width: 1,
-                //             color: Theme.of(context).colorScheme.primary,
-                //           ),
-                //           foregroundColor: Theme.of(context).colorScheme.primary,
-                //           backgroundColor: Theme.of(context).colorScheme.onPrimary, // 设置按钮的背景色
-                //           shape: RoundedRectangleBorder(
-                //             borderRadius:
-                //                 BorderRadius.circular(4), // 设置按钮的圆角
-                //           ),
-                //         ),
-                //         child: Text(
-                //           localizedStrings.gBarcodeEdit,
-                //           style: TextStyle(
-                //               color: Theme.of(context).colorScheme.primary,
-                //               fontSize: 14,
-                //               fontWeight: FontWeight.normal),
-                //         ),
-                //         onPressed: () async {
-                //           showDialog(
-                //             context: context,
-                //             builder: (BuildContext context) {
-                //               return const MyBarCodeDialog();
-                //             },
-                //           ).then((value) {
-                //             if (value != null) {
-                //               setState(() {
-                //                 // rowDataList = value;
-                //               });
-                //             }
-                //           });
-                //         },
-                //       ),
-                //     ),
-                //     SizedBox(
-                //       width: 120,
-                //       child: OutlinedButton(
-                //         style: OutlinedButton.styleFrom(
-                //           side: BorderSide(
-                //             width: 1,
-                //             color: Theme.of(context).colorScheme.primary,
-                //           ),
-                //           foregroundColor: Theme.of(context).colorScheme.primary,
-                //           backgroundColor: Theme.of(context).colorScheme.onPrimary, // 设置按钮的背景色
-                //           shape: RoundedRectangleBorder(
-                //             borderRadius:
-                //                 BorderRadius.circular(4), // 设置按钮的圆角
-                //           ),
-                //         ),
-                //         child: Text(
-                //           localizedStrings.gQrcodeEdit,
-                //           style: TextStyle(
-                //               color: Theme.of(context).colorScheme.primary,
-                //               fontSize: 14,
-                //               fontWeight: FontWeight.normal),
-                //         ),
-                //         onPressed: () async {
-                //           showDialog(
-                //             context: context,
-                //             builder: (BuildContext context) {
-                //               return const MyQrcodeDialog();
-                //             },
-                //           ).then((value) {
-                //             if (value != null) {
-                //               setState(() {
-                //                 // rowDataList = value;
-                //               });
-                //             }
-                //           });
-                //         },
-                //       ),
-                //     ),
-                //   ],
-                // ),
-
-                Divider(
-                  height: 2,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ],
-            ),
-          ),
-          Container(
-            height: 2,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-          SizedBox(
-            height: height - 50 - 90,
-            child: Row(
+      body: Container(
+          width: width,
+          decoration:
+              BoxDecoration(color: Theme.of(context).colorScheme.surface),
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (widget.type == "app")
+                  pageHeadInfo(
+                      context,
+                      width - headWidthPadding,
+                      localizedStrings.menuReceiptDesign,
+                      localizedStrings.gTipReceiptDesignPageHelp),
                 Expanded(
-                  flex: 2,
-                  child: ListView(
-                    children: _buildList(),
-                  ),
-                ),
-                Expanded(
-                  flex: 7,
-                  child: Scrollbar(
-                    controller: scrollController,
-                    // isAlwaysShown: true,
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      controller: scrollController,
-                      child: Container(
-                        padding: const EdgeInsets.all(10),
-                        width: 1700,
-                        height: 1000,
-                        decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.surfaceBright,
-                            border: Border.all(
-                                width: 0.2,
-                                color:
-                                    Theme.of(context).colorScheme.onSurface)),
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.vertical, // 水平滚动
-                          controller: scrollController1,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.fromLTRB(28, 0, 28, 0),
-                                //60mmX60
-                                width: _getPageWidth(),
-                                height: _getPageHeight(),
-                                decoration: BoxDecoration(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .surfaceTint,
-                                    border: Border.all(
-                                        width: 0.5,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurface)),
-                                child: Stack(
-                                  clipBehavior: Clip.none,
-                                  key: _parentKey,
-                                  children: [
-                                    _buildLines(), //屏蔽横线
-                                    ...floatButtonList,
-                                  ],
-                                ),
-                              )
-                            ],
+                    child: Column(
+                  children: [
+                    showHeadWidget(width), //顶部标题栏
+
+                    Divider(
+                      height: 1,
+                      color: Theme.of(context).colorScheme.outlineVariant,
+                    ),
+                    SizedBox(
+                      height: height - topTitleHeight,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: leftBtnWidth,
+                            child: ListView(
+                              children: _buildList(),
+                            ),
                           ),
-                        ),
+                          Expanded(
+                            flex: 7,
+                            child: Scrollbar(
+                              controller: scrollController,
+                              // isAlwaysShown: true,
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                controller: scrollController,
+                                child: Container(
+                                  padding: const EdgeInsets.all(10),
+                                  width: 1700,
+                                  height: 1000,
+                                  decoration: BoxDecoration(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .surfaceBright,
+                                      border: Border.all(
+                                          width: 0.2,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface)),
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.vertical, // 水平滚动
+                                    controller: scrollController1,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          padding:
+                                              EdgeInsets.fromLTRB(28, 0, 28, 0),
+                                          //60mmX60
+                                          width: _getPageWidth(),
+                                          height: _getPageHeight(),
+                                          decoration: BoxDecoration(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .surfaceTint,
+                                              border: Border.all(
+                                                  width: 0.5,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onSurface)),
+                                          child: Stack(
+                                            clipBehavior: Clip.none,
+                                            key: _parentKey,
+                                            children: [
+                                              _buildLines(), //屏蔽横线
+                                              ...floatButtonList,
+                                            ],
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Container(
+                              width: rightBtnWidth,
+                              alignment: Alignment.topLeft,
+                              padding:
+                                  const EdgeInsets.only(left: 10, right: 10),
+                              child: showAttributePart()),
+                          const SizedBox(width: 10)
+                        ],
                       ),
                     ),
-                  ),
-                ),
-                Expanded(
-                    flex: 3,
-                    child: Row(
-                      children: [
-                        const SizedBox(
-                          width: 5,
+                  ],
+                )),
+              ])),
+    );
+  }
+
+  Widget buildDivider() {
+    return Divider(
+      height: 1,
+      color: Theme.of(context).colorScheme.outlineVariant,
+    );
+  }
+
+  Widget showAttributePart() {
+    return Container(
+      width: 260,
+      padding: const EdgeInsets.only(left: 10, right: 10),
+      child: ListView(
+        children: (myReceiptItemData.tabOrder == 9999)
+            ? _selectItem()
+            : (myReceiptItemData.type == 'TEXT')
+                ? _textproperties()
+                : (myReceiptItemData.type == 'DATA')
+                    ? _varproperties()
+                    : (myReceiptItemData.type == 'Line')
+                        ? _lineproperties()
+                        : _textproperties(),
+      ),
+    );
+  }
+
+  Widget showHeadWidget(double width) {
+    return Container(
+      height: topBtnHeight,
+      width: width - 10,
+      color: Theme.of(context).colorScheme.onPrimary,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          SizedBox(
+            child: Row(children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Row(
+                    children: [
+                      SizedBox(
+                        height: 40,
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: 150,
+                              child: Text(
+                                localizedStrings.gPrinter,
+                                textAlign: TextAlign.right,
+                                style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.normal),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            SizedBox(
+                              width: 150, // 设置固定宽度
+                              child: showDropDownButton(
+                                  context, '', printerCtl, _printers,
+                                  (String? newValue) {
+                                setState(() {
+                                  _sltPrtName = newValue!;
+                                  printerCtl.text = newValue;
+                                });
+                              }),
+                            )
+                          ],
                         ),
-                        Expanded(
-                          child: ListView(
-                            children: (myReceiptItemData.tabOrder == 9999)
-                                ? _selectItem()
-                                : (myReceiptItemData.type == 'TEXT')
-                                    ? _textproperties()
-                                    : (myReceiptItemData.type == 'DATA')
-                                        ? _varproperties()
-                                        : (myReceiptItemData.type == 'BarCode')
-                                            ? _barCodeproperties()
-                                            : (myReceiptItemData.type == 'Line')
-                                                ? _lineproperties()
-                                                : (myReceiptItemData.type ==
-                                                        'Qrcode')
-                                                    ? _qrcodeproperties()
-                                                    : _textproperties(),
-                          ),
-                        )
-                      ],
-                    )),
-                const SizedBox(width: 10)
+                      )
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      SizedBox(
+                        height: 40,
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: 150,
+                              child: Text(
+                                localizedStrings.gPrintDirection,
+                                textAlign: TextAlign.right,
+                                style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.normal),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            SizedBox(
+                              width: 150, // 设置固定宽度
+                              child: showDropDownButton(
+                                  context,
+                                  '',
+                                  printDirectionCtl,
+                                  _printDirections, (String? newValue) {
+                                setState(() {
+                                  _sltPrintDir = newValue!;
+                                  printDirectionCtl.text = newValue;
+                                });
+                              }),
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Row(
+                    children: [
+                      SizedBox(
+                        height: 40,
+                        child: Row(
+                          children: [
+                            buildBtnText(localizedStrings.gPageWidth + '(mm):'),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            SizedBox(
+                                width: 80, // 设置固定宽度
+                                height: 48,
+                                child: showInputBox(context, pageWidth, '',
+                                    (value) {
+                                  setState(() {});
+                                }, true))
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      SizedBox(
+                        height: 40,
+                        child: Row(
+                          children: [
+                            buildBtnText(
+                                localizedStrings.gPageHeight + '(mm):'),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            SizedBox(
+                                width: 80, // 设置固定宽度
+                                height: 48,
+                                child: showInputBox(context, pageHeight, '',
+                                    (value) {
+                                  setState(() {});
+                                }, true))
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            ]),
+          ),
+          Container(
+            padding: const EdgeInsets.only(right: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    SizedBox(
+                      width: btnWidth,
+                      height: 40,
+                    ),
+                    SizedBox(
+                        width: btnWidth,
+                        height: 40,
+                        child: showTextButton(
+                            context, 40, localizedStrings.gBtnNewFormat, () {
+                          deleteAllItem();
+                        },
+                            Theme.of(context).colorScheme.onPrimary,
+                            Theme.of(context).colorScheme.primary,
+                            Theme.of(context).colorScheme.onPrimary)),
+                  ],
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    SizedBox(
+                        width: btnWidth,
+                        height: 40,
+                        child: showTextButton(
+                            context, 40, localizedStrings.gSaveFormat,
+                            () async {
+                          String executablePath = Platform.resolvedExecutable;
+                          var directory = p.dirname(executablePath);
+                          final formatfilePath =
+                              Directory('$directory\\format');
+                          if (!await formatfilePath.exists()) {
+                            await formatfilePath.create(recursive: true);
+                          }
+                          directory = formatfilePath.path;
+
+                          String? outputFile =
+                              (await FilePicker.platform.saveFile(
+                            initialDirectory: directory,
+                            dialogTitle: 'Output file:',
+                            type: FileType.custom,
+                            allowedExtensions: ['fmt'],
+                            fileName: 'format.fmt',
+                          ));
+                          if (outputFile != null) {
+                            if (!outputFile.contains(".fmt")) {
+                              outputFile = "$outputFile.fmt";
+                            }
+                            _exportCSV();
+                            _saveFormatToCsv(csv, outputFile);
+
+                            ///保存数据到csv
+                            String jsonFilePath =
+                                outputFile.replaceAll('.fmt', '.json');
+                            _saveFormatToJson(jsonFilePath); //同时保存一份到json
+                          }
+                          ////添加实现
+                        },
+                            Theme.of(context).colorScheme.onPrimary,
+                            Theme.of(context)
+                                .colorScheme
+                                .onTertiaryFixedVariant,
+                            Theme.of(context).colorScheme.onPrimary)),
+                    SizedBox(
+                        width: btnWidth,
+                        height: 40,
+                        child: showTextButton(
+                            context, 40, localizedStrings.gOpenJson, () async {
+                          String filePath = '';
+                          try {
+                            String executablePath = Platform.resolvedExecutable;
+                            var directory = p.dirname(executablePath);
+
+                            final formatfilePath =
+                                Directory('$directory\\format');
+                            if (!await formatfilePath.exists()) {
+                              await formatfilePath.create(recursive: true);
+                            }
+                            directory = formatfilePath.path;
+                            FilePickerResult? result =
+                                await FilePicker.platform.pickFiles(
+                              initialDirectory: directory,
+                              type: FileType.custom,
+                              allowedExtensions: ['json'],
+                            );
+                            if (result != null && result.files.isNotEmpty) {
+                              filePath = result.files.single.path!;
+                            }
+                          } catch (e) {
+                            setState(() {
+                              showTipInfo('Open fail', context);
+                            });
+                          }
+                          if (filePath != '') {
+                            deleteAllItem();
+                            _openJsonFile(filePath);
+                          }
+                        },
+                            Theme.of(context).colorScheme.onPrimary,
+                            Theme.of(context).colorScheme.primary,
+                            Theme.of(context).colorScheme.onPrimary)),
+                  ],
+                ),
               ],
             ),
           ),
         ],
       ),
-    );
-  }
-
-  Widget buildColumn1() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        Row(
-          children: [
-            SizedBox(
-              height: 40,
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 150,
-                    child: Text(
-                      localizedStrings.gPrinter,
-                      textAlign: TextAlign.right,
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontSize: 14,
-                          overflow: TextOverflow.ellipsis,
-                          fontWeight: FontWeight.normal),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  SizedBox(
-                    width: 200, // 设置固定宽度
-                    child: DropdownButton<String>(
-                      alignment: AlignmentDirectional.centerStart,
-                      dropdownColor:
-                          Theme.of(context).colorScheme.secondaryFixed,
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontSize: 14,
-                          fontWeight: FontWeight.normal),
-                      hint: Text(
-                        localizedStrings.gPrinter,
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontSize: 14,
-                            fontWeight: FontWeight.normal),
-                      ),
-                      value: _sltPrtName,
-                      items: _printers
-                          .map((String value) => DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              ))
-                          .toList(),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _sltPrtName = newValue!;
-                        });
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
-        Row(
-          children: [
-            SizedBox(
-              height: 40,
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 150,
-                    child: Text(
-                      localizedStrings.gPrintDirection,
-                      textAlign: TextAlign.right,
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontSize: 14,
-                          overflow: TextOverflow.ellipsis,
-                          fontWeight: FontWeight.normal),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  SizedBox(
-                    width: 200, // 设置固定宽度
-                    child: DropdownButton<String>(
-                      dropdownColor:
-                          Theme.of(context).colorScheme.secondaryFixed,
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontSize: 14,
-                          fontWeight: FontWeight.normal),
-                      hint: Text(
-                        localizedStrings.gPrintDirection,
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontSize: 14,
-                            fontWeight: FontWeight.normal),
-                      ),
-                      value: _sltPrintDir,
-                      items: _printDirections
-                          .map((String value) => DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              ))
-                          .toList(),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _sltPrintDir = newValue!;
-                        });
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget buildColumn2() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        Row(
-          children: [
-            SizedBox(
-              height: 40,
-              child: Row(
-                children: [
-                  buildBtnText(localizedStrings.gPageWidth + '(mm):'),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  SizedBox(
-                    width: 80, // 设置固定宽度
-                    height: 30,
-                    child: TextField(
-                      textAlign: TextAlign.right,
-                      textAlignVertical: TextAlignVertical.bottom,
-                      controller: pageWidth,
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            width: 1,
-                            color: Theme.of(context).colorScheme.primary,
-                          )),
-                          labelStyle: TextStyle(
-                              color: Theme.of(context).colorScheme.primary,
-                              fontSize: 14,
-                              fontWeight: FontWeight.normal), // 设置label字体大小为20
-                          hintText: 'Widht'),
-                      onChanged: (value) {
-                        setState(() {});
-                      }, // 点击“完成”按钮后，调用失去焦点方法
-                      // focusNode:
-                      //     _focusNodeyPos, // 将FocusNode对象绑定到TextField
-                    ),
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
-        Row(
-          children: [
-            SizedBox(
-              height: 40,
-              child: Row(
-                children: [
-                  buildBtnText(localizedStrings.gPageHeight + '(mm):'),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  SizedBox(
-                    width: 80, // 设置固定宽度
-                    height: 30,
-                    child: TextField(
-                      textAlign: TextAlign.right,
-                      textAlignVertical: TextAlignVertical.bottom,
-                      controller: pageHeight,
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            width: 1,
-                            color: Theme.of(context).colorScheme.primary,
-                          )),
-                          labelStyle: TextStyle(
-                              color: Theme.of(context).colorScheme.primary,
-                              fontSize: 14,
-                              overflow: TextOverflow.ellipsis,
-                              fontWeight: FontWeight.normal), // 设置label字体大小为20
-                          hintText: 'Height'),
-                      onChanged: (value) {
-                        setState(() {});
-                      }, // 点击“完成”按钮后，调用失去焦点方法
-                      // focusNode:
-                      //     _focusNodeyPos, // 将FocusNode对象绑定到TextField
-                    ),
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget buildColumn3() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        SizedBox(
-          width: btnWidth,
-          child: OutlinedButton(
-              onPressed: () {
-                deleteAllItem();
-              },
-              style: buildBtnStyle(),
-              child: Text(
-                localizedStrings.gBtnNewFormat,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontSize: 14,
-                    fontWeight: FontWeight.normal),
-              )),
-        ),
-      ],
-    );
-  }
-
-  Widget buildColumn4() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        SizedBox(
-          width: 135,
-          child: OutlinedButton(
-            style: buildBtnStyle(),
-            child: Text(
-              localizedStrings.gSaveFormat,
-              style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontSize: 14,
-                  fontWeight: FontWeight.normal),
-            ),
-            onPressed: () async {
-              String executablePath = Platform.resolvedExecutable;
-              var directory = p.dirname(executablePath);
-              final formatfilePath = Directory('$directory\\format');
-              if (!await formatfilePath.exists()) {
-                await formatfilePath.create(recursive: true);
-              }
-              directory = formatfilePath.path;
-
-              String? outputFile = (await FilePicker.platform.saveFile(
-                initialDirectory: directory,
-                dialogTitle: 'Output file:',
-                type: FileType.custom,
-                allowedExtensions: ['fmt'],
-                fileName: 'format.fmt',
-              ));
-              if (outputFile != null) {
-                if (!outputFile.contains(".fmt")) {
-                  outputFile = "$outputFile.fmt";
-                }
-                _exportCSV();
-                _saveFormatToCsv(csv, outputFile);
-
-                ///保存数据到csv
-                String jsonFilePath = outputFile.replaceAll('.fmt', '.json');
-                _saveFormatToJson(jsonFilePath); //同时保存一份到json
-              }
-              ////添加实现
-            },
-          ),
-        ),
-        SizedBox(
-          width: 135,
-          child: OutlinedButton(
-              onPressed: () async {
-                String filePath = '';
-                try {
-                  String executablePath = Platform.resolvedExecutable;
-                  var directory = p.dirname(executablePath);
-
-                  final formatfilePath = Directory('$directory\\format');
-                  if (!await formatfilePath.exists()) {
-                    await formatfilePath.create(recursive: true);
-                  }
-                  directory = formatfilePath.path;
-                  FilePickerResult? result =
-                      await FilePicker.platform.pickFiles(
-                    initialDirectory: directory,
-                    type: FileType.custom,
-                    allowedExtensions: ['json'],
-                  );
-                  if (result != null && result.files.isNotEmpty) {
-                    filePath = result.files.single.path!;
-                  }
-                } catch (e) {
-                  setState(() {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: const Text('Open fail',
-                            style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold)), ////此处需要秤回复
-                        duration: const Duration(seconds: 1),
-                        backgroundColor: Theme.of(context).colorScheme.error));
-                  });
-                }
-                if (filePath != '') {
-                  deleteAllItem();
-                  _openJsonFile(filePath);
-                }
-              },
-              style: buildBtnStyle(),
-              child: Text(
-                localizedStrings.gOpenJson,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontSize: 14,
-                    fontWeight: FontWeight.normal),
-              )),
-        ),
-      ],
     );
   }
 
@@ -1217,12 +1072,10 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
     return [fontsize, width, height];
   }
 
-  //  List vals = getFontSize(); print("${vals[0]} ${vals[1]} ${vals[2]}");
   String csv = "";
   void _exportCSV() async {
-    // var path = 'C:\\Users\\Test-Team\\Desktop\\text1111';
     List<List<dynamic>> csvData = <List<dynamic>>[];
-    // csvData.add(['Time', 'Name']);
+
     //打印正向或者反向
     if (_sltPrintDir == 'Forward') {
       csvData.add(['ROTATE', '0']);
@@ -1368,29 +1221,6 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
           '0',
           tempList[i].index,
         ]);
-        // if (tempList[i].lineWidth <= tempList[i].x2Pos) {
-        //   csvData.add([
-        //     'L',
-        //     tempList[i].xPos,
-        //     tempList[i].yPos,
-        //     (tempList[i].x2Pos + tempList[i].xPos).toInt(),
-        //     tempList[i].yPos,
-        //     tempList[i].lineWidth.toInt(),
-        //     0, //线类型
-        //     tempList[i].index,
-        //   ]);
-        // } else {
-        //   csvData.add([
-        //     'L',
-        //     tempList[i].xPos,
-        //     tempList[i].yPos,
-        //     tempList[i].xPos,
-        //     (tempList[i].lineWidth + tempList[i].yPos).toInt(),
-        //     tempList[i].x2Pos.toInt(),
-        //     0, //线类型
-        //     tempList[i].index,
-        //   ]);
-        // }
       }
     }
     csvData.add(['F', _sltPrtName, recieptMode]);
@@ -1399,11 +1229,6 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       textDelimiter: '',
     ).convert(csvData);
   }
-
-  // Future<File> get _localFilepath async {
-  //   final directory = p.dirname(Platform.script.toFilePath());
-  //   return File(p.join(directory, 'fromatdata.json'));
-  // }
 
   _saveFormatDataToJson(List list, String path) async {
     try {
@@ -1429,11 +1254,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       }
     } catch (e) {
       setState(() {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('$e Save fail'),
-          ),
-        );
+        showTipInfo('$e Save fail', context);
       });
     }
   }
@@ -1461,6 +1282,12 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
 
         if (_printDirections.contains(fromatContent.rotation)) {
           _sltPrintDir = fromatContent.rotation;
+          printDirectionCtl.text = fromatContent.rotation;
+        }
+
+        if (_printers.contains(fromatContent.printer)) {
+          _sltPrtName = fromatContent.printer!;
+          printerCtl.text = fromatContent.printer!;
         }
       });
       // String jsonItemString = jsonDecode(fromatContent.content);
@@ -1473,12 +1300,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
         redrawInterface(textInfoList);
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(e.toString(),
-              style:
-                  const TextStyle(fontSize: 20, fontWeight: FontWeight.normal)),
-          duration: const Duration(seconds: 1),
-          backgroundColor: Theme.of(context).colorScheme.error));
+      showTipInfo(e.toString(), context);
     }
     return textInfoList;
   }
@@ -1718,7 +1540,9 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
   Widget _generateExpansionTileWidget(tittle, List<String>? names) {
     return ExpansionTile(
       title: Text(tittle,
-          style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 14)),
+          style: Theme.of(context).textTheme.bodySmall!.apply(
+                color: Theme.of(context).colorScheme.primary,
+              )),
       children: names!.map((name) => _generateWidget(name)).toList(),
     );
   }
@@ -1739,34 +1563,44 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
     return FractionallySizedBox(
         widthFactor: 1,
         child: Container(
-          height: 30,
-          decoration: BoxDecoration(
-              border: Border(
-                  bottom: BorderSide(
-                      width: 0.2,
-                      color: Theme.of(context).colorScheme.secondaryFixed))),
+          padding: const EdgeInsets.only(bottom: 10),
+          height: 46,
           alignment: Alignment.center,
           child: Tooltip(
-              message: expStr,
-              preferBelow: false,
-              verticalOffset: 10.0,
-              waitDuration: const Duration(seconds: 1),
-              child: TextButton(
+            message: expStr,
+            preferBelow: false,
+            verticalOffset: 10.0,
+            waitDuration: const Duration(seconds: 1),
+            child: TextButton(
+                style: ButtonStyle(
+                  side: WidgetStateProperty.all<BorderSide>(BorderSide(
+                      width: 1,
+                      color: Theme.of(context).colorScheme.outlineVariant)),
+                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(0.0),
+                    ),
+                  ),
+                ),
                 onPressed: () {
                   count++;
                   num.add(count);
                   myReceiptItemData.tabOrder = count;
                   addfloatbutton(name);
                 },
-                child: Text(
-                  //左侧按钮文本的颜色
-                  text,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Theme.of(context).colorScheme.primary,
+                child: Container(
+                  width: 194, // 固定宽度
+                  height: 36, // 固定高度
+
+                  alignment: Alignment.center,
+                  child: Text(
+                    text,
+                    style: Theme.of(context).textTheme.bodySmall!.apply(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                   ),
-                ),
-              )),
+                )),
+          ),
         ));
   }
 
@@ -1854,7 +1688,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
           if (receiptItemList[i].index == myReceiptItemData.tabOrder) {
             receiptItemList[i].content = myReceiptItemData.content;
 
-            eventBus.fire(EventText(myReceiptItemData));
+            eventBus.fire(EventRcpText(myReceiptItemData));
             //修改可拖拽控件的信息
             _onUpdate(i);
           }
@@ -1871,7 +1705,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
           for (var i = 0; i < receiptItemList.length; i++) {
             if (receiptItemList[i].index == myReceiptItemData.tabOrder) {
               receiptItemList[i].fontSize = myReceiptItemData.fontSize;
-              eventBus.fire(EventText(myReceiptItemData));
+              eventBus.fire(EventRcpText(myReceiptItemData));
               _onUpdate(i);
             }
           }
@@ -1886,7 +1720,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
         for (var i = 0; i < receiptItemList.length; i++) {
           if (receiptItemList[i].index == myReceiptItemData.tabOrder) {
             receiptItemList[i].xPos = myReceiptItemData.xPos;
-            eventBus.fire(EventText(myReceiptItemData));
+            eventBus.fire(EventRcpText(myReceiptItemData));
             _onUpdate(i);
           }
         }
@@ -1900,7 +1734,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
         for (var i = 0; i < receiptItemList.length; i++) {
           if (receiptItemList[i].index == myReceiptItemData.tabOrder) {
             receiptItemList[i].yPos = myReceiptItemData.yPos;
-            eventBus.fire(EventText(myReceiptItemData));
+            eventBus.fire(EventRcpText(myReceiptItemData));
             _onUpdate(i);
           }
         }
@@ -1916,7 +1750,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
               receiptItemList[i].maxLength = myReceiptItemData.maxLength;
               receiptItemList[i].content = getShowVarName(
                   receiptItemList[i].varName, receiptItemList[i].maxLength);
-              eventBus.fire(EventText(myReceiptItemData));
+              eventBus.fire(EventRcpText(myReceiptItemData));
               _onUpdate(i);
             }
           }
@@ -1930,7 +1764,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
         for (var i = 0; i < receiptItemList.length; i++) {
           if (receiptItemList[i].index == myReceiptItemData.tabOrder) {
             receiptItemList[i].alignment = myReceiptItemData.alignment;
-            eventBus.fire(EventText(myReceiptItemData));
+            eventBus.fire(EventRcpText(myReceiptItemData));
             _onUpdate(i);
           }
         }
@@ -1989,14 +1823,14 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
               myReceiptItemData.varcontent;
           receiptItemList[objectIndex].style =
               myReceiptItemData.style; //此处说明条码库中有此条码
-          eventBus.fire(EventText(myReceiptItemData));
+          eventBus.fire(EventRcpText(myReceiptItemData));
           _onUpdate(objectIndex);
         } else {
           if (receiptItemList[objectIndex].style == 0) {
             myReceiptItemData.varcontent.clear();
             receiptItemList[objectIndex].varcontent =
                 myReceiptItemData.varcontent;
-            eventBus.fire(EventText(myReceiptItemData));
+            eventBus.fire(EventRcpText(myReceiptItemData));
           }
         }
       });
@@ -2009,7 +1843,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
           for (var i = 0; i < receiptItemList.length; i++) {
             if (receiptItemList[i].index == myReceiptItemData.tabOrder) {
               receiptItemList[i].height = myReceiptItemData.height;
-              eventBus.fire(EventText(myReceiptItemData));
+              eventBus.fire(EventRcpText(myReceiptItemData));
               _onUpdate(i);
             }
           }
@@ -2023,7 +1857,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
         for (var i = 0; i < receiptItemList.length; i++) {
           if (receiptItemList[i].index == myReceiptItemData.tabOrder) {
             receiptItemList[i].rotation = myReceiptItemData.rotation;
-            eventBus.fire(EventText(myReceiptItemData));
+            eventBus.fire(EventRcpText(myReceiptItemData));
             _onUpdate(i);
           }
         }
@@ -2035,7 +1869,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
         for (var i = 0; i < receiptItemList.length; i++) {
           if (receiptItemList[i].index == myReceiptItemData.tabOrder) {
             receiptItemList[i].hralignment = myReceiptItemData.hralignment;
-            eventBus.fire(EventText(myReceiptItemData));
+            eventBus.fire(EventRcpText(myReceiptItemData));
             _onUpdate(i);
           }
         }
@@ -2049,7 +1883,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
         for (var i = 0; i < receiptItemList.length; i++) {
           if (receiptItemList[i].index == myReceiptItemData.tabOrder) {
             receiptItemList[i].x2Pos = myReceiptItemData.x2Pos;
-            eventBus.fire(EventText(myReceiptItemData));
+            eventBus.fire(EventRcpText(myReceiptItemData));
             _onUpdate(i);
           }
         }
@@ -2063,7 +1897,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
         for (var i = 0; i < receiptItemList.length; i++) {
           if (receiptItemList[i].index == myReceiptItemData.tabOrder) {
             receiptItemList[i].y2Pos = myReceiptItemData.y2Pos;
-            eventBus.fire(EventText(myReceiptItemData));
+            eventBus.fire(EventRcpText(myReceiptItemData));
             _onUpdate(i);
           }
         }
@@ -2099,7 +1933,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
               receiptItemList[i].qrcodeType = myReceiptItemData.qrcodeType;
               receiptItemList[i].varcontent = myReceiptItemData.varcontent;
               receiptItemList[i].style = myReceiptItemData.style;
-              eventBus.fire(EventText(myReceiptItemData));
+              eventBus.fire(EventRcpText(myReceiptItemData));
               _onUpdate(i);
             }
           }
@@ -2112,7 +1946,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
         for (var i = 0; i < receiptItemList.length; i++) {
           if (receiptItemList[i].index == myReceiptItemData.tabOrder) {
             receiptItemList[i].qrWidth = myReceiptItemData.qrWidth;
-            eventBus.fire(EventText(myReceiptItemData));
+            eventBus.fire(EventRcpText(myReceiptItemData));
             _onUpdate(i);
           }
         }
@@ -2124,7 +1958,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
         for (var i = 0; i < receiptItemList.length; i++) {
           if (receiptItemList[i].index == myReceiptItemData.tabOrder) {
             receiptItemList[i].fontBold = myReceiptItemData.fontBold;
-            eventBus.fire(EventText(myReceiptItemData));
+            eventBus.fire(EventRcpText(myReceiptItemData));
             _onUpdate(i);
           }
         }
@@ -2136,7 +1970,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
         for (var i = 0; i < receiptItemList.length; i++) {
           if (receiptItemList[i].index == myReceiptItemData.tabOrder) {
             receiptItemList[i].fontReverse = myReceiptItemData.fontReverse;
-            eventBus.fire(EventText(myReceiptItemData));
+            eventBus.fire(EventRcpText(myReceiptItemData));
             _onUpdate(i);
           }
         }
@@ -2148,7 +1982,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
         for (var i = 0; i < receiptItemList.length; i++) {
           if (receiptItemList[i].index == myReceiptItemData.tabOrder) {
             receiptItemList[i].lineWidth = myReceiptItemData.lineWidth;
-            eventBus.fire(EventText(myReceiptItemData));
+            eventBus.fire(EventRcpText(myReceiptItemData));
             _onUpdate(i);
           }
         }
@@ -2160,7 +1994,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
         for (var i = 0; i < receiptItemList.length; i++) {
           if (receiptItemList[i].index == myReceiptItemData.tabOrder) {
             receiptItemList[i].x2Pos = myReceiptItemData.x2Pos;
-            eventBus.fire(EventText(myReceiptItemData));
+            eventBus.fire(EventRcpText(myReceiptItemData));
             _onUpdate(i);
           }
         }
@@ -2370,7 +2204,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
 
   Widget buildBtnText(String textStr) {
     return SizedBox(
-      width: btnWidth,
+      width: textWidth,
       child: Text(
         textStr,
         textAlign: TextAlign.right,
@@ -2441,14 +2275,6 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
     }
   }
 
-//下拉HR 位置
-  void _handleHrAlignmentSelected(String value) {
-    setState(() {
-      _selectedHRAlignment = value;
-      _onSubmit(_selectedHRAlignment, 9);
-    });
-  }
-
 //下拉字体加粗
   void _handleFontBoldSelected(String value) {
     setState(() {
@@ -2465,37 +2291,6 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
     });
   }
 
-//下拉qr宽度
-  void _handleQrWidthSelected(String value) {
-    setState(() {
-      _selectedQr = value;
-      _onSubmit(_selectedQr, 13);
-    });
-  }
-
-//下拉qrcode
-  void _handleQrcodeSelected(String value) {
-    setState(() {
-      _selectedQrcode = value;
-      if (_selectedQrcode == '--') {
-      } else {
-        _onSubmit(_selectedQrcode, 12);
-      }
-    });
-  }
-
-//下拉Barcode
-  void _handleBarcodeSelected(String value) {
-    setState(() {
-      _selectedBarcode = value;
-      if (_selectedBarcode == '--') {
-        // _onSubmit(_selectedBarcode, 6);
-      } else {
-        _onSubmit(_selectedBarcode, 6);
-      }
-    });
-  }
-
   //下拉字体加粗
   void _handleFontSizeSelected(String value) {
     setState(() {
@@ -2504,89 +2299,17 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
     });
   }
 
-  _textproperties() {
+  List<Widget> buildXYPosition() {
     return [
-      const SizedBox(height: 10),
-      deleteBtnBuild(),
-      const SizedBox(height: 10),
-      Container(
-        height: 35,
-        color: Theme.of(context).colorScheme.surfaceBright,
-        child: Column(
-          children: [
-            Text(
-              localizedStrings.gAttribute,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.normal,
-                  color: Theme.of(context).colorScheme.primary),
-            ),
-            Divider(
-              height: 2,
-              color: Theme.of(context).colorScheme.primary,
-            )
-          ],
-        ),
-      ),
       Row(
         children: [
-          const SizedBox(
-            height: 5,
-          ),
-          SizedBox(
-            width: 100,
-            child: Text(localizedStrings.gTabOrder,
-                textAlign: TextAlign.left,
-                style: const TextStyle(
-                  fontSize: 14,
-                )),
-          ),
-          const SizedBox(
-            height: 5,
-          ),
-          Text(
-            myReceiptItemData.tabOrder.toString(),
-            style: TextStyle(
-                fontSize: 14, color: Theme.of(context).colorScheme.primary),
-          )
-        ],
-      ),
-      const SizedBox(height: 10),
-      Row(
-        children: [
-          SizedBox(
-            width: 100,
-            child: Text(localizedStrings.gTipItemType,
-                textAlign: TextAlign.left,
-                style: const TextStyle(
-                  fontSize: 14,
-                )),
-          ),
-          Text(myReceiptItemData.type,
-              style: TextStyle(
-                  fontSize: 14, color: Theme.of(context).colorScheme.primary))
-        ],
-      ),
-      const SizedBox(
-        height: 5,
-      ),
-      Container(
-        height: 20,
-        color: Theme.of(context).colorScheme.surfaceBright,
-        child: Text(localizedStrings.gPosition,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 14,
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.normal)),
-      ),
-      Row(
-        children: [
-          const SizedBox(
-            width: 100,
+          Container(
+            height: 48,
+            width: 50,
+            alignment: Alignment.centerRight,
+            padding: const EdgeInsets.only(right: smallPadding),
             child: Text("X:",
-                textAlign: TextAlign.left,
+                textAlign: TextAlign.right,
                 style: TextStyle(
                   fontSize: 14,
                 )),
@@ -2596,11 +2319,11 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
               enabled: false,
               controller: xPosvar,
               decoration: InputDecoration(
-                hintText: myReceiptItemData.content.toString(),
-                hintStyle: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontSize: 14,
-                    fontWeight: FontWeight.normal),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(0.0),
+                  borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.outlineVariant),
+                ),
               ),
               onEditingComplete: () {
                 _onSubmit(xPosvar.text, 2);
@@ -2610,12 +2333,18 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
           ),
         ],
       ),
+      SizedBox(
+        height: smallPadding,
+      ),
       Row(
         children: [
-          const SizedBox(
-            width: 100,
+          Container(
+            height: 48,
+            width: 50,
+            alignment: Alignment.centerRight,
+            padding: const EdgeInsets.only(right: smallPadding),
             child: Text("Y:",
-                textAlign: TextAlign.left,
+                textAlign: TextAlign.right,
                 style: TextStyle(
                   fontSize: 14,
                 )),
@@ -2625,11 +2354,12 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
               enabled: false,
               controller: yPosvar,
               decoration: InputDecoration(
-                  labelStyle: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontSize: 14,
-                      fontWeight: FontWeight.normal), // 设置label字体大小为20
-                  hintText: myReceiptItemData.yPos.toString()),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(0.0),
+                  borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.outlineVariant),
+                ),
+              ),
               onEditingComplete: () {
                 _onSubmit(yPosvar.text, 3);
               }, // 点击“完成”按钮后，调用失去焦点方法
@@ -2638,81 +2368,52 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
           ),
         ],
       ),
-      const SizedBox(
-        height: 5,
-      ),
+    ];
+  }
 
-      Container(
-        height: 20,
-        color: Theme.of(context).colorScheme.surfaceBright,
-        child: Text(localizedStrings.gEditor,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 14,
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.normal)),
-      ),
-
-      SizedBox(
-        width: 100,
-        child: Text(localizedStrings.gTextContent,
-            textAlign: TextAlign.left,
-            style: const TextStyle(
-              fontSize: 14,
-            )),
-      ),
-
+  List<Widget> _textproperties() {
+    return [
+      buildAttitudeText(context, localizedStrings.gAttribute),
+      buildDivider(),
+      buildTabOrderAndTyptText(context, localizedStrings.gTabOrder,
+          myReceiptItemData.tabOrder.toString()),
+      buildTabOrderAndTyptText(
+          context, localizedStrings.gTipItemType, myReceiptItemData.varName),
+      showRightItemTitleText(context, localizedStrings.gPosition),
+      ...buildXYPosition(),
+      showRightItemTitleText(context, localizedStrings.gTextContent),
       buildTextField(textvariable, "", myReceiptItemData.content.toString(), 0),
-      Text(
-        localizedStrings.gFontSize,
-        style: const TextStyle(
-          fontSize: 14,
-        ),
-      ),
-      buildDropdownButton(
-        value: _selectFontsize,
-        items: _fontSizes,
-        hintText: 'FontSize',
-        onSelect: _handleFontSizeSelected,
-      ),
-      Text(
+      showRightItemTitleText(context, localizedStrings.gFontSize),
+      showDropDownButtonValue(context, _selectFontsize, _fontSizes,
+          localizedStrings.gFontSize, _handleFontSizeSelected),
+      showRightItemTitleText(context, localizedStrings.gRotation),
+      showDropDownButtonValue(
+        context,
+        _selectedRotation,
+        _rotations,
         localizedStrings.gRotation,
-        style: const TextStyle(
-          fontSize: 14,
-        ),
+        _handleRotationSelected,
       ),
-      buildDropdownButton(
-        value: _selectedRotation,
-        items: _rotations,
-        hintText: 'Rotation',
-        onSelect: _handleRotationSelected,
-      ),
-      // buildTextField(
-      //     fontsizevar, "Font Size", myReceiptItemData.fontSize.toString(), 1),
-      Text(
+      showRightItemTitleText(context, localizedStrings.gFontBold),
+      showDropDownButtonValue(
+        context,
+        _selectFontBold,
+        _fontBoldReverse,
         localizedStrings.gFontBold,
-        style: const TextStyle(
-          fontSize: 14,
-        ),
+        _handleFontBoldSelected,
       ),
-      buildDropdownButton(
-        value: _selectFontBold,
-        items: _fontBoldReverse,
-        hintText: localizedStrings.gFontBold,
-        onSelect: _handleFontBoldSelected,
-      ),
-      Text(
+      showRightItemTitleText(context, localizedStrings.gFontReverse),
+      showDropDownButtonValue(
+        context,
+        _selectFontReverse,
+        _fontBoldReverse,
         localizedStrings.gFontReverse,
-        style: const TextStyle(
-          fontSize: 14,
-        ),
+        _handleFontReverseSelected,
       ),
-      buildDropdownButton(
-        value: _selectFontReverse,
-        items: _fontBoldReverse,
-        hintText: localizedStrings.gFontReverse,
-        onSelect: _handleFontReverseSelected,
+      SizedBox(
+        height: regularPadding,
       ),
+      deleteBtnBuild(),
     ];
   }
 
@@ -2783,649 +2484,99 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
     myReceiptItemData.tabOrder = 9999;
   }
 
-  _varproperties() {
+  List<Widget> _varproperties() {
     return [
-      const SizedBox(height: 10),
-      deleteBtnBuild(),
-      const SizedBox(height: 10),
-      Container(
-        height: 35,
-        color: Theme.of(context).colorScheme.surfaceBright,
-        child: Column(
-          children: [
-            Text(
-              localizedStrings.gAttribute,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.normal,
-                  color: Theme.of(context).colorScheme.primary),
-            ),
-            Divider(
-              height: 2,
-              color: Theme.of(context).colorScheme.primary,
-            )
-          ],
-        ),
-      ),
-      Row(
-        children: [
-          const SizedBox(
-            height: 5,
-          ),
-          SizedBox(
-            width: 100,
-            child: Text(localizedStrings.gTabOrder,
-                textAlign: TextAlign.left,
-                style: const TextStyle(
-                  fontSize: 14,
-                )),
-          ),
-          const SizedBox(
-            height: 5,
-          ),
-          Text(
-            myReceiptItemData.tabOrder.toString(),
-            style: TextStyle(
-                fontSize: 14, color: Theme.of(context).colorScheme.primary),
-          )
-        ],
-      ),
-      const SizedBox(height: 10),
-      Row(
-        children: [
-          SizedBox(
-            width: 100,
-            child: Text(localizedStrings.gTipItemType,
-                textAlign: TextAlign.left,
-                style: const TextStyle(
-                  fontSize: 14,
-                )),
-          ),
-          Text(myReceiptItemData.varName,
-              style: TextStyle(
-                  fontSize: 14, color: Theme.of(context).colorScheme.primary))
-        ],
-      ),
-      const SizedBox(
-        height: 5,
-      ),
-      Container(
-        height: 20,
-        color: Theme.of(context).colorScheme.surfaceBright,
-        child: Text(localizedStrings.gPosition,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 14,
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.normal)),
-      ),
-      Row(
-        children: [
-          const SizedBox(
-            width: 100,
-            child: Text("X:",
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 14,
-                )),
-          ),
-          Expanded(
-            child: TextField(
-              enabled: false,
-              controller: xPosvar,
-              decoration: InputDecoration(
-                hintText: myReceiptItemData.content.toString(),
-                hintStyle: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontSize: 14,
-                    fontWeight: FontWeight.normal),
-              ),
-              onEditingComplete: () {
-                _onSubmit(xPosvar.text, 2);
-              }, // 点击“完成”按钮后，调用失去焦点方法
-              focusNode: _focusNodexPos, // 将FocusNode对象绑定到TextField
-            ),
-          ),
-        ],
-      ),
-      Row(
-        children: [
-          const SizedBox(
-            width: 100,
-            child: Text("Y:",
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 14,
-                )),
-          ),
-          Expanded(
-            child: TextField(
-              enabled: false,
-              controller: yPosvar,
-              decoration: InputDecoration(
-                  labelStyle: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontSize: 14,
-                      fontWeight: FontWeight.normal), // 设置label字体大小为20
-                  hintText: myReceiptItemData.yPos.toString()),
-              onEditingComplete: () {
-                _onSubmit(yPosvar.text, 3);
-              }, // 点击“完成”按钮后，调用失去焦点方法
-              focusNode: _focusNodeyPos, // 将FocusNode对象绑定到TextField
-            ),
-          ),
-        ],
-      ),
-      const SizedBox(height: 20),
-      SizedBox(
-        width: 100,
-        child: Text(localizedStrings.gMaxLength,
-            textAlign: TextAlign.left,
-            style: const TextStyle(
-              fontSize: 14,
-            )),
-      ),
+      buildAttitudeText(context, localizedStrings.gAttribute),
+      buildDivider(),
+      buildTabOrderAndTyptText(context, localizedStrings.gTabOrder,
+          myReceiptItemData.tabOrder.toString()),
+      buildTabOrderAndTyptText(
+          context, localizedStrings.gTipItemType, myReceiptItemData.varName),
+      showRightItemTitleText(context, localizedStrings.gPosition),
+      ...buildXYPosition(),
+      showRightItemTitleText(context, localizedStrings.gMaxLength),
       buildTextField(
           maxLenthvar, "", myReceiptItemData.maxLength.toString(), 4),
-      const SizedBox(width: 10),
-      Text(
+      showRightItemTitleText(context, localizedStrings.gAlignment),
+      showDropDownButtonValue(
+        context,
+        _selectedAlignment,
+        _alignments,
         localizedStrings.gAlignment,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+        _handleAlignmentSelected,
       ),
-      buildDropdownButton(
-        value: _selectedAlignment,
-        items: _alignments,
-        hintText: localizedStrings.gAlignment,
-        onSelect: _handleAlignmentSelected,
-      ),
-
-      Text(
+      showRightItemTitleText(context, localizedStrings.gRotation),
+      showDropDownButtonValue(
+        context,
+        _selectedRotation,
+        _rotations,
         localizedStrings.gRotation,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+        _handleRotationSelected,
       ),
-      buildDropdownButton(
-        value: _selectedRotation,
-        items: _rotations,
-        hintText: localizedStrings.gRotation,
-        onSelect: _handleRotationSelected,
-      ),
-      Text(
+      showRightItemTitleText(context, localizedStrings.gFontSize),
+      showDropDownButtonValue(
+        context,
+        _selectFontsize,
+        _fontSizes,
         localizedStrings.gFontSize,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+        _handleFontSizeSelected,
       ),
-      buildDropdownButton(
-        value: _selectFontsize,
-        items: _fontSizes,
-        hintText: localizedStrings.gFontSize,
-        onSelect: _handleFontSizeSelected,
-      ),
-      // buildTextField(
-      //     fontsizevar, "Font Size", myReceiptItemData.fontSize.toString(), 1),
-      Text(
+      showRightItemTitleText(context, localizedStrings.gFontBold),
+      showDropDownButtonValue(
+        context,
+        _selectFontBold,
+        _fontBoldReverse,
         localizedStrings.gFontBold,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+        _handleFontBoldSelected,
       ),
-      buildDropdownButton(
-        value: _selectFontBold,
-        items: _fontBoldReverse,
-        hintText: localizedStrings.gFontBold,
-        onSelect: _handleFontBoldSelected,
-      ),
-      Text(
+      showRightItemTitleText(context, localizedStrings.gFontReverse),
+      showDropDownButtonValue(
+        context,
+        _selectFontReverse,
+        _fontBoldReverse,
         localizedStrings.gFontReverse,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+        _handleFontReverseSelected,
       ),
-      buildDropdownButton(
-        value: _selectFontReverse,
-        items: _fontBoldReverse,
-        hintText: localizedStrings.gFontReverse,
-        onSelect: _handleFontReverseSelected,
+      SizedBox(
+        height: regularPadding,
       ),
-      const SizedBox(height: 5),
+      deleteBtnBuild(),
     ];
   }
 
   Widget deleteBtnBuild() {
-    return ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0), // 这里的10.0是圆角半径，可以根据需要调整
-          ),
-          backgroundColor: Theme.of(context).colorScheme.primary, // 设置按钮的背景色
-          elevation: 10, // 设置按钮的阴影
-        ),
-        onPressed: () {
+    return SizedBox(
+        width: 200,
+        child: showTextButton(context, btnHeight, localizedStrings.gBtnDelete,
+            () {
           setState(() {
             _deleteReceiptItem(myReceiptItemData.tabOrder);
           });
         },
-        child: Text(localizedStrings.gBtnDelete,
-            style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.normal,
-                color: Theme.of(context).colorScheme.onPrimary)));
+            Theme.of(context).colorScheme.onPrimary,
+            Theme.of(context).colorScheme.error,
+            Theme.of(context).colorScheme.onPrimary));
   }
 
-  _lineproperties() {
+  List<Widget> _lineproperties() {
     return [
-      const SizedBox(height: 10),
-      deleteBtnBuild(),
-      const SizedBox(height: 10),
-      Container(
-        height: 35,
-        color: Theme.of(context).colorScheme.surfaceBright,
-        child: Column(
-          children: [
-            Text(
-              localizedStrings.gAttribute,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.normal,
-                  color: Theme.of(context).colorScheme.primary),
-            ),
-            Divider(
-              height: 2,
-              color: Theme.of(context).colorScheme.primary,
-            )
-          ],
-        ),
-      ),
-      Row(
-        children: [
-          const SizedBox(
-            height: 5,
-          ),
-          SizedBox(
-            width: 100,
-            child: Text(localizedStrings.gTabOrder,
-                textAlign: TextAlign.left,
-                style: const TextStyle(
-                  fontSize: 14,
-                )),
-          ),
-          const SizedBox(
-            height: 5,
-          ),
-          Text(
-            myReceiptItemData.tabOrder.toString(),
-            style: TextStyle(
-                fontSize: 14, color: Theme.of(context).colorScheme.primary),
-          )
-        ],
-      ),
-      const SizedBox(height: 10),
-      Row(
-        children: [
-          SizedBox(
-            width: 100,
-            child: Text(localizedStrings.gTipItemType,
-                textAlign: TextAlign.left,
-                style: const TextStyle(
-                  fontSize: 14,
-                )),
-          ),
-          Text(myReceiptItemData.type,
-              style: TextStyle(
-                  fontSize: 14, color: Theme.of(context).colorScheme.primary))
-        ],
-      ),
-      const SizedBox(
-        height: 5,
-      ),
-      Container(
-        height: 20,
-        color: Theme.of(context).colorScheme.surfaceBright,
-        child: Text(localizedStrings.gPosition,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 14,
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.normal)),
-      ),
+      buildAttitudeText(context, localizedStrings.gAttribute),
+      buildDivider(),
+      buildTabOrderAndTyptText(context, localizedStrings.gTabOrder,
+          myReceiptItemData.tabOrder.toString()),
+      buildTabOrderAndTyptText(
+          context, localizedStrings.gTipItemType, myReceiptItemData.varName),
+      showRightItemTitleText(context, localizedStrings.gPosition),
       buildTextField(xPosvar, "X1", myReceiptItemData.xPos.toString(), 2),
       buildTextField(yPosvar, "Y1", myReceiptItemData.yPos.toString(), 3),
       buildTextField(
           x2Posvar, "Line Lenth", myReceiptItemData.x2Pos.toString(), 17),
       buildTextField(lineWidthVar, "Line Width",
           myReceiptItemData.lineWidth.toString(), 16),
-      const SizedBox(height: 20),
-    ];
-  }
-
-  _barCodeproperties() {
-    return [
-      const SizedBox(height: 10),
+      SizedBox(
+        height: regularPadding,
+      ),
       deleteBtnBuild(),
-      const SizedBox(height: 10),
-      Container(
-        height: 35,
-        color: Theme.of(context).colorScheme.surfaceBright,
-        child: Column(
-          children: [
-            Text(
-              localizedStrings.gAttribute,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.normal,
-                  color: Theme.of(context).colorScheme.primary),
-            ),
-            Divider(
-              height: 2,
-              color: Theme.of(context).colorScheme.primary,
-            )
-          ],
-        ),
-      ),
-      Row(
-        children: [
-          const SizedBox(
-            height: 5,
-          ),
-          SizedBox(
-            width: 100,
-            child: Text(localizedStrings.gTabOrder,
-                textAlign: TextAlign.left,
-                style: const TextStyle(
-                  fontSize: 14,
-                )),
-          ),
-          const SizedBox(
-            height: 5,
-          ),
-          Text(
-            myReceiptItemData.tabOrder.toString(),
-            style: TextStyle(
-                fontSize: 14, color: Theme.of(context).colorScheme.primary),
-          )
-        ],
-      ),
-      const SizedBox(height: 10),
-      Row(
-        children: [
-          SizedBox(
-            width: 100,
-            child: Text(localizedStrings.gTipItemType,
-                textAlign: TextAlign.left,
-                style: const TextStyle(
-                  fontSize: 14,
-                )),
-          ),
-          Text(myReceiptItemData.type,
-              style: TextStyle(
-                  fontSize: 14, color: Theme.of(context).colorScheme.primary))
-        ],
-      ),
-      const SizedBox(
-        height: 5,
-      ),
-      Container(
-        height: 20,
-        color: Theme.of(context).colorScheme.surfaceBright,
-        child: Text(localizedStrings.gPosition,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 14,
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.normal)),
-      ),
-      Row(
-        children: [
-          const SizedBox(
-            width: 100,
-            child: Text("X:",
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 14,
-                )),
-          ),
-          Expanded(
-            child: TextField(
-              enabled: false,
-              controller: xPosvar,
-              decoration: InputDecoration(
-                hintText: myReceiptItemData.content.toString(),
-                hintStyle: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontSize: 14,
-                    fontWeight: FontWeight.normal),
-              ),
-              onEditingComplete: () {
-                _onSubmit(xPosvar.text, 2);
-              }, // 点击“完成”按钮后，调用失去焦点方法
-              focusNode: _focusNodexPos, // 将FocusNode对象绑定到TextField
-            ),
-          ),
-        ],
-      ),
-      Row(
-        children: [
-          const SizedBox(
-            width: 100,
-            child: Text("Y:",
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 14,
-                )),
-          ),
-          Expanded(
-            child: TextField(
-              enabled: false,
-              controller: yPosvar,
-              decoration: InputDecoration(
-                  labelStyle: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontSize: 14,
-                      fontWeight: FontWeight.normal), // 设置label字体大小为20
-                  hintText: myReceiptItemData.yPos.toString()),
-              onEditingComplete: () {
-                _onSubmit(yPosvar.text, 3);
-              }, // 点击“完成”按钮后，调用失去焦点方法
-              focusNode: _focusNodeyPos, // 将FocusNode对象绑定到TextField
-            ),
-          ),
-        ],
-      ),
-      const SizedBox(height: 20),
-      Text(
-        localizedStrings.gBarcode,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
-      ),
-      buildDropdownButton(
-        value: _selectedBarcode,
-        items: _savedBarCodeNames,
-        hintText: localizedStrings.gBarcode,
-        onSelect: _handleBarcodeSelected,
-      ),
-      Text(
-        localizedStrings.gBarcodeHeight,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
-      ),
-      buildTextField(barcodeHeight, "", myReceiptItemData.height.toString(), 7),
-      const SizedBox(height: 20),
-      Text(
-        localizedStrings.gHrAlignment,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
-      ),
-      buildDropdownButton(
-        value: _selectedHRAlignment,
-        items: _hralignments,
-        hintText: localizedStrings.gHrAlignment,
-        onSelect: _handleHrAlignmentSelected,
-      ),
-      Text(
-        localizedStrings.gRotation,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
-      ),
-      buildDropdownButton(
-        value: _selectedRotation,
-        items: _rotations,
-        hintText: localizedStrings.gRotation,
-        onSelect: _handleRotationSelected,
-      ),
-      const SizedBox(height: 5),
-    ];
-  }
-
-  _qrcodeproperties() {
-    return [
-      const SizedBox(height: 10),
-      deleteBtnBuild(),
-      const SizedBox(height: 10),
-      Container(
-        height: 35,
-        color: Theme.of(context).colorScheme.surfaceBright,
-        child: Column(
-          children: [
-            Text(
-              localizedStrings.gAttribute,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.normal,
-                  color: Theme.of(context).colorScheme.primary),
-            ),
-            Divider(
-              height: 2,
-              color: Theme.of(context).colorScheme.primary,
-            )
-          ],
-        ),
-      ),
-      Row(
-        children: [
-          const SizedBox(
-            height: 5,
-          ),
-          SizedBox(
-            width: 100,
-            child: Text(localizedStrings.gTabOrder,
-                textAlign: TextAlign.left,
-                style: const TextStyle(
-                  fontSize: 14,
-                )),
-          ),
-          const SizedBox(
-            height: 5,
-          ),
-          Text(
-            myReceiptItemData.tabOrder.toString(),
-            style: TextStyle(
-                fontSize: 14, color: Theme.of(context).colorScheme.primary),
-          )
-        ],
-      ),
-      const SizedBox(height: 10),
-      Row(
-        children: [
-          SizedBox(
-            width: 100,
-            child: Text(localizedStrings.gTipItemType,
-                textAlign: TextAlign.left,
-                style: const TextStyle(
-                  fontSize: 14,
-                )),
-          ),
-          Text(myReceiptItemData.type,
-              style: TextStyle(
-                  fontSize: 14, color: Theme.of(context).colorScheme.primary))
-        ],
-      ),
-      const SizedBox(
-        height: 5,
-      ),
-      Container(
-        height: 20,
-        color: Theme.of(context).colorScheme.surfaceBright,
-        child: Text(localizedStrings.gPosition,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 14,
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.normal)),
-      ),
-      Row(
-        children: [
-          const SizedBox(
-            width: 100,
-            child: Text("X:",
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 14,
-                )),
-          ),
-          Expanded(
-            child: TextField(
-              enabled: false,
-              controller: xPosvar,
-              decoration: InputDecoration(
-                hintText: myReceiptItemData.content.toString(),
-                hintStyle: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontSize: 14,
-                    fontWeight: FontWeight.normal),
-              ),
-              onEditingComplete: () {
-                _onSubmit(xPosvar.text, 2);
-              }, // 点击“完成”按钮后，调用失去焦点方法
-              focusNode: _focusNodexPos, // 将FocusNode对象绑定到TextField
-            ),
-          ),
-        ],
-      ),
-      Row(
-        children: [
-          const SizedBox(
-            width: 100,
-            child: Text("Y:",
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 14,
-                )),
-          ),
-          Expanded(
-            child: TextField(
-              enabled: false,
-              controller: yPosvar,
-              decoration: InputDecoration(
-                  labelStyle: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontSize: 14,
-                      fontWeight: FontWeight.normal), // 设置label字体大小为20
-                  hintText: myReceiptItemData.yPos.toString()),
-              onEditingComplete: () {
-                _onSubmit(yPosvar.text, 3);
-              }, // 点击“完成”按钮后，调用失去焦点方法
-              focusNode: _focusNodeyPos, // 将FocusNode对象绑定到TextField
-            ),
-          ),
-        ],
-      ),
-      const SizedBox(height: 20),
-      Text(
-        localizedStrings.gQrcode,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
-      ),
-      buildDropdownButton(
-        value: _selectedQrcode,
-        items: _savedQrcodeNames,
-        hintText: localizedStrings.gQrcode,
-        onSelect: _handleQrcodeSelected,
-      ),
-      const SizedBox(height: 20),
-      Text(
-        localizedStrings.gQrcodeWidth,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
-      ),
-      buildDropdownButton(
-        value: _selectedQr,
-        items: _qrWidths,
-        hintText: localizedStrings.gQrcodeWidth,
-        onSelect: _handleQrWidthSelected,
-      ),
-      const SizedBox(height: 5),
     ];
   }
 

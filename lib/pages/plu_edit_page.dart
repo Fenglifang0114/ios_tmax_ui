@@ -6,10 +6,10 @@ import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/functions/methods.dart';
 import '../data/download_prt_fmt.dart';
 import '../data/language.dart';
-import '../data/manager_scale_channel.dart';
 import '../data/plu_data_source.dart';
 import '../data/plu_field_status_data.dart';
 import '../data/plu_info_list_data.dart';
@@ -414,167 +414,201 @@ class PluEidtPageState extends State<PluEidtPage> {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(50),
-        child: pageHeadDesign(
-          context,
-          localizedStrings.gTitlePluEdit,
-          [myDefScaleInfo.defScaleId!],
-          localizedStrings.gTipPlueditPageHelp,
-        ),
-      ),
-      body: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Column(children: [
-            buildButtonRow(),
-            SizedBox(height: 10),
-            // SizedBox(
-            //   width: 200,
-            //   height: 40,
-            //   child: TextField(
-            //     controller: searchCtl,
-            //     onChanged: _handleSearchTextChanged,
-            //     decoration: InputDecoration(
-            //       labelText: 'Find Row',
-            //       enabledBorder: OutlineInputBorder(
-            //           borderSide:
-            //               BorderSide(color: Colors.blue), // 设置正常状态下边框颜色为蓝色
-            //           borderRadius: BorderRadius.circular(4.0) // 可根据需要设置圆角半径
-            //           ),
-            //       focusedBorder: OutlineInputBorder(
-            //           borderSide: BorderSide(
-            //               color: Colors.blue, width: 2.0), // 设置获取焦点时边框颜色和宽度
-            //           borderRadius: BorderRadius.circular(4.0)),
-            //     ),
-            //   ),
-            // ),
-            // SizedBox(height: 10),
-            SizedBox(
-                width: width - 20,
-                height: height - 130,
-                child: Stack(alignment: Alignment.bottomCenter, children: [
-                  PaginatedDataTable2(
-                    // 100 Won't be shown since it is smaller than total records
-                    availableRowsPerPage: const [10, 20, 30, 50],
-                    horizontalMargin: 20,
-                    checkboxHorizontalMargin: 12,
-                    columnSpacing: 0,
-                    wrapInCard: false,
-                    renderEmptyRowsInTheEnd: false,
-                    headingRowColor: WidgetStateColor.resolveWith(
-                        (states) => Theme.of(context).colorScheme.onPrimary),
-                    headingTextStyle:
-                        TextStyle(color: Theme.of(context).colorScheme.primary),
-                    headingCheckboxTheme: CheckboxThemeData(
-                      side: BorderSide(
-                          color: Theme.of(context).colorScheme.primary,
-                          width: 2.0),
-                      fillColor: WidgetStateProperty.resolveWith<Color>(
-                          (Set<WidgetState> states) {
-                        if (states.contains(WidgetState.selected)) {
-                          return Theme.of(context).colorScheme.primary;
-                        }
-                        return Theme.of(context)
-                            .colorScheme
-                            .onPrimary; // 未选中时的填充颜色，可根据需要调整
-                      }),
-                    ),
-                    //checkboxAlignment: Alignment.topLeft,
+      body: Container(
+          width: width,
+          decoration:
+              BoxDecoration(color: Theme.of(context).colorScheme.surface),
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // pageHeadInfo(
+                //     context,
+                //     width - headWidthPadding,
+                //     localizedStrings.menuPluManagement,
+                //     localizedStrings.gTipPlueditPageHelp),
+                Expanded(
+                    child: Container(
+                  color: Theme.of(context).colorScheme.surfaceTint,
+                  child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Column(children: [
+                        buildButtonRow(),
+                        SizedBox(height: 10),
+                        SizedBox(
+                            width: width - 20,
+                            height: height - 230,
+                            child: Stack(
+                                alignment: Alignment.bottomCenter,
+                                children: [
+                                  PaginatedDataTable2(
+                                    // 100 Won't be shown since it is smaller than total records
+                                    availableRowsPerPage: const [
+                                      10,
+                                      20,
+                                      30,
+                                      50
+                                    ],
+                                    horizontalMargin: 20,
+                                    checkboxHorizontalMargin: 12,
+                                    columnSpacing: 0,
+                                    wrapInCard: false,
+                                    renderEmptyRowsInTheEnd: false,
+                                    headingRowColor:
+                                        WidgetStateColor.resolveWith((states) =>
+                                            Theme.of(context)
+                                                .colorScheme
+                                                .onPrimary),
+                                    headingTextStyle: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary),
+                                    headingCheckboxTheme: CheckboxThemeData(
+                                      side: BorderSide(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                          width: 2.0),
+                                      fillColor:
+                                          WidgetStateProperty.resolveWith<
+                                              Color>((Set<WidgetState> states) {
+                                        if (states
+                                            .contains(WidgetState.selected)) {
+                                          return Theme.of(context)
+                                              .colorScheme
+                                              .primary;
+                                        }
+                                        return Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary; // 未选中时的填充颜色，可根据需要调整
+                                      }),
+                                    ),
+                                    //checkboxAlignment: Alignment.topLeft,
 
-                    datarowCheckboxTheme: CheckboxThemeData(
-                      side: BorderSide(
-                          color: Theme.of(context).colorScheme.primary,
-                          width: 2.0),
-                      fillColor: WidgetStateProperty.resolveWith<Color>(
-                          (Set<WidgetState> states) {
-                        if (states.contains(WidgetState.selected)) {
-                          return Theme.of(context).colorScheme.primary;
-                        }
-                        return Theme.of(context).colorScheme.onPrimary;
-                      }),
-                    ),
+                                    datarowCheckboxTheme: CheckboxThemeData(
+                                      side: BorderSide(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                          width: 2.0),
+                                      fillColor:
+                                          WidgetStateProperty.resolveWith<
+                                              Color>((Set<WidgetState> states) {
+                                        if (states
+                                            .contains(WidgetState.selected)) {
+                                          return Theme.of(context)
+                                              .colorScheme
+                                              .primary;
+                                        }
+                                        return Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary;
+                                      }),
+                                    ),
 
-                    rowsPerPage: _rowsPerPage,
-                    autoRowsToHeight: false,
-                    minWidth: _pluInfoDataSource.selectedColumns.length < 8
-                        ? (width - 20)
-                        : (width - 20) > 1500
-                            ? (width - 20)
-                            : 1500,
-                    fit: FlexFit.tight,
-                    border: TableBorder(
-                        top: BorderSide(
-                            color: Theme.of(context).colorScheme.primary),
-                        bottom: BorderSide(
-                            color: Theme.of(context).colorScheme.primary),
-                        left: BorderSide(
-                            color: Theme.of(context).colorScheme.primary),
-                        right: BorderSide(
-                            color: Theme.of(context).colorScheme.primary),
-                        verticalInside: BorderSide.none,
-                        // BorderSide(
-                        //     color: Theme.of(context).colorScheme.surfaceTint),
-                        horizontalInside: BorderSide(
-                            color: Theme.of(context).colorScheme.primary,
-                            width: 1)),
-                    onRowsPerPageChanged: (value) {
-                      // No need to wrap into setState, it will be called inside the widget
-                      // and trigger rebuild
-                      //setState(() {
-                      _rowsPerPage = value!;
-                      if (kDebugMode) {
-                        print(_rowsPerPage);
-                      }
-                      //});
-                    },
-                    initialFirstRowIndex: 0,
-                    onPageChanged: (rowIndex) {
-                      if (kDebugMode) {
-                        print(rowIndex / _rowsPerPage);
-                      }
-                      setState(() {
-                        _isLoading = true;
-                      });
+                                    rowsPerPage: _rowsPerPage,
+                                    autoRowsToHeight: false,
+                                    minWidth: _pluInfoDataSource
+                                                .selectedColumns.length <
+                                            8
+                                        ? (width - 20)
+                                        : (width - 20) > 1500
+                                            ? (width - 20)
+                                            : 1500,
+                                    fit: FlexFit.tight,
+                                    border: TableBorder(
+                                        top: BorderSide(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary),
+                                        bottom: BorderSide(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary),
+                                        left: BorderSide(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary),
+                                        right: BorderSide(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary),
+                                        verticalInside: BorderSide.none,
+                                        // BorderSide(
+                                        //     color: Theme.of(context).colorScheme.surfaceTint),
+                                        horizontalInside: BorderSide(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            width: 1)),
+                                    onRowsPerPageChanged: (value) {
+                                      // No need to wrap into setState, it will be called inside the widget
+                                      // and trigger rebuild
+                                      //setState(() {
+                                      _rowsPerPage = value!;
+                                      if (kDebugMode) {
+                                        print(_rowsPerPage);
+                                      }
+                                      //});
+                                    },
+                                    initialFirstRowIndex: 0,
+                                    onPageChanged: (rowIndex) {
+                                      if (kDebugMode) {
+                                        print(rowIndex / _rowsPerPage);
+                                      }
+                                      setState(() {
+                                        _isLoading = true;
+                                      });
 
-                      Future.delayed(const Duration(seconds: 2), () {
-                        setState(() {
-                          _isLoading = false;
-                        });
-                      });
-                    },
-                    sortColumnIndex: _sortColumnIndex,
-                    sortAscending: _sortAscending,
-                    sortArrowIcon: Icons.keyboard_arrow_up, // custom arrow
-                    sortArrowAnimationDuration: const Duration(
-                        milliseconds: 0), // custom animation duration
-                    onSelectAll: _pluInfoDataSource.selectAll,
-                    controller: null,
-                    hidePaginator: false,
-                    columns: getcolumns(),
-                    empty: Center(
-                        child: Container(
-                            padding: const EdgeInsets.all(20),
-                            color: Colors.grey[200],
-                            child: const Text('No data'))),
-                    source: getCurrentRouteOption(context) == noData
-                        ? PluInfoDataSource.empty(context)
-                        : _pluInfoDataSource,
-                  ),
-                  // if (getCurrentRouteOption(context) == custPager)
-                  //   Positioned(bottom: 16, child: CustomPager(_controller!))
-                  if (_isLoading)
-                    Container(
-                        color: const Color.fromARGB(255, 162, 160, 160)
-                            .withOpacity(0.5),
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            backgroundColor: Colors.transparent,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                                Theme.of(context).colorScheme.primary),
-                          ),
-                        )),
-                ]))
-          ])),
+                                      Future.delayed(const Duration(seconds: 2),
+                                          () {
+                                        setState(() {
+                                          _isLoading = false;
+                                        });
+                                      });
+                                    },
+                                    sortColumnIndex: _sortColumnIndex,
+                                    sortAscending: _sortAscending,
+                                    sortArrowIcon:
+                                        Icons.keyboard_arrow_up, // custom arrow
+                                    sortArrowAnimationDuration: const Duration(
+                                        milliseconds:
+                                            0), // custom animation duration
+                                    onSelectAll: _pluInfoDataSource.selectAll,
+                                    controller: null,
+                                    hidePaginator: false,
+                                    columns: getcolumns(),
+                                    empty: Center(
+                                        child: Container(
+                                            padding: const EdgeInsets.all(20),
+                                            color: Colors.grey[200],
+                                            child: const Text('No data'))),
+                                    source:
+                                        getCurrentRouteOption(context) == noData
+                                            ? PluInfoDataSource.empty(context)
+                                            : _pluInfoDataSource,
+                                  ),
+                                  // if (getCurrentRouteOption(context) == custPager)
+                                  //   Positioned(bottom: 16, child: CustomPager(_controller!))
+                                  if (_isLoading)
+                                    Container(
+                                        color: const Color.fromARGB(
+                                                255, 162, 160, 160)
+                                            .withOpacity(0.5),
+                                        child: Center(
+                                          child: CircularProgressIndicator(
+                                            backgroundColor: Colors.transparent,
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                    Theme.of(context)
+                                                        .colorScheme
+                                                        .primary),
+                                          ),
+                                        )),
+                                ]))
+                      ])),
+                )),
+              ])),
     );
   }
 
@@ -691,7 +725,7 @@ class PluEidtPageState extends State<PluEidtPage> {
         Tooltip(
           message: localizedStrings.gBtnGetDataFormDb,
           child: CustomOutlinedButton(
-            btnWidth: 140,
+            btnWidth: 80,
             btnHeight: 40,
             icon: Icons.data_thresholding_outlined,
             text: localizedStrings.gBtnGetDataFormDb,
@@ -710,15 +744,6 @@ class PluEidtPageState extends State<PluEidtPage> {
                       });
                     });
                   },
-
-            // _dessertsDataSource.desserts.sort((a, b) {
-            //         final idComparison = b.id.compareTo(a.id);
-            //         if (idComparison != 0) {
-            //           return idComparison;
-            //         }
-            //         // 如果 id 相同，可以按照其他属性进行进一步的排序，这里假设按照名称进行升序排序
-            //         return a.plu!.compareTo(b.plu!);
-            //       });
           ),
         ),
         SizedBox(
@@ -727,7 +752,7 @@ class PluEidtPageState extends State<PluEidtPage> {
         Tooltip(
           message: localizedStrings.gBtnSaveDataBase,
           child: CustomOutlinedButton(
-            btnWidth: 120,
+            btnWidth: 80,
             btnHeight: 40,
             icon: Icons.change_circle_outlined,
             text: localizedStrings.gBtnSaveDataBase,
@@ -753,15 +778,6 @@ class PluEidtPageState extends State<PluEidtPage> {
             onPressed: () {
               performImport();
             },
-
-            // _dessertsDataSource.desserts.sort((a, b) {
-            //         final idComparison = b.id.compareTo(a.id);
-            //         if (idComparison != 0) {
-            //           return idComparison;
-            //         }
-            //         // 如果 id 相同，可以按照其他属性进行进一步的排序，这里假设按照名称进行升序排序
-            //         return a.plu!.compareTo(b.plu!);
-            //       });
           ),
         ),
         SizedBox(
@@ -803,7 +819,7 @@ class PluEidtPageState extends State<PluEidtPage> {
         Tooltip(
           message: localizedStrings.gBtnGetPluTemplate,
           child: CustomOutlinedButton(
-            btnWidth: 140,
+            btnWidth: 60,
             btnHeight: 40,
             icon: Icons.file_copy,
             text: localizedStrings.gBtnGetPluTemplate,
@@ -887,7 +903,7 @@ class PluEidtPageState extends State<PluEidtPage> {
                   icon: Icons.check_circle,
                   text: localizedStrings.gTitleConfirm,
                   onPressed: () {
-                    Navigator.of(context).pop(false);
+                    Navigator.of(ctx).pop(false);
 
                     setState(() {
                       isSendDb = true;
@@ -905,7 +921,7 @@ class PluEidtPageState extends State<PluEidtPage> {
                   icon: Icons.cancel,
                   text: localizedStrings.gBtnCancel,
                   onPressed: () {
-                    Navigator.of(context).pop(false);
+                    Navigator.of(ctx).pop(false);
                   },
                 ),
               ],
@@ -974,7 +990,7 @@ class PluEidtPageState extends State<PluEidtPage> {
                   icon: Icons.check_circle,
                   text: localizedStrings.gTitleConfirm,
                   onPressed: () {
-                    Navigator.of(context).pop(false);
+                    Navigator.of(ctx).pop(false);
                     selectDownloadType(_downloadType, filePath);
                   },
                 ),
@@ -987,7 +1003,7 @@ class PluEidtPageState extends State<PluEidtPage> {
                   icon: Icons.cancel,
                   text: localizedStrings.gBtnCancel,
                   onPressed: () {
-                    Navigator.of(context).pop(false);
+                    Navigator.of(ctx).pop(false);
                   },
                 ),
               ],

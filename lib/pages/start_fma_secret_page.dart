@@ -10,6 +10,7 @@ import 'package:t_max/data/manager_scale_channel.dart';
 import 'package:t_max/data/req_add_fma_rec_data.dart';
 import 'package:t_max/data/req_formula_data.dart';
 import 'package:t_max/data/reqweightdata_data.dart';
+import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/data/timer_manager.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/eventbus/eventbus.dart';
@@ -75,6 +76,9 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
 
   Timer? setWgtStartFalseTimer; // 用于每3秒将isWgtStart设置为false的定时器
   Timer? checkWgtStartTimer; // 用于每5秒检查isWgtStart的定时器
+
+  late Scale myScale;
+
   // 每3秒钟将isWgtStart设置为false
   void startSetWgtStartFalseTimer() {
     setWgtStartFalseTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
@@ -189,7 +193,6 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
 
   void getScaleInfo() {
     PublicFunctions.getWeight(widget.selScaleId);
-    DefScaleInfo.getDefScaleInfo(widget.selScaleId);
   }
 
   //生成订单编号
@@ -211,7 +214,12 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-
+    for (var scale in myAllScalesList) {
+      if (scale.scaleId == widget.selScaleId) {
+        myScale = scale;
+        break;
+      }
+    }
     //将传入的配方信息赋值给processWgtList
     initTotalWgtUnit();
     initWgtList();
@@ -303,7 +311,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
         setState(() {
           ReqWeightCountine tempWeight = ReqWeightCountine();
           tempWeight = event.obj;
-          if (tempWeight.scaleId == myDefScaleInfo.defScaleId!) {
+          if (tempWeight.scaleId == myScale.scaleId) {
             myReqWeightCountine = tempWeight;
             if (tempWeight.scaleId == 1) {
               myComScaleInfo.isOnline = true;
@@ -455,9 +463,9 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
           widget.selectFormula.header!.formulaHeader!.formulaUnit, //总原料重量单位
       isQualified: isAllOK ? 'yes' : 'no', //是否合格
       scaleId: widget.selScaleId, //秤ID
-      scaleName: myDefScaleInfo.defScaleName, //秤名称
-      scaleModel: myDefScaleInfo.defScaleModel, //秤型号
-      scaleSn: myDefScaleInfo.defScaleSn, //秤SN
+      scaleName: myScale.scaleName, //秤名称
+      scaleModel: myScale.scaleModel, //秤型号
+      scaleSn: myScale.scaleSn, //秤SN
     );
 
     List<RecDetail>? reqRecDetailList = []; //配方明细集合
@@ -561,7 +569,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
                     style: ElevatedButton.styleFrom(
                       foregroundColor:
                           Theme.of(context).colorScheme.onSurfaceVariant,
-                      backgroundColor: redColor,
+                      backgroundColor: Theme.of(context).colorScheme.error,
                       fixedSize: const Size(double.infinity, 48),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
@@ -609,7 +617,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
                     style: ElevatedButton.styleFrom(
                       foregroundColor:
                           Theme.of(context).colorScheme.onSurfaceVariant,
-                      backgroundColor: redColor,
+                      backgroundColor: Theme.of(context).colorScheme.error,
                       fixedSize: const Size(double.infinity, 48),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
@@ -642,15 +650,15 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
     for (int index = 0; index < list.length; index++) {
       bool isSelected = clickedRow == index;
       Color backgroundColor = (checkIndexIsOK(index))
-          ? Color(0xFFEDF3EC)
+          ? Theme.of(context).colorScheme.surfaceContainerLow
           : isSelected
               ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
-              : Color(0xFFF6F6F6);
+              : Theme.of(context).colorScheme.surfaceContainerLow;
       Color innerContainerColor = isSelected
           ? Theme.of(context).colorScheme.primary
           : Theme.of(context).colorScheme.surface;
       Color textColor = (checkIndexIsOK(index))
-          ? greenColor
+          ? Theme.of(context).colorScheme.onTertiaryFixedVariant
           : isSelected
               ? Theme.of(context).colorScheme.primary
               : Theme.of(context).colorScheme.onSurfaceVariant;
@@ -684,7 +692,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
                 ? Container(
                     width: 28,
                     height: 28,
-                    color: greenColor,
+                    color: Theme.of(context).colorScheme.onTertiaryFixedVariant,
                     child: Center(
                         child: Icon(Icons.check_circle_outline,
                             size: 24,
@@ -760,67 +768,69 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
     // final width = MediaQuery.of(context).size.width;
     return Scaffold(
         body: Container(
-      color: bgColor, //对接时修改颜色值
-      child: Padding(
-        padding: const EdgeInsets.all(14.0),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                children: [
-                  showTitleBar(),
-                  Divider(
-                    color: Theme.of(context).colorScheme.outline,
-                    thickness: 1,
-                    height: 1,
-                  ),
-                  showFormulaInfoAndWgt(),
-                  Divider(
-                    color: Theme.of(context).colorScheme.outline,
-                    thickness: 1,
-                    height: 1,
-                  ),
-                  Expanded(
-                    flex: 9,
-                    child: Column(children: [
-                      Container(
-                          height: 42,
+      color: Theme.of(context).colorScheme.surfaceDim, //对接时修改颜色值
+      child:
+          // Padding(
+          //   padding: const EdgeInsets.all(14.0),
+          //   child:
+          Row(
+        children: [
+          Expanded(
+            child: Column(
+              children: [
+                showTitleBar(),
+                Divider(
+                  color: Theme.of(context).colorScheme.outline,
+                  thickness: 1,
+                  height: 1,
+                ),
+                showFormulaInfoAndWgt(),
+                Divider(
+                  color: Theme.of(context).colorScheme.outline,
+                  thickness: 1,
+                  height: 1,
+                ),
+                Expanded(
+                  flex: 9,
+                  child: Column(children: [
+                    Container(
+                        height: 42,
+                        color: Theme.of(context).colorScheme.surface,
+                        child: Row(children: [
+                          SizedBox(
+                            width: 17,
+                          ),
+                          Expanded(
+                            child: Text(localizedStrings.fIngredientOrder),
+                          ),
+                        ])),
+                    Expanded(
+                      child: Container(
                           color: Theme.of(context).colorScheme.surface,
-                          child: Row(children: [
-                            SizedBox(
-                              width: 17,
-                            ),
-                            Expanded(
-                              child: Text(localizedStrings.fIngredientOrder),
-                            ),
-                          ])),
-                      Expanded(
-                        child: Container(
-                            color: Theme.of(context).colorScheme.surface,
-                            child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    width: 17,
-                                  ),
-                                  showRawOrderDetail(),
-                                ])),
-                      )
-                    ]),
-                  ),
-                  if (!checkAllOK()) showWgtTable(),
-                  if (!checkAllOK()) showNextBtn(),
-                  if (checkAllOK()) showCompleteStatus(),
-                  Container(
-                    height: 14,
-                    color: Theme.of(context).colorScheme.surface,
-                  ),
-                  showBottomBtn(),
-                ],
-              ),
+                          child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  width: 17,
+                                ),
+                                showRawOrderDetail(),
+                              ])),
+                    )
+                  ]),
+                ),
+                if (!checkAllOK()) showWgtTable(),
+                if (!checkAllOK()) showNextBtn(),
+                if (checkAllOK()) showCompleteStatus(),
+                Container(
+                  height: 14,
+                  color: Theme.of(context).colorScheme.surface,
+                ),
+                showBottomBtn(),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
+        // ),
       ),
     ));
   }
@@ -1116,7 +1126,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
                 // 添加点击行背景色
                 if (row == clickedRow) {
                   return BoxDecoration(
-                    color: clickColor,
+                    color: Theme.of(context).colorScheme.surfaceContainerLow,
                     border: Border(
                       bottom: BorderSide(
                           color: Theme.of(context).colorScheme.primary,
@@ -1127,7 +1137,9 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
                 return BoxDecoration(
                   color: Theme.of(context).colorScheme.surface,
                   border: Border(
-                    bottom: BorderSide(color: lineColor, width: 1),
+                    bottom: BorderSide(
+                        color: Theme.of(context).colorScheme.outlineVariant,
+                        width: 1),
                   ),
                 );
               },
@@ -1291,8 +1303,10 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
                         color: (data).isOK! == "no"
                             ? Color(0xFF666666)
                             : (data).isOK! == "ok"
-                                ? greenColor
-                                : redColor,
+                                ? Theme.of(context)
+                                    .colorScheme
+                                    .onTertiaryFixedVariant
+                                : Theme.of(context).colorScheme.error,
                       ),
                     );
                   },
@@ -1650,16 +1664,14 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
   String checkValueIsOk() {
     //判断当前的值是否达标
     String isWgtOk = '';
-    if (currentRawWgt + selectedProcessWgt.currentWgt! >=
-            selectedProcessWgt.minWgt! &&
-        currentRawWgt + selectedProcessWgt.currentWgt! <=
-            selectedProcessWgt.maxWgt!) {
+    double minWgt = double.parse(selectedProcessWgt.minWgt!.toStringAsFixed(3));
+    double maxWgt = double.parse(selectedProcessWgt.maxWgt!.toStringAsFixed(3));
+    if (currentRawWgt + selectedProcessWgt.currentWgt! >= minWgt &&
+        currentRawWgt + selectedProcessWgt.currentWgt! <= maxWgt) {
       isWgtOk = "ok";
-    } else if (currentRawWgt + selectedProcessWgt.currentWgt! <
-        selectedProcessWgt.minWgt!) {
+    } else if (currentRawWgt + selectedProcessWgt.currentWgt! < minWgt) {
       isWgtOk = "low";
-    } else if (currentRawWgt + selectedProcessWgt.currentWgt! >
-        selectedProcessWgt.maxWgt!) {
+    } else if (currentRawWgt + selectedProcessWgt.currentWgt! > maxWgt) {
       isWgtOk = "high";
     }
     return isWgtOk;
@@ -1695,7 +1707,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
             Expanded(
                 flex: 3,
                 child: Container(
-                  color: wgtBgColor,
+                  color: Theme.of(context).colorScheme.surfaceDim,
                   child: Column(children: [
                     Expanded(
                         flex: 3,
@@ -1774,7 +1786,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
             Expanded(
                 flex: 2,
                 child: Container(
-                  color: wgtBgColor,
+                  color: Theme.of(context).colorScheme.surfaceDim,
                   child: Column(children: [
                     Expanded(
                         flex: 1,
@@ -1857,7 +1869,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
             Expanded(
                 flex: 2,
                 child: Container(
-                  color: wgtBgColor,
+                  color: Theme.of(context).colorScheme.surfaceDim,
                   child: Column(children: [
                     Expanded(
                         flex: 1,
@@ -2279,7 +2291,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
         focusColor: Theme.of(context).colorScheme.outline,
         hoverColor: Theme.of(context).colorScheme.outline,
         style: IconButton.styleFrom(
-          backgroundColor: Color(0xFFF3F3F3),
+          backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
           shape: RoundedRectangleBorder(
             // 设置为矩形形状
             borderRadius: BorderRadius.zero, // 没有圆角，即正方形

@@ -1,7 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:t_max/pages/scale_manager_page.dart';
+import 'package:t_max/pages/wifi_setting_page.dart';
+// import 'package:t_max/pages/scale_manager_page.dart';
 
 import '../data/comscaleinfo_data.dart';
 
@@ -35,7 +36,6 @@ import 'plu_edit_page.dart';
 import 'receipt_design_page.dart';
 import 'retail_report_page.dart';
 import 'update_firmware_page.dart';
-import 'wifisetting_page.dart';
 
 class RetailHomePage extends StatefulWidget {
   const RetailHomePage({super.key});
@@ -523,27 +523,27 @@ class _RetailHomePageState extends State<RetailHomePage>
                         //     ),
                         //   ),
                         // ),
-                        GestureDetector(
-                          onTap: () {
-                            stopCheckSerialPort();
-                            setState(() {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ScaleManagerPage()),
-                              ).then((value) => _updateStatus());
-                            });
-                          },
-                          child: MouseRegion(
-                            cursor: SystemMouseCursors.click,
-                            child: customFunctionCard(
-                                context,
-                                localizedStrings.m_scale_title,
-                                Icons.schema_outlined,
-                                true),
-                          ),
-                        ),
+                        // GestureDetector(
+                        //   onTap: () {
+                        //     stopCheckSerialPort();
+                        //     setState(() {
+                        //       Navigator.push(
+                        //         context,
+                        //         MaterialPageRoute(
+                        //             builder: (context) =>
+                        //                 const ScaleManagerPage()),
+                        //       ).then((value) => _updateStatus());
+                        //     });
+                        //   },
+                        //   child: MouseRegion(
+                        //     cursor: SystemMouseCursors.click,
+                        //     child: customFunctionCard(
+                        //         context,
+                        //         localizedStrings.m_scale_title,
+                        //         Icons.schema_outlined,
+                        //         true),
+                        //   ),
+                        // ),
                         // GestureDetector(
                         //   onTap: () {
                         //     setState(() {
@@ -582,7 +582,7 @@ class _RetailHomePageState extends State<RetailHomePage>
                             cursor: SystemMouseCursors.click,
                             child: customFunctionCard(
                                 context,
-                                localizedStrings.gTitleUpdateFirmware,
+                                localizedStrings.menuFirmwareUpdate,
                                 Icons.cloud_upload_outlined,
                                 true),
                           ),
@@ -602,7 +602,7 @@ class _RetailHomePageState extends State<RetailHomePage>
                             cursor: SystemMouseCursors.click,
                             child: customFunctionCard(
                                 context,
-                                localizedStrings.gTitlePluEdit,
+                                localizedStrings.menuPluManagement,
                                 Icons.import_export,
                                 true),
                           ),
@@ -645,7 +645,7 @@ class _RetailHomePageState extends State<RetailHomePage>
                             cursor: SystemMouseCursors.click,
                             child: customFunctionCard(
                                 context,
-                                localizedStrings.wifi_setting_title,
+                                localizedStrings.menuWifiSetting,
                                 Icons.wifi,
                                 (myScreenMgr.wifiOrBt.contains('wifi'))),
                           ),
@@ -715,7 +715,7 @@ class _RetailHomePageState extends State<RetailHomePage>
                         cursor: SystemMouseCursors.click,
                         child: appCard(
                           context,
-                          localizedStrings.rDetailRptTitle,
+                          localizedStrings.menuRetailReport,
                           Icons.data_thresholding_outlined,
                           true,
                           localizedStrings.rTipDetailRpt,
@@ -737,7 +737,7 @@ class _RetailHomePageState extends State<RetailHomePage>
                     //     cursor: SystemMouseCursors.click,
                     //     child: appCard(
                     //       context,
-                    //       localizedStrings.gTitleLabelFmtDownload,
+                    //       localizedStrings.menuLabelFormatDownload,
                     //       Icons.design_services,
                     //       true,
                     //       localizedStrings.gTipLabelFmtDownload ,
@@ -761,7 +761,7 @@ class _RetailHomePageState extends State<RetailHomePage>
                         cursor: SystemMouseCursors.click,
                         child: appCard(
                             context,
-                            localizedStrings.rTitleSetVariableValues,
+                            localizedStrings.menuVariableValueSetting,
                             Icons.edit_attributes_outlined,
                             true,
                             localizedStrings.rTipSetVariableValues,
@@ -806,7 +806,7 @@ class _RetailHomePageState extends State<RetailHomePage>
                         cursor: SystemMouseCursors.click,
                         child: appCard(
                             context,
-                            localizedStrings.gTitleReceiptDownload,
+                            localizedStrings.menuReceiptFormatDownload,
                             Icons.receipt,
                             true,
                             localizedStrings.gTipReceiptDownload,
@@ -823,7 +823,7 @@ class _RetailHomePageState extends State<RetailHomePage>
                         cursor: SystemMouseCursors.click,
                         child: appCard(
                             context,
-                            localizedStrings.gTitleReceiptDesign,
+                            localizedStrings.menuReceiptDesign,
                             Icons.receipt,
                             myRedeLicInfo.isValid,
                             localizedStrings.gTipReceiptDesign,
@@ -944,7 +944,10 @@ class _RetailHomePageState extends State<RetailHomePage>
 
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const ReceiptDesignPage()),
+        MaterialPageRoute(
+            builder: (context) => const ReceiptDesignPage(
+                  type: "",
+                )),
       ).then((value) => _updateStatus());
     }
   }

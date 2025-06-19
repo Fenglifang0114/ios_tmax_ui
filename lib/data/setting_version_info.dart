@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:t_max/pages/home_page_config.dart';
+import 'package:t_max/pages/home_page.dart';
 import 'package:t_max/pages/home_page_industry.dart';
 import '../pages/home_page_retail.dart';
 import 'company_info.dart';
@@ -11,15 +11,15 @@ import 'encrypt_data.dart';
 const int tConfig = 1;
 const int tIndustry = 2;
 const int tRetail = 3;
-int mySystemVersion = 2;
-const String appTConfig = "T-CONFIG";
-const String appTIndustrial = "T-Industry";
-const String appTRetail = "T-RETAIL";
+int mySystemVersion = 1;
+const String appTConfig = "T-Connect";
+const String appTIndustrial = "T-Connect";
+const String appTRetail = "T-Connect";
 
 class SystemVersionInfo {
   Widget getHomePage() {
     if (mySystemVersion == tConfig) {
-      return const HomePage();
+      return const MyHomePage();
     } else if (mySystemVersion == tIndustry) {
       return const IndustryHomePage();
     } else {

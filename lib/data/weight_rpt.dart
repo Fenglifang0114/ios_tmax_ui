@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import '../functions/methods.dart';
-import 'manager_scale_channel.dart';
 import 'record_data.dart';
 import 'scalecmd_data.dart';
 import 'settingparam_data.dart';
@@ -371,14 +370,14 @@ List<GridColumn> getColumns() {
 }
 
 void sendRptDataToDB(
-    List<WeightReportData> myWeightReportData, String wgtMode) {
+    List<WeightReportData> myWeightReportData, String wgtMode, int scaleId) {
   if (myWeightReportData.isEmpty) {
     return;
   }
 
   var currentData = myWeightReportData[myWeightReportData.length - 1];
   myScaleCmd.cmdMode = "add_rec";
-  myAddScaleRecord.scaleId = myDefScaleInfo.defScaleId!;
+  myAddScaleRecord.scaleId = scaleId;
   myAddScaleRecord.id = currentData.id;
   myAddScaleRecord.scaleModel = currentData.scaleModel;
   myAddScaleRecord.scaleSn = currentData.scaleSn;
@@ -402,5 +401,5 @@ void sendRptDataToDB(
   myAddScaleRecord.scaleMode = wgtMode;
 
   myScaleCmd.cmdData = jsonEncode(myAddScaleRecord);
-  PublicFunctions.sendMsg(myDefScaleInfo.defScaleId!, jsonEncode(myScaleCmd));
+  PublicFunctions.sendMsg(scaleId, jsonEncode(myScaleCmd));
 }

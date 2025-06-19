@@ -4,6 +4,8 @@ const String wedaLic = "weda";
 const String chweLic = "chwe";
 const String inweLic = "inwe";
 const String taouLic = "taou";
+const String faspLic = "fasp";
+const String foscLic = "fosc";
 
 class LicenseData {
   List<LicenseInfo> licList;
@@ -40,6 +42,8 @@ LicenseInfo myWedaLicInfo =
 LicenseInfo myChweLicInfo = LicenseInfo(false, '', '', ''); //check weighing
 LicenseInfo myInWeLicInfo = LicenseInfo(false, '', '', ''); //Increment weighing
 LicenseInfo myTaouLicInfo = LicenseInfo(false, '', '', ''); //take out scale
+LicenseInfo myFaSpInfo = LicenseInfo(false, '', '', ''); //fateSpeed scale
+LicenseInfo myFoScLicInfo = LicenseInfo(false, '', '', ''); //formula scale
 
 class LicenseSetting {
   void setLicInfo() {
@@ -70,7 +74,12 @@ class LicenseSetting {
             myTaouLicInfo = item;
             myLicenseInfo = item;
             break;
-          case '':
+          case faspLic:
+            myFaSpInfo = item;
+            myLicenseInfo = item;
+            break;
+          case foscLic:
+            myFoScLicInfo = item;
             myLicenseInfo = item;
             break;
           default:

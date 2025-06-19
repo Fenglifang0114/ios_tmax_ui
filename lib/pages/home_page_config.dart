@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:t_max/pages/wifi_setting_page.dart';
 import '../data/comscaleinfo_data.dart';
 import '../data/manager_scale_channel.dart';
 import 'package:t_max/data/dialog_data.dart';
@@ -9,7 +10,6 @@ import 'package:t_max/data/license_data.dart';
 import 'package:t_max/data/scale_info_from_scale.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/pages/labeldesign_page.dart';
-import 'package:t_max/pages/wifisetting_page.dart';
 import 'package:window_manager/window_manager.dart';
 import '../data/company_info.dart';
 import '../data/downloadresponse.dart';
@@ -33,7 +33,7 @@ import 'custom_serial_protocol_page.dart';
 import 'down_recipt_fmt_page.dart';
 import 'lable_down_prn_fmt_page.dart';
 import 'receipt_design_page.dart';
-import 'scale_manager_page.dart';
+// import 'scale_manager_page.dart';
 import 'set_system_parameter.dart';
 import 'set_system_time.dart';
 import 'package:tray_manager/tray_manager.dart';
@@ -570,26 +570,26 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
                   //         true),
                   //   ),
                   // ),
-                  MouseRegion(
-                    cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                    child: GestureDetector(
-                      onTap: () {
-                        stopCheckSerialPort();
-                        setState(() {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const ScaleManagerPage()),
-                          ).then((value) => _updateStatus());
-                        });
-                      },
-                      child: customFunctionCard(
-                          context,
-                          localizedStrings.m_scale_title,
-                          Icons.schema_outlined,
-                          true),
-                    ),
-                  ),
+                  // MouseRegion(
+                  //   cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                  //   child: GestureDetector(
+                  //     onTap: () {
+                  //       stopCheckSerialPort();
+                  //       setState(() {
+                  //         Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute(
+                  //               builder: (context) => const ScaleManagerPage()),
+                  //         ).then((value) => _updateStatus());
+                  //       });
+                  //     },
+                  //     child: customFunctionCard(
+                  //         context,
+                  //         localizedStrings.menuMultiScaleManagement,
+                  //         Icons.schema_outlined,
+                  //         true),
+                  //   ),
+                  // ),
                   MouseRegion(
                       cursor: SystemMouseCursors.click, // 设置光标为手的形状
                       child: GestureDetector(
@@ -608,7 +608,7 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
                         },
                         child: customFunctionCard(
                             context,
-                            localizedStrings.cTitleDeviceTime,
+                            localizedStrings.menuDeviceTime,
                             Icons.date_range,
                             true),
                       )),
@@ -683,7 +683,7 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
                             },
                             child: customFunctionCard(
                                 context,
-                                localizedStrings.wifi_setting_title,
+                                localizedStrings.menuWifiSetting,
                                 Icons.wifi,
                                 (myScreenMgr.wifiOrBt.contains('wifi'))),
                           )),
@@ -703,7 +703,7 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
                           },
                           child: customFunctionCard(
                               context,
-                              localizedStrings.gTitleUpdateFirmware,
+                              localizedStrings.menuFirmwareUpdate,
                               Icons.cloud_upload_outlined,
                               true),
                         ),
@@ -722,7 +722,7 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
                           },
                           child: customFunctionCard(
                               context,
-                              localizedStrings.gTitleLabelFmtDownload,
+                              localizedStrings.menuLabelFormatDownload,
                               Icons.design_services,
                               true),
                         ),
@@ -740,7 +740,7 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
                           },
                           child: customFunctionCard(
                             context,
-                            localizedStrings.gTitleReceiptDownload,
+                            localizedStrings.menuReceiptFormatDownload,
                             Icons.receipt,
                             true,
                           ),
@@ -824,7 +824,7 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
                                 : null,
                             child: customFunctionCard(
                                 context,
-                                localizedStrings.label_design_title,
+                                localizedStrings.menuLabelDesign,
                                 Icons.design_services,
                                 myTConLicInfo.isValid),
                           ),
@@ -839,7 +839,7 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
                                 : null,
                             child: customFunctionCard(
                               context,
-                              localizedStrings.gTitleReceiptDesign,
+                              localizedStrings.menuReceiptDesign,
                               Icons.receipt,
                               myTConLicInfo.isValid,
                             ),
@@ -882,7 +882,7 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
                                 : null,
                             child: customFunctionCard(
                                 context,
-                                localizedStrings.gTitleSerialOutput,
+                                localizedStrings.menuSerialOutputDesign,
                                 Icons.usb_sharp,
                                 myTConLicInfo.isValid),
                           ),
@@ -907,7 +907,7 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
                                   : null,
                               child: customFunctionCard(
                                   context,
-                                  localizedStrings.abnormal_data_title,
+                                  localizedStrings.menuBasicDataCollection,
                                   Icons.warning,
                                   myTConLicInfo.isValid),
                             )),
@@ -931,7 +931,7 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
                                   : null,
                               child: customFunctionCard(
                                   context,
-                                  localizedStrings.cTitleParameterSet,
+                                  localizedStrings.menuParameterSetting,
                                   Icons.tune_outlined,
                                   myTConLicInfo.isValid),
                             )),
@@ -1040,7 +1040,8 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
 
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const ReceiptDesignPage()),
+        MaterialPageRoute(
+            builder: (context) => const ReceiptDesignPage(type: "")),
       ).then((value) => _updateStatus());
     }
   }
@@ -1051,7 +1052,10 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
 
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const LabelDesignPage()),
+        MaterialPageRoute(
+            builder: (context) => const LabelDesignPage(
+                  type: "",
+                )),
       ).then((value) => _updateStatus());
     }
   }

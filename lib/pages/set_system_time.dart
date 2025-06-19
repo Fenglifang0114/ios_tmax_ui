@@ -1,14 +1,18 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:t_max/data/home_page_common_data.dart';
+import 'package:t_max/data/scale_info_from_db.dart';
+import 'package:t_max/dialog/custom_dialog_tip.dart';
+import 'package:t_max/widget/common_widget.dart';
+import 'package:t_max/widget/scale_list.dart';
 import '../data/downloadresponse.dart';
-import '../data/manager_scale_channel.dart';
 import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
 import '../data/common.dart';
 import '../data/language.dart';
 import '../data/timer_manager.dart';
 import '../widget/page_head.dart';
+import 'package:adoptive_calendar/adoptive_calendar.dart';
 
 class SetSystemTimePage extends StatefulWidget {
   const SetSystemTimePage({super.key});
@@ -21,6 +25,11 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
   dynamic eventBus2;
   dynamic eventbus3;
 
+  int clickedRow = -1; //点击的行
+  int selScaleId = -1; //选择的秤ID
+  bool IsGettingTime = false; //是否正在获取时间
+  bool IsSettingTime = false; //是否正在设置时间
+
   DateTime customDate = DateTime.now();
   DateTime customTime = DateTime.now();
   DateTime deviceTime = DateTime.now();
@@ -31,40 +40,42 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
 
   Timer? _timer;
 
+//初始化秤列表
+
   @override
   void initState() {
     super.initState();
     cntScaleTimerMgr.stopCntScaleTimer();
-    PublicFunctions.getScaleTime(myDefScaleInfo.defScaleId!);
-
     eventBus1 = eventBus.on<EventSetScaleTime>().listen((event) {
       if (mounted) {
+        setState(() {
+          IsSettingTime = false;
+        });
         myRespDataFromScale = event.obj;
         if (myRespDataFromScale.msgBody.isNotEmpty) {
           if (myRespDataFromScale.msgBody.contains('ok')) {
-            cntScaleTimerMgr.stopCntScaleTimer();
-            PublicFunctions.getScaleTime(myDefScaleInfo.defScaleId!);
+            // cntScaleTimerMgr.stopCntScaleTimer();
+            PublicFunctions.getScaleTime(selScaleId);
+            setState(() {
+              IsGettingTime = true;
+            });
           } else {
             stopTimer();
-            cntScaleTimerMgr.startCntScaleTimer(5);
+            // cntScaleTimerMgr.startCntScaleTimer(5);
           }
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(
-                  (myRespDataFromScale.msgBody.contains('ok'))
-                      ? myRespDataFromScale.msgBody
-                      : myRespDataFromScale.msgBody,
-                  style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
-              duration: const Duration(seconds: 3),
-              backgroundColor: (myRespDataFromScale.msgBody.contains('ok'))
-                  ? Theme.of(context).colorScheme.onTertiaryFixedVariant
-                  : Theme.of(context).colorScheme.error));
+
+          myRespDataFromScale.msgBody.contains('ok')
+              ? showTipInfo(localizedStrings.fSuccessMsg, context)
+              : showTipInfo(myRespDataFromScale.msgBody, context);
         }
       }
     });
 
     eventBus2 = eventBus.on<EventGetScaleTime>().listen((event) {
       if (mounted) {
+        setState(() {
+          IsGettingTime = false;
+        });
         myRespDataFromScale = event.obj;
         if (myRespDataFromScale.msgBody.contains('ok')) {
           String dataStr = myRespDataFromScale.msgBody;
@@ -81,35 +92,18 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
               });
             } else {
               stopTimer();
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: const Text('failed to get time',
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.normal)), ////此处需要秤回复
-                  duration: const Duration(seconds: 3),
-                  backgroundColor: Theme.of(context).colorScheme.error));
+              showTipInfo(localizedStrings.gTipFailedGetTime, context);
             }
           } else {
             stopTimer();
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: const Text('failed to get time',
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.normal)), ////此处需要秤回复
-                duration: const Duration(seconds: 3),
-                backgroundColor: Theme.of(context).colorScheme.error));
+            showTipInfo(localizedStrings.gTipFailedGetTime, context);
           }
         } else {
           stopTimer();
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(myRespDataFromScale.msgBody,
-                  style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
-              duration: const Duration(seconds: 3),
-              backgroundColor: Theme.of(context).colorScheme.error));
+          showTipInfo(myRespDataFromScale.msgBody, context);
         }
-        cntScaleTimerMgr.stopCntScaleTimer();
-        cntScaleTimerMgr.startCntScaleTimer(5);
+        // cntScaleTimerMgr.stopCntScaleTimer();
+        // cntScaleTimerMgr.startCntScaleTimer(5);
       }
     });
 
@@ -149,6 +143,17 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
     });
   }
 
+  //切换的时候要修改掉秤的信息
+  void changeScale(int scaleId) {
+    setState(() {
+      selScaleId = scaleId;
+      PublicFunctions.getScaleTime(selScaleId);
+      setState(() {
+        IsGettingTime = true;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -158,224 +163,259 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
   Widget firstLayout(context, width) {
     return Container(
         width: width,
-        decoration:
-            BoxDecoration(color: Theme.of(context).colorScheme.secondaryFixed),
+        decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          // mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            pageHeadDefScale(
-              context,
-              localizedStrings.cTitleDeviceTime,
-              localizedStrings.gTipDeviceTimePageHelp,
-            ),
-            const SizedBox(height: 5),
+            // pageHeadInfo(
+            //     context,
+            //     width - headWidthPadding,
+            //     localizedStrings.menuDeviceTime,
+            //     localizedStrings.gTipDeviceTimePageHelp),
             Expanded(
-              flex: 3,
-              child: Container(
-                color: Theme.of(context).colorScheme.surfaceTint,
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Container(
-                        height: 50,
-                        color: Theme.of(context).colorScheme.surfaceTint,
-                        alignment: Alignment.centerLeft,
-                        child: Row(
-                          children: [
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            SizedBox(
-                              width: 400,
-                              child: Text.rich(
-                                TextSpan(
-                                    text:
-                                        "${deviceTime.year}-${pad0(deviceTime.month)}-${pad0(deviceTime.day)} ${pad0(deviceTime.hour)}:${pad0(deviceTime.minute)}:${pad0(deviceTime.second)}",
-                                    style: TextStyle(
-                                      fontSize: 30.0,
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                      height: 1.5,
-                                    )),
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            OutlinedButton(
-                              onPressed: () {
-                                var timestamp = (DateTime.now()
-                                            .toUtc()
-                                            .millisecondsSinceEpoch /
-                                        1000)
-                                    .truncate();
-                                cntScaleTimerMgr.stopCntScaleTimer();
-                                PublicFunctions.setScaleTime(
-                                    timestamp.toString(),
-                                    myDefScaleInfo.defScaleId!);
+                child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                  Container(
+                    width: scaleListWidth,
+                    color: Theme.of(context).colorScheme.surfaceTint,
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.height,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          SizedBox(
+                            height: regularPadding,
+                          ),
+                          Expanded(
+                            child: NewAllScaleListWidget(
+                              listWidth: scaleListWidth, // 列表宽度
+                              selScaleId: selScaleId,
+                              clickScale: (scale) {
+                                if (IsGettingTime || IsSettingTime) {
+                                  showTipInfo(
+                                      localizedStrings.gTipPerformingOperation,
+                                      context);
+                                  return;
+                                }
+                                setState(() {
+                                  changeScale(scale.scaleId);
+                                });
                               },
-                              child: btnStyle(localizedStrings.cBtnSyncPcTime),
-                            ),
-                          ],
-                        )),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Row(children: [
-                      Expanded(
-                        flex: 10,
-                        child: Container(
-                          color: Theme.of(context).colorScheme.surfaceTint,
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
-                            child: Row(
-                              children: [
-                                OutlinedButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      isManaul = true;
-                                      customDate = customTime = DateTime.now();
-                                      String formattedDateTime =
-                                          DateFormat('yyyy-MM-dd HH:mm:ss')
-                                              .format(DateTime.now());
-                                      manualTimeCtl.text = formattedDateTime;
-                                    });
-                                  },
-                                  child: btnStyle(localizedStrings.cBtnSetTime),
-                                ),
-                              ],
                             ),
                           ),
-                        ),
+                        ],
                       ),
-                    ]),
-                    const SizedBox(
-                      height: 40,
                     ),
-                    isManaul
-                        ? Row(
-                            children: [
-                              const SizedBox(
-                                width: 20,
-                              ),
-                              SizedBox(
-                                width: 400,
-                                child: TextField(
-                                  controller: manualTimeCtl,
-                                  readOnly: true,
-                                  style: const TextStyle(fontSize: 30),
-                                  maxLines: 1,
+                  ),
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 1,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .outlineVariant, //  分隔条颜色
+                        ),
+                        myAllScalesList.isEmpty
+                            ? SizedBox()
+                            : Expanded(
+                                child: Container(
+                                alignment: Alignment.center,
+                                child: Column(
+                                  children: [
+                                    SizedBox(
+                                      height: 50,
+                                    ),
+                                    Container(
+                                      height: scaleItemHeight,
+                                      width: 500,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .surfaceContainerLow,
+                                      alignment: Alignment.center,
+                                      child: Text.rich(
+                                        TextSpan(
+                                            text:
+                                                "${deviceTime.year}-${pad0(deviceTime.month)}-${pad0(deviceTime.day)} ${pad0(deviceTime.hour)}:${pad0(deviceTime.minute)}:${pad0(deviceTime.second)}",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .headlineMedium!
+                                                .apply(
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .primary)),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 100,
+                                    ),
+                                    Container(
+                                        height: leftBarHeight,
+                                        width: 500,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .surfaceContainerLow,
+                                        alignment: Alignment.center,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Expanded(
+                                                child: Container(
+                                              padding: EdgeInsets.only(
+                                                  left: regularPadding,
+                                                  right: regularPadding),
+                                              child: Text(
+                                                localizedStrings.gBtnSyncPcTime,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodySmall!
+                                                    .apply(
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .onSurface),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            )),
+                                            Expanded(
+                                                child: Container(
+                                              height: scaleInnerItemHeight,
+                                              padding: EdgeInsets.only(
+                                                  left: regularPadding,
+                                                  right: regularPadding),
+                                              child: showTextButton(
+                                                  context,
+                                                  btnHeight,
+                                                  localizedStrings.gBtnSyncTime,
+                                                  () {
+                                                var timestamp = (DateTime.now()
+                                                            .toUtc()
+                                                            .millisecondsSinceEpoch /
+                                                        1000)
+                                                    .truncate();
+                                                // cntScaleTimerMgr.stopCntScaleTimer();
+                                                PublicFunctions.setScaleTime(
+                                                    timestamp.toString(),
+                                                    selScaleId);
+                                                setState(() {
+                                                  IsSettingTime = true;
+                                                });
+                                              },
+                                                  Theme.of(context)
+                                                      .colorScheme
+                                                      .primary,
+                                                  Theme.of(context)
+                                                      .colorScheme
+                                                      .secondaryContainer,
+                                                  Theme.of(context)
+                                                      .colorScheme
+                                                      .onPrimary),
+                                            ))
+                                          ],
+                                        )),
+                                    SizedBox(
+                                      height: largePadding,
+                                    ),
+                                    Container(
+                                        height: leftBarHeight,
+                                        width: 500,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .surfaceContainerLow,
+                                        alignment: Alignment.center,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Expanded(
+                                                child: Container(
+                                              padding: EdgeInsets.only(
+                                                  left: regularPadding,
+                                                  right: regularPadding),
+                                              child: Text(
+                                                localizedStrings.gBtnSelectDate,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodySmall!
+                                                    .apply(
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .onSurface),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            )),
+                                            Expanded(
+                                                child: Container(
+                                              height: scaleInnerItemHeight,
+                                              padding: EdgeInsets.only(
+                                                  left: regularPadding,
+                                                  right: regularPadding),
+                                              child: showTextButton(
+                                                  context,
+                                                  btnHeight,
+                                                  localizedStrings
+                                                      .gBtnSetTime, () async {
+                                                DateTime? pickedDate =
+                                                    await showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return AdoptiveCalendar(
+                                                      initialDate:
+                                                          DateTime.now(),
+                                                      selectedColor:
+                                                          Theme.of(context)
+                                                              .colorScheme
+                                                              .primary,
+                                                      action: true,
+                                                    );
+                                                  },
+                                                );
+                                                setState(() {
+                                                  if (pickedDate != null) {
+                                                    var timestamp = (pickedDate
+                                                                .toUtc()
+                                                                .millisecondsSinceEpoch /
+                                                            1000)
+                                                        .truncate();
+
+                                                    // 停止计时器
+                                                    // cntScaleTimerMgr
+                                                    //     .stopCntScaleTimer();
+
+                                                    // 同步时间到秤
+                                                    PublicFunctions
+                                                        .setScaleTime(
+                                                      timestamp.toString(),
+                                                      selScaleId,
+                                                    );
+                                                    setState(() {
+                                                      IsSettingTime = true;
+                                                    });
+                                                  }
+                                                });
+                                              },
+                                                  Theme.of(context)
+                                                      .colorScheme
+                                                      .primary,
+                                                  Theme.of(context)
+                                                      .colorScheme
+                                                      .secondaryContainer,
+                                                  Theme.of(context)
+                                                      .colorScheme
+                                                      .onPrimary),
+                                            ))
+                                          ],
+                                        )),
+                                  ],
                                 ),
-                              ),
-                              const SizedBox(
-                                width: 20,
-                              ),
-                              OutlinedButton(
-                                  onPressed: () {
-                                    var timestamp = (customDate
-                                                .toUtc()
-                                                .millisecondsSinceEpoch /
-                                            1000)
-                                        .truncate();
-                                    cntScaleTimerMgr.stopCntScaleTimer();
-
-                                    PublicFunctions.setScaleTime(
-                                        timestamp.toString(),
-                                        myDefScaleInfo.defScaleId!);
-                                  },
-                                  child:
-                                      btnStyle(localizedStrings.cBtnSyncTime)),
-                            ],
-                          )
-                        : const SizedBox(),
-                    const SizedBox(
-                      height: 40,
+                              ))
+                      ],
                     ),
-                    isManaul
-                        ? Row(
-                            children: [
-                              const SizedBox(
-                                width: 20,
-                              ),
-                              OutlinedButton(
-                                onPressed: () async {
-                                  DateTime? selectDate = await showDatePicker(
-                                      context: context,
-                                      initialDate: DateTime.now(),
-                                      firstDate: DateTime(2018, 3, 5),
-                                      lastDate: DateTime(2100, 3, 5),
-                                      locale:
-                                          Locale(Intl.getCurrentLocale(), ''));
-
-                                  if (selectDate != null) {
-                                    setState(() {
-                                      customDate = selectDate;
-                                      customDate = DateTime(
-                                          customDate.year,
-                                          customDate.month,
-                                          customDate.day,
-                                          customTime.hour,
-                                          customTime.minute,
-                                          0);
-                                      manualTimeCtl.text =
-                                          DateFormat('yyyy-MM-dd HH:mm:ss')
-                                              .format(customDate);
-                                    });
-                                  }
-                                },
-                                child: SizedBox(
-                                    width: 200,
-                                    child: btnStyle(
-                                        localizedStrings.cBtnSelectDate)),
-                              ),
-                              const SizedBox(
-                                width: 20,
-                              ),
-                              OutlinedButton(
-                                  onPressed: () async {
-                                    TimeOfDay? selectedTime =
-                                        await showTimePicker(
-                                      context: context,
-                                      initialTime: TimeOfDay.now(),
-                                    );
-
-                                    if (selectedTime != null) {
-                                      String formattedTime =
-                                          DateFormat('yyyy-MM-dd HH:mm:ss')
-                                              .format(DateTime(
-                                                  customDate.year,
-                                                  customDate.month,
-                                                  customDate.day,
-                                                  selectedTime.hour,
-                                                  selectedTime.minute,
-                                                  0));
-                                      customTime = DateTime(
-                                          customDate.year,
-                                          customDate.month,
-                                          customDate.day,
-                                          selectedTime.hour,
-                                          selectedTime.minute,
-                                          0);
-                                      customDate = customTime;
-                                      manualTimeCtl.text = formattedTime;
-                                    }
-                                  },
-                                  child: btnStyle(
-                                      localizedStrings.cBtnSelectTime)),
-                              const SizedBox(
-                                width: 20,
-                              ),
-                            ],
-                          )
-                        : const SizedBox(),
-                  ],
-                ),
-              ),
-            ),
+                  ),
+                ])),
           ],
         ));
   }
@@ -388,38 +428,5 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
           textAlign: TextAlign.center,
           style: TextStyle(color: Theme.of(context).colorScheme.primary),
         ));
-  }
-
-  void showConfirmationDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext ctx) {
-        return AlertDialog(
-          title: Text(
-            localizedStrings.gTitleConfirm,
-            style: TextStyle(color: Theme.of(context).colorScheme.primary),
-          ),
-          content: Text(localizedStrings.data_delete_confirm),
-          actions: <Widget>[
-            OutlinedButton(
-              child: Text(localizedStrings.gBtnCancel),
-              onPressed: () {
-                Navigator.of(context).pop(false); // 不跳转
-              },
-            ),
-            OutlinedButton(
-              child: Text(localizedStrings.gBtnConfirm),
-              onPressed: () {
-                Navigator.of(context).pop(true); // 跳转
-              },
-            ),
-          ],
-        );
-      },
-    ).then((confirmed) {
-      if (confirmed) {
-        PublicFunctions.deleteAllRecordsTakeOut(myDefScaleInfo.defScaleId!);
-      }
-    });
   }
 }

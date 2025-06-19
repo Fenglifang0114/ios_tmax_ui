@@ -264,7 +264,6 @@ class _StickyTableState<T> extends State<StickyTable<T>> {
           ),
         );
 
-    // const titleTextColor = Color(0xff333333);
     const bodyTextColor = Color(0xff666666);
 
     ///内容
@@ -293,7 +292,6 @@ class _StickyTableState<T> extends State<StickyTable<T>> {
                       alignment: e.alignment,
                       height: widget.titleHeight,
                       padding: widget.cellPadding ?? const EdgeInsets.all(10),
-                      // color: Color(0xffE6EEF4),
                       child: DefaultTextStyle(
                         style: TextStyle(
                           color: Theme.of(context)

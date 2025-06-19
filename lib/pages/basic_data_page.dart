@@ -1,17 +1,17 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:t_max/data/downloadresponse.dart';
+import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/olul_err_data.dart';
-
+import 'package:t_max/data/scale_info_from_db.dart';
+import 'package:t_max/dialog/custom_dialog_tip.dart';
+import 'package:t_max/widget/common_widget.dart';
+import 'package:t_max/widget/scale_list.dart';
 import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
-
-import '../data/comscaleinfo_data.dart';
 import '../data/manager_scale_channel.dart';
 import '../data/language.dart';
-
-import '../data/scale_list_data.dart';
 import '../data/timer_manager.dart';
-import '../widget/custom_button.dart';
 import '../widget/page_head.dart';
 
 class BasicDataPage extends StatefulWidget {
@@ -24,65 +24,36 @@ class BasicDataPageState extends State<BasicDataPage> {
   dynamic eventBus1;
   dynamic eventBus2;
 
-  bool isWeightDataBtn = true;
+  bool enabledGetDataBtn = true;
 
   TextEditingController olCntCtl = TextEditingController(text: '');
-  List<NetScaleInfoLocal> scaleNetItems = [];
-  NetScaleInfoLocal defNetScaleInfo = NetScaleInfoLocal();
-  int selScaleId = -1;
 
-  void initScaleList() {
-    scaleNetItems = myNetScaleList;
-    selScaleId = myDefScaleInfo.defScaleId!;
-    if (myNetScaleList.isNotEmpty) {
-      defNetScaleInfo = NetScaleListMgr.findScaleInfo(
-          myNetScaleList, myDefScaleInfo.defScaleId!);
-    }
-  }
+  int selScaleId = -1;
 
   @override
   void initState() {
     super.initState();
-    initScaleList();
     cntScaleTimerMgr.stopCntScaleTimer();
-    PublicFunctions.getBasicData(myDefScaleInfo.defScaleId!);
-
-    isWeightDataBtn = false;
-
     eventBus1 = eventBus.on<EventGetBasicData>().listen((event) {
       if (mounted) {
-        isWeightDataBtn = true;
+        enabledGetDataBtn = true;
         myBasicErrInfo = BasicErrInfo(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         String jsonString = event.obj;
         setState(() {
-          if (jsonString.contains('fail') || jsonString.contains('no')) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text(jsonString,
-                    style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.normal)), ////此处需要秤回复
-                duration: const Duration(seconds: 3),
-                backgroundColor: Theme.of(context).colorScheme.error));
+          if (jsonString.contains('fail') || jsonString.contains('time out')) {
+            showTipInfo(localizedStrings.gTipTimeOut, context);
+            for (var item in myAllScalesList) {
+              if (item.scaleId == selScaleId) {
+                item.isOnline = false;
+              }
+            }
           } else {
             try {
               final jsonResponse = json.decode(jsonString);
               myBasicErrInfo = BasicErrInfo.fromJson(jsonResponse);
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: const Text('OK',
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.normal)), ////此处需要秤回复
-                  duration: const Duration(seconds: 3),
-                  backgroundColor:
-                      Theme.of(context).colorScheme.onTertiaryFixedVariant));
+              showTipInfo(localizedStrings.fSuccessMsg, context);
             } catch (e) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(jsonString,
-                      style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.normal)), ////此处需要秤回复
-                  duration: const Duration(seconds: 3),
-                  backgroundColor: Theme.of(context).colorScheme.error));
+              showTipInfo(jsonString, context);
             }
           }
         });
@@ -92,7 +63,6 @@ class BasicDataPageState extends State<BasicDataPage> {
       //修改了ScaleId
       if (mounted) {
         int scaleId = event.obj;
-
         if (scaleId != selScaleId) {
           setState(() {
             selScaleId = scaleId;
@@ -116,208 +86,198 @@ class BasicDataPageState extends State<BasicDataPage> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(
-          title: Container(
-            child: pageHeadDefScale(
-                context,
-                localizedStrings.abnormal_data_title,
-                localizedStrings.gTipBasicDataPageHelp),
-          ),
-          leading: IconTheme(
-              data: IconThemeData(
-                  color: Theme.of(context).colorScheme.primary // 设置抽屉图标颜色
-                  ),
-              child: Builder(builder: (BuildContext context) {
-                return IconButton(
-                  icon: const Icon(Icons.menu),
-                  onPressed: () {
-                    Scaffold.of(context).openDrawer();
-                  },
-                );
-              }))),
       body: firstLayout(context, width),
-      drawer: Drawer(
-          child: myWeighingScaleListDrawer(
-              context,
-              localizedStrings.gTipScaleList,
-              scaleNetItems,
-              selScaleId) // showNetScaleList(),
-          ),
     );
   }
 
   Widget firstLayout(context, width) {
     return Container(
         width: width,
-        // decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceTint,
-        // ),
+        decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          // mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(
-                child: SizedBox(
-              width: 300,
-              child: CustomOutlinedButton(
-                btnWidth: 200,
-                btnHeight: 50,
-                icon: Icons.date_range,
-                text: localizedStrings.abnormal_weight,
-                onPressed: isWeightDataBtn
-                    ? () {
-                        PublicFunctions.getBasicData(
-                            myDefScaleInfo.defScaleId!);
-                        setState(() {
-                          isWeightDataBtn = false;
-                        });
-                      }
-                    : null,
-              ),
-            )),
+            pageHeadInfo(
+                context,
+                width - headWidthPadding,
+                localizedStrings.menuBasicDataCollection,
+                localizedStrings.gTipBasicDataPageHelp),
             Expanded(
-              child: SizedBox(
-                width: width,
-                child: ListView(
-                  children: [
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+              child:
+                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Container(
+                  width: scaleListWidth,
+                  color: Theme.of(context).colorScheme.surfaceTint,
+                  child: SizedBox(
+                    height: MediaQuery.of(context).size.height,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
                       children: [
                         SizedBox(
-                          width: width / 3,
-                          child: customCard(
-                              context,
-                              localizedStrings.cTipPowerOnCnt,
-                              myBasicErrInfo.powerOnCnt.toString()),
+                          height: regularPadding,
                         ),
-                        SizedBox(
-                          width: width / 3,
-                          child: customCard(
-                              context,
-                              localizedStrings.cTipRunningTime,
-                              myBasicErrInfo.runningTime.toString()),
+                        Expanded(
+                          child: NewAllScaleListWidget(
+                            listWidth: scaleListWidth, // 列表宽度
+                            selScaleId: selScaleId,
+                            clickScale: (scale) {
+                              if (!enabledGetDataBtn) {
+                                showTipInfo(
+                                    localizedStrings.gTipPerformingOperation,
+                                    context);
+                                return;
+                              }
+                              setState(() {
+                                changeScale(scale.scaleId);
+                              });
+                            },
+                          ),
                         ),
                       ],
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        SizedBox(
-                          width: width / 3,
-                          child: customCard(
-                              context,
-                              localizedStrings.cTipPowerOffCnt,
-                              myBasicErrInfo.forcedShutdownCnt.toString()),
-                        ),
-                        SizedBox(
-                          width: width / 3,
-                          child: customCard(
-                              context,
-                              localizedStrings.cTipWeighingCount,
-                              myBasicErrInfo.wgtCnt.toString()),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        SizedBox(
-                          width: width / 3,
-                          child: customCard(
-                              context,
-                              localizedStrings.cTipOlTime,
-                              myBasicErrInfo.olTime.toString()),
-                        ),
-                        SizedBox(
-                          width: width / 3,
-                          child: customCard(
-                              context,
-                              localizedStrings.cTipUlTime,
-                              myBasicErrInfo.ulTime.toString()),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        SizedBox(
-                          width: width / 3,
-                          child: customCard(
-                              context,
-                              localizedStrings.cTipErr4Cnt,
-                              myBasicErrInfo.err4Cnt.toString()),
-                        ),
-                        SizedBox(
-                          width: width / 3,
-                          child: customCard(
-                              context,
-                              localizedStrings.cTipErr19Cnt,
-                              myBasicErrInfo.err19Cnt.toString()),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        SizedBox(
-                          width: width / 3,
-                          child: customCard(
-                              context,
-                              localizedStrings.cTipCalswitchCnt,
-                              myBasicErrInfo.calSwitchCnt.toString()),
-                        ),
-                        SizedBox(
-                          width: width / 3,
-                          child: customCard(
-                              context,
-                              localizedStrings.cTipCalCnt,
-                              myBasicErrInfo.caliCnt.toString()),
-                        ),
-                      ],
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+                Container(
+                  width: 1,
+                  color: Theme.of(context).colorScheme.outlineVariant, //  分隔条颜色
+                ),
+                myAllScalesList.isEmpty
+                    ? SizedBox()
+                    : Expanded(
+                        child: Container(
+                        padding: const EdgeInsets.all(largePadding),
+                        child: Column(children: [
+                          Expanded(
+                              child: Column(children: [
+                            showTitleItem(
+                              Theme.of(context).colorScheme.surfaceContainerLow,
+                              localizedStrings.gTipInformation,
+                              localizedStrings.gTipValue,
+                              localizedStrings.gTipInformation,
+                              localizedStrings.gTipValue,
+                            ),
+                            showBasicDataItem(
+                                Theme.of(context).colorScheme.surface,
+                                localizedStrings.cTipPowerOnCnt,
+                                myBasicErrInfo.powerOnCnt.toString(),
+                                localizedStrings.cTipRunningTime,
+                                myBasicErrInfo.runningTime.toString()),
+                            showBasicDataItem(
+                                Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainerLow,
+                                localizedStrings.cTipPowerOffCnt,
+                                myBasicErrInfo.forcedShutdownCnt.toString(),
+                                localizedStrings.cTipWeighingCount,
+                                myBasicErrInfo.wgtCnt.toString()),
+                            showBasicDataItem(
+                                Theme.of(context).colorScheme.surface,
+                                localizedStrings.cTipOlTime,
+                                myBasicErrInfo.olTime.toString(),
+                                localizedStrings.cTipUlTime,
+                                myBasicErrInfo.ulTime.toString()),
+                            showBasicDataItem(
+                              Theme.of(context).colorScheme.surfaceContainerLow,
+                              localizedStrings.cTipCalswitchCnt,
+                              myBasicErrInfo.calSwitchCnt.toString(),
+                              localizedStrings.cTipCalCnt,
+                              myBasicErrInfo.caliCnt.toString(),
+                            ),
+                            showBasicDataItem(
+                                Theme.of(context).colorScheme.surface,
+                                localizedStrings.cTipErr4Cnt,
+                                myBasicErrInfo.err4Cnt.toString(),
+                                localizedStrings.cTipErr19Cnt,
+                                myBasicErrInfo.err19Cnt.toString()),
+                          ])),
+                          Container(
+                            child: showTextButton(
+                                context,
+                                btnHeight,
+                                localizedStrings.gBtnGetBasicData,
+                                enabledGetDataBtn
+                                    ? () {
+                                        PublicFunctions.getBasicData(
+                                            selScaleId);
+                                        setState(() {
+                                          enabledGetDataBtn = false;
+                                        });
+                                      }
+                                    : null,
+                                Theme.of(context).colorScheme.onPrimary,
+                                Theme.of(context).colorScheme.primary,
+                                Theme.of(context).colorScheme.onPrimary),
+                          ),
+                        ]),
+                      )),
+              ]),
             ),
           ],
         ));
   }
 
-  Widget customCard(BuildContext context, String titleName, String value) {
-    return Card(
-        elevation: 2.0,
-        shadowColor: Theme.of(context).colorScheme.primary,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-        margin: const EdgeInsets.all(10),
-        color: Theme.of(context).colorScheme.surfaceTint,
-        child: SizedBox(
-            height: 80,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                const SizedBox(
-                  width: 20,
-                ),
-                Expanded(
-                  child: Text(
-                    titleName,
-                    overflow: TextOverflow.visible,
-                  ),
-                ),
-                SizedBox(
-                  width: 120,
-                  child: Text(
-                    value,
-                    overflow: TextOverflow.visible,
-                  ),
-                ),
-              ],
-            )));
+  Widget showTextInfo(String text) {
+    return Expanded(
+        child: Text(
+      text,
+      style: Theme.of(context).textTheme.bodySmall!.apply(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+      overflow: TextOverflow.ellipsis,
+    ));
+  }
+
+  Widget showTitleInfo(String text) {
+    return Expanded(
+        child: Text(
+      text,
+      style: Theme.of(context).textTheme.bodySmall!.apply(
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+      overflow: TextOverflow.ellipsis,
+    ));
+  }
+
+  Widget showTitleItem(
+      Color color, String text1, String text2, String text3, String text4) {
+    return Container(
+      height: btnHeight,
+      color: color,
+      child: Row(
+        children: [
+          showTitleInfo(text1),
+          showTitleInfo(text2),
+          showTitleInfo(text3),
+          showTitleInfo(text4),
+        ],
+      ),
+    );
+  }
+
+  Widget showBasicDataItem(
+      Color color, String text1, String text2, String text3, String text4) {
+    return Container(
+      height: btnHeight,
+      color: color,
+      child: Row(
+        children: [
+          showTextInfo(text1),
+          showTextInfo(text2),
+          showTextInfo(text3),
+          showTextInfo(text4),
+        ],
+      ),
+    );
+  }
+
+  //切换的时候要修改掉秤的信息
+  void changeScale(int scaleId) {
+    // PublicFunctions.stopWeight(selScaleId);
+    setState(() {
+      selScaleId = scaleId;
+    });
+
+    // PublicFunctions.getWeight(scaleId);
   }
 }

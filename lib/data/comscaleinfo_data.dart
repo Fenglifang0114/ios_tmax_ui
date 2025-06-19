@@ -32,6 +32,8 @@ class ComScaleInfo {
 ComScaleInfo myComScaleInfo =
     ComScaleInfo(1, 1, true, "", 1, 1, 1, 1, "", "", false, "");
 
+List<ComScaleInfo> myComScaleList = []; // 用于存储 串口秤 的列表
+
 class Comportdata {
   String modelName;
   String scaSn;

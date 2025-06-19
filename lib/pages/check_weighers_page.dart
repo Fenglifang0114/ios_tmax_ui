@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+import 'package:t_max/data/home_page_common_data.dart';
 import '../../data/device_data.dart';
 import '../../data/report_data.dart';
 import '../../data/reqweightdata_data.dart';
@@ -464,7 +465,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
     eventBus12 = eventBus.on<EventUpdateSettingParam>().listen((event) {
       if (mounted) {
         setState(() {
-          PublicFunctions.getUIConfCheck(myDefScaleInfo.defScaleId!);
+          PublicFunctions.getUIConfCheck();
         });
       }
     });
@@ -611,28 +612,46 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(
-          title: Container(
-            child: pageHeadDefScale(
-                context,
-                localizedStrings.iTitleCheckWeigher,
-                localizedStrings.gTipCheckWgtPageHelp),
-          ),
-          leading: IconTheme(
-              data: IconThemeData(
-                  color: Theme.of(context).colorScheme.primary // 设置抽屉图标颜色
-                  ),
-              child: Builder(builder: (BuildContext context) {
-                return IconButton(
-                  icon: const Icon(Icons.menu),
-                  onPressed: () {
-                    Scaffold.of(context).openDrawer();
-                  },
-                );
-              }))),
-      body: _isFirstLayout
-          ? firstLayout(context, width)
-          : secondLayout(context, width),
+      // appBar: AppBar(
+      //     title: Container(
+      //       child: pageHeadDefScale(
+      //           context,
+      //           localizedStrings.menuCheckWeighing,
+      //           localizedStrings.gTipCheckWgtPageHelp),
+      //     ),
+      //     leading: IconTheme(
+      //         data: IconThemeData(
+      //             color: Theme.of(context).colorScheme.primary // 设置抽屉图标颜色
+      //             ),
+      //         child: Builder(builder: (BuildContext context) {
+      //           return IconButton(
+      //             icon: const Icon(Icons.menu),
+      //             onPressed: () {
+      //               Scaffold.of(context).openDrawer();
+      //             },
+      //           );
+      //         }))),
+      body: Container(
+          width: width,
+          decoration:
+              BoxDecoration(color: Theme.of(context).colorScheme.surface),
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                pageHeadInfo(
+                    context,
+                    width - headWidthPadding,
+                    localizedStrings.menuCheckWeighing,
+                    localizedStrings.gTipCheckWgtPageHelp),
+                Expanded(
+                    child: Container(
+                  color: Theme.of(context).colorScheme.surfaceTint,
+                  child: _isFirstLayout
+                      ? firstLayout(context, width)
+                      : secondLayout(context, width),
+                )),
+              ])),
       drawer: Drawer(
           child: myWeighingScaleListDrawer(
               context,
@@ -1886,7 +1905,7 @@ class _CheckWeighersPageState extends State<CheckWeighersPage> {
 
 // "ReqData":"{\"ScaleId\": 2, \"Product\": \"Apple\", \"Weight\": \"1.230\", \"Price\": \"3.25\"}"}
   void sendReportDataToDB() {
-    sendRptDataToDB(myWeightReportData, weighingCheckMode);
+    sendRptDataToDB(myWeightReportData, weighingCheckMode, 1);
   }
 
   bool checkWgtValue(String str) {

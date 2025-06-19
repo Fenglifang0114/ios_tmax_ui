@@ -97,7 +97,7 @@ class CableIpSettingPageState extends State<CableIpSettingPage> {
                           15,
                           ipaddressRegex,
                           _isValidIP,
-                          localizedStrings.error_ip_tip,
+                          localizedStrings.gTipErrorIp,
                           (value) {
                             setState(() {
                               _isValidIP = validateIpFlag(value);
@@ -111,7 +111,7 @@ class CableIpSettingPageState extends State<CableIpSettingPage> {
                           15,
                           ipaddressRegex,
                           _isValidMask,
-                          localizedStrings.error_ip_tip,
+                          localizedStrings.gTipErrorIp,
                           (value) {
                             setState(() {
                               _isValidMask = validateIpFlag(value);
@@ -125,7 +125,7 @@ class CableIpSettingPageState extends State<CableIpSettingPage> {
                           15,
                           ipaddressRegex,
                           _isValidGateway,
-                          localizedStrings.error_ip_tip,
+                          localizedStrings.gTipErrorIp,
                           (value) {
                             setState(() {
                               _isValidGateway = validateIpFlag(value);
@@ -142,7 +142,7 @@ class CableIpSettingPageState extends State<CableIpSettingPage> {
                           15,
                           ipaddressRegex,
                           _isValidServerIp,
-                          localizedStrings.error_ip_tip,
+                          localizedStrings.gTipErrorIp,
                           (value) {
                             setState(() {
                               _isValidServerIp = validateIpFlag(value);

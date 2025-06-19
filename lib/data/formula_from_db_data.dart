@@ -62,7 +62,7 @@ class Detail {
 
 class FormulaDetail {
   int? recId;
-  String? formulaId;
+  int? formulaRecId;
   String? materialId;
   double? materialWeight;
   double? materialPercentage;
@@ -73,7 +73,7 @@ class FormulaDetail {
 
   FormulaDetail({
     this.recId,
-    this.formulaId,
+    this.formulaRecId,
     this.materialId,
     this.materialWeight,
     this.materialPercentage,
@@ -85,7 +85,7 @@ class FormulaDetail {
 
   factory FormulaDetail.fromJson(Map<String, dynamic> json) => FormulaDetail(
         recId: json["RecId"],
-        formulaId: json["FormulaID"],
+        formulaRecId: json["FormulaRecID"],
         materialId: json["MaterialID"],
         materialWeight: (json["MaterialWeight"] as num?)?.toDouble(),
         materialPercentage: (json["MaterialPercentage"] as num?)?.toDouble(),
@@ -97,7 +97,7 @@ class FormulaDetail {
 
   Map<String, dynamic> toJson() => {
         "RecId": recId,
-        "FormulaID": formulaId,
+        "FormulaRecID": formulaRecId,
         "MaterialID": materialId,
         "MaterialWeight": materialWeight,
         "MaterialPercentage": materialPercentage,
@@ -215,6 +215,7 @@ class Header {
 
 class FormulaHeader {
   int? recId;
+  int? formulaKey;
   String? formulaId;
   String? formulaName;
   int? categoryId;
@@ -235,6 +236,7 @@ class FormulaHeader {
 
   FormulaHeader({
     this.recId,
+    this.formulaKey,
     this.formulaId,
     this.formulaName,
     this.categoryId,
@@ -256,6 +258,7 @@ class FormulaHeader {
 
   factory FormulaHeader.fromJson(Map<String, dynamic> json) => FormulaHeader(
         recId: json["RecId"],
+        formulaKey: json["FormulaKey"],
         formulaId: json["FormulaID"],
         formulaName: json["FormulaName"],
         categoryId: json["CategoryID"],
@@ -281,6 +284,7 @@ class FormulaHeader {
 
   Map<String, dynamic> toJson() => {
         "RecId": recId,
+        "FormulaKey": formulaKey,
         "FormulaID": formulaId,
         "FormulaName": formulaName,
         "CategoryID": categoryId,

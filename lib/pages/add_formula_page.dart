@@ -67,6 +67,7 @@ class AddFormulaPageState extends State<AddFormulaPage> {
     _eventbus2 = eventBus.on<EventRespAddFormulaType>().listen((event) {
       if (mounted) {
         PublicFunctions.getFormulaTypeList();
+        showTipInfo(localizedStrings.fAddSuccessMsg, context);
       }
     });
     _eventbus3 = eventBus.on<EventRespAddFormula>().listen((event) {
@@ -123,20 +124,18 @@ class AddFormulaPageState extends State<AddFormulaPage> {
             !showFlag
                 ? TextSpan(
                     text: '*',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.error, // 设置 * 为红色
-                      fontSize: 16, // 可以根据需要调整字体大小
-                    ),
+                    style: Theme.of(context).textTheme.bodySmall!.apply(
+                          color: Theme.of(context).colorScheme.error,
+                        ),
                   )
                 : TextSpan(
                     text: '',
                   ),
             TextSpan(
-              text: ' $itemName',
-              style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface,
-                  overflow: TextOverflow.ellipsis),
-            ),
+                text: ' $itemName',
+                style: Theme.of(context).textTheme.bodySmall!.apply(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    overflow: TextOverflow.ellipsis)),
           ],
         ),
       ),
@@ -150,7 +149,8 @@ class AddFormulaPageState extends State<AddFormulaPage> {
         height: 48,
         padding: const EdgeInsets.only(left: 16, right: 20),
         decoration: BoxDecoration(
-          border: Border.all(color: Color(0xFFCDD4DC)), // 设置边框颜色
+          border: Border.all(
+              color: Theme.of(context).colorScheme.outlineVariant), // 设置边框颜色
           borderRadius: BorderRadius.circular(0), // 设置圆角
         ),
         child: DropdownButton<FormulaMode>(
@@ -166,10 +166,9 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                 value: item,
                 child: Text(
                   formulaModeTranslation[item]!,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface, // 设置提示文本颜色
-                    fontSize: 14,
-                  ),
+                  style: Theme.of(context).textTheme.bodySmall!.apply(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                 ),
               );
             }).toList(),
@@ -220,7 +219,8 @@ class AddFormulaPageState extends State<AddFormulaPage> {
         height: 48,
         padding: const EdgeInsets.only(left: 16, right: 20),
         decoration: BoxDecoration(
-          border: Border.all(color: Color(0xFFCDD4DC)), // 设置边框颜色
+          border: Border.all(
+              color: Theme.of(context).colorScheme.outlineVariant), // 设置边框颜色
           borderRadius: BorderRadius.circular(0), // 设置圆角
         ),
         child: DropdownButton<FormulaWgtUnit>(
@@ -236,10 +236,9 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                 value: item,
                 child: Text(
                   item.name,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface, // 设置提示文本颜色
-                    fontSize: 14,
-                  ),
+                  style: Theme.of(context).textTheme.bodySmall!.apply(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                 ),
               );
             }).toList(),
@@ -261,7 +260,8 @@ class AddFormulaPageState extends State<AddFormulaPage> {
         height: 48,
         padding: const EdgeInsets.only(left: 16, right: 20),
         decoration: BoxDecoration(
-          border: Border.all(color: Color(0xFFCDD4DC)), // 设置边框颜色
+          border: Border.all(
+              color: Theme.of(context).colorScheme.outlineVariant), // 设置边框颜色
           borderRadius: BorderRadius.circular(0), // 设置圆角
         ),
         child: DropdownButton(
@@ -293,11 +293,9 @@ class AddFormulaPageState extends State<AddFormulaPage> {
               formulaTypeCtl.text = value.toString();
             });
           },
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-            fontSize: 14,
-            fontWeight: FontWeight.normal,
-          ),
+          style: Theme.of(context).textTheme.bodySmall!.apply(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
         ));
   }
 
@@ -307,7 +305,8 @@ class AddFormulaPageState extends State<AddFormulaPage> {
         height: 48,
         padding: const EdgeInsets.only(left: 16, right: 20),
         decoration: BoxDecoration(
-          border: Border.all(color: Color(0xFFCDD4DC)), // 设置边框颜色
+          border: Border.all(
+              color: Theme.of(context).colorScheme.outlineVariant), // 设置边框颜色
           borderRadius: BorderRadius.circular(0), // 设置圆角
         ),
         child: DropdownButton(
@@ -370,23 +369,16 @@ class AddFormulaPageState extends State<AddFormulaPage> {
               );
             });
           },
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-            fontSize: 14,
-            fontWeight: FontWeight.normal,
-          ),
+          style: Theme.of(context).textTheme.bodySmall!.apply(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
         ));
   }
 
   //输入框
   showInputBox(TextEditingController controller, String hintText) {
-    return Container(
+    return SizedBox(
       height: 48,
-      padding: const EdgeInsets.only(left: 16, right: 20),
-      decoration: BoxDecoration(
-        border: Border.all(color: Color(0xFFCDD4DC)), // 设置边框颜色
-        borderRadius: BorderRadius.circular(0), // 设置圆角
-      ),
       child: TextField(
         controller: controller,
         decoration: InputDecoration(
@@ -394,12 +386,12 @@ class AddFormulaPageState extends State<AddFormulaPage> {
           hintStyle: TextStyle(
             color: Theme.of(context).colorScheme.onSurface, // 设置提示文本颜色
           ),
-          border: InputBorder.none, // 移除默认边框
+          border: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(0.0))),
         ),
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.onSurface, // 设置输入文本颜色
-          fontSize: 14,
-        ),
+        style: Theme.of(context).textTheme.bodySmall!.apply(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
         onChanged: (value) {
           setState(() {});
         },
@@ -463,7 +455,10 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                     height: 48,
                     padding: const EdgeInsets.only(left: 16, right: 20),
                     decoration: BoxDecoration(
-                      border: Border.all(color: Color(0xFFCDD4DC)), // 设置边框颜色
+                      border: Border.all(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .outlineVariant), // 设置边框颜色
                       borderRadius: BorderRadius.circular(0), // 设置圆角
                     ),
                     alignment: Alignment.centerLeft,
@@ -666,7 +661,7 @@ class AddFormulaPageState extends State<AddFormulaPage> {
             decoration: BoxDecoration(
               color: isSelected
                   ? Theme.of(context).colorScheme.primary
-                  : Color(0xffD9D9D9),
+                  : Theme.of(context).colorScheme.surfaceContainerLow,
               border: Border(
                 right: BorderSide(
                   color: Theme.of(context).colorScheme.outline,
@@ -698,7 +693,7 @@ class AddFormulaPageState extends State<AddFormulaPage> {
               alignment: Alignment.centerLeft,
               color: isSelected
                   ? Theme.of(context).colorScheme.primary
-                  : Color(0xFFF5F5F5),
+                  : Theme.of(context).colorScheme.surfaceContainerLow,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -714,31 +709,35 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                               children: [
                                 TextSpan(
                                   text: localizedStrings.fFmaNameLabel + ':  ',
-                                  style: TextStyle(
-                                    color: isSelected
-                                        ? Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .onSurface
-                                            .withOpacity(0.5),
-                                    fontSize: 14,
-                                  ),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .apply(
+                                        color: isSelected
+                                            ? Theme.of(context)
+                                                .colorScheme
+                                                .onPrimary
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .onSurface
+                                                .withOpacity(0.5),
+                                      ),
                                 ),
                                 TextSpan(
                                   text:
                                       item.rawDataInfo.rawMaterial.materialName,
-                                  style: TextStyle(
-                                    color: isSelected
-                                        ? Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .onSurface,
-                                    fontSize: 14,
-                                  ),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .apply(
+                                        color: isSelected
+                                            ? Theme.of(context)
+                                                .colorScheme
+                                                .onPrimary
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .onSurface,
+                                      ),
                                 ),
                                 TextSpan(text: '    '),
                                 TextSpan(
@@ -746,87 +745,99 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                                           FormulaMode.wgt.name
                                       ? localizedStrings.fWeightMode + ":"
                                       : localizedStrings.fPctMode + ":",
-                                  style: TextStyle(
-                                    color: isSelected
-                                        ? Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .onSurface
-                                            .withOpacity(0.5),
-                                    fontSize: 14,
-                                  ),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .apply(
+                                        color: isSelected
+                                            ? Theme.of(context)
+                                                .colorScheme
+                                                .onPrimary
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .onSurface
+                                                .withOpacity(0.5),
+                                      ),
                                 ),
                                 TextSpan(
                                   text: item.wgt.toString(),
-                                  style: TextStyle(
-                                    color: isSelected
-                                        ? Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .onSurface,
-                                    fontSize: 14,
-                                  ),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .apply(
+                                        color: isSelected
+                                            ? Theme.of(context)
+                                                .colorScheme
+                                                .onPrimary
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .onSurface,
+                                      ),
                                 ),
                                 TextSpan(text: '    '),
                                 TextSpan(
                                   text: localizedStrings.fAllowableError + ':',
-                                  style: TextStyle(
-                                    color: isSelected
-                                        ? Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .onSurface
-                                            .withOpacity(0.5),
-                                    fontSize: 14,
-                                  ),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .apply(
+                                        color: isSelected
+                                            ? Theme.of(context)
+                                                .colorScheme
+                                                .onPrimary
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .onSurface
+                                                .withOpacity(0.5),
+                                      ),
                                 ),
                                 TextSpan(
                                   text: item.error.toString(),
-                                  style: TextStyle(
-                                    color: isSelected
-                                        ? Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .onSurface,
-                                    fontSize: 14,
-                                  ),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .apply(
+                                        color: isSelected
+                                            ? Theme.of(context)
+                                                .colorScheme
+                                                .onPrimary
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .onSurface,
+                                      ),
                                 ),
                                 TextSpan(text: '    '),
                                 TextSpan(
                                   text:
                                       localizedStrings.fIngredientRemark + ": ",
-                                  style: TextStyle(
-                                    color: isSelected
-                                        ? Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .onSurface
-                                            .withOpacity(0.5),
-                                    fontSize: 14,
-                                  ),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .apply(
+                                        color: isSelected
+                                            ? Theme.of(context)
+                                                .colorScheme
+                                                .onPrimary
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .onSurface
+                                                .withOpacity(0.5),
+                                      ),
                                 ),
                                 TextSpan(
                                   text: item.rawDataInfo.rawMaterial.ingredient,
-                                  style: TextStyle(
-                                    color: isSelected
-                                        ? Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .onSurface,
-                                    fontSize: 14,
-                                  ),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .apply(
+                                        color: isSelected
+                                            ? Theme.of(context)
+                                                .colorScheme
+                                                .onPrimary
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .onSurface,
+                                      ),
                                 ),
                               ],
                             ),
@@ -915,7 +926,7 @@ class AddFormulaPageState extends State<AddFormulaPage> {
           Container(
             width: 22,
             decoration: BoxDecoration(
-              color: Color(0xffD9D9D9),
+              color: Theme.of(context).colorScheme.surfaceContainerLow,
               border: Border(
                 right: BorderSide(
                   color: Theme.of(context).colorScheme.outline,
@@ -927,9 +938,9 @@ class AddFormulaPageState extends State<AddFormulaPage> {
             alignment: Alignment.center,
             child: Text(
               '0',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
+              style: Theme.of(context).textTheme.bodySmall!.apply(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
             ),
           ),
           SizedBox(width: 10),
@@ -937,7 +948,7 @@ class AddFormulaPageState extends State<AddFormulaPage> {
             child: Container(
               height: 48,
               alignment: Alignment.centerLeft,
-              color: Color(0xFFF5F5F5),
+              color: Theme.of(context).colorScheme.surfaceContainerLow,
               child: Row(
                 children: [
                   SizedBox(width: 10),
@@ -949,13 +960,12 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                         children: [
                           TextSpan(
                             text: localizedStrings.fFmaContainer,
-                            style: TextStyle(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurface
-                                  .withOpacity(0.5),
-                              fontSize: 14,
-                            ),
+                            style: Theme.of(context).textTheme.bodySmall!.apply(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurface
+                                      .withOpacity(0.5),
+                                ),
                           ),
                         ],
                       ),
@@ -1006,10 +1016,9 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         localizedStrings.fSetRawMaterialBtn,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface,
-                          fontSize: 16,
-                        ),
+                        style: Theme.of(context).textTheme.bodyMedium!.apply(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
                       ),
                     ))
                   ]),
@@ -1050,17 +1059,8 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                                           : localizedStrings.fPctMode + ':',
                                       false),
                                 ),
-                                Container(
+                                SizedBox(
                                     height: 48,
-                                    padding: const EdgeInsets.only(
-                                        left: 16, right: 20),
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .outline, // 设置边框颜色
-                                      width: 1, // 设置边框宽度
-                                    )),
                                     child: Row(
                                       children: [
                                         Expanded(
@@ -1077,43 +1077,57 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                                                   10),
                                             ],
                                             decoration: InputDecoration(
-                                                border: InputBorder.none,
-                                                hintText: formulaModeCtl.text ==
-                                                        FormulaMode.wgt.name
-                                                    ? localizedStrings
-                                                        .fInputWeightHint
-                                                    : localizedStrings
-                                                        .fInputPercentageHint,
-                                                hintStyle: TextStyle(
-                                                  fontSize: 14,
+                                              border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(
+                                                              0.0))),
+                                              hintText: formulaModeCtl.text ==
+                                                      FormulaMode.wgt.name
+                                                  ? localizedStrings
+                                                      .fInputWeightHint
+                                                  : localizedStrings
+                                                      .fInputPercentageHint,
+                                              hintStyle: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall!
+                                                  .apply(
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .onSurfaceVariant,
+                                                  ),
+                                              suffixIcon: Container(
+                                                  width: 50,
+                                                  alignment: Alignment.center,
+                                                  child: Center(
+                                                    child: Text(
+                                                      formulaModeCtl.text ==
+                                                              FormulaMode
+                                                                  .wgt.name
+                                                          ? formulaUnitCtl.text
+                                                          : pctStrShow,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodySmall!
+                                                          .apply(
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .colorScheme
+                                                                .onSurfaceVariant,
+                                                          ),
+                                                    ),
+                                                  )),
+                                            ),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall!
+                                                .apply(
                                                   color: Theme.of(context)
                                                       .colorScheme
                                                       .onSurface,
-                                                )),
-                                            style: TextStyle(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .onSurface,
-                                            ),
+                                                ),
                                           ),
                                         ),
-                                        Container(
-                                            width: 50,
-                                            alignment: Alignment.center,
-                                            child: Center(
-                                              child: Text(
-                                                formulaModeCtl.text ==
-                                                        FormulaMode.wgt.name
-                                                    ? formulaUnitCtl.text
-                                                    : pctStrShow,
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .onSurfaceVariant,
-                                                ),
-                                              ),
-                                            )),
                                       ],
                                     ))
                               ]))
@@ -1130,30 +1144,9 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                                 child: showItemName(
                                     localizedStrings.fAllowableError, false),
                               ),
-                              Container(
+                              SizedBox(
                                   height: 48,
-                                  padding: const EdgeInsets.only(left: 16),
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .outline, // 设置边框颜色
-                                    width: 1, // 设置边框宽度
-                                  )),
                                   child: Row(children: [
-                                    Container(
-                                      width: 30,
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        showErrorStr,
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onSurfaceVariant,
-                                        ),
-                                      ),
-                                    ),
                                     Expanded(
                                       child: TextField(
                                         onChanged: (value) {
@@ -1167,39 +1160,64 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                                           LengthLimitingTextInputFormatter(10),
                                         ],
                                         decoration: InputDecoration(
-                                            border: InputBorder.none,
-                                            hintText: localizedStrings
-                                                .fInputErrorHint,
-                                            hintStyle: TextStyle(
-                                              fontSize: 14,
+                                          border: OutlineInputBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(0.0))),
+                                          hintText:
+                                              localizedStrings.fInputErrorHint,
+                                          hintStyle: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall!
+                                              .apply(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onSurfaceVariant,
+                                              ),
+                                          prefixIcon: Container(
+                                            width: 30,
+                                            alignment: Alignment.center,
+                                            child: Text(
+                                              showErrorStr,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall!
+                                                  .apply(
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .onSurfaceVariant,
+                                                  ),
+                                            ),
+                                          ),
+                                          suffixIcon: Container(
+                                              width: 50,
+                                              alignment: Alignment.center,
+                                              child: Center(
+                                                child: Text(
+                                                  formulaModeCtl.text ==
+                                                          FormulaMode.wgt.name
+                                                      ? formulaUnitCtl.text
+                                                      : pctStrShow,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodySmall!
+                                                      .apply(
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .onSurfaceVariant,
+                                                      ),
+                                                ),
+                                              )),
+                                        ),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall!
+                                            .apply(
                                               color: Theme.of(context)
                                                   .colorScheme
                                                   .onSurface,
-                                            )),
-                                        style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onSurface,
-                                        ),
+                                            ),
                                       ),
                                     ),
-                                    Container(
-                                        width: 50,
-                                        alignment: Alignment.center,
-                                        child: Center(
-                                          child: Text(
-                                            formulaModeCtl.text ==
-                                                    FormulaMode.wgt.name
-                                                ? formulaUnitCtl.text
-                                                : pctStrShow,
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .onSurfaceVariant,
-                                            ),
-                                          ),
-                                        )),
                                   ]))
                             ]),
                           ),
@@ -1295,7 +1313,9 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                                         90
                                     ? 90
                                     : constraints.maxHeight - 54 - 90 - 90 - 30,
-                                color: Color(0xFFF5F5F5),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainerLow,
                                 alignment: Alignment.centerLeft,
                                 child: Row(
                                   children: [
@@ -1359,6 +1379,7 @@ class AddFormulaPageState extends State<AddFormulaPage> {
     }
     ReqFormulaHeader tempHeader = ReqFormulaHeader(
       formulaId: formulaCodeCtl.text,
+      formulaKey: 0,
       formulaName: formulaNameCtl.text,
       categoryId: categoryId,
       formulaMode: formulaModeCtl.text,
@@ -1416,10 +1437,9 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         localizedStrings.fIngredientOrder,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface,
-                          fontSize: 16,
-                        ),
+                        style: Theme.of(context).textTheme.bodyMedium!.apply(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
                       ),
                     )),
                     SizedBox(
@@ -1432,11 +1452,10 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                         formulaModeCtl.text == FormulaMode.wgt.name
                             ? '${localizedStrings.fTotalWeightLabel} :  ${totalWgt.toString()} ${formulaUnitCtl.text}'
                             : '${localizedStrings.fTotalWeightLabel} :  ${totalWgt.toString()} %',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Theme.of(context).colorScheme.onSurface,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                        style: Theme.of(context).textTheme.bodyMedium!.apply(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     )),
                     SizedBox(
@@ -1464,17 +1483,15 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                         },
                         child: Text(
                           localizedStrings.fClearBtn,
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Theme.of(context).colorScheme.onSurface,
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                          style: Theme.of(context).textTheme.bodySmall!.apply(
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
+                          overflow: TextOverflow.ellipsis,
                         ))
                   ]),
                 ),
                 if (needContainer) showContainerOrder(),
-                SizedBox(
-                  height: constraints.maxHeight - 54 - 48 - 10,
+                Expanded(
                   child: ListView.builder(
                     itemCount: addFormulaRawList.length,
                     itemBuilder: (context, index) {
@@ -1494,254 +1511,212 @@ class AddFormulaPageState extends State<AddFormulaPage> {
     final double widthFor3Item =
         (width - 200) / 3 > 400 ? 400 : (width - 200) / 3;
     return Scaffold(
-        backgroundColor: Color(0xFFD9D9D9),
-        body: Padding(
-          padding: const EdgeInsets.all(14.0),
-          child: Container(
-            color: Theme.of(context).colorScheme.surface,
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 54,
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
+        body:
+            // Padding(
+            //   padding: const EdgeInsets.all(14.0),
+            //   child:
+            Container(
+          color: Theme.of(context).colorScheme.surface,
+          child: Column(
+            children: [
+              SizedBox(
+                height: 54,
+                child: Row(
+                  children: [
+                    SizedBox(width: 20),
+                    Container(
+                      width: 3,
+                      height: 14,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    SizedBox(width: 12),
+                    SizedBox(
+                      child: Text(
+                        localizedStrings.fAddFmaBtn,
+                        style: Theme.of(context).textTheme.bodyMedium!.apply(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                      ),
+                    ),
+                    SizedBox(width: 20),
+                  ],
+                ),
+              ),
+              Divider(
+                height: 1,
+                color: Theme.of(context).colorScheme.outline,
+              ),
+              Container(
+                  padding: const EdgeInsets.only(left: 20, right: 20),
+                  height: 202,
                   child: Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Container(
-                        width: 3,
-                        height: 14,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                      SizedBox(width: 12),
-                      SizedBox(
-                        child: Text(
-                          localizedStrings.fAddFmaBtn,
-                          style: TextStyle(
-                              fontSize: 16,
-                              color: Theme.of(context).colorScheme.onSurface),
-                        ),
-                      ),
-                      SizedBox(width: 20),
-                    ],
-                  ),
-                ),
-                Divider(
-                  height: 1,
-                  color: Theme.of(context).colorScheme.outline,
-                ),
-                Container(
-                    padding: const EdgeInsets.only(left: 20, right: 20),
-                    height: 202,
-                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        showCodeAndMode(widthFor3Item),
+                        showNameAndUnit(widthFor3Item),
+                        showTypeAndEncrypt(widthFor3Item),
+                      ])),
+              Divider(
+                height: 1,
+                color: Theme.of(context).colorScheme.outline,
+              ),
+              Expanded(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    return Container(
+                      padding: const EdgeInsets.only(left: 20, right: 20),
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          showCodeAndMode(widthFor3Item),
-                          showNameAndUnit(widthFor3Item),
-                          showTypeAndEncrypt(widthFor3Item),
-                        ])),
-                Divider(
-                  height: 1,
-                  color: Theme.of(context).colorScheme.outline,
-                ),
-                Expanded(
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      return Container(
-                        padding: const EdgeInsets.only(left: 20, right: 20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            showAddWidget(constraints),
-                            Container(
-                              padding: const EdgeInsets.only(top: 24),
-                              child: VerticalDivider(
-                                width: 1,
-                                color: Theme.of(context).colorScheme.outline,
-                              ),
+                          showAddWidget(constraints),
+                          Container(
+                            padding: const EdgeInsets.only(top: 24),
+                            child: VerticalDivider(
+                              width: 1,
+                              color: Theme.of(context).colorScheme.outline,
                             ),
-                            showOrderWidget(constraints),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
+                          ),
+                          showOrderWidget(constraints),
+                        ],
+                      ),
+                    );
+                  },
                 ),
-                Container(
-                    height: 114,
-                    alignment: Alignment.centerLeft,
-                    child: Column(children: [
-                      Container(
-                          height: 42,
-                          padding: const EdgeInsets.only(left: 20, right: 20),
-                          child: Row(children: [
-                            Expanded(
-                                child: Container(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                localizedStrings.fRemarkCol,
-                                style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            )),
-                          ])),
-                      Container(
-                          height: 72,
-                          padding: const EdgeInsets.only(left: 20, right: 20),
-                          child: Row(children: [
-                            Expanded(
-                                child: Container(
-                              height: 72,
-                              padding:
-                                  const EdgeInsets.only(left: 16, right: 20),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .outline, // 设置边框颜色
-                                  width: 1, // 设置边框宽度
-                                ),
-                              ),
-                              child: TextField(
-                                controller: remarkCtl,
-                                style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.onSurface,
-                                    fontSize: 14),
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: localizedStrings.fInputRemarkHint,
-                                  hintStyle: TextStyle(
+              ),
+              Container(
+                  height: 114,
+                  alignment: Alignment.centerLeft,
+                  child: Column(children: [
+                    Container(
+                        height: 42,
+                        padding: const EdgeInsets.only(left: 20, right: 20),
+                        child: Row(children: [
+                          Expanded(
+                              child: Container(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              localizedStrings.fRemarkCol,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall!
+                                  .apply(
                                     color:
                                         Theme.of(context).colorScheme.onSurface,
                                   ),
+                            ),
+                          )),
+                        ])),
+                    Container(
+                        height: 72,
+                        padding: const EdgeInsets.only(left: 20, right: 20),
+                        child: Row(children: [
+                          Expanded(
+                              child: SizedBox(
+                            height: 72,
+                            child: TextField(
+                              controller: remarkCtl,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall!
+                                  .apply(
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
+                                  ),
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(0.0))),
+                                hintText: localizedStrings.fInputRemarkHint,
+                                hintStyle: TextStyle(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurfaceVariant,
                                 ),
                               ),
-                            ))
-                          ]))
-                    ])),
-                SizedBox(
-                    height: 86,
-                    child: Center(
-                        child: SizedBox(
-                      width: 400,
-                      height: 48,
-                      child: Row(children: [
-                        // Expanded(
-                        //   child: ElevatedButton(
-                        //     style: ElevatedButton.styleFrom(
-                        //       foregroundColor:
-                        //           Theme.of(context).colorScheme.onPrimary,
-                        //       backgroundColor:
-                        //           Theme.of(context).colorScheme.primary,
-                        //       fixedSize: const Size(double.infinity, 48),
-                        //       shape: RoundedRectangleBorder(
-                        //         borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
-                        //       ),
-                        //     ),
-                        //     onPressed: formulaCodeCtl.text == '' ||
-                        //             formulaNameCtl.text == '' ||
-                        //             formulaTypeCtl.text == '' ||
-                        //             formulaModeCtl.text == '' ||
-                        //             formulaUnitCtl.text == '' ||
-                        //             addFormulaRawList.isEmpty
-                        //         ? null
-                        //         : (formulaModeCtl.text ==
-                        //                     FormulaMode.pct.name &&
-                        //                 totalWgt != 100)
-                        //             ? null
-                        //             : () {
-                        //                 //先判断是否有重复的ID和名称
-                        //                 //先判断formulaDataList是否为空
-                        //                 saveFormula(0);
-                        //               },
-                        //     child: Text(
-                        //       localizedStrings.fSaveAndExitBtn,
-                        //       style: TextStyle(
-                        //         fontWeight: FontWeight.normal,
-                        //         color: Theme.of(context).colorScheme.onPrimary,
-                        //         overflow: TextOverflow.ellipsis,
-                        //       ),
-                        //     ),
-                        //   ),
-                        // ),
-                        // SizedBox(
-                        //   width: 20,
-                        // ),
-                        Expanded(
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor:
-                                  Theme.of(context).colorScheme.onPrimary,
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.primary,
-                              fixedSize: const Size(double.infinity, 48),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
-                              ),
+                              maxLines: 5,
                             ),
-                            onPressed: formulaCodeCtl.text == '' ||
-                                    formulaNameCtl.text == '' ||
-                                    formulaTypeCtl.text == '' ||
-                                    formulaModeCtl.text == '' ||
-                                    formulaUnitCtl.text == '' ||
-                                    addFormulaRawList.isEmpty
-                                ? null
-                                : (formulaModeCtl.text ==
-                                            FormulaMode.pct.name &&
-                                        totalWgt != 100)
-                                    ? null
-                                    : () {
-                                        //先判断是否有重复的ID和名称
-                                        //先判断formulaDataList是否为空
-                                        saveFormula(1);
-                                        //清空所有的内容，做一个干净的配方
-                                      },
-                            child: Text(
-                              localizedStrings.gBtnSave,
-                              style: TextStyle(
-                                fontWeight: FontWeight.normal,
-                                color: Theme.of(context).colorScheme.onPrimary,
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                          ))
+                        ]))
+                  ])),
+              SizedBox(
+                  height: 86,
+                  child: Center(
+                      child: SizedBox(
+                    width: 400,
+                    height: 48,
+                    child: Row(children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor:
+                                Theme.of(context).colorScheme.onPrimary,
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
+                            fixedSize: const Size(double.infinity, 48),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
+                            ),
+                          ),
+                          onPressed: formulaCodeCtl.text == '' ||
+                                  formulaNameCtl.text == '' ||
+                                  formulaTypeCtl.text == '' ||
+                                  formulaModeCtl.text == '' ||
+                                  formulaUnitCtl.text == '' ||
+                                  addFormulaRawList.isEmpty
+                              ? null
+                              : (formulaModeCtl.text == FormulaMode.pct.name &&
+                                      totalWgt != 100)
+                                  ? null
+                                  : () {
+                                      //先判断是否有重复的ID和名称
+                                      //先判断formulaDataList是否为空
+                                      saveFormula(1);
+                                      //清空所有的内容，做一个干净的配方
+                                    },
+                          child: Text(
+                            localizedStrings.gBtnSave,
+                            style: TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: Theme.of(context).colorScheme.onPrimary,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ),
-                        SizedBox(
-                          width: 20,
-                        ),
-                        Expanded(
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Theme.of(context)
-                                  .colorScheme
-                                  .onSurfaceVariant,
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.outline,
-                              fixedSize: const Size(double.infinity, 48),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
-                              ),
-                            ),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: Text(
-                              localizedStrings.fBackBtn,
-                              style: TextStyle(
-                                fontWeight: FontWeight.normal,
-                                color: Theme.of(context).colorScheme.onSurface,
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
+                            backgroundColor:
+                                Theme.of(context).colorScheme.outline,
+                            fixedSize: const Size(double.infinity, 48),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
                             ),
                           ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text(
+                            localizedStrings.fBackBtn,
+                            style: Theme.of(context).textTheme.bodySmall!.apply(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
-                      ]),
-                    ))),
-              ],
-            ),
+                      ),
+                    ]),
+                  ))),
+            ],
           ),
+          // ),
         ));
   }
 }
@@ -1788,11 +1763,9 @@ class AddFormulaTypeDialogState extends State<AddFormulaTypeDialog> {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         localizedStrings.fAddTypeBtn,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
+                        style: Theme.of(context).textTheme.bodyMedium!.apply(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -1827,11 +1800,11 @@ class AddFormulaTypeDialogState extends State<AddFormulaTypeDialog> {
                           alignment: Alignment.centerLeft,
                           child: Text(
                             localizedStrings.fFmaCategoryCol,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Theme.of(context).colorScheme.onSurface,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                            style: Theme.of(context).textTheme.bodySmall!.apply(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ),
@@ -1841,15 +1814,6 @@ class AddFormulaTypeDialogState extends State<AddFormulaTypeDialog> {
                     child: Row(children: [
                       Expanded(
                         child: Container(
-                            padding: const EdgeInsets.only(left: 16, right: 20),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .outline, // 设置边框颜色
-                                width: 1, // 设置边框宽度
-                              ),
-                            ),
                             alignment: Alignment.centerLeft,
                             child: TextField(
                               onChanged: (value) {
@@ -1857,7 +1821,9 @@ class AddFormulaTypeDialogState extends State<AddFormulaTypeDialog> {
                               },
                               controller: formulaTypeCtl,
                               decoration: InputDecoration(
-                                border: InputBorder.none,
+                                border: OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(0.0))),
                                 hintText:
                                     localizedStrings.fInputFormulaTypeHint,
                                 suffixIconConstraints:
@@ -1875,11 +1841,14 @@ class AddFormulaTypeDialogState extends State<AddFormulaTypeDialog> {
                                   },
                                 ),
                               ),
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Theme.of(context).colorScheme.onSurface,
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall!
+                                  .apply(
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                               maxLines: 5,
                               minLines: 1,
                             )),
@@ -1921,17 +1890,14 @@ class AddFormulaTypeDialogState extends State<AddFormulaTypeDialog> {
                               }
                               PublicFunctions.addFormulaType(
                                   formulaTypeCtl.text);
-                              showTipInfo(
-                                  localizedStrings.fAddSuccessMsg, context);
+                              Navigator.pop(context);
                             },
                       child: Text(
                         localizedStrings.gBtnConfirm,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.normal,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                        style: Theme.of(context).textTheme.bodyMedium!.apply(
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ),
@@ -1941,7 +1907,9 @@ class AddFormulaTypeDialogState extends State<AddFormulaTypeDialog> {
                       style: ElevatedButton.styleFrom(
                         foregroundColor:
                             Theme.of(context).colorScheme.onSurfaceVariant,
-                        backgroundColor: Theme.of(context).colorScheme.outline,
+                        backgroundColor: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest,
                         fixedSize: const Size(double.infinity, 48),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero,
@@ -1952,12 +1920,10 @@ class AddFormulaTypeDialogState extends State<AddFormulaTypeDialog> {
                       },
                       child: Text(
                         localizedStrings.gBtnCancel,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.normal,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                        style: Theme.of(context).textTheme.bodyMedium!.apply(
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   )

@@ -65,36 +65,6 @@ class S {
     );
   }
 
-  /// `Model Name`
-  String get gModelName {
-    return Intl.message(
-      'Model Name',
-      name: 'gModelName',
-      desc: 'This is a prompt for model name.',
-      args: [],
-    );
-  }
-
-  /// `SN#:`
-  String get gScaleSn {
-    return Intl.message(
-      'SN#:',
-      name: 'gScaleSn',
-      desc: 'This is a prompt for sn.',
-      args: [],
-    );
-  }
-
-  /// `Perpetual`
-  String get gTipPerpetual {
-    return Intl.message(
-      'Perpetual',
-      name: 'gTipPerpetual',
-      desc: 'This is a tip of the certification expiration date.',
-      args: [],
-    );
-  }
-
   /// `Connect`
   String get gBtnConnect {
     return Intl.message(
@@ -186,26 +156,6 @@ class S {
     );
   }
 
-  /// `System Unique ID:  `
-  String get gSystemId {
-    return Intl.message(
-      'System Unique ID:  ',
-      name: 'gSystemId',
-      desc: 'This is the prompt for the system authentication ID.',
-      args: [],
-    );
-  }
-
-  /// `Expiration date:`
-  String get gExpirationDate {
-    return Intl.message(
-      'Expiration date:',
-      name: 'gExpirationDate',
-      desc: 'This is the prompt for the expiration date.',
-      args: [],
-    );
-  }
-
   /// `Serial port information modification`
   String get gTitleSerialModify {
     return Intl.message(
@@ -222,86 +172,6 @@ class S {
       'Serial Port Status:',
       name: 'gSerialPortStatus',
       desc: 'This is the title for serial port status.',
-      args: [],
-    );
-  }
-
-  /// `Serial port:`
-  String get gSerialPort {
-    return Intl.message(
-      'Serial port:',
-      name: 'gSerialPort',
-      desc: 'This is the prompt for serial port.',
-      args: [],
-    );
-  }
-
-  /// `Refresh port`
-  String get gRefreshPort {
-    return Intl.message(
-      'Refresh port',
-      name: 'gRefreshPort',
-      desc: 'This is the prompt to refresh port.',
-      args: [],
-    );
-  }
-
-  /// `Data bits:`
-  String get gDataBits {
-    return Intl.message(
-      'Data bits:',
-      name: 'gDataBits',
-      desc: 'This is the prompt for data bits.',
-      args: [],
-    );
-  }
-
-  /// `Baud rate:`
-  String get gBaudRate {
-    return Intl.message(
-      'Baud rate:',
-      name: 'gBaudRate',
-      desc: 'This is the prompt for baud rate.',
-      args: [],
-    );
-  }
-
-  /// `Parity:`
-  String get gSerialParity {
-    return Intl.message(
-      'Parity:',
-      name: 'gSerialParity',
-      desc: 'This is the prompt for parity.',
-      args: [],
-    );
-  }
-
-  /// `Stop bits:`
-  String get gStopBits {
-    return Intl.message(
-      'Stop bits:',
-      name: 'gStopBits',
-      desc: 'This is the prompt for stop bits.',
-      args: [],
-    );
-  }
-
-  /// `Confirm`
-  String get gBtnConfirm {
-    return Intl.message(
-      'Confirm',
-      name: 'gBtnConfirm',
-      desc: 'This is a confirmation button.',
-      args: [],
-    );
-  }
-
-  /// `Cancel`
-  String get gBtnCancel {
-    return Intl.message(
-      'Cancel',
-      name: 'gBtnCancel',
-      desc: 'This is a button to cancel',
       args: [],
     );
   }
@@ -326,50 +196,40 @@ class S {
     );
   }
 
-  /// `Wireless network settings`
-  String get gNetworkSetting {
-    return Intl.message(
-      'Wireless network settings',
-      name: 'gNetworkSetting',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Password:`
+  /// `Password`
   String get gPassword {
     return Intl.message(
-      'Password:',
+      'Password',
       name: 'gPassword',
       desc: 'This is a prompt for password.',
       args: [],
     );
   }
 
-  /// `IPv4:`
+  /// `IPv4`
   String get gIpAddress {
     return Intl.message(
-      'IPv4:',
+      'IPv4',
       name: 'gIpAddress',
       desc: 'This is a prompt for IPv4.',
       args: [],
     );
   }
 
-  /// `NetMask:`
+  /// `NetMask`
   String get gNetmask {
     return Intl.message(
-      'NetMask:',
+      'NetMask',
       name: 'gNetmask',
       desc: 'This is a prompt for NetMask.',
       args: [],
     );
   }
 
-  /// `Gateway:`
+  /// `Gateway`
   String get gGateway {
     return Intl.message(
-      'Gateway:',
+      'Gateway',
       name: 'gGateway',
       desc: 'This is a prompt for Gateway.',
       args: [],
@@ -426,10 +286,10 @@ class S {
     );
   }
 
-  /// `Connected AP Info:`
+  /// `Connected AP Info`
   String get gTipConnectedInfo {
     return Intl.message(
-      'Connected AP Info:',
+      'Connected AP Info',
       name: 'gTipConnectedInfo',
       desc: 'This is a prompt for connected info .',
       args: [],
@@ -488,16 +348,6 @@ class S {
     );
   }
 
-  /// `Bluetooth Configurations`
-  String get gTitleBtSetting {
-    return Intl.message(
-      'Bluetooth Configurations',
-      name: 'gTitleBtSetting',
-      desc: 'This is a title for bluetooth configurations.',
-      args: [],
-    );
-  }
-
   /// `Strong`
   String get gEPStrong {
     return Intl.message(
@@ -548,10 +398,10 @@ class S {
     );
   }
 
-  /// `Device name:`
+  /// `Device name`
   String get gDeviceName {
     return Intl.message(
-      'Device name:',
+      'Device name',
       name: 'gDeviceName',
       desc: 'This is a prompt for device name.',
       args: [],
@@ -1009,30 +859,30 @@ class S {
     );
   }
 
-  /// `Zero:`
+  /// `Zero`
   String get iTextZero {
     return Intl.message(
-      'Zero:',
+      'Zero',
       name: 'iTextZero',
       desc: 'This is a prompt about zero weight in T-Industry,',
       args: [],
     );
   }
 
-  /// `Net:`
+  /// `Net`
   String get iTextNet {
     return Intl.message(
-      'Net:',
+      'Net',
       name: 'iTextNet',
       desc: 'This is a prompt about net weight in T-Industry,',
       args: [],
     );
   }
 
-  /// `Stable:`
+  /// `Stable`
   String get iStable {
     return Intl.message(
-      'Stable:',
+      'Stable',
       name: 'iStable',
       desc: 'This is a prompt about stable weight in T-Industry,',
       args: [],
@@ -1214,11 +1064,6 @@ class S {
     );
   }
 
-  /// `Add`
-  String get gBtnAdd {
-    return Intl.message('Add', name: 'gBtnAdd', desc: '', args: []);
-  }
-
   /// `Edit`
   String get gBtnEdit {
     return Intl.message('Edit', name: 'gBtnEdit', desc: '', args: []);
@@ -1319,16 +1164,6 @@ class S {
     );
   }
 
-  /// `Language Setting`
-  String get language_setting_title {
-    return Intl.message(
-      'Language Setting',
-      name: 'language_setting_title',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Back`
   String get button_back {
     return Intl.message('Back', name: 'button_back', desc: '', args: []);
@@ -1349,16 +1184,6 @@ class S {
     return Intl.message(
       'Scale Model:',
       name: 'scale_model',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Get IP Address`
-  String get button_get_ip {
-    return Intl.message(
-      'Get IP Address',
-      name: 'button_get_ip',
       desc: '',
       args: [],
     );
@@ -1554,16 +1379,6 @@ class S {
     );
   }
 
-  /// `Wi-Fi Setting`
-  String get wifi_setting_title {
-    return Intl.message(
-      'Wi-Fi Setting',
-      name: 'wifi_setting_title',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Applications`
   String get customization_setting_title {
     return Intl.message(
@@ -1579,16 +1394,6 @@ class S {
     return Intl.message(
       'Advanced',
       name: 'advanced_setting_title',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Label Design`
-  String get label_design_title {
-    return Intl.message(
-      'Label Design',
-      name: 'label_design_title',
       desc: '',
       args: [],
     );
@@ -1614,32 +1419,12 @@ class S {
     );
   }
 
-  /// `Label Format Download`
-  String get gTitleLabelFmtDownload {
-    return Intl.message(
-      'Label Format Download',
-      name: 'gTitleLabelFmtDownload',
-      desc: 'This is a title about downloading label printing Formats app.',
-      args: [],
-    );
-  }
-
   /// `This application is used to download print format.`
   String get gTipLabelFmtDownload {
     return Intl.message(
       'This application is used to download print format.',
       name: 'gTipLabelFmtDownload',
       desc: 'This is a prompt about downloading label printing Formats app.',
-      args: [],
-    );
-  }
-
-  /// `Serial Output Design`
-  String get gTitleSerialOutput {
-    return Intl.message(
-      'Serial Output Design',
-      name: 'gTitleSerialOutput',
-      desc: 'This is a title about serial output design',
       args: [],
     );
   }
@@ -1754,44 +1539,12 @@ class S {
     );
   }
 
-  /// `Weighing(Single)`
-  String get iTitleWeighting {
-    return Intl.message(
-      'Weighing(Single)',
-      name: 'iTitleWeighting',
-      desc: 'This is a title about weighting,support one scale.',
-      args: [],
-    );
-  }
-
-  /// `Weighing Data Collection(Single)`
-  String get iTitleWeightCollection {
-    return Intl.message(
-      'Weighing Data Collection(Single)',
-      name: 'iTitleWeightCollection',
-      desc:
-          'This is a title about collect weight data,support one scale,in T-Industry',
-      args: [],
-    );
-  }
-
   /// `This application is used to collect weighing data in real time`
   String get iTipWeightCollection {
     return Intl.message(
       'This application is used to collect weighing data in real time',
       name: 'iTipWeightCollection',
       desc: 'This is a prompt about collect weight data,in T-Industry',
-      args: [],
-    );
-  }
-
-  /// `Check Weighing(Single)`
-  String get iTitleCheckWeigher {
-    return Intl.message(
-      'Check Weighing(Single)',
-      name: 'iTitleCheckWeigher',
-      desc:
-          'This is a title about check weighing,support one scale,in T-Industry',
       args: [],
     );
   }
@@ -1806,17 +1559,6 @@ class S {
     );
   }
 
-  /// `Increment Weighing(Single)`
-  String get iTitleIncrementWeighting {
-    return Intl.message(
-      'Increment Weighing(Single)',
-      name: 'iTitleIncrementWeighting',
-      desc:
-          'This is a title about Increment Weighing,support one scale,in T-Industry',
-      args: [],
-    );
-  }
-
   /// `This app is used to implement the increment scale.`
   String get iTipIncrementWeighting {
     return Intl.message(
@@ -1827,58 +1569,12 @@ class S {
     );
   }
 
-  /// `Take Out Scale(Single)`
-  String get gTitleTakeOut {
-    return Intl.message(
-      'Take Out Scale(Single)',
-      name: 'gTitleTakeOut',
-      desc:
-          'This is a title about take out scale,support one scale,in T-Industry',
-      args: [],
-    );
-  }
-
   /// `This app is used to implement the take out scale.`
   String get gTipTakeOut {
     return Intl.message(
       'This app is used to implement the take out scale.',
       name: 'gTipTakeOut',
       desc: 'This is a prompt about take out scale,in T-Industry',
-      args: [],
-    );
-  }
-
-  /// `Get name`
-  String get get_bt_name {
-    return Intl.message('Get name', name: 'get_bt_name', desc: '', args: []);
-  }
-
-  /// `Modify name`
-  String get modify_bt_name {
-    return Intl.message(
-      'Modify name',
-      name: 'modify_bt_name',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Emission Power:`
-  String get bt_emission_power {
-    return Intl.message(
-      'Emission Power:',
-      name: 'bt_emission_power',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Modify emission power`
-  String get bt_modify_emission {
-    return Intl.message(
-      'Modify emission power',
-      name: 'bt_modify_emission',
-      desc: '',
       args: [],
     );
   }
@@ -1908,26 +1604,6 @@ class S {
     return Intl.message(
       'Please confirm to go to the default print format page.',
       name: 'jump_confirm_info',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Download is successful!`
-  String get download_result_ok {
-    return Intl.message(
-      'Download is successful!',
-      name: 'download_result_ok',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Download failed!`
-  String get download_result_fail {
-    return Intl.message(
-      'Download failed!',
-      name: 'download_result_fail',
       desc: '',
       args: [],
     );
@@ -2053,102 +1729,12 @@ class S {
     );
   }
 
-  /// `Basic Data`
-  String get abnormal_data_title {
-    return Intl.message(
-      'Basic Data',
-      name: 'abnormal_data_title',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Device Time`
-  String get cTitleDeviceTime {
-    return Intl.message(
-      'Device Time',
-      name: 'cTitleDeviceTime',
-      desc: 'This is a title about device time.',
-      args: [],
-    );
-  }
-
-  /// `Sync PC Time`
-  String get cBtnSyncPcTime {
-    return Intl.message(
-      'Sync PC Time',
-      name: 'cBtnSyncPcTime',
-      desc: 'This is a button about sync pc time.',
-      args: [],
-    );
-  }
-
-  /// `Set Date/Time`
-  String get cBtnSetTime {
-    return Intl.message(
-      'Set Date/Time',
-      name: 'cBtnSetTime',
-      desc: 'This is a button about set date/time.',
-      args: [],
-    );
-  }
-
-  /// `Sync Time`
-  String get cBtnSyncTime {
-    return Intl.message(
-      'Sync Time',
-      name: 'cBtnSyncTime',
-      desc: 'This is a button about sync time.',
-      args: [],
-    );
-  }
-
-  /// `Select Time`
-  String get cBtnSelectTime {
-    return Intl.message(
-      'Select Time',
-      name: 'cBtnSelectTime',
-      desc: 'This is a button about select time.',
-      args: [],
-    );
-  }
-
-  /// `Select Date`
-  String get cBtnSelectDate {
-    return Intl.message(
-      'Select Date',
-      name: 'cBtnSelectDate',
-      desc: 'This is a button about select date.',
-      args: [],
-    );
-  }
-
-  /// `failed to get time`
-  String get cTipFailedGetTime {
-    return Intl.message(
-      'failed to get time',
-      name: 'cTipFailedGetTime',
-      desc: 'This is a tip about failed to get time.',
-      args: [],
-    );
-  }
-
   /// `Batch Delivery`
   String get batch_delivery_title {
     return Intl.message(
       'Batch Delivery',
       name: 'batch_delivery_title',
       desc: '',
-      args: [],
-    );
-  }
-
-  /// `Parameter Setting`
-  String get cTitleParameterSet {
-    return Intl.message(
-      'Parameter Setting',
-      name: 'cTitleParameterSet',
-      desc: 'This is a title about parameter setting.',
       args: [],
     );
   }
@@ -2283,16 +1869,6 @@ class S {
     );
   }
 
-  /// `Incorrect address! e.g. xxx.xxx.xxx.xxx`
-  String get error_ip_tip {
-    return Intl.message(
-      'Incorrect address! e.g. xxx.xxx.xxx.xxx',
-      name: 'error_ip_tip',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Ethernet IP Setting`
   String get set_ethernet_ip_title {
     return Intl.message(
@@ -2313,16 +1889,6 @@ class S {
     );
   }
 
-  /// `Receipt Format Download`
-  String get gTitleReceiptDownload {
-    return Intl.message(
-      'Receipt Format Download',
-      name: 'gTitleReceiptDownload',
-      desc: 'This is a title about receipt format download.',
-      args: [],
-    );
-  }
-
   /// `This application is used to download the print format of the receipt.`
   String get gTipReceiptDownload {
     return Intl.message(
@@ -2333,67 +1899,72 @@ class S {
     );
   }
 
-  /// `Information`
-  String get about_title {
-    return Intl.message('Information', name: 'about_title', desc: '', args: []);
-  }
-
-  /// `Version:`
-  String get app_version_title {
+  /// `Version`
+  String get appVersionTitle {
     return Intl.message(
-      'Version:',
-      name: 'app_version_title',
-      desc: '',
+      'Version',
+      name: 'appVersionTitle',
+      desc: 'Title for the application version information',
       args: [],
     );
   }
 
-  /// `Company:`
-  String get app_company_title {
+  /// `Company`
+  String get appCompanyTitle {
     return Intl.message(
-      'Company:',
-      name: 'app_company_title',
-      desc: '',
+      'Company',
+      name: 'appCompanyTitle',
+      desc: 'Title for the application company information',
       args: [],
     );
   }
 
-  /// `Tel:`
-  String get app_tel_title {
-    return Intl.message('Tel:', name: 'app_tel_title', desc: '', args: []);
-  }
-
-  /// `Email:`
-  String get app_email_title {
-    return Intl.message('Email:', name: 'app_email_title', desc: '', args: []);
-  }
-
-  /// `Address:`
-  String get app_address_title {
+  /// `Tel`
+  String get appTelTitle {
     return Intl.message(
-      'Address:',
-      name: 'app_address_title',
-      desc: '',
+      'Tel',
+      name: 'appTelTitle',
+      desc: 'Title for the application telephone information',
       args: [],
     );
   }
 
-  /// `Website Address:`
-  String get app_web_title {
+  /// `Email`
+  String get appEmailTitle {
     return Intl.message(
-      'Website Address:',
-      name: 'app_web_title',
-      desc: '',
+      'Email',
+      name: 'appEmailTitle',
+      desc: 'Title for the application email information',
       args: [],
     );
   }
 
-  /// `Applicable Models:`
-  String get app_models {
+  /// `Address`
+  String get appAddressTitle {
     return Intl.message(
-      'Applicable Models:',
-      name: 'app_models',
-      desc: '',
+      'Address',
+      name: 'appAddressTitle',
+      desc: 'Title for the application address information',
+      args: [],
+    );
+  }
+
+  /// `Website`
+  String get appWebTitle {
+    return Intl.message(
+      'Website',
+      name: 'appWebTitle',
+      desc: 'Title for the application website information',
+      args: [],
+    );
+  }
+
+  /// `Applicable Models`
+  String get appModels {
+    return Intl.message(
+      'Applicable Models',
+      name: 'appModels',
+      desc: 'Title for the models that the application is applicable to',
       args: [],
     );
   }
@@ -3498,16 +3069,6 @@ class S {
     );
   }
 
-  /// `Get Basic Data`
-  String get abnormal_weight {
-    return Intl.message(
-      'Get Basic Data',
-      name: 'abnormal_weight',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Select Product Excel`
   String get gBtnSelectPluFile {
     return Intl.message(
@@ -3669,21 +3230,6 @@ class S {
     );
   }
 
-  /// `Multi-scale Management`
-  String get m_scale_title {
-    return Intl.message(
-      'Multi-scale Management',
-      name: 'm_scale_title',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Add`
-  String get scale_mgr_btn_add {
-    return Intl.message('Add', name: 'scale_mgr_btn_add', desc: '', args: []);
-  }
-
   /// `Rename`
   String get scale_mgr_btn_rename {
     return Intl.message(
@@ -3704,21 +3250,6 @@ class S {
     );
   }
 
-  /// `Test Connect`
-  String get scale_mgr_btn_test {
-    return Intl.message(
-      'Test Connect',
-      name: 'scale_mgr_btn_test',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Scale Name`
-  String get gScaleName {
-    return Intl.message('Scale Name', name: 'gScaleName', desc: '', args: []);
-  }
-
   /// `Status`
   String get gStatus {
     return Intl.message(
@@ -3735,17 +3266,6 @@ class S {
       'Progress',
       name: 'gProgress',
       desc: 'This is the prompt for the download progress.',
-      args: [],
-    );
-  }
-
-  /// `Retail Detail Report`
-  String get rDetailRptTitle {
-    return Intl.message(
-      'Retail Detail Report',
-      name: 'rDetailRptTitle',
-      desc:
-          'This is the title of the retail detail report page in the retail app.',
       args: [],
     );
   }
@@ -3804,26 +3324,6 @@ class S {
     );
   }
 
-  /// `online`
-  String get gOnlineTip {
-    return Intl.message(
-      'online',
-      name: 'gOnlineTip',
-      desc: 'This is a prompt for online information.',
-      args: [],
-    );
-  }
-
-  /// `offline`
-  String get gOfflineTip {
-    return Intl.message(
-      'offline',
-      name: 'gOfflineTip',
-      desc: 'This is a prompt for offline information.',
-      args: [],
-    );
-  }
-
   /// `Whether to join the management`
   String get rJoinManagementTip {
     return Intl.message(
@@ -3831,16 +3331,6 @@ class S {
       name: 'rJoinManagementTip',
       desc:
           'This is a prompt about whether to join the management in the retail app.',
-      args: [],
-    );
-  }
-
-  /// `Update Firmware`
-  String get gTitleUpdateFirmware {
-    return Intl.message(
-      'Update Firmware',
-      name: 'gTitleUpdateFirmware',
-      desc: 'This is the title for updating the firmware.',
       args: [],
     );
   }
@@ -4432,100 +3922,100 @@ class S {
     );
   }
 
-  /// `Weighing Count:`
+  /// `Weighing Count`
   String get cTipWeighingCount {
     return Intl.message(
-      'Weighing Count:',
+      'Weighing Count',
       name: 'cTipWeighingCount',
       desc: 'This is a tip for weighing count.',
       args: [],
     );
   }
 
-  /// `Abnormal Power-Off Count:`
+  /// `Abnormal Power-Off Count`
   String get cTipPowerOffCnt {
     return Intl.message(
-      'Abnormal Power-Off Count:',
+      'Abnormal Power-Off Count',
       name: 'cTipPowerOffCnt',
       desc: 'This is a tip for abnormal power-off count.',
       args: [],
     );
   }
 
-  /// `Running Time(mins):`
+  /// `Running Time(mins)`
   String get cTipRunningTime {
     return Intl.message(
-      'Running Time(mins):',
+      'Running Time(mins)',
       name: 'cTipRunningTime',
       desc: 'This is a tip for running time.',
       args: [],
     );
   }
 
-  /// `Power-On Count:`
+  /// `Power-On Count`
   String get cTipPowerOnCnt {
     return Intl.message(
-      'Power-On Count:',
+      'Power-On Count',
       name: 'cTipPowerOnCnt',
       desc: 'This is a tip for power-on count.',
       args: [],
     );
   }
 
-  /// `OL Time(mins):`
+  /// `OL Time(mins)`
   String get cTipOlTime {
     return Intl.message(
-      'OL Time(mins):',
+      'OL Time(mins)',
       name: 'cTipOlTime',
       desc: 'This is a tip for ol time.',
       args: [],
     );
   }
 
-  /// `UL Time(mins):`
+  /// `UL Time(mins)`
   String get cTipUlTime {
     return Intl.message(
-      'UL Time(mins):',
+      'UL Time(mins)',
       name: 'cTipUlTime',
       desc: 'This is a tip for ul time.',
       args: [],
     );
   }
 
-  /// `Err4 Count:`
+  /// `Err4 Count`
   String get cTipErr4Cnt {
     return Intl.message(
-      'Err4 Count:',
+      'Err4 Count',
       name: 'cTipErr4Cnt',
       desc: 'This is a tip for err4 count.',
       args: [],
     );
   }
 
-  /// `Err19 Count:`
+  /// `Err19 Count`
   String get cTipErr19Cnt {
     return Intl.message(
-      'Err19 Count:',
+      'Err19 Count',
       name: 'cTipErr19Cnt',
       desc: 'This is a tip for err19 count.',
       args: [],
     );
   }
 
-  /// `Calibration Switch Count:`
+  /// `Calibration Switch Count`
   String get cTipCalswitchCnt {
     return Intl.message(
-      'Calibration Switch Count:',
+      'Calibration Switch Count',
       name: 'cTipCalswitchCnt',
       desc: 'This is a tip for cal switch count.',
       args: [],
     );
   }
 
-  /// `Calibration Count:`
+  /// `Calibration Count`
   String get cTipCalCnt {
     return Intl.message(
-      'Calibration Count:',
+      'Calibration Count',
       name: 'cTipCalCnt',
       desc: 'This is a tip for calibration count.',
       args: [],
@@ -4802,6 +4292,16 @@ class S {
     );
   }
 
+  /// `Edit Formula`
+  String get fEditFmaBtn {
+    return Intl.message(
+      'Edit Formula',
+      name: 'fEditFmaBtn',
+      desc: 'Button to edit a old formula',
+      args: [],
+    );
+  }
+
   /// `Records`
   String get fHistoricalWeighingRecordsBtn {
     return Intl.message(
@@ -4962,10 +4462,10 @@ class S {
     );
   }
 
-  /// `Update Time`
+  /// `Create Time`
   String get fCreatedAtCol {
     return Intl.message(
-      'Update Time',
+      'Create Time',
       name: 'fCreatedAtCol',
       desc: 'Table column title for creation time',
       args: [],
@@ -6093,6 +5593,1361 @@ class S {
       'Formula completed',
       name: 'fFormulaCompletedTip',
       desc: 'Prompt message indicating that the formula has been completed',
+      args: [],
+    );
+  }
+
+  /// `Multi-scale Management`
+  String get menuMultiScaleManagement {
+    return Intl.message(
+      'Multi-scale Management',
+      name: 'menuMultiScaleManagement',
+      desc: 'Menu item for multi-scale management',
+      args: [],
+    );
+  }
+
+  /// `Device Time`
+  String get menuDeviceTime {
+    return Intl.message(
+      'Device Time',
+      name: 'menuDeviceTime',
+      desc: 'Menu item for device Time',
+      args: [],
+    );
+  }
+
+  /// `Bluetooth Setting`
+  String get menuBluetoothSetting {
+    return Intl.message(
+      'Bluetooth Setting',
+      name: 'menuBluetoothSetting',
+      desc: 'Menu item for bluetooth setting',
+      args: [],
+    );
+  }
+
+  /// `Wi-Fi Setting`
+  String get menuWifiSetting {
+    return Intl.message(
+      'Wi-Fi Setting',
+      name: 'menuWifiSetting',
+      desc: 'Menu item for Wi-Fi setting',
+      args: [],
+    );
+  }
+
+  /// `Firmware Update`
+  String get menuFirmwareUpdate {
+    return Intl.message(
+      'Firmware Update',
+      name: 'menuFirmwareUpdate',
+      desc: 'Menu item for firmware update',
+      args: [],
+    );
+  }
+
+  /// `Label Design`
+  String get menuLabelDesign {
+    return Intl.message(
+      'Label Design',
+      name: 'menuLabelDesign',
+      desc: 'Menu item for label design',
+      args: [],
+    );
+  }
+
+  /// `Receipt Design`
+  String get menuReceiptDesign {
+    return Intl.message(
+      'Receipt Design',
+      name: 'menuReceiptDesign',
+      desc: 'Menu item for receipt design',
+      args: [],
+    );
+  }
+
+  /// `Serial Output Design`
+  String get menuSerialOutputDesign {
+    return Intl.message(
+      'Serial Output Design',
+      name: 'menuSerialOutputDesign',
+      desc: 'Menu item for serial output design',
+      args: [],
+    );
+  }
+
+  /// `Basic Data Collection`
+  String get menuBasicDataCollection {
+    return Intl.message(
+      'Basic Data Collection',
+      name: 'menuBasicDataCollection',
+      desc: 'Menu item for basic data collection',
+      args: [],
+    );
+  }
+
+  /// `Parameter Setting`
+  String get menuParameterSetting {
+    return Intl.message(
+      'Parameter Setting',
+      name: 'menuParameterSetting',
+      desc: 'Menu item for parameter setting',
+      args: [],
+    );
+  }
+
+  /// `Weighing`
+  String get menuWeighing {
+    return Intl.message(
+      'Weighing',
+      name: 'menuWeighing',
+      desc: 'Menu item for weighing',
+      args: [],
+    );
+  }
+
+  /// `PLU Management`
+  String get menuPluManagement {
+    return Intl.message(
+      'PLU Management',
+      name: 'menuPluManagement',
+      desc: 'Menu item for PLU management',
+      args: [],
+    );
+  }
+
+  /// `Label Format Download`
+  String get menuLabelFormatDownload {
+    return Intl.message(
+      'Label Format Download',
+      name: 'menuLabelFormatDownload',
+      desc: 'Menu item for label format download',
+      args: [],
+    );
+  }
+
+  /// `Receipt Format Download`
+  String get menuReceiptFormatDownload {
+    return Intl.message(
+      'Receipt Format Download',
+      name: 'menuReceiptFormatDownload',
+      desc: 'Menu item for receipt format download',
+      args: [],
+    );
+  }
+
+  /// `Retail Report`
+  String get menuRetailReport {
+    return Intl.message(
+      'Retail Report',
+      name: 'menuRetailReport',
+      desc: 'Menu item for retail report',
+      args: [],
+    );
+  }
+
+  /// `Variable Value Setting`
+  String get menuVariableValueSetting {
+    return Intl.message(
+      'Variable Value Setting',
+      name: 'menuVariableValueSetting',
+      desc: 'Menu item for variable value setting',
+      args: [],
+    );
+  }
+
+  /// `Weighing Data Collection`
+  String get menuWeighingDataCollection {
+    return Intl.message(
+      'Weighing Data Collection',
+      name: 'menuWeighingDataCollection',
+      desc: 'Menu item for weighing data collection',
+      args: [],
+    );
+  }
+
+  /// `Check Weighing`
+  String get menuCheckWeighing {
+    return Intl.message(
+      'Check Weighing',
+      name: 'menuCheckWeighing',
+      desc: 'Menu item for check weighing',
+      args: [],
+    );
+  }
+
+  /// `Increment Weighing`
+  String get menuIncrementWeighing {
+    return Intl.message(
+      'Increment Weighing',
+      name: 'menuIncrementWeighing',
+      desc: 'Menu item for increment weighing',
+      args: [],
+    );
+  }
+
+  /// `Take Out Scale`
+  String get menuTakeOutScale {
+    return Intl.message(
+      'Take Out Scale',
+      name: 'menuTakeOutScale',
+      desc: 'Menu item for take out scale',
+      args: [],
+    );
+  }
+
+  /// `Formula`
+  String get menuFormula {
+    return Intl.message(
+      'Formula',
+      name: 'menuFormula',
+      desc: 'Menu item for formula',
+      args: [],
+    );
+  }
+
+  /// `Liquid Filling Speed`
+  String get menuFlowRate {
+    return Intl.message(
+      'Liquid Filling Speed',
+      name: 'menuFlowRate',
+      desc: 'Menu item for liquid filling speed',
+      args: [],
+    );
+  }
+
+  /// `Calibration`
+  String get menuCalibration {
+    return Intl.message(
+      'Calibration',
+      name: 'menuCalibration',
+      desc: 'Menu item for calibration',
+      args: [],
+    );
+  }
+
+  /// `Set Language`
+  String get menuLanguageSetting {
+    return Intl.message(
+      'Set Language',
+      name: 'menuLanguageSetting',
+      desc: 'Menu item for language setting',
+      args: [],
+    );
+  }
+
+  /// `Applications`
+  String get menuApplications {
+    return Intl.message(
+      'Applications',
+      name: 'menuApplications',
+      desc: 'Menu item for applications',
+      args: [],
+    );
+  }
+
+  /// `System Information`
+  String get menuSystemInformation {
+    return Intl.message(
+      'System Information',
+      name: 'menuSystemInformation',
+      desc: 'Menu item for system information',
+      args: [],
+    );
+  }
+
+  /// `Configuration`
+  String get menuConfiguration {
+    return Intl.message(
+      'Configuration',
+      name: 'menuConfiguration',
+      desc: 'Menu item for configuration',
+      args: [],
+    );
+  }
+
+  /// `Confirm`
+  String get gBtnConfirm {
+    return Intl.message(
+      'Confirm',
+      name: 'gBtnConfirm',
+      desc: 'This is a confirmation button.',
+      args: [],
+    );
+  }
+
+  /// `Cancel`
+  String get gBtnCancel {
+    return Intl.message(
+      'Cancel',
+      name: 'gBtnCancel',
+      desc: 'This is a button to cancel',
+      args: [],
+    );
+  }
+
+  /// `Perpetual`
+  String get gTipPerpetual {
+    return Intl.message(
+      'Perpetual',
+      name: 'gTipPerpetual',
+      desc: 'This is a tip of the certification expiration date.',
+      args: [],
+    );
+  }
+
+  /// `System Unique ID`
+  String get gSystemId {
+    return Intl.message(
+      'System Unique ID',
+      name: 'gSystemId',
+      desc: 'This is the prompt for the system authentication ID.',
+      args: [],
+    );
+  }
+
+  /// `Expiration date`
+  String get gExpirationDate {
+    return Intl.message(
+      'Expiration date',
+      name: 'gExpirationDate',
+      desc: 'This is the prompt for the expiration date.',
+      args: [],
+    );
+  }
+
+  /// `Renew`
+  String get gBtnRenew {
+    return Intl.message(
+      'Renew',
+      name: 'gBtnRenew',
+      desc: 'This is the button for renewing the software service.',
+      args: [],
+    );
+  }
+
+  /// `Unactivated`
+  String get gTipUnactivated {
+    return Intl.message(
+      'Unactivated',
+      name: 'gTipUnactivated',
+      desc: 'This is a tip for unactivated status.',
+      args: [],
+    );
+  }
+
+  /// `Activated`
+  String get gTipActivated {
+    return Intl.message(
+      'Activated',
+      name: 'gTipActivated',
+      desc: 'This is a tip for activated status.',
+      args: [],
+    );
+  }
+
+  /// `Add App`
+  String get gBtnAddApp {
+    return Intl.message(
+      'Add App',
+      name: 'gBtnAddApp',
+      desc: 'This is a button for adding an application.',
+      args: [],
+    );
+  }
+
+  /// `Remove`
+  String get gBtnRemove {
+    return Intl.message(
+      'Remove',
+      name: 'gBtnRemove',
+      desc: 'This is a button for removing something.',
+      args: [],
+    );
+  }
+
+  /// `Activate`
+  String get gBtnActivate {
+    return Intl.message(
+      'Activate',
+      name: 'gBtnActivate',
+      desc: 'This is a button for activating something.',
+      args: [],
+    );
+  }
+
+  /// `Activation Feedback`
+  String get gTitleActivationFeedback {
+    return Intl.message(
+      'Activation Feedback',
+      name: 'gTitleActivationFeedback',
+      desc: 'This is the title for activation feedback.',
+      args: [],
+    );
+  }
+
+  /// `Added`
+  String get gBtnAdded {
+    return Intl.message(
+      'Added',
+      name: 'gBtnAdded',
+      desc: 'This is a button indicating that an item has been added.',
+      args: [],
+    );
+  }
+
+  /// `Configuration Function Charging Method`
+  String get gTitleConfigFunctionCharge {
+    return Intl.message(
+      'Configuration Function Charging Method',
+      name: 'gTitleConfigFunctionCharge',
+      desc: 'This is the title for the configuration function charging method.',
+      args: [],
+    );
+  }
+
+  /// `The configuration of the following functions is charged at ￥100/year. After purchase, you can activate the following configuration functions. Please contact the supplier for activation.`
+  String get gSubtitleConfigFunctionCharge {
+    return Intl.message(
+      'The configuration of the following functions is charged at ￥100/year. After purchase, you can activate the following configuration functions. Please contact the supplier for activation.',
+      name: 'gSubtitleConfigFunctionCharge',
+      desc:
+          'This is the subtitle for the configuration function charging method.',
+      args: [],
+    );
+  }
+
+  /// `Added Configuration Functions`
+  String get gTitleAddedConfigFunction {
+    return Intl.message(
+      'Added Configuration Functions',
+      name: 'gTitleAddedConfigFunction',
+      desc: 'This is the title for the added configuration functions.',
+      args: [],
+    );
+  }
+
+  /// `The following applications have been added to the navigation bar. Click the remove button to remove the corresponding function. After removal, you can continue to add applications.`
+  String get gSubtitleAddedConfigFunction {
+    return Intl.message(
+      'The following applications have been added to the navigation bar. Click the remove button to remove the corresponding function. After removal, you can continue to add applications.',
+      name: 'gSubtitleAddedConfigFunction',
+      desc: 'This is the subtitle for the added configuration functions.',
+      args: [],
+    );
+  }
+
+  /// `Back to Previous Level`
+  String get gBtnBackToPrevious {
+    return Intl.message(
+      'Back to Previous Level',
+      name: 'gBtnBackToPrevious',
+      desc: 'This is a button to go back to the previous level.',
+      args: [],
+    );
+  }
+
+  /// `Activation Method`
+  String get gTitleActivationMethod {
+    return Intl.message(
+      'Activation Method',
+      name: 'gTitleActivationMethod',
+      desc: 'This is the title for activation method.',
+      args: [],
+    );
+  }
+
+  /// `Upload the activation file provided by the supplier in the input box below.`
+  String get gSubtitleUploadActivationFile {
+    return Intl.message(
+      'Upload the activation file provided by the supplier in the input box below.',
+      name: 'gSubtitleUploadActivationFile',
+      desc:
+          'This is the subtitle for uploading the activation file provided by the supplier in the input box below.',
+      args: [],
+    );
+  }
+
+  /// `Please select an activation file`
+  String get gTipSelectActivationFile {
+    return Intl.message(
+      'Please select an activation file',
+      name: 'gTipSelectActivationFile',
+      desc: 'This is a tip to select an activation file.',
+      args: [],
+    );
+  }
+
+  /// `Select File`
+  String get gBtnSelectFile {
+    return Intl.message(
+      'Select File',
+      name: 'gBtnSelectFile',
+      desc: 'This is a button to select a file.',
+      args: [],
+    );
+  }
+
+  /// `All configuration functions`
+  String get gTipAllConfigFunctions {
+    return Intl.message(
+      'All configuration functions',
+      name: 'gTipAllConfigFunctions',
+      desc: 'This is a tip for all configuration functions.',
+      args: [],
+    );
+  }
+
+  /// `Date not updated`
+  String get gTipDateNotUpdated {
+    return Intl.message(
+      'Date not updated',
+      name: 'gTipDateNotUpdated',
+      desc: 'This is a tip indicating that the date has not been updated.',
+      args: [],
+    );
+  }
+
+  /// `Free`
+  String get gTipFree {
+    return Intl.message(
+      'Free',
+      name: 'gTipFree',
+      desc: 'This is a free tip message.',
+      args: [],
+    );
+  }
+
+  /// `Application Configuration`
+  String get gTitleAppConfig {
+    return Intl.message(
+      'Application Configuration',
+      name: 'gTitleAppConfig',
+      desc: 'This is the title for application configuration.',
+      args: [],
+    );
+  }
+
+  /// `The uploaded activation file is incorrect. Please upload it again.`
+  String get gTipActivationFileError {
+    return Intl.message(
+      'The uploaded activation file is incorrect. Please upload it again.',
+      name: 'gTipActivationFileError',
+      desc: 'This is a tip for an incorrect activation file upload.',
+      args: [],
+    );
+  }
+
+  /// `Add`
+  String get gBtnAdd {
+    return Intl.message(
+      'Add',
+      name: 'gBtnAdd',
+      desc: 'This is a button for adding new items.',
+      args: [],
+    );
+  }
+
+  /// `online`
+  String get gTipOnline {
+    return Intl.message(
+      'online',
+      name: 'gTipOnline',
+      desc: 'This is a prompt for online information.',
+      args: [],
+    );
+  }
+
+  /// `offline`
+  String get gTipOffline {
+    return Intl.message(
+      'offline',
+      name: 'gTipOffline',
+      desc: 'This is a prompt for offline information.',
+      args: [],
+    );
+  }
+
+  /// `Scale Name`
+  String get gScaleName {
+    return Intl.message(
+      'Scale Name',
+      name: 'gScaleName',
+      desc: 'This is the prompt for the scale name.',
+      args: [],
+    );
+  }
+
+  /// `Model Name`
+  String get gModelName {
+    return Intl.message(
+      'Model Name',
+      name: 'gModelName',
+      desc: 'This is a prompt for model name.',
+      args: [],
+    );
+  }
+
+  /// `SN`
+  String get gScaleSn {
+    return Intl.message(
+      'SN',
+      name: 'gScaleSn',
+      desc: 'This is a prompt for sn.',
+      args: [],
+    );
+  }
+
+  /// `Data bits`
+  String get gDataBits {
+    return Intl.message(
+      'Data bits',
+      name: 'gDataBits',
+      desc: 'This is the prompt for data bits.',
+      args: [],
+    );
+  }
+
+  /// `Baud rate`
+  String get gBaudRate {
+    return Intl.message(
+      'Baud rate',
+      name: 'gBaudRate',
+      desc: 'This is the prompt for baud rate.',
+      args: [],
+    );
+  }
+
+  /// `Parity`
+  String get gSerialParity {
+    return Intl.message(
+      'Parity',
+      name: 'gSerialParity',
+      desc: 'This is the prompt for parity.',
+      args: [],
+    );
+  }
+
+  /// `Stop bits`
+  String get gStopBits {
+    return Intl.message(
+      'Stop bits',
+      name: 'gStopBits',
+      desc: 'This is the prompt for stop bits.',
+      args: [],
+    );
+  }
+
+  /// `Serial port`
+  String get gSerialPort {
+    return Intl.message(
+      'Serial port',
+      name: 'gSerialPort',
+      desc: 'This is the prompt for serial port.',
+      args: [],
+    );
+  }
+
+  /// `Click to refresh`
+  String get gTipRefreshPort {
+    return Intl.message(
+      'Click to refresh',
+      name: 'gTipRefreshPort',
+      desc: 'This is a tip to click to refresh the list.',
+      args: [],
+    );
+  }
+
+  /// `Port`
+  String get gTipPort {
+    return Intl.message(
+      'Port',
+      name: 'gTipPort',
+      desc: 'This is a prompt for port number.',
+      args: [],
+    );
+  }
+
+  /// `App Information`
+  String get gAppInformation {
+    return Intl.message(
+      'App Information',
+      name: 'gAppInformation',
+      desc: 'Title for app-related information',
+      args: [],
+    );
+  }
+
+  /// `Language Setting`
+  String get gTitleLanguageSetting {
+    return Intl.message(
+      'Language Setting',
+      name: 'gTitleLanguageSetting',
+      desc: 'Title for language setting page',
+      args: [],
+    );
+  }
+
+  /// `Select Language`
+  String get gTipSelectLanguage {
+    return Intl.message(
+      'Select Language',
+      name: 'gTipSelectLanguage',
+      desc: 'Prompt for selecting language',
+      args: [],
+    );
+  }
+
+  /// `Connect fail`
+  String get gTipConnectFail {
+    return Intl.message(
+      'Connect fail',
+      name: 'gTipConnectFail',
+      desc: 'This is a prompt message when the connection fails.',
+      args: [],
+    );
+  }
+
+  /// `The serial port disconnected`
+  String get gTipSerialPortDisconnected {
+    return Intl.message(
+      'The serial port disconnected',
+      name: 'gTipSerialPortDisconnected',
+      desc: 'This is a prompt message when the serial port is disconnected.',
+      args: [],
+    );
+  }
+
+  /// `Sync PC Time`
+  String get gBtnSyncPcTime {
+    return Intl.message(
+      'Sync PC Time',
+      name: 'gBtnSyncPcTime',
+      desc: 'This is a button about sync pc time.',
+      args: [],
+    );
+  }
+
+  /// `Set Date/Time`
+  String get gBtnSetTime {
+    return Intl.message(
+      'Set Date/Time',
+      name: 'gBtnSetTime',
+      desc: 'This is a button about set date/time.',
+      args: [],
+    );
+  }
+
+  /// `Sync Time`
+  String get gBtnSyncTime {
+    return Intl.message(
+      'Sync Time',
+      name: 'gBtnSyncTime',
+      desc: 'This is a button about sync time.',
+      args: [],
+    );
+  }
+
+  /// `Select Time`
+  String get gBtnSelectTime {
+    return Intl.message(
+      'Select Time',
+      name: 'gBtnSelectTime',
+      desc: 'This is a button about select time.',
+      args: [],
+    );
+  }
+
+  /// `Select Date`
+  String get gBtnSelectDate {
+    return Intl.message(
+      'Select Date',
+      name: 'gBtnSelectDate',
+      desc: 'This is a button about select date.',
+      args: [],
+    );
+  }
+
+  /// `failed to get time`
+  String get gTipFailedGetTime {
+    return Intl.message(
+      'failed to get time',
+      name: 'gTipFailedGetTime',
+      desc: 'This is a tip about failed to get time.',
+      args: [],
+    );
+  }
+
+  /// `Get name`
+  String get gGetBluetoothName {
+    return Intl.message(
+      'Get name',
+      name: 'gGetBluetoothName',
+      desc: 'This is a button or action to get the Bluetooth name.',
+      args: [],
+    );
+  }
+
+  /// `Modify name`
+  String get gModifyBluetoothName {
+    return Intl.message(
+      'Modify name',
+      name: 'gModifyBluetoothName',
+      desc: 'This is a button or action to modify the Bluetooth name.',
+      args: [],
+    );
+  }
+
+  /// `Emission Power:`
+  String get gBluetoothEmissionPower {
+    return Intl.message(
+      'Emission Power:',
+      name: 'gBluetoothEmissionPower',
+      desc: 'This is a label indicating the Bluetooth emission power.',
+      args: [],
+    );
+  }
+
+  /// `Modify emission power`
+  String get gModifyBluetoothEmission {
+    return Intl.message(
+      'Modify emission power',
+      name: 'gModifyBluetoothEmission',
+      desc:
+          'This is a button or action to modify the Bluetooth emission power.',
+      args: [],
+    );
+  }
+
+  /// `Get Ip`
+  String get gBtnGetIp {
+    return Intl.message(
+      'Get Ip',
+      name: 'gBtnGetIp',
+      desc: ' This is a button to get the IP address.',
+      args: [],
+    );
+  }
+
+  /// `Incorrect address! e.g. xxx.xxx.xxx.xxx`
+  String get gTipErrorIp {
+    return Intl.message(
+      'Incorrect address! e.g. xxx.xxx.xxx.xxx',
+      name: 'gTipErrorIp',
+      desc: 'This is a tip for an incorrect IP address.',
+      args: [],
+    );
+  }
+
+  /// `Information`
+  String get gTipInformation {
+    return Intl.message(
+      'Information',
+      name: 'gTipInformation',
+      desc: 'This is a prompt for information.',
+      args: [],
+    );
+  }
+
+  /// `Value`
+  String get gTipValue {
+    return Intl.message(
+      'Value',
+      name: 'gTipValue',
+      desc: 'This is a prompt for value.',
+      args: [],
+    );
+  }
+
+  /// `Get Basic Data`
+  String get gBtnGetBasicData {
+    return Intl.message(
+      'Get Basic Data',
+      name: 'gBtnGetBasicData',
+      desc: 'This is a button to get basic data.',
+      args: [],
+    );
+  }
+
+  /// `Download is successful!`
+  String get gTipDownloadOk {
+    return Intl.message(
+      'Download is successful!',
+      name: 'gTipDownloadOk',
+      desc: 'This is a tip indicating that the download was successful.',
+      args: [],
+    );
+  }
+
+  /// `Download failed!`
+  String get gTipDownloadFail {
+    return Intl.message(
+      'Download failed!',
+      name: 'gTipDownloadFail',
+      desc: 'This is a tip indicating that the download failed.',
+      args: [],
+    );
+  }
+
+  /// `Default Value`
+  String get gTipDefaultValue {
+    return Intl.message(
+      'Default Value',
+      name: 'gTipDefaultValue',
+      desc: 'This is the prompt for the default value.',
+      args: [],
+    );
+  }
+
+  /// `Max Length`
+  String get gTipMaxLength {
+    return Intl.message(
+      'Max Length',
+      name: 'gTipMaxLength',
+      desc: 'This is the prompt for the maximum length.',
+      args: [],
+    );
+  }
+
+  /// `Filling`
+  String get gTipFilling {
+    return Intl.message(
+      'Filling',
+      name: 'gTipFilling',
+      desc: 'This is the prompt for filling.',
+      args: [],
+    );
+  }
+
+  /// `Alignment`
+  String get gTipAlignment {
+    return Intl.message(
+      'Alignment',
+      name: 'gTipAlignment',
+      desc: 'This is the prompt for alignment.',
+      args: [],
+    );
+  }
+
+  /// `Type`
+  String get gTipType {
+    return Intl.message(
+      'Type',
+      name: 'gTipType',
+      desc: 'This is the prompt for type.',
+      args: [],
+    );
+  }
+
+  /// `String Property`
+  String get gTipStringProperty {
+    return Intl.message(
+      'String Property',
+      name: 'gTipStringProperty',
+      desc: 'This is the title for string property.',
+      args: [],
+    );
+  }
+
+  /// `Hexadecimal input, please separate with a space, for example: 31 32 33 34 35 36`
+  String get gTipHexInput {
+    return Intl.message(
+      'Hexadecimal input, please separate with a space, for example: 31 32 33 34 35 36',
+      name: 'gTipHexInput',
+      desc: 'This is the prompt for hexadecimal input, separated by spaces.',
+      args: [],
+    );
+  }
+
+  /// `Hexadecimal`
+  String get gTipHex {
+    return Intl.message(
+      'Hexadecimal',
+      name: 'gTipHex',
+      desc: 'This is the prompt for hexadecimal.',
+      args: [],
+    );
+  }
+
+  /// `Text Hexadecimal Property`
+  String get gTipTextHexProperty {
+    return Intl.message(
+      'Text Hexadecimal Property',
+      name: 'gTipTextHexProperty',
+      desc: 'This is the title for text hexadecimal property.',
+      args: [],
+    );
+  }
+
+  /// `Content`
+  String get gTipContent {
+    return Intl.message(
+      'Content',
+      name: 'gTipContent',
+      desc: 'This is the prompt for content.',
+      args: [],
+    );
+  }
+
+  /// `Text Property`
+  String get gTipTextProperty {
+    return Intl.message(
+      'Text Property',
+      name: 'gTipTextProperty',
+      desc: 'This is the title for text property.',
+      args: [],
+    );
+  }
+
+  /// `Enter Property`
+  String get gTipEnterProperty {
+    return Intl.message(
+      'Enter Property',
+      name: 'gTipEnterProperty',
+      desc: 'This is the title for enter property.',
+      args: [],
+    );
+  }
+
+  /// `Unstable Text`
+  String get gTipUnstableText {
+    return Intl.message(
+      'Unstable Text',
+      name: 'gTipUnstableText',
+      desc: 'This is the prompt for unstable text.',
+      args: [],
+    );
+  }
+
+  /// `Net Text`
+  String get gTipNetText {
+    return Intl.message(
+      'Net Text',
+      name: 'gTipNetText',
+      desc: 'This is the prompt for net text.',
+      args: [],
+    );
+  }
+
+  /// `Stable Text`
+  String get gTipStableText {
+    return Intl.message(
+      'Stable Text',
+      name: 'gTipStableText',
+      desc: 'This is the prompt for stable text.',
+      args: [],
+    );
+  }
+
+  /// `Gross Text`
+  String get gTipGrossText {
+    return Intl.message(
+      'Gross Text',
+      name: 'gTipGrossText',
+      desc: 'This is the prompt for gross text.',
+      args: [],
+    );
+  }
+
+  /// `Float Property`
+  String get gTipFloatProperty {
+    return Intl.message(
+      'Float Property',
+      name: 'gTipFloatProperty',
+      desc: 'This is the title for float property.',
+      args: [],
+    );
+  }
+
+  /// `Decimal`
+  String get gTipDecimal {
+    return Intl.message(
+      'Decimal',
+      name: 'gTipDecimal',
+      desc: 'This is the prompt for decimal places.',
+      args: [],
+    );
+  }
+
+  /// `Add Device`
+  String get gTitleAddDevice {
+    return Intl.message(
+      'Add Device',
+      name: 'gTitleAddDevice',
+      desc: 'This is the title for adding a device.',
+      args: [],
+    );
+  }
+
+  /// `For serial port connection, a serial cable is required to connect to the PC. For WiFi connection, the device's IP address and port number must be correct.`
+  String get gTipAddDevice {
+    return Intl.message(
+      'For serial port connection, a serial cable is required to connect to the PC. For WiFi connection, the device\'s IP address and port number must be correct.',
+      name: 'gTipAddDevice',
+      desc: 'This is a tip for adding a device.',
+      args: [],
+    );
+  }
+
+  /// `Empty the scale pan`
+  String get gTipEmptyScalePan {
+    return Intl.message(
+      'Empty the scale pan',
+      name: 'gTipEmptyScalePan',
+      desc: 'This is a tip to empty the scale pan.',
+      args: [],
+    );
+  }
+
+  /// `Set the full scale`
+  String get gTipSetFullScale {
+    return Intl.message(
+      'Set the full scale',
+      name: 'gTipSetFullScale',
+      desc: 'This is a tip to set the full scale.',
+      args: [],
+    );
+  }
+
+  /// `Place the weight`
+  String get gTipPlaceWeight {
+    return Intl.message(
+      'Place the weight',
+      name: 'gTipPlaceWeight',
+      desc: 'This is a tip to place the weight.',
+      args: [],
+    );
+  }
+
+  /// `Calibration result`
+  String get gTipCalibrationResult {
+    return Intl.message(
+      'Calibration result',
+      name: 'gTipCalibrationResult',
+      desc: 'This is a tip for the calibration result.',
+      args: [],
+    );
+  }
+
+  /// `Calibrate`
+  String get gBtnCalibration {
+    return Intl.message(
+      'Calibrate',
+      name: 'gBtnCalibration',
+      desc: 'This is a button for calibration.',
+      args: [],
+    );
+  }
+
+  /// `Please empty the scale pan and click next`
+  String get gTipEmptyScalePanThenNext {
+    return Intl.message(
+      'Please empty the scale pan and click next',
+      name: 'gTipEmptyScalePanThenNext',
+      desc: 'This is a tip to empty the scale pan and click next.',
+      args: [],
+    );
+  }
+
+  /// `Please set the full scale weight and click next`
+  String get gTipSetFullScaleThenNext {
+    return Intl.message(
+      'Please set the full scale weight and click next',
+      name: 'gTipSetFullScaleThenNext',
+      desc: 'This is a tip to set the full scale weight and click next.',
+      args: [],
+    );
+  }
+
+  /// `Please load the weight, wait for the green light to turn on and click next`
+  String get gTipLoadWeightThenNext {
+    return Intl.message(
+      'Please load the weight, wait for the green light to turn on and click next',
+      name: 'gTipLoadWeightThenNext',
+      desc:
+          'This is a tip to load the weight, wait for the green light to turn on and click next.',
+      args: [],
+    );
+  }
+
+  /// `Please empty the scale pan`
+  String get gTipPleaseEmptyScalePan {
+    return Intl.message(
+      'Please empty the scale pan',
+      name: 'gTipPleaseEmptyScalePan',
+      desc: 'This is a tip to ask to empty the scale pan.',
+      args: [],
+    );
+  }
+
+  /// `Please load the weight`
+  String get gTipPleaseLoadWeight {
+    return Intl.message(
+      'Please load the weight',
+      name: 'gTipPleaseLoadWeight',
+      desc: 'This is a tip to ask to load the weight.',
+      args: [],
+    );
+  }
+
+  /// `If calibration fails, please click 'Recalibrate'.`
+  String get gTipCalResult {
+    return Intl.message(
+      'If calibration fails, please click \'Recalibrate\'.',
+      name: 'gTipCalResult',
+      desc: 'This is a tip for calibration result.',
+      args: [],
+    );
+  }
+
+  /// `Calibration failed`
+  String get gTipCalibrationFailed {
+    return Intl.message(
+      'Calibration failed',
+      name: 'gTipCalibrationFailed',
+      desc: 'This is a tip for calibration failure.',
+      args: [],
+    );
+  }
+
+  /// `Calibration successful`
+  String get gTipCalibrationSuccess {
+    return Intl.message(
+      'Calibration successful',
+      name: 'gTipCalibrationSuccess',
+      desc: 'This is a tip for successful calibration.',
+      args: [],
+    );
+  }
+
+  /// `Recalibrate`
+  String get gTipCalibrationAgain {
+    return Intl.message(
+      'Recalibrate',
+      name: 'gTipCalibrationAgain',
+      desc: 'This is a tip to ask to calibrate again.',
+      args: [],
+    );
+  }
+
+  /// `Calibration is in progress. It is recommended to complete the calibration before switching the scale! Are you sure you want to switch?`
+  String get gTipCalibrationWarning {
+    return Intl.message(
+      'Calibration is in progress. It is recommended to complete the calibration before switching the scale! Are you sure you want to switch?',
+      name: 'gTipCalibrationWarning',
+      desc: 'This is a warning message for calibration.',
+      args: [],
+    );
+  }
+
+  /// `Previous Step`
+  String get gBtnPrevious {
+    return Intl.message(
+      'Previous Step',
+      name: 'gBtnPrevious',
+      desc: 'This is a button to go back to the previous step.',
+      args: [],
+    );
+  }
+
+  /// `Next Step`
+  String get gBtnNext {
+    return Intl.message(
+      'Next Step',
+      name: 'gBtnNext',
+      desc: 'This is a button to go to the next step.',
+      args: [],
+    );
+  }
+
+  /// `Please enter the max range`
+  String get gTipInputRange {
+    return Intl.message(
+      'Please enter the max range',
+      name: 'gTipInputRange',
+      desc: 'This is a prompt to ask the user to input the measuring range.',
+      args: [],
+    );
+  }
+
+  /// `Decimal`
+  String get gTxtDecimal {
+    return Intl.message(
+      'Decimal',
+      name: 'gTxtDecimal',
+      desc: 'This is the prompt for decimal places.',
+      args: [],
+    );
+  }
+
+  /// `Gaduation`
+  String get gTipGaduation {
+    return Intl.message(
+      'Gaduation',
+      name: 'gTipGaduation',
+      desc: 'This is the prompt for graduation.',
+      args: [],
+    );
+  }
+
+  /// `Fail,Please redo the last step.`
+  String get gTipRedoLastStep {
+    return Intl.message(
+      'Fail,Please redo the last step.',
+      name: 'gTipRedoLastStep',
+      desc: 'This is a tip to redo the last step.',
+      args: [],
+    );
+  }
+
+  /// `Fail,Please reset the maximum range.`
+  String get gTipResetMaxRange {
+    return Intl.message(
+      'Fail,Please reset the maximum range.',
+      name: 'gTipResetMaxRange',
+      desc: 'This is a tip to reset the maximum range.',
+      args: [],
+    );
+  }
+
+  /// `No devices found yet, Please add your device`
+  String get gTipNoDevice {
+    return Intl.message(
+      'No devices found yet, Please add your device',
+      name: 'gTipNoDevice',
+      desc: 'This is a tip to inform the user that no devices are found.',
+      args: [],
+    );
+  }
+
+  /// `The port is already in use.`
+  String get gTipPortInUsed {
+    return Intl.message(
+      'The port is already in use.',
+      name: 'gTipPortInUsed',
+      desc: 'This is a tip to inform the user that the port is already in use.',
+      args: [],
+    );
+  }
+
+  /// `Performing operation...`
+  String get gTipPerformingOperation {
+    return Intl.message(
+      'Performing operation...',
+      name: 'gTipPerformingOperation',
+      desc:
+          'This is a tip to inform the user that an operation is being performed.',
+      args: [],
+    );
+  }
+
+  /// `Device List`
+  String get gTitleDeviceList {
+    return Intl.message(
+      'Device List',
+      name: 'gTitleDeviceList',
+      desc: 'This is the title for the device list.',
       args: [],
     );
   }

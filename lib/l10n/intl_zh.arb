@@ -4,18 +4,6 @@
     "@gLanguage": {
         "description": "This is a prompt for the current language."
     },
-    "gModelName": "机型",
-    "@gModelName": {
-        "description": "This is a prompt for model name."
-    },
-    "gScaleSn": "SN#:",
-    "@gScaleSn": {
-        "description": "This is a prompt for sn."
-    },
-    "gTipPerpetual": "永久",
-    "@gTipPerpetual": {
-        "description": "This is a tip of the certification expiration date."
-    },
     "gBtnConnect": "连接",
     "@gBtnConnect": {
         "description": "This is a button for testing the connection with the device."
@@ -52,14 +40,6 @@
     "@gBtnExit": {
         "description": "This is a button to exit."
     },
-    "gSystemId": "系统ID:  ",
-    "@gSystemId": {
-        "description": "This is the prompt for the system authentication ID."
-    },
-    "gExpirationDate": "到期日期:",
-    "@gExpirationDate": {
-        "description": "This is the prompt for the expiration date."
-    },
     "gTitleSerialModify": "串口信息修改",
     "@gTitleSerialModify": {
         "description": "This is the title for modifying serial port information."
@@ -67,39 +47,7 @@
     "gSerialPortStatus": "串口状态:",
     "@gSerialPortStatus": {
         "description": "This is the title for serial port status."
-    },
-    "gSerialPort": "串口:",
-    "@gSerialPort": {
-        "description": "This is the prompt for serial port."
-    },
-    "gRefreshPort": "刷新串口",
-    "@gRefreshPort": {
-        "description": "This is the prompt to refresh port."
-    },
-    "gDataBits": "数据位:",
-    "@gDataBits": {
-        "description": "This is the prompt for data bits."
-    },
-    "gBaudRate": "波特率:",
-    "@gBaudRate": {
-        "description": "This is the prompt for baud rate."
-    },
-    "gSerialParity": "校验位:",
-    "@gSerialParity": {
-        "description": "This is the prompt for parity."
-    },
-    "gStopBits": "停止位:",
-    "@gStopBits": {
-        "description": "This is the prompt for stop bits."
-    },
-    "gBtnConfirm": "确认",
-    "@gBtnConfirm": {
-        "description": "This is a confirmation button."
-    },
-    "gBtnCancel": "取消",
-    "@gBtnCancel": {
-        "description": "This is a button to cancel"
-    },
+    },    
     "gMsgRefresh": "刷新",
     "@gMsgRefresh": {
         "description": "This is a button to refresh."
@@ -108,23 +56,19 @@
     "@gFindSsid": {
         "description": "This is a prompt for discover ssid."
     },
-    "gNetworkSetting": "无线网设置",
-    "@gNetworkSetting": {
-        "description": ""
-    },
-    "gPassword": "密码:",
+    "gPassword": "密码",
     "@gPassword": {
         "description": "This is a prompt for password."
     },
-    "gIpAddress": "IPv4:",
+    "gIpAddress": "IPv4",
     "@gIpAddress": {
         "description": "This is a prompt for IPv4."
     },
-    "gNetmask": "子网掩码:",
+    "gNetmask": "子网掩码",
     "@gNetmask": {
         "description": "This is a prompt for NetMask."
     },
-    "gGateway": "网关:",
+    "gGateway": "网关",
     "@gGateway": {
         "description": "This is a prompt for Gateway."
     },
@@ -148,7 +92,7 @@
     "@gTipConnected": {
         "description": "This is a prompt for already connected ."
     },
-    "gTipConnectedInfo": "已连接AP信息:",
+    "gTipConnectedInfo": "已连接AP信息",
     "@gTipConnectedInfo": {
         "description": "This is a prompt for connected info ."
     },
@@ -172,10 +116,6 @@
     "@gTipSSID": {
         "description": "This is a prompt for SSID."
     },
-    "gTitleBtSetting": "蓝牙配置",
-    "@gTitleBtSetting": {
-        "description": "This is a title for bluetooth configurations."
-    },
     "gEPStrong": "强",
     "@gEPStrong": {
         "description": "This is a prompt for the Bluetooth signal strength."
@@ -196,7 +136,7 @@
     "@gTipTimeOut": {
         "description": "This is a prompt for time out."
     },
-    "gDeviceName": "设备名称:",
+    "gDeviceName": "设备名称",
     "@gDeviceName": {
         "description": "This is a prompt for device name."
     },
@@ -380,15 +320,15 @@
     "@iBtnZero": {
         "description": "This is a zeroing button in T-Industry,"
     },
-    "iTextZero": "零点:",
+    "iTextZero": "零点",
     "@iTextZero": {
         "description": "This is a prompt about zero weight in T-Industry,"
     },
-    "iTextNet": "净重:",
+    "iTextNet": "净重",
     "@iTextNet": {
         "description": "This is a prompt about net weight in T-Industry,"
     },
-    "iStable": "稳定:",
+    "iStable": "稳定",
     "@iStable": {
         "description": "This is a prompt about stable weight in T-Industry,"
     },
@@ -468,10 +408,6 @@
     "@plu_remarks": {
         "description": ""
     },
-    "gBtnAdd": "添加",
-    "@gBtnAdd": {
-        "description": ""
-    },
     "gBtnEdit": "编辑",
     "@gBtnEdit": {
         "description": ""
@@ -520,10 +456,6 @@
     "@user_error_message3": {
         "description": ""
     },
-    "language_setting_title": "语言设置",
-    "@language_setting_title": {
-        "description": ""
-    },
     "button_back": "返回",
     "@button_back": {
         "description": ""
@@ -534,10 +466,6 @@
     },
     "scale_model": "选择机型:",
     "@scale_model": {
-        "description": ""
-    },
-    "button_get_ip": "获取IP",
-    "@button_get_ip": {
         "description": ""
     },
     "firmware_update": "串口更新软件",
@@ -620,20 +548,12 @@
     "@bt_setting_title": {
         "description": ""
     },
-    "wifi_setting_title": "Wi-Fi 设置",
-    "@wifi_setting_title": {
-        "description": ""
-    },
     "customization_setting_title": "应用",
     "@customization_setting_title": {
         "description": ""
     },
     "advanced_setting_title": "高级",
     "@advanced_setting_title": {
-        "description": ""
-    },
-    "label_design_title": "标签设计",
-    "@label_design_title": {
         "description": ""
     },
     "gTitleReceiptDesign": "票据设计",
@@ -644,17 +564,9 @@
     "@gTipReceiptDesign": {
         "description": "This is a prompt about receipt design app."
     },
-    "gTitleLabelFmtDownload": "下发标签打印格式",
-    "@gTitleLabelFmtDownload": {
-        "description": "This is a title about downloading label printing Formats app."
-    },
     "gTipLabelFmtDownload": "此应用时用来下发打印格式.",
     "@gTipLabelFmtDownload": {
         "description": "This is a prompt about downloading label printing Formats app."
-    },
-    "gTitleSerialOutput": "串口输出设计",
-    "@gTitleSerialOutput": {
-        "description": "This is a title about serial output design"
     },
     "gTitleSerialOutputDownload": "串口输出下发",
     "@gTitleSerialOutputDownload": {
@@ -700,57 +612,21 @@
     "@gTipPluDownload": {
         "description": "This is a tip about downloading plu."
     },
-    "iTitleWeighting": "称重模式(单秤)",
-    "@iTitleWeighting": {
-        "description": "This is a title about weighting,support one scale."
-    },
-    "iTitleWeightCollection": "重量收集模式(单秤)",
-    "@iTitleWeightCollection": {
-        "description": "This is a title about collect weight data,support one scale,in T-Industry"
-    },
     "iTipWeightCollection": "此应用是用来实时收集重量.",
     "@iTipWeightCollection": {
         "description": "This is a prompt about collect weight data,in T-Industry"
-    },
-    "iTitleCheckWeigher": "检重秤模式(单秤)",
-    "@iTitleCheckWeigher": {
-        "description": "This is a title about check weighing,support one scale,in T-Industry"
     },
     "iTipCheckWeigher": "此应用是用来实时记录检重重量.",
     "@iTipCheckWeigher": {
         "description": "This is a prompt about check weighing,in T-Industry"
     },
-    "iTitleIncrementWeighting": "加法秤模式(单秤)",
-    "@iTitleIncrementWeighting": {
-        "description": "This is a title about Increment Weighing,support one scale,in T-Industry"
-    },
     "iTipIncrementWeighting": "此应用是用来实现加法秤.",
     "@iTipIncrementWeighting": {
         "description": "This is a prompt about Increment Weighing,in T-Industry"
     },
-    "gTitleTakeOut": "减法秤模式(单秤)",
-    "@gTitleTakeOut": {
-        "description": "This is a title about take out scale,support one scale,in T-Industry"
-    },
     "gTipTakeOut": "此应用是用来实现减法秤.",
     "@gTipTakeOut": {
         "description": "This is a prompt about take out scale,in T-Industry"
-    },
-    "get_bt_name": "获取名字",
-    "@get_bt_name": {
-        "description": ""
-    },
-    "modify_bt_name": "修改名字",
-    "@modify_bt_name": {
-        "description": ""
-    },
-    "bt_emission_power": "信号强度:",
-    "@bt_emission_power": {
-        "description": ""
-    },
-    "bt_modify_emission": "修改信号强度",
-    "@bt_modify_emission": {
-        "description": ""
     },
     "gTitleConfirm": "确认",
     "@gTitleConfirm": {
@@ -762,14 +638,6 @@
     },
     "jump_confirm_info": "请确认跳转默认打印格式下发页面.",
     "@jump_confirm_info": {
-        "description": ""
-    },
-    "download_result_ok": "下发成功!",
-    "@download_result_ok": {
-        "description": ""
-    },
-    "download_result_fail": "下发失败!",
-    "@download_result_fail": {
         "description": ""
     },
     "select_firmware_btn": "选择 Firmware",
@@ -820,45 +688,9 @@
     "@choose_json_file": {
         "description": ""
     },
-    "abnormal_data_title": "基础数据",
-    "@abnormal_data_title": {
-        "description": ""
-    },
-    "cTitleDeviceTime": "设备时间",
-    "@cTitleDeviceTime": {
-        "description": "This is a title about device time."
-    },
-    "cBtnSyncPcTime": "同步PC时间",
-    "@cBtnSyncPcTime": {
-        "description": "This is a button about sync pc time."
-    },
-    "cBtnSetTime": "设置时间日期",
-    "@cBtnSetTime": {
-        "description": "This is a button about set date/time."
-    },
-    "cBtnSyncTime": "同步时间日期",
-    "@cBtnSyncTime": {
-        "description": "This is a button about sync time."
-    },
-    "cBtnSelectTime": "选择时间",
-    "@cBtnSelectTime": {
-        "description": "This is a button about select time."
-    },
-    "cBtnSelectDate": "选择日期",
-    "@cBtnSelectDate": {
-        "description": "This is a button about select date."
-    },
-    "cTipFailedGetTime": "获取设备时间失败",
-    "@cTipFailedGetTime": {
-        "description": "This is a tip about failed to get time."
-    },
     "batch_delivery_title": "批量下发",
     "@batch_delivery_title": {
         "description": ""
-    },
-    "cTitleParameterSet": "参数设置",
-    "@cTitleParameterSet": {
-        "description": "This is a title about parameter setting."
     },
     "cTipConfigurationName": "参数名称",
     "@cTipConfigurationName": {
@@ -916,10 +748,6 @@
     "@server_port": {
         "description": ""
     },
-    "error_ip_tip": "不正确的地址! e.g. xxx.xxx.xxx.xxx",
-    "@error_ip_tip": {
-        "description": ""
-    },
     "set_ethernet_ip_title": "有线IP地址设置",
     "@set_ethernet_ip_title": {
         "description": ""
@@ -928,45 +756,37 @@
     "@go_home": {
         "description": ""
     },
-    "gTitleReceiptDownload": "下发票据打印格式",
-    "@gTitleReceiptDownload": {
-        "description": "This is a title about receipt format download."
-    },
     "gTipReceiptDownload": "此应用是用来下发票据打印格式.",
     "@gTipReceiptDownload": {
         "description": "This is a prompt about receipt format download."
     },
-    "about_title": "信息",
-    "@about_title": {
-        "description": ""
+    "appVersionTitle": "版本",
+    "@appVersionTitle": {
+        "description": "Title for the application version information"
     },
-    "app_version_title": "版本:",
-    "@app_version_title": {
-        "description": ""
+    "appCompanyTitle": "公司",
+    "@appCompanyTitle": {
+        "description": "Title for the application company information"
     },
-    "app_company_title": "公司:",
-    "@app_company_title": {
-        "description": ""
+    "appTelTitle": "电话",
+    "@appTelTitle": {
+        "description": "Title for the application telephone information"
     },
-    "app_tel_title": "电话:",
-    "@app_tel_title": {
-        "description": ""
+    "appEmailTitle": "邮箱",
+    "@appEmailTitle": {
+        "description": "Title for the application email information"
     },
-    "app_email_title": "邮箱:",
-    "@app_email_title": {
-        "description": ""
+    "appAddressTitle": "地址",
+    "@appAddressTitle": {
+        "description": "Title for the application address information"
     },
-    "app_address_title": "地址:",
-    "@app_address_title": {
-        "description": ""
+    "appWebTitle": "网址",
+    "@appWebTitle": {
+        "description": "Title for the application website information"
     },
-    "app_web_title": "网址:",
-    "@app_web_title": {
-        "description": ""
-    },
-    "app_models": "适用机型:",
-    "@app_models": {
-        "description": ""
+    "appModels": "适用机型",
+    "@appModels": {
+        "description": "Title for the models that the application is applicable to"
     },
     "p_text_title": "自由文本",
     "@p_text_title": {
@@ -1520,10 +1340,6 @@
     "@batch_down_slt_folder": {
         "description": ""
     },
-    "abnormal_weight": "获取基本数据",
-    "@abnormal_weight": {
-        "description": ""
-    },
     "gBtnSelectPluFile": "选择Plu Excel",
     "@gBtnSelectPluFile": {
         "description": "This is a button for selecting the PLU file."
@@ -1588,28 +1404,12 @@
     "@def_fmt_out_range_tip": {
         "description": ""
     },
-    "m_scale_title": "多台秤管理",
-    "@m_scale_title": {
-        "description": ""
-    },
-    "scale_mgr_btn_add": "添加",
-    "@scale_mgr_btn_add": {
-        "description": ""
-    },
     "scale_mgr_btn_rename": "重命名",
     "@scale_mgr_btn_rename": {
         "description": ""
     },
     "scale_mgr_btn_def": "设置默认",
     "@scale_mgr_btn_def": {
-        "description": ""
-    },
-    "scale_mgr_btn_test": "测试连接",
-    "@scale_mgr_btn_test": {
-        "description": ""
-    },
-    "gScaleName": "秤名",
-    "@gScaleName": {
         "description": ""
     },
     "gStatus": "状态",
@@ -1619,10 +1419,6 @@
     "gProgress": "进度",
     "@gProgress": {
         "description": "This is the prompt for the download progress."
-    },
-    "rDetailRptTitle": "零售详单",
-    "@rDetailRptTitle": {
-        "description": "This is the title of the retail detail report page in the retail app."
     },
     "rTipDetailRpt": "此应用是显示零售详单数据.",
     "@rTipDetailRpt": {
@@ -1644,21 +1440,9 @@
     "@rRefreshListBtn": {
         "description": "This is the name of the button for refreshing the retail list in the retail app."
     },
-    "gOnlineTip": "在线",
-    "@gOnlineTip": {
-        "description": "This is a prompt for online information."
-    },
-    "gOfflineTip": "断线",
-    "@gOfflineTip": {
-        "description": "This is a prompt for offline information."
-    },
     "rJoinManagementTip": "是否加入管理",
     "@rJoinManagementTip": {
         "description": "This is a prompt about whether to join the management in the retail app."
-    },
-    "gTitleUpdateFirmware": "更新软件",
-    "@gTitleUpdateFirmware": {
-        "description": "This is the title for updating the firmware."
     },
     "gTipFirmwareZipFile": "软件Zip:",
     "@gTipFirmwareZipFile": {
@@ -1892,43 +1676,43 @@
     "@gBtnOpenSerialPort": {
         "description": "This is a button to open serial port."
     },
-    "cTipWeighingCount": "称重次数:",
+    "cTipWeighingCount": "称重次数",
     "@cTipWeighingCount": {
         "description": "This is a tip for weighing count."
     },
-    "cTipPowerOffCnt": "异常关机次数:",
+    "cTipPowerOffCnt": "异常关机次数",
     "@cTipPowerOffCnt": {
         "description": "This is a tip for abnormal power-off count."
     },
-    "cTipRunningTime": "运行时间(mins):",
+    "cTipRunningTime": "运行时间(mins)",
     "@cTipRunningTime": {
         "description": "This is a tip for running time."
     },
-    "cTipPowerOnCnt": "开机次数:",
+    "cTipPowerOnCnt": "开机次数",
     "@cTipPowerOnCnt": {
         "description": "This is a tip for power-on count."
     },
-    "cTipOlTime": "OL 时间(mins):",
+    "cTipOlTime": "OL 时间(mins)",
     "@cTipOlTime": {
         "description": "This is a tip for ol time."
     },
-    "cTipUlTime": "UL 时间(mins):",
+    "cTipUlTime": "UL 时间(mins)",
     "@cTipUlTime": {
         "description": "This is a tip for ul time."
     },
-    "cTipErr4Cnt": "Err4 次数:",
+    "cTipErr4Cnt": "Err4 次数",
     "@cTipErr4Cnt": {
         "description": "This is a tip for err4 count."
     },
-    "cTipErr19Cnt": "Err19 次数:",
+    "cTipErr19Cnt": "Err19 次数",
     "@cTipErr19Cnt": {
         "description": "This is a tip for err19 count."
     },
-    "cTipCalswitchCnt": "校正开关次数:",
+    "cTipCalswitchCnt": "校正开关次数",
     "@cTipCalswitchCnt": {
         "description": "This is a tip for cal switch count."
     },
-    "cTipCalCnt": "标定次数:",
+    "cTipCalCnt": "标定次数",
     "@cTipCalCnt": {
         "description": "This is a tip for calibration count."
     },
@@ -2039,6 +1823,10 @@
     "fAddFmaBtn": "新增配方",
     "@fAddFmaBtn": {
         "description": "Button to add a new formula"
+    },
+    "fEditFmaBtn": "编辑配方",
+    "@fEditFmaBtn": {
+        "description": "Button to edit a old formula"
     },
     "fHistoricalWeighingRecordsBtn": "称重记录",
     "@fHistoricalWeighingRecordsBtn": {
@@ -2555,5 +2343,558 @@
     "fFormulaCompletedTip": "配方已完成",
     "@fFormulaCompletedTip": {
         "description": "Prompt message indicating that the formula has been completed"
-    }
+    },
+    "menuMultiScaleManagement": "多秤管理",
+    "@menuMultiScaleManagement": {
+        "description": "Menu item for multi-scale management"
+    },
+    "menuDeviceTime": "设备时间",
+    "@menuDeviceTime": {
+        "description": "Menu item for device Time"
+    },  
+    "menuBluetoothSetting": "蓝牙设置",
+    "@menuBluetoothSetting": {
+        "description": "Menu item for bluetooth setting"
+    },
+    "menuWifiSetting": "Wi-Fi设置",
+    "@menuWifiSetting": {
+        "description": "Menu item for Wi-Fi setting"
+    },
+    "menuFirmwareUpdate": "固件更新",
+    "@menuFirmwareUpdate": {
+        "description": "Menu item for firmware update"
+    },
+    "menuLabelDesign": "标签格式设计",
+    "@menuLabelDesign": {
+        "description": "Menu item for label design"
+    },
+    "menuReceiptDesign": "票据格式设计",
+    "@menuReceiptDesign": {
+        "description": "Menu item for receipt design"
+    },
+    "menuSerialOutputDesign": "串口输出设计",
+    "@menuSerialOutputDesign": {
+        "description": "Menu item for serial output design"
+    },
+    "menuBasicDataCollection": "基础数据收集",
+    "@menuBasicDataCollection": {
+        "description": "Menu item for basic data collection"
+    },
+    "menuParameterSetting": "参数设置",
+    "@menuParameterSetting": {
+        "description": "Menu item for parameter setting"
+    },
+    "menuWeighing": "称重",
+    "@menuWeighing": {
+        "description": "Menu item for weighing"
+    },
+    "menuPluManagement": "PLU管理",
+    "@menuPluManagement": {
+        "description": "Menu item for PLU management"
+    },
+    "menuLabelFormatDownload": "标签格式下发",
+    "@menuLabelFormatDownload": {
+        "description": "Menu item for label format download"
+    },
+    "menuReceiptFormatDownload": "票据格式下发",
+    "@menuReceiptFormatDownload": {
+        "description": "Menu item for receipt format download"
+    },
+    "menuRetailReport": "零售报表",
+    "@menuRetailReport": {
+        "description": "Menu item for retail report"
+    },
+    "menuVariableValueSetting": "变量值设置",
+    "@menuVariableValueSetting": {
+        "description": "Menu item for variable value setting"
+    },
+    "menuWeighingDataCollection": "称重数据收集",
+    "@menuWeighingDataCollection": {
+        "description": "Menu item for weighing data collection"
+    },
+    "menuCheckWeighing": "检重",
+    "@menuCheckWeighing": {
+        "description": "Menu item for check weighing"
+    },
+    "menuIncrementWeighing": "加法秤",
+    "@menuIncrementWeighing": {
+        "description": "Menu item for increment weighing"
+    },
+    "menuTakeOutScale": "减法秤",
+    "@menuTakeOutScale": {
+        "description": "Menu item for take out scale"
+    },
+    "menuFormula": "配方",
+    "@menuFormula": {
+        "description": "Menu item for formula"
+    },
+    "menuFlowRate": "流速",
+    "@menuFlowRate": {
+        "description": "Menu item for liquid filling speed"
+    },
+    "menuCalibration": "标定",
+    "@menuCalibration": {
+        "description": "Menu item for calibration"
+    },
+    "menuLanguageSetting": "设置语言",
+    "@menuLanguageSetting": {
+        "description": "Menu item for language setting"
+    },
+    "menuApplications": "应用",
+    "@menuApplications": {
+        "description": "Menu item for applications"
+    },   
+    "menuSystemInformation": "系统信息",
+    "@menuSystemInformation": {
+        "description": "Menu item for system information"
+    },
+    "menuConfiguration": "配置",
+    "@menuConfiguration": {
+        "description": "Menu item for configuration"
+    },
+    "gBtnConfirm": "确认",
+    "@gBtnConfirm": {
+        "description": "This is a confirmation button."
+    },
+    "gBtnCancel": "取消",
+    "@gBtnCancel": {
+        "description": "This is a button to cancel"
+    },
+    "gTipPerpetual": "永久",
+    "@gTipPerpetual": {
+        "description": "This is a tip of the certification expiration date."
+    },
+    "gSystemId": "系统ID",
+    "@gSystemId": {
+        "description": "This is the prompt for the system authentication ID."
+    },
+    "gExpirationDate": "到期日期",
+    "@gExpirationDate": {
+        "description": "This is the prompt for the expiration date."
+    },
+    "gBtnRenew": "续费",
+    "@gBtnRenew": {
+        "description": "This is the button for renewing the software service."
+    },    
+    "gTipUnactivated": "未激活",
+    "@gTipUnactivated": {
+        "description": "This is a tip for unactivated status."
+    },
+    "gTipActivated": "已激活",
+    "@gTipActivated": {
+        "description": "This is a tip for activated status."
+    },
+    "gBtnAddApp": "添加应用",
+    "@gBtnAddApp": {
+        "description": "This is a button for adding an application."
+    },
+    "gBtnRemove": "移除",
+    "@gBtnRemove": {
+        "description": "This is a button for removing something."
+    },
+    "gBtnActivate": "激活",  
+    "@gBtnActivate": {
+        "description": "This is a button for activating something."
+    },
+    "gTitleActivationFeedback": "激活反馈", 
+    "@gTitleActivationFeedback": {
+        "description": "This is the title for activation feedback."
+    },
+    "gBtnAdded": "已添加",
+    "@gBtnAdded": {
+        "description": "This is a button indicating that an item has been added."
+    },
+    "gTitleConfigFunctionCharge": "配置功能收费方式",
+    "@gTitleConfigFunctionCharge": {
+        "description": "This is the title for the configuration function charging method."
+    },
+    "gSubtitleConfigFunctionCharge": "下方功能配置按￥100/年方式收费，购买后可激活下方配置功能，需激活请联系供应商",
+    "@gSubtitleConfigFunctionCharge": {
+        "description": "This is the subtitle for the configuration function charging method."
+    },
+    "gTitleAddedConfigFunction": "已添加配置功能",
+    "@gTitleAddedConfigFunction": {
+        "description": "This is the title for the added configuration functions."
+    },
+    "gSubtitleAddedConfigFunction": "下方应用已添加至导航栏内，点击移除按钮可移除对应功能，移除后可继续添加应用",
+    "@gSubtitleAddedConfigFunction": {
+        "description": "This is the subtitle for the added configuration functions."
+    },
+    "gBtnBackToPrevious": "返回上一级",
+    "@gBtnBackToPrevious": {
+        "description": "This is a button to go back to the previous level."
+    },
+    "gTitleActivationMethod": "激活方式",  
+    "@gTitleActivationMethod": {
+        "description": "This is the title for activation method."
+    },
+    "gSubtitleUploadActivationFile": "在下方输入框内上传供应商提供的激活文件",  
+    "@gSubtitleUploadActivationFile": {
+        "description": "This is the subtitle for uploading the activation file provided by the supplier in the input box below."
+    },
+    "gTipSelectActivationFile": "请选择激活文件",
+    "@gTipSelectActivationFile": {
+        "description": "This is a tip to select an activation file."
+    },
+    "gBtnSelectFile": "选择文件",
+    "@gBtnSelectFile": {
+        "description": "This is a button to select a file."
+    },
+    "gTipAllConfigFunctions": "所有配置功能",
+    "@gTipAllConfigFunctions": {
+        "description": "This is a tip for all configuration functions."
+    },
+    "gTipDateNotUpdated": "日期未更新", 
+    "@gTipDateNotUpdated": {
+        "description": "This is a tip indicating that the date has not been updated."
+    },
+    "gTipFree": "免费",
+    "@gTipFree": {
+        "description": "This is a free tip message."
+    },
+    "gTitleAppConfig": "应用配置",
+    "@gTitleAppConfig": {
+        "description": "This is the title for application configuration."
+    },
+    "gTipActivationFileError": "上传的激活文件错误请重新上传",
+    "@gTipActivationFileError": {
+        "description": "This is a tip for an incorrect activation file upload."
+    },
+    "gBtnAdd": "新增",
+    "@gBtnAdd": {
+        "description": "This is a button for adding new items."
+    },
+    "gOnlineTip": "在线",
+    "@gOnlineTip": {
+        "description": "This is a prompt for online information."
+    },
+    "gTipOffline": "断线",
+    "@gTipOffline": {
+        "description": "This is a prompt for offline information."
+    },
+    "gScaleName": "Scale Name",
+    "@gScaleName": {
+        "description": "This is the prompt for the scale name."
+    },
+    "gModelName": "型号名称",
+    "@gModelName": {
+        "description": "This is a prompt for model name."
+    },
+    "gScaleSn": "设备序列号",
+    "@gScaleSn": {
+        "description": "This is a prompt for sn."
+    },
+    "gDataBits": "数据位",
+    "@gDataBits": {
+        "description": "This is the prompt for data bits."
+    },
+    "gBaudRate": "波特率",
+    "@gBaudRate": {
+        "description": "This is the prompt for baud rate."
+    },
+    "gSerialParity": "校验位",
+    "@gSerialParity": {
+        "description": "This is the prompt for parity."
+    },
+    "gStopBits": "停止位",
+    "@gStopBits": {
+        "description": "This is the prompt for stop bits."
+    },
+    "gSerialPort": "串口",
+    "@gSerialPort": {
+        "description": "This is the prompt for serial port."
+    },
+    "gTipRefreshPort": "点击刷新",
+    "@gTipRefreshPort": {
+        "description": "This is a tip to click to refresh the list."
+    },
+    "gTipPort": "端口号",
+    "@gTipPort": {
+        "description": "This is a prompt for port number."
+    },
+    "gAppInformation": "应用信息",
+    "@gAppInformation": {
+        "description": "Title for app-related information"
+    },
+    "gTitleLanguageSetting": "Language Setting",
+    "@gTitleLanguageSetting": {
+        "description": "Title for language setting page"
+    },
+    "gTipSelectLanguage": "选择语言",
+    "@gTipSelectLanguage": {
+        "description": "Prompt for selecting language"
+    },
+    "gTipConnectFail": "连接失败",
+    "@gTipConnectFail": {
+        "description": "This is a prompt message when the connection fails."
+    },
+    "gTipSerialPortDisconnected": "串口已断开连接",
+    "@gTipSerialPortDisconnected": {
+        "description": "This is a prompt message when the serial port is disconnected."
+    },
+    "gBtnSyncPcTime": "同步PC时间",
+    "@gBtnSyncPcTime": {
+        "description": "This is a button about sync pc time."
+    },
+    "gBtnSetTime": "设置时间日期",
+    "@gBtnSetTime": {
+        "description": "This is a button about set date/time."
+    },
+    "gBtnSyncTime": "同步时间日期",
+    "@gBtnSyncTime": {
+        "description": "This is a button about sync time."
+    },
+    "gBtnSelectTime": "选择时间",
+    "@gBtnSelectTime": {
+        "description": "This is a button about select time."
+    },
+    "gBtnSelectDate": "选择日期",
+    "@gBtnSelectDate": {
+        "description": "This is a button about select date."
+    },
+    "gTipFailedGetTime": "获取设备时间失败",
+    "@gTipFailedGetTime": {
+        "description": "This is a tip about failed to get time."
+    },
+    "gGetBluetoothName": "获取名字",
+    "@gGetBluetoothName": {
+        "description": "This is a button or action to get the Bluetooth name."
+    },
+    "gModifyBluetoothName": "修改名字",
+    "@gModifyBluetoothName": {
+        "description": "This is a button or action to modify the Bluetooth name."
+    },
+    "gBluetoothEmissionPower": "信号强度",
+    "@gBluetoothEmissionPower": {
+        "description": "This is a label indicating the Bluetooth emission power."
+    },
+    "gModifyBluetoothEmission": "修改信号强度",
+    "@gModifyBluetoothEmission": {
+        "description": "This is a button or action to modify the Bluetooth emission power."
+    },
+    "gBtnGetIp": "获取IP",
+    "@gBtnGetIp": {
+        "description": " This is a button to get the IP address."
+    },
+    "gTipErrorIp": "Incorrect address! e.g. xxx.xxx.xxx.xxx",
+    "@gTipErrorIp": {
+        "description": "This is a tip for an incorrect IP address."
+    },
+    "gTipInformation": "信息",
+    "@gTipInformation": {
+        "description": "This is a prompt for information."
+    },
+    "gTipValue": "值",
+    "@gTipValue": {
+        "description": "This is a prompt for value."
+    },
+    "gBtnGetBasicData": "获取基础数据",
+    "@gBtnGetBasicData": {
+        "description": "This is a button to get basic data."
+    },
+    "gTipDownloadOk": "下发成功!",
+    "@gTipDownloadOk": {
+        "description": "This is a tip indicating that the download was successful."
+    },
+    "gTipDownloadFail": "下发失败!",
+    "@gTipDownloadFail": {
+        "description": "This is a tip indicating that the download failed."
+    },
+    "gTipDefaultValue": "默认值",
+    "@gTipDefaultValue": {
+        "description": "This is the prompt for the default value."
+    },
+    "gTipMaxLength": "最大长度",
+    "@gTipMaxLength": {
+        "description": "This is the prompt for the maximum length."
+    },
+    "gTipFilling": "填充",
+    "@gTipFilling": {
+        "description": "This is the prompt for filling."
+    },
+    "gTipAlignment": "对齐方式",
+    "@gTipAlignment": {
+        "description": "This is the prompt for alignment."
+    },
+    "gTipType": "类型",
+    "@gTipType": {
+        "description": "This is the prompt for type."
+    },
+    "gTipStringProperty": "字符串属性",
+    "@gTipStringProperty": {
+        "description": "This is the title for string property."
+    },
+    "gTipHexInput": "十六进制输入，请用空格分隔，例如：31 32 33 34 35 36",
+    "@gTipHexInput": {
+        "description": "This is the prompt for hexadecimal input, separated by spaces."
+    },
+    "gTipHex": "十六进制",
+    "@gTipHex": {
+        "description": "This is the prompt for hexadecimal."
+    },
+    "gTipTextHexProperty": "文本十六进制属性",
+    "@gTipTextHexProperty": {
+        "description": "This is the title for text hexadecimal property."
+    },
+    "gTipContent": "内容",
+    "@gTipContent": {
+        "description": "This is the prompt for content."
+    },
+    "gTipTextProperty": "文本属性",
+    "@gTipTextProperty": {
+        "description": "This is the title for text property."
+    },
+    "gTipEnterProperty": "回车属性",
+    "@gTipEnterProperty": {
+        "description": "This is the title for enter property."
+    },
+    "gTipUnstableText": "不稳定文本",
+    "@gTipUnstableText": {
+        "description": "This is the prompt for unstable text."
+    },
+    "gTipNetText": "净重文本",
+    "@gTipNetText": {
+        "description": "This is the prompt for net text."
+    },
+    "gTipStableText": "稳定文本",
+    "@gTipStableText": {
+        "description": "This is the prompt for stable text."
+    },
+    "gTipGrossText": "毛重文本",
+    "@gTipGrossText": {
+        "description": "This is the prompt for gross text."
+    },
+    "gTipFloatProperty": "浮点属性",
+    "@gTipFloatProperty": {
+        "description": "This is the title for float property."
+    },
+    "gTipDecimal": "小数位",
+    "@gTipDecimal": {
+        "description": "This is the prompt for decimal places."
+    },
+    "gTitleAddDevice": "添加设备",
+    "@gTitleAddDevice": {
+        "description": "This is the title for adding a device."
+    },
+    "gTipAddDevice": "串口连接方式需要使用串口线连接到PC端，WIFI连接方式需要设备IP地址和端口号正确。",
+    "@gTipAddDevice": {
+        "description": "This is a tip for adding a device."
+    },
+    "gTipEmptyScalePan": "清空秤盘",
+    "@gTipEmptyScalePan": {
+        "description": "This is a tip to empty the scale pan."
+    },
+    "gTipSetFullScale": "设置满量程",
+    "@gTipSetFullScale": {
+        "description": "This is a tip to set the full scale."
+    },
+    "gTipPlaceWeight": "放置砝码",
+    "@gTipPlaceWeight": {
+        "description": "This is a tip to place the weight."
+    },
+    "gTipCalibrationResult": "校准结果",
+    "@gTipCalibrationResult": {
+        "description": "This is a tip for the calibration result."
+    },
+    "gBtnCalibration": "校准",
+    "@gBtnCalibration": {
+        "description": "This is a button for calibration."
+    },
+    "gTipEmptyScalePanThenNext": "请清空秤盘，然后点击下一步",
+    "@gTipEmptyScalePanThenNext": {
+        "description": "This is a tip to empty the scale pan and click next."
+    },
+    "gTipSetFullScaleThenNext": "请设置满量程重量，然后点击下一步",
+    "@gTipSetFullScaleThenNext": {
+        "description": "This is a tip to set the full scale weight and click next."
+    },
+    "gTipLoadWeightThenNext": "请加载砝码，等待绿灯亮起后点击下一步",
+    "@gTipLoadWeightThenNext": {
+        "description": "This is a tip to load the weight, wait for the green light to turn on and click next."
+    },
+    "gTipPleaseEmptyScalePan": "请清空秤盘",
+    "@gTipPleaseEmptyScalePan": {
+        "description": "This is a tip to ask to empty the scale pan."
+    },
+    "gTipPleaseLoadWeight": "请加载砝码",
+    "@gTipPleaseLoadWeight": {
+        "description": "This is a tip to ask to load the weight."
+    },
+    "gTipCalResult": "如果校准失败，请点击'重新校准'",
+    "@gTipCalResult": { 
+        "description": "This is a tip for calibration result." 
+    },
+    "gTipCalibrationFailed": "校准失败",
+    "@gTipCalibrationFailed": {
+        "description": "This is a tip for calibration failure."
+    },
+    "gTipCalibrationSuccess": "校准成功",
+    "@gTipCalibrationSuccess": {
+        "description": "This is a tip for successful calibration."
+    },
+    "gTipCalibrationAgain": "重新校准",
+    "@gTipCalibrationAgain": {
+        "description": "This is a tip to ask to calibrate again."
+    },
+    "gTipCalibrationWarning": "正在校准，建议先完成校准后再切换秤！是否确定切换？",
+    "@gTipCalibrationWarning": {
+        "description": "This is a warning message for calibration."
+    },
+    "gBtnPrevious": "上一步",
+    "@gBtnPrevious": {
+        "description": "This is a button to go back to the previous step." 
+    },
+    "gBtnNext": "下一步",
+    "@gBtnNext": {
+        "description": "This is a button to go to the next step."
+    },
+    "gTipInputRange": "请输入量程",
+    "@gTipInputRange": {
+        "description": "This is a prompt to ask the user to input the measuring range."
+    },
+    "gTxtDecimal": "小数点",
+    "@gTxtDecimal": {
+        "description": "This is the prompt for decimal places."
+    },
+    "gTipGaduation": "分度值",
+    "@gTipGaduation": {
+        "description": "This is the prompt for graduation."
+    },
+    "gTipRedoLastStep": "失败，请重做上一步",
+    "@gTipRedoLastStep": {
+        "description": "This is a tip to redo the last step."
+    },
+    "gTipResetMaxRange": "失败，请重置最大量程！",
+    "@gTipResetMaxRange": {
+        "description": "This is a tip to reset the maximum range."
+    },
+    "gTipNoDevice": "没有发现设备，请添加设备",
+    "@gTipNoDevice": {
+        "description": "This is a tip to inform the user that no devices are found."
+    },
+    "gTipPortInUsed": "串口已经被其他设备占用",
+    "@gTipPortInUsed": {
+        "description": "This is a tip to inform the user that the port is already in use."
+    },
+    "gTipPerformingOperation": "正在进行操作，请稍后...",
+    "@gTipPerformingOperation": {
+        "description": "This is a tip to inform the user that an operation is being performed."
+    },     
+    "gTitleDeviceList": "设备列表",
+    "@gTitleDeviceList": {
+        "description": "This is the title for the device list."
+    },    
+    "gTipStandaloneMode": "独立模式",
+    "@gTipStandaloneMode": {
+        "description": "This is a tip indicating the standalone operation mode."
+    },
+    "gTipWeightSummationMode": "重量汇总模式",
+    "@gTipWeightSummationMode": {
+        "description": "This is a tip indicating the weight summation operation mode."
+    }    
 }
+
+
+
+
+    

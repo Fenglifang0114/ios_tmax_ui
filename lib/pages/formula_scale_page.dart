@@ -7,7 +7,8 @@ import 'package:t_max/data/comscaleinfo_data.dart';
 import 'package:t_max/data/fma_rec_list_db_data.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/formula_scale_data.dart';
-import 'package:t_max/data/manager_scale_channel.dart';
+import 'package:t_max/data/home_page_common_data.dart';
+import 'package:t_max/data/icons.dart';
 import 'package:t_max/data/req_formula_data.dart';
 import 'package:t_max/dialog/add_fma_wgt_dialog.dart';
 import 'package:t_max/dialog/add_raw_info_dialog.dart';
@@ -17,14 +18,16 @@ import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/pages/add_formula_page.dart';
 import 'package:t_max/pages/all_fma_wgt_rec_page.dart';
+import 'package:t_max/pages/edit_formula_page.dart';
 import 'package:t_max/pages/fma_wgt_rec_page.dart';
 import 'package:t_max/pages/start_fma_pct_page.dart';
 import 'package:t_max/pages/start_fma_secret_page.dart';
 import 'package:t_max/widget/formula_widget.dart';
 import 'package:t_max/data/formula_from_db_data.dart';
+import 'package:t_max/widget/page_head.dart';
+import 'package:t_max/widget/scale_list.dart';
 import 'package:t_max/widget/sticky_table.dart';
 import '../data/language.dart';
-import 'package:t_max/dialog/custom_dialog_tip.dart';
 
 // 定义 EncryptedValue 枚举
 enum EncryptedValue {
@@ -52,7 +55,6 @@ class FormulationScalePage extends StatefulWidget {
 
 class FormulationScalePageState extends State<FormulationScalePage>
     with SingleTickerProviderStateMixin {
-  bool _isLeftPanelExpanded = true;
   // bool _showBottomSection = false;
   int _selectedTabIndex = 0;
   int _selectedScaleIndex = -1; // 用于跟踪选中的秤
@@ -78,8 +80,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
 
   FormulaInfoDb? selectedFormula; //选中的配方，用于展示原料列表
   Detail selectedDetail = Detail(); //配方中选中的原料
-  NetScaleInfoLocal defNetScaleInfo = NetScaleInfoLocal(); //默认秤
-  List<NetScaleInfoLocal> scaleNetItems = []; //秤列表
+
   int selScaleId = -1; //选择的秤ID
   List<FormulaInfoDb> rawFormulaList = []; //原料和配方的关系表
   // 存储搜索结果
@@ -98,21 +99,20 @@ class FormulationScalePageState extends State<FormulationScalePage>
   dynamic _eventbus9;
   dynamic _eventbus10;
 
-//初始化秤列表
-  void initScaleList() {
-    scaleNetItems = myNetScaleList;
-    selScaleId = myDefScaleInfo.defScaleId!;
-    if (myNetScaleList.isNotEmpty) {
-      defNetScaleInfo = NetScaleListMgr.findScaleInfo(
-          myNetScaleList, myDefScaleInfo.defScaleId!);
-    }
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    PublicFunctions.getRawTypeList();
+    PublicFunctions.getFormulaTypeList();
+    PublicFunctions.getRawList();
+    PublicFunctions.getFormulaList();
+    PublicFunctions.getFormulaRecList();
   }
-  //myComScaleInfo
 
   @override
   void initState() {
     super.initState();
-    initScaleList();
+
     _tabController = TabController(length: 2, vsync: this);
 
     _eventbus1 = eventBus.on<EventRespGetRawTypeList>().listen((event) {
@@ -178,7 +178,6 @@ class FormulationScalePageState extends State<FormulationScalePage>
           setState(() {
             formulaDataList = formulaInfoDbFromJson(dataStr);
             searchFmaList = List.from(formulaDataList);
-            print(formulaDataList.length);
           });
         } else {
           setState(() {
@@ -248,46 +247,59 @@ class FormulationScalePageState extends State<FormulationScalePage>
 
   @override
   Widget build(BuildContext context) {
-    // final width = MediaQuery.of(context).size.width;
+    final width = MediaQuery.of(context).size.width;
     return Scaffold(
         body: Container(
-      color: bgColor, //对接时修改颜色值
-      child: Padding(
-        padding: const EdgeInsets.all(14.0),
-        child: Row(
-          children: [
-            showScaleList(),
-            SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                children: [
-                  showTabBar(),
-                  Divider(
-                    color: Theme.of(context).colorScheme.outline,
-                    thickness: 1,
-                    height: 1,
-                  ),
-                  if (_selectedTabIndex == 0) showFormulaSearch(),
-                  if (_selectedTabIndex == 1) showRawSearch(),
-                  if (_selectedTabIndex == 0) showFormulaTable(),
-                  if (_selectedTabIndex == 1) showRawTable(),
-                  SizedBox(height: 14),
-                  // _showBottomSection
-                  //     ?
-                  if (_selectedTabIndex == 0) showFormulaBottom(),
-                  if (_selectedTabIndex == 1) showRawBottom(),
+            color: Theme.of(context).colorScheme.surfaceDim, //对接时修改颜色值
+            // child: Padding(
+            //   padding: const EdgeInsets.all(14.0),
+            child: Column(
+              children: [
+                pageHeadInfo(context, width - headWidthPadding,
+                    localizedStrings.menuFormula, ''),
+                Container(
+                  height: regularPadding,
+                  color: Theme.of(context).colorScheme.surfaceDim,
+                ),
+                Expanded(
+                  child: Row(
+                    children: [
+                      showScaleList(),
+                      SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          children: [
+                            showTabBar(),
+                            Divider(
+                              color: Theme.of(context).colorScheme.outline,
+                              thickness: 1,
+                              height: 1,
+                            ),
+                            if (_selectedTabIndex == 0) showFormulaSearch(),
+                            if (_selectedTabIndex == 1) showRawSearch(),
+                            if (_selectedTabIndex == 0) showFormulaTable(),
+                            if (_selectedTabIndex == 1) showRawTable(),
+                            SizedBox(height: 14),
+                            // _showBottomSection
+                            //     ?
+                            if (_selectedTabIndex == 0) showFormulaBottom(),
+                            if (_selectedTabIndex == 1) showRawBottom(),
 
-                  Container(
-                    height: 14,
-                    color: Theme.of(context).colorScheme.surface,
+                            Container(
+                              height: 14,
+                              color: Theme.of(context).colorScheme.surface,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    ));
+                )
+              ],
+            )
+
+            // ),
+            ));
   }
 
   // 搜索方法
@@ -456,7 +468,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
               bool isSelected = _selectedRawIndex == index;
               Color backgroundColor = isSelected
                   ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
-                  : Color(0xFFF6F6F6);
+                  : Theme.of(context).colorScheme.surfaceContainerLow;
               Color innerContainerColor = isSelected
                   ? Theme.of(context).colorScheme.primary
                   : Theme.of(context).colorScheme.surface;
@@ -571,7 +583,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
             // 添加点击行背景色
             if (row == clickedRow) {
               return BoxDecoration(
-                color: clickColor,
+                color: Theme.of(context).colorScheme.surfaceContainerLow,
                 border: Border(
                   bottom: BorderSide(
                       color: Theme.of(context).colorScheme.primary, width: 1),
@@ -581,7 +593,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
             return BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
               border: Border(
-                bottom: BorderSide(color: lineColor, width: 1),
+                bottom: BorderSide(
+                    color: Theme.of(context).colorScheme.outlineVariant,
+                    width: 1),
               ),
             );
           },
@@ -829,7 +843,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
             // 添加点击行背景色
             if (row == clickedRow) {
               return BoxDecoration(
-                color: clickColor,
+                color: Theme.of(context).colorScheme.surfaceContainerLow,
                 border: Border(
                   bottom: BorderSide(
                       color: Theme.of(context).colorScheme.primary, width: 1),
@@ -839,7 +853,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
             return BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
               border: Border(
-                bottom: BorderSide(color: lineColor, width: 1),
+                bottom: BorderSide(
+                    color: Theme.of(context).colorScheme.outlineVariant,
+                    width: 1),
               ),
             );
           },
@@ -946,8 +962,10 @@ class FormulationScalePageState extends State<FormulationScalePage>
                         : localizedStrings.fPublic,
                     style: TextStyle(
                         color: (data).header!.formulaHeader!.isEncrypted!
-                            ? redColor
-                            : greenColor));
+                            ? Theme.of(context).colorScheme.error
+                            : Theme.of(context)
+                                .colorScheme
+                                .onTertiaryFixedVariant));
               },
             ),
             StickyTableColumn(
@@ -1077,17 +1095,16 @@ class FormulationScalePageState extends State<FormulationScalePage>
                   onPressed: () {
                     //检查该配方是否有历史称量记录
 
-                    final formulaId = (data as FormulaInfoDb)
+                    final formulaKey = (data as FormulaInfoDb)
                         .header!
                         .formulaHeader!
-                        .formulaId!;
+                        .formulaKey!;
 
-                    final formulaName =
-                        (data).header!.formulaHeader!.formulaName!;
+                    // final formulaName =
+                    //     (data).header!.formulaHeader!.formulaName!;
 
-                    final hasHistory = fmaRecFromDbList.any((record) =>
-                        record.header?.formulaId == formulaId &&
-                        record.header?.formulaName == formulaName);
+                    final hasHistory = fmaRecFromDbList.any(
+                        (record) => record.header?.formulaKey == formulaKey);
 
                     if (!hasHistory) {
                       showTipInfo(localizedStrings.fNoRecordTip, context);
@@ -1097,8 +1114,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                       final List<FmaRecFromDb> formulaHistoryRecords =
                           fmaRecFromDbList
                               .where((record) =>
-                                  record.header?.formulaId == formulaId &&
-                                  record.header?.formulaName == formulaName)
+                                  record.header?.formulaKey == formulaKey)
                               .toList();
                       Navigator.push(
                         context,
@@ -1119,30 +1135,36 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 );
               },
             ),
-            // StickyTableColumn(
-            //   localizedStrings.fEditBtn,
-            //   fixedEnd: true,
-            //   columnWidth: const FixedColumnWidth(80),
-            //   renderCell: (context, title, data, row, column) {
-            //     return MaterialButton(
-            //       onPressed: () {
-            //         ScaffoldMessenger.of(context).hideCurrentSnackBar();
-            //         ScaffoldMessenger.of(
-            //           context,
-            //         ).showSnackBar(SnackBar(
-            //             content: Text(localizedStrings.fDeleteSuccessMsg)));
-            //       },
-            //       // color: Colors.red,
-            //       minWidth: 0,
-            //       child: Center(
-            //           child: Icon(
-            //         size: 20,
-            //         Icons.edit_outlined,
-            //         color: Theme.of(context).colorScheme.primary,
-            //       )),
-            //     );
-            //   },
-            // ),
+            StickyTableColumn(
+              localizedStrings.fEditBtn,
+              fixedEnd: true,
+              columnWidth: const FixedColumnWidth(80),
+              renderCell: (context, title, data, row, column) {
+                return MaterialButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        FormulaInfoDb? editFormulaInfo = searchFmaList[row];
+                        return EditFormulaPage(
+                          editFormulaInfo: editFormulaInfo,
+                        );
+                      },
+                    ).then((value) {
+                      setState(() {});
+                    });
+                  },
+                  // color: Colors.red,
+                  minWidth: 0,
+                  child: Center(
+                      child: Icon(
+                    size: 20,
+                    Icons.edit_outlined,
+                    color: Theme.of(context).colorScheme.primary,
+                  )),
+                );
+              },
+            ),
             StickyTableColumn(
               localizedStrings.gBtnDelete,
               fixedEnd: true,
@@ -1318,13 +1340,14 @@ class FormulationScalePageState extends State<FormulationScalePage>
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                      backgroundColor: greenColor,
+                      backgroundColor:
+                          Theme.of(context).colorScheme.onTertiaryFixedVariant,
                       fixedSize: const Size(double.infinity, 48),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
                       ),
                     ),
-                    onPressed: (selectedFormula == null)
+                    onPressed: (selectedFormula == null || selScaleId == -1)
                         ? null
                         : () {
                             //检查配方是保密的，还是公开的
@@ -1584,7 +1607,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
                                       maxWidth: 300,
                                       minWidth: 100,
                                     ),
-                                    color: Color(0xFFE6EEF4),
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .secondaryContainer,
                                     child: Center(
                                       child: Text(
                                         formula.header?.formulaHeader
@@ -1643,209 +1668,81 @@ class FormulationScalePageState extends State<FormulationScalePage>
                         height: 62,
                         alignment: Alignment.center,
                         child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(4)),
-                            color: (selScaleId != 1)
-                                ? Color(0xFFD5D8DB)
-                                : Color.fromRGBO(255, 255, 255, 0.1),
-                          ),
-                          width: 38,
-                          height: 38,
-                          child: Icon(
-                            size: 20,
-                            Icons.cable_sharp,
-                            color: (selScaleId != 1)
-                                ? Theme.of(context).colorScheme.primary
-                                : Theme.of(context).colorScheme.onPrimary,
-                          ),
-                        )),
-                    if (_isLeftPanelExpanded)
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Text(
-                              myComScaleInfo.scaleName,
-                              style: TextStyle(
-                                  color: (selScaleId != 1)
-                                      ? Theme.of(context).colorScheme.primary
-                                      : Theme.of(context).colorScheme.onPrimary,
-                                  fontSize: 14),
+                            decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(4)),
+                              color: (selScaleId != 1)
+                                  ? Color(0xFFD5D8DB)
+                                  : Color.fromRGBO(255, 255, 255, 0.1),
                             ),
-                            Text(
-                              myComScaleInfo.isOnline
-                                  ? localizedStrings.gOnlineTip
-                                  : localizedStrings.gOfflineTip,
-                              style: TextStyle(
-                                  color: (selScaleId == 1)
-                                      ? Theme.of(context).colorScheme.onPrimary
-                                      : myComScaleInfo.isOnline
-                                          ? Theme.of(context)
-                                              .colorScheme
-                                              .onTertiaryFixedVariant
-                                          : Theme.of(context).colorScheme.error,
-                                  fontSize: 14),
-                            ),
-                          ],
-                        ),
+                            width: 38,
+                            height: 38,
+                            child: Container(
+                                alignment: Alignment.center,
+                                width: 20,
+                                height: 20,
+                                child: getSvgIcon(
+                                    serialPortSvgIcon(),
+                                    20,
+                                    20,
+                                    (selScaleId != 1)
+                                        ? Theme.of(context).colorScheme.primary
+                                        : Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary)))),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text(
+                            myComScaleInfo.scaleName,
+                            style: TextStyle(
+                                color: (selScaleId != 1)
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(context).colorScheme.onPrimary,
+                                fontSize: 14),
+                          ),
+                          Text(
+                            myComScaleInfo.isOnline
+                                ? localizedStrings.gTipOnline
+                                : localizedStrings.gTipOffline,
+                            style: TextStyle(
+                                color: (selScaleId == 1)
+                                    ? Theme.of(context).colorScheme.onPrimary
+                                    : myComScaleInfo.isOnline
+                                        ? Theme.of(context)
+                                            .colorScheme
+                                            .onTertiaryFixedVariant
+                                        : Theme.of(context).colorScheme.error,
+                                fontSize: 14),
+                          ),
+                        ],
                       ),
+                    ),
                   ],
                 ),
               ))),
     );
   }
 
-  showScaleListTitle() {
-    return SizedBox(
-        height: 54,
-        width: _isLeftPanelExpanded ? 226 : 62,
-        child: Row(children: [
-          _isLeftPanelExpanded
-              ? Expanded(
-                  child: Text(
-                  localizedStrings.fScaleList,
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurface,
-                      fontSize: 16),
-                ))
-              : SizedBox(
-                  width: 0,
-                ),
-          Center(
-            child: IconButton(
-              iconSize: 24,
-              onPressed: () {
-                setState(() {
-                  _isLeftPanelExpanded = !_isLeftPanelExpanded;
-                });
-              },
-              icon: Icon(_isLeftPanelExpanded
-                  ? Icons.format_indent_decrease_outlined
-                  : Icons.format_indent_increase_outlined),
-            ),
-          ),
-        ]));
-  }
-
   showScaleList() {
     return AnimatedContainer(
       color: Theme.of(context).colorScheme.surface,
-      width: _isLeftPanelExpanded ? 254 : 90,
+      width: 234,
       duration: Duration(milliseconds: 300),
       child: Column(
         children: [
-          showScaleListTitle(),
-          // 分割线
-          Divider(
-            color: Theme.of(context).colorScheme.outline,
-            thickness: 1,
-            height: 1,
-          ),
-          SizedBox(height: 14),
-          showComScale(),
-          SizedBox(
-            height: 10,
-          ),
+          SizedBox(height: regularPadding),
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14),
-              child: ListView.separated(
-                itemCount: scaleNetItems.length,
-                separatorBuilder: (context, index) =>
-                    const SizedBox(height: 10),
-                itemBuilder: (context, index) {
-                  final scale = scaleNetItems[index];
-                  bool isSelect = (index == _selectedScaleIndex);
-                  return MouseRegion(
-                      cursor: SystemMouseCursors.click,
-                      child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _selectedScaleIndex = index;
-                              selScaleId = scale.scaleId!;
-                            });
-                          },
-                          child: Container(
-                            height: 62,
-                            color: !isSelect
-                                ? Color(0xFFECF0F3)
-                                : Theme.of(context).colorScheme.primary,
-                            child: Row(
-                              children: [
-                                Container(
-                                    width: 62,
-                                    height: 62,
-                                    alignment: Alignment.center,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(4)),
-                                        color: !isSelect
-                                            ? Color(0xFFD5D8DB)
-                                            : Color.fromRGBO(
-                                                255, 255, 255, 0.1),
-                                      ),
-                                      width: 38,
-                                      height: 38,
-                                      child: Icon(
-                                        size: 20,
-                                        Icons.wifi,
-                                        color: !isSelect
-                                            ? Theme.of(context)
-                                                .colorScheme
-                                                .primary
-                                            : Theme.of(context)
-                                                .colorScheme
-                                                .onPrimary,
-                                      ),
-                                    )),
-                                if (_isLeftPanelExpanded)
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Text(
-                                          scale.scaleName ?? '',
-                                          style: TextStyle(
-                                              color: !isSelect
-                                                  ? Theme.of(context)
-                                                      .colorScheme
-                                                      .primary
-                                                  : Theme.of(context)
-                                                      .colorScheme
-                                                      .onPrimary,
-                                              fontSize: 14),
-                                        ),
-                                        Text(
-                                          scale.isOnline!
-                                              ? localizedStrings.gOnlineTip
-                                              : localizedStrings.gOfflineTip,
-                                          style: TextStyle(
-                                              color: isSelect
-                                                  ? Theme.of(context)
-                                                      .colorScheme
-                                                      .onPrimary
-                                                  : scale.isOnline!
-                                                      ? Theme.of(context)
-                                                          .colorScheme
-                                                          .onTertiaryFixedVariant
-                                                      : Theme.of(context)
-                                                          .colorScheme
-                                                          .error,
-                                              fontSize: 14),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          )));
-                },
-              ),
+            child: NewAllScaleListWidget(
+              listWidth: scaleListWidth, // 列表宽度
+              selScaleId: selScaleId,
+              clickScale: (scale) {
+                setState(() {
+                  selScaleId = scale.scaleId;
+                });
+              },
             ),
           ),
         ],
@@ -1862,12 +1759,6 @@ class FormulationScalePageState extends State<FormulationScalePage>
           SizedBox(
             width: 20,
           ),
-          IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: Icon(Icons.arrow_circle_left_outlined,
-                  size: 28, color: Theme.of(context).colorScheme.primary)),
           Expanded(
             child: TabBar(
               isScrollable: true,
@@ -1886,13 +1777,6 @@ class FormulationScalePageState extends State<FormulationScalePage>
               ],
             ),
           ),
-          Icon(
-            Icons.help,
-            color: Color(0xFFF4B837),
-          ),
-          SizedBox(
-            width: 20,
-          )
         ],
       ),
     );
@@ -2081,7 +1965,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
           focusColor: Theme.of(context).colorScheme.outline,
           hoverColor: Theme.of(context).colorScheme.outline,
           style: IconButton.styleFrom(
-            backgroundColor: Color(0xFFF3F3F3),
+            backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
             shape: RoundedRectangleBorder(
               // 设置为矩形形状
               borderRadius: BorderRadius.zero, // 没有圆角，即正方形

@@ -10,6 +10,8 @@ import 'package:t_max/pages/flow_rate_page.dart';
 import 'package:t_max/pages/formula_scale_page.dart';
 import 'package:t_max/pages/labeldesign_page.dart';
 import 'package:t_max/pages/sel_four_scales_page.dart';
+import 'package:t_max/pages/weight_collection_page.dart';
+import 'package:t_max/pages/wifi_setting_page.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
 import '../data/company_info.dart';
@@ -31,14 +33,12 @@ import '../widget/home_page_widget.dart';
 import '../widget/version.dart';
 import 'check_weighers_page.dart';
 import 'plu_edit_page.dart';
-import 'scale_manager_page.dart';
+// import 'scale_manager_page.dart';
 
 import 'take_in_page.dart';
 import 'take_out_page.dart';
 import 'update_firmware_page.dart';
 import 'weighing.dart';
-import 'weight_mode_page.dart';
-import 'wifisetting_page.dart';
 
 class IndustryHomePage extends StatefulWidget {
   const IndustryHomePage({super.key});
@@ -529,27 +529,27 @@ class IndustryHomePageState extends State<IndustryHomePage>
                       //         true),
                       //   ),
                       // ),
-                      MouseRegion(
-                        cursor: SystemMouseCursors.click, // 设置光标为手的形状
-                        child: GestureDetector(
-                          onTap: () {
-                            stopCheckSerialPort();
-                            setState(() {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ScaleManagerPage()),
-                              ).then((value) => _updateStatus());
-                            });
-                          },
-                          child: customFunctionCard(
-                              context,
-                              localizedStrings.m_scale_title,
-                              Icons.schema_outlined,
-                              true),
-                        ),
-                      ),
+                      // MouseRegion(
+                      //   cursor: SystemMouseCursors.click, // 设置光标为手的形状
+                      //   child: GestureDetector(
+                      //     onTap: () {
+                      //       stopCheckSerialPort();
+                      //       setState(() {
+                      //         Navigator.push(
+                      //           context,
+                      //           MaterialPageRoute(
+                      //               builder: (context) =>
+                      //                   const ScaleManagerPage()),
+                      //         ).then((value) => _updateStatus());
+                      //       });
+                      //     },
+                      //     child: customFunctionCard(
+                      //         context,
+                      //         localizedStrings.menuMultiScaleManagement,
+                      //         Icons.schema_outlined,
+                      //         true),
+                      //   ),
+                      // ),
                       MouseRegion(
                         cursor: SystemMouseCursors.click, // 设置光标为手的形状
                         child: GestureDetector(
@@ -565,7 +565,7 @@ class IndustryHomePageState extends State<IndustryHomePage>
                           },
                           child: customFunctionCard(
                               context,
-                              localizedStrings.gTitlePluEdit,
+                              localizedStrings.menuPluManagement,
                               Icons.edit_road,
                               myFactoryInfoFromScale.modelName == null
                                   ? true
@@ -639,7 +639,7 @@ class IndustryHomePageState extends State<IndustryHomePage>
                           cursor: SystemMouseCursors.click,
                           child: customFunctionCard(
                               context,
-                              localizedStrings.wifi_setting_title,
+                              localizedStrings.menuWifiSetting,
                               Icons.wifi,
                               (myScreenMgr.wifiOrBt.contains('wifi'))),
                         ),
@@ -661,7 +661,7 @@ class IndustryHomePageState extends State<IndustryHomePage>
                           },
                           child: customFunctionCard(
                               context,
-                              localizedStrings.gTitleUpdateFirmware,
+                              localizedStrings.menuFirmwareUpdate,
                               Icons.cloud_upload_outlined,
                               true),
                         ),
@@ -745,7 +745,7 @@ class IndustryHomePageState extends State<IndustryHomePage>
                           },
                           child: appCard(
                               context,
-                              localizedStrings.iTitleWeighting,
+                              localizedStrings.menuWeighing,
                               Icons.monitor_weight_outlined,
                               true,
                               'This application is used to display the weighing data in real time.',
@@ -803,7 +803,7 @@ class IndustryHomePageState extends State<IndustryHomePage>
                           onTap: myWedaLicInfo.isValid
                               ? () {
                                   setState(() {
-                                    PublicFunctions.getUIConfNormal(1);
+                                    PublicFunctions.getUIConfNormal();
                                     stopCheckSerialPort();
                                     setState(() {
                                       Navigator.push(
@@ -818,7 +818,7 @@ class IndustryHomePageState extends State<IndustryHomePage>
                               : null,
                           child: appCard(
                               context,
-                              localizedStrings.iTitleWeightCollection,
+                              localizedStrings.menuWeighingDataCollection,
                               Icons.save_as,
                               myWedaLicInfo.isValid,
                               localizedStrings.iTipWeightCollection,
@@ -833,7 +833,7 @@ class IndustryHomePageState extends State<IndustryHomePage>
                             onTap: myChweLicInfo.isValid
                                 ? () {
                                     setState(() {
-                                      PublicFunctions.getUIConfCheck(1);
+                                      PublicFunctions.getUIConfCheck();
 
                                       stopCheckSerialPort();
                                       setState(() {
@@ -849,7 +849,7 @@ class IndustryHomePageState extends State<IndustryHomePage>
                                 : null,
                             child: appCard(
                                 context,
-                                localizedStrings.iTitleCheckWeigher,
+                                localizedStrings.menuCheckWeighing,
                                 Icons.scale,
                                 myChweLicInfo.isValid,
                                 'This application is used to check weighing data in real time',
@@ -863,7 +863,7 @@ class IndustryHomePageState extends State<IndustryHomePage>
                             onTap: myInWeLicInfo.isValid
                                 ? () {
                                     setState(() {
-                                      PublicFunctions.getUIConfTakeIn(1);
+                                      PublicFunctions.getUIConfTakeIn();
 
                                       stopCheckSerialPort();
                                       setState(() {
@@ -879,7 +879,7 @@ class IndustryHomePageState extends State<IndustryHomePage>
                                 : null,
                             child: appCard(
                                 context,
-                                localizedStrings.iTitleIncrementWeighting,
+                                localizedStrings.menuIncrementWeighing,
                                 Icons.add,
                                 myInWeLicInfo.isValid,
                                 localizedStrings.iTipIncrementWeighting,
@@ -893,7 +893,7 @@ class IndustryHomePageState extends State<IndustryHomePage>
                             onTap: myTaouLicInfo.isValid
                                 ? () {
                                     setState(() {
-                                      PublicFunctions.getUIConfTakeOut(1);
+                                      PublicFunctions.getUIConfTakeOut();
                                       stopCheckSerialPort();
                                       setState(() {
                                         Navigator.push(
@@ -908,7 +908,7 @@ class IndustryHomePageState extends State<IndustryHomePage>
                                 : null,
                             child: appCard(
                                 context,
-                                localizedStrings.gTitleTakeOut,
+                                localizedStrings.menuTakeOutScale,
                                 Icons.remove,
                                 myTaouLicInfo.isValid,
                                 localizedStrings.gTipTakeOut,
@@ -1093,7 +1093,8 @@ class IndustryHomePageState extends State<IndustryHomePage>
 
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const LabelDesignPage()),
+        MaterialPageRoute(
+            builder: (context) => const LabelDesignPage(type: "")),
       ).then((value) => _updateStatus());
     }
   }

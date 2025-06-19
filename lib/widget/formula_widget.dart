@@ -10,7 +10,8 @@ class RawRemarkTextWidget extends StatelessWidget {
     return Expanded(
       child: Container(
         alignment: Alignment.topLeft,
-        color: const Color(0xFFF6F6F6),
+        padding: const EdgeInsets.all(8.0),
+        color: Theme.of(context).colorScheme.surfaceContainerLow,
         child: SelectableText(
           text,
           style: TextStyle(

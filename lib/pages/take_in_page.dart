@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+import 'package:t_max/data/home_page_common_data.dart';
 import '../../data/device_data.dart';
 import '../../data/report_data.dart';
 import '../../data/reqweightdata_data.dart';
@@ -398,7 +399,7 @@ class TakeInPageState extends State<TakeInPage> {
     eventBus14 = eventBus.on<EventUpdateSettingParam>().listen((event) {
       if (mounted) {
         setState(() {
-          PublicFunctions.getUIConfTakeIn(myDefScaleInfo.defScaleId!);
+          PublicFunctions.getUIConfTakeIn();
         });
       }
     });
@@ -615,28 +616,27 @@ class TakeInPageState extends State<TakeInPage> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(
-          title: Container(
-            child: pageHeadDefScale(
-                context,
-                localizedStrings.iTitleIncrementWeighting,
-                localizedStrings.gTipIncrementWgtPageHelp),
-          ),
-          leading: IconTheme(
-              data: IconThemeData(
-                  color: Theme.of(context).colorScheme.primary // 设置抽屉图标颜色
-                  ),
-              child: Builder(builder: (BuildContext context) {
-                return IconButton(
-                  icon: const Icon(Icons.menu),
-                  onPressed: () {
-                    Scaffold.of(context).openDrawer();
-                  },
-                );
-              }))),
-      body: _isFirstLayout
-          ? firstLayout(context, width)
-          : secondLayout(context, width),
+      body: Container(
+          width: width,
+          decoration:
+              BoxDecoration(color: Theme.of(context).colorScheme.surface),
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                pageHeadInfo(
+                    context,
+                    width - headWidthPadding,
+                    localizedStrings.menuIncrementWeighing,
+                    localizedStrings.gTipIncrementWgtPageHelp),
+                Expanded(
+                    child: Container(
+                  color: Theme.of(context).colorScheme.surfaceTint,
+                  child: _isFirstLayout
+                      ? firstLayout(context, width)
+                      : secondLayout(context, width),
+                )),
+              ])),
       drawer: Drawer(
           child: myWeighingScaleListDrawer(
               context,
@@ -912,72 +912,6 @@ class TakeInPageState extends State<TakeInPage> {
                                   '${option.plu}:${option.productName}',
                             ),
                           ),
-                          // buildTextString(
-                          //     localizedStrings.user_name, constraints, context),
-                          // Container(
-                          //   height: 53,
-                          //   width: 150,
-                          //   padding: const EdgeInsets.all(0),
-                          //   child: DropdownButtonFormField<String>(
-                          //     itemHeight: 50.0,
-                          //     isExpanded: true,
-                          //     // decoration: const InputDecoration(border: OutlineInputBorder()),
-                          //     value: userNameValue,
-                          //     onChanged: (String? newPosition) {
-                          //       setState(() {
-                          //         userNameValue = newPosition.toString();
-                          //         for (var i = 0;
-                          //             i < myUserInfoList.userInfo!.length;
-                          //             i++) {
-                          //           if (userNameValue ==
-                          //               myUserInfoList.userInfo![i].name) {
-                          //             myUserInfo = myUserInfoList.userInfo![i];
-                          //             eventBus.fire(EventUserInfo(myUserInfo));
-                          //           }
-                          //         }
-                          //       });
-                          //     },
-                          //     items: userNameList.map<DropdownMenuItem<String>>(
-                          //         (String value) {
-                          //       return DropdownMenuItem(
-                          //           value: value,
-                          //           child: Text(value,
-                          //               overflow: TextOverflow.ellipsis));
-                          //     }).toList(),
-                          //   ),
-                          // ),
-                          // CustomElevatedButton(
-                          //   btnWidth: constraints.maxWidth / 10 - 50,
-                          //   btnHeight: 40,
-                          //   icon: Icons.edit_note_outlined,
-                          //   text: localizedStrings.user_edit,
-                          //   onPressed: () {
-                          //     PublicFunctions.getUserList();
-                          //     getUserNameList();
-                          //     if (!userNameList.contains(userNameValue)) {
-                          //       myUserInfo.name = "";
-                          //       userNameValue = "";
-                          //       myUserInfo.id = "";
-                          //       myUserInfo.isFemale = true;
-                          //       myUserInfo.phone = "";
-                          //       myUserInfo.remarks = "";
-                          //     }
-                          //     addUserDialog(context).then((onvalue) {
-                          //       setState(() {
-                          //         PublicFunctions.getUserList();
-                          //         getUserNameList();
-                          //         if (!userNameList.contains(userNameValue)) {
-                          //           myUserInfo.name = "";
-                          //           userNameValue = "";
-                          //           myUserInfo.id = "";
-                          //           myUserInfo.isFemale = true;
-                          //           myUserInfo.phone = "";
-                          //           myUserInfo.remarks = "";
-                          //         }
-                          //       });
-                          //     });
-                          //   },
-                          // ),
                           CustomOutlinedButton(
                             btnWidth: constraints.maxWidth / 10 - 50,
                             btnHeight: 40,
@@ -1797,76 +1731,6 @@ class TakeInPageState extends State<TakeInPage> {
                     '${option.plu}:${option.productName}',
               ),
             ),
-            // SizedBox(
-            //   width: constraints.maxWidth / 10,
-            //   child: TextButton(
-            //       onPressed: () {},
-            //       child: Text(localizedStrings.user_name,
-            //           maxLines: 1,
-            //           overflow: TextOverflow.ellipsis,
-            //           style: const TextStyle(
-            //               fontSize: 14, fontWeight: FontWeight.normal))),
-            // ),
-            // Container(
-            //   height: 53,
-            //   width: constraints.maxWidth / 10,
-            //   padding: const EdgeInsets.all(0),
-            //   child: DropdownButtonFormField<String>(
-            //     itemHeight: 50.0,
-            //     isExpanded: true,
-            //     // decoration: const InputDecoration(border: OutlineInputBorder()),
-            //     value: userNameValue,
-            //     onChanged: (String? newPosition) {
-            //       setState(() {
-            //         userNameValue = newPosition.toString();
-            //         for (var i = 0; i < myUserInfoList.userInfo!.length; i++) {
-            //           if (userNameValue == myUserInfoList.userInfo![i].name) {
-            //             myUserInfo = myUserInfoList.userInfo![i];
-            //             eventBus.fire(EventUserInfo(myUserInfo));
-            //           }
-            //         }
-            //       });
-            //     },
-            //     items:
-            //         userNameList.map<DropdownMenuItem<String>>((String value) {
-            //       return DropdownMenuItem(
-            //           value: value,
-            //           child: Text(value, overflow: TextOverflow.ellipsis));
-            //     }).toList(),
-            //   ),
-            // ),
-            // CustomElevatedButton(
-            //   btnWidth: constraints.maxWidth / 10 - 50,
-            //   btnHeight: 40,
-            //   icon: Icons.edit_note_outlined,
-            //   text: localizedStrings.user_edit,
-            //   onPressed: () {
-            //     PublicFunctions.getUserList();
-            //     getUserNameList();
-            //     if (!userNameList.contains(userNameValue)) {
-            //       myUserInfo.name = "";
-            //       userNameValue = "";
-            //       myUserInfo.id = "";
-            //       myUserInfo.isFemale = true;
-            //       myUserInfo.phone = "";
-            //       myUserInfo.remarks = "";
-            //     }
-            //     addUserDialog(context).then((onvalue) {
-            //       setState(() {
-            //         PublicFunctions.getUserList();
-            //         getUserNameList();
-            //         if (!userNameList.contains(userNameValue)) {
-            //           myUserInfo.name = "";
-            //           userNameValue = "";
-            //           myUserInfo.id = "";
-            //           myUserInfo.isFemale = true;
-            //           myUserInfo.phone = "";
-            //           myUserInfo.remarks = "";
-            //         }
-            //       });
-            //     });
-            //   },
-            // ),
             CustomOutlinedButton(
               btnWidth: constraints.maxWidth / 10 - 50,
               btnHeight: 40,
@@ -2057,7 +1921,7 @@ class TakeInPageState extends State<TakeInPage> {
 
 // "ReqData":"{\"ScaleId\": 2, \"Product\": \"Apple\", \"Weight\": \"1.230\", \"Price\": \"3.25\"}"}
   void sendReportDataToDB() {
-    sendRptDataToDB(myWeightReportData, weighingTakeInMode);
+    sendRptDataToDB(myWeightReportData, weighingTakeInMode, 1);
   }
 
   bool isWeightValue() {

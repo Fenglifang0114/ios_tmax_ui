@@ -68,7 +68,8 @@ class AddRawDialogState extends State<AddRawDialog> {
         height: 48,
         padding: const EdgeInsets.only(left: 5, right: 10),
         decoration: BoxDecoration(
-          border: Border.all(color: Color(0xFFCDD4DC)), // 设置边框颜色
+          border: Border.all(
+              color: Theme.of(context).colorScheme.outlineVariant), // 设置边框颜色
           borderRadius: BorderRadius.circular(0), // 设置圆角
         ),
         child: DropdownButton(
@@ -215,21 +216,13 @@ class AddRawDialogState extends State<AddRawDialog> {
                           child: Row(children: [
                             Expanded(
                               child: Container(
-                                  padding:
-                                      const EdgeInsets.only(left: 5, right: 5),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .outline, // 设置边框颜色
-                                      width: 1, // 设置边框宽度
-                                    ),
-                                  ),
                                   alignment: Alignment.centerLeft,
                                   child: TextField(
                                     controller: rawCodeCtl,
                                     decoration: InputDecoration(
-                                      border: InputBorder.none,
+                                      border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(0.0))),
                                       hintText: localizedStrings
                                           .fInputRawMaterialIdHint,
                                       suffixIconConstraints:
@@ -282,21 +275,13 @@ class AddRawDialogState extends State<AddRawDialog> {
                           child: Row(children: [
                             Expanded(
                               child: Container(
-                                  padding:
-                                      const EdgeInsets.only(left: 5, right: 5),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .outline, // 设置边框颜色
-                                      width: 1, // 设置边框宽度
-                                    ),
-                                  ),
                                   alignment: Alignment.centerLeft,
                                   child: TextField(
                                     controller: rawNameCtl,
                                     decoration: InputDecoration(
-                                      border: InputBorder.none,
+                                      border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(0.0))),
                                       hintText: localizedStrings
                                           .fInputRawMaterialNameHint,
                                       suffixIconConstraints:
@@ -564,7 +549,9 @@ class AddRawDialogState extends State<AddRawDialog> {
                       style: ElevatedButton.styleFrom(
                         foregroundColor:
                             Theme.of(context).colorScheme.onSurfaceVariant,
-                        backgroundColor: Theme.of(context).colorScheme.outline,
+                        backgroundColor: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest,
                         fixedSize: const Size(double.infinity, 48),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero,
@@ -578,7 +565,7 @@ class AddRawDialogState extends State<AddRawDialog> {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          color: Theme.of(context).colorScheme.onPrimary,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -784,7 +771,9 @@ class AddRawTypeDialogState extends State<AddRawTypeDialog> {
                       style: ElevatedButton.styleFrom(
                         foregroundColor:
                             Theme.of(context).colorScheme.onSurfaceVariant,
-                        backgroundColor: Theme.of(context).colorScheme.outline,
+                        backgroundColor: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest,
                         fixedSize: const Size(double.infinity, 48),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero,
@@ -798,7 +787,7 @@ class AddRawTypeDialogState extends State<AddRawTypeDialog> {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          color: Theme.of(context).colorScheme.onPrimary,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -867,7 +856,8 @@ class EditRawDialogState extends State<EditRawDialog> {
         height: 48,
         padding: const EdgeInsets.only(left: 5, right: 10),
         decoration: BoxDecoration(
-          border: Border.all(color: Color(0xFFCDD4DC)), // 设置边框颜色
+          border: Border.all(
+              color: Theme.of(context).colorScheme.outlineVariant), // 设置边框颜色
           borderRadius: BorderRadius.circular(0), // 设置圆角
         ),
         child: DropdownButton(
@@ -1348,7 +1338,9 @@ class EditRawDialogState extends State<EditRawDialog> {
                       style: ElevatedButton.styleFrom(
                         foregroundColor:
                             Theme.of(context).colorScheme.onSurfaceVariant,
-                        backgroundColor: Theme.of(context).colorScheme.outline,
+                        backgroundColor: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest,
                         fixedSize: const Size(double.infinity, 48),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero,
@@ -1362,7 +1354,7 @@ class EditRawDialogState extends State<EditRawDialog> {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          color: Theme.of(context).colorScheme.onPrimary,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),

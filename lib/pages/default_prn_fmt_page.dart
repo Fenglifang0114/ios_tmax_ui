@@ -3,8 +3,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/functions/methods.dart';
-import 'package:t_max/pages/sel_scales_page.dart';
+import 'package:t_max/pages/all_page_path.dart';
 import 'package:t_max/widget/custom_button.dart';
 import '../data/manager_scale_channel.dart';
 import '../data/download_prt_fmt.dart';
@@ -64,34 +65,41 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
 
   @override
   Widget build(BuildContext context) {
-    // final width = MediaQuery.of(context).size.width;
+    final width = MediaQuery.of(context).size.width;
     // final _height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(50),
-        child: Container(
-          child: pageHeadDesign(
-            context,
-            localizedStrings.gTitleLabelFmtDownload,
-            [myDefScaleInfo.defScaleId!],
-            '',
-          ),
-        ),
-      ),
-      body: ListView(
-        scrollDirection: Axis.horizontal,
-        children: [
-          _buildMainContent(),
-        ],
-      ),
+      body: Container(
+          width: width,
+          decoration:
+              BoxDecoration(color: Theme.of(context).colorScheme.surface),
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                pageHeadInfo(
+                    context,
+                    width - headWidthPadding,
+                    localizedStrings.menuLabelFormatDownload,
+                    localizedStrings.gTipLabelFmtDownPageHelp),
+                Expanded(
+                    child: Container(
+                  color: Theme.of(context).colorScheme.surfaceTint,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: [
+                      _buildMainContent(),
+                    ],
+                  ),
+                )),
+              ])),
     );
   }
 
   Widget _buildMainContent() {
     return Stack(children: [
       SizedBox(
-        width: MediaQuery.of(context).size.width,
+        width: MediaQuery.of(context).size.width - 280,
         child: Column(
           children: [
             const SizedBox(
@@ -303,7 +311,7 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
                   icon: Icons.check_circle,
                   text: localizedStrings.gBtnConfirm,
                   onPressed: () {
-                    Navigator.of(context).pop(true);
+                    Navigator.of(ctx).pop(true);
                   },
                 ),
               ],
@@ -333,7 +341,7 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
                   icon: Icons.check_circle,
                   text: localizedStrings.gBtnConfirm,
                   onPressed: () {
-                    Navigator.of(context).pop(true);
+                    Navigator.of(ctx).pop(true);
                   },
                 ),
                 const SizedBox(width: 20),
@@ -343,7 +351,7 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
                   icon: Icons.cancel,
                   text: localizedStrings.gBtnCancel,
                   onPressed: () {
-                    Navigator.of(context).pop(false);
+                    Navigator.of(ctx).pop(false);
                   },
                 ),
               ],
@@ -366,7 +374,7 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
       context: context,
       barrierDismissible: false, // 允许点击空白处关闭对话框
       builder: (context) {
-        return SelectScalesPage(
+        return SelectScalesPageNew(
           funcNo: funcNo,
           sendMsgStr: msg,
         );

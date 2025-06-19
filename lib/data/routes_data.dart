@@ -1,0 +1,426 @@
+//所有的路由
+
+import 'package:flutter/material.dart';
+import 'package:t_max/data/home_page_common_data.dart';
+import 'package:t_max/data/icons.dart';
+import 'package:t_max/data/language.dart';
+import 'package:t_max/data/license_data.dart';
+import 'package:t_max/pages/apps_page.dart';
+import 'package:t_max/pages/apps_setting_page.dart';
+import 'package:t_max/pages/basic_data_page.dart';
+import 'package:t_max/pages/blue_tooth_setting_page.dart';
+import 'package:t_max/pages/calibration_page.dart';
+import 'package:t_max/pages/check_weighers_page.dart';
+import 'package:t_max/pages/configuration_page.dart';
+import 'package:t_max/pages/custom_serial_protocol_page.dart';
+import 'package:t_max/pages/down_recipt_fmt_page.dart';
+import 'package:t_max/pages/flow_rate_page.dart';
+import 'package:t_max/pages/formula_scale_page.dart';
+import 'package:t_max/pages/header_footer_page.dart';
+import 'package:t_max/pages/labeldesign_page.dart';
+import 'package:t_max/pages/lable_down_prn_fmt_page.dart';
+import 'package:t_max/pages/multi_scale_management_page.dart';
+import 'package:t_max/pages/plu_edit_page.dart';
+import 'package:t_max/pages/receipt_design_page.dart';
+import 'package:t_max/pages/retail_report_page.dart';
+import 'package:t_max/pages/set_system_parameter.dart';
+import 'package:t_max/pages/set_system_time.dart';
+import 'package:t_max/pages/take_in_page.dart';
+import 'package:t_max/pages/take_out_page.dart';
+import 'package:t_max/pages/update_firmware_page.dart';
+import 'package:t_max/pages/weighing.dart';
+import 'package:t_max/pages/weight_collection_page.dart';
+import 'package:t_max/pages/wifi_setting_page.dart';
+
+class RouteData {
+  RouteData({
+    required this.title,
+    required this.subtitle,
+    required this.id,
+    this.routeName,
+    this.selected,
+    required this.iconPath,
+  });
+
+  String title;
+  String subtitle;
+  int id;
+  String? routeName;
+  String? selected;
+  String iconPath;
+}
+
+List<int> allPaidConfigMenu = [
+  MenuId.labelDesignPage.index,
+  MenuId.receiptDesignPage.index,
+  MenuId.serialOutputDesignPage.index,
+  MenuId.basicDataCollectionPage.index,
+  MenuId.parameterSettingPage.index,
+];
+
+List<RouteData> getAllConfigMenus() {
+  List<RouteData> allConfigMenus = [
+    RouteData(
+      id: MenuId.multiScaleManagement.index,
+      title: localizedStrings.menuMultiScaleManagement,
+      routeName: "/multiScaleManagement",
+      subtitle: localizedStrings.menuMultiScaleManagement,
+      iconPath: multiScaleSvgIcon(),
+    ),
+    RouteData(
+      id: MenuId.setSystemTimePage.index,
+      title: localizedStrings.menuDeviceTime,
+      routeName: "/setSystemTime",
+      subtitle: localizedStrings.menuDeviceTime,
+      iconPath: dateTimeSvgIcon(),
+    ),
+    RouteData(
+      id: MenuId.btSettingPage.index,
+      title: localizedStrings.menuBluetoothSetting,
+      routeName: "/btSetting",
+      subtitle: localizedStrings.menuBluetoothSetting,
+      iconPath: btSettingSvgIcon(),
+    ),
+    RouteData(
+      id: MenuId.wifiSettingPage.index,
+      title: localizedStrings.menuWifiSetting,
+      routeName: "/wifiSetting",
+      subtitle: localizedStrings.menuWifiSetting,
+      iconPath: wifiSettingSvgIcon(),
+    ),
+    RouteData(
+      id: MenuId.updateFirmwarePage.index,
+      title: localizedStrings.menuFirmwareUpdate,
+      routeName: "/updateFirmware",
+      subtitle: localizedStrings.menuFirmwareUpdate,
+      iconPath: firmwareSvgIcon(),
+    ),
+    RouteData(
+      id: MenuId.labelDesignPage.index,
+      title: localizedStrings.menuLabelDesign,
+      routeName: "/labelDesign",
+      subtitle: localizedStrings.menuLabelDesign,
+      iconPath: labelDesignSvgIcon(),
+    ),
+    RouteData(
+      id: MenuId.receiptDesignPage.index,
+      title: localizedStrings.menuReceiptDesign,
+      routeName: "/receiptDesign",
+      subtitle: localizedStrings.menuReceiptDesign,
+      iconPath: reciptDesignSvgIcon(),
+    ),
+    RouteData(
+      id: MenuId.serialOutputDesignPage.index,
+      title: localizedStrings.menuSerialOutputDesign,
+      routeName: "/serialOutputDesign",
+      subtitle: localizedStrings.menuSerialOutputDesign,
+      iconPath: serialSvgIcon(),
+    ),
+    RouteData(
+      id: MenuId.basicDataCollectionPage.index,
+      title: localizedStrings.menuBasicDataCollection,
+      routeName: "/basicDataCollection",
+      subtitle: localizedStrings.menuBasicDataCollection,
+      iconPath: basicDataSvgIcon(),
+    ),
+    RouteData(
+        id: MenuId.parameterSettingPage.index,
+        title: localizedStrings.menuParameterSetting,
+        routeName: "/parameterSetting",
+        subtitle: localizedStrings.menuParameterSetting,
+        iconPath: parameterSvgIcon()),
+    RouteData(
+        id: MenuId.calibrationPage.index,
+        title: localizedStrings.menuCalibration,
+        routeName: "/calibration",
+        subtitle: localizedStrings.menuCalibration,
+        iconPath: calibrationSvgIcon()),
+    RouteData(
+      id: MenuId.pluEditPage.index,
+      title: localizedStrings.menuPluManagement,
+      routeName: "/pluEdit",
+      subtitle: localizedStrings.menuPluManagement,
+      iconPath: pluEditSvgIcon(),
+    ),
+    RouteData(
+        id: MenuId.downloadLabelPage.index,
+        title: localizedStrings.menuLabelFormatDownload,
+        routeName: "/downloadLabel",
+        subtitle: localizedStrings.menuLabelFormatDownload,
+        iconPath: labelDownloadSvgIcon()),
+    RouteData(
+        id: MenuId.downReciptPage.index,
+        title: localizedStrings.menuReceiptFormatDownload,
+        routeName: "/downRecipt",
+        subtitle: localizedStrings.menuReceiptFormatDownload,
+        iconPath: reciptDownloadSvgIcon()),
+  ];
+  return allConfigMenus;
+}
+
+List<RouteData> getCurrentConfigMenus() {
+  List<RouteData> currentConfigMenus = [];
+  List<RouteData> allConfigMenus = getAllConfigMenus();
+  for (var menu in allConfigMenus) {
+    if (freeConfigMenuIds.contains(menu.id)) {
+      currentConfigMenus.add(menu);
+    } else if (myLicenseInfo.isValid &&
+        selectedConfigPaidMenuIds.contains(menu.id)) {
+      currentConfigMenus.add(menu);
+    }
+  }
+  return currentConfigMenus;
+}
+
+String generateTitle(int pageId) {
+  if (pageId == MenuId.multiScaleManagement.index) {
+    return localizedStrings.menuMultiScaleManagement;
+  } else if (pageId == MenuId.setSystemTimePage.index) {
+    return localizedStrings.menuDeviceTime;
+  } else if (pageId == MenuId.btSettingPage.index) {
+    return localizedStrings.menuBluetoothSetting;
+  } else if (pageId == MenuId.wifiSettingPage.index) {
+    return localizedStrings.menuWifiSetting;
+  } else if (pageId == MenuId.updateFirmwarePage.index) {
+    return localizedStrings.menuFirmwareUpdate;
+  } else if (pageId == MenuId.labelDesignPage.index) {
+    return localizedStrings.menuLabelDesign;
+  } else if (pageId == MenuId.receiptDesignPage.index) {
+    return localizedStrings.menuReceiptDesign;
+  } else if (pageId == MenuId.serialOutputDesignPage.index) {
+    return localizedStrings.menuSerialOutputDesign;
+  } else if (pageId == MenuId.basicDataCollectionPage.index) {
+    return localizedStrings.menuBasicDataCollection;
+  } else if (pageId == MenuId.parameterSettingPage.index) {
+    return localizedStrings.menuParameterSetting;
+  } else if (pageId == MenuId.weightModePage.index) {
+    return localizedStrings.menuWeighing;
+  } else if (pageId == MenuId.pluEditPage.index) {
+    return localizedStrings.menuPluManagement;
+  } else if (pageId == MenuId.downloadLabelPage.index) {
+    return localizedStrings.menuLabelFormatDownload;
+  } else if (pageId == MenuId.downReciptPage.index) {
+    return localizedStrings.menuReceiptFormatDownload;
+  } else if (pageId == MenuId.transactionReportPage.index) {
+    return localizedStrings.menuRetailReport;
+  } else if (pageId == MenuId.weightDataCollectionPage.index) {
+    return localizedStrings.menuWeighingDataCollection;
+  } else if (pageId == MenuId.checkWeighersPage.index) {
+    return localizedStrings.menuCheckWeighing;
+  } else if (pageId == MenuId.takeInPage.index) {
+    return localizedStrings.menuIncrementWeighing;
+  } else if (pageId == MenuId.takeOutPage.index) {
+    return localizedStrings.menuTakeOutScale;
+  } else if (pageId == MenuId.formulationScalePage.index) {
+    return localizedStrings.menuFormula;
+  } else if (pageId == MenuId.flowRatePage.index) {
+    return localizedStrings.menuFlowRate;
+  } else if (pageId == MenuId.calibrationPage.index) {
+    return localizedStrings.menuCalibration;
+  }
+  return '';
+}
+
+List<int> allPaidAppMenu = [
+  MenuId.weightDataCollectionPage.index,
+  MenuId.checkWeighersPage.index,
+  MenuId.takeInPage.index,
+  MenuId.takeOutPage.index,
+  MenuId.labelDesignPage.index,
+  MenuId.receiptDesignPage.index,
+  MenuId.formulationScalePage.index,
+  MenuId.flowRatePage.index,
+];
+
+List<RouteData> getAllAppsMenus() {
+  return [
+    RouteData(
+      id: MenuId.weightModePage.index,
+      title: localizedStrings.menuWeighing,
+      routeName: "/weightMode",
+      subtitle: localizedStrings.menuWeighing,
+      iconPath: weighingSvgIcon(),
+    ),
+    RouteData(
+        id: MenuId.transactionReportPage.index,
+        title: localizedStrings.menuRetailReport,
+        routeName: "/transactionReport",
+        subtitle: localizedStrings.menuRetailReport,
+        iconPath: detailReportSvgIcon()),
+    RouteData(
+        id: MenuId.weightDataCollectionPage.index,
+        title: localizedStrings.menuWeighingDataCollection,
+        routeName: "/weightDataCollection",
+        subtitle: localizedStrings.menuWeighingDataCollection,
+        iconPath: wgtCollectionSvgIcon()),
+    RouteData(
+        id: MenuId.checkWeighersPage.index,
+        title: localizedStrings.menuCheckWeighing,
+        routeName: "/checkWeighing",
+        subtitle: localizedStrings.menuCheckWeighing,
+        iconPath: checkScaleSvgIcon()),
+    RouteData(
+        id: MenuId.takeInPage.index,
+        title: localizedStrings.menuIncrementWeighing,
+        routeName: "/takeIn",
+        subtitle: localizedStrings.menuIncrementWeighing,
+        iconPath: takeInSvgIcon()),
+    RouteData(
+      id: MenuId.takeOutPage.index,
+      title: localizedStrings.menuTakeOutScale,
+      routeName: "/takeOut",
+      subtitle: localizedStrings.menuTakeOutScale,
+      iconPath: takeOutSvgIcon(),
+    ),
+    RouteData(
+        id: MenuId.formulationScalePage.index,
+        title: localizedStrings.menuFormula,
+        routeName: "/formulationScale",
+        subtitle: localizedStrings.menuFormula,
+        iconPath: firmwareSvgIcon()),
+    RouteData(
+        id: MenuId.flowRatePage.index,
+        title: localizedStrings.menuFlowRate,
+        routeName: "/flowRate",
+        subtitle: localizedStrings.menuFlowRate,
+        iconPath: rateSpeedSvgIcon()),
+    RouteData(
+      id: MenuId.labelDesignPage.index,
+      title: localizedStrings.menuLabelDesign,
+      routeName: "/labelDesign",
+      subtitle: localizedStrings.menuLabelDesign,
+      iconPath: labelDesignSvgIcon(),
+    ),
+    RouteData(
+      id: MenuId.receiptDesignPage.index,
+      title: localizedStrings.menuReceiptDesign,
+      routeName: "/receiptDesign",
+      subtitle: localizedStrings.menuReceiptDesign,
+      iconPath: reciptDesignSvgIcon(),
+    ),
+  ];
+}
+
+List<RouteData> getCurrentAppsMenus() {
+  List<RouteData> currentAppsMenus = [];
+  List<RouteData> allAppsMenus = getAllAppsMenus();
+
+  for (var menu in allAppsMenus) {
+    if (freeAppMenuIds.contains(menu.id)) {
+      currentAppsMenus.add(menu);
+    } else if (getIsConfigCertified(menu.id) &&
+        selectedAppsPaidMenuIds.contains(menu.id)) {
+      currentAppsMenus.add(menu);
+    }
+  }
+
+  return currentAppsMenus;
+}
+
+bool getIsConfigCertified(int id) {
+  if (id == MenuId.weightDataCollectionPage.index) {
+    return myWedaLicInfo.isValid;
+  } else if (id == MenuId.checkWeighersPage.index) {
+    return myChweLicInfo.isValid;
+  } else if (id == MenuId.takeInPage.index) {
+    return myInWeLicInfo.isValid;
+  } else if (id == MenuId.takeOutPage.index) {
+    return myTaouLicInfo.isValid;
+  } else if (id == MenuId.formulationScalePage.index) {
+    return myFoScLicInfo.isValid;
+  } else if (id == MenuId.flowRatePage.index) {
+    return myFaSpInfo.isValid;
+  } else if (id == MenuId.labelDesignPage.index) {
+    // return myLdLicInfo.isValid;
+  } else if (id == MenuId.receiptDesignPage.index) {
+    return myRedeLicInfo.isValid;
+  }
+
+  return false;
+}
+
+bool isFreeApp(int pId) => freeAppMenuIds.contains(pId);
+
+Widget buildPageContent(dynamic Function(String) navigateContent,
+    String? pageName, String? lastRouteName) {
+  if (pageName == '/settingsApps') {
+    return AppsPage(onNavigate: navigateContent, lastRouteName: lastRouteName!);
+  }
+  if (pageName == '/settingsConfig') {
+    return ConfigurationPage(
+        onNavigate: navigateContent, lastRouteName: lastRouteName!);
+  }
+
+  if (pageName == '/settingsAppsSetting') {
+    return AppsSettingPage(
+        onNavigate: navigateContent, lastRouteName: lastRouteName!);
+  }
+
+  int pageId = 9999;
+  for (var item in getAllConfigMenus()) {
+    if (item.routeName == pageName) {
+      pageId = item.id;
+      break;
+    }
+  }
+  if (pageId == 9999) {
+    for (var item in getAllAppsMenus()) {
+      if (item.routeName == pageName) {
+        pageId = item.id;
+        break;
+      }
+    }
+  }
+  if (pageId == 9999) {
+    return Container();
+  }
+
+  if (pageId == MenuId.multiScaleManagement.index) {
+    return MultiScaleManagement();
+  } else if (pageId == MenuId.setSystemTimePage.index) {
+    return SetSystemTimePage();
+  } else if (pageId == MenuId.wifiSettingPage.index) {
+    return WifiSettingPage();
+  } else if (pageId == MenuId.btSettingPage.index) {
+    return BluetoothPage();
+  } else if (pageId == MenuId.updateFirmwarePage.index) {
+    return UpdateFirmwarePage();
+  } else if (pageId == MenuId.labelDesignPage.index) {
+    return LabelDesignPage(
+      type: "config",
+    );
+  } else if (pageId == MenuId.receiptDesignPage.index) {
+    return ReceiptDesignPage(type: "config");
+  } else if (pageId == MenuId.serialOutputDesignPage.index) {
+    return CustomSerialProtocol();
+  } else if (pageId == MenuId.basicDataCollectionPage.index) {
+    return BasicDataPage();
+  } else if (pageId == MenuId.parameterSettingPage.index) {
+    return SetParameterPage();
+  } else if (pageId == MenuId.weightModePage.index) {
+    return WeightModePage();
+  } else if (pageId == MenuId.pluEditPage.index) {
+    return PluEidtPage();
+  } else if (pageId == MenuId.downloadLabelPage.index) {
+    return DownloadLabelPage();
+  } else if (pageId == MenuId.downReciptPage.index) {
+    return DownReciptPage();
+  } else if (pageId == MenuId.transactionReportPage.index) {
+    return TransactionReportPage();
+  } else if (pageId == MenuId.weightDataCollectionPage.index) {
+    return WeightDataCollectionPage();
+  } else if (pageId == MenuId.checkWeighersPage.index) {
+    return CheckWeighersPage();
+  } else if (pageId == MenuId.takeInPage.index) {
+    return TakeInPage();
+  } else if (pageId == MenuId.takeOutPage.index) {
+    return TakeOutPage();
+  } else if (pageId == MenuId.formulationScalePage.index) {
+    return FormulationScalePage();
+  } else if (pageId == MenuId.flowRatePage.index) {
+    return FlowRatePage();
+  } else if (pageId == MenuId.multiScaleManagement.index) {
+    return MultiScaleManagement();
+  } else if (pageId == MenuId.calibrationPage.index) {}
+  return CalibrationPage();
+}

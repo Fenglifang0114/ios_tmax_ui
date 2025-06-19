@@ -227,9 +227,19 @@ class EventText {
   EventText(this.obj);
 }
 
+class EventRcpText {
+  dynamic obj;
+  EventRcpText(this.obj);
+}
+
 class EventOffset {
   dynamic obj;
   EventOffset(this.obj);
+}
+
+class EventRcpOffset {
+  dynamic obj;
+  EventRcpOffset(this.obj);
 }
 
 class EventPageSize {
@@ -340,6 +350,11 @@ class EventBarcodetypedata {
 class EventSelectedControl {
   dynamic obj;
   EventSelectedControl(this.obj);
+}
+
+class EventRcpSelectedControl {
+  dynamic obj;
+  EventRcpSelectedControl(this.obj);
 }
 
 class EventWiFiListInfo {
@@ -517,6 +532,26 @@ class EventRevAddRec {
   EventRevAddRec(this.obj);
 }
 
+class EventRevCalValue {
+  dynamic obj;
+  EventRevCalValue(this.obj);
+}
+
+class EventRevSetGaduationValue {
+  dynamic obj;
+  EventRevSetGaduationValue(this.obj);
+}
+
+class EventRevSetDecimalValue {
+  dynamic obj;
+  EventRevSetDecimalValue(this.obj);
+}
+
+class EventRevSetMaxRange {
+  dynamic obj;
+  EventRevSetMaxRange(this.obj);
+}
+
 class EventDeleteRec {
   dynamic obj;
   EventDeleteRec(this.obj);
@@ -600,4 +635,14 @@ class EventRespFlowRateAdd {
 class EventRespFlowRateList {
   dynamic obj;
   EventRespFlowRateList(this.obj);
+}
+
+class EventRespGetAllWgtRecs {
+  dynamic obj;
+  EventRespGetAllWgtRecs(this.obj);
+}
+
+class EventDelAllWgtRecs {
+  dynamic obj;
+  EventDelAllWgtRecs(this.obj);
 }

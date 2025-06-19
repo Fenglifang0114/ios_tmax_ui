@@ -4,8 +4,12 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/timer_manager.dart';
+import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/functions/methods.dart';
+import 'package:t_max/widget/common_widget.dart';
+import 'package:t_max/widget/dropdown_copy.dart';
 import '../data/downloadresponse.dart';
 import '../data/manager_scale_channel.dart';
 import '../data/custom_serial_protocol_text_dart.dart';
@@ -14,7 +18,6 @@ import '../data/reqweightdata_data.dart';
 
 import '../eventbus/eventbus.dart';
 import 'package:path/path.dart' as p;
-import '../widget/custom_button.dart';
 import '../widget/page_head.dart';
 import 'package:archive/archive_io.dart';
 
@@ -57,6 +60,9 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
   int _selectedDecimal = 3;
   final double buttonWidth = 100;
   final double buttonHeight = 40;
+  final double topTitleHeight = 76;
+  final double leftBtnWidth = 223;
+  final double rightBtnWidth = 350;
 
   late int _currentPageIndex;
   late ColorScheme colorScheme;
@@ -130,18 +136,9 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
           // cntScaleTimerMgr.startCntScaleTimer(5);
           myRespDataFromScale = event.obj;
           if (myRespDataFromScale.msgBody.isNotEmpty) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text(
-                    (myRespDataFromScale.msgBody.contains('ok'))
-                        ? 'Download successful!'
-                        : myRespDataFromScale.msgBody,
-                    style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.normal)), ////此处需要秤回复
-                duration: const Duration(seconds: 3),
-                backgroundColor: (myRespDataFromScale.msgBody.contains('ok'))
-                    ? Theme.of(context).colorScheme.onTertiaryFixedVariant
-                    : Theme.of(context).colorScheme.error));
+            (myRespDataFromScale.msgBody.contains('ok'))
+                ? showTipInfo(localizedStrings.gTipDownloadOk, context)
+                : showTipInfo(myRespDataFromScale.msgBody, context);
           }
         });
       }
@@ -273,352 +270,355 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
   @override
   Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;
+    final double width = screenSize.width;
     colorScheme = Theme.of(context).colorScheme;
     pageTitle = getTitleName(_currentPageIndex);
 
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(80),
-        child: Container(
-          height: 50,
-          width: screenSize.width - 10,
-          color: colorScheme.primary,
-          child: pageHeadDefScale(context, localizedStrings.gTitleSerialOutput,
-              localizedStrings.gTipSerialDesignPageHelp),
-        ),
+        body: Container(
+            width: width,
+            decoration: BoxDecoration(color: colorScheme.surface),
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // pageHeadInfo(
+                  //     context,
+                  //     width - headWidthPadding,
+                  //     localizedStrings.menuSerialOutputDesign,
+                  //     localizedStrings.gTipSerialDesignPageHelp),
+                  buildPageTitle(),
+                  buildBottomPart(),
+                ])));
+  }
+
+//标题栏组件
+  Widget buildPageTitle() {
+    return Container(
+      height: topTitleHeight,
+      padding: const EdgeInsets.all(regularPadding),
+      child: Container(
+        height: btnHeight,
+        color: colorScheme.surfaceDim,
+        child: Row(children: [
+          columnItem(pageMap['Weight']!),
+          columnItem(pageMap['OL']!),
+          columnItem(pageMap['UL']!),
+          columnItem(pageMap['Pcs']!),
+          columnItem(pageMap['Price']!),
+          columnItem(pageMap['Percent']!),
+        ]),
       ),
-      body: Row(
+    );
+  }
+
+  // 底部部分组件
+  Widget buildBottomPart() {
+    return Expanded(
+        child: Container(
+      color: colorScheme.surfaceContainerLow,
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-              flex: 1,
-              child: Column(
-                children: <Widget>[
-                  Divider(
-                    height: 2,
-                    color: colorScheme.primary,
-                  ),
-                  Expanded(
-                    flex: 6, // 设置子部件占用空间的比例
-                    child: Container(
-                      color: colorScheme.surfaceTint,
-                      child: ListView.builder(
-                        itemCount: _buttonLabels.length + 1, // +1是为了添加"Enter"按钮
-                        itemBuilder: (context, index) {
-                          if (index == _buttonLabels.length) {
-                            // 最后一个是"Enter"按钮
-                            return TextButton(
-                              onPressed: () {
-                                setState(() {
-                                  _addEnter(_currentPageIndex);
-                                });
-                              },
-                              child: const Text('Enter'),
-                            );
-                          }
-                          final label = _buttonLabels[index];
-                          return TextButton(
-                            onPressed: () {
-                              setState(() {
-                                if (label == 'Text') {
-                                  _addTextData(_currentPageIndex);
-                                }
-                                if (label == 'Text_Hex') {
-                                  _addTextHexData(_currentPageIndex);
-                                } else {
-                                  _addVarData(label, _currentPageIndex);
-                                }
-                              });
-                            },
-                            child: Text(label),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                ],
-              )),
-          Expanded(
-            flex: 5,
-            child: Container(
-              decoration: BoxDecoration(
-                  color: colorScheme.surfaceTint,
-                  border: Border.all(
-                      width: 0.2,
-                      color: Theme.of(context).colorScheme.onSurface)),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    flex: 5,
-                    child: ListView(
-                      children: [
-                        Row(
-                          children: [
-                            pageTitleWidget(3),
-                            pageTitleWidget(1),
-                            pageTitleWidget(2),
-                            pageTitleWidget(4),
-                            pageTitleWidget(5),
-                            pageTitleWidget(6),
-                          ],
-                        ),
-                        Divider(
-                          height: 10,
-                          thickness: 10,
-                          color: colorScheme.scrim,
-                        ),
-                        SizedBox(
-                          height: 40,
-                          child: Center(
-                            child: Text(
-                              pageTitle,
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: colorScheme.primary),
-                            ),
-                          ),
-                        ),
-                        _buildTexts(_currentPageIndex),
-                      ],
-                    ),
-                  ),
-                  Divider(
-                    height: 2,
-                    color: colorScheme.primary,
-                  ),
-                  Expanded(
-                    flex: 4,
-                    child: secondPageBuild(_currentPageIndex),
-                  ),
-                ],
+          showBottomLeftPart(),
+          showBottomMiddlePart(),
+          showBottomRightPart(),
+        ],
+      ),
+    ));
+  }
+
+  // 底部左侧部分组件
+  Widget showBottomLeftPart() {
+    return Container(
+        color: colorScheme.surfaceContainerLow,
+        width: leftBtnWidth,
+        padding: const EdgeInsets.all(regularPadding),
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: ListView.builder(
+                itemCount: _buttonLabels.length + 1, // +1是为了添加"Enter"按钮
+                itemBuilder: (context, index) {
+                  if (index == _buttonLabels.length) {
+                    // 最后一个是"Enter"按钮
+                    return buildEnterBtn();
+                  }
+                  final label = _buttonLabels[index];
+                  return buildOtherTextBtn(label);
+                },
+              ),
+            ),
+          ],
+        ));
+  }
+
+  // 构建其他文本按钮
+  Widget buildOtherTextBtn(String label) {
+    return Container(
+        height: 44,
+        padding: const EdgeInsets.only(bottom: smallPadding),
+        child: TextButton(
+          style: ButtonStyle(
+            backgroundColor: WidgetStateProperty.all(colorScheme.onPrimary),
+            shape: WidgetStateProperty.all(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(0),
               ),
             ),
           ),
-          Expanded(
-              flex: 4,
-              child: Container(
-                  color: Theme.of(context).colorScheme.surfaceTint,
-                  child: Column(
+          onPressed: () {
+            setState(() {
+              if (label == 'Text') {
+                _addTextData(_currentPageIndex);
+              }
+              if (label == 'Text_Hex') {
+                _addTextHexData(_currentPageIndex);
+              } else {
+                _addVarData(label, _currentPageIndex);
+              }
+            });
+          },
+          child: Text(label,
+              style: Theme.of(context).textTheme.bodySmall!.apply(
+                    color: colorScheme.onSurface,
+                  )),
+        ));
+  }
+
+  //显示Enter按钮
+  Widget buildEnterBtn() {
+    return Container(
+      height: 44,
+      padding: const EdgeInsets.only(bottom: smallPadding),
+      child: TextButton(
+        style: ButtonStyle(
+          backgroundColor: WidgetStateProperty.all(colorScheme.onPrimary),
+          shape: WidgetStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(0),
+            ),
+          ),
+        ),
+        onPressed: () {
+          setState(() {
+            _addEnter(_currentPageIndex);
+          });
+        },
+        child: Text('Enter',
+            style: Theme.of(context).textTheme.bodySmall!.apply(
+                  color: colorScheme.onSurface,
+                )),
+      ),
+    );
+  }
+
+  // 底部中间部分组件
+  Widget showBottomMiddlePart() {
+    return Expanded(
+      child: Container(
+          padding:
+              const EdgeInsets.only(top: regularPadding, right: regularPadding),
+          child: Container(
+            color: colorScheme.surface,
+            padding: const EdgeInsets.all(regularPadding),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  flex: 5,
+                  child: ListView(
                     children: [
-                      Expanded(
-                        flex: 1, // 设置子部件占用空间的比例
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            CustomElevatedButton(
-                              btnWidth: buttonWidth,
-                              btnHeight: 40,
-                              icon: Icons.download_rounded,
-                              text: localizedStrings.gBtnDownload,
-                              onPressed: (!serialPreview &&
-                                      isListEmpty() &&
-                                      !_downloading)
-                                  ? () async {
-                                      jsonFilesList.clear();
-                                      for (var i = 1; i < 7; i++) {
-                                        bool res = await generateJson(i);
-                                        if (!res) {
-                                          return;
-                                        }
-                                      }
-                                      await generateFileList();
-                                      if (jsonFilesList.isNotEmpty) {
-                                        PublicFunctions.sendOutputFmtToScale(
-                                            jsonFilesList,
-                                            myDefScaleInfo.defScaleId!);
-                                      }
-                                      setState(() {
-                                        _downloading = true;
-                                      });
-                                      cntScaleTimerMgr.stopCntScaleTimer();
-                                    }
-                                  : null,
-                            ),
-                            CustomElevatedButton(
-                              btnWidth: buttonWidth,
-                              btnHeight: buttonHeight,
-                              icon: Icons.visibility_outlined,
-                              text: localizedStrings.cBtnOpenPreview,
-                              onPressed: !serialPreview &&
-                                      (myDefScaleInfo.defScaleId! == 1)
-                                  ? handleButtonPress
-                                  : null,
-                            ),
-                            CustomElevatedButton(
-                              btnWidth: buttonWidth,
-                              btnHeight: buttonHeight,
-                              icon: Icons.visibility_off_outlined,
-                              text: localizedStrings.cBtnClosePreview,
-                              onPressed: () async {
-                                setState(() {
-                                  serialPreview = false;
-                                  outputData.clear();
-                                });
-                                // PublicFunctions.closeScalePassth(1);
-                                PublicFunctions.stopWeight(1);
-                              },
-                            ),
-                          ],
+                      SizedBox(
+                        height: 40,
+                        child: Center(
+                          child: Text(
+                            pageTitle,
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall!
+                                .apply(color: colorScheme.primary),
+                          ),
                         ),
                       ),
-                      Divider(
-                        height: 2,
-                        color: colorScheme.primary,
-                      ),
-                      !serialPreview
-                          ? Expanded(
-                              flex: 6, // 设置子部件占用空间的比例
-                              child: ListView(
-                                children: (getListName(_currentPageIndex).isNotEmpty &&
-                                        mySerialProtocolText.type == 'Bool' &&
-                                        mySerialProtocolText.tabOrder != 9999 &&
-                                        (mySerialProtocolText.varName == 'isstable' ||
-                                            mySerialProtocolText.varName ==
-                                                'istare'))
-                                    ? _boolProperty()
-                                    : (getListName(_currentPageIndex).isNotEmpty &&
-                                            mySerialProtocolText.type ==
-                                                'TEXT' &&
-                                            mySerialProtocolText.tabOrder !=
-                                                9999)
-                                        ? _textProperty()
-                                        : (getListName(_currentPageIndex).isNotEmpty &&
-                                                mySerialProtocolText.type ==
-                                                    'TEXT_HEX' &&
-                                                mySerialProtocolText.tabOrder !=
-                                                    9999)
-                                            ? _textHexProperty()
-                                            : (getListName(_currentPageIndex).isNotEmpty &&
-                                                    mySerialProtocolText.type ==
-                                                        'String' &&
-                                                    mySerialProtocolText.tabOrder !=
-                                                        9999)
-                                                ? _stringProperty()
-                                                : (getListName(_currentPageIndex)
-                                                            .isNotEmpty &&
-                                                        mySerialProtocolText.type ==
-                                                            'Enter')
-                                                    ? _enterProperty()
-                                                    : (getListName(_currentPageIndex)
-                                                                .isNotEmpty &&
-                                                            mySerialProtocolText.type ==
-                                                                'Float' &&
-                                                            mySerialProtocolText
-                                                                    .tabOrder !=
-                                                                9999)
-                                                        ? _floatProperty()
-                                                        : (getListName(_currentPageIndex)
-                                                                    .isNotEmpty &&
-                                                                mySerialProtocolText
-                                                                        .type ==
-                                                                    'Integer' &&
-                                                                mySerialProtocolText.tabOrder != 9999)
-                                                            ? _intProperty()
-                                                            : [],
-                              ),
-                            )
-                          : Expanded(
-                              flex: 6,
-                              child: Column(
-                                children: [
-                                  Expanded(
-                                      flex: 1,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          OutlinedButton(
-                                              style: ButtonStyle(
-                                                side: WidgetStateProperty
-                                                    .resolveWith<BorderSide>(
-                                                  (Set<WidgetState> states) {
-                                                    return BorderSide(
-                                                      color: colorScheme
-                                                          .scrim, // 设置边框颜色为红色
-                                                      width: 2, // 设置边框宽度
-                                                    );
-                                                  },
-                                                ),
-                                              ),
-                                              onPressed: () {
-                                                setState(() {
-                                                  outputData.clear();
-                                                });
-                                              },
-                                              child: Text(
-                                                localizedStrings.gBtnClear,
-                                                overflow: TextOverflow.ellipsis,
-                                              )),
-                                          OutlinedButton(
-                                              style: ButtonStyle(
-                                                backgroundColor: _isHexDisplay
-                                                    ? WidgetStateProperty.all(
-                                                        colorScheme.primary)
-                                                    : WidgetStateProperty.all(
-                                                        colorScheme.onPrimary),
-                                                side: WidgetStateProperty
-                                                    .resolveWith<BorderSide>(
-                                                  (Set<WidgetState> states) {
-                                                    return BorderSide(
-                                                      color: colorScheme
-                                                          .scrim, // 设置边框颜色为红色
-                                                      width: 2, // 设置边框宽度
-                                                    );
-                                                  },
-                                                ),
-                                              ),
-                                              onPressed: () {
-                                                setState(() {
-                                                  _isHexDisplay =
-                                                      !_isHexDisplay;
-                                                });
-                                                PublicFunctions
-                                                    .changeScalePassth(
-                                                        _isHexDisplay, 1);
-                                              },
-                                              child: Text(
-                                                'HEX',
-                                                style: TextStyle(
-                                                  color: _isHexDisplay
-                                                      ? colorScheme.onPrimary
-                                                      : colorScheme.primary,
-                                                ),
-                                                overflow: TextOverflow.ellipsis,
-                                              ))
-                                        ],
-                                      )),
-                                  Expanded(
-                                    flex: 6,
-                                    child: Container(
-                                      margin: const EdgeInsets.all(10.0),
-                                      padding: const EdgeInsets.all(10.0),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary, // 边框颜色
-                                          width: 2.0, // 边框宽度
-                                        ),
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(10.0)), // 边框圆角
-                                      ),
-                                      child: ListView.builder(
-                                        padding:
-                                            const EdgeInsets.all(10.0), // 添加边距
-                                        itemCount: outputData.length,
-                                        itemBuilder: (context, index) {
-                                          return Text(outputData[index]);
-                                        },
-                                        controller: _scrollController,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ))
+                      _buildTexts(_currentPageIndex),
                     ],
-                  )))
+                  ),
+                ),
+                Expanded(
+                  flex: 4,
+                  child: secondPageBuild(_currentPageIndex),
+                ),
+                buildBtnRow(),
+              ],
+            ),
+          )),
+    );
+  }
+
+  // 底部右侧部分组件
+  Widget showBottomRightPart() {
+    return SizedBox(
+        width: rightBtnWidth,
+        child: Container(
+            padding: const EdgeInsets.only(
+              top: regularPadding,
+            ),
+            child: Container(
+                color: colorScheme.surface,
+                padding: const EdgeInsets.all(regularPadding),
+                child: Column(
+                  children: [!serialPreview ? attribute() : preview()],
+                ))));
+  }
+
+  // 显示属性界面
+  Widget attribute() {
+    return Expanded(
+      child: ListView(
+        children: (getListName(_currentPageIndex).isNotEmpty &&
+                mySerialProtocolText.type == 'Bool' &&
+                mySerialProtocolText.tabOrder != 9999 &&
+                (mySerialProtocolText.varName == 'isstable' ||
+                    mySerialProtocolText.varName == 'istare'))
+            ? _boolProperty()
+            : (getListName(_currentPageIndex).isNotEmpty &&
+                    mySerialProtocolText.type == 'TEXT' &&
+                    mySerialProtocolText.tabOrder != 9999)
+                ? _textProperty()
+                : (getListName(_currentPageIndex).isNotEmpty &&
+                        mySerialProtocolText.type == 'TEXT_HEX' &&
+                        mySerialProtocolText.tabOrder != 9999)
+                    ? _textHexProperty()
+                    : (getListName(_currentPageIndex).isNotEmpty &&
+                            mySerialProtocolText.type == 'String' &&
+                            mySerialProtocolText.tabOrder != 9999)
+                        ? _stringProperty()
+                        : (getListName(_currentPageIndex).isNotEmpty &&
+                                mySerialProtocolText.type == 'Enter')
+                            ? _enterProperty()
+                            : (getListName(_currentPageIndex).isNotEmpty &&
+                                    mySerialProtocolText.type == 'Float' &&
+                                    mySerialProtocolText.tabOrder != 9999)
+                                ? _floatProperty()
+                                : (getListName(_currentPageIndex).isNotEmpty &&
+                                        mySerialProtocolText.type ==
+                                            'Integer' &&
+                                        mySerialProtocolText.tabOrder != 9999)
+                                    ? _intProperty()
+                                    : [],
+      ),
+    );
+  }
+
+  // 显示预览界面
+  Widget preview() {
+    return Expanded(
+        child: Column(
+      children: [
+        Expanded(
+            flex: 1,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                showTextButton(context, btnHeight, localizedStrings.gBtnClear,
+                    () {
+                  setState(() {
+                    outputData.clear();
+                  });
+                }, colorScheme.onPrimary, colorScheme.error,
+                    colorScheme.onPrimary),
+                showTextButton(context, btnHeight, 'HEX', () {
+                  setState(() {
+                    _isHexDisplay = !_isHexDisplay;
+                  });
+                  PublicFunctions.changeScalePassth(_isHexDisplay, 1);
+                },
+                    _isHexDisplay ? colorScheme.onPrimary : colorScheme.primary,
+                    _isHexDisplay
+                        ? colorScheme.primary
+                        : colorScheme.outlineVariant,
+                    colorScheme.onPrimary)
+              ],
+            )),
+        Expanded(
+          flex: 6,
+          child: Container(
+            padding: const EdgeInsets.all(smallPadding),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: colorScheme.outlineVariant, // 边框颜色
+                width: 1.0, // 边框宽度
+              ),
+              borderRadius:
+                  const BorderRadius.all(Radius.circular(0.0)), // 边框圆角
+            ),
+            child: ListView.builder(
+              padding: const EdgeInsets.all(smallPadding), // 添加边距
+              itemCount: outputData.length,
+              itemBuilder: (context, index) {
+                return Text(outputData[index],
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall!
+                        .apply(color: colorScheme.onSurfaceVariant));
+              },
+              controller: _scrollController,
+            ),
+          ),
+        ),
+      ],
+    ));
+  }
+
+  // 提取分隔线组件
+  Widget verticalDivider() {
+    return Container(
+      height: btnHeight,
+      width: 1,
+      alignment: Alignment.center,
+      child: Container(
+        color: colorScheme.primary,
+        height: 24,
+      ),
+    );
+  }
+
+  // 提取按钮组件
+  Widget textButton(int pageId) {
+    return SizedBox(
+        height: btnHeight,
+        child: TextButton(
+          style: ButtonStyle(
+            shape: WidgetStateProperty.all(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(0),
+              ),
+            ),
+          ),
+          onPressed: () {
+            setState(() {
+              _currentPageIndex = pageId;
+            });
+          },
+          child: Text(
+            getTitleName(pageId),
+            style: Theme.of(context).textTheme.bodySmall!.apply(
+                color: _currentPageIndex == pageId
+                    ? colorScheme.primary
+                    : colorScheme.onSurface),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ));
+  }
+
+  // 提取每列组件
+  Widget columnItem(int pageId) {
+    return Expanded(
+      child: Row(
+        children: [
+          Expanded(child: textButton(pageId)),
+          verticalDivider(),
         ],
       ),
     );
@@ -665,8 +665,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
           content: const Text(('There are no files to save.'),
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal)),
           duration: const Duration(seconds: 3),
-          backgroundColor:
-              Theme.of(context).colorScheme.onTertiaryFixedVariant));
+          backgroundColor: colorScheme.onTertiaryFixedVariant));
     }
 
     for (var file in files) {
@@ -690,7 +689,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                   style: const TextStyle(
                       fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
               duration: const Duration(seconds: 3),
-              backgroundColor: Theme.of(context).colorScheme.error));
+              backgroundColor: colorScheme.error));
         }
       }
     }
@@ -715,8 +714,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
               style: const TextStyle(
                   fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
           duration: const Duration(seconds: 3),
-          backgroundColor:
-              Theme.of(context).colorScheme.onTertiaryFixedVariant));
+          backgroundColor: colorScheme.onTertiaryFixedVariant));
     }
   }
 
@@ -732,23 +730,25 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
 
   String getTitleName(int pageId) {
     String titleName = '';
-    switch (pageId) {
-      case 1:
+    String key =
+        pageMap.entries.firstWhere((entry) => entry.value == pageId).key;
+    switch (key) {
+      case "OL":
         titleName = localizedStrings.serial_page_ol;
         break;
-      case 2:
+      case "UL":
         titleName = localizedStrings.serial_page_ul;
         break;
-      case 3:
+      case "Weight":
         titleName = localizedStrings.serial_page_weight;
         break;
-      case 4:
+      case "Pcs":
         titleName = localizedStrings.serial_page_pcs;
         break;
-      case 5:
+      case "Price":
         titleName = localizedStrings.serial_page_price;
         break;
-      case 6:
+      case "Percent":
         titleName = localizedStrings.serial_page_percent;
         break;
       default:
@@ -789,33 +789,108 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     );
   }
 
+  Widget buildBtnRow() {
+    return SizedBox(
+        height: btnHeight,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            SizedBox(
+              width: 200,
+              child: showTextButton(
+                  context,
+                  btnHeight,
+                  localizedStrings.gBtnDownload,
+                  (!serialPreview && isListEmpty() && !_downloading)
+                      ? () async {
+                          jsonFilesList.clear();
+                          for (var i = 1; i < 7; i++) {
+                            bool res = await generateJson(i);
+                            if (!res) {
+                              return;
+                            }
+                          }
+                          await generateFileList();
+                          if (jsonFilesList.isNotEmpty) {
+                            PublicFunctions.sendOutputFmtToScale(
+                                jsonFilesList, myDefScaleInfo.defScaleId!);
+                          }
+                          setState(() {
+                            _downloading = true;
+                          });
+                          cntScaleTimerMgr.stopCntScaleTimer();
+                        }
+                      : null,
+                  colorScheme.onPrimary,
+                  colorScheme.primary,
+                  colorScheme.onPrimary),
+            ),
+            !serialPreview
+                ? SizedBox(
+                    width: 200,
+                    child: showTextButton(
+                        context,
+                        btnHeight,
+                        localizedStrings.cBtnOpenPreview,
+                        !serialPreview && (myDefScaleInfo.defScaleId! == 1)
+                            ? handleButtonPress
+                            : null,
+                        colorScheme.onPrimary,
+                        colorScheme.onTertiaryFixedVariant,
+                        colorScheme.onPrimary),
+                  )
+                : SizedBox(
+                    width: 200,
+                    child: showTextButton(
+                        context, btnHeight, localizedStrings.cBtnClosePreview,
+                        () async {
+                      setState(() {
+                        serialPreview = false;
+                        outputData.clear();
+                      });
+                      // PublicFunctions.closeScalePassth(1);
+                      PublicFunctions.stopWeight(1);
+                    }, colorScheme.onPrimary, colorScheme.error,
+                        colorScheme.onPrimary),
+                  ),
+          ],
+        ));
+  }
+
   Container secondPageBuild(int pageId) {
     return Container(
-      color: Theme.of(context).colorScheme.surfaceTint,
+      color: colorScheme.surfaceTint,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Container(
             height: 30,
-            color: colorScheme.primary,
+            color: colorScheme.surfaceContainerLow,
             child: Center(
               child: Text(
                 localizedStrings.cBtnOpenPreview,
-                style: TextStyle(
-                  color: colorScheme.onPrimary,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodySmall!
+                    .apply(color: colorScheme.onSurface),
               ),
             ),
           ),
           Expanded(
             child: Container(
+              padding: const EdgeInsets.only(
+                  left: regularPadding,
+                  right: regularPadding,
+                  top: smallPadding),
               width: double.infinity,
               color: colorScheme.surfaceTint,
               child: SingleChildScrollView(
                 child: Text(
                   _getOutputData(pageId),
-                  style: const TextStyle(fontSize: 16),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall!
+                      .apply(color: colorScheme.onSurface),
                 ),
               ),
             ),
@@ -884,7 +959,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         color: colorScheme.surfaceTint,
         child: Center(
           child: Text(
-            'Text Property',
+            localizedStrings.gTipTextProperty,
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20,
@@ -893,20 +968,11 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
           ),
         ),
       ),
-      const SizedBox(
-        height: 20,
-      ),
-      Text(
-        'Type:    ${mySerialProtocolText.type}',
-        style: TextStyle(color: colorScheme.primary),
-      ),
-      const SizedBox(
-        height: 20,
-      ),
+      showTextTitleAttribute('Type:    ${mySerialProtocolText.type}'),
       Text(
         (mySerialProtocolText.varName == 'isstable')
-            ? 'Stable Text:'
-            : 'Gross Text',
+            ? localizedStrings.gTipStableText
+            : localizedStrings.gTipGrossText,
         style: TextStyle(color: colorScheme.primary),
       ),
       TextField(
@@ -927,8 +993,8 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       ),
       Text(
         (mySerialProtocolText.varName == 'isstable')
-            ? 'Unstable Text:'
-            : 'Net Text',
+            ? localizedStrings.gTipUnstableText
+            : localizedStrings.gTipNetText,
         style: TextStyle(color: colorScheme.primary),
       ),
       TextField(
@@ -951,31 +1017,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       const SizedBox(
         height: 15,
       ),
-      ElevatedButton(
-          onPressed: () {
-            setState(() {
-              _deleteItem(_currentPageIndex);
-            });
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: colorScheme.primary, // 设置按钮的背景色
-            elevation: 10, // 设置按钮的阴影
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
-            ),
-          ),
-          child: Text('Delete',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.onPrimary,
-              ))),
-      const SizedBox(
-        height: 50,
-      ),
-      const SizedBox(
-        height: 50,
-      ),
+      deleteButton(),
     ];
   }
 
@@ -1000,7 +1042,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         color: colorScheme.tertiaryContainer,
         child: Center(
           child: Text(
-            'Enter Property',
+            localizedStrings.gTipEnterProperty,
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20,
@@ -1009,20 +1051,8 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
           ),
         ),
       ),
-      const SizedBox(
-        height: 20,
-      ),
-      Text(
-        'Type:    ${mySerialProtocolText.type}',
-        style: TextStyle(color: colorScheme.primary),
-      ),
-      const SizedBox(
-        height: 20,
-      ),
-      Text(
-        'Content:    \\r\\n',
-        style: TextStyle(color: colorScheme.primary),
-      ),
+      showTextTitleAttribute('Type:    ${mySerialProtocolText.type}'),
+      showTextTitleAttribute(localizedStrings.gTipContent + '    \\r\\n'),
       const SizedBox(
         height: 15,
       ),
@@ -1030,25 +1060,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       const SizedBox(
         height: 15,
       ),
-      ElevatedButton(
-          onPressed: () {
-            setState(() {
-              _deleteItem(_currentPageIndex);
-            });
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: colorScheme.primary, // 设置按钮的背景色
-            elevation: 10, // 设置按钮的阴影
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
-            ),
-          ),
-          child: Text('Delete',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: colorScheme.onPrimary,
-              ))),
+      deleteButton()
     ];
   }
 
@@ -1184,7 +1196,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         color: colorScheme.tertiaryContainer,
         child: Center(
           child: Text(
-            'Text Property',
+            localizedStrings.gTipTextProperty,
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20,
@@ -1196,17 +1208,8 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       const SizedBox(
         height: 20,
       ),
-      Text(
-        'Type:    ${mySerialProtocolText.type}',
-        style: TextStyle(color: colorScheme.primary),
-      ),
-      const SizedBox(
-        height: 20,
-      ),
-      Text(
-        'Content:',
-        style: TextStyle(color: colorScheme.primary),
-      ),
+      showTextTitleAttribute('Type:    ${mySerialProtocolText.type}'),
+      showTextTitleAttribute(localizedStrings.gTipContent),
       TextField(
         controller: myContentCtl,
         onChanged: (value) {
@@ -1215,10 +1218,6 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
           });
         },
         textAlignVertical: TextAlignVertical.top,
-
-        // inputFormatters: [
-        //   FilteringTextInputFormatter.allow(englishRegExp), // 传入正则表达式
-        // ],
         decoration: const InputDecoration(),
       ),
       const SizedBox(
@@ -1240,7 +1239,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         color: colorScheme.tertiaryContainer,
         child: Center(
           child: Text(
-            'Text Hex Property',
+            localizedStrings.gTipTextHexProperty,
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20,
@@ -1252,24 +1251,19 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       const SizedBox(
         height: 20,
       ),
-      Text(
-        'Hexadecimal input, please separate with a space \r\nfor example: 31 32 33 34 35 36',
-        style: TextStyle(color: colorScheme.error),
+      Container(
+        height: 80,
+        color: colorScheme.surface,
+        alignment: Alignment.centerLeft,
+        child: Text(
+          localizedStrings.gTipHexInput,
+          style: Theme.of(context).textTheme.bodySmall!.apply(
+                color: colorScheme.onSurface,
+              ),
+        ),
       ),
-      const SizedBox(
-        height: 20,
-      ),
-      Text(
-        'Type:    ${mySerialProtocolText.type}',
-        style: TextStyle(color: colorScheme.primary),
-      ),
-      const SizedBox(
-        height: 20,
-      ),
-      Text(
-        'Hex:',
-        style: TextStyle(color: colorScheme.primary),
-      ),
+      showTextTitleAttribute('Type:    ${mySerialProtocolText.type}'),
+      showTextTitleAttribute('Hex'),
       TextField(
         controller: myContentCtl,
         onChanged: (value) {
@@ -1278,10 +1272,6 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
           });
         },
         textAlignVertical: TextAlignVertical.top,
-
-        // inputFormatters: [
-        //   FilteringTextInputFormatter.allow(englishRegExp), // 传入正则表达式
-        // ],
         decoration: const InputDecoration(),
       ),
       const SizedBox(
@@ -1312,35 +1302,14 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
           ),
         ),
       ),
-      const SizedBox(
-        height: 20,
-      ),
-      Text(
-        'Type:    ${mySerialProtocolText.type}',
-        style: TextStyle(color: colorScheme.primary),
-      ),
-      const SizedBox(
-        height: 20,
-      ),
-      Text(
-        'Alignment:',
-        style: TextStyle(color: colorScheme.primary),
-      ),
+      showTextTitleAttribute('Type:    ${mySerialProtocolText.type}'),
+      showTextTitleAttribute(localizedStrings.gTipAlignment),
       _alignmentDropdownButton(_currentPageIndex),
-      Text(
-        'Filling:',
-        style: TextStyle(color: colorScheme.primary),
-      ),
+      showTextTitleAttribute(localizedStrings.gTipFilling),
       _fillingDropdownButton(_currentPageIndex),
-      Text(
-        'Max Length:',
-        style: TextStyle(color: colorScheme.primary),
-      ),
+      showTextTitleAttribute(localizedStrings.gTipMaxLength),
       maxLenWidget(),
-      Text(
-        'Default Value:',
-        style: TextStyle(color: colorScheme.primary),
-      ),
+      showTextTitleAttribute(localizedStrings.gTipDefaultValue),
       TextField(
         readOnly: true,
         controller: myContentCtl,
@@ -1372,97 +1341,40 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     ];
   }
 
-  DropdownButton _decimalDropdownButton(int pageId) {
-    return DropdownButton<String>(
-      dropdownColor: colorScheme.secondaryFixed,
-      style: TextStyle(
-          color: colorScheme.onSurface,
-          fontSize: 20,
-          fontWeight: FontWeight.normal),
-      hint: Text(
-        'Decimal:',
-        style: TextStyle(
-            color: colorScheme.onPrimary,
-            fontSize: 20,
-            fontWeight: FontWeight.bold),
-      ),
-      value: _selectedDecimal.toString(),
-      items: decimals
-          .map((int value) => DropdownMenuItem<String>(
-                value: value.toString(),
-                child: Text(value.toString()),
-              ))
-          .toList(),
-      onChanged: (String? newValue) {
-        setState(() {
-          _selectedDecimal = int.parse(newValue!);
-          _changedDecimal(_selectedDecimal, pageId);
-          myContentCtl.text = mySerialProtocolText.content;
-        });
-      },
-    );
+  Widget _decimalDropdownButton(int pageId) {
+    return showDropDownButtonValue(
+        context,
+        _selectedDecimal.toString(),
+        decimals.map((int value) => (value.toString())).toList(),
+        '', (String? newValue) {
+      setState(() {
+        _selectedDecimal = int.parse(newValue!);
+        _changedDecimal(_selectedDecimal, pageId);
+        myContentCtl.text = mySerialProtocolText.content;
+      });
+    });
   }
 
-  DropdownButton _fillingDropdownButton(int pageId) {
-    return DropdownButton<String>(
-      dropdownColor: colorScheme.secondaryFixed,
-      style: TextStyle(
-          color: colorScheme.onSurface,
-          fontSize: 20,
-          fontWeight: FontWeight.normal),
-      hint: Text(
-        'Filling:',
-        style: TextStyle(
-            color: colorScheme.onPrimary,
-            fontSize: 20,
-            fontWeight: FontWeight.bold),
-      ),
-      value: _selectedFilling,
-      items: fillings
-          .map((String value) => DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              ))
-          .toList(),
-      onChanged: (String? newValue) {
-        setState(() {
-          _selectedFilling = newValue!;
-          _changedFilling(_selectedFilling, pageId);
-          myContentCtl.text = mySerialProtocolText.content;
-        });
-      },
-    );
+  Widget _fillingDropdownButton(int pageId) {
+    return showDropDownButtonValue(context, _selectedFilling, fillings, '',
+        (String? newValue) {
+      setState(() {
+        _selectedFilling = newValue!;
+        _changedFilling(_selectedFilling, pageId);
+        myContentCtl.text = mySerialProtocolText.content;
+      });
+    });
   }
 
-  DropdownButton _alignmentDropdownButton(int pageId) {
-    return DropdownButton<String>(
-      dropdownColor: colorScheme.secondaryFixed,
-      style: TextStyle(
-          color: colorScheme.onSurface,
-          fontSize: 20,
-          fontWeight: FontWeight.normal),
-      hint: Text(
-        'Alignment:',
-        style: TextStyle(
-            color: colorScheme.onPrimary,
-            fontSize: 20,
-            fontWeight: FontWeight.bold),
-      ),
-      value: _selectedAlignment,
-      items: alignments
-          .map((String value) => DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              ))
-          .toList(),
-      onChanged: (String? newValue) {
-        setState(() {
-          _selectedAlignment = newValue!;
-          _changedAlignment(_selectedAlignment, pageId);
-          myContentCtl.text = mySerialProtocolText.content;
-        });
-      },
-    );
+  Widget _alignmentDropdownButton(int pageId) {
+    return showDropDownButtonValue(context, _selectedAlignment, alignments, '',
+        (String? newValue) {
+      setState(() {
+        _selectedAlignment = newValue!;
+        _changedAlignment(_selectedAlignment, pageId);
+        myContentCtl.text = mySerialProtocolText.content;
+      });
+    });
   }
 
   //float类型的属性编辑
@@ -1474,7 +1386,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         color: colorScheme.tertiaryContainer,
         child: Center(
           child: Text(
-            'Float Property',
+            localizedStrings.gTipFloatProperty,
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20,
@@ -1483,40 +1395,16 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
           ),
         ),
       ),
-      const SizedBox(
-        height: 20,
-      ),
-      Text(
-        'Type:    ${mySerialProtocolText.type}',
-        style: TextStyle(color: colorScheme.primary),
-      ),
-      const SizedBox(
-        height: 20,
-      ),
-      Text(
-        'Alignment:',
-        style: TextStyle(color: colorScheme.primary),
-      ),
+      showTextTitleAttribute('Type:    ${mySerialProtocolText.type}'),
+      showTextTitleAttribute(localizedStrings.gTipAlignment),
       _alignmentDropdownButton(_currentPageIndex),
-      Text(
-        'Filling:',
-        style: TextStyle(color: colorScheme.primary),
-      ),
+      showTextTitleAttribute(localizedStrings.gTipFilling),
       _fillingDropdownButton(_currentPageIndex),
-      Text(
-        'Decimal:',
-        style: TextStyle(color: colorScheme.primary),
-      ),
+      showTextTitleAttribute(localizedStrings.gTipDecimal),
       _decimalDropdownButton(_currentPageIndex),
-      Text(
-        'Max Length:',
-        style: TextStyle(color: colorScheme.primary),
-      ),
+      showTextTitleAttribute(localizedStrings.gTipMaxLength),
       maxLenWidget(),
-      Text(
-        'Default Value:',
-        style: TextStyle(color: colorScheme.primary),
-      ),
+      showTextTitleAttribute(localizedStrings.gTipDefaultValue),
       TextField(
         readOnly: true,
         controller: myContentCtl,
@@ -1546,6 +1434,20 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         height: 50,
       ),
     ];
+  }
+
+  Widget showTextTitleAttribute(String title) {
+    return Container(
+      height: 42,
+      color: colorScheme.surface,
+      alignment: Alignment.centerLeft,
+      child: Text(
+        title,
+        style: Theme.of(context).textTheme.bodySmall!.apply(
+              color: colorScheme.onSurface,
+            ),
+      ),
+    );
   }
 
   _intProperty() {
@@ -1564,35 +1466,14 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
           ),
         ),
       ),
-      const SizedBox(
-        height: 20,
-      ),
-      Text(
-        'Type:    ${mySerialProtocolText.type}',
-        style: TextStyle(color: colorScheme.primary),
-      ),
-      const SizedBox(
-        height: 20,
-      ),
-      Text(
-        'Alignment:',
-        style: TextStyle(color: colorScheme.primary),
-      ),
+      showTextTitleAttribute('Type:    ${mySerialProtocolText.type}'),
+      showTextTitleAttribute(localizedStrings.gTipAlignment),
       _alignmentDropdownButton(_currentPageIndex),
-      Text(
-        'Filling:',
-        style: TextStyle(color: colorScheme.primary),
-      ),
+      showTextTitleAttribute(localizedStrings.gTipFilling),
       _fillingDropdownButton(_currentPageIndex),
-      Text(
-        'Max Length:',
-        style: TextStyle(color: colorScheme.primary),
-      ),
+      showTextTitleAttribute(localizedStrings.gTipMaxLength),
       maxLenWidget(),
-      Text(
-        'Default Value:',
-        style: TextStyle(color: colorScheme.primary),
-      ),
+      showTextTitleAttribute(localizedStrings.gTipDefaultValue),
       TextField(
         readOnly: true,
         controller: myContentCtl,
@@ -1625,34 +1506,17 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
   }
 
   Widget deleteButton() {
-    return ElevatedButton(
-        onPressed: () {
-          setState(() {
-            _deleteItem(_currentPageIndex);
-          });
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: colorScheme.primary, // 设置按钮的背景色
-          elevation: 10, // 设置按钮的阴影
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
-          ),
-        ),
-        child: Text('Delete',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.onPrimary,
-            )));
+    return showTextButton(context, btnHeight, localizedStrings.gBtnDelete, () {
+      setState(() {
+        _deleteItem(_currentPageIndex);
+      });
+    }, colorScheme.onPrimary, colorScheme.error, colorScheme.onPrimary);
   }
 
   Widget arrowWidget() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        const SizedBox(
-          width: 50,
-        ),
         InkWell(
           onTap: () {
             setState(() {
@@ -1666,27 +1530,20 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
             });
           },
           child: Container(
-            height: 30.0,
-            width: 30.0,
+            height: 38.0,
+            width: 38.0,
             decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: colorScheme.primary,
-                width: 1.0,
-              ),
+              shape: BoxShape.rectangle,
               color: !isArrowBackHovered
-                  ? Theme.of(context).colorScheme.onPrimary
+                  ? colorScheme.surfaceContainerLow
                   : colorScheme.secondaryFixed,
             ),
             child: Icon(
-              Icons.arrow_back,
+              Icons.arrow_left,
               color: colorScheme.primary,
-              size: 24.0,
+              size: 32.0,
             ),
           ),
-        ),
-        const SizedBox(
-          width: 50,
         ),
         InkWell(
           onTap: () {
@@ -1701,27 +1558,20 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
             });
           },
           child: Container(
-            height: 30.0,
-            width: 30.0,
+            height: 38.0,
+            width: 38.0,
             decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: colorScheme.primary,
-                width: 1.0,
-              ),
+              shape: BoxShape.rectangle,
               color: !isArrowForwardHovered
-                  ? Theme.of(context).colorScheme.onPrimary
+                  ? colorScheme.surfaceContainerLow
                   : colorScheme.secondaryFixed,
             ),
             child: Icon(
-              Icons.arrow_forward,
+              Icons.arrow_right,
               color: colorScheme.primary,
-              size: 24.0,
+              size: 32.0,
             ),
           ),
-        ),
-        const SizedBox(
-          width: 50,
         ),
       ],
     );
@@ -1893,16 +1743,22 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
   Widget _buildTextContent(SerialProtocolText textData, int pageId) {
     List<SerialProtocolText> list = getListName(pageId);
     return Container(
-      height: 30,
-      width: 100,
+      height: 40,
+      width: 150,
       decoration: BoxDecoration(
-        border: Border.all(width: 1, color: colorScheme.primary),
+        border: Border.all(width: 1, color: colorScheme.surfaceContainerLow),
       ),
       child: TextButton(
         style: ButtonStyle(
-            backgroundColor: (textData.isSelect)
-                ? WidgetStateProperty.all(colorScheme.primary)
-                : null),
+          backgroundColor: (textData.isSelect)
+              ? WidgetStateProperty.all(colorScheme.primary)
+              : null,
+          shape: WidgetStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(0),
+            ),
+          ),
+        ),
         onPressed: () {
           setState(() {
             mySerialProtocolText = textData;
@@ -1930,10 +1786,10 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
               ? textData.varName
               : textData.content,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(
+          style: Theme.of(context).textTheme.bodySmall!.copyWith(
               color: (textData.isSelect)
-                  ? Theme.of(context).colorScheme.onPrimary
-                  : colorScheme.primary),
+                  ? colorScheme.onPrimary
+                  : colorScheme.onSurface),
         ),
       ),
     );
@@ -1956,7 +1812,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         return AlertDialog(
           title: Text(
             localizedStrings.gTitleConfirm,
-            style: TextStyle(color: Theme.of(context).colorScheme.primary),
+            style: TextStyle(color: colorScheme.primary),
           ),
           content: Text(msg),
           actions: <Widget>[

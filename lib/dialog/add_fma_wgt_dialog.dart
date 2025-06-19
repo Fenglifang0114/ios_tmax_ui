@@ -4,8 +4,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/data/formula_common.dart';
+
 import 'package:t_max/data/language.dart';
-import 'package:t_max/pages/add_formula_page.dart';
 
 class AddFormulaWgtDialog extends StatefulWidget {
   const AddFormulaWgtDialog({super.key});
@@ -19,20 +19,26 @@ class AddFormulaWgtDialogState extends State<AddFormulaWgtDialog> {
 
   showUnitDropDownButton(List<FormulaWgtUnit> items, String hintText,
       TextEditingController valueCtl) {
-    return Container(
+    return SizedBox(
         height: 48,
-        padding: const EdgeInsets.only(left: 16, right: 20),
-        decoration: BoxDecoration(
-          border: Border.all(color: Color(0xFFCDD4DC)), // 设置边框颜色
-          borderRadius: BorderRadius.circular(0), // 设置圆角
-        ),
-        child: DropdownButton<FormulaWgtUnit>(
+        child: DropdownButtonFormField<FormulaWgtUnit>(
+            borderRadius: BorderRadius.circular(0),
+            decoration: InputDecoration(
+                enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .outlineVariant, // 设置边框颜色
+                      width: 1.0, // 设置边框宽度
+                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(0.0))),
+                border: OutlineInputBorder()),
             isExpanded: true,
             value: items.firstWhere(
                 (mode) => mode.toString().split('.').last == valueCtl.text,
                 orElse: () => items[0]),
             hint: Text(hintText), // 设置提示文本
-            underline: SizedBox.shrink(), // 移除下划线
+
             items: items.map((FormulaWgtUnit item) {
               // 设置下拉列表项
               return DropdownMenuItem<FormulaWgtUnit>(
@@ -274,7 +280,9 @@ class AddFormulaWgtDialogState extends State<AddFormulaWgtDialog> {
                       style: ElevatedButton.styleFrom(
                         foregroundColor:
                             Theme.of(context).colorScheme.onSurfaceVariant,
-                        backgroundColor: Theme.of(context).colorScheme.outline,
+                        backgroundColor: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest,
                         fixedSize: const Size(double.infinity, 48),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero,
@@ -288,7 +296,7 @@ class AddFormulaWgtDialogState extends State<AddFormulaWgtDialog> {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          color: Theme.of(context).colorScheme.onPrimary,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
