@@ -6,7 +6,6 @@ import 'package:t_max/data/comscaleinfo_data.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/formula_scale_data.dart';
 import 'package:t_max/data/formula_wgt_process_data.dart';
-import 'package:t_max/data/manager_scale_channel.dart';
 import 'package:t_max/data/req_add_fma_rec_data.dart';
 import 'package:t_max/data/req_formula_data.dart';
 import 'package:t_max/data/reqweightdata_data.dart';
@@ -539,7 +538,9 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
                                 // 保存
                                 saveFmaRec(isAllOK);
                                 PublicFunctions.stopWeight(widget.selScaleId);
-                                Navigator.pop(context);
+                                if (mounted) {
+                                  Navigator.pop(context);
+                                }
                               } else {
                                 return;
                               }
@@ -652,7 +653,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
       Color backgroundColor = (checkIndexIsOK(index))
           ? Theme.of(context).colorScheme.surfaceContainerLow
           : isSelected
-              ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
+              ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)
               : Theme.of(context).colorScheme.surfaceContainerLow;
       Color innerContainerColor = isSelected
           ? Theme.of(context).colorScheme.primary
@@ -1091,7 +1092,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
   showTable() {
     return Expanded(
         flex: 3,
-        child: Container(child: LayoutBuilder(
+        child: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
           // 获取表格的最大宽度
           double maxWidth = constraints.maxWidth;
@@ -1301,7 +1302,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
                               : "未达标",
                       style: TextStyle(
                         color: (data).isOK! == "no"
-                            ? Color(0xFF666666)
+                            ? Theme.of(context).colorScheme.onSurfaceVariant
                             : (data).isOK! == "ok"
                                 ? Theme.of(context)
                                     .colorScheme
@@ -1339,7 +1340,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
               ],
             ),
           );
-        })));
+        }));
   }
 
   showWgtTable() {
@@ -2253,7 +2254,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
           ),
           Icon(
             Icons.help,
-            color: Color(0xFFF4B837),
+            color: Theme.of(context).colorScheme.onTertiaryContainer,
           ),
           SizedBox(
             width: 20,

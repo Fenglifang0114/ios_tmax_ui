@@ -8,6 +8,10 @@
     "@gBtnConnect": {
         "description": "This is a button for testing the connection with the device."
     },
+    "gBtnTestConnect": "测试连接",
+    "@gBtnTestConnect": {
+        "description": "This is a button for testing the connection with the device."
+    },
     "gBtnTare": "扣重",
     "@gBtnTare": {
         "description": "This is a button for tare weight."
@@ -103,6 +107,10 @@
     "gTipGetIP": "获取IP中，请稍后...",
     "@gTipGetIP": {
         "description": "This is a prompt for obtaining Ip info."
+    },
+    "gTipGetAPList": "获取AP列表中，请稍后...",
+    "@gTipGetAPList": {
+        "description": "This is a prompt for obtaining Ap list."
     },
     "gTipGetIpOk": "获取IP成功！",
     "@gTipGetIpOk": {
@@ -360,8 +368,8 @@
     "@user_edit": {
         "description": "This is a prompt about user edit."
     },
-    "parameter_settings_title": "参数设置",
-    "@parameter_settings_title": {
+    "gParameterSettingsTitle": "参数设置",
+    "@gParameterSettingsTitle": {
         "description": "This is a prompt about parameter settings."
     },
     "save_mode": "保存模式",
@@ -591,6 +599,10 @@
     "cBtnClosePreview": "关闭预览",
     "@cBtnClosePreview": {
         "description": "This is a button about close preview in T-Config."
+    },    
+    "gTitlePreview": "预览",
+    "@gTitlePreview": {
+        "description": "This is a preview of the output of a custom serial port protocol."
     },
     "gBtnClear": "清除",
     "@gBtnClear": {
@@ -644,16 +656,8 @@
     "@select_firmware_btn": {
         "description": ""
     },
-    "report_set_btn": "报表设计",
-    "@report_set_btn": {
-        "description": ""
-    },
     "report_show_btn": "显示报表",
     "@report_show_btn": {
-        "description": ""
-    },
-    "report_delete_btn": "删除所有",
-    "@report_delete_btn": {
         "description": ""
     },
     "report_hide_btn": "隐藏报表",
@@ -2471,11 +2475,7 @@
     "gExpirationDate": "到期日期",
     "@gExpirationDate": {
         "description": "This is the prompt for the expiration date."
-    },
-    "gBtnRenew": "续费",
-    "@gBtnRenew": {
-        "description": "This is the button for renewing the software service."
-    },    
+    },  
     "gTipUnactivated": "未激活",
     "@gTipUnactivated": {
         "description": "This is a tip for unactivated status."
@@ -2508,9 +2508,13 @@
     "@gTitleConfigFunctionCharge": {
         "description": "This is the title for the configuration function charging method."
     },
-    "gSubtitleConfigFunctionCharge": "下方功能配置按￥100/年方式收费，购买后可激活下方配置功能，需激活请联系供应商",
+    "gSubtitleConfigFunctionCharge": "按年付费激活全部高级功能，有效期一年。如需购买请点击右上角的（ℹ️）联系软件服务商",
     "@gSubtitleConfigFunctionCharge": {
         "description": "This is the subtitle for the configuration function charging method."
+    },
+    "gSubtitleAppsCharge": "按功能付费以永久激活。如需购买请点击右上角的（ℹ️）联系软件服务商",
+    "@gSubtitleAppsCharge": {
+        "description": "This is the subtitle for the apps function charging method."
     },
     "gTitleAddedConfigFunction": "已添加配置功能",
     "@gTitleAddedConfigFunction": {
@@ -2616,7 +2620,7 @@
     "@gAppInformation": {
         "description": "Title for app-related information"
     },
-    "gTitleLanguageSetting": "Language Setting",
+    "gTitleLanguageSetting": "语言设置",
     "@gTitleLanguageSetting": {
         "description": "Title for language setting page"
     },
@@ -2891,7 +2895,185 @@
     "gTipWeightSummationMode": "重量汇总模式",
     "@gTipWeightSummationMode": {
         "description": "This is a tip indicating the weight summation operation mode."
-    }    
+    },
+    "gBtnReportSetting":"报表设置",
+    "@gBtnReportSetting":{
+        "description": "This is a button about report setting."
+    },
+    "gBtnDeleteAll": "删除所有",
+    "@gBtnDeleteAll": {
+        "description": "This is a button for deleting all items."
+    },    
+    "gTipConfirmDeleteAll": "请确定是否删除所有数据?",
+    "@gTipConfirmDeleteAll": {
+        "description": "This is a confirmation prompt for deleting all data."
+    },     
+    "gTipExportSuccess": "导出成功",
+    "@gTipExportSuccess": {
+        "description": "This is a prompt for successful export."
+    },
+    "gTipExportFail": "导出失败",
+    "@gTipExportFail": {
+        "description": "This is a prompt for failed export."
+    },
+    "gTipSaveType": "保存类型",
+    "@gTipSaveType": {
+        "description": "This is the prompt for the save type."
+    },
+    "gTipInvalidInput": "输入的数据不合法",
+    "@gTipInvalidInput": {
+        "description": "This is the prompt for invalid input data, especially for upper and lower limits."
+    },    
+    "gTipInvalidWeightData": "重量数据无效",
+    "@gTipInvalidWeightData": {
+        "description": "This is a prompt for invalid weight data."
+    },
+    "gBtnConfigSetting": "功能中心",
+    "@gBtnConfigSetting": {
+        "description": "This is a button for configuration center."
+    },
+    "gTipFreeApplications": "免费应用",
+    "@gTipFreeApplications": {
+        "description": "This is a tip for free applications."
+    },
+    "gTipRetailApplications": "零售应用",
+    "@gTipRetailApplications": {
+        "description": "This is a tip for retail applications."
+    },
+    "gTipIndustrialApplications": "工业应用",
+    "@gTipIndustrialApplications": {
+        "description": "This is a tip for industrial applications."
+    },
+    "gTipAdvancedConfiguration": "高级配置",
+    "@gTipAdvancedConfiguration": {
+        "description": "This is a tip for advanced configuration."
+    },
+    "gTipFreeConfiguration": "免费配置",
+    "@gTipFreeConfiguration": {
+        "description": "This is a tip for free configuration."
+    },
+    "gTipFailToSelectFile": "选择文件失败",
+    "@gTipFailToSelectFile": {
+        "description": "This is a tip for failing to select a file."
+    },
+    "subTitleMultiScaleManagement": "通过串口、Wi-Fi和蓝牙，与多台设备进行连接。",
+    "@subTitleMultiScaleManagement": {
+        "description": "SubTitle for multi-scale management"
+    },
+    "subTitleDeviceTime": "设置设备的日期和时间。",
+    "@subTitleDeviceTime": {
+        "description": "SubTitle for device Time"
+    },  
+    "subTitleBluetoothSetting": "设置蓝牙名称与信号强度。",
+    "@subTitleBluetoothSetting": {
+        "description": "SubTitle for bluetooth setting"
+    },
+    "subTitleWifiSetting": "获取静态/动态IP地址并连接Wi-Fi",
+    "@subTitleWifiSetting": {
+        "description": "SubTitle for Wi-Fi setting"
+    },
+    "subTitleFirmwareUpdate": "通过串口或Wi-Fi更新秤的软件",
+    "@subTitleFirmwareUpdate": {
+        "description": "SubTitle for firmware update"
+    },
+    "subTitleLabelDesign": "自定义标签打印格式",
+    "@subTitleLabelDesign": {
+        "description": "SubTitle for label design"
+    },
+    "subTitleReceiptDesign": "自定义票据打印格式",
+    "@subTitleReceiptDesign": {
+        "description": "SubTitle for receipt design"
+    },
+    "subTitleSerialOutputDesign": "自定义并下发串口输出内容",
+    "@subTitleSerialOutputDesign": {
+        "description": "SubTitle for serial output design"
+    },
+    "subTitleBasicDataCollection": "读取秤的运行数据，以了解任何异常活动。",
+    "@subTitleBasicDataCollection": {
+        "description": "SubTitle for basic data collection"
+    },
+    "subTitleParameterSetting": "在线设置设备参数",
+    "@subTitleParameterSetting": {
+        "description": "SubTitle for parameter setting"
+    },
+    "subTitleWeighing": "在线显示称重数据，支持归零和去皮的基础操作。",
+    "@subTitleWeighing": {
+        "description": "SubTitle for weighing"
+    },
+    "subTitlePluManagement": "批量编辑与管理PLU。",
+    "@subTitlePluManagement": {
+        "description": "SubTitle for PLU management"
+    },
+    "subTitleLabelFormatDownload": "将标签打印格式下发至秤。",
+    "@subTitleLabelFormatDownload": {
+        "description": "SubTitle for label format download"
+    },
+    "subTitleReceiptFormatDownload": "将票据打印格式下发至秤。",
+    "@subTitleReceiptFormatDownload": {
+        "description": "SubTitle for receipt format download"
+    },
+    "subTitleRetailReport": "自动收集和记录零售数据，并形成报表供用户下载。",
+    "@subTitleRetailReport": {
+        "description": "SubTitle for retail report"
+    },
+    "subTitleVariableValueSetting": "编辑页眉页脚以及操作员的信息",
+    "@subTitleVariableValueSetting": {
+        "description": "SubTitle for variable value setting"
+    },
+    "subTitleWeighingDataCollection": "在线称重，并生成称重数据报表。",
+    "@subTitleWeighingDataCollection": {
+        "description": "SubTitle for weighing data collection"
+    },
+    "subTitleCheckWeighing": "在线检重，并生成检重数据报表。",
+    "@subTitleCheckWeighing": {
+        "description": "SubTitle for check weighing"
+    },
+    "subTitleIncrementWeighing": "记录加载过程中称重值的增量，并生成数据报表。",
+    "@subTitleIncrementWeighing": {
+        "description": "SubTitle for increment weighing"
+    },
+    "subTitleTakeOutScale": "记录卸载过程中称重值的减量，并生成数据报表。",
+    "@subTitleTakeOutScale": {
+        "description": "SubTitle for take out scale"
+    },
+    "subTitleFormula": "配方编辑、管理、在线配料及数据生成。",
+    "@subTitleFormula": {
+        "description": "SubTitle for formula"
+    },
+    "subTitleFlowRate": "测试流速大小与变化趋势",
+    "@subTitleFlowRate": {
+        "description": "SubTitle for liquid filling speed"
+    },
+    "subTitleCalibration": "对秤进行单点或线性标定。",
+    "@subTitleCalibration": {
+        "description": "SubTitle for calibration"
+    },
+    "tipPage": "页",
+    "@tipPage": {
+        "description": "This is a prompt for the page number."
+    },
+    "tipPageSequnce": "第",
+    "@tipPageSequnce": {
+        "description": "This is a prompt for the sequence of the page.  The English part needs no translation."
+    },
+    "tipPageTotal": "共",
+    "@tipPageTotal": {
+        "description": "This is a prompt for the total number of pages."
+    },
+    "gTipSelectDeviceFirst": "请先选择一台设备",
+    "@gTipSelectDeviceFirst": {
+        "description": "Please select a device first."
+    },
+    "gTipNoDeviceAddFirst": "没有设备，请先添加设备",
+    "@gTipNoDeviceAddFirst": {
+        "description": "No devices available. Please add a device first."
+    },
+    "gTipGettingDeviceTime": "正在获取设备时间，请稍等",
+    "@gTipGettingDeviceTime": {
+        "description": "Retrieving the device time, please wait a moment."
+    }  
+
+
 }
 
 

@@ -28,10 +28,9 @@ class S {
   static const AppLocalizationDelegate delegate = AppLocalizationDelegate();
 
   static Future<S> load(Locale locale) {
-    final name =
-        (locale.countryCode?.isEmpty ?? false)
-            ? locale.languageCode
-            : locale.toString();
+    final name = (locale.countryCode?.isEmpty ?? false)
+        ? locale.languageCode
+        : locale.toString();
     final localeName = Intl.canonicalizedLocale(name);
     return initializeMessages(localeName).then((_) {
       Intl.defaultLocale = localeName;
@@ -70,6 +69,16 @@ class S {
     return Intl.message(
       'Connect',
       name: 'gBtnConnect',
+      desc: 'This is a button for testing the connection with the device.',
+      args: [],
+    );
+  }
+
+  /// `Test Connect`
+  String get gBtnTestConnect {
+    return Intl.message(
+      'Test Connect',
+      name: 'gBtnTestConnect',
       desc: 'This is a button for testing the connection with the device.',
       args: [],
     );
@@ -312,6 +321,16 @@ class S {
       'Obtaining IP, please wait...',
       name: 'gTipGetIP',
       desc: 'This is a prompt for obtaining Ip info.',
+      args: [],
+    );
+  }
+
+  /// `Obtaining AP list,please wait...`
+  String get gTipGetAPList {
+    return Intl.message(
+      'Obtaining AP list,please wait...',
+      name: 'gTipGetAPList',
+      desc: 'This is a prompt for obtaining Ap list.',
       args: [],
     );
   }
@@ -960,10 +979,10 @@ class S {
   }
 
   /// `Parameter settings`
-  String get parameter_settings_title {
+  String get gParameterSettingsTitle {
     return Intl.message(
       'Parameter settings',
-      name: 'parameter_settings_title',
+      name: 'gParameterSettingsTitle',
       desc: 'This is a prompt about parameter settings.',
       args: [],
     );
@@ -1489,6 +1508,16 @@ class S {
     );
   }
 
+  /// `Preview`
+  String get gTitlePreview {
+    return Intl.message(
+      'Preview',
+      name: 'gTitlePreview',
+      desc: 'This is a preview of the output of a custom serial port protocol.',
+      args: [],
+    );
+  }
+
   /// `Clear`
   String get gBtnClear {
     return Intl.message(
@@ -1619,31 +1648,11 @@ class S {
     );
   }
 
-  /// `Report Setting`
-  String get report_set_btn {
-    return Intl.message(
-      'Report Setting',
-      name: 'report_set_btn',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Show Reports`
   String get report_show_btn {
     return Intl.message(
       'Show Reports',
       name: 'report_show_btn',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Delete All`
-  String get report_delete_btn {
-    return Intl.message(
-      'Delete All',
-      name: 'report_delete_btn',
       desc: '',
       args: [],
     );
@@ -5837,10 +5846,10 @@ class S {
     );
   }
 
-  /// `Applications`
+  /// `Application`
   String get menuApplications {
     return Intl.message(
-      'Applications',
+      'Application',
       name: 'menuApplications',
       desc: 'Menu item for applications',
       args: [],
@@ -5913,16 +5922,6 @@ class S {
       'Expiration date',
       name: 'gExpirationDate',
       desc: 'This is the prompt for the expiration date.',
-      args: [],
-    );
-  }
-
-  /// `Renew`
-  String get gBtnRenew {
-    return Intl.message(
-      'Renew',
-      name: 'gBtnRenew',
-      desc: 'This is the button for renewing the software service.',
       args: [],
     );
   }
@@ -6007,13 +6006,23 @@ class S {
     );
   }
 
-  /// `The configuration of the following functions is charged at ￥100/year. After purchase, you can activate the following configuration functions. Please contact the supplier for activation.`
+  /// `Pay annually to activate all advanced functions, valid for one year. To purchase, please click ( ℹ️ ) in the top-right corner to contact the software provider.`
   String get gSubtitleConfigFunctionCharge {
     return Intl.message(
-      'The configuration of the following functions is charged at ￥100/year. After purchase, you can activate the following configuration functions. Please contact the supplier for activation.',
+      'Pay annually to activate all advanced functions, valid for one year. To purchase, please click ( ℹ️ ) in the top-right corner to contact the software provider.',
       name: 'gSubtitleConfigFunctionCharge',
       desc:
           'This is the subtitle for the configuration function charging method.',
+      args: [],
+    );
+  }
+
+  /// `Pay per function to activate permanently. To purchase, please click ( ℹ️ ) in the top-right corner to contact the software provider.`
+  String get gSubtitleAppsCharge {
+    return Intl.message(
+      'Pay per function to activate permanently. To purchase, please click ( ℹ️ ) in the top-right corner to contact the software provider.',
+      name: 'gSubtitleAppsCharge',
+      desc: 'This is the subtitle for the apps function charging method.',
       args: [],
     );
   }
@@ -6968,6 +6977,448 @@ class S {
       'Weight Summation Mode',
       name: 'gTipWeightSummationMode',
       desc: 'This is a tip indicating the weight summation operation mode.',
+      args: [],
+    );
+  }
+
+  /// `Report Setting`
+  String get gBtnReportSetting {
+    return Intl.message(
+      'Report Setting',
+      name: 'gBtnReportSetting',
+      desc: 'This is a button about report setting.',
+      args: [],
+    );
+  }
+
+  /// `Delete All`
+  String get gBtnDeleteAll {
+    return Intl.message(
+      'Delete All',
+      name: 'gBtnDeleteAll',
+      desc: 'This is a button for deleting all items.',
+      args: [],
+    );
+  }
+
+  /// `Are you sure you want to delete all data?`
+  String get gTipConfirmDeleteAll {
+    return Intl.message(
+      'Are you sure you want to delete all data?',
+      name: 'gTipConfirmDeleteAll',
+      desc: 'This is a confirmation prompt for deleting all data.',
+      args: [],
+    );
+  }
+
+  /// `Export successful`
+  String get gTipExportSuccess {
+    return Intl.message(
+      'Export successful',
+      name: 'gTipExportSuccess',
+      desc: 'This is a prompt for successful export.',
+      args: [],
+    );
+  }
+
+  /// `Export failed`
+  String get gTipExportFail {
+    return Intl.message(
+      'Export failed',
+      name: 'gTipExportFail',
+      desc: 'This is a prompt for failed export.',
+      args: [],
+    );
+  }
+
+  /// `Save type`
+  String get gTipSaveType {
+    return Intl.message(
+      'Save type',
+      name: 'gTipSaveType',
+      desc: 'This is the prompt for the save type.',
+      args: [],
+    );
+  }
+
+  /// `The input data is invalid`
+  String get gTipInvalidInput {
+    return Intl.message(
+      'The input data is invalid',
+      name: 'gTipInvalidInput',
+      desc:
+          'This is the prompt for invalid input data, especially for upper and lower limits.',
+      args: [],
+    );
+  }
+
+  /// `Invalid weight data`
+  String get gTipInvalidWeightData {
+    return Intl.message(
+      'Invalid weight data',
+      name: 'gTipInvalidWeightData',
+      desc: 'This is a prompt for invalid weight data.',
+      args: [],
+    );
+  }
+
+  /// `Function Center`
+  String get gBtnConfigSetting {
+    return Intl.message(
+      'Function Center',
+      name: 'gBtnConfigSetting',
+      desc: 'This is a button for function center.',
+      args: [],
+    );
+  }
+
+  /// `Free Applications`
+  String get gTipFreeApplications {
+    return Intl.message(
+      'Free Applications',
+      name: 'gTipFreeApplications',
+      desc: 'This is a tip for free applications.',
+      args: [],
+    );
+  }
+
+  /// `Retail Applications`
+  String get gTipRetailApplications {
+    return Intl.message(
+      'Retail Applications',
+      name: 'gTipRetailApplications',
+      desc: 'This is a tip for retail applications.',
+      args: [],
+    );
+  }
+
+  /// `Industrial Applications`
+  String get gTipIndustrialApplications {
+    return Intl.message(
+      'Industrial Applications',
+      name: 'gTipIndustrialApplications',
+      desc: 'This is a tip for industrial applications.',
+      args: [],
+    );
+  }
+
+  /// `Advanced Configuration`
+  String get gTipAdvancedConfiguration {
+    return Intl.message(
+      'Advanced Configuration',
+      name: 'gTipAdvancedConfiguration',
+      desc: 'This is a tip for advanced configuration.',
+      args: [],
+    );
+  }
+
+  /// `Free Configuration`
+  String get gTipFreeConfiguration {
+    return Intl.message(
+      'Free Configuration',
+      name: 'gTipFreeConfiguration',
+      desc: 'This is a tip for free configuration.',
+      args: [],
+    );
+  }
+
+  /// `Fail to select file`
+  String get gTipFailToSelectFile {
+    return Intl.message(
+      'Fail to select file',
+      name: 'gTipFailToSelectFile',
+      desc: 'This is a tip for failing to select a file.',
+      args: [],
+    );
+  }
+
+  /// `Connect to multiple devices via serial port, Wi-Fi, and Bluetooth.`
+  String get subTitleMultiScaleManagement {
+    return Intl.message(
+      'Connect to multiple devices via serial port, Wi-Fi, and Bluetooth.',
+      name: 'subTitleMultiScaleManagement',
+      desc: 'SubTitle for multi-scale management',
+      args: [],
+    );
+  }
+
+  /// `Set the device's date and time.`
+  String get subTitleDeviceTime {
+    return Intl.message(
+      'Set the device\'s date and time.',
+      name: 'subTitleDeviceTime',
+      desc: 'SubTitle for device Time',
+      args: [],
+    );
+  }
+
+  /// `Configure Bluetooth name and signal strength.`
+  String get subTitleBluetoothSetting {
+    return Intl.message(
+      'Configure Bluetooth name and signal strength.',
+      name: 'subTitleBluetoothSetting',
+      desc: 'SubTitle for bluetooth setting',
+      args: [],
+    );
+  }
+
+  /// `Obtain static/dynamic IP addresses and connect to Wi-Fi.`
+  String get subTitleWifiSetting {
+    return Intl.message(
+      'Obtain static/dynamic IP addresses and connect to Wi-Fi.',
+      name: 'subTitleWifiSetting',
+      desc: 'SubTitle for Wi-Fi setting',
+      args: [],
+    );
+  }
+
+  /// `Update the scale's firmware via serial port or Wi-Fi.`
+  String get subTitleFirmwareUpdate {
+    return Intl.message(
+      'Update the scale\'s firmware via serial port or Wi-Fi.',
+      name: 'subTitleFirmwareUpdate',
+      desc: 'SubTitle for firmware update',
+      args: [],
+    );
+  }
+
+  /// `Customize the label printing format.`
+  String get subTitleLabelDesign {
+    return Intl.message(
+      'Customize the label printing format.',
+      name: 'subTitleLabelDesign',
+      desc: 'SubTitle for label design',
+      args: [],
+    );
+  }
+
+  /// `Customize the receipt printing format.`
+  String get subTitleReceiptDesign {
+    return Intl.message(
+      'Customize the receipt printing format.',
+      name: 'subTitleReceiptDesign',
+      desc: 'SubTitle for receipt design',
+      args: [],
+    );
+  }
+
+  /// `Customize and download serial port output content.`
+  String get subTitleSerialOutputDesign {
+    return Intl.message(
+      'Customize and download serial port output content.',
+      name: 'subTitleSerialOutputDesign',
+      desc: 'SubTitle for serial output design',
+      args: [],
+    );
+  }
+
+  /// `Read device usage info from scales to understand any abnormal activity.`
+  String get subTitleBasicDataCollection {
+    return Intl.message(
+      'Read device usage info from scales to understand any abnormal activity.',
+      name: 'subTitleBasicDataCollection',
+      desc: 'SubTitle for basic data collection',
+      args: [],
+    );
+  }
+
+  /// `Configure device parameters online.`
+  String get subTitleParameterSetting {
+    return Intl.message(
+      'Configure device parameters online.',
+      name: 'subTitleParameterSetting',
+      desc: 'SubTitle for parameter setting',
+      args: [],
+    );
+  }
+
+  /// `Display weighing data in real-time, supporting basic operations.`
+  String get subTitleWeighing {
+    return Intl.message(
+      'Display weighing data in real-time, supporting basic operations.',
+      name: 'subTitleWeighing',
+      desc: 'SubTitle for weighing',
+      args: [],
+    );
+  }
+
+  /// `Batch edit and manage PLUs.`
+  String get subTitlePluManagement {
+    return Intl.message(
+      'Batch edit and manage PLUs.',
+      name: 'subTitlePluManagement',
+      desc: 'SubTitle for PLU management',
+      args: [],
+    );
+  }
+
+  /// `Download label printing format to the scale.`
+  String get subTitleLabelFormatDownload {
+    return Intl.message(
+      'Download label printing format to the scale.',
+      name: 'subTitleLabelFormatDownload',
+      desc: 'SubTitle for label format download',
+      args: [],
+    );
+  }
+
+  /// `Download receipt printing format to the scale.`
+  String get subTitleReceiptFormatDownload {
+    return Intl.message(
+      'Download receipt printing format to the scale.',
+      name: 'subTitleReceiptFormatDownload',
+      desc: 'SubTitle for receipt format download',
+      args: [],
+    );
+  }
+
+  /// `Automatically collect, record, and generate reports for retail data.`
+  String get subTitleRetailReport {
+    return Intl.message(
+      'Automatically collect, record, and generate reports for retail data.',
+      name: 'subTitleRetailReport',
+      desc: 'SubTitle for retail report',
+      args: [],
+    );
+  }
+
+  /// `Edit headers, footers, and operator information.`
+  String get subTitleVariableValueSetting {
+    return Intl.message(
+      'Edit headers, footers, and operator information.',
+      name: 'subTitleVariableValueSetting',
+      desc: 'SubTitle for variable value setting',
+      args: [],
+    );
+  }
+
+  /// `Perform online weighing and generate weight data reports.`
+  String get subTitleWeighingDataCollection {
+    return Intl.message(
+      'Perform online weighing and generate weight data reports.',
+      name: 'subTitleWeighingDataCollection',
+      desc: 'SubTitle for weighing data collection',
+      args: [],
+    );
+  }
+
+  /// `Perform online weight inspection and generate inspection reports.`
+  String get subTitleCheckWeighing {
+    return Intl.message(
+      'Perform online weight inspection and generate inspection reports.',
+      name: 'subTitleCheckWeighing',
+      desc: 'SubTitle for check weighing',
+      args: [],
+    );
+  }
+
+  /// `Record weight increment during loading and generate data reports.`
+  String get subTitleIncrementWeighing {
+    return Intl.message(
+      'Record weight increment during loading and generate data reports.',
+      name: 'subTitleIncrementWeighing',
+      desc: 'SubTitle for increment weighing',
+      args: [],
+    );
+  }
+
+  /// `Record weight decrement during unloading  and generate data reports.`
+  String get subTitleTakeOutScale {
+    return Intl.message(
+      'Record weight decrement during unloading  and generate data reports.',
+      name: 'subTitleTakeOutScale',
+      desc: 'SubTitle for take out scale',
+      args: [],
+    );
+  }
+
+  /// `Formula editing, management, online batching, and data generation.`
+  String get subTitleFormula {
+    return Intl.message(
+      'Formula editing, management, online batching, and data generation.',
+      name: 'subTitleFormula',
+      desc: 'SubTitle for formula',
+      args: [],
+    );
+  }
+
+  /// `Test liquid filling speed and variation trends.`
+  String get subTitleFlowRate {
+    return Intl.message(
+      'Test liquid filling speed and variation trends.',
+      name: 'subTitleFlowRate',
+      desc: 'SubTitle for liquid filling speed',
+      args: [],
+    );
+  }
+
+  /// `Perform single-point or linear calibration on the scale.`
+  String get subTitleCalibration {
+    return Intl.message(
+      'Perform single-point or linear calibration on the scale.',
+      name: 'subTitleCalibration',
+      desc: 'SubTitle for calibration',
+      args: [],
+    );
+  }
+
+  /// `Page`
+  String get tipPage {
+    return Intl.message(
+      'Page',
+      name: 'tipPage',
+      desc: 'This is a prompt for the page number.',
+      args: [],
+    );
+  }
+
+  /// ``
+  String get tipPageSequnce {
+    return Intl.message(
+      '',
+      name: 'tipPageSequnce',
+      desc:
+          'This is a prompt for the sequence of the page.  The English part needs no translation.',
+      args: [],
+    );
+  }
+
+  /// `Total`
+  String get tipPageTotal {
+    return Intl.message(
+      'Total',
+      name: 'tipPageTotal',
+      desc: 'This is a prompt for the total number of pages.',
+      args: [],
+    );
+  }
+
+  /// `Please select a device first.`
+  String get gTipSelectDeviceFirst {
+    return Intl.message(
+      'Please select a device first.',
+      name: 'gTipSelectDeviceFirst',
+      desc: 'Please select a device first.',
+      args: [],
+    );
+  }
+
+  /// `No devices available. Please add a device first.`
+  String get gTipNoDeviceAddFirst {
+    return Intl.message(
+      'No devices available. Please add a device first.',
+      name: 'gTipNoDeviceAddFirst',
+      desc: 'No devices available. Please add a device first.',
+      args: [],
+    );
+  }
+
+  /// `Retrieving the device time, please wait a moment.`
+  String get gTipGettingDeviceTime {
+    return Intl.message(
+      'Retrieving the device time, please wait a moment.',
+      name: 'gTipGettingDeviceTime',
+      desc: 'Retrieving the device time, please wait a moment.',
       args: [],
     );
   }

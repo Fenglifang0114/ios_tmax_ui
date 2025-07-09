@@ -45,6 +45,8 @@ class RestorablePluSelections extends RestorableProperty<Set<int>> {
 
 int _idCounter = 0;
 
+List<PluData> myPluInfoList = [];
+
 /// Domain model entity
 class PluData {
   int? recId;

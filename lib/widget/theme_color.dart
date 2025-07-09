@@ -72,10 +72,15 @@ themeColor(Map<String, dynamic> colorTheme, bool isDarkMode) {
       fontWeight: bold,
       fontSize: 32.0,
     ),
+    displayMedium: TextStyle(
+      fontFamily: 'alibaba',
+      fontWeight: regular,
+      fontSize: 24.0,
+    ),
   );
 
   ColorScheme lightColorScheme = ColorScheme(
-    primary: Color(0xFF004D8A),
+    primary: Color(int.parse(colorTheme['primary'])),
     secondary: Color(int.parse(colorTheme['secondary'])),
     tertiary: Color(int.parse(colorTheme['tertiary'])),
     surfaceTint: Color(int.parse(colorTheme['background'])), //主要的背景色
@@ -96,19 +101,20 @@ themeColor(Map<String, dynamic> colorTheme, bool isDarkMode) {
     tertiaryContainer: const Color.fromARGB(255, 251, 253, 248), //0xFFF8F9FD
     primaryContainer: Color(int.parse(colorTheme['primary'])), //0xFFF8F9FD
     scrim: const Color.fromARGB(255, 204, 224, 239), //0xCCE0EF
-    shadow: Color(0xFF004D8A),
+    shadow: Color(int.parse(colorTheme['primary'])),
     surfaceDim: Color(0xFFEFEFEF), //画布背景灰色
     outlineVariant: Color(0xFFE6E6E6), //输入框边框
     surfaceContainerLow: Color(0xFFF5F5F5), //选中框
     surfaceContainerLowest: Color(0xFFD0D0D0), //很少用
     surfaceContainerHighest: Color(0xFF8D8D8D),
     secondaryContainer: Color(0xFFE6EEF4),
+    onTertiaryContainer: Color(0xFFF4B837),
 
     brightness: Brightness.light,
   );
 
   ColorScheme darkColorScheme = ColorScheme(
-    primary: Color(0xFF004D8A),
+    primary: Color(int.parse(colorTheme['primary'])),
     secondary: Color(int.parse(colorTheme['secondary'])),
     tertiary: Color(int.parse(colorTheme['tertiary'])),
     surfaceTint: Color(int.parse(colorTheme['background'])), //主要的背景色
@@ -129,13 +135,14 @@ themeColor(Map<String, dynamic> colorTheme, bool isDarkMode) {
     tertiaryContainer: const Color.fromARGB(255, 251, 253, 248), //0xFFF8F9FD
     primaryContainer: Color(int.parse(colorTheme['primary'])), //0xFFF8F9FD
     scrim: const Color.fromARGB(255, 204, 224, 239), //0xCCE0EF
-    shadow: Color(0xFF004D8A),
+    shadow: Color(int.parse(colorTheme['primary'])),
     surfaceDim: Color(0xFFEFEFEF), //画布背景灰色
     outlineVariant: Color(0xFFE6E6E6), //输入框边框
     surfaceContainerLow: Color(0xFFF5F5F5), //选中框
     surfaceContainerLowest: Color(0xFFD0D0D0), //很少用
     surfaceContainerHighest: Color(0xFF8D8D8D),
     secondaryContainer: Color(0xFFE6EEF4),
+    onTertiaryContainer: Color(0xFFF4B837),
     brightness: Brightness.dark,
   );
 

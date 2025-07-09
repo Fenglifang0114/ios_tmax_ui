@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:t_max/data/dialog_data.dart';
 import 'package:t_max/data/license_data.dart';
 import 'package:t_max/data/scale_info_from_scale.dart';
+import 'package:t_max/data/settingparam_data.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/pages/flow_rate_page.dart';
 import 'package:t_max/pages/formula_scale_page.dart';
@@ -803,7 +804,8 @@ class IndustryHomePageState extends State<IndustryHomePage>
                           onTap: myWedaLicInfo.isValid
                               ? () {
                                   setState(() {
-                                    PublicFunctions.getUIConfNormal();
+                                    PublicFunctions.getUIConfNormal(
+                                        wgtCollectionMode);
                                     stopCheckSerialPort();
                                     setState(() {
                                       Navigator.push(
@@ -833,7 +835,8 @@ class IndustryHomePageState extends State<IndustryHomePage>
                             onTap: myChweLicInfo.isValid
                                 ? () {
                                     setState(() {
-                                      PublicFunctions.getUIConfCheck();
+                                      PublicFunctions.getUIConfNormal(
+                                          wgtCheckMode);
 
                                       stopCheckSerialPort();
                                       setState(() {
@@ -863,7 +866,8 @@ class IndustryHomePageState extends State<IndustryHomePage>
                             onTap: myInWeLicInfo.isValid
                                 ? () {
                                     setState(() {
-                                      PublicFunctions.getUIConfTakeIn();
+                                      PublicFunctions.getUIConfNormal(
+                                          wgtTakeInMode);
 
                                       stopCheckSerialPort();
                                       setState(() {
@@ -893,7 +897,8 @@ class IndustryHomePageState extends State<IndustryHomePage>
                             onTap: myTaouLicInfo.isValid
                                 ? () {
                                     setState(() {
-                                      PublicFunctions.getUIConfTakeOut();
+                                      PublicFunctions.getUIConfNormal(
+                                          wgtTakeOutMode);
                                       stopCheckSerialPort();
                                       setState(() {
                                         Navigator.push(

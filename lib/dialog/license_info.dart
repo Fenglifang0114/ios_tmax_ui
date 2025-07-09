@@ -482,6 +482,21 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
           updateLicenseInfo();
         }
         break;
+      case ladeLic:
+        if (myLadeLicInfo.isValid) {
+          if (isLongerValidityPeriod(myLadeLicInfo.liceseDate, dueDate)) {
+            myLadeLicInfo = newLicInfo;
+            updateLicenseInfo();
+          } else {
+            errMessage = 'The new period is not the latest.';
+
+            updateResCtl();
+          }
+        } else {
+          myLadeLicInfo = newLicInfo;
+          updateLicenseInfo();
+        }
+        break;
       default:
         break;
     }

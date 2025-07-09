@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/pages/update_firmware_page.dart';
 import '../data/manager_scale_channel.dart';
 import 'package:t_max/functions/methods.dart';
@@ -12,9 +11,7 @@ import '../data/language.dart';
 import '../data/scalecmd_data.dart';
 import '../data/writelog.dart';
 import '../widget/custom_button.dart';
-import '../widget/page_head.dart';
 import 'default_prn_fmt_page.dart';
-import 'sel_scales_page.dart';
 
 class DownloadLabelPage extends StatefulWidget {
   const DownloadLabelPage({super.key});

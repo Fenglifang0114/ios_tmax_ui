@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -129,9 +128,17 @@ class SetParameterPageState extends State<SetParameterPage> {
       if (mounted) {
         int scaleId = event.obj;
         if (scaleId != selScaleId) {
-          setState(() {
-            print('object');
-          });
+          setState(() {});
+        }
+      }
+    });
+    // 在页面构建完成后显示提示
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (myAllScalesList.isEmpty) {
+        showTipInfo(localizedStrings.gTipNoDeviceAddFirst, context);
+      } else {
+        if (selScaleId == -1) {
+          showTipInfo(localizedStrings.gTipSelectDeviceFirst, context);
         }
       }
     });
@@ -178,11 +185,6 @@ class SetParameterPageState extends State<SetParameterPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              pageHeadInfo(
-                  context,
-                  width - headWidthPadding,
-                  localizedStrings.menuParameterSetting,
-                  localizedStrings.gTipParameterSettingPageHelp),
               Expanded(
                 child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,

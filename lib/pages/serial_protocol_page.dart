@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
@@ -5,20 +6,20 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/data/home_page_common_data.dart';
-import 'package:t_max/data/timer_manager.dart';
+import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/functions/methods.dart';
+import 'package:t_max/pages/update_firmware_page.dart';
 import 'package:t_max/widget/common_widget.dart';
 import 'package:t_max/widget/dropdown_copy.dart';
+import 'package:t_max/widget/scale_list.dart';
 import '../data/downloadresponse.dart';
 import '../data/manager_scale_channel.dart';
 import '../data/custom_serial_protocol_text_dart.dart';
 import '../data/language.dart';
 import '../data/reqweightdata_data.dart';
-
 import '../eventbus/eventbus.dart';
 import 'package:path/path.dart' as p;
-import '../widget/page_head.dart';
 import 'package:archive/archive_io.dart';
 
 class CustomSerialProtocol extends StatefulWidget {
@@ -98,7 +99,6 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     'Percent',
   ];
 
-  dynamic _eventbus1;
   dynamic _eventbus2;
   dynamic _eventbus3;
   dynamic _eventbus4;
@@ -107,6 +107,30 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
   dynamic _eventbus7;
   dynamic _eventbus8;
   final ScrollController _scrollController = ScrollController();
+
+  int selScaleId = -1;
+
+  List<Scale> comScalesList = [];
+  bool isPassthDataRev = false; //是否收到秤的透传数据
+  late Timer _timer; //监控透传的状态
+
+  //切换的时候要修改掉秤的信息
+  void changeScale(int scaleId) {
+    if (isPassthDataRev && selScaleId == scaleId) {
+      return;
+    }
+    if (selScaleId != -1 && selScaleId != scaleId) {
+      PublicFunctions.stopWeight(selScaleId);
+    }
+
+    setState(() {
+      selScaleId = scaleId;
+      _isHexDisplay = false;
+      outputData.clear();
+    });
+
+    PublicFunctions.getWeight(scaleId);
+  }
 
   bool isListEmpty() {
     if (textListOl.isNotEmpty ||
@@ -125,35 +149,44 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     _currentPageIndex = 3;
     super.initState();
     initOutputList();
-    cntScaleTimerMgr.stopCntScaleTimer();
-    DefScaleInfo.getDefScaleInfo(1);
-    // cntScaleTimerMgr.startCntScaleTimer(5);
-    _eventbus1 = eventBus.on<EventSerialOutputResp>().listen((event) {
-      if (mounted) {
+    for (var scale in myAllScalesList) {
+      if (scale.tMedia == comScaleType) {
+        comScalesList.add(scale);
+      }
+    }
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      if (isPassthDataRev) {
         setState(() {
-          _downloading = false;
-          cntScaleTimerMgr.stopCntScaleTimer();
-          // cntScaleTimerMgr.startCntScaleTimer(5);
-          myRespDataFromScale = event.obj;
-          if (myRespDataFromScale.msgBody.isNotEmpty) {
-            (myRespDataFromScale.msgBody.contains('ok'))
-                ? showTipInfo(localizedStrings.gTipDownloadOk, context)
-                : showTipInfo(myRespDataFromScale.msgBody, context);
-          }
+          isPassthDataRev = false;
         });
       }
     });
+
     _eventbus2 = eventBus.on<EventScalePassthData>().listen((event) {
       if (mounted) {
         if (serialPreview) {
           setState(() {
             myRespDataFromScale = event.obj;
-            outputData.add(myRespDataFromScale.msgBody);
-            if (outputData.length > 1000) {
-              outputData.clear();
+            if (myRespDataFromScale.scaleId == selScaleId) {
+              outputData.add(myRespDataFromScale.msgBody);
+              if (outputData.length > 1000) {
+                outputData.clear();
+              }
+              isPassthDataRev = true;
+            }
+            for (var item in myAllScalesList) {
+              if (item.scaleId == myRespDataFromScale.scaleId) {
+                item.isOnline = true;
+                break;
+              }
             }
           });
           scrollToBottom();
+        } else {
+          myRespDataFromScale = event.obj;
+          if (myRespDataFromScale.msgBody.isNotEmpty) {
+            PublicFunctions.stopWeight(myRespDataFromScale.scaleId);
+          }
         }
       }
     });
@@ -169,12 +202,17 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       if (mounted) {
         myRespDataFromScale = event.obj;
         if (myRespDataFromScale.msgBody.contains('ok')) {
-          cntScaleTimerMgr.stopCntScaleTimer();
-          // cntScaleTimerMgr.startCntScaleTimer(5);
-          PublicFunctions.stopWeight(1);
+          for (var item in myAllScalesList) {
+            if (item.scaleId == myRespDataFromScale.scaleId) {
+              item.isOnline = true;
+              break;
+            }
+          }
+
+          PublicFunctions.stopWeight(selScaleId);
         } else if (!serialPreview) {
           // PublicFunctions.openScalePassth(1);
-          PublicFunctions.stopWeight(1);
+          PublicFunctions.stopWeight(selScaleId);
         }
       }
     });
@@ -183,7 +221,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       if (mounted) {
         // myRespDataFromScale = event.obj;
         if (!serialPreview) {
-          PublicFunctions.stopWeight(1);
+          PublicFunctions.stopWeight(selScaleId);
         }
       }
     });
@@ -205,12 +243,14 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       if (mounted) {
         setState(() {
           myReqWeightCountine = event.obj;
-          if (myReqWeightCountine.scaleId! == 1) {
+          if (myReqWeightCountine.scaleId! == selScaleId) {
             if (!serialPreview) {
-              PublicFunctions.stopWeight(1);
+              PublicFunctions.stopWeight(selScaleId);
             } else {
-              PublicFunctions.openScalePassth(1);
+              PublicFunctions.openScalePassth(selScaleId);
             }
+          } else {
+            PublicFunctions.stopWeight(myReqWeightCountine.scaleId!);
           }
         });
       }
@@ -222,10 +262,16 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         setState(() {
           if (myRespDataFromScale.msgBody.contains('ok')) {
             // print('ok');
+            for (var item in myAllScalesList) {
+              if (item.scaleId == myRespDataFromScale.scaleId) {
+                item.isOnline = true;
+                break;
+              }
+            }
             return;
           } else {
             if (!serialPreview) {
-              PublicFunctions.stopWeight(1);
+              PublicFunctions.stopWeight(selScaleId);
             }
           }
         });
@@ -256,7 +302,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
   void dispose() {
     _scrollController.removeListener(scrollToBottom); // 移除监听
     _scrollController.dispose();
-    _eventbus1.cancel();
+
     _eventbus2.cancel();
     _eventbus3.cancel();
     _eventbus4.cancel();
@@ -264,6 +310,10 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     _eventbus6.cancel();
     _eventbus7.cancel();
     _eventbus8.cancel();
+    _timer.cancel();
+    if (selScaleId != -1) {
+      PublicFunctions.stopWeight(selScaleId);
+    }
     super.dispose();
   }
 
@@ -275,21 +325,196 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     pageTitle = getTitleName(_currentPageIndex);
 
     return Scaffold(
-        body: Container(
-            width: width,
-            decoration: BoxDecoration(color: colorScheme.surface),
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // pageHeadInfo(
-                  //     context,
-                  //     width - headWidthPadding,
-                  //     localizedStrings.menuSerialOutputDesign,
-                  //     localizedStrings.gTipSerialDesignPageHelp),
-                  buildPageTitle(),
-                  buildBottomPart(),
-                ])));
+      body: (!serialPreview)
+          ? Container(
+              width: width,
+              decoration: BoxDecoration(color: colorScheme.surface),
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // pageHeadInfo(
+                    //     context,
+                    //     width - headWidthPadding,
+                    //     localizedStrings.menuSerialOutputDesign,
+                    //     localizedStrings.gTipSerialDesignPageHelp),
+                    buildPageTitle(),
+                    buildBottomPart(),
+                  ]))
+          : buildPreview(width),
+    );
+  }
+
+  Widget buildPreview(double width) {
+    return Container(
+        width: width,
+        decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              child: subTitleInfo(
+                  context,
+                  width - headWidthPadding,
+                  localizedStrings.gTitlePreview,
+                  localizedStrings.gTipScaleMgrPageHelp),
+            ),
+            Expanded(
+              child:
+                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Container(
+                  width: scaleListWidth,
+                  color: Theme.of(context).colorScheme.surfaceTint,
+                  child: SizedBox(
+                    height: MediaQuery.of(context).size.height,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        SizedBox(
+                          height: regularPadding,
+                        ),
+                        Expanded(
+                          child: NewComScaleListWidget(
+                            listWidth: scaleListWidth, // 列表宽度
+                            selScaleId: selScaleId,
+                            clickScale: (scale) {
+                              setState(() {
+                                changeScale(scale.scaleId);
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
+                  width: 1,
+                  color: Theme.of(context).colorScheme.outlineVariant, //  分隔条颜色
+                ),
+                comScalesList.isEmpty
+                    ? SizedBox()
+                    : Expanded(
+                        child: Container(
+                        padding: const EdgeInsets.only(
+                            top: smallPadding, bottom: largePadding),
+                        child: Column(children: [
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(0.0)), // 边框圆角
+                              ),
+                              child: ListView.builder(
+                                padding:
+                                    const EdgeInsets.all(smallPadding), // 添加边距
+                                itemCount: outputData.length,
+                                itemBuilder: (context, index) {
+                                  return Text(outputData[index],
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall!
+                                          .apply(
+                                              color: colorScheme
+                                                  .onSurfaceVariant));
+                                },
+                                controller: _scrollController,
+                              ),
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              showTextButton(context, btnHeight,
+                                  localizedStrings.gBtnClear, () {
+                                setState(() {
+                                  outputData.clear();
+                                });
+                              }, colorScheme.onPrimary, colorScheme.error,
+                                  colorScheme.onPrimary),
+                              showTextButton(context, btnHeight, 'HEX', () {
+                                setState(() {
+                                  _isHexDisplay = !_isHexDisplay;
+                                });
+                                PublicFunctions.changeScalePassth(
+                                    _isHexDisplay, selScaleId);
+                              },
+                                  _isHexDisplay
+                                      ? colorScheme.onPrimary
+                                      : colorScheme.primary,
+                                  _isHexDisplay
+                                      ? colorScheme.primary
+                                      : colorScheme.outlineVariant,
+                                  colorScheme.onPrimary)
+                            ],
+                          )
+                        ]),
+                      )),
+              ]),
+            ),
+          ],
+        ));
+  }
+
+  Widget subTitleInfo(
+      dynamic context, double maxWidth, String pageTitle, String helpInfo) {
+    return SizedBox(
+        height: pageTopTitleHeight,
+        child: Column(children: [
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                subNewTitle(context, maxWidth, pageTitle),
+              ],
+            ),
+          ),
+          Divider(
+            color:
+                Theme.of(context).colorScheme.surfaceContainerLow, // 设置分割线的颜色
+            height: 1, // 设置分割线的高度
+            thickness: 1, // 设置分割线的粗细
+          ),
+        ]));
+  }
+
+  Widget subNewTitle(
+    dynamic context,
+    double maxWidth,
+    String pageTitle,
+  ) {
+    return Row(
+      children: [
+        SizedBox(
+          width: largePadding,
+        ),
+        IconButton(
+          iconSize: 22,
+          onPressed: () {
+            setState(() {
+              serialPreview = false;
+            });
+            PublicFunctions.stopWeight(selScaleId);
+          },
+          icon: Icon(Icons.keyboard_double_arrow_left),
+          color: Theme.of(context).colorScheme.primary,
+        ),
+        SizedBox(
+          width: regularPadding,
+        ),
+        SizedBox(
+          width: maxWidth,
+          child: Text(
+            pageTitle,
+            style: Theme.of(context).textTheme.labelMedium!.apply(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
   }
 
 //标题栏组件
@@ -720,12 +945,13 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
 
   void handleButtonPress() async {
     setState(() {
-      cntScaleTimerMgr.stopCntScaleTimer();
       serialPreview = true;
       _isHexDisplay = false;
       outputData.clear();
     });
-    PublicFunctions.getWeight(1);
+    if (selScaleId != -1) {
+      PublicFunctions.getWeight(selScaleId);
+    }
   }
 
   String getTitleName(int pageId) {
@@ -812,49 +1038,49 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                           }
                           await generateFileList();
                           if (jsonFilesList.isNotEmpty) {
-                            PublicFunctions.sendOutputFmtToScale(
-                                jsonFilesList, myDefScaleInfo.defScaleId!);
+                            // PublicFunctions.sendOutputFmtToScale(
+                            //     jsonFilesList, myDefScaleInfo.defScaleId!);
+                            useNetworkUpdate(jsonFilesList);
                           }
-                          setState(() {
-                            _downloading = true;
-                          });
-                          cntScaleTimerMgr.stopCntScaleTimer();
                         }
                       : null,
                   colorScheme.onPrimary,
                   colorScheme.primary,
                   colorScheme.onPrimary),
             ),
-            !serialPreview
-                ? SizedBox(
-                    width: 200,
-                    child: showTextButton(
-                        context,
-                        btnHeight,
-                        localizedStrings.cBtnOpenPreview,
-                        !serialPreview && (myDefScaleInfo.defScaleId! == 1)
-                            ? handleButtonPress
-                            : null,
-                        colorScheme.onPrimary,
-                        colorScheme.onTertiaryFixedVariant,
-                        colorScheme.onPrimary),
-                  )
-                : SizedBox(
-                    width: 200,
-                    child: showTextButton(
-                        context, btnHeight, localizedStrings.cBtnClosePreview,
-                        () async {
-                      setState(() {
-                        serialPreview = false;
-                        outputData.clear();
-                      });
-                      // PublicFunctions.closeScalePassth(1);
-                      PublicFunctions.stopWeight(1);
-                    }, colorScheme.onPrimary, colorScheme.error,
-                        colorScheme.onPrimary),
-                  ),
+            SizedBox(
+              width: 200,
+              child: showTextButton(
+                  context,
+                  btnHeight,
+                  localizedStrings.cBtnOpenPreview,
+                  handleButtonPress,
+                  colorScheme.onPrimary,
+                  colorScheme.onTertiaryFixedVariant,
+                  colorScheme.onPrimary),
+            )
           ],
         ));
+  }
+
+//comScaleSerialSend 串口的连续发送
+  void useNetworkUpdate(List<String> jsonList) {
+    String msg = '';
+    showSelScaleDialog(comScaleSerialSend, msg, jsonList);
+  }
+
+  void showSelScaleDialog(int funcNo, String msg, List<String> jsonList) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 允许点击空白处关闭对话框
+      builder: (context) {
+        return SelectScalesPageNew(
+          funcNo: funcNo,
+          sendMsgStr: msg,
+          jsonList: jsonList,
+        );
+      },
+    );
   }
 
   Container secondPageBuild(int pageId) {
@@ -1658,7 +1884,15 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     for (var i = 0; i < list.length; i++) {
       if (list[i].tabOrder == mySerialProtocolText.tabOrder) {
         list.removeAt(i);
-        mySerialProtocolText.tabOrder = 9999;
+        setState(() {
+          if (list.isNotEmpty) {
+            mySerialProtocolText = list[list.length - 1];
+            _changeSelect(list.length - 1, list);
+          } else {
+            mySerialProtocolText.tabOrder = 9999;
+          }
+        });
+
         break;
       }
     }

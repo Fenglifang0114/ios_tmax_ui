@@ -364,7 +364,7 @@ class AddRawDialogState extends State<AddRawDialog> {
                                   focusColor: Theme.of(context)
                                       .colorScheme
                                       .primary
-                                      .withOpacity(0.1),
+                                      .withValues(alpha: 0.1),
                                   shape: RoundedRectangleBorder(
                                       // 设置为矩形形状
                                       borderRadius:
@@ -1169,7 +1169,7 @@ class EditRawDialogState extends State<EditRawDialog> {
                                   focusColor: Theme.of(context)
                                       .colorScheme
                                       .primary
-                                      .withOpacity(0.1),
+                                      .withValues(alpha: 0.1),
                                   shape: RoundedRectangleBorder(
                                       // 设置为矩形形状
                                       borderRadius:

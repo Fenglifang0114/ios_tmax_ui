@@ -38,7 +38,7 @@ String getMenuIconPath(int pageId) {
     return takeOutSvgIcon();
   } else if (pageId == MenuId.checkWeighersPage.index) {
     return checkScaleSvgIcon();
-  } else if (pageId == MenuId.transactionReportPage.index) {
+  } else if (pageId == MenuId.retailReportPage.index) {
     return detailReportSvgIcon();
   } else if (pageId == MenuId.formulationScalePage.index) {
     return formulaModeSvgIcon();
@@ -274,4 +274,28 @@ String startWgtSvgIcon() {
 
 String endWgtSvgIcon() {
   return 'assets/images/endWgt.svg';
+}
+
+String deleteSvgIcon() {
+  return 'assets/images/delete.svg';
+}
+
+String reportSettingSvgIcon() {
+  return 'assets/images/reportSetting.svg';
+}
+
+String highLowSettingSvgIcon() {
+  return 'assets/images/highLowSetting.svg';
+}
+
+String configSettingSvgIcon() {
+  return 'assets/images/configSetting.svg';
+}
+
+String appSettingSvgIcon() {
+  return 'assets/images/appSetting.svg';
+}
+
+String appOnOffSvgIcon() {
+  return 'assets/images/appOnOff.svg';
 }

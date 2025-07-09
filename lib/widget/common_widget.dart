@@ -53,7 +53,11 @@ showInputBox(BuildContext context, TextEditingController controller,
         ),
       ),
       style: Theme.of(context).textTheme.bodySmall!.apply(
-            color: Theme.of(context).colorScheme.onSurface, // 设置输入文本颜色
+            color: isEnabled
+                ? Theme.of(context).colorScheme.onSurface
+                : Theme.of(context)
+                    .colorScheme
+                    .surfaceContainerHighest, // 设置输入文本颜色
           ),
       onChanged: onChanged, // 监听文本变化,
     ),

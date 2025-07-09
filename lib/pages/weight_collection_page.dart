@@ -1,26 +1,29 @@
 //重量收集页面 20250522
 
-import 'dart:math';
-
+import 'dart:async';
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:t_max/data/home_page_common_data.dart';
+import 'package:t_max/data/icons.dart';
 import 'package:t_max/data/new_get_recs.dart';
-import 'package:t_max/data/received_wgt_value.dart';
-import 'package:t_max/data/record_data.dart';
+import 'package:t_max/data/plu_data_source.dart';
+import 'package:t_max/data/plu_info_list_data.dart';
+import 'package:t_max/data/reqweightdata_data.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/data/settingparam_data.dart';
 import 'package:t_max/data/weight_report_data.dart';
-import 'package:t_max/data/wgt_rpt_data_source.dart';
+import 'package:t_max/data/wgt_value_data.dart';
+import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/dialog/setting_dialog.dart';
 import 'package:t_max/dialog/weight_report_feilds_setting.dart';
-import 'package:t_max/widget/common_widget.dart';
 import 'package:t_max/widget/page_info.dart';
 import 'package:t_max/widget/scale_list.dart';
+import 'package:t_max/widget/total_wgt_common.dart';
 import 'package:t_max/widget/wgt_value_with_list_widget.dart';
 import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
-import '../data/comscaleinfo_data.dart';
 import '../data/downloadresponse.dart';
 import '../data/language.dart';
 import '../widget/page_head.dart';
@@ -33,11 +36,31 @@ class WeightDataCollectionPage extends StatefulWidget {
 }
 
 class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
-  List<NetScaleInfoLocal> scaleNetItems = [];
+  TextEditingController totalWgtUnitCtl = TextEditingController(text: 'kg');
+// 使用 ValueNotifier 来存储总重量和稳定状态
+  final ValueNotifier<double> totalWeightNotifier = ValueNotifier<double>(0);
+  final ValueNotifier<bool> totalWgtStableNotifier = ValueNotifier<bool>(false);
 
+  final Map<int, GlobalKey<WeightDataCollectionPageState>> _scaleWidgetKeys =
+      {};
+  ReqWeightCountine tempWeight = ReqWeightCountine();
+  final Map<int, Widget> _scaleWidgetCache = {};
+  Map<int, WeightInfo> scaleWeightMap = {}; // 存储每台秤的最新称重数据，键为秤的 ID，值为包含重量和单位的对象
+  Map<int, WeightInfo> scaleWgtMapDetail = {}; //存储每台秤的详细数据，组成total weight 的明细数据
   List<int> mySelScaleIdList = [];
+  List<ScaleRecInfo> allWgtRecList = [];
 
-  Map<int, ReceiveWgtInfo> myScaleWgtMap = {};
+  PluData? selectedPluData; // 用于存储选中的PluData
+
+  final double scaleWgtWidth = 351;
+  late Timer updateTimer; //刷新数据
+
+  late TableState _tableState;
+
+  bool firstGetRec = true;
+  bool totalWgtStble = false;
+  bool needUpdate = false;
+
   dynamic eventBus1;
   dynamic eventBus2;
   dynamic eventBus3;
@@ -45,34 +68,30 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
   dynamic eventBus4;
   dynamic eventBus6;
   dynamic eventBus7;
-
-  GetScaleRecords currGetScaleRecords = GetScaleRecords(weightRecords: []);
-
-  bool firstGetRec = true;
-  int maxRecId = 0;
-  int dateformat = 1;
-  List<ScaleRecInfo> allWgtRecList = [];
-  bool sort = false;
-  int clickedRow = -1;
-
-  ScrollController scrollController = ScrollController();
-  ScrollController scrollController1 = ScrollController();
-
-  late TableState _tableState;
+  dynamic eventBus8;
+  dynamic eventBus9;
+  dynamic eventBus10;
+  dynamic eventBus11;
+  dynamic eventBus12;
 
   @override
   void initState() {
     super.initState();
-
+    myPluInfoList.clear();
     // 初始化 TableState
     _tableState = TableState();
+    mySettingParam.scaleMode = 0;
     _tableState.loadPage(1);
 
-    PublicFunctions.getUIConfNormal();
+    PublicFunctions.getUIConfNormal(wgtCollectionMode);
+    PublicFunctions.getProductList();
+
+    startTimer();
+
     eventBus1 = eventBus.on<EventUpdateSettingParam>().listen((event) {
       if (mounted) {
         setState(() {
-          PublicFunctions.getUIConfNormal();
+          PublicFunctions.getUIConfNormal(wgtCollectionMode);
         });
       }
     });
@@ -80,7 +99,7 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     eventBus2 = eventBus.on<EventSettingParam>().listen((event) {
       if (mounted) {
         setState(() {
-          myModeSettingNormal = event.obj;
+          mySettingParam = event.obj;
         });
       }
     });
@@ -93,26 +112,24 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
 
     eventBus4 = eventBus.on<EventRespGetAllWgtRecs>().listen((event) {
       if (mounted) {
-        setState(() {
-          String jsonString = event.obj;
+        String jsonString = event.obj;
 
-          RevAllWgtRecs getAllWgtInfo = revAllWgtRecsFromJson(jsonString);
-          if (getAllWgtInfo.totalCount! > 0) {
-            List<ScaleRecInfo>? scaleRecInfos = getAllWgtInfo.scaleRecInfos;
+        RevAllWgtRecs getAllWgtInfo = revAllWgtRecsFromJson(jsonString);
+        if (getAllWgtInfo.totalCount! > 0) {
+          List<ScaleRecInfo>? scaleRecInfos = getAllWgtInfo.scaleRecInfos;
 
-            allWgtRecList.clear();
+          allWgtRecList.clear();
 
-            allWgtRecList = List<ScaleRecInfo>.from(scaleRecInfos!);
+          allWgtRecList = List<ScaleRecInfo>.from(scaleRecInfos!);
 
-            _tableState.addData(allWgtRecList);
-            _tableState.setTotalCount(getAllWgtInfo.totalCount!);
-            // _tableState.loadPage(1);
-          } else {
-            allWgtRecList.clear();
-            // wgtRptDataList.clear();
-            // updateTableData(getWeightReportData());
-          }
-        });
+          _tableState.addData(allWgtRecList);
+          _tableState.setTotalCount(getAllWgtInfo.totalCount!);
+          // _tableState.loadPage(1);
+        } else {
+          allWgtRecList.clear();
+          // wgtRptDataList.clear();
+          // updateTableData(getWeightReportData());
+        }
       }
     });
 
@@ -133,7 +150,86 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
 
     eventBus7 = eventBus.on<EventDelAllWgtRecs>().listen((event) {
       if (mounted) {
+        setState(() {
+          _tableState.allData.clear();
+          _tableState.loadPage(1);
+        });
+      }
+    });
+
+    eventBus8 = eventBus.on<EventReqWeightCountine>().listen((event) {
+      if (mounted) {
+        if (mySettingParam.wgtMode == 0) {
+          // 独立模式直接退出
+          return;
+        }
+        tempWeight = event.obj;
+        if (tempWeight.scaleId != null &&
+            mounted &&
+            tempWeight.msgBody != null) {
+          // 记录每台秤的最新称重数据
+          scaleWeightMap[tempWeight.scaleId!] = WeightInfo(
+              weight: tempWeight.msgBody!.weightVal.toString(),
+              unit: tempWeight.msgBody!.weightUnit,
+              stable: tempWeight.msgBody!.isStable);
+
+          updateTotalWeightAndStable();
+          needUpdate = false;
+        }
+      }
+    });
+
+    eventBus9 = eventBus.on<EventProductRecList>().listen((event) {
+      if (mounted) {
+        setState(() {
+          List<PluInfoList> pluInfoList = event.obj;
+          for (int i = 0; i < pluInfoList.length; i++) {
+            PluData newPlu =
+                PluData(0, 0, 0, 0, '', '', 0, 0, 0, 0, 0, 0, 0, '');
+            newPlu.recId = pluInfoList[i].recId;
+            newPlu.plu = int.tryParse(pluInfoList[i].plu) ?? 0;
+            newPlu.productCode = int.tryParse(pluInfoList[i].productCode) ?? 0;
+            newPlu.itemCode = int.tryParse(pluInfoList[i].itemCode) ?? 0;
+            newPlu.category = pluInfoList[i].category;
+            newPlu.productName = pluInfoList[i].productName;
+            newPlu.price = double.tryParse(pluInfoList[i].price) ?? 0;
+            newPlu.taxType = int.tryParse(pluInfoList[i].taxType) ?? 0;
+            newPlu.generalUnit = int.tryParse(pluInfoList[i].generalUnit) ?? 0;
+            newPlu.unitWeight = double.tryParse(pluInfoList[i].unitWeight) ?? 0;
+            newPlu.pretare = double.tryParse(pluInfoList[i].pretare) ?? 0;
+            newPlu.limitHigh = double.tryParse(pluInfoList[i].limitHigh) ?? 0;
+            newPlu.limitLow = double.tryParse(pluInfoList[i].limitLow) ?? 0;
+            newPlu.creatAt = pluInfoList[i].creatAt ?? " ";
+            myPluInfoList.add(newPlu);
+          }
+
+          // getProductNameList();
+          // getWeight();
+          // getRecords();
+        });
+      }
+    });
+    eventBus10 = eventBus.on<EventAddWgtRec>().listen((event) {
+      if (mounted) {
         _tableState.loadPage(1);
+      }
+    });
+
+    eventBus11 = eventBus.on<EventDelAllWgtRecs>().listen((event) {
+      if (mounted) {
+        _tableState.loadPage(1);
+      }
+    });
+
+    eventBus12 = eventBus.on<EventExportAllRecs>().listen((event) {
+      if (mounted) {
+        String resString = event.obj;
+        if (resString.contains('ok')) {
+          showTipInfo(localizedStrings.gTipExportSuccess, context);
+        } else {
+          showTipInfo(
+              '${localizedStrings.gTipExportFail} ：$resString', context);
+        }
       }
     });
   }
@@ -147,12 +243,170 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     eventBus5.cancel();
     eventBus6.cancel();
     eventBus7.cancel();
+    eventBus8.cancel();
+    eventBus9.cancel();
+    eventBus10.cancel();
+    eventBus11.cancel();
+    eventBus12.cancel();
 
     for (var item in mySelScaleIdList) {
       PublicFunctions.stopWeight(item);
     }
+    myPluInfoList.clear();
+    updateTimer.cancel();
+
+    totalWgtUnitCtl.clear();
+    totalWeightNotifier.dispose();
+    totalWgtStableNotifier.dispose();
+
+    _tableState.dispose();
 
     super.dispose();
+  }
+
+  // 添加定时器，每 2 秒计算一次总重量
+  void startTimer() {
+    updateTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (mounted) {
+        if (mySettingParam.wgtMode == 0) {
+          return;
+        }
+        if (!needUpdate) {
+          needUpdate = true;
+          return;
+        }
+        // 更新总重量和稳定状态
+        updateTotalWeightAndStable();
+      }
+    });
+  }
+
+  // 更新总重量和稳定状态
+  void updateTotalWeightAndStable() {
+    double totalWeight = calculateTotalWeight();
+    bool totalWgtStable = getTotalWgtStable();
+    totalWeightNotifier.value = totalWeight;
+    totalWgtStableNotifier.value = totalWgtStable;
+  }
+
+  // 单位换算方法
+  double convertUnit(double weight, String fromUnit, String toUnit) {
+    // 简单示例，仅支持 kg 和 g 的换算，可根据实际情况扩展
+    if (fromUnit == toUnit) {
+      return weight;
+    }
+    if (fromUnit == 'kg' && toUnit == 'g') {
+      return weight * 1000;
+    }
+    if (fromUnit == 'g' && toUnit == 'kg') {
+      return weight / 1000;
+    }
+    if (fromUnit == 'g' && toUnit == 'lb') {
+      return weight * kgToLb / 1000;
+    }
+    if (fromUnit == 'kg' && toUnit == 'lb') {
+      return weight * kgToLb;
+    }
+    if (fromUnit == 'lb' && toUnit == 'g') {
+      return weight / kgToLb / 1000;
+    }
+    if (fromUnit == 'lb' && toUnit == 'kg') {
+      return weight / kgToLb;
+    }
+    // 默认不转换
+    return weight;
+  }
+
+  bool getTotalWgtStable() {
+    if (mySelScaleIdList.isEmpty) {
+      return false;
+    }
+
+    // 提前构建一个设备 ID 到设备对象的映射，避免在循环中多次查找
+    final scaleIdToScaleMap = <int, Scale>{};
+    for (final scale in myAllScalesList) {
+      scaleIdToScaleMap[scale.scaleId] = scale;
+    }
+
+    int validScaleCount = 0;
+
+    for (final entry in scaleWeightMap.entries) {
+      final scaleId = entry.key;
+
+      // 判断选择的设备是不是当前的设备
+      if (!mySelScaleIdList.contains(scaleId)) {
+        continue;
+      }
+
+      final myTempScale = scaleIdToScaleMap[scaleId];
+      // 设备不存在或不在线则跳过
+      if (myTempScale == null || !myTempScale.isOnline) {
+        continue;
+      }
+
+      final info = entry.value;
+      // 判断这个 value 是不是正的数据
+      if (info.weight.contains('-')) {
+        continue;
+      }
+
+      validScaleCount++;
+      if (!info.stable) {
+        return false;
+      }
+    }
+
+    // 没有有效设备则返回 false
+    return validScaleCount > 0;
+  }
+
+  // 计算总重量
+  double calculateTotalWeight() {
+    double totalWeight = 0;
+    scaleWgtMapDetail = {}; //每次计算都先清空明细数据
+    if (myAllScalesList.isEmpty) {
+      return 0;
+    }
+    for (var entry in scaleWeightMap.entries) {
+      int scaleId = entry.key;
+
+      //判断选择的设备是不是当前的设备
+      if (!mySelScaleIdList.contains(scaleId)) {
+        continue;
+      }
+
+      Scale myTempScale = myAllScalesList[0];
+      for (var item in myAllScalesList) {
+        if (item.scaleId == scaleId) {
+          myTempScale = item;
+          break;
+        }
+      }
+      if (!myTempScale.isOnline) {
+        continue;
+      }
+
+      WeightInfo info = entry.value;
+      //判断这个value是不是正的数据
+      if (info.weight.contains('-')) {
+        continue;
+      }
+      //转换为double类型的，最多三位小数
+      double weight = double.parse(info.weight);
+      // 转换为三位小数
+      weight = double.parse(weight.toStringAsFixed(3));
+      double convertedWeight =
+          convertUnit(weight, info.unit, totalWgtUnitCtl.text);
+      double tmpWeight = double.parse(convertedWeight.toStringAsFixed(3));
+      totalWeight += tmpWeight;
+      scaleWgtMapDetail[scaleId] = WeightInfo(
+          weight: tmpWeight.toStringAsFixed(3),
+          unit: totalWgtUnitCtl.text,
+          stable: info.stable);
+    }
+    totalWeight = double.parse(totalWeight.toStringAsFixed(3));
+
+    return totalWeight;
   }
 
   @override
@@ -212,29 +466,20 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                         color:
                             Theme.of(context).colorScheme.surfaceContainerLow,
                       ),
-                      showScaleWgt(context, 351),
-                      Container(
-                        width: regularPadding,
-                        color:
-                            Theme.of(context).colorScheme.surfaceContainerLow,
-                      ),
+                      if (mySelScaleIdList.isNotEmpty)
+                        showScaleWgt(context, scaleWgtWidth),
+                      if (mySelScaleIdList.isNotEmpty)
+                        Container(
+                          width: regularPadding,
+                          color:
+                              Theme.of(context).colorScheme.surfaceContainerLow,
+                        ),
                       showWgtTable(context) // width - 591 - 36)
                     ],
                   ),
                 )),
               ])),
     );
-  }
-
-  void addOrRemoveSelScale(int scaleId) {
-    if (mySelScaleIdList.contains(scaleId)) {
-      mySelScaleIdList.remove(scaleId);
-      PublicFunctions.stopWeight(scaleId);
-    } else {
-      mySelScaleIdList.add(scaleId);
-      PublicFunctions.getWeight(scaleId);
-    }
-    setState(() {}); // 强制刷新界面
   }
 
   String getScaleName(int scaleId) {
@@ -250,33 +495,228 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     return scaleName;
   }
 
+  void addOrRemoveSelScale(int scaleId) {
+    if (mySelScaleIdList.contains(scaleId)) {
+      mySelScaleIdList.remove(scaleId);
+      PublicFunctions.stopWeight(scaleId);
+
+      // 从缓存和keys中移除
+      _scaleWidgetCache.remove(scaleId);
+      _scaleWidgetKeys.remove(scaleId);
+    } else {
+      mySelScaleIdList.add(scaleId);
+      PublicFunctions.getWeight(scaleId);
+    }
+  }
+
   Widget showScaleWgt(BuildContext context, double width) {
-    return Container(
+    return SizedBox(
       width: width,
-      padding: const EdgeInsets.only(bottom: regularPadding),
-      color: Theme.of(context).colorScheme.surfaceContainerLow,
-      child: ListView.builder(
-        itemCount: mySelScaleIdList.length,
-        itemBuilder: (context, index) {
-          final scaleId = mySelScaleIdList[index];
-          // 无论设备 ID 是否已创建，都返回 ScaleItemWithListWidget
-          return ScaleWgtWidget(
-            key: ValueKey(scaleId), // 使用 ValueKey 确保状态正确更新
-            scaleId: scaleId,
-            scaleName: getScaleName(scaleId),
-          );
-        },
+      child: Column(
+        children: [
+          if (mySettingParam.wgtMode == 1)
+            Container(
+              padding:
+                  EdgeInsets.only(left: regularPadding, right: regularPadding),
+              height: 72,
+              child: Row(
+                children: [
+                  showSelectPluWidget(context, width - 2 * regularPadding, 40,
+                      (PluData pluData) {
+                    setState(() {
+                      selectedPluData = pluData;
+                    });
+                  })
+                ],
+              ),
+            ),
+          if (mySettingParam.wgtMode == 1)
+            Container(
+              height: regularPadding,
+              color: Theme.of(context).colorScheme.surfaceContainerLow,
+            ),
+          Expanded(
+              child: Container(
+            width: width,
+            padding: const EdgeInsets.only(bottom: regularPadding),
+            color: Theme.of(context).colorScheme.surfaceContainerLow,
+            child: ListView.builder(
+              itemCount: mySelScaleIdList.length,
+              itemBuilder: (context, index) {
+                final scaleId = mySelScaleIdList[index];
+
+                // 如果key不存在，创建新的GlobalKey
+                if (!_scaleWidgetKeys.containsKey(scaleId)) {
+                  _scaleWidgetKeys[scaleId] =
+                      GlobalKey<WeightDataCollectionPageState>();
+                }
+
+                // 如果缓存不存在，使用稳定的GlobalKey创建新Widget
+                if (!_scaleWidgetCache.containsKey(scaleId)) {
+                  _scaleWidgetCache[scaleId] = ScaleWgtWidget(
+                    key: _scaleWidgetKeys[scaleId]!,
+                    scaleId: scaleId,
+                    scaleName: getScaleName(scaleId),
+                  );
+                } else {}
+
+                return _scaleWidgetCache[scaleId]!;
+              },
+            ),
+          ))
+        ],
       ),
     );
   }
 
   showWgtTable(BuildContext context) {
     return Expanded(
-      flex: 7,
       child: Container(
           color: Theme.of(context).colorScheme.surface,
           child: Column(
             children: [
+              if (mySettingParam.wgtMode == 1)
+                Container(
+                  padding: EdgeInsets.only(
+                      left: regularPadding, right: regularPadding),
+                  height: 72,
+                  child: Row(
+                    children: [
+                      Text(
+                        localizedStrings.fTotalWeight,
+                        style: Theme.of(context).textTheme.labelMedium!.apply(
+                            color: Theme.of(context).colorScheme.onSurface),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Expanded(
+                          child: Container(
+                        alignment: Alignment.centerRight,
+                        child: ValueListenableBuilder<double>(
+                          valueListenable: totalWeightNotifier,
+                          builder: (context, totalWeight, _) {
+                            return FittedBox(
+                              fit: BoxFit.scaleDown, // 当文字溢出时缩小字体
+                              alignment: Alignment.centerRight,
+                              child: Text(
+                                totalWgtUnitCtl.text == 'g'
+                                    ? totalWeight.toStringAsFixed(0)
+                                    : totalWeight.toStringAsFixed(3),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.right,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headlineLarge!
+                                    .copyWith(
+                                      fontSize: 40,
+                                      color: mySelScaleIdList.isNotEmpty
+                                          ? Theme.of(context)
+                                              .colorScheme
+                                              .onTertiaryFixedVariant
+                                          : Theme.of(context).colorScheme.error,
+                                    ),
+                              ),
+                            );
+                          },
+                        ),
+                      )),
+                      Container(
+                        width: 60,
+                        alignment: Alignment.centerRight,
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: totalWgtUnitCtl.text,
+                            items:
+                                <String>['kg', 'g', 'lb'].map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge!
+                                        .apply(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface,
+                                        ),
+                                    textAlign: TextAlign.right),
+                              );
+                            }).toList(),
+                            onChanged: (newValue) {
+                              if (newValue != null) {
+                                setState(() {
+                                  totalWgtUnitCtl.text = newValue;
+                                });
+
+                                // 更新总重量和稳定状态
+                                updateTotalWeightAndStable();
+                              }
+                            },
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: regularPadding,
+                      ),
+                      ValueListenableBuilder<bool>(
+                        valueListenable: totalWgtStableNotifier,
+                        builder: (context, totalWgtStable, _) {
+                          return Tooltip(
+                            message: localizedStrings.gBtnSave,
+                            child: IconButton(
+                              iconSize: 28,
+                              color: Theme.of(context).colorScheme.primary,
+                              focusColor: Theme.of(context).colorScheme.outline,
+                              hoverColor: Theme.of(context)
+                                  .colorScheme
+                                  .onPrimary
+                                  .withValues(alpha: 0.1),
+                              style: IconButton.styleFrom(
+                                disabledBackgroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainerLow,
+                                backgroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .onTertiaryFixedVariant,
+                                shape: RoundedRectangleBorder(
+                                  // 设置为矩形形状
+                                  borderRadius: BorderRadius.zero, // 没有圆角，即正方形
+                                ),
+                                fixedSize: const Size(28, 28), // 设置固定大小
+                              ),
+                              onPressed: totalWgtStable
+                                  ? () {
+                                      sendDataToDb(
+                                        mySelScaleIdList,
+                                        scaleWgtMapDetail,
+                                        calculateTotalWeight(),
+                                        totalWgtUnitCtl.text,
+                                        selectedPluData,
+                                      );
+                                    }
+                                  : null,
+                              icon: getSvgIcon(
+                                saveSvgIcon(),
+                                28,
+                                28,
+                                totalWgtStable
+                                    ? Theme.of(context).colorScheme.onPrimary
+                                    : Theme.of(context)
+                                        .colorScheme
+                                        .surfaceContainerHighest,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              if (mySettingParam.wgtMode == 1)
+                Container(
+                  height: regularPadding,
+                  color: Theme.of(context).colorScheme.surfaceContainerLow,
+                ),
               Container(
                   padding: EdgeInsets.only(
                       left: regularPadding, right: regularPadding),
@@ -284,43 +724,182 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      showTextButton(
-                          context,
-                          32,
-                          localizedStrings.gBtnExport,
-                          () {},
-                          Theme.of(context).colorScheme.onPrimary,
-                          Theme.of(context).colorScheme.primary,
-                          Theme.of(context).colorScheme.onPrimary),
+                      Tooltip(
+                        message: localizedStrings.gBtnExport,
+                        child: IconButton(
+                          iconSize: 28,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          focusColor: Theme.of(context).colorScheme.outline,
+                          hoverColor: Theme.of(context)
+                              .colorScheme
+                              .onPrimary
+                              .withValues(alpha: 0.1),
+                          style: IconButton.styleFrom(
+                            disabledBackgroundColor: Theme.of(context)
+                                .colorScheme
+                                .surfaceContainerLow,
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
+                            shape: RoundedRectangleBorder(
+                              // 设置为矩形形状
+                              borderRadius: BorderRadius.zero, // 没有圆角，即正方形
+                            ),
+                            fixedSize: const Size(28, 28), // 设置固定大小
+                          ),
+                          onPressed: () async {
+                            final directory = Directory.current.path;
+                            String? outputFile =
+                                (await FilePicker.platform.saveFile(
+                              initialDirectory: directory,
+                              type: FileType.custom,
+                              dialogTitle: 'Output file:',
+                              allowedExtensions: ["csv"],
+                              fileName: 'report.csv',
+                            ));
+
+                            if (outputFile != null) {
+                              if (!outputFile.contains(".csv")) {
+                                outputFile = "$outputFile.csv";
+                              }
+                              PublicFunctions.exportAllRecords(
+                                  mySettingParam.scaleMode, outputFile);
+                            }
+                          },
+                          icon: getSvgIcon(
+                            exportSvgIcon(),
+                            28,
+                            28,
+                            Theme.of(context).colorScheme.onPrimary,
+                          ),
+                        ),
+                      ),
                       SizedBox(
                         width: regularPadding,
                       ),
-                      showTextButton(context, 32, localizedStrings.gBtnSetting,
-                          () {
-                        reportFieldsSettingDialog(context);
-                      },
-                          Theme.of(context).colorScheme.onPrimary,
-                          Theme.of(context).colorScheme.primary,
-                          Theme.of(context).colorScheme.onPrimary),
+                      Tooltip(
+                        message: localizedStrings.gBtnReportSetting,
+                        child: IconButton(
+                          iconSize: 28,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          focusColor: Theme.of(context).colorScheme.outline,
+                          hoverColor: Theme.of(context)
+                              .colorScheme
+                              .onPrimary
+                              .withValues(alpha: 0.1),
+                          style: IconButton.styleFrom(
+                            disabledBackgroundColor: Theme.of(context)
+                                .colorScheme
+                                .surfaceContainerLow,
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
+                            shape: RoundedRectangleBorder(
+                              // 设置为矩形形状
+                              borderRadius: BorderRadius.zero, // 没有圆角，即正方形
+                            ),
+                            fixedSize: const Size(28, 28), // 设置固定大小
+                          ),
+                          onPressed: () {
+                            reportFieldsSettingDialog(context);
+                          },
+                          icon: getSvgIcon(
+                            reportSettingSvgIcon(),
+                            28,
+                            28,
+                            Theme.of(context).colorScheme.onPrimary,
+                          ),
+                        ),
+                      ),
                       SizedBox(
                         width: regularPadding,
                       ),
-                      showTextButton(context, 32, 'parameter Setting', () {
-                        paramSettingDialog(context);
-                      },
-                          Theme.of(context).colorScheme.onPrimary,
-                          Theme.of(context).colorScheme.primary,
-                          Theme.of(context).colorScheme.onPrimary),
+                      Tooltip(
+                        message: localizedStrings.gParameterSettingsTitle,
+                        child: IconButton(
+                          iconSize: 28,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          focusColor: Theme.of(context).colorScheme.outline,
+                          hoverColor: Theme.of(context)
+                              .colorScheme
+                              .onPrimary
+                              .withValues(alpha: 0.1),
+                          style: IconButton.styleFrom(
+                            disabledBackgroundColor: Theme.of(context)
+                                .colorScheme
+                                .surfaceContainerLow,
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
+                            shape: RoundedRectangleBorder(
+                              // 设置为矩形形状
+                              borderRadius: BorderRadius.zero, // 没有圆角，即正方形
+                            ),
+                            fixedSize: const Size(28, 28), // 设置固定大小
+                          ),
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return ParameterSettingDialog();
+                                });
+                          },
+                          icon: getSvgIcon(
+                            settingSvgIcon(),
+                            28,
+                            28,
+                            Theme.of(context).colorScheme.onPrimary,
+                          ),
+                        ),
+                      ),
                       SizedBox(
                         width: regularPadding,
                       ),
-                      showTextButton(context, 32, localizedStrings.gBtnDelete,
-                          () {
-                        PublicFunctions.newDeleteAllRecords(0);
-                      },
-                          Theme.of(context).colorScheme.onPrimary,
-                          Theme.of(context).colorScheme.primary,
-                          Theme.of(context).colorScheme.onPrimary)
+                      Tooltip(
+                        message: localizedStrings.gBtnDeleteAll,
+                        child: IconButton(
+                          iconSize: 28,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          focusColor: Theme.of(context).colorScheme.outline,
+                          hoverColor: Theme.of(context)
+                              .colorScheme
+                              .onPrimary
+                              .withValues(alpha: 0.1),
+                          style: IconButton.styleFrom(
+                            disabledBackgroundColor: Theme.of(context)
+                                .colorScheme
+                                .surfaceContainerLow,
+                            backgroundColor:
+                                Theme.of(context).colorScheme.error,
+                            shape: RoundedRectangleBorder(
+                              // 设置为矩形形状
+                              borderRadius: BorderRadius.zero, // 没有圆角，即正方形
+                            ),
+                            fixedSize: const Size(28, 28), // 设置固定大小
+                          ),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              barrierDismissible: false, // 点击对话框外部不关闭对话框
+                              builder: (BuildContext context) {
+                                return ShowDeleteTipDialog(
+                                  title: localizedStrings.fTipTitle,
+                                  msg: localizedStrings.gTipConfirmDeleteAll,
+                                );
+                              },
+                            ).then((value) {
+                              if (value) {
+                                setState(() {
+                                  PublicFunctions.newDeleteAllRecords(0);
+                                });
+                              }
+                            });
+                          },
+                          icon: getSvgIcon(
+                            deleteSvgIcon(),
+                            28,
+                            28,
+                            Theme.of(context).colorScheme.onPrimary,
+                          ),
+                        ),
+                      ),
                     ],
                   )),
               Divider(
@@ -332,7 +911,7 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
               ),
               ChangeNotifierProvider<TableState>.value(
                 value: _tableState,
-                child: DataTableDemo(),
+                child: WgtDataTable(),
               ),
             ],
           )),
@@ -344,14 +923,13 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
       context: context,
       barrierDismissible: false, // 允许点击空白处关闭对话框
       builder: (context) {
-        return const ReportFeildsSettingDialog();
+        return const ReportSettingDialog();
       },
     ).then((value) {
       if (value) {
         setState(() {
-          print(111);
           for (var item in myReportFeildsMap.keys) {
-            _tableState._visibleColumns[item]!.isSelect =
+            _tableState.visibleColumns[item]!.isSelect =
                 myReportFeildsMap[item]!.isSelect;
           }
         });
@@ -381,16 +959,14 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
               children: [
                 subTitle(context, maxWidth, pageTitle),
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  Container(
-                    child: Text(
-                      mySettingParam.wgtMode == 0
-                          ? localizedStrings.gTipStandaloneMode
-                          : localizedStrings.gTipWeightSummationMode,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodySmall!
-                          .apply(color: Theme.of(context).colorScheme.primary),
-                    ),
+                  Text(
+                    mySettingParam.wgtMode == 0
+                        ? localizedStrings.gTipStandaloneMode
+                        : localizedStrings.gTipWeightSummationMode,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall!
+                        .apply(color: Theme.of(context).colorScheme.primary),
                   ),
                   const SizedBox(
                     width: largePadding,
@@ -413,630 +989,118 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
   }
 }
 
-//显示表格
+void sendDataToDb(
+  List<int> selScaleList,
+  Map<int, WeightInfo> scaleWgtMapDetail,
+  double totalWeight,
+  String baseUnit,
+  PluData? selPlu,
+) {
+  // 检查必要参数是否为空
+  if (selScaleList.isEmpty || scaleWgtMapDetail.isEmpty) return;
 
-class DataTableDemo extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final tableState = Provider.of<TableState>(context);
-    ScrollController scrollController = ScrollController();
-    ScrollController _horizontalScrollController = ScrollController();
+  // 提前构建 scaleId 到 Scale 对象的映射
+  final scaleIdToScaleMap = <int, Scale>{};
+  for (final scale in myAllScalesList) {
+    scaleIdToScaleMap[scale.scaleId] = scale;
+  }
 
-    // 延迟初始化数据
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (tableState.allData.isEmpty) {
-        // tableState.initializeData(100);
-      }
-    });
+  // 处理 PluData
+  final tempPlu = selPlu ??
+      PluData(
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+      );
 
-    return Expanded(
-      child: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints builder) {
-          final double width = builder.maxWidth; // 获取当前可用宽度
-          final double height = builder.maxHeight;
-          double minWidth = width;
-          int count = getItemNum(tableState);
-          if (count * 200 > width) {
-            minWidth = count * 200;
-          }
-          return SizedBox(
-            height: height,
-            child: Column(
-              children: [
-                Expanded(
-                  child: Container(
-                    padding: EdgeInsets.only(
-                        left: regularPadding, right: regularPadding),
-                    child: Scrollbar(
-                      controller:
-                          _horizontalScrollController, // 将 ScrollController 传递给 Scrollbar
-                      thumbVisibility: true, // 始终显示滚动条
-                      trackVisibility: true, // 始终显示滚动条轨道
-                      interactive: true, // 允许用户直接与滚动条交互
-                      child: SingleChildScrollView(
-                        controller:
-                            _horizontalScrollController, // 将 ScrollController 传递给 SingleChildScrollView
-                        scrollDirection: Axis.horizontal,
-                        child: SizedBox(
-                          width: minWidth,
-                          child: Column(
-                            children: [
-                              // 表头放在水平滚动组件内，垂直滚动组件外
-                              Container(
-                                height: 36,
-                                width: minWidth,
-                                color: Theme.of(context).colorScheme.surfaceDim,
-                                child: DataTable(
-                                    columns: _buildColumns(context, tableState),
-                                    rows: [],
-                                    showCheckboxColumn: false,
-                                    headingRowHeight: 36,
-                                    columnSpacing: 5,
-                                    horizontalMargin: 10),
-                              ),
-                              Expanded(
-                                child: ListView.builder(
-                                  shrinkWrap: true,
-                                  controller: scrollController,
-                                  physics: ClampingScrollPhysics(),
-                                  itemCount: tableState.currentPageData.length,
-                                  itemBuilder: (context, index) {
-                                    final item =
-                                        tableState.currentPageData[index];
-                                    return Column(
-                                      children: [
-                                        Container(
-                                          width: minWidth,
-                                          color: item.isExpanded
-                                              ? Theme.of(context)
-                                                  .colorScheme
-                                                  .surfaceDim
-                                              : Theme.of(context)
-                                                  .colorScheme
-                                                  .surface,
-                                          child: DataTable(
-                                              columns: _buildColumns(
-                                                  context, tableState),
-                                              rows: [
-                                                DataRow(
-                                                  cells: _buildDataCells(
-                                                      context,
-                                                      tableState,
-                                                      item),
-                                                  onSelectChanged: (_) =>
-                                                      tableState.toggleExpanded(
-                                                          item.id),
-                                                ),
-                                              ],
-                                              headingRowHeight: 0, // 隐藏主行的表头
-                                              showCheckboxColumn:
-                                                  false, // 隐藏主行的复选框
-                                              columnSpacing: 5,
-                                              horizontalMargin: 10),
-                                        ),
-                                        // 明细行
-                                        if (item.isExpanded)
-                                          ...item.scaleRec.details!.map(
-                                            (detail) => SizedBox(
-                                              width: minWidth,
-                                              // color: Colors.grey[100],
-                                              child: DataTable(
-                                                  columns: _buildColumns(
-                                                      context, tableState),
-                                                  rows: [
-                                                    DataRow(
-                                                      cells:
-                                                          _buildDetailDataCells(
-                                                        context,
-                                                        tableState,
-                                                        detail,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                  headingRowHeight:
-                                                      0, // 隐藏明细行的表头
-                                                  columnSpacing: 5,
-                                                  horizontalMargin: 10),
-                                            ),
-                                          ),
-                                      ],
-                                    );
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.first_page),
-                        onPressed: () => tableState.goToPage(1),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.chevron_left),
-                        onPressed: tableState.previousPage,
-                      ),
-                      Text(
-                        '第 ${tableState.currentPage} 页 / 共 ${(tableState._totalCount / tableState._itemsPerPage).ceil()} 页  ',
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.chevron_right),
-                        onPressed: tableState.nextPage,
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.last_page),
-                        onPressed: () => tableState.goToPage(
-                          (tableState._totalCount / tableState._itemsPerPage)
-                              .ceil(),
-                        ),
-                      ),
-                      Text(
-                        '${tableState._itemsPerPage}/页   共${tableState._totalCount}  ',
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
+  final newAddRec = ReqAddWgtRec()
+    ..mode = mySettingParam.scaleMode
+    ..detailRec = [];
+
+  // 构建 Header 通用部分
+  final headerCommon = Header(
+    id: '1',
+    plu: tempPlu.plu?.toString() ?? '',
+    productCode: tempPlu.productCode?.toString() ?? '',
+    itemCode: tempPlu.itemCode?.toString() ?? '',
+    category: tempPlu.category ?? '',
+    productName: tempPlu.productName ?? '',
+    generalUnit: tempPlu.generalUnit?.toString() ?? '',
+    taxType: tempPlu.taxType?.toString() ?? '',
+    price: tempPlu.price?.toString() ?? '',
+    unitWeight: tempPlu.unitWeight?.toString() ?? '',
+    pretare: tempPlu.pretare?.toString() ?? '',
+    limitHigh: tempPlu.limitHigh?.toString() ?? '',
+    limitLow: tempPlu.limitLow?.toString() ?? '',
+    weight: baseUnit == 'g'
+        ? totalWeight.toStringAsFixed(0)
+        : totalWeight.toString(),
+    weightUnit: baseUnit,
+    userNo: '0',
+    userName: 'admin',
+    scaleMode: mySettingParam.scaleMode.toString(),
+  );
+
+  if (scaleWgtMapDetail.length == 1) {
+    final scaleId = scaleWgtMapDetail.keys.first;
+    final tempScale = scaleIdToScaleMap[scaleId]!;
+    newAddRec.headRec = headerCommon.copyWith(
+      scaleModel: tempScale.scaleModel,
+      scaleSn: tempScale.scaleSn,
+      scaleName: tempScale.scaleName,
+    );
+    newAddRec.detailRec = [];
+  } else {
+    newAddRec.headRec = headerCommon.copyWith(
+      scaleModel: '',
+      scaleSn: '',
+      scaleName: '',
     );
   }
 
-  int getItemNum(TableState tableState) {
-    int itemNum = 0;
-    for (var item in tableState.visibleColumns.values) {
-      if (item.isSelect) {
-        itemNum += 1;
-      }
+  if (scaleWgtMapDetail.length > 1) {
+    // 构建 detailRec
+    int seq = 1;
+    for (final scaleId in scaleWgtMapDetail.keys) {
+      final tempScale = scaleIdToScaleMap[scaleId]!;
+      final weightInfo = scaleWgtMapDetail[scaleId]!;
+      final weight = baseUnit == 'g'
+          ? double.parse(weightInfo.weight).toStringAsFixed(0)
+          : weightInfo.weight;
+
+      newAddRec.detailRec!.add(NewWgtDetail(
+        no: seq,
+        scaleModel: tempScale.scaleModel,
+        scaleSn: tempScale.scaleSn,
+        weight: weight,
+        weightUnit: baseUnit,
+        scaleName: tempScale.scaleName,
+      ));
+      seq++;
     }
-    return itemNum;
   }
 
-  // 构建表格列
-  List<DataColumn> _buildColumns(BuildContext context, TableState tableState) {
-    return [
-      if (tableState.visibleColumns['Id']!.isSelect)
-        getDataColumn(context, tableState.visibleColumns['Id']!.showName,
-            width: 60),
-      if (tableState.visibleColumns['Date Time']!.isSelect)
-        getDataColumn(
-            context, tableState.visibleColumns['Date Time']!.showName),
-      if (tableState.visibleColumns['PLU']!.isSelect)
-        getDataColumn(context, tableState.visibleColumns['PLU']!.showName),
-      if (tableState.visibleColumns['Product Code']!.isSelect)
-        getDataColumn(
-            context, tableState.visibleColumns['Product Code']!.showName),
-      if (tableState.visibleColumns['Item Code']!.isSelect)
-        getDataColumn(
-            context, tableState.visibleColumns['Item Code']!.showName),
-      if (tableState.visibleColumns['PLU Name']!.isSelect)
-        getDataColumn(context, tableState.visibleColumns['PLU Name']!.showName),
-      if (tableState.visibleColumns['Price']!.isSelect)
-        getDataColumn(context, tableState.visibleColumns['Price']!.showName),
-      if (tableState.visibleColumns['GeneralUnit']!.isSelect)
-        getDataColumn(
-            context, tableState.visibleColumns['GeneralUnit']!.showName),
-      if (tableState.visibleColumns['TaxType']!.isSelect)
-        getDataColumn(context, tableState.visibleColumns['TaxType']!.showName),
-      if (tableState.visibleColumns['UnitWeight']!.isSelect)
-        getDataColumn(
-            context, tableState.visibleColumns['UnitWeight']!.showName),
-      if (tableState.visibleColumns['LimitHigh']!.isSelect)
-        getDataColumn(
-            context, tableState.visibleColumns['LimitHigh']!.showName),
-      if (tableState.visibleColumns['LimitLow']!.isSelect)
-        getDataColumn(context, tableState.visibleColumns['LimitLow']!.showName),
-      if (tableState.visibleColumns['Weight']!.isSelect)
-        getDataColumn(context, tableState.visibleColumns['Weight']!.showName),
-      if (tableState.visibleColumns['Weight Unit']!.isSelect)
-        getDataColumn(
-            context, tableState.visibleColumns['Weight Unit']!.showName),
-      if (tableState.visibleColumns['Pretare']!.isSelect)
-        getDataColumn(context, tableState.visibleColumns['Pretare']!.showName),
-      if (tableState.visibleColumns['Scale Name']!.isSelect)
-        getDataColumn(
-            context, tableState.visibleColumns['Scale Name']!.showName),
-      DataColumn(
-          label: Container(
-        width: 100,
-      )),
-    ];
-  }
-
-  DataColumn getDataColumn(BuildContext context, String title,
-      {double? width}) {
-    width ??= 200;
-    return DataColumn(
-        headingRowAlignment: MainAxisAlignment.start,
-        label: SizedBox(
-          width: width,
-          child: Text(
-            title,
-            style: Theme.of(context)
-                .textTheme
-                .bodySmall!
-                .apply(color: Theme.of(context).colorScheme.onSurface),
-            textAlign: TextAlign.left,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ));
-  }
-
-  // 构建主行数据单元格
-  List<DataCell> _buildDataCells(
-      BuildContext context, TableState tableState, DataItem item) {
-    final cells = <DataCell>[];
-
-    if (tableState.visibleColumns['Id']!.isSelect) {
-      cells.add(getDataCell(
-        context,
-        item.scaleRec.header!.recId.toString(),
-        width: 60,
-      ));
-    }
-    if (tableState.visibleColumns['Date Time']!.isSelect) {
-      cells.add(getDataCell(
-        context,
-        item.scaleRec.header!.createdAt!.toIso8601String(),
-      ));
-    }
-    if (tableState.visibleColumns['PLU']!.isSelect) {
-      cells.add(getDataCell(
-        context,
-        item.scaleRec.header!.plu.toString(),
-      ));
-    }
-    if (tableState.visibleColumns['Product Code']!.isSelect) {
-      cells.add(getDataCell(
-        context,
-        item.scaleRec.header!.productCode.toString(),
-      ));
-    }
-    if (tableState.visibleColumns['Item Code']!.isSelect) {
-      cells.add(getDataCell(
-        context,
-        item.scaleRec.header!.itemCode.toString(),
-      ));
-    }
-    if (tableState.visibleColumns['PLU Name']!.isSelect) {
-      cells.add(getDataCell(
-        context,
-        item.scaleRec.header!.productName.toString(),
-      ));
-    }
-    if (tableState.visibleColumns['Price']!.isSelect) {
-      cells.add(getDataCell(
-        context,
-        item.scaleRec.header!.price.toString(),
-      ));
-    }
-    if (tableState.visibleColumns['GeneralUnit']!.isSelect) {
-      cells.add(getDataCell(
-        context,
-        item.scaleRec.header!.generalUnit.toString(),
-      ));
-    }
-    if (tableState.visibleColumns['TaxType']!.isSelect) {
-      cells.add(getDataCell(
-        context,
-        item.scaleRec.header!.taxType.toString(),
-      ));
-    }
-    if (tableState.visibleColumns['UnitWeight']!.isSelect) {
-      cells.add(getDataCell(
-        context,
-        item.scaleRec.header!.unitWeight.toString(),
-      ));
-    }
-    if (tableState.visibleColumns['LimitHigh']!.isSelect) {
-      cells.add(getDataCell(
-        context,
-        item.scaleRec.header!.limitHigh.toString(),
-      ));
-    }
-    if (tableState.visibleColumns['LimitLow']!.isSelect) {
-      cells.add(getDataCell(
-        context,
-        item.scaleRec.header!.limitLow.toString(),
-      ));
-    }
-    if (tableState.visibleColumns['Weight']!.isSelect) {
-      cells.add(getDataCell(
-        context,
-        item.scaleRec.header!.weight.toString(),
-      ));
-    }
-    if (tableState.visibleColumns['Weight Unit']!.isSelect) {
-      cells.add(getDataCell(
-        context,
-        item.scaleRec.header!.weightUnit.toString(),
-      ));
-    }
-    if (tableState.visibleColumns['Pretare']!.isSelect) {
-      cells.add(getDataCell(
-        context,
-        item.scaleRec.header!.pretare.toString(),
-      ));
-    }
-    if (tableState.visibleColumns['Scale Name']!.isSelect) {
-      cells.add(getDataCell(
-        context,
-        item.scaleRec.header!.scaleName.toString(),
-      ));
-    }
-    cells.add(
-      DataCell(
-        item.scaleRec.details == null || item.scaleRec.details!.isEmpty
-            ? SizedBox(
-                // width: 100,
-                )
-            : SizedBox(
-                // width: 100,
-                child: IconButton(
-                  alignment: Alignment.center,
-                  icon: Icon(
-                      item.isExpanded ? Icons.expand_less : Icons.expand_more),
-                  onPressed: () => tableState.toggleExpanded(item.id),
-                ),
-              ),
-      ),
-    );
-    return cells;
-  }
-
-  DataCell getDataCell(BuildContext context, String title, {double? width}) {
-    width ??= 200;
-    return DataCell(SizedBox(
-      width: width,
-      child: Text(
-        title,
-        style: Theme.of(context)
-            .textTheme
-            .bodySmall!
-            .apply(color: Theme.of(context).colorScheme.onSurface),
-        textAlign: TextAlign.left,
-        overflow: TextOverflow.ellipsis,
-      ),
-    ));
-  }
-
-  // 构建明细行数据单元格
-  List<DataCell> _buildDetailDataCells(
-    BuildContext context,
-    TableState tableState,
-    Detail detail,
-  ) {
-    final cells = <DataCell>[];
-
-    if (tableState.visibleColumns['Id']!.isSelect) {
-      cells.add(getDataCell(context, '', width: 60));
-    }
-    if (tableState.visibleColumns['Date Time']!.isSelect) {
-      cells.add(getDataCell(
-        context,
-        '',
-      ));
-    }
-    if (tableState.visibleColumns['PLU']!.isSelect) {
-      cells.add(getDataCell(
-        context,
-        '',
-      ));
-    }
-    if (tableState.visibleColumns['Product Code']!.isSelect) {
-      cells.add(getDataCell(
-        context,
-        '',
-      ));
-    }
-    if (tableState.visibleColumns['Item Code']!.isSelect) {
-      cells.add(getDataCell(
-        context,
-        '',
-      ));
-    }
-    if (tableState.visibleColumns['PLU Name']!.isSelect) {
-      cells.add(getDataCell(
-        context,
-        '',
-      ));
-    }
-    if (tableState.visibleColumns['Price']!.isSelect) {
-      cells.add(getDataCell(
-        context,
-        '',
-      ));
-    }
-    if (tableState.visibleColumns['GeneralUnit']!.isSelect) {
-      cells.add(getDataCell(
-        context,
-        '',
-      ));
-    }
-    if (tableState.visibleColumns['TaxType']!.isSelect) {
-      cells.add(getDataCell(
-        context,
-        '',
-      ));
-    }
-    if (tableState.visibleColumns['UnitWeight']!.isSelect) {
-      cells.add(getDataCell(
-        context,
-        '',
-      ));
-    }
-    if (tableState.visibleColumns['LimitHigh']!.isSelect) {
-      cells.add(getDataCell(
-        context,
-        '',
-      ));
-    }
-    if (tableState.visibleColumns['LimitLow']!.isSelect) {
-      cells.add(getDataCell(
-        context,
-        '',
-      ));
-    }
-    if (tableState.visibleColumns['Weight']!.isSelect) {
-      cells.add(getDataCell(
-        context,
-        detail.weight.toString(),
-      ));
-    }
-    if (tableState.visibleColumns['Weight Unit']!.isSelect) {
-      cells.add(getDataCell(
-        context,
-        detail.weightUnit.toString(),
-      ));
-    }
-    if (tableState.visibleColumns['Pretare']!.isSelect) {
-      cells.add(getDataCell(
-        context,
-        '',
-      ));
-    }
-    if (tableState.visibleColumns['Scale Name']!.isSelect) {
-      cells.add(getDataCell(
-        context,
-        detail.scaleName!,
-      ));
-    }
-    cells.add(DataCell(SizedBox()));
-    return cells;
-  }
+  // 发送数据
+  final jsonString = reqAddWgtRecToJson(newAddRec);
+  PublicFunctions.addSummaryData(jsonString);
 }
 
-class DataItem {
-  int id;
-  ScaleRecInfo scaleRec;
-  bool isExpanded;
-
-  DataItem({
-    required this.id,
-    required this.scaleRec,
-    this.isExpanded = false,
-  });
-}
-
-// 表格状态管理
-class TableState with ChangeNotifier {
-  // 可显示的列配置
-  final Map<String, ReportShowName> _visibleColumns = {
-    'Id': ReportShowName('Id', true),
-    'Date Time': ReportShowName(localizedStrings.gRptDateTime, true),
-    'PLU': ReportShowName('PLU', true),
-    'Product Code': ReportShowName(localizedStrings.gPluPluCode, false),
-    'Item Code': ReportShowName(localizedStrings.gPluItemCode, false),
-    'PLU Name': ReportShowName(localizedStrings.gPluPluName, true),
-    'Price': ReportShowName(localizedStrings.gPluPrice, false),
-    'GeneralUnit': ReportShowName(localizedStrings.gPluWgtUnit, false),
-    'TaxType': ReportShowName(localizedStrings.gPluTaxType, false),
-    'UnitWeight': ReportShowName(localizedStrings.gPluUnitWgt, false),
-    'LimitHigh': ReportShowName(localizedStrings.gPluLimitHigh, false),
-    'LimitLow': ReportShowName(localizedStrings.gPluLimitLow, false),
-    'Weight': ReportShowName(localizedStrings.gRptWeight, true),
-    'Weight Unit': ReportShowName(localizedStrings.gRptWeightUnit, true),
-    'Pretare': ReportShowName(localizedStrings.gPluPretare, false),
-    // 'User NO.': ReportShowName('User NO.', false),
-    // 'User Name': ReportShowName('User Name', true),
-    'Scale Name': ReportShowName(localizedStrings.gScaleName, true),
-  };
-  Map<String, ReportShowName> get visibleColumns => _visibleColumns;
-
-  // 分页状态
-  int _currentPage = 1;
-  int get currentPage => _currentPage;
-  final int _itemsPerPage = 100;
-  int _totalCount = 0; // 总数据条数
-
-  // 模拟数据
-  final List<DataItem> _allData = [];
-  List<DataItem> get allData => _allData;
-
-  // 获取当前页数据
-  List<DataItem> get currentPageData {
-    final startIndex = (1 - 1) * _itemsPerPage;
-    final endIndex = min(startIndex + _itemsPerPage, _allData.length);
-    return _allData.sublist(startIndex, endIndex);
-  }
-
-  // 假设这是请求数据的方法，需要根据实际情况实现
-  void fetchData(int page, int pageSize) {
-    PublicFunctions.newGetRecords(
-      0,
-      page,
-      pageSize,
-      sortColumnName.toString(),
-      sortDirectValue.name,
-    );
-    return;
-  }
-
-  // 设置总数据条数
-  void setTotalCount(int totalCount) {
-    _totalCount = totalCount;
-    notifyListeners();
-  }
-
-  // 加载指定页的数据
-  Future<void> loadPage(int page) async {
-    if (page >= 1 && page <= (_totalCount / _itemsPerPage).ceil()) {
-      _currentPage = page;
-      _allData.clear();
-    }
-    fetchData(page, _itemsPerPage);
-  }
-
-  void addData(List<ScaleRecInfo> newData) {
-    _allData.clear();
-    for (var item in newData) {
-      _allData.add(DataItem(id: item.header!.recId!, scaleRec: item));
-    }
-    notifyListeners();
-  }
-
-  // 切换行展开状态
-  void toggleExpanded(int id) {
-    final index = _allData.indexWhere((item) => item.id == id);
-    if (index != -1) {
-      _allData[index].isExpanded = !_allData[index].isExpanded;
-      notifyListeners();
+Scale getScaleFormAll(int scaleId) {
+  for (var item in myAllScalesList) {
+    if (item.scaleId == scaleId) {
+      return item;
     }
   }
-
-  // 切换列显示状态
-  void toggleColumnVisibility(String columnKey) {
-    if (_visibleColumns.containsKey(columnKey)) {
-      _visibleColumns[columnKey]!.isSelect =
-          !_visibleColumns[columnKey]!.isSelect;
-      notifyListeners();
-    }
-  }
-
-  //分页控制方法
-  Future<void> previousPage() async {
-    if (_currentPage > 1) {
-      await loadPage(_currentPage - 1);
-    }
-  }
-
-  Future<void> nextPage() async {
-    if (_currentPage < (_totalCount / _itemsPerPage).ceil()) {
-      await loadPage(_currentPage + 1);
-    }
-  }
-
-  Future<void> goToPage(int page) async {
-    await loadPage(page);
-  }
+  return myAllScalesList[0];
 }

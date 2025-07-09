@@ -79,8 +79,9 @@ Future<void> setWindowOptions() async {
     center: true,
     backgroundColor: Colors.transparent,
     skipTaskbar: false, // 底部任务栏是否显示 true 不显示
-    titleBarStyle: TitleBarStyle.normal, // 标题栏的图标是否显示
-    windowButtonVisibility: false, // 没有作用呢
+    titleBarStyle:
+        TitleBarStyle.hidden, //隐藏控制栏，TitleBarStyle.hidden, // 标题栏的图标是否显示
+    windowButtonVisibility: true, // 没有作用呢
     title: '',
   );
   await windowManager.waitUntilReadyToShow(windowOptions, () async {
@@ -115,6 +116,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     connectService();
     return MaterialApp(
+
         //自定义主题
         theme: themeColor(colorTheme, savedDarkMode),
         // 国际化
@@ -153,7 +155,6 @@ class MyApp extends StatelessWidget {
 
     PublicFunctions.getLicense();
     PublicFunctions.getScaleList();
-    PublicFunctions.getWifiPwdList();
   }
 
   Future<void> connectService() async {

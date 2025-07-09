@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/icons.dart';
-import 'package:t_max/dialog/company_info_dialog.dart';
 import 'package:t_max/dialog/language_setting.dart';
-import 'package:t_max/pages/apps_page.dart';
-import 'package:t_max/pages/configuration_page.dart';
 import '../data/comscaleinfo_data.dart';
 import '../data/manager_scale_channel.dart';
 import 'package:t_max/data/timer_manager.dart';
@@ -503,10 +500,9 @@ class _TopRightIconsState extends State<TopRightIcons> {
               ),
               onTap: () {
                 // 延迟执行，避免菜单关闭时 UI 闪烁
-                Future.delayed(
-                  Duration.zero,
-                  () => _setLanguageDialog(context),
-                );
+                if (mounted) {
+                  _setLanguageDialog(context);
+                }
               },
             ),
             PopupMenuDivider(height: 1.0),

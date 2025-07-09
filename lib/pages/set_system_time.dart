@@ -11,7 +11,6 @@ import '../../functions/methods.dart';
 import '../data/common.dart';
 import '../data/language.dart';
 import '../data/timer_manager.dart';
-import '../widget/page_head.dart';
 import 'package:adoptive_calendar/adoptive_calendar.dart';
 
 class SetSystemTimePage extends StatefulWidget {
@@ -27,8 +26,8 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
 
   int clickedRow = -1; //点击的行
   int selScaleId = -1; //选择的秤ID
-  bool IsGettingTime = false; //是否正在获取时间
-  bool IsSettingTime = false; //是否正在设置时间
+  bool isGettingTime = false; //是否正在获取时间
+  bool isSettingTime = false; //是否正在设置时间
 
   DateTime customDate = DateTime.now();
   DateTime customTime = DateTime.now();
@@ -49,7 +48,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
     eventBus1 = eventBus.on<EventSetScaleTime>().listen((event) {
       if (mounted) {
         setState(() {
-          IsSettingTime = false;
+          isSettingTime = false;
         });
         myRespDataFromScale = event.obj;
         if (myRespDataFromScale.msgBody.isNotEmpty) {
@@ -57,7 +56,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
             // cntScaleTimerMgr.stopCntScaleTimer();
             PublicFunctions.getScaleTime(selScaleId);
             setState(() {
-              IsGettingTime = true;
+              isGettingTime = true;
             });
           } else {
             stopTimer();
@@ -74,7 +73,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
     eventBus2 = eventBus.on<EventGetScaleTime>().listen((event) {
       if (mounted) {
         setState(() {
-          IsGettingTime = false;
+          isGettingTime = false;
         });
         myRespDataFromScale = event.obj;
         if (myRespDataFromScale.msgBody.contains('ok')) {
@@ -90,6 +89,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                 stopTimer();
                 startTimer();
               });
+              showTipInfo(localizedStrings.fSuccessMsg, context);
             } else {
               stopTimer();
               showTipInfo(localizedStrings.gTipFailedGetTime, context);
@@ -119,6 +119,17 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
         // });
       }
     });
+
+    // 在页面构建完成后显示提示
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (myAllScalesList.isEmpty) {
+        showTipInfo(localizedStrings.gTipNoDeviceAddFirst, context);
+      } else {
+        if (selScaleId == -1) {
+          showTipInfo(localizedStrings.gTipSelectDeviceFirst, context);
+        }
+      }
+    });
   }
 
   @override
@@ -145,11 +156,12 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
 
   //切换的时候要修改掉秤的信息
   void changeScale(int scaleId) {
+    showTipInfo(localizedStrings.gTipGettingDeviceTime, context);
     setState(() {
       selScaleId = scaleId;
       PublicFunctions.getScaleTime(selScaleId);
       setState(() {
-        IsGettingTime = true;
+        isGettingTime = true;
       });
     });
   }
@@ -193,7 +205,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                               listWidth: scaleListWidth, // 列表宽度
                               selScaleId: selScaleId,
                               clickScale: (scale) {
-                                if (IsGettingTime || IsSettingTime) {
+                                if (isGettingTime || isSettingTime) {
                                   showTipInfo(
                                       localizedStrings.gTipPerformingOperation,
                                       context);
@@ -289,20 +301,26 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                                                   context,
                                                   btnHeight,
                                                   localizedStrings.gBtnSyncTime,
-                                                  () {
-                                                var timestamp = (DateTime.now()
-                                                            .toUtc()
-                                                            .millisecondsSinceEpoch /
-                                                        1000)
-                                                    .truncate();
-                                                // cntScaleTimerMgr.stopCntScaleTimer();
-                                                PublicFunctions.setScaleTime(
-                                                    timestamp.toString(),
-                                                    selScaleId);
-                                                setState(() {
-                                                  IsSettingTime = true;
-                                                });
-                                              },
+                                                  selScaleId == -1
+                                                      ? null
+                                                      : () {
+                                                          var timestamp = (DateTime
+                                                                          .now()
+                                                                      .toUtc()
+                                                                      .millisecondsSinceEpoch /
+                                                                  1000)
+                                                              .truncate();
+                                                          // cntScaleTimerMgr.stopCntScaleTimer();
+                                                          PublicFunctions
+                                                              .setScaleTime(
+                                                                  timestamp
+                                                                      .toString(),
+                                                                  selScaleId);
+                                                          setState(() {
+                                                            isSettingTime =
+                                                                true;
+                                                          });
+                                                        },
                                                   Theme.of(context)
                                                       .colorScheme
                                                       .primary,
@@ -355,48 +373,55 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                                               child: showTextButton(
                                                   context,
                                                   btnHeight,
-                                                  localizedStrings
-                                                      .gBtnSetTime, () async {
-                                                DateTime? pickedDate =
-                                                    await showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return AdoptiveCalendar(
-                                                      initialDate:
-                                                          DateTime.now(),
-                                                      selectedColor:
-                                                          Theme.of(context)
-                                                              .colorScheme
-                                                              .primary,
-                                                      action: true,
-                                                    );
-                                                  },
-                                                );
-                                                setState(() {
-                                                  if (pickedDate != null) {
-                                                    var timestamp = (pickedDate
-                                                                .toUtc()
-                                                                .millisecondsSinceEpoch /
-                                                            1000)
-                                                        .truncate();
+                                                  localizedStrings.gBtnSetTime,
+                                                  selScaleId == -1
+                                                      ? null
+                                                      : () async {
+                                                          DateTime? pickedDate =
+                                                              await showDialog(
+                                                            context: context,
+                                                            builder:
+                                                                (BuildContext
+                                                                    context) {
+                                                              return AdoptiveCalendar(
+                                                                initialDate:
+                                                                    DateTime
+                                                                        .now(),
+                                                                selectedColor: Theme.of(
+                                                                        context)
+                                                                    .colorScheme
+                                                                    .primary,
+                                                                action: true,
+                                                              );
+                                                            },
+                                                          );
+                                                          setState(() {
+                                                            if (pickedDate !=
+                                                                null) {
+                                                              var timestamp = (pickedDate
+                                                                          .toUtc()
+                                                                          .millisecondsSinceEpoch /
+                                                                      1000)
+                                                                  .truncate();
 
-                                                    // 停止计时器
-                                                    // cntScaleTimerMgr
-                                                    //     .stopCntScaleTimer();
+                                                              // 停止计时器
+                                                              // cntScaleTimerMgr
+                                                              //     .stopCntScaleTimer();
 
-                                                    // 同步时间到秤
-                                                    PublicFunctions
-                                                        .setScaleTime(
-                                                      timestamp.toString(),
-                                                      selScaleId,
-                                                    );
-                                                    setState(() {
-                                                      IsSettingTime = true;
-                                                    });
-                                                  }
-                                                });
-                                              },
+                                                              // 同步时间到秤
+                                                              PublicFunctions
+                                                                  .setScaleTime(
+                                                                timestamp
+                                                                    .toString(),
+                                                                selScaleId,
+                                                              );
+                                                              setState(() {
+                                                                isSettingTime =
+                                                                    true;
+                                                              });
+                                                            }
+                                                          });
+                                                        },
                                                   Theme.of(context)
                                                       .colorScheme
                                                       .primary,

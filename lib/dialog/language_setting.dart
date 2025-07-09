@@ -64,7 +64,7 @@ class LanguageSettingPageState extends State<LanguageSettingPage> {
       backgroundColor: Colors.transparent,
       child: Container(
         width: 610,
-        height: 260,
+        height: 350,
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(0),
@@ -107,7 +107,42 @@ class LanguageSettingPageState extends State<LanguageSettingPage> {
                               _changed,
                             )),
                       ],
-                    )))
+                    ))),
+            showTextButton(context, btnHeight, localizedStrings.gBtnConfirm,
+                () {
+              String value = languageCtl.text;
+              setState(() {
+                if (value == "中文") {
+                  S.load(const Locale('zh', 'CN'));
+                  saveLanguageSetting('zh_CN');
+                } else if (value == "English") {
+                  S.load(const Locale('en', 'US'));
+                  saveLanguageSetting('en_US');
+                } else if (value == "Русский") {
+                  S.load(const Locale('ru', 'RU'));
+                  saveLanguageSetting('ru_RU');
+                } else if (value == "日本語") {
+                  S.load(const Locale('ja', 'JP'));
+                  saveLanguageSetting('ja_JP');
+                } else if (value == "Italiano") {
+                  S.load(const Locale('it', 'IT'));
+                  saveLanguageSetting('it_IT');
+                } else if (value == "Português") {
+                  S.load(const Locale('pt', 'PT'));
+                  saveLanguageSetting('pt_PT');
+                } else if (value == "Français") {
+                  S.load(const Locale('fr', 'FR'));
+                  saveLanguageSetting('fr_FR');
+                }
+              });
+              Navigator.pop(context);
+            },
+                Theme.of(context).colorScheme.onPrimary,
+                Theme.of(context).colorScheme.primary,
+                Theme.of(context).colorScheme.primary),
+            SizedBox(
+              height: regularPadding,
+            )
           ],
         ),
       ),
@@ -118,30 +153,30 @@ class LanguageSettingPageState extends State<LanguageSettingPage> {
     if (value != null) {
       languageCtl.text = value;
       // SpUtil.putString(SpConstant.LANGUAGE, value);
-      setState(() {
-        if (value == "中文") {
-          S.load(const Locale('zh', 'CN'));
-          saveLanguageSetting('zh_CN');
-        } else if (value == "English") {
-          S.load(const Locale('en', 'US'));
-          saveLanguageSetting('en_US');
-        } else if (value == "Русский") {
-          S.load(const Locale('ru', 'RU'));
-          saveLanguageSetting('ru_RU');
-        } else if (value == "日本語") {
-          S.load(const Locale('ja', 'JP'));
-          saveLanguageSetting('ja_JP');
-        } else if (value == "Italiano") {
-          S.load(const Locale('it', 'IT'));
-          saveLanguageSetting('it_IT');
-        } else if (value == "Português") {
-          S.load(const Locale('pt', 'PT'));
-          saveLanguageSetting('pt_PT');
-        } else if (value == "Français") {
-          S.load(const Locale('fr', 'FR'));
-          saveLanguageSetting('fr_FR');
-        }
-      });
+      // setState(() {
+      //   if (value == "中文") {
+      //     S.load(const Locale('zh', 'CN'));
+      //     saveLanguageSetting('zh_CN');
+      //   } else if (value == "English") {
+      //     S.load(const Locale('en', 'US'));
+      //     saveLanguageSetting('en_US');
+      //   } else if (value == "Русский") {
+      //     S.load(const Locale('ru', 'RU'));
+      //     saveLanguageSetting('ru_RU');
+      //   } else if (value == "日本語") {
+      //     S.load(const Locale('ja', 'JP'));
+      //     saveLanguageSetting('ja_JP');
+      //   } else if (value == "Italiano") {
+      //     S.load(const Locale('it', 'IT'));
+      //     saveLanguageSetting('it_IT');
+      //   } else if (value == "Português") {
+      //     S.load(const Locale('pt', 'PT'));
+      //     saveLanguageSetting('pt_PT');
+      //   } else if (value == "Français") {
+      //     S.load(const Locale('fr', 'FR'));
+      //     saveLanguageSetting('fr_FR');
+      //   }
+      // });
     }
   }
 }

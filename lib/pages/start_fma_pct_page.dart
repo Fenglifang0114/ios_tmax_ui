@@ -5,7 +5,6 @@ import 'package:t_max/data/comscaleinfo_data.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/formula_scale_data.dart';
 import 'package:t_max/data/formula_wgt_process_data.dart';
-import 'package:t_max/data/manager_scale_channel.dart';
 import 'package:t_max/data/req_add_fma_rec_data.dart';
 import 'package:t_max/data/req_formula_data.dart';
 import 'package:t_max/data/reqweightdata_data.dart';
@@ -540,7 +539,9 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                             // 保存
                             saveFmaRec(isAllOK);
                             PublicFunctions.stopWeight(widget.selScaleId);
-                            Navigator.pop(context);
+                            if (mounted) {
+                              Navigator.pop(context);
+                            }
                           } else {
                             return;
                           }
@@ -919,9 +920,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                         //修改了此处
                         (data as FormulaWgtProcessData).no == 0
                             ? "-"
-                            : (data as FormulaWgtProcessData)
-                                .errorWgt
-                                .toString());
+                            : (data).errorWgt.toString());
                   },
                 ),
                 StickyTableColumn(
@@ -970,7 +969,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                                   : localizedStrings.fUnqualified,
                       style: TextStyle(
                         color: (data).isOK! == "no"
-                            ? Color(0xFF666666)
+                            ? Theme.of(context).colorScheme.onSurfaceVariant
                             : (data).isOK! == "ok"
                                 ? Theme.of(context)
                                     .colorScheme
@@ -2033,7 +2032,9 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
           needTotalWgt = 0.0;
           showTipInfo('配方数据错误！', context);
         }
-      } catch (e) {}
+      } catch (e) {
+        return; // 处理未找到匹配项的情况
+      }
     }
   }
 
@@ -2086,7 +2087,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
           Expanded(child: Text(localizedStrings.fOrderNo + ': $recRecNumber')),
           Icon(
             Icons.help,
-            color: Color(0xFFF4B837),
+            color: Theme.of(context).colorScheme.onTertiaryContainer,
           ),
           SizedBox(
             width: 20,

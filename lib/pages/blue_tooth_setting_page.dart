@@ -6,7 +6,6 @@ import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/widget/common_widget.dart';
-import 'package:t_max/widget/page_head.dart';
 import 'package:t_max/widget/scale_list.dart';
 import '../data/downloadresponse.dart';
 import '../data/manager_scale_channel.dart';
@@ -86,6 +85,16 @@ class BluetoothPageState extends State<BluetoothPage> {
           }
           _stopTimer();
         });
+      }
+    });
+    // 在页面构建完成后显示提示
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (comScalesList.isEmpty) {
+        showTipInfo(localizedStrings.gTipNoDeviceAddFirst, context);
+      } else {
+        if (selScaleId == -1) {
+          showTipInfo(localizedStrings.gTipSelectDeviceFirst, context);
+        }
       }
     });
   }
@@ -236,7 +245,7 @@ class BluetoothPageState extends State<BluetoothPage> {
                                   context,
                                   38,
                                   localizedStrings.gGetBluetoothName,
-                                  isSetting
+                                  isSetting || selScaleId == -1
                                       ? null
                                       : () {
                                           setState(() {
@@ -262,7 +271,7 @@ class BluetoothPageState extends State<BluetoothPage> {
                         context,
                         btnHeight,
                         localizedStrings.gModifyBluetoothName,
-                        isSetting
+                        isSetting || selScaleId == -1
                             ? null
                             : () {
                                 try {
@@ -302,7 +311,7 @@ class BluetoothPageState extends State<BluetoothPage> {
               SizedBox(
                 width: 700,
                 child: Row(children: [
-                  Container(
+                  SizedBox(
                       height: btnHeight,
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -359,7 +368,7 @@ class BluetoothPageState extends State<BluetoothPage> {
                         context,
                         btnHeight,
                         localizedStrings.gModifyBluetoothEmission,
-                        isSetting
+                        isSetting || selScaleId == -1
                             ? null
                             : () {
                                 try {

@@ -50,11 +50,8 @@ class SettingParam {
 }
 
 SettingParam mySettingParam = SettingParam(0, "", "", "", "", "", 0, "", "", 0);
-SettingParam myModeSettingNormal =
-    SettingParam(0, "", "", "", "", "", 0, "", "", 0);
-SettingParam myModeSettingCheck =
-    SettingParam(0, "", "", "", "", "", 0, "", "", 0);
-SettingParam myModeSettingTakeIn =
-    SettingParam(0, "", "", "", "", "", 0, "", "", 0);
-SettingParam myModeSettingTakeOut =
-    SettingParam(0, "", "", "", "", "", 0, "", "", 0);
+
+final String wgtCollectionMode = '0';
+final String wgtCheckMode = '1';
+final String wgtTakeInMode = '2';
+final String wgtTakeOutMode = '3';

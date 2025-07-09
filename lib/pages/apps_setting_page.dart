@@ -11,17 +11,17 @@ import 'package:t_max/data/license_data.dart';
 import 'package:t_max/data/parse_log.dart';
 
 import 'package:t_max/data/routes_data.dart';
-import 'package:t_max/dialog/app_common_data.dart';
+import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/dialog/license_info.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
+import 'package:t_max/widget/page_info.dart';
 import 'package:t_max/widget/show_license_res.dart';
 
 class AppsSettingPage extends StatefulWidget {
-  final Function(String) onNavigate;
-  final String lastRouteName;
-  const AppsSettingPage(
-      {super.key, required this.onNavigate, required this.lastRouteName});
+  const AppsSettingPage({
+    super.key,
+  });
 
   @override
   State<AppsSettingPage> createState() => _AppsSettingPageState();
@@ -31,6 +31,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
   // 模拟第二部分列表数据
 
   late List<RouteData> allAppsMenus = [];
+  late List<RouteData> allConfigMenus = [];
   TextEditingController activationFileCtl = TextEditingController();
   List<String> licList = [];
   dynamic eventbus1;
@@ -45,7 +46,15 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
   bool licenseKey = false;
   String moduleName = '';
   LicenseInfo newLicInfo = LicenseInfo(false, '', '', '');
-  final double iconSize = 24;
+  final double iconSize = 36;
+  bool pressedConfig = true;
+  final double minItemWidth = 410;
+  final double spacing = 30;
+  final double runSpacing = 20;
+  final double minItemHeight = 210;
+  final double freeAppHeight = 180;
+
+  bool isFilePickerBusy = false;
 
   //做一个map 存放功能和激活的日期，描述
 
@@ -55,6 +64,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
   @override
   void didChangeDependencies() {
     allAppsMenus = getAllAppsMenus();
+    allConfigMenus = getAllConfigMenus();
 
     super.didChangeDependencies();
   }
@@ -337,30 +347,45 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
           updateLicenseInfo();
         }
         break;
+      case ladeLic:
+        if (newLicInfo.isValid) {
+          if (isLongerValidityPeriod(myLadeLicInfo.liceseDate, dueDate)) {
+            myLadeLicInfo = newLicInfo;
+            updateLicenseInfo();
+            mapActiveMenusRes.value = Map.from(mapActiveMenusRes.value)
+              ..[ladeLic] = ShowAppActiveInfo(myLadeLicInfo.liceseDate, "ok");
+          } else {
+            mapActiveMenusRes.value = Map.from(mapActiveMenusRes.value)
+              ..[ladeLic] = ShowAppActiveInfo(myLadeLicInfo.liceseDate,
+                  localizedStrings.gTipDateNotUpdated);
+
+            updateResCtl();
+          }
+        } else {
+          myLadeLicInfo = newLicInfo;
+          mapActiveMenusRes.value = Map.from(mapActiveMenusRes.value)
+            ..[ladeLic] = ShowAppActiveInfo(myLadeLicInfo.liceseDate, "fail");
+          updateLicenseInfo();
+        }
+        break;
+
       default:
         break;
     }
   }
 
-  void updateLicenseInfo() {
-    PublicFunctions.updateLicense(licList[0]);
-  }
-
-  bool getIsAddedApp(int id) {
-    return selectedAppsPaidMenuIds.contains(id);
-  }
-
-  Widget buildAppInfo(BuildContext context, int index) {
+  Widget buildConfigInfo(BuildContext context, int id) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    if (allAppsMenus.isEmpty) return SizedBox();
+    if (allConfigMenus.isEmpty) return SizedBox();
 
-    bool isConfigCertified = getIsConfigCertified(allAppsMenus[index].id);
-    bool isAdded = getIsAddedApp(allAppsMenus[index].id);
+    bool isConfigCertified = myTConLicInfo.isValid;
+    bool isAdded = getIsAddedConfig(id);
+    bool isFreed = isFreeConfig(id);
+    RouteData tempApp =
+        allConfigMenus.firstWhere((element) => element.id == id);
 
     return Container(
-      // 使用 withValues 替代 withOpacity
-//加边框
       decoration: BoxDecoration(
           color: colorScheme.surface,
           border: Border.all(
@@ -370,53 +395,236 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
       padding: const EdgeInsets.all(regularPadding),
       child: Column(
         children: [
-          Container(
-            height: 30,
+          SizedBox(
+            height: 40,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 // 使用 ConstrainedBox 限制按钮的最大宽度为 300
-                getSvgIcon(allAppsMenus[index].iconPath, iconSize, iconSize,
+                getSvgIcon(tempApp.iconPath, iconSize, iconSize,
                     Theme.of(context).colorScheme.primary),
                 SizedBox(
-                  width: smallPadding,
-                ),
-                Flexible(
+                  width: 40,
+                  height: 40,
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      // 使用 Expanded 组件让前面的文本自适应空间
-                      Expanded(
-                        flex: 2,
-                        child: RichText(
-                          maxLines: 1, // 限制最多显示 1 行
-                          text: TextSpan(
-                            text: allAppsMenus[index].title,
-                            style: textTheme.bodySmall!
-                                .apply(color: colorScheme.onSurface),
-                          ),
-                          overflow: TextOverflow.ellipsis, // 超出部分用省略号表示
-                        ),
+                      // 使用 ConstrainedBox 限制按钮的最大宽度为 300
+                      SizedBox(
+                        child: IconButton(
+                            iconSize: 36,
+                            padding: EdgeInsets.zero,
+                            visualDensity: VisualDensity.compact,
+                            icon: Icon(getConfigSwithState(id)
+                                ? Icons.toggle_on_outlined
+                                : Icons.toggle_off_outlined),
+                            color: getConfigSwithState(id)
+                                ? Theme.of(context)
+                                    .colorScheme
+                                    .onTertiaryFixedVariant
+                                : Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant,
+                            onPressed: (isFreeConfig(id))
+                                ? () {
+                                    if (!isAdded) {
+                                      addSelectConfig(id);
+                                    } else {
+                                      removeSelectConfig(id);
+                                    }
+                                  }
+                                : (isConfigCertified)
+                                    ? () {
+                                        if (!isAdded) {
+                                          addSelectConfig(id);
+                                        } else {
+                                          removeSelectConfig(id);
+                                        }
+                                      }
+                                    : null),
                       ),
-                      // 使用 Expanded 组件让后面的文本自适应空间
-                      Expanded(
-                        flex: 1,
-                        child: RichText(
-                          textAlign: TextAlign.right,
-                          maxLines: 1, // 限制最多显示 1 行
-                          text: TextSpan(
-                            text: isFreeApp(allAppsMenus[index].id)
-                                ? localizedStrings.gTipFree
-                                : isConfigCertified
-                                    ? localizedStrings.gTipPerpetual
-                                    : localizedStrings.gTipUnactivated,
-                            style: textTheme.bodySmall!.apply(
-                                color: isFreeApp(allAppsMenus[index].id)
-                                    ? colorScheme.primary
-                                    : isConfigCertified
-                                        ? colorScheme.onTertiaryFixedVariant
-                                        : colorScheme.error),
-                          ),
-                          overflow: TextOverflow.ellipsis, // 超出部分用省略号表示
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: smallPadding,
+          ),
+          SizedBox(
+            height: 30,
+            child: Row(
+              children: [
+                // 使用 Expanded 组件让前面的文本自适应空间
+                Expanded(
+                  child: RichText(
+                    maxLines: 1, // 限制最多显示 1 行
+                    text: TextSpan(
+                      text: tempApp.title,
+                      style: textTheme.labelMedium!
+                          .apply(color: colorScheme.onSurface),
+                    ),
+                    overflow: TextOverflow.ellipsis, // 超出部分用省略号表示
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: smallPadding,
+          ),
+          Container(
+            height: 60,
+            alignment: Alignment.topLeft,
+            child: Text(
+              tempApp.subtitle,
+              maxLines: 3,
+              textAlign: TextAlign.left,
+              style: textTheme.bodySmall!
+                  .apply(color: colorScheme.onSurfaceVariant),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          if (!isFreed) Spacer(),
+          if (!isFreed)
+            Container(
+              alignment: Alignment.centerLeft,
+              height: 30,
+              child: Text(
+                isConfigCertified
+                    ? localizedStrings.gTipActivated
+                    : localizedStrings.gTipUnactivated,
+                style: textTheme.bodySmall!.apply(
+                    color: isConfigCertified
+                        ? colorScheme.onTertiaryFixedVariant
+                        : colorScheme.error),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  void updateLicenseInfo() {
+    PublicFunctions.updateLicense(licList[0]);
+  }
+
+  bool getIsAddedConfig(int id) {
+    return selectedConfigPaidMenuIds.contains(id);
+  }
+
+  bool getIsAddedApp(int id) {
+    return selectedAppsPaidMenuIds.contains(id);
+  }
+
+  bool getConfigSwithState(int id) {
+    bool isAdded = getIsAddedConfig(id);
+    bool isConfigCertified = myTConLicInfo.isValid;
+    if (isFreeConfig(id) && !isAdded) {
+      return false;
+    }
+    if (isFreeConfig(id) && isAdded) {
+      return true;
+    }
+
+    if (isConfigCertified && isAdded) {
+      return true;
+    }
+
+    if (isConfigCertified && !isAdded) {
+      return false;
+    }
+
+    return false;
+  }
+
+  bool getAppSwithState(int id) {
+    bool isAdded = getIsAddedApp(id);
+    bool isConfigCertified = getIsConfigCertified(id);
+    if (isFreeApp(id) && !isAdded) {
+      return false;
+    }
+    if (isFreeApp(id) && isAdded) {
+      return true;
+    }
+
+    if (isConfigCertified && isAdded) {
+      return true;
+    }
+
+    if (isConfigCertified && !isAdded) {
+      return false;
+    }
+
+    return false;
+  }
+
+  Widget buildAppInfo(BuildContext context, int id) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    if (allAppsMenus.isEmpty) return SizedBox();
+
+    bool isConfigCertified = getIsConfigCertified(id);
+    bool isAdded = getIsAddedApp(id);
+    bool isFreed = isFreeApp(id);
+    RouteData tempApp = allAppsMenus.firstWhere((element) => element.id == id);
+
+    return Container(
+      decoration: BoxDecoration(
+          color: colorScheme.surface,
+          border: Border.all(
+            width: 1,
+            color: colorScheme.surfaceContainerLow,
+          )),
+      padding: const EdgeInsets.all(regularPadding),
+      child: Column(
+        children: [
+          SizedBox(
+            height: 40,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // 使用 ConstrainedBox 限制按钮的最大宽度为 300
+                getSvgIcon(tempApp.iconPath, iconSize, iconSize,
+                    Theme.of(context).colorScheme.primary),
+                SizedBox(
+                  width: 40,
+                  height: 40,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      // 使用 ConstrainedBox 限制按钮的最大宽度为 300
+                      SizedBox(
+                        child: IconButton(
+                          iconSize: 36,
+                          padding: EdgeInsets.zero,
+                          visualDensity: VisualDensity.compact,
+                          icon: Icon(getAppSwithState(id)
+                              ? Icons.toggle_on_outlined
+                              : Icons.toggle_off_outlined),
+                          color: getAppSwithState(id)
+                              ? Theme.of(context)
+                                  .colorScheme
+                                  .onTertiaryFixedVariant
+                              : Theme.of(context).colorScheme.onSurfaceVariant,
+                          onPressed: isFreeApp(id)
+                              ? () {
+                                  if (!isAdded) {
+                                    addSelectApp(id);
+                                  } else {
+                                    removeSelectApp(id);
+                                  }
+                                }
+                              : isConfigCertified
+                                  ? () {
+                                      if (!isAdded) {
+                                        addSelectApp(id);
+                                      } else {
+                                        removeSelectApp(id);
+                                      }
+                                    }
+                                  : null,
                         ),
                       ),
                     ],
@@ -428,75 +636,90 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
           SizedBox(
             height: smallPadding,
           ),
-          Expanded(
-            child: Container(
-              // 使用 withValues 替代 withOpacity
-              alignment: Alignment.topLeft,
-              child: SelectableText(
-                allAppsMenus[index].subtitle,
-                textAlign: TextAlign.left,
-                style: textTheme.bodySmall!
-                    .apply(color: colorScheme.onSurfaceVariant),
-              ),
+          SizedBox(
+            height: 30,
+            child: Row(
+              children: [
+                // 使用 Expanded 组件让前面的文本自适应空间
+                Expanded(
+                  child: RichText(
+                    maxLines: 1, // 限制最多显示 1 行
+                    text: TextSpan(
+                      text: tempApp.title,
+                      style: textTheme.labelMedium!
+                          .apply(color: colorScheme.onSurface),
+                    ),
+                    overflow: TextOverflow.ellipsis, // 超出部分用省略号表示
+                  ),
+                ),
+              ],
             ),
           ),
           SizedBox(
             height: smallPadding,
           ),
           Container(
-            height: 30,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                // 使用 ConstrainedBox 限制按钮的最大宽度为 300
-                ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    maxWidth: 350,
-                  ),
-                  child: textAddAppBtn(
-                      colorScheme,
-                      textTheme,
-                      isFreeApp(allAppsMenus[index].id) && !isAdded
-                          ? () {
-                              setState(() {
-                                selectedAppsPaidMenuIds
-                                    .add(allAppsMenus[index].id);
-                              });
-                              writePageIdsToJson(
-                                  selectedConfigPaidMenuIds,
-                                  selectedAppsPaidMenuIds,
-                                  widget.lastRouteName);
-                            }
-                          : isConfigCertified && !isAdded
-                              ? () {
-                                  setState(() {
-                                    selectedAppsPaidMenuIds
-                                        .add(allAppsMenus[index].id);
-                                    print(selectedAppsPaidMenuIds.length);
-                                  });
-                                  writePageIdsToJson(
-                                      selectedConfigPaidMenuIds,
-                                      selectedAppsPaidMenuIds,
-                                      widget.lastRouteName);
-                                }
-                              : isFreeApp(allAppsMenus[index].id) && isAdded
-                                  ? null
-                                  : isConfigCertified && isAdded
-                                      ? null
-                                      : !isConfigCertified
-                                          ? null
-                                          : null,
-                      isAdded
-                          ? localizedStrings.gBtnAdded
-                          : localizedStrings.gBtnAddApp,
-                      isAdded),
-                ),
-              ],
+            height: 60,
+            alignment: Alignment.topLeft,
+            child: Text(
+              tempApp.subtitle,
+              maxLines: 3,
+              textAlign: TextAlign.left,
+              style: textTheme.bodySmall!
+                  .apply(color: colorScheme.onSurfaceVariant),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
+          if (!isFreed) Spacer(),
+          if (!isFreed)
+            Container(
+              alignment: Alignment.centerLeft,
+              height: 30,
+              child: Text(
+                isConfigCertified
+                    ? localizedStrings.gTipActivated
+                    : localizedStrings.gTipUnactivated,
+                style: textTheme.bodySmall!.apply(
+                    color: isConfigCertified
+                        ? colorScheme.onTertiaryFixedVariant
+                        : colorScheme.error),
+              ),
+            ),
         ],
       ),
     );
+  }
+
+  void addSelectConfig(int id) {
+    setState(() {
+      selectedConfigPaidMenuIds.add(id);
+    });
+    writePageIdsToJson(
+        selectedConfigPaidMenuIds, selectedAppsPaidMenuIds, '/settingsConfig');
+  }
+
+  void removeSelectConfig(int id) {
+    setState(() {
+      selectedConfigPaidMenuIds.remove(id);
+    });
+    writePageIdsToJson(
+        selectedConfigPaidMenuIds, selectedAppsPaidMenuIds, '/settingsConfig');
+  }
+
+  void addSelectApp(int id) {
+    setState(() {
+      selectedAppsPaidMenuIds.add(id);
+    });
+    writePageIdsToJson(
+        selectedConfigPaidMenuIds, selectedAppsPaidMenuIds, '/settingsConfig');
+  }
+
+  void removeSelectApp(int id) {
+    setState(() {
+      selectedAppsPaidMenuIds.remove(id);
+    });
+    writePageIdsToJson(
+        selectedConfigPaidMenuIds, selectedAppsPaidMenuIds, '/settingsConfig');
   }
 
   // 显示激活弹框，在弹框内选择文件
@@ -539,7 +762,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
                             child: Container(
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                localizedStrings.gBtnRenew,
+                                localizedStrings.gBtnActivate,
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyMedium!
@@ -575,39 +798,59 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
                         padding: EdgeInsets.all(largePadding),
                         child: Column(children: [
                           Expanded(
-                              child: buildActivatePart(colorScheme, textTheme,
-                                  () async {
-                            String filePath = '';
-                            try {
-                              FilePickerResult? result =
-                                  await FilePicker.platform.pickFiles(
-                                type: FileType.custom,
-                                allowedExtensions: ['txt'],
-                              );
-                              if (result != null && result.files.isNotEmpty) {
-                                filePath = result.files.single.path!;
-                              }
-                              setState(() {
-                                if (filePath != '') {
-                                  activationFileCtl.text = filePath;
-                                }
-                              });
-                            } catch (e) {
-                              setState(() {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                        content: const Text('Open fail',
-                                            style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight
-                                                    .bold)), ////此处需要秤回复
-                                        duration: const Duration(seconds: 5),
-                                        backgroundColor: Theme.of(context)
-                                            .colorScheme
-                                            .error));
-                              });
-                            }
-                          }, localizedStrings.gBtnSelectFile)),
+                              child: Container(
+                            alignment: Alignment.center,
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: 400,
+                                    child: showInputBox(
+                                        activationFileCtl,
+                                        localizedStrings
+                                            .gTipSelectActivationFile),
+                                  ),
+                                  SizedBox(
+                                    width: regularPadding,
+                                  ),
+                                  textBtn(context, colorScheme, textTheme,
+                                      () async {
+                                    // 开始选择文件时，将状态设置为忙碌
+                                    if (isFilePickerBusy) {
+                                      return;
+                                    }
+                                    isFilePickerBusy = true;
+
+                                    String filePath = '';
+                                    try {
+                                      FilePickerResult? result =
+                                          await FilePicker.platform.pickFiles(
+                                        type: FileType.custom,
+                                        allowedExtensions: ['txt'],
+                                      );
+                                      if (result != null &&
+                                          result.files.isNotEmpty) {
+                                        filePath = result.files.single.path!;
+                                      }
+                                      setState(() {
+                                        if (filePath != '') {
+                                          activationFileCtl.text = filePath;
+                                        }
+                                      });
+                                    } catch (e) {
+                                      showTipInfo(
+                                          localizedStrings.gTipFailToSelectFile,
+                                          context);
+                                    } finally {
+                                      // 无论选择文件操作成功还是失败，都将状态设置为空闲
+                                      setState(() {
+                                        isFilePickerBusy = false;
+                                      });
+                                    }
+                                  }, localizedStrings.gBtnSelectFile,
+                                      inputHeight)
+                                ]),
+                          )),
                         ]),
                       ),
                     ),
@@ -640,7 +883,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
                                       }
                                     : null,
                                 child: Text(
-                                  localizedStrings.gBtnRenew,
+                                  localizedStrings.gBtnActivate,
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyMedium!
@@ -664,7 +907,8 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
                                 backgroundColor: Theme.of(context)
                                     .colorScheme
                                     .surfaceContainerHighest,
-                                fixedSize: const Size(double.infinity, 48),
+                                fixedSize:
+                                    const Size(double.infinity, btnHeight),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.zero,
                                 ),
@@ -698,142 +942,565 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
     );
   }
 
+  Widget myPageHeadInfo(
+      dynamic context, double maxWidth, String pageTitle, String helpInfo) {
+    return Container(
+        height: pageTopTitleHeight,
+        color: Theme.of(context).colorScheme.surface,
+        child: Column(children: [
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                subTitle(context, maxWidth, pageTitle),
+                Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                  const SizedBox(
+                    width: largePadding,
+                  ),
+                  Row(children: [
+                    Text(
+                      localizedStrings.gSystemId + ": ",
+                      style: Theme.of(context).textTheme.bodySmall!.apply(
+                          color: Theme.of(context).colorScheme.onSurface),
+                    ),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    SelectableText(
+                      myLicenseInfo.pId,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge!
+                          .apply(color: Theme.of(context).colorScheme.primary),
+                    ),
+                  ]),
+                  const SizedBox(
+                    width: largePadding,
+                  ),
+                  textBtn(
+                    context,
+                    Theme.of(context).colorScheme,
+                    Theme.of(context).textTheme,
+                    showActivateDialog,
+                    localizedStrings.gBtnActivate,
+                    36,
+                  ),
+                  const SizedBox(
+                    width: largePadding,
+                  ),
+                  // PageInfoButton(helpInfo: helpInfo, onRefresh: () {}),
+                  const SizedBox(
+                    width: largePadding,
+                  ),
+                ])
+              ],
+            ),
+          ),
+          Divider(
+            color:
+                Theme.of(context).colorScheme.surfaceContainerLow, // 设置分割线的颜色
+            height: 1, // 设置分割线的高度
+            thickness: 1, // 设置分割线的粗细
+          ),
+        ]));
+  }
+
+  Widget subTitle(
+    dynamic context,
+    double maxWidth,
+    String pageTitle,
+  ) {
+    return Row(
+      children: [
+        SizedBox(
+          width: largePadding,
+        ),
+        SizedBox(
+          child: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: getSvgIcon(returnSvgIcon(), 28, 28,
+                  Theme.of(context).colorScheme.primary)),
+        ),
+        SizedBox(
+          width: regularPadding,
+        ),
+        SizedBox(
+          width: maxWidth,
+          child: Text(
+            pageTitle,
+            style: Theme.of(context).textTheme.labelMedium!.apply(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     allAppsMenus = getAllAppsMenus();
+    double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
       body: Column(children: [
         // 第一部分，固定高度 64
-
+        myPageHeadInfo(
+            context, width - 700, localizedStrings.gBtnConfigSetting, ''),
+        Container(
+          height: regularPadding,
+          color: Theme.of(context).colorScheme.surfaceContainerLow,
+        ),
         // 第二部分和第三部分按 13:10 比例分配剩余空间
         Expanded(
           child: Container(
               color: colorScheme.surface,
               child: Row(children: [
                 Container(
+                  width: 80,
+                  padding: EdgeInsets.only(top: regularPadding),
+                  color: colorScheme.surface,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      // 第一个图标按钮
+                      Tooltip(
+                        message: localizedStrings.menuConfiguration,
+                        child: InkWell(
+                          onTapUp: (_) {
+                            setState(() {
+                              pressedConfig = true; // 抬起时更新状态
+                            });
+                          },
+                          onTapCancel: () {
+                            setState(() {
+                              pressedConfig = false; // 取消点击时更新状态
+                            });
+                          },
+                          child: Container(
+                            width: 44,
+                            height: 44,
+                            color: pressedConfig
+                                ? colorScheme.primary
+                                : colorScheme.surfaceDim,
+                            child: Center(
+                              child: getSvgIcon(
+                                  configSettingSvgIcon(),
+                                  22,
+                                  22,
+                                  pressedConfig
+                                      ? colorScheme.onPrimary
+                                      : colorScheme.onSurface),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20), // 按钮间距
+                      // 第二个图标按钮
+                      Tooltip(
+                        message: localizedStrings.gTitleAppConfig,
+                        child: InkWell(
+                          onTapUp: (_) {
+                            setState(() {
+                              pressedConfig = false; // 抬起时更新状态
+                            });
+                          },
+                          onTapCancel: () {
+                            setState(() {
+                              pressedConfig = true; // 取消点击时更新状态
+                            });
+                          },
+                          child: Container(
+                            width: 44,
+                            height: 44,
+                            color: !pressedConfig
+                                ? colorScheme.primary
+                                : colorScheme.surfaceDim,
+                            child: Center(
+                              child: getSvgIcon(
+                                  appSettingSvgIcon(),
+                                  22,
+                                  22,
+                                  !pressedConfig
+                                      ? colorScheme.onPrimary
+                                      : colorScheme.onSurface),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
                   width: regularPadding,
                   color: colorScheme.surfaceDim,
                 ),
-                Expanded(
-                    child: Container(
-                  padding: EdgeInsets.only(
-                      left: regularPadding,
-                      right: regularPadding,
-                      bottom: regularPadding),
-                  child: Column(children: [
-                    Container(
-                        height: leftBarIconHeight,
-                        color: colorScheme.surface,
-                        child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Container(
-                                        child: Text(
-                                          localizedStrings.gTitleAppConfig,
-                                          style: textTheme.bodyLarge!.apply(
-                                              color: colorScheme.onSurface),
-                                        ),
-                                      ),
-                                      Container(
-                                          child: Row(children: [
-                                        Text(
-                                          localizedStrings.gSystemId + ": ",
-                                          style: textTheme.bodySmall!.apply(
-                                              color: colorScheme.onSurface),
-                                        ),
-                                        SizedBox(
-                                          width: 20,
-                                        ),
-                                        SelectableText(
-                                          myLicenseInfo.pId,
-                                          style: textTheme.bodyLarge!.apply(
-                                              color: colorScheme.primary),
-                                        ),
-                                      ])),
-                                    ]),
-                              ),
-                            ])),
-                    Expanded(
-                        flex: 13,
-                        child: Container(
-                          padding: EdgeInsets.only(
-                              left: regularPadding,
-                              right: regularPadding,
-                              bottom: regularPadding),
-                          child: LayoutBuilder(
-                            builder: (context, constraints) {
-                              // 计算可用高度
-                              final availableWidth = constraints.maxWidth;
-                              // 计算每个元素的宽度，减去元素间的间距后平分
-                              final itemWidth = (availableWidth - 2 * 30) / 3;
-                              return SingleChildScrollView(
-                                child: Wrap(
-                                  spacing: 30, // 元素间的水平间距
-                                  runSpacing: 20, // 元素间的垂直间距
-                                  children: List.generate(
-                                    allAppsMenus.length,
-                                    (index) {
-                                      return SizedBox(
-                                        width: itemWidth,
-                                        height: 138, // 固定元素高度
-                                        child: buildAppInfo(context, index),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        )),
-                    Container(
-                      height: 36,
-                      color: colorScheme.surface,
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            textBtn(
-                              context,
-                              colorScheme,
-                              textTheme,
-                              showActivateDialog,
-                              localizedStrings.gBtnActivate,
-                              36,
-                            ),
-                            SizedBox(
-                              width: regularPadding,
-                            ),
-                            textColorBtn(
-                              context,
-                              colorScheme,
-                              textTheme,
-                              () {
-                                widget.onNavigate('/settingsApps');
-                              },
-                              localizedStrings.gBtnBackToPrevious,
-                              36,
-                              Theme.of(context).colorScheme.onSurfaceVariant,
-                              Theme.of(context).colorScheme.onPrimary,
-                            ),
-                          ]),
-                    ),
-                  ]),
-                )),
+                if (pressedConfig) showConfigSettingWidget(),
+                if (!pressedConfig) showAppSettingsWidget()
               ])),
-        ),
-        Container(
-          height: regularPadding,
-          color: colorScheme.surfaceDim,
         ),
       ]),
     );
+  }
+
+  Widget showConfigSettingWidget() {
+    return Expanded(
+        child: Container(
+      padding: EdgeInsets.only(
+          left: regularPadding, right: regularPadding, bottom: regularPadding),
+      child: Column(children: [
+        Container(
+            height: 112,
+            color: Theme.of(context).colorScheme.surface,
+            child:
+                Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+              Container(
+                height: btnHeight,
+                alignment: Alignment.centerLeft,
+                child: Row(children: [
+                  Text(
+                    localizedStrings.menuConfiguration,
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelLarge!
+                        .apply(color: Theme.of(context).colorScheme.onSurface),
+                  ),
+                ]),
+              ),
+              Row(children: [
+                Expanded(
+                  child: SelectableText(
+                    localizedStrings.gSubtitleConfigFunctionCharge,
+                    style: Theme.of(context).textTheme.bodySmall!.apply(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant),
+                  ),
+                )
+              ]),
+            ])),
+        Expanded(
+            child: Container(
+                padding: EdgeInsets.only(
+                    left: regularPadding,
+                    right: regularPadding,
+                    bottom: regularPadding),
+                child: ListView(
+                  children: [
+                    Container(
+                      height: btnHeight,
+                      alignment: Alignment.centerLeft,
+                      child: Row(children: [
+                        Text(
+                          localizedStrings.gTipFreeConfiguration,
+                          style: Theme.of(context).textTheme.labelLarge!.apply(
+                              color: Theme.of(context).colorScheme.onSurface),
+                        ),
+                      ]),
+                    ),
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        // 计算可用高度
+                        final availableWidth = constraints.maxWidth;
+                        final itemWidth = calculateColumnCount(
+                            availableWidth, minItemWidth, spacing);
+                        // 过滤出免费的应用
+                        final freeConfigMenus = allConfigMenus
+                            .where(
+                                (menu) => freeConfigMenuIds.contains(menu.id))
+                            .toList();
+                        return SingleChildScrollView(
+                          child: Wrap(
+                            spacing: spacing, // 元素间的水平间距
+                            runSpacing: runSpacing, // 元素间的垂直间距
+
+                            children: List.generate(
+                              freeConfigMenus.length,
+                              (index) {
+                                return SizedBox(
+                                  width: itemWidth,
+                                  height: freeAppHeight, // 固定元素高度
+                                  child: buildConfigInfo(
+                                      context, freeConfigMenus[index].id),
+                                );
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    SizedBox(
+                      height: regularPadding,
+                    ),
+                    Container(
+                      height: btnHeight,
+                      alignment: Alignment.centerLeft,
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              localizedStrings.gTipAdvancedConfiguration,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelLarge!
+                                  .apply(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface),
+                            ),
+                            if (myTConLicInfo.isValid)
+                              Text(
+                                ' ${localizedStrings.gExpirationDate}  :  ${myTConLicInfo.liceseDate} ',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .apply(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface),
+                              ),
+                          ]),
+                    ),
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        // 计算可用高度
+                        final availableWidth = constraints.maxWidth;
+                        final itemWidth = calculateColumnCount(
+                            availableWidth, minItemWidth, spacing);
+                        // 过滤出免费的应用
+                        final paidConfigMenus = allConfigMenus
+                            .where(
+                                (menu) => paidConfigMenuIds.contains(menu.id))
+                            .toList();
+                        return SingleChildScrollView(
+                          child: Wrap(
+                            spacing: spacing, // 元素间的水平间距
+                            runSpacing: runSpacing, // 元素间的垂直间距
+
+                            children: List.generate(
+                              paidConfigMenus.length,
+                              (index) {
+                                return SizedBox(
+                                  width: itemWidth,
+                                  height: minItemHeight, // 固定元素高度
+                                  child: buildConfigInfo(
+                                      context, paidConfigMenus[index].id),
+                                );
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ))),
+      ]),
+    ));
+  }
+
+  Widget showAppSettingsWidget() {
+    return Expanded(
+        child: Container(
+      padding: EdgeInsets.only(
+          left: regularPadding, right: regularPadding, bottom: regularPadding),
+      child: Column(children: [
+        Container(
+            height: 112,
+            color: Theme.of(context).colorScheme.surface,
+            child:
+                Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+              Container(
+                height: btnHeight,
+                alignment: Alignment.centerLeft,
+                child: Row(children: [
+                  Text(
+                    localizedStrings.gTitleAppConfig,
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelLarge!
+                        .apply(color: Theme.of(context).colorScheme.onSurface),
+                  ),
+                ]),
+              ),
+              Row(children: [
+                Expanded(
+                  child: SelectableText(
+                    localizedStrings.gSubtitleAppsCharge,
+                    style: Theme.of(context).textTheme.bodySmall!.apply(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant),
+                  ),
+                )
+              ]),
+            ])),
+        Divider(height: 1, color: Theme.of(context).colorScheme.surfaceDim),
+        SizedBox(
+          height: regularPadding,
+        ),
+        Expanded(
+            child: Container(
+                padding: EdgeInsets.only(
+                    left: regularPadding,
+                    right: regularPadding,
+                    bottom: regularPadding),
+                child: ListView(
+                  children: [
+                    Container(
+                      height: btnHeight,
+                      alignment: Alignment.centerLeft,
+                      child: Row(children: [
+                        Text(
+                          localizedStrings.gTipFreeApplications,
+                          style: Theme.of(context).textTheme.labelLarge!.apply(
+                              color: Theme.of(context).colorScheme.onSurface),
+                        ),
+                      ]),
+                    ),
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        // 计算可用高度
+                        final availableWidth = constraints.maxWidth;
+                        final itemWidth = calculateColumnCount(
+                            availableWidth, minItemWidth, spacing);
+                        // 过滤出免费的应用
+                        final freeAppsMenus = allAppsMenus
+                            .where((menu) => freeAppMenuIds.contains(menu.id))
+                            .toList();
+                        return SingleChildScrollView(
+                          child: Wrap(
+                            spacing: spacing, // 元素间的水平间距
+                            runSpacing: runSpacing, // 元素间的垂直间距
+
+                            children: List.generate(
+                              freeAppsMenus.length,
+                              (index) {
+                                return SizedBox(
+                                  width: itemWidth,
+                                  height: freeAppHeight, // 固定元素高度
+                                  child: buildAppInfo(
+                                      context, freeAppsMenus[index].id),
+                                );
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    SizedBox(
+                      height: regularPadding,
+                    ),
+                    Container(
+                      height: btnHeight,
+                      alignment: Alignment.centerLeft,
+                      child: Row(children: [
+                        Text(
+                          localizedStrings.gTipRetailApplications,
+                          style: Theme.of(context).textTheme.labelLarge!.apply(
+                              color: Theme.of(context).colorScheme.onSurface),
+                        ),
+                      ]),
+                    ),
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        // 计算可用高度
+
+                        final availableWidth = constraints.maxWidth;
+
+                        final itemWidth = calculateColumnCount(
+                            availableWidth, minItemWidth, spacing);
+
+                        final retailAppsMenus = allAppsMenus
+                            .where((menu) => retailAppMenuIds.contains(menu.id))
+                            .toList();
+                        return SingleChildScrollView(
+                          child: Wrap(
+                            spacing: spacing, // 元素间的水平间距
+                            runSpacing: runSpacing, // 元素间的垂直间距
+                            children: List.generate(
+                              retailAppsMenus.length,
+                              (index) {
+                                return SizedBox(
+                                  width: itemWidth,
+                                  height: minItemHeight, // 固定元素高度
+                                  child: buildAppInfo(
+                                      context, retailAppsMenus[index].id),
+                                );
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    SizedBox(
+                      height: regularPadding,
+                    ),
+                    Container(
+                      height: btnHeight,
+                      alignment: Alignment.centerLeft,
+                      child: Row(children: [
+                        Text(
+                          localizedStrings.gTipIndustrialApplications,
+                          style: Theme.of(context).textTheme.labelLarge!.apply(
+                              color: Theme.of(context).colorScheme.onSurface),
+                        ),
+                      ]),
+                    ),
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        // 计算可用高度
+                        final availableWidth = constraints.maxWidth;
+
+                        final itemWidth = calculateColumnCount(
+                            availableWidth, minItemWidth, spacing);
+
+                        final industrialAppsMenus = allAppsMenus
+                            .where((menu) =>
+                                industrialAppMenuIds.contains(menu.id))
+                            .toList();
+                        return SingleChildScrollView(
+                          child: Wrap(
+                            spacing: spacing, // 元素间的水平间距
+                            runSpacing: runSpacing, // 元素间的垂直间距
+                            children: List.generate(
+                              industrialAppsMenus.length,
+                              (index) {
+                                return SizedBox(
+                                  width: itemWidth,
+                                  height: minItemHeight, // 固定元素高度
+                                  child: buildAppInfo(
+                                      context, industrialAppsMenus[index].id),
+                                );
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ))),
+      ]),
+    ));
+  }
+
+  // 定义一个函数来计算列数
+  double calculateColumnCount(
+      double availableWidth, double minItemWidth, double spacing) {
+    int count = 0;
+
+    for (int columns = 3; columns <= 20; columns++) {
+      final calculatedWidth =
+          (availableWidth - (columns - 1) * spacing) / columns;
+      if (calculatedWidth < minItemWidth) {
+        count = columns - 1;
+        break;
+      }
+    }
+
+    // 计算每个元素的宽度
+    final itemWidth = (availableWidth - (count - 1) * spacing) / count;
+    return itemWidth;
   }
 
   void showLicenseResDialog() {
@@ -841,7 +1508,6 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
       context: context,
       barrierDismissible: false, // 点击对话框外部不关闭对话框
       builder: (BuildContext context) {
-        // 将 ValueNotifier 传递给对话框
         return ShowLicenseResDialog(
           mapActiveMenusRes: mapActiveMenusRes,
         );
@@ -851,22 +1517,32 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
     });
   }
 
-  Widget buildActivatePart(ColorScheme colorScheme, TextTheme textTheme,
-      VoidCallback? func, String name) {
-    return Container(
-      alignment: Alignment.center,
-      child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        SizedBox(
-          width: 400,
-          child: showInputBox(
-              activationFileCtl, localizedStrings.gTipSelectActivationFile),
+  Widget textBtn(
+    BuildContext context,
+    ColorScheme colorScheme,
+    TextTheme textTheme,
+    VoidCallback? func,
+    String name,
+    double height,
+  ) {
+    return ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          foregroundColor: colorScheme.onPrimary,
+          backgroundColor: colorScheme.primary,
+          fixedSize: Size(double.infinity, height),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.zero,
+          ),
         ),
-        SizedBox(
-          width: regularPadding,
-        ),
-        textBtn(context, colorScheme, textTheme, func, name, inputHeight)
-      ]),
-    );
+        onPressed: func,
+        child: Text(
+          name,
+          style: Theme.of(context).textTheme.bodySmall!.apply(
+              color: func == null
+                  ? colorScheme.surfaceContainerHighest
+                  : colorScheme.onPrimary),
+          overflow: TextOverflow.ellipsis,
+        ));
   }
 
   showInputBox(TextEditingController controller, String hintText) {
@@ -913,12 +1589,10 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        child: Text(
-                          title,
-                          style: textTheme.bodyLarge!
-                              .apply(color: colorScheme.onSurface),
-                        ),
+                      Text(
+                        title,
+                        style: textTheme.bodyLarge!
+                            .apply(color: colorScheme.onSurface),
                       ),
                     ]),
               ),
@@ -972,29 +1646,5 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
         return;
       }
     }
-  }
-
-  Widget textAddAppBtn(ColorScheme colorScheme, TextTheme textTheme,
-      VoidCallback? func, String name, bool isAdded) {
-    return ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          foregroundColor: colorScheme.onPrimary,
-          backgroundColor: isAdded ? Color(0xFFFFF3F3) : colorScheme.scrim,
-          fixedSize: const Size(double.infinity, 30),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.zero,
-          ),
-        ),
-        onPressed: func,
-        child: Text(
-          name,
-          style: Theme.of(context).textTheme.bodySmall!.apply(
-              color: func == null
-                  ? Theme.of(context).colorScheme.surfaceContainerHighest
-                  : isAdded
-                      ? colorScheme.error
-                      : colorScheme.primary),
-          overflow: TextOverflow.ellipsis,
-        ));
   }
 }

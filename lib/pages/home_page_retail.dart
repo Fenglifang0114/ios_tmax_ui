@@ -707,8 +707,7 @@ class _RetailHomePageState extends State<RetailHomePage>
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  const TransactionReportPage()),
+                              builder: (context) => const RetailReportPage()),
                         ).then((value) => _updateStatus());
                       },
                       child: MouseRegion(

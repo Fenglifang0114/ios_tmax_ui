@@ -3,8 +3,6 @@
 // 自定义进度条组件
 import 'package:flutter/material.dart';
 
-import '../data/formula_common.dart';
-
 class CustomProgressBar extends StatelessWidget {
   final double value;
   final double minValue;

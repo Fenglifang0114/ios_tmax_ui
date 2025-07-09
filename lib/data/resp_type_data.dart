@@ -2,10 +2,8 @@ import 'dart:convert';
 import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/data/settingparam_data.dart';
 import '../eventbus/eventbus.dart';
-import 'comscaleinfo_data.dart';
 import 'downloadresponse.dart';
 import 'ipinfodata.dart';
-import 'manager_scale_channel.dart';
 import 'record_data.dart';
 import 'reqweightdata_data.dart';
 import 'respdata_data.dart';
@@ -85,6 +83,7 @@ class RespMsgType {
   static const String respCalValue = 'resp_cal_value';
   static const String respSetGaduationValue = 'resp_set_gaduation_value';
   static const String respSetDecimalValue = 'resp_set_decimal_value';
+  static const String respWifiPwdAdd = 'resp_wifi_pwd_add';
 
   static final Map<String, Function> handlers = {
     RespMsgType.respGetUIConf: handleGetUIConf,
@@ -144,15 +143,7 @@ class RespMsgType {
   static void handleGetUIConf(dynamic data) {
     final jsonResponse = json.decode(data['MsgBody']);
     mySettingParam = SettingParam.fromJson(jsonResponse);
-    if (mySettingParam.scaleMode == 0) {
-      myModeSettingNormal = mySettingParam;
-    } else if (mySettingParam.scaleMode == 1) {
-      myModeSettingCheck = mySettingParam;
-    } else if (mySettingParam.scaleMode == 2) {
-      myModeSettingTakeIn = mySettingParam;
-    } else if (mySettingParam.scaleMode == 3) {
-      myModeSettingTakeOut = mySettingParam;
-    }
+
     eventBus.fire(EventSettingParam(mySettingParam));
   }
 
@@ -500,7 +491,7 @@ class RespMsgType {
   static void handleRespCheckSerialPort(dynamic data) {
     final jsonStrings = data['MsgBody'];
     int id = data['ScaleId'];
-    if (!jsonStrings.contains('fail')) {
+    if (!jsonStrings.contains('fail') && !jsonStrings.contains('timeout')) {
       myFactoryInfoFromScale =
           FactoryInfoFromScale.fromJson(json.decode(jsonStrings));
     } else {

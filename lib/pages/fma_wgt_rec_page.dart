@@ -58,7 +58,7 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
   ScrollController scrollController = ScrollController();
   ScrollController scrollController1 = ScrollController();
 
-  List<bool> _isExpanded = [];
+  final List<bool> _isExpanded = [];
   bool _isAllSelected = false;
   late List<bool> _selectedRows;
 
@@ -533,7 +533,7 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
           ),
           Icon(
             Icons.help,
-            color: Color(0xFFF4B837),
+            color: Theme.of(context).colorScheme.onTertiaryContainer,
           ),
           SizedBox(
             width: 20,
@@ -679,7 +679,10 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
       // 将 CSV 内容写入文件
       await file.writeAsString(csv);
       // 提示导出成功
-      showTipInfo(localizedStrings.fSaveSuccess, context);
+      if (mounted) // 确保组件仍然挂载
+      {
+        showTipInfo(localizedStrings.fSaveSuccess, context);
+      }
     } catch (e) {
       // 提示导出失败
       // print("Export failed: $e");
@@ -725,23 +728,6 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
           width: 20,
         ),
       ]),
-    );
-  }
-}
-
-class _ClearButton extends StatelessWidget {
-  const _ClearButton({required this.controller});
-
-  final TextEditingController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      icon: const Icon(
-        Icons.clear,
-        size: 20,
-      ),
-      onPressed: () => controller.clear(),
     );
   }
 }

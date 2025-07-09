@@ -24,14 +24,14 @@ const String srvUninstalled = "status1"; //服务未安装
 const String srvinstalled = "status2"; //服务已安装  服务未启动
 const String srvStarted = "status3"; //服务已安装 服务已启动
 
-class TransactionReportPage extends StatefulWidget {
-  const TransactionReportPage({super.key});
+class RetailReportPage extends StatefulWidget {
+  const RetailReportPage({super.key});
 
   @override
-  TransactionReportPageState createState() => TransactionReportPageState();
+  RetailReportPageState createState() => RetailReportPageState();
 }
 
-class TransactionReportPageState extends State<TransactionReportPage> {
+class RetailReportPageState extends State<RetailReportPage> {
   final ScrollController _scrollController = ScrollController();
   late final ScrollController _scrollController1 = ScrollController();
 
@@ -400,7 +400,7 @@ class TransactionReportPageState extends State<TransactionReportPage> {
                         ),
                         SizedBox(
                           width: maxWidth - 20,
-                          height: maxheight - 200,
+                          height: maxheight - 230,
                           child: Scrollbar(
                             controller: _scrollController,
                             child: SingleChildScrollView(
@@ -446,8 +446,6 @@ class TransactionReportPageState extends State<TransactionReportPage> {
                   ),
                 )
               ])),
-      drawer: Drawer(child: myDrawer() // showNetScaleList(),
-          ),
     );
   }
 

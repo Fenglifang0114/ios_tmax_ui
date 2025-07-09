@@ -4,13 +4,38 @@ import 'package:flutter/material.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/language.dart';
 
+// 用于存储当前显示的对话框的上下文
+BuildContext? _currentDialogContext;
+
 void showTipInfo(String message, BuildContext context) {
+  // 如果有当前显示的对话框，先关闭它
+  if (_currentDialogContext != null &&
+      Navigator.canPop(_currentDialogContext!)) {
+    Navigator.pop(_currentDialogContext!);
+  }
+
   showDialog(
     context: context,
-    barrierColor: Colors.transparent, //设置透明底色
-    builder: (BuildContext context) {
-      return CustomDialogView(
-        message: message,
+    barrierColor: Colors.transparent, // 设置透明底色
+    builder: (BuildContext dialogContext) {
+      // 记录当前对话框的上下文
+      _currentDialogContext = dialogContext;
+      return WillPopScope(
+        onWillPop: () async {
+          // 当对话框关闭时，清除当前对话框上下文
+          _currentDialogContext = null;
+          return true;
+        },
+        child: CustomDialogView(
+          message: message,
+          onClose: () {
+            // 关闭对话框时，清除当前对话框上下文
+            _currentDialogContext = null;
+            if (Navigator.canPop(dialogContext)) {
+              Navigator.pop(dialogContext);
+            }
+          },
+        ),
       );
     },
   );
@@ -18,7 +43,9 @@ void showTipInfo(String message, BuildContext context) {
 
 class CustomDialogView extends StatefulWidget {
   final String message;
-  const CustomDialogView({super.key, required this.message});
+  final VoidCallback onClose;
+  const CustomDialogView(
+      {super.key, required this.message, required this.onClose});
 
   @override
   State<CustomDialogView> createState() => _CustomDialogViewState();
@@ -31,9 +58,8 @@ class _CustomDialogViewState extends State<CustomDialogView> {
   void initState() {
     super.initState();
     _timer = Timer(const Duration(seconds: 3), () {
-      if (mounted && Navigator.canPop(context)) {
-        Navigator.pop(context);
-      }
+      // 时间到后调用关闭回调
+      widget.onClose();
     });
   }
 
@@ -74,6 +100,77 @@ class _CustomDialogViewState extends State<CustomDialogView> {
     );
   }
 }
+
+// void showTipInfo(String message, BuildContext context) {
+//   showDialog(
+//     context: context,
+//     barrierColor: Colors.transparent, //设置透明底色
+//     builder: (BuildContext context) {
+//       return CustomDialogView(
+//         message: message,
+//       );
+//     },
+//   );
+// }
+
+// class CustomDialogView extends StatefulWidget {
+//   final String message;
+//   const CustomDialogView({super.key, required this.message});
+
+//   @override
+//   State<CustomDialogView> createState() => _CustomDialogViewState();
+// }
+
+// class _CustomDialogViewState extends State<CustomDialogView> {
+//   late Timer _timer;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _timer = Timer(const Duration(seconds: 3), () {
+//       if (mounted && Navigator.canPop(context)) {
+//         Navigator.pop(context);
+//       }
+//     });
+//   }
+
+//   @override
+//   void dispose() {
+//     _timer.cancel();
+//     super.dispose();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Center(
+//       child: Container(
+//         padding: const EdgeInsets.all(10),
+//         width: 500,
+//         height: 80,
+//         color: const Color.fromRGBO(0, 0, 0, 0.8),
+//         child: Row(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           crossAxisAlignment: CrossAxisAlignment.center,
+//           children: [
+//             Expanded(
+//                 child: Center(
+//               child: Text(
+//                 widget.message,
+//                 style: const TextStyle(
+//                   color: Colors.white,
+//                   fontSize: 16,
+//                   fontWeight: FontWeight.normal,
+//                   decoration: TextDecoration.none,
+//                   overflow: TextOverflow.ellipsis,
+//                 ),
+//               ),
+//             ))
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 // 定义提示单位不对的弹框
 class ShowNormalTipDialog extends StatefulWidget {

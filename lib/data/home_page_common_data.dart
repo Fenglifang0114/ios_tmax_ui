@@ -33,6 +33,7 @@ const wgtIconSize = 24.0; //顶部菜单图标大小
 const appScaleListWidth = 234.0; //app里面下拉秤的列表宽度
 
 String appIconPath = 'assets/images/app.png';
+String logoIconPath = 'assets/images/logo.png';
 
 // Duration for home page elements to fade in.
 const Duration entranceAnimationDuration = Duration(milliseconds: 200);
@@ -77,14 +78,29 @@ Set<int> paidConfigMenuIds = {
 // 存储用户选择要添加的付费菜单 ID
 Set<int> selectedAppsPaidMenuIds = {
   MenuId.weightModePage.index,
-  MenuId.transactionReportPage.index,
+  MenuId.retailReportPage.index,
 };
 
 //免费的appId
 Set<int> freeAppMenuIds = {
   MenuId.weightModePage.index,
-  MenuId.downloadLabelPage.index,
-  MenuId.transactionReportPage.index,
+  MenuId.retailReportPage.index,
+};
+
+//零售的appId
+Set<int> retailAppMenuIds = {
+  MenuId.labelDesignPage.index,
+  MenuId.receiptDesignPage.index,
+};
+
+//零售的appId
+Set<int> industrialAppMenuIds = {
+  MenuId.weightDataCollectionPage.index,
+  MenuId.checkWeighersPage.index,
+  MenuId.takeInPage.index,
+  MenuId.takeOutPage.index,
+  MenuId.formulationScalePage.index,
+  MenuId.flowRatePage.index,
 };
 
 //如何定义一个枚举类型 比如  home  = 1  config = 2  apps = 3  appsSetting = 4  systemSetting = 5
@@ -105,7 +121,7 @@ enum MenuId {
   pluEditPage,
   downloadLabelPage,
   downReciptPage,
-  transactionReportPage,
+  retailReportPage,
   headerFooterPage,
   weightDataCollectionPage,
   checkWeighersPage,

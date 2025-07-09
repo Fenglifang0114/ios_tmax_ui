@@ -29,7 +29,7 @@ import '../dialog/license_info.dart';
 import '../widget/home_page_widget.dart';
 import '../widget/version.dart';
 import 'basic_data_page.dart';
-import 'custom_serial_protocol_page.dart';
+import 'serial_protocol_page.dart';
 import 'down_recipt_fmt_page.dart';
 import 'lable_down_prn_fmt_page.dart';
 import 'receipt_design_page.dart';
@@ -101,25 +101,27 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
   void onWindowClose() async {
     bool isPreventClose = await windowManager.isPreventClose();
     if (isPreventClose) {
-      showDialog(
-        context: context,
-        barrierDismissible: false, // 允许点击空白处关闭对话框
-        builder: (context) {
-          return CustomAlertDialog(
-            titleText: localizedStrings.gTipExitApp,
-            onNoPressed: () {
-              Navigator.of(context).pop();
-            },
-            onYesPressed: () async {
-              Navigator.of(context).pop();
-              dispose();
-              await trayManager.destroy(); //退出系统托盘
-              await windowManager.destroy();
-              exit(0);
-            },
-          );
-        },
-      );
+      if (mounted) {
+        showDialog(
+          context: context,
+          barrierDismissible: false, // 允许点击空白处关闭对话框
+          builder: (context) {
+            return CustomAlertDialog(
+              titleText: localizedStrings.gTipExitApp,
+              onNoPressed: () {
+                Navigator.of(context).pop();
+              },
+              onYesPressed: () async {
+                Navigator.of(context).pop();
+                dispose();
+                await trayManager.destroy(); //退出系统托盘
+                await windowManager.destroy();
+                exit(0);
+              },
+            );
+          },
+        );
+      }
     }
   }
 

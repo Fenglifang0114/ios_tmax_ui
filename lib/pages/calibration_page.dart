@@ -234,6 +234,16 @@ class CalibrationPageState extends State<CalibrationPage> {
         }
       }
     });
+    // 在页面构建完成后显示提示
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (myAllScalesList.isEmpty) {
+        showTipInfo(localizedStrings.gTipNoDeviceAddFirst, context);
+      } else {
+        if (selScaleId == -1) {
+          showTipInfo(localizedStrings.gTipSelectDeviceFirst, context);
+        }
+      }
+    });
   }
 
   @override

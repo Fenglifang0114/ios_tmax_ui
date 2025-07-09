@@ -44,7 +44,8 @@ class ShowLicenseResDialogState extends State<ShowLicenseResDialog> {
         return localizedStrings.menuFlowRate;
       case foscLic:
         return localizedStrings.menuFormula;
-
+      case ladeLic:
+        return localizedStrings.menuLabelDesign;
       default:
         return res;
     }

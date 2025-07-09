@@ -327,7 +327,7 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                                   ? Theme.of(context)
                                       .colorScheme
                                       .primary
-                                      .withOpacity(0.1)
+                                      .withValues(alpha: 0.1)
                                   : Theme.of(context)
                                       .colorScheme
                                       .surfaceContainerLow,
@@ -357,7 +357,7 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                                       ),
                                     ),
                                   ),
-                                  Container(
+                                  SizedBox(
                                     width: widget.selectFormula.header!
                                                 .formulaHeader!.isEncrypted ==
                                             false
@@ -544,19 +544,21 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                                 } else {
                                   double totalWgt = double.parse(formulaWgt);
                                   String fmaUnit = formulaUnit;
-                                  Navigator.pop(context);
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          FormulaPctWeighingPage(
-                                        selectFormula: widget.selectFormula,
-                                        selScaleId: widget.selectScaleId,
-                                        totalFmaWgt: totalWgt,
-                                        fmaUnit: fmaUnit,
+                                  if (mounted) {
+                                    Navigator.pop(context);
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            FormulaPctWeighingPage(
+                                          selectFormula: widget.selectFormula,
+                                          selScaleId: widget.selectScaleId,
+                                          totalFmaWgt: totalWgt,
+                                          fmaUnit: fmaUnit,
+                                        ),
                                       ),
-                                    ),
-                                  );
+                                    );
+                                  }
                                 }
                               }
                             });

@@ -6,8 +6,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:t_max/data/comscaleinfo_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/icons.dart';
+import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/widget/common_widget.dart';
-import 'package:t_max/widget/page_head.dart';
 import '../data/downloadresponse.dart';
 import '../data/language.dart';
 import '../eventbus/eventbus.dart';
@@ -277,8 +277,8 @@ class _UpdateFirmwarePageState extends State<UpdateFirmwarePage> {
     );
   }
 
-  void useSerialPortUpdate(String force) {
-    PublicFunctions.sendFormatToScale("${zipFileCtl.text},$force");
+  void useSerialPortUpdate(String force, int scaleId) {
+    PublicFunctions.sendFormatToScale("${zipFileCtl.text},$force", scaleId);
     setState(() {
       _errMsgSerial = localizedStrings.gTipWait;
       isSetting = true;
@@ -357,6 +357,7 @@ class _UpdateFirmwarePageState extends State<UpdateFirmwarePage> {
 int normalSend = 1; //正常的发送数据
 int sendServerIp = 2; //正常的发送数据
 int sendOnline = 3; //仅仅在线发送（无串口）
+int comScaleSerialSend = 4; //串口类型
 
 class ScaleDownRes {
   int scaleId;
@@ -368,9 +369,11 @@ class ScaleDownRes {
 class SelectScalesPageNew extends StatefulWidget {
   final int funcNo;
   final String sendMsgStr;
+  final List<String>? jsonList;
   const SelectScalesPageNew({
     required this.funcNo,
     required this.sendMsgStr,
+    this.jsonList,
     super.key,
   });
 
@@ -392,15 +395,14 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
   dynamic _eventbus9;
   dynamic _eventbus10;
   dynamic _eventbus11;
+  dynamic _eventbus12;
 
-  // List<bool> checkboxStates = [];
   Map<int, bool> checkboxStatesMap = {};
-  List<NetScaleInfoLocal> scaleNetItems = [];
   Map<int, ScaleDownRes> scaleResMap = {};
   Map<int, Timer?> scaleTimerMap = {};
 
   bool isDownloading = false;
-  bool isSelectCom = false;
+
   ComScaleInfo comScale = myComScaleInfo;
 
   double _progress = 0.0;
@@ -410,9 +412,9 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
     super.initState();
 
     _deviceNameController.text = '';
-    scaleNetItems = myNetScaleList;
-    for (var item in scaleNetItems) {
-      checkboxStatesMap[item.scaleId!] = false;
+
+    for (var item in myAllScalesList) {
+      checkboxStatesMap[item.scaleId] = false;
     }
     _eventbus1 = eventBus.on<EventDownPrnFmtResp>().listen((event) {
       if (mounted) {
@@ -544,9 +546,11 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
             isDownloading = false;
           }
           if (myRespDataFromScale.msgBody.contains("connection")) {
-            showForceDialog(context, localizedStrings.gTipDeviceLost);
+            showForceDialog(context, localizedStrings.gTipDeviceLost,
+                myRespDataFromScale.scaleId);
           } else if (myRespDataFromScale.msgBody.contains("match")) {
-            showForceDialog(context, localizedStrings.gTipModelNotMatch);
+            showForceDialog(context, localizedStrings.gTipModelNotMatch,
+                myRespDataFromScale.scaleId);
           }
         });
       }
@@ -572,7 +576,7 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
             if (numericValue < 100 && numericValue * 1.5 < 100.0) {
               numericValue = (numericValue * 1.5).toInt();
             }
-            updateProgress(numericValue);
+            updateProgress(numericValue, myRespDataFromScale.scaleId);
           } else {
             setState(() {
               if (!scaleResMap[myRespDataFromScale.scaleId]!
@@ -586,14 +590,30 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
         }
       }
     });
+
+    _eventbus12 = eventBus.on<EventSerialOutputResp>().listen((event) {
+      if (mounted) {
+        setState(() {
+          myRespDataFromScale = event.obj;
+          if (myRespDataFromScale.msgBody.isNotEmpty) {
+            parseRecInfo(myRespDataFromScale.scaleId);
+          }
+
+          if (checkAllNotEmpty()) {
+            isDownloading = false;
+          }
+        });
+      }
+    });
   }
 
-  void updateProgress(int value) {
+  void updateProgress(int value, int scaleId) {
     setState(() {
       _progress = value.toDouble() / 100;
-      scaleResMap[1]!.process = _progress;
-      if (scaleResMap[1]!.res != '' && scaleResMap[1]!.res != 'ok') {
-        scaleResMap[1]!.res = '';
+      scaleResMap[scaleId]!.process = _progress;
+      if (scaleResMap[scaleId]!.res != '' &&
+          scaleResMap[scaleId]!.res != 'ok') {
+        scaleResMap[scaleId]!.res = '';
       }
     });
   }
@@ -624,6 +644,8 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
     _eventbus9.cancel();
     _eventbus10.cancel();
     _eventbus11.cancel();
+    _eventbus12.cancel();
+
     if (scaleTimerMap.isNotEmpty) {
       scaleTimerMap.forEach((int key, Timer? timer) {
         timer!.cancel();
@@ -638,7 +660,7 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
       backgroundColor: Colors.transparent,
       child: Container(
         width: 1035,
-        height: 600,
+        height: 800,
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(0),
@@ -681,6 +703,7 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
                         color: Theme.of(context).colorScheme.secondaryFixed,
                       ),
                       onPressed: () {
+                        PublicFunctions.killBootCommander();
                         Navigator.pop(context, '');
                       })
                 ])),
@@ -694,14 +717,10 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
                 child: Container(
               padding: const EdgeInsets.all(regularPadding),
               child: Column(children: [
-                SizedBox(
-                  height: 120,
-                  child: Column(children: [buildComScaleInfo()]),
-                ),
                 Expanded(
                   child: SingleChildScrollView(
                     scrollDirection: Axis.vertical,
-                    child: scaleNetItems.isNotEmpty
+                    child: myAllScalesList.isNotEmpty
                         ? buildNetScaleInfo()
                         : SizedBox(),
                   ),
@@ -720,13 +739,16 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
                     localizedStrings.gBtnConfirm,
                     !isDownloading && checkSelect()
                         ? () {
+                            PublicFunctions.killBootCommander();
                             setState(() {
                               isDownloading = true;
-                              scaleResMap.clear();
+
+                              for (var entry in scaleResMap.entries) {
+                                entry.value.res = "";
+                              }
                             });
-                            if (checkSelect()) {
-                              performSend();
-                            }
+
+                            performSend();
                           }
                         : null,
                     Theme.of(context).colorScheme.onPrimary,
@@ -741,6 +763,7 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
                     isDownloading
                         ? null
                         : () {
+                            PublicFunctions.killBootCommander();
                             Navigator.of(context).pop();
                           },
                     Theme.of(context).colorScheme.onPrimary,
@@ -750,176 +773,6 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
                 ],
               ),
             )
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget buildComScaleInfo() {
-    return DataTable(
-      columnSpacing: 8,
-      checkboxHorizontalMargin: 8,
-      headingTextStyle:
-          TextStyle(color: Theme.of(context).colorScheme.onSurface),
-      headingRowHeight: 48,
-      headingRowColor:
-          WidgetStateProperty.all(Theme.of(context).colorScheme.surfaceDim),
-      dataTextStyle: Theme.of(context).textTheme.bodySmall!.apply(
-          color: Theme.of(context).colorScheme.onSurface, fontSizeFactor: 0.9),
-      border: TableBorder(
-        horizontalInside: BorderSide(
-          color: Theme.of(context).colorScheme.outlineVariant,
-          width: 1.0,
-        ),
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      columns: [
-        // 自定义第一列宽度为 20
-        DataColumn(
-          headingRowAlignment: MainAxisAlignment.start,
-          label: SizedBox(),
-          columnWidth: FixedColumnWidth(40),
-        ),
-        // 自定义第二列宽度为 80
-        DataColumn(
-          label: SizedBox(
-            width: 80, // 设置固定宽度
-            child: Text(
-              localizedStrings.gStatus,
-              textAlign: TextAlign.left,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ),
-
-        DataColumn(
-            label: SizedBox(
-          width: 120, // 设置固定宽度
-          child: Text(
-            localizedStrings.gScaleName,
-            textAlign: TextAlign.left,
-            overflow: TextOverflow.ellipsis,
-          ),
-        )),
-
-        DataColumn(
-          label: SizedBox(
-            width: 150, // 设置固定宽度
-            child: Text(
-              localizedStrings.gModelName + '/Sn',
-              textAlign: TextAlign.left,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ),
-
-        DataColumn(
-            label: SizedBox(
-          width: 100, // 设置固定宽度
-          child: Text(
-            'COM',
-            textAlign: TextAlign.left,
-            overflow: TextOverflow.ellipsis,
-          ),
-        )),
-        DataColumn(
-            label: SizedBox(
-          width: 100, // 设置固定宽度
-          child: Text(
-            localizedStrings.gProgress,
-            textAlign: TextAlign.left,
-            overflow: TextOverflow.ellipsis,
-          ),
-        )),
-        DataColumn(
-            label: SizedBox(
-          width: 350, // 设置固定宽度
-          child: Text(
-            localizedStrings.gTipResult,
-            textAlign: TextAlign.left,
-            overflow: TextOverflow.ellipsis,
-          ),
-        )),
-      ],
-      rows: List.generate(
-        1,
-        (index) => DataRow(
-          color: WidgetStateProperty.all(
-              Theme.of(context).colorScheme.surfaceContainerLow),
-          cells: [
-            DataCell(Container(
-              alignment: Alignment.centerLeft,
-              child: Checkbox(
-                value: isSelectCom,
-                onChanged: isDownloading
-                    ? null
-                    : (value) {
-                        setState(() {
-                          isSelectCom = value!;
-                          scaleResMap.clear();
-                          // if (checkboxStatesMap.isNotEmpty && isSelectCom) {
-                          //   for (var item in scaleNetItems) {
-                          //     checkboxStatesMap[item.scaleId!] = false;
-                          //   }
-                          // }
-                        });
-                      },
-              ),
-            )),
-            DataCell(
-              SizedBox(
-                child: Text(
-                    comScale.isOnline
-                        ? localizedStrings.gTipOnline
-                        : localizedStrings.gTipOffline,
-                    maxLines: 2,
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface,
-                        overflow: TextOverflow.ellipsis)),
-              ),
-            ),
-            DataCell(
-              SizedBox(
-                width: 120,
-                child: Text(comScale.scaleName,
-                    maxLines: 1,
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface,
-                        overflow: TextOverflow.ellipsis)),
-              ),
-            ),
-            DataCell(Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  buildDataCellInfo(150, comScale.scaleModel,
-                      Theme.of(context).colorScheme.onSurface),
-                  buildDataCellInfo(150, comScale.scaleSn,
-                      Theme.of(context).colorScheme.onSurface),
-                ])),
-            DataCell(
-              Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    buildDataCellInfo(100, comScale.portName,
-                        Theme.of(context).colorScheme.onSurface),
-                    buildDataCellInfo(100, comScale.baudRate.toString(),
-                        Theme.of(context).colorScheme.onSurface)
-                  ]),
-            ),
-            DataCell(
-              SizedBox(
-                child: buildProgess(comScale.scaleId),
-              ),
-            ),
-            DataCell(
-              Text(getResStr(comScale.scaleId),
-                  maxLines: 1,
-                  style: TextStyle(
-                    color: getResTextColor(comScale.scaleId),
-                  ),
-                  overflow: TextOverflow.ellipsis),
-            ),
           ],
         ),
       ),
@@ -940,7 +793,7 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
   Widget buildNetScaleInfo() {
     return DataTable(
       columnSpacing: 8,
-      checkboxHorizontalMargin: 0,
+      checkboxHorizontalMargin: 8,
       headingTextStyle:
           TextStyle(color: Theme.of(context).colorScheme.onSurface),
       headingRowHeight: 48,
@@ -953,12 +806,13 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
           color: Theme.of(context).colorScheme.outlineVariant,
           width: 1.0,
         ),
+        borderRadius: BorderRadius.circular(8.0),
       ),
       columns: [
         DataColumn(
-          label: SizedBox(
-            width: 20, // 设置固定宽度
-          ),
+          headingRowAlignment: MainAxisAlignment.start,
+          label: SizedBox(),
+          columnWidth: FixedColumnWidth(40),
         ),
         DataColumn(
           label: SizedBox(
@@ -1019,129 +873,157 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
         )),
       ],
       rows: List.generate(
-        scaleNetItems.length,
-        (index) => DataRow(
-          color: WidgetStateProperty.all(
-              Theme.of(context).colorScheme.surfaceContainerLow),
-          cells: [
-            DataCell(
-              SizedBox(
-                width: 20, // 设置固定宽度
-                child: Checkbox(
-                  value: checkboxStatesMap[scaleNetItems[index].scaleId!],
-                  onChanged: isDownloading
-                      ? null
-                      : (value) {
-                          setState(() {
-                            checkboxStatesMap[scaleNetItems[index].scaleId!] =
-                                value!;
-                            // isSelectCom = false;
-                            scaleResMap.clear();
-                          });
-                        },
+        myAllScalesList.length,
+        (index) {
+          Scale tempScale = myAllScalesList[index];
+          return DataRow(
+            color: WidgetStateProperty.all(
+                Theme.of(context).colorScheme.surfaceContainerLow),
+            cells: [
+              DataCell(
+                SizedBox(
+                  width: 20, // 设置固定宽度
+                  child: Checkbox(
+                    value: checkboxStatesMap[tempScale.scaleId],
+                    onChanged: isDownloading
+                        ? null
+                        : (value) {
+                            setState(() {
+                              checkboxStatesMap[tempScale.scaleId] = value!;
+                              scaleResMap.clear();
+                              checkboxStatesMap.forEach((scaleId, selected) {
+                                if (selected) {
+                                  int id = scaleId;
+                                  ScaleDownRes newMap =
+                                      ScaleDownRes(id, '', 0.0);
+                                  scaleResMap[id] = newMap;
+                                }
+                              });
+                            });
+                          },
+                  ),
                 ),
               ),
-            ),
-            DataCell(
-              SizedBox(
-                width: 50,
-                child: Text(
-                    scaleNetItems[index].isOnline!
-                        ? localizedStrings.gTipOnline
-                        : localizedStrings.gTipOffline,
-                    maxLines: 2,
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface,
-                        overflow: TextOverflow.ellipsis)),
+              DataCell(
+                SizedBox(
+                  width: 50,
+                  child: Text(
+                      tempScale.isOnline
+                          ? localizedStrings.gTipOnline
+                          : localizedStrings.gTipOffline,
+                      maxLines: 2,
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
+                          overflow: TextOverflow.ellipsis)),
+                ),
               ),
-            ),
-            DataCell(
-              SizedBox(
-                width: 120,
-                child: Text(scaleNetItems[index].scaleName!,
-                    maxLines: 2,
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface,
-                        overflow: TextOverflow.ellipsis)),
+              DataCell(
+                SizedBox(
+                  width: 120,
+                  child: Text(tempScale.scaleName,
+                      maxLines: 2,
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
+                          overflow: TextOverflow.ellipsis)),
+                ),
               ),
-            ),
-            DataCell(
-              SizedBox(
-                  width: 150, // 设置固定宽度
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        SizedBox(
-                            width: 150,
-                            child: Text(
-                              scaleNetItems[index].scaleModel! == "TMax"
-                                  ? ""
-                                  : scaleNetItems[index].scaleModel!,
-                              style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface),
-                              overflow: TextOverflow.ellipsis,
-                            )),
-                        SizedBox(
-                            width: 150,
-                            child: Text(
-                                scaleNetItems[index].scaleModel! == "TMax"
+              DataCell(
+                SizedBox(
+                    width: 150, // 设置固定宽度
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          SizedBox(
+                              width: 150,
+                              child: Text(
+                                tempScale.scaleModel == "TMax"
                                     ? ""
-                                    : scaleNetItems[index].scaleSn!,
+                                    : tempScale.scaleModel,
                                 style: TextStyle(
                                     color: Theme.of(context)
                                         .colorScheme
                                         .onSurface),
-                                overflow: TextOverflow.ellipsis)),
-                      ])),
-            ),
-            DataCell(
-              SizedBox(
-                  width: 100, // 设置固定宽度
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        SizedBox(
-                            width: 100,
-                            child: Text(scaleNetItems[index].ip!,
+                                overflow: TextOverflow.ellipsis,
+                              )),
+                          SizedBox(
+                              width: 150,
+                              child: Text(
+                                  tempScale.scaleModel == "TMax"
+                                      ? ""
+                                      : tempScale.scaleSn,
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface),
+                                  overflow: TextOverflow.ellipsis)),
+                        ])),
+              ),
+              DataCell(
+                SizedBox(
+                    width: 100, // 设置固定宽度
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          SizedBox(
+                              width: 100,
+                              child: Text(
+                                tempScale.tMedia == comScaleType
+                                    ? (tempScale.mediaConfig
+                                            as SerialMediaConfig)
+                                        .devPath
+                                    : (tempScale.mediaConfig
+                                            as NetworkMediaConfig)
+                                        .ipAddress,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                     color: Theme.of(context)
                                         .colorScheme
-                                        .onSurface))),
-                        SizedBox(
-                            width: 100,
-                            child: Text(scaleNetItems[index].port!.toString(),
+                                        .onSurface),
+                              )),
+                          SizedBox(
+                              width: 100,
+                              child: Text(
+                                tempScale.tMedia == comScaleType
+                                    ? (tempScale.mediaConfig
+                                            as SerialMediaConfig)
+                                        .baudRate
+                                        .toString()
+                                    : (tempScale.mediaConfig
+                                            as NetworkMediaConfig)
+                                        .port
+                                        .toString(),
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                     color: Theme.of(context)
                                         .colorScheme
-                                        .onSurface)))
-                      ])),
-            ),
-            DataCell(
-              SizedBox(
-                width: 100,
-                child: buildProgess(scaleNetItems[index].scaleId!),
+                                        .onSurface),
+                              ))
+                        ])),
               ),
-            ),
-            DataCell(
-              SizedBox(
-                width: 345,
-                child: Text(getResStr(scaleNetItems[index].scaleId!),
-                    maxLines: 2,
-                    style: TextStyle(
-                        color: getResTextColor(scaleNetItems[index].scaleId!),
-                        overflow: TextOverflow.ellipsis)),
+              DataCell(
+                SizedBox(
+                  width: 100,
+                  child: buildProgess(tempScale.scaleId),
+                ),
               ),
-            ),
-          ],
-        ),
+              DataCell(
+                SizedBox(
+                  width: 345,
+                  child: Text(getResStr(tempScale.scaleId),
+                      maxLines: 2,
+                      style: TextStyle(
+                          color: getResTextColor(tempScale.scaleId),
+                          overflow: TextOverflow.ellipsis)),
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
 
-  void showForceDialog(BuildContext context, String tipStr) {
+  void showForceDialog(BuildContext context, String tipStr, int scaleId) {
     showDialog(
       context: context,
       builder: (BuildContext ctx) {
@@ -1190,7 +1072,7 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
       },
     ).then((confirmed) {
       if (confirmed) {
-        useSerialPortUpdate("1");
+        useSerialPortUpdate("1", scaleId);
       }
     });
   }
@@ -1228,8 +1110,15 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
 
   void buildProcessTimer(int downTime) {
     scaleResMap.forEach((int id, ScaleDownRes value) {
+      if (myAllScalesList.isEmpty) {
+        return;
+      }
+      Scale tempScale = myAllScalesList[0];
       if (widget.funcNo == sendOnline) {
-        if (id != 1) {
+        for (var scale in myAllScalesList) {
+          tempScale = scale;
+        }
+        if (tempScale.tMedia != comScaleType) {
           final timer = Timer.periodic(const Duration(seconds: 1), (timer) {
             if (scaleResMap[id]!.res != "") {
               // setState(() {
@@ -1287,24 +1176,11 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
 
   bool checkSelect() {
     bool res = false;
-    scaleResMap.clear();
-    if (isSelectCom) {
-      int id = comScale.scaleId;
-      ScaleDownRes newMap = ScaleDownRes(id, '', 0.0);
-      scaleResMap[id] = newMap;
-      res = true;
-    }
+
     if (checkboxStatesMap.isEmpty) {
       return res;
     }
 
-    checkboxStatesMap.forEach((scaleId, selected) {
-      if (selected) {
-        int id = scaleId;
-        ScaleDownRes newMap = ScaleDownRes(id, '', 0.0);
-        scaleResMap[id] = newMap;
-      }
-    });
     if (scaleResMap.isNotEmpty) {
       res = true;
     }
@@ -1320,29 +1196,41 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
   }
 
   void sendMessage(int scaleId) {
+    if (myAllScalesList.isEmpty) {
+      return;
+    }
+    Scale tempScale = myAllScalesList[0];
+    for (var scale in myAllScalesList) {
+      if (scaleId == scale.scaleId) {
+        tempScale = scale;
+      }
+    }
+
     if (widget.funcNo == normalSend) {
       PublicFunctions.sendMsg(scaleId, widget.sendMsgStr);
     } else if (widget.funcNo == sendServerIp) {
       PublicFunctions.sendServerIpToScale(widget.sendMsgStr, scaleId);
     } else if (widget.funcNo == sendOnline) {
-      if (scaleId == 1) {
-        useSerialPortUpdate('0');
+      if (tempScale.tMedia == comScaleType) {
+        useSerialPortUpdate('0', scaleId);
       } else {
         PublicFunctions.updateFirmWareOnline(widget.sendMsgStr, scaleId);
       }
+    } else if (widget.funcNo == comScaleSerialSend) {
+      PublicFunctions.sendOutputFmtToScale(widget.jsonList!, scaleId);
     }
   }
 
-  void useSerialPortUpdate(String force) {
-    PublicFunctions.sendFormatToScale("${widget.sendMsgStr} ,$force");
+  void useSerialPortUpdate(String force, int scaleId) {
+    PublicFunctions.sendFormatToScale("${widget.sendMsgStr} ,$force", scaleId);
     setState(() {
-      scaleResMap[1]!.res = localizedStrings.gTipWait;
+      scaleResMap[scaleId]!.res = localizedStrings.gTipWait;
       isDownloading = true;
     });
     Timer(const Duration(seconds: 10), () {
       if (!(_progress > 0) && isDownloading) {
         setState(() {
-          scaleResMap[1]!.res = localizedStrings.gTipRebootForUpdate;
+          scaleResMap[scaleId]!.res = localizedStrings.gTipRebootForUpdate;
         });
       }
     });
@@ -1422,7 +1310,7 @@ class AddScaleDialog1State extends State<AddScaleDialog1> {
             Expanded(
               child: Container(
                   padding: const EdgeInsets.all(26),
-                  height: 150,
+                  height: 200,
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:gbk_codec/gbk_codec.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
+import 'package:t_max/pages/header_footer_page.dart';
 import 'package:t_max/widget/common_widget.dart';
 import '../data/manager_scale_channel.dart';
 import '../data/barcoderowdata.dart';
@@ -143,7 +144,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
   List<dynamic> varcontent = [];
   // Offset _offset = const Offset(0, 0);
   // bool _isDragging = false;
-  final double btnWidth = 150;
+  final double btnWidth = 220;
   final double textWidth = 120;
   final double topTitleHeight = 300;
   final double topBtnHeight = 130;
@@ -184,13 +185,13 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
 
   String _sltPrtName = 'ESC/POS';
   String _selectedAlignment = 'Left';
-  String _selectedBarcode = '--';
-  String _selectedQrcode = '--';
+  String selectedBarcode = '--';
+  String selectedQrcode = '--';
   String _selectedRotation = '0';
   late List<String> _savedBarCodeNames = ['--'];
   late List<String> _savedQrcodeNames = ['--'];
-  String _selectedHRAlignment = 'Bottom';
-  String _selectedQr = '3';
+  String selectedHRAlignment = 'Bottom';
+  String selectedQr = '3';
   String _sltPrintDir = 'Forward';
   String _selectFontBold = 'false';
   String _selectFontReverse = 'false';
@@ -261,10 +262,10 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
           fontsizevar.text = myReceiptItemData.fontSize.toString();
           barcodeHeight.text = myReceiptItemData.height.toString();
           _selectedRotation = myReceiptItemData.rotation.toString();
-          _selectedBarcode = myReceiptItemData.barcodeName;
-          _selectedQrcode = myReceiptItemData.qrcodeName;
+          selectedBarcode = myReceiptItemData.barcodeName;
+          selectedQrcode = myReceiptItemData.qrcodeName;
           _selectFontsize = myReceiptItemData.fontSize.toString();
-          _selectedQr =
+          selectedQr =
               int.parse(myReceiptItemData.qrWidth.toString()).toString();
           if (myReceiptItemData.alignment == 1) {
             _selectedAlignment = 'Left';
@@ -275,7 +276,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
           }
           _selectFontBold = myReceiptItemData.fontBold;
           _selectFontReverse = myReceiptItemData.fontReverse;
-          _selectedHRAlignment = myReceiptItemData.hralignment;
+          selectedHRAlignment = myReceiptItemData.hralignment;
         });
       }
     });
@@ -342,12 +343,10 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
           mySavedBarcodeName = event.obj;
           _savedBarCodeNames = mySavedBarcodeName.savedBarcodeName;
           if (_savedBarCodeNames.isNotEmpty) {
-            _selectedBarcode =
-                _savedBarCodeNames[_savedBarCodeNames.length - 1];
+            selectedBarcode = _savedBarCodeNames[_savedBarCodeNames.length - 1];
           } else {
             _savedBarCodeNames = ['--'];
-            _selectedBarcode =
-                _savedBarCodeNames[_savedBarCodeNames.length - 1];
+            selectedBarcode = _savedBarCodeNames[_savedBarCodeNames.length - 1];
           }
         });
       }
@@ -367,10 +366,10 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
           mySavedQrcodeName = event.obj;
           _savedQrcodeNames = mySavedQrcodeName.savedQrcodeName;
           if (_savedQrcodeNames.isNotEmpty) {
-            _selectedQrcode = _savedQrcodeNames[_savedQrcodeNames.length - 1];
+            selectedQrcode = _savedQrcodeNames[_savedQrcodeNames.length - 1];
           } else {
             _savedQrcodeNames = ['--'];
-            _selectedQrcode = _savedQrcodeNames[_savedQrcodeNames.length - 1];
+            selectedQrcode = _savedQrcodeNames[_savedQrcodeNames.length - 1];
           }
         });
       }
@@ -465,7 +464,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
+                          SizedBox(
                             width: leftBtnWidth,
                             child: ListView(
                               children: _buildList(),
@@ -726,9 +725,15 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     SizedBox(
-                      width: btnWidth,
-                      height: 40,
-                    ),
+                        width: btnWidth,
+                        height: 40,
+                        child: showTextButton(context, 40,
+                            localizedStrings.menuVariableValueSetting, () {
+                          HeaderFooterPage.show(context);
+                        },
+                            Theme.of(context).colorScheme.onPrimary,
+                            Theme.of(context).colorScheme.primary,
+                            Theme.of(context).colorScheme.onPrimary)),
                     SizedBox(
                         width: btnWidth,
                         height: 40,

@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:t_max/data/home_page_common_data.dart';
 import '../data/language.dart';
 import '../data/weight_report_data.dart';
-import '../widget/custom_button.dart';
 
-class ReportFeildsSettingDialog extends StatefulWidget {
-  const ReportFeildsSettingDialog({super.key});
+class ReportSettingDialog extends StatefulWidget {
+  const ReportSettingDialog({super.key});
   @override
-  ReportFeildsSettingDialogState createState() =>
-      ReportFeildsSettingDialogState();
+  ReportSettingDialogState createState() => ReportSettingDialogState();
 }
 
-class ReportFeildsSettingDialogState extends State<ReportFeildsSettingDialog> {
+class ReportSettingDialogState extends State<ReportSettingDialog> {
   TextEditingController errorText = TextEditingController();
   Map<String, ReportShowName> tempFeildMap = {};
   bool isSelectAll = false;
@@ -21,6 +20,9 @@ class ReportFeildsSettingDialogState extends State<ReportFeildsSettingDialog> {
       tempFeildMap[key] = ReportShowName(
           myReportFeildsMap[key]!.showName, myReportFeildsMap[key]!.isSelect);
     });
+
+    isSelectAll = tempFeildMap.values.every((element) => element.isSelect);
+
     super.initState();
   }
 
@@ -40,88 +42,224 @@ class ReportFeildsSettingDialogState extends State<ReportFeildsSettingDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: getDialogTitle(context, localizedStrings.report_set_btn,
-          Icons.settings_applications_rounded, 400),
-      content: Container(
-          height: 350,
-          decoration:
-              BoxDecoration(color: Theme.of(context).colorScheme.surfaceBright),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                CheckboxListTile(
-                  title: Text(
-                    localizedStrings.gSelectAll,
-                    style: TextStyle(overflow: TextOverflow.ellipsis),
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      child: Container(
+        width: 630,
+        height: 493,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(0),
+        ),
+        child: Column(
+          children: [
+            // 头部
+            Container(
+                height: 54,
+                padding: const EdgeInsets.only(left: 20, right: 20),
+                alignment: Alignment.centerLeft,
+                child: Row(children: [
+                  Container(
+                    width: 3,
+                    height: 14,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
-                  value: isSelectAll,
-                  onChanged: (bool? newValue) {
-                    setState(() {
-                      isSelectAll = newValue!;
-                      selectAll(newValue);
-                    });
-                  },
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.onPrimary),
-                  child: Column(
-                    children: tempFeildMap.values
-                        .map((ReportShowName reportShowName) {
-                      return CheckboxListTile(
-                        title: Text(
-                          reportShowName.showName,
-                          style: TextStyle(overflow: TextOverflow.ellipsis),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        localizedStrings.gBtnReportSetting,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.onSurface,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        value: reportShowName.isSelect,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                      icon: Icon(
+                        Icons.cancel,
+                        size: 24,
+                        color: Theme.of(context).colorScheme.secondaryFixed,
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop(false);
+                      })
+                ])),
+            // 分割线
+            Divider(
+              height: 1,
+              color: Theme.of(context).colorScheme.outline,
+            ),
+            // 中部
+
+            Expanded(
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: regularPadding,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: regularPadding,
+                      ),
+                      Checkbox(
+                        value: isSelectAll,
                         onChanged: (bool? newValue) {
                           setState(() {
-                            for (var key in tempFeildMap.keys) {
-                              if (tempFeildMap[key]!.showName ==
-                                  reportShowName.showName) {
-                                tempFeildMap[key]!.isSelect = newValue!;
-                                break;
-                              }
-                            }
+                            isSelectAll = newValue!;
+                            selectAll(newValue);
                           });
                         },
-                      );
-                    }).toList(),
+                      ),
+                      Flexible(
+                        child: Text(
+                          localizedStrings.gSelectAll,
+                          style: TextStyle(overflow: TextOverflow.ellipsis),
+                        ),
+                      ),
+                    ],
                   ),
-                )
-              ],
+                  SizedBox(
+                    height: regularPadding,
+                  ),
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                      child: SingleChildScrollView(
+                        child: Wrap(
+                          // spacing: 14, // 列间距
+                          runSpacing: 14, // 行间距
+                          children: tempFeildMap.values
+                              .map((ReportShowName reportShowName) {
+                            return SizedBox(
+                              width: 150, // 每行 3 个元素
+                              child: Row(
+                                // mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Checkbox(
+                                    value: reportShowName.isSelect,
+                                    onChanged: (bool? newValue) {
+                                      setState(() {
+                                        for (var key in tempFeildMap.keys) {
+                                          if (tempFeildMap[key]!.showName ==
+                                              reportShowName.showName) {
+                                            tempFeildMap[key]!.isSelect =
+                                                newValue!;
+                                            break;
+                                          }
+                                        }
+                                        // 检查是否全选
+                                        isSelectAll = tempFeildMap.values.every(
+                                            (element) => element.isSelect);
+                                      });
+                                    },
+                                  ),
+                                  Flexible(
+                                    child: Text(
+                                      reportShowName.showName,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall!
+                                          .apply(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurfaceVariant,
+                                          ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          )),
-      actions: <Widget>[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            CustomElevatedButton(
-              btnWidth: 120,
-              btnHeight: 40,
-              icon: Icons.check_circle,
-              text: localizedStrings.gBtnConfirm,
-              onPressed: () {
-                tempFeildMap.forEach((key, value) {
-                  myReportFeildsMap[key]!.isSelect = value.isSelect;
-                });
-                Navigator.of(context).pop(true);
-              },
-            ),
-            const SizedBox(width: 20),
-            CustomOutlinedButton(
-              btnWidth: 120,
-              btnHeight: 40,
-              icon: Icons.cancel,
-              text: localizedStrings.gBtnCancel,
-              onPressed: () {
-                Navigator.of(context).pop(false);
-              },
+
+            // 底部
+            Container(
+              height: 96,
+              width: 400,
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor:
+                            Theme.of(context).colorScheme.onPrimary,
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        fixedSize: const Size(double.infinity, 48),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.zero,
+                        ),
+                      ),
+                      onPressed: () {
+                        tempFeildMap.forEach((key, value) {
+                          myReportFeildsMap[key]!.isSelect = value.isSelect;
+                        });
+                        Navigator.of(context).pop(true);
+                      },
+                      child: Text(
+                        localizedStrings.gBtnConfirm,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.normal,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 20),
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor:
+                            Theme.of(context).colorScheme.onSurfaceVariant,
+                        backgroundColor: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest,
+                        fixedSize: const Size(double.infinity, 48),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.zero,
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop(false);
+                      },
+                      child: Text(
+                        localizedStrings.gBtnCancel,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.normal,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
           ],
-        )
-      ],
+        ),
+      ),
     );
   }
 }

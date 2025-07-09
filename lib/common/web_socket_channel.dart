@@ -5,13 +5,10 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:t_max/data/cominfoslist_data.dart';
 import 'package:t_max/data/comscaleinfo_data.dart';
-import 'package:t_max/data/downloadresponse.dart';
-
 import 'package:t_max/data/modifyresult_data.dart';
 import 'package:t_max/data/pak_info_data.dart';
 import 'package:t_max/data/plu_info_list_data.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
-
 import 'package:t_max/data/scalelist_data.dart';
 import 'package:t_max/data/settingparam_data.dart';
 import 'package:t_max/data/userinfo_data.dart';
@@ -252,27 +249,13 @@ class WebSocketChannel {
           manager.dispose(key);
         }
       }
-
-      // var lenth = myScaleTotalInfo.scaleDataList!.length;
-      // for (var i = 0; i < lenth; i++) {
-      //   var scaleInfo = myScaleTotalInfo.scaleDataList![i];
-      //   var jsonMediaInfoData = scaleInfo.mediaInfo!.mediaInfoJson;
-      //   if (jsonMediaInfoData == null) {
-      //     continue;
-      //   }
-      //   if (scaleInfo.tMedia == 0) {
-      //     await pasterComMediaInfo(jsonMediaInfoData.toString(), scaleInfo);
-      //   } else if (scaleInfo.tMedia == 1) {
-      //     await pasterNetMediaInfo(jsonMediaInfoData.toString(), scaleInfo);
-      //   }
-      // }
     } else {
       myAllScalesList.clear();
       for (var key in manager.connections.keys) {
         manager.dispose(key);
       }
     }
-    eventBus.fire(EventRespAddScale('ok'));
+    eventBus.fire(EventRespAddScale('scale list'));
   }
 
   Future pasterComMediaInfo(
@@ -484,6 +467,13 @@ class WebSocketChannel {
         eventBus.fire(EventUpdateSettingParam(''));
       } else if (jsonData['MsgType'] == "resp_del_wgt_rec") {
         eventBus.fire(EventDelAllWgtRecs(''));
+      } else if (jsonData['MsgType'] == "resp_add_wgt_rec") {
+        eventBus.fire(EventAddWgtRec(''));
+      } else if (jsonData['MsgType'] == "resp_export_all_recs") {
+        String dataString = jsonData['MsgBody'];
+        eventBus.fire(EventExportAllRecs(dataString));
+      } else if (jsonData['MsgType'] == "resp_wifi_pwd_add") {
+        eventBus.fire(EventRevWifiPwdAdd(''));
       } else {}
     } catch (e) {
       if (kDebugMode) {
@@ -495,15 +485,7 @@ class WebSocketChannel {
   static void handleGetUIConf(String data) {
     var jsonData = json.decode(data);
     mySettingParam = SettingParam.fromJson(jsonData);
-    if (mySettingParam.scaleMode == 0) {
-      myModeSettingNormal = mySettingParam;
-    } else if (mySettingParam.scaleMode == 1) {
-      myModeSettingCheck = mySettingParam;
-    } else if (mySettingParam.scaleMode == 2) {
-      myModeSettingTakeIn = mySettingParam;
-    } else if (mySettingParam.scaleMode == 3) {
-      myModeSettingTakeOut = mySettingParam;
-    }
+
     eventBus.fire(EventSettingParam(mySettingParam));
   }
 

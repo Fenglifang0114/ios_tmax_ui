@@ -57,7 +57,6 @@ class FormulationScalePageState extends State<FormulationScalePage>
     with SingleTickerProviderStateMixin {
   // bool _showBottomSection = false;
   int _selectedTabIndex = 0;
-  int _selectedScaleIndex = -1; // 用于跟踪选中的秤
   late TabController _tabController;
   bool sort = false;
   final ScrollController _scrollController =
@@ -199,7 +198,6 @@ class FormulationScalePageState extends State<FormulationScalePage>
         String dataStr = event.obj;
         if (dataStr != '' && dataStr != 'null') {
           fmaRecFromDbList = fmaRecFromDbFromJson(dataStr);
-          print(fmaRecFromDbList.length);
         } else {
           fmaRecFromDbList = [];
         }
@@ -251,8 +249,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
     return Scaffold(
         body: Container(
             color: Theme.of(context).colorScheme.surfaceDim, //对接时修改颜色值
-            // child: Padding(
-            //   padding: const EdgeInsets.all(14.0),
+
             child: Column(
               children: [
                 pageHeadInfo(context, width - headWidthPadding,
@@ -467,7 +464,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
             child: () {
               bool isSelected = _selectedRawIndex == index;
               Color backgroundColor = isSelected
-                  ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
+                  ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)
                   : Theme.of(context).colorScheme.surfaceContainerLow;
               Color innerContainerColor = isSelected
                   ? Theme.of(context).colorScheme.primary
@@ -1193,8 +1190,10 @@ class FormulationScalePageState extends State<FormulationScalePage>
                           selectedFmaRows.clear();
                           selectFmaAll = false;
                         });
-                        showTipInfo(
-                            localizedStrings.fDeleteSuccessMsg, context);
+                        if (mounted) {
+                          showTipInfo(
+                              localizedStrings.fDeleteSuccessMsg, context);
+                        }
                       } else {
                         return;
                       }
@@ -1643,89 +1642,6 @@ class FormulationScalePageState extends State<FormulationScalePage>
     );
   }
 
-  showComScale() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 14),
-      child: MouseRegion(
-          cursor: SystemMouseCursors.click,
-          child: GestureDetector(
-              onTap: () {
-                setState(() {
-                  selScaleId = 1;
-                  _selectedScaleIndex = -1;
-                  //串口秤
-                });
-              },
-              child: Container(
-                height: 62,
-                color: (selScaleId != 1)
-                    ? Color(0xFFECF0F3)
-                    : Theme.of(context).colorScheme.primary,
-                child: Row(
-                  children: [
-                    Container(
-                        width: 62,
-                        height: 62,
-                        alignment: Alignment.center,
-                        child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(4)),
-                              color: (selScaleId != 1)
-                                  ? Color(0xFFD5D8DB)
-                                  : Color.fromRGBO(255, 255, 255, 0.1),
-                            ),
-                            width: 38,
-                            height: 38,
-                            child: Container(
-                                alignment: Alignment.center,
-                                width: 20,
-                                height: 20,
-                                child: getSvgIcon(
-                                    serialPortSvgIcon(),
-                                    20,
-                                    20,
-                                    (selScaleId != 1)
-                                        ? Theme.of(context).colorScheme.primary
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary)))),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Text(
-                            myComScaleInfo.scaleName,
-                            style: TextStyle(
-                                color: (selScaleId != 1)
-                                    ? Theme.of(context).colorScheme.primary
-                                    : Theme.of(context).colorScheme.onPrimary,
-                                fontSize: 14),
-                          ),
-                          Text(
-                            myComScaleInfo.isOnline
-                                ? localizedStrings.gTipOnline
-                                : localizedStrings.gTipOffline,
-                            style: TextStyle(
-                                color: (selScaleId == 1)
-                                    ? Theme.of(context).colorScheme.onPrimary
-                                    : myComScaleInfo.isOnline
-                                        ? Theme.of(context)
-                                            .colorScheme
-                                            .onTertiaryFixedVariant
-                                        : Theme.of(context).colorScheme.error,
-                                fontSize: 14),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ))),
-    );
-  }
-
   showScaleList() {
     return AnimatedContainer(
       color: Theme.of(context).colorScheme.surface,
@@ -2064,10 +1980,14 @@ class FormulationScalePageState extends State<FormulationScalePage>
         File file = File(filePath);
         await file.writeAsString(csv);
         // 显示导出成功提示
-        showTipInfo(localizedStrings.fSaveSuccess, context);
+        if (mounted) {
+          showTipInfo(localizedStrings.fSaveSuccess, context);
+        }
       } catch (e) {
         // 处理写入文件时可能出现的异常，并显示错误提示
-        showTipInfo('$e', context);
+        if (mounted) {
+          showTipInfo('$e', context);
+        }
       }
     }
   }
@@ -2105,10 +2025,14 @@ class FormulationScalePageState extends State<FormulationScalePage>
         File file = File(filePath);
         await file.writeAsString(csv);
         // 显示导出成功提示
-        showTipInfo(localizedStrings.fSaveSuccess, context);
+        if (mounted) {
+          showTipInfo(localizedStrings.fSaveSuccess, context);
+        }
       } catch (e) {
         // 处理写入文件时可能出现的异常，并显示错误提示
-        showTipInfo('$e', context);
+        if (mounted) {
+          showTipInfo('$e', context);
+        }
       }
     }
   }

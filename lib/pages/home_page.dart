@@ -1,6 +1,7 @@
 // //主页
 
 //首页   测试首页
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -24,6 +25,7 @@ import 'package:t_max/dialog/language_setting.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/generated/l10n.dart';
+import 'package:t_max/widget/page_info.dart';
 import 'package:t_max/widget/version.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
@@ -55,6 +57,8 @@ class MyHomePageState extends State<MyHomePage>
   dynamic _eventbus7; // 监听事件
   dynamic _eventbus8; // 监听事件
   dynamic _eventbus9; // 监听事件
+  final ScrollController _scrollController = ScrollController();
+  bool _isHovering = false; // 用于控制鼠标悬停状态
 
   @override
   void didChangeDependencies() {
@@ -76,25 +80,27 @@ class MyHomePageState extends State<MyHomePage>
   void onWindowClose() async {
     bool isPreventClose = await windowManager.isPreventClose();
     if (isPreventClose) {
-      showDialog(
-        context: context,
-        barrierDismissible: false, // 允许点击空白处关闭对话框
-        builder: (context) {
-          return CustomAlertDialog(
-            titleText: localizedStrings.gTipExitApp,
-            onNoPressed: () {
-              Navigator.of(context).pop();
-            },
-            onYesPressed: () async {
-              Navigator.of(context).pop();
-              dispose();
-              await trayManager.destroy(); //退出系统托盘
-              await windowManager.destroy();
-              exit(0);
-            },
-          );
-        },
-      );
+      if (mounted) {
+        showDialog(
+          context: context,
+          barrierDismissible: false, // 允许点击空白处关闭对话框
+          builder: (context) {
+            return CustomAlertDialog(
+              titleText: localizedStrings.gTipExitApp,
+              onNoPressed: () {
+                Navigator.of(context).pop();
+              },
+              onYesPressed: () async {
+                Navigator.of(context).pop();
+                dispose();
+                await trayManager.destroy(); //退出系统托盘
+                await windowManager.destroy();
+                exit(0);
+              },
+            );
+          },
+        );
+      }
     }
   }
 
@@ -132,27 +138,6 @@ class MyHomePageState extends State<MyHomePage>
       dataTimeNow = DateTime.now();
     });
 
-    // _eventbus3 = eventBus.on<EventRespCheckComPort>().listen((event) {
-    //   if (mounted) {
-    //     if (myScreenMgr.isMainScreen) {
-    //       setState(() {
-    //         myComScaleSn = event.obj;
-    //         if (myComScaleSn.modelName != '') {
-    //           myComScaleInfo.isOnline = true;
-    //           myComScaleInfo.isOnline = true;
-    //           PublicFunctions.getOneEepromInfo("wifi_or_bt", 1);
-    //         } else {
-    //           myComScaleInfo.isOnline = false;
-    //           myComScaleSn.modelName = '';
-    //           myComScaleSn.scaleSn = '';
-    //           myComScaleInfo.isOnline = false;
-    //           myScreenMgr.wifiOrBt = 'off';
-    //         }
-    //       });
-    //     }
-    //   }
-    // });
-
     _eventbus4 = eventBus.on<EventGetFactoryInfo>().listen((event) {
       if (mounted) {
         setState(() {
@@ -183,6 +168,14 @@ class MyHomePageState extends State<MyHomePage>
           var eventInfo = event.obj;
           if (eventInfo.isNotEmpty) {
             var jsonData = json.decode(eventInfo);
+            try {
+              List<dynamic> jsonList = json.decode(eventInfo);
+              if (jsonList.isNotEmpty) {
+                myLicenseInfo.pId = jsonList[0]['Id'];
+              }
+            } catch (e) {
+              myLicenseInfo.pId = '';
+            }
 
             try {
               myLicenseData = LicenseData.fromJson(jsonData);
@@ -265,15 +258,39 @@ class MyHomePageState extends State<MyHomePage>
   }
 
   Widget showNavigationBar(bool isExpanded, List<RouteData> demos) {
-    return ListView.builder(
-      primary: false,
-      itemBuilder: (context, index) => MenuItem(
-        demo: demos[index],
-        isExpanded: isExpanded,
-        isSelected: demos[index].routeName! == _selectedNavRoute,
-        onTap: () => _navigateContent(demos[index].routeName!),
+    return MouseRegion(
+      onEnter: (_) {
+        setState(() {
+          _isHovering = true;
+        });
+      },
+      onExit: (_) {
+        setState(() {
+          _isHovering = false;
+        });
+      },
+      child: ScrollbarTheme(
+        data: ScrollbarThemeData(
+          thumbColor:
+              WidgetStateProperty.all(Theme.of(context).colorScheme.onPrimary),
+          radius: const Radius.circular(4.0), // 设置滚动条圆角
+        ),
+        child: Scrollbar(
+          thumbVisibility: _isHovering,
+          controller: _scrollController,
+          child: ListView.builder(
+            controller: _scrollController,
+            primary: false,
+            itemBuilder: (context, index) => MenuItem(
+              demo: demos[index],
+              isExpanded: isExpanded,
+              isSelected: demos[index].routeName! == _selectedNavRoute,
+              onTap: () => _navigateContent(demos[index].routeName!),
+            ),
+            itemCount: demos.length,
+          ),
+        ),
       ),
-      itemCount: demos.length,
     );
   }
 
@@ -282,6 +299,10 @@ class MyHomePageState extends State<MyHomePage>
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(40), // 自定义高度
+        child: DraggableTitleBar(title: ''),
+      ),
       body: Row(
         children: [
           // 动态显示的左侧导航栏
@@ -304,7 +325,7 @@ class MyHomePageState extends State<MyHomePage>
                           });
                         },
                         icon: Image.asset(
-                          appIconPath,
+                          logoIconPath,
                           width: iconAppSize,
                           height: iconAppSize,
                         ),
@@ -332,15 +353,20 @@ class MyHomePageState extends State<MyHomePage>
                 Expanded(
                   child: showNavigationBar(isExpanded, getCurrentConfigMenus()),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                        width: 120,
-                        height: 40,
-                        child: Image.asset(companyImage)),
-                  ],
-                ),
+                if (isExpanded)
+                  SizedBox(
+                    height: largePadding,
+                  ),
+                if (isExpanded)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                          width: 120,
+                          height: 40,
+                          child: Image.asset(companyImage)),
+                    ],
+                  ),
                 SizedBox(
                   height: largePadding,
                 )
@@ -394,43 +420,25 @@ class MyHomePageState extends State<MyHomePage>
                               ),
                         Row(
                           children: [
-                            PopupMenuButton<String>(
-                              tooltip: localizedStrings.menuApplications,
-                              icon: getSvgIcon(appsSvgIcon(), topIconSize,
-                                  topIconSize, colorScheme.primary),
-                              offset: Offset(-15, 40),
-                              color: colorScheme.onInverseSurface
-                                  .withValues(alpha: 0.7),
-                              itemBuilder: (BuildContext context) =>
-                                  <PopupMenuEntry<String>>[
-                                PopupMenuItem(
-                                  value: '1',
-                                  child: Text(
-                                    localizedStrings.menuConfiguration,
-                                    style: textTheme.bodySmall!.apply(
-                                      // 根据选中状态改变颜色
-                                      color: colorScheme.surface,
-                                    ),
-                                  ),
-                                  onTap: () {
-                                    _navigateContent('/settingsConfig');
-                                  },
-                                ),
-                                PopupMenuDivider(height: 1.0),
-                                PopupMenuItem(
-                                  value: '2',
-                                  child: Text(
-                                    localizedStrings.menuApplications,
-                                    style: textTheme.bodySmall!.apply(
-                                      // 根据选中状态改变颜色
-                                      color: colorScheme.surface,
-                                    ),
-                                  ),
-                                  onTap: () {
-                                    _navigateContent('/settingsApps');
-                                  },
-                                ),
-                              ],
+                            if (generateHelpTitle(
+                                    getPageId(_selectedNavRoute)) !=
+                                '')
+                              Tooltip(
+                                message: localizedStrings.gTipHelp,
+                                child: PageInfoButton(
+                                    helpInfo: generateHelpTitle(
+                                        getPageId(_selectedNavRoute)),
+                                    onRefresh: () {}),
+                              ),
+                            Tooltip(
+                              message: localizedStrings.menuConfiguration,
+                              child: IconButton(
+                                icon: getSvgIcon(appsSvgIcon(), topIconSize,
+                                    topIconSize, colorScheme.primary),
+                                onPressed: () {
+                                  _navigateContent('/settingsConfig');
+                                },
+                              ),
                             ),
                             PopupMenuButton<String>(
                               tooltip: localizedStrings.menuLanguageSetting,
@@ -558,10 +566,7 @@ class MyHomePageState extends State<MyHomePage>
       },
     ).then((_) {
       if (mounted) {
-        // 更新 localizedStrings
-
         setState(() {
-          // 刷新整个页面
           _navigateContent(_selectedNavRoute);
         });
       }
@@ -598,7 +603,7 @@ class MenuItem extends StatelessWidget {
           height: 52, // 固定高度
           child: Material(
             color: isSelected
-                ? Color(0xFF06406F)
+                ? Color.fromARGB(51, 0, 0, 0) //透明度百分比20% *255
                 : Theme.of(context).colorScheme.primary,
             child: MergeSemantics(
               child: InkWell(
@@ -656,5 +661,224 @@ class MenuItem extends StatelessWidget {
         ),
         position: TooltipPosition.right,
         child: buildMenuInfo());
+  }
+}
+
+class WindowButtons extends StatefulWidget {
+  const WindowButtons({super.key});
+
+  @override
+  State<WindowButtons> createState() => _WindowButtonsState();
+}
+
+class _WindowButtonsState extends State<WindowButtons> with WindowListener {
+  final StreamController<bool> _maximizedStreamController =
+      StreamController<bool>.broadcast();
+
+  @override
+  void initState() {
+    super.initState();
+    // 注册监听器
+    windowManager.addListener(this);
+    _initMaximizedState();
+  }
+
+  Future<void> _initMaximizedState() async {
+    _maximizedStreamController.add(await windowManager.isMaximized());
+  }
+
+  // 实现 WindowListener 接口的 onWindowMaximize 方法
+  @override
+  void onWindowMaximize() {
+    _maximizedStreamController.add(true);
+  }
+
+  // 实现 WindowListener 接口的 onWindowUnmaximize 方法
+  @override
+  void onWindowUnmaximize() {
+    _maximizedStreamController.add(false);
+  }
+
+  @override
+  void dispose() {
+    // 移除监听器
+    windowManager.removeListener(this);
+    _maximizedStreamController.close();
+    super.dispose();
+  }
+
+  // 定义常量
+  static const buttonSize = Size(45, 32);
+  static const iconSize = 16.0;
+
+  // 公共按钮样式
+  ButtonStyle get baseButtonStyle => ButtonStyle(
+        padding: WidgetStateProperty.all(EdgeInsets.zero),
+        minimumSize: WidgetStateProperty.all(buttonSize),
+        maximumSize: WidgetStateProperty.all(buttonSize),
+        backgroundColor: WidgetStateProperty.all(Colors.transparent),
+        overlayColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.hovered)) {
+            return Colors.black12;
+          }
+          if (states.contains(WidgetState.pressed)) {
+            return Colors.black26;
+          }
+          return Colors.transparent;
+        }),
+        shape: WidgetStateProperty.all(RoundedRectangleBorder(
+          borderRadius: BorderRadius.zero,
+        )),
+      );
+
+  // 创建最小化按钮
+  Widget _buildMinimizeButton() {
+    return IconButton(
+      style: baseButtonStyle,
+      icon: Icon(
+        Icons.remove,
+        size: iconSize,
+        color: Colors.black,
+      ),
+      onPressed: () => windowManager.minimize(),
+    );
+  }
+
+  // 创建最大化/还原按钮
+  Widget _buildMaximizeButton() {
+    return IconButton(
+      style: baseButtonStyle,
+      icon: StreamBuilder<bool>(
+        stream: _maximizedStreamController.stream,
+        initialData: false,
+        builder: (context, snapshot) {
+          final isMaximized = snapshot.data ?? false;
+          return Icon(
+            isMaximized ? Icons.fullscreen_exit_sharp : Icons.fullscreen_sharp,
+            size: iconSize,
+            color: Colors.black,
+          );
+        },
+      ),
+      onPressed: () async {
+        if (await windowManager.isMaximized()) {
+          windowManager.unmaximize();
+        } else {
+          windowManager.maximize();
+        }
+      },
+    );
+  }
+
+  // 创建关闭按钮
+  Widget _buildCloseButton() {
+    return IconButton(
+      style: baseButtonStyle.copyWith(
+        overlayColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.hovered) ||
+              states.contains(WidgetState.pressed)) {
+            return Colors.red;
+          }
+          return Colors.black;
+        }),
+      ),
+      icon: Icon(
+        Icons.close_sharp,
+        size: iconSize,
+        color: Colors.black,
+      ),
+      onPressed: () async {
+        if (mounted) {
+          showDialog(
+            context: context,
+            barrierDismissible: false, // 允许点击空白处关闭对话框
+            builder: (context) {
+              return CustomAlertDialog(
+                titleText: localizedStrings.gTipExitApp,
+                onNoPressed: () {
+                  Navigator.of(context).pop();
+                },
+                onYesPressed: () async {
+                  Navigator.of(context).pop();
+                  dispose();
+                  await trayManager.destroy(); //退出系统托盘
+                  await windowManager.destroy();
+                  exit(0);
+                },
+              );
+            },
+          );
+        }
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        _buildMinimizeButton(),
+        _buildMaximizeButton(),
+        _buildCloseButton(),
+      ],
+    );
+  }
+}
+
+// 可拖拽的标题栏组件
+class DraggableTitleBar extends StatelessWidget {
+  final Widget? leading; // 左侧图标/内容
+  final String title; // 标题文本
+  final bool showButtons; // 是否显示窗口按钮
+
+  const DraggableTitleBar({
+    super.key,
+    this.leading,
+    required this.title,
+    this.showButtons = true,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      // 关键：添加拖拽事件处理
+      onPanStart: (details) => windowManager.startDragging(),
+
+      // 双击标题栏时切换窗口最大化/还原
+      onDoubleTap: () async {
+        if (await windowManager.isMaximized()) {
+          windowManager.unmaximize();
+        } else {
+          windowManager.maximize();
+        }
+      },
+
+      child: Container(
+        height: 32, // 标题栏高度
+        color: Color(0xFFF0F0F0), // 标题栏背景色
+        child: Row(
+          children: [
+            if (leading != null) leading!,
+            SizedBox(width: 8), // 左侧图标和标题之间的间距
+            Image.asset(appIconPath, width: 20, height: 20), // 左侧图标
+
+            // 标题文本
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  title,
+                  style: TextStyle(fontSize: 12),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+
+            // 窗口控制按钮
+            if (showButtons) WindowButtons(),
+          ],
+        ),
+      ),
+    );
   }
 }

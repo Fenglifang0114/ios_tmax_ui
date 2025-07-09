@@ -10,7 +10,6 @@ import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/widget/common_widget.dart';
 import 'package:t_max/widget/scale_list.dart';
-import '../data/comscaleinfo_data.dart';
 import '../data/const_var_data.dart';
 import '../data/downloadresponse.dart';
 import 'package:t_max/data/respdata_data.dart';
@@ -25,7 +24,6 @@ import '../data/timer_manager.dart';
 import '../data/wifi_pwd_info.dart';
 import '../eventbus/eventbus.dart';
 import '../functions/methods.dart';
-import '../widget/page_head.dart';
 
 class WifiSettingPage extends StatefulWidget {
   const WifiSettingPage({super.key});
@@ -80,8 +78,6 @@ class WifiSettingPageState extends State<WifiSettingPage> {
 
   int selScaleId = -1;
 
-  String errorMessage = '';
-
   List<Scale> comScalesList = [];
 
   TextEditingController controller = TextEditingController();
@@ -117,8 +113,9 @@ class WifiSettingPageState extends State<WifiSettingPage> {
 
   @override
   void initState() {
+    super.initState();
     cntScaleTimerMgr.stopCntScaleTimer();
-    errorMessage = ''; //localizedStrings.gTipGetApListAndIP;
+    PublicFunctions.getWifiPwdList();
 
     for (var scale in myAllScalesList) {
       if (scale.tMedia == comScaleType) {
@@ -141,7 +138,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     }
     displayedItems = List.from(wifiItems);
     ssidController.text = "";
-    // PublicFunctions.getWifiList();
+
     _eventbus1 = eventBus.on<EventWiFiListInfo>().listen((event) {
       if (mounted) {
         setState(() {
@@ -160,15 +157,9 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                 wifiRssiList.add(myWifiListInfo.wifidatalist![i].rssi!);
               }
             }
-            // cntScaleTimerMgr.stopCntScaleTimer();
-            // PublicFunctions.getApInfo(1);
-          } else {
-            // cntScaleTimerMgr.stopCntScaleTimer();
-            // cntScaleTimerMgr.startCntScaleTimer(5);
-          }
+          } else {}
           displayedItems = List.from(wifiItems);
           _enableRefresh = true;
-          errorMessage = "";
         });
       }
     });
@@ -180,13 +171,15 @@ class WifiSettingPageState extends State<WifiSettingPage> {
           if (myRespDataFromScale.msgBody.isNotEmpty) {
             if (myRespDataFromScale.msgBody.contains(msgOk)) {
               isConnecting = false;
-              errorMessage = localizedStrings.gTipGetIP;
-              // cntScaleTimerMgr.stopCntScaleTimer();
+
+              showTipInfo(localizedStrings.gTipGetIP, context);
+
               _startGetIP(2);
             } else {
               isConnecting = false;
-              errorMessage = myRespDataFromScale.msgBody;
-              // cntScaleTimerMgr.stopCntScaleTimer();
+
+              showTipInfo(myRespDataFromScale.msgBody, context);
+
               _startGetIP(2);
             }
           }
@@ -202,22 +195,15 @@ class WifiSettingPageState extends State<WifiSettingPage> {
             if (myRespDataFromScale.msgBody.contains(msgOk)) {
               isConnecting = false;
               if (alreadyConnected) {
-                errorMessage = localizedStrings.gTipGetIP;
-                // cntScaleTimerMgr.stopCntScaleTimer();
+                showTipInfo(localizedStrings.gTipConnected, context);
               } else {
-                // cntScaleTimerMgr.stopCntScaleTimer();
                 connectAp();
               }
             } else {
-              errorMessage = myRespDataFromScale.msgBody;
+              showTipInfo(myRespDataFromScale.msgBody, context);
             }
           }
         });
-        if (firstGetApList) {
-          PublicFunctions.getApInfo(selScaleId);
-          isSetting = true;
-          firstGetApList = false;
-        }
       }
     });
 
@@ -233,13 +219,12 @@ class WifiSettingPageState extends State<WifiSettingPage> {
               ipController.text = myIpInfoData.iP!;
               gateWayController.text = myIpInfoData.gateway!;
               netMaskController.text = myIpInfoData.netmask!;
-              errorMessage = '';
+
               showTipInfo(localizedStrings.gTipGetIpOk, context);
             } else {
-              errorMessage = '';
               showTipInfo(localizedStrings.gTipGetIpFail, context);
             }
-            // cntScaleTimerMgr.stopCntScaleTimer();
+
             PublicFunctions.getIpMode(selScaleId);
             isSetting = true;
           }
@@ -252,8 +237,8 @@ class WifiSettingPageState extends State<WifiSettingPage> {
         isSetting = false;
         setState(() {
           myMessageError = event.obj;
-          if (!errorMessage.contains(msgOk)) {
-            errorMessage = myMessageError.messagedata!;
+          if (!myMessageError.messagedata!.contains(msgOk)) {
+            showTipInfo(myMessageError.messagedata!, context);
           }
         });
       }
@@ -265,12 +250,15 @@ class WifiSettingPageState extends State<WifiSettingPage> {
           isSetting = false;
           myGetIpError = event.obj;
           if (!myGetIpError.messagedata!.contains(msgOk)) {
-            errorMessage = myGetIpError.messagedata!;
+            showTipInfo(myGetIpError.messagedata!, context);
           }
-          // cntScaleTimerMgr.stopCntScaleTimer();
-          // cntScaleTimerMgr.startCntScaleTimer(5);
 
           isConnecting = false;
+        });
+
+        setState(() {
+          PublicFunctions.getIpMode(selScaleId);
+          isSetting = true;
         });
       }
     });
@@ -286,11 +274,13 @@ class WifiSettingPageState extends State<WifiSettingPage> {
               _isStatic = true;
             }
           }
-          // cntScaleTimerMgr.stopCntScaleTimer();
-          // cntScaleTimerMgr.startCntScaleTimer(5);
         });
-        PublicFunctions.getWifiList(selScaleId);
-        isSetting = true;
+        if (firstGetApList) {
+          showTipInfo(localizedStrings.gTipGetAPList, context);
+          PublicFunctions.getWifiList(selScaleId);
+          isSetting = true;
+          firstGetApList = false;
+        }
       }
     });
 
@@ -299,11 +289,10 @@ class WifiSettingPageState extends State<WifiSettingPage> {
         setState(() {
           isSetting = false;
           myGetWifiListError = event.obj;
-          errorMessage = myGetWifiListError.messagedata!;
+
+          showTipInfo(myGetWifiListError.messagedata!, context);
           _enableRefresh = true;
         });
-        // cntScaleTimerMgr.stopCntScaleTimer();
-        // cntScaleTimerMgr.startCntScaleTimer(5);
       }
     });
 
@@ -326,8 +315,6 @@ class WifiSettingPageState extends State<WifiSettingPage> {
             ipController.clear();
             gateWayController.clear();
             netMaskController.clear();
-            // cntScaleTimerMgr.stopCntScaleTimer();
-            // cntScaleTimerMgr.startCntScaleTimer(5);
           }
           _startGetIP(1);
         });
@@ -342,11 +329,13 @@ class WifiSettingPageState extends State<WifiSettingPage> {
           if (myRespDataFromScale.msgBody.isNotEmpty) {
             if (myRespDataFromScale.msgBody.contains(msgOk)) {
               isConnecting = false;
-              errorMessage = localizedStrings.gTipGetIP;
+
+              showTipInfo(localizedStrings.gTipGetIP, context);
               cntScaleTimerMgr.stopCntScaleTimer();
             } else {
               isConnecting = false;
-              errorMessage = myRespDataFromScale.msgBody;
+
+              showTipInfo(myRespDataFromScale.msgBody, context);
               cntScaleTimerMgr.stopCntScaleTimer();
             }
           }
@@ -362,34 +351,33 @@ class WifiSettingPageState extends State<WifiSettingPage> {
           isSetting = false;
           myRespDataFromScale = event.obj;
           if (myRespDataFromScale.msgBody.contains(msgOk)) {
-            myComScaleInfo.isOnline = true;
             cntScaleTimerMgr.stopCntScaleTimer();
-            // PublicFunctions.getWifiList(1);
+
+            isSetting = true;
           } else {
             _enableRefresh = true;
-            errorMessage = myRespDataFromScale.msgBody;
-            // cntScaleTimerMgr.stopCntScaleTimer();
-            // cntScaleTimerMgr.startCntScaleTimer(5);
-          }
-        });
-        PublicFunctions.getApInfo(selScaleId);
-        isSetting = true;
-      }
-    });
-    _eventbus12 = eventBus.on<EventRespCheckNetScale>().listen((event) {
-      if (mounted) {
-        // setState(() {
-        //   myFactoryInfoFromScale = event.obj;
-        //   if (myFactoryInfoFromScale.modelName != '') {
-        //     myComScaleInfo.isOnline = true;
-        //   } else {
-        //     myComScaleInfo.isOnline = false;
-        //   }
-        // });
-      }
-    });
 
-    super.initState();
+            showTipInfo(myRespDataFromScale.msgBody, context);
+          }
+          PublicFunctions.getApInfo(selScaleId);
+        });
+      }
+    });
+    _eventbus12 = eventBus.on<EventRevWifiPwdAdd>().listen((event) {
+      if (mounted) {
+        PublicFunctions.getWifiPwdList();
+      }
+    });
+    // 在页面构建完成后显示提示
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (comScalesList.isEmpty) {
+        showTipInfo(localizedStrings.gTipNoDeviceAddFirst, context);
+      } else {
+        if (selScaleId == -1) {
+          showTipInfo(localizedStrings.gTipSelectDeviceFirst, context);
+        }
+      }
+    });
   }
 
   @override
@@ -406,6 +394,10 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     _eventbus10.cancel();
     _eventbus11.cancel();
     _eventbus12.cancel();
+
+    myWifiListInfo.wifidatalist!.clear();
+    myWifiPwdInfoList.clear;
+
     _stopGetIp();
     super.dispose();
   }
@@ -592,10 +584,23 @@ class WifiSettingPageState extends State<WifiSettingPage> {
 
   void changeScale(int scaleId) {
     setState(() {
+      displayedItems.clear();
+      ssidController.clear();
+      passwordController.clear();
+      netMaskController.clear();
+      ipController.clear();
+      gateWayController.clear();
+      connectedSsid = "";
+      connectedMac = "";
+
       selScaleId = scaleId;
-      PublicFunctions.stopWeight(selScaleId);
+      // PublicFunctions.stopWeight(selScaleId);
+
+      showTipInfo(localizedStrings.gTipGetApListAndIP, context);
       PublicFunctions.changeWifiMode(selScaleId);
+
       isSetting = true;
+      firstGetApList = true;
     });
   }
 
@@ -689,11 +694,13 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                               onPressed: _enableRefresh
                                   ? () {
                                       setState(() {
+                                        displayedItems.clear();
                                         _enableRefresh = false;
-                                        errorMessage = '';
                                       });
-                                      cntScaleTimerMgr.stopCntScaleTimer();
 
+                                      showTipInfo(
+                                          localizedStrings.gTipGetAPList,
+                                          context);
                                       PublicFunctions.getWifiList(selScaleId);
                                       isSetting = true;
                                     }
@@ -876,9 +883,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                             ),
                         onChanged: (value) {
                           isValidData();
-                          setState(() {
-                            errorMessage = '';
-                          });
+                          setState(() {});
                         },
                       )
                     ],
@@ -1062,13 +1067,9 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                             context,
                             btnHeight,
                             localizedStrings.gBtnGetIp,
-                            isConnecting
+                            isConnecting || isSetting
                                 ? null
                                 : () {
-                                    setState(() {
-                                      errorMessage = '';
-                                    });
-                                    cntScaleTimerMgr.stopCntScaleTimer();
                                     PublicFunctions.getIpInfo(selScaleId);
                                     isSetting = true;
                                   },
@@ -1084,13 +1085,15 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                             context,
                             btnHeight,
                             localizedStrings.gBtnStatic,
-                            (_isStatic || isConnecting)
+                            (_isStatic || isConnecting || isSetting)
                                 ? null
                                 : () {
                                     setState(() {
                                       _isStatic = true;
-                                      errorMessage =
-                                          localizedStrings.gTipConnectStaticIp;
+
+                                      showTipInfo(
+                                          localizedStrings.gTipConnectStaticIp,
+                                          context);
                                     });
 
                                     // sendDataToWifi();
@@ -1107,13 +1110,11 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                             context,
                             btnHeight,
                             localizedStrings.gBtnDynamic,
-                            (_isStatic && !isConnecting)
+                            (_isStatic && !isConnecting && !isSetting)
                                 ? () {
                                     setState(() {
                                       _isStatic = false;
-                                      errorMessage = '';
                                     });
-                                    cntScaleTimerMgr.stopCntScaleTimer();
 
                                     PublicFunctions.setWifiDynamicMode(
                                         selScaleId);
@@ -1132,12 +1133,11 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                             context,
                             btnHeight,
                             localizedStrings.gBtnConnect,
-                            (isValidData() && !isConnecting)
+                            (isValidData() && !isConnecting && !isSetting)
                                 ? () {
-                                    setState(() {
-                                      errorMessage =
-                                          localizedStrings.gTipConnecting;
-                                    });
+                                    showTipInfo(localizedStrings.gTipConnecting,
+                                        context);
+
                                     isConnecting = true;
                                     cntScaleTimerMgr.stopCntScaleTimer();
                                     if (_isStatic) {
@@ -1155,18 +1155,6 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                       ),
                     ]));
               }),
-              errorMessage != ""
-                  ? SizedBox(
-                      height: 40,
-                      child: Center(
-                        child: Text(
-                          errorMessage,
-                          style: Theme.of(context).textTheme.bodySmall!.apply(
-                                color: Theme.of(context).colorScheme.error,
-                              ),
-                        ),
-                      ))
-                  : SizedBox(),
             ],
           ),
         ),
@@ -1218,6 +1206,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     myConnectApInfo.password = passwordController.text;
     myConnectApInfo.bssid = bssId; //手动输入的如何处理？id写-1
     myScaleCmd.cmdData = jsonEncode(myConnectApInfo).toString();
+
     PublicFunctions.sendMsg(selScaleId, jsonEncode(myScaleCmd));
     isSetting = true;
     writelog(jsonEncode(myScaleCmd));
@@ -1228,19 +1217,16 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     myWifiPwdInfo.ssid = ssidController.text;
     myWifiPwdInfo.pwd = passwordController.text;
     String wifiStr = jsonEncode(myWifiPwdInfo).toString();
+
     PublicFunctions.addWifiPwd(wifiStr);
-    WifiPwdInfoList wifiInfo = WifiPwdInfoList(
-        id: myWifiPwdInfoList.length,
-        ssid: myWifiPwdInfo.ssid!,
-        pwd: myWifiPwdInfo.pwd!);
-    myWifiPwdInfoList.add(wifiInfo);
   }
 
   void connectDynamicIp() {
     if (myWiFiAPInfo.ssid == ssidController.text &&
         myWiFiAPInfo.bssid == bssId) {
       isConnecting = false;
-      errorMessage = localizedStrings.gTipConnected;
+
+      showTipInfo(localizedStrings.gTipConnected, context);
     } else {
       myRespDataFromScale.msgBody = '';
       connectAp();
@@ -1268,6 +1254,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     myStaticIpInfo.ip = ip;
     myStaticIpInfo.netmask = netmask;
     myScaleCmd.cmdData = jsonEncode(myStaticIpInfo).toString();
+
     PublicFunctions.sendMsg(selScaleId, jsonEncode(myScaleCmd));
     isSetting = true;
     writelog(jsonEncode(myScaleCmd));

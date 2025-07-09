@@ -80,7 +80,7 @@ class RevAllWgtRecs {
 
 class ScaleRecInfo {
   Header? header;
-  List<Detail>? details;
+  List<NewWgtDetail>? details;
 
   ScaleRecInfo({
     this.header,
@@ -91,8 +91,8 @@ class ScaleRecInfo {
         header: json["Header"] == null ? null : Header.fromJson(json["Header"]),
         details: json["Details"] == null
             ? []
-            : List<Detail>.from(
-                json["Details"]!.map((x) => Detail.fromJson(x))),
+            : List<NewWgtDetail>.from(
+                json["Details"]!.map((x) => NewWgtDetail.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -103,7 +103,7 @@ class ScaleRecInfo {
       };
 }
 
-class Detail {
+class NewWgtDetail {
   int? recId;
   int? headId;
   int? no;
@@ -114,7 +114,7 @@ class Detail {
   String? scaleName;
   DateTime? createdAt;
 
-  Detail({
+  NewWgtDetail({
     this.recId,
     this.headId,
     this.no,
@@ -126,7 +126,7 @@ class Detail {
     this.createdAt,
   });
 
-  factory Detail.fromJson(Map<String, dynamic> json) => Detail(
+  factory NewWgtDetail.fromJson(Map<String, dynamic> json) => NewWgtDetail(
         recId: json["RecId"],
         headId: json["HeadId"],
         no: json["No"],
@@ -203,6 +203,55 @@ class Header {
     this.scaleName,
     this.createdAt,
   });
+
+  Header copyWith({
+    String? id,
+    String? scaleModel,
+    String? scaleSn,
+    String? plu,
+    String? productCode,
+    String? itemCode,
+    String? category,
+    String? productName,
+    String? generalUnit,
+    String? taxType,
+    String? price,
+    String? unitWeight,
+    String? pretare,
+    String? limitHigh,
+    String? limitLow,
+    String? weight,
+    String? weightUnit,
+    String? userNo,
+    String? userName,
+    String? scaleMode,
+    String? scaleName,
+    DateTime? createdAt,
+  }) =>
+      Header(
+        id: id ?? this.id,
+        scaleModel: scaleModel ?? this.scaleModel,
+        scaleSn: scaleSn ?? this.scaleSn,
+        plu: plu ?? this.plu,
+        productCode: productCode ?? this.productCode,
+        itemCode: itemCode ?? this.itemCode,
+        category: category ?? this.category,
+        productName: productName ?? this.productName,
+        generalUnit: generalUnit ?? this.generalUnit,
+        taxType: taxType ?? this.taxType,
+        price: price ?? this.price,
+        unitWeight: unitWeight ?? this.unitWeight,
+        pretare: pretare ?? this.pretare,
+        limitHigh: limitHigh ?? this.limitHigh,
+        limitLow: limitLow ?? this.limitLow,
+        weight: weight ?? this.weight,
+        weightUnit: weightUnit ?? this.weightUnit,
+        userNo: userNo ?? this.userNo,
+        userName: userName ?? this.userName,
+        scaleMode: scaleMode ?? this.scaleMode,
+        scaleName: scaleName ?? this.scaleName,
+        createdAt: createdAt ?? this.createdAt,
+      );
 
   factory Header.fromJson(Map<String, dynamic> json) => Header(
         recId: json["RecId"],
@@ -281,5 +330,71 @@ class ReqDelAllWgtRecs {
 
   Map<String, dynamic> toJson() => {
         "Mode": mode,
+      };
+}
+
+//请求增加汇总的称重记录
+
+ReqAddWgtRec reqAddWgtRecFromJson(String str) =>
+    ReqAddWgtRec.fromJson(json.decode(str));
+
+String reqAddWgtRecToJson(ReqAddWgtRec data) => json.encode(data.toJson());
+
+class ReqAddWgtRec {
+  int? mode;
+  Header? headRec;
+  List<NewWgtDetail>? detailRec;
+
+  ReqAddWgtRec({
+    this.mode,
+    this.headRec,
+    this.detailRec,
+  });
+
+  factory ReqAddWgtRec.fromJson(Map<String, dynamic> json) => ReqAddWgtRec(
+        mode: json["Mode"],
+        headRec:
+            json["HeadRec"] == null ? null : Header.fromJson(json["HeadRec"]),
+        detailRec: json["DetailRec"] == null
+            ? []
+            : List<NewWgtDetail>.from(
+                json["DetailRec"]!.map((x) => NewWgtDetail.fromJson(x))),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "Mode": mode,
+        "HeadRec": headRec?.toJson(),
+        "DetailRec": detailRec == null
+            ? []
+            : List<dynamic>.from(detailRec!.map((x) => x.toJson())),
+      };
+}
+
+//请求导出所有数据
+
+ReqExportAllWgtRecs reqExportAllWgtRecsFromJson(String str) =>
+    ReqExportAllWgtRecs.fromJson(json.decode(str));
+
+String reqExportAllWgtRecsToJson(ReqExportAllWgtRecs data) =>
+    json.encode(data.toJson());
+
+class ReqExportAllWgtRecs {
+  int? mode;
+  String? path;
+
+  ReqExportAllWgtRecs({
+    this.mode,
+    this.path,
+  });
+
+  factory ReqExportAllWgtRecs.fromJson(Map<String, dynamic> json) =>
+      ReqExportAllWgtRecs(
+        mode: json["Mode"],
+        path: json["Path"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "Mode": mode,
+        "Path": path,
       };
 }

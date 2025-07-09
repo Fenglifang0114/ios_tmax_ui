@@ -6,7 +6,6 @@ import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/functions/methods.dart';
 import '../data/download_prt_fmt.dart';
 import '../data/language.dart';
@@ -18,7 +17,6 @@ import '../data/setting_version_info.dart';
 import '../dialog/show_options_dialog.dart';
 import '../eventbus/eventbus.dart';
 import '../widget/custom_button.dart';
-import '../widget/page_head.dart';
 import 'package:path/path.dart' as path;
 
 import '../widget/show_error_dialog.dart';
@@ -594,7 +592,7 @@ class PluEidtPageState extends State<PluEidtPage> {
                                     Container(
                                         color: const Color.fromARGB(
                                                 255, 162, 160, 160)
-                                            .withOpacity(0.5),
+                                            .withValues(alpha: 0.5),
                                         child: Center(
                                           child: CircularProgressIndicator(
                                             backgroundColor: Colors.transparent,
@@ -714,8 +712,9 @@ class PluEidtPageState extends State<PluEidtPage> {
               if (splitted.length != 2) {
                 return;
               }
-
-              _showDownloadTypeDialog(context, splitted[1]);
+              if (mounted) {
+                _showDownloadTypeDialog(context, splitted[1]);
+              }
             },
           ),
         ),

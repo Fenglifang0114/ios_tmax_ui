@@ -9,7 +9,6 @@ import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/widget/common_widget.dart';
-import 'package:t_max/widget/scale_list.dart';
 import '../data/manager_scale_channel.dart';
 import '../data/barcoderowdata.dart';
 import '../data/encrypt_data.dart';

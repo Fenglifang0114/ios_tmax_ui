@@ -547,6 +547,11 @@ class EventRevSetDecimalValue {
   EventRevSetDecimalValue(this.obj);
 }
 
+class EventRevWifiPwdAdd {
+  dynamic obj;
+  EventRevWifiPwdAdd(this.obj);
+}
+
 class EventRevSetMaxRange {
   dynamic obj;
   EventRevSetMaxRange(this.obj);
@@ -645,4 +650,19 @@ class EventRespGetAllWgtRecs {
 class EventDelAllWgtRecs {
   dynamic obj;
   EventDelAllWgtRecs(this.obj);
+}
+
+class EventAddWgtRec {
+  dynamic obj;
+  EventAddWgtRec(this.obj);
+}
+
+class EventExportAllRecs {
+  dynamic obj;
+  EventExportAllRecs(this.obj);
+}
+
+class EventSaveTakeInOutWgt {
+  dynamic obj;
+  EventSaveTakeInOutWgt(this.obj);
 }

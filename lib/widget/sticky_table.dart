@@ -439,8 +439,8 @@ class _StickyTableState<T> extends State<StickyTable<T>> {
 }
 
 ///排序组件
-class _SortWidget extends StatelessWidget {
-  const _SortWidget({this.sortUp});
+class SortWidget extends StatelessWidget {
+  const SortWidget({super.key, this.sortUp});
 
   final bool? sortUp;
 
@@ -679,16 +679,11 @@ class _SyncScrollController extends ScrollController {
 class _SyncScrollPosition extends ScrollPositionWithSingleContext {
   _SyncScrollPosition(
     this.owner, {
-    required ScrollPhysics physics,
-    required ScrollContext context,
-    double? initialPixels,
-    ScrollPosition? oldPosition,
-  }) : super(
-          physics: physics,
-          context: context,
-          initialPixels: initialPixels,
-          oldPosition: oldPosition,
-        );
+    required super.physics,
+    required super.context,
+    super.initialPixels = null,
+    super.oldPosition,
+  });
 
   final _SyncScrollController owner;
 
@@ -797,7 +792,7 @@ class _SyncScrollPosition extends ScrollPositionWithSingleContext {
 }
 
 class _SyncScrollActivity extends ScrollActivity {
-  _SyncScrollActivity(_SyncScrollPosition delegate) : super(delegate);
+  _SyncScrollActivity(_SyncScrollPosition super.delegate);
 
   @override
   _SyncScrollPosition get delegate => super.delegate as _SyncScrollPosition;

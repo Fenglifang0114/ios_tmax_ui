@@ -8,7 +8,6 @@ import '../common/web_socket_channel.dart';
 import '../data/download_prt_fmt.dart';
 import '../data/manager_scale_channel.dart';
 import '../data/scalecmd_data.dart';
-import '../data/settingparam_data.dart';
 
 const String weighingMode = '0';
 const String weighingCheckMode = '1';
@@ -313,6 +312,21 @@ class PublicFunctions {
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
 
+  //增加汇总称重记录
+  static void addSummaryData(String jsonStr) {
+    myScaleCmd.cmdMode = "add_wgt_rec";
+    myScaleCmd.cmdData = jsonStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  static void exportAllRecords(int mode, String path) {
+    ReqExportAllWgtRecs req = ReqExportAllWgtRecs(mode: mode, path: path);
+    String reqStr = reqExportAllWgtRecsToJson(req);
+    myScaleCmd.cmdMode = "export_all_recs";
+    myScaleCmd.cmdData = reqStr; //根据scale model scale sn  scale name(别名)
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
   //获取称重记录
   static void newGetRecords(int mode, int page, int pageSize,
       String sortColumnName, String direction) {
@@ -329,44 +343,11 @@ class PublicFunctions {
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
 
-  static void getUIConfNormal() {
+  static void getUIConfNormal(String mode) {
     myScaleCmd.cmdMode = "get_ui_conf";
-    myScaleCmd.cmdData = "0";
+    myScaleCmd.cmdData = mode;
     // sendMsg(scaleId, jsonEncode(myScaleCmd));
     sendMsgChan0(jsonEncode(myScaleCmd));
-  }
-
-  static void getUIConfCheck() {
-    myScaleCmd.cmdMode = "get_ui_conf";
-    myScaleCmd.cmdData = "1";
-    // sendMsg(scaleId, jsonEncode(myScaleCmd));
-    sendMsgChan0(jsonEncode(myScaleCmd));
-  }
-
-  static void getUIConfTakeIn() {
-    myScaleCmd.cmdMode = "get_ui_conf";
-    myScaleCmd.cmdData = "2";
-    // sendMsg(scaleId, jsonEncode(myScaleCmd));
-    sendMsgChan0(jsonEncode(myScaleCmd));
-  }
-
-  static void getUIConfTakeOut() {
-    myScaleCmd.cmdMode = "get_ui_conf";
-    myScaleCmd.cmdData = "3";
-    // sendMsg(scaleId, jsonEncode(myScaleCmd));
-    sendMsgChan0(jsonEncode(myScaleCmd));
-  }
-
-  static void getNewUiConf() {
-    if (mySettingParam.scaleMode == 0) {
-      PublicFunctions.getUIConfNormal();
-    } else if (mySettingParam.scaleMode == 1) {
-      PublicFunctions.getUIConfCheck();
-    } else if (mySettingParam.scaleMode == 2) {
-      PublicFunctions.getUIConfTakeIn();
-    } else if (mySettingParam.scaleMode == 3) {
-      PublicFunctions.getUIConfTakeOut();
-    }
   }
 
   static void newDeleteAllRecords(int mode) {
@@ -374,6 +355,14 @@ class PublicFunctions {
     ReqDelAllWgtRecs reqData = ReqDelAllWgtRecs(mode: mode);
     String jsonStr = reqDelAllWgtRecsToJson(reqData);
     myScaleCmd.cmdData = jsonStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //关闭boot commander
+
+  static void killBootCommander() {
+    myScaleCmd.cmdMode = "kill_boot_commander";
+    myScaleCmd.cmdData = '';
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
 
@@ -401,10 +390,10 @@ class PublicFunctions {
     sendMsg(scaleId, jsonEncode(myScaleCmd));
   }
 
-  static void sendFormatToScale(String firmwarePathStr) {
+  static void sendFormatToScale(String firmwarePathStr, int scaleId) {
     myScaleCmd.cmdMode = "update_firmware";
     myScaleCmd.cmdData = firmwarePathStr;
-    sendMsg(1, jsonEncode(myScaleCmd));
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
     writelog(jsonEncode(myScaleCmd));
   }
 
@@ -609,7 +598,6 @@ class PublicFunctions {
   }
 
   static void sendOutputFmtToScale(List<String> list, int scaleId) async {
-    scaleId = 1;
     myDownLoadSetOutputFmt.filePath = list;
     String json = jsonEncode(myDownLoadSetOutputFmt);
     myScaleCmd.cmdMode = "set_output_format";
@@ -656,32 +644,26 @@ class PublicFunctions {
   }
 
   static void openScalePassth(int scaleId) {
-    if (scaleId == 1) {
-      myScaleCmd.cmdMode = "open_scale_passthrough";
-      myScaleCmd.cmdData = 'string';
-      sendMsg(scaleId, jsonEncode(myScaleCmd));
-    }
+    myScaleCmd.cmdMode = "open_scale_passthrough";
+    myScaleCmd.cmdData = 'string';
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
   }
 
   static void changeScalePassth(bool isHex, int scaleId) {
-    if (scaleId == 1) {
-      myScaleCmd.cmdMode = "change_scale_passth_mode";
-      if (isHex) {
-        myScaleCmd.cmdData = 'hex';
-      } else {
-        myScaleCmd.cmdData = 'string';
-      }
-
-      sendMsg(scaleId, jsonEncode(myScaleCmd));
+    myScaleCmd.cmdMode = "change_scale_passth_mode";
+    if (isHex) {
+      myScaleCmd.cmdData = 'hex';
+    } else {
+      myScaleCmd.cmdData = 'string';
     }
+
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
   }
 
   static void closeScalePassth(int scaleId) {
-    if (scaleId == 1) {
-      myScaleCmd.cmdMode = "close_scale_passthrough";
-      myScaleCmd.cmdData = '';
-      sendMsg(scaleId, jsonEncode(myScaleCmd));
-    }
+    myScaleCmd.cmdMode = "close_scale_passthrough";
+    myScaleCmd.cmdData = '';
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
   }
 
   static void closewifiPassth(int scaleId) {

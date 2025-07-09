@@ -8,7 +8,6 @@ import 'package:t_max/data/icons.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/data/scalecmd_data.dart';
 import 'package:t_max/data/writelog.dart';
-import 'package:t_max/dialog/app_common_data.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/widget/common_widget.dart';
 import 'package:t_max/widget/no_device_widget.dart';
@@ -56,7 +55,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
   bool isRename = false;
   bool _isValidIP = false;
   bool _isModifyName = false;
-  bool _isEditing = false;
+  bool isEditing = false;
   bool _isNetPort = false;
   bool isDel = false; //是否执行删除
 
@@ -117,6 +116,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
     initScaleList();
     initEventBus();
     PublicFunctions.getPortList();
+    PublicFunctions.getScaleList();
 
     checkPortList();
 
@@ -151,22 +151,12 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
           isAddScale = false;
           String dataStr = event.obj;
           if (dataStr.isNotEmpty) {
+            if (dataStr.contains('scale list')) {
+              return;
+            }
             dataStr.contains('ok')
                 ? showTipInfo(localizedStrings.fSuccessMsg, context)
                 : showTipInfo(dataStr, context);
-          }
-
-          for (int i = 0; i < myNetScaleList.length; i++) {
-            if (selScaleId < myNetScaleList[i].scaleId!) {
-              selScaleId = myNetScaleList[i].scaleId!;
-              scaleNameCtl.text = myNetScaleList[i].scaleName!;
-              scaleModelCtl.text = myNetScaleList[i].scaleModel!;
-              snCtl.text = myNetScaleList[i].scaleSn!;
-            }
-          }
-          if (scaleModelCtl.text == "TMax") {
-            scaleModelCtl.text = "";
-            snCtl.text = "";
           }
         });
       }
@@ -221,6 +211,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
       if (mounted) {
         myModifyAck = event.obj;
         isComSetting = false;
+        PublicFunctions.getScaleList();
         PublicFunctions.checkSerialPort(selScaleId);
         isTesting = true;
       }
@@ -312,8 +303,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
             snCtl.text = myAllScalesList[i].scaleSn;
           }
           if ((scaleModelCtl.text == 'T-Max' || scaleModelCtl.text == 'TMax') &&
-              snCtl.text.length == 10 &&
-              snCtl.text.startsWith('174')) {
+              snCtl.text.length == 10) {
             scaleModelCtl.text = '';
             snCtl.text = '';
           }
@@ -709,7 +699,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
                 context,
                 Theme.of(context).colorScheme,
                 Theme.of(context).textTheme,
-                (isAddScale || isTesting) || isRename || isDel
+                (isAddScale || isTesting) || isRename || isDel || isComSetting
                     ? null
                     : () {
                         setState(() {
@@ -724,6 +714,36 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
               ),
             ),
           ],
+        ));
+  }
+
+  Widget textColorBtn(
+    BuildContext context,
+    ColorScheme colorScheme,
+    TextTheme textTheme,
+    VoidCallback? func,
+    String name,
+    double height,
+    Color backColor,
+    Color fontColor,
+  ) {
+    return ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          foregroundColor: colorScheme.onPrimary,
+          backgroundColor: backColor,
+          fixedSize: Size(double.infinity, height),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.zero,
+          ),
+        ),
+        onPressed: func,
+        child: Text(
+          name,
+          style: Theme.of(context).textTheme.bodySmall!.apply(
+              color: func == null
+                  ? colorScheme.surfaceContainerHighest
+                  : fontColor),
+          overflow: TextOverflow.ellipsis,
         ));
   }
 
@@ -789,8 +809,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
                         }
                         if ((scale.scaleModel == 'T-Max' ||
                                 scale.scaleModel == 'TMax') &&
-                            scale.scaleSn.length == 10 &&
-                            scale.scaleSn.startsWith('174')) {
+                            scale.scaleSn.length == 10) {
                           scaleModelCtl.text = '';
                           snCtl.text = '';
                         }
@@ -820,7 +839,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
                                       : Theme.of(context)
                                           .colorScheme
                                           .surface
-                                          .withOpacity(0.1),
+                                          .withValues(alpha: 0.1),
                                 ),
                                 width: scaleInnerItemHeight,
                                 height: scaleInnerItemHeight,
@@ -1217,7 +1236,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
         showTextButton(
             context,
             btnHeight,
-            localizedStrings.gBtnConnect,
+            localizedStrings.gBtnTestConnect,
             isClosePort || isComSetting || comPortCtl.text == ''
                 ? null
                 : () {
@@ -1259,10 +1278,10 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
                   context,
                   btnHeight,
                   localizedStrings.gBtnConfirm,
-                  scaleNameCtl.text.isNotEmpty
+                  scaleNameCtl.text.isNotEmpty && _isModifyName
                       ? () {
                           modifyScaleName();
-                          _isEditing = true;
+                          isEditing = true;
                         }
                       : null,
                   Theme.of(context).colorScheme.onPrimary,
@@ -1300,7 +1319,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
         showTextButton(
             context,
             btnHeight,
-            localizedStrings.gBtnConnect,
+            localizedStrings.gBtnTestConnect,
             !isAddScale && !isTesting && !isDel && !isComSetting
                 ? () {
                     PublicFunctions.checkSerialPort(selScaleId);
@@ -1346,11 +1365,8 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
   }
 
   bool isValidScaleName(String name) {
-    if (scaleNameCtl.text == "ComScale") {
-      return false;
-    }
-    for (NetScaleInfoLocal scaleInfo in myNetScaleList) {
-      if (scaleInfo.scaleName == scaleNameCtl.text) {
+    for (Scale tempScale in myAllScalesList) {
+      if (tempScale.scaleName == scaleNameCtl.text) {
         return false;
       }
     }
@@ -1384,16 +1400,6 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
     selScaleId = -1;
   }
 
-  void sendToCheckOnline() {
-    PublicFunctions.checkSerialPort(1);
-    if (myNetScaleList.isEmpty) {
-      return;
-    }
-    for (var i = 0; i < myNetScaleList.length; i++) {
-      PublicFunctions.checkSerialPort(myNetScaleList[i].scaleId!);
-    }
-  }
-
   void sendStaticIpInfo(String ip, String gateway, String netmask) {
     myScaleCmd.cmdMode = 'set_wifi_static_ip';
     myStaticIpInfo.gateway = gateway;
@@ -1402,24 +1408,6 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
     myScaleCmd.cmdData = jsonEncode(myStaticIpInfo).toString();
     PublicFunctions.sendMsg(myDefScaleInfo.defScaleId!, jsonEncode(myScaleCmd));
     writelog(jsonEncode(myScaleCmd));
-  }
-
-  //等待进度条
-  Widget _buildProcess() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        isDel || isTesting
-            ? Center(
-                child: CircularProgressIndicator(
-                  backgroundColor: Colors.transparent,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                      Theme.of(context).colorScheme.primary),
-                ),
-              )
-            : const SizedBox(),
-      ],
-    );
   }
 }
 

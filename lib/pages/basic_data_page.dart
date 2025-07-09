@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:t_max/data/downloadresponse.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/olul_err_data.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
@@ -12,7 +11,6 @@ import '../../functions/methods.dart';
 import '../data/manager_scale_channel.dart';
 import '../data/language.dart';
 import '../data/timer_manager.dart';
-import '../widget/page_head.dart';
 
 class BasicDataPage extends StatefulWidget {
   const BasicDataPage({super.key});
@@ -45,6 +43,7 @@ class BasicDataPageState extends State<BasicDataPage> {
             for (var item in myAllScalesList) {
               if (item.scaleId == selScaleId) {
                 item.isOnline = false;
+                break;
               }
             }
           } else {
@@ -69,6 +68,16 @@ class BasicDataPageState extends State<BasicDataPage> {
             DefScaleInfo.getDefScaleInfo(scaleId);
             PublicFunctions.getBasicData(myDefScaleInfo.defScaleId!);
           });
+        }
+      }
+    });
+    // 在页面构建完成后显示提示
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (myAllScalesList.isEmpty) {
+        showTipInfo(localizedStrings.gTipNoDeviceAddFirst, context);
+      } else {
+        if (selScaleId == -1) {
+          showTipInfo(localizedStrings.gTipSelectDeviceFirst, context);
         }
       }
     });
@@ -98,11 +107,6 @@ class BasicDataPageState extends State<BasicDataPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            pageHeadInfo(
-                context,
-                width - headWidthPadding,
-                localizedStrings.menuBasicDataCollection,
-                localizedStrings.gTipBasicDataPageHelp),
             Expanded(
               child:
                   Row(crossAxisAlignment: CrossAxisAlignment.start, children: [

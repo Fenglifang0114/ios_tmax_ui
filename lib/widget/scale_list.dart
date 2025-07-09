@@ -567,7 +567,7 @@ class _NewAllScaleListWidgetState extends State<NewAllScaleListWidget> {
                                                   : Theme.of(context)
                                                       .colorScheme
                                                       .surface
-                                                      .withOpacity(0.1),
+                                                      .withValues(alpha: 0.1),
                                             ),
                                             width: scaleInnerItemHeight,
                                             height: scaleInnerItemHeight,
@@ -740,7 +740,7 @@ class _NewComScaleListWidgetState extends State<NewComScaleListWidget> {
                                                   : Theme.of(context)
                                                       .colorScheme
                                                       .surface
-                                                      .withOpacity(0.1),
+                                                      .withValues(alpha: 0.1),
                                             ),
                                             width: scaleInnerItemHeight,
                                             height: scaleInnerItemHeight,
@@ -929,7 +929,8 @@ class _NewMutiScaleListWidgetState extends State<NewMutiScaleListWidget> {
                                                   : Theme.of(context)
                                                       .colorScheme
                                                       .surface
-                                                      .withOpacity(0.1),
+                                                      // 使用 withValues 替代 withOpacity
+                                                      .withValues(alpha: 0.1),
                                             ),
                                             width: scaleInnerItemHeight,
                                             height: scaleInnerItemHeight,

@@ -15,8 +15,5 @@ export 'package:t_max/pages/lable_down_prn_fmt_page.dart';
 export 'package:t_max/pages/plu_edit_page.dart';
 export 'package:t_max/pages/retail_report_page.dart';
 export 'package:t_max/pages/take_in_page.dart';
-export 'package:t_max/pages/take_out_page.dart';
-export 'package:t_max/pages/check_weighers_page.dart';
-export 'package:t_max/pages/weight_mode_page.dart';
 export 'package:t_max/pages/formula_scale_page.dart';
 export 'package:t_max/pages/flow_rate_page.dart';

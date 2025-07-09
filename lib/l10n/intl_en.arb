@@ -8,6 +8,10 @@
     "@gBtnConnect": {
         "description": "This is a button for testing the connection with the device."
     },
+    "gBtnTestConnect": "Test Connect",
+    "@gBtnTestConnect": {
+        "description": "This is a button for testing the connection with the device."
+    },
     "gBtnTare": "Tare",
     "@gBtnTare": {
         "description": "This is a button for tare weight."
@@ -103,6 +107,10 @@
     "gTipGetIP": "Obtaining IP, please wait...",
     "@gTipGetIP": {
         "description": "This is a prompt for obtaining Ip info."
+    },
+    "gTipGetAPList": "Obtaining AP list,please wait...",
+    "@gTipGetAPList": {
+        "description": "This is a prompt for obtaining Ap list."
     },
     "gTipGetIpOk": "Get Ip OK !",
     "@gTipGetIpOk": {
@@ -360,8 +368,8 @@
     "@user_edit": {
         "description": "This is a prompt about user edit."
     },
-    "parameter_settings_title": "Parameter settings",
-    "@parameter_settings_title": {
+    "gParameterSettingsTitle": "Parameter settings",
+    "@gParameterSettingsTitle": {
         "description": "This is a prompt about parameter settings."
     },
     "save_mode": "Save Mode",
@@ -591,6 +599,10 @@
     "cBtnClosePreview": "Close preview",
     "@cBtnClosePreview": {
         "description": "This is a button about close preview in T-Config."
+    },    
+    "gTitlePreview": "Preview",
+    "@gTitlePreview": {
+        "description": "This is a preview of the output of a custom serial port protocol."
     },
     "gBtnClear": "Clear",
     "@gBtnClear": {
@@ -644,16 +656,8 @@
     "@select_firmware_btn": {
         "description": ""
     },
-    "report_set_btn": "Report Setting",
-    "@report_set_btn": {
-        "description": ""
-    },
     "report_show_btn": "Show Reports",
     "@report_show_btn": {
-        "description": ""
-    },
-    "report_delete_btn": "Delete All",
-    "@report_delete_btn": {
         "description": ""
     },
     "report_hide_btn": "Hide Report",
@@ -2440,7 +2444,7 @@
     "@menuLanguageSetting": {
         "description": "Menu item for language setting"
     },
-    "menuApplications": "Applications",
+    "menuApplications": "Application",
     "@menuApplications": {
         "description": "Menu item for applications"
     },   
@@ -2471,10 +2475,6 @@
     "gExpirationDate": "Expiration date",
     "@gExpirationDate": {
         "description": "This is the prompt for the expiration date."
-    },
-    "gBtnRenew": "Renew",
-    "@gBtnRenew": {
-        "description": "This is the button for renewing the software service."
     },
     "gTipUnactivated": "Unactivated",
     "@gTipUnactivated": {
@@ -2508,9 +2508,13 @@
     "@gTitleConfigFunctionCharge": {
         "description": "This is the title for the configuration function charging method."
     },
-    "gSubtitleConfigFunctionCharge": "The configuration of the following functions is charged at ￥100/year. After purchase, you can activate the following configuration functions. Please contact the supplier for activation.",
+    "gSubtitleConfigFunctionCharge": "Pay annually to activate all advanced functions, valid for one year. To purchase, please click ( ℹ️ ) in the top-right corner to contact the software provider.",
     "@gSubtitleConfigFunctionCharge": {
         "description": "This is the subtitle for the configuration function charging method."
+    },
+    "gSubtitleAppsCharge": "Pay per function to activate permanently. To purchase, please click ( ℹ️ ) in the top-right corner to contact the software provider.",
+    "@gSubtitleAppsCharge": {
+        "description": "This is the subtitle for the apps function charging method."
     },
     "gTitleAddedConfigFunction": "Added Configuration Functions",
     "@gTitleAddedConfigFunction": {
@@ -2891,5 +2895,182 @@
     "gTipWeightSummationMode": "Weight Summation Mode",
     "@gTipWeightSummationMode": {
         "description": "This is a tip indicating the weight summation operation mode."
+    },
+    "gBtnReportSetting":"Report Setting",
+    "@gBtnReportSetting":{
+        "description": "This is a button about report setting."
+    },
+    "gBtnDeleteAll": "Delete All",
+    "@gBtnDeleteAll": {
+        "description": "This is a button for deleting all items."
+    },
+    "gTipConfirmDeleteAll": "Are you sure you want to delete all data?",
+    "@gTipConfirmDeleteAll": {
+        "description": "This is a confirmation prompt for deleting all data."
+    },     
+    "gTipExportSuccess": "Export successful",
+    "@gTipExportSuccess": {
+        "description": "This is a prompt for successful export."
+    },
+    "gTipExportFail": "Export failed",
+    "@gTipExportFail": {
+        "description": "This is a prompt for failed export."
+    },
+    "gTipSaveType": "Save type",
+    "@gTipSaveType": {
+        "description": "This is the prompt for the save type."
+    },
+    "gTipInvalidInput": "The input data is invalid",
+    "@gTipInvalidInput": {
+        "description": "This is the prompt for invalid input data, especially for upper and lower limits."
+    },
+    "gTipInvalidWeightData": "Invalid weight data",
+    "@gTipInvalidWeightData": {
+        "description": "This is a prompt for invalid weight data."
+    },
+    "gBtnConfigSetting": "Function Center",
+    "@gBtnConfigSetting": {
+        "description": "This is a button for function center."
+    },
+    "gTipFreeApplications": "Free Applications",
+    "@gTipFreeApplications": {
+        "description": "This is a tip for free applications."
+    },
+    "gTipRetailApplications": "Retail Applications",
+    "@gTipRetailApplications": {
+        "description": "This is a tip for retail applications."
+    },
+    "gTipIndustrialApplications": "Industrial Applications",
+    "@gTipIndustrialApplications": {
+        "description": "This is a tip for industrial applications."
+    },
+    "gTipAdvancedConfiguration": "Advanced Configuration",
+    "@gTipAdvancedConfiguration": {
+        "description": "This is a tip for advanced configuration."
+    },
+    "gTipFreeConfiguration": "Free Configuration",
+    "@gTipFreeConfiguration": {
+        "description": "This is a tip for free configuration."
+    },
+    "gTipFailToSelectFile": "Fail to select file",
+    "@gTipFailToSelectFile": {
+        "description": "This is a tip for failing to select a file."
+    },
+    "subTitleMultiScaleManagement": "Connect to multiple devices via serial port, Wi-Fi, and Bluetooth.",
+    "@subTitleMultiScaleManagement": {
+        "description": "SubTitle for multi-scale management"
+    },
+    "subTitleDeviceTime": "Set the device's date and time.",
+    "@subTitleDeviceTime": {
+        "description": "SubTitle for device Time"
+    },  
+    "subTitleBluetoothSetting": "Configure Bluetooth name and signal strength.",
+    "@subTitleBluetoothSetting": {
+        "description": "SubTitle for bluetooth setting"
+    },
+    "subTitleWifiSetting": "Obtain static/dynamic IP addresses and connect to Wi-Fi.",
+    "@subTitleWifiSetting": {
+        "description": "SubTitle for Wi-Fi setting"
+    },
+    "subTitleFirmwareUpdate": "Update the scale's firmware via serial port or Wi-Fi.",
+    "@subTitleFirmwareUpdate": {
+        "description": "SubTitle for firmware update"
+    },
+    "subTitleLabelDesign": "Customize the label printing format.",
+    "@subTitleLabelDesign": {
+        "description": "SubTitle for label design"
+    },
+    "subTitleReceiptDesign": "Customize the receipt printing format.",
+    "@subTitleReceiptDesign": {
+        "description": "SubTitle for receipt design"
+    },
+    "subTitleSerialOutputDesign": "Customize and download serial port output content.",
+    "@subTitleSerialOutputDesign": {
+        "description": "SubTitle for serial output design"
+    },
+    "subTitleBasicDataCollection": "Read device usage info from scales to understand any abnormal activity.",
+    "@subTitleBasicDataCollection": {
+        "description": "SubTitle for basic data collection"
+    },
+    "subTitleParameterSetting": "Configure device parameters online.",
+    "@subTitleParameterSetting": {
+        "description": "SubTitle for parameter setting"
+    },
+    "subTitleWeighing": "Display weighing data in real-time, supporting basic operations.",
+    "@subTitleWeighing": {
+        "description": "SubTitle for weighing"
+    },
+    "subTitlePluManagement": "Batch edit and manage PLUs.",
+    "@subTitlePluManagement": {
+        "description": "SubTitle for PLU management"
+    },
+    "subTitleLabelFormatDownload": "Download label printing format to the scale.",
+    "@subTitleLabelFormatDownload": {
+        "description": "SubTitle for label format download"
+    },
+    "subTitleReceiptFormatDownload": "Download receipt printing format to the scale.",
+    "@subTitleReceiptFormatDownload": {
+        "description": "SubTitle for receipt format download"
+    },
+    "subTitleRetailReport": "Automatically collect, record, and generate reports for retail data.",
+    "@subTitleRetailReport": {
+        "description": "SubTitle for retail report"
+    },
+    "subTitleVariableValueSetting": "Edit headers, footers, and operator information.",
+    "@subTitleVariableValueSetting": {
+        "description": "SubTitle for variable value setting"
+    },
+    "subTitleWeighingDataCollection": "Perform online weighing and generate weight data reports.",
+    "@subTitleWeighingDataCollection": {
+        "description": "SubTitle for weighing data collection"
+    },
+    "subTitleCheckWeighing": "Perform online weight inspection and generate inspection reports.",
+    "@subTitleCheckWeighing": {
+        "description": "SubTitle for check weighing"
+    },
+    "subTitleIncrementWeighing": "Record weight increment during loading and generate data reports.",
+    "@subTitleIncrementWeighing": {
+        "description": "SubTitle for increment weighing"
+    },
+    "subTitleTakeOutScale": "Record weight decrement during unloading  and generate data reports.",
+    "@subTitleTakeOutScale": {
+        "description": "SubTitle for take out scale"
+    },
+    "subTitleFormula": "Formula editing, management, online batching, and data generation.",
+    "@subTitleFormula": {
+        "description": "SubTitle for formula"
+    },
+    "subTitleFlowRate": "Test liquid filling speed and variation trends.",
+    "@subTitleFlowRate": {
+        "description": "SubTitle for liquid filling speed"
+    },
+    "subTitleCalibration": "Perform single-point or linear calibration on the scale.",
+    "@subTitleCalibration": {
+        "description": "SubTitle for calibration"
+    },
+    "tipPage": "Page",
+    "@tipPage": {
+        "description": "This is a prompt for the page number."
+    },
+    "tipPageSequnce": "",
+    "@tipPageSequnce": {
+        "description": "This is a prompt for the sequence of the page.  The English part needs no translation."
+    },
+    "tipPageTotal": "Total",
+    "@tipPageTotal": {
+        "description": "This is a prompt for the total number of pages."
+    },
+    "gTipSelectDeviceFirst": "Please select a device first.",
+    "@gTipSelectDeviceFirst": {
+        "description": "Please select a device first."
+    },
+    "gTipNoDeviceAddFirst": "No devices available. Please add a device first.",
+    "@gTipNoDeviceAddFirst": {
+        "description": "No devices available. Please add a device first."
+    },
+    "gTipGettingDeviceTime": "Retrieving the device time, please wait a moment.",
+    "@gTipGettingDeviceTime": {
+        "description": "Retrieving the device time, please wait a moment."
     }
+
 }    

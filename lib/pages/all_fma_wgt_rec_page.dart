@@ -56,7 +56,7 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
   ScrollController scrollController = ScrollController(); //滚动控制器
   ScrollController scrollController1 = ScrollController(); //滚动控制器
 
-  List<bool> _isExpanded = [];
+  final List<bool> _isExpanded = [];
   bool _isAllSelected = false;
   late List<bool> _selectedRows;
 
@@ -235,7 +235,7 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
                       thickness: 1,
                       height: 1,
                     ),
-                    Container(
+                    SizedBox(
                       height: formulaTableHeight,
                       child: ListView.builder(
                         itemCount: fmaRecFromDbList.length,
@@ -823,7 +823,7 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
           ),
           Icon(
             Icons.help,
-            color: Color(0xFFF4B837),
+            color: Theme.of(context).colorScheme.onTertiaryContainer,
           ),
           SizedBox(
             width: 20,
@@ -972,7 +972,6 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
       showTipInfo(localizedStrings.fSaveSuccess, context);
     } catch (e) {
       // 提示导出失败
-      print("Export failed: $e");
     }
   }
 
@@ -1135,23 +1134,6 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
           width: 20,
         ),
       ]),
-    );
-  }
-}
-
-class _ClearButton extends StatelessWidget {
-  const _ClearButton({required this.controller});
-
-  final TextEditingController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      icon: const Icon(
-        Icons.clear,
-        size: 20,
-      ),
-      onPressed: () => controller.clear(),
     );
   }
 }

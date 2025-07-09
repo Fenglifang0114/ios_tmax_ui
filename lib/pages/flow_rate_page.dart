@@ -7,12 +7,16 @@ import 'package:flutter/material.dart';
 import 'package:t_max/data/comscaleinfo_data.dart';
 import 'package:t_max/data/flow_data_from_db.dart';
 import 'package:t_max/data/flow_rate_data.dart';
+import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/manager_scale_channel.dart';
 import 'package:t_max/data/reqweightdata_data.dart';
+import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/data/timer_manager.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
+import 'package:t_max/widget/page_head.dart';
+import 'package:t_max/widget/scale_list.dart';
 import 'package:t_max/widget/sticky_table.dart';
 import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
@@ -90,7 +94,6 @@ class FlowRatePageState extends State<FlowRatePage>
       ScrollController(); // 添加 ScrollController
 
   FlowRateFromDb selectedProcessWgt = FlowRateFromDb(); //选中的流速数据
-  NetScaleInfoLocal defNetScaleInfo = NetScaleInfoLocal(); //默认秤
 
   Timer? weightCollectionTimer; // 声明定时器
   Timer? setWgtStartFalseTimer; // 用于每3秒将isWgtStart设置为false的定时器
@@ -132,11 +135,6 @@ class FlowRatePageState extends State<FlowRatePage>
   //   weightRecords.add(record);
   // }
 
-  void getScaleInfo() {
-    PublicFunctions.getWeight(selScaleId);
-    DefScaleInfo.getDefScaleInfo(selScaleId);
-  }
-
   // 每3秒钟将isWgtStart设置为false
   void startSetWgtStartFalseTimer() {
     setWgtStartFalseTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
@@ -160,30 +158,21 @@ class FlowRatePageState extends State<FlowRatePage>
 
   //切换的时候要修改掉秤的信息和停止重量
   void changeScale(int scaleId) {
-    PublicFunctions.stopWeight(selScaleId);
+    if (selScaleId != -1) {
+      PublicFunctions.stopWeight(selScaleId);
+    }
+
     setState(() {
       selScaleId = scaleId;
+      currentWgtStrNotifier.value = '----';
     });
-    DefScaleInfo.getDefScaleInfo(scaleId);
-    PublicFunctions.getWeight(scaleId);
-  }
 
-//初始化秤列表
-  void initScaleList() {
-    scaleNetItems = myNetScaleList;
-    selScaleId = myDefScaleInfo.defScaleId!;
-    if (myNetScaleList.isNotEmpty) {
-      defNetScaleInfo = NetScaleListMgr.findScaleInfo(
-          myNetScaleList, myDefScaleInfo.defScaleId!);
-    }
+    PublicFunctions.getWeight(selScaleId);
   }
-  //myComScaleInfo
 
   @override
   void initState() {
     super.initState();
-    initScaleList();
-    getScaleInfo();
     PublicFunctions.getFlowRateData();
     cntScaleTimerMgr.startCntAliveTimer(10);
     startSetWgtStartFalseTimer();
@@ -231,10 +220,12 @@ class FlowRatePageState extends State<FlowRatePage>
       if (mounted) {
         ReqWeightCountine tempWeight = ReqWeightCountine();
         tempWeight = event.obj;
-        if (tempWeight.scaleId == myDefScaleInfo.defScaleId!) {
+        if (tempWeight.scaleId == selScaleId) {
           myReqWeightCountine = tempWeight;
-          if (tempWeight.scaleId == 1) {
-            myComScaleInfo.isOnline = true;
+          for (var item in myAllScalesList) {
+            if (item.scaleId == selScaleId && item.isOnline == false) {
+              item.isOnline = true;
+            }
           }
           isWgtStart = true;
 
@@ -375,6 +366,9 @@ class FlowRatePageState extends State<FlowRatePage>
     wgtDataListNotifier.dispose();
     _scrollController.dispose(); // 释放 ScrollController
     _folwDataScrollCtl.dispose(); // 释放 ScrollController
+    if (selScaleId != -1) {
+      PublicFunctions.stopWeight(selScaleId);
+    }
     super.dispose();
   }
 
@@ -495,12 +489,7 @@ class FlowRatePageState extends State<FlowRatePage>
               sort: false,
               columnWidth: FixedColumnWidth(columnWidth),
               alignment: Alignment.topLeft,
-              onCellClick: (context, title, data, row, column) {
-                // ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                // ScaffoldMessenger.of(
-                //   context,
-                // ).showSnackBar(SnackBar(content: Text("年龄$data")));
-              },
+              onCellClick: (context, title, data, row, column) {},
               // 修改 renderCell 方法
               renderCell: (context, title, data, row, column) {
                 return Text((data as FlowRateFromDb)
@@ -516,12 +505,7 @@ class FlowRatePageState extends State<FlowRatePage>
               showSort: true,
               sort: false,
               alignment: Alignment.topLeft,
-              onCellClick: (context, title, data, row, column) {
-                // ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                // ScaffoldMessenger.of(
-                //   context,
-                // ).showSnackBar(SnackBar(content: Text("年龄$data")));
-              },
+              onCellClick: (context, title, data, row, column) {},
               // 修改 renderCell 方法
               renderCell: (context, title, data, row, column) {
                 return Text(
@@ -553,12 +537,7 @@ class FlowRatePageState extends State<FlowRatePage>
               sort: false,
               columnWidth: FixedColumnWidth(columnWidth),
               alignment: Alignment.centerLeft,
-              onCellClick: (context, title, data, row, column) {
-                // ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                // ScaffoldMessenger.of(
-                //   context,
-                // ).showSnackBar(SnackBar(content: Text("年龄$data")));
-              },
+              onCellClick: (context, title, data, row, column) {},
               // 修改 renderCell 方法
               renderCell: (context, title, data, row, column) {
                 return Text(
@@ -572,12 +551,7 @@ class FlowRatePageState extends State<FlowRatePage>
               sort: false,
               columnWidth: FixedColumnWidth(columnWidth),
               alignment: Alignment.centerLeft,
-              onCellClick: (context, title, data, row, column) {
-                // ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                // ScaffoldMessenger.of(
-                //   context,
-                // ).showSnackBar(SnackBar(content: Text("年龄$data")));
-              },
+              onCellClick: (context, title, data, row, column) {},
               // 修改 renderCell 方法
               renderCell: (context, title, data, row, column) {
                 return Text(
@@ -893,785 +867,644 @@ class FlowRatePageState extends State<FlowRatePage>
 
   @override
   Widget build(BuildContext context) {
-    // final width = MediaQuery.of(context).size.width;
+    final width = MediaQuery.of(context).size.width;
     return Scaffold(
-        body: Container(
-      color: Theme.of(context).colorScheme.surfaceDim, //对接时修改颜色值
-      child: Padding(
-        padding: const EdgeInsets.all(14.0),
-        child: Row(
-          children: [
-            showScaleList(),
-            SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                children: [
-                  showTitleBar(),
-                  Divider(
-                    color: Theme.of(context).colorScheme.outline,
-                    thickness: 1,
-                    height: 1,
-                  ),
-                  Expanded(
-                      flex: 9,
-                      child: Container(
-                        color: Theme.of(context).colorScheme.surface,
-                        child: Row(children: [
-                          Expanded(
-                              flex: 1,
-                              child: Container(
-                                  padding: EdgeInsets.all(50),
-
-                                  //此处显示一张图片
-                                  child: Image.asset(
-                                    'assets/images/halfContainer.png',
-                                    fit: BoxFit.contain,
-                                  ))),
-                          Expanded(
-                              flex: 3,
-                              child: Container(
-                                color: Theme.of(context).colorScheme.surface,
-                                child: Column(children: [
-                                  SizedBox(
-                                    height: 14,
-                                  ),
-                                  Expanded(
-                                      flex: 7,
-                                      child: Container(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .surface,
-                                        child: Row(children: [
-                                          Expanded(
-                                            flex: 2,
-                                            child: Container(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .surfaceDim,
-                                              child: Column(
-                                                children: [
-                                                  Container(
-                                                    height: 30,
-                                                    padding: EdgeInsets.only(
-                                                        left: 10),
-                                                    alignment:
-                                                        Alignment.centerLeft,
-                                                    child: Text(
-                                                      localizedStrings
-                                                          .fCurrentWeightLabel,
-                                                      textAlign: TextAlign.left,
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                      child: Row(children: [
-                                                    Expanded(
-                                                        flex: 3,
-                                                        child: Container(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  left: 10),
-                                                          alignment: Alignment
-                                                              .centerLeft,
-                                                          // 使用 ValueListenableBuilder 监听当前重量的变化
-                                                          child:
-                                                              ValueListenableBuilder<
-                                                                  String>(
-                                                            valueListenable:
-                                                                currentWgtStrNotifier,
-                                                            builder: (context,
-                                                                value, child) {
-                                                              return FittedBox(
-                                                                fit: BoxFit
-                                                                    .scaleDown, // 仅在空间不足时缩小
-                                                                alignment: Alignment
-                                                                    .centerLeft,
-                                                                child: Text(
-                                                                  value
-                                                                      .toString(),
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          80,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color: Theme.of(
-                                                                              context)
-                                                                          .colorScheme
-                                                                          .primary),
-                                                                ),
-                                                              );
-                                                            },
-                                                          ),
-                                                        )),
-                                                    Expanded(
-                                                        flex: 1,
-                                                        child: Container(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  left: 10,
-                                                                  right: 10,
-                                                                  bottom: 10),
-                                                          alignment: Alignment
-                                                              .bottomRight,
-                                                          child:
-                                                              ValueListenableBuilder<
-                                                                  String>(
-                                                            valueListenable:
-                                                                currentUnitNotifier,
-                                                            builder: (context,
-                                                                value, child) {
-                                                              return FittedBox(
-                                                                fit: BoxFit
-                                                                    .scaleDown, // 仅在空间不足时缩小
-                                                                alignment: Alignment
-                                                                    .centerRight,
-                                                                child: Text(
-                                                                  value
-                                                                      .toString(),
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          24,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color: Theme.of(
-                                                                              context)
-                                                                          .colorScheme
-                                                                          .primary),
-                                                                ),
-                                                              );
-                                                            },
-                                                          ),
-                                                        ))
-                                                  ]))
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Expanded(
-                                            flex: 3,
-                                            child: Row(children: [
-                                              isStart
-                                                  ? Expanded(
-                                                      flex: 1,
-                                                      child: SizedBox(),
-                                                    )
-                                                  : Expanded(
-                                                      flex: 1,
-                                                      child: ElevatedButton(
-                                                        style: ElevatedButton
-                                                            .styleFrom(
-                                                          foregroundColor:
-                                                              Theme.of(context)
-                                                                  .colorScheme
-                                                                  .primary,
-                                                          backgroundColor:
-                                                              Theme.of(context)
-                                                                  .colorScheme
-                                                                  .surface,
-                                                          fixedSize: const Size(
-                                                              double.infinity,
-                                                              48),
-                                                          shape:
-                                                              RoundedRectangleBorder(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .zero, // 可以根据需要调整圆角
-                                                                  side:
-                                                                      BorderSide(
-                                                                    color: isStart
-                                                                        ? Theme.of(context)
-                                                                            .colorScheme
-                                                                            .outline
-                                                                        : Theme.of(context)
-                                                                            .colorScheme
-                                                                            .primary,
-                                                                  )),
-                                                        ),
-                                                        onPressed: isStart
-                                                            ? null
-                                                            : () {
-                                                                PublicFunctions
-                                                                    .performZero();
-                                                              },
-                                                        child: Text(
-                                                          localizedStrings
-                                                              .iBtnZero,
-                                                          style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .normal,
-                                                            color: Theme.of(
-                                                                    context)
-                                                                .colorScheme
-                                                                .primary,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                          ),
-                                                        ),
-                                                      )),
-                                              SizedBox(
-                                                width: 10,
-                                              ),
-                                              isStart
-                                                  ? Expanded(
-                                                      flex: 1,
-                                                      child: SizedBox(),
-                                                    )
-                                                  : Expanded(
-                                                      flex: 1,
-                                                      child: ElevatedButton(
-                                                        style: ElevatedButton
-                                                            .styleFrom(
-                                                          foregroundColor:
-                                                              Theme.of(context)
-                                                                  .colorScheme
-                                                                  .primary,
-                                                          backgroundColor:
-                                                              Theme.of(context)
-                                                                  .colorScheme
-                                                                  .surface,
-                                                          fixedSize: const Size(
-                                                              double.infinity,
-                                                              48),
-                                                          shape:
-                                                              RoundedRectangleBorder(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .zero, // 可以根据需要调整圆角
-                                                                  side:
-                                                                      BorderSide(
-                                                                    color: isStart
-                                                                        ? Theme.of(context)
-                                                                            .colorScheme
-                                                                            .outline
-                                                                        : Theme.of(context)
-                                                                            .colorScheme
-                                                                            .primary,
-                                                                  )),
-                                                        ),
-                                                        onPressed: isStart
-                                                            ? null
-                                                            : () {
-                                                                PublicFunctions
-                                                                    .performTare();
-                                                              },
-                                                        child: Text(
-                                                          localizedStrings
-                                                              .gBtnTare,
-                                                          style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .normal,
-                                                            color: Theme.of(
-                                                                    context)
-                                                                .colorScheme
-                                                                .primary,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                          ),
-                                                        ),
-                                                      )),
-                                              SizedBox(
-                                                width: 10,
-                                              ),
-                                              Expanded(
-                                                  flex: 1,
-                                                  child: ElevatedButton(
-                                                    style: ElevatedButton
-                                                        .styleFrom(
-                                                      foregroundColor:
-                                                          Theme.of(context)
-                                                              .colorScheme
-                                                              .onPrimary,
-                                                      backgroundColor:
-                                                          Theme.of(context)
-                                                              .colorScheme
-                                                              .primary,
-                                                      fixedSize: const Size(
-                                                          double.infinity, 48),
-                                                      shape:
-                                                          RoundedRectangleBorder(
-                                                        borderRadius: BorderRadius
-                                                            .zero, // 可以根据需要调整圆角
-                                                      ),
-                                                    ),
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        isStart = !isStart;
-                                                        if (isStart) {
-                                                          wgtDataList
-                                                              .clear(); // 清空重量数据列表
-                                                          selectedProcessWgt =
-                                                              FlowRateFromDb();
-                                                          rateDataList = [];
-                                                          clickedRow = -1;
-                                                        } else {
-                                                          calculateRate();
-                                                        }
-                                                      });
-                                                    },
-                                                    child: Text(
-                                                      //下一步  修改了此处
-                                                      isStart
-                                                          ? localizedStrings
-                                                              .gBtnEnd
-                                                          : localizedStrings
-                                                              .gBtnStart,
-                                                      style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.normal,
-                                                        color: Theme.of(context)
-                                                            .colorScheme
-                                                            .onPrimary,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                      ),
-                                                    ),
-                                                  )),
-                                            ]),
-                                          ),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                        ]),
-                                      )),
-                                  SizedBox(
-                                    height: 8,
-                                  ),
-                                  Expanded(
-                                      flex: 6,
-                                      child: Row(children: [
-                                        showTotalWeight(
-                                            localizedStrings.fTotalWeight,
-                                            selectedProcessWgt.flowRateHeader ==
-                                                    null
-                                                ? ""
-                                                : selectedProcessWgt
-                                                    .flowRateHeader!.totalWeight
-                                                    .toString(),
-                                            selectedProcessWgt.flowRateHeader ==
-                                                    null
-                                                ? ""
-                                                : selectedProcessWgt
-                                                    .flowRateHeader!.wgtUnit!),
-                                        SizedBox(
-                                          width: 8,
-                                        ),
-                                        showTotalWeight(
-                                            localizedStrings.fTotalTime,
-                                            selectedProcessWgt.flowRateHeader ==
-                                                    null
-                                                ? ""
-                                                : selectedProcessWgt
-                                                    .flowRateHeader!.totalTime
-                                                    .toString(),
-                                            's'),
-                                        SizedBox(
-                                          width: 8,
-                                        ),
-                                        showTotalWeight(
-                                            localizedStrings.fAverageSpeed,
-                                            selectedProcessWgt.flowRateHeader ==
-                                                    null
-                                                ? ""
-                                                : selectedProcessWgt
-                                                    .flowRateHeader!
-                                                    .averageFlowRate
-                                                    .toString(),
-                                            selectedProcessWgt.flowRateHeader ==
-                                                    null
-                                                ? ""
-                                                : '${selectedProcessWgt.flowRateHeader!.wgtUnit!}/s'),
-                                        SizedBox(
-                                          width: 8,
-                                        ),
-                                        showTotalWeight(
-                                            localizedStrings.fMaxSpeed,
-                                            selectedProcessWgt.flowRateHeader ==
-                                                    null
-                                                ? ""
-                                                : selectedProcessWgt
-                                                    .flowRateHeader!.maxFlowRate
-                                                    .toString(),
-                                            selectedProcessWgt.flowRateHeader ==
-                                                    null
-                                                ? ""
-                                                : '${selectedProcessWgt.flowRateHeader!.wgtUnit!}/s'),
-                                        SizedBox(
-                                          width: 8,
-                                        ),
-                                        showTotalWeight(
-                                            localizedStrings.fMinSpeed,
-                                            selectedProcessWgt.flowRateHeader ==
-                                                    null
-                                                ? ""
-                                                : selectedProcessWgt
-                                                    .flowRateHeader!.minFlowRate
-                                                    .toString(),
-                                            selectedProcessWgt.flowRateHeader ==
-                                                    null
-                                                ? ""
-                                                : '${selectedProcessWgt.flowRateHeader!.wgtUnit!}/s'),
-                                      ])),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
-                                  Expanded(
-                                      flex: 18,
-                                      child: Container(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .surface,
-                                        child: Column(children: [
-                                          SizedBox(
-                                              height: 36,
-                                              child: Row(children: [
-                                                SizedBox(
-                                                  width: 10,
-                                                ),
-                                                Expanded(
-                                                    child: Text(localizedStrings
-                                                        .fHistoricalWeighingRecordsBtn)),
-                                                Expanded(
-                                                  flex: 1,
-                                                  child: Row(children: [
-                                                    Spacer(),
-                                                    SizedBox(
-                                                      width: 150,
-                                                      child: ElevatedButton(
-                                                        style: ElevatedButton
-                                                            .styleFrom(
-                                                          foregroundColor:
-                                                              Theme.of(context)
-                                                                  .colorScheme
-                                                                  .onPrimary,
-                                                          backgroundColor:
-                                                              Theme.of(context)
-                                                                  .colorScheme
-                                                                  .primary,
-                                                          fixedSize: const Size(
-                                                              double.infinity,
-                                                              48),
-                                                          shape:
-                                                              RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .zero, // 可以根据需要调整圆角
-                                                          ),
-                                                        ),
-                                                        onPressed: () async {
-                                                          // 选择文件保存位置
-                                                          final directory =
-                                                              Directory
-                                                                  .current.path;
-                                                          String? outputFile =
-                                                              (await FilePicker
-                                                                  .platform
-                                                                  .saveFile(
-                                                            initialDirectory:
-                                                                directory,
-                                                            type:
-                                                                FileType.custom,
-                                                            dialogTitle:
-                                                                'Output file:',
-                                                            allowedExtensions: [
-                                                              "csv"
-                                                            ],
-                                                            fileName:
-                                                                'records.csv',
-                                                          ));
-                                                          if (outputFile !=
-                                                              null) {
-                                                            if (!outputFile
-                                                                .contains(
-                                                                    ".csv")) {
-                                                              outputFile =
-                                                                  "$outputFile.csv";
-                                                            }
-                                                            String filePath =
-                                                                outputFile;
-                                                            // 生成 CSV 数据
-                                                            List<List<dynamic>>
-                                                                csvData = [];
-
-                                                            for (var headerData
-                                                                in processWgtList) {
-                                                              // 添加头数据
-
-                                                              // 添加明细数据头
-                                                              csvData.add([
-                                                                'Rec ID',
-                                                                'Total Weight',
-                                                                'Total Time',
-                                                                'Average Speed',
-                                                                'Max Speed',
-                                                                'Min Speed',
-                                                                'ID',
-                                                                'Time',
-                                                                'Rate'
-                                                              ]);
-                                                              // 添加明细数据
-                                                              for (var detail
-                                                                  in headerData
-                                                                      .flowRateDetail!) {
-                                                                csvData.add([
-                                                                  headerData
-                                                                      .flowRateHeader!
-                                                                      .recId,
-                                                                  headerData
-                                                                      .flowRateHeader!
-                                                                      .totalWeight,
-                                                                  headerData
-                                                                      .flowRateHeader!
-                                                                      .totalTime,
-                                                                  headerData
-                                                                      .flowRateHeader!
-                                                                      .averageFlowRate,
-                                                                  headerData
-                                                                      .flowRateHeader!
-                                                                      .maxFlowRate,
-                                                                  headerData
-                                                                      .flowRateHeader!
-                                                                      .minFlowRate,
-                                                                  detail.id,
-                                                                  detail.time,
-                                                                  detail.rate
-                                                                ]);
-                                                              }
-                                                            }
-                                                            // 将 CSV 数据写入文件
-                                                            try {
-                                                              // 尝试将数据转换为 CSV 格式
-                                                              String csv =
-                                                                  const ListToCsvConverter()
-                                                                      .convert(
-                                                                          csvData);
-                                                              // 创建文件对象
-                                                              File file = File(
-                                                                  filePath);
-                                                              // 尝试将 CSV 数据写入文件
-                                                              await file
-                                                                  .writeAsString(
-                                                                      csv);
-                                                              // 显示导出成功提示
-                                                              showTipInfo(
-                                                                  localizedStrings
-                                                                      .fSaveSuccess,
-                                                                  context);
-                                                            } catch (e) {
-                                                              // 处理写入文件时可能出现的异常，并显示错误提示
-                                                              showTipInfo(' $e',
-                                                                  context);
-                                                            }
-                                                          }
-                                                        },
-                                                        child: Text(
-                                                          localizedStrings
-                                                              .gBtnExport,
-                                                          style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .normal,
-                                                            color: Theme.of(
-                                                                    context)
-                                                                .colorScheme
-                                                                .onPrimary,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    )
-                                                  ]),
-                                                ),
-                                              ])),
-                                          SizedBox(
-                                            height: 5,
-                                          ),
-                                          Expanded(
-                                              child: Row(
-                                                  children: [showWgtTable()]))
-                                        ]),
-                                      )),
-                                ]),
-                              ))
-                        ]),
-                      )),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Container(
-                    height: 30,
-                    color: Theme.of(context).colorScheme.surface,
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            padding: EdgeInsets.only(left: 10),
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              localizedStrings.fFlowRate,
-                              textAlign: TextAlign.left,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Container(
-                            padding: EdgeInsets.only(
-                              left: 10,
-                              right: 10,
-                              top: 5,
-                            ),
-                            alignment: Alignment.centerRight,
-                            child: SizedBox(
-                              width: 150,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  foregroundColor:
-                                      Theme.of(context).colorScheme.onPrimary,
-                                  backgroundColor:
-                                      Theme.of(context).colorScheme.primary,
-                                  fixedSize: const Size(double.infinity, 48),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.zero, // 可以根据需要调整圆角
-                                  ),
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    showDataTable = !showDataTable;
-                                  });
-                                },
-                                child: Text(
-                                  showDataTable
-                                      ? localizedStrings.fShowCurveChart
-                                      : localizedStrings.fShowDataTable,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.normal,
-                                    color:
-                                        Theme.of(context).colorScheme.onPrimary,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+      body: Container(
+        color: Theme.of(context).colorScheme.surface,
+        child: Padding(
+          padding: const EdgeInsets.all(0.0),
+          child: Column(
+            children: [
+              _buildPageHeadInfo(context, width),
+              _buildSpacer(context),
+              Expanded(
+                child: Row(
+                  children: [
+                    showScaleList(),
+                    Container(
+                      width: 14,
+                      color: Theme.of(context).colorScheme.surfaceDim,
                     ),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Expanded(flex: 10, child: _buildTopSection(context)),
+                          Container(
+                            height: 14,
+                            color: Theme.of(context).colorScheme.surfaceDim,
+                          ),
+                          _buildToggleSection(context),
+                          _buildChartOrTableSection(context)
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPageHeadInfo(BuildContext context, double width) {
+    return pageHeadInfo(
+      context,
+      width - headWidthPadding,
+      localizedStrings.fFlowRate,
+      '',
+    );
+  }
+
+  Widget _buildSpacer(BuildContext context) {
+    return Container(
+      height: regularPadding,
+      color: Theme.of(context).colorScheme.surfaceDim,
+    );
+  }
+
+  Widget _buildTopSection(
+    BuildContext context,
+  ) {
+    return Row(
+      children: [
+        _buildImageSection(context),
+        Expanded(
+            child: Column(
+          children: [
+            _buildCurrentWeightSection(context),
+            _buildTotalInfoSection(context),
+            _buildHistoricalSection(context),
+          ],
+        ))
+      ],
+    );
+  }
+
+  Widget _buildImageSection(BuildContext context) {
+    return SizedBox(
+      width: 200,
+      child: Container(
+        padding: const EdgeInsets.all(50),
+        child: Image.asset(
+          'assets/images/halfContainer.png',
+          fit: BoxFit.contain,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWeightLabel(BuildContext context) {
+    return Container(
+      height: 30,
+      padding: const EdgeInsets.only(left: 10),
+      alignment: Alignment.centerLeft,
+      child: Text(
+        localizedStrings.fCurrentWeightLabel,
+        textAlign: TextAlign.left,
+      ),
+    );
+  }
+
+  Widget _buildUnitDisplay(BuildContext context) {
+    return Expanded(
+      flex: 1,
+      child: Container(
+        padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+        alignment: Alignment.bottomRight,
+        child: ValueListenableBuilder<String>(
+          valueListenable: currentUnitNotifier,
+          builder: (context, value, child) {
+            return FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerRight,
+              child: Text(
+                value.toString(),
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildControlButtonsRow(BuildContext context) {
+    return Expanded(
+      flex: 3,
+      child: Row(
+        children: [
+          _buildZeroButton(context),
+          const SizedBox(width: 10),
+          _buildTareButton(context),
+          const SizedBox(width: 10),
+          _buildStartEndButton(context),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildZeroButton(BuildContext context) {
+    return isStart
+        ? const Expanded(flex: 1, child: SizedBox())
+        : Expanded(
+            flex: 1,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Theme.of(context).colorScheme.primary,
+                backgroundColor: Theme.of(context).colorScheme.surface,
+                fixedSize: const Size(double.infinity, 48),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.zero,
+                  side: BorderSide(
+                    color: isStart
+                        ? Theme.of(context).colorScheme.outline
+                        : Theme.of(context).colorScheme.primary,
                   ),
-                  Expanded(
-                      flex: 6,
-                      child: Container(
-                          padding: EdgeInsets.only(top: 5),
-                          color: Theme.of(context).colorScheme.surface,
-                          child: Row(children: [
-                            showDataTable
-                                ? Expanded(
-                                    child: Row(children: [showRateInfoTable()]))
-                                : Expanded(
-                                    child: LineChartSample5(
-                                      rateDataList: rateDataList,
-                                      unit: selectedProcessWgt.flowRateHeader ==
-                                              null
-                                          ? " "
-                                          : selectedProcessWgt
-                                              .flowRateHeader!.wgtUnit!,
-                                    ),
-                                  )
-                          ]))),
-                ],
+                ),
+              ),
+              onPressed: isStart ? null : () => PublicFunctions.performZero(),
+              child: Text(
+                localizedStrings.iBtnZero,
+                style: TextStyle(
+                  fontWeight: FontWeight.normal,
+                  color: Theme.of(context).colorScheme.primary,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ),
+          );
+  }
+
+  Widget _buildTareButton(BuildContext context) {
+    return isStart
+        ? const Expanded(flex: 1, child: SizedBox())
+        : Expanded(
+            flex: 1,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Theme.of(context).colorScheme.primary,
+                backgroundColor: Theme.of(context).colorScheme.surface,
+                fixedSize: const Size(double.infinity, 48),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.zero,
+                  side: BorderSide(
+                    color: isStart
+                        ? Theme.of(context).colorScheme.outline
+                        : Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+              ),
+              onPressed: isStart ? null : () => PublicFunctions.performTare(),
+              child: Text(
+                localizedStrings.gBtnTare,
+                style: TextStyle(
+                  fontWeight: FontWeight.normal,
+                  color: Theme.of(context).colorScheme.primary,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+          );
+  }
+
+  Widget _buildStartEndButton(BuildContext context) {
+    return Expanded(
+      flex: 1,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          foregroundColor: Theme.of(context).colorScheme.onPrimary,
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          fixedSize: const Size(double.infinity, 48),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.zero,
+          ),
+        ),
+        onPressed: () {
+          setState(() {
+            isStart = !isStart;
+            if (isStart) {
+              wgtDataList.clear();
+              selectedProcessWgt = FlowRateFromDb();
+              rateDataList = [];
+              clickedRow = -1;
+            } else {
+              calculateRate();
+            }
+          });
+        },
+        child: Text(
+          isStart ? localizedStrings.gBtnEnd : localizedStrings.gBtnStart,
+          style: TextStyle(
+            fontWeight: FontWeight.normal,
+            color: Theme.of(context).colorScheme.onPrimary,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTotalInfoItem(
+      BuildContext context, String title, String weight, String unit) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.all(5),
+        color: Theme.of(context).colorScheme.surfaceDim,
+        child: Column(
+          children: [
+            _buildTotalInfoTitle(context, title),
+            _buildTotalInfoValue(context, weight, unit),
           ],
         ),
       ),
-    ));
+    );
   }
 
-  showComScale() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 14),
-      child: MouseRegion(
-          cursor: SystemMouseCursors.click,
-          child: GestureDetector(
-              onTap: () {
-                setState(() {
-                  // selScaleId = 1;
-                  selectedScaleIndex = -1;
-                  //串口秤
-                });
-                changeScale(1);
-              },
-              child: Container(
-                height: 62,
-                color: (selScaleId != 1)
-                    ? Color(0xFFECF0F3)
-                    : Theme.of(context).colorScheme.primary,
-                child: Row(
-                  children: [
-                    Container(
-                        width: 62,
-                        height: 62,
-                        alignment: Alignment.center,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(4)),
-                            color: (selScaleId != 1)
-                                ? Color(0xFFD5D8DB)
-                                : Color.fromRGBO(255, 255, 255, 0.1),
-                          ),
-                          width: 38,
-                          height: 38,
-                          child: Icon(
-                            size: 20,
-                            Icons.cable_sharp,
-                            color: (selScaleId != 1)
-                                ? Theme.of(context).colorScheme.primary
-                                : Theme.of(context).colorScheme.onPrimary,
-                          ),
-                        )),
-                    if (_isLeftPanelExpanded)
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Text(
-                              myComScaleInfo.scaleName,
-                              style: TextStyle(
-                                  color: (selScaleId != 1)
-                                      ? Theme.of(context).colorScheme.primary
-                                      : Theme.of(context).colorScheme.onPrimary,
-                                  fontSize: 14),
-                            ),
-                            Text(
-                              myComScaleInfo.isOnline
-                                  ? localizedStrings.gTipOnline
-                                  : localizedStrings.gTipOffline,
-                              style: TextStyle(
-                                  color: (selScaleId == 1)
-                                      ? Theme.of(context).colorScheme.onPrimary
-                                      : myComScaleInfo.isOnline
-                                          ? Theme.of(context)
-                                              .colorScheme
-                                              .onTertiaryFixedVariant
-                                          : Theme.of(context).colorScheme.error,
-                                  fontSize: 14),
-                            ),
-                          ],
-                        ),
-                      ),
-                  ],
+  Widget _buildTotalInfoTitle(BuildContext context, String title) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Flexible(
+          child: Text(
+            title,
+            textAlign: TextAlign.start,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTotalInfoValue(
+      BuildContext context, String weight, String unit) {
+    return Expanded(
+      child: Row(
+        children: [
+          Expanded(
+            flex: 3,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Text(
+                weight,
+                style: TextStyle(
+                  fontSize: 80,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
-              ))),
+              ),
+            ),
+          ),
+          Text(unit),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHistoricalHeader(BuildContext context) {
+    return SizedBox(
+      height: 36,
+      child: Row(
+        children: [
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(localizedStrings.fHistoricalWeighingRecordsBtn),
+          ),
+          Expanded(
+            flex: 1,
+            child: Row(
+              children: [
+                const Spacer(),
+                _buildExportButton(context),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildExportButton(BuildContext context) {
+    return SizedBox(
+      width: 150,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          foregroundColor: Theme.of(context).colorScheme.onPrimary,
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          fixedSize: const Size(double.infinity, 48),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.zero,
+          ),
+        ),
+        onPressed: () async {
+          final directory = Directory.current.path;
+          String? outputFile = await FilePicker.platform.saveFile(
+            initialDirectory: directory,
+            type: FileType.custom,
+            dialogTitle: 'Output file:',
+            allowedExtensions: ["csv"],
+            fileName: 'records.csv',
+          );
+          if (outputFile != null) {
+            if (!outputFile.contains(".csv")) {
+              outputFile = "$outputFile.csv";
+            }
+            String filePath = outputFile;
+            List<List<dynamic>> csvData = [];
+
+            for (var headerData in processWgtList) {
+              csvData.add([
+                'Rec ID',
+                'Total Weight',
+                'Total Time',
+                'Average Speed',
+                'Max Speed',
+                'Min Speed',
+                'ID',
+                'Time',
+                'Rate'
+              ]);
+              for (var detail in headerData.flowRateDetail!) {
+                csvData.add([
+                  headerData.flowRateHeader!.recId,
+                  headerData.flowRateHeader!.totalWeight,
+                  headerData.flowRateHeader!.totalTime,
+                  headerData.flowRateHeader!.averageFlowRate,
+                  headerData.flowRateHeader!.maxFlowRate,
+                  headerData.flowRateHeader!.minFlowRate,
+                  detail.id,
+                  detail.time,
+                  detail.rate
+                ]);
+              }
+            }
+            try {
+              String csv = const ListToCsvConverter().convert(csvData);
+              File file = File(filePath);
+              await file.writeAsString(csv);
+              if (mounted) {
+                showTipInfo(localizedStrings.fSaveSuccess, context);
+              }
+            } catch (e) {
+              if (mounted) {
+                showTipInfo(' $e', context);
+              }
+            }
+          }
+        },
+        child: Text(
+          localizedStrings.gBtnExport,
+          style: TextStyle(
+            fontWeight: FontWeight.normal,
+            color: Theme.of(context).colorScheme.onPrimary,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildToggleSection(BuildContext context) {
+    return Container(
+      height: 30,
+      color: Theme.of(context).colorScheme.surface,
+      child: Row(
+        children: [
+          _buildFlowRateLabel(context),
+          _buildToggleButton(context),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFlowRateLabel(BuildContext context) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.only(left: 10),
+        alignment: Alignment.centerLeft,
+        child: Text(
+          localizedStrings.fFlowRate,
+          textAlign: TextAlign.left,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildToggleButton(BuildContext context) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.only(left: 10, right: 10, top: 5),
+        alignment: Alignment.centerRight,
+        child: SizedBox(
+          width: 150,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              fixedSize: const Size(double.infinity, 48),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.zero,
+              ),
+            ),
+            onPressed: () {
+              setState(() {
+                showDataTable = !showDataTable;
+              });
+            },
+            child: Text(
+              showDataTable
+                  ? localizedStrings.fShowCurveChart
+                  : localizedStrings.fShowDataTable,
+              style: TextStyle(
+                fontWeight: FontWeight.normal,
+                color: Theme.of(context).colorScheme.onPrimary,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCurrentWeightSection(BuildContext context) {
+    return Container(
+      height: 100,
+      color: Theme.of(context).colorScheme.surface,
+      padding: const EdgeInsets.only(
+          top: regularPadding, right: regularPadding, bottom: regularPadding),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 4,
+            child: Container(
+              color: Theme.of(context).colorScheme.surfaceDim,
+              child: Column(
+                children: [
+                  _buildWeightLabel(context),
+                  Expanded(
+                      child: Row(
+                    children: [
+                      _buildWeightValue(context),
+                      _buildUnitDisplay(context),
+                    ],
+                  ))
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+
+          _buildZeroButton(context),
+          const SizedBox(width: 10),
+          _buildTareButton(context),
+          const SizedBox(width: 10),
+          _buildStartEndButton(context),
+          const SizedBox(height: 8),
+          // 使用 Flexible 替代 Expanded
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWeightValue(BuildContext context) {
+    return Expanded(
+      flex: 3,
+      child: Container(
+        padding: const EdgeInsets.only(left: 10),
+        alignment: Alignment.centerLeft,
+        child: ValueListenableBuilder<String>(
+          valueListenable: currentWgtStrNotifier,
+          builder: (context, value, child) {
+            return FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Text(
+                value.toString(),
+                style: TextStyle(
+                  fontSize: 80,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTotalInfoSection(BuildContext context) {
+    return Flexible(
+      flex: 6,
+      child: Row(
+        children: [
+          _buildTotalInfoItem(
+            context,
+            localizedStrings.fTotalWeight,
+            selectedProcessWgt.flowRateHeader?.totalWeight?.toString() ?? "",
+            selectedProcessWgt.flowRateHeader?.wgtUnit ?? "",
+          ),
+          const SizedBox(width: 8),
+          _buildTotalInfoItem(
+            context,
+            localizedStrings.fTotalTime,
+            selectedProcessWgt.flowRateHeader?.totalTime?.toString() ?? "",
+            's',
+          ),
+          const SizedBox(width: 8),
+          _buildTotalInfoItem(
+            context,
+            localizedStrings.fAverageSpeed,
+            selectedProcessWgt.flowRateHeader?.averageFlowRate?.toString() ??
+                "",
+            '${selectedProcessWgt.flowRateHeader?.wgtUnit ?? ""}/s',
+          ),
+          const SizedBox(width: 8),
+          _buildTotalInfoItem(
+            context,
+            localizedStrings.fMaxSpeed,
+            selectedProcessWgt.flowRateHeader?.maxFlowRate?.toString() ?? "",
+            '${selectedProcessWgt.flowRateHeader?.wgtUnit ?? ""}/s',
+          ),
+          const SizedBox(width: 8),
+          _buildTotalInfoItem(
+            context,
+            localizedStrings.fMinSpeed,
+            selectedProcessWgt.flowRateHeader?.minFlowRate?.toString() ?? "",
+            '${selectedProcessWgt.flowRateHeader?.wgtUnit ?? ""}/s',
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHistoricalSection(BuildContext context) {
+    return Flexible(
+      flex: 18,
+      child: Container(
+        color: Theme.of(context).colorScheme.surface,
+        child: Column(
+          children: [
+            const SizedBox(height: 5),
+            _buildHistoricalHeader(context),
+            const SizedBox(height: 5),
+            Expanded(child: Row(children: [showWgtTable()])),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildChartOrTableSection(BuildContext context) {
+    return Expanded(
+      flex: 6,
+      child: Container(
+        padding: const EdgeInsets.only(top: 5),
+        color: Theme.of(context).colorScheme.surface,
+        child: Row(
+          children: [
+            showDataTable
+                ? Expanded(child: Row(children: [showRateInfoTable()]))
+                : Expanded(
+                    child: LineChartSample5(
+                      rateDataList: rateDataList,
+                      unit: selectedProcessWgt.flowRateHeader?.wgtUnit ?? " ",
+                    ),
+                  ),
+          ],
+        ),
+      ),
+    );
+  }
+
+// ... 已有代码 ...
+
+  showScaleList() {
+    return AnimatedContainer(
+      color: Theme.of(context).colorScheme.surface,
+      width: 234,
+      duration: Duration(milliseconds: 300),
+      child: Column(
+        children: [
+          SizedBox(height: regularPadding),
+          Expanded(
+            child: NewAllScaleListWidget(
+              listWidth: scaleListWidth, // 列表宽度
+              selScaleId: selScaleId,
+              clickScale: (scale) {
+                changeScale(scale.scaleId);
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -1705,154 +1538,6 @@ class FlowRatePageState extends State<FlowRatePage>
             ),
           ),
         ]));
-  }
-
-  showScaleList() {
-    return AnimatedContainer(
-      color: Theme.of(context).colorScheme.surface,
-      width: _isLeftPanelExpanded ? 254 : 90,
-      duration: Duration(milliseconds: 300),
-      child: Column(
-        children: [
-          showScaleListTitle(),
-          // 分割线
-          Divider(
-            color: Theme.of(context).colorScheme.outline,
-            thickness: 1,
-            height: 1,
-          ),
-          SizedBox(height: 14),
-          showComScale(),
-          SizedBox(
-            height: 10,
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14),
-              child: ListView.separated(
-                itemCount: scaleNetItems.length,
-                separatorBuilder: (context, index) =>
-                    const SizedBox(height: 10),
-                itemBuilder: (context, index) {
-                  final scale = scaleNetItems[index];
-                  bool isSelect = (selScaleId == scale.scaleId!);
-                  return MouseRegion(
-                      cursor: SystemMouseCursors.click,
-                      child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              selectedScaleIndex = index;
-                              // selScaleId = scale.scaleId!;
-                            });
-                            changeScale(scale.scaleId!);
-                          },
-                          child: Container(
-                            height: 62,
-                            color: !isSelect
-                                ? Color(0xFFECF0F3)
-                                : Theme.of(context).colorScheme.primary,
-                            child: Row(
-                              children: [
-                                Container(
-                                    width: 62,
-                                    height: 62,
-                                    alignment: Alignment.center,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(4)),
-                                        color: !isSelect
-                                            ? Color(0xFFD5D8DB)
-                                            : Color.fromRGBO(
-                                                255, 255, 255, 0.1),
-                                      ),
-                                      width: 38,
-                                      height: 38,
-                                      child: Icon(
-                                        size: 20,
-                                        Icons.wifi,
-                                        color: !isSelect
-                                            ? Theme.of(context)
-                                                .colorScheme
-                                                .primary
-                                            : Theme.of(context)
-                                                .colorScheme
-                                                .onPrimary,
-                                      ),
-                                    )),
-                                if (_isLeftPanelExpanded)
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Text(
-                                          scale.scaleName ?? '',
-                                          style: TextStyle(
-                                              color: !isSelect
-                                                  ? Theme.of(context)
-                                                      .colorScheme
-                                                      .primary
-                                                  : Theme.of(context)
-                                                      .colorScheme
-                                                      .onPrimary,
-                                              fontSize: 14),
-                                        ),
-                                        Text(
-                                          scale.isOnline!
-                                              ? localizedStrings.gTipOnline
-                                              : localizedStrings.gTipOffline,
-                                          style: TextStyle(
-                                              color: isSelect
-                                                  ? Theme.of(context)
-                                                      .colorScheme
-                                                      .onPrimary
-                                                  : scale.isOnline!
-                                                      ? Theme.of(context)
-                                                          .colorScheme
-                                                          .onTertiaryFixedVariant
-                                                      : Theme.of(context)
-                                                          .colorScheme
-                                                          .error,
-                                              fontSize: 14),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          )));
-                },
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  showTitleBar() {
-    return Container(
-      height: 54,
-      color: Theme.of(context).colorScheme.surface,
-      child: Row(
-        children: [
-          SizedBox(
-            width: 20,
-          ),
-          Expanded(child: Text(localizedStrings.fFlowRate)),
-          Icon(
-            Icons.help,
-            color: Color(0xFFF4B837),
-          ),
-          SizedBox(
-            width: 20,
-          )
-        ],
-      ),
-    );
   }
 }
 
@@ -2199,7 +1884,7 @@ class _LineChartSample5State extends State<LineChartSample5> {
                   horizontalInterval: yInterval,
                   getDrawingHorizontalLine: (value) {
                     return FlLine(
-                      color: Colors.grey.withOpacity(0.5),
+                      color: Colors.grey.withValues(alpha: 0.5),
                       strokeWidth: 1,
                       dashArray: [5, 5],
                     );

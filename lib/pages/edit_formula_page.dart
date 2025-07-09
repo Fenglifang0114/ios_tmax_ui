@@ -552,7 +552,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                       focusColor: Theme.of(context)
                           .colorScheme
                           .primary
-                          .withOpacity(0.1),
+                          .withValues(alpha: 0.1),
                       shape: RoundedRectangleBorder(
                           // 设置为矩形形状
                           borderRadius: BorderRadius.zero, // 没有圆角，即正方形
@@ -774,7 +774,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                                             : Theme.of(context)
                                                 .colorScheme
                                                 .onSurface
-                                                .withOpacity(0.5),
+                                                .withValues(alpha: 0.5),
                                       ),
                                 ),
                                 TextSpan(
@@ -810,7 +810,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                                             : Theme.of(context)
                                                 .colorScheme
                                                 .onSurface
-                                                .withOpacity(0.5),
+                                                .withValues(alpha: 0.5),
                                       ),
                                 ),
                                 TextSpan(
@@ -842,7 +842,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                                             : Theme.of(context)
                                                 .colorScheme
                                                 .onSurface
-                                                .withOpacity(0.5),
+                                                .withValues(alpha: 0.5),
                                       ),
                                 ),
                                 TextSpan(
@@ -875,7 +875,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                                             : Theme.of(context)
                                                 .colorScheme
                                                 .onSurface
-                                                .withOpacity(0.5),
+                                                .withValues(alpha: 0.5),
                                       ),
                                 ),
                                 TextSpan(
@@ -925,7 +925,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                               hoverColor: Theme.of(context)
                                   .colorScheme
                                   .primary
-                                  .withOpacity(0.1),
+                                  .withValues(alpha: 0.1),
                               onTap: () {
                                 moveDown(index);
                               },
@@ -1018,7 +1018,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                                   color: Theme.of(context)
                                       .colorScheme
                                       .onSurface
-                                      .withOpacity(0.5),
+                                      .withValues(alpha: 0.5),
                                 ),
                           ),
                         ],

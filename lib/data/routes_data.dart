@@ -5,18 +5,15 @@ import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/icons.dart';
 import 'package:t_max/data/language.dart';
 import 'package:t_max/data/license_data.dart';
-import 'package:t_max/pages/apps_page.dart';
-import 'package:t_max/pages/apps_setting_page.dart';
 import 'package:t_max/pages/basic_data_page.dart';
 import 'package:t_max/pages/blue_tooth_setting_page.dart';
 import 'package:t_max/pages/calibration_page.dart';
 import 'package:t_max/pages/check_weighers_page.dart';
-import 'package:t_max/pages/configuration_page.dart';
-import 'package:t_max/pages/custom_serial_protocol_page.dart';
+import 'package:t_max/pages/configuration_center_page.dart';
+import 'package:t_max/pages/serial_protocol_page.dart';
 import 'package:t_max/pages/down_recipt_fmt_page.dart';
 import 'package:t_max/pages/flow_rate_page.dart';
 import 'package:t_max/pages/formula_scale_page.dart';
-import 'package:t_max/pages/header_footer_page.dart';
 import 'package:t_max/pages/labeldesign_page.dart';
 import 'package:t_max/pages/lable_down_prn_fmt_page.dart';
 import 'package:t_max/pages/multi_scale_management_page.dart';
@@ -64,95 +61,95 @@ List<RouteData> getAllConfigMenus() {
       id: MenuId.multiScaleManagement.index,
       title: localizedStrings.menuMultiScaleManagement,
       routeName: "/multiScaleManagement",
-      subtitle: localizedStrings.menuMultiScaleManagement,
+      subtitle: localizedStrings.subTitleMultiScaleManagement,
       iconPath: multiScaleSvgIcon(),
     ),
     RouteData(
       id: MenuId.setSystemTimePage.index,
       title: localizedStrings.menuDeviceTime,
       routeName: "/setSystemTime",
-      subtitle: localizedStrings.menuDeviceTime,
+      subtitle: localizedStrings.subTitleDeviceTime,
       iconPath: dateTimeSvgIcon(),
     ),
     RouteData(
       id: MenuId.btSettingPage.index,
       title: localizedStrings.menuBluetoothSetting,
       routeName: "/btSetting",
-      subtitle: localizedStrings.menuBluetoothSetting,
+      subtitle: localizedStrings.subTitleBluetoothSetting,
       iconPath: btSettingSvgIcon(),
     ),
     RouteData(
       id: MenuId.wifiSettingPage.index,
       title: localizedStrings.menuWifiSetting,
       routeName: "/wifiSetting",
-      subtitle: localizedStrings.menuWifiSetting,
+      subtitle: localizedStrings.subTitleWifiSetting,
       iconPath: wifiSettingSvgIcon(),
     ),
     RouteData(
       id: MenuId.updateFirmwarePage.index,
       title: localizedStrings.menuFirmwareUpdate,
       routeName: "/updateFirmware",
-      subtitle: localizedStrings.menuFirmwareUpdate,
+      subtitle: localizedStrings.subTitleFirmwareUpdate,
       iconPath: firmwareSvgIcon(),
     ),
     RouteData(
       id: MenuId.labelDesignPage.index,
       title: localizedStrings.menuLabelDesign,
       routeName: "/labelDesign",
-      subtitle: localizedStrings.menuLabelDesign,
+      subtitle: localizedStrings.subTitleLabelDesign,
       iconPath: labelDesignSvgIcon(),
     ),
     RouteData(
       id: MenuId.receiptDesignPage.index,
       title: localizedStrings.menuReceiptDesign,
       routeName: "/receiptDesign",
-      subtitle: localizedStrings.menuReceiptDesign,
+      subtitle: localizedStrings.subTitleReceiptDesign,
       iconPath: reciptDesignSvgIcon(),
     ),
     RouteData(
       id: MenuId.serialOutputDesignPage.index,
       title: localizedStrings.menuSerialOutputDesign,
       routeName: "/serialOutputDesign",
-      subtitle: localizedStrings.menuSerialOutputDesign,
+      subtitle: localizedStrings.subTitleSerialOutputDesign,
       iconPath: serialSvgIcon(),
     ),
     RouteData(
       id: MenuId.basicDataCollectionPage.index,
       title: localizedStrings.menuBasicDataCollection,
       routeName: "/basicDataCollection",
-      subtitle: localizedStrings.menuBasicDataCollection,
+      subtitle: localizedStrings.subTitleBasicDataCollection,
       iconPath: basicDataSvgIcon(),
     ),
     RouteData(
         id: MenuId.parameterSettingPage.index,
         title: localizedStrings.menuParameterSetting,
         routeName: "/parameterSetting",
-        subtitle: localizedStrings.menuParameterSetting,
+        subtitle: localizedStrings.subTitleParameterSetting,
         iconPath: parameterSvgIcon()),
     RouteData(
         id: MenuId.calibrationPage.index,
         title: localizedStrings.menuCalibration,
         routeName: "/calibration",
-        subtitle: localizedStrings.menuCalibration,
+        subtitle: localizedStrings.subTitleCalibration,
         iconPath: calibrationSvgIcon()),
     RouteData(
       id: MenuId.pluEditPage.index,
       title: localizedStrings.menuPluManagement,
       routeName: "/pluEdit",
-      subtitle: localizedStrings.menuPluManagement,
+      subtitle: localizedStrings.subTitlePluManagement,
       iconPath: pluEditSvgIcon(),
     ),
     RouteData(
         id: MenuId.downloadLabelPage.index,
         title: localizedStrings.menuLabelFormatDownload,
         routeName: "/downloadLabel",
-        subtitle: localizedStrings.menuLabelFormatDownload,
+        subtitle: localizedStrings.subTitleLabelFormatDownload,
         iconPath: labelDownloadSvgIcon()),
     RouteData(
         id: MenuId.downReciptPage.index,
         title: localizedStrings.menuReceiptFormatDownload,
         routeName: "/downRecipt",
-        subtitle: localizedStrings.menuReceiptFormatDownload,
+        subtitle: localizedStrings.subTitleReceiptFormatDownload,
         iconPath: reciptDownloadSvgIcon()),
   ];
   return allConfigMenus;
@@ -162,7 +159,8 @@ List<RouteData> getCurrentConfigMenus() {
   List<RouteData> currentConfigMenus = [];
   List<RouteData> allConfigMenus = getAllConfigMenus();
   for (var menu in allConfigMenus) {
-    if (freeConfigMenuIds.contains(menu.id)) {
+    if (freeConfigMenuIds.contains(menu.id) &&
+        selectedConfigPaidMenuIds.contains(menu.id)) {
       currentConfigMenus.add(menu);
     } else if (myLicenseInfo.isValid &&
         selectedConfigPaidMenuIds.contains(menu.id)) {
@@ -201,7 +199,7 @@ String generateTitle(int pageId) {
     return localizedStrings.menuLabelFormatDownload;
   } else if (pageId == MenuId.downReciptPage.index) {
     return localizedStrings.menuReceiptFormatDownload;
-  } else if (pageId == MenuId.transactionReportPage.index) {
+  } else if (pageId == MenuId.retailReportPage.index) {
     return localizedStrings.menuRetailReport;
   } else if (pageId == MenuId.weightDataCollectionPage.index) {
     return localizedStrings.menuWeighingDataCollection;
@@ -217,6 +215,35 @@ String generateTitle(int pageId) {
     return localizedStrings.menuFlowRate;
   } else if (pageId == MenuId.calibrationPage.index) {
     return localizedStrings.menuCalibration;
+  }
+  return '';
+}
+
+String generateHelpTitle(int pageId) {
+  if (pageId == MenuId.multiScaleManagement.index) {
+    return localizedStrings.gTipScaleMgrPageHelp;
+  } else if (pageId == MenuId.setSystemTimePage.index) {
+    return localizedStrings.gTipDeviceTimePageHelp;
+  } else if (pageId == MenuId.wifiSettingPage.index) {
+    return localizedStrings.gTipWifiSettingPageHelp;
+  } else if (pageId == MenuId.updateFirmwarePage.index) {
+    return localizedStrings.gTipUpdateFirmwarePageHelp;
+  } else if (pageId == MenuId.labelDesignPage.index) {
+    return localizedStrings.gTipLabelDesignPageHelp;
+  } else if (pageId == MenuId.receiptDesignPage.index) {
+    return localizedStrings.gTipReceiptDesignPageHelp;
+  } else if (pageId == MenuId.serialOutputDesignPage.index) {
+    return localizedStrings.gTipSerialDesignPageHelp;
+  } else if (pageId == MenuId.basicDataCollectionPage.index) {
+    return localizedStrings.gTipBasicDataPageHelp;
+  } else if (pageId == MenuId.parameterSettingPage.index) {
+    return localizedStrings.gTipParameterSettingPageHelp;
+  } else if (pageId == MenuId.pluEditPage.index) {
+    return localizedStrings.gTipPlueditPageHelp;
+  } else if (pageId == MenuId.downloadLabelPage.index) {
+    return localizedStrings.gTipLabelFmtDownPageHelp;
+  } else if (pageId == MenuId.downReciptPage.index) {
+    return localizedStrings.gTipReceiptFmtDownPageHelp;
   }
   return '';
 }
@@ -238,83 +265,67 @@ List<RouteData> getAllAppsMenus() {
       id: MenuId.weightModePage.index,
       title: localizedStrings.menuWeighing,
       routeName: "/weightMode",
-      subtitle: localizedStrings.menuWeighing,
+      subtitle: localizedStrings.subTitleWeighing,
       iconPath: weighingSvgIcon(),
     ),
     RouteData(
-        id: MenuId.transactionReportPage.index,
+        id: MenuId.retailReportPage.index,
         title: localizedStrings.menuRetailReport,
         routeName: "/transactionReport",
-        subtitle: localizedStrings.menuRetailReport,
+        subtitle: localizedStrings.subTitleRetailReport,
         iconPath: detailReportSvgIcon()),
     RouteData(
         id: MenuId.weightDataCollectionPage.index,
         title: localizedStrings.menuWeighingDataCollection,
         routeName: "/weightDataCollection",
-        subtitle: localizedStrings.menuWeighingDataCollection,
+        subtitle: localizedStrings.subTitleWeighingDataCollection,
         iconPath: wgtCollectionSvgIcon()),
     RouteData(
         id: MenuId.checkWeighersPage.index,
         title: localizedStrings.menuCheckWeighing,
         routeName: "/checkWeighing",
-        subtitle: localizedStrings.menuCheckWeighing,
+        subtitle: localizedStrings.subTitleCheckWeighing,
         iconPath: checkScaleSvgIcon()),
     RouteData(
         id: MenuId.takeInPage.index,
         title: localizedStrings.menuIncrementWeighing,
         routeName: "/takeIn",
-        subtitle: localizedStrings.menuIncrementWeighing,
+        subtitle: localizedStrings.subTitleIncrementWeighing,
         iconPath: takeInSvgIcon()),
     RouteData(
       id: MenuId.takeOutPage.index,
       title: localizedStrings.menuTakeOutScale,
       routeName: "/takeOut",
-      subtitle: localizedStrings.menuTakeOutScale,
+      subtitle: localizedStrings.subTitleTakeOutScale,
       iconPath: takeOutSvgIcon(),
     ),
     RouteData(
         id: MenuId.formulationScalePage.index,
         title: localizedStrings.menuFormula,
         routeName: "/formulationScale",
-        subtitle: localizedStrings.menuFormula,
+        subtitle: localizedStrings.subTitleFormula,
         iconPath: firmwareSvgIcon()),
     RouteData(
         id: MenuId.flowRatePage.index,
         title: localizedStrings.menuFlowRate,
         routeName: "/flowRate",
-        subtitle: localizedStrings.menuFlowRate,
+        subtitle: localizedStrings.subTitleFlowRate,
         iconPath: rateSpeedSvgIcon()),
     RouteData(
       id: MenuId.labelDesignPage.index,
       title: localizedStrings.menuLabelDesign,
       routeName: "/labelDesign",
-      subtitle: localizedStrings.menuLabelDesign,
+      subtitle: localizedStrings.subTitleLabelDesign,
       iconPath: labelDesignSvgIcon(),
     ),
     RouteData(
       id: MenuId.receiptDesignPage.index,
       title: localizedStrings.menuReceiptDesign,
       routeName: "/receiptDesign",
-      subtitle: localizedStrings.menuReceiptDesign,
+      subtitle: localizedStrings.subTitleReceiptDesign,
       iconPath: reciptDesignSvgIcon(),
     ),
   ];
-}
-
-List<RouteData> getCurrentAppsMenus() {
-  List<RouteData> currentAppsMenus = [];
-  List<RouteData> allAppsMenus = getAllAppsMenus();
-
-  for (var menu in allAppsMenus) {
-    if (freeAppMenuIds.contains(menu.id)) {
-      currentAppsMenus.add(menu);
-    } else if (getIsConfigCertified(menu.id) &&
-        selectedAppsPaidMenuIds.contains(menu.id)) {
-      currentAppsMenus.add(menu);
-    }
-  }
-
-  return currentAppsMenus;
 }
 
 bool getIsConfigCertified(int id) {
@@ -331,7 +342,7 @@ bool getIsConfigCertified(int id) {
   } else if (id == MenuId.flowRatePage.index) {
     return myFaSpInfo.isValid;
   } else if (id == MenuId.labelDesignPage.index) {
-    // return myLdLicInfo.isValid;
+    return myLadeLicInfo.isValid;
   } else if (id == MenuId.receiptDesignPage.index) {
     return myRedeLicInfo.isValid;
   }
@@ -339,22 +350,24 @@ bool getIsConfigCertified(int id) {
   return false;
 }
 
+bool isFreeConfig(int pId) => freeConfigMenuIds.contains(pId);
+
 bool isFreeApp(int pId) => freeAppMenuIds.contains(pId);
 
 Widget buildPageContent(dynamic Function(String) navigateContent,
     String? pageName, String? lastRouteName) {
-  if (pageName == '/settingsApps') {
-    return AppsPage(onNavigate: navigateContent, lastRouteName: lastRouteName!);
-  }
+  // if (pageName == '/settingsApps') {
+  //   return AppsPage(onNavigate: navigateContent, lastRouteName: lastRouteName!);
+  // }
   if (pageName == '/settingsConfig') {
     return ConfigurationPage(
         onNavigate: navigateContent, lastRouteName: lastRouteName!);
   }
 
-  if (pageName == '/settingsAppsSetting') {
-    return AppsSettingPage(
-        onNavigate: navigateContent, lastRouteName: lastRouteName!);
-  }
+  // if (pageName == '/settingsAppsSetting') {
+  //   return AppsSettingPage(
+  //       onNavigate: navigateContent, lastRouteName: lastRouteName!);
+  // }
 
   int pageId = 9999;
   for (var item in getAllConfigMenus()) {
@@ -405,8 +418,8 @@ Widget buildPageContent(dynamic Function(String) navigateContent,
     return DownloadLabelPage();
   } else if (pageId == MenuId.downReciptPage.index) {
     return DownReciptPage();
-  } else if (pageId == MenuId.transactionReportPage.index) {
-    return TransactionReportPage();
+  } else if (pageId == MenuId.retailReportPage.index) {
+    return RetailReportPage();
   } else if (pageId == MenuId.weightDataCollectionPage.index) {
     return WeightDataCollectionPage();
   } else if (pageId == MenuId.checkWeighersPage.index) {
