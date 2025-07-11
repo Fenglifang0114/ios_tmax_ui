@@ -46,7 +46,7 @@ final Uint8List kTransparentImage = transparent_image.kTransparentImage;
 
 //全局变量
 
-String defualtSelectPage = '/multiScaleManagement'; //当前选中的页面ID
+String defualtSelectPage = '/settingsConfig'; //当前选中的页面ID
 
 // 存储用户选择要添加的付费菜单 ID
 Set<int> selectedConfigPaidMenuIds = {};

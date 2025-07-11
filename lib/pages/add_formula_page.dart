@@ -4,10 +4,12 @@ import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/formula_from_db_data.dart';
 
 import 'package:t_max/data/formula_scale_data.dart';
+import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/req_formula_data.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
+import 'package:t_max/widget/page_head.dart';
 import '../data/language.dart';
 
 class AddFormulaPage extends StatefulWidget {
@@ -272,18 +274,33 @@ class AddFormulaPageState extends State<AddFormulaPage> {
               ? [
                   DropdownMenuItem<String>(
                     value: null,
-                    child: Text(localizedStrings.fPleaseSelectCategory),
+                    child: Text(
+                      localizedStrings.fPleaseSelectCategory,
+                      style: Theme.of(context).textTheme.bodySmall!.apply(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .surfaceContainerHighest,
+                          ),
+                    ),
                   )
                 ]
               : [
                   DropdownMenuItem<String>(
                     value: null,
-                    child: Text(localizedStrings.fPleaseSelectCategory),
+                    child: Text(localizedStrings.fPleaseSelectCategory,
+                        style: Theme.of(context).textTheme.bodySmall!.apply(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainerHighest,
+                            )),
                   ),
                   ...formulaTypeList.map((CategoryTypeList item) {
                     return DropdownMenuItem<String>(
                       value: item.categoryName,
-                      child: Text(item.categoryName),
+                      child: Text(item.categoryName,
+                          style: Theme.of(context).textTheme.bodySmall!.apply(
+                                color: Theme.of(context).colorScheme.onSurface,
+                              )),
                     );
                   })
                 ],
@@ -294,7 +311,7 @@ class AddFormulaPageState extends State<AddFormulaPage> {
             });
           },
           style: Theme.of(context).textTheme.bodySmall!.apply(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
         ));
   }
@@ -318,13 +335,23 @@ class AddFormulaPageState extends State<AddFormulaPage> {
               ? [
                   DropdownMenuItem<String>(
                     value: null,
-                    child: Text(localizedStrings.fSelectRawMaterialHint),
+                    child: Text(localizedStrings.fSelectRawMaterialHint,
+                        style: Theme.of(context).textTheme.bodySmall!.apply(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainerHighest,
+                            )),
                   )
                 ]
               : [
                   DropdownMenuItem<String>(
                     value: null,
-                    child: Text(localizedStrings.fSelectRawMaterialHint),
+                    child: Text(localizedStrings.fSelectRawMaterialHint,
+                        style: Theme.of(context).textTheme.bodySmall!.apply(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainerHighest,
+                            )),
                   ),
                   ...rawDataList.map((RawDataInfo item) {
                     // 拼接 materialId 和 materialName
@@ -333,7 +360,12 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                     return DropdownMenuItem<String>(
                       // 使用拼接后的文本作为 value
                       value: displayText,
-                      child: Text(displayText),
+                      child: Text(
+                        displayText,
+                        style: Theme.of(context).textTheme.bodySmall!.apply(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                      ),
                     );
                   })
                 ],
@@ -462,7 +494,11 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                       borderRadius: BorderRadius.circular(0), // 设置圆角
                     ),
                     alignment: Alignment.centerLeft,
-                    child: Text("%", textAlign: TextAlign.left),
+                    child: Text("%",
+                        style: Theme.of(context).textTheme.bodySmall!.apply(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                        textAlign: TextAlign.left),
                   )
           ]),
         ),
@@ -542,10 +578,10 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                 Expanded(
                   child: Text(
                     localizedStrings.fConfidential,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurface,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    style: Theme.of(context).textTheme.bodySmall!.apply(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 // Tooltip(
@@ -595,10 +631,10 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                 Expanded(
                   child: Text(
                     localizedStrings.fNeedContainer,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurface,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    style: Theme.of(context).textTheme.bodySmall!.apply(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
@@ -673,11 +709,11 @@ class AddFormulaPageState extends State<AddFormulaPage> {
             alignment: Alignment.center,
             child: Text(
               '${index + 1}',
-              style: TextStyle(
-                color: isSelected
-                    ? Theme.of(context).colorScheme.onPrimary
-                    : Theme.of(context).colorScheme.onSurface,
-              ),
+              style: Theme.of(context).textTheme.bodySmall!.apply(
+                    color: isSelected
+                        ? Theme.of(context).colorScheme.onPrimary
+                        : Theme.of(context).colorScheme.onSurface,
+                  ),
             ),
           ),
           SizedBox(width: 10),
@@ -1285,12 +1321,15 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                                             },
                                       child: Text(
                                         localizedStrings.gBtnAdd,
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.normal,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onPrimary,
-                                            overflow: TextOverflow.ellipsis),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall!
+                                            .apply(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onPrimary,
+                                            ),
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                   )
@@ -1520,29 +1559,9 @@ class AddFormulaPageState extends State<AddFormulaPage> {
           color: Theme.of(context).colorScheme.surface,
           child: Column(
             children: [
-              SizedBox(
-                height: 54,
-                child: Row(
-                  children: [
-                    SizedBox(width: 20),
-                    Container(
-                      width: 3,
-                      height: 14,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    SizedBox(width: 12),
-                    SizedBox(
-                      child: Text(
-                        localizedStrings.fAddFmaBtn,
-                        style: Theme.of(context).textTheme.bodyMedium!.apply(
-                              color: Theme.of(context).colorScheme.onSurface,
-                            ),
-                      ),
-                    ),
-                    SizedBox(width: 20),
-                  ],
-                ),
-              ),
+              pageHeadInfo(context, width - headWidthPadding,
+                  localizedStrings.fAddFmaBtn, '',
+                  showHelp: false),
               Divider(
                 height: 1,
                 color: Theme.of(context).colorScheme.outline,
@@ -1676,11 +1695,11 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                                     },
                           child: Text(
                             localizedStrings.gBtnSave,
-                            style: TextStyle(
-                              fontWeight: FontWeight.normal,
-                              color: Theme.of(context).colorScheme.onPrimary,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                            style: Theme.of(context).textTheme.bodySmall!.apply(
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ),

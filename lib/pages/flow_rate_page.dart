@@ -8,7 +8,6 @@ import 'package:t_max/data/comscaleinfo_data.dart';
 import 'package:t_max/data/flow_data_from_db.dart';
 import 'package:t_max/data/flow_rate_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
-import 'package:t_max/data/manager_scale_channel.dart';
 import 'package:t_max/data/reqweightdata_data.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/data/timer_manager.dart';
@@ -913,7 +912,7 @@ class FlowRatePageState extends State<FlowRatePage>
       context,
       width - headWidthPadding,
       localizedStrings.fFlowRate,
-      '',
+      localizedStrings.gTipFlowRatePageHelp,
     );
   }
 
@@ -994,21 +993,6 @@ class FlowRatePageState extends State<FlowRatePage>
     );
   }
 
-  Widget _buildControlButtonsRow(BuildContext context) {
-    return Expanded(
-      flex: 3,
-      child: Row(
-        children: [
-          _buildZeroButton(context),
-          const SizedBox(width: 10),
-          _buildTareButton(context),
-          const SizedBox(width: 10),
-          _buildStartEndButton(context),
-        ],
-      ),
-    );
-  }
-
   Widget _buildZeroButton(BuildContext context) {
     return isStart
         ? const Expanded(flex: 1, child: SizedBox())
@@ -1028,7 +1012,9 @@ class FlowRatePageState extends State<FlowRatePage>
                   ),
                 ),
               ),
-              onPressed: isStart ? null : () => PublicFunctions.performZero(),
+              onPressed: isStart
+                  ? null
+                  : () => PublicFunctions.performZeroWithScaleId(selScaleId),
               child: Text(
                 localizedStrings.iBtnZero,
                 style: TextStyle(
@@ -1060,7 +1046,9 @@ class FlowRatePageState extends State<FlowRatePage>
                   ),
                 ),
               ),
-              onPressed: isStart ? null : () => PublicFunctions.performTare(),
+              onPressed: isStart
+                  ? null
+                  : () => PublicFunctions.performTareWithScaleId(selScaleId),
               child: Text(
                 localizedStrings.gBtnTare,
                 style: TextStyle(

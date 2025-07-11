@@ -336,7 +336,8 @@ Widget pageHeadDefScale(dynamic context, String pageTitle, String helpInfo) {
 }
 
 Widget pageHeadInfo(
-    dynamic context, double maxWidth, String pageTitle, String helpInfo) {
+    dynamic context, double maxWidth, String pageTitle, String helpInfo,
+    {bool showHelp = true}) {
   return Container(
       height: pageTopTitleHeight,
       color: Theme.of(context).colorScheme.surface,
@@ -346,12 +347,13 @@ Widget pageHeadInfo(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               subTitle(context, maxWidth, pageTitle),
-              Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                PageInfoButton(helpInfo: helpInfo, onRefresh: () {}),
-                const SizedBox(
-                  width: largePadding,
-                ),
-              ])
+              if (showHelp)
+                Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                  PageInfoButton(helpInfo: helpInfo, onRefresh: () {}),
+                  const SizedBox(
+                    width: largePadding,
+                  ),
+                ])
             ],
           ),
         ),

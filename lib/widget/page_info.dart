@@ -1,6 +1,8 @@
 //每个页面的关于按钮
 
 import 'package:flutter/material.dart';
+import 'package:t_max/data/home_page_common_data.dart';
+import 'package:t_max/data/icons.dart';
 import '../dialog/page_help_dialog.dart';
 
 class PageInfoButton extends StatefulWidget {
@@ -19,8 +21,8 @@ class PageInfoButtonState extends State<PageInfoButton> {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
+    return IconButton(
+      onPressed: () {
         setState(() {
           isPressed = !isPressed;
           showDialog(
@@ -38,15 +40,36 @@ class PageInfoButtonState extends State<PageInfoButton> {
         });
         // 处理按钮点击事件
       },
-      onHover: (value) {
-        setState(() {
-          isHovered = value;
-        });
-      },
-      child: Icon(
-        Icons.help_outlined,
-        color: Theme.of(context).colorScheme.primary,
-      ),
+      icon: getSvgIcon(aboutSvgIcon(), topIconSize, topIconSize,
+          Theme.of(context).colorScheme.primary),
     );
+
+    // InkWell(
+    //   onTap: () {
+    //     setState(() {
+    //       isPressed = !isPressed;
+    //       showDialog(
+    //         context: context,
+    //         barrierDismissible: false, // 允许点击空白处关闭对话框
+    //         builder: (context) {
+    //           return PageHelpInfoDialog(
+    //             helpInfo: widget.helpInfo,
+    //           );
+    //         },
+    //       ).then((value) => setState(() {
+    //             isPressed = !isPressed;
+    //             widget.onRefresh();
+    //           }));
+    //     });
+    //     // 处理按钮点击事件
+    //   },
+    //   onHover: (value) {
+    //     setState(() {
+    //       isHovered = value;
+    //     });
+    //   },
+    //   child: getSvgIcon(aboutSvgIcon(), topIconSize, topIconSize,
+    //       Theme.of(context).colorScheme.primary),
+    // );
   }
 }

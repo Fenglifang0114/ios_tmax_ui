@@ -3,12 +3,10 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:t_max/data/comscaleinfo_data.dart';
 import 'package:t_max/data/fma_rec_list_db_data.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/formula_scale_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
-import 'package:t_max/data/icons.dart';
 import 'package:t_max/data/req_formula_data.dart';
 import 'package:t_max/dialog/add_fma_wgt_dialog.dart';
 import 'package:t_max/dialog/add_raw_info_dialog.dart';
@@ -252,8 +250,11 @@ class FormulationScalePageState extends State<FormulationScalePage>
 
             child: Column(
               children: [
-                pageHeadInfo(context, width - headWidthPadding,
-                    localizedStrings.menuFormula, ''),
+                pageHeadInfo(
+                    context,
+                    width - headWidthPadding,
+                    localizedStrings.menuFormula,
+                    localizedStrings.gTipFmaPageHelp),
                 Container(
                   height: regularPadding,
                   color: Theme.of(context).colorScheme.surfaceDim,
@@ -490,9 +491,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     child: Center(
                       child: Text(
                         '${index + 1}',
-                        style: TextStyle(
-                          color: numberTextColor,
-                        ),
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                              color: numberTextColor,
+                            ),
                       ),
                     ),
                   ),
@@ -505,9 +506,10 @@ class FormulationScalePageState extends State<FormulationScalePage>
                       selectedFormula?.details![index].rawMaterialTypeName!
                               .rawMaterial!.materialName! ??
                           '',
-                      style: TextStyle(
-                        color: textColor,
-                      ),
+
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                            color: textColor,
+                          ),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -702,22 +704,6 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 );
               },
             ),
-
-            // StickyTableColumn(
-            //   "年龄",
-            //   showSort: true,
-            //   sort: false,
-            //   onCellClick: (context, title, data, row, column) {
-            //     ScaffoldMessenger.of(context).hideCurrentSnackBar();
-            //     ScaffoldMessenger.of(
-            //       context,
-            //     ).showSnackBar(SnackBar(content: Text("年龄$data")));
-            //   },
-            //   renderCell: (context, title, data, row, column) {
-            //     return Text("*$data");
-            //   },
-            // ),
-
             StickyTableColumn(
               localizedStrings.fEditBtn,
               fixedEnd: true,
@@ -894,13 +880,17 @@ class FormulationScalePageState extends State<FormulationScalePage>
               // 修改 renderCell 方法
               renderCell: (context, title, data, row, column) {
                 return Text(
-                    (data as FormulaInfoDb).header!.formulaHeader!.formulaId!);
+                    (data as FormulaInfoDb).header!.formulaHeader!.formulaId!,
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ));
               },
               renderTitle: (context, title) {
                 return Text(
                   title.title,
-                  style:
-                      TextStyle(color: Theme.of(context).colorScheme.primary),
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                 );
               },
             ),
@@ -922,6 +912,14 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     .formulaHeader!
                     .formulaName!);
               },
+              renderTitle: (context, title) {
+                return Text(
+                  title.title,
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                );
+              },
             ),
             StickyTableColumn(
               localizedStrings.fFmaCategoryCol,
@@ -938,6 +936,14 @@ class FormulationScalePageState extends State<FormulationScalePage>
               renderCell: (context, title, data, row, column) {
                 return Text(
                     (data as FormulaInfoDb).header!.formulaCategoryName!);
+              },
+              renderTitle: (context, title) {
+                return Text(
+                  title.title,
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                );
               },
             ),
             StickyTableColumn(
@@ -964,6 +970,14 @@ class FormulationScalePageState extends State<FormulationScalePage>
                                 .colorScheme
                                 .onTertiaryFixedVariant));
               },
+              renderTitle: (context, title) {
+                return Text(
+                  title.title,
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                );
+              },
             ),
             StickyTableColumn(
               localizedStrings.fFmaModeCol,
@@ -986,6 +1000,14 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     ? localizedStrings.fPctMode
                     : localizedStrings.fWeightMode);
               },
+              renderTitle: (context, title) {
+                return Text(
+                  title.title,
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                );
+              },
             ),
             StickyTableColumn(
               localizedStrings.fIngredientCountLabel,
@@ -1006,6 +1028,14 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     .materialCount!
                     .toString());
               },
+              renderTitle: (context, title) {
+                return Text(
+                  title.title,
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                );
+              },
             ),
             StickyTableColumn(
               localizedStrings.fConfidential,
@@ -1025,6 +1055,14 @@ class FormulationScalePageState extends State<FormulationScalePage>
                         ? localizedStrings.fConfidential
                         : localizedStrings.fPublic);
               },
+              renderTitle: (context, title) {
+                return Text(
+                  title.title,
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                );
+              },
             ),
             StickyTableColumn(
               localizedStrings.fCreatedAtCol,
@@ -1043,6 +1081,14 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 return Text(DateFormat('yyyy-MM-dd HH:mm:ss').format(
                     (data as FormulaInfoDb).header!.formulaHeader!.createdAt!));
               },
+              renderTitle: (context, title) {
+                return Text(
+                  title.title,
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                );
+              },
             ),
             StickyTableColumn(
               localizedStrings.fUpdatedAtCol,
@@ -1060,6 +1106,14 @@ class FormulationScalePageState extends State<FormulationScalePage>
               renderCell: (context, title, data, row, column) {
                 return Text(DateFormat('yyyy-MM-dd HH:mm:ss').format(
                     (data as FormulaInfoDb).header!.formulaHeader!.updatedAt!));
+              },
+              renderTitle: (context, title) {
+                return Text(
+                  title.title,
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                );
               },
             ),
             StickyTableColumn(
@@ -1080,6 +1134,14 @@ class FormulationScalePageState extends State<FormulationScalePage>
                   (data as FormulaInfoDb).header!.formulaHeader!.remark!,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
+                );
+              },
+              renderTitle: (context, title) {
+                return Text(
+                  title.title,
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                 );
               },
             ),
@@ -1131,6 +1193,14 @@ class FormulationScalePageState extends State<FormulationScalePage>
                           color: Theme.of(context).colorScheme.primary)),
                 );
               },
+              renderTitle: (context, title) {
+                return Text(
+                  title.title,
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                );
+              },
             ),
             StickyTableColumn(
               localizedStrings.fEditBtn,
@@ -1139,15 +1209,13 @@ class FormulationScalePageState extends State<FormulationScalePage>
               renderCell: (context, title, data, row, column) {
                 return MaterialButton(
                   onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        FormulaInfoDb? editFormulaInfo = searchFmaList[row];
-                        return EditFormulaPage(
-                          editFormulaInfo: editFormulaInfo,
-                        );
-                      },
-                    ).then((value) {
+                    FormulaInfoDb? editFormulaInfo = searchFmaList[row];
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => EditFormulaPage(
+                                  editFormulaInfo: editFormulaInfo,
+                                ))).then((value) {
                       setState(() {});
                     });
                   },
@@ -1159,6 +1227,14 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     Icons.edit_outlined,
                     color: Theme.of(context).colorScheme.primary,
                   )),
+                );
+              },
+              renderTitle: (context, title) {
+                return Text(
+                  title.title,
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                 );
               },
             ),
@@ -1209,6 +1285,15 @@ class FormulationScalePageState extends State<FormulationScalePage>
                   )),
                 );
               },
+              renderTitle: (context, title) {
+                return Text(
+                  title.title,
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: Colors
+                            .black, // Theme.of(context).colorScheme.onSurface,
+                      ),
+                );
+              },
             ),
           ],
         ),
@@ -1243,11 +1328,10 @@ class FormulationScalePageState extends State<FormulationScalePage>
                   flex: 3,
                   child: Text(
                     selectedFormula?.header?.formulaHeader?.formulaName ?? "",
-                    style: TextStyle(
-                      fontWeight: FontWeight.normal,
-                      color: Theme.of(context).colorScheme.onSurface,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                    overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                   ),
                 ),
@@ -1266,11 +1350,10 @@ class FormulationScalePageState extends State<FormulationScalePage>
                   flex: 1,
                   child: Text(
                     selectedFormula?.header?.formulaHeader?.formulaId ?? "",
-                    style: TextStyle(
-                      fontWeight: FontWeight.normal,
-                      color: Theme.of(context).colorScheme.onSurface,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                    overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                   ),
                 ),
@@ -1290,11 +1373,10 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     selectedFormula?.header?.formulaHeader?.materialCount
                             .toString() ??
                         "",
-                    style: TextStyle(
-                      fontWeight: FontWeight.normal,
-                      color: Theme.of(context).colorScheme.onSurface,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                    overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                   ),
                 ),
@@ -1322,11 +1404,10 @@ class FormulationScalePageState extends State<FormulationScalePage>
                                     null
                             ? " ${selectedFormula!.header!.formulaHeader!.totalWeight} ${selectedFormula!.header!.formulaHeader!.formulaUnit}"
                             : " ",
-                    style: TextStyle(
-                      fontWeight: FontWeight.normal,
-                      color: Theme.of(context).colorScheme.onSurface,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                    overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                   ),
                 ),
@@ -1470,11 +1551,10 @@ class FormulationScalePageState extends State<FormulationScalePage>
                           },
                     child: Text(
                       localizedStrings.fStartWeighingBtn,
-                      style: TextStyle(
-                        fontWeight: FontWeight.normal,
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ),
@@ -1614,12 +1694,15 @@ class FormulationScalePageState extends State<FormulationScalePage>
                                         formula.header?.formulaHeader
                                                 ?.formulaName ??
                                             "",
-                                        style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onSurfaceVariant,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall!
+                                            .copyWith(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onSurfaceVariant,
+                                            ),
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                   ),
@@ -1724,9 +1807,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
             child: Align(
               alignment: Alignment.centerLeft,
               child: TextField(
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                 controller: _searchRawIdCtl,
                 decoration: InputDecoration(
                   prefixIcon: Icon(
@@ -1746,10 +1829,14 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     },
                   ),
                   hintText: localizedStrings.fSearchHint,
-                  hintStyle: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      fontSize: 14,
-                      fontWeight: FontWeight.normal),
+                  contentPadding: EdgeInsets.symmetric(vertical: 10),
+                  hintStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        // 设置提示文本样式
+                        fontSize: 12,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest,
+                      ),
                   border: const OutlineInputBorder(
                     borderRadius: BorderRadius.zero,
                   ),
@@ -1776,41 +1863,70 @@ class FormulationScalePageState extends State<FormulationScalePage>
                   width: 1,
                 )),
             child: DropdownButton(
-              underline: SizedBox(),
-              isExpanded: true,
-              value: rawTypeCtl.text == "" ? null : rawTypeCtl.text,
-              items: rawTypeList.isEmpty
-                  ? [
-                      DropdownMenuItem<String>(
-                        value: null,
-                        child: Text(localizedStrings.fPleaseSelectCategory),
-                      )
-                    ]
-                  : [
-                      DropdownMenuItem<String>(
-                        value: null,
-                        child: Text(localizedStrings.fPleaseSelectCategory),
-                      ),
-                      ...rawTypeList.map((CategoryTypeList item) {
-                        return DropdownMenuItem<String>(
-                          value: item.categoryName,
-                          child: Text(item.categoryName),
-                        );
-                      })
-                    ],
-              onChanged: (value) {
-                if (value == null) return;
-                setState(() {
-                  rawTypeCtl.text = value.toString();
-                  performRawSearch();
-                });
-              },
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                fontSize: 14,
-                fontWeight: FontWeight.normal,
-              ),
-            )),
+                underline: SizedBox(),
+                isExpanded: true,
+                value: rawTypeCtl.text == "" ? null : rawTypeCtl.text,
+                items: rawTypeList.isEmpty
+                    ? [
+                        DropdownMenuItem<String>(
+                          value: null,
+                          child: Text(
+                            localizedStrings.fPleaseSelectCategory,
+                            style:
+                                Theme.of(context).textTheme.bodySmall!.copyWith(
+                                      fontSize: 12,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .surfaceContainerHighest,
+                                    ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        )
+                      ]
+                    : [
+                        DropdownMenuItem<String>(
+                          value: null,
+                          child: Text(
+                            localizedStrings.fPleaseSelectCategory,
+                            style:
+                                Theme.of(context).textTheme.bodySmall!.copyWith(
+                                      fontSize: 12,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .surfaceContainerHighest,
+                                    ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        ...rawTypeList.map((CategoryTypeList item) {
+                          return DropdownMenuItem<String>(
+                            value: item.categoryName,
+                            child: Text(
+                              item.categoryName,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall!
+                                  .copyWith(
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
+                                  ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          );
+                        })
+                      ],
+                onChanged: (value) {
+                  if (value == null) return;
+                  setState(() {
+                    rawTypeCtl.text = value.toString();
+                    performRawSearch();
+                  });
+                },
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      // 设置提示文本样式
+
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ))),
         SizedBox(
           width: 14,
         ),
@@ -2051,9 +2167,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
             child: Align(
               alignment: Alignment.centerLeft,
               child: TextField(
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                   controller: _searchFmaIdCtl,
                   decoration: InputDecoration(
                     prefixIcon: Icon(
@@ -2073,10 +2189,14 @@ class FormulationScalePageState extends State<FormulationScalePage>
                       },
                     ),
                     hintText: localizedStrings.fSearchHint,
-                    hintStyle: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        fontSize: 14,
-                        fontWeight: FontWeight.normal),
+                    contentPadding: EdgeInsets.symmetric(vertical: 10),
+                    hintStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
+                          // 设置提示文本样式
+                          fontSize: 12,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .surfaceContainerHighest,
+                        ),
                     border: const OutlineInputBorder(
                       borderRadius: BorderRadius.zero,
                     ),
@@ -2111,18 +2231,43 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 ? [
                     DropdownMenuItem<String>(
                       value: null,
-                      child: Text(localizedStrings.fPleaseSelectCategory),
+                      child: Text(
+                        localizedStrings.fPleaseSelectCategory,
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                              // 设置提示文本样式
+                              fontSize: 12,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainerHighest,
+                            ),
+                      ),
                     )
                   ]
                 : [
                     DropdownMenuItem<String>(
                       value: null,
-                      child: Text(localizedStrings.fPleaseSelectCategory),
+                      child: Text(localizedStrings.fPleaseSelectCategory,
+                          style:
+                              Theme.of(context).textTheme.bodySmall!.copyWith(
+                                    // 设置提示文本样式
+                                    fontSize: 12,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .surfaceContainerHighest,
+                                  )),
                     ),
                     ...formulaTypeList.map((CategoryTypeList item) {
                       return DropdownMenuItem<String>(
                         value: item.categoryName,
-                        child: Text(item.categoryName),
+                        child: Text(
+                          item.categoryName,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
+                        ),
                       );
                     })
                   ],
@@ -2133,11 +2278,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 performFmaSearch();
               });
             },
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-              fontSize: 14,
-              fontWeight: FontWeight.normal,
-            ),
+            style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
           ),
         ),
         SizedBox(
@@ -2166,12 +2309,24 @@ class FormulationScalePageState extends State<FormulationScalePage>
             items: [
               DropdownMenuItem<EncryptedValue>(
                 value: null,
-                child: Text(localizedStrings.fSelectConfidentialityStatusMsg),
+                child: Text(localizedStrings.fSelectConfidentialityStatusMsg,
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                          // 设置提示文本样式
+                          fontSize: 12,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .surfaceContainerHighest,
+                        )),
               ),
               ...EncryptedValue.values.map((value) {
                 return DropdownMenuItem<EncryptedValue>(
                   value: value,
-                  child: Text(value.getTranslation(context)),
+                  child: Text(
+                    value.getTranslation(context),
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                  ),
                 );
               }).toList(),
             ],
@@ -2184,11 +2339,12 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 performFmaSearch();
               });
             },
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-              fontSize: 14,
-              fontWeight: FontWeight.normal,
-            ),
+
+            style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  // 设置提示文本样式
+
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
           ),
         ),
         SizedBox(

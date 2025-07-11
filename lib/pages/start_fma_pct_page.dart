@@ -1248,18 +1248,19 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          SizedBox(
-                            height: 20,
-                          ),
+                          // SizedBox(
+                          //   height: 20,
+                          // ),
                           Container(
+                              height: 150,
                               alignment: Alignment.bottomCenter,
                               child: Image.asset(
                                 "assets/images/complete.png",
                                 fit: BoxFit.cover,
                               )),
-                          SizedBox(
-                            height: 14,
-                          ),
+                          // SizedBox(
+                          //   height: 14,
+                          // ),
                           Container(
                             alignment: Alignment.center,
                             child: Text(
@@ -1710,7 +1711,8 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                             onPressed: startFormula
                                 ? null
                                 : () {
-                                    PublicFunctions.performZero();
+                                    PublicFunctions.performZeroWithScaleId(
+                                        widget.selScaleId);
                                   },
                             child: Text(
                               localizedStrings.iBtnZero,
@@ -1754,7 +1756,8 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                               onPressed: startFormula
                                   ? null
                                   : () {
-                                      PublicFunctions.performTare();
+                                      PublicFunctions.performTareWithScaleId(
+                                          widget.selScaleId);
                                     },
                               child: Text(
                                 localizedStrings.gBtnTare,
@@ -1867,7 +1870,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
       //如果是第一个原料，直接赋值，这个原料是容器，直接赋值，执行扣重
       selectedProcessWgt.currentWgt = currentRawWgt;
       selectedProcessWgt.isOK = okStr;
-      PublicFunctions.performTare();
+      PublicFunctions.performTareWithScaleId(widget.selScaleId);
       //然后去找下一个原料
       findNextRaw();
       return;
@@ -1908,7 +1911,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
         } else if (value == 2) {
           //接受修正
           handleReviseWgt(currentTempWgtValue);
-          PublicFunctions.performTare();
+          PublicFunctions.performTareWithScaleId(widget.selScaleId);
           setState(() {});
         } else {
           return;
@@ -2061,8 +2064,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                 double.parse(targetItem.currentErrorPct!.toStringAsFixed(3));
           }
         }
-        PublicFunctions.performTare();
-
+        PublicFunctions.performTareWithScaleId(widget.selScaleId);
         //查找下一个
         findNextRaw();
 
