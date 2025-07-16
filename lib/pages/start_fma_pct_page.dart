@@ -5,6 +5,8 @@ import 'package:t_max/data/comscaleinfo_data.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/formula_scale_data.dart';
 import 'package:t_max/data/formula_wgt_process_data.dart';
+import 'package:t_max/data/get_auto_next_data.dart';
+import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/req_add_fma_rec_data.dart';
 import 'package:t_max/data/req_formula_data.dart';
 import 'package:t_max/data/reqweightdata_data.dart';
@@ -71,11 +73,19 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
   dynamic _eventbus6;
   dynamic _eventbus7;
   dynamic _eventbus8;
+  dynamic _eventbus9;
 
   Timer? setWgtStartFalseTimer; // 用于每3秒将isWgtStart设置为false的定时器
   Timer? checkWgtStartTimer; // 用于每5秒检查isWgtStart的定时器
 
   late Scale myScale;
+
+  bool autoNextStep = false;
+  final TextEditingController stableTimeCtl = TextEditingController();
+  Timer? autoNextStepTimer;
+  int stableDurationCounter = 0; // 稳定时长计数器
+  final ValueNotifier<bool> autoNextStepNotifier = ValueNotifier(false);
+  int stableTime = 0;
 
   // 每3秒钟将isWgtStart设置为false
   void startSetWgtStartFalseTimer() {
@@ -98,12 +108,50 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
     });
   }
 
+  // 启动自动下一步定时器
+  void startAutoNextStepTimer() {
+    autoNextStepTimer =
+        Timer.periodic(const Duration(milliseconds: 50), (timer) {
+      if (myReqWeightCountine.msgBody == null) {
+        stableDurationCounter = 0;
+      } else if (!myReqWeightCountine.msgBody!.isStable) {
+        stableDurationCounter = 0;
+      } else if (myReqWeightCountine.msgBody != null &&
+          myReqWeightCountine.msgBody!.isStable &&
+          isEnableNext &&
+          isWgtStart &&
+          checkValueIsOk() == 'ok') {
+        stableDurationCounter++;
+        if (stableDurationCounter >= stableTime * 20) {
+          final isOk = checkValueIsOk();
+          if (isOk == "ok") {
+            nextStep(isOk); // 执行下一步操作
+            stableDurationCounter = 0; // 重置计数器
+          }
+        }
+      }
+    });
+  }
+
+  // 停止自动下一步定时器
+  void stopAutoNextStepTimer() {
+    autoNextStepTimer?.cancel();
+    autoNextStepTimer = null;
+    stableDurationCounter = 0;
+  }
+
+  // nextStep 方法
+  void nextStep(String isWgtOk) {
+    double currentTempWgtValue = currentRawWgt;
+    handleOkStatus(isWgtOk, currentTempWgtValue);
+  }
+
 //百分比模式下初始化重量和单位
   void initTotalWgtUnit() {
     if (widget.selectFormula.header!.formulaHeader!.formulaMode == 'pct') {
       initTotalWeight = widget.totalFmaWgt;
       initTotalWeight = double.parse(initTotalWeight.toStringAsFixed(3));
-      widget.selectFormula.header!.formulaHeader!.formulaUnit = fmaUnit;
+      widget.selectFormula.header!.formulaHeader!.formulaUnit = widget.fmaUnit;
       widget.selectFormula.header!.formulaHeader!.totalWeight = initTotalWeight;
       needTotalWgt = initTotalWeight;
     }
@@ -195,7 +243,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
 
   //生成订单编号
   void createRecNumber() {
-    String company = "T-Scale"; // 公司名称
+    String company = "F"; // 公司名称
     DateTime now = DateTime.now();
     String year = now.year.toString(); // 取年份的后两位
     String month = now.month.toString().padLeft(2, '0'); // 取月份，不足两位时补零
@@ -211,6 +259,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
   @override
   void initState() {
     super.initState();
+
     _tabController = TabController(length: 2, vsync: this);
     //将传入的配方信息赋值给processWgtList
     for (var scale in myAllScalesList) {
@@ -229,6 +278,16 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
 
     startSetWgtStartFalseTimer();
     startCheckWgtStartTimer();
+    //自动启停定时器
+    autoNextStepNotifier.addListener(() {
+      if (autoNextStepNotifier.value) {
+        startAutoNextStepTimer();
+      } else {
+        stopAutoNextStepTimer();
+      }
+    });
+
+    PublicFunctions.getAutoNext();
 
     _eventbus1 = eventBus.on<EventRespGetRawTypeList>().listen((event) {
       if (mounted) {
@@ -331,13 +390,12 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                     myReqWeightCountine.msgBody!.weightVal; // 更新当前重量
                 currentRawWgt =
                     double.parse(myReqWeightCountine.msgBody!.weightVal);
-                // currentRawWgt =
-                //     double.parse(myReqWeightCountine.msgBody!.weightVal) -
-                //         actualTotalRawWgt;
+
                 currentRawWgt = double.parse(currentRawWgt.toStringAsFixed(3));
-                // if (currentRawWgt < 0) {
-                //   currentRawWgt = 0.0;
-                // }
+                if (!myReqWeightCountine.msgBody!.isStable) {
+                  stableDurationCounter = 0;
+                  //自动下一步的时候用到的
+                }
               } catch (e) {
                 // 处理转换失败的情况
                 // print('Failed to parse weight value: $e');
@@ -346,6 +404,26 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
             }
           }
         });
+      }
+    });
+
+    _eventbus9 = eventBus.on<EventRespGetAutoNext>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+        if (dataStr != '') {
+          setState(() {
+            autoNextStep = getAutoNextFormDbFromJson(dataStr).autoNext;
+
+            autoNextStepNotifier.value = autoNextStep;
+
+            stableTime = getAutoNextFormDbFromJson(dataStr).stableTime;
+            stableTimeCtl.text = stableTime.toString();
+          });
+        } else {
+          setState(() {
+            autoNextStepNotifier.value = false;
+          });
+        }
       }
     });
   }
@@ -362,10 +440,16 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
     _eventbus6.cancel();
     _eventbus7.cancel();
     _eventbus8.cancel();
+    _eventbus9.cancel();
+
     cntScaleTimerMgr.stopCntAliveTimer();
     currentWgtStrNotifier.dispose();
     setWgtStartFalseTimer?.cancel(); // 取消定时器
     checkWgtStartTimer?.cancel(); // 取消定时器
+    stopAutoNextStepTimer();
+
+    autoNextStepNotifier.dispose();
+    stableTimeCtl.dispose();
   }
 
   // 提示切换单位对话框
@@ -2086,17 +2170,118 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
           SizedBox(
             width: 17,
           ),
-          Expanded(child: Text(localizedStrings.fOrderNo + ': $recRecNumber')),
-          Icon(
-            Icons.help,
-            color: Theme.of(context).colorScheme.onTertiaryContainer,
+          Expanded(
+              child: Text(
+            localizedStrings.fOrderNo + ': $recRecNumber',
+            style: Theme.of(context)
+                .textTheme
+                .labelMedium!
+                .apply(color: Theme.of(context).colorScheme.onSurface),
+          )),
+          Text(
+            localizedStrings.gTipAutoNextStep,
+            style: Theme.of(context)
+                .textTheme
+                .bodySmall!
+                .apply(color: Theme.of(context).colorScheme.onSurface),
           ),
+          SizedBox(
+            width: regularPadding,
+          ),
+          IconButton(
+              onPressed: () {
+                setState(() {
+                  autoNextStep = !autoNextStep;
+                  autoNextStepNotifier.value = autoNextStep;
+                  if (autoNextStep) {
+                    stableTimeCtl.text = stableTime.toString();
+                  }
+                });
+                setAutoNext();
+              },
+              icon: Icon(
+                autoNextStep
+                    ? Icons.toggle_on_outlined
+                    : Icons.toggle_off_outlined,
+                color: autoNextStep
+                    ? Theme.of(context).colorScheme.onTertiaryFixedVariant
+                    : Theme.of(context).colorScheme.onSurface,
+              )),
+          SizedBox(
+            width: regularPadding,
+          ),
+          if (autoNextStep)
+            Text(
+              localizedStrings.gTipStableTime,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodySmall!
+                  .apply(color: Theme.of(context).colorScheme.onSurface),
+            ),
+          if (autoNextStep)
+            SizedBox(
+              width: regularPadding,
+            ),
+          if (autoNextStep)
+            SizedBox(
+              width: 65,
+              height: 35,
+              child: DropdownButtonFormField<String>(
+                borderRadius: BorderRadius.circular(0),
+                decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 5, horizontal: 10), // 调整垂直和水平内边距
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .outlineVariant, // 设置边框颜色
+                          width: 1.0, // 设置边框宽度
+                        ),
+                        borderRadius: BorderRadius.all(Radius.circular(0.0))),
+                    border: OutlineInputBorder()),
+                isExpanded: true,
+                value: stableTimeCtl.text == "" ? null : stableTimeCtl.text,
+                items: [
+                  ...['1', '2', '5', '10'].map((String item) {
+                    return DropdownMenuItem<String>(
+                      value: item,
+                      child: Text(
+                        item,
+                        style: Theme.of(context).textTheme.bodySmall!.apply(
+                            color: Theme.of(context).colorScheme.onSurface),
+                      ),
+                    );
+                  })
+                ],
+                onChanged: (value) {
+                  setState(() {
+                    stableTimeCtl.text = value!;
+                    stableTime = int.tryParse(stableTimeCtl.text) ?? 1;
+                    setAutoNext();
+                  });
+                },
+                style: Theme.of(context)
+                    .textTheme
+                    .bodySmall!
+                    .apply(color: Theme.of(context).colorScheme.onSurface),
+              ),
+            ),
           SizedBox(
             width: 20,
           )
         ],
       ),
     );
+  }
+
+  void setAutoNext() {
+    ReqAutoNext reqAutoNext = ReqAutoNext(
+      autoNext: autoNextStep,
+      stableTime: stableTime,
+    );
+
+    PublicFunctions.updateAutoNext(reqAutoNextToJson(reqAutoNext));
   }
 
   showAddFormulaIconBtn(String tip, IconData icon, Function() onPressed) {

@@ -15,7 +15,7 @@ import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/dialog/license_info.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
-import 'package:t_max/widget/page_info.dart';
+import 'package:t_max/widget/dialog_head_style.dart';
 import 'package:t_max/widget/show_license_res.dart';
 
 class AppsSettingPage extends StatefulWidget {
@@ -744,54 +744,12 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
                 ),
                 child: Column(
                   children: [
-                    Container(
-                        height: 54,
-                        padding: const EdgeInsets.only(
-                            left: largePadding, right: largePadding),
-                        alignment: Alignment.centerLeft,
-                        child: Row(children: [
-                          Container(
-                            width: 3,
-                            height: regularPadding,
-                            color: Theme.of(context).colorScheme.onSurface,
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: Container(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                localizedStrings.gBtnActivate,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium!
-                                    .apply(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurface),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ),
-                          IconButton(
-                              icon: Icon(
-                                Icons.cancel,
-                                size: iconSize,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .secondaryFixed,
-                              ),
-                              onPressed: () {
-                                activationFileCtl.text = '';
-                                Navigator.pop(context);
-                              })
-                        ])),
-                    // 分割线
-                    Divider(
-                      height: 1,
-                      color: Theme.of(context).colorScheme.outline,
-                    ),
+                    ...dialogHeadStyle(
+                        context, localizedStrings.gBtnActivate, true,
+                        onClose: () {
+                      activationFileCtl.text = '';
+                      Navigator.pop(context);
+                    }),
                     Expanded(
                       flex: 10,
                       child: Container(
@@ -1043,7 +1001,6 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
     allAppsMenus = getAllAppsMenus();
     double width = MediaQuery.of(context).size.width;
 

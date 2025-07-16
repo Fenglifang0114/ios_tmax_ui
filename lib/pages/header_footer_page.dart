@@ -6,7 +6,7 @@ import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/pages/update_firmware_page.dart';
 import 'package:t_max/widget/common_widget.dart';
-import 'package:t_max/widget/page_head.dart';
+import 'package:t_max/widget/dialog_head_style.dart';
 import '../data/header_footer.dart';
 import '../data/language.dart';
 import '../data/scalecmd_data.dart';
@@ -81,49 +81,11 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                    height: 54,
-                    padding: const EdgeInsets.only(left: 20, right: 20),
-                    alignment: Alignment.centerLeft,
-                    child: Row(children: [
-                      Container(
-                        width: 3,
-                        height: 14,
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                        child: Container(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            localizedStrings.menuVariableValueSetting,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.onSurface,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ),
-                      ),
-                      IconButton(
-                          icon: Icon(
-                            Icons.cancel,
-                            size: 24,
-                            color: Theme.of(context).colorScheme.secondaryFixed,
-                          ),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          })
-                    ])),
-                // 分割线
-                Divider(
-                  height: 1,
-                  color: Theme.of(context).colorScheme.outline,
+                ...dialogHeadStyle(
+                  context,
+                  localizedStrings.menuVariableValueSetting,
+                  true,
                 ),
-
                 Expanded(
                     child: SizedBox(
                   child: Column(

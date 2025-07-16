@@ -11,6 +11,7 @@ import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/widget/common_widget.dart';
+import 'package:t_max/widget/dialog_head_style.dart';
 import 'package:t_max/widget/scale_list.dart';
 import '../../functions/methods.dart';
 import '../data/language.dart';
@@ -904,46 +905,12 @@ class ParameterSettingDialogState extends State<ParameterSettingDialog> {
         child: Column(
           children: [
             // 头部
-            Container(
-                height: 54,
-                padding: const EdgeInsets.only(left: 20, right: 20),
-                alignment: Alignment.centerLeft,
-                child: Row(children: [
-                  Container(
-                    width: 3,
-                    height: 14,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: Container(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        localizedStrings.menuParameterSetting,
-                        style: Theme.of(context).textTheme.bodyMedium!.apply(
-                              color: Theme.of(context).colorScheme.onSurface,
-                            ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                      icon: Icon(
-                        Icons.cancel,
-                        size: 24,
-                        color: Theme.of(context).colorScheme.secondaryFixed,
-                      ),
-                      onPressed: () {
-                        Navigator.pop(ctx);
-                      })
-                ])),
-            // 分割线
-            Divider(
-              height: 1,
-              color: Theme.of(context).colorScheme.outline,
-            ),
+            ...dialogHeadStyle(
+                context, localizedStrings.menuParameterSetting, true,
+                onClose: () {
+              Navigator.pop(ctx);
+            }),
+
             // 中部
             Expanded(
               child: Container(

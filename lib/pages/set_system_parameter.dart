@@ -13,7 +13,6 @@ import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
 import '../data/language.dart';
 import '../data/timer_manager.dart';
-import '../widget/page_head.dart';
 
 class SetParameterPage extends StatefulWidget {
   const SetParameterPage({super.key});

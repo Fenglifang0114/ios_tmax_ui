@@ -5,7 +5,6 @@ export '../widget/defer_widget.dart';
 export '../pages/home_page_config.dart';
 export 'package:t_max/pages/home_page_industry.dart';
 export 'package:t_max/pages/multi_scale_management_page.dart';
-export 'package:t_max/pages/wifisetting_page_bak.dart';
 export 'package:t_max/pages/update_firmware_page.dart';
 export 'package:t_max/pages/set_system_time.dart';
 export 'package:t_max/pages/weighing.dart';

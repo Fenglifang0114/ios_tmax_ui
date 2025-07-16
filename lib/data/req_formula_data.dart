@@ -12,6 +12,21 @@ class TypeName {
   }
 }
 
+//配方秤中的类型添加字段
+class TypeIdAndName {
+  String name;
+  int id;
+  TypeIdAndName(this.name, this.id);
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['Name'] = name;
+    data['ID'] = id;
+    
+    return data;
+  }
+}
+
 // To parse this JSON data, do
 //
 //     final categoryTypeList = categoryTypeListFromJson(jsonString);

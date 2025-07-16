@@ -408,7 +408,6 @@ class _ConfigurationPageState extends State<ConfigurationPage>
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
     allConfigMenus = getAllConfigMenus();
 
     return Scaffold(

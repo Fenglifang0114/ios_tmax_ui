@@ -115,7 +115,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "fAbandonIngredientsBtn": MessageLookupByLibrary.simpleMessage("Abandon"),
     "fActualError": MessageLookupByLibrary.simpleMessage("Actual Error"),
     "fActualSingleWeight": MessageLookupByLibrary.simpleMessage(
-      "Actual Component Weight",
+      "Actual Ingredient Weight",
     ),
     "fActualTotalWeight": MessageLookupByLibrary.simpleMessage(
       "Actual Total Weight",
@@ -124,9 +124,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "fAddFormulaWeightTitle": MessageLookupByLibrary.simpleMessage(
       "Add Formula Weight",
     ),
-    "fAddRawMaterialBtn": MessageLookupByLibrary.simpleMessage("Add component"),
+    "fAddRawMaterialBtn": MessageLookupByLibrary.simpleMessage(
+      "Add Ingredient",
+    ),
     "fAddRawMaterialTypeBtn": MessageLookupByLibrary.simpleMessage(
-      "Add Component Category",
+      "Add Ingredient Category",
     ),
     "fAddSuccessMsg": MessageLookupByLibrary.simpleMessage(
       "Added successfully!",
@@ -155,10 +157,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Current Error",
     ),
     "fCurrentMaterialOverweightMsg": MessageLookupByLibrary.simpleMessage(
-      "Current component is overweight, please choose to abandon or correct?",
+      "Current ingredient is overweight, please choose to abandon or correct?",
     ),
     "fCurrentMaterialWeightInvalidMsg": MessageLookupByLibrary.simpleMessage(
-      "The current weight of the component is not qualified!",
+      "The current weight of the ingredient is not qualified!",
     ),
     "fCurrentWeightLabel": MessageLookupByLibrary.simpleMessage(
       "Current Weight",
@@ -174,7 +176,13 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "fEditBtn": MessageLookupByLibrary.simpleMessage("Edit"),
     "fEditFmaBtn": MessageLookupByLibrary.simpleMessage("Edit Formula"),
-    "fEditMaterial": MessageLookupByLibrary.simpleMessage("Edit Component"),
+    "fEditFormulaTypeBtn": MessageLookupByLibrary.simpleMessage(
+      "Edit Formula Category",
+    ),
+    "fEditMaterial": MessageLookupByLibrary.simpleMessage("Edit Ingredient"),
+    "fEditRawMaterialTypeBtn": MessageLookupByLibrary.simpleMessage(
+      "Edit Ingredient Category",
+    ),
     "fExportFmaBtn": MessageLookupByLibrary.simpleMessage("Export Formula"),
     "fExportRecordsBtn": MessageLookupByLibrary.simpleMessage("Export Records"),
     "fFlowRate": MessageLookupByLibrary.simpleMessage("Liquid Filling Speed"),
@@ -226,7 +234,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "fIngredientCountLabel": MessageLookupByLibrary.simpleMessage("Quantity"),
     "fIngredientOrder": MessageLookupByLibrary.simpleMessage("Order"),
     "fIngredientRemark": MessageLookupByLibrary.simpleMessage(
-      "Component Notes",
+      "Ingredient Notes",
     ),
     "fIngredientsDataLabel": MessageLookupByLibrary.simpleMessage(
       "Formula Data",
@@ -248,19 +256,19 @@ class MessageLookup extends MessageLookupByLibrary {
       "Please enter the formula category.",
     ),
     "fInputIngredientDescHint": MessageLookupByLibrary.simpleMessage(
-      "Please enter the component notes.",
+      "Please enter the ingredient notes.",
     ),
     "fInputPercentageHint": MessageLookupByLibrary.simpleMessage(
       "Please enter the percentage.",
     ),
     "fInputRawMaterialIdHint": MessageLookupByLibrary.simpleMessage(
-      "Please enter the component ID.",
+      "Please enter the ingredient ID.",
     ),
     "fInputRawMaterialNameHint": MessageLookupByLibrary.simpleMessage(
-      "Please enter the component name.",
+      "Please enter the ingredient name.",
     ),
     "fInputRawMaterialTypeHint": MessageLookupByLibrary.simpleMessage(
-      "Please enter the component category.",
+      "Please enter the ingredient category.",
     ),
     "fInputRemarkHint": MessageLookupByLibrary.simpleMessage(
       "Please enter the notes.",
@@ -271,12 +279,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "fInvolvedFmas": MessageLookupByLibrary.simpleMessage("Involved Formulas"),
     "fLowSpeed": MessageLookupByLibrary.simpleMessage("Low Speed"),
     "fMaterialCountCol": MessageLookupByLibrary.simpleMessage(
-      "Component Quantity",
+      "Ingredient Quantity",
     ),
-    "fMaterialIdCol": MessageLookupByLibrary.simpleMessage("Component ID"),
-    "fMaterialNameCol": MessageLookupByLibrary.simpleMessage("Component Name"),
+    "fMaterialIdCol": MessageLookupByLibrary.simpleMessage("Ingredient ID"),
+    "fMaterialNameCol": MessageLookupByLibrary.simpleMessage("Ingredient Name"),
     "fMaterialSingleWeight": MessageLookupByLibrary.simpleMessage(
-      "Component Weight",
+      "Ingredient Weight",
     ),
     "fMaxSpeed": MessageLookupByLibrary.simpleMessage("Max.Speed"),
     "fMediumSpeed": MessageLookupByLibrary.simpleMessage("Medium Speed"),
@@ -294,20 +302,24 @@ class MessageLookup extends MessageLookupByLibrary {
     "fPublic": MessageLookupByLibrary.simpleMessage("Public"),
     "fQualificationStatus": MessageLookupByLibrary.simpleMessage("Pass"),
     "fQualified": MessageLookupByLibrary.simpleMessage("√"),
+    "fRawCategoryManagement": MessageLookupByLibrary.simpleMessage(
+      "Category Management",
+    ),
     "fRawIdDuplicate": MessageLookupByLibrary.simpleMessage(
-      "Component Id already exists",
+      "Ingredient Id already exists",
+    ),
+    "fRawInUseDeleteErrorMsg": MessageLookupByLibrary.simpleMessage(
+      "Ingredient is in use and cannot be deleted.",
     ),
     "fRawMaterialListTab": MessageLookupByLibrary.simpleMessage(
-      "Component List",
+      "Ingredient List",
     ),
-    "fRawMaterialTypeCol": MessageLookupByLibrary.simpleMessage(
-      "Component Category",
-    ),
+    "fRawMaterialTypeNameCol": MessageLookupByLibrary.simpleMessage("Category"),
     "fRawMaterialWeightLabel": MessageLookupByLibrary.simpleMessage(
-      "Component Weight",
+      "Ingredient Weight",
     ),
     "fRawNameDuplicate": MessageLookupByLibrary.simpleMessage(
-      "Component name already exists",
+      "Ingredient name already exists",
     ),
     "fRecordTitle": MessageLookupByLibrary.simpleMessage("Formula Records"),
     "fRemarkCol": MessageLookupByLibrary.simpleMessage("Notes"),
@@ -324,10 +336,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Please select the formula mode.",
     ),
     "fSelectRawMaterialHint": MessageLookupByLibrary.simpleMessage(
-      "Select Component",
+      "Select Ingredient",
     ),
     "fSelectUnitHint": MessageLookupByLibrary.simpleMessage("Select Unit"),
-    "fSetRawMaterialBtn": MessageLookupByLibrary.simpleMessage("Set component"),
+    "fSetRawMaterialBtn": MessageLookupByLibrary.simpleMessage(
+      "Set Ingredient",
+    ),
     "fShowCurveChart": MessageLookupByLibrary.simpleMessage("Curve chart"),
     "fShowDataTable": MessageLookupByLibrary.simpleMessage("Data table"),
     "fSpeed": MessageLookupByLibrary.simpleMessage("Speed"),
@@ -344,6 +358,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "fTargetWeightLabel": MessageLookupByLibrary.simpleMessage("Target Weight"),
     "fTime": MessageLookupByLibrary.simpleMessage("Time"),
+    "fTipNoData": MessageLookupByLibrary.simpleMessage(
+      "No data, please add first.",
+    ),
+    "fTipOperation": MessageLookupByLibrary.simpleMessage("Operation"),
     "fTipTitle": MessageLookupByLibrary.simpleMessage("Prompt"),
     "fTotalTime": MessageLookupByLibrary.simpleMessage("Total time"),
     "fTotalWeight": MessageLookupByLibrary.simpleMessage("Total weight"),
@@ -578,6 +596,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "All configuration functions",
     ),
     "gTipAuto": MessageLookupByLibrary.simpleMessage("Auto"),
+    "gTipAutoNextStep": MessageLookupByLibrary.simpleMessage("Auto Next Step"),
     "gTipBasicDataPageHelp": MessageLookupByLibrary.simpleMessage(
       "1. Click [Get Basic Data];\n2. T-Config will automatically collect basic data from the scale and display it synchronously on the interface.\n3. You can click the menu bar button in the upper left corner to select the device you want to switch to.",
     ),
@@ -672,7 +691,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "1.Place the container on the weighing pan, and after the weight stabilizes, click [Tare].\n2.Click [Start] and pour the liquid into the container.\n3.After completion, click [End]. The software will automatically generate the liquid filling speed changes during this process and analyze the total weight, total time, average speed, maximum speed, and minimum speed.\n4.Click [Show Data Table] to view the liquid filling speed at each moment.\n5.Select the record you want to export and click [Export] to download the data locally.\n\nNote: If there is no weight change for more than 3 seconds during the liquid pouring process, the software will automatically end and generate a record.",
     ),
     "gTipFmaPageHelp": MessageLookupByLibrary.simpleMessage(
-      "1.In the Component List, click [+] to add a new component. Enter the ID, Name, Category, and Description, then click [Confirm].\n 2.Click on a component to view all Formulas that use it. Further click to see detailed formula information.\n 3.In the Formula List, click [+] to create a new formula and enter its details.\n 4.If the total weight of the formula is fixed, select the \"Weight\" mode, where each component is set with a fixed weight.\n 5.If the total weight is variable, select the \"Percentage\" mode, where each component is set by ratio. The total ratio must add up to 100% before saving the formula.\n 6.In the Formula List, select the desired formula and click [Start Dosing].\n 7.The software will guide you step-by-step, indicating which component to weigh. When the weight falls within the allowed error range, click [Next] until dosing is complete.\n 8.If a component is overweight, the software will prompt you to either discard dosing or adjust the formula.\n 9.Discard dosing: Clears the data and returns to the Formula List.\n 10.Adjust formula: Resets to the first component, allowing you to add the required weight as prompted until all dosing is completed.\n 11.In the Formula List, you can view all dosing records or records for a single formula, with the option to export them.\n \n Note: If a formula is set to \"Confidential\", the operator will only see a progress bar for each component during dosing—not the actual weight. The system will guide dosing speed based on the allowed error range.",
+      "1.In the Ingredients List, click [+] to add a new ingredient. Enter the ID, Name, Category, and Description, then click [Confirm].\n 2.Click on a ingredient to view all Formulas that use it. Further click to see detailed formula information.\n 3.In the Formula List, click [+] to create a new formula and enter its details.\n 4.If the total weight of the formula is fixed, select the \"Weight\" mode, where each ingredient is set with a fixed weight.\n 5.If the total weight is variable, select the \"Percentage\" mode, where each ingredient is set by ratio. The total ratio must add up to 100% before saving the formula.\n 6.In the Formula List, select the desired formula and click [Start Dosing].\n 7.The software will guide you step-by-step, indicating which ingredient to weigh. When the weight falls within the allowed error range, click [Next] until dosing is complete.\n 8.If a ingredient is overweight, the software will prompt you to either discard dosing or adjust the formula.\n 9.Discard dosing: Clears the data and returns to the Formula List.\n 10.Adjust formula: Resets to the first ingredient, allowing you to add the required weight as prompted until all dosing is completed.\n 11.In the Formula List, you can view all dosing records or records for a single formula, with the option to export them.\n \n Note: If a formula is set to \"Confidential\", the operator will only see a progress bar for each ingredient during dosing—not the actual weight. The system will guide dosing speed based on the allowed error range.",
     ),
     "gTipFolderNoSelected": MessageLookupByLibrary.simpleMessage(
       "No folder has been selected, so the file cannot be saved.",
@@ -869,6 +888,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Please set the full scale weight and click next",
     ),
     "gTipStableText": MessageLookupByLibrary.simpleMessage("Stable Text"),
+    "gTipStableTime": MessageLookupByLibrary.simpleMessage("Stable Time (s)"),
     "gTipStandaloneMode": MessageLookupByLibrary.simpleMessage(
       "Standalone Mode",
     ),
@@ -1292,7 +1312,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "show_reduced_weight": MessageLookupByLibrary.simpleMessage(
       "Reduced weight:",
     ),
-    "stable_time": MessageLookupByLibrary.simpleMessage("Stable Time (s)"),
     "stable_time_error_tip": MessageLookupByLibrary.simpleMessage(
       "The value must be under 20 seconds.",
     ),

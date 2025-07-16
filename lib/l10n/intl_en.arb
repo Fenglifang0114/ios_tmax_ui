@@ -384,8 +384,8 @@
     "@gTipAuto": {
         "description": "This is a prompt about auto mode."
     },
-    "stable_time": "Stable Time (s)",
-    "@stable_time": {
+    "gTipStableTime": "Stable Time (s)",
+    "@gTipStableTime": {
         "description": "This is a prompt about stable time."
     },
     "stable_time_error_tip": "The value must be under 20 seconds.",
@@ -1808,7 +1808,7 @@
     "@gTipWeighingPageHelp": {
         "description": "This is the help info for the weighing page."
     },
-    "gTipFmaPageHelp": "1.In the Component List, click [+] to add a new component. Enter the ID, Name, Category, and Description, then click [Confirm].\n 2.Click on a component to view all Formulas that use it. Further click to see detailed formula information.\n 3.In the Formula List, click [+] to create a new formula and enter its details.\n 4.If the total weight of the formula is fixed, select the \"Weight\" mode, where each component is set with a fixed weight.\n 5.If the total weight is variable, select the \"Percentage\" mode, where each component is set by ratio. The total ratio must add up to 100% before saving the formula.\n 6.In the Formula List, select the desired formula and click [Start Dosing].\n 7.The software will guide you step-by-step, indicating which component to weigh. When the weight falls within the allowed error range, click [Next] until dosing is complete.\n 8.If a component is overweight, the software will prompt you to either discard dosing or adjust the formula.\n 9.Discard dosing: Clears the data and returns to the Formula List.\n 10.Adjust formula: Resets to the first component, allowing you to add the required weight as prompted until all dosing is completed.\n 11.In the Formula List, you can view all dosing records or records for a single formula, with the option to export them.\n \n Note: If a formula is set to \"Confidential\", the operator will only see a progress bar for each component during dosing—not the actual weight. The system will guide dosing speed based on the allowed error range.",
+    "gTipFmaPageHelp": "1.In the Ingredients List, click [+] to add a new ingredient. Enter the ID, Name, Category, and Description, then click [Confirm].\n 2.Click on a ingredient to view all Formulas that use it. Further click to see detailed formula information.\n 3.In the Formula List, click [+] to create a new formula and enter its details.\n 4.If the total weight of the formula is fixed, select the \"Weight\" mode, where each ingredient is set with a fixed weight.\n 5.If the total weight is variable, select the \"Percentage\" mode, where each ingredient is set by ratio. The total ratio must add up to 100% before saving the formula.\n 6.In the Formula List, select the desired formula and click [Start Dosing].\n 7.The software will guide you step-by-step, indicating which ingredient to weigh. When the weight falls within the allowed error range, click [Next] until dosing is complete.\n 8.If a ingredient is overweight, the software will prompt you to either discard dosing or adjust the formula.\n 9.Discard dosing: Clears the data and returns to the Formula List.\n 10.Adjust formula: Resets to the first ingredient, allowing you to add the required weight as prompted until all dosing is completed.\n 11.In the Formula List, you can view all dosing records or records for a single formula, with the option to export them.\n \n Note: If a formula is set to \"Confidential\", the operator will only see a progress bar for each ingredient during dosing—not the actual weight. The system will guide dosing speed based on the allowed error range.",
     "@gTipFmaPageHelp": {
         "description": "This is the help info for the formula management page."
     },
@@ -1820,7 +1820,7 @@
     "@fFmaListTab": {
         "description": "Tab label for formula list"
     },
-    "fRawMaterialListTab": "Component List",
+    "fRawMaterialListTab": "Ingredient List",
     "@fRawMaterialListTab": {
         "description": "Tab label for raw material list"
     },
@@ -1876,7 +1876,7 @@
     "@fIngredientOrder": {
         "description": "Section title for ingredient order display"
     },
-    "fIngredientRemark": "Component Notes",
+    "fIngredientRemark": "Ingredient Notes",
     "@fIngredientRemark": {
         "description": "Section title for ingredient remarks"
     },
@@ -1900,9 +1900,9 @@
     "@fNetScale": {
         "description": "Label for network scale in scale list"
     },
-    "fRawMaterialTypeCol": "Component Category",
-    "@fRawMaterialTypeCol": {
-        "description": "Table column title for raw material category"
+    "fRawMaterialTypeNameCol": "Category",
+    "@fRawMaterialTypeNameCol": {
+        "description": "Table column title for category name"
     },
     "fCreatedAtCol": "Create Time",
     "@fCreatedAtCol": {
@@ -1916,6 +1916,10 @@
     "@fEditBtn": {
         "description": "Button for editing table row"
     },
+    "fTipOperation": "Operation",
+    "@fTipOperation": {
+        "description": "Table column title for operations"
+    },
     "fFmaCategoryCol": "Category",
     "@fFmaCategoryCol": {
         "description": "Table column title for formula category"
@@ -1924,7 +1928,7 @@
     "@fFmaModeCol": {
         "description": "Table column title for formula mode (weight/pct)"
     },
-    "fMaterialCountCol": "Component Quantity",
+    "fMaterialCountCol": "Ingredient Quantity",
     "@fMaterialCountCol": {
         "description": "Table column title for number of materials in formula"
     },
@@ -1976,11 +1980,11 @@
     "@fActualTotalWeight": {
         "description": "Table column title for actual total weight"
     },
-    "fMaterialSingleWeight": "Component Weight",
+    "fMaterialSingleWeight": "Ingredient Weight",
     "@fMaterialSingleWeight": {
         "description": "Table column title for material single weight"
     },
-    "fActualSingleWeight": "Actual Component Weight",
+    "fActualSingleWeight": "Actual Ingredient Weight",
     "@fActualSingleWeight": {
         "description": "Table column title for actual single weight"
     },
@@ -1996,17 +2000,17 @@
     "@fQualificationStatus": {
         "description": "Table column title for qualification status"
     },
-    "fMaterialNameCol": "Component Name",
+    "fMaterialNameCol": "Ingredient Name",
     "@fMaterialNameCol": {
         "description": "Table column title for material name"
     },
-    "fMaterialIdCol": "Component ID",
+    "fMaterialIdCol": "Ingredient ID",
     "@fMaterialIdCol": {
         "description": "Table column title for material ID"
     },
-    "fEditMaterial": "Edit Component",
+    "fEditMaterial": "Edit Ingredient",
     "@fEditMaterial": {
-        "description": "Edit component page"
+        "description": "Edit Ingredient page"
     },
     "fBackBtn": "Back",
     "@fBackBtn": {
@@ -2040,7 +2044,7 @@
     "@fSelectUnitHint": {
         "description": "Hint text for the unit selection dropdown"
     },
-    "fSelectRawMaterialHint": "Select Component",
+    "fSelectRawMaterialHint": "Select Ingredient",
     "@fSelectRawMaterialHint": {
         "description": "Placeholder or hint for selecting raw material"
     },
@@ -2080,15 +2084,15 @@
     "@fFormulaNameDuplicate": {
         "description": "Error message for duplicate formula name"
     },
-    "fRawIdDuplicate": "Component Id already exists",
+    "fRawIdDuplicate": "Ingredient Id already exists",
     "@fRawIdDuplicate": {
         "description": "Error message for duplicate raw ID"
     },
-    "fRawNameDuplicate": "Component name already exists",
+    "fRawNameDuplicate": "Ingredient name already exists",
     "@fRawNameDuplicate": {
         "description": "Error message for duplicate raw name"
     },
-    "fSetRawMaterialBtn": "Set component",
+    "fSetRawMaterialBtn": "Set Ingredient",
     "@fSetRawMaterialBtn": {
         "description": "Text on the button to set raw material"
     },
@@ -2104,29 +2108,37 @@
     "@fAddTypeBtn": {
         "description": "Text on the button to add category"
     },
-    "fAddRawMaterialBtn": "Add component",
+    "fAddRawMaterialBtn": "Add Ingredient",
     "@fAddRawMaterialBtn": {
         "description": "Text on the button to add raw material"
     },
-    "fInputRawMaterialIdHint": "Please enter the component ID.",
+    "fInputRawMaterialIdHint": "Please enter the ingredient ID.",
     "@fInputRawMaterialIdHint": {
         "description": "Hint text for raw material ID input field"
     },
-    "fInputRawMaterialNameHint": "Please enter the component name.",
+    "fInputRawMaterialNameHint": "Please enter the ingredient name.",
     "@fInputRawMaterialNameHint": {
         "description": "Hint text for raw material name input field"
     },
-    "fInputIngredientDescHint": "Please enter the component notes.",
+    "fInputIngredientDescHint": "Please enter the ingredient notes.",
     "@fInputIngredientDescHint": {
         "description": "Hint text for ingredient description input field"
     },
-    "fInputRawMaterialTypeHint": "Please enter the component category.",
+    "fInputRawMaterialTypeHint": "Please enter the ingredient category.",
     "@fInputRawMaterialTypeHint": {
         "description": "Hint text for raw material category input field"
     },
-    "fAddRawMaterialTypeBtn": "Add Component Category",
+    "fAddRawMaterialTypeBtn": "Add Ingredient Category",
     "@fAddRawMaterialTypeBtn": {
         "description": "Text on the button to add raw material category"
+    }, 
+    "fEditRawMaterialTypeBtn": "Edit Ingredient Category",
+    "@fEditRawMaterialTypeBtn": {
+        "description": "Text on the button to edit raw material category"
+    },
+    "fEditFormulaTypeBtn": "Edit Formula Category",
+    "@fEditFormulaTypeBtn": {
+        "description": "Text on the button to edit formula category"
     },
     "fFormulaDetailsTitle": "Formula Details",
     "@fFormulaDetailsTitle": {
@@ -2176,11 +2188,11 @@
     "@fCurrentErrorWeightLabel": {
         "description": "Label for current error weight field"
     },
-    "fCurrentMaterialOverweightMsg": "Current component is overweight, please choose to abandon or correct?",
+    "fCurrentMaterialOverweightMsg": "Current ingredient is overweight, please choose to abandon or correct?",
     "@fCurrentMaterialOverweightMsg": {
         "description": "Warning message when current raw material is overweight, asking to abandon or correct"
     },
-    "fCurrentMaterialWeightInvalidMsg": "The current weight of the component is not qualified!",
+    "fCurrentMaterialWeightInvalidMsg": "The current weight of the ingredient is not qualified!",
     "@fCurrentMaterialWeightInvalidMsg": {
         "description": "Error message when current raw material weight is invalid"
     },
@@ -2192,7 +2204,7 @@
     "@fFormulaProgressLabel": {
         "description": "Label for formula progress display"
     },
-    "fRawMaterialWeightLabel": "Component Weight",
+    "fRawMaterialWeightLabel": "Ingredient Weight",
     "@fRawMaterialWeightLabel": {
         "description": "Label for raw material weight field"
     },
@@ -2219,6 +2231,18 @@
     "fFormulaInUseDeleteErrorMsg": "Formula is in use and cannot be deleted.",
     "@fFormulaInUseDeleteErrorMsg": {
         "description": "Error message when deleting a formula that is currently in use"
+    },
+    "fRawInUseDeleteErrorMsg": "Ingredient is in use and cannot be deleted.",
+    "@fRawInUseDeleteErrorMsg": {
+        "description": "Error message when deleting a ingredient that is currently in use"
+    },
+    "fTipNoData": "No data, please add first.",
+    "@fTipNoData": {
+        "description": "Text to display when there is no data"
+    },
+    "fRawCategoryManagement": "Category Management",
+    "@fRawCategoryManagement": {
+        "description": "Title for category management page"
     },
     "fDeleteSuccessMsg": "Deleted successfully",
     "@fDeleteSuccessMsg": {
@@ -2283,6 +2307,10 @@
     "fNextStepBtn": "Next Step",
     "@fNextStepBtn": {
         "description": "Button to proceed to the next step"
+    },
+    "gTipAutoNextStep": "Auto Next Step",
+    "@gTipAutoNextStep": {
+        "description": "Prompt message indicating automatic mode"
     },
     "fDeviceDisconnected": "Device disconnected, please check the connection.",
     "@fDeviceDisconnected": {

@@ -189,7 +189,7 @@ showDropDownButton(
         decoration: InputDecoration(
             enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.outlineVariant, // 设置边框颜色
+                  color: Theme.of(context).colorScheme.primary, // 设置边框颜色
                   width: 1.0, // 设置边框宽度
                 ),
                 borderRadius: BorderRadius.all(Radius.circular(0.0))),

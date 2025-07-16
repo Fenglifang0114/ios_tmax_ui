@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:t_max/data/home_page_common_data.dart';
+import 'package:t_max/widget/dialog_head_style.dart';
 import '../data/language.dart';
 import '../data/weight_report_data.dart';
 
@@ -54,48 +55,11 @@ class ReportSettingDialogState extends State<ReportSettingDialog> {
         child: Column(
           children: [
             // 头部
-            Container(
-                height: 54,
-                padding: const EdgeInsets.only(left: 20, right: 20),
-                alignment: Alignment.centerLeft,
-                child: Row(children: [
-                  Container(
-                    width: 3,
-                    height: 14,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: Container(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        localizedStrings.gBtnReportSetting,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onSurface,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                      icon: Icon(
-                        Icons.cancel,
-                        size: 24,
-                        color: Theme.of(context).colorScheme.secondaryFixed,
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pop(false);
-                      })
-                ])),
-            // 分割线
-            Divider(
-              height: 1,
-              color: Theme.of(context).colorScheme.outline,
-            ),
+            ...dialogHeadStyle(
+                context, localizedStrings.gBtnReportSetting, true, onClose: () {
+              Navigator.of(context).pop(false);
+            }),
+
             // 中部
 
             Expanded(

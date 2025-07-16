@@ -666,3 +666,8 @@ class EventSaveTakeInOutWgt {
   dynamic obj;
   EventSaveTakeInOutWgt(this.obj);
 }
+
+class EventRespGetAutoNext {
+  dynamic obj;
+  EventRespGetAutoNext(this.obj);
+}

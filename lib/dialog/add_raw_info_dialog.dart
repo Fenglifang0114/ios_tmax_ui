@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/formula_scale_data.dart';
+import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/language.dart';
 import 'package:t_max/data/req_formula_data.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
+import 'package:t_max/dialog/raw_type_mgr.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
+import 'package:t_max/widget/common_widget.dart';
+import 'package:t_max/widget/dialog_head_style.dart';
 
 ////添加原料信息
 ///
 ///// 定义新增原料弹框组件
+///
+///
 ///
 int getRawTypeId(String name) {
   for (var item in rawTypeList) {
@@ -52,6 +58,8 @@ class AddRawDialogState extends State<AddRawDialog> {
     super.initState();
   }
 
+//
+
   @override
   void dispose() {
     _eventbus1.cancel();
@@ -73,49 +81,67 @@ class AddRawDialogState extends State<AddRawDialog> {
           borderRadius: BorderRadius.circular(0), // 设置圆角
         ),
         child: DropdownButton(
-          underline: SizedBox(),
-          isExpanded: true,
-          value: rawTypeCtl.text == "" ? null : rawTypeCtl.text,
-          items: rawTypeList.isEmpty
-              ? [
-                  DropdownMenuItem<String>(
-                    value: null,
-                    child: Text(localizedStrings.fPleaseSelectCategory),
-                  )
-                ]
-              : [
-                  DropdownMenuItem<String>(
-                    value: null,
-                    child: Text(localizedStrings.fPleaseSelectCategory),
-                  ),
-                  ...rawTypeList.map((CategoryTypeList item) {
-                    return DropdownMenuItem<String>(
-                      value: item.categoryName,
-                      child: Text(item.categoryName),
-                    );
-                  })
-                ],
-          onChanged: (value) {
-            if (value == null) return;
-            setState(() {
-              rawTypeCtl.text = value.toString();
-            });
-          },
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-            fontSize: 14,
-            fontWeight: FontWeight.normal,
-          ),
-        ));
+            underline: SizedBox(),
+            isExpanded: true,
+            value: rawTypeCtl.text == "" ? null : rawTypeCtl.text,
+            items: rawTypeList.isEmpty
+                ? [
+                    DropdownMenuItem<String>(
+                      value: null,
+                      child: Text(localizedStrings.fPleaseSelectCategory,
+                          style: Theme.of(context).textTheme.bodySmall!.apply(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainerHighest,
+                              )),
+                    )
+                  ]
+                : [
+                    DropdownMenuItem<String>(
+                      value: null,
+                      child: Text(localizedStrings.fPleaseSelectCategory,
+                          style: Theme.of(context).textTheme.bodySmall!.apply(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainerHighest,
+                              )),
+                    ),
+                    ...rawTypeList.map((CategoryTypeList item) {
+                      return DropdownMenuItem<String>(
+                        value: item.categoryName,
+                        child: Text(item.categoryName,
+                            style: Theme.of(context).textTheme.bodySmall!.apply(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                )),
+                      );
+                    })
+                  ],
+            onChanged: (value) {
+              if (value == null) {
+                setState(() {
+                  rawTypeCtl.text = '';
+                });
+
+                return;
+              }
+
+              setState(() {
+                rawTypeCtl.text = value.toString();
+              });
+            },
+            style: Theme.of(context).textTheme.bodySmall!.apply(
+                  color: Theme.of(context).colorScheme.onSurface,
+                )));
   }
 
-  // 显示新增配方类型对话框
-  void showAddRawTypeDialog() {
+  // 显示原料类型管理的对话框
+  void showRawTypeMgrDialog() {
     showDialog(
       context: context,
       barrierDismissible: false, // 点击对话框外部不关闭对话框
       builder: (BuildContext context) {
-        return AddRawTypeDialog();
+        return RawTypeMgrDialog();
       },
     ).then((value) {
       setState(() {});
@@ -124,6 +150,22 @@ class AddRawDialogState extends State<AddRawDialog> {
 
   @override
   Widget build(BuildContext context) {
+    // 提取公共的文本样式
+    final textStyle = Theme.of(context).textTheme.bodySmall!.apply(
+          color: Theme.of(context).colorScheme.onSurface,
+          overflow: TextOverflow.ellipsis,
+        );
+
+    // 提取输入框的公共装饰
+    final inputDecoration = InputDecoration(
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(0.0),
+      ),
+      hintStyle: TextStyle(
+        color: Theme.of(context).colorScheme.onSurface,
+      ),
+    );
+
     return Dialog(
       backgroundColor: Colors.transparent,
       child: Container(
@@ -136,48 +178,9 @@ class AddRawDialogState extends State<AddRawDialog> {
         child: Column(
           children: [
             // 头部
-            Container(
-                height: 54,
-                padding: const EdgeInsets.only(left: 20, right: 20),
-                alignment: Alignment.centerLeft,
-                child: Row(children: [
-                  Container(
-                    width: 3,
-                    height: 14,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: Container(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        localizedStrings.fAddRawMaterialBtn,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onSurface,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                      icon: Icon(
-                        Icons.cancel,
-                        size: 24,
-                        color: Theme.of(context).colorScheme.secondaryFixed,
-                      ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      })
-                ])),
-            // 分割线
-            Divider(
-              height: 1,
-              color: Theme.of(context).colorScheme.outline,
-            ),
+            ...dialogHeadStyle(
+                context, localizedStrings.fAddRawMaterialBtn, true),
+
             // 中部
             Expanded(
                 child: Column(children: [
@@ -200,12 +203,15 @@ class AddRawDialogState extends State<AddRawDialog> {
                                 alignment: Alignment.centerLeft,
                                 child: Text(
                                   localizedStrings.fMaterialIdCol,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color:
-                                        Theme.of(context).colorScheme.onSurface,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .apply(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
+                                      ),
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ),
@@ -233,13 +239,15 @@ class AddRawDialogState extends State<AddRawDialog> {
                                       // print('Input changed: $value');
                                       setState(() {});
                                     },
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurface,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall!
+                                        .apply(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
                                   )),
                             ),
                           ]),
@@ -259,12 +267,15 @@ class AddRawDialogState extends State<AddRawDialog> {
                                 alignment: Alignment.centerLeft,
                                 child: Text(
                                   localizedStrings.fMaterialNameCol,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color:
-                                        Theme.of(context).colorScheme.onSurface,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .apply(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
+                                      ),
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ),
@@ -292,13 +303,15 @@ class AddRawDialogState extends State<AddRawDialog> {
                                       // print('Input changed: $value');
                                       setState(() {});
                                     },
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurface,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall!
+                                        .apply(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
                                   )),
                             ),
                           ]),
@@ -327,12 +340,15 @@ class AddRawDialogState extends State<AddRawDialog> {
                                 alignment: Alignment.centerLeft,
                                 child: Text(
                                   localizedStrings.fFmaCategoryCol,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color:
-                                        Theme.of(context).colorScheme.onSurface,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .apply(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
+                                      ),
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ),
@@ -342,7 +358,7 @@ class AddRawDialogState extends State<AddRawDialog> {
                             localizedStrings.fPleaseSelectCategory, rawTypeCtl),
                       ])),
                   SizedBox(
-                    width: 20,
+                    width: largePadding,
                   ),
                   Expanded(
                       flex: 1,
@@ -351,126 +367,49 @@ class AddRawDialogState extends State<AddRawDialog> {
                           height: 42,
                         ),
                         SizedBox(
-                          height: 48,
+                          height: btnHeight,
                           child: Row(children: [
-                            Tooltip(
-                              message: localizedStrings.fAddTypeBtn, // 提示信息
-                              child: IconButton(
-                                iconSize: 24,
-                                color: Theme.of(context).colorScheme.onPrimary,
-                                style: IconButton.styleFrom(
-                                  backgroundColor:
-                                      Theme.of(context).colorScheme.surface,
-                                  focusColor: Theme.of(context)
-                                      .colorScheme
-                                      .primary
-                                      .withValues(alpha: 0.1),
-                                  shape: RoundedRectangleBorder(
-                                      // 设置为矩形形状
-                                      borderRadius:
-                                          BorderRadius.zero, // 没有圆角，即正方形
-                                      side: BorderSide(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .outline, // 设置边框颜色
-                                        width: 1, // 设置边框宽度
-                                      )),
-                                  fixedSize: const Size(48, 48), // 设置固定大小
-                                ),
-                                onPressed: () {
-                                  showAddRawTypeDialog();
-                                },
-                                icon: Icon(
-                                  Icons.add,
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
-                                ),
-                              ),
+                            Expanded(
+                              child: showTextButton(context, btnHeight,
+                                  localizedStrings.fRawCategoryManagement, () {
+                                showRawTypeMgrDialog();
+                              },
+                                  Theme.of(context).colorScheme.onPrimary,
+                                  Theme.of(context).colorScheme.primary,
+                                  Theme.of(context).colorScheme.onPrimary),
                             ),
-                            Spacer(),
                           ]),
                         ),
                       ])),
                   SizedBox(
-                    width: 20,
+                    width: largePadding,
                   ),
                 ]),
               ),
               SizedBox(
-                height: 116,
+                height: 160,
                 width: 582,
-                child: Row(children: [
-                  SizedBox(
-                    width: 20,
-                  ),
-                  Expanded(
-                      flex: 1,
-                      child: Column(children: [
-                        SizedBox(
-                          height: 42,
-                          child: Row(children: [
-                            Expanded(
-                              child: Container(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  localizedStrings.fIngredientRemark,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color:
-                                        Theme.of(context).colorScheme.onSurface,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ]),
-                        ),
-                        SizedBox(
-                          height: 74,
-                          child: Row(children: [
-                            Expanded(
-                              child: Container(
-                                  padding: EdgeInsets.all(5),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .outline, // 设置边框颜色
-                                      width: 1, // 设置边框宽度
-                                    ),
-                                  ),
-                                  alignment: Alignment.centerLeft,
-                                  child: TextField(
-                                    controller: rawRemarkCtl,
-                                    decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      hintText: localizedStrings
-                                          .fInputIngredientDescHint,
-                                      suffixIconConstraints:
-                                          BoxConstraints.tight(Size(40, 40)),
-                                    ),
-                                    maxLines: 3,
-                                    onChanged: (value) {
-                                      // 处理输入变化事件
-                                      // print('Input changed: $value');
-                                      setState(() {});
-                                    },
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurface,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  )),
-                            ),
-                          ]),
-                        ),
-                      ])),
-                  SizedBox(
-                    width: 20,
-                  ),
-                ]),
+                child: Row(
+                  children: [
+                    const SizedBox(width: largePadding),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          // 标签部分
+                          SizedBox(
+                              height: 42,
+                              child: _LabelSection(textStyle: textStyle)),
+                          // 输入框部分
+                          Expanded(
+                              child: _InputSection(
+                                  inputDecoration: inputDecoration,
+                                  rawRemarkCtl: rawRemarkCtl)),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: largePadding),
+                  ],
+                ),
               ),
             ])),
 
@@ -493,53 +432,54 @@ class AddRawDialogState extends State<AddRawDialog> {
                           borderRadius: BorderRadius.zero,
                         ),
                       ),
-                      onPressed: (rawCodeCtl.text.isEmpty ||
-                              rawNameCtl.text.isEmpty ||
-                              rawTypeCtl.text.isEmpty)
-                          ? null
-                          : () {
-                              // 检查原料是否已经存在
-                              for (var item in rawDataList) {
-                                if (item.rawMaterial.materialName ==
-                                    rawNameCtl.text) {
-                                  showTipInfo(localizedStrings.fRawIdDuplicate,
-                                      context);
-                                  return;
-                                }
-                                if (item.rawMaterial.materialId ==
-                                    rawCodeCtl.text) {
-                                  showTipInfo(
-                                      localizedStrings.fRawNameDuplicate,
-                                      context);
-                                  return;
-                                }
-                              }
+                      onPressed:
+                          (rawCodeCtl.text.isEmpty || rawNameCtl.text.isEmpty
+                              // || rawTypeCtl.text.isEmpty
+                              )
+                              ? null
+                              : () {
+                                  // 检查原料是否已经存在
+                                  for (var item in rawDataList) {
+                                    if (item.rawMaterial.materialName ==
+                                        rawNameCtl.text) {
+                                      showTipInfo(
+                                          localizedStrings.fRawIdDuplicate,
+                                          context);
+                                      return;
+                                    }
+                                    if (item.rawMaterial.materialId ==
+                                        rawCodeCtl.text) {
+                                      showTipInfo(
+                                          localizedStrings.fRawNameDuplicate,
+                                          context);
+                                      return;
+                                    }
+                                  }
 
-                              int typeId = getRawTypeId(rawTypeCtl.text);
-                              if (typeId == -1) {
-                                return;
-                              }
-                              AddRawData data = AddRawData(
-                                materialId: rawCodeCtl.text,
-                                materialName: rawNameCtl.text,
-                                categoryId: typeId,
-                                ingredient: rawRemarkCtl.text,
-                                createdBy: "admin",
-                                updatedBy: "admin",
-                                remark: "",
-                                remark1: "",
-                              );
-                              PublicFunctions.addRawData(data);
-                              Navigator.pop(context);
-                            },
+                                  int typeId = getRawTypeId(rawTypeCtl.text);
+                                  if (typeId == -1) {
+                                    typeId = 0;
+                                    // return;
+                                  }
+                                  AddRawData data = AddRawData(
+                                    materialId: rawCodeCtl.text,
+                                    materialName: rawNameCtl.text,
+                                    categoryId: typeId,
+                                    ingredient: rawRemarkCtl.text,
+                                    createdBy: "admin",
+                                    updatedBy: "admin",
+                                    remark: "",
+                                    remark1: "",
+                                  );
+                                  PublicFunctions.addRawData(data);
+                                  Navigator.pop(context);
+                                },
                       child: Text(
                         localizedStrings.gBtnConfirm,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.normal,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                        style: Theme.of(context).textTheme.labelMedium!.apply(
+                              color: Theme.of(context).colorScheme.onPrimary,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                       ),
                     ),
                   ),
@@ -562,12 +502,10 @@ class AddRawDialogState extends State<AddRawDialog> {
                       },
                       child: Text(
                         localizedStrings.gBtnCancel,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.normal,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                        style: Theme.of(context).textTheme.labelMedium!.apply(
+                              color: Theme.of(context).colorScheme.onPrimary,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                       ),
                     ),
                   )
@@ -581,224 +519,59 @@ class AddRawDialogState extends State<AddRawDialog> {
   }
 }
 
-//// 定义新增原料类型弹框组件
-class AddRawTypeDialog extends StatefulWidget {
-  const AddRawTypeDialog({super.key});
-  @override
-  AddRawTypeDialogState createState() => AddRawTypeDialogState();
-}
+// 提取输入框部分为单独的组件
+class _InputSection extends StatelessWidget {
+  final InputDecoration inputDecoration;
+  final TextEditingController rawRemarkCtl;
 
-class AddRawTypeDialogState extends State<AddRawTypeDialog> {
-  TextEditingController rawTypeCtl = TextEditingController();
+  const _InputSection(
+      {required this.inputDecoration, required this.rawRemarkCtl});
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      child: Container(
-        width: 610,
-        height: 376,
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(0),
-        ),
-        child: Column(
-          children: [
-            // 头部
-            Container(
-                height: 54,
-                padding: const EdgeInsets.only(left: 20, right: 20),
-                alignment: Alignment.centerLeft,
-                child: Row(children: [
-                  Container(
-                    width: 3,
-                    height: 14,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: Container(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        localizedStrings.fAddRawMaterialTypeBtn,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onSurface,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                      icon: Icon(
-                        Icons.cancel,
-                        size: 24,
-                        color: Theme.of(context).colorScheme.secondaryFixed,
-                      ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      })
-                ])),
-            // 分割线
-            Divider(
-              height: 1,
-              color: Theme.of(context).colorScheme.outline,
-            ),
-            // 中部
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.all(26),
-                height: 150,
-                width: 500,
-                child: Column(children: [
-                  SizedBox(
-                    height: 42,
-                    child: Row(children: [
-                      Expanded(
-                        child: Container(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            localizedStrings.fRawMaterialTypeCol,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Theme.of(context).colorScheme.onSurface,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ]),
-                  ),
-                  SizedBox(
-                    // height: 48,
-
-                    child: Row(children: [
-                      Expanded(
-                        child: Container(
-                            padding: const EdgeInsets.only(left: 16, right: 20),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .outline, // 设置边框颜色
-                                width: 1, // 设置边框宽度
-                              ),
-                            ),
-                            alignment: Alignment.centerLeft,
-                            child: TextField(
-                              controller: rawTypeCtl,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText:
-                                    localizedStrings.fInputRawMaterialTypeHint,
-                                suffixIconConstraints:
-                                    BoxConstraints.tight(Size(40, 40)),
-                                suffixIcon: IconButton(
-                                  icon: Icon(
-                                    Icons.close,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurfaceVariant,
-                                  ),
-                                  onPressed: () {
-                                    rawTypeCtl.clear(); // 清空文本
-                                  },
-                                ),
-                              ),
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Theme.of(context).colorScheme.onSurface,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              maxLines: 5,
-                              minLines: 1,
-                            )),
-                      ),
-                    ]),
-                  ),
-                ]),
+    return Row(
+      children: [
+        Expanded(
+          child: TextField(
+            controller: rawRemarkCtl,
+            decoration: inputDecoration.copyWith(
+              hintText: localizedStrings.fInputIngredientDescHint,
+              hintStyle: TextStyle(
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
               ),
             ),
-
-            // 底部
-            Container(
-              height: 96,
-              width: 400,
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor:
-                            Theme.of(context).colorScheme.onPrimary,
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        fixedSize: const Size(double.infinity, 48),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.zero,
-                        ),
-                      ),
-                      onPressed: () {
-                        // 检查原料类型是否已经存在
-                        for (var item in rawTypeList) {
-                          if (item.categoryName == rawTypeCtl.text) {
-                            showTipInfo(
-                                localizedStrings.fTypeExistsMsg, context);
-                            return;
-                          }
-                        }
-                        PublicFunctions.addRawType(rawTypeCtl.text);
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        localizedStrings.gBtnConfirm,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.normal,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 20),
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor:
-                            Theme.of(context).colorScheme.onSurfaceVariant,
-                        backgroundColor: Theme.of(context)
-                            .colorScheme
-                            .surfaceContainerHighest,
-                        fixedSize: const Size(double.infinity, 48),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.zero,
-                        ),
-                      ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        localizedStrings.gBtnCancel,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.normal,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ],
+            maxLines: 4,
+            style: Theme.of(context).textTheme.bodySmall!.apply(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+            onChanged: (value) {},
+          ),
         ),
-      ),
+      ],
+    );
+  }
+}
+
+// 提取标签部分为单独的组件
+class _LabelSection extends StatelessWidget {
+  final TextStyle textStyle;
+
+  const _LabelSection({required this.textStyle});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Container(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              localizedStrings.fIngredientRemark,
+              style: textStyle,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -897,13 +670,13 @@ class EditRawDialogState extends State<EditRawDialog> {
         ));
   }
 
-  // 显示新增配方类型对话框
-  void showAddRawTypeDialog() {
+  //// 显示原料类型管理的对话框
+  void showRawTypeMgrDialog() {
     showDialog(
       context: context,
       barrierDismissible: false, // 点击对话框外部不关闭对话框
       builder: (BuildContext context) {
-        return AddRawTypeDialog();
+        return RawTypeMgrDialog();
       },
     ).then((value) {
       setState(() {});
@@ -924,48 +697,8 @@ class EditRawDialogState extends State<EditRawDialog> {
         child: Column(
           children: [
             // 头部
-            Container(
-                height: 54,
-                padding: const EdgeInsets.only(left: 20, right: 20),
-                alignment: Alignment.centerLeft,
-                child: Row(children: [
-                  Container(
-                    width: 3,
-                    height: 14,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: Container(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        localizedStrings.fEditMaterial,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onSurface,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                      icon: Icon(
-                        Icons.cancel,
-                        size: 24,
-                        color: Theme.of(context).colorScheme.secondaryFixed,
-                      ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      })
-                ])),
-            // 分割线
-            Divider(
-              height: 1,
-              color: Theme.of(context).colorScheme.outline,
-            ),
+            ...dialogHeadStyle(context, localizedStrings.fEditMaterial, true),
+
             // 中部
             Expanded(
                 child: Column(children: [
@@ -1158,41 +891,15 @@ class EditRawDialogState extends State<EditRawDialog> {
                         SizedBox(
                           height: 48,
                           child: Row(children: [
-                            Tooltip(
-                              message: localizedStrings.fAddTypeBtn, // 提示信息
-                              child: IconButton(
-                                iconSize: 24,
-                                color: Theme.of(context).colorScheme.onPrimary,
-                                style: IconButton.styleFrom(
-                                  backgroundColor:
-                                      Theme.of(context).colorScheme.surface,
-                                  focusColor: Theme.of(context)
-                                      .colorScheme
-                                      .primary
-                                      .withValues(alpha: 0.1),
-                                  shape: RoundedRectangleBorder(
-                                      // 设置为矩形形状
-                                      borderRadius:
-                                          BorderRadius.zero, // 没有圆角，即正方形
-                                      side: BorderSide(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .outline, // 设置边框颜色
-                                        width: 1, // 设置边框宽度
-                                      )),
-                                  fixedSize: const Size(48, 48), // 设置固定大小
-                                ),
-                                onPressed: () {
-                                  showAddRawTypeDialog();
-                                },
-                                icon: Icon(
-                                  Icons.add,
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
-                                ),
-                              ),
+                            Expanded(
+                              child: showTextButton(context, btnHeight,
+                                  localizedStrings.fRawCategoryManagement, () {
+                                showRawTypeMgrDialog();
+                              },
+                                  Theme.of(context).colorScheme.onPrimary,
+                                  Theme.of(context).colorScheme.primary,
+                                  Theme.of(context).colorScheme.onPrimary),
                             ),
-                            Spacer(),
                           ]),
                         ),
                       ])),
@@ -1298,29 +1005,30 @@ class EditRawDialogState extends State<EditRawDialog> {
                           borderRadius: BorderRadius.zero,
                         ),
                       ),
-                      onPressed: (rawCodeCtl.text.isEmpty ||
-                              rawNameCtl.text.isEmpty ||
-                              rawTypeCtl.text.isEmpty)
-                          ? null
-                          : () {
-                              int typeId = getRawTypeId(rawTypeCtl.text);
-                              if (typeId == -1) {
-                                return;
-                              }
-                              EditRawData data = EditRawData(
-                                recId: widget.rawData.rawMaterial.recId,
-                                materialId: rawCodeCtl.text,
-                                materialName: rawNameCtl.text,
-                                categoryId: typeId,
-                                ingredient: rawRemarkCtl.text,
-                                createdBy: "admin",
-                                updatedBy: "admin",
-                                remark: "",
-                                remark1: "",
-                              );
-                              PublicFunctions.editRawData(data);
-                              Navigator.pop(context);
-                            },
+                      onPressed:
+                          (rawCodeCtl.text.isEmpty || rawNameCtl.text.isEmpty
+                              // ||   rawTypeCtl.text.isEmpty
+                              )
+                              ? null
+                              : () {
+                                  int typeId = getRawTypeId(rawTypeCtl.text);
+                                  if (typeId == -1) {
+                                    return;
+                                  }
+                                  EditRawData data = EditRawData(
+                                    recId: widget.rawData.rawMaterial.recId,
+                                    materialId: rawCodeCtl.text,
+                                    materialName: rawNameCtl.text,
+                                    categoryId: typeId,
+                                    ingredient: rawRemarkCtl.text,
+                                    createdBy: "admin",
+                                    updatedBy: "admin",
+                                    remark: "",
+                                    remark1: "",
+                                  );
+                                  PublicFunctions.editRawData(data);
+                                  Navigator.pop(context);
+                                },
                       child: Text(
                         localizedStrings.gBtnConfirm,
                         style: TextStyle(

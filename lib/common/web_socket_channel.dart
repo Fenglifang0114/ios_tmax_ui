@@ -434,7 +434,9 @@ class WebSocketChannel {
           jsonData['MsgType'] == "resp_raw_data_edit") {
         String dataString = jsonData['MsgBody'];
         eventBus.fire(EventRespAddRawData(dataString));
-      } else if (jsonData['MsgType'] == "resp_formula_type_add") {
+      } else if (jsonData['MsgType'] == "resp_formula_type_add" ||
+          jsonData['MsgType'] == "resp_fma_type_edit" ||
+          jsonData['MsgType'] == "resp_fma_type_delete") {
         String dataString = jsonData['MsgBody'];
         eventBus.fire(EventRespAddFormulaType(dataString));
       } else if (jsonData['MsgType'] == "resp_formula_list") {
@@ -450,7 +452,9 @@ class WebSocketChannel {
         eventBus.fire(EventRespFormulaRecList(dataString));
       } else if (jsonData['MsgType'] == "resp_formula_rec_add") {
         eventBus.fire(EventRespFormulaRecAdd(''));
-      } else if (jsonData['MsgType'] == "resp_raw_type_add") {
+      } else if (jsonData['MsgType'] == "resp_raw_type_add" ||
+          jsonData['MsgType'] == "resp_raw_type_edit" ||
+          jsonData['MsgType'] == "resp_raw_type_delete") {
         eventBus.fire(EventRespRawTypeAdd(''));
       } else if (jsonData['MsgType'] == "resp_flow_rate_list") {
         String dataString = jsonData['MsgBody'];
@@ -474,6 +478,9 @@ class WebSocketChannel {
         eventBus.fire(EventExportAllRecs(dataString));
       } else if (jsonData['MsgType'] == "resp_wifi_pwd_add") {
         eventBus.fire(EventRevWifiPwdAdd(''));
+      } else if (jsonData['MsgType'] == "resp_get_auto_next") {
+        String dataString = jsonData['MsgBody'];
+        eventBus.fire(EventRespGetAutoNext(dataString));
       } else {}
     } catch (e) {
       if (kDebugMode) {

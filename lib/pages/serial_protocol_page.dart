@@ -7,14 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
-import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/pages/update_firmware_page.dart';
 import 'package:t_max/widget/common_widget.dart';
 import 'package:t_max/widget/dropdown_copy.dart';
 import 'package:t_max/widget/scale_list.dart';
 import '../data/downloadresponse.dart';
-import '../data/manager_scale_channel.dart';
 import '../data/custom_serial_protocol_text_dart.dart';
 import '../data/language.dart';
 import '../data/reqweightdata_data.dart';
@@ -71,7 +69,6 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
   bool isArrowForwardHovered = false;
   bool serialPreview = false;
   bool _isHexDisplay = false;
-  bool _downloading = false;
   // bool _cntStop = false; //连续发送已经停止
   bool sendStop = false; //连续发送已经停止
 
@@ -1027,7 +1024,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                   context,
                   btnHeight,
                   localizedStrings.gBtnDownload,
-                  (!serialPreview && isListEmpty() && !_downloading)
+                  (!serialPreview && isListEmpty())
                       ? () async {
                           jsonFilesList.clear();
                           for (var i = 1; i < 7; i++) {

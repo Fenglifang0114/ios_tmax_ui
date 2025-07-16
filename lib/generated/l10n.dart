@@ -1019,10 +1019,10 @@ class S {
   }
 
   /// `Stable Time (s)`
-  String get stable_time {
+  String get gTipStableTime {
     return Intl.message(
       'Stable Time (s)',
-      name: 'stable_time',
+      name: 'gTipStableTime',
       desc: 'This is a prompt about stable time.',
       args: [],
     );
@@ -4251,10 +4251,10 @@ class S {
     );
   }
 
-  /// `1.In the Component List, click [+] to add a new component. Enter the ID, Name, Category, and Description, then click [Confirm].\n 2.Click on a component to view all Formulas that use it. Further click to see detailed formula information.\n 3.In the Formula List, click [+] to create a new formula and enter its details.\n 4.If the total weight of the formula is fixed, select the "Weight" mode, where each component is set with a fixed weight.\n 5.If the total weight is variable, select the "Percentage" mode, where each component is set by ratio. The total ratio must add up to 100% before saving the formula.\n 6.In the Formula List, select the desired formula and click [Start Dosing].\n 7.The software will guide you step-by-step, indicating which component to weigh. When the weight falls within the allowed error range, click [Next] until dosing is complete.\n 8.If a component is overweight, the software will prompt you to either discard dosing or adjust the formula.\n 9.Discard dosing: Clears the data and returns to the Formula List.\n 10.Adjust formula: Resets to the first component, allowing you to add the required weight as prompted until all dosing is completed.\n 11.In the Formula List, you can view all dosing records or records for a single formula, with the option to export them.\n \n Note: If a formula is set to "Confidential", the operator will only see a progress bar for each component during dosing—not the actual weight. The system will guide dosing speed based on the allowed error range.`
+  /// `1.In the Ingredients List, click [+] to add a new ingredient. Enter the ID, Name, Category, and Description, then click [Confirm].\n 2.Click on a ingredient to view all Formulas that use it. Further click to see detailed formula information.\n 3.In the Formula List, click [+] to create a new formula and enter its details.\n 4.If the total weight of the formula is fixed, select the "Weight" mode, where each ingredient is set with a fixed weight.\n 5.If the total weight is variable, select the "Percentage" mode, where each ingredient is set by ratio. The total ratio must add up to 100% before saving the formula.\n 6.In the Formula List, select the desired formula and click [Start Dosing].\n 7.The software will guide you step-by-step, indicating which ingredient to weigh. When the weight falls within the allowed error range, click [Next] until dosing is complete.\n 8.If a ingredient is overweight, the software will prompt you to either discard dosing or adjust the formula.\n 9.Discard dosing: Clears the data and returns to the Formula List.\n 10.Adjust formula: Resets to the first ingredient, allowing you to add the required weight as prompted until all dosing is completed.\n 11.In the Formula List, you can view all dosing records or records for a single formula, with the option to export them.\n \n Note: If a formula is set to "Confidential", the operator will only see a progress bar for each ingredient during dosing—not the actual weight. The system will guide dosing speed based on the allowed error range.`
   String get gTipFmaPageHelp {
     return Intl.message(
-      '1.In the Component List, click [+] to add a new component. Enter the ID, Name, Category, and Description, then click [Confirm].\n 2.Click on a component to view all Formulas that use it. Further click to see detailed formula information.\n 3.In the Formula List, click [+] to create a new formula and enter its details.\n 4.If the total weight of the formula is fixed, select the "Weight" mode, where each component is set with a fixed weight.\n 5.If the total weight is variable, select the "Percentage" mode, where each component is set by ratio. The total ratio must add up to 100% before saving the formula.\n 6.In the Formula List, select the desired formula and click [Start Dosing].\n 7.The software will guide you step-by-step, indicating which component to weigh. When the weight falls within the allowed error range, click [Next] until dosing is complete.\n 8.If a component is overweight, the software will prompt you to either discard dosing or adjust the formula.\n 9.Discard dosing: Clears the data and returns to the Formula List.\n 10.Adjust formula: Resets to the first component, allowing you to add the required weight as prompted until all dosing is completed.\n 11.In the Formula List, you can view all dosing records or records for a single formula, with the option to export them.\n \n Note: If a formula is set to "Confidential", the operator will only see a progress bar for each component during dosing—not the actual weight. The system will guide dosing speed based on the allowed error range.',
+      '1.In the Ingredients List, click [+] to add a new ingredient. Enter the ID, Name, Category, and Description, then click [Confirm].\n 2.Click on a ingredient to view all Formulas that use it. Further click to see detailed formula information.\n 3.In the Formula List, click [+] to create a new formula and enter its details.\n 4.If the total weight of the formula is fixed, select the "Weight" mode, where each ingredient is set with a fixed weight.\n 5.If the total weight is variable, select the "Percentage" mode, where each ingredient is set by ratio. The total ratio must add up to 100% before saving the formula.\n 6.In the Formula List, select the desired formula and click [Start Dosing].\n 7.The software will guide you step-by-step, indicating which ingredient to weigh. When the weight falls within the allowed error range, click [Next] until dosing is complete.\n 8.If a ingredient is overweight, the software will prompt you to either discard dosing or adjust the formula.\n 9.Discard dosing: Clears the data and returns to the Formula List.\n 10.Adjust formula: Resets to the first ingredient, allowing you to add the required weight as prompted until all dosing is completed.\n 11.In the Formula List, you can view all dosing records or records for a single formula, with the option to export them.\n \n Note: If a formula is set to "Confidential", the operator will only see a progress bar for each ingredient during dosing—not the actual weight. The system will guide dosing speed based on the allowed error range.',
       name: 'gTipFmaPageHelp',
       desc: 'This is the help info for the formula management page.',
       args: [],
@@ -4281,10 +4281,10 @@ class S {
     );
   }
 
-  /// `Component List`
+  /// `Ingredient List`
   String get fRawMaterialListTab {
     return Intl.message(
-      'Component List',
+      'Ingredient List',
       name: 'fRawMaterialListTab',
       desc: 'Tab label for raw material list',
       args: [],
@@ -4421,10 +4421,10 @@ class S {
     );
   }
 
-  /// `Component Notes`
+  /// `Ingredient Notes`
   String get fIngredientRemark {
     return Intl.message(
-      'Component Notes',
+      'Ingredient Notes',
       name: 'fIngredientRemark',
       desc: 'Section title for ingredient remarks',
       args: [],
@@ -4481,12 +4481,12 @@ class S {
     );
   }
 
-  /// `Component Category`
-  String get fRawMaterialTypeCol {
+  /// `Category`
+  String get fRawMaterialTypeNameCol {
     return Intl.message(
-      'Component Category',
-      name: 'fRawMaterialTypeCol',
-      desc: 'Table column title for raw material category',
+      'Category',
+      name: 'fRawMaterialTypeNameCol',
+      desc: 'Table column title for category name',
       args: [],
     );
   }
@@ -4521,6 +4521,16 @@ class S {
     );
   }
 
+  /// `Operation`
+  String get fTipOperation {
+    return Intl.message(
+      'Operation',
+      name: 'fTipOperation',
+      desc: 'Table column title for operations',
+      args: [],
+    );
+  }
+
   /// `Category`
   String get fFmaCategoryCol {
     return Intl.message(
@@ -4541,10 +4551,10 @@ class S {
     );
   }
 
-  /// `Component Quantity`
+  /// `Ingredient Quantity`
   String get fMaterialCountCol {
     return Intl.message(
-      'Component Quantity',
+      'Ingredient Quantity',
       name: 'fMaterialCountCol',
       desc: 'Table column title for number of materials in formula',
       args: [],
@@ -4671,20 +4681,20 @@ class S {
     );
   }
 
-  /// `Component Weight`
+  /// `Ingredient Weight`
   String get fMaterialSingleWeight {
     return Intl.message(
-      'Component Weight',
+      'Ingredient Weight',
       name: 'fMaterialSingleWeight',
       desc: 'Table column title for material single weight',
       args: [],
     );
   }
 
-  /// `Actual Component Weight`
+  /// `Actual Ingredient Weight`
   String get fActualSingleWeight {
     return Intl.message(
-      'Actual Component Weight',
+      'Actual Ingredient Weight',
       name: 'fActualSingleWeight',
       desc: 'Table column title for actual single weight',
       args: [],
@@ -4721,32 +4731,32 @@ class S {
     );
   }
 
-  /// `Component Name`
+  /// `Ingredient Name`
   String get fMaterialNameCol {
     return Intl.message(
-      'Component Name',
+      'Ingredient Name',
       name: 'fMaterialNameCol',
       desc: 'Table column title for material name',
       args: [],
     );
   }
 
-  /// `Component ID`
+  /// `Ingredient ID`
   String get fMaterialIdCol {
     return Intl.message(
-      'Component ID',
+      'Ingredient ID',
       name: 'fMaterialIdCol',
       desc: 'Table column title for material ID',
       args: [],
     );
   }
 
-  /// `Edit Component`
+  /// `Edit Ingredient`
   String get fEditMaterial {
     return Intl.message(
-      'Edit Component',
+      'Edit Ingredient',
       name: 'fEditMaterial',
-      desc: 'Edit component page',
+      desc: 'Edit Ingredient page',
       args: [],
     );
   }
@@ -4831,10 +4841,10 @@ class S {
     );
   }
 
-  /// `Select Component`
+  /// `Select Ingredient`
   String get fSelectRawMaterialHint {
     return Intl.message(
-      'Select Component',
+      'Select Ingredient',
       name: 'fSelectRawMaterialHint',
       desc: 'Placeholder or hint for selecting raw material',
       args: [],
@@ -4931,30 +4941,30 @@ class S {
     );
   }
 
-  /// `Component Id already exists`
+  /// `Ingredient Id already exists`
   String get fRawIdDuplicate {
     return Intl.message(
-      'Component Id already exists',
+      'Ingredient Id already exists',
       name: 'fRawIdDuplicate',
       desc: 'Error message for duplicate raw ID',
       args: [],
     );
   }
 
-  /// `Component name already exists`
+  /// `Ingredient name already exists`
   String get fRawNameDuplicate {
     return Intl.message(
-      'Component name already exists',
+      'Ingredient name already exists',
       name: 'fRawNameDuplicate',
       desc: 'Error message for duplicate raw name',
       args: [],
     );
   }
 
-  /// `Set component`
+  /// `Set Ingredient`
   String get fSetRawMaterialBtn {
     return Intl.message(
-      'Set component',
+      'Set Ingredient',
       name: 'fSetRawMaterialBtn',
       desc: 'Text on the button to set raw material',
       args: [],
@@ -4991,62 +5001,82 @@ class S {
     );
   }
 
-  /// `Add component`
+  /// `Add Ingredient`
   String get fAddRawMaterialBtn {
     return Intl.message(
-      'Add component',
+      'Add Ingredient',
       name: 'fAddRawMaterialBtn',
       desc: 'Text on the button to add raw material',
       args: [],
     );
   }
 
-  /// `Please enter the component ID.`
+  /// `Please enter the ingredient ID.`
   String get fInputRawMaterialIdHint {
     return Intl.message(
-      'Please enter the component ID.',
+      'Please enter the ingredient ID.',
       name: 'fInputRawMaterialIdHint',
       desc: 'Hint text for raw material ID input field',
       args: [],
     );
   }
 
-  /// `Please enter the component name.`
+  /// `Please enter the ingredient name.`
   String get fInputRawMaterialNameHint {
     return Intl.message(
-      'Please enter the component name.',
+      'Please enter the ingredient name.',
       name: 'fInputRawMaterialNameHint',
       desc: 'Hint text for raw material name input field',
       args: [],
     );
   }
 
-  /// `Please enter the component notes.`
+  /// `Please enter the ingredient notes.`
   String get fInputIngredientDescHint {
     return Intl.message(
-      'Please enter the component notes.',
+      'Please enter the ingredient notes.',
       name: 'fInputIngredientDescHint',
       desc: 'Hint text for ingredient description input field',
       args: [],
     );
   }
 
-  /// `Please enter the component category.`
+  /// `Please enter the ingredient category.`
   String get fInputRawMaterialTypeHint {
     return Intl.message(
-      'Please enter the component category.',
+      'Please enter the ingredient category.',
       name: 'fInputRawMaterialTypeHint',
       desc: 'Hint text for raw material category input field',
       args: [],
     );
   }
 
-  /// `Add Component Category`
+  /// `Add Ingredient Category`
   String get fAddRawMaterialTypeBtn {
     return Intl.message(
-      'Add Component Category',
+      'Add Ingredient Category',
       name: 'fAddRawMaterialTypeBtn',
       desc: 'Text on the button to add raw material category',
+      args: [],
+    );
+  }
+
+  /// `Edit Ingredient Category`
+  String get fEditRawMaterialTypeBtn {
+    return Intl.message(
+      'Edit Ingredient Category',
+      name: 'fEditRawMaterialTypeBtn',
+      desc: 'Text on the button to edit raw material category',
+      args: [],
+    );
+  }
+
+  /// `Edit Formula Category`
+  String get fEditFormulaTypeBtn {
+    return Intl.message(
+      'Edit Formula Category',
+      name: 'fEditFormulaTypeBtn',
+      desc: 'Text on the button to edit formula category',
       args: [],
     );
   }
@@ -5171,10 +5201,10 @@ class S {
     );
   }
 
-  /// `Current component is overweight, please choose to abandon or correct?`
+  /// `Current ingredient is overweight, please choose to abandon or correct?`
   String get fCurrentMaterialOverweightMsg {
     return Intl.message(
-      'Current component is overweight, please choose to abandon or correct?',
+      'Current ingredient is overweight, please choose to abandon or correct?',
       name: 'fCurrentMaterialOverweightMsg',
       desc:
           'Warning message when current raw material is overweight, asking to abandon or correct',
@@ -5182,10 +5212,10 @@ class S {
     );
   }
 
-  /// `The current weight of the component is not qualified!`
+  /// `The current weight of the ingredient is not qualified!`
   String get fCurrentMaterialWeightInvalidMsg {
     return Intl.message(
-      'The current weight of the component is not qualified!',
+      'The current weight of the ingredient is not qualified!',
       name: 'fCurrentMaterialWeightInvalidMsg',
       desc: 'Error message when current raw material weight is invalid',
       args: [],
@@ -5212,10 +5242,10 @@ class S {
     );
   }
 
-  /// `Component Weight`
+  /// `Ingredient Weight`
   String get fRawMaterialWeightLabel {
     return Intl.message(
-      'Component Weight',
+      'Ingredient Weight',
       name: 'fRawMaterialWeightLabel',
       desc: 'Label for raw material weight field',
       args: [],
@@ -5278,6 +5308,36 @@ class S {
       'Formula is in use and cannot be deleted.',
       name: 'fFormulaInUseDeleteErrorMsg',
       desc: 'Error message when deleting a formula that is currently in use',
+      args: [],
+    );
+  }
+
+  /// `Ingredient is in use and cannot be deleted.`
+  String get fRawInUseDeleteErrorMsg {
+    return Intl.message(
+      'Ingredient is in use and cannot be deleted.',
+      name: 'fRawInUseDeleteErrorMsg',
+      desc: 'Error message when deleting a ingredient that is currently in use',
+      args: [],
+    );
+  }
+
+  /// `No data, please add first.`
+  String get fTipNoData {
+    return Intl.message(
+      'No data, please add first.',
+      name: 'fTipNoData',
+      desc: 'Text to display when there is no data',
+      args: [],
+    );
+  }
+
+  /// `Category Management`
+  String get fRawCategoryManagement {
+    return Intl.message(
+      'Category Management',
+      name: 'fRawCategoryManagement',
+      desc: 'Title for category management page',
       args: [],
     );
   }
@@ -5440,6 +5500,16 @@ class S {
       'Next Step',
       name: 'fNextStepBtn',
       desc: 'Button to proceed to the next step',
+      args: [],
+    );
+  }
+
+  /// `Auto Next Step`
+  String get gTipAutoNextStep {
+    return Intl.message(
+      'Auto Next Step',
+      name: 'gTipAutoNextStep',
+      desc: 'Prompt message indicating automatic mode',
       args: [],
     );
   }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/modifyscale_data.dart';
+import 'package:t_max/widget/dialog_head_style.dart';
 import '../../data/device_data.dart';
 import '../../data/scalecmd_data.dart';
 import '../../data/settingparam_data.dart';
@@ -98,48 +99,12 @@ class ParameterSettingDialogState extends State<ParameterSettingDialog> {
         child: Column(
           children: [
             // 头部
-            Container(
-                height: 54,
-                padding: const EdgeInsets.only(left: 20, right: 20),
-                alignment: Alignment.centerLeft,
-                child: Row(children: [
-                  Container(
-                    width: 3,
-                    height: 14,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: Container(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        localizedStrings.gParameterSettingsTitle,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onSurface,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                      icon: Icon(
-                        Icons.cancel,
-                        size: 24,
-                        color: Theme.of(context).colorScheme.secondaryFixed,
-                      ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      })
-                ])),
-            // 分割线
-            Divider(
-              height: 1,
-              color: Theme.of(context).colorScheme.outline,
+            ...dialogHeadStyle(
+              context,
+              localizedStrings.gParameterSettingsTitle,
+              true,
             ),
+
             // 中部
             Expanded(
                 child: Container(
@@ -157,7 +122,7 @@ class ParameterSettingDialogState extends State<ParameterSettingDialog> {
                                 showTitleName(
                                     localizedStrings.gTipWeightSummationMode),
                               showTitleName(localizedStrings.save_mode),
-                              showTitleName(localizedStrings.stable_time),
+                              showTitleName(localizedStrings.gTipStableTime),
                               showTitleName(localizedStrings.date_format),
                               showTitleName(localizedStrings.gDateSeparator),
                               if (mySettingParam.scaleMode == 1)
@@ -666,7 +631,7 @@ class ParamSettingDialogState extends State<ParamSettingDialog> {
                                   SizedBox(
                                     width: 200,
                                     child: Text(
-                                      localizedStrings.stable_time + ":",
+                                      localizedStrings.gTipStableTime + ":",
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 1,
                                     ),

@@ -210,6 +210,58 @@ class PublicFunctions {
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
 
+  //删除原料类型
+  static void deleteRawType(String name) {
+    myScaleCmd.cmdMode = "del_raw_type";
+    TypeName myTypeName = TypeName(name);
+    String jsonstr = jsonEncode(myTypeName);
+    myScaleCmd.cmdData = jsonstr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+//编辑原料类型
+  static void editRawType(String newName, int rawId) {
+    myScaleCmd.cmdMode = "edit_raw_type";
+    TypeIdAndName myTypeName = TypeIdAndName(newName, rawId);
+    String jsonstr = jsonEncode(myTypeName);
+    myScaleCmd.cmdData = jsonstr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //删除配方类型
+  static void deleteFmaType(String name) {
+    myScaleCmd.cmdMode = "del_formula_type";
+    TypeName myTypeName = TypeName(name);
+    String jsonstr = jsonEncode(myTypeName);
+    myScaleCmd.cmdData = jsonstr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+//编辑配方类型
+  static void editFmaType(String newName, int rawId) {
+    myScaleCmd.cmdMode = "edit_formula_type";
+    TypeIdAndName myTypeName = TypeIdAndName(newName, rawId);
+    String jsonstr = jsonEncode(myTypeName);
+    myScaleCmd.cmdData = jsonstr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //获取自动下一步
+
+  static void getAutoNext() {
+    myScaleCmd.cmdMode = "get_auto_next";
+    myScaleCmd.cmdData = '';
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //更新自动下一步
+
+  static void updateAutoNext(String reqStr) {
+    myScaleCmd.cmdMode = "update_auto_next";
+    myScaleCmd.cmdData = reqStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
   //获取原料类型
 
   static void getRawTypeList() {

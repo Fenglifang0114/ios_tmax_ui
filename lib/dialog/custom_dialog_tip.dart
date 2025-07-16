@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/language.dart';
+import 'package:t_max/widget/dialog_head_style.dart';
 
 // 用于存储当前显示的对话框的上下文
 BuildContext? _currentDialogContext;
@@ -199,48 +200,8 @@ class ShowNormalTipDialogState extends State<ShowNormalTipDialog> {
         child: Column(
           children: [
             // 头部
-            Container(
-                height: 54,
-                padding: const EdgeInsets.only(left: 20, right: 20),
-                alignment: Alignment.centerLeft,
-                child: Row(children: [
-                  Container(
-                    width: 3,
-                    height: 14,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: Container(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        widget.title,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onSurface,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                      icon: Icon(
-                        Icons.cancel,
-                        size: 24,
-                        color: Theme.of(context).colorScheme.secondaryFixed,
-                      ),
-                      onPressed: () {
-                        Navigator.pop(context, false);
-                      })
-                ])),
-            // 分割线
-            Divider(
-              height: 1,
-              color: Theme.of(context).colorScheme.outline,
-            ),
+            ...dialogHeadStyle(context, widget.title, true),
+
             // 中部
             Expanded(
               child: Container(
@@ -364,48 +325,10 @@ class ShowDeleteTipDialogState extends State<ShowDeleteTipDialog> {
         child: Column(
           children: [
             // 头部
-            Container(
-                height: 54,
-                padding: const EdgeInsets.only(left: 20, right: 20),
-                alignment: Alignment.centerLeft,
-                child: Row(children: [
-                  Container(
-                    width: 3,
-                    height: 14,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: Container(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        widget.title,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onSurface,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                      icon: Icon(
-                        Icons.cancel,
-                        size: 24,
-                        color: Theme.of(context).colorScheme.secondaryFixed,
-                      ),
-                      onPressed: () {
-                        Navigator.pop(context, false);
-                      })
-                ])),
-            // 分割线
-            Divider(
-              height: 1,
-              color: Theme.of(context).colorScheme.outline,
-            ),
+            ...dialogHeadStyle(context, widget.title, true, onClose: () {
+              Navigator.pop(context, false);
+            }),
+
             // 中部
             Expanded(
               child: Container(
@@ -532,48 +455,10 @@ class ShowHignWgtTipDialogState extends State<ShowHignWgtTipDialog> {
         child: Column(
           children: [
             // 头部
-            Container(
-                height: 54,
-                padding: const EdgeInsets.only(left: 20, right: 20),
-                alignment: Alignment.centerLeft,
-                child: Row(children: [
-                  Container(
-                    width: 3,
-                    height: 14,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: Container(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        widget.title,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onSurface,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                      icon: Icon(
-                        Icons.cancel,
-                        size: 24,
-                        color: Theme.of(context).colorScheme.secondaryFixed,
-                      ),
-                      onPressed: () {
-                        Navigator.pop(context, 0);
-                      })
-                ])),
-            // 分割线
-            Divider(
-              height: 1,
-              color: Theme.of(context).colorScheme.outline,
-            ),
+            ...dialogHeadStyle(context, widget.title, true, onClose: () {
+              Navigator.pop(context, 0);
+            }),
+
             // 中部
             Expanded(
               child: Container(
@@ -697,48 +582,12 @@ class ShowUnitTipDialogState extends State<ShowUnitTipDialog> {
         child: Column(
           children: [
             // 头部
-            Container(
-                height: 54,
-                padding: const EdgeInsets.only(left: 20, right: 20),
-                alignment: Alignment.centerLeft,
-                child: Row(children: [
-                  Container(
-                    width: 3,
-                    height: 14,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: Container(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        widget.title,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onSurface,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                      icon: Icon(
-                        Icons.cancel,
-                        size: 24,
-                        color: Theme.of(context).colorScheme.secondaryFixed,
-                      ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      })
-                ])),
-            // 分割线
-            Divider(
-              height: 1,
-              color: Theme.of(context).colorScheme.outline,
+            ...dialogHeadStyle(
+              context,
+              widget.title,
+              true,
             ),
+
             // 中部
             Expanded(
               child: Container(

@@ -111,19 +111,11 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
         body: Container(
       color: Theme.of(context).colorScheme.surfaceDim, //对接时修改颜色值
       child: Padding(
-        padding: const EdgeInsets.all(14.0),
+        padding: const EdgeInsets.all(0.0),
         child: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
-          // 获取父容器的可用高度
           double availableHeight = constraints.maxHeight;
-
-          // 其他子组件的固定高度
-          double otherChildrenHeight = 54 +
-              1 +
-              70 +
-              14 +
-              65; // 对应 showTitleAndReturn、Divider、showFormulaSearch、Container 的高度
-
+          double otherChildrenHeight = 54 + 1 + 70 + 14 + 65;
           // 计算 showFormulaTable 可用的高度
           double formulaTableHeight = availableHeight - otherChildrenHeight;
           return Column(
@@ -187,35 +179,129 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
                             },
                           ),
                           Expanded(
-                            child:
-                                Text(localizedStrings.fOrderNo ?? "Order No"),
+                            child: Text(
+                              localizedStrings.fOrderNo ?? "Order No",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall!
+                                  .apply(
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
+                                  ),
+                            ),
                           ),
-                          Expanded(child: Text(localizedStrings.fFmaIdLabel)),
-                          Expanded(child: Text(localizedStrings.fFmaNameLabel)),
                           Expanded(
-                              child: Text(localizedStrings.fMaterialNameCol)),
+                              child: Text(
+                            localizedStrings.fFmaIdLabel,
+                            style: Theme.of(context).textTheme.bodySmall!.apply(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                ),
+                          )),
                           Expanded(
-                              child: Text(localizedStrings.fMaterialIdCol)),
-                          Expanded(child: Text(localizedStrings.fFmaModeCol)),
-                          Expanded(child: Text(localizedStrings.fConfidential)),
+                              child: Text(
+                            localizedStrings.fFmaNameLabel,
+                            style: Theme.of(context).textTheme.bodySmall!.apply(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                ),
+                          )),
                           Expanded(
-                              child:
-                                  Text(localizedStrings.fFormulaTotalWeight)),
+                              child: Text(
+                            localizedStrings.fMaterialNameCol,
+                            style: Theme.of(context).textTheme.bodySmall!.apply(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                ),
+                          )),
                           Expanded(
-                              child: Text(localizedStrings.fActualTotalWeight)),
+                              child: Text(
+                            localizedStrings.fMaterialIdCol,
+                            style: Theme.of(context).textTheme.bodySmall!.apply(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                ),
+                          )),
                           Expanded(
-                              child:
-                                  Text(localizedStrings.fMaterialSingleWeight)),
+                              child: Text(
+                            localizedStrings.fFmaModeCol,
+                            style: Theme.of(context).textTheme.bodySmall!.apply(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                ),
+                          )),
                           Expanded(
-                              child:
-                                  Text(localizedStrings.fActualSingleWeight)),
+                              child: Text(
+                            localizedStrings.fConfidential,
+                            style: Theme.of(context).textTheme.bodySmall!.apply(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                ),
+                          )),
                           Expanded(
-                              child: Text(localizedStrings.fAllowableError)),
-                          Expanded(child: Text(localizedStrings.fActualError)),
+                              child: Text(
+                            localizedStrings.fFormulaTotalWeight,
+                            style: Theme.of(context).textTheme.bodySmall!.apply(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                ),
+                          )),
                           Expanded(
-                              child:
-                                  Text(localizedStrings.fQualificationStatus)),
-                          Expanded(child: Text(localizedStrings.fCreatedAtCol)),
+                              child: Text(
+                            localizedStrings.fActualTotalWeight,
+                            style: Theme.of(context).textTheme.bodySmall!.apply(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                ),
+                          )),
+                          Expanded(
+                              child: Text(
+                            localizedStrings.fMaterialSingleWeight,
+                            style: Theme.of(context).textTheme.bodySmall!.apply(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                ),
+                          )),
+                          Expanded(
+                              child: Text(
+                            localizedStrings.fActualSingleWeight,
+                            style: Theme.of(context).textTheme.bodySmall!.apply(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                ),
+                          )),
+                          Expanded(
+                              child: Text(
+                            localizedStrings.fAllowableError,
+                            style: Theme.of(context).textTheme.bodySmall!.apply(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                ),
+                          )),
+                          Expanded(
+                              child: Text(
+                            localizedStrings.fActualError,
+                            style: Theme.of(context).textTheme.bodySmall!.apply(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                ),
+                          )),
+                          Expanded(
+                              child: Text(
+                            localizedStrings.fQualificationStatus,
+                            style: Theme.of(context).textTheme.bodySmall!.apply(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                ),
+                          )),
+                          Expanded(
+                              child: Text(
+                            localizedStrings.fCreatedAtCol,
+                            style: Theme.of(context).textTheme.bodySmall!.apply(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                ),
+                          )),
                           const SizedBox(width: 60, child: Text('')),
                         ],
                       ),
@@ -247,41 +333,97 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
                                     ),
                                     Expanded(
                                         child: Text(
-                                            rowData.header?.recordId ?? "")),
-                                    Expanded(
-                                        child: Text(
-                                            rowData.header!.formulaId ?? "")),
-                                    Expanded(
-                                        child: Text(
-                                            rowData.header!.formulaName ?? "")),
-                                    Expanded(child: Text('')),
-                                    Expanded(child: Text('')),
-                                    Expanded(
-                                        child: Text(
-                                            rowData.header!.formulaMode! ==
-                                                    'wgt'
-                                                ? localizedStrings.fWeightMode
-                                                : localizedStrings.fPctMode)),
-                                    Expanded(
-                                        child: Text(
-                                      " ${rowData.header!.isEncrypted.toString() == "true" ? localizedStrings.fConfidential : localizedStrings.fPublic}",
-                                      style: TextStyle(
-                                          color: rowData.header!.isEncrypted
-                                                      .toString() ==
-                                                  "false"
-                                              ? Theme.of(context)
-                                                  .colorScheme
-                                                  .onTertiaryFixedVariant
-                                              : Theme.of(context)
-                                                  .colorScheme
-                                                  .error),
+                                      rowData.header?.recordId ?? "",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall!
+                                          .apply(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface,
+                                          ),
                                     )),
                                     Expanded(
                                         child: Text(
-                                            "${rowData.header!.actualFmaTotalWgt} ${rowData.header!.totalWeightUnit}")),
+                                      rowData.header!.formulaId ?? "",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall!
+                                          .apply(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface,
+                                          ),
+                                    )),
                                     Expanded(
                                         child: Text(
-                                            "${rowData.header!.actualTotalWeight} ${rowData.header!.totalWeightUnit}")),
+                                      rowData.header!.formulaName ?? "",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall!
+                                          .apply(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface,
+                                          ),
+                                    )),
+                                    Expanded(child: Text('')),
+                                    Expanded(child: Text('')),
+                                    Expanded(
+                                        child: Text(
+                                      rowData.header!.formulaMode! == 'wgt'
+                                          ? localizedStrings.fWeightMode
+                                          : localizedStrings.fPctMode,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall!
+                                          .apply(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface,
+                                          ),
+                                    )),
+                                    Expanded(
+                                        child: Text(
+                                      " ${rowData.header!.isEncrypted.toString() == "true" ? localizedStrings.fConfidential : localizedStrings.fPublic}",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall!
+                                          .apply(
+                                              color: rowData.header!.isEncrypted
+                                                          .toString() ==
+                                                      "false"
+                                                  ? Theme.of(context)
+                                                      .colorScheme
+                                                      .onTertiaryFixedVariant
+                                                  : Theme.of(context)
+                                                      .colorScheme
+                                                      .error),
+                                    )),
+                                    Expanded(
+                                        child: Text(
+                                      "${rowData.header!.actualFmaTotalWgt!.toStringAsFixed(3)} ${rowData.header!.totalWeightUnit}",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall!
+                                          .apply(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface,
+                                          ),
+                                    )),
+                                    Expanded(
+                                        child: Text(
+                                      "${rowData.header!.actualTotalWeight!.toStringAsFixed(3)} ${rowData.header!.totalWeightUnit}",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall!
+                                          .apply(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface,
+                                          ),
+                                    )),
                                     Expanded(child: Text('')),
                                     Expanded(child: Text('')),
                                     Expanded(child: Text('')),
@@ -293,27 +435,40 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
                                                 "yes"
                                             ? localizedStrings.fQualified
                                             : localizedStrings.fUnqualified,
-                                        style: TextStyle(
-                                            color: rowData.header!.isQualified
-                                                        .toString() ==
-                                                    "yes"
-                                                ? Theme.of(context)
-                                                    .colorScheme
-                                                    .onTertiaryFixedVariant
-                                                : Theme.of(context)
-                                                    .colorScheme
-                                                    .error),
+                                        style: Theme.of(
+                                                context)
+                                            .textTheme
+                                            .bodySmall!
+                                            .apply(
+                                                color: rowData
+                                                            .header!.isQualified
+                                                            .toString() ==
+                                                        "yes"
+                                                    ? Theme.of(context)
+                                                        .colorScheme
+                                                        .onTertiaryFixedVariant
+                                                    : Theme.of(context)
+                                                        .colorScheme
+                                                        .error),
                                       ),
                                     ),
                                     Expanded(
                                         // 格式化日期时间，显示本地时区的年月日时分秒
-                                        child: Text(rowData
-                                                    .header!.recordSaveTime !=
-                                                null
-                                            ? DateFormat('yyyy-MM-dd HH:mm:ss')
-                                                .format(rowData
-                                                    .header!.recordSaveTime!)
-                                            : '')),
+                                        child: Text(
+                                      rowData.header!.recordSaveTime != null
+                                          ? DateFormat('yyyy-MM-dd HH:mm:ss')
+                                              .format(rowData
+                                                  .header!.recordSaveTime!)
+                                          : '',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall!
+                                          .apply(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface,
+                                          ),
+                                    )),
                                     SizedBox(
                                       width: 60,
                                       child: IconButton(
@@ -373,93 +528,149 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
                                                                 .fFmaContainer
                                                             : detail.materialName ??
                                                                 "",
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodySmall!
+                                                            .apply(
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .colorScheme
+                                                                  .onSurfaceVariant,
+                                                            ),
                                                       ),
                                                     ),
                                                     Expanded(
                                                       child: Text(
-                                                          detail.materialId ??
-                                                              ''),
+                                                        detail.materialId ?? '',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodySmall!
+                                                            .apply(
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .colorScheme
+                                                                  .onSurfaceVariant,
+                                                            ),
+                                                      ),
                                                     ),
                                                     Expanded(child: Text('')),
                                                     Expanded(child: Text('')),
                                                     Expanded(child: Text('')),
                                                     Expanded(child: Text('')),
                                                     Expanded(
-                                                        child: Text(detail
-                                                                        .sequence ==
-                                                                    0 ||
-                                                                rowData.header!
-                                                                        .isEncrypted
-                                                                        .toString() ==
-                                                                    "true"
-                                                            ? '-'
-                                                            : "${detail.targetWgt.toString()} ${rowData.header!.totalWeightUnit!}")),
-
-                                                    Expanded(
-                                                        child: Text((detail
-                                                                        .sequence ==
-                                                                    0 ||
-                                                                (rowData.header!
-                                                                        .isEncrypted
-                                                                        .toString() !=
-                                                                    "true"))
-                                                            ? '${detail.actualWeight.toString()} ${rowData.header!.totalWeightUnit!}'
-                                                            : "-")),
-                                                    Expanded(
-                                                      child: Text(detail
-                                                                      .sequence ==
-                                                                  0 ||
+                                                        child: Text(
+                                                      detail.sequence == 0 ||
                                                               rowData.header!
                                                                       .isEncrypted
                                                                       .toString() ==
                                                                   "true"
                                                           ? '-'
-                                                          : rowData.header!
-                                                                      .formulaMode! ==
-                                                                  "pct"
-                                                              ? "${double.parse((detail.allowableError! * rowData.header!.actualFmaTotalWgt! / 100).toStringAsFixed(3)).toString()} ${rowData.header!.totalWeightUnit!}"
-                                                              : "${detail.allowableError!.toString()} ${rowData.header!.totalWeightUnit!}"),
-                                                    ),
+                                                          : "${detail.targetWgt.toString()} ${rowData.header!.totalWeightUnit!}",
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodySmall!
+                                                          .apply(
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .colorScheme
+                                                                .onSurfaceVariant,
+                                                          ),
+                                                    )),
+
                                                     Expanded(
-                                                        child: Text(detail
-                                                                        .sequence ==
-                                                                    0 ||
+                                                        child: Text(
+                                                      (detail.sequence == 0 ||
+                                                              (rowData.header!
+                                                                      .isEncrypted
+                                                                      .toString() !=
+                                                                  "true"))
+                                                          ? '${detail.actualWeight.toString()} ${rowData.header!.totalWeightUnit!}'
+                                                          : "-",
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodySmall!
+                                                          .apply(
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .colorScheme
+                                                                .onSurfaceVariant,
+                                                          ),
+                                                    )),
+                                                    Expanded(
+                                                      child: Text(
+                                                        detail.sequence == 0 ||
                                                                 rowData.header!
                                                                         .isEncrypted
                                                                         .toString() ==
                                                                     "true"
                                                             ? '-'
-                                                            : "${detail.actualErrorWgt.toString()} ${rowData.header!.totalWeightUnit!}")),
+                                                            : rowData.header!
+                                                                        .formulaMode! ==
+                                                                    "pct"
+                                                                ? "${double.parse((detail.allowableError! * rowData.header!.actualFmaTotalWgt! / 100).toStringAsFixed(3)).toString()} ${rowData.header!.totalWeightUnit!}"
+                                                                : "${detail.allowableError!.toString()} ${rowData.header!.totalWeightUnit!}",
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodySmall!
+                                                            .apply(
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .colorScheme
+                                                                  .onSurfaceVariant,
+                                                            ),
+                                                      ),
+                                                    ),
                                                     Expanded(
                                                         child: Text(
-                                                            detail.sequence ==
-                                                                        0 ||
-                                                                    rowData
-                                                                            .header!
-                                                                            .isEncrypted
-                                                                            .toString() ==
-                                                                        "true"
-                                                                ? '-'
-                                                                : detail.isQualified
-                                                                            .toString() ==
-                                                                        "ok"
-                                                                    ? localizedStrings
-                                                                        .fQualified
-                                                                    : localizedStrings
-                                                                        .fUnqualified,
-                                                            style: TextStyle(
-                                                                color: detail
-                                                                            .isQualified
-                                                                            .toString() ==
-                                                                        "ok"
-                                                                    ? Theme.of(
-                                                                            context)
-                                                                        .colorScheme
-                                                                        .onTertiaryFixedVariant
-                                                                    : Theme.of(
-                                                                            context)
-                                                                        .colorScheme
-                                                                        .error))),
+                                                      detail.sequence == 0 ||
+                                                              rowData.header!
+                                                                      .isEncrypted
+                                                                      .toString() ==
+                                                                  "true"
+                                                          ? '-'
+                                                          : "${detail.actualErrorWgt.toString()} ${rowData.header!.totalWeightUnit!}",
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodySmall!
+                                                          .apply(
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .colorScheme
+                                                                .onSurfaceVariant,
+                                                          ),
+                                                    )),
+                                                    Expanded(
+                                                        child: Text(
+                                                      detail.sequence == 0 ||
+                                                              rowData.header!
+                                                                      .isEncrypted
+                                                                      .toString() ==
+                                                                  "true"
+                                                          ? '-'
+                                                          : detail.isQualified
+                                                                      .toString() ==
+                                                                  "ok"
+                                                              ? localizedStrings
+                                                                  .fQualified
+                                                              : localizedStrings
+                                                                  .fUnqualified,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodySmall!
+                                                          .apply(
+                                                              color: detail
+                                                                          .isQualified
+                                                                          .toString() ==
+                                                                      "ok"
+                                                                  ? Theme.of(
+                                                                          context)
+                                                                      .colorScheme
+                                                                      .onTertiaryFixedVariant
+                                                                  : Theme.of(
+                                                                          context)
+                                                                      .colorScheme
+                                                                      .error),
+                                                    )),
                                                     Expanded(child: Text('')),
                                                     SizedBox(
                                                       width: 60,
@@ -521,7 +732,9 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
                   },
                 ),
                 Text(
-                  localizedStrings.fRecordTitle,
+                  widget.oneFmaRecList.isNotEmpty
+                      ? '${widget.oneFmaRecList[0].header?.formulaName} ${localizedStrings.fRecordTitle}'
+                      : localizedStrings.fRecordTitle,
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 14,
@@ -530,10 +743,6 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
                 ), // 标题文本
               ],
             ),
-          ),
-          Icon(
-            Icons.help,
-            color: Theme.of(context).colorScheme.onTertiaryContainer,
           ),
           SizedBox(
             width: 20,
@@ -716,11 +925,10 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
                   },
             child: Text(
               localizedStrings.fExportRecordsBtn,
-              style: TextStyle(
-                fontWeight: FontWeight.normal,
-                color: Theme.of(context).colorScheme.onPrimary,
-                overflow: TextOverflow.ellipsis,
-              ),
+              style: Theme.of(context).textTheme.bodySmall!.apply(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ),

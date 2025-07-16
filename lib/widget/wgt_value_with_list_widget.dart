@@ -66,7 +66,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
   int _stableSaveTime = 0;
   bool firstGetRec = true;
   late bool _isSaveBtnEnable;
-  late bool _isStableStatusJudge;
+
   bool lastStableStatus = false;
   int maxRecId = 0;
   late Scale tempDefScaleInfo;
@@ -127,7 +127,6 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
       _isSaveBtnEnable = false;
       weightMode = cstStableSave;
     }
-    _isStableStatusJudge = false;
 
     weightMode = (mySettingParam.recMode == msgManual)
         ? cstManualSave

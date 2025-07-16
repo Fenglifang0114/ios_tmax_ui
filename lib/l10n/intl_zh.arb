@@ -384,8 +384,8 @@
     "@gTipAuto": {
         "description": "This is a prompt about auto mode."
     },
-    "stable_time": "稳定时间(s)",
-    "@stable_time": {
+    "gTipStableTime": "稳定时间(s)",
+    "@gTipStableTime": {
         "description": "This is a prompt about stable time."
     },
     "stable_time_error_tip": "20秒以内.",
@@ -1900,9 +1900,9 @@
     "@fNetScale": {
         "description": "Label for network scale in scale list"
     },
-    "fRawMaterialTypeCol": "原料类别",
-    "@fRawMaterialTypeCol": {
-        "description": "Table column title for raw material category"
+    "fRawMaterialTypeNameCol": "类别",
+    "@fRawMaterialTypeNameCol": {
+        "description": "Table column title for category name"
     },
     "fCreatedAtCol": "创建时间",
     "@fCreatedAtCol": {
@@ -1915,6 +1915,10 @@
     "fEditBtn": "编辑",
     "@fEditBtn": {
         "description": "Button for editing table row"
+    },
+    "fTipOperation": "操作",
+    "@fTipOperation": {
+        "description": "Table column title for operations"
     },
     "fFmaCategoryCol": "类别",
     "@fFmaCategoryCol": {
@@ -2127,7 +2131,15 @@
     "fAddRawMaterialTypeBtn": "增加原料类型",
     "@fAddRawMaterialTypeBtn": {
         "description": "Text on the button to add raw material category"
+    }, 
+    "fEditRawMaterialTypeBtn": "编辑原料类型",
+    "@fEditRawMaterialTypeBtn": {
+        "description": "Text on the button to edit raw material category"
     },
+    "fEditFormulaTypeBtn": "编辑配方类型",
+    "@fEditFormulaTypeBtn": {
+        "description": "Text on the button to edit formula category"
+    },  
     "fFormulaDetailsTitle": "配方详情",
     "@fFormulaDetailsTitle": {
         "description": "Title for formula details page or section"
@@ -2220,6 +2232,18 @@
     "@fFormulaInUseDeleteErrorMsg": {
         "description": "Error message when deleting a formula that is currently in use"
     },
+    "fRawInUseDeleteErrorMsg": "已有原料使用，不能删除",
+    "@fRawInUseDeleteErrorMsg": {
+        "description": "Error message when deleting a ingredient that is currently in use"
+    },
+    "fTipNoData": "暂无数据，请先添加！",
+    "@fTipNoData": {
+        "description": "Text to display when there is no data"
+    },     
+    "fRawCategoryManagement": "类别管理",
+    "@fRawCategoryManagement": {
+        "description": "Title for category management page"
+    },
     "fDeleteSuccessMsg": "删除成功",
     "@fDeleteSuccessMsg": {
         "description": "Success message for delete operation"
@@ -2284,6 +2308,10 @@
     "@fNextStepBtn": {
         "description": "Button to proceed to the next step"
     },
+    "gTipAutoNextStep": "自动下一步",
+    "@gTipAutoNextStep": {
+        "description": "Prompt message indicating automatic mode"
+    },    
     "fDeviceDisconnected": "设备断线，请检查连接.",
     "@fDeviceDisconnected": {
         "description": "Prompt when the device is disconnected"

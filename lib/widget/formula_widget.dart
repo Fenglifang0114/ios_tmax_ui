@@ -36,9 +36,9 @@ class ShowRawTitleWidget extends StatelessWidget {
       alignment: Alignment.centerLeft,
       child: Text(
         text,
-        style: TextStyle(
-            fontSize: 14,
-            color: Theme.of(context).colorScheme.onSurfaceVariant),
+        style: Theme.of(context).textTheme.bodyMedium!.apply(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
         overflow: TextOverflow.ellipsis,
       ),
     );

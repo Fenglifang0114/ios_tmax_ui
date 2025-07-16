@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/formula_from_db_data.dart';
 import 'package:t_max/data/language.dart';
-import 'package:t_max/dialog/add_fma_wgt_dialog.dart';
-import 'package:t_max/pages/start_fma_pct_page.dart';
-import 'package:t_max/pages/start_fma_secret_page.dart';
+import 'package:t_max/widget/dialog_head_style.dart';
 
 class ShowFormulaDetailDialog extends StatefulWidget {
   const ShowFormulaDetailDialog(
@@ -60,10 +58,10 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                 value: item,
                 child: Text(
                   item.name,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface, // 设置提示文本颜色
-                    fontSize: 14,
-                  ),
+                  style: Theme.of(context).textTheme.bodySmall!.apply(
+                        color:
+                            Theme.of(context).colorScheme.onSurface, // 设置提示文本颜色
+                      ),
                 ),
               );
             }).toList(),
@@ -80,7 +78,7 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext ctx) {
     return Dialog(
       backgroundColor: Colors.transparent,
       child: Container(
@@ -93,48 +91,15 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
         child: Column(
           children: [
             // 头部
-            Container(
-                height: 54,
-                padding: const EdgeInsets.only(left: 20, right: 20),
-                alignment: Alignment.centerLeft,
-                child: Row(children: [
-                  Container(
-                    width: 3,
-                    height: 14,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: Container(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        localizedStrings.fFormulaDetailsTitle,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onSurface,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                      icon: Icon(
-                        Icons.cancel,
-                        size: 24,
-                        color: Theme.of(context).colorScheme.secondaryFixed,
-                      ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      })
-                ])),
-            // 分割线
-            Divider(
-              height: 1,
-              color: Theme.of(context).colorScheme.outline,
+            ...dialogHeadStyle(
+              context,
+              localizedStrings.fFormulaDetailsTitle,
+              true,
+              onClose: () {
+                Navigator.pop(context, false);
+              },
             ),
+
             // 中部
             Expanded(
                 child: Column(children: [
@@ -152,20 +117,26 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                             children: [
                               TextSpan(
                                 text: localizedStrings.fFmaIdLabel + ': ',
-                                style: TextStyle(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurfaceVariant, // 设置 * 为红色
-                                    fontSize: 14, // 可以根据需要调整字体大小
-                                    overflow: TextOverflow.ellipsis),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .apply(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurfaceVariant,
+                                        overflow: TextOverflow.ellipsis),
                               ),
                               TextSpan(
                                 text: widget.selectFormula.header!
                                     .formulaHeader!.formulaId!,
-                                style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.onSurface,
-                                    overflow: TextOverflow.ellipsis),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .apply(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
+                                        overflow: TextOverflow.ellipsis),
                               ),
                             ],
                           ),
@@ -184,21 +155,26 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                               children: [
                                 TextSpan(
                                   text: localizedStrings.fFmaNameLabel + ': ',
-                                  style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurfaceVariant, // 设置 * 为红色
-                                      fontSize: 14, // 可以根据需要调整字体大小
-                                      overflow: TextOverflow.ellipsis),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .apply(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurfaceVariant,
+                                          overflow: TextOverflow.ellipsis),
                                 ),
                                 TextSpan(
                                   text: widget.selectFormula.header!
                                       .formulaHeader!.formulaName!,
-                                  style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurface,
-                                      overflow: TextOverflow.ellipsis),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .apply(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface,
+                                          overflow: TextOverflow.ellipsis),
                                 ),
                               ],
                             ),
@@ -227,22 +203,27 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                                 TextSpan(
                                   text: localizedStrings.fIngredientCountLabel +
                                       ': ',
-                                  style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurfaceVariant, // 设置 * 为红色
-                                      fontSize: 14, // 可以根据需要调整字体大小
-                                      overflow: TextOverflow.ellipsis),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .apply(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurfaceVariant,
+                                          overflow: TextOverflow.ellipsis),
                                 ),
                                 TextSpan(
                                   text: widget.selectFormula.header!
                                       .formulaHeader!.materialCount!
                                       .toString(),
-                                  style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurface,
-                                      overflow: TextOverflow.ellipsis),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .apply(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface,
+                                          overflow: TextOverflow.ellipsis),
                                 ),
                               ],
                             ),
@@ -269,21 +250,28 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                                         text: localizedStrings
                                                 .fFormulaTotalWeightLabel +
                                             ': ',
-                                        style: TextStyle(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSurfaceVariant, // 设置 * 为红色
-                                            fontSize: 14, // 可以根据需要调整字体大小
-                                            overflow: TextOverflow.ellipsis),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall!
+                                            .apply(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onSurfaceVariant,
+                                                overflow:
+                                                    TextOverflow.ellipsis),
                                       ),
                                       TextSpan(
                                         text:
                                             '${widget.selectFormula.header!.formulaHeader!.totalWeight!.toString()}  ${widget.selectFormula.header!.formulaHeader!.formulaUnit!}',
-                                        style: TextStyle(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSurface,
-                                            overflow: TextOverflow.ellipsis),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall!
+                                            .apply(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onSurface,
+                                                overflow:
+                                                    TextOverflow.ellipsis),
                                       ),
                                     ],
                                   ),
@@ -344,16 +332,19 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                                       child: Text(
                                         material.formulaDetail!.sequence
                                             .toString(),
-                                        style: TextStyle(
-                                          color:
-                                              selectDetailIndex == globalIndex
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall!
+                                            .apply(
+                                              color: selectDetailIndex ==
+                                                      globalIndex
                                                   ? Theme.of(context)
                                                       .colorScheme
                                                       .onPrimary
                                                   : Theme.of(context)
                                                       .colorScheme
                                                       .onSurface,
-                                        ),
+                                            ),
                                       ),
                                     ),
                                   ),
@@ -365,11 +356,14 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                                         : 260,
                                     child: Text(
                                       '  ${material.rawMaterialTypeName!.rawMaterial!.materialName!}',
-                                      style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurface,
-                                      ),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall!
+                                          .apply(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface,
+                                          ),
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
@@ -381,14 +375,24 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                                           constraints: const BoxConstraints(
                                               maxWidth: 100),
                                           alignment: Alignment.centerRight,
-                                          child: Text(widget
-                                                      .selectFormula
-                                                      .header!
-                                                      .formulaHeader!
-                                                      .formulaMode ==
-                                                  'wgt'
-                                              ? '${material.formulaDetail!.materialWeight.toString()} ${widget.selectFormula.header!.formulaHeader!.formulaUnit!}'
-                                              : '${material.formulaDetail!.materialWeight.toString()} %'),
+                                          child: Text(
+                                            widget
+                                                        .selectFormula
+                                                        .header!
+                                                        .formulaHeader!
+                                                        .formulaMode ==
+                                                    'wgt'
+                                                ? '${material.formulaDetail!.materialWeight.toString()} ${widget.selectFormula.header!.formulaHeader!.formulaUnit!}'
+                                                : '${material.formulaDetail!.materialWeight.toString()} %',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall!
+                                                .apply(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onSurface,
+                                                ),
+                                          ),
                                         )
                                       : SizedBox(),
                                   SizedBox(width: 10),
@@ -463,8 +467,7 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         localizedStrings.fRemarkCol,
-                        style: TextStyle(
-                            fontSize: 16,
+                        style: Theme.of(context).textTheme.bodyMedium!.apply(
                             color: Theme.of(context).colorScheme.onSurface,
                             overflow: TextOverflow.ellipsis),
                       ),
@@ -489,7 +492,7 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                           alignment: Alignment.topLeft,
                           child: SelectableText(
                             widget.selectFormula.header!.formulaHeader!.remark!,
-                            style: TextStyle(
+                            style: Theme.of(context).textTheme.bodySmall!.apply(
                                 color: Theme.of(context).colorScheme.onSurface,
                                 overflow: TextOverflow.ellipsis),
                           ),
@@ -519,129 +522,14 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                         ),
                       ),
                       onPressed: () {
-                        //检查配方是保密的，还是公开的
-                        if (widget.selectFormula.header?.formulaHeader
-                                ?.isEncrypted ==
-                            false) {
-                          //检查配方是重量模式还是百分比模式
-                          if (widget.selectFormula.header?.formulaHeader
-                                  ?.formulaMode ==
-                              "pct") {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AddFormulaWgtDialog();
-                              },
-                            ).then((value) {
-                              if (value != null &&
-                                  value is Map<String, String>) {
-                                String formulaWgt = value['formulaWgt'] ?? '';
-                                String formulaUnit = value['formulaUnit'] ?? '';
-
-                                // 先判断这个总重是个数
-                                if (double.tryParse(formulaWgt) == null) {
-                                  return;
-                                } else {
-                                  double totalWgt = double.parse(formulaWgt);
-                                  String fmaUnit = formulaUnit;
-                                  if (mounted) {
-                                    Navigator.pop(context);
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            FormulaPctWeighingPage(
-                                          selectFormula: widget.selectFormula,
-                                          selScaleId: widget.selectScaleId,
-                                          totalFmaWgt: totalWgt,
-                                          fmaUnit: fmaUnit,
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                }
-                              }
-                            });
-                          } else {
-                            Navigator.pop(context);
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => FormulaPctWeighingPage(
-                                  selectFormula: widget.selectFormula,
-                                  selScaleId: widget.selectScaleId,
-                                  totalFmaWgt: widget.selectFormula.header!
-                                      .formulaHeader!.totalWeight!,
-                                  fmaUnit: widget.selectFormula.header!
-                                      .formulaHeader!.formulaUnit!,
-                                ),
-                              ),
-                            );
-                          }
-                        } else {
-                          //检查配方是重量模式还是百分比模式
-                          if (widget.selectFormula.header?.formulaHeader
-                                  ?.formulaMode ==
-                              "pct") {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AddFormulaWgtDialog();
-                              },
-                            ).then((value) {
-                              if (value != null &&
-                                  value is Map<String, String>) {
-                                String formulaWgt = value['formulaWgt'] ?? '';
-                                String formulaUnit = value['formulaUnit'] ?? '';
-
-                                // 先判断这个总重是个数
-                                if (double.tryParse(formulaWgt) == null) {
-                                  return;
-                                } else {
-                                  double totalWgt = double.parse(formulaWgt);
-                                  String fmaUnit = formulaUnit;
-                                  Navigator.pop(context);
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          FormulaSecretWeighingPage(
-                                        selectFormula: widget.selectFormula,
-                                        selScaleId: widget.selectScaleId,
-                                        totalFmaWgt: totalWgt,
-                                        fmaUnit: fmaUnit,
-                                      ),
-                                    ),
-                                  );
-                                }
-                              }
-                            });
-                          } else {
-                            Navigator.pop(context);
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => FormulaSecretWeighingPage(
-                                  selectFormula: widget.selectFormula,
-                                  selScaleId: widget.selectScaleId,
-                                  totalFmaWgt: widget.selectFormula.header!
-                                      .formulaHeader!.totalWeight!,
-                                  fmaUnit: widget.selectFormula.header!
-                                      .formulaHeader!.formulaUnit!,
-                                ),
-                              ),
-                            );
-                          }
-                        }
+                        Navigator.pop(ctx, true);
                       },
                       child: Text(
                         localizedStrings.fStartWeighingBtn,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.normal,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                        style: Theme.of(context).textTheme.bodySmall!.apply(
+                              color: Theme.of(context).colorScheme.onPrimary,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                       ),
                     ),
                   ),
@@ -660,16 +548,14 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                         ),
                       ),
                       onPressed: () {
-                        Navigator.pop(context);
+                        Navigator.pop(ctx, false);
                       },
                       child: Text(
                         localizedStrings.gBtnCancel,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.normal,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                        style: Theme.of(context).textTheme.bodySmall!.apply(
+                              color: Theme.of(context).colorScheme.onPrimary,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                       ),
                     ),
                   )

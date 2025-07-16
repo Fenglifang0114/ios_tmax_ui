@@ -29,6 +29,7 @@ const scaleListWidth = 290.0; //下拉秤的列表宽度
 const wifiListWidth = 255.0; //下拉秤的列表宽度
 const headWidthPadding = 500.0; //头部菜单间隔宽度
 const wgtIconSize = 24.0; //顶部菜单图标大小
+const dialogHeadHeight = 54.0; //对话框头部高度
 
 const appScaleListWidth = 234.0; //app里面下拉秤的列表宽度
 

@@ -94,17 +94,6 @@ class FormulationScalePageState extends State<FormulationScalePage>
   dynamic _eventbus7;
   dynamic _eventbus8;
   dynamic _eventbus9;
-  dynamic _eventbus10;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    PublicFunctions.getRawTypeList();
-    PublicFunctions.getFormulaTypeList();
-    PublicFunctions.getRawList();
-    PublicFunctions.getFormulaList();
-    PublicFunctions.getFormulaRecList();
-  }
 
   @override
   void initState() {
@@ -206,11 +195,16 @@ class FormulationScalePageState extends State<FormulationScalePage>
         PublicFunctions.getFormulaRecList();
       }
     });
-    _eventbus10 = eventBus.on<EventRespRawTypeAdd>().listen((event) {
-      if (mounted) {
-        PublicFunctions.getRawTypeList();
-        showTipInfo(localizedStrings.fSuccessMsg, context);
-      }
+
+    //初始化完成再做一次数据加载
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // 在这里调用数据加载的方法
+      PublicFunctions.getRawTypeList();
+      PublicFunctions.getFormulaTypeList();
+      PublicFunctions.getRawList();
+      PublicFunctions.getFormulaList();
+      PublicFunctions.getFormulaRecList();
     });
   }
 
@@ -238,7 +232,6 @@ class FormulationScalePageState extends State<FormulationScalePage>
     _eventbus7?.cancel();
     _eventbus8?.cancel();
     _eventbus9?.cancel();
-    _eventbus10?.cancel();
   }
 
   @override
@@ -624,22 +617,24 @@ class FormulationScalePageState extends State<FormulationScalePage>
               columnWidth: const FixedColumnWidth(120),
               alignment: Alignment.centerLeft,
               onTitleClick: (context, title) {
-                // ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                // ScaffoldMessenger.of(
-                //   context,
-                // ).showSnackBar(const SnackBar(content: Text("排序")));
                 // setState(() {
                 //   sort = !(title.sort ?? false);
                 // });
               },
               renderCell: (context, title, data, row, column) {
-                return Text((data as RawDataInfo).rawMaterial.materialId);
+                return Text(
+                  (data as RawDataInfo).rawMaterial.materialId,
+                  style: Theme.of(context).textTheme.bodySmall!.apply(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                );
               },
               renderTitle: (context, title) {
                 return Text(
                   title.title,
-                  style:
-                      TextStyle(color: Theme.of(context).colorScheme.primary),
+                  style: Theme.of(context).textTheme.bodySmall!.apply(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                 );
               },
             ),
@@ -651,18 +646,44 @@ class FormulationScalePageState extends State<FormulationScalePage>
               sort: false,
               renderCell: (context, title, data, row, column) {
                 // 显示 materialId 字段
-                return Text((data as RawDataInfo).rawMaterial.materialName);
+                return Text(
+                  (data as RawDataInfo).rawMaterial.materialName,
+                  style: Theme.of(context).textTheme.bodySmall!.apply(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                );
+              },
+              renderTitle: (context, title) {
+                return Text(
+                  title.title,
+                  style: Theme.of(context).textTheme.bodySmall!.apply(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                );
               },
             ),
             StickyTableColumn(
-              localizedStrings.fRawMaterialTypeCol,
+              localizedStrings.fRawMaterialTypeNameCol,
               showSort: true,
               sort: false,
               alignment: Alignment.centerLeft,
               columnWidth: const FixedColumnWidth(200),
               renderCell: (context, title, data, row, column) {
                 // 显示 materialId 字段
-                return Text((data as RawDataInfo).rawCategoryName);
+                return Text(
+                  (data as RawDataInfo).rawCategoryName,
+                  style: Theme.of(context).textTheme.bodySmall!.apply(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                );
+              },
+              renderTitle: (context, title) {
+                return Text(
+                  title.title,
+                  style: Theme.of(context).textTheme.bodySmall!.apply(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                );
               },
             ),
             StickyTableColumn(
@@ -673,8 +694,21 @@ class FormulationScalePageState extends State<FormulationScalePage>
               sort: false,
               renderCell: (context, title, data, row, column) {
                 // 显示 createdAt 字段
-                return Text(DateFormat('yyyy-MM-dd HH:mm:ss')
-                    .format((data as RawDataInfo).rawMaterial.createdAt));
+                return Text(
+                  DateFormat('yyyy-MM-dd HH:mm:ss')
+                      .format((data as RawDataInfo).rawMaterial.createdAt),
+                  style: Theme.of(context).textTheme.bodySmall!.apply(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                );
+              },
+              renderTitle: (context, title) {
+                return Text(
+                  title.title,
+                  style: Theme.of(context).textTheme.bodySmall!.apply(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                );
               },
             ),
             StickyTableColumn(
@@ -685,8 +719,21 @@ class FormulationScalePageState extends State<FormulationScalePage>
               sort: false,
               renderCell: (context, title, data, row, column) {
                 // 显示 updatedAt 字段
-                return Text(DateFormat('yyyy-MM-dd HH:mm:ss')
-                    .format((data as RawDataInfo).rawMaterial.updatedAt));
+                return Text(
+                  DateFormat('yyyy-MM-dd HH:mm:ss')
+                      .format((data as RawDataInfo).rawMaterial.updatedAt),
+                  style: Theme.of(context).textTheme.bodySmall!.apply(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                );
+              },
+              renderTitle: (context, title) {
+                return Text(
+                  title.title,
+                  style: Theme.of(context).textTheme.bodySmall!.apply(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                );
               },
             ),
             StickyTableColumn(
@@ -699,8 +746,19 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 // 显示 ingredient 字段
                 return Text(
                   (data as RawDataInfo).rawMaterial.ingredient,
+                  style: Theme.of(context).textTheme.bodySmall!.apply(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
+                );
+              },
+              renderTitle: (context, title) {
+                return Text(
+                  title.title,
+                  style: Theme.of(context).textTheme.bodySmall!.apply(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                 );
               },
             ),
@@ -732,6 +790,14 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     Icons.edit_outlined,
                     color: Theme.of(context).colorScheme.primary,
                   )),
+                );
+              },
+              renderTitle: (context, title) {
+                return Text(
+                  title.title,
+                  style: Theme.of(context).textTheme.bodySmall!.apply(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                 );
               },
             ),
@@ -781,6 +847,14 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     Icons.delete_forever_outlined,
                     color: Theme.of(context).colorScheme.error,
                   )),
+                );
+              },
+              renderTitle: (context, title) {
+                return Text(
+                  title.title,
+                  style: Theme.of(context).textTheme.bodySmall!.apply(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                 );
               },
             ),
@@ -1430,124 +1504,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     onPressed: (selectedFormula == null || selScaleId == -1)
                         ? null
                         : () {
-                            //检查配方是保密的，还是公开的
-                            if (selectedFormula
-                                    ?.header?.formulaHeader?.isEncrypted ==
-                                false) {
-                              //检查配方是重量模式还是百分比模式
-                              if (selectedFormula
-                                      ?.header?.formulaHeader?.formulaMode ==
-                                  "pct") {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return AddFormulaWgtDialog();
-                                  },
-                                ).then((value) {
-                                  if (value != null &&
-                                      value is Map<String, String>) {
-                                    String formulaWgt =
-                                        value['formulaWgt'] ?? '';
-                                    String formulaUnit =
-                                        value['formulaUnit'] ?? '';
-
-                                    // 先判断这个总重是个数
-                                    if (double.tryParse(formulaWgt) == null) {
-                                      return;
-                                    } else {
-                                      double totalWgt =
-                                          double.parse(formulaWgt);
-                                      String fmaUnit = formulaUnit;
-
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              FormulaPctWeighingPage(
-                                            selectFormula: selectedFormula!,
-                                            selScaleId: selScaleId,
-                                            totalFmaWgt: totalWgt,
-                                            fmaUnit: fmaUnit,
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                  }
-                                });
-                              } else {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        FormulaPctWeighingPage(
-                                      selectFormula: selectedFormula!,
-                                      selScaleId: selScaleId,
-                                      totalFmaWgt: selectedFormula!
-                                          .header!.formulaHeader!.totalWeight!,
-                                      fmaUnit: selectedFormula!
-                                          .header!.formulaHeader!.formulaUnit!,
-                                    ),
-                                  ),
-                                );
-                              }
-                            } else {
-                              //检查配方是重量模式还是百分比模式
-                              if (selectedFormula
-                                      ?.header?.formulaHeader?.formulaMode ==
-                                  "pct") {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return AddFormulaWgtDialog();
-                                  },
-                                ).then((value) {
-                                  if (value != null &&
-                                      value is Map<String, String>) {
-                                    String formulaWgt =
-                                        value['formulaWgt'] ?? '';
-                                    String formulaUnit =
-                                        value['formulaUnit'] ?? '';
-
-                                    // 先判断这个总重是个数
-                                    if (double.tryParse(formulaWgt) == null) {
-                                      return;
-                                    } else {
-                                      double totalWgt =
-                                          double.parse(formulaWgt);
-                                      String fmaUnit = formulaUnit;
-
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              FormulaSecretWeighingPage(
-                                            selectFormula: selectedFormula!,
-                                            selScaleId: selScaleId,
-                                            totalFmaWgt: totalWgt,
-                                            fmaUnit: fmaUnit,
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                  }
-                                });
-                              } else {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        FormulaSecretWeighingPage(
-                                      selectFormula: selectedFormula!,
-                                      selScaleId: selScaleId,
-                                      totalFmaWgt: selectedFormula!
-                                          .header!.formulaHeader!.totalWeight!,
-                                      fmaUnit: selectedFormula!
-                                          .header!.formulaHeader!.formulaUnit!,
-                                    ),
-                                  ),
-                                );
-                              }
-                            }
+                            startWeighting();
                           },
                     child: Text(
                       localizedStrings.fStartWeighingBtn,
@@ -1622,6 +1579,108 @@ class FormulationScalePageState extends State<FormulationScalePage>
     );
   }
 
+  void startWeighting() {
+    //检查配方是保密的，还是公开的
+    if (selectedFormula == null) {
+      return;
+    }
+    if (selectedFormula?.header?.formulaHeader?.isEncrypted == false) {
+      //检查配方是重量模式还是百分比模式
+      if (selectedFormula?.header?.formulaHeader?.formulaMode == "pct") {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AddFormulaWgtDialog();
+          },
+        ).then((value) {
+          if (value != null && value is Map<String, String>) {
+            String formulaWgt = value['formulaWgt'] ?? '';
+            String formulaUnit = value['formulaUnit'] ?? '';
+
+            // 先判断这个总重是个数
+            if (double.tryParse(formulaWgt) == null) {
+              return;
+            } else {
+              double totalWgt = double.parse(formulaWgt);
+              String fmaUnit = formulaUnit;
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => FormulaPctWeighingPage(
+                    selectFormula: selectedFormula!,
+                    selScaleId: selScaleId,
+                    totalFmaWgt: totalWgt,
+                    fmaUnit: fmaUnit,
+                  ),
+                ),
+              );
+            }
+          }
+        });
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => FormulaPctWeighingPage(
+              selectFormula: selectedFormula!,
+              selScaleId: selScaleId,
+              totalFmaWgt: selectedFormula!.header!.formulaHeader!.totalWeight!,
+              fmaUnit: selectedFormula!.header!.formulaHeader!.formulaUnit!,
+            ),
+          ),
+        );
+      }
+    } else {
+      //检查配方是重量模式还是百分比模式
+      if (selectedFormula?.header?.formulaHeader?.formulaMode == "pct") {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AddFormulaWgtDialog();
+          },
+        ).then((value) {
+          if (value != null && value is Map<String, String>) {
+            String formulaWgt = value['formulaWgt'] ?? '';
+            String formulaUnit = value['formulaUnit'] ?? '';
+
+            // 先判断这个总重是个数
+            if (double.tryParse(formulaWgt) == null) {
+              return;
+            } else {
+              double totalWgt = double.parse(formulaWgt);
+              String fmaUnit = formulaUnit;
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => FormulaSecretWeighingPage(
+                    selectFormula: selectedFormula!,
+                    selScaleId: selScaleId,
+                    totalFmaWgt: totalWgt,
+                    fmaUnit: fmaUnit,
+                  ),
+                ),
+              );
+            }
+          }
+        });
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => FormulaSecretWeighingPage(
+              selectFormula: selectedFormula!,
+              selScaleId: selScaleId,
+              totalFmaWgt: selectedFormula!.header!.formulaHeader!.totalWeight!,
+              fmaUnit: selectedFormula!.header!.formulaHeader!.formulaUnit!,
+            ),
+          ),
+        );
+      }
+    }
+  }
+
 //原料列表底部
   showRawBottom() {
     return Expanded(
@@ -1668,6 +1727,12 @@ class FormulationScalePageState extends State<FormulationScalePage>
                               InkWell(
                                 onTap: () {
                                   //跳出配方详情
+                                  if (selScaleId == -1) {
+                                    showTipInfo(
+                                        localizedStrings.gTipSelectDeviceFirst,
+                                        context);
+                                    return;
+                                  }
 
                                   showDialog(
                                       context: context,
@@ -1676,7 +1741,13 @@ class FormulationScalePageState extends State<FormulationScalePage>
                                           selectFormula: formula,
                                           selectScaleId: selScaleId,
                                         );
-                                      });
+                                      }).then((value) {
+                                    if (value) {
+                                      selectedFormula = formula;
+
+                                      startWeighting();
+                                    }
+                                  });
                                 },
                                 child: IntrinsicWidth(
                                   child: Container(
@@ -1700,7 +1771,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                                             .copyWith(
                                               color: Theme.of(context)
                                                   .colorScheme
-                                                  .onSurfaceVariant,
+                                                  .onSurface,
                                             ),
                                         overflow: TextOverflow.ellipsis,
                                       ),

@@ -4,10 +4,15 @@ import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/formula_from_db_data.dart';
 
 import 'package:t_max/data/formula_scale_data.dart';
+import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/req_formula_data.dart';
+import 'package:t_max/dialog/add_raw_info_dialog.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
+import 'package:t_max/dialog/fma_type_mgr.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
+import 'package:t_max/widget/common_widget.dart';
+import 'package:t_max/widget/dialog_head_style.dart';
 import '../data/language.dart';
 
 class EditFormulaPage extends StatefulWidget {
@@ -44,16 +49,15 @@ class EditFormulaPageState extends State<EditFormulaPage> {
     FormulaMode.pct: localizedStrings.fPctMode,
   };
 
-  int? selectedIndex;
-  dynamic _eventbus1;
-  dynamic _eventbus2;
+  int selectedIndex = -1;
+
   dynamic _eventbus3;
   dynamic _eventbus4;
+  dynamic _eventbus5;
 
   @override
   void initState() {
     super.initState();
-
     formulaCodeCtl.text =
         widget.editFormulaInfo.header!.formulaHeader!.formulaId!;
 
@@ -100,27 +104,6 @@ class EditFormulaPageState extends State<EditFormulaPage> {
     totalWgt =
         widget.editFormulaInfo.header!.formulaHeader!.totalWeight!; // 总权重
 
-    _eventbus1 = eventBus.on<EventRespGetFormulaTypeList>().listen((event) {
-      if (mounted) {
-        String dataStr = event.obj;
-        if (dataStr != '') {
-          setState(() {
-            formulaTypeList = categoryTypeListFromJson(dataStr);
-          });
-        } else {
-          setState(() {
-            formulaTypeList = [];
-          });
-        }
-      }
-    });
-
-    _eventbus2 = eventBus.on<EventRespAddFormulaType>().listen((event) {
-      if (mounted) {
-        PublicFunctions.getFormulaTypeList();
-        showTipInfo(localizedStrings.fAddSuccessMsg, context);
-      }
-    });
     _eventbus3 = eventBus.on<EventRespAddFormula>().listen((event) {
       if (mounted) {
         PublicFunctions.getFormulaList();
@@ -142,15 +125,47 @@ class EditFormulaPageState extends State<EditFormulaPage> {
         }
       }
     });
+
+    _eventbus5 = eventBus.on<EventRespGetRawDataList>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+        if (dataStr != '' && dataStr != 'null') {
+          setState(() {
+            rawDataList = rawDataInfoFromJson(dataStr);
+            if (rawDataList.isNotEmpty) {
+              selectedRawDataInfo = rawDataList.last;
+              rawMaterialCtl.text =
+                  '${selectedRawDataInfo!.rawMaterial.materialId} ${selectedRawDataInfo!.rawMaterial.materialName}';
+              selectedIndex = -1; // 重置选中索引
+              wgtCtl.text = '';
+              errorCtl.text = '';
+            }
+          });
+        } else {
+          setState(() {
+            rawDataList = [];
+          });
+        }
+      }
+    });
   }
 
   @override
   void dispose() {
     super.dispose();
-    _eventbus1.cancel();
-    _eventbus2.cancel();
     _eventbus3.cancel();
     _eventbus4.cancel();
+    _eventbus5.cancel();
+    formulaCodeCtl.dispose();
+    formulaNameCtl.dispose();
+    formulaModeCtl.dispose();
+    formulaUnitCtl.dispose();
+    formulaTypeCtl.dispose();
+    rawMaterialCtl.dispose();
+    wgtCtl.dispose();
+    errorCtl.dispose();
+    remarkCtl.dispose();
+    addFormulaRawList.clear();
   }
 
 // 显示新增配方类型对话框
@@ -160,6 +175,16 @@ class EditFormulaPageState extends State<EditFormulaPage> {
       barrierDismissible: false, // 点击对话框外部不关闭对话框
       builder: (BuildContext context) {
         return AddFormulaTypeDialog();
+      },
+    );
+  }
+
+  void showFormulaTypeMgrDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 点击对话框外部不关闭对话框
+      builder: (BuildContext context) {
+        return FmaTypeMgrDialog();
       },
     );
   }
@@ -323,29 +348,48 @@ class EditFormulaPageState extends State<EditFormulaPage> {
               ? [
                   DropdownMenuItem<String>(
                     value: null,
-                    child: Text(localizedStrings.fPleaseSelectCategory),
+                    child: Text(
+                      localizedStrings.fPleaseSelectCategory,
+                      style: Theme.of(context).textTheme.bodySmall!.apply(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .surfaceContainerHighest,
+                          ),
+                    ),
                   )
                 ]
               : [
                   DropdownMenuItem<String>(
                     value: null,
-                    child: Text(localizedStrings.fPleaseSelectCategory),
+                    child: Text(localizedStrings.fPleaseSelectCategory,
+                        style: Theme.of(context).textTheme.bodySmall!.apply(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainerHighest,
+                            )),
                   ),
                   ...formulaTypeList.map((CategoryTypeList item) {
                     return DropdownMenuItem<String>(
                       value: item.categoryName,
-                      child: Text(item.categoryName),
+                      child: Text(item.categoryName,
+                          style: Theme.of(context).textTheme.bodySmall!.apply(
+                                color: Theme.of(context).colorScheme.onSurface,
+                              )),
                     );
                   })
                 ],
           onChanged: (value) {
-            if (value == null) return;
+            if (value == null) {
+              setState(() {
+                formulaTypeCtl.text = "";
+              });
+            }
             setState(() {
               formulaTypeCtl.text = value.toString();
             });
           },
           style: Theme.of(context).textTheme.bodySmall!.apply(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
         ));
   }
@@ -369,13 +413,23 @@ class EditFormulaPageState extends State<EditFormulaPage> {
               ? [
                   DropdownMenuItem<String>(
                     value: null,
-                    child: Text(localizedStrings.fSelectRawMaterialHint),
+                    child: Text(localizedStrings.fSelectRawMaterialHint,
+                        style: Theme.of(context).textTheme.bodySmall!.apply(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainerHighest,
+                            )),
                   )
                 ]
               : [
                   DropdownMenuItem<String>(
                     value: null,
-                    child: Text(localizedStrings.fSelectRawMaterialHint),
+                    child: Text(localizedStrings.fSelectRawMaterialHint,
+                        style: Theme.of(context).textTheme.bodySmall!.apply(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainerHighest,
+                            )),
                   ),
                   ...rawDataList.map((RawDataInfo item) {
                     // 拼接 materialId 和 materialName
@@ -384,7 +438,12 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                     return DropdownMenuItem<String>(
                       // 使用拼接后的文本作为 value
                       value: displayText,
-                      child: Text(displayText),
+                      child: Text(
+                        displayText,
+                        style: Theme.of(context).textTheme.bodySmall!.apply(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                      ),
                     );
                   })
                 ],
@@ -427,17 +486,19 @@ class EditFormulaPageState extends State<EditFormulaPage> {
   }
 
   //输入框
-  showInputBox(
-      TextEditingController controller, String hintText, bool readFlag) {
+  showInputBox(TextEditingController controller, String hintText,
+      {bool enable = true}) {
     return SizedBox(
       height: 48,
       child: TextField(
-        readOnly: readFlag,
+        enabled: enable,
         controller: controller,
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(
-            color: Theme.of(context).colorScheme.onSurface, // 设置提示文本颜色
+            color: Theme.of(context)
+                .colorScheme
+                .surfaceContainerHighest, // 设置提示文本颜色
           ),
           border: OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(0.0))),
@@ -461,8 +522,8 @@ class EditFormulaPageState extends State<EditFormulaPage> {
           height: 90,
           child: Column(children: [
             showItemName(localizedStrings.fFmaIdLabel + ' ', false),
-            showInputBox(
-                formulaCodeCtl, localizedStrings.fInputFormulaIdHint, true),
+            showInputBox(formulaCodeCtl, localizedStrings.fInputFormulaIdHint,
+                enable: false),
           ]),
         ),
       ]),
@@ -490,7 +551,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
           child: Column(children: [
             showItemName(localizedStrings.fFmaNameLabel + " ", false),
             showInputBox(
-                formulaNameCtl, localizedStrings.fInputFormulaNameHint, false),
+                formulaNameCtl, localizedStrings.fInputFormulaNameHint),
           ]),
         ),
       ]),
@@ -516,7 +577,11 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                       borderRadius: BorderRadius.circular(0), // 设置圆角
                     ),
                     alignment: Alignment.centerLeft,
-                    child: Text("%", textAlign: TextAlign.left),
+                    child: Text("%",
+                        style: Theme.of(context).textTheme.bodySmall!.apply(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                        textAlign: TextAlign.left),
                   )
           ]),
         ),
@@ -532,7 +597,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
           width: width,
           height: 90,
           child: Column(children: [
-            showItemName(localizedStrings.fFmaCategoryCol, false),
+            showItemName(localizedStrings.fFmaCategoryCol, true),
             Row(
               children: [
                 Expanded(
@@ -542,47 +607,25 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                 Container(
                   width: 10,
                 ),
-                Tooltip(
-                  message: localizedStrings.fAddTypeBtn, // 提示信息
-                  child: IconButton(
-                    iconSize: 24,
-                    color: Theme.of(context).colorScheme.onPrimary,
-                    style: IconButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.surface,
-                      focusColor: Theme.of(context)
-                          .colorScheme
-                          .primary
-                          .withValues(alpha: 0.1),
-                      shape: RoundedRectangleBorder(
-                          // 设置为矩形形状
-                          borderRadius: BorderRadius.zero, // 没有圆角，即正方形
-                          side: BorderSide(
-                            color:
-                                Theme.of(context).colorScheme.outline, // 设置边框颜色
-                            width: 1, // 设置边框宽度
-                          )),
-                      fixedSize: const Size(48, 48), // 设置固定大小
-                    ),
-                    onPressed: () {
-                      showAddFormulaTypeDialog();
-                    },
-                    icon: Icon(
-                      Icons.add,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                  ),
-                ),
+                showTextButton(
+                    context, btnHeight, localizedStrings.fRawCategoryManagement,
+                    () {
+                  showFormulaTypeMgrDialog();
+                },
+                    Theme.of(context).colorScheme.onPrimary,
+                    Theme.of(context).colorScheme.primary,
+                    Theme.of(context).colorScheme.onPrimary)
               ],
             )
           ]),
         ),
       ]),
-      Row(children: [
+      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         SizedBox(
-          width: width / 2,
+          width: width / 3,
           height: 90,
           child: Column(children: [
-            showItemName(localizedStrings.fConfidential, true),
+            showItemName('', true),
             Row(
               children: [
                 Checkbox(
@@ -596,46 +639,21 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                 Expanded(
                   child: Text(
                     localizedStrings.fConfidential,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurface,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    style: Theme.of(context).textTheme.bodySmall!.apply(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                // Tooltip(
-                //   message: '自由配方模式', // 提示信息
-                //   child: ElevatedButton(
-                //     style: ElevatedButton.styleFrom(
-                //       fixedSize: const Size(150, 48),
-                //       backgroundColor: Theme.of(context).colorScheme.primary,
-                //       foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                //       shape: RoundedRectangleBorder(
-                //         borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
-                //       ),
-                //     ),
-                //     onPressed: null,
-                //     child: Text(
-                //       "自由配方模式",
-                //       style: TextStyle(
-                //         color: Theme.of(context)
-                //             .colorScheme
-                //             .onPrimary, // 可以根据需要调整文本颜色
-                //         fontSize: 14, // 可以根据需要调整字体大小
-                //         overflow: TextOverflow.ellipsis,
-                //         fontWeight: FontWeight.normal,
-                //       ),
-                //     ),
-                //   ),
-                // )
               ],
             ),
           ]),
         ),
         SizedBox(
-          width: width / 2,
+          width: width / 3,
           height: 90,
           child: Column(children: [
-            showItemName(localizedStrings.fNeedContainer, true),
+            showItemName('', true),
             Row(
               children: [
                 Checkbox(
@@ -649,16 +667,20 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                 Expanded(
                   child: Text(
                     localizedStrings.fNeedContainer,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurface,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    style: Theme.of(context).textTheme.bodySmall!.apply(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
             ),
           ]),
         ),
+        SizedBox(
+          width: width / 3,
+          child: SizedBox(),
+        )
       ]),
     ]);
   }
@@ -716,22 +738,16 @@ class EditFormulaPageState extends State<EditFormulaPage> {
               color: isSelected
                   ? Theme.of(context).colorScheme.primary
                   : Theme.of(context).colorScheme.surfaceContainerLow,
-              border: Border(
-                right: BorderSide(
-                  color: Theme.of(context).colorScheme.outline,
-                  width: 1,
-                ),
-              ),
               shape: BoxShape.circle,
             ),
             alignment: Alignment.center,
             child: Text(
               '${index + 1}',
-              style: TextStyle(
-                color: isSelected
-                    ? Theme.of(context).colorScheme.onPrimary
-                    : Theme.of(context).colorScheme.onSurface,
-              ),
+              style: Theme.of(context).textTheme.bodySmall!.apply(
+                    color: isSelected
+                        ? Theme.of(context).colorScheme.onPrimary
+                        : Theme.of(context).colorScheme.onSurface,
+                  ),
             ),
           ),
           SizedBox(width: 10),
@@ -739,7 +755,18 @@ class EditFormulaPageState extends State<EditFormulaPage> {
               child: InkWell(
             onTap: () {
               setState(() {
-                selectedIndex = index;
+                if (selectedIndex == index) {
+                  selectedIndex = -1;
+                } else {
+                  selectedIndex = index;
+
+                  selectedRawDataInfo =
+                      addFormulaRawList[index].rawDataInfo; // 更新选中的原料信息
+                  rawMaterialCtl.text =
+                      '${selectedRawDataInfo!.rawMaterial.materialId} ${selectedRawDataInfo!.rawMaterial.materialName}';
+                  wgtCtl.text = addFormulaRawList[index].wgt.toString();
+                  errorCtl.text = addFormulaRawList[index].error.toString();
+                }
               });
             },
             child: Container(
@@ -947,6 +974,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                           iconSize: 24,
                           onPressed: () {
                             setState(() {
+                              selectedIndex = -1;
                               addFormulaRawList.removeAt(index);
                               updateTotalWgt();
                             });
@@ -981,12 +1009,6 @@ class EditFormulaPageState extends State<EditFormulaPage> {
             width: 22,
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surfaceContainerLow,
-              border: Border(
-                right: BorderSide(
-                  color: Theme.of(context).colorScheme.outline,
-                  width: 1,
-                ),
-              ),
               shape: BoxShape.circle,
             ),
             alignment: Alignment.center,
@@ -1056,356 +1078,395 @@ class EditFormulaPageState extends State<EditFormulaPage> {
 
   // 显示添加部分的组件
   Widget showAddWidget(BoxConstraints constraints) {
-    return Expanded(
-        flex: 11,
-        child: Container(
-            padding: const EdgeInsets.only(right: 20),
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 54,
-                  child: Row(children: [
-                    Expanded(
-                        child: Container(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        localizedStrings.fSetRawMaterialBtn,
-                        style: Theme.of(context).textTheme.bodyMedium!.apply(
-                              color: Theme.of(context).colorScheme.onSurface,
-                            ),
-                      ),
-                    ))
+    return Container(
+        height: 360,
+        width: (constraints.maxWidth - 20) / 30 * 14,
+        padding: const EdgeInsets.only(right: 20),
+        child: Column(
+          children: [
+            SizedBox(
+              height: 54,
+              child: Row(children: [
+                Expanded(
+                    child: Container(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    localizedStrings.fSetRawMaterialBtn,
+                    style: Theme.of(context).textTheme.labelMedium!.apply(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                  ),
+                )),
+                TextButton(
+                  onPressed: () {
+                    showAddRawInfoDialog();
+                  },
+                  child: Text(localizedStrings.fAddRawMaterialBtn,
+                      style: Theme.of(context).textTheme.bodySmall!.apply(
+                            color: Theme.of(context).colorScheme.primary,
+                          )),
+                )
+              ]),
+            ),
+
+            SizedBox(
+              height: 90,
+              width: constraints.maxWidth - 20,
+              child: Row(children: [
+                Expanded(
+                  flex: 1,
+                  child: Column(children: [
+                    SizedBox(
+                      height: 42,
+                      child: showItemName(
+                          localizedStrings.fSelectRawMaterialHint, false),
+                    ),
+                    showRawDropDownBtn(
+                      localizedStrings.fSelectRawMaterialHint,
+                    )
                   ]),
                 ),
                 SizedBox(
-                  height: constraints.maxHeight - 54,
-                  child: ListView(
-                    children: [
+                  width: 20,
+                ),
+                Expanded(
+                    flex: 1,
+                    child: Column(children: [
                       SizedBox(
-                        height: 90,
-                        child: Row(children: [
-                          Expanded(
-                            flex: 1,
-                            child: Column(children: [
-                              SizedBox(
-                                height: 42,
-                                child: showItemName(
-                                    localizedStrings.fSelectRawMaterialHint,
-                                    false),
-                              ),
-                              showRawDropDownBtn(
-                                localizedStrings.fSelectRawMaterialHint,
-                              )
-                            ]),
-                          ),
-                          SizedBox(
-                            width: 20,
-                          ),
-                          Expanded(
-                              flex: 1,
-                              child: Column(children: [
-                                SizedBox(
-                                  height: 42,
-                                  child: showItemName(
-                                      formulaModeCtl.text ==
-                                              FormulaMode.wgt.name
-                                          ? localizedStrings.fWeightMode + ':'
-                                          : localizedStrings.fPctMode + ':',
-                                      false),
-                                ),
-                                SizedBox(
-                                    height: 48,
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: TextField(
-                                            controller: wgtCtl,
-                                            onChanged: (value) {
-                                              setState(() {});
-                                            },
-                                            inputFormatters: [
-                                              FilteringTextInputFormatter.allow(
-                                                  RegExp(
-                                                      r'^(0|[1-9]\d*)(\.\d{0,4})?$')),
-                                              LengthLimitingTextInputFormatter(
-                                                  10),
-                                            ],
-                                            decoration: InputDecoration(
-                                              border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(
-                                                              0.0))),
-                                              hintText: formulaModeCtl.text ==
-                                                      FormulaMode.wgt.name
-                                                  ? localizedStrings
-                                                      .fInputWeightHint
-                                                  : localizedStrings
-                                                      .fInputPercentageHint,
-                                              hintStyle: Theme.of(context)
-                                                  .textTheme
-                                                  .bodySmall!
-                                                  .apply(
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .onSurfaceVariant,
-                                                  ),
-                                              suffixIcon: Container(
-                                                  width: 50,
-                                                  alignment: Alignment.center,
-                                                  child: Center(
-                                                    child: Text(
-                                                      formulaModeCtl.text ==
-                                                              FormulaMode
-                                                                  .wgt.name
-                                                          ? formulaUnitCtl.text
-                                                          : pctStrShow,
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodySmall!
-                                                          .apply(
-                                                            color: Theme.of(
-                                                                    context)
-                                                                .colorScheme
-                                                                .onSurfaceVariant,
-                                                          ),
-                                                    ),
-                                                  )),
-                                            ),
+                        height: 42,
+                        child: showItemName(
+                            formulaModeCtl.text == FormulaMode.wgt.name
+                                ? localizedStrings.fWeightMode + ':'
+                                : localizedStrings.fPctMode + ':',
+                            false),
+                      ),
+                      SizedBox(
+                          height: 48,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: wgtCtl,
+                                  onChanged: (value) {
+                                    setState(() {});
+                                  },
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp(r'^(0|[1-9]\d*)(\.\d{0,4})?$')),
+                                    LengthLimitingTextInputFormatter(10),
+                                  ],
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(0.0))),
+                                    hintText: formulaModeCtl.text ==
+                                            FormulaMode.wgt.name
+                                        ? localizedStrings.fInputWeightHint
+                                        : localizedStrings.fInputPercentageHint,
+                                    hintStyle: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall!
+                                        .apply(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .surfaceContainerHighest,
+                                        ),
+                                    suffixIcon: Container(
+                                        width: 50,
+                                        alignment: Alignment.center,
+                                        child: Center(
+                                          child: Text(
+                                            formulaModeCtl.text ==
+                                                    FormulaMode.wgt.name
+                                                ? formulaUnitCtl.text
+                                                : pctStrShow,
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .bodySmall!
                                                 .apply(
                                                   color: Theme.of(context)
                                                       .colorScheme
-                                                      .onSurface,
+                                                      .onSurfaceVariant,
                                                 ),
                                           ),
-                                        ),
-                                      ],
-                                    ))
-                              ]))
-                        ]),
-                      ),
-                      SizedBox(
-                        height: 90,
+                                        )),
+                                  ),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .apply(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
+                                      ),
+                                ),
+                              ),
+                            ],
+                          ))
+                    ]))
+              ]),
+            ),
+            SizedBox(
+              height: 90,
+              child: Row(children: [
+                Expanded(
+                  flex: 1,
+                  child: Column(children: [
+                    SizedBox(
+                      height: 42,
+                      child:
+                          showItemName(localizedStrings.fAllowableError, false),
+                    ),
+                    SizedBox(
+                        height: 48,
                         child: Row(children: [
                           Expanded(
-                            flex: 1,
-                            child: Column(children: [
-                              SizedBox(
-                                height: 42,
-                                child: showItemName(
-                                    localizedStrings.fAllowableError, false),
-                              ),
-                              SizedBox(
-                                  height: 48,
-                                  child: Row(children: [
-                                    Expanded(
-                                      child: TextField(
-                                        onChanged: (value) {
-                                          setState(() {});
-                                        },
-                                        controller: errorCtl,
-                                        inputFormatters: [
-                                          FilteringTextInputFormatter.allow(
-                                              RegExp(
-                                                  r'^(0|[1-9]\d*)(\.\d{0,4})?$')),
-                                          LengthLimitingTextInputFormatter(10),
-                                        ],
-                                        decoration: InputDecoration(
-                                          border: OutlineInputBorder(
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(0.0))),
-                                          hintText:
-                                              localizedStrings.fInputErrorHint,
-                                          hintStyle: Theme.of(context)
-                                              .textTheme
-                                              .bodySmall!
-                                              .apply(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .onSurfaceVariant,
-                                              ),
-                                          prefixIcon: Container(
-                                            width: 30,
-                                            alignment: Alignment.center,
-                                            child: Text(
-                                              showErrorStr,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodySmall!
-                                                  .apply(
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .onSurfaceVariant,
-                                                  ),
-                                            ),
-                                          ),
-                                          suffixIcon: Container(
-                                              width: 50,
-                                              alignment: Alignment.center,
-                                              child: Center(
-                                                child: Text(
-                                                  formulaModeCtl.text ==
-                                                          FormulaMode.wgt.name
-                                                      ? formulaUnitCtl.text
-                                                      : pctStrShow,
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodySmall!
-                                                      .apply(
-                                                        color: Theme.of(context)
-                                                            .colorScheme
-                                                            .onSurfaceVariant,
-                                                      ),
-                                                ),
-                                              )),
+                            child: TextField(
+                              onChanged: (value) {
+                                setState(() {});
+                              },
+                              controller: errorCtl,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'^(0|[1-9]\d*)(\.\d{0,4})?$')),
+                                LengthLimitingTextInputFormatter(10),
+                              ],
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(0.0))),
+                                hintText: localizedStrings.fInputErrorHint,
+                                hintStyle: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .apply(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .surfaceContainerHighest,
+                                    ),
+                                prefixIcon: Container(
+                                  width: 30,
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    showErrorStr,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall!
+                                        .apply(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurfaceVariant,
                                         ),
+                                  ),
+                                ),
+                                suffixIcon: Container(
+                                    width: 50,
+                                    alignment: Alignment.center,
+                                    child: Center(
+                                      child: Text(
+                                        formulaModeCtl.text ==
+                                                FormulaMode.wgt.name
+                                            ? formulaUnitCtl.text
+                                            : pctStrShow,
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodySmall!
                                             .apply(
                                               color: Theme.of(context)
                                                   .colorScheme
-                                                  .onSurface,
+                                                  .onSurfaceVariant,
                                             ),
                                       ),
-                                    ),
-                                  ]))
-                            ]),
+                                    )),
+                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall!
+                                  .apply(
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
+                                  ),
+                            ),
                           ),
+                        ]))
+                  ]),
+                ),
+                SizedBox(
+                  width: 20,
+                ),
+                Expanded(
+                    flex: 1,
+                    child: Column(children: [
+                      Container(
+                        height: 42,
+                      ),
+                      Row(children: [
+                        if (selectedIndex == -1)
+                          Expanded(
+                              child: showTextButton(
+                                  context,
+                                  btnHeight,
+                                  localizedStrings.gBtnAdd,
+                                  (selectedRawDataInfo == null ||
+                                          wgtCtl.text == '' ||
+                                          errorCtl.text == '')
+                                      ? null
+                                      : () {
+                                          performAddBtn();
+                                        },
+                                  Theme.of(context).colorScheme.onPrimary,
+                                  Theme.of(context).colorScheme.primary,
+                                  Theme.of(context).colorScheme.onPrimary)),
+                        if (selectedIndex != -1)
+                          Expanded(
+                              child: showTextButton(
+                                  context,
+                                  btnHeight,
+                                  localizedStrings.gBtnModify,
+                                  (selectedRawDataInfo == null ||
+                                          wgtCtl.text == '' ||
+                                          errorCtl.text == '')
+                                      ? null
+                                      : () {
+                                          performModifyBtn();
+                                        },
+                                  Theme.of(context).colorScheme.onPrimary,
+                                  Theme.of(context).colorScheme.primary,
+                                  Theme.of(context).colorScheme.onPrimary)),
+                        if (selectedIndex != -1)
                           SizedBox(
-                            width: 20,
+                            width: regularPadding,
                           ),
+                        if (selectedIndex != -1)
                           Expanded(
-                              flex: 1,
-                              child: Column(children: [
-                                Container(
-                                  height: 42,
-                                ),
-                                Row(children: [
-                                  Expanded(
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        foregroundColor: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary,
-                                        backgroundColor: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                        fixedSize:
-                                            const Size(double.infinity, 48),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.zero,
-                                        ),
-                                      ),
-                                      onPressed: (selectedRawDataInfo == null ||
-                                              wgtCtl.text == '' ||
-                                              errorCtl.text == '')
-                                          ? null
-                                          : () {
-                                              if (selectedRawDataInfo == null) {
-                                                return;
-                                              }
-                                              double wgt = 0.0;
-                                              if (wgtCtl.text != '') {
-                                                wgt = double.parse(wgtCtl.text);
-                                              }
-                                              double error = 0.0;
-                                              if (errorCtl.text != '') {
-                                                error =
-                                                    double.parse(errorCtl.text);
-                                              }
-
-                                              int num =
-                                                  addFormulaRawList.length + 1;
-                                              AddFormulaRawWgtInfo tempInfo =
-                                                  AddFormulaRawWgtInfo(
-                                                      rawDataInfo:
-                                                          selectedRawDataInfo!,
-                                                      sequence: num,
-                                                      wgt: wgt,
-                                                      error: error);
-                                              setState(() {
-                                                addFormulaRawList.add(tempInfo);
-                                                updateTotalWgt();
-                                                //清空输入框
-                                                wgtCtl.text = '';
-                                                errorCtl.text = '';
-                                                rawMaterialCtl.clear();
-                                                selectedRawDataInfo = null;
-                                              });
-                                            },
-                                      child: Text(
-                                        localizedStrings.gBtnAdd,
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.normal,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onPrimary,
-                                            overflow: TextOverflow.ellipsis),
-                                      ),
-                                    ),
-                                  )
-                                ]),
-                              ]))
-                        ]),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                                height: constraints.maxHeight -
-                                            54 -
-                                            90 -
-                                            90 -
-                                            30 <
-                                        90
-                                    ? 90
-                                    : constraints.maxHeight - 54 - 90 - 90 - 30,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .surfaceContainerLow,
-                                alignment: Alignment.centerLeft,
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                        child: Container(
-                                            padding: const EdgeInsets.all(10),
-                                            alignment: Alignment.topLeft,
-                                            child: SelectableText(
-                                              selectedRawDataInfo == null
-                                                  ? ""
-                                                  : selectedRawDataInfo!
-                                                      .rawMaterial.ingredient,
-                                              style: TextStyle(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .onSurface,
-                                              ),
-                                            )))
-                                  ],
-                                )),
+                              child: showTextButton(context, btnHeight,
+                                  localizedStrings.gBtnCancel, () {
+                            setState(() {
+                              wgtCtl.text = '';
+                              errorCtl.text = '';
+                              rawMaterialCtl.clear();
+                              selectedRawDataInfo = null;
+                              selectedIndex = -1;
+                            });
+                          },
+                                  Theme.of(context).colorScheme.onPrimary,
+                                  Theme.of(context)
+                                      .colorScheme
+                                      .surfaceContainerHighest,
+                                  Theme.of(context).colorScheme.onPrimary))
+                      ]),
+                    ]))
+              ]),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Container(
+                height: 100,
+                color: Theme.of(context).colorScheme.surfaceContainerLow,
+                alignment: Alignment.centerLeft,
+                child: Container(
+                    padding: const EdgeInsets.all(10),
+                    alignment: Alignment.topLeft,
+                    child: SelectableText(
+                      selectedRawDataInfo == null
+                          ? ""
+                          : selectedRawDataInfo!.rawMaterial.ingredient,
+                      style: Theme.of(context).textTheme.bodySmall!.apply(
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
-                        ],
-                      ),
-                    ],
-                  ),
-                )
+                    ))),
 
-                // 其他组件
-              ],
-            )));
+            // 其他组件
+          ],
+        ));
+  }
+
+  void showAddRawInfoDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 点击对话框外部不关闭对话框
+      builder: (BuildContext context) {
+        return AddRawDialog();
+      },
+    ).then((value) {
+      setState(() {});
+    });
+  }
+
+  void performModifyBtn() {
+    if (selectedRawDataInfo == null) {
+      return;
+    }
+    double wgt = 0.0;
+    if (wgtCtl.text != '') {
+      wgt = double.parse(wgtCtl.text);
+    }
+    double error = 0.0;
+    if (errorCtl.text != '') {
+      error = double.parse(errorCtl.text);
+    }
+
+    AddFormulaRawWgtInfo tempInfo = AddFormulaRawWgtInfo(
+        rawDataInfo: selectedRawDataInfo!,
+        sequence: selectedIndex,
+        wgt: wgt,
+        error: error);
+    setState(() {
+      addFormulaRawList[selectedIndex] = tempInfo;
+      updateTotalWgt();
+      //清空输入框
+      wgtCtl.text = '';
+      errorCtl.text = '';
+      rawMaterialCtl.clear();
+      selectedRawDataInfo = null;
+      selectedIndex = -1;
+    });
+  }
+
+  void performAddBtn() {
+    if (selectedRawDataInfo == null) {
+      return;
+    }
+    double wgt = 0.0;
+    if (wgtCtl.text != '') {
+      wgt = double.parse(wgtCtl.text);
+    }
+    double error = 0.0;
+    if (errorCtl.text != '') {
+      error = double.parse(errorCtl.text);
+    }
+
+    int num = addFormulaRawList.length + 1;
+    AddFormulaRawWgtInfo tempInfo = AddFormulaRawWgtInfo(
+        rawDataInfo: selectedRawDataInfo!,
+        sequence: num,
+        wgt: wgt,
+        error: error);
+    setState(() {
+      addFormulaRawList.add(tempInfo);
+      updateTotalWgt();
+      //清空输入框
+      wgtCtl.text = '';
+      errorCtl.text = '';
+      rawMaterialCtl.clear();
+      selectedRawDataInfo = null;
+    });
   }
 
   //保存功能
   void saveFormula(int func) {
     if (formulaDataList.isEmpty) {
       return;
+    }
+
+    for (var item in formulaDataList) {
+      if (item.header!.formulaHeader!.formulaName == formulaNameCtl.text &&
+          item.header!.formulaHeader!.formulaId !=
+              widget.editFormulaInfo.header!.formulaHeader!.formulaId) {
+        showTipInfo(localizedStrings.fFormulaNameDuplicate, context);
+        return;
+      }
     }
 
     //查找配方类别的ID
@@ -1453,526 +1514,277 @@ class EditFormulaPageState extends State<EditFormulaPage> {
     String jsonStr = formulaAddInfoToJson(tempReqAddF);
     PublicFunctions.editFormulaData(jsonStr);
 
-    if (func == 1) {
-      newFma();
-    } else {
-      Navigator.pop(context);
-    }
+    Navigator.pop(context);
   }
 
   // 显示顺序和删除按钮
   Widget showOrderWidget(BoxConstraints constraints) {
-    return Expanded(
-        flex: 13,
-        child: Container(
-            padding: const EdgeInsets.only(left: 10),
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 54,
-                  child: Row(children: [
-                    Expanded(
-                        child: Container(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        localizedStrings.fIngredientOrder,
-                        style: Theme.of(context).textTheme.bodyMedium!.apply(
-                              color: Theme.of(context).colorScheme.onSurface,
-                            ),
-                      ),
-                    )),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Expanded(
-                        child: Container(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        formulaModeCtl.text == FormulaMode.wgt.name
-                            ? '${localizedStrings.fTotalWeightLabel} :  ${totalWgt.toString()} ${formulaUnitCtl.text}'
-                            : '${localizedStrings.fTotalWeightLabel} :  ${totalWgt.toString()} %',
-                        style: Theme.of(context).textTheme.bodyMedium!.apply(
-                              color: Theme.of(context).colorScheme.onSurface,
-                            ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    )),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    TextButton(
-                        style: TextButton.styleFrom(
-                          fixedSize: const Size(100, 40),
-                          backgroundColor:
-                              Theme.of(context).colorScheme.surface,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
-                            side: BorderSide(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .outline, // 设置边框颜色
-                              width: 1, // 设置边框宽度
-                            ),
-                          ),
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            addFormulaRawList.clear();
-                          });
-                        },
-                        child: Text(
-                          localizedStrings.fClearBtn,
-                          style: Theme.of(context).textTheme.bodySmall!.apply(
-                                color: Theme.of(context).colorScheme.onSurface,
-                              ),
-                          overflow: TextOverflow.ellipsis,
-                        ))
-                  ]),
-                ),
-                if (needContainer) showContainerOrder(),
+    return Container(
+        height: 360,
+        width: (constraints.maxWidth - 20) / 30 * 15,
+        padding: const EdgeInsets.only(left: 10),
+        child: Column(
+          children: [
+            SizedBox(
+              height: 54,
+              child: Row(children: [
                 Expanded(
-                  child: ListView.builder(
-                    itemCount: addFormulaRawList.length,
-                    itemBuilder: (context, index) {
-                      final item = addFormulaRawList[index];
-                      final isSelected = index == selectedIndex;
-                      return showRawOrderRow(item, index, isSelected);
+                    child: Container(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    localizedStrings.fIngredientOrder,
+                    style: Theme.of(context).textTheme.labelMedium!.apply(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                  ),
+                )),
+                SizedBox(
+                  width: 10,
+                ),
+                Expanded(
+                    child: Container(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    formulaModeCtl.text == FormulaMode.wgt.name
+                        ? '${localizedStrings.fTotalWeightLabel} :  ${totalWgt.toString()} ${formulaUnitCtl.text}'
+                        : '${localizedStrings.fTotalWeightLabel} :  ${totalWgt.toString()} %',
+                    style: Theme.of(context).textTheme.labelMedium!.apply(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                )),
+                SizedBox(
+                  width: 10,
+                ),
+                TextButton(
+                    style: TextButton.styleFrom(
+                      fixedSize: const Size(100, 40),
+                      backgroundColor: Theme.of(context).colorScheme.surface,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
+                        side: BorderSide(
+                          color:
+                              Theme.of(context).colorScheme.outline, // 设置边框颜色
+                          width: 1, // 设置边框宽度
+                        ),
+                      ),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        addFormulaRawList.clear();
+                      });
                     },
+                    child: Text(
+                      localizedStrings.fClearBtn,
+                      style: Theme.of(context).textTheme.bodySmall!.apply(
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
+                      overflow: TextOverflow.ellipsis,
+                    ))
+              ]),
+            ),
+            if (needContainer) showContainerOrder(),
+            SizedBox(
+              height: needContainer ? 240 : 300,
+              child: ListView.builder(
+                itemCount: addFormulaRawList.length,
+                itemBuilder: (context, index) {
+                  final item = addFormulaRawList[index];
+                  final isSelected = index == selectedIndex;
+                  return showRawOrderRow(item, index, isSelected);
+                },
+              ),
+            ),
+          ],
+        ));
+  }
+
+  Widget showBtnRow() {
+    return SizedBox(
+        height: 86,
+        child: Center(
+            child: SizedBox(
+          width: 400,
+          height: 48,
+          child: Row(children: [
+            Expanded(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  fixedSize: const Size(double.infinity, 48),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
                   ),
                 ),
-              ],
-            )));
+                onPressed: formulaCodeCtl.text == '' ||
+                        formulaNameCtl.text == '' ||
+                        // formulaTypeCtl.text == '' ||
+                        formulaModeCtl.text == '' ||
+                        formulaUnitCtl.text == '' ||
+                        addFormulaRawList.isEmpty
+                    ? null
+                    : (formulaModeCtl.text == FormulaMode.pct.name &&
+                            totalWgt != 100)
+                        ? null
+                        : () {
+                            saveFormula(1);
+                          },
+                child: Text(
+                  localizedStrings.gBtnSave,
+                  style: Theme.of(context).textTheme.bodySmall!.apply(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+            SizedBox(
+              width: 20,
+            ),
+            Expanded(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor:
+                      Theme.of(context).colorScheme.onSurfaceVariant,
+                  backgroundColor: Theme.of(context).colorScheme.outline,
+                  fixedSize: const Size(double.infinity, 48),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  localizedStrings.fBackBtn,
+                  style: Theme.of(context).textTheme.bodySmall!.apply(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+          ]),
+        )));
+  }
+
+  Widget showFmaRemark() {
+    return Container(
+        height: 114,
+        alignment: Alignment.centerLeft,
+        child: Column(children: [
+          Container(
+              height: 42,
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              child: Row(children: [
+                Expanded(
+                    child: Container(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    localizedStrings.fRemarkCol,
+                    style: Theme.of(context).textTheme.labelMedium!.apply(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                  ),
+                )),
+              ])),
+          Container(
+              height: 72,
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              child: Row(children: [
+                Expanded(
+                    child: SizedBox(
+                  height: 72,
+                  child: TextField(
+                    controller: remarkCtl,
+                    style: Theme.of(context).textTheme.bodySmall!.apply(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(0.0))),
+                      hintText: localizedStrings.fInputRemarkHint,
+                      hintStyle: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                    maxLines: 5,
+                  ),
+                ))
+              ]))
+        ]));
   }
 
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final double widthFor3Item =
-        (width - 200) / 3 > 400 ? 400 : (width - 200) / 3;
+        (width - 300) / 3 > 380 ? 380 : (width - 300) / 3;
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
-        body:
-            // Padding(
-            //   padding: const EdgeInsets.all(14.0),
-            //   child:
-            Container(
+        body: Container(
           color: Theme.of(context).colorScheme.surface,
           child: Column(
             children: [
-              SizedBox(
-                height: 54,
-                child: Row(
-                  children: [
-                    SizedBox(width: 20),
-                    Container(
-                      width: 3,
-                      height: 14,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    SizedBox(width: 12),
-                    SizedBox(
-                      child: Text(
-                        localizedStrings.fEditFmaBtn,
-                        style: Theme.of(context).textTheme.bodyMedium!.apply(
-                              color: Theme.of(context).colorScheme.onSurface,
-                            ),
-                      ),
-                    ),
-                    SizedBox(width: 20),
-                  ],
-                ),
-              ),
-              Divider(
-                height: 1,
-                color: Theme.of(context).colorScheme.outline,
-              ),
-              Container(
-                  padding: const EdgeInsets.only(left: 20, right: 20),
-                  height: 202,
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        showCodeAndMode(widthFor3Item),
-                        showNameAndUnit(widthFor3Item),
-                        showTypeAndEncrypt(widthFor3Item),
-                      ])),
-              Divider(
-                height: 1,
-                color: Theme.of(context).colorScheme.outline,
+              ...dialogHeadStyle(
+                context,
+                localizedStrings.fEditFmaBtn,
+                false,
               ),
               Expanded(
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    return Container(
-                      padding: const EdgeInsets.only(left: 20, right: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          showAddWidget(constraints),
-                          Container(
-                            padding: const EdgeInsets.only(top: 24),
-                            child: VerticalDivider(
-                              width: 1,
-                              color: Theme.of(context).colorScheme.outline,
-                            ),
-                          ),
-                          showOrderWidget(constraints),
-                        ],
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Container(
+                          padding: const EdgeInsets.only(left: 20, right: 20),
+                          height: 202,
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                showCodeAndMode(widthFor3Item),
+                                showNameAndUnit(widthFor3Item),
+                                showTypeAndEncrypt(widthFor3Item + 200),
+                              ])),
+                      Divider(
+                        height: 1,
+                        color: Theme.of(context).colorScheme.outline,
                       ),
-                    );
-                  },
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          return Container(
+                            padding: const EdgeInsets.only(left: 20, right: 20),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                showAddWidget(constraints),
+                                Container(
+                                  height: 360,
+                                  padding: const EdgeInsets.only(top: 24),
+                                  child: VerticalDivider(
+                                    width: 1,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .surfaceContainerLow,
+                                  ),
+                                ),
+                                showOrderWidget(constraints),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                      showFmaRemark(),
+                    ],
+                  ),
                 ),
               ),
-              Container(
-                  height: 114,
-                  alignment: Alignment.centerLeft,
-                  child: Column(children: [
-                    Container(
-                        height: 42,
-                        padding: const EdgeInsets.only(left: 20, right: 20),
-                        child: Row(children: [
-                          Expanded(
-                              child: Container(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              localizedStrings.fRemarkCol,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall!
-                                  .apply(
-                                    color:
-                                        Theme.of(context).colorScheme.onSurface,
-                                  ),
-                            ),
-                          )),
-                        ])),
-                    Container(
-                        height: 72,
-                        padding: const EdgeInsets.only(left: 20, right: 20),
-                        child: Row(children: [
-                          Expanded(
-                              child: SizedBox(
-                            height: 72,
-                            child: TextField(
-                              controller: remarkCtl,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall!
-                                  .apply(
-                                    color:
-                                        Theme.of(context).colorScheme.onSurface,
-                                  ),
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(0.0))),
-                                hintText: localizedStrings.fInputRemarkHint,
-                                hintStyle: TextStyle(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onSurfaceVariant,
-                                ),
-                              ),
-                              maxLines: 5,
-                            ),
-                          ))
-                        ]))
-                  ])),
-              SizedBox(
-                  height: 86,
-                  child: Center(
-                      child: SizedBox(
-                    width: 400,
-                    height: 48,
-                    child: Row(children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor:
-                                Theme.of(context).colorScheme.onPrimary,
-                            backgroundColor:
-                                Theme.of(context).colorScheme.primary,
-                            fixedSize: const Size(double.infinity, 48),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
-                            ),
-                          ),
-                          onPressed: formulaCodeCtl.text == '' ||
-                                  formulaNameCtl.text == '' ||
-                                  formulaTypeCtl.text == '' ||
-                                  formulaModeCtl.text == '' ||
-                                  formulaUnitCtl.text == '' ||
-                                  addFormulaRawList.isEmpty
-                              ? null
-                              : (formulaModeCtl.text == FormulaMode.pct.name &&
-                                      totalWgt != 100)
-                                  ? null
-                                  : () {
-                                      //先判断是否有重复的ID和名称
-                                      //先判断formulaDataList是否为空
-                                      saveFormula(1);
-                                      //清空所有的内容，做一个干净的配方
-                                    },
-                          child: Text(
-                            localizedStrings.gBtnSave,
-                            style: TextStyle(
-                              fontWeight: FontWeight.normal,
-                              color: Theme.of(context).colorScheme.onPrimary,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      Expanded(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
-                            backgroundColor:
-                                Theme.of(context).colorScheme.outline,
-                            fixedSize: const Size(double.infinity, 48),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text(
-                            localizedStrings.fBackBtn,
-                            style: Theme.of(context).textTheme.bodySmall!.apply(
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
-                                ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ),
-                    ]),
-                  ))),
+              showBtnRow()
             ],
           ),
           // ),
         ));
-  }
-}
-
-// 定义新增配方类型弹框组件
-class AddFormulaTypeDialog extends StatefulWidget {
-  const AddFormulaTypeDialog({super.key});
-  @override
-  AddFormulaTypeDialogState createState() => AddFormulaTypeDialogState();
-}
-
-class AddFormulaTypeDialogState extends State<AddFormulaTypeDialog> {
-  TextEditingController formulaTypeCtl = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      child: Container(
-        width: 610,
-        height: 376,
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(0),
-        ),
-        child: Column(
-          children: [
-            // 头部
-            Container(
-                height: 54,
-                padding: const EdgeInsets.only(left: 20, right: 20),
-                alignment: Alignment.centerLeft,
-                child: Row(children: [
-                  Container(
-                    width: 3,
-                    height: 14,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: Container(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        localizedStrings.fAddTypeBtn,
-                        style: Theme.of(context).textTheme.bodyMedium!.apply(
-                              color: Theme.of(context).colorScheme.onSurface,
-                            ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                      icon: Icon(
-                        Icons.cancel,
-                        size: 24,
-                        color: Theme.of(context).colorScheme.secondaryFixed,
-                      ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      })
-                ])),
-            // 分割线
-            Divider(
-              height: 1,
-              color: Theme.of(context).colorScheme.outline,
-            ),
-            // 中部
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.all(26),
-                height: 150,
-                width: 500,
-                child: Column(children: [
-                  SizedBox(
-                    height: 42,
-                    child: Row(children: [
-                      Expanded(
-                        child: Container(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            localizedStrings.fFmaCategoryCol,
-                            style: Theme.of(context).textTheme.bodySmall!.apply(
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
-                                ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ),
-                    ]),
-                  ),
-                  SizedBox(
-                    child: Row(children: [
-                      Expanded(
-                        child: Container(
-                            alignment: Alignment.centerLeft,
-                            child: TextField(
-                              onChanged: (value) {
-                                setState(() {});
-                              },
-                              controller: formulaTypeCtl,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(0.0))),
-                                hintText:
-                                    localizedStrings.fInputFormulaTypeHint,
-                                suffixIconConstraints:
-                                    BoxConstraints.tight(Size(40, 40)),
-                                suffixIcon: IconButton(
-                                  icon: Icon(
-                                    Icons.close,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurfaceVariant,
-                                  ),
-                                  onPressed: () {
-                                    formulaTypeCtl.clear(); // 清空文本
-                                    setState(() {});
-                                  },
-                                ),
-                              ),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall!
-                                  .apply(
-                                    color:
-                                        Theme.of(context).colorScheme.onSurface,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                              maxLines: 5,
-                              minLines: 1,
-                            )),
-                      ),
-                    ]),
-                  ),
-                ]),
-              ),
-            ),
-
-            // 底部
-            Container(
-              height: 96,
-              width: 400,
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor:
-                            Theme.of(context).colorScheme.onPrimary,
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        fixedSize: const Size(double.infinity, 48),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.zero,
-                        ),
-                      ),
-                      onPressed: formulaTypeCtl.text.isEmpty
-                          ? null
-                          : () {
-                              for (var item in formulaTypeList) {
-                                if (item.categoryName == formulaTypeCtl.text) {
-                                  showTipInfo(
-                                      localizedStrings.fTypeExistsMsg, context);
-                                  return;
-                                }
-                              }
-                              PublicFunctions.addFormulaType(
-                                  formulaTypeCtl.text);
-                              Navigator.pop(context);
-                            },
-                      child: Text(
-                        localizedStrings.gBtnConfirm,
-                        style: Theme.of(context).textTheme.bodyMedium!.apply(
-                              color: Theme.of(context).colorScheme.onPrimary,
-                            ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 20),
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor:
-                            Theme.of(context).colorScheme.onSurfaceVariant,
-                        backgroundColor: Theme.of(context)
-                            .colorScheme
-                            .surfaceContainerHighest,
-                        fixedSize: const Size(double.infinity, 48),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.zero,
-                        ),
-                      ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        localizedStrings.gBtnCancel,
-                        style: Theme.of(context).textTheme.bodyMedium!.apply(
-                              color: Theme.of(context).colorScheme.onPrimary,
-                            ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
 
