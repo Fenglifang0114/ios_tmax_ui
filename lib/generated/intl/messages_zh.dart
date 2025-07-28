@@ -35,6 +35,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "batch_down_export": MessageLookupByLibrary.simpleMessage("导出"),
     "batch_down_slt_folder": MessageLookupByLibrary.simpleMessage("选择文件夹"),
     "bt_setting_title": MessageLookupByLibrary.simpleMessage("蓝牙设置"),
+    "btnContinueWeighing": MessageLookupByLibrary.simpleMessage("继续称重"),
+    "btnFreeFormulaMode": MessageLookupByLibrary.simpleMessage("自由配方模式"),
+    "btnNormalMode": MessageLookupByLibrary.simpleMessage("正常模式"),
+    "btnRestart": MessageLookupByLibrary.simpleMessage("重新开始"),
+    "btnTemporarySave": MessageLookupByLibrary.simpleMessage("暂存"),
     "btn_add_lic_file": MessageLookupByLibrary.simpleMessage("选择认证文件"),
     "button_add_license": MessageLookupByLibrary.simpleMessage("添加认证"),
     "button_back": MessageLookupByLibrary.simpleMessage("返回"),
@@ -104,6 +109,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "fComScale": MessageLookupByLibrary.simpleMessage("串口秤"),
     "fCompleteIngredientsBtn": MessageLookupByLibrary.simpleMessage("完成配料"),
     "fConfidential": MessageLookupByLibrary.simpleMessage("保密"),
+    "fConfirmClearAndEnterFreeModeMsg": MessageLookupByLibrary.simpleMessage(
+      "当前数据未保存，确认清空并开启自由配料模式吗？",
+    ),
     "fConfirmDelete": MessageLookupByLibrary.simpleMessage("确定删除？"),
     "fCreatedAtCol": MessageLookupByLibrary.simpleMessage("创建时间"),
     "fCreatedTimeCol": MessageLookupByLibrary.simpleMessage("创建时间"),
@@ -112,7 +120,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "当前原料超重，请选择放弃配料还是修正？",
     ),
     "fCurrentMaterialWeightInvalidMsg": MessageLookupByLibrary.simpleMessage(
-      "当前原料重量不合格！",
+      "当前原料重量不合格！确定继续？",
     ),
     "fCurrentWeightLabel": MessageLookupByLibrary.simpleMessage("当前重量"),
     "fDataTooLittle": MessageLookupByLibrary.simpleMessage("数据量太少，无法保存"),
@@ -247,6 +255,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "fWeightMode": MessageLookupByLibrary.simpleMessage("重量"),
     "fWgtUnit": MessageLookupByLibrary.simpleMessage("重量单位"),
     "firmware_update": MessageLookupByLibrary.simpleMessage("串口更新软件"),
+    "formulaDeleteError": MessageLookupByLibrary.simpleMessage("存在临时称重记录"),
     "gAlignment": MessageLookupByLibrary.simpleMessage("对齐方式:"),
     "gAppInformation": MessageLookupByLibrary.simpleMessage("应用信息"),
     "gAttribute": MessageLookupByLibrary.simpleMessage("属性"),
@@ -429,6 +438,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "1.点击【获取基本数据】；\n2.T-Config会自动收集秤上的基本数据，并在界面上同步显示。\n3.可以点击左上角的菜单栏按钮，选择需要切换的设备。",
     ),
     "gTipCalResult": MessageLookupByLibrary.simpleMessage("如果校准失败，请点击\'重新校准\'"),
+    "gTipCalibrating": MessageLookupByLibrary.simpleMessage("正在标定..."),
     "gTipCalibrationAgain": MessageLookupByLibrary.simpleMessage("重新校准"),
     "gTipCalibrationFailed": MessageLookupByLibrary.simpleMessage("校准失败"),
     "gTipCalibrationResult": MessageLookupByLibrary.simpleMessage("校准结果"),
@@ -436,6 +446,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipCalibrationWarning": MessageLookupByLibrary.simpleMessage(
       "正在校准，建议先完成校准后再切换秤！是否确定切换？",
     ),
+    "gTipCalibrationWeight": MessageLookupByLibrary.simpleMessage("请输入校准重量"),
     "gTipCheckWgtPageHelp": MessageLookupByLibrary.simpleMessage(
       "1.点击【编辑】设置上下限（判断是基于软件设置的上下限，而不是秤）。设置完成后，放置重量，相应的报警灯会亮起；\n2.点击【保存】按钮，保存当前称重记录；\n3.点击【显示报表】，会在界面下方显示已保存的称重记录；\n4.点击【设置】可以切换为自动保存模式，并可以设置为在OK/HIGH/LOW/ALL时保存。\n5.在【PLU名字】中输入PLU编号或名称，以调用T-Industry数据库中的PLU（此处的PLU不是秤上的PLU）；\n6.点击【报表设置】，可以选择称重数据显示的信息；（目前暂无功能的变量：Product Code、Item Code、User Name、User NO）\n7.点击标题行中的上下箭头，可以对报表进行升/降的排序；\n8.点击【导出】按钮，以表格形式导出保存的所有数据；\n\n注：\n1.上下限的单位是当前秤上选择的单位。在软件中设置好上下限后，并通过秤切换单位后，上下限的值不会进行单位换算。\n2.目前软件判断上下限是从大于零点开始（一般秤上是从20d开始）。\n",
     ),
@@ -500,8 +511,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipGetIP": MessageLookupByLibrary.simpleMessage("获取IP中，请稍后..."),
     "gTipGetIpFail": MessageLookupByLibrary.simpleMessage("获取IP失败!"),
     "gTipGetIpOk": MessageLookupByLibrary.simpleMessage("获取IP成功！"),
+    "gTipGetParameterFail": MessageLookupByLibrary.simpleMessage("获取参数失败"),
     "gTipGettingDeviceTime": MessageLookupByLibrary.simpleMessage(
       "正在获取设备时间，请稍等",
+    ),
+    "gTipGettingParameter": MessageLookupByLibrary.simpleMessage(
+      "正在获取参数，请稍等...",
+    ),
+    "gTipGravityAcceleration": MessageLookupByLibrary.simpleMessage("重力加速度"),
+    "gTipGravityAccelerationInputError": MessageLookupByLibrary.simpleMessage(
+      "重力加速度输入错误",
     ),
     "gTipGrossText": MessageLookupByLibrary.simpleMessage("毛重文本"),
     "gTipHelp": MessageLookupByLibrary.simpleMessage("帮助"),
@@ -517,7 +536,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "gTipIndustrialApplications": MessageLookupByLibrary.simpleMessage("工业应用"),
     "gTipInformation": MessageLookupByLibrary.simpleMessage("信息"),
-    "gTipInputRange": MessageLookupByLibrary.simpleMessage("请输入量程"),
+    "gTipInitialZero": MessageLookupByLibrary.simpleMessage("初始置零"),
     "gTipInstallService": MessageLookupByLibrary.simpleMessage("安装服务"),
     "gTipInvalidInput": MessageLookupByLibrary.simpleMessage("输入的数据不合法"),
     "gTipInvalidWeightData": MessageLookupByLibrary.simpleMessage("重量数据无效"),
@@ -535,7 +554,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "请加载砝码，等待绿灯亮起后点击下一步",
     ),
     "gTipManual": MessageLookupByLibrary.simpleMessage("手动"),
+    "gTipManualZero": MessageLookupByLibrary.simpleMessage("手动归零"),
     "gTipMaxLength": MessageLookupByLibrary.simpleMessage("最大长度"),
+    "gTipMaxRange": MessageLookupByLibrary.simpleMessage("最大量程"),
     "gTipModelNotMatch": MessageLookupByLibrary.simpleMessage(
       "机种名不匹配. 是否强制更新?",
     ),
@@ -555,6 +576,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipPlaceWeight": MessageLookupByLibrary.simpleMessage("放置砝码"),
     "gTipPleaseEmptyScalePan": MessageLookupByLibrary.simpleMessage("请清空秤盘"),
     "gTipPleaseLoadWeight": MessageLookupByLibrary.simpleMessage("请加载砝码"),
+    "gTipPleaseStableWeight": MessageLookupByLibrary.simpleMessage("请先稳定重量."),
     "gTipPluDownload": MessageLookupByLibrary.simpleMessage("此应用时用于下发产品信息."),
     "gTipPluDuplicated": MessageLookupByLibrary.simpleMessage("重复"),
     "gTipPlueditPageHelp": MessageLookupByLibrary.simpleMessage(
@@ -612,16 +634,18 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipServiceStatus": MessageLookupByLibrary.simpleMessage("服务状态:"),
     "gTipServiceStoped": MessageLookupByLibrary.simpleMessage("服务已停止"),
     "gTipServiceUninstalled": MessageLookupByLibrary.simpleMessage("服务未安装"),
-    "gTipSetFullScale": MessageLookupByLibrary.simpleMessage("设置满量程"),
-    "gTipSetFullScaleThenNext": MessageLookupByLibrary.simpleMessage(
-      "请设置满量程重量，然后点击下一步",
+    "gTipSetCalibrationWeight": MessageLookupByLibrary.simpleMessage("设置校准重量"),
+    "gTipSetCalibrationWeightThenNext": MessageLookupByLibrary.simpleMessage(
+      "请设置校准重量，然后点击下一步",
     ),
+    "gTipSetParameterFail": MessageLookupByLibrary.simpleMessage("设置参数失败"),
     "gTipStableText": MessageLookupByLibrary.simpleMessage("稳定文本"),
     "gTipStableTime": MessageLookupByLibrary.simpleMessage("稳定时间(s)"),
     "gTipStandaloneMode": MessageLookupByLibrary.simpleMessage("独立模式"),
     "gTipStartService": MessageLookupByLibrary.simpleMessage("开始服务"),
     "gTipStopService": MessageLookupByLibrary.simpleMessage("停止服务"),
     "gTipStringProperty": MessageLookupByLibrary.simpleMessage("字符串属性"),
+    "gTipSwitchUnit": MessageLookupByLibrary.simpleMessage("切换单位，请同时切换相应的量程"),
     "gTipTakeOut": MessageLookupByLibrary.simpleMessage("此应用是用来实现减法秤."),
     "gTipTakeOutPageHelp": MessageLookupByLibrary.simpleMessage(
       "1.点击【开始】以启动减法秤功能，记录卸载过程中称重值的减量（条件是秤上必须有重量）。\n2.点击【显示报表】，会在界面下方显示已保存的记录；\n3.点击【设置】，可以将【保存模式】切换为【自动】；\n4.在【设置】中，您还可以设置数据导出的日期格式和数据分隔符；\n5.在【PLU名字】中输入PLU编号或名称，以调用T-Industry数据库中的PLU（此处的PLU不是秤上的PLU）；\n6.点击【报表设置】，可以选择称重数据显示的信息；（目前暂无功能的变量：Product Code、Item Code、User Name、User NO）\n7.点击标题行中的上下箭头，可以对报表进行升/降的排序；\n8.点击【导出】按钮，以表格形式导出保存的所有数据；\n9.点击【停止】按钮，可以关闭此功能。\n\n注：\n报表中的重量是指减量，而不是秤盘上的所有重量。\n",
@@ -646,12 +670,14 @@ class MessageLookup extends MessageLookupByLibrary {
       "1.此功能界面上会实时同步秤上的称重数据（支持所有单位包括PCS、PCT）；\n2.可以点击【扣重】和【归零】对秤执行操作；\n3.点击左上角的列表按钮可以在列表中查看已连接设备的并进行更换。\n\n注：\n1.此功能可以通过连接串口、网口或Wi-Fi使用。\n2.T-Industry的称重单位与秤保持一致，但是切换单位需要在秤上执行。\n",
     ),
     "gTipWeightSummationMode": MessageLookupByLibrary.simpleMessage("重量汇总模式"),
+    "gTipWeightUnit": MessageLookupByLibrary.simpleMessage("重量单位"),
     "gTipWgtDataCollectionHelp": MessageLookupByLibrary.simpleMessage(
       "1.点击【保存】按钮，手动保存当前称重数据（无数量限制）；点击【导出】按钮，以表格形式导出保存的所有数据；\n2.点击【设置】，可以将【保存模式】切换为【自动】；\n3.在【设置】中，您还可以设置数据导出的日期格式和数据分隔符；\n4.在【PLU名字】中输入PLU编号或名称，以调用T-Industry数据库中的PLU（此处的PLU不是秤上的PLU）；\n5.点击【报表设置】，可以选择称重数据显示的信息；（目前暂无功能的变量：Product Code、Item Code、User Name、User NO）\n6.点击标题行中的上下箭头，可以对报表进行升/降的排序。\n\n注：\n1.需要先清空秤盘，才会保存下一条称重的数据（零点不会被保存）。\n2.【报表设置】中的上下限是T-Industry数据中PLU设置的上下限，并非秤上设置的上下限。\n3.关闭/重启软件，已保存的数据不会被清除。\n",
     ),
     "gTipWifiSettingPageHelp": MessageLookupByLibrary.simpleMessage(
       "1.从左侧菜单栏中选择要连接的Wi-Fi；\n2.输入密码，点击【连接】获取IP地址（IPv4）；\n3.返回主界面，点击【多台秤管理】；\n4.点击左侧的【+】按钮，输入IP地址和串口号；\n5.点击【确认】连接秤。\n",
     ),
+    "gTipZeroTracking": MessageLookupByLibrary.simpleMessage("零点追踪"),
     "gTitleActivationFeedback": MessageLookupByLibrary.simpleMessage("激活反馈"),
     "gTitleActivationMethod": MessageLookupByLibrary.simpleMessage("激活方式"),
     "gTitleAddDevice": MessageLookupByLibrary.simpleMessage("添加设备"),
@@ -734,6 +760,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "l_time_var": MessageLookupByLibrary.simpleMessage("Time"),
     "l_total_cnt_expl": MessageLookupByLibrary.simpleMessage("总数量"),
     "l_total_cnt_var": MessageLookupByLibrary.simpleMessage("TotalCount"),
+    "l_total_pcs_expl": MessageLookupByLibrary.simpleMessage("总pcs"),
+    "l_total_pcs_var": MessageLookupByLibrary.simpleMessage("TotalPcs"),
     "l_total_wgt_expl": MessageLookupByLibrary.simpleMessage("总重量"),
     "l_total_wgt_var": MessageLookupByLibrary.simpleMessage("TotalWeight"),
     "l_unit_wgt_expl": MessageLookupByLibrary.simpleMessage("单重"),
@@ -773,6 +801,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "menuWeighingDataCollection": MessageLookupByLibrary.simpleMessage(
       "称重数据收集",
     ),
+    "menuWeighingSetting": MessageLookupByLibrary.simpleMessage("称重设置"),
     "menuWifiSetting": MessageLookupByLibrary.simpleMessage("Wi-Fi设置"),
     "new_license_text": MessageLookupByLibrary.simpleMessage("新认证:"),
     "output_confirm_info": MessageLookupByLibrary.simpleMessage("请确认文件夹的名字!"),
@@ -926,7 +955,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "subTitleBluetoothSetting": MessageLookupByLibrary.simpleMessage(
       "设置蓝牙名称与信号强度。",
     ),
-    "subTitleCalibration": MessageLookupByLibrary.simpleMessage("对秤进行单点或线性标定。"),
+    "subTitleCalibration": MessageLookupByLibrary.simpleMessage(
+      "对秤进行称重参数设置及标定",
+    ),
     "subTitleCheckWeighing": MessageLookupByLibrary.simpleMessage(
       "在线检重，并生成检重数据报表。",
     ),
@@ -979,9 +1010,22 @@ class MessageLookup extends MessageLookupByLibrary {
     "subTitleWifiSetting": MessageLookupByLibrary.simpleMessage(
       "获取静态/动态IP地址并连接Wi-Fi",
     ),
+    "tipEnsureWeightCorrect": MessageLookupByLibrary.simpleMessage(
+      "请确保当前重量数据正确，是否继续？",
+    ),
+    "tipFormulaDataError": MessageLookupByLibrary.simpleMessage("配方数据错误！"),
+    "tipNoRawMaterialWeightData": MessageLookupByLibrary.simpleMessage(
+      "没有原料重量数据，无需暂存",
+    ),
     "tipPage": MessageLookupByLibrary.simpleMessage("页"),
     "tipPageSequnce": MessageLookupByLibrary.simpleMessage("第"),
     "tipPageTotal": MessageLookupByLibrary.simpleMessage("共"),
+    "tipTemporarySaveFormulaRecord": MessageLookupByLibrary.simpleMessage(
+      "暂存记录",
+    ),
+    "titleConfidentialWeighingMode": MessageLookupByLibrary.simpleMessage(
+      "保密称重模式",
+    ),
     "txt_serial_port_connected": MessageLookupByLibrary.simpleMessage("串口已连接"),
     "txt_serial_port_connected_fail": MessageLookupByLibrary.simpleMessage(
       "无法连接",

@@ -1,22 +1,23 @@
-//保密配方
+//保密配方 暂存的和正常称重的公用页面  保密的配方不会有修改配方的按钮
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:t_max/data/comscaleinfo_data.dart';
+import 'package:t_max/data/darf_fma_data_from_db.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/formula_scale_data.dart';
 import 'package:t_max/data/formula_wgt_process_data.dart';
 import 'package:t_max/data/get_auto_next_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
+import 'package:t_max/data/icons.dart';
 import 'package:t_max/data/req_add_fma_rec_data.dart';
 import 'package:t_max/data/req_formula_data.dart';
 import 'package:t_max/data/reqweightdata_data.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
-import 'package:t_max/data/timer_manager.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/data/formula_from_db_data.dart';
+import 'package:t_max/widget/common_widget.dart';
 import 'package:t_max/widget/fma_process_bar.dart';
 import 'package:t_max/widget/sticky_table.dart';
 import '../data/language.dart';
@@ -27,11 +28,17 @@ class FormulaSecretWeighingPage extends StatefulWidget {
       required this.selectFormula,
       required this.selScaleId,
       required this.totalFmaWgt,
-      required this.fmaUnit});
+      required this.fmaUnit,
+      required this.fromDraft,
+      required this.selectDarftInfo});
+
   final FormulaInfoDb selectFormula;
   final int selScaleId;
   final double totalFmaWgt;
   final String fmaUnit;
+  final bool fromDraft; //是否来自草稿
+  final DarfFmaInfoListFromDb? selectDarftInfo; //草稿配方信息
+
   @override
   State<FormulaSecretWeighingPage> createState() =>
       FormulaSecretWeighingPageState();
@@ -75,6 +82,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
   dynamic _eventbus7;
   dynamic _eventbus8;
   dynamic _eventbus9;
+  dynamic _eventbus10;
 
   Timer? setWgtStartFalseTimer; // 用于每3秒将isWgtStart设置为false的定时器
   Timer? checkWgtStartTimer; // 用于每5秒检查isWgtStart的定时器
@@ -87,6 +95,25 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
   int stableDurationCounter = 0; // 稳定时长计数器
   final ValueNotifier<bool> autoNextStepNotifier = ValueNotifier(false);
   int stableTime = 0;
+
+  FormulaInfoDb myFmaInfo = FormulaInfoDb(); //当前配方信息
+  Timer? _cntAliveTimer;
+  // 启动发送存活消息的定时器
+  void startCntAliveTimer(int time) {
+    _cntAliveTimer?.cancel();
+
+    _cntAliveTimer = Timer(Duration(seconds: time), () {
+      if (widget.selScaleId != -1) {
+        PublicFunctions.sendScaleAlive(widget.selScaleId);
+      }
+      startCntAliveTimer(10);
+    });
+  }
+
+  // 停止发送存活消息的定时器
+  void stopCntAliveTimer() {
+    _cntAliveTimer?.cancel();
+  }
 
   // 每3秒钟将isWgtStart设置为false
   void startSetWgtStartFalseTimer() {
@@ -105,6 +132,9 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
       if (isWgtStart == false) {
         // 重新发送请求开启连续发送
         PublicFunctions.getWeight(widget.selScaleId);
+        setState(() {
+          myReqWeightCountine.msgBody = null;
+        });
       }
     });
   }
@@ -113,7 +143,9 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
   void startAutoNextStepTimer() {
     autoNextStepTimer =
         Timer.periodic(const Duration(milliseconds: 50), (timer) {
-      if (!myReqWeightCountine.msgBody!.isStable) {
+      if (myReqWeightCountine.msgBody == null) {
+        stableDurationCounter = 0;
+      } else if (!myReqWeightCountine.msgBody!.isStable) {
         stableDurationCounter = 0;
       } else if (myReqWeightCountine.msgBody != null &&
           myReqWeightCountine.msgBody!.isStable &&
@@ -123,7 +155,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
         stableDurationCounter++;
         if (stableDurationCounter >= stableTime * 20) {
           final isOk = checkValueIsOk();
-          if (isOk == "ok") {
+          if (isOk == "ok" && startFormula) {
             nextStep(isOk); // 执行下一步操作
             stableDurationCounter = 0; // 重置计数器
           }
@@ -147,11 +179,11 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
 
 //百分比模式下初始化重量和单位
   void initTotalWgtUnit() {
-    if (widget.selectFormula.header!.formulaHeader!.formulaMode == 'pct') {
+    if (myFmaInfo.header!.formulaHeader!.formulaMode == 'pct') {
       initTotalWeight = widget.totalFmaWgt;
       initTotalWeight = double.parse(initTotalWeight.toStringAsFixed(3));
-      widget.selectFormula.header!.formulaHeader!.formulaUnit = widget.fmaUnit;
-      widget.selectFormula.header!.formulaHeader!.totalWeight = initTotalWeight;
+      myFmaInfo.header!.formulaHeader!.formulaUnit = widget.fmaUnit;
+      myFmaInfo.header!.formulaHeader!.totalWeight = initTotalWeight;
       needTotalWgt = initTotalWeight;
     }
   }
@@ -161,11 +193,10 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
     double maxValue = 0.0;
     double errorWgt = 0.0; //误差重量值
     double targetWgt = 0.0; //目标重量值
-    String fmode =
-        widget.selectFormula.header!.formulaHeader!.formulaMode ?? '';
-    needTotalWgt = widget.selectFormula.header!.formulaHeader!.totalWeight!;
+    String fmode = myFmaInfo.header!.formulaHeader!.formulaMode ?? '';
+    needTotalWgt = myFmaInfo.header!.formulaHeader!.totalWeight!;
     //如果包含容器，第一个写容器  修改了此处
-    if (widget.selectFormula.header!.formulaHeader!.needContainer!) {
+    if (myFmaInfo.header!.formulaHeader!.needContainer!) {
       FormulaWgtProcessData processWgt = FormulaWgtProcessData(
         no: 0,
         rawId: '-',
@@ -185,7 +216,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
       processWgtList.add(processWgt);
     }
 
-    for (var detail in widget.selectFormula.details!) {
+    for (var detail in myFmaInfo.details!) {
       if (fmode == 'wgt') {
         minValue = detail.formulaDetail!.materialWeight! -
             detail.formulaDetail!.allowableError!;
@@ -232,10 +263,6 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
     }
   }
 
-  getFmaUnit() {
-    fmaUnit = widget.selectFormula.header!.formulaHeader!.formulaUnit ?? '';
-  }
-
   void getScaleInfo() {
     PublicFunctions.getWeight(widget.selScaleId);
   }
@@ -255,9 +282,115 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
     recRecNumber = orderNumber;
   }
 
+  // 如果是暂存的配方数据，则需要将暂存的数据赋值给processWgtList
+  void initDarftFmaData() {
+    double lastNeedTotalWgt = needTotalWgt; // 保存上一次的总重量
+    if (widget.selectDarftInfo!.details!.isEmpty) {
+      return; // 如果没有暂存数据，则不进行赋值
+    }
+    for (var detail in widget.selectDarftInfo!.details!) {
+      if (detail.isContainer == true) {
+        processWgtList[0].currentWgt =
+            double.parse((detail.actualWeight ?? 0.0).toStringAsFixed(3));
+        continue; // 跳过容器
+      } else {
+        //找出seq 值一样的再赋值
+        for (var wgt in processWgtList) {
+          if (wgt.no == detail.seq) {
+            wgt.currentWgt =
+                double.parse((detail.actualWeight ?? 0.0).toStringAsFixed(3));
+            break; // 找到后跳出循环
+          }
+        }
+      }
+    }
+
+    // 计算误差并找出超标比例最大的原料
+    double maxExceedRatio = 0.0;
+    FormulaWgtProcessData? maxExceedWgt;
+    for (var wgt in processWgtList) {
+      if (wgt.no == 0) continue; // 跳过容器
+
+      double minWgt = wgt.minWgt!;
+      double maxWgt = wgt.maxWgt!;
+      double currentWgt = wgt.currentWgt!;
+      double targetWgt = wgt.targetWgt!;
+
+      // 计算误差
+
+      wgt.currentErrorWgt =
+          double.parse((currentWgt - targetWgt).toStringAsFixed(3));
+      wgt.currentErrorPct = double.parse(
+          (wgt.currentErrorWgt! / targetWgt * 100).toStringAsFixed(3));
+
+      // 判断状态
+      if (currentWgt >= minWgt && currentWgt <= maxWgt) {
+        wgt.isOK = "ok";
+      } else if (currentWgt < minWgt) {
+        wgt.isOK = "low";
+      } else {
+        wgt.isOK = "high";
+        double exceedRatio = (currentWgt - maxWgt) / maxWgt;
+        if (exceedRatio > maxExceedRatio) {
+          maxExceedRatio = exceedRatio;
+          maxExceedWgt = wgt;
+        }
+      }
+    }
+
+    // 如果有超标原料，按超标比例最大的重新计算配方目标值
+    if (maxExceedWgt != null) {
+      double ratio = maxExceedWgt.currentWgt! / maxExceedWgt.targetWgt!;
+      ratio = double.parse(ratio.toStringAsFixed(3)); // 保留三位小数
+      needTotalWgt = needTotalWgt * ratio; // 更新需要的总重量
+      needTotalWgt = double.parse(needTotalWgt.toStringAsFixed(3)); // 保留三位小数
+
+      if (myFmaInfo.header!.formulaHeader!.formulaMode == 'pct') {
+        for (var item in processWgtList) {
+          if (item.no == 0) {
+            continue;
+          }
+          item.targetWgt = needTotalWgt * item.targetPct! / 100;
+          item.targetWgt = double.parse(item.targetWgt!.toStringAsFixed(3));
+          item.errorWgt = needTotalWgt * item.errorPct! / 100;
+          item.errorWgt = double.parse(item.errorWgt!.toStringAsFixed(3));
+          item.minWgt = item.targetWgt! - item.errorWgt!;
+          item.minWgt = double.parse(item.minWgt!.toStringAsFixed(3));
+          item.maxWgt = item.targetWgt! + item.errorWgt!;
+          item.maxWgt = double.parse(item.maxWgt!.toStringAsFixed(3));
+          item.currentErrorWgt = item.currentWgt! - item.targetWgt!;
+          item.currentErrorWgt =
+              double.parse(item.currentErrorWgt!.toStringAsFixed(3));
+          item.isOK = checkIsOk(item.currentWgt!, item.minWgt!, item.maxWgt!);
+        }
+      } else {
+        for (var item in processWgtList) {
+          //如果第一个是容器，就不用去计算
+          if (item.no == 0) {
+            continue;
+          }
+          item.targetWgt = needTotalWgt * item.targetWgt! / lastNeedTotalWgt;
+          item.targetWgt = double.parse(item.targetWgt!.toStringAsFixed(3));
+          item.minWgt = item.targetWgt! - item.errorWgt!;
+          item.minWgt = double.parse(item.minWgt!.toStringAsFixed(3));
+          item.maxWgt = item.targetWgt! + item.errorWgt!;
+          item.maxWgt = double.parse(item.maxWgt!.toStringAsFixed(3));
+          item.currentErrorWgt = item.currentWgt! - item.targetWgt!;
+          item.currentErrorWgt =
+              double.parse(item.currentErrorWgt!.toStringAsFixed(3));
+          item.isOK = checkIsOk(item.currentWgt!, item.minWgt!, item.maxWgt!);
+        }
+      }
+    }
+    findNextRaw();
+  }
+
   @override
   void initState() {
     super.initState();
+    myFmaInfo = widget.selectFormula; //获取传入的配方信息
+    fmaUnit = widget.fmaUnit; //获取传入的配方单位
+
     _tabController = TabController(length: 2, vsync: this);
     for (var scale in myAllScalesList) {
       if (scale.scaleId == widget.selScaleId) {
@@ -265,17 +398,6 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
         break;
       }
     }
-    //将传入的配方信息赋值给processWgtList
-    initTotalWgtUnit();
-    initWgtList();
-    getScaleInfo();
-    createRecNumber();
-    getFmaUnit();
-    cntScaleTimerMgr.startCntAliveTimer(10);
-    startSetWgtStartFalseTimer();
-    startCheckWgtStartTimer();
-
-    //自动启停定时器
     autoNextStepNotifier.addListener(() {
       if (autoNextStepNotifier.value) {
         startAutoNextStepTimer();
@@ -283,6 +405,21 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
         stopAutoNextStepTimer();
       }
     });
+    //将传入的配方信息赋值给processWgtList
+    initTotalWgtUnit();
+    initWgtList();
+    getScaleInfo();
+
+    if (widget.fromDraft) {
+      recRecNumber = widget.selectDarftInfo!.header!.orderId!;
+      initDarftFmaData();
+    } else {
+      createRecNumber();
+    }
+
+    startCntAliveTimer(10);
+    startSetWgtStartFalseTimer();
+    startCheckWgtStartTimer();
 
     PublicFunctions.getAutoNext();
 
@@ -332,6 +469,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
     _eventbus4 = eventBus.on<EventRespAddRawData>().listen((event) {
       if (mounted) {
         PublicFunctions.getRawList();
+        PublicFunctions.getFormulaList();
       }
     });
     _eventbus5 = eventBus.on<EventRespAddFormulaType>().listen((event) {
@@ -369,14 +507,11 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
           tempWeight = event.obj;
           if (tempWeight.scaleId == myScale.scaleId) {
             myReqWeightCountine = tempWeight;
-            if (tempWeight.scaleId == 1) {
-              myComScaleInfo.isOnline = true;
-            }
 
             // isCnting = true;
             isWgtStart = true;
             if (myReqWeightCountine.msgBody!.weightUnit !=
-                    widget.selectFormula.header!.formulaHeader!.formulaUnit &&
+                    myFmaInfo.header!.formulaHeader!.formulaUnit &&
                 isShowTipDialog == false) {
               isShowTipDialog = true;
               showTipDialog();
@@ -421,6 +556,13 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
         }
       }
     });
+    _eventbus10 = eventBus.on<EventRespEditRawData>().listen((event) {
+      if (mounted) {
+        showTipInfo(localizedStrings.fSuccessMsg, context);
+        PublicFunctions.getRawList();
+        PublicFunctions.getFormulaList();
+      }
+    });
   }
 
   @override
@@ -436,11 +578,13 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
     _eventbus7.cancel();
     _eventbus8.cancel();
     _eventbus9.cancel();
-    cntScaleTimerMgr.stopCntAliveTimer();
+    _eventbus10.cancel();
+    stopCntAliveTimer();
     setWgtStartFalseTimer?.cancel(); // 取消定时器
     checkWgtStartTimer?.cancel(); // 取消定时器
     stopAutoNextStepTimer();
     stableTimeCtl.dispose();
+
     autoNextStepNotifier.dispose();
   }
 
@@ -453,7 +597,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
         return ShowUnitTipDialog(
           title: localizedStrings.fTipTitle,
           msg:
-              '${localizedStrings.fWgtUnit} ${widget.selectFormula.header!.formulaHeader!.formulaUnit!},${localizedStrings.fSwitchUnitHint}',
+              '${localizedStrings.fWgtUnit} ${myFmaInfo.header!.formulaHeader!.formulaUnit!},${localizedStrings.fSwitchUnitHint}',
         );
       },
     ).then((value) {
@@ -468,7 +612,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
   }
 
   // 显示新增配方类型对话框
-  void showDeleteTipDialog() {
+  void showDeleteDialog() {
     showDialog(
       context: context,
       barrierDismissible: false, // 点击对话框外部不关闭对话框
@@ -509,7 +653,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
   //检查是否全部OK
   bool checkAllOK() {
     for (var wgt in processWgtList) {
-      if (wgt.isOK != okStr) {
+      if (wgt.isOK != okStr && wgt.no != 0) {
         return false;
       }
     }
@@ -528,18 +672,15 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
     RecHeader recHeader = RecHeader(
       recordId: recRecNumber, //配方订单编号
       recHeaderOperator: 'admin', //操作员
-      formulaId: widget.selectFormula.header!.formulaHeader!.formulaId, //配方ID
-      formulaTypeName:
-          widget.selectFormula.header!.formulaHeader!.formulaName, //配方名称
-      totalWeight:
-          widget.selectFormula.header!.formulaHeader!.totalWeight!, //总重量
+      formulaId: myFmaInfo.header!.formulaHeader!.formulaId, //配方ID
+      formulaTypeName: myFmaInfo.header!.formulaHeader!.formulaName, //配方名称
+      totalWeight: myFmaInfo.header!.formulaHeader!.totalWeight!, //总重量
       actualFmaTotalWgt: needTotalWgt, //实际配方总重量包括修正的重量
       actualTotalWeight: actualTotalRawWgt, //实际原料总重量
-      totalWeightUnit:
-          widget.selectFormula.header!.formulaHeader!.formulaUnit, //总重量单位
+      totalWeightUnit: myFmaInfo.header!.formulaHeader!.formulaUnit, //总重量单位
 
       totalMaterialWeightUnit:
-          widget.selectFormula.header!.formulaHeader!.formulaUnit, //总原料重量单位
+          myFmaInfo.header!.formulaHeader!.formulaUnit, //总原料重量单位
       isQualified: isAllOK ? 'yes' : 'no', //是否合格
       scaleId: widget.selScaleId, //秤ID
       scaleName: myScale.scaleName, //秤名称
@@ -576,6 +717,10 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
         ReqAddFmaRec(recHeader: recHeader, recDetail: reqRecDetailList); //配方
 
     PublicFunctions.addFormulaRec(reqAddFmaRecToJson(reqAddFmaRec));
+    if (widget.fromDraft) {
+      //删除草稿
+      PublicFunctions.deleteDraftRecord(recRecNumber);
+    }
 
     setState(() {
       isFinish = true;
@@ -583,140 +728,241 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
     });
   }
 
+  final double maxWidth = 360; //最大宽度
   showBottomBtn() {
-    return Expanded(
-        flex: 5,
-        child: Container(
-            color: Theme.of(context).colorScheme.surface,
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              SizedBox(
-                width: 200,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    fixedSize: const Size(double.infinity, 48),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
-                    ),
-                  ),
-                  onPressed: !isFinish
-                      ? () {
-                          bool isAllOK = checkAllOK();
-                          if (!isAllOK) {
-                            showDialog(
-                              context: context,
-                              barrierDismissible: false, // 点击对话框外部不关闭对话框
-                              builder: (BuildContext context) {
-                                return ShowNormalTipDialog(
-                                  title: localizedStrings.fTipTitle,
-                                  msg: localizedStrings.fFormulaUnqualifiedMsg,
-                                );
-                              },
-                            ).then((value) {
-                              if (value) {
-                                // 保存
-                                saveFmaRec(isAllOK);
-                                PublicFunctions.stopWeight(widget.selScaleId);
-                                if (mounted) {
-                                  Navigator.pop(context);
-                                }
-                              } else {
-                                return;
+    return Container(
+        height: 76,
+        color: Theme.of(context).colorScheme.surface,
+        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: maxWidth),
+            child: showTextButton(
+                context,
+                btnHeight,
+                localizedStrings.fCompleteIngredientsBtn,
+                !isFinish
+                    ? () {
+                        bool isAllOK = checkAllOK();
+                        if (!isAllOK) {
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false, // 点击对话框外部不关闭对话框
+                            builder: (BuildContext context) {
+                              return ShowNormalTipDialog(
+                                title: localizedStrings.fTipTitle,
+                                msg: localizedStrings.fFormulaUnqualifiedMsg,
+                              );
+                            },
+                          ).then((value) {
+                            if (value) {
+                              // 保存
+                              saveFmaRec(isAllOK);
+                              PublicFunctions.stopWeight(widget.selScaleId);
+                              if (mounted) {
+                                Navigator.pop(context);
                               }
-                            });
-                          } else {
-                            saveFmaRec(isAllOK);
-                            Navigator.pop(context);
-                          }
+                            } else {
+                              return;
+                            }
+                          });
+                        } else {
+                          saveFmaRec(isAllOK);
+                          Navigator.pop(context);
                         }
-                      : null,
-                  child: Text(
-                    localizedStrings.fCompleteIngredientsBtn,
-                    style: TextStyle(
-                      fontWeight: FontWeight.normal,
-                      color: Theme.of(context).colorScheme.onPrimary,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: 20,
-              ),
-              SizedBox(
-                  width: 200,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor:
-                          Theme.of(context).colorScheme.onSurfaceVariant,
-                      backgroundColor: Theme.of(context).colorScheme.error,
-                      fixedSize: const Size(double.infinity, 48),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
-                      ),
-                    ),
-                    onPressed: () {
-                      if (!isFinish) {
+                      }
+                    : null,
+                Theme.of(context).colorScheme.onPrimary,
+                Theme.of(context).colorScheme.primary,
+                Theme.of(context).colorScheme.onPrimary),
+          ),
+          SizedBox(
+            width: largePadding,
+          ),
+          ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: maxWidth),
+            child: showTextButton(
+                context,
+                btnHeight,
+                localizedStrings.btnTemporarySave,
+                !isEnableNext
+                    ? null
+                    : () {
+                        //已完成，不能暂存，只能结束
+                        performDarfFmaSave();
+                      },
+                Theme.of(context).colorScheme.onPrimary,
+                Theme.of(context).colorScheme.primary,
+                Theme.of(context).colorScheme.onPrimary),
+          ),
+          SizedBox(
+            width: largePadding,
+          ),
+          ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: maxWidth),
+            child: showTextButton(
+                context, btnHeight, localizedStrings.fAbandonIngredientsBtn,
+                () {
+              performAbandonFma();
+            },
+                Theme.of(context).colorScheme.onPrimary,
+                Theme.of(context).colorScheme.error,
+                Theme.of(context).colorScheme.onPrimary),
+          ),
+          SizedBox(
+            width: largePadding,
+          ),
+          ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: maxWidth),
+            child: showTextButton(
+                context, btnHeight, localizedStrings.btnRestart, () {
+              showDeleteDialog();
+            },
+                Theme.of(context).colorScheme.onPrimary,
+                Theme.of(context).colorScheme.error,
+                Theme.of(context).colorScheme.onPrimary),
+          ),
+        ]));
+  }
+
+  void performAbandonFma() {
+    if (!isFinish) {
+      showDialog(
+        context: context,
+        barrierDismissible: false, // 点击对话框外部不关闭对话框
+        builder: (BuildContext context) {
+          return ShowDeleteTipDialog(
+            title: localizedStrings.fTipTitle,
+            msg: localizedStrings.fClearWeighingDataMsg,
+          );
+        },
+      ).then((value) {
+        if (value) {
+          setState(() {
+            PublicFunctions.stopWeight(widget.selScaleId);
+            Navigator.pop(context);
+          });
+        }
+      });
+    } else {
+      PublicFunctions.stopWeight(widget.selScaleId);
+      Navigator.pop(context);
+    }
+  }
+
+  Widget showStartBtn() {
+    return Container(
+        height: 76,
+        color: Theme.of(context).colorScheme.surface,
+        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: maxWidth),
+            child: showTextButton(
+                context,
+                btnHeight,
+                localizedStrings.gBtnStart,
+                isWgtStart
+                    ? () {
                         showDialog(
                           context: context,
                           barrierDismissible: false, // 点击对话框外部不关闭对话框
                           builder: (BuildContext context) {
-                            return ShowDeleteTipDialog(
+                            return ShowNormalTipDialog(
                               title: localizedStrings.fTipTitle,
-                              msg: localizedStrings.fClearWeighingDataMsg,
+                              msg: localizedStrings.tipEnsureWeightCorrect,
                             );
                           },
                         ).then((value) {
                           if (value) {
                             setState(() {
-                              PublicFunctions.stopWeight(widget.selScaleId);
-                              Navigator.pop(context);
+                              startFormula = true;
                             });
                           }
                         });
-                      } else {
-                        PublicFunctions.stopWeight(widget.selScaleId);
-                        Navigator.pop(context);
                       }
-                    },
-                    child: Text(
-                      localizedStrings.fAbandonIngredientsBtn,
-                      style: TextStyle(
-                        fontWeight: FontWeight.normal,
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  )),
-              SizedBox(
-                width: 20,
-              ),
-              SizedBox(
-                  width: 200,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor:
-                          Theme.of(context).colorScheme.onSurfaceVariant,
-                      backgroundColor: Theme.of(context).colorScheme.error,
-                      fixedSize: const Size(double.infinity, 48),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
-                      ),
-                    ),
-                    onPressed: () {
-                      showDeleteTipDialog();
-                    },
-                    child: Text(
-                      localizedStrings.fClearBtn,
-                      style: TextStyle(
-                        fontWeight: FontWeight.normal,
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  )),
-            ])));
+                    : null,
+                Theme.of(context).colorScheme.onPrimary,
+                Theme.of(context).colorScheme.primary,
+                Theme.of(context).colorScheme.onPrimary),
+          ),
+        ]));
+  }
+
+  void performDarfFmaSave() {
+    //先判断出了容器之外有没有原料重量，如果没有原料重量，就不需要暂存
+    bool hasRawWeight = false;
+    for (var wgtRec in processWgtList) {
+      if (wgtRec.no != 0 && wgtRec.currentWgt! > 0) {
+        hasRawWeight = true;
+        break;
+      }
+    }
+
+    if (!hasRawWeight) {
+      showTipInfo(localizedStrings.tipNoRawMaterialWeightData, context);
+      return;
+    }
+
+    //通过当前原料的重量计算总的原料的实际重量
+    DarfFmaInfoListFromDb tempDarfFmaInfo = DarfFmaInfoListFromDb();
+    List<DarfDetail> tempDetails = [];
+
+    for (var wgtRec in processWgtList) {
+      if (wgtRec.no == 0) {
+        DarfDetail detail = DarfDetail(
+            recId: 0,
+            orderId: recRecNumber,
+            rawMaterialId: '',
+            seq: wgtRec.no,
+            actualWeight: wgtRec.currentWgt,
+            actualWeightUnit: fmaUnit,
+            isContainer: true,
+            remark: '',
+            remark1: '',
+            remark2: '');
+        tempDetails.add(detail);
+        continue; //跳过容器
+      }
+      DarfDetail detail = DarfDetail(
+          recId: 0,
+          orderId: recRecNumber,
+          rawMaterialId: wgtRec.rawId,
+          seq: wgtRec.no,
+          actualWeight: wgtRec.currentWgt,
+          actualWeightUnit: fmaUnit,
+          isContainer: false,
+          remark: '',
+          remark1: '',
+          remark2: '');
+      tempDetails.add(detail);
+    }
+
+    DarfHeader header = DarfHeader(
+      recId: 0,
+      orderId: recRecNumber, //配方订单编号
+      createdBy: 'admin', //操作员
+      formulaId: myFmaInfo.header!.formulaHeader!.formulaId, //配方ID
+
+      status: 0,
+      remark: '',
+      remark1: '',
+      remark2: '', //备注
+    );
+
+    tempDarfFmaInfo.header = header;
+    tempDarfFmaInfo.details = tempDetails;
+
+    String jsonStr = darfFmaInfoFromDbToJson(tempDarfFmaInfo);
+    if (widget.fromDraft) {
+      PublicFunctions.updateDraftRecord(jsonStr);
+    } else {
+      PublicFunctions.createDraftRecord(jsonStr);
+    }
+
+    PublicFunctions.stopWeight(widget.selScaleId);
+    PublicFunctions.getDraftRecords();
+    if (mounted) {
+      Navigator.pop(context);
+    }
   }
 
   //传入index判断是否达标
@@ -854,64 +1100,58 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
           // Padding(
           //   padding: const EdgeInsets.all(14.0),
           //   child:
-          Row(
+          Column(
         children: [
+          showTitleBar(),
+          Divider(
+            color: Theme.of(context).colorScheme.surfaceDim,
+            thickness: 1,
+            height: 1,
+          ),
+          showFormulaInfo(),
+          Divider(
+            color: Theme.of(context).colorScheme.surfaceDim,
+            thickness: 1,
+            height: 1,
+          ),
           Expanded(
-            child: Column(
-              children: [
-                showTitleBar(),
-                Divider(
-                  color: Theme.of(context).colorScheme.outline,
-                  thickness: 1,
-                  height: 1,
-                ),
-                showFormulaInfoAndWgt(),
-                Divider(
-                  color: Theme.of(context).colorScheme.outline,
-                  thickness: 1,
-                  height: 1,
-                ),
-                Expanded(
-                  flex: 9,
-                  child: Column(children: [
-                    Container(
-                        height: 42,
-                        color: Theme.of(context).colorScheme.surface,
-                        child: Row(children: [
+            flex: 9,
+            child: Column(children: [
+              Container(
+                  height: 42,
+                  color: Theme.of(context).colorScheme.surface,
+                  child: Row(children: [
+                    SizedBox(
+                      width: 17,
+                    ),
+                    Expanded(
+                      child: Text(localizedStrings.fIngredientOrder),
+                    ),
+                  ])),
+              Expanded(
+                child: Container(
+                    color: Theme.of(context).colorScheme.surface,
+                    child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
                           SizedBox(
                             width: 17,
                           ),
-                          Expanded(
-                            child: Text(localizedStrings.fIngredientOrder),
-                          ),
+                          showRawOrderDetail(),
                         ])),
-                    Expanded(
-                      child: Container(
-                          color: Theme.of(context).colorScheme.surface,
-                          child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  width: 17,
-                                ),
-                                showRawOrderDetail(),
-                              ])),
-                    )
-                  ]),
-                ),
-                if (!checkAllOK()) showWgtTable(),
-                if (!checkAllOK()) showNextBtn(),
-                if (checkAllOK()) showCompleteStatus(),
-                Container(
-                  height: 14,
-                  color: Theme.of(context).colorScheme.surface,
-                ),
-                showBottomBtn(),
-              ],
-            ),
+              )
+            ]),
           ),
+          if (!checkAllOK() && startFormula) showWgtTable(),
+          if (!startFormula) showWgtDataAndBtn(),
+          if (!checkAllOK() && startFormula) showNextBtn(),
+          if (checkAllOK()) showCompleteStatus(),
+          // Container(
+          //   height: 14,
+          //   color: Theme.of(context).colorScheme.surface,
+          // ),
+          startFormula ? showBottomBtn() : showStartBtn(),
         ],
-        // ),
       ),
     ));
   }
@@ -932,8 +1172,8 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
   //显示速度
 
   showSpeed() {
-    return Expanded(
-        flex: 5,
+    return SizedBox(
+        width: 300,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
@@ -978,51 +1218,32 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
   }
 
 //扣重归零等按钮
-  showTareZero() {
+  Widget showTareZero() {
     return Container(
         height: 52,
         color: Theme.of(context).colorScheme.surface,
         padding: const EdgeInsets.only(top: 8, bottom: 8),
         child: Row(children: [
-          showSpeed(),
-          SizedBox(
-            width: 20,
-          ),
           Expanded(
-              flex: 2,
+              flex: 1,
               child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                showSpeed(),
+                SizedBox(
+                  width: 20,
+                ),
                 SizedBox(
                   width: 150,
                   child: Row(children: [
                     Expanded(
-                        child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Theme.of(context).colorScheme.primary,
-                        backgroundColor: Theme.of(context).colorScheme.surface,
-                        fixedSize: const Size(double.infinity, 48),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
-                            side: BorderSide(
-                              color: startFormula
-                                  ? Theme.of(context).colorScheme.outline
-                                  : Theme.of(context).colorScheme.primary,
-                            )),
-                      ),
-                      onPressed: startFormula
-                          ? null
-                          : () {
-                              PublicFunctions.performZeroWithScaleId(
-                                  widget.selScaleId);
-                            },
-                      child: Text(
-                        localizedStrings.iBtnZero,
-                        style: TextStyle(
-                          fontWeight: FontWeight.normal,
-                          color: Theme.of(context).colorScheme.primary,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    )),
+                      child: btnStyle(
+                          localizedStrings.iBtnZero,
+                          startFormula
+                              ? null
+                              : () {
+                                  PublicFunctions.performZeroWithScaleId(
+                                      widget.selScaleId);
+                                }),
+                    ),
                   ]),
                 ),
                 SizedBox(
@@ -1032,36 +1253,85 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
                   width: 150,
                   child: Row(children: [
                     Expanded(
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor:
-                              Theme.of(context).colorScheme.primary,
-                          backgroundColor:
-                              Theme.of(context).colorScheme.surface,
-                          fixedSize: const Size(double.infinity, 48),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
-                              side: BorderSide(
-                                color: startFormula
-                                    ? Theme.of(context).colorScheme.outline
-                                    : Theme.of(context).colorScheme.primary,
-                              )),
-                        ),
-                        onPressed: startFormula
-                            ? null
-                            : () {
-                                PublicFunctions.performTareWithScaleId(
-                                    widget.selScaleId);
-                              },
-                        child: Text(
+                      child: btnStyle(
                           localizedStrings.gBtnTare,
-                          style: TextStyle(
-                            fontWeight: FontWeight.normal,
-                            color: Theme.of(context).colorScheme.primary,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ),
+                          startFormula
+                              ? null
+                              : () {
+                                  PublicFunctions.performTareWithScaleId(
+                                      widget.selScaleId);
+                                }),
+                    ),
+                  ]),
+                ),
+              ]))
+        ]));
+  }
+
+  Widget btnStyle(String title, VoidCallback? onPress) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        foregroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        fixedSize: const Size(double.infinity, 48),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
+            side: BorderSide(
+              color: startFormula
+                  ? Theme.of(context).colorScheme.outline
+                  : Theme.of(context).colorScheme.primary,
+            )),
+      ),
+      onPressed: onPress,
+      child: Text(
+        title,
+        style: showTextStyle(color: Theme.of(context).colorScheme.primary),
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+  }
+
+  //扣重归零等按钮
+  Widget showTareZeroBtn() {
+    return Container(
+        height: 52,
+        color: Theme.of(context).colorScheme.surface,
+        padding: const EdgeInsets.only(top: 8, bottom: 8),
+        child: Row(children: [
+          Expanded(
+              flex: 1,
+              child:
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                SizedBox(
+                  width: 150,
+                  child: Row(children: [
+                    Expanded(
+                      child: btnStyle(
+                          localizedStrings.iBtnZero,
+                          startFormula
+                              ? null
+                              : () {
+                                  PublicFunctions.performZeroWithScaleId(
+                                      widget.selScaleId);
+                                }),
+                    ),
+                  ]),
+                ),
+                SizedBox(
+                  width: largePadding,
+                ),
+                SizedBox(
+                  width: 150,
+                  child: Row(children: [
+                    Expanded(
+                      child: btnStyle(
+                          localizedStrings.gBtnTare,
+                          startFormula
+                              ? null
+                              : () {
+                                  PublicFunctions.performTareWithScaleId(
+                                      widget.selScaleId);
+                                }),
                     ),
                   ]),
                 ),
@@ -1072,58 +1342,31 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
   //扣重归零等按钮
   showNextBtn() {
     return Container(
-        height: 50,
+        height: 48,
         color: Theme.of(context).colorScheme.surface,
+        padding: const EdgeInsets.only(right: largePadding * 2),
         child: Row(children: [
-          SizedBox(
-            width: 17,
-          ),
           Expanded(
               flex: 1,
               child: SizedBox(
                   child: Row(children: [
                 Spacer(),
                 SizedBox(
-                  width: 20,
-                ),
-                SizedBox(
                   width: 200,
-                  child: Row(children: [
-                    Expanded(
-                        child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor:
-                            Theme.of(context).colorScheme.onPrimary,
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        fixedSize: const Size(double.infinity, 48),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
-                        ),
-                      ),
-                      onPressed: isEnableNext
+                  child: showTextButton(
+                      context,
+                      btnHeight,
+                      localizedStrings.fNextStepBtn,
+                      isEnableNext
                           ? () {
                               handleNexBtn();
                             }
                           : null,
-                      child: Text(
-                        //下一步
-                        localizedStrings.fNextStepBtn,
-                        style: TextStyle(
-                          fontWeight: FontWeight.normal,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    )),
-                  ]),
-                ),
-                SizedBox(
-                  width: 20,
+                      Theme.of(context).colorScheme.onPrimary,
+                      Theme.of(context).colorScheme.primary,
+                      Theme.of(context).colorScheme.onPrimary),
                 )
               ]))),
-          SizedBox(
-            width: 20,
-          )
         ]));
   }
 
@@ -1426,150 +1669,238 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
         }));
   }
 
-  showWgtTable() {
+  Widget showMetialName() {
+    return SizedBox(
+        height: 48,
+        child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+          Expanded(
+              child: Container(
+                  color: Theme.of(context).colorScheme.surface,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.center,
+                    child: Text(
+                      selectedProcessWgt.no == 0
+                          ? localizedStrings.fFmaContainer
+                          : selectedProcessWgt.rawName ?? '',
+                      style: TextStyle(
+                          fontSize: 40,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.primary),
+                    ),
+                  )))
+        ]));
+  }
+
+  Widget showWgtDataAndBtn() {
+    return Expanded(
+      flex: 8,
+      child: Container(
+        color: Theme.of(context).colorScheme.surface,
+        alignment: Alignment.center,
+        child: Column(
+          children: [
+            SizedBox(
+              width: 314,
+              child: Row(
+                children: [
+                  Container(
+                    width: 314 - 50,
+                    height: 48,
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.only(left: 8.0),
+                    constraints: BoxConstraints(
+                      minWidth: 314 - 50,
+                      maxWidth: 314 - 50,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surfaceDim,
+                      borderRadius: BorderRadius.circular(0),
+                    ),
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft, // 保持文本左对齐
+                      child: Text(
+                        (myReqWeightCountine.msgBody == null)
+                            ? '-----'
+                            : myReqWeightCountine.msgBody!.weightVal,
+                        maxLines: 1,
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                              fontSize: 48,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: 50,
+                    height: 48,
+                    color: Theme.of(context).colorScheme.surfaceDim,
+                    alignment: Alignment.center,
+                    child: Text(
+                      (myReqWeightCountine.msgBody == null)
+                          ? '--'
+                          : myReqWeightCountine.msgBody!.weightUnit,
+                      style: showTextStyle(),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            SizedBox(
+              height: regularPadding,
+            ),
+            showTareZeroBtn()
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget showWgtTable() {
     return Expanded(
         flex: 13,
         child: Container(
           color: Theme.of(context).colorScheme.onPrimary,
           child: Column(children: [
-            SizedBox(
-                height: 48,
-                child:
-                    Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                  Expanded(
-                      child: Container(
-                          color: Theme.of(context).colorScheme.surface,
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            alignment: Alignment.center,
-                            child: Text(
-                              selectedProcessWgt.no == 0
-                                  ? localizedStrings.fFmaContainer
-                                  : selectedProcessWgt.rawName ?? '',
-                              style: TextStyle(
-                                  fontSize: 40,
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).colorScheme.primary),
-                            ),
-                          )))
-                ])),
+            showMetialName(),
             Expanded(
                 child: SizedBox(
               child: Row(children: [
                 Expanded(
                     child: Container(
-                  padding: const EdgeInsets.only(left: 50, right: 50),
+                  padding: const EdgeInsets.only(
+                      left: regularPadding, right: regularPadding),
                   color: Theme.of(context).colorScheme.surface,
                   child: Column(children: [
-                    Expanded(
-                        flex: 1,
-                        child: SizedBox(
-                            child: Column(children: [
-                          Expanded(
-                              flex: 1,
-                              child: Container(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                    localizedStrings.fRawMaterialWeightLabel),
-                              )),
-                          Expanded(
-                            flex: 1,
-                            child: LayoutBuilder(
-                              builder: (BuildContext context,
-                                  BoxConstraints constraints) {
-                                // 获取 Container 的最大宽度
-                                double maxWidth = constraints.maxWidth;
-                                double maxHeight = constraints.maxHeight;
+                    if (startFormula)
+                      Expanded(
+                          flex: 1,
+                          child: LayoutBuilder(builder: (BuildContext context,
+                              BoxConstraints constraints) {
+                            double heightLimit = constraints.maxHeight;
+                            return SizedBox(
+                                child: Column(children: [
+                              if (heightLimit > 48)
+                                Expanded(
+                                    flex: 1,
+                                    child: Container(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(localizedStrings
+                                          .fRawMaterialWeightLabel),
+                                    )),
+                              Expanded(
+                                flex: 1,
+                                child: LayoutBuilder(
+                                  builder: (BuildContext context,
+                                      BoxConstraints constraints) {
+                                    // 获取 Container 的最大宽度
+                                    double maxWidth = constraints.maxWidth;
+                                    double maxHeight = constraints.maxHeight;
 
-                                return Container(
-                                  // 使用自定义进度条组件
-                                  alignment: Alignment.centerLeft,
-                                  child: CustomProgressBar(
-                                    value: currentRawWgt < 0
-                                        ? 0
-                                        : currentRawWgt, // 传入当前值
-                                    minValue: double.parse(
-                                                (selectedProcessWgt.minWgt! -
-                                                        selectedProcessWgt
-                                                            .currentWgt!)
-                                                    .toStringAsFixed(3)) <
-                                            0
-                                        ? 0.0
-                                        : double.parse((selectedProcessWgt
-                                                    .minWgt! -
-                                                selectedProcessWgt.currentWgt!)
-                                            .toStringAsFixed(3)), // 传入最小值
+                                    return Container(
+                                      // 使用自定义进度条组件
+                                      alignment: Alignment.centerLeft,
+                                      child: CustomProgressBar(
+                                        value: currentRawWgt < 0
+                                            ? 0
+                                            : currentRawWgt, // 传入当前值
+                                        minValue: double.parse(
+                                                    (selectedProcessWgt
+                                                                .minWgt! -
+                                                            selectedProcessWgt
+                                                                .currentWgt!)
+                                                        .toStringAsFixed(3)) <
+                                                0
+                                            ? 0.0
+                                            : double.parse((selectedProcessWgt
+                                                        .minWgt! -
+                                                    selectedProcessWgt
+                                                        .currentWgt!)
+                                                .toStringAsFixed(3)), // 传入最小值
 
-                                    maxValue: double.parse(
-                                                (selectedProcessWgt.maxWgt! -
-                                                        selectedProcessWgt
-                                                            .currentWgt!)
-                                                    .toStringAsFixed(3)) <
-                                            0
-                                        ? 0.0
-                                        : double.parse((selectedProcessWgt
-                                                    .maxWgt! -
-                                                selectedProcessWgt.currentWgt!)
-                                            .toStringAsFixed(3)), // 传入最大值
-                                    targetValue: double.parse(
-                                                (selectedProcessWgt.targetWgt! -
-                                                        selectedProcessWgt
-                                                            .currentWgt!)
-                                                    .toStringAsFixed(3)) <
-                                            0
-                                        ? 0.0
-                                        : double.parse((selectedProcessWgt
-                                                    .targetWgt! -
-                                                selectedProcessWgt.currentWgt!)
-                                            .toStringAsFixed(3)), // 传入目标值
-                                    maxWidth: maxWidth, // 传递最大宽度
-                                    maxHeight: maxHeight, // 传递最大高度
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ]))),
+                                        maxValue: double.parse(
+                                                    (selectedProcessWgt
+                                                                .maxWgt! -
+                                                            selectedProcessWgt
+                                                                .currentWgt!)
+                                                        .toStringAsFixed(3)) <
+                                                0
+                                            ? 0.0
+                                            : double.parse((selectedProcessWgt
+                                                        .maxWgt! -
+                                                    selectedProcessWgt
+                                                        .currentWgt!)
+                                                .toStringAsFixed(3)), // 传入最大值
+                                        targetValue: double.parse(
+                                                    (selectedProcessWgt
+                                                                .targetWgt! -
+                                                            selectedProcessWgt
+                                                                .currentWgt!)
+                                                        .toStringAsFixed(3)) <
+                                                0
+                                            ? 0.0
+                                            : double.parse((selectedProcessWgt
+                                                        .targetWgt! -
+                                                    selectedProcessWgt
+                                                        .currentWgt!)
+                                                .toStringAsFixed(3)), // 传入目标值
+                                        maxWidth: maxWidth, // 传递最大宽度
+                                        maxHeight: maxHeight, // 传递最大高度
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ]));
+                          })),
 
-                    showTareZero(),
+                    startFormula ? showTareZero() : showTareZeroBtn(),
 
-                    Expanded(
-                        flex: 1,
-                        child: SizedBox(
-                            child: Column(children: [
-                          Expanded(
-                              flex: 1,
-                              child: Container(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                    localizedStrings.fFormulaProgressLabel),
-                              )),
-                          Expanded(
-                            flex: 1,
-                            child: LayoutBuilder(
-                              builder: (BuildContext context,
-                                  BoxConstraints constraints) {
-                                // 获取 Container 的最大宽度
-                                double maxWidth = constraints.maxWidth;
-                                double maxHeight = constraints.maxHeight;
+                    if (startFormula)
+                      Expanded(
+                          flex: 1,
+                          child: LayoutBuilder(builder: (BuildContext context,
+                              BoxConstraints constraints) {
+                            double heightLimit = constraints.maxHeight;
+                            return SizedBox(
+                                child: Column(children: [
+                              if (heightLimit > 48)
+                                Expanded(
+                                    flex: 1,
+                                    child: Container(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(localizedStrings
+                                          .fFormulaProgressLabel),
+                                    )),
+                              Expanded(
+                                flex: 1,
+                                child: LayoutBuilder(
+                                  builder: (BuildContext context,
+                                      BoxConstraints constraints) {
+                                    // 获取 Container 的最大宽度
+                                    double maxWidth = constraints.maxWidth;
+                                    double maxHeight = constraints.maxHeight;
 
-                                return Container(
-                                  // 使用自定义进度条组件
-                                  alignment: Alignment.centerLeft,
-                                  child: CustomFmaProgressBar(
-                                    currentValue: getOKCount(), // 传入当前值
-                                    max: processWgtList.isEmpty
-                                        ? 1
-                                        : processWgtList.length, // 传入最大值
+                                    return Container(
+                                      // 使用自定义进度条组件
+                                      alignment: Alignment.centerLeft,
+                                      child: CustomFmaProgressBar(
+                                        currentValue: getOKCount(), // 传入当前值
+                                        max: processWgtList.isEmpty
+                                            ? 1
+                                            : processWgtList.length, // 传入最大值
 
-                                    maxWidth: maxWidth, // 传递最大宽度
-                                    maxHeight: maxHeight, // 传递最大高度
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ]))),
+                                        maxWidth: maxWidth, // 传递最大宽度
+                                        maxHeight: maxHeight, // 传递最大高度
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ]));
+                          })),
 
                     //重量表格 调试用，无须删除
                     // showTable(),
@@ -1589,12 +1920,12 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
 
   showFCode() {
     String id = "";
-    if (widget.selectFormula.header == null ||
-        widget.selectFormula.header!.formulaHeader == null ||
-        widget.selectFormula.header!.formulaHeader!.formulaId == null) {
+    if (myFmaInfo.header == null ||
+        myFmaInfo.header!.formulaHeader == null ||
+        myFmaInfo.header!.formulaHeader!.formulaId == null) {
       id = "";
     } else {
-      id = widget.selectFormula.header!.formulaHeader!.formulaId!;
+      id = myFmaInfo.header!.formulaHeader!.formulaId!;
     }
     return Expanded(
       child: Text(
@@ -1611,12 +1942,12 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
 
   showFName() {
     String name = "";
-    if (widget.selectFormula.header == null ||
-        widget.selectFormula.header!.formulaHeader == null ||
-        widget.selectFormula.header!.formulaHeader!.formulaName == null) {
+    if (myFmaInfo.header == null ||
+        myFmaInfo.header!.formulaHeader == null ||
+        myFmaInfo.header!.formulaHeader!.formulaName == null) {
       name = "";
     } else {
-      name = widget.selectFormula.header!.formulaHeader!.formulaName!;
+      name = myFmaInfo.header!.formulaHeader!.formulaName!;
     }
     return Expanded(
       child: Text(
@@ -1661,7 +1992,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
 //显示总重和单位
 
   showTotalWgtAndUnit() {
-    final header = widget.selectFormula.header;
+    final header = myFmaInfo.header;
     final formulaHeader = header?.formulaHeader;
     final totalWeight = formulaHeader?.totalWeight;
     final formulaUnit = formulaHeader?.formulaUnit;
@@ -1680,53 +2011,6 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
         overflow: TextOverflow.ellipsis,
         maxLines: 1,
       ),
-    );
-  }
-
-  showFInfo() {
-    return Expanded(
-      flex: 9,
-      child: Column(children: [
-        Container(
-          height: 40,
-          color: Theme.of(context).colorScheme.surface,
-          alignment: Alignment.centerLeft,
-          child: Row(children: [
-            // 显示标签部分，设置固定宽度
-            Expanded(
-              child: Text(
-                localizedStrings.fRemarkCol,
-                style: Theme.of(context).textTheme.labelMedium!.apply(
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-              ),
-            ),
-            // 显示编号内容部分，用 Expanded 约束宽度
-          ]),
-        ),
-        Expanded(
-          child: Container(
-            color: Theme.of(context).colorScheme.surface,
-            padding: const EdgeInsets.all(5),
-            alignment: Alignment.topLeft,
-            child: SelectableText(
-              widget.selectFormula.header == null ||
-                      widget.selectFormula.header!.formulaHeader == null ||
-                      widget.selectFormula.header!.formulaHeader!.remark == null
-                  ? ""
-                  : widget.selectFormula.header!.formulaHeader!.remark!,
-              style: Theme.of(context).textTheme.bodySmall!.apply(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-            ),
-          ),
-        ),
-        SizedBox(
-          height: 10,
-        )
-      ]),
     );
   }
 
@@ -1825,8 +2109,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
                                   fit: BoxFit.scaleDown,
                                   alignment: Alignment.centerLeft, // 保持文本左对齐
                                   child: Text(
-                                    (myReqWeightCountine.msgBody == null ||
-                                            !isWgtStart)
+                                    (myReqWeightCountine.msgBody == null)
                                         ? '-----'
                                         : currentRawWgt.toString(),
                                     maxLines: 1,
@@ -2031,30 +2314,110 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
     );
   }
 
-  showFormulaInfoAndWgt() {
-    return Expanded(
-      flex: 5,
-      child: Container(
-        color: const Color.fromARGB(255, 253, 252, 252),
-        child: Column(children: [
-          Expanded(
-              child: Row(
-            children: [
-              SizedBox(
-                width: 17,
-              ),
-              showFInfo(),
+  TextStyle showTitleTextStyle({Color? color}) {
+    return Theme.of(context).textTheme.bodyMedium!.apply(
+          color: color ?? Theme.of(context).colorScheme.onSurface,
+        );
+  }
 
-              //显示重量
-              // showWgtData(),
-              SizedBox(
-                width: 20,
-              ),
-            ],
-          ))
-        ]),
-      ),
+  TextStyle showTextStyle({Color? color}) {
+    return Theme.of(context).textTheme.bodySmall!.apply(
+          color: color ?? Theme.of(context).colorScheme.onSurface,
+        );
+  }
+
+  Widget showFmaItem(String title, String content) {
+    return Container(
+      height: 42,
+      alignment: Alignment.centerLeft,
+      child: RichText(
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          text: TextSpan(children: [
+            TextSpan(
+                text: '$title: ',
+                style: showTitleTextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant)),
+            TextSpan(text: content, style: showTitleTextStyle()),
+          ])),
     );
+  }
+
+  showFormulaInfo() {
+    return Container(
+        height: 126,
+        padding: const EdgeInsets.only(
+          left: regularPadding,
+          right: regularPadding,
+        ),
+        color: Theme.of(context).colorScheme.surface,
+        child: Row(
+          children: [
+            Expanded(
+              flex: 1,
+              child: Column(
+                children: [
+                  showFmaItem(localizedStrings.fOrderNo, recRecNumber),
+                  showFmaItem(localizedStrings.fFmaNameLabel,
+                      widget.selectFormula.header!.formulaHeader!.formulaName!),
+                  showFmaItem(localizedStrings.fFmaIdLabel,
+                      widget.selectFormula.header!.formulaHeader!.formulaId!),
+                ],
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.only(
+                  top: regularPadding, bottom: regularPadding),
+              width: largePadding,
+              child: VerticalDivider(
+                color: Theme.of(context).colorScheme.surfaceDim,
+                thickness: 1,
+              ),
+            ),
+            Expanded(
+              flex: 1,
+              child: Container(
+                padding: const EdgeInsets.only(
+                    left: regularPadding, right: regularPadding),
+                child: Column(
+                  children: [
+                    Container(
+                      height: 42,
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        localizedStrings.fRemarkCol,
+                        style: Theme.of(context).textTheme.labelMedium!.apply(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    ),
+                    Expanded(
+                        child: Container(
+                      alignment: Alignment.topLeft,
+                      child: SelectableText(
+                        myFmaInfo.header == null ||
+                                myFmaInfo.header!.formulaHeader == null ||
+                                myFmaInfo.header!.formulaHeader!.remark == null
+                            ? ""
+                            : myFmaInfo.header!.formulaHeader!.remark!,
+                        style: Theme.of(context).textTheme.bodySmall!.apply(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant,
+                            ),
+                      ),
+                    ))
+                  ],
+                ),
+              ),
+            ),
+
+            //显示重量
+            // showWgtData(),
+          ],
+        ));
   }
 
   void handleNexBtn() {
@@ -2086,7 +2449,35 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
 
     //不合格，重量轻了 轻了就不让往下走
     if (isWgtOk == 'low') {
-      showTipInfo(localizedStrings.fCurrentMaterialWeightInvalidMsg, context);
+      //锁定当前重量
+      double currentTempWgtValue = currentRawWgt;
+      // 提示太轻
+      showDialog(
+        context: context,
+        barrierDismissible: false, // 点击对话框外部不关闭对话框
+        builder: (BuildContext context) {
+          return ShowLowWgtTipDialog(
+            title: localizedStrings.fTipTitle,
+            msg: localizedStrings.fCurrentMaterialWeightInvalidMsg,
+          );
+        },
+      ).then((value) {
+        if (value == 1) {
+          //继续下一个配料，且记录本次配料
+          setState(() {
+            //清空所有称重数据
+
+            performLowRow(currentTempWgtValue);
+          });
+        } else if (value == 2) {
+          //接受修正
+          handleReviseWgt(currentTempWgtValue);
+          PublicFunctions.performTareWithScaleId(widget.selScaleId);
+          setState(() {});
+        } else {
+          return;
+        }
+      });
       return;
     } else if (isWgtOk == highStr) {
       //锁定当前重量
@@ -2104,16 +2495,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
       ).then((value) {
         if (value == 1) {
           //放弃此次配料
-          setState(() {
-            //清空所有称重数据
-            processWgtList.clear();
-
-            currentRawWgt = 0.0;
-            clickedRow = 0;
-            startFormula = false;
-
-            initWgtList();
-          });
+          showDeleteDialog();
         } else if (value == 2) {
           //接受修正
           handleReviseWgt(currentTempWgtValue);
@@ -2129,15 +2511,59 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
     }
   }
 
+  performLowRow(double currentTempWgtValue) {
+    processWgtList[clickedRow].currentWgt =
+        currentTempWgtValue + processWgtList[clickedRow].currentWgt!;
+    processWgtList[clickedRow].currentWgt =
+        double.parse(processWgtList[clickedRow].currentWgt!.toStringAsFixed(3));
+    processWgtList[clickedRow].isOK = 'low';
+    processWgtList[clickedRow].currentErrorWgt =
+        (processWgtList[clickedRow].currentWgt! -
+            processWgtList[clickedRow].targetWgt!);
+    processWgtList[clickedRow].currentErrorWgt = double.parse(
+        processWgtList[clickedRow].currentErrorWgt!.toStringAsFixed(3));
+    PublicFunctions.performTareWithScaleId(widget.selScaleId);
+    // 从当前行的下一行开始向后查找
+    int nextIndex = -1;
+    for (int i = clickedRow + 1; i < processWgtList.length; i++) {
+      if (processWgtList[i].isOK != 'ok') {
+        nextIndex = i;
+        break;
+      }
+    }
+
+    // 如果向后没找到，就从第一行开始查找
+    if (nextIndex == -1) {
+      for (int i = 0; i < processWgtList.length; i++) {
+        if (processWgtList[i].isOK != 'ok') {
+          nextIndex = i;
+          break;
+        }
+      }
+    }
+
+    // 如果找到了合适的行，更新选中行和选中的原料重量项
+    if (nextIndex != -1) {
+      clickedRow = nextIndex;
+      selectedProcessWgt = processWgtList[clickedRow];
+    } else {
+      // 若都没找到，回到第一行
+      clickedRow = 0;
+      selectedProcessWgt = processWgtList[0];
+    }
+    currentRawWgt = 0.0;
+    startFormula = true;
+  }
+
   //重新计算需要的重量
   recalculateWgtList(double lastNeedTotalWgt) {
     //根据模式计算需要的重量
-    if (widget.selectFormula.header == null ||
-        widget.selectFormula.header!.formulaHeader == null ||
-        widget.selectFormula.header!.formulaHeader!.formulaMode == null) {
+    if (myFmaInfo.header == null ||
+        myFmaInfo.header!.formulaHeader == null ||
+        myFmaInfo.header!.formulaHeader!.formulaMode == null) {
       return;
     }
-    String fmaMode = widget.selectFormula.header!.formulaHeader!.formulaMode!;
+    String fmaMode = myFmaInfo.header!.formulaHeader!.formulaMode!;
 
     if (fmaMode == 'wgt') {
       //按重量
@@ -2187,12 +2613,13 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
     FormulaWgtProcessData nextItem;
     // 先查找 isOK 不为 'ok' 的项
     try {
-      nextItem = processWgtList.firstWhere((item) => item.isOK != 'ok');
+      nextItem = processWgtList
+          .firstWhere((item) => item.isOK != 'ok' && item.no != 0);
       selectedProcessWgt = nextItem; // 更新选中的原料重量项
       //如果有容器
-      if (widget.selectFormula.header != null &&
-          widget.selectFormula.header!.formulaHeader != null &&
-          widget.selectFormula.header!.formulaHeader!.needContainer!) {
+      if (myFmaInfo.header != null &&
+          myFmaInfo.header!.formulaHeader != null &&
+          myFmaInfo.header!.formulaHeader!.needContainer!) {
         clickedRow = selectedProcessWgt.no!; // 更新点击的行索引
       } else {
         clickedRow = selectedProcessWgt.no! - 1; // 更新点击的行索引
@@ -2216,9 +2643,9 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
     if (processWgtList.isNotEmpty) {
       try {
         //先根据当前的重量计算出需要的总重量
-        if (widget.selectFormula.header != null &&
-            widget.selectFormula.header!.formulaHeader != null &&
-            widget.selectFormula.header!.formulaHeader!.totalWeight != null &&
+        if (myFmaInfo.header != null &&
+            myFmaInfo.header!.formulaHeader != null &&
+            myFmaInfo.header!.formulaHeader!.totalWeight != null &&
             selectedProcessWgt.targetWgt != null &&
             selectedProcessWgt.targetWgt! != 0) {
           double lastNeedTotalWgt = needTotalWgt;
@@ -2239,7 +2666,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
         } else {
           // 处理空值情况
           needTotalWgt = 0.0;
-          showTipInfo('配方数据错误！', context);
+          showTipInfo(localizedStrings.tipFormulaDataError, context);
         }
       } catch (e) {
         return;
@@ -2261,7 +2688,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
         targetItem.currentErrorWgt =
             double.parse(targetItem.currentErrorWgt!.toStringAsFixed(3));
         //百分比模式算出百分比
-        if (widget.selectFormula.header!.formulaHeader!.formulaMode! == 'pct') {
+        if (myFmaInfo.header!.formulaHeader!.formulaMode! == 'pct') {
           //计算误差的百分比
           if (needTotalWgt > 0) {
             targetItem.currentErrorPct =
@@ -2290,51 +2717,40 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
       color: Theme.of(context).colorScheme.surface,
       child: Row(
         children: [
-          SizedBox(
-            width: 17,
-          ),
           Expanded(
-            child: RichText(
-                text: TextSpan(
-                    style: TextStyle(overflow: TextOverflow.ellipsis),
-                    children: [
-                  TextSpan(
-                      text: localizedStrings.fOrderNo + ': ',
-                      style: Theme.of(context).textTheme.bodyMedium!.apply(
-                          color:
-                              Theme.of(context).colorScheme.onSurfaceVariant)),
-                  TextSpan(
-                      text: recRecNumber,
-                      style: Theme.of(context).textTheme.bodyMedium!.apply(
-                          color: Theme.of(context).colorScheme.onSurface)),
-                  TextSpan(
-                    text: '       ',
-                  ),
-                  TextSpan(
-                      text: localizedStrings.fFmaNameLabel + ': ',
-                      style: Theme.of(context).textTheme.bodyMedium!.apply(
-                          color:
-                              Theme.of(context).colorScheme.onSurfaceVariant)),
-                  TextSpan(
-                      text: widget
-                          .selectFormula.header!.formulaHeader!.formulaName!,
-                      style: Theme.of(context).textTheme.bodyMedium!.apply(
-                          color: Theme.of(context).colorScheme.onSurface)),
-                  TextSpan(
-                    text: '       ',
-                  ),
-                  TextSpan(
-                      text: localizedStrings.fFmaIdLabel + ': ',
-                      style: Theme.of(context).textTheme.bodyMedium!.apply(
-                          color:
-                              Theme.of(context).colorScheme.onSurfaceVariant)),
-                  TextSpan(
-                      text: widget
-                          .selectFormula.header!.formulaHeader!.formulaId!,
-                      style: Theme.of(context).textTheme.bodyMedium!.apply(
-                          color: Theme.of(context).colorScheme.onSurface)),
-                ])),
-          ),
+              child: Row(
+            children: [
+              SizedBox(
+                width: largePadding,
+              ),
+              SizedBox(
+                child: IconButton(
+                    onPressed: () {
+                      if (!startFormula) {
+                        PublicFunctions.stopWeight(widget.selScaleId);
+                        Navigator.pop(context);
+                      } else {
+                        performAbandonFma();
+                      }
+                    },
+                    icon: getSvgIcon(returnSvgIcon(), 28, 28,
+                        Theme.of(context).colorScheme.primary)),
+              ),
+              SizedBox(
+                width: regularPadding,
+              ),
+              SizedBox(
+                width: maxWidth,
+                child: Text(
+                  localizedStrings.titleConfidentialWeighingMode,
+                  style: Theme.of(context).textTheme.labelMedium!.apply(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          )),
           Text(
             localizedStrings.gTipAutoNextStep,
             style: Theme.of(context)

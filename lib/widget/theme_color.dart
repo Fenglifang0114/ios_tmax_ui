@@ -93,8 +93,8 @@ themeColor(Map<String, dynamic> colorTheme, bool isDarkMode) {
     onError: Colors.white,
     onPrimary: Colors.white, //字体颜色
     onSecondary: Colors.white,
-    onSurface: Color(0xFF171A1D), //            0xFF272727), // Colors.black,
-    onSurfaceVariant: Color(0xFF555759), //Color(0xFF606060),
+    onSurface: Color(0xFF272727), //0xFF171A1D),  // Colors.black,
+    onSurfaceVariant: Color(0xFF606060), //Color(0xFF555759), //
     onInverseSurface: Colors.black,
     secondaryFixed: const Color.fromARGB(255, 191, 191, 191), //0xFFBFBFBFF
     onTertiary: Colors.white,
@@ -106,7 +106,8 @@ themeColor(Map<String, dynamic> colorTheme, bool isDarkMode) {
     outlineVariant: Color(0xFFE6E6E6), //输入框边框
     surfaceContainerLow: Color(0xFFF5F5F5), //选中框
     surfaceContainerLowest: Color(0xFFD0D0D0), //很少用
-    surfaceContainerHighest: Color(0xFF7D8082), //          Color(0xFF8D8D8D),
+    surfaceContainerHighest:
+        Color(0xFF8D8D8D), //Color(0xFF7D8082), //          Color(0xFF8D8D8D),
     secondaryContainer: Color(0xFFE6EEF4),
     onTertiaryContainer: Color(0xFFF4B837),
 

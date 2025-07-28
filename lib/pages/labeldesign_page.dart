@@ -61,6 +61,7 @@ const labelVarMap = {
     "Percent,DATA",
     "TotalWeight,DATA",
     "TotalCount,DATA",
+    "TotalPcs,DATA",
   ],
 };
 
@@ -2861,6 +2862,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       "Percent": localizedStrings.l_percent_var,
       "TotalWeight": localizedStrings.l_total_wgt_var,
       "TotalCount": localizedStrings.l_total_cnt_var,
+      "TotalPcs": localizedStrings.l_total_pcs_var,
     };
 
     langVarExplMap = {
@@ -2882,6 +2884,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       "Percent": localizedStrings.l_percent_expl,
       "TotalWeight": localizedStrings.l_total_wgt_expl,
       "TotalCount": localizedStrings.l_total_cnt_expl,
+      "TotalPcs": localizedStrings.l_total_pcs_expl,
     };
   }
 }

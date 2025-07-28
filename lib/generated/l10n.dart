@@ -2883,6 +2883,16 @@ class S {
     );
   }
 
+  /// `TotalPcs`
+  String get l_total_pcs_var {
+    return Intl.message(
+      'TotalPcs',
+      name: 'l_total_pcs_var',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Line`
   String get l_line_expl {
     return Intl.message('Line', name: 'l_line_expl', desc: '', args: []);
@@ -2998,6 +3008,16 @@ class S {
     return Intl.message(
       'TotalCount',
       name: 'l_total_cnt_expl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `TotalPcs`
+  String get l_total_pcs_expl {
+    return Intl.message(
+      'TotalPcs',
+      name: 'l_total_pcs_expl',
       desc: '',
       args: [],
     );
@@ -5212,10 +5232,10 @@ class S {
     );
   }
 
-  /// `The current weight of the ingredient is not qualified!`
+  /// `The current weight of the ingredient is not qualified! Confirm continue?`
   String get fCurrentMaterialWeightInvalidMsg {
     return Intl.message(
-      'The current weight of the ingredient is not qualified!',
+      'The current weight of the ingredient is not qualified! Confirm continue?',
       name: 'fCurrentMaterialWeightInvalidMsg',
       desc: 'Error message when current raw material weight is invalid',
       args: [],
@@ -5413,10 +5433,10 @@ class S {
     );
   }
 
-  /// `Switch mode clears raw materials. Confirm?`
+  /// `Switching modes will clear the raw material list. Confirm?`
   String get fSwitchModeClearMsg {
     return Intl.message(
-      'Switch mode clears raw materials. Confirm?',
+      'Switching modes will clear the raw material list. Confirm?',
       name: 'fSwitchModeClearMsg',
       desc:
           'Confirmation message for mode switch that clears raw material list',
@@ -5922,6 +5942,16 @@ class S {
       'Calibration',
       name: 'menuCalibration',
       desc: 'Menu item for calibration',
+      args: [],
+    );
+  }
+
+  /// `Weighing Setting`
+  String get menuWeighingSetting {
+    return Intl.message(
+      'Weighing Setting',
+      name: 'menuWeighingSetting',
+      desc: 'Menu item for weighing setting',
       args: [],
     );
   }
@@ -6799,12 +6829,12 @@ class S {
     );
   }
 
-  /// `Set the full scale`
-  String get gTipSetFullScale {
+  /// `Set calibration weight`
+  String get gTipSetCalibrationWeight {
     return Intl.message(
-      'Set the full scale',
-      name: 'gTipSetFullScale',
-      desc: 'This is a tip to set the full scale.',
+      'Set calibration weight',
+      name: 'gTipSetCalibrationWeight',
+      desc: 'This is a tip to set the calibration weight.',
       args: [],
     );
   }
@@ -6849,12 +6879,12 @@ class S {
     );
   }
 
-  /// `Please set the full scale weight and click next`
-  String get gTipSetFullScaleThenNext {
+  /// `Please set the calibration weight and click next`
+  String get gTipSetCalibrationWeightThenNext {
     return Intl.message(
-      'Please set the full scale weight and click next',
-      name: 'gTipSetFullScaleThenNext',
-      desc: 'This is a tip to set the full scale weight and click next.',
+      'Please set the calibration weight and click next',
+      name: 'gTipSetCalibrationWeightThenNext',
+      desc: 'This is a tip to set the calibration weight and click next.',
       args: [],
     );
   }
@@ -6960,12 +6990,12 @@ class S {
     );
   }
 
-  /// `Please enter the max range`
-  String get gTipInputRange {
+  /// `Please enter the calibration weight`
+  String get gTipCalibrationWeight {
     return Intl.message(
-      'Please enter the max range',
-      name: 'gTipInputRange',
-      desc: 'This is a prompt to ask the user to input the measuring range.',
+      'Please enter the calibration weight',
+      name: 'gTipCalibrationWeight',
+      desc: 'This is a prompt to ask the user to input the calibration weight.',
       args: [],
     );
   }
@@ -6990,12 +7020,137 @@ class S {
     );
   }
 
+  /// `Maximum Range`
+  String get gTipMaxRange {
+    return Intl.message(
+      'Maximum Range',
+      name: 'gTipMaxRange',
+      desc: 'This is the prompt for the maximum range.',
+      args: [],
+    );
+  }
+
+  /// `Weight Unit`
+  String get gTipWeightUnit {
+    return Intl.message(
+      'Weight Unit',
+      name: 'gTipWeightUnit',
+      desc: 'This is the prompt for the weight unit.',
+      args: [],
+    );
+  }
+
+  /// `Initial Zero Setting`
+  String get gTipInitialZero {
+    return Intl.message(
+      'Initial Zero Setting',
+      name: 'gTipInitialZero',
+      desc: 'This is the prompt for initial zero setting.',
+      args: [],
+    );
+  }
+
+  /// `Manual Zero Reset`
+  String get gTipManualZero {
+    return Intl.message(
+      'Manual Zero Reset',
+      name: 'gTipManualZero',
+      desc: 'This is the prompt for manual zero reset.',
+      args: [],
+    );
+  }
+
+  /// `Zero Tracking`
+  String get gTipZeroTracking {
+    return Intl.message(
+      'Zero Tracking',
+      name: 'gTipZeroTracking',
+      desc: 'This is the prompt for zero tracking.',
+      args: [],
+    );
+  }
+
+  /// `Gravitational Acceleration`
+  String get gTipGravityAcceleration {
+    return Intl.message(
+      'Gravitational Acceleration',
+      name: 'gTipGravityAcceleration',
+      desc: 'This is the prompt for gravitational acceleration.',
+      args: [],
+    );
+  }
+
+  /// `Gravitational acceleration input error`
+  String get gTipGravityAccelerationInputError {
+    return Intl.message(
+      'Gravitational acceleration input error',
+      name: 'gTipGravityAccelerationInputError',
+      desc:
+          'This is a tip to inform the user that the gravitational acceleration input is incorrect.',
+      args: [],
+    );
+  }
+
   /// `Fail,Please redo the last step.`
   String get gTipRedoLastStep {
     return Intl.message(
       'Fail,Please redo the last step.',
       name: 'gTipRedoLastStep',
       desc: 'This is a tip to redo the last step.',
+      args: [],
+    );
+  }
+
+  /// `Calibrating...`
+  String get gTipCalibrating {
+    return Intl.message(
+      'Calibrating...',
+      name: 'gTipCalibrating',
+      desc: 'This is a tip to inform the user that calibration is in progress.',
+      args: [],
+    );
+  }
+
+  /// `Getting parameters, please wait...`
+  String get gTipGettingParameter {
+    return Intl.message(
+      'Getting parameters, please wait...',
+      name: 'gTipGettingParameter',
+      desc:
+          'This is a tip to inform the user that the parameters are being retrieved.',
+      args: [],
+    );
+  }
+
+  /// `get parameter fail`
+  String get gTipGetParameterFail {
+    return Intl.message(
+      'get parameter fail',
+      name: 'gTipGetParameterFail',
+      desc:
+          'This is a tip to inform the user that parameter retrieval has failed.',
+      args: [],
+    );
+  }
+
+  /// `set parameter fail`
+  String get gTipSetParameterFail {
+    return Intl.message(
+      'set parameter fail',
+      name: 'gTipSetParameterFail',
+      desc:
+          'This is a tip to inform the user that parameter setting has failed.',
+      args: [],
+    );
+  }
+
+  /// `When switching units, please also switch the corresponding range.`
+  String get gTipSwitchUnit {
+    return Intl.message(
+      'When switching units, please also switch the corresponding range.',
+      name: 'gTipSwitchUnit',
+      desc:
+          'This is a tip to remind the user to switch the corresponding range when changing the unit.',
       args: [],
     );
   }
@@ -7442,12 +7597,12 @@ class S {
     );
   }
 
-  /// `Perform single-point or linear calibration on the scale.`
+  /// `Weighing parameter setting and calibration for the scales.`
   String get subTitleCalibration {
     return Intl.message(
-      'Perform single-point or linear calibration on the scale.',
+      'Weighing parameter setting and calibration for the scales.',
       name: 'subTitleCalibration',
-      desc: 'SubTitle for calibration',
+      desc: 'SubTitle for weighing setting',
       args: [],
     );
   }
@@ -7509,6 +7664,139 @@ class S {
       'Retrieving the device time, please wait a moment.',
       name: 'gTipGettingDeviceTime',
       desc: 'Retrieving the device time, please wait a moment.',
+      args: [],
+    );
+  }
+
+  /// `Restart`
+  String get btnRestart {
+    return Intl.message(
+      'Restart',
+      name: 'btnRestart',
+      desc: 'Button to restart the operation',
+      args: [],
+    );
+  }
+
+  /// `Temporary Save`
+  String get btnTemporarySave {
+    return Intl.message(
+      'Temporary Save',
+      name: 'btnTemporarySave',
+      desc: 'Button to temporarily save data',
+      args: [],
+    );
+  }
+
+  /// `Formula data error!`
+  String get tipFormulaDataError {
+    return Intl.message(
+      'Formula data error!',
+      name: 'tipFormulaDataError',
+      desc: 'Error message indicating formula data error',
+      args: [],
+    );
+  }
+
+  /// `No raw material weight data, no need to save temporarily`
+  String get tipNoRawMaterialWeightData {
+    return Intl.message(
+      'No raw material weight data, no need to save temporarily',
+      name: 'tipNoRawMaterialWeightData',
+      desc: 'Tip indicating no raw material weight data to save temporarily',
+      args: [],
+    );
+  }
+
+  /// `Temporary storage record`
+  String get tipTemporarySaveFormulaRecord {
+    return Intl.message(
+      'Temporary storage record',
+      name: 'tipTemporarySaveFormulaRecord',
+      desc: 'Tip indicating temporarily saving formula weighing record',
+      args: [],
+    );
+  }
+
+  /// `Continue Weighing`
+  String get btnContinueWeighing {
+    return Intl.message(
+      'Continue Weighing',
+      name: 'btnContinueWeighing',
+      desc: 'Button to continue the weighing process',
+      args: [],
+    );
+  }
+
+  /// `Confidential Weighing Mode`
+  String get titleConfidentialWeighingMode {
+    return Intl.message(
+      'Confidential Weighing Mode',
+      name: 'titleConfidentialWeighingMode',
+      desc: 'Title for confidential weighing mode',
+      args: [],
+    );
+  }
+
+  /// `Please ensure the current weight data is correct. Do you want to continue?`
+  String get tipEnsureWeightCorrect {
+    return Intl.message(
+      'Please ensure the current weight data is correct. Do you want to continue?',
+      name: 'tipEnsureWeightCorrect',
+      desc:
+          'Tip to ensure the current weight data is correct and ask if to continue',
+      args: [],
+    );
+  }
+
+  /// `Temporary weighing records exist.`
+  String get formulaDeleteError {
+    return Intl.message(
+      'Temporary weighing records exist.',
+      name: 'formulaDeleteError',
+      desc:
+          'Error message when deleting a formula indicating that there are temporary weighing records',
+      args: [],
+    );
+  }
+
+  /// `Free formula mode`
+  String get btnFreeFormulaMode {
+    return Intl.message(
+      'Free formula mode',
+      name: 'btnFreeFormulaMode',
+      desc: 'Button to enter free formula mode',
+      args: [],
+    );
+  }
+
+  /// `Normal mode`
+  String get btnNormalMode {
+    return Intl.message(
+      'Normal mode',
+      name: 'btnNormalMode',
+      desc: 'Button to enter normal mode',
+      args: [],
+    );
+  }
+
+  /// `The current data is not saved. Confirm to clear and enable the free formula mode?`
+  String get fConfirmClearAndEnterFreeModeMsg {
+    return Intl.message(
+      'The current data is not saved. Confirm to clear and enable the free formula mode?',
+      name: 'fConfirmClearAndEnterFreeModeMsg',
+      desc:
+          'Confirmation message for clearing unsaved data and entering free formula mode',
+      args: [],
+    );
+  }
+
+  /// `Please first stable the weight.`
+  String get gTipPleaseStableWeight {
+    return Intl.message(
+      'Please first stable the weight.',
+      name: 'gTipPleaseStableWeight',
+      desc: 'Tip to please first stable the weight',
       args: [],
     );
   }

@@ -41,6 +41,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "bt_setting_title": MessageLookupByLibrary.simpleMessage(
       "Bluetooth Setting",
     ),
+    "btnContinueWeighing": MessageLookupByLibrary.simpleMessage(
+      "Continue Weighing",
+    ),
+    "btnFreeFormulaMode": MessageLookupByLibrary.simpleMessage(
+      "Free formula mode",
+    ),
+    "btnNormalMode": MessageLookupByLibrary.simpleMessage("Normal mode"),
+    "btnRestart": MessageLookupByLibrary.simpleMessage("Restart"),
+    "btnTemporarySave": MessageLookupByLibrary.simpleMessage("Temporary Save"),
     "btn_add_lic_file": MessageLookupByLibrary.simpleMessage(
       "Select License File",
     ),
@@ -150,6 +159,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "fComScale": MessageLookupByLibrary.simpleMessage("Serial Scale"),
     "fCompleteIngredientsBtn": MessageLookupByLibrary.simpleMessage("Complete"),
     "fConfidential": MessageLookupByLibrary.simpleMessage("Confidential"),
+    "fConfirmClearAndEnterFreeModeMsg": MessageLookupByLibrary.simpleMessage(
+      "The current data is not saved. Confirm to clear and enable the free formula mode?",
+    ),
     "fConfirmDelete": MessageLookupByLibrary.simpleMessage("Confirm delete?"),
     "fCreatedAtCol": MessageLookupByLibrary.simpleMessage("Create Time"),
     "fCreatedTimeCol": MessageLookupByLibrary.simpleMessage("Create Time"),
@@ -160,7 +172,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Current ingredient is overweight, please choose to abandon or correct?",
     ),
     "fCurrentMaterialWeightInvalidMsg": MessageLookupByLibrary.simpleMessage(
-      "The current weight of the ingredient is not qualified!",
+      "The current weight of the ingredient is not qualified! Confirm continue?",
     ),
     "fCurrentWeightLabel": MessageLookupByLibrary.simpleMessage(
       "Current Weight",
@@ -351,7 +363,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "fStartWeighingBtn": MessageLookupByLibrary.simpleMessage("Start Weighing"),
     "fSuccessMsg": MessageLookupByLibrary.simpleMessage("Success"),
     "fSwitchModeClearMsg": MessageLookupByLibrary.simpleMessage(
-      "Switch mode clears raw materials. Confirm?",
+      "Switching modes will clear the raw material list. Confirm?",
     ),
     "fSwitchUnitHint": MessageLookupByLibrary.simpleMessage(
       "Please switch the device unit.",
@@ -376,6 +388,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "fWgtUnit": MessageLookupByLibrary.simpleMessage("Weight Unit"),
     "firmware_update": MessageLookupByLibrary.simpleMessage(
       "Update Firmware Serial",
+    ),
+    "formulaDeleteError": MessageLookupByLibrary.simpleMessage(
+      "Temporary weighing records exist.",
     ),
     "gAlignment": MessageLookupByLibrary.simpleMessage("Alignment:"),
     "gAppInformation": MessageLookupByLibrary.simpleMessage("App Information"),
@@ -603,6 +618,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipCalResult": MessageLookupByLibrary.simpleMessage(
       "If calibration fails, please click \'Recalibrate\'.",
     ),
+    "gTipCalibrating": MessageLookupByLibrary.simpleMessage("Calibrating..."),
     "gTipCalibrationAgain": MessageLookupByLibrary.simpleMessage("Recalibrate"),
     "gTipCalibrationFailed": MessageLookupByLibrary.simpleMessage(
       "Calibration failed",
@@ -615,6 +631,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "gTipCalibrationWarning": MessageLookupByLibrary.simpleMessage(
       "Calibration is in progress. It is recommended to complete the calibration before switching the scale! Are you sure you want to switch?",
+    ),
+    "gTipCalibrationWeight": MessageLookupByLibrary.simpleMessage(
+      "Please enter the calibration weight",
     ),
     "gTipCheckWgtPageHelp": MessageLookupByLibrary.simpleMessage(
       "1. Click [Edit] to set the upper and lower limits (the judgment is based on the upper and lower limits set in the background, not on the scale). After setting, place the weight and the corresponding alarm light will light up;\n2. Click [Save] to save the current weighing record;\n3. Click [Show Reports] to display the report;\n4. Click [Setting] to set automatic saving. (Can be set to save when OK, HIGH, LOW, ALL.)\n5. You can also set the date format and delimiter for data export;\n6. Enter the PLU number or name in the [PLU Name] column to call the PLU in the backend database; (The PLU here is not the PLU on the scale)\n7. Click [Report Setting] to select the information displayed for weighing data; (Currently, there are no functional variables available: Product Code, Item Code, User Name, User NO）\n8. Click the arrow in a column of the report title row will sort the report in ascending/descending order.\n9.Click [Export] to export all saved data (xlsx).\n\nNote:\n1. The units for the upper and lower limits are the currently selected units on the scale. After setting the upper and lower limits in the software, the values of the upper and lower limits will not undergo unit conversion when switching units through the scale.\n2. At present, the software determines the upper and lower limits from zero, while on the scale, it starts from 20d.\n",
@@ -716,8 +735,20 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "gTipGetIpFail": MessageLookupByLibrary.simpleMessage("Get Ip Fail !"),
     "gTipGetIpOk": MessageLookupByLibrary.simpleMessage("Get Ip OK !"),
+    "gTipGetParameterFail": MessageLookupByLibrary.simpleMessage(
+      "get parameter fail",
+    ),
     "gTipGettingDeviceTime": MessageLookupByLibrary.simpleMessage(
       "Retrieving the device time, please wait a moment.",
+    ),
+    "gTipGettingParameter": MessageLookupByLibrary.simpleMessage(
+      "Getting parameters, please wait...",
+    ),
+    "gTipGravityAcceleration": MessageLookupByLibrary.simpleMessage(
+      "Gravitational Acceleration",
+    ),
+    "gTipGravityAccelerationInputError": MessageLookupByLibrary.simpleMessage(
+      "Gravitational acceleration input error",
     ),
     "gTipGrossText": MessageLookupByLibrary.simpleMessage("Gross Text"),
     "gTipHelp": MessageLookupByLibrary.simpleMessage("Help"),
@@ -735,8 +766,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "Industrial Applications",
     ),
     "gTipInformation": MessageLookupByLibrary.simpleMessage("Information"),
-    "gTipInputRange": MessageLookupByLibrary.simpleMessage(
-      "Please enter the max range",
+    "gTipInitialZero": MessageLookupByLibrary.simpleMessage(
+      "Initial Zero Setting",
     ),
     "gTipInstallService": MessageLookupByLibrary.simpleMessage(
       "Install Service",
@@ -761,7 +792,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Please load the weight, wait for the green light to turn on and click next",
     ),
     "gTipManual": MessageLookupByLibrary.simpleMessage("Manual"),
+    "gTipManualZero": MessageLookupByLibrary.simpleMessage("Manual Zero Reset"),
     "gTipMaxLength": MessageLookupByLibrary.simpleMessage("Max Length"),
+    "gTipMaxRange": MessageLookupByLibrary.simpleMessage("Maximum Range"),
     "gTipModelNotMatch": MessageLookupByLibrary.simpleMessage(
       "Model name in ZIP doesn\'t match device\'s. Force update?",
     ),
@@ -791,6 +824,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "gTipPleaseLoadWeight": MessageLookupByLibrary.simpleMessage(
       "Please load the weight",
+    ),
+    "gTipPleaseStableWeight": MessageLookupByLibrary.simpleMessage(
+      "Please first stable the weight.",
     ),
     "gTipPluDownload": MessageLookupByLibrary.simpleMessage(
       "This application is used to download product information.",
@@ -881,11 +917,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipServiceUninstalled": MessageLookupByLibrary.simpleMessage(
       "Service not installed",
     ),
-    "gTipSetFullScale": MessageLookupByLibrary.simpleMessage(
-      "Set the full scale",
+    "gTipSetCalibrationWeight": MessageLookupByLibrary.simpleMessage(
+      "Set calibration weight",
     ),
-    "gTipSetFullScaleThenNext": MessageLookupByLibrary.simpleMessage(
-      "Please set the full scale weight and click next",
+    "gTipSetCalibrationWeightThenNext": MessageLookupByLibrary.simpleMessage(
+      "Please set the calibration weight and click next",
+    ),
+    "gTipSetParameterFail": MessageLookupByLibrary.simpleMessage(
+      "set parameter fail",
     ),
     "gTipStableText": MessageLookupByLibrary.simpleMessage("Stable Text"),
     "gTipStableTime": MessageLookupByLibrary.simpleMessage("Stable Time (s)"),
@@ -896,6 +935,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipStopService": MessageLookupByLibrary.simpleMessage("Stop Service"),
     "gTipStringProperty": MessageLookupByLibrary.simpleMessage(
       "String Property",
+    ),
+    "gTipSwitchUnit": MessageLookupByLibrary.simpleMessage(
+      "When switching units, please also switch the corresponding range.",
     ),
     "gTipTakeOut": MessageLookupByLibrary.simpleMessage(
       "This app is used to implement the take out scale.",
@@ -929,12 +971,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipWeightSummationMode": MessageLookupByLibrary.simpleMessage(
       "Weight Summation Mode",
     ),
+    "gTipWeightUnit": MessageLookupByLibrary.simpleMessage("Weight Unit"),
     "gTipWgtDataCollectionHelp": MessageLookupByLibrary.simpleMessage(
       "1. Click [Save] to manually save the current weighing data (with no quantity limit); Click [Export] to export all saved data (xlsx);\n2. Click [Setting] and select Save Mode to Auto, it can be set to auto save mode;\n3. You can also set the date format and delimiter for data export;\n4. Enter the PLU number or name in the PLU Name column to call the PLU in the backend database; (The PLU here is not the PLU on the scale)\n5. Click [Report Setting] to select the information displayed for weighing data; (Currently, there are no functional variables available: Product Code、Item Code、User Name、User NO）\n6. Click the arrow in column of the report title row will sort the report in ascending/descending order.\n\nNote: \n1. To save data, you need to clear the scale before saving the next transaction. Zero point will not be saved.\n2. The upper and lower limit variables are the upper and lower limits set in the backend PLU, not the upper and lower limits set on the scale.\n3. The saved data will not be cleared after closing/restarting the software.\n",
     ),
     "gTipWifiSettingPageHelp": MessageLookupByLibrary.simpleMessage(
       "1. Select the Wi-Fi you want to connect to from the left menu bar;\n2. Enter the password and click [Connect] to obtain the IP address;\n3. Return to the main interface and enter [Multi-scale Management];\n4. Click [+] at the top of the left status bar, enter the IP address and serial port number;\n5. Click [Confirm] to connect.\n",
     ),
+    "gTipZeroTracking": MessageLookupByLibrary.simpleMessage("Zero Tracking"),
     "gTitleActivationFeedback": MessageLookupByLibrary.simpleMessage(
       "Activation Feedback",
     ),
@@ -1043,6 +1087,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "l_time_var": MessageLookupByLibrary.simpleMessage("Time"),
     "l_total_cnt_expl": MessageLookupByLibrary.simpleMessage("TotalCount"),
     "l_total_cnt_var": MessageLookupByLibrary.simpleMessage("TotalCount"),
+    "l_total_pcs_expl": MessageLookupByLibrary.simpleMessage("TotalPcs"),
+    "l_total_pcs_var": MessageLookupByLibrary.simpleMessage("TotalPcs"),
     "l_total_wgt_expl": MessageLookupByLibrary.simpleMessage("TotalWeight"),
     "l_total_wgt_var": MessageLookupByLibrary.simpleMessage("TotalWeight"),
     "l_unit_wgt_expl": MessageLookupByLibrary.simpleMessage("UnitWeight"),
@@ -1105,6 +1151,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "menuWeighing": MessageLookupByLibrary.simpleMessage("Weighing"),
     "menuWeighingDataCollection": MessageLookupByLibrary.simpleMessage(
       "Weighing Data Collection",
+    ),
+    "menuWeighingSetting": MessageLookupByLibrary.simpleMessage(
+      "Weighing Setting",
     ),
     "menuWifiSetting": MessageLookupByLibrary.simpleMessage("Wi-Fi Setting"),
     "new_license_text": MessageLookupByLibrary.simpleMessage("New License:"),
@@ -1322,7 +1371,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Configure Bluetooth name and signal strength.",
     ),
     "subTitleCalibration": MessageLookupByLibrary.simpleMessage(
-      "Perform single-point or linear calibration on the scale.",
+      "Weighing parameter setting and calibration for the scales.",
     ),
     "subTitleCheckWeighing": MessageLookupByLibrary.simpleMessage(
       "Perform online weight inspection and generate inspection reports.",
@@ -1384,9 +1433,24 @@ class MessageLookup extends MessageLookupByLibrary {
     "subTitleWifiSetting": MessageLookupByLibrary.simpleMessage(
       "Obtain static/dynamic IP addresses and connect to Wi-Fi.",
     ),
+    "tipEnsureWeightCorrect": MessageLookupByLibrary.simpleMessage(
+      "Please ensure the current weight data is correct. Do you want to continue?",
+    ),
+    "tipFormulaDataError": MessageLookupByLibrary.simpleMessage(
+      "Formula data error!",
+    ),
+    "tipNoRawMaterialWeightData": MessageLookupByLibrary.simpleMessage(
+      "No raw material weight data, no need to save temporarily",
+    ),
     "tipPage": MessageLookupByLibrary.simpleMessage("Page"),
     "tipPageSequnce": MessageLookupByLibrary.simpleMessage(""),
     "tipPageTotal": MessageLookupByLibrary.simpleMessage("Total"),
+    "tipTemporarySaveFormulaRecord": MessageLookupByLibrary.simpleMessage(
+      "Temporary storage record",
+    ),
+    "titleConfidentialWeighingMode": MessageLookupByLibrary.simpleMessage(
+      "Confidential Weighing Mode",
+    ),
     "txt_serial_port_connected": MessageLookupByLibrary.simpleMessage(
       "Serial port connected",
     ),

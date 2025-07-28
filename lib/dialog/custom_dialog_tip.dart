@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/language.dart';
+import 'package:t_max/widget/common_widget.dart';
 import 'package:t_max/widget/dialog_head_style.dart';
 
 // 用于存储当前显示的对话框的上下文
@@ -546,6 +547,100 @@ class ShowHignWgtTipDialogState extends State<ShowHignWgtTipDialog> {
                       ),
                     ),
                   ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+//正常提示的对话框
+class ShowLowWgtTipDialog extends StatefulWidget {
+  const ShowLowWgtTipDialog(
+      {super.key, required this.title, required this.msg});
+  final String title;
+  final String msg;
+  @override
+  ShowLowWgtTipDialogState createState() => ShowLowWgtTipDialogState();
+}
+
+class ShowLowWgtTipDialogState extends State<ShowLowWgtTipDialog> {
+  TextEditingController formulaTypeCtl = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      child: Container(
+        width: 400,
+        height: 300,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(0),
+        ),
+        child: Column(
+          children: [
+            // 头部
+            ...dialogHeadStyle(context, widget.title, true, onClose: () {
+              Navigator.pop(context, 0);
+            }),
+
+            // 中部
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.all(26),
+                height: 150,
+                width: 380,
+                child: Row(children: [
+                  Icon(Icons.warning,
+                      size: 48, color: Theme.of(context).colorScheme.error),
+                  Expanded(
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: Text(
+                        widget.msg,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.normal,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                      ),
+                    ),
+                  ),
+                ]),
+              ),
+            ),
+
+            // 底部
+            Container(
+              height: 96,
+              width: 400,
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                      child: showTextButton(
+                          context, btnHeight, localizedStrings.gBtnConfirm, () {
+                    Navigator.pop(context, 1);
+                  },
+                          Theme.of(context).colorScheme.onPrimary,
+                          Theme.of(context).colorScheme.primary,
+                          Theme.of(context).colorScheme.onPrimary)),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                      child: showTextButton(
+                          context, btnHeight, localizedStrings.gBtnCancel, () {
+                    Navigator.pop(context, 0);
+                  },
+                          Theme.of(context).colorScheme.onPrimary,
+                          Theme.of(context).colorScheme.surfaceContainerHighest,
+                          Theme.of(context).colorScheme.onPrimary)),
                 ],
               ),
             ),

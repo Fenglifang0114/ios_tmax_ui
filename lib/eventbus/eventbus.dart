@@ -547,14 +547,64 @@ class EventRevSetDecimalValue {
   EventRevSetDecimalValue(this.obj);
 }
 
+class EventRevSetWeightUnit {
+  dynamic obj;
+  EventRevSetWeightUnit(this.obj);
+}
+
+class EventRevGetWeightUnit {
+  dynamic obj;
+  EventRevGetWeightUnit(this.obj);
+}
+
+class EventRevGetGaduation1Value {
+  dynamic obj;
+  EventRevGetGaduation1Value(this.obj);
+}
+
+class EventRevSetGaduation1Value {
+  dynamic obj;
+  EventRevSetGaduation1Value(this.obj);
+}
+
+class EventRevGetDecimalValue {
+  dynamic obj;
+  EventRevGetDecimalValue(this.obj);
+}
+
+class EventRevGetGravAcc {
+  dynamic obj;
+  EventRevGetGravAcc(this.obj);
+}
+
+class EventRevGetMaxRange1 {
+  dynamic obj;
+  EventRevGetMaxRange1(this.obj);
+}
+
+class EventRevGetManualZero {
+  dynamic obj;
+  EventRevGetManualZero(this.obj);
+}
+
+class EventRevGetZeroTracking {
+  dynamic obj;
+  EventRevGetZeroTracking(this.obj);
+}
+
+class EventRevGetInitialZero {
+  dynamic obj;
+  EventRevGetInitialZero(this.obj);
+}
+
 class EventRevWifiPwdAdd {
   dynamic obj;
   EventRevWifiPwdAdd(this.obj);
 }
 
-class EventRevSetMaxRange {
+class EventRevCalWeight {
   dynamic obj;
-  EventRevSetMaxRange(this.obj);
+  EventRevCalWeight(this.obj);
 }
 
 class EventDeleteRec {
@@ -600,6 +650,11 @@ class EventRespGetRawDataList {
 class EventRespAddRawData {
   dynamic obj;
   EventRespAddRawData(this.obj);
+}
+
+class EventRespEditRawData {
+  dynamic obj;
+  EventRespEditRawData(this.obj);
 }
 
 class EventRespAddFormulaType {
@@ -670,4 +725,24 @@ class EventSaveTakeInOutWgt {
 class EventRespGetAutoNext {
   dynamic obj;
   EventRespGetAutoNext(this.obj);
+}
+
+class EventRespGetDraftFmaWgtRecList {
+  dynamic obj;
+  EventRespGetDraftFmaWgtRecList(this.obj);
+}
+
+class EventRespCreateDraftFmaWgtRecList {
+  dynamic obj;
+  EventRespCreateDraftFmaWgtRecList(this.obj);
+}
+
+class EventRespUpdateDraftFmaWgtRecList {
+  dynamic obj;
+  EventRespUpdateDraftFmaWgtRecList(this.obj);
+}
+
+class EventRespDelDraftFmaWgtRecList {
+  dynamic obj;
+  EventRespDelDraftFmaWgtRecList(this.obj);
 }

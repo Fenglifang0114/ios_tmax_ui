@@ -1,3 +1,4 @@
+import 'package:t_max/data/darf_fma_data_from_db.dart';
 import 'package:t_max/data/fma_rec_list_db_data.dart';
 import 'package:t_max/data/formula_from_db_data.dart';
 import 'package:t_max/data/formula_scale_data.dart';
@@ -12,6 +13,8 @@ List<RawDataInfo> rawDataList = [];
 List<FormulaInfoDb> formulaDataList = [];
 
 List<FmaRecFromDb> fmaRecFromDbList = [];
+
+List<DarfFmaInfo> darfFmaInfoList = []; //暂存的配方称重记录和配方明细
 
 //定义常量的颜色
 

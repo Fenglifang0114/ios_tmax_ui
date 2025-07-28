@@ -15,6 +15,8 @@ import 'eventbus/eventbus.dart';
 import 'generated/l10n.dart';
 import 'widget/theme_color.dart';
 
+ServerSocket? mainServerSocket;
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
@@ -29,8 +31,9 @@ Future<void> main() async {
   }
   await initPageId();
   await ensureInitialized();
-  bool isPortAvailable = await checkAndBindPort();
-  if (isPortAvailable) {
+  mainServerSocket = await checkAndBindPort();
+
+  if (mainServerSocket != null) {
     runApp(MyApp(savedLanguage, ipAddress, savedDarkMode == 'true'));
   } else {
     exit(0);
@@ -50,14 +53,13 @@ Future<void> initPageId() async {
   }
 }
 
-Future<bool> checkAndBindPort() async {
-  ServerSocket? serverSocket;
+Future<ServerSocket?> checkAndBindPort() async {
   try {
-    // 尝试创建ServerSocket来绑定端口20015
-    serverSocket = await ServerSocket.bind(InternetAddress.anyIPv4, 58581);
-    return true; // 成功绑定端口，说明应用之前没开启，现在可以占用该端口继续
+    // 尝试创建ServerSocket来绑定端口58581
+    return await ServerSocket.bind(InternetAddress.anyIPv4, 58581);
   } catch (e) {
-    return false; // 端口已被占用，推测应用已在运行
+    // 端口已被占用，推测应用已在运行
+    return null;
   }
 }
 

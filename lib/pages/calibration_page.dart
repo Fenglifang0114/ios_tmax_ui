@@ -11,7 +11,6 @@ import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/widget/common_widget.dart';
-import 'package:t_max/widget/dialog_head_style.dart';
 import 'package:t_max/widget/scale_list.dart';
 import '../../functions/methods.dart';
 import '../data/language.dart';
@@ -31,6 +30,14 @@ class CalibrationPageState extends State<CalibrationPage> {
   ReqWeightCountine tempWeight = ReqWeightCountine();
   TextEditingController scaleRangeCtl = TextEditingController(text: "");
   TextEditingController scaleUnitCtl = TextEditingController(text: "kg");
+  TextEditingController scaleCap1Ctl = TextEditingController(text: "10");
+  TextEditingController decimalCtl = TextEditingController(text: "0");
+  TextEditingController gaduation1Ctl = TextEditingController(text: "1");
+  TextEditingController initialZeroCtl = TextEditingController(text: "0");
+  TextEditingController zeroTrackingCtl = TextEditingController(text: "0.5d");
+  TextEditingController manualZeroCtl = TextEditingController(text: "0");
+  TextEditingController unitCtl = TextEditingController(text: "kg");
+  TextEditingController gravAccCtl = TextEditingController(text: "9.8"); //重力加速度
 
   int selScaleId = -1; //选择的秤ID
 
@@ -47,6 +54,17 @@ class CalibrationPageState extends State<CalibrationPage> {
   bool isFinish = false; //是否完成校准
   bool isCnting = false; //是否正在计数
   bool isStart = false; //是否开始
+  bool isCalibration = false; //是否校准
+
+// 存储初始值
+  String initialMaxRange1 = '';
+  String initialWgtUnit = '';
+  String initialInitZero = '';
+  String initialManualZero = '';
+  String initialZeroTracking = '';
+  String initialGravAcc = '';
+  String initialDecimal = '';
+  String initialGaduation1 = '';
 
   dynamic eventBus1; //接收秤数据
   dynamic eventBus2; //接收秤数据
@@ -54,6 +72,14 @@ class CalibrationPageState extends State<CalibrationPage> {
   dynamic eventBus4; //接收秤数据
   dynamic eventBus5; //接收秤数据
   dynamic eventBus6; //接收秤数据
+  dynamic eventBus7; //接收秤数据
+  dynamic eventBus8; //接收秤数据
+  dynamic eventBus9; //接收秤数据
+  dynamic eventBus10; //接收秤数据
+  dynamic eventBus11; //接收秤数据
+  dynamic eventBus12; //接收秤数据
+  dynamic eventBus13; //接收秤数据
+  dynamic eventBus14; //接收秤数据
 
   //定时发送秤还活着
   Timer? _cntAliveTimer;
@@ -70,7 +96,7 @@ class CalibrationPageState extends State<CalibrationPage> {
 
     _isCntAliveTiming = true;
     _cntAliveTimer = Timer(Duration(seconds: time), () {
-      PublicFunctions.sendScaleAlive(selScaleId); //只管串口
+      PublicFunctions.sendScaleAlive(selScaleId);
       if (!isStart) {
         PublicFunctions.getWeight(selScaleId);
       }
@@ -177,16 +203,26 @@ class CalibrationPageState extends State<CalibrationPage> {
       }
     });
 
-    eventBus3 = eventBus.on<EventRevSetMaxRange>().listen((event) {
+    eventBus3 = eventBus.on<EventRevCalWeight>().listen((event) {
       if (mounted) {
         ChannelResponse tempRespData = ChannelResponse('', '', 0);
         tempRespData = event.obj;
         if (mounted) {
           if (!tempRespData.msgBody.contains('ok')) {
-            showTipInfo(localizedStrings.gTipResetMaxRange, context);
+            showTipInfo(localizedStrings.gTipRedoLastStep, context);
             setState(() {
-              curStep = step2;
+              curStep = curStep - 1;
+              if (curStep < 1) {
+                curStep = 1;
+              }
             });
+          } else {
+            if (curStep == step4) {
+              setState(() {
+                isFinish = true;
+                isCalSuccess = true;
+              });
+            }
           }
         }
       }
@@ -198,7 +234,7 @@ class CalibrationPageState extends State<CalibrationPage> {
         tempRespData = event.obj;
         if (mounted) {
           if (!tempRespData.msgBody.contains('ok')) {
-            showTipInfo('fail,set decimal fail!', context);
+            showTipInfo(localizedStrings.gTipSetParameterFail, context);
           } else {
             showTipInfo(localizedStrings.fSuccessMsg, context);
           }
@@ -212,7 +248,6 @@ class CalibrationPageState extends State<CalibrationPage> {
         tempRespData = event.obj;
         if (mounted) {
           if (!tempRespData.msgBody.contains('ok')) {
-            showTipInfo('fail,set gaduation fail!', context);
           } else {}
         }
       }
@@ -235,6 +270,187 @@ class CalibrationPageState extends State<CalibrationPage> {
         }
       }
     });
+
+    eventBus7 = eventBus.on<EventRevGetDecimalValue>().listen((event) {
+      if (mounted) {
+        ChannelResponse tempRespData = ChannelResponse('', '', 0);
+        tempRespData = event.obj;
+        if (mounted) {
+          if (tempRespData.msgBody.length > 1) {
+            // showTipInfo('fail,get parameter fail!', context);
+            return;
+          }
+
+          initialDecimal = tempRespData.msgBody;
+
+          setState(() {
+            decimalCtl.text = initialDecimal;
+          });
+        }
+      }
+    });
+    eventBus8 = eventBus.on<EventRevGetGaduation1Value>().listen((event) {
+      if (mounted) {
+        ChannelResponse tempRespData = ChannelResponse('', '', 0);
+        tempRespData = event.obj;
+        if (mounted) {
+          if (tempRespData.msgBody.length > 1) {
+            // showTipInfo('fail,get parameter fail!', context);
+            return;
+          }
+          initialGaduation1 = tempRespData.msgBody;
+
+          setState(() {
+            gaduation1Ctl.text = initialGaduation1;
+          });
+        }
+      }
+    });
+
+    eventBus9 = eventBus.on<EventRevGetGravAcc>().listen((event) {
+      if (mounted) {
+        ChannelResponse tempRespData = ChannelResponse('', '', 0);
+        tempRespData = event.obj;
+        if (mounted) {
+          if (tempRespData.msgBody.length > 7) {
+            showTipInfo(localizedStrings.gTipGetParameterFail, context);
+            return;
+          }
+          initialGravAcc = (tempRespData.msgBody);
+
+          setState(() {
+            gravAccCtl.text = initialGravAcc;
+          });
+          showTipInfo(localizedStrings.fSuccessMsg, context);
+        }
+      }
+    });
+
+    eventBus10 = eventBus.on<EventRevGetInitialZero>().listen((event) {
+      if (mounted) {
+        ChannelResponse tempRespData = ChannelResponse('', '', 0);
+        tempRespData = event.obj;
+        if (mounted) {
+          if (tempRespData.msgBody.length > 7) {
+            // showTipInfo('fail,get parameter fail!', context);
+            return;
+          }
+          initialInitZero = (tempRespData.msgBody);
+          setState(() {
+            initialZeroCtl.text = initialInitZero;
+          });
+        }
+      }
+    });
+
+    eventBus11 = eventBus.on<EventRevGetZeroTracking>().listen((event) {
+      if (mounted) {
+        ChannelResponse tempRespData = ChannelResponse('', '', 0);
+        tempRespData = event.obj;
+        if (mounted) {
+          if (tempRespData.msgBody.length > 7) {
+            // showTipInfo('fail,get parameter fail!', context);
+            return;
+          }
+          String revStr = tempRespData.msgBody;
+          switch (revStr) {
+            case '0':
+              initialZeroTracking = 'off';
+              break;
+            case '1':
+              initialZeroTracking = '0.5d';
+              break;
+            case '2':
+              initialZeroTracking = '1d';
+              break;
+            case '3':
+              initialZeroTracking = '2d';
+              break;
+            case '4':
+              initialZeroTracking = '3d';
+              break;
+            case '5':
+              initialZeroTracking = '4d';
+              break;
+            default:
+              initialZeroTracking = '';
+          }
+
+          setState(() {
+            zeroTrackingCtl.text = initialZeroTracking;
+          });
+        }
+      }
+    });
+
+    eventBus12 = eventBus.on<EventRevGetManualZero>().listen((event) {
+      if (mounted) {
+        ChannelResponse tempRespData = ChannelResponse('', '', 0);
+        tempRespData = event.obj;
+        if (mounted) {
+          if (tempRespData.msgBody.length > 7) {
+            // showTipInfo('fail,get parameter fail!', context);
+            return;
+          }
+          initialManualZero = (tempRespData.msgBody);
+
+          setState(() {
+            manualZeroCtl.text = initialManualZero;
+          });
+        }
+      }
+    });
+    //获取重量单位
+    eventBus13 = eventBus.on<EventRevGetWeightUnit>().listen((event) {
+      if (mounted) {
+        ChannelResponse tempRespData = ChannelResponse('', '', 0);
+        tempRespData = event.obj;
+        if (mounted) {
+          if (tempRespData.msgBody.length > 1) {
+            // showTipInfo('fail,get parameter fail!', context);
+
+            return;
+          }
+          initialWgtUnit = tempRespData.msgBody;
+          switch (initialWgtUnit) {
+            case '0':
+              initialWgtUnit = 'kg';
+              break;
+            case '1':
+              initialWgtUnit = 'g';
+              break;
+            case '2':
+              initialWgtUnit = 'lb';
+              break;
+            default:
+              initialWgtUnit = '';
+          }
+          setState(() {
+            unitCtl.text = initialWgtUnit;
+          });
+        }
+      }
+    });
+
+    //获取秤的最大量程1
+    eventBus14 = eventBus.on<EventRevGetMaxRange1>().listen((event) {
+      if (mounted) {
+        ChannelResponse tempRespData = ChannelResponse('', '', 0);
+        tempRespData = event.obj;
+        if (mounted) {
+          if (tempRespData.msgBody.length > 7) {
+            // showTipInfo('fail,get parameter fail!', context);
+            return;
+          }
+          initialMaxRange1 = tempRespData.msgBody;
+
+          setState(() {
+            scaleCap1Ctl.text = initialMaxRange1;
+          });
+        }
+      }
+    });
+
     // 在页面构建完成后显示提示
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (myAllScalesList.isEmpty) {
@@ -255,6 +471,15 @@ class CalibrationPageState extends State<CalibrationPage> {
     eventBus4.cancel();
     eventBus5.cancel();
     eventBus6.cancel();
+    eventBus7.cancel();
+    eventBus8.cancel();
+    eventBus9.cancel();
+    eventBus10.cancel();
+    eventBus11.cancel();
+    eventBus12.cancel();
+    eventBus13.cancel();
+    eventBus14.cancel();
+
     stopCntAliveTimer();
     startTimer?.cancel();
     calHeartBeatTimer?.cancel();
@@ -267,18 +492,6 @@ class CalibrationPageState extends State<CalibrationPage> {
     PublicFunctions.stopWeight(selScaleId);
 
     super.dispose();
-  }
-
-  void showParameterSettingDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false, // 点击对话框外部不关闭对话框
-      builder: (BuildContext context) {
-        return ParameterSettingDialog(
-          selScaleId: selScaleId,
-        );
-      },
-    );
   }
 
   void performChangeScale(int scaleId) {
@@ -296,12 +509,36 @@ class CalibrationPageState extends State<CalibrationPage> {
         isZero: false,
         isNet: false,
       );
+      initialMaxRange1 = '';
+      initialWgtUnit = '';
+      initialInitZero = '';
+      initialManualZero = '';
+      initialZeroTracking = '';
+      initialGravAcc = '';
+      initialDecimal = '';
+      initialGaduation1 = '';
     });
-    PublicFunctions.getWeight(selScaleId);
+    getAllParameter();
+  }
+
+  void getAllParameter() {
+    showTipInfo(localizedStrings.gTipGettingParameter, context);
+    PublicFunctions.getMaxRange1(selScaleId);
+    PublicFunctions.getWeightUnit(selScaleId);
+    PublicFunctions.getInitialZero(selScaleId);
+    PublicFunctions.getManualZero(selScaleId);
+    PublicFunctions.getZeroTracking(selScaleId);
+    PublicFunctions.getGravityAcceleration(selScaleId);
+    PublicFunctions.getDecimalValue(selScaleId);
+    PublicFunctions.getGaduation1Value(selScaleId);
+  }
+
+  showCalibrationWarning() {
+    showTipInfo(localizedStrings.gTipCalibrating, context);
   }
 
   void changeScale(int scaleId) {
-    if (curStep != step1) {
+    if (curStep != step1 && curStep != step4) {
       showDialog(
         context: context,
         barrierDismissible: false, // 点击对话框外部不关闭对话框
@@ -389,18 +626,13 @@ class CalibrationPageState extends State<CalibrationPage> {
                                     child: Column(
                                       children: [
                                         showSetParameterBtn(),
-                                        showStepPart(),
-                                        showStepTip(),
-                                        Expanded(
-                                          child: curStep == step1
-                                              ? showStep1()
-                                              : curStep == step2
-                                                  ? showStep2()
-                                                  : curStep == step3
-                                                      ? showStep3()
-                                                      : showStep4(),
+                                        SizedBox(
+                                          height: largePadding,
                                         ),
-                                        showBtnRow()
+                                        if (isCalibration && selScaleId != -1)
+                                          ...showCalibrationPart(),
+                                        if (!isCalibration && selScaleId != -1)
+                                          ...showParameterSettingPart()
                                       ],
                                     )))
                       ],
@@ -409,6 +641,417 @@ class CalibrationPageState extends State<CalibrationPage> {
                 ])),
           ],
         ));
+  }
+
+  Widget showTitle(String title) {
+    return SizedBox(
+      height: 42,
+      width: 300,
+      child: Row(children: [
+        Expanded(
+          child: Container(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              title,
+              style: Theme.of(context).textTheme.bodySmall!.apply(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ),
+      ]),
+    );
+  }
+
+  List<Widget> showParameterSettingPart() {
+    return [
+      Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        SizedBox(
+          width: 300,
+          child: Column(children: [
+            showTitle(localizedStrings.gTipMaxRange),
+            showCapInputBox(scaleCap1Ctl),
+          ]),
+        ),
+        SizedBox(
+          width: largePadding * 2,
+        ),
+        SizedBox(
+          width: 300,
+          child: Column(children: [
+            showTitle(localizedStrings.gTipGaduation),
+            showDropDownButton(context, '', gaduation1Ctl, [
+              '1',
+              '2',
+              '5',
+              '10',
+              '20',
+              '50',
+              '100',
+            ], (onValue) {
+              setState(() {
+                gaduation1Ctl.text = onValue!;
+              });
+            }),
+          ]),
+        ),
+      ]),
+      Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        SizedBox(
+          width: 300,
+          child: Column(children: [
+            showTitle(localizedStrings.gTipWeightUnit),
+            SizedBox(
+                child: showDropDownButton(context, '', unitCtl, [
+              'kg',
+              'g',
+              'lb',
+            ], (onValue) {
+              showDialog(
+                context: context,
+                barrierDismissible: false, // 点击对话框外部不关闭对话框
+                builder: (BuildContext ctx) {
+                  return ShowNormalTipDialog(
+                    title: localizedStrings.fTipTitle,
+                    msg: localizedStrings.gTipSwitchUnit,
+                  );
+                },
+              );
+              setState(() {
+                unitCtl.text = onValue!;
+              });
+            })),
+          ]),
+        ),
+        SizedBox(
+          width: largePadding * 2,
+        ),
+        SizedBox(
+          width: 300,
+          child: Column(children: [
+            showTitle(localizedStrings.gTipDecimal),
+            SizedBox(
+                child: showDropDownButton(context, '', decimalCtl, [
+              '0',
+              '1',
+              '2',
+              '3',
+            ], (onValue) {
+              setState(() {
+                decimalCtl.text = onValue!;
+              });
+            })),
+          ]),
+        ),
+      ]),
+      Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        SizedBox(
+          width: 300,
+          child: Column(children: [
+            showTitle(localizedStrings.gTipInitialZero),
+            SizedBox(
+                child: showDropDownButton(context, '', initialZeroCtl,
+                    ['0', '2', '3', '4', '10', '20', '50', '100'], (onValue) {
+              setState(() {
+                initialZeroCtl.text = onValue!;
+              });
+            })),
+          ]),
+        ),
+        SizedBox(
+          width: largePadding * 2,
+        ),
+        SizedBox(
+          width: 300,
+          child: Column(children: [
+            showTitle(localizedStrings.gTipManualZero),
+            SizedBox(
+                child: showDropDownButton(context, '', manualZeroCtl,
+                    ['0', '2', '3', '4', '10', '20', '50', '100'], (onValue) {
+              setState(() {
+                manualZeroCtl.text = onValue!;
+              });
+            })),
+          ]),
+        ),
+      ]),
+      Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        SizedBox(
+          width: 300,
+          child: Column(children: [
+            showTitle(localizedStrings.gTipZeroTracking),
+            //   0:off 1:0.5 2:1 3:2 4:3 5:4
+            SizedBox(
+                child: showDropDownButton(context, '', zeroTrackingCtl,
+                    ['off', '0.5d', '1d', '2d', '3d', '4d'], (onValue) {
+              setState(() {
+                zeroTrackingCtl.text = onValue!;
+              });
+            })),
+          ]),
+        ),
+        SizedBox(
+          width: largePadding * 2,
+        ),
+        SizedBox(
+          width: 300,
+          child: Column(children: [
+            showTitle(localizedStrings.gTipGravityAcceleration),
+            showGravAccInputBox(),
+          ]),
+        ),
+      ]),
+      SizedBox(
+        height: largePadding,
+      ),
+      Container(
+        height: 96,
+        width: 400,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  fixedSize: const Size(double.infinity, 48),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.zero,
+                  ),
+                ),
+                onPressed: scaleCap1Ctl.text.isEmpty
+                    ? null
+                    : () {
+                        if (!chackGravAcc()) {
+                          showTipInfo(
+                              localizedStrings
+                                  .gTipGravityAccelerationInputError,
+                              context);
+                          return;
+                        }
+                        performModifyParameter();
+                      },
+                child: Text(
+                  localizedStrings.gBtnConfirm,
+                  style: Theme.of(context).textTheme.bodyMedium!.apply(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+            SizedBox(width: 20),
+            Expanded(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor:
+                      Theme.of(context).colorScheme.onSurfaceVariant,
+                  backgroundColor:
+                      Theme.of(context).colorScheme.surfaceContainerHighest,
+                  fixedSize: const Size(double.infinity, 48),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.zero,
+                  ),
+                ),
+                onPressed: () {
+                  //取消的话重新获取下参数
+
+                  showTipInfo(localizedStrings.gTipGettingParameter, context);
+
+                  Future.delayed(const Duration(seconds: 2), () {
+                    getAllParameter();
+                  });
+                },
+                child: Text(
+                  localizedStrings.gBtnCancel,
+                  style: Theme.of(context).textTheme.bodyMedium!.apply(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    ];
+  }
+
+  void performModifyParameter() {
+    // 比较并发送修改协议
+    if (scaleCap1Ctl.text != initialMaxRange1) {
+      PublicFunctions.setMaxRange1(selScaleId, scaleCap1Ctl.text);
+    }
+
+    if (unitCtl.text != initialWgtUnit) {
+      int unitIndex = 0;
+      switch (unitCtl.text) {
+        case 'kg':
+          unitIndex = 0;
+          break;
+        case 'g':
+          unitIndex = 1;
+          break;
+        case 'lb':
+          unitIndex = 2;
+          break;
+      }
+
+      PublicFunctions.setWeightUnit(selScaleId, unitIndex.toString());
+    }
+
+    if (initialZeroCtl.text != initialInitZero) {
+      PublicFunctions.setInitialZero(
+          selScaleId, initialZeroCtl.text); // 假设存在此方法
+    }
+
+    if (manualZeroCtl.text != initialManualZero) {
+      PublicFunctions.setManualZero(selScaleId, manualZeroCtl.text); // 假设存在此方法
+    }
+
+    if (zeroTrackingCtl.text != initialZeroTracking) {
+      // 0:off 1:0.5 2:1 3:2 4:3 5:4
+      int zeroTrackingIndex = 0;
+      switch (zeroTrackingCtl.text) {
+        case 'off':
+          zeroTrackingIndex = 0;
+          break;
+        case '0.5d':
+          zeroTrackingIndex = 1;
+          break;
+        case '1d':
+          zeroTrackingIndex = 2;
+          break;
+        case '2d':
+          zeroTrackingIndex = 3;
+          break;
+        case '3d':
+          zeroTrackingIndex = 4;
+          break;
+        case '4d':
+          zeroTrackingIndex = 5;
+          break;
+      }
+      PublicFunctions.setZeroTracking(selScaleId, zeroTrackingIndex.toString());
+    }
+
+    if (gravAccCtl.text != initialGravAcc) {
+      String gravAccValue =
+          (double.tryParse(gravAccCtl.text)! * 100000).toStringAsFixed(0);
+      PublicFunctions.setGravityAcceleration(selScaleId, gravAccValue);
+    }
+
+    if (decimalCtl.text != initialDecimal) {
+      PublicFunctions.setDecimalValue(selScaleId, decimalCtl.text);
+    }
+
+    if (gaduation1Ctl.text != initialGaduation1) {
+      PublicFunctions.setGaduation1Value(selScaleId, gaduation1Ctl.text);
+    }
+    Future.delayed(const Duration(seconds: 2), () {
+      getAllParameter();
+    });
+  }
+
+  bool chackGravAcc() {
+    if (gravAccCtl.text == "") {
+      return false;
+    }
+    if (double.parse(gravAccCtl.text) < 9.7 ||
+        double.parse(gravAccCtl.text) > 9.9) {
+      return false;
+    }
+    return true;
+  }
+
+  Widget showCapInputBox(TextEditingController capCtl) {
+    return SizedBox(
+      height: inputHeight,
+      child: TextField(
+        enabled: true,
+        controller: capCtl,
+        keyboardType: const TextInputType.numberWithOptions(decimal: false),
+        inputFormatters: [
+          FilteringTextInputFormatter.digitsOnly,
+          TextInputFormatter.withFunction((oldValue, newValue) {
+            if (newValue.text.isEmpty) return newValue; // 允许清空输入
+            if (newValue.text.startsWith('0') && newValue.text.length > 1) {
+              return oldValue; // 不允许以 0 开头且长度大于 1 的输入
+            }
+            final intValue = int.tryParse(newValue.text);
+            if (intValue != null && intValue > 0) {
+              return newValue; // 只允许正整数
+            }
+            return oldValue;
+          }),
+        ],
+        decoration: InputDecoration(
+          border: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(0.0))),
+          hintText: '',
+          hintStyle: TextStyle(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+          counterText: '',
+        ),
+        maxLength: 9,
+        style: Theme.of(context)
+            .textTheme
+            .bodySmall!
+            .apply(color: Theme.of(context).colorScheme.onSurface),
+        onChanged: (onValue) {},
+      ),
+    );
+  }
+
+  Widget showGravAccInputBox() {
+    return SizedBox(
+      height: inputHeight,
+      child: TextField(
+        enabled: true,
+        controller: gravAccCtl,
+        // 允许输入数字和小数点
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        inputFormatters: [
+          // 修正后的正则表达式，允许9之后直接输入小数点
+          FilteringTextInputFormatter.allow(
+              RegExp(r'^9(\.?|(\.(7|8)\d{0,4})?)$')),
+        ],
+        decoration: InputDecoration(
+          border: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(0.0))),
+          hintText: '',
+          hintStyle: TextStyle(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
+        style: Theme.of(context)
+            .textTheme
+            .bodySmall!
+            .apply(color: Theme.of(context).colorScheme.onSurface),
+        onChanged: (onValue) {},
+      ),
+    );
+  }
+
+  List<Widget> showCalibrationPart() {
+    return [
+      showStepPart(),
+      showStepTip(),
+      Expanded(
+        child: curStep == step1
+            ? showStep1()
+            : curStep == step2
+                ? showStep2()
+                : curStep == step3
+                    ? showStep3()
+                    : showStep4(),
+      ),
+      showBtnRow()
+    ];
   }
 
   Widget showStep2() {
@@ -430,7 +1073,7 @@ class CalibrationPageState extends State<CalibrationPage> {
                       children: [
                         Container(
                           alignment: Alignment.centerLeft,
-                          child: Text(localizedStrings.gTipInputRange),
+                          child: Text(localizedStrings.gTipCalibrationWeight),
                         ),
                         SizedBox(
                           height: inputHeight,
@@ -456,7 +1099,7 @@ class CalibrationPageState extends State<CalibrationPage> {
                               border: OutlineInputBorder(
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(0.0))),
-                              hintText: localizedStrings.gTipInputRange,
+                              hintText: localizedStrings.gTipCalibrationWeight,
                               hintStyle: TextStyle(
                                 color: Theme.of(context)
                                     .colorScheme
@@ -652,14 +1295,14 @@ class CalibrationPageState extends State<CalibrationPage> {
                           setState(() {
                             if (curStep == step1) {
                               curStep = step2;
-                              PublicFunctions.calibrationZero(selScaleId);
+                              PublicFunctions.calibrationWeight(
+                                  selScaleId, '0');
                             } else if (curStep == step2) {
                               curStep = step3;
-                              int range = int.tryParse(scaleRangeCtl.text)!;
-                              PublicFunctions.setMaxRange(selScaleId, range);
                             } else if (curStep == step3) {
                               curStep = step4;
-                              PublicFunctions.calibrationMaxRange(selScaleId);
+                              PublicFunctions.calibrationWeight(
+                                  selScaleId, scaleRangeCtl.text);
                             } else if (curStep == step4) {
                               curStep = step1;
                               // isFinish = true?
@@ -703,7 +1346,7 @@ class CalibrationPageState extends State<CalibrationPage> {
       case step1:
         return localizedStrings.gTipEmptyScalePanThenNext;
       case step2:
-        return localizedStrings.gTipSetFullScaleThenNext;
+        return localizedStrings.gTipSetCalibrationWeightThenNext;
       case step3:
         return localizedStrings.gTipLoadWeightThenNext;
       case step4:
@@ -718,7 +1361,7 @@ class CalibrationPageState extends State<CalibrationPage> {
       case step1:
         return localizedStrings.gTipEmptyScalePan;
       case step2:
-        return localizedStrings.gTipSetFullScale;
+        return localizedStrings.gTipSetCalibrationWeight;
       case step3:
         return localizedStrings.gTipPlaceWeight;
       case step4:
@@ -843,20 +1486,54 @@ class CalibrationPageState extends State<CalibrationPage> {
     return SizedBox(
       height: 48,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          showTextButton(
-              context,
-              48,
-              localizedStrings.menuParameterSetting,
-              selScaleId == -1
-                  ? null
-                  : () {
-                      showParameterSettingDialog();
-                    },
-              Theme.of(context).colorScheme.onPrimary,
-              Theme.of(context).colorScheme.primary,
-              Theme.of(context).colorScheme.onSurfaceVariant)
+          SizedBox(
+            width: 200,
+            child: showTextButton(
+                context,
+                48,
+                localizedStrings.menuParameterSetting,
+                selScaleId == -1
+                    ? null
+                    : () {
+                        if (curStep != step1 && curStep != step4) {
+                          showCalibrationWarning();
+                          return;
+                        }
+                        setState(() {
+                          isCalibration = false;
+                        });
+                      },
+                !isCalibration
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : Theme.of(context).colorScheme.onSurface,
+                !isCalibration
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.surfaceDim,
+                Theme.of(context).colorScheme.onSurfaceVariant),
+          ),
+          SizedBox(
+            width: 200,
+            child: showTextButton(
+                context,
+                48,
+                localizedStrings.menuCalibration,
+                selScaleId == -1
+                    ? null
+                    : () {
+                        setState(() {
+                          isCalibration = true;
+                        });
+                      },
+                isCalibration
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : Theme.of(context).colorScheme.onSurface,
+                isCalibration
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.surfaceDim,
+                Theme.of(context).colorScheme.onSurfaceVariant),
+          ),
         ],
       ),
     );
@@ -876,218 +1553,5 @@ class CalibrationPageState extends State<CalibrationPage> {
             buildStepInfo(step4),
           ],
         ));
-  }
-}
-
-// 定义新增配方类型弹框组件
-class ParameterSettingDialog extends StatefulWidget {
-  final int selScaleId;
-  const ParameterSettingDialog({super.key, required this.selScaleId});
-  @override
-  ParameterSettingDialogState createState() => ParameterSettingDialogState();
-}
-
-class ParameterSettingDialogState extends State<ParameterSettingDialog> {
-  TextEditingController decimalCtl = TextEditingController(text: '3');
-  TextEditingController gaduationCtl = TextEditingController(text: '5');
-
-  @override
-  Widget build(BuildContext ctx) {
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      child: Container(
-        width: 610,
-        height: 376,
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(0),
-        ),
-        child: Column(
-          children: [
-            // 头部
-            ...dialogHeadStyle(
-                context, localizedStrings.menuParameterSetting, true,
-                onClose: () {
-              Navigator.pop(ctx);
-            }),
-
-            // 中部
-            Expanded(
-              child: Container(
-                  padding: const EdgeInsets.all(26),
-                  height: 150,
-                  width: 600,
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SizedBox(
-                          width: 265,
-                          child: Column(children: [
-                            SizedBox(
-                              height: 42,
-                              child: Row(children: [
-                                Expanded(
-                                  child: Container(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      'Decimal',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall!
-                                          .apply(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSurface,
-                                          ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ),
-                              ]),
-                            ),
-                            SizedBox(
-                              child: Row(children: [
-                                Expanded(
-                                  child: Container(
-                                      alignment: Alignment.centerLeft,
-                                      child: showDropDownButton(
-                                          context, '', decimalCtl, [
-                                        '0',
-                                        '1',
-                                        '2',
-                                        '3',
-                                      ], (onValue) {
-                                        setState(() {
-                                          decimalCtl.text = onValue!;
-                                        });
-                                      })),
-                                ),
-                              ]),
-                            ),
-                          ]),
-                        ),
-                        SizedBox(
-                          width: 265,
-                          child: Column(children: [
-                            SizedBox(
-                              height: 42,
-                              child: Row(children: [
-                                Expanded(
-                                  child: Container(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      'Gaduation',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall!
-                                          .apply(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSurface,
-                                          ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ),
-                              ]),
-                            ),
-                            SizedBox(
-                              child: Row(children: [
-                                Expanded(
-                                  child: Container(
-                                      alignment: Alignment.centerLeft,
-                                      child: showDropDownButton(
-                                          context, '', gaduationCtl, [
-                                        '1',
-                                        '2',
-                                        '5',
-                                        '10',
-                                        '20',
-                                        '50',
-                                        '100',
-                                      ], (onValue) {
-                                        setState(() {
-                                          gaduationCtl.text = onValue!;
-                                        });
-                                      })),
-                                ),
-                              ]),
-                            ),
-                          ]),
-                        ),
-                      ])),
-            ),
-
-            // 底部
-            Container(
-              height: 96,
-              width: 400,
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor:
-                            Theme.of(context).colorScheme.onPrimary,
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        fixedSize: const Size(double.infinity, 48),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.zero,
-                        ),
-                      ),
-                      onPressed:
-                          decimalCtl.text.isEmpty && gaduationCtl.text.isEmpty
-                              ? null
-                              : () {
-                                  PublicFunctions.setDecimalValue(
-                                      widget.selScaleId, decimalCtl.text);
-                                  PublicFunctions.setGaduationValue(
-                                      widget.selScaleId, gaduationCtl.text);
-                                  Navigator.pop(ctx);
-                                },
-                      child: Text(
-                        localizedStrings.gBtnConfirm,
-                        style: Theme.of(context).textTheme.bodyMedium!.apply(
-                              color: Theme.of(context).colorScheme.onPrimary,
-                            ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 20),
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor:
-                            Theme.of(context).colorScheme.onSurfaceVariant,
-                        backgroundColor: Theme.of(context)
-                            .colorScheme
-                            .surfaceContainerHighest,
-                        fixedSize: const Size(double.infinity, 48),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.zero,
-                        ),
-                      ),
-                      onPressed: () {
-                        Navigator.pop(ctx);
-                      },
-                      child: Text(
-                        localizedStrings.gBtnCancel,
-                        style: Theme.of(context).textTheme.bodyMedium!.apply(
-                              color: Theme.of(context).colorScheme.onPrimary,
-                            ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

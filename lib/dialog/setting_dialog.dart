@@ -35,7 +35,7 @@ class ParameterSettingDialogState extends State<ParameterSettingDialog> {
   int _wgtMode = 0;
   int _checkSaveMode = 1;
   int _checkDateMode = 1;
-  int _checkScaleMode = 1;
+  int checkScaleMode = 1;
   String dateSeparator = '-';
   int _checkDateSeparator = 1;
   int _checkHiLow = 1;
@@ -55,7 +55,7 @@ class ParameterSettingDialogState extends State<ParameterSettingDialog> {
             : (mySettingParam.dateSeparator == "/")
                 ? 3
                 : 1);
-    _checkScaleMode = mySettingParam.scaleMode;
+    checkScaleMode = mySettingParam.scaleMode;
     _checkDateMode = (mySettingParam.dateFormat.isEmpty)
         ? 1
         : int.parse(mySettingParam.dateFormat);

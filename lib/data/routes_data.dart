@@ -128,7 +128,7 @@ List<RouteData> getAllConfigMenus() {
         iconPath: parameterSvgIcon()),
     RouteData(
         id: MenuId.calibrationPage.index,
-        title: localizedStrings.menuCalibration,
+        title: localizedStrings.menuWeighingSetting,
         routeName: "/calibration",
         subtitle: localizedStrings.subTitleCalibration,
         iconPath: calibrationSvgIcon()),
@@ -214,7 +214,7 @@ String generateTitle(int pageId) {
   } else if (pageId == MenuId.flowRatePage.index) {
     return localizedStrings.menuFlowRate;
   } else if (pageId == MenuId.calibrationPage.index) {
-    return localizedStrings.menuCalibration;
+    return localizedStrings.menuWeighingSetting;
   }
   return '';
 }

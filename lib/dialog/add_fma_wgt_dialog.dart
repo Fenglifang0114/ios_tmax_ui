@@ -16,7 +16,8 @@ class AddFormulaWgtDialog extends StatefulWidget {
 
 class AddFormulaWgtDialogState extends State<AddFormulaWgtDialog> {
   TextEditingController formulaWgtCtl = TextEditingController();
-  TextEditingController formulaUnitCtl = TextEditingController();
+  TextEditingController formulaUnitCtl =
+      TextEditingController(text: FormulaWgtUnit.g.name);
 
   showUnitDropDownButton(List<FormulaWgtUnit> items, String hintText,
       TextEditingController valueCtl) {

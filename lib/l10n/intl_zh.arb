@@ -1240,6 +1240,10 @@
     "@l_total_cnt_var": {
         "description": ""
     },
+    "l_total_pcs_var": "TotalPcs",
+    "@l_total_pcs_var": {
+        "description": ""
+    },
     "l_line_expl": "Line",
     "@l_line_expl": {
         "description": ""
@@ -1310,6 +1314,10 @@
     },
     "l_total_cnt_expl": "总数量",
     "@l_total_cnt_expl": {
+        "description": ""
+    },
+    "l_total_pcs_expl": "总pcs",
+    "@l_total_pcs_expl": {
         "description": ""
     },
     "l_line_width_txt": "Line Width",
@@ -2192,7 +2200,7 @@
     "@fCurrentMaterialOverweightMsg": {
         "description": "Warning message when current raw material is overweight, asking to abandon or correct"
     },
-    "fCurrentMaterialWeightInvalidMsg": "当前原料重量不合格！",
+    "fCurrentMaterialWeightInvalidMsg": "当前原料重量不合格！确定继续？",
     "@fCurrentMaterialWeightInvalidMsg": {
         "description": "Error message when current raw material weight is invalid"
     },
@@ -2475,6 +2483,10 @@
     "menuCalibration": "标定",
     "@menuCalibration": {
         "description": "Menu item for calibration"
+    },
+    "menuWeighingSetting": "称重设置",
+    "@menuWeighingSetting": {
+        "description": "Menu item for weighing setting"
     },
     "menuLanguageSetting": "设置语言",
     "@menuLanguageSetting": {
@@ -2824,9 +2836,9 @@
     "@gTipEmptyScalePan": {
         "description": "This is a tip to empty the scale pan."
     },
-    "gTipSetFullScale": "设置满量程",
-    "@gTipSetFullScale": {
-        "description": "This is a tip to set the full scale."
+    "gTipSetCalibrationWeight": "设置校准重量",
+    "@gTipSetCalibrationWeight": {
+        "description": "This is a tip to set the calibration weight."
     },
     "gTipPlaceWeight": "放置砝码",
     "@gTipPlaceWeight": {
@@ -2844,9 +2856,9 @@
     "@gTipEmptyScalePanThenNext": {
         "description": "This is a tip to empty the scale pan and click next."
     },
-    "gTipSetFullScaleThenNext": "请设置满量程重量，然后点击下一步",
-    "@gTipSetFullScaleThenNext": {
-        "description": "This is a tip to set the full scale weight and click next."
+    "gTipSetCalibrationWeightThenNext": "请设置校准重量，然后点击下一步",
+    "@gTipSetCalibrationWeightThenNext": {
+        "description": "This is a tip to set the calibration weight and click next."
     },
     "gTipLoadWeightThenNext": "请加载砝码，等待绿灯亮起后点击下一步",
     "@gTipLoadWeightThenNext": {
@@ -2888,9 +2900,9 @@
     "@gBtnNext": {
         "description": "This is a button to go to the next step."
     },
-    "gTipInputRange": "请输入量程",
-    "@gTipInputRange": {
-        "description": "This is a prompt to ask the user to input the measuring range."
+    "gTipCalibrationWeight": "请输入校准重量",
+    "@gTipCalibrationWeight": {
+        "description": "This is a prompt to ask the user to input the calibration weight."
     },
     "gTxtDecimal": "小数点",
     "@gTxtDecimal": {
@@ -2900,9 +2912,57 @@
     "@gTipGaduation": {
         "description": "This is the prompt for graduation."
     },
+    "gTipMaxRange": "最大量程",
+    "@gTipMaxRange": {
+        "description": "This is the prompt for the maximum range."
+    },
+    "gTipWeightUnit": "重量单位",
+    "@gTipWeightUnit": {
+        "description": "This is the prompt for the weight unit."
+    },
+    "gTipInitialZero": "初始置零",
+    "@gTipInitialZero": {
+        "description": "This is the prompt for initial zero setting."
+    },
+    "gTipManualZero": "手动归零",
+    "@gTipManualZero": {
+        "description": "This is the prompt for manual zero reset."
+    },
+    "gTipZeroTracking": "零点追踪",
+    "@gTipZeroTracking": {
+        "description": "This is the prompt for zero tracking."
+    },
+    "gTipGravityAcceleration": "重力加速度",
+    "@gTipGravityAcceleration": {
+        "description": "This is the prompt for gravitational acceleration."
+    },
+    "gTipGravityAccelerationInputError": "重力加速度输入错误",
+    "@gTipGravityAccelerationInputError": {
+        "description": "This is a tip to inform the user that the gravitational acceleration input is incorrect."
+    },
     "gTipRedoLastStep": "失败，请重做上一步",
     "@gTipRedoLastStep": {
         "description": "This is a tip to redo the last step."
+    },
+    "gTipCalibrating": "正在标定...",
+    "@gTipCalibrating": {
+        "description": "This is a tip to inform the user that calibration is in progress."
+    },
+    "gTipGettingParameter": "正在获取参数，请稍等...",
+    "@gTipGettingParameter": {
+        "description": "This is a tip to inform the user that the parameters are being retrieved."
+    },
+    "gTipGetParameterFail": "获取参数失败",
+    "@gTipGetParameterFail": {
+        "description": "This is a tip to inform the user that parameter retrieval has failed."
+    },
+    "gTipSetParameterFail": "设置参数失败",
+    "@gTipSetParameterFail": {
+        "description": "This is a tip to inform the user that parameter setting has failed."
+    },
+    "gTipSwitchUnit": "切换单位，请同时切换相应的量程",
+    "@gTipSwitchUnit": {
+        "description": "This is a tip to remind the user to switch the corresponding range when changing the unit."
     },
     "gTipResetMaxRange": "失败，请重置最大量程！",
     "@gTipResetMaxRange": {
@@ -3080,9 +3140,9 @@
     "@subTitleFlowRate": {
         "description": "SubTitle for liquid filling speed"
     },
-    "subTitleCalibration": "对秤进行单点或线性标定。",
+    "subTitleCalibration": "对秤进行称重参数设置及标定",
     "@subTitleCalibration": {
-        "description": "SubTitle for calibration"
+        "description": "SubTitle for weighing setting"
     },
     "tipPage": "页",
     "@tipPage": {
@@ -3107,9 +3167,59 @@
     "gTipGettingDeviceTime": "正在获取设备时间，请稍等",
     "@gTipGettingDeviceTime": {
         "description": "Retrieving the device time, please wait a moment."
-    }  
-
-
+    },
+    "btnRestart": "重新开始",
+    "@btnRestart": {
+        "description": "Button to restart the operation"
+    },
+    "btnTemporarySave": "暂存",
+    "@btnTemporarySave": {
+        "description": "Button to temporarily save data"
+    },
+    "tipFormulaDataError": "配方数据错误！",
+    "@tipFormulaDataError": {
+        "description": "Error message indicating formula data error"
+    },
+    "tipNoRawMaterialWeightData": "没有原料重量数据，无需暂存",
+    "@tipNoRawMaterialWeightData": {
+        "description": "Tip indicating no raw material weight data to save temporarily"
+    },
+    "tipTemporarySaveFormulaRecord": "暂存记录",
+    "@tipTemporarySaveFormulaRecord": {
+        "description": "Tip indicating temporarily saving formula weighing record"
+    },
+    "btnContinueWeighing": "继续称重",
+    "@btnContinueWeighing": {
+        "description": "Button to continue the weighing process"
+    },
+    "titleConfidentialWeighingMode": "保密称重模式",
+    "@titleConfidentialWeighingMode": {
+        "description": "Title for confidential weighing mode"
+    },
+    "tipEnsureWeightCorrect": "请确保当前重量数据正确，是否继续？",
+    "@tipEnsureWeightCorrect": {
+        "description": "Tip to ensure the current weight data is correct and ask if to continue"
+    },
+    "formulaDeleteError": "存在临时称重记录",
+    "@formulaDeleteError": {
+        "description": "Error message when deleting a formula indicating that there are temporary weighing records"
+    },
+    "btnFreeFormulaMode": "自由配方模式",
+    "@btnFreeFormulaMode": {
+        "description": "Button to enter free formula mode"
+    },
+    "btnNormalMode": "正常模式",
+    "@btnNormalMode": {
+        "description": "Button to enter normal mode"
+    },
+    "fConfirmClearAndEnterFreeModeMsg": "当前数据未保存，确认清空并开启自由配料模式吗？",
+    "@fConfirmClearAndEnterFreeModeMsg": {
+        "description": "Confirmation message for clearing unsaved data and entering free formula mode"
+    },
+    "gTipPleaseStableWeight": "请先稳定重量.",
+    "@gTipPleaseStableWeight": {
+        "description": "Tip to please first stable the weight"
+    }
 }
 
 

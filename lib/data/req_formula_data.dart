@@ -22,7 +22,7 @@ class TypeIdAndName {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['Name'] = name;
     data['ID'] = id;
-    
+
     return data;
   }
 }
@@ -281,5 +281,13 @@ class ReqFormulaHeader {
         "CreatedBy": createdBy,
         "UpdatedBy": updatedBy,
         "Remark": remark,
+      };
+}
+
+class DeleteDraftFmaId {
+  String orderId;
+  DeleteDraftFmaId({required this.orderId});
+  Map<String, dynamic> toJson() => {
+        "OrderID": orderId,
       };
 }

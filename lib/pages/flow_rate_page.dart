@@ -10,7 +10,6 @@ import 'package:t_max/data/flow_rate_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/reqweightdata_data.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
-import 'package:t_max/data/timer_manager.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
@@ -118,6 +117,23 @@ class FlowRatePageState extends State<FlowRatePage>
   dynamic eventbus1;
   dynamic eventbus2;
   dynamic eventbus8;
+  Timer? _cntAliveTimer;
+  // 启动发送存活消息的定时器
+  void startCntAliveTimer(int time) {
+    _cntAliveTimer?.cancel();
+
+    _cntAliveTimer = Timer(Duration(seconds: time), () {
+      if (selScaleId != -1) {
+        PublicFunctions.sendScaleAlive(selScaleId);
+      }
+      startCntAliveTimer(10);
+    });
+  }
+
+  // 停止发送存活消息的定时器
+  void stopCntAliveTimer() {
+    _cntAliveTimer?.cancel();
+  }
 
   // 用于存储重量记录的列表
   // List<WeightRecord> weightRecords = [];
@@ -136,7 +152,7 @@ class FlowRatePageState extends State<FlowRatePage>
 
   // 每3秒钟将isWgtStart设置为false
   void startSetWgtStartFalseTimer() {
-    setWgtStartFalseTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
+    setWgtStartFalseTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
       if (mounted) {
         setState(() {
           isWgtStart = false;
@@ -173,7 +189,7 @@ class FlowRatePageState extends State<FlowRatePage>
   void initState() {
     super.initState();
     PublicFunctions.getFlowRateData();
-    cntScaleTimerMgr.startCntAliveTimer(10);
+    startCntAliveTimer(10);
     startSetWgtStartFalseTimer();
     startCheckWgtStartTimer();
 
@@ -346,7 +362,7 @@ class FlowRatePageState extends State<FlowRatePage>
   @override
   void dispose() {
     eventbus8?.cancel();
-    cntScaleTimerMgr.stopCntAliveTimer();
+    stopCntAliveTimer();
     PublicFunctions.stopWeight(selScaleId);
     eventbus1?.cancel();
     eventbus2?.cancel();

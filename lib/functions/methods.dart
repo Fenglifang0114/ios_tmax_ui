@@ -395,6 +395,35 @@ class PublicFunctions {
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
 
+  //获取暂存的称重记录
+  static void getDraftRecords() {
+    myScaleCmd.cmdMode = "get_draft_fma_wgt_rec_list";
+    myScaleCmd.cmdData = '';
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //创建暂存的称重记录
+  static void createDraftRecord(String jsonStr) {
+    myScaleCmd.cmdMode = "create_draft_fma_wgt_rec";
+    myScaleCmd.cmdData = jsonStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //更新暂存的称重记录
+  static void updateDraftRecord(String jsonStr) {
+    myScaleCmd.cmdMode = "update_draft_fma_wgt_rec";
+    myScaleCmd.cmdData = jsonStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //删除暂存的称重记录
+  static void deleteDraftRecord(String recId) {
+    myScaleCmd.cmdMode = "delete_draft_fma_wgt_rec";
+    DeleteDraftFmaId myScaleCmdData = DeleteDraftFmaId(orderId: recId);
+    myScaleCmd.cmdData = jsonEncode(myScaleCmdData);
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
   static void getUIConfNormal(String mode) {
     myScaleCmd.cmdMode = "get_ui_conf";
     myScaleCmd.cmdData = mode;
@@ -774,21 +803,33 @@ class PublicFunctions {
     sendMsg(scaleId, jsonEncode(myScaleCmd));
   }
 
-  static void calibrationZero(int scaleId) {
-    myScaleCmd.cmdMode = "cal_zero_range";
+  static void calibrationWeight(int scaleId, String value) {
+    myScaleCmd.cmdMode = "cal_weight";
+    myScaleCmd.cmdData = value;
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
+  static void setMaxRange1(int scaleId, String value) {
+    myScaleCmd.cmdMode = "set_max_range1";
+    myScaleCmd.cmdData = value;
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
+  static void setMaxRange2(int scaleId, String value) {
+    myScaleCmd.cmdMode = "set_max_range2";
+    myScaleCmd.cmdData = value;
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
+  static void getMaxRange2(int scaleId) {
+    myScaleCmd.cmdMode = "get_max_range2";
     myScaleCmd.cmdData = '';
     sendMsg(scaleId, jsonEncode(myScaleCmd));
   }
 
-  static void calibrationMaxRange(int scaleId) {
-    myScaleCmd.cmdMode = "cal_max_range";
+  static void getMaxRange1(int scaleId) {
+    myScaleCmd.cmdMode = "get_max_range1";
     myScaleCmd.cmdData = '';
-    sendMsg(scaleId, jsonEncode(myScaleCmd));
-  }
-
-  static void setMaxRange(int scaleId, int value) {
-    myScaleCmd.cmdMode = "set_max_range";
-    myScaleCmd.cmdData = value.toString();
     sendMsg(scaleId, jsonEncode(myScaleCmd));
   }
 
@@ -804,9 +845,93 @@ class PublicFunctions {
     sendMsg(scaleId, jsonEncode(myScaleCmd));
   }
 
-  static void setGaduationValue(int scaleId, String value) {
-    myScaleCmd.cmdMode = "set_gaduation_value";
+  static void getDecimalValue(int scaleId) {
+    myScaleCmd.cmdMode = "get_decimal_value";
+    myScaleCmd.cmdData = '';
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
+  static void getGaduation1Value(int scaleId) {
+    myScaleCmd.cmdMode = "get_gaduation1_value";
+    myScaleCmd.cmdData = '';
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
+  static void setGaduation2Value(int scaleId, String value) {
+    myScaleCmd.cmdMode = "set_gaduation2_value";
     myScaleCmd.cmdData = value;
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
+  static void getGaduation2Value(int scaleId) {
+    myScaleCmd.cmdMode = "get_gaduation2_value";
+    myScaleCmd.cmdData = '';
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
+  static void setGaduation1Value(int scaleId, String value) {
+    myScaleCmd.cmdMode = "set_gaduation1_value";
+    myScaleCmd.cmdData = value;
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
+  static void setWeightUnit(int scaleId, String value) {
+    myScaleCmd.cmdMode = "set_weight_unit";
+    myScaleCmd.cmdData = value;
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
+  static void getWeightUnit(int scaleId) {
+    myScaleCmd.cmdMode = "get_weight_unit";
+    myScaleCmd.cmdData = '';
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
+  static void setInitialZero(int scaleId, String value) {
+    myScaleCmd.cmdMode = "set_initial_zero";
+    myScaleCmd.cmdData = value;
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
+  static void getInitialZero(int scaleId) {
+    myScaleCmd.cmdMode = "get_initial_zero";
+    myScaleCmd.cmdData = '';
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
+  static void setManualZero(int scaleId, String value) {
+    myScaleCmd.cmdMode = "set_manual_zero";
+    myScaleCmd.cmdData = value;
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
+  static void getManualZero(int scaleId) {
+    myScaleCmd.cmdMode = "get_manual_zero";
+    myScaleCmd.cmdData = '';
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
+  static void setZeroTracking(int scaleId, String value) {
+    myScaleCmd.cmdMode = "set_zero_tracking";
+    myScaleCmd.cmdData = value;
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
+  static void getZeroTracking(int scaleId) {
+    myScaleCmd.cmdMode = "get_zero_tracking";
+    myScaleCmd.cmdData = '';
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
+  static void setGravityAcceleration(int scaleId, String value) {
+    myScaleCmd.cmdMode = "set_grav_acc";
+    myScaleCmd.cmdData = value;
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
+  static void getGravityAcceleration(int scaleId) {
+    myScaleCmd.cmdMode = "get_grav_acc";
+    myScaleCmd.cmdData = '';
     sendMsg(scaleId, jsonEncode(myScaleCmd));
   }
 }

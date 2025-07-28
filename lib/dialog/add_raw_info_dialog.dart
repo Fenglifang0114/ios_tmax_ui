@@ -1027,6 +1027,7 @@ class EditRawDialogState extends State<EditRawDialog> {
                                     remark1: "",
                                   );
                                   PublicFunctions.editRawData(data);
+
                                   Navigator.pop(context);
                                 },
                       child: Text(

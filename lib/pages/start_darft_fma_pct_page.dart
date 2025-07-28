@@ -1,3 +1,5 @@
+//暂存的配方走这条路
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/darf_fma_data_from_db.dart';
@@ -20,26 +22,27 @@ import 'package:t_max/widget/fma_process_bar.dart';
 import 'package:t_max/widget/sticky_table.dart';
 import '../data/language.dart';
 
-class FormulaPctWeighingPage extends StatefulWidget {
-  const FormulaPctWeighingPage(
+class DarftFmaPctWgtPage extends StatefulWidget {
+  const DarftFmaPctWgtPage(
       {super.key,
       required this.selectFormula,
       required this.selScaleId,
       required this.totalFmaWgt,
       required this.fmaUnit,
-      required this.fromDarft //是否来自暂存的数据
-      });
+      required this.fromDarft, //是否来自暂存的数据
+      required this.selectDarftInfo});
   final FormulaInfoDb selectFormula;
   final int selScaleId;
   final double totalFmaWgt;
   final String fmaUnit;
   final bool fromDarft; //是否来自暂存的数据
+  final DarfFmaInfoListFromDb? selectDarftInfo; //暂存的配方数据
 
   @override
-  State<FormulaPctWeighingPage> createState() => FormulaPctWeighingPageState();
+  State<DarftFmaPctWgtPage> createState() => DarftFmaPctWgtPageState();
 }
 
-class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
+class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
     with SingleTickerProviderStateMixin {
   bool sort = false;
   final ScrollController _scrollController =
@@ -65,6 +68,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
   bool isEnableNext = true; //是否禁用下一个
   bool isFinish = false; //是否完成
   double needTotalWgt = 0.000; //需要的总重量 默认为0  这个主要是修正后的重量
+
   FormulaInfoDb myFmaInfo = FormulaInfoDb(); //当前配方信息
 
   final ValueNotifier<String> currentWgtStrNotifier = ValueNotifier('----');
@@ -91,6 +95,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
   int stableDurationCounter = 0; // 稳定时长计数器
   final ValueNotifier<bool> autoNextStepNotifier = ValueNotifier(false);
   int stableTime = 0;
+
   Timer? _cntAliveTimer;
   // 启动发送存活消息的定时器
   void startCntAliveTimer(int time) {
@@ -111,7 +116,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
 
   // 每3秒钟将isWgtStart设置为false
   void startSetWgtStartFalseTimer() {
-    setWgtStartFalseTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+    setWgtStartFalseTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
       if (mounted) {
         setState(() {
           isWgtStart = false;
@@ -179,321 +184,108 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
     }
   }
 
-  void initWgtList() {
-    double minValue = 0.0;
-    double maxValue = 0.0;
-    double errorWgt = 0.0; //误差重量值
-    double targetWgt = 0.0; //目标重量值
-    String fmode = myFmaInfo.header!.formulaHeader!.formulaMode ?? '';
-    needTotalWgt = myFmaInfo.header!.formulaHeader!.totalWeight!;
-    //如果包含容器，第一个写容器  修改了此处
-    if (myFmaInfo.header!.formulaHeader!.needContainer!) {
-      FormulaWgtProcessData processWgt = FormulaWgtProcessData(
-        no: 0,
-        rawId: '-',
-        rawName: '-',
-        fmaMode: fmode,
-        targetWgt: 80,
-        targetPct: 80,
-        currentWgt: 0.0,
-        minWgt: 50,
-        maxWgt: 100,
-        errorWgt: 0,
-        errorPct: 0,
-        currentErrorWgt: 0.0,
-        currentErrorPct: 0.0,
-        isOK: 'no', //no 未开始 low: 低，high: 高，ok: 正常 初始值都是 low
-      );
-      processWgtList.add(processWgt);
+  // 如果是暂存的配方数据，则需要将暂存的数据赋值给processWgtList
+  void initDarftFmaData() {
+    double lastNeedTotalWgt = needTotalWgt; // 保存上一次的总重量
+    if (widget.selectDarftInfo!.details!.isEmpty) {
+      return; // 如果没有暂存数据，则不进行赋值
     }
-
-    for (var detail in myFmaInfo.details!) {
-      if (fmode == 'wgt') {
-        minValue = detail.formulaDetail!.materialWeight! -
-            detail.formulaDetail!.allowableError!;
-        maxValue = detail.formulaDetail!.materialWeight! +
-            detail.formulaDetail!.allowableError!;
-        errorWgt = detail.formulaDetail!.allowableError!;
-        targetWgt = detail.formulaDetail!.materialWeight!;
+    for (var detail in widget.selectDarftInfo!.details!) {
+      if (detail.isContainer == true) {
+        processWgtList[0].currentWgt =
+            double.parse((detail.actualWeight ?? 0.0).toStringAsFixed(3));
+        continue; // 跳过容器
       } else {
-        minValue = initTotalWeight *
-                (detail.formulaDetail!.materialPercentage! / 100) -
-            detail.formulaDetail!.allowableError! * initTotalWeight / 100;
-        minValue = double.parse(minValue.toStringAsFixed(3));
-        maxValue = initTotalWeight *
-                (detail.formulaDetail!.materialPercentage! / 100) +
-            detail.formulaDetail!.allowableError! * initTotalWeight / 100;
-        maxValue = double.parse(maxValue.toStringAsFixed(3));
-        errorWgt =
-            detail.formulaDetail!.allowableError! * initTotalWeight / 100;
-        errorWgt = double.parse(errorWgt.toStringAsFixed(3));
-        targetWgt =
-            initTotalWeight * (detail.formulaDetail!.materialPercentage! / 100);
-        targetWgt = double.parse(targetWgt.toStringAsFixed(3));
-      }
-      FormulaWgtProcessData processWgt = FormulaWgtProcessData(
-        no: detail.formulaDetail?.sequence,
-        rawId: detail.formulaDetail?.materialId,
-        rawName: detail.rawMaterialTypeName?.rawMaterial!.materialName,
-        fmaMode: fmode,
-        targetWgt: targetWgt,
-        targetPct: detail.formulaDetail?.materialPercentage,
-        currentWgt: 0.0,
-        minWgt: minValue < 0 ? 0 : minValue,
-        maxWgt: maxValue,
-        errorWgt: errorWgt,
-        errorPct: detail.formulaDetail?.allowableError,
-        currentErrorWgt: 0.0,
-        currentErrorPct: 0.0,
-        isOK: 'no', //no 未开始 low: 低，high: 高，ok: 正常 初始值都是 low
-      );
-      processWgtList.add(processWgt);
-    }
-    if (processWgtList.isNotEmpty) {
-      selectedProcessWgt = processWgtList[0]; //默认选中第一个原料重量
-    }
-  }
-
-  void getScaleInfo() {
-    PublicFunctions.getWeight(widget.selScaleId);
-  }
-
-  //生成订单编号
-  void createRecNumber() {
-    String company = "F"; // 公司名称
-    DateTime now = DateTime.now();
-    String year = now.year.toString(); // 取年份的后两位
-    String month = now.month.toString().padLeft(2, '0'); // 取月份，不足两位时补零
-    String day = now.day.toString().padLeft(2, '0'); // 取日期，不足两位时补零
-    String hour = now.hour.toString().padLeft(2, '0'); // 取小时，不足两位时补零
-    String minute = now.minute.toString().padLeft(2, '0'); // 取分钟，不足两位时补零
-    String second = now.second.toString().padLeft(2, '0'); // 取秒数，不足两位时补零
-// 拼接成订单编号
-    String orderNumber = "$company-$year$month$day$hour$minute$second";
-    recRecNumber = orderNumber;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    myFmaInfo = widget.selectFormula; //将传入的配方信息赋值给myFmaInfo
-    fmaUnit = widget.fmaUnit; //将传入的配方单位赋值给fmaUnit
-
-    //将传入的配方信息赋值给processWgtList
-    for (var scale in myAllScalesList) {
-      if (scale.scaleId == widget.selScaleId) {
-        myScale = scale;
-        break;
-      }
-    }
-
-    initTotalWgtUnit();
-    initWgtList();
-    getScaleInfo();
-    createRecNumber();
-
-    startCntAliveTimer(10);
-
-    startSetWgtStartFalseTimer();
-    startCheckWgtStartTimer();
-    //自动启停定时器
-    autoNextStepNotifier.addListener(() {
-      if (autoNextStepNotifier.value) {
-        startAutoNextStepTimer();
-      } else {
-        stopAutoNextStepTimer();
-      }
-    });
-
-    PublicFunctions.getAutoNext();
-
-    _eventbus1 = eventBus.on<EventRespGetRawTypeList>().listen((event) {
-      if (mounted) {
-        String dataStr = event.obj;
-        if (dataStr != '') {
-          setState(() {
-            rawTypeList = categoryTypeListFromJson(dataStr);
-          });
-        } else {
-          setState(() {
-            rawTypeList = [];
-          });
-        }
-      }
-    });
-    _eventbus2 = eventBus.on<EventRespGetFormulaTypeList>().listen((event) {
-      if (mounted) {
-        String dataStr = event.obj;
-        if (dataStr != '') {
-          setState(() {
-            formulaTypeList = categoryTypeListFromJson(dataStr);
-          });
-        } else {
-          setState(() {
-            formulaTypeList = [];
-          });
-        }
-      }
-    });
-    _eventbus3 = eventBus.on<EventRespGetRawDataList>().listen((event) {
-      if (mounted) {
-        String dataStr = event.obj;
-        if (dataStr != '' && dataStr != 'null') {
-          setState(() {
-            rawDataList = rawDataInfoFromJson(dataStr);
-            // print(rawDataList.length);
-          });
-        } else {
-          setState(() {
-            rawDataList = [];
-          });
-        }
-      }
-    });
-    _eventbus4 = eventBus.on<EventRespAddRawData>().listen((event) {
-      if (mounted) {
-        PublicFunctions.getRawList();
-      }
-    });
-    _eventbus5 = eventBus.on<EventRespAddFormulaType>().listen((event) {
-      if (mounted) {
-        PublicFunctions.getFormulaTypeList();
-      }
-    });
-
-    _eventbus6 = eventBus.on<EventRespFormulaList>().listen((event) {
-      if (mounted) {
-        String dataStr = event.obj;
-        if (dataStr != '' && dataStr != 'null') {
-          setState(() {
-            formulaDataList = formulaInfoDbFromJson(dataStr);
-
-            //查找当前配方，重新计算配方
-            for (var formula in formulaDataList) {
-              if (formula.header!.formulaHeader!.formulaId ==
-                  myFmaInfo.header!.formulaHeader!.formulaId) {
-                myFmaInfo = formula;
-                //不能清空，要记录下来当前的重量，重新去计算
-                List<FormulaWgtProcessData> oldProcessWgtList =
-                    List.from(processWgtList);
-                processWgtList.clear(); //清空原有的配方重量列表
-                initTotalWgtUnit();
-                initWgtList();
-
-                initOldFmaData(oldProcessWgtList);
-                break;
-                //
-              }
-            }
-            // print(formulaDataList.length);
-          });
-        } else {
-          setState(() {
-            formulaDataList = [];
-          });
-        }
-      }
-    });
-
-    _eventbus7 = eventBus.on<EventRespFormulaRecAdd>().listen((event) {
-      if (mounted) {
-        PublicFunctions.getFormulaRecList();
-      }
-    });
-
-    _eventbus8 = eventBus.on<EventReqWeightCountine>().listen((event) {
-      if (mounted) {
-        setState(() {
-          ReqWeightCountine tempWeight = ReqWeightCountine();
-          tempWeight = event.obj;
-          if (tempWeight.scaleId == myScale.scaleId) {
-            myReqWeightCountine = tempWeight;
-
-            // isCnting = true;
-            isWgtStart = true;
-            if (myReqWeightCountine.msgBody!.weightUnit !=
-                    myFmaInfo.header!.formulaHeader!.formulaUnit &&
-                isShowTipDialog == false) {
-              isShowTipDialog = true;
-              showTipDialog();
-            }
-            if (myReqWeightCountine.msgBody != null) {
-              try {
-                currentWgtStrNotifier.value =
-                    myReqWeightCountine.msgBody!.weightVal; // 更新当前重量
-                currentRawWgt =
-                    double.parse(myReqWeightCountine.msgBody!.weightVal);
-
-                currentRawWgt = double.parse(currentRawWgt.toStringAsFixed(3));
-                if (!myReqWeightCountine.msgBody!.isStable) {
-                  stableDurationCounter = 0;
-                  //自动下一步的时候用到的
-                }
-              } catch (e) {
-                // 处理转换失败的情况
-                // print('Failed to parse weight value: $e');
-                currentRawWgt = 0.0;
-              }
-            }
+        //找出seq 值一样的再赋值
+        for (var wgt in processWgtList) {
+          if (wgt.no == detail.seq) {
+            wgt.currentWgt =
+                double.parse((detail.actualWeight ?? 0.0).toStringAsFixed(3));
+            break; // 找到后跳出循环
           }
-        });
-      }
-    });
-
-    _eventbus9 = eventBus.on<EventRespGetAutoNext>().listen((event) {
-      if (mounted) {
-        String dataStr = event.obj;
-        if (dataStr != '') {
-          setState(() {
-            autoNextStep = getAutoNextFormDbFromJson(dataStr).autoNext;
-
-            autoNextStepNotifier.value = autoNextStep;
-
-            stableTime = getAutoNextFormDbFromJson(dataStr).stableTime;
-            stableTimeCtl.text = stableTime.toString();
-          });
-        } else {
-          setState(() {
-            autoNextStepNotifier.value = false;
-          });
         }
       }
-    });
-    _eventbus10 = eventBus.on<EventRespEditRawData>().listen((event) {
-      if (mounted) {
-        showTipInfo(localizedStrings.fSuccessMsg, context);
-        PublicFunctions.getRawList();
-        PublicFunctions.getFormulaList();
+    }
+
+    // 计算误差并找出超标比例最大的原料
+    double maxExceedRatio = 0.0;
+    FormulaWgtProcessData? maxExceedWgt;
+    for (var wgt in processWgtList) {
+      if (wgt.no == 0) continue; // 跳过容器
+
+      double minWgt = wgt.minWgt!;
+      double maxWgt = wgt.maxWgt!;
+      double currentWgt = wgt.currentWgt!;
+      double targetWgt = wgt.targetWgt!;
+
+      // 计算误差
+
+      wgt.currentErrorWgt =
+          double.parse((currentWgt - targetWgt).toStringAsFixed(3));
+      wgt.currentErrorPct = double.parse(
+          (wgt.currentErrorWgt! / targetWgt * 100).toStringAsFixed(3));
+
+      // 判断状态
+      if (currentWgt >= minWgt && currentWgt <= maxWgt) {
+        wgt.isOK = "ok";
+      } else if (currentWgt < minWgt) {
+        wgt.isOK = "low";
+      } else {
+        wgt.isOK = "high";
+        double exceedRatio = (currentWgt - maxWgt) / maxWgt;
+        if (exceedRatio > maxExceedRatio) {
+          maxExceedRatio = exceedRatio;
+          maxExceedWgt = wgt;
+        }
       }
-    });
+    }
+
+    // 如果有超标原料，按超标比例最大的重新计算配方目标值
+    if (maxExceedWgt != null) {
+      double ratio = maxExceedWgt.currentWgt! / maxExceedWgt.targetWgt!;
+      ratio = double.parse(ratio.toStringAsFixed(3)); // 保留三位小数
+      needTotalWgt = needTotalWgt * ratio; // 更新需要的总重量
+      needTotalWgt = double.parse(needTotalWgt.toStringAsFixed(3)); // 保留三位小数
+
+      if (myFmaInfo.header!.formulaHeader!.formulaMode == 'pct') {
+        for (var item in processWgtList) {
+          if (item.no == 0) {
+            continue;
+          }
+          item.targetWgt = needTotalWgt * item.targetPct! / 100;
+          item.targetWgt = double.parse(item.targetWgt!.toStringAsFixed(3));
+          item.errorWgt = needTotalWgt * item.errorPct! / 100;
+          item.errorWgt = double.parse(item.errorWgt!.toStringAsFixed(3));
+          item.minWgt = item.targetWgt! - item.errorWgt!;
+          item.minWgt = double.parse(item.minWgt!.toStringAsFixed(3));
+          item.maxWgt = item.targetWgt! + item.errorWgt!;
+          item.maxWgt = double.parse(item.maxWgt!.toStringAsFixed(3));
+          item.currentErrorWgt = item.currentWgt! - item.targetWgt!;
+          item.currentErrorWgt =
+              double.parse(item.currentErrorWgt!.toStringAsFixed(3));
+          item.isOK = checkIsOk(item.currentWgt!, item.minWgt!, item.maxWgt!);
+        }
+      } else {
+        for (var item in processWgtList) {
+          //如果第一个是容器，就不用去计算
+          if (item.no == 0) {
+            continue;
+          }
+          item.targetWgt = needTotalWgt * item.targetWgt! / lastNeedTotalWgt;
+          item.targetWgt = double.parse(item.targetWgt!.toStringAsFixed(3));
+          item.minWgt = item.targetWgt! - item.errorWgt!;
+          item.minWgt = double.parse(item.minWgt!.toStringAsFixed(3));
+          item.maxWgt = item.targetWgt! + item.errorWgt!;
+          item.maxWgt = double.parse(item.maxWgt!.toStringAsFixed(3));
+          item.currentErrorWgt = item.currentWgt! - item.targetWgt!;
+          item.currentErrorWgt =
+              double.parse(item.currentErrorWgt!.toStringAsFixed(3));
+          item.isOK = checkIsOk(item.currentWgt!, item.minWgt!, item.maxWgt!);
+        }
+      }
+    }
+    findNextRaw();
   }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _eventbus1.cancel();
-    _eventbus2.cancel();
-    _eventbus3.cancel();
-    _eventbus4.cancel();
-    _eventbus5.cancel();
-    _eventbus6.cancel();
-    _eventbus7.cancel();
-    _eventbus8.cancel();
-    _eventbus9.cancel();
-    _eventbus10.cancel();
-
-    stopCntAliveTimer();
-    currentWgtStrNotifier.dispose();
-    setWgtStartFalseTimer?.cancel(); // 取消定时器
-    checkWgtStartTimer?.cancel(); // 取消定时器
-    stopAutoNextStepTimer();
-
-    autoNextStepNotifier.dispose();
-    stableTimeCtl.dispose();
-  }
-
-  ColorScheme get colorScheme => Theme.of(context).colorScheme;
 
   // 如果是暂存的配方数据，则需要将暂存的数据赋值给processWgtList
   void initOldFmaData(List<FormulaWgtProcessData> oldProcessWgtList) {
@@ -609,6 +401,307 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
       }
     }
     findNextRaw();
+  }
+
+  void initWgtList() {
+    double minValue = 0.0;
+    double maxValue = 0.0;
+    double errorWgt = 0.0; //误差重量值
+    double targetWgt = 0.0; //目标重量值
+    String fmode = myFmaInfo.header!.formulaHeader!.formulaMode ?? '';
+    needTotalWgt = myFmaInfo.header!.formulaHeader!.totalWeight!;
+    //如果包含容器，第一个写容器  修改了此处
+    if (myFmaInfo.header!.formulaHeader!.needContainer!) {
+      FormulaWgtProcessData processWgt = FormulaWgtProcessData(
+        no: 0,
+        rawId: '-',
+        rawName: '-',
+        fmaMode: fmode,
+        targetWgt: 80,
+        targetPct: 80,
+        currentWgt: 0.0,
+        minWgt: 50,
+        maxWgt: 100,
+        errorWgt: 0,
+        errorPct: 0,
+        currentErrorWgt: 0.0,
+        currentErrorPct: 0.0,
+        isOK: 'no', //no 未开始 low: 低，high: 高，ok: 正常 初始值都是 low
+      );
+      processWgtList.add(processWgt);
+    }
+
+    for (var detail in myFmaInfo.details!) {
+      if (fmode == 'wgt') {
+        minValue = detail.formulaDetail!.materialWeight! -
+            detail.formulaDetail!.allowableError!;
+        maxValue = detail.formulaDetail!.materialWeight! +
+            detail.formulaDetail!.allowableError!;
+        errorWgt = detail.formulaDetail!.allowableError!;
+        targetWgt = detail.formulaDetail!.materialWeight!;
+      } else {
+        minValue = initTotalWeight *
+                (detail.formulaDetail!.materialPercentage! / 100) -
+            detail.formulaDetail!.allowableError! * initTotalWeight / 100;
+        minValue = double.parse(minValue.toStringAsFixed(3));
+        maxValue = initTotalWeight *
+                (detail.formulaDetail!.materialPercentage! / 100) +
+            detail.formulaDetail!.allowableError! * initTotalWeight / 100;
+        maxValue = double.parse(maxValue.toStringAsFixed(3));
+        errorWgt =
+            detail.formulaDetail!.allowableError! * initTotalWeight / 100;
+        errorWgt = double.parse(errorWgt.toStringAsFixed(3));
+        targetWgt =
+            initTotalWeight * (detail.formulaDetail!.materialPercentage! / 100);
+        targetWgt = double.parse(targetWgt.toStringAsFixed(3));
+      }
+      FormulaWgtProcessData processWgt = FormulaWgtProcessData(
+        no: detail.formulaDetail?.sequence,
+        rawId: detail.formulaDetail?.materialId,
+        rawName: detail.rawMaterialTypeName?.rawMaterial!.materialName,
+        fmaMode: fmode,
+        targetWgt: targetWgt,
+        targetPct: detail.formulaDetail?.materialPercentage,
+        currentWgt: 0.0,
+        minWgt: minValue < 0 ? 0 : minValue,
+        maxWgt: maxValue,
+        errorWgt: errorWgt,
+        errorPct: detail.formulaDetail?.allowableError,
+        currentErrorWgt: 0.0,
+        currentErrorPct: 0.0,
+        isOK: 'no', //no 未开始 low: 低，high: 高，ok: 正常 初始值都是 low
+      );
+      processWgtList.add(processWgt);
+    }
+    if (processWgtList.isNotEmpty) {
+      selectedProcessWgt = processWgtList[0]; //默认选中第一个原料重量
+    }
+  }
+
+  void getScaleInfo() {
+    PublicFunctions.getWeight(widget.selScaleId);
+  }
+
+  //生成订单编号
+  void createRecNumber() {
+    recRecNumber = widget.selectDarftInfo!.header!.orderId!;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    myFmaInfo = widget.selectFormula;
+    fmaUnit = widget.fmaUnit; //获取传入的配方单位
+
+    //将传入的配方信息赋值给processWgtList
+    for (var scale in myAllScalesList) {
+      if (scale.scaleId == widget.selScaleId) {
+        myScale = scale;
+        break;
+      }
+    }
+
+    initTotalWgtUnit(); //初始化百分比的总重量和单位
+    initWgtList();
+    initDarftFmaData(); //暂存的配方数据写入
+    getScaleInfo(); //获取重量
+    createRecNumber(); //订单编号来源于暂存的配方数据
+
+    startCntAliveTimer(10);
+
+    startSetWgtStartFalseTimer();
+    startCheckWgtStartTimer();
+    //自动启停定时器
+    autoNextStepNotifier.addListener(() {
+      if (autoNextStepNotifier.value) {
+        startAutoNextStepTimer();
+      } else {
+        stopAutoNextStepTimer();
+      }
+    });
+
+    PublicFunctions.getAutoNext();
+
+    _eventbus1 = eventBus.on<EventRespGetRawTypeList>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+        if (dataStr != '') {
+          setState(() {
+            rawTypeList = categoryTypeListFromJson(dataStr);
+          });
+        } else {
+          setState(() {
+            rawTypeList = [];
+          });
+        }
+      }
+    });
+    _eventbus2 = eventBus.on<EventRespGetFormulaTypeList>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+        if (dataStr != '') {
+          setState(() {
+            formulaTypeList = categoryTypeListFromJson(dataStr);
+          });
+        } else {
+          setState(() {
+            formulaTypeList = [];
+          });
+        }
+      }
+    });
+    _eventbus3 = eventBus.on<EventRespGetRawDataList>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+        if (dataStr != '' && dataStr != 'null') {
+          setState(() {
+            rawDataList = rawDataInfoFromJson(dataStr);
+            // print(rawDataList.length);
+          });
+        } else {
+          setState(() {
+            rawDataList = [];
+          });
+        }
+      }
+    });
+    _eventbus4 = eventBus.on<EventRespAddRawData>().listen((event) {
+      if (mounted) {
+        PublicFunctions.getRawList();
+      }
+    });
+    _eventbus5 = eventBus.on<EventRespAddFormulaType>().listen((event) {
+      if (mounted) {
+        PublicFunctions.getFormulaTypeList();
+      }
+    });
+
+    _eventbus6 = eventBus.on<EventRespFormulaList>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+        if (dataStr != '' && dataStr != 'null') {
+          setState(() {
+            formulaDataList = formulaInfoDbFromJson(dataStr);
+            // print(formulaDataList.length);
+            for (var formula in formulaDataList) {
+              if (formula.header!.formulaHeader!.formulaId ==
+                  myFmaInfo.header!.formulaHeader!.formulaId) {
+                myFmaInfo = formula;
+                //不能清空，要记录下来当前的重量，重新去计算
+                List<FormulaWgtProcessData> oldProcessWgtList =
+                    List.from(processWgtList);
+                processWgtList.clear(); //清空原有的配方重量列表
+                initTotalWgtUnit();
+                initWgtList();
+                initOldFmaData(oldProcessWgtList);
+                break;
+                //
+              }
+            }
+          });
+        } else {
+          setState(() {
+            formulaDataList = [];
+          });
+        }
+      }
+    });
+
+    _eventbus7 = eventBus.on<EventRespFormulaRecAdd>().listen((event) {
+      if (mounted) {
+        PublicFunctions.getFormulaRecList();
+      }
+    });
+
+    _eventbus8 = eventBus.on<EventReqWeightCountine>().listen((event) {
+      if (mounted) {
+        setState(() {
+          ReqWeightCountine tempWeight = ReqWeightCountine();
+          tempWeight = event.obj;
+          if (tempWeight.scaleId == myScale.scaleId) {
+            myReqWeightCountine = tempWeight;
+
+            // isCnting = true;
+            isWgtStart = true;
+            if (myReqWeightCountine.msgBody!.weightUnit !=
+                    myFmaInfo.header!.formulaHeader!.formulaUnit &&
+                isShowTipDialog == false) {
+              isShowTipDialog = true;
+              showTipDialog();
+            }
+            if (myReqWeightCountine.msgBody != null) {
+              try {
+                currentWgtStrNotifier.value =
+                    myReqWeightCountine.msgBody!.weightVal; // 更新当前重量
+                currentRawWgt =
+                    double.parse(myReqWeightCountine.msgBody!.weightVal);
+
+                currentRawWgt = double.parse(currentRawWgt.toStringAsFixed(3));
+                if (!myReqWeightCountine.msgBody!.isStable) {
+                  stableDurationCounter = 0;
+                  //自动下一步的时候用到的
+                }
+              } catch (e) {
+                // 处理转换失败的情况
+                // print('Failed to parse weight value: $e');
+                currentRawWgt = 0.0;
+              }
+            }
+          }
+        });
+      }
+    });
+
+    _eventbus9 = eventBus.on<EventRespGetAutoNext>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+        if (dataStr != '') {
+          setState(() {
+            autoNextStep = getAutoNextFormDbFromJson(dataStr).autoNext;
+
+            autoNextStepNotifier.value = autoNextStep;
+
+            stableTime = getAutoNextFormDbFromJson(dataStr).stableTime;
+            stableTimeCtl.text = stableTime.toString();
+          });
+        } else {
+          setState(() {
+            autoNextStepNotifier.value = false;
+          });
+        }
+      }
+    });
+    _eventbus10 = eventBus.on<EventRespEditRawData>().listen((event) {
+      if (mounted) {
+        showTipInfo(localizedStrings.fSuccessMsg, context);
+        PublicFunctions.getRawList();
+        PublicFunctions.getFormulaList();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _eventbus1.cancel();
+    _eventbus2.cancel();
+    _eventbus3.cancel();
+    _eventbus4.cancel();
+    _eventbus5.cancel();
+    _eventbus6.cancel();
+    _eventbus7.cancel();
+    _eventbus8.cancel();
+    _eventbus9.cancel();
+    _eventbus10.cancel();
+
+    stopCntAliveTimer();
+    currentWgtStrNotifier.dispose();
+    setWgtStartFalseTimer?.cancel(); // 取消定时器
+    checkWgtStartTimer?.cancel(); // 取消定时器
+    stopAutoNextStepTimer();
+
+    autoNextStepNotifier.dispose();
+    stableTimeCtl.dispose();
   }
 
   // 提示切换单位对话框
@@ -738,6 +831,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
         ReqAddFmaRec(recHeader: recHeader, recDetail: reqRecDetailList); //配方
 
     PublicFunctions.addFormulaRec(reqAddFmaRecToJson(reqAddFmaRec));
+    PublicFunctions.deleteDraftRecord(recRecNumber);
 
     setState(() {
       isFinish = true;
@@ -811,7 +905,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
 
     String jsonStr = darfFmaInfoFromDbToJson(tempDarfFmaInfo);
 
-    PublicFunctions.createDraftRecord(jsonStr);
+    PublicFunctions.updateDraftRecord(jsonStr);
     PublicFunctions.stopWeight(widget.selScaleId);
     PublicFunctions.getDraftRecords();
     if (mounted) {
@@ -835,6 +929,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
         if (value) {
           // 保存
           saveFmaRec(isAllOK);
+
           PublicFunctions.stopWeight(widget.selScaleId);
           if (mounted) {
             Navigator.pop(context);
@@ -879,7 +974,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
   Widget showBottomBtn() {
     return Container(
         height: 76,
-        color: colorScheme.surface,
+        color: Theme.of(context).colorScheme.surface,
         child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           ConstrainedBox(
             constraints: BoxConstraints(maxWidth: maxWidth),
@@ -892,9 +987,9 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                         performFinishBtn();
                       }
                     : null,
-                colorScheme.onPrimary,
-                colorScheme.primary,
-                colorScheme.onPrimary),
+                Theme.of(context).colorScheme.onPrimary,
+                Theme.of(context).colorScheme.primary,
+                Theme.of(context).colorScheme.onPrimary),
           ),
           SizedBox(width: regularPadding),
           ConstrainedBox(
@@ -906,11 +1001,12 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                 !isEnableNext
                     ? null
                     : () {
+                        //已完成，不能暂存，只能结束
                         performDarfFmaSave();
                       },
-                colorScheme.onPrimary,
-                colorScheme.primary,
-                colorScheme.onPrimary),
+                Theme.of(context).colorScheme.onPrimary,
+                Theme.of(context).colorScheme.primary,
+                Theme.of(context).colorScheme.onPrimary),
           ),
           SizedBox(width: regularPadding),
           ConstrainedBox(
@@ -924,9 +1020,9 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                         performAbandonBtn();
                       }
                     : null,
-                colorScheme.onPrimary,
-                colorScheme.error,
-                colorScheme.onPrimary),
+                Theme.of(context).colorScheme.onPrimary,
+                Theme.of(context).colorScheme.error,
+                Theme.of(context).colorScheme.onPrimary),
           ),
           SizedBox(width: regularPadding),
           ConstrainedBox(
@@ -940,9 +1036,9 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                         showDeleteDialog();
                       }
                     : null,
-                colorScheme.onPrimary,
-                colorScheme.error,
-                colorScheme.onPrimary),
+                Theme.of(context).colorScheme.onPrimary,
+                Theme.of(context).colorScheme.error,
+                Theme.of(context).colorScheme.onPrimary),
           ),
         ]));
   }
@@ -952,7 +1048,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
     // final width = MediaQuery.of(context).size.width;
     return Scaffold(
         body: Container(
-      color: colorScheme.surface, //对接时修改颜色值
+      color: Theme.of(context).colorScheme.surfaceDim, //对接时修改颜色值
       child:
           // Padding(
           //   padding: const EdgeInsets.all(14.0),
@@ -964,19 +1060,19 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
               children: [
                 showTitleBar(),
                 Divider(
-                  color: colorScheme.outline,
+                  color: Theme.of(context).colorScheme.outline,
                   thickness: 1,
                   height: 1,
                 ),
                 showFormulaInfoAndWgt(),
                 Divider(
-                  color: colorScheme.outline,
+                  color: Theme.of(context).colorScheme.outline,
                   thickness: 1,
                   height: 1,
                 ),
                 Container(
                     height: 42,
-                    color: colorScheme.surface,
+                    color: Theme.of(context).colorScheme.surface,
                     child: Row(children: [
                       SizedBox(
                         width: 17,
@@ -984,10 +1080,8 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                       Expanded(
                         child: Text(
                           localizedStrings.fIngredientsRecordTitle,
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelMedium!
-                              .apply(color: colorScheme.onSurface),
+                          style: Theme.of(context).textTheme.labelMedium!.apply(
+                              color: Theme.of(context).colorScheme.onSurface),
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                         ),
@@ -1031,7 +1125,8 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                                   SizedBox(width: smallPadding),
                                   Icon(
                                     Icons.mode_edit_outlined,
-                                    color: colorScheme.primary,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
                                   ),
                                 ],
                               )),
@@ -1042,7 +1137,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                 showWgtTable(),
                 Container(
                   height: 14,
-                  color: colorScheme.surface,
+                  color: Theme.of(context).colorScheme.surface,
                 ),
                 showBottomBtn(),
               ],
@@ -1055,7 +1150,6 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
   }
 
   Widget showRawWgtAndUnit(int index, Color? textColor) {
-    // ... existing code ...
     final formulaHeader = myFmaInfo.header?.formulaHeader;
     final formulaDetail = myFmaInfo.details?[index].formulaDetail;
 
@@ -1068,15 +1162,17 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
 
       return Text(
         displayText,
-        style: getTextStyle(color: textColor),
-        overflow: TextOverflow.ellipsis,
+        style: getTextStyle(
+          color: textColor,
+        ),
       );
     } else {
       // 处理数据为空的情况
       return Text(
         '-',
-        style: getTextStyle(color: textColor),
-        overflow: TextOverflow.ellipsis,
+        style: getTextStyle(
+          color: textColor,
+        ),
       );
     }
   }
@@ -1107,11 +1203,11 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
             columnCount = 8;
           }
           double tableWidth = maxWidth - 45 - 80;
-          //80 序号
+
           double columnWidth = tableWidth / columnCount;
           return Container(
             padding: const EdgeInsets.only(left: 20, right: 20),
-            color: colorScheme.surface,
+            color: Theme.of(context).colorScheme.surface,
             child: StickyTable(
               controller: _scrollController, // 传递 ScrollController
               // 修改 data 属性
@@ -1132,29 +1228,25 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                   });
                 }
               },
-              titleDecoration: BoxDecoration(
-                color: colorScheme.surfaceDim,
-                border: Border(
-                  bottom:
-                      BorderSide(color: colorScheme.outlineVariant, width: 1),
-                ),
-              ),
 
               cellDecoration: (context, column, data, row, columnIndex) {
                 // 添加点击行背景色
                 if (row == clickedRow) {
                   return BoxDecoration(
-                    color: colorScheme.surfaceContainerLow,
+                    color: Theme.of(context).colorScheme.surfaceContainerLow,
                     border: Border(
-                      bottom: BorderSide(color: colorScheme.primary, width: 1),
+                      bottom: BorderSide(
+                          color: Theme.of(context).colorScheme.primary,
+                          width: 1),
                     ),
                   );
                 }
                 return BoxDecoration(
-                  color: colorScheme.surface,
+                  color: Theme.of(context).colorScheme.surface,
                   border: Border(
-                    bottom:
-                        BorderSide(color: colorScheme.outlineVariant, width: 1),
+                    bottom: BorderSide(
+                        color: Theme.of(context).colorScheme.outlineVariant,
+                        width: 1),
                   ),
                 );
               },
@@ -1171,7 +1263,9 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                   renderCell: (context, title, data, row, column) {
                     return Text(
                       (data as FormulaWgtProcessData).no.toString(),
-                      style: getTextStyle(),
+                      style: getTextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                     );
                   },
                   renderTitle: (context, title) {
@@ -1180,7 +1274,9 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                       child: Text(
                         title.title,
                         overflow: TextOverflow.ellipsis,
-                        style: getTextStyle(),
+                        style: getTextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                       ),
                     );
                   },
@@ -1194,12 +1290,12 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                   onCellClick: (context, title, data, row, column) {},
                   // 修改 renderCell 方法
                   renderCell: (context, title, data, row, column) {
-                    return Text((data as FormulaWgtProcessData).rawId!,
-                        overflow: TextOverflow.ellipsis,
-                        style: getTextStyle(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurfaceVariant));
+                    return Text(
+                      (data as FormulaWgtProcessData).rawId!,
+                      style: getTextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    );
                   },
                   renderTitle: (context, title) {
                     return showTableTitle(title.title);
@@ -1220,9 +1316,8 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                             ? localizedStrings.fFmaContainer
                             : (data).rawName!,
                         style: getTextStyle(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurfaceVariant));
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ));
                   },
                   renderTitle: (context, title) {
                     return showTableTitle(title.title);
@@ -1239,12 +1334,12 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                     // 修改 renderCell 方法
                     renderCell: (context, title, data, row, column) {
                       return Text(
-                          (data as FormulaWgtProcessData).targetPct.toString(),
-                          overflow: TextOverflow.ellipsis,
-                          style: getTextStyle(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurfaceVariant));
+                        (data as FormulaWgtProcessData).targetPct.toString(),
+                        style: getTextStyle(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      );
                     },
                     renderTitle: (context, title) {
                       return showTableTitle(title.title);
@@ -1265,9 +1360,8 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                             ? "-"
                             : (data).targetWgt.toString(),
                         style: getTextStyle(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurfaceVariant));
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ));
                   },
                   renderTitle: (context, title) {
                     return showTableTitle(title.title);
@@ -1285,9 +1379,8 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                     return Text(
                         (data as FormulaWgtProcessData).currentWgt.toString(),
                         style: getTextStyle(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurfaceVariant));
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ));
                   },
                   renderTitle: (context, title) {
                     return showTableTitle(title.title);
@@ -1308,9 +1401,8 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                             ? "-"
                             : "± ${(data).errorWgt}",
                         style: getTextStyle(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurfaceVariant));
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ));
                   },
                   renderTitle: (context, title) {
                     return showTableTitle(title.title);
@@ -1331,9 +1423,8 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                             ? "-"
                             : (data).currentErrorWgt.toString(),
                         style: getTextStyle(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurfaceVariant));
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ));
                   },
                   renderTitle: (context, title) {
                     return showTableTitle(title.title);
@@ -1346,6 +1437,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                   columnWidth: FixedColumnWidth(columnWidth),
                   alignment: Alignment.centerLeft,
                   onCellClick: (context, title, data, row, column) {},
+                  // 修改 renderCell 方法
                   renderCell: (context, title, data, row, column) {
                     return ConstrainedBox(
                       constraints: BoxConstraints(
@@ -1386,12 +1478,12 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                                         : localizedStrings.fUnqualified,
                             style: Theme.of(context).textTheme.bodySmall!.apply(
                                   color: (data).isOK! == "no"
-                                      ? colorScheme.primary
+                                      ? Theme.of(context).colorScheme.primary
                                       : (data).isOK! == "ok"
                                           ? Theme.of(context)
                                               .colorScheme
                                               .onTertiaryFixedVariant
-                                          : colorScheme.error,
+                                          : Theme.of(context).colorScheme.error,
                                 ),
                           ), // 显示原料重量和单位
                         ),
@@ -1422,7 +1514,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                 //           child: Icon(
                 //         size: 20,
                 //         Icons.add_comment_outlined,
-                //         color: colorScheme.primary,
+                //         color: Theme.of(context).colorScheme.primary,
                 //       )),
                 //     );
                 //   },
@@ -1431,6 +1523,28 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
             ),
           );
         }));
+  }
+
+  Widget showTableTitle(String title) {
+    return SizedBox(
+        child: Text(title,
+            overflow: TextOverflow.ellipsis, style: getTextStyle()));
+  }
+
+  TextStyle getTextStyle({Color? color}) {
+    //返回一个文本样式
+    color ??= Theme.of(context).colorScheme.onSurface;
+    return Theme.of(context).textTheme.bodySmall!.apply(
+          color: color,
+        );
+  }
+
+  TextStyle getTitleTextStyle({Color? color}) {
+    //返回一个文本样式
+    color ??= Theme.of(context).colorScheme.onSurface;
+    return Theme.of(context).textTheme.bodyMedium!.apply(
+          color: color,
+        );
   }
 
   showFCode() {
@@ -1474,7 +1588,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
   showFormulaName() {
     return Container(
       height: 28,
-      color: colorScheme.surface,
+      color: Theme.of(context).colorScheme.surface,
       alignment: Alignment.centerLeft,
       child: Row(children: [
         // 显示标签部分，设置固定宽度
@@ -1485,7 +1599,8 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
           ),
           child: Text(
             localizedStrings.fFmaNameLabel + ": ",
-            style: getTitleTextStyle(color: colorScheme.onSurfaceVariant),
+            style: getTitleTextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant),
             overflow: TextOverflow.ellipsis,
             maxLines: 1,
           ),
@@ -1528,7 +1643,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
               flex: 1,
               child: Container(
                 height: 28,
-                color: colorScheme.surface,
+                color: Theme.of(context).colorScheme.surface,
                 alignment: Alignment.centerLeft,
                 child: Row(children: [
                   // 显示标签部分
@@ -1537,7 +1652,8 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                     child: Text(
                       localizedStrings.fFmaIdLabel + ": ",
                       style: getTitleTextStyle(
-                          color: colorScheme.onSurfaceVariant),
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                     ),
@@ -1551,7 +1667,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
               flex: 1,
               child: Container(
                 height: 28,
-                color: colorScheme.surface,
+                color: Theme.of(context).colorScheme.surface,
                 alignment: Alignment.centerLeft,
                 child: Row(children: [
                   Flexible(
@@ -1559,7 +1675,8 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                     child: Text(
                       localizedStrings.fTotalWeightLabel + ": ",
                       style: getTitleTextStyle(
-                          color: colorScheme.onSurfaceVariant),
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                     ),
@@ -1574,7 +1691,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
         showFormulaName(),
         Container(
           height: 40,
-          color: colorScheme.surface,
+          color: Theme.of(context).colorScheme.surface,
           alignment: Alignment.centerLeft,
           child: Row(children: [
             // 显示标签部分，设置固定宽度
@@ -1598,7 +1715,10 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                       myFmaInfo.header!.formulaHeader!.remark == null
                   ? ""
                   : myFmaInfo.header!.formulaHeader!.remark!,
-              style: getTextStyle(color: colorScheme.onSurfaceVariant),
+              style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                    fontSize: 12,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
             ),
           ),
         )
@@ -1640,7 +1760,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
     return Expanded(
         flex: 20,
         child: Container(
-            color: colorScheme.surface,
+            color: Theme.of(context).colorScheme.surface,
             alignment: Alignment.center,
             child: Row(children: [
               Expanded(
@@ -1649,6 +1769,9 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
+                          // SizedBox(
+                          //   height: 20,
+                          // ),
                           Container(
                               height: 150,
                               alignment: Alignment.bottomCenter,
@@ -1656,17 +1779,19 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                                 "assets/images/complete.png",
                                 fit: BoxFit.cover,
                               )),
+                          // SizedBox(
+                          //   height: 14,
+                          // ),
                           Container(
                             alignment: Alignment.center,
                             child: Text(
                               localizedStrings.fFormulaCompletedTip,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium!
-                                  .apply(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurfaceVariant),
+                              style:
+                                  Theme.of(context).textTheme.bodyMedium!.apply(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurfaceVariant,
+                                      ),
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
@@ -1681,17 +1806,16 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
       child: Column(children: [
         Container(
           height: 28,
-          color: colorScheme.surface,
+          color: Theme.of(context).colorScheme.surface,
           alignment: Alignment.centerLeft,
           child: Row(children: [
             // 显示标签部分，设置固定宽度
             Expanded(
               child: Text(
                 localizedStrings.fIngredientsDataLabel,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium!
-                    .apply(color: colorScheme.onSurface),
+                style: Theme.of(context).textTheme.bodyMedium!.apply(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
               ),
@@ -1705,7 +1829,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
             Expanded(
                 flex: 3,
                 child: Container(
-                  color: colorScheme.surfaceDim,
+                  color: Theme.of(context).colorScheme.surfaceDim,
                   child: Column(children: [
                     Expanded(
                         flex: 3,
@@ -1725,10 +1849,9 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                                     .textTheme
                                     .titleLarge!
                                     .apply(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary),
-
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                    ),
                                 overflow: TextOverflow.ellipsis,
                               ),
                             )),
@@ -1757,10 +1880,11 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                                               .textTheme
                                               .titleLarge!
                                               .copyWith(
-                                                  fontSize: 48,
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .primary),
+                                                fontSize: 48,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary,
+                                              ),
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                       );
@@ -1772,17 +1896,19 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                                 child: Container(
                                   padding: const EdgeInsets.only(right: 8.0),
                                   alignment: Alignment.bottomRight,
-                                  child: Text(fmaUnit,
-                                      maxLines: 1,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium!
-                                          .apply(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSurface,
-                                          ),
-                                      overflow: TextOverflow.ellipsis),
+                                  child: Text(
+                                    fmaUnit,
+                                    maxLines: 1,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium!
+                                        .apply(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface,
+                                        ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 )),
                           ]),
                         )),
@@ -1794,7 +1920,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
             Expanded(
                 flex: 2,
                 child: Container(
-                  color: colorScheme.surfaceDim,
+                  color: Theme.of(context).colorScheme.surfaceDim,
                   child: Column(children: [
                     Expanded(
                         flex: 1,
@@ -1806,17 +1932,18 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                                   padding: const EdgeInsets.only(left: 8.0),
                                   alignment: Alignment.centerLeft,
                                   child: Text(
-                                      localizedStrings.fTargetWeightLabel,
-                                      maxLines: 1,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium!
-                                          .apply(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSurface,
-                                          ),
-                                      overflow: TextOverflow.ellipsis),
+                                    localizedStrings.fTargetWeightLabel,
+                                    maxLines: 1,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium!
+                                        .apply(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface,
+                                        ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 )),
                           ]),
                         )),
@@ -1843,16 +1970,17 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                                                     .toStringAsFixed(3))
                                             .toString(),
                                     maxLines: 1,
-                                    //修改了此处
                                     style: Theme.of(context)
                                         .textTheme
                                         .titleLarge!
                                         .copyWith(
-                                            fontSize: 48,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSurface,
-                                            overflow: TextOverflow.ellipsis),
+                                          fontSize: 48,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface,
+                                        ),
+
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ),
@@ -1886,7 +2014,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
             Expanded(
                 flex: 2,
                 child: Container(
-                  color: colorScheme.surfaceDim,
+                  color: Theme.of(context).colorScheme.surfaceDim,
                   child: Column(children: [
                     Expanded(
                         flex: 1,
@@ -1906,8 +2034,8 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                                       color: Theme.of(context)
                                           .colorScheme
                                           .onSurface,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
-                                overflow: TextOverflow.ellipsis,
                               ),
                             )),
                           ]),
@@ -1939,6 +2067,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                                               .colorScheme
                                               .onSurface,
                                         ),
+
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
@@ -1959,8 +2088,8 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                                           color: Theme.of(context)
                                               .colorScheme
                                               .onSurface,
+                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 )),
                           ]),
@@ -1978,7 +2107,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
             Expanded(
                 flex: 6,
                 child: Container(
-                  color: colorScheme.surfaceDim,
+                  color: Theme.of(context).colorScheme.surfaceDim,
                   child: Column(children: [
                     Expanded(
                         flex: 1,
@@ -1990,8 +2119,17 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                                 alignment: Alignment.centerLeft,
                                 color: Color.fromARGB(255, 249, 252, 252),
                                 child: Text(
-                                    localizedStrings.fRawMaterialWeightLabel,
-                                    style: getTextStyle()),
+                                  localizedStrings.fRawMaterialWeightLabel,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .apply(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                ),
                               )),
                           Expanded(
                             flex: 1,
@@ -2061,8 +2199,17 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                                 alignment: Alignment.centerLeft,
                                 color: Color.fromARGB(255, 249, 252, 252),
                                 child: Text(
-                                    localizedStrings.fFormulaProgressLabel,
-                                    style: getTextStyle()),
+                                  localizedStrings.fFormulaProgressLabel,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .apply(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                ),
                               )),
                           Expanded(
                             flex: 1,
@@ -2109,15 +2256,17 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                           Expanded(
                               child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              foregroundColor: colorScheme.primary,
-                              backgroundColor: colorScheme.surface,
+                              foregroundColor:
+                                  Theme.of(context).colorScheme.primary,
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.surface,
                               fixedSize: const Size(double.infinity, 48),
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
                                   side: BorderSide(
                                     color: startFormula
-                                        ? colorScheme.outline
-                                        : colorScheme.primary,
+                                        ? Theme.of(context).colorScheme.outline
+                                        : Theme.of(context).colorScheme.primary,
                                   )),
                             ),
                             onPressed: startFormula
@@ -2128,10 +2277,13 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                                   },
                             child: Text(
                               localizedStrings.iBtnZero,
-                              //修改了此处
-
-                              style: getTextStyle(color: colorScheme.primary),
-
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall!
+                                  .apply(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                  ),
                               overflow: TextOverflow.ellipsis,
                             ),
                           )),
@@ -2147,8 +2299,10 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                           Expanded(
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                foregroundColor: colorScheme.primary,
-                                backgroundColor: colorScheme.surface,
+                                foregroundColor:
+                                    Theme.of(context).colorScheme.primary,
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.surface,
                                 fixedSize: const Size(double.infinity, 48),
                                 shape: RoundedRectangleBorder(
                                     borderRadius:
@@ -2175,7 +2329,8 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                                     .textTheme
                                     .bodySmall!
                                     .apply(
-                                      color: colorScheme.primary,
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
                                     ),
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -2193,8 +2348,10 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                           Expanded(
                               child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              foregroundColor: colorScheme.onPrimary,
-                              backgroundColor: colorScheme.primary,
+                              foregroundColor:
+                                  Theme.of(context).colorScheme.onPrimary,
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.primary,
                               fixedSize: const Size(double.infinity, 48),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
@@ -2208,10 +2365,9 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                             child: Text(
                               //下一步  修改了此处
                               localizedStrings.fNextStepBtn,
-                              style:
-                                  Theme.of(context).textTheme.bodySmall!.apply(
-                                        color: colorScheme.onPrimary,
-                                      ),
+                              style: getTextStyle(
+                                color: Theme.of(context).colorScheme.onPrimary,
+                              ),
                               overflow: TextOverflow.ellipsis,
                             ),
                           )),
@@ -2227,33 +2383,11 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
     );
   }
 
-  Widget showTableTitle(String title) {
-    return SizedBox(
-        child: Text(title,
-            overflow: TextOverflow.ellipsis, style: getTextStyle()));
-  }
-
-  TextStyle getTextStyle({Color? color}) {
-    //返回一个文本样式
-    color ??= colorScheme.onSurface;
-    return Theme.of(context).textTheme.bodySmall!.apply(
-          color: color,
-        );
-  }
-
-  TextStyle getTitleTextStyle({Color? color}) {
-    //返回一个文本样式
-    color ??= colorScheme.onSurface;
-    return Theme.of(context).textTheme.bodyMedium!.apply(
-          color: color,
-        );
-  }
-
   showFormulaInfoAndWgt() {
     return Expanded(
       flex: 9,
       child: Container(
-        color: colorScheme.surface,
+        color: const Color.fromARGB(255, 253, 252, 252),
         child: Column(children: [
           Expanded(
               child: Row(
@@ -2266,7 +2400,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                 width: 20,
               ),
               VerticalDivider(
-                color: colorScheme.outline,
+                color: Theme.of(context).colorScheme.outline,
                 width: 1,
               ),
               SizedBox(
@@ -2376,7 +2510,6 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
 
   performLowRow(double currentTempWgtValue) {
     //重量轻时执行下一步的操作
-    print(clickedRow.toString());
 
     processWgtList[clickedRow].currentWgt =
         currentTempWgtValue + processWgtList[clickedRow].currentWgt!;
@@ -2392,7 +2525,8 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
     // 从当前行的下一行开始向后查找
     int nextIndex = -1;
     for (int i = clickedRow + 1; i < processWgtList.length; i++) {
-      if (processWgtList[i].isOK != 'ok') {
+      if (processWgtList[i].isOK != 'ok' && processWgtList[i].no != 0) {
+        // 排除容器项
         nextIndex = i;
         break;
       }
@@ -2401,7 +2535,8 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
     // 如果向后没找到，就从第一行开始查找
     if (nextIndex == -1) {
       for (int i = 0; i < processWgtList.length; i++) {
-        if (processWgtList[i].isOK != 'ok') {
+        if (processWgtList[i].isOK != 'ok' && processWgtList[i].no != 0) {
+          // 排除容器项
           nextIndex = i;
           break;
         }
@@ -2480,7 +2615,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
     // 先查找 isOK 不为 'ok' 的项
     try {
       nextItem = processWgtList
-          .firstWhere((item) => item.isOK != 'ok' && item.no != 0);
+          .firstWhere((item) => item.isOK != 'ok' && item.no != 0); // 排除容器项
       selectedProcessWgt = nextItem; // 更新选中的原料重量项
       //如果有容器
       if (myFmaInfo.header != null &&
@@ -2581,7 +2716,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
   showTitleBar() {
     return Container(
       height: 54,
-      color: colorScheme.surface,
+      color: Theme.of(context).colorScheme.surface,
       child: Row(
         children: [
           SizedBox(
@@ -2593,11 +2728,14 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
             style: Theme.of(context)
                 .textTheme
                 .labelMedium!
-                .apply(color: colorScheme.onSurface),
+                .apply(color: Theme.of(context).colorScheme.onSurface),
           )),
           Text(
             localizedStrings.gTipAutoNextStep,
-            style: getTextStyle(),
+            style: Theme.of(context)
+                .textTheme
+                .bodySmall!
+                .apply(color: Theme.of(context).colorScheme.onSurface),
           ),
           SizedBox(
             width: regularPadding,
@@ -2618,8 +2756,8 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                     ? Icons.toggle_on_outlined
                     : Icons.toggle_off_outlined,
                 color: autoNextStep
-                    ? colorScheme.onTertiaryFixedVariant
-                    : colorScheme.onSurface,
+                    ? Theme.of(context).colorScheme.onTertiaryFixedVariant
+                    : Theme.of(context).colorScheme.onSurface,
               )),
           SizedBox(
             width: regularPadding,
@@ -2627,7 +2765,10 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
           if (autoNextStep)
             Text(
               localizedStrings.gTipStableTime,
-              style: getTextStyle(),
+              style: Theme.of(context)
+                  .textTheme
+                  .bodySmall!
+                  .apply(color: Theme.of(context).colorScheme.onSurface),
             ),
           if (autoNextStep)
             SizedBox(
@@ -2659,7 +2800,8 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                       value: item,
                       child: Text(
                         item,
-                        style: getTextStyle(),
+                        style: Theme.of(context).textTheme.bodySmall!.apply(
+                            color: Theme.of(context).colorScheme.onSurface),
                       ),
                     );
                   })
@@ -2671,7 +2813,10 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                     setAutoNext();
                   });
                 },
-                style: getTextStyle(),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodySmall!
+                    .apply(color: Theme.of(context).colorScheme.onSurface),
               ),
             ),
           SizedBox(
@@ -2696,9 +2841,9 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
         message: tip, // 提示信息
         child: IconButton(
           iconSize: 24,
-          color: colorScheme.onPrimary,
+          color: Theme.of(context).colorScheme.onPrimary,
           style: IconButton.styleFrom(
-            backgroundColor: colorScheme.primary,
+            backgroundColor: Theme.of(context).colorScheme.primary,
             shape: RoundedRectangleBorder(
               // 设置为矩形形状
               borderRadius: BorderRadius.zero, // 没有圆角，即正方形
@@ -2715,11 +2860,11 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
       message: tip, // 提示信息
       child: IconButton(
         iconSize: 24,
-        color: colorScheme.onPrimary,
-        focusColor: colorScheme.outline,
-        hoverColor: colorScheme.outline,
+        color: Theme.of(context).colorScheme.onPrimary,
+        focusColor: Theme.of(context).colorScheme.outline,
+        hoverColor: Theme.of(context).colorScheme.outline,
         style: IconButton.styleFrom(
-          backgroundColor: colorScheme.surfaceContainerLow,
+          backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
           shape: RoundedRectangleBorder(
             // 设置为矩形形状
             borderRadius: BorderRadius.zero, // 没有圆角，即正方形
@@ -2729,7 +2874,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
         onPressed: onPressed,
         icon: Icon(
           icon,
-          color: colorScheme.primary,
+          color: Theme.of(context).colorScheme.primary,
         ),
       ),
     );

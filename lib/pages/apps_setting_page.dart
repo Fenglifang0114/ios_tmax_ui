@@ -11,7 +11,6 @@ import 'package:t_max/data/license_data.dart';
 import 'package:t_max/data/parse_log.dart';
 
 import 'package:t_max/data/routes_data.dart';
-import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/dialog/license_info.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
@@ -796,9 +795,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
                                         }
                                       });
                                     } catch (e) {
-                                      showTipInfo(
-                                          localizedStrings.gTipFailToSelectFile,
-                                          context);
+                                      return;
                                     } finally {
                                       // 无论选择文件操作成功还是失败，都将状态设置为空闲
                                       setState(() {

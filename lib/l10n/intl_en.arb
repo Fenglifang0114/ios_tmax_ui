@@ -1240,6 +1240,10 @@
     "@l_total_cnt_var": {
         "description": ""
     },
+    "l_total_pcs_var": "TotalPcs",
+    "@l_total_pcs_var": {
+        "description": ""
+    },
     "l_line_expl": "Line",
     "@l_line_expl": {
         "description": ""
@@ -1310,6 +1314,10 @@
     },
     "l_total_cnt_expl": "TotalCount",
     "@l_total_cnt_expl": {
+        "description": ""
+    },
+    "l_total_pcs_expl": "TotalPcs",
+    "@l_total_pcs_expl": {
         "description": ""
     },
     "l_line_width_txt": "Line Width",
@@ -2192,7 +2200,7 @@
     "@fCurrentMaterialOverweightMsg": {
         "description": "Warning message when current raw material is overweight, asking to abandon or correct"
     },
-    "fCurrentMaterialWeightInvalidMsg": "The current weight of the ingredient is not qualified!",
+    "fCurrentMaterialWeightInvalidMsg": "The current weight of the ingredient is not qualified! Confirm continue?",
     "@fCurrentMaterialWeightInvalidMsg": {
         "description": "Error message when current raw material weight is invalid"
     },
@@ -2272,7 +2280,7 @@
     "@fSelectConfidentialityStatusMsg": {
         "description": "This is used to prompt the user to select the confidentiality status of relevant content."
     },
-    "fSwitchModeClearMsg": "Switch mode clears raw materials. Confirm?",
+    "fSwitchModeClearMsg": "Switching modes will clear the raw material list. Confirm?",
     "@fSwitchModeClearMsg": {
         "description": "Confirmation message for mode switch that clears raw material list"
     },
@@ -2475,6 +2483,10 @@
     "menuCalibration": "Calibration",
     "@menuCalibration": {
         "description": "Menu item for calibration"
+    },
+    "menuWeighingSetting": "Weighing Setting",
+    "@menuWeighingSetting": {
+        "description": "Menu item for weighing setting"
     },
     "menuLanguageSetting": "Set Language",
     "@menuLanguageSetting": {
@@ -2824,9 +2836,9 @@
     "@gTipEmptyScalePan": {
         "description": "This is a tip to empty the scale pan."
     },
-    "gTipSetFullScale": "Set the full scale",
-    "@gTipSetFullScale": {
-        "description": "This is a tip to set the full scale."
+    "gTipSetCalibrationWeight": "Set calibration weight",
+    "@gTipSetCalibrationWeight": {
+        "description": "This is a tip to set the calibration weight."
     },
     "gTipPlaceWeight": "Place the weight",
     "@gTipPlaceWeight": {
@@ -2844,9 +2856,9 @@
     "@gTipEmptyScalePanThenNext": {
         "description": "This is a tip to empty the scale pan and click next."
     },
-    "gTipSetFullScaleThenNext": "Please set the full scale weight and click next",
-    "@gTipSetFullScaleThenNext": {
-        "description": "This is a tip to set the full scale weight and click next."
+    "gTipSetCalibrationWeightThenNext": "Please set the calibration weight and click next",
+    "@gTipSetCalibrationWeightThenNext": {
+        "description": "This is a tip to set the calibration weight and click next."
     },
     "gTipLoadWeightThenNext": "Please load the weight, wait for the green light to turn on and click next",
     "@gTipLoadWeightThenNext": {
@@ -2888,9 +2900,9 @@
     "@gBtnNext": {
         "description": "This is a button to go to the next step."
     },
-    "gTipInputRange": "Please enter the max range",
-    "@gTipInputRange": {
-        "description": "This is a prompt to ask the user to input the measuring range."
+    "gTipCalibrationWeight": "Please enter the calibration weight",
+    "@gTipCalibrationWeight": {
+        "description": "This is a prompt to ask the user to input the calibration weight."
     },
     "gTxtDecimal": "Decimal",
     "@gTxtDecimal": {
@@ -2900,10 +2912,58 @@
     "@gTipGaduation": {
         "description": "This is the prompt for graduation."
     },
+    "gTipMaxRange": "Maximum Range",
+    "@gTipMaxRange": {
+        "description": "This is the prompt for the maximum range."
+    },
+    "gTipWeightUnit": "Weight Unit",
+    "@gTipWeightUnit": {
+        "description": "This is the prompt for the weight unit."
+    },
+    "gTipInitialZero": "Initial Zero Setting",
+    "@gTipInitialZero": {
+        "description": "This is the prompt for initial zero setting."
+    },
+    "gTipManualZero": "Manual Zero Reset",
+    "@gTipManualZero": {
+        "description": "This is the prompt for manual zero reset."
+    },
+    "gTipZeroTracking": "Zero Tracking",
+    "@gTipZeroTracking": {
+        "description": "This is the prompt for zero tracking."
+    },
+    "gTipGravityAcceleration": "Gravitational Acceleration",
+    "@gTipGravityAcceleration": {
+        "description": "This is the prompt for gravitational acceleration."
+    },
+    "gTipGravityAccelerationInputError": "Gravitational acceleration input error",
+    "@gTipGravityAccelerationInputError": {
+        "description": "This is a tip to inform the user that the gravitational acceleration input is incorrect."
+    },
     "gTipRedoLastStep": "Fail,Please redo the last step.",
     "@gTipRedoLastStep": {
         "description": "This is a tip to redo the last step."
-    },    
+    },
+    "gTipCalibrating": "Calibrating...",
+    "@gTipCalibrating": {
+        "description": "This is a tip to inform the user that calibration is in progress."
+    },
+    "gTipGettingParameter": "Getting parameters, please wait...",
+    "@gTipGettingParameter": {
+        "description": "This is a tip to inform the user that the parameters are being retrieved."
+    },
+    "gTipGetParameterFail": "get parameter fail",
+    "@gTipGetParameterFail": {
+        "description": "This is a tip to inform the user that parameter retrieval has failed."
+    },
+    "gTipSetParameterFail": "set parameter fail",
+    "@gTipSetParameterFail": {
+        "description": "This is a tip to inform the user that parameter setting has failed."
+    },
+    "gTipSwitchUnit": "When switching units, please also switch the corresponding range.",
+    "@gTipSwitchUnit": {
+        "description": "This is a tip to remind the user to switch the corresponding range when changing the unit."
+    },
     "gTipResetMaxRange": "Fail,Please reset the maximum range.",
     "@gTipResetMaxRange": {
         "description": "This is a tip to reset the maximum range."
@@ -3080,9 +3140,9 @@
     "@subTitleFlowRate": {
         "description": "SubTitle for liquid filling speed"
     },
-    "subTitleCalibration": "Perform single-point or linear calibration on the scale.",
+    "subTitleCalibration": "Weighing parameter setting and calibration for the scales.",
     "@subTitleCalibration": {
-        "description": "SubTitle for calibration"
+        "description": "SubTitle for weighing setting"
     },
     "tipPage": "Page",
     "@tipPage": {
@@ -3107,6 +3167,57 @@
     "gTipGettingDeviceTime": "Retrieving the device time, please wait a moment.",
     "@gTipGettingDeviceTime": {
         "description": "Retrieving the device time, please wait a moment."
+    },
+    "btnRestart": "Restart",
+    "@btnRestart": {
+        "description": "Button to restart the operation"
+    },
+    "btnTemporarySave": "Temporary Save",
+    "@btnTemporarySave": {
+        "description": "Button to temporarily save data"
+    },
+    "tipFormulaDataError": "Formula data error!",
+    "@tipFormulaDataError": {
+        "description": "Error message indicating formula data error"
+    },
+    "tipNoRawMaterialWeightData": "No raw material weight data, no need to save temporarily",
+    "@tipNoRawMaterialWeightData": {
+        "description": "Tip indicating no raw material weight data to save temporarily"
+    },
+    "tipTemporarySaveFormulaRecord": "Temporary storage record",
+    "@tipTemporarySaveFormulaRecord": {
+        "description": "Tip indicating temporarily saving formula weighing record"
+    },
+    "btnContinueWeighing": "Continue Weighing",
+    "@btnContinueWeighing": {
+        "description": "Button to continue the weighing process"
+    },
+    "titleConfidentialWeighingMode": "Confidential Weighing Mode",
+    "@titleConfidentialWeighingMode": {
+        "description": "Title for confidential weighing mode"
+    },
+    "tipEnsureWeightCorrect": "Please ensure the current weight data is correct. Do you want to continue?",
+    "@tipEnsureWeightCorrect": {
+        "description": "Tip to ensure the current weight data is correct and ask if to continue"
+    },
+    "formulaDeleteError": "Temporary weighing records exist.",
+    "@formulaDeleteError": {
+        "description": "Error message when deleting a formula indicating that there are temporary weighing records"
+    },
+    "btnFreeFormulaMode": "Free formula mode",
+    "@btnFreeFormulaMode": {
+        "description": "Button to enter free formula mode"
+    },
+    "btnNormalMode": "Normal mode",
+    "@btnNormalMode": {
+        "description": "Button to enter normal mode"
+    },
+    "fConfirmClearAndEnterFreeModeMsg": "The current data is not saved. Confirm to clear and enable the free formula mode?",
+    "@fConfirmClearAndEnterFreeModeMsg": {
+        "description": "Confirmation message for clearing unsaved data and entering free formula mode"
+    },
+    "gTipPleaseStableWeight": "Please first stable the weight.",
+    "@gTipPleaseStableWeight": {
+        "description": "Tip to please first stable the weight"
     }
-
 }    

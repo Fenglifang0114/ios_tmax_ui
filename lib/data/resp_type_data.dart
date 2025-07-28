@@ -79,11 +79,26 @@ class RespMsgType {
   static const String respRevDetailTail = 'resp_rev_detail_tail';
   static const String respExportRecs = 'resp_export_recs';
   static const String respImportRecs = 'resp_import_recs';
-  static const String respSetMaxRange = 'resp_set_max_range';
+  static const String respSetCalWgt = 'resp_cal_weight';
   static const String respCalValue = 'resp_cal_value';
-  static const String respSetGaduationValue = 'resp_set_gaduation_value';
+  static const String respSetGaduation1Value = 'resp_set_gaduation1_value';
   static const String respSetDecimalValue = 'resp_set_decimal_value';
   static const String respWifiPwdAdd = 'resp_wifi_pwd_add';
+  static const String respGetGaduation1Value = 'resp_get_gaduation1_value';
+  static const String respGetDecimalValue = 'resp_get_decimal_value';
+  static const String respGetGravAcc = 'resp_get_grav_acc';
+  static const String respGetWeightUnit = 'resp_get_weight_unit';
+  static const String respGetMaxRange1 = 'resp_get_max_range1';
+  static const String respGetManualZero = 'resp_get_manual_zero';
+  static const String respGetZeroTracking = 'resp_get_zero_tracking';
+  static const String respGetInitialZero = 'resp_get_initial_zero';
+
+  static const String respSetMaxRange1 = 'resp_set_max_range1';
+  static const String respSetManualZero = 'resp_set_manual_zero';
+  static const String respSetWeightUnit = 'resp_set_weight_unit';
+  static const String respSetInitialZero = 'resp_set_initial_zero';
+  static const String respSetZeroTracking = 'resp_set_zero_tracking';
+  static const String respSetGravAcc = 'resp_set_grav_acc';
 
   static final Map<String, Function> handlers = {
     RespMsgType.respGetUIConf: handleGetUIConf,
@@ -134,10 +149,24 @@ class RespMsgType {
     RespMsgType.respRevDetailTail: handleRespRevDetailTail,
     RespMsgType.respExportRecs: handleRespExportRecs,
     RespMsgType.respAddRec: handleRespAddRec,
-    RespMsgType.respSetMaxRange: handleSetMaxRange,
+    RespMsgType.respSetCalWgt: handleSetCalWgt,
     RespMsgType.respCalValue: handleCalValue,
-    RespMsgType.respSetGaduationValue: handleSetGaduationValue,
+    RespMsgType.respSetGaduation1Value: handleSetDecimalValue,
     RespMsgType.respSetDecimalValue: handleSetDecimalValue,
+    RespMsgType.respGetGaduation1Value: handleRespGetGaduation1Value,
+    RespMsgType.respGetDecimalValue: handleRespGetDecimalValue,
+    RespMsgType.respGetGravAcc: handleRespGetGravAcc,
+    RespMsgType.respGetWeightUnit: handleRespGetWeightUnit,
+    RespMsgType.respGetMaxRange1: handleRespGetMaxRange1,
+    RespMsgType.respGetManualZero: handleRespGetManualZero,
+    RespMsgType.respGetZeroTracking: handleRespGetZeroTracking,
+    RespMsgType.respGetInitialZero: handleRespGetInitialZero,
+    RespMsgType.respSetMaxRange1: handleSetDecimalValue,
+    RespMsgType.respSetManualZero: handleSetDecimalValue,
+    RespMsgType.respSetWeightUnit: handleSetDecimalValue,
+    RespMsgType.respSetInitialZero: handleSetDecimalValue,
+    RespMsgType.respSetZeroTracking: handleSetDecimalValue,
+    RespMsgType.respSetGravAcc: handleSetDecimalValue,
   };
 
   static void handleGetUIConf(dynamic data) {
@@ -463,9 +492,9 @@ class RespMsgType {
     eventBus.fire(EventRevAddRec(mobj));
   }
 
-  static void handleSetMaxRange(dynamic data) {
+  static void handleSetCalWgt(dynamic data) {
     dynamic mobj = ChannelResponse.fromJson(data);
-    eventBus.fire(EventRevSetMaxRange(mobj));
+    eventBus.fire(EventRevCalWeight(mobj));
   }
 
   static void handleCalValue(dynamic data) {
@@ -473,7 +502,7 @@ class RespMsgType {
     eventBus.fire(EventRevCalValue(mobj));
   }
 
-  static void handleSetGaduationValue(dynamic data) {
+  static void handleSetGaduation1Value(dynamic data) {
     dynamic mobj = ChannelResponse.fromJson(data);
     eventBus.fire(EventRevSetGaduationValue(mobj));
   }
@@ -481,6 +510,46 @@ class RespMsgType {
   static void handleSetDecimalValue(dynamic data) {
     dynamic mobj = ChannelResponse.fromJson(data);
     eventBus.fire(EventRevSetDecimalValue(mobj));
+  }
+
+  static void handleRespGetGaduation1Value(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventRevGetGaduation1Value(mobj));
+  }
+
+  static void handleRespGetDecimalValue(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventRevGetDecimalValue(mobj));
+  }
+
+  static void handleRespGetGravAcc(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventRevGetGravAcc(mobj));
+  }
+
+  static void handleRespGetWeightUnit(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventRevGetWeightUnit(mobj));
+  }
+
+  static void handleRespGetMaxRange1(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventRevGetMaxRange1(mobj));
+  }
+
+  static void handleRespGetManualZero(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventRevGetManualZero(mobj));
+  }
+
+  static void handleRespGetZeroTracking(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventRevGetZeroTracking(mobj));
+  }
+
+  static void handleRespGetInitialZero(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventRevGetInitialZero(mobj));
   }
 
   static void handleRespUpdateFirmwareNet(dynamic data) {

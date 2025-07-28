@@ -1,8 +1,9 @@
+//因为含有暂存的配方，所以要限制修改
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/formula_from_db_data.dart';
-
 import 'package:t_max/data/formula_scale_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/req_formula_data.dart';
@@ -15,19 +16,19 @@ import 'package:t_max/widget/common_widget.dart';
 import 'package:t_max/widget/dialog_head_style.dart';
 import '../data/language.dart';
 
-class EditFormulaPage extends StatefulWidget {
+class EditDarftFmaPage extends StatefulWidget {
   final FormulaInfoDb editFormulaInfo;
 
-  const EditFormulaPage({
+  const EditDarftFmaPage({
     required this.editFormulaInfo,
     super.key,
   });
 
   @override
-  State<EditFormulaPage> createState() => EditFormulaPageState();
+  State<EditDarftFmaPage> createState() => EditDarftFmaPageState();
 }
 
-class EditFormulaPageState extends State<EditFormulaPage> {
+class EditDarftFmaPageState extends State<EditDarftFmaPage> {
   TextEditingController formulaCodeCtl = TextEditingController();
   TextEditingController formulaNameCtl = TextEditingController();
   TextEditingController formulaModeCtl = TextEditingController(text: 'wgt');
@@ -40,6 +41,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
 
   bool isEncrypted = false; // 保密初始值为 false
   bool needContainer = false; // 保密初始值为 false
+  bool isHaveDarft = true; // 是否有草稿配方
   RawDataInfo? selectedRawDataInfo;
   List<AddFormulaRawWgtInfo> addFormulaRawList = [];
   double totalWgt = 0.0; // 总权重
@@ -253,44 +255,48 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                 ),
               );
             }).toList(),
-            onChanged: (FormulaMode? newValue) {
-              // 处理下拉列表项选择事件
-              if (newValue != null) {
-                // 在这里处理选择的值
-                //这里要提示修改模式时，需要把原来的数据清空
+            onChanged: isHaveDarft
+                ? null
+                : (FormulaMode? newValue) {
+                    // 处理下拉列表项选择事件
+                    if (newValue != null) {
+                      // 在这里处理选择的值
+                      //这里要提示修改模式时，需要把原来的数据清空
 
-                if (addFormulaRawList.isEmpty) {
-                  setState(() {
-                    valueCtl.text =
-                        newValue.toString().split('.').last; // 更新 valueCtl 的值
-                  });
-                } else {
-                  showDialog(
-                    context: context,
-                    barrierDismissible: false, // 点击对话框外部不关闭对话框
-                    builder: (BuildContext context) {
-                      return ShowNormalTipDialog(
-                        title: localizedStrings.fTipTitle,
-                        msg: localizedStrings.fSwitchModeClearMsg,
-                      );
-                    },
-                  ).then((value) {
-                    if (value) {
-                      // 保存
-                      setState(() {
-                        valueCtl.text = newValue
-                            .toString()
-                            .split('.')
-                            .last; // 更新 valueCtl 的值
-                        addFormulaRawList.clear();
-                      });
-                    } else {
-                      return;
+                      if (addFormulaRawList.isEmpty) {
+                        setState(() {
+                          valueCtl.text = newValue
+                              .toString()
+                              .split('.')
+                              .last; // 更新 valueCtl 的值
+                        });
+                      } else {
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false, // 点击对话框外部不关闭对话框
+                          builder: (BuildContext context) {
+                            return ShowNormalTipDialog(
+                              title: localizedStrings.fTipTitle,
+                              msg: localizedStrings.fSwitchModeClearMsg,
+                            );
+                          },
+                        ).then((value) {
+                          if (value) {
+                            // 保存
+                            setState(() {
+                              valueCtl.text = newValue
+                                  .toString()
+                                  .split('.')
+                                  .last; // 更新 valueCtl 的值
+                              addFormulaRawList.clear();
+                            });
+                          } else {
+                            return;
+                          }
+                        });
+                      }
                     }
-                  });
-                }
-              }
-            }));
+                  }));
   }
 
   //下拉列表框
@@ -323,16 +329,18 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                 ),
               );
             }).toList(),
-            onChanged: (FormulaWgtUnit? newValue) {
-              // 处理下拉列表项选择事件
-              if (newValue != null) {
-                // 在这里处理选择的值
-                // print('Selected: ${newValue.toString().split('.').last}');
-                setState(() {
-                  valueCtl.text = newValue.name; // 更新 valueCtl 的值
-                });
-              }
-            }));
+            onChanged: isHaveDarft
+                ? null
+                : (FormulaWgtUnit? newValue) {
+                    // 处理下拉列表项选择事件
+                    if (newValue != null) {
+                      // 在这里处理选择的值
+                      // print('Selected: ${newValue.toString().split('.').last}');
+                      setState(() {
+                        valueCtl.text = newValue.name; // 更新 valueCtl 的值
+                      });
+                    }
+                  }));
   }
 
   //选择类型下拉列表框
@@ -383,16 +391,18 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                     );
                   })
                 ],
-          onChanged: (value) {
-            if (value == null) {
-              setState(() {
-                formulaTypeCtl.text = "";
-              });
-            }
-            setState(() {
-              formulaTypeCtl.text = value.toString();
-            });
-          },
+          onChanged: isHaveDarft
+              ? null
+              : (value) {
+                  if (value == null) {
+                    setState(() {
+                      formulaTypeCtl.text = "";
+                    });
+                  }
+                  setState(() {
+                    formulaTypeCtl.text = value.toString();
+                  });
+                },
           style: Theme.of(context).textTheme.bodySmall!.apply(
                 color: Theme.of(context).colorScheme.onSurface,
               ),
@@ -452,38 +462,40 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                     );
                   })
                 ],
-          onChanged: (value) {
-            if (value == null) return;
-            setState(() {
-              rawMaterialCtl.text = value.toString();
-              selectedRawDataInfo = rawDataList.firstWhere(
-                (item) =>
-                    '${item.rawMaterial.materialId} ${item.rawMaterial.materialName}' ==
-                    value,
-                orElse: () {
-                  return RawDataInfo(
-                    // 根据 RawDataInfo 类的构造函数传入必要的参数
-                    rawMaterial: RawMaterial(
-                      materialId: '',
-                      materialName: '',
-                      categoryId: 0,
-                      ingredient: '',
-                      createdBy: '',
-                      updatedBy: '',
-                      remark: '',
-                      recId: -1,
-                      createdAt: DateTime.now(),
-                      updatedAt: DateTime.now(),
-                      remark1: '',
-                      // 其他必要的参数
-                    ),
-                    rawCategoryName: '',
-                    // 其他必要的参数
-                  );
+          onChanged: isHaveDarft
+              ? null
+              : (value) {
+                  if (value == null) return;
+                  setState(() {
+                    rawMaterialCtl.text = value.toString();
+                    selectedRawDataInfo = rawDataList.firstWhere(
+                      (item) =>
+                          '${item.rawMaterial.materialId} ${item.rawMaterial.materialName}' ==
+                          value,
+                      orElse: () {
+                        return RawDataInfo(
+                          // 根据 RawDataInfo 类的构造函数传入必要的参数
+                          rawMaterial: RawMaterial(
+                            materialId: '',
+                            materialName: '',
+                            categoryId: 0,
+                            ingredient: '',
+                            createdBy: '',
+                            updatedBy: '',
+                            remark: '',
+                            recId: -1,
+                            createdAt: DateTime.now(),
+                            updatedAt: DateTime.now(),
+                            remark1: '',
+                            // 其他必要的参数
+                          ),
+                          rawCategoryName: '',
+                          // 其他必要的参数
+                        );
+                      },
+                    );
+                  });
                 },
-              );
-            });
-          },
           style: Theme.of(context).textTheme.bodySmall!.apply(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
@@ -555,8 +567,8 @@ class EditFormulaPageState extends State<EditFormulaPage> {
           height: 90,
           child: Column(children: [
             showItemName(localizedStrings.fFmaNameLabel + " ", false),
-            showInputBox(
-                formulaNameCtl, localizedStrings.fInputFormulaNameHint),
+            showInputBox(formulaNameCtl, localizedStrings.fInputFormulaNameHint,
+                enable: false),
           ]),
         ),
       ]),
@@ -613,10 +625,14 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                   width: 10,
                 ),
                 showTextButton(
-                    context, btnHeight, localizedStrings.fRawCategoryManagement,
-                    () {
-                  showFormulaTypeMgrDialog();
-                },
+                    context,
+                    btnHeight,
+                    localizedStrings.fRawCategoryManagement,
+                    isHaveDarft
+                        ? null
+                        : () {
+                            showFormulaTypeMgrDialog();
+                          },
                     Theme.of(context).colorScheme.onPrimary,
                     Theme.of(context).colorScheme.primary,
                     Theme.of(context).colorScheme.onPrimary)
@@ -635,11 +651,13 @@ class EditFormulaPageState extends State<EditFormulaPage> {
               children: [
                 Checkbox(
                   value: isEncrypted, // 假设这是一个状态变量，用于跟踪复选框的状态
-                  onChanged: (bool? newValue) {
-                    setState(() {
-                      isEncrypted = newValue!;
-                    });
-                  },
+                  onChanged: isHaveDarft
+                      ? null
+                      : (bool? newValue) {
+                          setState(() {
+                            isEncrypted = newValue!;
+                          });
+                        },
                 ),
                 Expanded(
                   child: Text(
@@ -663,11 +681,13 @@ class EditFormulaPageState extends State<EditFormulaPage> {
               children: [
                 Checkbox(
                   value: needContainer, // 假设这是一个状态变量，用于跟踪复选框的状态
-                  onChanged: (bool? newValue) {
-                    setState(() {
-                      needContainer = newValue!;
-                    });
-                  },
+                  onChanged: isHaveDarft
+                      ? null
+                      : (bool? newValue) {
+                          setState(() {
+                            needContainer = newValue!;
+                          });
+                        },
                 ),
                 Expanded(
                   child: Text(
@@ -932,69 +952,79 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                       ],
                     ),
                   ),
-                  Row(
-                    children: [
-                      Container(
-                        height: 48,
-                        alignment: Alignment.center,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                  isHaveDarft
+                      ? SizedBox()
+                      : Row(
                           children: [
-                            InkWell(
-                              onTap: () {
-                                moveUp(index);
-                              },
-                              onHover: (bool hovering) {},
-                              child: Icon(
-                                Icons.keyboard_arrow_up_sharp,
-                                color: isSelected
-                                    ? Theme.of(context).colorScheme.onPrimary
-                                    : Theme.of(context).colorScheme.onSurface,
-                                size: 16,
+                            Container(
+                              height: 48,
+                              alignment: Alignment.center,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      moveUp(index);
+                                    },
+                                    onHover: (bool hovering) {},
+                                    child: Icon(
+                                      Icons.keyboard_arrow_up_sharp,
+                                      color: isSelected
+                                          ? Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .onSurface,
+                                      size: 16,
+                                    ),
+                                  ),
+                                  InkWell(
+                                    hoverColor: Theme.of(context)
+                                        .colorScheme
+                                        .primary
+                                        .withValues(alpha: 0.1),
+                                    onTap: () {
+                                      moveDown(index);
+                                    },
+                                    onHover: (bool hovering) {},
+                                    child: Icon(
+                                      Icons.keyboard_arrow_down_sharp,
+                                      color: isSelected
+                                          ? Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .onSurface,
+                                      size: 16,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            InkWell(
-                              hoverColor: Theme.of(context)
-                                  .colorScheme
-                                  .primary
-                                  .withValues(alpha: 0.1),
-                              onTap: () {
-                                moveDown(index);
-                              },
-                              onHover: (bool hovering) {},
-                              child: Icon(
-                                Icons.keyboard_arrow_down_sharp,
-                                color: isSelected
-                                    ? Theme.of(context).colorScheme.onPrimary
-                                    : Theme.of(context).colorScheme.onSurface,
-                                size: 16,
+                            SizedBox(width: 10),
+                            SizedBox(
+                              child: IconButton(
+                                iconSize: 24,
+                                onPressed: () {
+                                  setState(() {
+                                    selectedIndex = -1;
+                                    addFormulaRawList.removeAt(index);
+                                    updateTotalWgt();
+                                  });
+                                },
+                                icon: Icon(
+                                  Icons.delete_outline,
+                                  color: isSelected
+                                      ? Theme.of(context).colorScheme.onPrimary
+                                      : Theme.of(context).colorScheme.onSurface,
+                                ),
                               ),
                             ),
+                            SizedBox(width: 10),
                           ],
                         ),
-                      ),
-                      SizedBox(width: 10),
-                      SizedBox(
-                        child: IconButton(
-                          iconSize: 24,
-                          onPressed: () {
-                            setState(() {
-                              selectedIndex = -1;
-                              addFormulaRawList.removeAt(index);
-                              updateTotalWgt();
-                            });
-                          },
-                          icon: Icon(
-                            Icons.delete_outline,
-                            color: isSelected
-                                ? Theme.of(context).colorScheme.onPrimary
-                                : Theme.of(context).colorScheme.onSurface,
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 10),
-                    ],
-                  ),
                 ],
               ),
             ),
@@ -1103,9 +1133,11 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                   ),
                 )),
                 TextButton(
-                  onPressed: () {
-                    showAddRawInfoDialog();
-                  },
+                  onPressed: isHaveDarft
+                      ? null
+                      : () {
+                          showAddRawInfoDialog();
+                        },
                   child: Text(localizedStrings.fAddRawMaterialBtn,
                       style: Theme.of(context).textTheme.bodySmall!.apply(
                             color: Theme.of(context).colorScheme.primary,
@@ -1575,11 +1607,13 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                         ),
                       ),
                     ),
-                    onPressed: () {
-                      setState(() {
-                        addFormulaRawList.clear();
-                      });
-                    },
+                    onPressed: isHaveDarft
+                        ? null
+                        : () {
+                            setState(() {
+                              addFormulaRawList.clear();
+                            });
+                          },
                     child: Text(
                       localizedStrings.fClearBtn,
                       style: Theme.of(context).textTheme.bodySmall!.apply(

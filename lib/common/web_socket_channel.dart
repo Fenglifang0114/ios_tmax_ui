@@ -187,10 +187,6 @@ class WebSocketChannel {
     String url = GetUrl.getUrl(scaleInfo.scaleId!);
 
     manager.connect(scaleInfo.scaleId!, url);
-    //TODO: 这个部分要去的，没有默认的秤
-    if (myDefScaleInfo.defScaleId == scaleInfo.scaleId!) {
-      DefScaleInfo.getDefScaleInfo(scaleInfo.scaleId!);
-    }
   }
 
   void getNetScaleList(ScaleDataInfo scaleInfo, NetInfo netInfo) {
@@ -430,10 +426,11 @@ class WebSocketChannel {
         String dataString = jsonData['MsgBody'];
         eventBus.fire(EventRespGetRawDataList(dataString));
       } else if (jsonData['MsgType'] == "resp_raw_data_add" ||
-          jsonData['MsgType'] == "resp_raw_data_delete" ||
-          jsonData['MsgType'] == "resp_raw_data_edit") {
+          jsonData['MsgType'] == "resp_raw_data_delete") {
         String dataString = jsonData['MsgBody'];
         eventBus.fire(EventRespAddRawData(dataString));
+      } else if (jsonData['MsgType'] == "resp_raw_data_edit") {
+        eventBus.fire(EventRespEditRawData(''));
       } else if (jsonData['MsgType'] == "resp_formula_type_add" ||
           jsonData['MsgType'] == "resp_fma_type_edit" ||
           jsonData['MsgType'] == "resp_fma_type_delete") {
@@ -481,6 +478,18 @@ class WebSocketChannel {
       } else if (jsonData['MsgType'] == "resp_get_auto_next") {
         String dataString = jsonData['MsgBody'];
         eventBus.fire(EventRespGetAutoNext(dataString));
+      } else if (jsonData['MsgType'] == "resp_get_draft_fma_wgt_rec_list") {
+        String dataString = jsonData['MsgBody'];
+        eventBus.fire(EventRespGetDraftFmaWgtRecList(dataString));
+      } else if (jsonData['MsgType'] == "resp_create_draft_fma_wgt_rec_list") {
+        String dataString = jsonData['MsgBody'];
+        eventBus.fire(EventRespCreateDraftFmaWgtRecList(dataString));
+      } else if (jsonData['MsgType'] == "resp_update_draft_fma_wgt_rec_list") {
+        String dataString = jsonData['MsgBody'];
+        eventBus.fire(EventRespUpdateDraftFmaWgtRecList(dataString));
+      } else if (jsonData['MsgType'] == "resp_delete_draft_fma_wgt_rec_list") {
+        String dataString = jsonData['MsgBody'];
+        eventBus.fire(EventRespDelDraftFmaWgtRecList(dataString));
       } else {}
     } catch (e) {
       if (kDebugMode) {
