@@ -2328,15 +2328,8 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
         if (value == 1) {
           //继续下一个配料，且记录本次配料
           setState(() {
-            //清空所有称重数据
-
             performLowRow(currentTempWgtValue);
           });
-        } else if (value == 2) {
-          //接受修正
-          handleReviseWgt(currentTempWgtValue);
-          PublicFunctions.performTareWithScaleId(widget.selScaleId);
-          setState(() {});
         } else {
           return;
         }
@@ -2473,9 +2466,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
 
 //查找下一个原料
   void findNextRaw() {
-    //修改了此处
-
-    //重头找第一个不合格的开始处理
+    //从头找第一个不合格的开始处理
     FormulaWgtProcessData nextItem;
     // 先查找 isOK 不为 'ok' 的项
     try {
@@ -2490,9 +2481,6 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
       } else {
         clickedRow = selectedProcessWgt.no! - 1; // 更新点击的行索引
       }
-
-      // print(clickedRow);
-
       currentRawWgt = 0.000;
     } catch (e) {
       // 如果没有 isOK 不为 'ok' 的项，说明配方完成了
@@ -2502,6 +2490,36 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
       showTipInfo(localizedStrings.fFormulaCompletionMsg, context);
       return;
     }
+  }
+
+  //重量正常的时候，往下走，不从第一个开始
+  void findOkNextRaw() {
+    // 先查找 isOK 不为 'ok' 的项
+    int nextIndex = -1;
+    for (int i = clickedRow + 1; i < processWgtList.length; i++) {
+      if (processWgtList[i].isOK != 'ok') {
+        nextIndex = i;
+        break;
+      }
+    }
+    if (nextIndex == -1) {
+      findNextRaw();
+      return;
+    }
+    setState(() {
+      clickedRow = nextIndex;
+
+      selectedProcessWgt = processWgtList[clickedRow]; // 更新选中的原料重量项
+      //如果有容器
+      if (myFmaInfo.header != null &&
+          myFmaInfo.header!.formulaHeader != null &&
+          myFmaInfo.header!.formulaHeader!.needContainer!) {
+        clickedRow = selectedProcessWgt.no!; // 更新点击的行索引
+      } else {
+        clickedRow = selectedProcessWgt.no! - 1; // 更新点击的行索引
+      }
+      currentRawWgt = 0.000;
+    });
   }
 
   handleReviseWgt(double tmpCurrWgt) {
@@ -2567,7 +2585,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
         }
         PublicFunctions.performTareWithScaleId(widget.selScaleId);
         //查找下一个
-        findNextRaw();
+        findOkNextRaw();
 
         // print(clickedRow);
       } catch (e) {

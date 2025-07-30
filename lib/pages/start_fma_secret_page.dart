@@ -2469,11 +2469,6 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
 
             performLowRow(currentTempWgtValue);
           });
-        } else if (value == 2) {
-          //接受修正
-          handleReviseWgt(currentTempWgtValue);
-          PublicFunctions.performTareWithScaleId(widget.selScaleId);
-          setState(() {});
         } else {
           return;
         }
@@ -2638,6 +2633,36 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
     }
   }
 
+  //重量正常的时候，往下走，不从第一个开始
+  void findOkNextRaw() {
+    // 先查找 isOK 不为 'ok' 的项
+    int nextIndex = -1;
+    for (int i = clickedRow + 1; i < processWgtList.length; i++) {
+      if (processWgtList[i].isOK != 'ok') {
+        nextIndex = i;
+        break;
+      }
+    }
+    if (nextIndex == -1) {
+      findNextRaw();
+      return;
+    }
+    setState(() {
+      clickedRow = nextIndex;
+
+      selectedProcessWgt = processWgtList[clickedRow]; // 更新选中的原料重量项
+      //如果有容器
+      if (myFmaInfo.header != null &&
+          myFmaInfo.header!.formulaHeader != null &&
+          myFmaInfo.header!.formulaHeader!.needContainer!) {
+        clickedRow = selectedProcessWgt.no!; // 更新点击的行索引
+      } else {
+        clickedRow = selectedProcessWgt.no! - 1; // 更新点击的行索引
+      }
+      currentRawWgt = 0.000;
+    });
+  }
+
   handleReviseWgt(double tmpCurrWgt) {
     //修正重量，将当前的原料重量赋值给目标重量
     if (processWgtList.isNotEmpty) {
@@ -2700,7 +2725,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
         PublicFunctions.performTareWithScaleId(widget.selScaleId);
 
         //查找下一个
-        findNextRaw();
+        findOkNextRaw();
 
         // print(clickedRow);
       } catch (e) {
