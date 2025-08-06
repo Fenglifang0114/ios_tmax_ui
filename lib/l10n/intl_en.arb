@@ -1344,7 +1344,7 @@
     "@gBtnImport": {
         "description": ""
     },
-    "gBtnGetDataFormDb": "Get Data From DB",
+    "gBtnGetDataFormDb": "Get Data From Local",
     "@gBtnGetDataFormDb": {
         "description": ""
     },
@@ -1536,7 +1536,7 @@
     "@gBtnSaveExcel": {
         "description": "This is the button to save excel."
     },
-    "gBtnSaveDataBase": "Save To DB",
+    "gBtnSaveDataBase": "Save To Local",
     "@gBtnSaveDataBase": {
         "description": "This is the button to save database."
     },
@@ -3184,7 +3184,7 @@
     "@tipNoRawMaterialWeightData": {
         "description": "Tip indicating no raw material weight data to save temporarily"
     },
-    "tipTemporarySaveFormulaRecord": "Temporary storage record",
+    "tipTemporarySaveFormulaRecord": "Temporary Storage Record",
     "@tipTemporarySaveFormulaRecord": {
         "description": "Tip indicating temporarily saving formula weighing record"
     },

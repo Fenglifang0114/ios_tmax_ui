@@ -1344,7 +1344,7 @@
     "@gBtnImport": {
         "description": ""
     },
-    "gBtnGetDataFormDb": "从数据库获取数据",
+    "gBtnGetDataFormDb": "从本地获取数据",
     "@gBtnGetDataFormDb": {
         "description": ""
     },
@@ -1536,7 +1536,7 @@
     "@gBtnSaveExcel": {
         "description": "This is the button to save excel."
     },
-    "gBtnSaveDataBase": "保存数据库",
+    "gBtnSaveDataBase": "保存到本地",
     "@gBtnSaveDataBase": {
         "description": "This is the button to save database."
     },

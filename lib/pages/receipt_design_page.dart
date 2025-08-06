@@ -147,7 +147,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
   final double btnWidth = 220;
   final double textWidth = 120;
   final double topTitleHeight = 300;
-  final double topBtnHeight = 130;
+  final double topBtnHeight = 120;
   final double leftBtnWidth = 280;
   final double rightBtnWidth = 288;
 

@@ -355,7 +355,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
         body: Container(
-            color: Theme.of(context).colorScheme.surfaceDim, //对接时修改颜色值
+            color: colorScheme.surfaceDim, //对接时修改颜色值
 
             child: Column(
               children: [
@@ -366,7 +366,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     localizedStrings.gTipFmaPageHelp),
                 Container(
                   height: regularPadding,
-                  color: Theme.of(context).colorScheme.surfaceDim,
+                  color: colorScheme.surfaceDim,
                 ),
                 Expanded(
                   child: Row(
@@ -378,7 +378,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                           children: [
                             showTabBar(),
                             Divider(
-                              color: Theme.of(context).colorScheme.outline,
+                              color: colorScheme.outline,
                               thickness: 1,
                               height: 1,
                             ),
@@ -398,7 +398,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
 
                             Container(
                               height: 14,
-                              color: Theme.of(context).colorScheme.surface,
+                              color: colorScheme.surface,
                             ),
                           ],
                         ),
@@ -543,7 +543,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
     return Expanded(
       flex: 6,
       child: Container(
-        color: Theme.of(context).colorScheme.surface,
+        color: colorScheme.surface,
         child: Column(children: [
           ShowRawTitleWidget(
             text: localizedStrings.fIngredientOrder,
@@ -559,7 +559,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
     return Expanded(
       flex: 6,
       child: Container(
-        color: Theme.of(context).colorScheme.surface,
+        color: colorScheme.surface,
         child: Column(children: [
           ShowRawTitleWidget(
             text: localizedStrings.fIngredientOrder,
@@ -648,17 +648,16 @@ class FormulationScalePageState extends State<FormulationScalePage>
             child: () {
               bool isSelected = _selectedRawIndex == index;
               Color backgroundColor = isSelected
-                  ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)
-                  : Theme.of(context).colorScheme.surfaceContainerLow;
-              Color innerContainerColor = isSelected
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.surface;
+                  ? colorScheme.primary.withValues(alpha: 0.1)
+                  : colorScheme.surfaceContainerLow;
+              Color innerContainerColor =
+                  isSelected ? colorScheme.primary : colorScheme.surface;
               Color textColor = isSelected
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.onSurfaceVariant;
+                  ? colorScheme.primary
+                  : colorScheme.onSurfaceVariant;
               Color numberTextColor = isSelected
-                  ? Theme.of(context).colorScheme.onPrimary
-                  : Theme.of(context).colorScheme.onSurfaceVariant;
+                  ? colorScheme.onPrimary
+                  : colorScheme.onSurfaceVariant;
 
               return Container(
                 height: 32,
@@ -674,9 +673,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     child: Center(
                       child: Text(
                         '${index + 1}',
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                              color: numberTextColor,
-                            ),
+                        style: textTheme.bodySmall!.copyWith(
+                          color: numberTextColor,
+                        ),
                       ),
                     ),
                   ),
@@ -694,9 +693,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
                               .materialName! ??
                           '',
 
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                            color: textColor,
-                          ),
+                      style: textTheme.bodySmall!.copyWith(
+                        color: textColor,
+                      ),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -737,17 +736,16 @@ class FormulationScalePageState extends State<FormulationScalePage>
             child: () {
               bool isSelected = _selectedRawIndex == index;
               Color backgroundColor = isSelected
-                  ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)
-                  : Theme.of(context).colorScheme.surfaceContainerLow;
-              Color innerContainerColor = isSelected
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.surface;
+                  ? colorScheme.primary.withValues(alpha: 0.1)
+                  : colorScheme.surfaceContainerLow;
+              Color innerContainerColor =
+                  isSelected ? colorScheme.primary : colorScheme.surface;
               Color textColor = isSelected
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.onSurfaceVariant;
+                  ? colorScheme.primary
+                  : colorScheme.onSurfaceVariant;
               Color numberTextColor = isSelected
-                  ? Theme.of(context).colorScheme.onPrimary
-                  : Theme.of(context).colorScheme.onSurfaceVariant;
+                  ? colorScheme.onPrimary
+                  : colorScheme.onSurfaceVariant;
 
               return Container(
                 height: 32,
@@ -763,9 +761,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     child: Center(
                       child: Text(
                         '${index + 1}',
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                              color: numberTextColor,
-                            ),
+                        style: textTheme.bodySmall!.copyWith(
+                          color: numberTextColor,
+                        ),
                       ),
                     ),
                   ),
@@ -779,9 +777,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
                               .rawMaterial!.materialName! ??
                           '',
 
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                            color: textColor,
-                          ),
+                      style: textTheme.bodySmall!.copyWith(
+                        color: textColor,
+                      ),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -820,7 +818,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
       flex: 8,
       child: Container(
         padding: const EdgeInsets.only(left: 20, right: 20),
-        color: Theme.of(context).colorScheme.surface,
+        color: colorScheme.surface,
         child: StickyTable(
           controller: _scrollController, // 传递 ScrollController
           // data: List.generate(50, (index) => sort ? 50 - index : index),
@@ -854,19 +852,16 @@ class FormulationScalePageState extends State<FormulationScalePage>
             // 添加点击行背景色
             if (row == clickedRow) {
               return BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerLow,
+                color: colorScheme.surfaceContainerLow,
                 border: Border(
-                  bottom: BorderSide(
-                      color: Theme.of(context).colorScheme.primary, width: 1),
+                  bottom: BorderSide(color: colorScheme.primary, width: 1),
                 ),
               );
             }
             return BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
+              color: colorScheme.surface,
               border: Border(
-                bottom: BorderSide(
-                    color: Theme.of(context).colorScheme.outlineVariant,
-                    width: 1),
+                bottom: BorderSide(color: colorScheme.outlineVariant, width: 1),
               ),
             );
           },
@@ -901,19 +896,12 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 // });
               },
               renderCell: (context, title, data, row, column) {
-                return Text(
-                  (data as RawDataInfo).rawMaterial.materialId,
-                  style: Theme.of(context).textTheme.bodySmall!.apply(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                );
+                return showRenderCellText(
+                    (data as RawDataInfo).rawMaterial.materialId);
               },
               renderTitle: (context, title) {
-                return Text(
+                return showRenderTitleText(
                   title.title,
-                  style: Theme.of(context).textTheme.bodySmall!.apply(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
                 );
               },
             ),
@@ -925,19 +913,12 @@ class FormulationScalePageState extends State<FormulationScalePage>
               sort: false,
               renderCell: (context, title, data, row, column) {
                 // 显示 materialId 字段
-                return Text(
-                  (data as RawDataInfo).rawMaterial.materialName,
-                  style: Theme.of(context).textTheme.bodySmall!.apply(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                );
+                return showRenderCellText(
+                    (data as RawDataInfo).rawMaterial.materialName);
               },
               renderTitle: (context, title) {
-                return Text(
+                return showRenderTitleText(
                   title.title,
-                  style: Theme.of(context).textTheme.bodySmall!.apply(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
                 );
               },
             ),
@@ -949,19 +930,12 @@ class FormulationScalePageState extends State<FormulationScalePage>
               columnWidth: const FixedColumnWidth(200),
               renderCell: (context, title, data, row, column) {
                 // 显示 materialId 字段
-                return Text(
-                  (data as RawDataInfo).rawCategoryName,
-                  style: Theme.of(context).textTheme.bodySmall!.apply(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                );
+                return showRenderCellText(
+                    (data as RawDataInfo).rawCategoryName);
               },
               renderTitle: (context, title) {
-                return Text(
+                return showRenderTitleText(
                   title.title,
-                  style: Theme.of(context).textTheme.bodySmall!.apply(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
                 );
               },
             ),
@@ -973,20 +947,14 @@ class FormulationScalePageState extends State<FormulationScalePage>
               sort: false,
               renderCell: (context, title, data, row, column) {
                 // 显示 createdAt 字段
-                return Text(
+                return showRenderCellText(
                   DateFormat('yyyy-MM-dd HH:mm:ss')
                       .format((data as RawDataInfo).rawMaterial.createdAt),
-                  style: Theme.of(context).textTheme.bodySmall!.apply(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
                 );
               },
               renderTitle: (context, title) {
-                return Text(
+                return showRenderTitleText(
                   title.title,
-                  style: Theme.of(context).textTheme.bodySmall!.apply(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
                 );
               },
             ),
@@ -998,20 +966,12 @@ class FormulationScalePageState extends State<FormulationScalePage>
               sort: false,
               renderCell: (context, title, data, row, column) {
                 // 显示 updatedAt 字段
-                return Text(
-                  DateFormat('yyyy-MM-dd HH:mm:ss')
-                      .format((data as RawDataInfo).rawMaterial.updatedAt),
-                  style: Theme.of(context).textTheme.bodySmall!.apply(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                );
+                return showRenderCellText(DateFormat('yyyy-MM-dd HH:mm:ss')
+                    .format((data as RawDataInfo).rawMaterial.updatedAt));
               },
               renderTitle: (context, title) {
-                return Text(
+                return showRenderTitleText(
                   title.title,
-                  style: Theme.of(context).textTheme.bodySmall!.apply(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
                 );
               },
             ),
@@ -1023,21 +983,12 @@ class FormulationScalePageState extends State<FormulationScalePage>
               sort: false,
               renderCell: (context, title, data, row, column) {
                 // 显示 ingredient 字段
-                return Text(
-                  (data as RawDataInfo).rawMaterial.ingredient,
-                  style: Theme.of(context).textTheme.bodySmall!.apply(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                );
+                return showRenderCellText(
+                    (data as RawDataInfo).rawMaterial.ingredient);
               },
               renderTitle: (context, title) {
-                return Text(
+                return showRenderTitleText(
                   title.title,
-                  style: Theme.of(context).textTheme.bodySmall!.apply(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
                 );
               },
             ),
@@ -1067,16 +1018,13 @@ class FormulationScalePageState extends State<FormulationScalePage>
                       child: Icon(
                     size: 20,
                     Icons.edit_outlined,
-                    color: Theme.of(context).colorScheme.primary,
+                    color: colorScheme.primary,
                   )),
                 );
               },
               renderTitle: (context, title) {
-                return Text(
+                return showRenderTitleText(
                   title.title,
-                  style: Theme.of(context).textTheme.bodySmall!.apply(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
                 );
               },
             ),
@@ -1124,16 +1072,13 @@ class FormulationScalePageState extends State<FormulationScalePage>
                       child: Icon(
                     size: 20,
                     Icons.delete_forever_outlined,
-                    color: Theme.of(context).colorScheme.error,
+                    color: colorScheme.error,
                   )),
                 );
               },
               renderTitle: (context, title) {
-                return Text(
+                return showRenderTitleText(
                   title.title,
-                  style: Theme.of(context).textTheme.bodySmall!.apply(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
                 );
               },
             ),
@@ -1148,7 +1093,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
       flex: 7,
       child: Container(
         padding: const EdgeInsets.only(left: 20, right: 20),
-        color: Theme.of(context).colorScheme.surface,
+        color: colorScheme.surface,
         child: StickyTable(
           controller: _scrollController, // 传递 ScrollController
           // 修改 data 属性
@@ -1179,19 +1124,16 @@ class FormulationScalePageState extends State<FormulationScalePage>
             // 添加点击行背景色
             if (row == clickedDarftRow) {
               return BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerLow,
+                color: colorScheme.surfaceContainerLow,
                 border: Border(
-                  bottom: BorderSide(
-                      color: Theme.of(context).colorScheme.primary, width: 1),
+                  bottom: BorderSide(color: colorScheme.primary, width: 1),
                 ),
               );
             }
             return BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
+              color: colorScheme.surface,
               border: Border(
-                bottom: BorderSide(
-                    color: Theme.of(context).colorScheme.outlineVariant,
-                    width: 1),
+                bottom: BorderSide(color: colorScheme.outlineVariant, width: 1),
               ),
             );
           },
@@ -1225,22 +1167,15 @@ class FormulationScalePageState extends State<FormulationScalePage>
               onTitleClick: (context, title) {},
               // 修改 renderCell 方法
               renderCell: (context, title, data, row, column) {
-                return Text(
-                    (data as DarfFmaInfo)
-                        .fmaInfo!
-                        .header!
-                        .formulaHeader!
-                        .formulaId!,
-                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ));
+                return showRenderCellText((data as DarfFmaInfo)
+                    .fmaInfo!
+                    .header!
+                    .formulaHeader!
+                    .formulaId!);
               },
               renderTitle: (context, title) {
-                return Text(
+                return showRenderTitleText(
                   title.title,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
                 );
               },
             ),
@@ -1253,22 +1188,17 @@ class FormulationScalePageState extends State<FormulationScalePage>
               onCellClick: (context, title, data, row, column) {},
               // 修改 renderCell 方法
               renderCell: (context, title, data, row, column) {
-                return Text(
-                    (data as DarfFmaInfo)
-                        .fmaInfo!
-                        .header!
-                        .formulaHeader!
-                        .formulaName!,
-                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ));
+                return showRenderCellText(
+                  (data as DarfFmaInfo)
+                      .fmaInfo!
+                      .header!
+                      .formulaHeader!
+                      .formulaName!,
+                );
               },
               renderTitle: (context, title) {
-                return Text(
+                return showRenderTitleText(
                   title.title,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
                 );
               },
             ),
@@ -1281,17 +1211,12 @@ class FormulationScalePageState extends State<FormulationScalePage>
               onCellClick: (context, title, data, row, column) {},
               // 修改 renderCell 方法
               renderCell: (context, title, data, row, column) {
-                return Text((data as DarfFmaInfo).fmaRec!.header!.orderId!,
-                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ));
+                return showRenderCellText(
+                    (data as DarfFmaInfo).fmaRec!.header!.orderId!);
               },
               renderTitle: (context, title) {
-                return Text(
+                return showRenderTitleText(
                   title.title,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
                 );
               },
             ),
@@ -1305,15 +1230,15 @@ class FormulationScalePageState extends State<FormulationScalePage>
             //   renderCell: (context, title, data, row, column) {
             //     return Text(
             //         (data as DarfFmaInfo).fmaInfo!.header!.formulaCategoryName!,
-            //         style: Theme.of(context).textTheme.bodySmall!.copyWith(
-            //               color: Theme.of(context).colorScheme.onSurfaceVariant,
+            //         style: textTheme.bodySmall!.copyWith(
+            //               color: colorScheme.onSurfaceVariant,
             //             ));
             //   },
             //   renderTitle: (context, title) {
             //     return Text(
             //       title.title,
-            //       style: Theme.of(context).textTheme.bodySmall!.copyWith(
-            //             color: Theme.of(context).colorScheme.onSurface,
+            //       style: textTheme.bodySmall!.copyWith(
+            //             color: colorScheme.onSurface,
             //           ),
             //     );
             //   },
@@ -1326,7 +1251,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
               onCellClick: (context, title, data, row, column) {},
               // 修改 renderCell 方法
               renderCell: (context, title, data, row, column) {
-                return Text(
+                return showRenderCellText(
                   (data as DarfFmaInfo)
                           .fmaInfo!
                           .header!
@@ -1334,20 +1259,14 @@ class FormulationScalePageState extends State<FormulationScalePage>
                           .isEncrypted!
                       ? localizedStrings.fConfidential
                       : localizedStrings.fPublic,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                      color: (data).fmaInfo!.header!.formulaHeader!.isEncrypted!
-                          ? Theme.of(context).colorScheme.error
-                          : Theme.of(context)
-                              .colorScheme
-                              .onTertiaryFixedVariant),
+                  color: data.fmaInfo!.header!.formulaHeader!.isEncrypted!
+                      ? colorScheme.error
+                      : colorScheme.onTertiaryFixedVariant,
                 );
               },
               renderTitle: (context, title) {
-                return Text(
+                return showRenderTitleText(
                   title.title,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
                 );
               },
             ),
@@ -1359,25 +1278,20 @@ class FormulationScalePageState extends State<FormulationScalePage>
               onCellClick: (context, title, data, row, column) {},
               // 修改 renderCell 方法
               renderCell: (context, title, data, row, column) {
-                return Text(
-                    (data as DarfFmaInfo)
-                                .fmaInfo!
-                                .header!
-                                .formulaHeader!
-                                .formulaMode! ==
-                            'pct'
-                        ? localizedStrings.fPctMode
-                        : localizedStrings.fWeightMode,
-                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ));
+                return showRenderCellText(
+                  (data as DarfFmaInfo)
+                              .fmaInfo!
+                              .header!
+                              .formulaHeader!
+                              .formulaMode! ==
+                          'pct'
+                      ? localizedStrings.fPctMode
+                      : localizedStrings.fWeightMode,
+                );
               },
               renderTitle: (context, title) {
-                return Text(
+                return showRenderTitleText(
                   title.title,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
                 );
               },
             ),
@@ -1391,57 +1305,20 @@ class FormulationScalePageState extends State<FormulationScalePage>
               },
               // 修改 renderCell 方法
               renderCell: (context, title, data, row, column) {
-                return Text(
-                    (data as DarfFmaInfo)
-                        .fmaInfo!
-                        .header!
-                        .formulaHeader!
-                        .materialCount!
-                        .toString(),
-                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ));
+                return showRenderCellText((data as DarfFmaInfo)
+                    .fmaInfo!
+                    .header!
+                    .formulaHeader!
+                    .materialCount!
+                    .toString());
               },
               renderTitle: (context, title) {
-                return Text(
+                return showRenderTitleText(
                   title.title,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
                 );
               },
             ),
-            StickyTableColumn(
-              localizedStrings.fConfidential,
-              showSort: true,
-              sort: false,
-              alignment: Alignment.centerLeft,
-              onCellClick: (context, title, data, row, column) {
-                // ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              },
-              // 修改 renderCell 方法
-              renderCell: (context, title, data, row, column) {
-                return Text(
-                    (data as DarfFmaInfo)
-                            .fmaInfo!
-                            .header!
-                            .formulaHeader!
-                            .isEncrypted!
-                        ? localizedStrings.fConfidential
-                        : localizedStrings.fPublic,
-                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ));
-              },
-              renderTitle: (context, title) {
-                return Text(
-                  title.title,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                );
-              },
-            ),
+
             StickyTableColumn(
               localizedStrings.fCreatedAtCol,
               showSort: true,
@@ -1451,19 +1328,12 @@ class FormulationScalePageState extends State<FormulationScalePage>
               onCellClick: (context, title, data, row, column) {},
               // 修改 renderCell 方法
               renderCell: (context, title, data, row, column) {
-                return Text(
-                    DateFormat('yyyy-MM-dd HH:mm:ss').format(
-                        (data as DarfFmaInfo).fmaRec!.header!.createdAt!),
-                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ));
+                return showRenderCellText(DateFormat('yyyy-MM-dd HH:mm:ss')
+                    .format((data as DarfFmaInfo).fmaRec!.header!.createdAt!));
               },
               renderTitle: (context, title) {
-                return Text(
+                return showRenderTitleText(
                   title.title,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
                 );
               },
             ),
@@ -1477,21 +1347,13 @@ class FormulationScalePageState extends State<FormulationScalePage>
               onCellClick: (context, title, data, row, column) {},
               // 修改 renderCell 方法
               renderCell: (context, title, data, row, column) {
-                return Text(
+                return showRenderCellText(
                   (data as DarfFmaInfo).fmaInfo!.header!.formulaHeader!.remark!,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
                 );
               },
               renderTitle: (context, title) {
-                return Text(
+                return showRenderTitleText(
                   title.title,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
                 );
               },
             ),
@@ -1531,17 +1393,13 @@ class FormulationScalePageState extends State<FormulationScalePage>
                       child: Icon(
                     size: 20,
                     Icons.delete_forever_outlined,
-                    color: Theme.of(context).colorScheme.error,
+                    color: colorScheme.error,
                   )),
                 );
               },
               renderTitle: (context, title) {
-                return Text(
+                return showRenderTitleText(
                   title.title,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Colors
-                            .black, // Theme.of(context).colorScheme.onSurface,
-                      ),
                 );
               },
             ),
@@ -1556,7 +1414,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
       flex: 7,
       child: Container(
         padding: const EdgeInsets.only(left: 20, right: 20),
-        color: Theme.of(context).colorScheme.surface,
+        color: colorScheme.surface,
         child: StickyTable(
           controller: _scrollController, // 传递 ScrollController
           // 修改 data 属性
@@ -1587,19 +1445,16 @@ class FormulationScalePageState extends State<FormulationScalePage>
             // 添加点击行背景色
             if (row == clickedFmaRow) {
               return BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerLow,
+                color: colorScheme.surfaceContainerLow,
                 border: Border(
-                  bottom: BorderSide(
-                      color: Theme.of(context).colorScheme.primary, width: 1),
+                  bottom: BorderSide(color: colorScheme.primary, width: 1),
                 ),
               );
             }
             return BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
+              color: colorScheme.surface,
               border: Border(
-                bottom: BorderSide(
-                    color: Theme.of(context).colorScheme.outlineVariant,
-                    width: 1),
+                bottom: BorderSide(color: colorScheme.outlineVariant, width: 1),
               ),
             );
           },
@@ -1632,18 +1487,13 @@ class FormulationScalePageState extends State<FormulationScalePage>
               onTitleClick: (context, title) {},
               // 修改 renderCell 方法
               renderCell: (context, title, data, row, column) {
-                return Text(
-                    (data as FormulaInfoDb).header!.formulaHeader!.formulaId!,
-                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ));
+                return showRenderCellText(
+                  (data as FormulaInfoDb).header!.formulaHeader!.formulaId!,
+                );
               },
               renderTitle: (context, title) {
-                return Text(
+                return showRenderTitleText(
                   title.title,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
                 );
               },
             ),
@@ -1655,17 +1505,14 @@ class FormulationScalePageState extends State<FormulationScalePage>
               onCellClick: (context, title, data, row, column) {},
               // 修改 renderCell 方法
               renderCell: (context, title, data, row, column) {
-                return Text((data as FormulaInfoDb)
+                return showRenderCellText((data as FormulaInfoDb)
                     .header!
                     .formulaHeader!
                     .formulaName!);
               },
               renderTitle: (context, title) {
-                return Text(
+                return showRenderTitleText(
                   title.title,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
                 );
               },
             ),
@@ -1677,15 +1524,12 @@ class FormulationScalePageState extends State<FormulationScalePage>
               onCellClick: (context, title, data, row, column) {},
               // 修改 renderCell 方法
               renderCell: (context, title, data, row, column) {
-                return Text(
+                return showRenderCellText(
                     (data as FormulaInfoDb).header!.formulaCategoryName!);
               },
               renderTitle: (context, title) {
-                return Text(
+                return showRenderTitleText(
                   title.title,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
                 );
               },
             ),
@@ -1697,23 +1541,18 @@ class FormulationScalePageState extends State<FormulationScalePage>
               onCellClick: (context, title, data, row, column) {},
               // 修改 renderCell 方法
               renderCell: (context, title, data, row, column) {
-                return Text(
-                    (data as FormulaInfoDb).header!.formulaHeader!.isEncrypted!
-                        ? localizedStrings.fConfidential
-                        : localizedStrings.fPublic,
-                    style: TextStyle(
-                        color: (data).header!.formulaHeader!.isEncrypted!
-                            ? Theme.of(context).colorScheme.error
-                            : Theme.of(context)
-                                .colorScheme
-                                .onTertiaryFixedVariant));
+                return showRenderCellText(
+                  (data as FormulaInfoDb).header!.formulaHeader!.isEncrypted!
+                      ? localizedStrings.fConfidential
+                      : localizedStrings.fPublic,
+                  color: data.header!.formulaHeader!.isEncrypted!
+                      ? colorScheme.error
+                      : colorScheme.onTertiaryFixedVariant,
+                );
               },
               renderTitle: (context, title) {
-                return Text(
+                return showRenderTitleText(
                   title.title,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
                 );
               },
             ),
@@ -1725,7 +1564,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
               onCellClick: (context, title, data, row, column) {},
               // 修改 renderCell 方法
               renderCell: (context, title, data, row, column) {
-                return Text((data as FormulaInfoDb)
+                return showRenderCellText((data as FormulaInfoDb)
                             .header!
                             .formulaHeader!
                             .formulaMode! ==
@@ -1734,11 +1573,8 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     : localizedStrings.fWeightMode);
               },
               renderTitle: (context, title) {
-                return Text(
+                return showRenderTitleText(
                   title.title,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
                 );
               },
             ),
@@ -1752,42 +1588,15 @@ class FormulationScalePageState extends State<FormulationScalePage>
               },
               // 修改 renderCell 方法
               renderCell: (context, title, data, row, column) {
-                return Text((data as FormulaInfoDb)
+                return showRenderCellText((data as FormulaInfoDb)
                     .header!
                     .formulaHeader!
                     .materialCount!
                     .toString());
               },
               renderTitle: (context, title) {
-                return Text(
+                return showRenderTitleText(
                   title.title,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                );
-              },
-            ),
-            StickyTableColumn(
-              localizedStrings.fConfidential,
-              showSort: true,
-              sort: false,
-              alignment: Alignment.centerLeft,
-              onCellClick: (context, title, data, row, column) {
-                // ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              },
-              // 修改 renderCell 方法
-              renderCell: (context, title, data, row, column) {
-                return Text(
-                    (data as FormulaInfoDb).header!.formulaHeader!.isEncrypted!
-                        ? localizedStrings.fConfidential
-                        : localizedStrings.fPublic);
-              },
-              renderTitle: (context, title) {
-                return Text(
-                  title.title,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
                 );
               },
             ),
@@ -1800,15 +1609,15 @@ class FormulationScalePageState extends State<FormulationScalePage>
               onCellClick: (context, title, data, row, column) {},
               // 修改 renderCell 方法
               renderCell: (context, title, data, row, column) {
-                return Text(DateFormat('yyyy-MM-dd HH:mm:ss').format(
-                    (data as FormulaInfoDb).header!.formulaHeader!.createdAt!));
+                return showRenderCellText(DateFormat('yyyy-MM-dd HH:mm:ss')
+                    .format((data as FormulaInfoDb)
+                        .header!
+                        .formulaHeader!
+                        .createdAt!));
               },
               renderTitle: (context, title) {
-                return Text(
+                return showRenderTitleText(
                   title.title,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
                 );
               },
             ),
@@ -1821,15 +1630,15 @@ class FormulationScalePageState extends State<FormulationScalePage>
               onCellClick: (context, title, data, row, column) {},
               // 修改 renderCell 方法
               renderCell: (context, title, data, row, column) {
-                return Text(DateFormat('yyyy-MM-dd HH:mm:ss').format(
-                    (data as FormulaInfoDb).header!.formulaHeader!.updatedAt!));
+                return showRenderCellText(DateFormat('yyyy-MM-dd HH:mm:ss')
+                    .format((data as FormulaInfoDb)
+                        .header!
+                        .formulaHeader!
+                        .updatedAt!));
               },
               renderTitle: (context, title) {
-                return Text(
+                return showRenderTitleText(
                   title.title,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
                 );
               },
             ),
@@ -1842,18 +1651,12 @@ class FormulationScalePageState extends State<FormulationScalePage>
               onCellClick: (context, title, data, row, column) {},
               // 修改 renderCell 方法
               renderCell: (context, title, data, row, column) {
-                return Text(
-                  (data as FormulaInfoDb).header!.formulaHeader!.remark!,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                );
+                return showRenderCellText(
+                    (data as FormulaInfoDb).header!.formulaHeader!.remark!);
               },
               renderTitle: (context, title) {
-                return Text(
+                return showRenderTitleText(
                   title.title,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
                 );
               },
             ),
@@ -1901,16 +1704,12 @@ class FormulationScalePageState extends State<FormulationScalePage>
                   minWidth: 0,
                   child: Center(
                       child: Icon(Icons.receipt_long_sharp,
-                          size: 20,
-                          color: Theme.of(context).colorScheme.primary)),
+                          size: 20, color: colorScheme.primary)),
                 );
               },
               renderTitle: (context, title) {
-                return Text(
+                return showRenderTitleText(
                   title.title,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
                 );
               },
             ),
@@ -1959,16 +1758,13 @@ class FormulationScalePageState extends State<FormulationScalePage>
                       child: Icon(
                     size: 20,
                     Icons.edit_outlined,
-                    color: Theme.of(context).colorScheme.primary,
+                    color: colorScheme.primary,
                   )),
                 );
               },
               renderTitle: (context, title) {
-                return Text(
+                return showRenderTitleText(
                   title.title,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
                 );
               },
             ),
@@ -2032,17 +1828,13 @@ class FormulationScalePageState extends State<FormulationScalePage>
                       child: Icon(
                     size: 20,
                     Icons.delete_forever_outlined,
-                    color: Theme.of(context).colorScheme.error,
+                    color: colorScheme.error,
                   )),
                 );
               },
               renderTitle: (context, title) {
-                return Text(
+                return showRenderTitleText(
                   title.title,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Colors
-                            .black, // Theme.of(context).colorScheme.onSurface,
-                      ),
                 );
               },
             ),
@@ -2056,22 +1848,21 @@ class FormulationScalePageState extends State<FormulationScalePage>
     return Expanded(
       flex: 4,
       child: Container(
-        color: Theme.of(context).colorScheme.surface,
+        color: colorScheme.surface,
         child: Column(children: [
           Container(
               height: 48,
-              color: Theme.of(context).colorScheme.surface,
+              color: colorScheme.surface,
               child: Row(children: [
                 const SizedBox(
                   width: 20,
                 ),
                 Text(
                   localizedStrings.fFmaNameLabel + "：",
-                  style: TextStyle(
-                    fontWeight: FontWeight.normal,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    overflow: TextOverflow.ellipsis,
+                  style: getTextStyle(
+                    color: colorScheme.onSurfaceVariant,
                   ),
+                  overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                 ),
                 // 显示配方名称内容
@@ -2079,9 +1870,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
                   flex: 3,
                   child: Text(
                     selectedFormula?.header?.formulaHeader?.formulaName ?? "",
-                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
+                    style: textTheme.bodySmall!.copyWith(
+                      color: colorScheme.onSurface,
+                    ),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                   ),
@@ -2089,11 +1880,10 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 // 显示配方编号标签
                 Text(
                   localizedStrings.fFmaIdLabel + ": ",
-                  style: TextStyle(
-                    fontWeight: FontWeight.normal,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    overflow: TextOverflow.ellipsis,
+                  style: getTextStyle(
+                    color: colorScheme.onSurfaceVariant,
                   ),
+                  overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                 ),
                 // 显示配方编号内容
@@ -2101,20 +1891,19 @@ class FormulationScalePageState extends State<FormulationScalePage>
                   flex: 1,
                   child: Text(
                     selectedFormula?.header?.formulaHeader?.formulaId ?? "",
-                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
+                    style: textTheme.bodySmall!.copyWith(
+                      color: colorScheme.onSurface,
+                    ),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                   ),
                 ),
                 Text(
                   localizedStrings.fIngredientCountLabel + ": ",
-                  style: TextStyle(
-                    fontWeight: FontWeight.normal,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    overflow: TextOverflow.ellipsis,
+                  style: getTextStyle(
+                    color: colorScheme.onSurfaceVariant,
                   ),
+                  overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                 ),
                 // 显示配方编号内容
@@ -2124,9 +1913,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     selectedFormula?.header?.formulaHeader?.materialCount
                             .toString() ??
                         "",
-                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
+                    style: textTheme.bodySmall!.copyWith(
+                      color: colorScheme.onSurface,
+                    ),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                   ),
@@ -2134,11 +1923,10 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 selectedFormula?.header?.formulaHeader?.formulaMode != "pct"
                     ? Text(
                         "  ${localizedStrings.fTotalWeightLabel}: ",
-                        style: TextStyle(
-                          fontWeight: FontWeight.normal,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          overflow: TextOverflow.ellipsis,
+                        style: getTextStyle(
+                          color: colorScheme.onSurfaceVariant,
                         ),
+                        overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                       )
                     : SizedBox(),
@@ -2155,9 +1943,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
                                     null
                             ? " ${selectedFormula!.header!.formulaHeader!.totalWeight} ${selectedFormula!.header!.formulaHeader!.formulaUnit}"
                             : " ",
-                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
+                    style: textTheme.bodySmall!.copyWith(
+                      color: colorScheme.onSurface,
+                    ),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                   ),
@@ -2170,9 +1958,8 @@ class FormulationScalePageState extends State<FormulationScalePage>
                   height: 36,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                      backgroundColor:
-                          Theme.of(context).colorScheme.onTertiaryFixedVariant,
+                      foregroundColor: colorScheme.onPrimary,
+                      backgroundColor: colorScheme.onTertiaryFixedVariant,
                       fixedSize: const Size(double.infinity, 48),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
@@ -2185,9 +1972,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
                           },
                     child: Text(
                       localizedStrings.fStartWeighingBtn,
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                            color: Theme.of(context).colorScheme.onPrimary,
-                          ),
+                      style: textTheme.bodySmall!.copyWith(
+                        color: colorScheme.onPrimary,
+                      ),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -2197,7 +1984,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 ),
               ])),
           Divider(
-            color: Theme.of(context).colorScheme.outline,
+            color: colorScheme.outline,
             thickness: 1,
             height: 1,
           ),
@@ -2229,7 +2016,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 width: 26,
               ),
               VerticalDivider(
-                color: Theme.of(context).colorScheme.outline,
+                color: colorScheme.outline,
                 width: 1,
               ),
               SizedBox(
@@ -2256,26 +2043,59 @@ class FormulationScalePageState extends State<FormulationScalePage>
     );
   }
 
+  ColorScheme get colorScheme => Theme.of(context).colorScheme;
+  TextTheme get textTheme => Theme.of(context).textTheme;
+
+  TextStyle getTextStyle({Color? color}) {
+    //返回一个文本样式
+    color ??= colorScheme.onSurface;
+    return textTheme.bodySmall!.apply(
+      color: color,
+    );
+  }
+
+  TextStyle getTitleTextStyle({Color? color}) {
+    //返回一个文本样式
+    color ??= colorScheme.onSurface;
+    return textTheme.bodyMedium!.apply(
+      color: color,
+    );
+  }
+
+  showRenderCellText(String context, {Color? color}) {
+    color ??= colorScheme.onSurfaceVariant;
+    return Text(context,
+        style: getTextStyle(color: color),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis);
+  }
+
+  showRenderTitleText(String title) {
+    return Text(title,
+        style: getTextStyle(color: colorScheme.onSurface),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis);
+  }
+
   showDarftFmaBottom() {
     return Expanded(
       flex: 4,
       child: Container(
-        color: Theme.of(context).colorScheme.surface,
+        color: colorScheme.surface,
         child: Column(children: [
           Container(
               height: 48,
-              color: Theme.of(context).colorScheme.surface,
+              color: colorScheme.surface,
               child: Row(children: [
                 const SizedBox(
                   width: 20,
                 ),
                 Text(
                   localizedStrings.fFmaNameLabel + "：",
-                  style: TextStyle(
-                    fontWeight: FontWeight.normal,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    overflow: TextOverflow.ellipsis,
+                  style: getTextStyle(
+                    color: colorScheme.onSurfaceVariant,
                   ),
+                  overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                 ),
                 // 显示配方名称内容
@@ -2285,9 +2105,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     selectedDarfFma
                             ?.fmaInfo!.header!.formulaHeader?.formulaName ??
                         "",
-                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
+                    style: textTheme.bodySmall!.copyWith(
+                      color: colorScheme.onSurface,
+                    ),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                   ),
@@ -2295,11 +2115,10 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 // 显示配方编号标签
                 Text(
                   localizedStrings.fFmaIdLabel + ": ",
-                  style: TextStyle(
-                    fontWeight: FontWeight.normal,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    overflow: TextOverflow.ellipsis,
+                  style: getTextStyle(
+                    color: colorScheme.onSurfaceVariant,
                   ),
+                  overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                 ),
                 // 显示配方编号内容
@@ -2309,20 +2128,19 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     selectedDarfFma
                             ?.fmaInfo!.header!.formulaHeader?.formulaId ??
                         "",
-                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
+                    style: textTheme.bodySmall!.copyWith(
+                      color: colorScheme.onSurface,
+                    ),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                   ),
                 ),
                 Text(
                   localizedStrings.fIngredientCountLabel + ": ",
-                  style: TextStyle(
-                    fontWeight: FontWeight.normal,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    overflow: TextOverflow.ellipsis,
+                  style: getTextStyle(
+                    color: colorScheme.onSurfaceVariant,
                   ),
+                  overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                 ),
                 // 显示配方编号内容
@@ -2333,9 +2151,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
                             ?.fmaInfo!.header!.formulaHeader?.materialCount
                             .toString() ??
                         "",
-                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
+                    style: textTheme.bodySmall!.copyWith(
+                      color: colorScheme.onSurface,
+                    ),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                   ),
@@ -2344,11 +2162,10 @@ class FormulationScalePageState extends State<FormulationScalePage>
                         "pct"
                     ? Text(
                         "  ${localizedStrings.fTotalWeightLabel}: ",
-                        style: TextStyle(
-                          fontWeight: FontWeight.normal,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          overflow: TextOverflow.ellipsis,
+                        style: getTextStyle(
+                          color: colorScheme.onSurfaceVariant,
                         ),
+                        overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                       )
                     : SizedBox(),
@@ -2368,9 +2185,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
                                     null
                             ? " ${selectedDarfFma!.fmaInfo!.header!.formulaHeader!.totalWeight} ${selectedDarfFma!.fmaInfo!.header!.formulaHeader!.formulaUnit}"
                             : " ",
-                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
+                    style: textTheme.bodySmall!.copyWith(
+                      color: colorScheme.onSurface,
+                    ),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                   ),
@@ -2383,9 +2200,8 @@ class FormulationScalePageState extends State<FormulationScalePage>
                   height: 36,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                      backgroundColor:
-                          Theme.of(context).colorScheme.onTertiaryFixedVariant,
+                      foregroundColor: colorScheme.onPrimary,
+                      backgroundColor: colorScheme.onTertiaryFixedVariant,
                       fixedSize: const Size(double.infinity, 48),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
@@ -2398,9 +2214,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
                           },
                     child: Text(
                       localizedStrings.btnContinueWeighing,
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                            color: Theme.of(context).colorScheme.onPrimary,
-                          ),
+                      style: textTheme.bodySmall!.copyWith(
+                        color: colorScheme.onPrimary,
+                      ),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -2410,7 +2226,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 ),
               ])),
           Divider(
-            color: Theme.of(context).colorScheme.outline,
+            color: colorScheme.outline,
             thickness: 1,
             height: 1,
           ),
@@ -2442,7 +2258,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 width: 26,
               ),
               VerticalDivider(
-                color: Theme.of(context).colorScheme.outline,
+                color: colorScheme.outline,
                 width: 1,
               ),
               SizedBox(
@@ -2702,7 +2518,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
     return Expanded(
       flex: 2,
       child: Container(
-        color: Theme.of(context).colorScheme.surface,
+        color: colorScheme.surface,
         child: Column(children: [
           Expanded(
               child: Row(
@@ -2717,7 +2533,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     Container(
                       width: 3,
                       height: 14,
-                      color: Theme.of(context).colorScheme.onSurface,
+                      color: colorScheme.onSurface,
                     ),
                     SizedBox(
                       width: 12,
@@ -2814,7 +2630,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
 
   showScaleList() {
     return AnimatedContainer(
-      color: Theme.of(context).colorScheme.surface,
+      color: colorScheme.surface,
       width: 234,
       duration: Duration(milliseconds: 300),
       child: Column(
@@ -2839,7 +2655,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
   showTabBar() {
     return Container(
       height: 54,
-      color: Theme.of(context).colorScheme.surface,
+      color: colorScheme.surface,
       child: Row(
         children: [
           SizedBox(
@@ -2887,7 +2703,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
   showRawSearch() {
     return Container(
       height: 70,
-      color: Theme.of(context).colorScheme.surface,
+      color: colorScheme.surface,
       child: Row(children: [
         SizedBox(
           width: 20,
@@ -2898,14 +2714,14 @@ class FormulationScalePageState extends State<FormulationScalePage>
             child: Align(
               alignment: Alignment.centerLeft,
               child: TextField(
-                style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
+                style: textTheme.bodySmall!.copyWith(
+                  color: colorScheme.onSurface,
+                ),
                 controller: _searchRawIdCtl,
                 decoration: InputDecoration(
                   prefixIcon: Icon(
                     Icons.search,
-                    color: Theme.of(context).colorScheme.primary,
+                    color: colorScheme.primary,
                   ),
                   suffixIcon: IconButton(
                     icon: const Icon(
@@ -2921,13 +2737,12 @@ class FormulationScalePageState extends State<FormulationScalePage>
                   ),
                   hintText: localizedStrings.fSearchHint,
                   contentPadding: EdgeInsets.symmetric(vertical: 10),
-                  hintStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        // 设置提示文本样式
-                        fontSize: 12,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .surfaceContainerHighest,
-                      ),
+                  hintStyle: textTheme.bodySmall!.copyWith(
+                    // 设置提示文本样式
+                    fontSize: 12,
+                    color:
+                        Theme.of(context).colorScheme.surfaceContainerHighest,
+                  ),
                   border: const OutlineInputBorder(
                     borderRadius: BorderRadius.zero,
                   ),
@@ -2947,10 +2762,10 @@ class FormulationScalePageState extends State<FormulationScalePage>
             height: 40,
             padding: const EdgeInsets.only(left: 16, right: 20),
             decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface,
+                color: colorScheme.surface,
                 borderRadius: BorderRadius.circular(0),
                 border: Border.all(
-                  color: Theme.of(context).colorScheme.outline,
+                  color: colorScheme.outline,
                   width: 1,
                 )),
             child: DropdownButton(
@@ -2963,13 +2778,12 @@ class FormulationScalePageState extends State<FormulationScalePage>
                           value: null,
                           child: Text(
                             localizedStrings.fPleaseSelectCategory,
-                            style:
-                                Theme.of(context).textTheme.bodySmall!.copyWith(
-                                      fontSize: 12,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .surfaceContainerHighest,
-                                    ),
+                            style: textTheme.bodySmall!.copyWith(
+                              fontSize: 12,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainerHighest,
+                            ),
                             overflow: TextOverflow.ellipsis,
                           ),
                         )
@@ -2979,13 +2793,12 @@ class FormulationScalePageState extends State<FormulationScalePage>
                           value: null,
                           child: Text(
                             localizedStrings.fPleaseSelectCategory,
-                            style:
-                                Theme.of(context).textTheme.bodySmall!.copyWith(
-                                      fontSize: 12,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .surfaceContainerHighest,
-                                    ),
+                            style: textTheme.bodySmall!.copyWith(
+                              fontSize: 12,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainerHighest,
+                            ),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
@@ -2998,8 +2811,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                                   .textTheme
                                   .bodySmall!
                                   .copyWith(
-                                    color:
-                                        Theme.of(context).colorScheme.onSurface,
+                                    color: colorScheme.onSurface,
                                   ),
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -3013,11 +2825,11 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     performRawSearch();
                   });
                 },
-                style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                      // 设置提示文本样式
+                style: textTheme.bodySmall!.copyWith(
+                  // 设置提示文本样式
 
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ))),
+                  color: colorScheme.onSurface,
+                ))),
         SizedBox(
           width: 14,
         ),
@@ -3026,7 +2838,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
             child: IconButton(
               icon: Icon(
                 Icons.cleaning_services_outlined,
-                color: Theme.of(context).colorScheme.primary,
+                color: colorScheme.primary,
               ),
               onPressed: () {
                 setState(() {
@@ -3041,9 +2853,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
         //新增原料按钮
         IconButton(
           iconSize: 24,
-          color: Theme.of(context).colorScheme.onPrimary,
+          color: colorScheme.onPrimary,
           style: IconButton.styleFrom(
-            backgroundColor: Theme.of(context).colorScheme.primary,
+            backgroundColor: colorScheme.primary,
             shape: RoundedRectangleBorder(
               // 设置为矩形形状
               borderRadius: BorderRadius.zero, // 没有圆角，即正方形
@@ -3061,11 +2873,11 @@ class FormulationScalePageState extends State<FormulationScalePage>
 
         IconButton(
           iconSize: 24,
-          color: Theme.of(context).colorScheme.onPrimary,
-          focusColor: Theme.of(context).colorScheme.outline,
-          hoverColor: Theme.of(context).colorScheme.outline,
+          color: colorScheme.onPrimary,
+          focusColor: colorScheme.outline,
+          hoverColor: colorScheme.outline,
           style: IconButton.styleFrom(
-            backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
+            backgroundColor: colorScheme.surfaceContainerLow,
             shape: RoundedRectangleBorder(
               // 设置为矩形形状
               borderRadius: BorderRadius.zero, // 没有圆角，即正方形
@@ -3077,7 +2889,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
           },
           icon: Icon(
             Icons.file_upload_outlined,
-            color: Theme.of(context).colorScheme.primary,
+            color: colorScheme.primary,
           ),
         ),
         SizedBox(
@@ -3092,9 +2904,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
         message: tip, // 提示信息
         child: IconButton(
           iconSize: 24,
-          color: Theme.of(context).colorScheme.onPrimary,
+          color: colorScheme.onPrimary,
           style: IconButton.styleFrom(
-            backgroundColor: Theme.of(context).colorScheme.primary,
+            backgroundColor: colorScheme.primary,
             shape: RoundedRectangleBorder(
               // 设置为矩形形状
               borderRadius: BorderRadius.zero, // 没有圆角，即正方形
@@ -3111,9 +2923,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
       message: tip, // 提示信息
       child: IconButton(
         iconSize: 24,
-        color: Theme.of(context).colorScheme.onPrimary,
-        focusColor: Theme.of(context).colorScheme.outline,
-        hoverColor: Theme.of(context).colorScheme.outline,
+        color: colorScheme.onPrimary,
+        focusColor: colorScheme.outline,
+        hoverColor: colorScheme.outline,
         style: IconButton.styleFrom(
           backgroundColor: Color(0xFFF3F3F3),
           shape: RoundedRectangleBorder(
@@ -3125,7 +2937,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
         onPressed: onPressed,
         icon: Icon(
           icon,
-          color: Theme.of(context).colorScheme.primary,
+          color: colorScheme.primary,
         ),
       ),
     );
@@ -3224,7 +3036,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
   showFormulaSearch() {
     return Container(
       height: 70,
-      color: Theme.of(context).colorScheme.surface,
+      color: colorScheme.surface,
       child: Row(children: [
         SizedBox(
           width: 20,
@@ -3235,14 +3047,14 @@ class FormulationScalePageState extends State<FormulationScalePage>
             child: Align(
               alignment: Alignment.centerLeft,
               child: TextField(
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
+                  style: textTheme.bodySmall!.copyWith(
+                    color: colorScheme.onSurface,
+                  ),
                   controller: _searchFmaIdCtl,
                   decoration: InputDecoration(
                     prefixIcon: Icon(
                       Icons.search,
-                      color: Theme.of(context).colorScheme.primary,
+                      color: colorScheme.primary,
                     ),
                     suffixIcon: IconButton(
                       icon: const Icon(
@@ -3258,13 +3070,12 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     ),
                     hintText: localizedStrings.fSearchHint,
                     contentPadding: EdgeInsets.symmetric(vertical: 10),
-                    hintStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          // 设置提示文本样式
-                          fontSize: 12,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .surfaceContainerHighest,
-                        ),
+                    hintStyle: textTheme.bodySmall!.copyWith(
+                      // 设置提示文本样式
+                      fontSize: 12,
+                      color:
+                          Theme.of(context).colorScheme.surfaceContainerHighest,
+                    ),
                     border: const OutlineInputBorder(
                       borderRadius: BorderRadius.zero,
                     ),
@@ -3284,10 +3095,10 @@ class FormulationScalePageState extends State<FormulationScalePage>
           height: 40,
           padding: const EdgeInsets.only(left: 16, right: 20),
           decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
+              color: colorScheme.surface,
               borderRadius: BorderRadius.circular(0),
               border: Border.all(
-                color: Theme.of(context).colorScheme.outline,
+                color: colorScheme.outline,
                 width: 1,
               )),
           child: DropdownButton(
@@ -3300,13 +3111,13 @@ class FormulationScalePageState extends State<FormulationScalePage>
                       value: null,
                       child: Text(
                         localizedStrings.fPleaseSelectCategory,
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                              // 设置提示文本样式
-                              fontSize: 12,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .surfaceContainerHighest,
-                            ),
+                        style: textTheme.bodySmall!.copyWith(
+                          // 设置提示文本样式
+                          fontSize: 12,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .surfaceContainerHighest,
+                        ),
                       ),
                     )
                   ]
@@ -3314,26 +3125,22 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     DropdownMenuItem<String>(
                       value: null,
                       child: Text(localizedStrings.fPleaseSelectCategory,
-                          style:
-                              Theme.of(context).textTheme.bodySmall!.copyWith(
-                                    // 设置提示文本样式
-                                    fontSize: 12,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .surfaceContainerHighest,
-                                  )),
+                          style: textTheme.bodySmall!.copyWith(
+                            // 设置提示文本样式
+                            fontSize: 12,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .surfaceContainerHighest,
+                          )),
                     ),
                     ...formulaTypeList.map((CategoryTypeList item) {
                       return DropdownMenuItem<String>(
                         value: item.categoryName,
                         child: Text(
                           item.categoryName,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall!
-                              .copyWith(
-                                color: Theme.of(context).colorScheme.onSurface,
-                              ),
+                          style: textTheme.bodySmall!.copyWith(
+                            color: colorScheme.onSurface,
+                          ),
                         ),
                       );
                     })
@@ -3345,9 +3152,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 performFmaSearch();
               });
             },
-            style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
+            style: textTheme.bodySmall!.copyWith(
+              color: colorScheme.onSurface,
+            ),
           ),
         ),
         SizedBox(
@@ -3358,10 +3165,10 @@ class FormulationScalePageState extends State<FormulationScalePage>
           height: 40,
           padding: const EdgeInsets.only(left: 16, right: 20),
           decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
+              color: colorScheme.surface,
               borderRadius: BorderRadius.circular(0),
               border: Border.all(
-                color: Theme.of(context).colorScheme.outline,
+                color: colorScheme.outline,
                 width: 1,
               )),
           child: DropdownButton<EncryptedValue>(
@@ -3377,22 +3184,21 @@ class FormulationScalePageState extends State<FormulationScalePage>
               DropdownMenuItem<EncryptedValue>(
                 value: null,
                 child: Text(localizedStrings.fSelectConfidentialityStatusMsg,
-                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          // 设置提示文本样式
-                          fontSize: 12,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .surfaceContainerHighest,
-                        )),
+                    style: textTheme.bodySmall!.copyWith(
+                      // 设置提示文本样式
+                      fontSize: 12,
+                      color:
+                          Theme.of(context).colorScheme.surfaceContainerHighest,
+                    )),
               ),
               ...EncryptedValue.values.map((value) {
                 return DropdownMenuItem<EncryptedValue>(
                   value: value,
                   child: Text(
                     value.getTranslation(context),
-                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
+                    style: textTheme.bodySmall!.copyWith(
+                      color: colorScheme.onSurface,
+                    ),
                   ),
                 );
               }),
@@ -3407,11 +3213,11 @@ class FormulationScalePageState extends State<FormulationScalePage>
               });
             },
 
-            style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                  // 设置提示文本样式
+            style: textTheme.bodySmall!.copyWith(
+              // 设置提示文本样式
 
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
+              color: colorScheme.onSurface,
+            ),
           ),
         ),
         SizedBox(
@@ -3422,7 +3228,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
             child: IconButton(
               icon: Icon(
                 Icons.cleaning_services_outlined,
-                color: Theme.of(context).colorScheme.primary,
+                color: colorScheme.primary,
               ),
               onPressed: () {
                 setState(() {
@@ -3475,7 +3281,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
   showDarftFmaSearch() {
     return Container(
       height: 70,
-      color: Theme.of(context).colorScheme.surface,
+      color: colorScheme.surface,
       child: Row(children: [
         SizedBox(
           width: 20,
@@ -3486,14 +3292,14 @@ class FormulationScalePageState extends State<FormulationScalePage>
             child: Align(
               alignment: Alignment.centerLeft,
               child: TextField(
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
+                  style: textTheme.bodySmall!.copyWith(
+                    color: colorScheme.onSurface,
+                  ),
                   controller: _searchDarftIdCtl,
                   decoration: InputDecoration(
                     prefixIcon: Icon(
                       Icons.search,
-                      color: Theme.of(context).colorScheme.primary,
+                      color: colorScheme.primary,
                     ),
                     suffixIcon: IconButton(
                       icon: const Icon(
@@ -3509,13 +3315,12 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     ),
                     hintText: localizedStrings.fSearchHint,
                     contentPadding: EdgeInsets.symmetric(vertical: 10),
-                    hintStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          // 设置提示文本样式
-                          fontSize: 12,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .surfaceContainerHighest,
-                        ),
+                    hintStyle: textTheme.bodySmall!.copyWith(
+                      // 设置提示文本样式
+                      fontSize: 12,
+                      color:
+                          Theme.of(context).colorScheme.surfaceContainerHighest,
+                    ),
                     border: const OutlineInputBorder(
                       borderRadius: BorderRadius.zero,
                     ),

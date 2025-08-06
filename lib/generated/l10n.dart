@@ -3078,10 +3078,10 @@ class S {
     return Intl.message('Import', name: 'gBtnImport', desc: '', args: []);
   }
 
-  /// `Get Data From DB`
+  /// `Get Data From Local`
   String get gBtnGetDataFormDb {
     return Intl.message(
-      'Get Data From DB',
+      'Get Data From Local',
       name: 'gBtnGetDataFormDb',
       desc: '',
       args: [],
@@ -3570,10 +3570,10 @@ class S {
     );
   }
 
-  /// `Save To DB`
+  /// `Save To Local`
   String get gBtnSaveDataBase {
     return Intl.message(
-      'Save To DB',
+      'Save To Local',
       name: 'gBtnSaveDataBase',
       desc: 'This is the button to save database.',
       args: [],
@@ -7708,10 +7708,10 @@ class S {
     );
   }
 
-  /// `Temporary storage record`
+  /// `Temporary Storage Record`
   String get tipTemporarySaveFormulaRecord {
     return Intl.message(
-      'Temporary storage record',
+      'Temporary Storage Record',
       name: 'tipTemporarySaveFormulaRecord',
       desc: 'Tip indicating temporarily saving formula weighing record',
       args: [],

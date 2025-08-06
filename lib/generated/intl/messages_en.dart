@@ -442,7 +442,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "gBtnExport": MessageLookupByLibrary.simpleMessage("Export"),
     "gBtnGetBasicData": MessageLookupByLibrary.simpleMessage("Get Basic Data"),
     "gBtnGetDataFormDb": MessageLookupByLibrary.simpleMessage(
-      "Get Data From DB",
+      "Get Data From Local",
     ),
     "gBtnGetIp": MessageLookupByLibrary.simpleMessage("Get Ip"),
     "gBtnGetPluTemplate": MessageLookupByLibrary.simpleMessage(
@@ -457,7 +457,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "gBtnRemove": MessageLookupByLibrary.simpleMessage("Remove"),
     "gBtnReportSetting": MessageLookupByLibrary.simpleMessage("Report Setting"),
     "gBtnSave": MessageLookupByLibrary.simpleMessage("Save"),
-    "gBtnSaveDataBase": MessageLookupByLibrary.simpleMessage("Save To DB"),
+    "gBtnSaveDataBase": MessageLookupByLibrary.simpleMessage("Save To Local"),
     "gBtnSaveExcel": MessageLookupByLibrary.simpleMessage("Save To Excel"),
     "gBtnSelectDate": MessageLookupByLibrary.simpleMessage("Select Date"),
     "gBtnSelectFile": MessageLookupByLibrary.simpleMessage("Select File"),
@@ -1446,7 +1446,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tipPageSequnce": MessageLookupByLibrary.simpleMessage(""),
     "tipPageTotal": MessageLookupByLibrary.simpleMessage("Total"),
     "tipTemporarySaveFormulaRecord": MessageLookupByLibrary.simpleMessage(
-      "Temporary storage record",
+      "Temporary Storage Record",
     ),
     "titleConfidentialWeighingMode": MessageLookupByLibrary.simpleMessage(
       "Confidential Weighing Mode",

@@ -105,7 +105,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   final double btnWidth = 150;
   final double textWidth = 120;
   final double topTitleHeight = 300;
-  final double topBtnHeight = 130;
+  final double topBtnHeight = 120;
   final double leftBtnWidth = 280;
   final double rightBtnWidth = 288;
 

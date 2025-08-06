@@ -1,133 +1,292 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:data_table_2/data_table_2.dart';
+
 import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:t_max/functions/methods.dart';
-import '../data/download_prt_fmt.dart';
-import '../data/language.dart';
-import '../data/plu_data_source.dart';
-import '../data/plu_field_status_data.dart';
-import '../data/plu_info_list_data.dart';
-import '../data/scalecmd_data.dart';
-import '../data/setting_version_info.dart';
-import '../dialog/show_options_dialog.dart';
-import '../eventbus/eventbus.dart';
-import '../widget/custom_button.dart';
 import 'package:path/path.dart' as path;
-
-import '../widget/show_error_dialog.dart';
-import 'sel_scales_page.dart';
+import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+import 'package:t_max/data/download_prt_fmt.dart';
+import 'package:t_max/data/home_page_common_data.dart';
+import 'package:t_max/data/language.dart';
+import 'package:t_max/data/plu_data_source.dart';
+import 'package:t_max/data/plu_field_status_data.dart';
+import 'package:t_max/data/plu_info_list_data.dart';
+import 'package:t_max/data/scalecmd_data.dart';
+import 'package:t_max/dialog/add_plu_info_dialog.dart';
+import 'package:t_max/dialog/custom_dialog_tip.dart';
+import 'package:t_max/dialog/show_options_dialog.dart';
+import 'package:t_max/eventbus/eventbus.dart';
+import 'package:t_max/functions/methods.dart';
+import 'package:t_max/pages/update_firmware_page.dart';
+import 'package:t_max/widget/dialog_head_style.dart';
+import 'package:t_max/widget/outline_btn_new.dart';
+import 'package:t_max/widget/show_error_dialog.dart';
 
 class PluEidtPage extends StatefulWidget {
   const PluEidtPage({super.key});
 
   @override
-  State<PluEidtPage> createState() => PluEidtPageState();
+  State<PluEidtPage> createState() => _PluEidtPageState();
 }
 
-class PluEidtPageState extends State<PluEidtPage> {
-  int _rowsPerPage = PaginatedDataTable.defaultRowsPerPage;
-
-  final RestorablePluSelections _pluInfoSelections = RestorablePluSelections();
-  late PluInfoDataSource _pluInfoDataSource;
-
-  var defaultSorting = 'Default sorting';
-  String _downloadType = "1";
-  String _saveType = "1";
-
-  bool _isLoading = false;
+class _PluEidtPageState extends State<PluEidtPage> {
+  ColorScheme get colorScheme => Theme.of(context).colorScheme;
+  TextTheme get textTheme => Theme.of(context).textTheme;
   bool _getingData = false;
-
-  int? _sortColumnIndex;
-  bool _sortAscending = true;
-  bool _initialized = false;
-  bool showCustomArrow = false;
-  bool sortArrowsAlwaysVisible = false;
-  bool isSendDb = false;
-
+  Timer? gettingDataTimer;
   dynamic _eventbus1;
   dynamic _eventbus2;
 
-  Timer? gettingDataTimer;
+  bool showCustomArrow = false;
+  bool sortArrowsAlwaysVisible = false;
+  bool isSendDb = false;
+  String _saveType = "1";
+  String _downloadType = "1";
 
-  Map<String, FieldNameStatus> colNamesMap = {};
+  List<PluDataModel> dataModels = <PluDataModel>[];
 
-  TextEditingController searchCtl = TextEditingController(text: "");
+  final columnWidth = {
+    'select': 50.0,
+    'plu': double.nan,
+    'productName': double.nan,
+    'category': double.nan,
+    'generalUnit': double.nan,
+    'taxType': double.nan,
+    'price': double.nan,
+    'unitWeight': double.nan,
+    'pretare': double.nan,
+    'limitHigh': double.nan,
+    'limitLow': double.nan,
+    'productCode': double.nan,
+    'itemCode': double.nan,
+    'edit': double.nan,
+    'delete': double.nan,
+  };
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_initialized) {
-      colNamesMap = {
-        'plu': FieldNameStatus(localizedStrings.gPluPlu, true),
-        'productCode': FieldNameStatus(localizedStrings.gPluPluCode, true),
-        'itemCode': FieldNameStatus(localizedStrings.gPluItemCode, true),
-        'category': FieldNameStatus(localizedStrings.gPluCategory, true),
-        'productName': FieldNameStatus(localizedStrings.gPluPluName, true),
-        'generalUnit': FieldNameStatus(localizedStrings.gPluWgtUnit, true),
-        'taxType': FieldNameStatus(localizedStrings.gPluTaxType, true),
-        'price': FieldNameStatus(localizedStrings.gPluPrice, true),
-        'unitWeight': FieldNameStatus(
-            localizedStrings.gPluUnitWgt, mySystemVersion == 3 ? false : true),
-        'pretare': FieldNameStatus(localizedStrings.gPluPretare, true),
-        'limitHigh': FieldNameStatus(localizedStrings.gPluLimitHigh,
-            mySystemVersion == 3 ? false : true),
-        'limitLow': FieldNameStatus(
-            localizedStrings.gPluLimitLow, mySystemVersion == 3 ? false : true),
-      };
-      _pluInfoDataSource = PluInfoDataSource(
-          context, getCurrentRouteOption(context) == defaultSorting);
+  final ValueNotifier<bool> allSelectedNotifier = ValueNotifier<bool>(false);
 
-      if (getCurrentRouteOption(context) == defaultSorting) {
-        _sortColumnIndex = 1;
-      }
-      _initialized = true;
-      for (var entry in colNamesMap.entries) {
-        if (entry.value.isSelected) {
-          _pluInfoDataSource.selectedColumns.add(entry.key);
-        }
-      }
+  // 分页控制变量
+
+  int currentPage = 1;
+
+  int pageSize = 50;
+
+  int totalPages = 1;
+
+  // 计算总页数
+
+  void _calculateTotalPages() {
+    totalPages = (dataModels.length / pageSize).ceil();
+
+    if (totalPages == 0) totalPages = 1;
+
+    if (currentPage > totalPages) {
+      currentPage = totalPages;
     }
-
-    _pluInfoDataSource.updateSelectedDesserts(_pluInfoSelections);
-    _pluInfoDataSource.addListener(_updateSelectedDessertRowListener);
-    // _originalDataSource = List.from(_dessertsDataSource.desserts);
   }
 
-  String getCurrentRouteOption(BuildContext context) {
-    var isEmpty = ModalRoute.of(context) != null &&
-            ModalRoute.of(context)!.settings.arguments != null &&
-            ModalRoute.of(context)!.settings.arguments is String
-        ? ModalRoute.of(context)!.settings.arguments as String
-        : '';
+  // 切换到指定页
 
-    return isEmpty;
-  }
-
-  void _updateSelectedDessertRowListener() {
+  void _changePage(int page) {
     setState(() {
-      _pluInfoSelections.setDessertSelections(_pluInfoDataSource.pluInfoList);
+      currentPage = page;
+
+      _updateDataSource();
     });
   }
 
-  void sort<T>(
-    Comparable<T> Function(PluData d) getField,
-    int columnIndex,
-    bool ascending,
-  ) {
-    _pluInfoDataSource.sort<T>(getField, ascending);
+  // 更新每页显示数量
+
+  void _changePageSize(int size) {
     setState(() {
-      _sortColumnIndex = columnIndex;
-      _sortAscending = ascending;
+      pageSize = size;
+      currentPage = 1;
+      _calculateTotalPages();
+      _updateDataSource();
+    });
+  }
+
+  // 获取当前页数据
+
+  List<PluDataModel> _getCurrentPageData() {
+    final startIndex = (currentPage - 1) * pageSize;
+
+    final endIndex = currentPage * pageSize;
+
+    if (startIndex >= dataModels.length) return [];
+
+    return dataModels.sublist(
+      startIndex,
+      endIndex > dataModels.length ? dataModels.length : endIndex,
+    );
+  }
+
+  NationDataSource? _dataSource;
+
+  // 更新数据源
+
+  void _updateDataSource() {
+    _dataSource = NationDataSource(
+      dataModels: _getCurrentPageData(),
+
+      allSelectedNotifier: allSelectedNotifier,
+
+      updateAllSelectedStatus: _updateAllSelectedStatus,
+
+      onEdit: _handleEdit,
+
+      onDelete: _handleDelete,
+      columnVisibility: _columnVisibility, // 传递列可见性配置
+    );
+  }
+
+  // 初始化分页
+
+  void _initPagination() {
+    _calculateTotalPages();
+
+    _updateDataSource();
+  }
+
+  // 当数据变化时重新计算分页
+
+  void _onDataChanged() {
+    _calculateTotalPages();
+
+    _updateDataSource();
+  }
+
+  // 添加示例数据用于测试分页
+
+  void _addSampleData() {
+    dataModels.addAll([
+      PluDataModel(
+          pluData: PluData(1, 001, 0, 0, '55', 'productName', 0, 0, 5.55, 5.55,
+              0.23, 5.6, 5.33, '')),
+      PluDataModel(
+          pluData: PluData(1, 001, 0, 0, '55', 'productName', 0, 0, 5.55, 5.55,
+              0.23, 5.6, 5.33, '')),
+      PluDataModel(
+          pluData: PluData(1, 001, 0, 0, '55', 'productName', 0, 0, 5.55, 5.55,
+              0.23, 5.6, 5.33, '')),
+    ]);
+  }
+
+  // 删除选中项并更新分页
+
+  void _deleteSelectedItems() {
+    setState(() {
+      dataModels.removeWhere((model) => model.isSelected);
+
+      _onDataChanged();
+    });
+  }
+
+  // 处理编辑
+
+  void _handleEdit(PluDataModel model, int index) {
+    // 找到原始数据中的索引
+
+    final originalIndex = dataModels.indexOf(model);
+
+    if (originalIndex == -1) return;
+
+    // 显示编辑对话框
+    showDialog(
+      context: context,
+      builder: (context) => AddPluInfoDialog(
+        type: 1,
+        pluInfo: model.pluData,
+        onSave: (updatedPlu) {
+          setState(() {
+            dataModels[originalIndex] = PluDataModel(pluData: updatedPlu);
+
+            _onDataChanged();
+          });
+        },
+      ),
+    );
+  }
+
+  // 定义可选列配置，固定列不参与选择
+  final Map<String, bool> _columnVisibility = {
+    'plu': true,
+    'productName': true,
+    'category': true,
+    'price': true,
+    'generalUnit': true,
+    'taxType': true,
+    'unitWeight': true,
+    'pretare': true,
+    'limitHigh': true,
+    'limitLow': true,
+    'productCode': true,
+    'itemCode': true,
+  };
+
+  // 根据列名返回显示名称
+  String getColumnName(String columnName) {
+    switch (columnName) {
+      case 'plu':
+        return localizedStrings.gPluPlu;
+      case 'productName':
+        return localizedStrings.gPluPluName;
+      case 'category':
+        return localizedStrings.gPluCategory;
+      case 'price':
+        return localizedStrings.gPluPrice;
+      case 'generalUnit':
+        return localizedStrings.gPluWgtUnit;
+      case 'taxType':
+        return localizedStrings.gPluTaxType;
+      case 'unitWeight':
+        return localizedStrings.gPluUnitWgt;
+      case 'pretare':
+        return localizedStrings.gPluPretare;
+      case 'limitHigh':
+        return localizedStrings.gPluLimitHigh;
+      case 'limitLow':
+        return localizedStrings.gPluLimitLow;
+
+      case 'productCode':
+        return localizedStrings.gPluPluCode;
+      case 'itemCode':
+        return localizedStrings.gPluItemCode;
+      case 'edit':
+        return '编辑';
+      case 'delete':
+        return '删除';
+      default:
+        return columnName;
+    }
+  }
+
+  // 处理删除单行
+
+  void _handleDelete(PluDataModel model) {
+    setState(() {
+      dataModels.remove(model);
+
+      _onDataChanged();
     });
   }
 
   @override
   void initState() {
+    super.initState();
+
+    allSelectedNotifier.addListener(() {
+      if (allSelectedNotifier.value) {
+        _selectAll();
+      } else {
+        _deselectAll();
+      }
+    });
+
+    _addSampleData();
+    _initPagination();
     PublicFunctions.getProductList();
     _eventbus1 = eventBus.on<EventPLuDataSavedOK>().listen((event) {
       if (mounted) {
@@ -157,27 +316,21 @@ class PluEidtPageState extends State<PluEidtPage> {
           newPlu.limitHigh = double.tryParse(pluInfoList[i].limitHigh) ?? 0;
           newPlu.limitLow = double.tryParse(pluInfoList[i].limitLow) ?? 0;
           newPlu.creatAt = pluInfoList[i].creatAt ?? " ";
-          _pluInfoDataSource.pluInfoList.add(newPlu);
+
+          PluDataModel tempData = PluDataModel(pluData: newPlu);
+
+          dataModels.add(tempData);
         }
         setState(() {
-          _pluInfoDataSource.updateSelectedDesserts(_pluInfoSelections);
+          _onDataChanged();
           _getingData = false;
         });
       }
     });
-
-    super.initState();
   }
 
   @override
   void dispose() {
-    PluInfoDataSource.empty(context);
-    _pluInfoDataSource.pluInfoList.clear();
-    _pluInfoDataSource.selectedColumns.clear();
-    _pluInfoDataSource.removeListener(_updateSelectedDessertRowListener);
-    _pluInfoDataSource.dispose();
-    _pluInfoSelections.dispose();
-    searchCtl.dispose();
     _eventbus1.cancel();
     _eventbus2.cancel();
     gettingDataTimer?.cancel();
@@ -185,1020 +338,187 @@ class PluEidtPageState extends State<PluEidtPage> {
     super.dispose();
   }
 
-  void deleteSelectedRows() {
-    List<PluData> newDesserts = _pluInfoDataSource.pluInfoList
-        .where((dessert) => !dessert.selected)
-        .toList();
-    setState(() {
-      _pluInfoDataSource.pluInfoList = newDesserts;
-    });
-    _pluInfoDataSource.updateSelectedDesserts(_pluInfoSelections);
-  }
+  // 更新全选状态
 
-  List<PluData> findDessertsByName(String nameToFind) {
-    return _pluInfoDataSource.pluInfoList
-        .where((pluInfo) => pluInfo.productName!
-            .toLowerCase()
-            .contains(nameToFind.toLowerCase()))
-        .toList();
-  }
+  void _updateAllSelectedStatus() {
+    final currentPageData = _getCurrentPageData();
 
-  void handleSearchTextChanged(String value) {
-    List<PluData> foundDesserts = findDessertsByName(value);
-    setState(() {
-      _pluInfoDataSource.pluInfoList = foundDesserts;
-    });
-  }
+    final allSelected = currentPageData.every((model) => model.isSelected);
 
-  List<DataColumn2> getcolumns() {
-    List<DataColumn2> columns = [];
-    for (var filed in _pluInfoDataSource.selectedColumns) {
-      switch (filed) {
-        case "plu":
-          columns.add(
-            DataColumn2(
-              label: Text(
-                colNamesMap['plu']!.field,
-                overflow: TextOverflow.visible,
-              ),
-              // size: ColumnSize.M,
-              numeric: true,
-              // example of fixed 1st row
-              fixedWidth: 120,
-              onSort: (columnIndex, ascending) =>
-                  sort<num>((d) => d.plu!, columnIndex, ascending),
-            ),
-          );
-          break;
-        case "productCode":
-          columns.add(
-            DataColumn2(
-              label: Text(
-                colNamesMap['productCode']!.field,
-                overflow: TextOverflow.visible,
-              ),
-              numeric: true,
-              //  size: ColumnSize.M,
-              // example of fixed 1st row
-              fixedWidth: 150,
-              onSort: (columnIndex, ascending) =>
-                  sort<num>((d) => d.productCode!, columnIndex, ascending),
-            ),
-          );
-          break;
-        case "itemCode":
-          columns.add(
-            DataColumn2(
-              label: Text(
-                colNamesMap['itemCode']!.field,
-                overflow: TextOverflow.visible,
-              ),
-              numeric: true,
-              //  size: ColumnSize.M,
-              // example of fixed 1st row
-              fixedWidth: 150,
-              onSort: (columnIndex, ascending) =>
-                  sort<num>((d) => d.itemCode!, columnIndex, ascending),
-            ),
-          );
-          break;
-        case "category":
-          columns.add(
-            DataColumn2(
-              label: Text(
-                colNamesMap['category']!.field,
-                overflow: TextOverflow.visible,
-              ),
-              numeric: true, size: ColumnSize.M,
-              // example of fixed 1st row
-              // fixedWidth: 200,
-              onSort: (columnIndex, ascending) =>
-                  sort<num>((d) => d.itemCode!, columnIndex, ascending),
-            ),
-          );
-          break;
-        case "productName":
-          columns.add(
-            DataColumn2(
-              label: Text(
-                colNamesMap['productName']!.field,
-                overflow: TextOverflow.visible,
-              ),
-              numeric: true,
-              size: ColumnSize.L,
-              // example of fixed 1st row
-              // fixedWidth: size * 0.25 > 300 ? size * 0.2 : 300,
-              onSort: (columnIndex, ascending) =>
-                  sort<String>((d) => d.productName!, columnIndex, ascending),
-            ),
-          );
-          break;
-        case "generalUnit":
-          columns.add(
-            DataColumn2(
-              label: Text(
-                colNamesMap['generalUnit']!.field,
-                overflow: TextOverflow.visible,
-              ),
-              numeric: true, size: ColumnSize.S,
-              // example of fixed 1st row
-              fixedWidth: null,
-              onSort: (columnIndex, ascending) =>
-                  sort<num>((d) => d.generalUnit!, columnIndex, ascending),
-            ),
-          );
-          break;
-        case "taxType":
-          columns.add(
-            DataColumn2(
-              label: Text(
-                colNamesMap['taxType']!.field,
-                overflow: TextOverflow.visible,
-              ),
-              numeric: true, size: ColumnSize.S,
-              // example of fixed 1st row
-              fixedWidth: null,
-              onSort: (columnIndex, ascending) =>
-                  sort<num>((d) => d.taxType!, columnIndex, ascending),
-            ),
-          );
-          break;
-        case "price":
-          columns.add(
-            DataColumn2(
-              label: Text(
-                colNamesMap['price']!.field,
-                overflow: TextOverflow.visible,
-              ),
-              numeric: true, size: ColumnSize.S,
-              // example of fixed 1st row
-              fixedWidth: null,
-              onSort: (columnIndex, ascending) =>
-                  sort<num>((d) => d.price!, columnIndex, ascending),
-            ),
-          );
-          break;
-        case "unitWeight":
-          columns.add(
-            DataColumn2(
-              label: Text(
-                colNamesMap['unitWeight']!.field,
-                overflow: TextOverflow.visible,
-              ),
-              numeric: true, size: ColumnSize.S,
-              // example of fixed 1st row
-              fixedWidth: null,
-              onSort: (columnIndex, ascending) =>
-                  sort<num>((d) => d.unitWeight!, columnIndex, ascending),
-            ),
-          );
-          break;
-        case "pretare":
-          columns.add(
-            DataColumn2(
-              label: Text(
-                colNamesMap['pretare']!.field,
-                overflow: TextOverflow.visible,
-              ),
-              numeric: true,
-              // size: ColumnSize.S,
-              // example of fixed 1st row
-              fixedWidth: 120,
-              onSort: (columnIndex, ascending) =>
-                  sort<num>((d) => d.pretare!, columnIndex, ascending),
-            ),
-          );
-          break;
-        case "limitHigh":
-          columns.add(
-            DataColumn2(
-              label: Text(
-                colNamesMap['limitHigh']!.field,
-                overflow: TextOverflow.visible,
-              ),
-              numeric: true,
-              // size: ColumnSize.S,
-              // example of fixed 1st row
-              fixedWidth: 120,
-              onSort: (columnIndex, ascending) =>
-                  sort<num>((d) => d.limitHigh!, columnIndex, ascending),
-            ),
-          );
-          break;
-        case "limitLow":
-          columns.add(
-            DataColumn2(
-              label: Text(
-                colNamesMap['limitLow']!.field,
-                overflow: TextOverflow.visible,
-              ),
-              numeric: true,
-              // size: ColumnSize.S,
-              // example of fixed 1st row
-              fixedWidth: 120,
-              onSort: (columnIndex, ascending) =>
-                  sort<num>((d) => d.limitLow!, columnIndex, ascending),
-            ),
-          );
-          break;
-      }
+    final allUnselected = currentPageData.every((model) => !model.isSelected);
+
+    if (allSelected) {
+      allSelectedNotifier.value = true;
+    } else if (allUnselected) {
+      allSelectedNotifier.value = false;
     }
-
-    return columns;
   }
 
-  @override
-  Widget build(BuildContext context) {
-    var height = MediaQuery.of(context).size.height;
-    var width = MediaQuery.of(context).size.width;
-    return Scaffold(
-      body: Container(
-          width: width,
-          decoration:
-              BoxDecoration(color: Theme.of(context).colorScheme.surface),
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // pageHeadInfo(
-                //     context,
-                //     width - headWidthPadding,
-                //     localizedStrings.menuPluManagement,
-                //     localizedStrings.gTipPlueditPageHelp),
-                Expanded(
-                    child: Container(
-                  color: Theme.of(context).colorScheme.surfaceTint,
-                  child: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Column(children: [
-                        buildButtonRow(),
-                        SizedBox(height: 10),
-                        SizedBox(
-                            width: width - 20,
-                            height: height - 230,
-                            child: Stack(
-                                alignment: Alignment.bottomCenter,
-                                children: [
-                                  PaginatedDataTable2(
-                                    // 100 Won't be shown since it is smaller than total records
-                                    availableRowsPerPage: const [
-                                      10,
-                                      20,
-                                      30,
-                                      50
-                                    ],
-                                    horizontalMargin: 20,
-                                    checkboxHorizontalMargin: 12,
-                                    columnSpacing: 0,
-                                    wrapInCard: false,
-                                    renderEmptyRowsInTheEnd: false,
-                                    headingRowColor:
-                                        WidgetStateColor.resolveWith((states) =>
-                                            Theme.of(context)
-                                                .colorScheme
-                                                .onPrimary),
-                                    headingTextStyle: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary),
-                                    headingCheckboxTheme: CheckboxThemeData(
-                                      side: BorderSide(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                          width: 2.0),
-                                      fillColor:
-                                          WidgetStateProperty.resolveWith<
-                                              Color>((Set<WidgetState> states) {
-                                        if (states
-                                            .contains(WidgetState.selected)) {
-                                          return Theme.of(context)
-                                              .colorScheme
-                                              .primary;
-                                        }
-                                        return Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary; // 未选中时的填充颜色，可根据需要调整
-                                      }),
-                                    ),
-                                    //checkboxAlignment: Alignment.topLeft,
+  void _selectAll() {
+    setState(() {
+      for (final model in dataModels) {
+        model.isSelected = true;
+      }
+    });
+  }
 
-                                    datarowCheckboxTheme: CheckboxThemeData(
-                                      side: BorderSide(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                          width: 2.0),
-                                      fillColor:
-                                          WidgetStateProperty.resolveWith<
-                                              Color>((Set<WidgetState> states) {
-                                        if (states
-                                            .contains(WidgetState.selected)) {
-                                          return Theme.of(context)
-                                              .colorScheme
-                                              .primary;
-                                        }
-                                        return Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary;
-                                      }),
-                                    ),
+  void _deselectAll() {
+    setState(() {
+      for (final model in dataModels) {
+        model.isSelected = false;
+      }
+    });
+  }
 
-                                    rowsPerPage: _rowsPerPage,
-                                    autoRowsToHeight: false,
-                                    minWidth: _pluInfoDataSource
-                                                .selectedColumns.length <
-                                            8
-                                        ? (width - 20)
-                                        : (width - 20) > 1500
-                                            ? (width - 20)
-                                            : 1500,
-                                    fit: FlexFit.tight,
-                                    border: TableBorder(
-                                        top: BorderSide(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primary),
-                                        bottom: BorderSide(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primary),
-                                        left: BorderSide(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primary),
-                                        right: BorderSide(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primary),
-                                        verticalInside: BorderSide.none,
-                                        // BorderSide(
-                                        //     color: Theme.of(context).colorScheme.surfaceTint),
-                                        horizontalInside: BorderSide(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primary,
-                                            width: 1)),
-                                    onRowsPerPageChanged: (value) {
-                                      // No need to wrap into setState, it will be called inside the widget
-                                      // and trigger rebuild
-                                      //setState(() {
-                                      _rowsPerPage = value!;
-                                      if (kDebugMode) {
-                                        print(_rowsPerPage);
-                                      }
-                                      //});
-                                    },
-                                    initialFirstRowIndex: 0,
-                                    onPageChanged: (rowIndex) {
-                                      if (kDebugMode) {
-                                        print(rowIndex / _rowsPerPage);
-                                      }
-                                      setState(() {
-                                        _isLoading = true;
-                                      });
-
-                                      Future.delayed(const Duration(seconds: 2),
-                                          () {
-                                        setState(() {
-                                          _isLoading = false;
-                                        });
-                                      });
-                                    },
-                                    sortColumnIndex: _sortColumnIndex,
-                                    sortAscending: _sortAscending,
-                                    sortArrowIcon:
-                                        Icons.keyboard_arrow_up, // custom arrow
-                                    sortArrowAnimationDuration: const Duration(
-                                        milliseconds:
-                                            0), // custom animation duration
-                                    onSelectAll: _pluInfoDataSource.selectAll,
-                                    controller: null,
-                                    hidePaginator: false,
-                                    columns: getcolumns(),
-                                    empty: Center(
-                                        child: Container(
-                                            padding: const EdgeInsets.all(20),
-                                            color: Colors.grey[200],
-                                            child: const Text('No data'))),
-                                    source:
-                                        getCurrentRouteOption(context) == noData
-                                            ? PluInfoDataSource.empty(context)
-                                            : _pluInfoDataSource,
-                                  ),
-                                  // if (getCurrentRouteOption(context) == custPager)
-                                  //   Positioned(bottom: 16, child: CustomPager(_controller!))
-                                  if (_isLoading)
-                                    Container(
-                                        color: const Color.fromARGB(
-                                                255, 162, 160, 160)
-                                            .withValues(alpha: 0.5),
-                                        child: Center(
-                                          child: CircularProgressIndicator(
-                                            backgroundColor: Colors.transparent,
-                                            valueColor:
-                                                AlwaysStoppedAnimation<Color>(
-                                                    Theme.of(context)
-                                                        .colorScheme
-                                                        .primary),
-                                          ),
-                                        )),
-                                ]))
-                      ])),
-                )),
-              ])),
-    );
+  showIconBtn(String tip, IconData icon, Color color, Function() onPressed) {
+    return Tooltip(
+        message: tip, // 提示信息
+        child: IconButton(
+          iconSize: 24,
+          color: colorScheme.onPrimary,
+          style: IconButton.styleFrom(
+            backgroundColor: color,
+            shape: RoundedRectangleBorder(
+              // 设置为矩形形状
+              borderRadius: BorderRadius.zero, // 没有圆角，即正方形
+            ),
+            fixedSize: const Size(40, 40), // 设置固定大小
+          ),
+          onPressed: onPressed,
+          icon: Icon(icon),
+        ));
   }
 
   Widget buildButtonRow() {
+    // 收集所有按钮的文本
+    final List<String> buttonTexts = [
+      localizedStrings.gBtnGetDataFormDb,
+      localizedStrings.gBtnSaveDataBase,
+      localizedStrings.gBtnImport,
+      localizedStrings.gBtnExport,
+      localizedStrings.gBtnGetPluTemplate,
+    ];
+
+    // 计算每个文本的长度（作为宽度分配的依据）
+    final textLengths = buttonTexts.map((text) => text.length).toList();
+
+    final totalLength =
+        textLengths.fold<int>(0, (sum, length) => sum + length as int);
+
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        CustomOutlinedButton(
-          btnWidth: 0,
-          btnHeight: 40,
-          icon: Icons.delete_outline,
-          text: '',
-          onPressed: () {
-            deleteSelectedRows();
-          },
-        ),
-        SizedBox(
-          width: 5,
-        ),
-        CustomOutlinedButton(
-          btnWidth: 0,
-          btnHeight: 40,
-          icon: Icons.add,
-          text: '',
-          onPressed: () {
-            setState(() {
-              _pluInfoDataSource.pluInfoList.add(PluData(0, 0, 0, 0, '-',
-                  'PLU Name', 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, ''));
-
-              // 按照 id 进行降序排序，并确保排序的稳定性
-              _pluInfoDataSource.pluInfoList.sort((a, b) {
-                final idComparison = b.id.compareTo(a.id);
-                if (idComparison != 0) {
-                  return idComparison;
-                }
-                // 如果 id 相同，可以按照其他属性进行进一步的排序，这里假设按照名称进行升序排序
-                return a.plu!.compareTo(b.plu!);
-              });
-              _pluInfoDataSource.updateSelectedDesserts(_pluInfoSelections);
-            });
-          },
-        ),
-        SizedBox(
-          width: 5,
-        ),
-        CustomOutlinedButton(
-          btnWidth: 0,
-          btnHeight: 40,
-          icon: Icons.settings,
-          text: '',
-          onPressed: () async {
-            List<String> selectedOptions =
-                await _showMultiSelectDialog(context);
-
-            _pluInfoDataSource.selectedColumns = selectedOptions;
-            for (var entry in colNamesMap.entries) {
-              if (selectedOptions.contains(entry.key)) {
-                colNamesMap[entry.key]!.isSelected = true;
-              } else {
-                colNamesMap[entry.key]!.isSelected = false;
-              }
-            }
-          },
-        ),
-        SizedBox(
-          width: 5,
-        ),
-        Tooltip(
-          message: localizedStrings.gBtnDownload,
-          child: CustomOutlinedButton(
-            btnWidth: 0,
-            btnHeight: 40,
-            icon: Icons.download,
-            text: '',
-            onPressed: () async {
-              List<PluData> selectedPluInfos = [];
-              if (_pluInfoDataSource.pluInfoList.isEmpty) {
-                return showErrorDialog(context, localizedStrings.gTipNoData);
-              }
-              bool selectRow = false;
-              for (var dessert in _pluInfoDataSource.pluInfoList) {
-                if (dessert.selected) {
-                  selectedPluInfos.add(dessert);
-                  selectRow = true;
-                }
-              }
-              if (!selectRow) {
-                isSendDb = false;
-                return showErrorDialog(
-                    context, localizedStrings.gTipNoDataSelected);
-              }
-              String msg = checkImportData(selectedPluInfos);
-              if (msg != "") {
-                isSendDb = false;
-                return showErrorDialog(context, msg);
-              }
-
-              String msgStr = await downloadFormExcel(selectedPluInfos);
-              if (!msgStr.contains("OK")) {
-                showSnackBar(msgStr);
-                return;
-              }
-              List<String> splitted = msgStr.split(',');
-              if (splitted.length != 2) {
-                return;
-              }
-              if (mounted) {
-                _showDownloadTypeDialog(context, splitted[1]);
-              }
-            },
-          ),
-        ),
-        SizedBox(
-          width: 5,
-        ),
-        Tooltip(
-          message: localizedStrings.gBtnGetDataFormDb,
-          child: CustomOutlinedButton(
-            btnWidth: 80,
-            btnHeight: 40,
-            icon: Icons.data_thresholding_outlined,
-            text: localizedStrings.gBtnGetDataFormDb,
-            onPressed: _getingData
-                ? null
-                : () {
-                    _pluInfoDataSource.pluInfoList.clear();
-
-                    PublicFunctions.getProductList();
-                    setState(() {
-                      _getingData = true;
-                    });
-                    gettingDataTimer = Timer(Duration(seconds: 60), () {
-                      setState(() {
-                        _getingData = false; // 1分钟后将intpp设置为1
-                      });
-                    });
-                  },
-          ),
-        ),
-        SizedBox(
-          width: 5,
-        ),
-        Tooltip(
-          message: localizedStrings.gBtnSaveDataBase,
-          child: CustomOutlinedButton(
-            btnWidth: 80,
-            btnHeight: 40,
-            icon: Icons.change_circle_outlined,
-            text: localizedStrings.gBtnSaveDataBase,
-            onPressed: () {
-              if (isSendDb) {
-                return showErrorDialog(
-                    context, localizedStrings.gTipSavingData);
-              }
-              _showSaveDatabaseDialog(context);
-            },
-          ),
-        ),
-        SizedBox(
-          width: 5,
-        ),
-        Tooltip(
-          message: localizedStrings.gBtnImport,
-          child: CustomOutlinedButton(
-            btnWidth: 80,
-            btnHeight: 40,
-            icon: Icons.input_rounded,
-            text: localizedStrings.gBtnImport,
-            onPressed: () {
-              performImport();
-            },
-          ),
-        ),
-        SizedBox(
-          width: 5,
-        ),
-        Tooltip(
-          message: localizedStrings.gBtnExport,
-          child: CustomOutlinedButton(
-            btnWidth: 80,
-            btnHeight: 40,
-            icon: Icons.list_alt_outlined,
-            text: localizedStrings.gBtnExport,
-            onPressed: () async {
-              List<PluData> selectedPluInfos = [];
-              if (_pluInfoDataSource.pluInfoList.isEmpty) {
-                return showErrorDialog(context, localizedStrings.gTipNoData);
-              }
-              bool selectRow = false;
-              for (var dessert in _pluInfoDataSource.pluInfoList) {
-                if (dessert.selected) {
-                  selectedPluInfos.add(dessert);
-                  selectRow = true;
-                }
-              }
-              if (!selectRow) {
-                isSendDb = false;
-                return showErrorDialog(
-                    context, localizedStrings.gTipNoDataSelected);
-              }
-
-              String msg = await writeDessertsToExcel(selectedPluInfos);
-              showSnackBar(msg);
-            },
-          ),
-        ),
-        SizedBox(
-          width: 5,
-        ),
-        Tooltip(
-          message: localizedStrings.gBtnGetPluTemplate,
-          child: CustomOutlinedButton(
-            btnWidth: 60,
-            btnHeight: 40,
-            icon: Icons.file_copy,
-            text: localizedStrings.gBtnGetPluTemplate,
-            onPressed: () async {
-              String msg = await performExportTemplate();
-              showErrorDialog(context, msg);
-            },
-
-            // _dessertsDataSource.desserts.sort((a, b) {
-            //         final idComparison = b.id.compareTo(a.id);
-            //         if (idComparison != 0) {
-            //           return idComparison;
-            //         }
-            //         // 如果 id 相同，可以按照其他属性进行进一步的排序，这里假设按照名称进行升序排序
-            //         return a.plu!.compareTo(b.plu!);
-            //       });
-          ),
-        ),
-        SizedBox(
-          width: 5,
+        showTextBtnList(buttonTexts, textLengths, totalLength),
+        // 右侧图标按钮部分保持不变
+        Container(
+          width: regularPadding * 4 + 40 * 4,
+          alignment: Alignment.centerRight,
+          child: showIconBtnList(),
         ),
       ],
     );
   }
 
-  //保存到数据库的类型：全部下发，增量下发
-  void _showSaveDatabaseDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext ctx) {
-        return AlertDialog(
-          title: Text(
-            localizedStrings.gTitleConfirm,
-            style: TextStyle(color: Theme.of(context).colorScheme.primary),
-          ),
-          content: SizedBox(
-              width: 400,
-              height: 100,
-              child: Column(
-                children: [
-                  StatefulBuilder(builder: (context, StateSetter setState) {
-                    return Column(
-                      children: [
-                        SizedBox(
-                          width: 400,
-                          child: RadioListTile(
-                            title: Text(localizedStrings.gTipDownloadAllPlu),
-                            value: '1',
-                            groupValue: _saveType,
-                            onChanged: (value) {
-                              setState(() {
-                                _saveType = value.toString();
-                              });
-                            },
-                          ),
-                        ),
-                        SizedBox(
-                          width: 400,
-                          child: RadioListTile(
-                            title: Text(localizedStrings.gTipUpdatePlu),
-                            value: '2',
-                            groupValue: _saveType,
-                            onChanged: (value) {
-                              setState(() {
-                                _saveType = value.toString();
-                              });
-                            },
-                          ),
-                        ),
-                      ],
-                    );
-                  }),
-                ],
-              )),
-          actions: <Widget>[
-            Row(
-              children: [
-                CustomElevatedButton(
-                  btnWidth: 120,
-                  btnHeight: 40,
-                  icon: Icons.check_circle,
-                  text: localizedStrings.gTitleConfirm,
-                  onPressed: () {
-                    Navigator.of(ctx).pop(false);
+  Widget showTextBtnList(
+      List<String> buttonTexts, List<int> textLengths, int totalLength) {
+    return Expanded(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          // 获取Expanded的最大可用宽度
+          final maxAvailableWidth = constraints.maxWidth;
 
-                    setState(() {
-                      isSendDb = true;
-                    });
+          final spacing = regularPadding * (buttonTexts.length - 1);
+          final availableWidthForButtons =
+              maxAvailableWidth - spacing - buttonTexts.length * 150;
+          //最小宽度150
+          // 计算每个按钮的最大宽度
+          final buttonMaxWidths = textLengths.map((length) {
+            return (length / totalLength) * availableWidthForButtons + 150;
+          }).toList();
 
-                    sendAllData(_saveType);
-                  },
-                ),
-                SizedBox(
-                  width: 20,
-                ),
-                CustomOutlinedButton(
-                  btnWidth: 120,
-                  btnHeight: 40,
-                  icon: Icons.cancel,
-                  text: localizedStrings.gBtnCancel,
-                  onPressed: () {
-                    Navigator.of(ctx).pop(false);
-                  },
-                ),
-              ],
-            )
-          ],
-        );
-      },
+          return Row(
+            children: [
+              CustomGeneralButton(
+                text: buttonTexts[0],
+                maxWidth: buttonMaxWidths[0],
+                onPressed: _getingData
+                    ? null
+                    : () {
+                        dataModels.clear();
+                        PublicFunctions.getProductList();
+                        setState(() {
+                          _getingData = true;
+                        });
+                        gettingDataTimer =
+                            Timer(const Duration(seconds: 60), () {
+                          setState(() {
+                            _getingData = false; // 1分钟后将状态重置
+                          });
+                        });
+                      },
+              ),
+              const SizedBox(width: regularPadding),
+              CustomGeneralButton(
+                text: buttonTexts[1],
+                maxWidth: buttonMaxWidths[1],
+                onPressed: () {
+                  if (isSendDb) {
+                    return showErrorDialog(
+                        context, localizedStrings.gTipSavingData);
+                  }
+                  _showSaveDatabaseDialog(context);
+                },
+              ),
+              const SizedBox(width: regularPadding),
+              CustomGeneralButton(
+                text: buttonTexts[2],
+                maxWidth: buttonMaxWidths[2],
+                onPressed: () {
+                  performImport();
+                },
+              ),
+              const SizedBox(width: regularPadding),
+              CustomGeneralButton(
+                text: buttonTexts[3],
+                maxWidth: buttonMaxWidths[3],
+                onPressed: () async {
+                  List<PluData> selectedPluInfos = [];
+                  if (dataModels.isEmpty) {
+                    return showErrorDialog(
+                        context, localizedStrings.gTipNoData);
+                  }
+                  bool selectRow = false;
+                  for (var dessert in dataModels) {
+                    if (dessert.isSelected) {
+                      selectedPluInfos.add(dessert.pluData);
+                      selectRow = true;
+                    }
+                  }
+                  if (!selectRow) {
+                    isSendDb = false;
+                    return showErrorDialog(
+                        context, localizedStrings.gTipNoDataSelected);
+                  }
+
+                  String msg = await writeDessertsToExcel(selectedPluInfos);
+
+                  showTipInfo(msg, context);
+                },
+              ),
+              const SizedBox(width: regularPadding),
+              CustomGeneralButton(
+                text: buttonTexts[4],
+                maxWidth: buttonMaxWidths[4],
+                onPressed: () async {
+                  String msg = await performExportTemplate();
+                  showErrorDialog(context, msg);
+                },
+              ),
+            ],
+          );
+        },
+      ),
     );
-  }
-
-//确定下发类型：全部下发，增量下发
-  void _showDownloadTypeDialog(BuildContext context, String filePath) {
-    showDialog(
-      context: context,
-      builder: (BuildContext ctx) {
-        return AlertDialog(
-          title: Text(
-            localizedStrings.gTitleConfirm,
-            style: TextStyle(color: Theme.of(context).colorScheme.primary),
-          ),
-          content: SizedBox(
-              width: 400,
-              height: 100,
-              child: Column(
-                children: [
-                  StatefulBuilder(builder: (context, StateSetter setState) {
-                    return Column(
-                      children: [
-                        SizedBox(
-                          width: 400,
-                          child: RadioListTile(
-                            title: Text(localizedStrings.gTipDownloadAllPlu),
-                            value: '1',
-                            groupValue: _downloadType,
-                            onChanged: (value) {
-                              setState(() {
-                                _downloadType = value.toString();
-                              });
-                            },
-                          ),
-                        ),
-                        SizedBox(
-                          width: 400,
-                          child: RadioListTile(
-                            title: Text(localizedStrings.gTipUpdatePlu),
-                            value: '2',
-                            groupValue: _downloadType,
-                            onChanged: (value) {
-                              setState(() {
-                                _downloadType = value.toString();
-                              });
-                            },
-                          ),
-                        ),
-                      ],
-                    );
-                  }),
-                ],
-              )),
-          actions: <Widget>[
-            Row(
-              children: [
-                CustomElevatedButton(
-                  btnWidth: 120,
-                  btnHeight: 40,
-                  icon: Icons.check_circle,
-                  text: localizedStrings.gTitleConfirm,
-                  onPressed: () {
-                    Navigator.of(ctx).pop(false);
-                    selectDownloadType(_downloadType, filePath);
-                  },
-                ),
-                SizedBox(
-                  width: 20,
-                ),
-                CustomOutlinedButton(
-                  btnWidth: 120,
-                  btnHeight: 40,
-                  icon: Icons.cancel,
-                  text: localizedStrings.gBtnCancel,
-                  onPressed: () {
-                    Navigator.of(ctx).pop(false);
-                  },
-                ),
-              ],
-            )
-          ],
-        );
-      },
-    );
-  }
-
-  void selectDownloadType(String type, String filePath) {
-    if (type == '1') {
-      String sendJson = getSendMsg(1, filePath);
-      showSelScaleDialog(1, sendJson);
-    } else {
-      String sendJson = getSendMsg(2, filePath);
-      showSelScaleDialog(1, sendJson);
-    }
-  }
-
-  void showSelScaleDialog(int funcNo, String msg) {
-    showDialog(
-      context: context,
-      barrierDismissible: false, // 允许点击空白处关闭对话框
-      builder: (context) {
-        return SelectScalesPage(
-          funcNo: funcNo,
-          sendMsgStr: msg,
-        );
-      },
-    );
-  }
-
-  String getSendMsg(int type, String fmtPath) {
-    if (type == 1) {
-      myScaleCmd.cmdMode = "down_plu_to_scale";
-    } else {
-      myScaleCmd.cmdMode = "insert_plu_to_scale";
-    }
-
-    myDownLoadPluFile.scaleModel = 'TMax';
-    myDownLoadPluFile.filePath = fmtPath;
-    myDownLoadPluFile.nameMaxLen = 30;
-    myScaleCmd.cmdData = json.encode(myDownLoadPluFile);
-    return jsonEncode(myScaleCmd);
-  }
-
-//下发全部PLU
-  void sendAllData(String saveType) {
-    if (_pluInfoDataSource.pluInfoList.isEmpty) {
-      isSendDb = false;
-      return showErrorDialog(context, localizedStrings.gTipNoData);
-    }
-    bool selectRow = false;
-    for (var dessert in _pluInfoDataSource.pluInfoList) {
-      if (dessert.selected) {
-        selectRow = true;
-        break;
-      }
-    }
-    if (!selectRow) {
-      isSendDb = false;
-      return showErrorDialog(context, localizedStrings.gTipNoDataSelected);
-    }
-    String msg = checkImportData(_pluInfoDataSource.pluInfoList);
-    if (msg != "") {
-      isSendDb = false;
-      return showErrorDialog(context, msg);
-    }
-    if (saveType == "1") {
-      PublicFunctions.delAllProduct();
-      //全部下发，先清除
-    }
-    sendDataToSrv(saveType);
-  }
-
-  void sendDataToSrv(String saveType) {
-    List<PluInfoList> pluList = [];
-    for (var info in _pluInfoDataSource.pluInfoList) {
-      if (info.selected) {
-        pluList.add(PluInfoList(
-            recId: 0,
-            plu: info.plu.toString(),
-            productCode: info.productCode.toString(),
-            itemCode: info.itemCode.toString(),
-            category: info.category == null ? '-' : info.category!,
-            productName: info.productName!,
-            generalUnit: info.generalUnit.toString(),
-            taxType: info.taxType.toString(),
-            price: info.price.toString(),
-            unitWeight: info.unitWeight.toString(),
-            pretare: info.pretare.toString(),
-            limitHigh: info.limitHigh.toString(),
-            limitLow: info.limitLow.toString(),
-            creatAt: ''));
-      }
-    }
-    sendPluListInBatches(pluList, saveType);
-  }
-
-  void sendPluListInBatches(List<PluInfoList> pluList, String saveType) {
-    const batchSize = 100;
-    int totalItems = pluList.length;
-
-    // 创建一个定时器的流控制器
-    final StreamController<Timer> timerController = StreamController<Timer>();
-
-    // 创建一个定时器，每隔4秒向流中添加一个新的定时器实例
-    var timer = Timer.periodic(const Duration(milliseconds: 50), (Timer t) {
-      timerController.add(t);
-    });
-
-    // 创建一个索引，用于跟踪当前发送到哪个批次了
-    int currentIndex = 0;
-
-    // 监听定时器流，当有新的定时器实例时，发送下一批数据
-    timerController.stream.listen((Timer timer) {
-      if (currentIndex < totalItems) {
-        int endIndex = currentIndex + batchSize;
-        endIndex = endIndex < totalItems ? endIndex : totalItems;
-        List<PluInfoList> batch = pluList.sublist(currentIndex, endIndex);
-        String jsonData = jsonEncode(batch);
-        if (saveType == "1") {
-          PublicFunctions.addProduct(jsonData);
-        } else {
-          PublicFunctions.modifyProduct(jsonData);
-        }
-
-        currentIndex += batchSize;
-      } else {
-        // 所有数据发送完毕，关闭定时器流控制器
-        timerController.close();
-        timer.cancel();
-        eventBus.fire(EventPLuDataSavedOK(''));
-      }
-    });
-  }
-
-  Future<List<String>> _showMultiSelectDialog(BuildContext content) async {
-    List<String>? result = await showDialog<List<String>>(
-      context: context,
-      builder: (BuildContext context) {
-        return MultiSelectDialog(
-          options: colNamesMap,
-          context: context,
-        );
-      },
-    );
-    return result ?? [];
-  }
-
-  String checkImportData(List<PluData> dataSource) {
-    for (var dataRow in dataSource) {
-      if (!dataRow.selected) {
-        continue;
-      }
-
-      // 检查PLU相关条件
-      if (dataRow.plu == null) {
-        return '${localizedStrings.gPluPlu}  null. ${localizedStrings.gPluPluName} : ${dataRow.productName}';
-      }
-      if (dataRow.plu == 0) {
-        return '${localizedStrings.gPluPlu} : 1-99999. ${localizedStrings.gPluPluName} : ${dataRow.productName}';
-      }
-
-      // 检查Product Name相关条件
-      if (dataRow.productName == null) {
-        return '${localizedStrings.gPluPluName} null. ${localizedStrings.gPluPlu} : ${dataRow.plu}';
-      }
-      if (dataRow.productName == '') {
-        return "${localizedStrings.gPluPluName}   . ${localizedStrings.gPluPlu} : ${dataRow.plu}";
-      }
-
-      // 检查是否有PLU值重复的情况
-      List<int?> pluValues = dataSource.map((row) => row.plu).toList();
-      int pluCount = pluValues.where((plu) => plu == dataRow.plu).length;
-      if (pluCount > 1) {
-        return '${localizedStrings.gPluPlu} ${localizedStrings.gTipPluDuplicated}.  ${localizedStrings.gPluPlu}: ${dataRow.plu}';
-      }
-    }
-    return '';
-  }
-
-  Future<String> pickFiles() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      // initialDirectory: directory,
-      allowMultiple: false,
-      type: FileType.custom,
-      allowedExtensions: ['xlsx'],
-    );
-    String filePath = '';
-    if (result != null) {
-      filePath = result.files.single.path!;
-    }
-
-    return filePath;
   }
 
   Future<String> performExportTemplate() async {
@@ -1206,84 +526,68 @@ class PluEidtPageState extends State<PluEidtPage> {
       final excel = Excel.createExcel();
       final sheet = excel['Sheet1'];
 
+      List<String> selectedColumns = [];
+      for (var element in _columnVisibility.keys) {
+        if (_columnVisibility[element] == true) {
+          selectedColumns.add(element);
+        }
+      }
+
       // 写入表头
       sheet.appendRow([
-        if (_pluInfoDataSource.selectedColumns.contains('plu'))
-          TextCellValue('PLU'),
-        if (_pluInfoDataSource.selectedColumns.contains('productCode'))
+        if (selectedColumns.contains('plu')) TextCellValue('PLU'),
+        if (selectedColumns.contains('productCode'))
           TextCellValue('ProductCode'),
-        if (_pluInfoDataSource.selectedColumns.contains('itemCode'))
-          TextCellValue('ItemCode'),
-        if (_pluInfoDataSource.selectedColumns.contains('productName'))
+        if (selectedColumns.contains('itemCode')) TextCellValue('ItemCode'),
+        if (selectedColumns.contains('productName'))
           TextCellValue('ProductName'),
-        if (_pluInfoDataSource.selectedColumns.contains('generalUnit'))
+        if (selectedColumns.contains('generalUnit'))
           TextCellValue('GeneralUnit'),
-        if (_pluInfoDataSource.selectedColumns.contains('taxType'))
-          TextCellValue('TaxType'),
-        if (_pluInfoDataSource.selectedColumns.contains('price'))
-          TextCellValue('Price'),
-        if (_pluInfoDataSource.selectedColumns.contains('unitWeight'))
-          TextCellValue('UnitWeight'),
-        if (_pluInfoDataSource.selectedColumns.contains('pretare'))
-          TextCellValue('PreTare'),
-        if (_pluInfoDataSource.selectedColumns.contains('limitHigh'))
-          TextCellValue('LimitHigh'),
-        if (_pluInfoDataSource.selectedColumns.contains('limitLow'))
-          TextCellValue('LimitLow'),
+        if (selectedColumns.contains('taxType')) TextCellValue('TaxType'),
+        if (selectedColumns.contains('price')) TextCellValue('Price'),
+        if (selectedColumns.contains('unitWeight')) TextCellValue('UnitWeight'),
+        if (selectedColumns.contains('pretare')) TextCellValue('PreTare'),
+        if (selectedColumns.contains('limitHigh')) TextCellValue('LimitHigh'),
+        if (selectedColumns.contains('limitLow')) TextCellValue('LimitLow'),
       ]);
 
       // 写入数据行
 
       sheet.appendRow([
-        if (_pluInfoDataSource.selectedColumns.contains('plu'))
-          TextCellValue("1"),
-        if (_pluInfoDataSource.selectedColumns.contains('productCode'))
-          TextCellValue('1'),
-        if (_pluInfoDataSource.selectedColumns.contains('itemCode'))
-          TextCellValue('1'),
-        if (_pluInfoDataSource.selectedColumns.contains('productName'))
-          TextCellValue('Apple'),
-        if (_pluInfoDataSource.selectedColumns.contains('generalUnit'))
-          TextCellValue('1'),
-        if (_pluInfoDataSource.selectedColumns.contains('taxType'))
-          TextCellValue('1'),
-        if (_pluInfoDataSource.selectedColumns.contains('price'))
-          TextCellValue('8.88'),
-        if (_pluInfoDataSource.selectedColumns.contains('unitWeight'))
-          TextCellValue('8'),
-        if (_pluInfoDataSource.selectedColumns.contains('pretare'))
-          TextCellValue('0.88'),
-        if (_pluInfoDataSource.selectedColumns.contains('limitHigh'))
-          TextCellValue('10'),
-        if (_pluInfoDataSource.selectedColumns.contains('limitLow'))
-          TextCellValue('2'),
+        if (selectedColumns.contains('plu')) TextCellValue("1"),
+        if (selectedColumns.contains('productCode')) TextCellValue('1'),
+        if (selectedColumns.contains('itemCode')) TextCellValue('1'),
+        if (selectedColumns.contains('productName')) TextCellValue('Apple'),
+        if (selectedColumns.contains('generalUnit')) TextCellValue('1'),
+        if (selectedColumns.contains('taxType')) TextCellValue('1'),
+        if (selectedColumns.contains('price')) TextCellValue('8.88'),
+        if (selectedColumns.contains('unitWeight')) TextCellValue('8'),
+        if (selectedColumns.contains('pretare')) TextCellValue('0.88'),
+        if (selectedColumns.contains('limitHigh')) TextCellValue('10'),
+        if (selectedColumns.contains('limitLow')) TextCellValue('2'),
       ]);
 
       sheet.appendRow([
-        if (_pluInfoDataSource.selectedColumns.contains('plu'))
-          TextCellValue("1-99999"),
-        if (_pluInfoDataSource.selectedColumns.contains('productCode'))
+        if (selectedColumns.contains('plu')) TextCellValue("1-99999"),
+        if (selectedColumns.contains('productCode'))
           TextCellValue('Not in use yet'),
-        if (_pluInfoDataSource.selectedColumns.contains('itemCode'))
+        if (selectedColumns.contains('itemCode'))
           TextCellValue('Not in use yet'),
-        if (_pluInfoDataSource.selectedColumns.contains('productName'))
+        if (selectedColumns.contains('productName'))
           TextCellValue(
               'The length is 30. Characters need scale support for display and only printer support for printing.'),
-        if (_pluInfoDataSource.selectedColumns.contains('generalUnit'))
+        if (selectedColumns.contains('generalUnit'))
           TextCellValue(
               '''weighing scale: 0-g 1-kg 2-lb 3-oz 4-lboz 5-tj 6-hj 7-t\r\nprice scale: 0-kg  1-100g  2-pcs'''),
-        if (_pluInfoDataSource.selectedColumns.contains('taxType'))
+        if (selectedColumns.contains('taxType'))
           TextCellValue('0-tax1 1-tax2  2-tax3'),
-        if (_pluInfoDataSource.selectedColumns.contains('price'))
-          TextCellValue('unit Price'),
-        if (_pluInfoDataSource.selectedColumns.contains('unitWeight'))
-          TextCellValue('Unit: g'),
-        if (_pluInfoDataSource.selectedColumns.contains('pretare'))
-          TextCellValue('Unit: Kg'),
-        if (_pluInfoDataSource.selectedColumns.contains('limitHigh'))
+        if (selectedColumns.contains('price')) TextCellValue('unit Price'),
+        if (selectedColumns.contains('unitWeight')) TextCellValue('Unit: g'),
+        if (selectedColumns.contains('pretare')) TextCellValue('Unit: Kg'),
+        if (selectedColumns.contains('limitHigh'))
           TextCellValue(
               'With unit weight, upper & lower limit units are pcs and must be integers; without, they are the same as GeneralUnit.'),
-        if (_pluInfoDataSource.selectedColumns.contains('limitLow'))
+        if (selectedColumns.contains('limitLow'))
           TextCellValue(
               'With unit weight, upper & lower limit units are pcs and must be integers; without, they are the same as GeneralUnit.'),
       ]);
@@ -1305,11 +609,101 @@ class PluEidtPageState extends State<PluEidtPage> {
     }
   }
 
+  Future<String> writeDessertsToExcel(List<PluData> desserts) async {
+    try {
+      final excel = Excel.createExcel();
+      final sheet = excel['Sheet1'];
+      List<String> selectedColumns = [];
+      for (var element in _columnVisibility.keys) {
+        if (_columnVisibility[element] == true) {
+          selectedColumns.add(element);
+        }
+      }
+
+      // 写入表头
+      sheet.appendRow([
+        if (selectedColumns.contains('plu')) TextCellValue('PLU'),
+        if (selectedColumns.contains('productCode'))
+          TextCellValue('ProductCode'),
+        if (selectedColumns.contains('itemCode')) TextCellValue('ItemCode'),
+        if (selectedColumns.contains('productName'))
+          TextCellValue('ProductName'),
+        if (selectedColumns.contains('generalUnit'))
+          TextCellValue('GeneralUnit'),
+        if (selectedColumns.contains('taxType')) TextCellValue('TaxType'),
+        if (selectedColumns.contains('price')) TextCellValue('Price'),
+        if (selectedColumns.contains('unitWeight')) TextCellValue('UnitWeight'),
+        if (selectedColumns.contains('pretare')) TextCellValue('PreTare'),
+        if (selectedColumns.contains('limitHigh')) TextCellValue('LimitHigh'),
+        if (selectedColumns.contains('limitLow')) TextCellValue('LimitLow'),
+      ]);
+
+      // 写入数据行
+      for (var dessert in desserts) {
+        sheet.appendRow([
+          if (selectedColumns.contains('plu'))
+            TextCellValue(dessert.plu?.toString() ?? ''),
+          if (selectedColumns.contains('productCode'))
+            TextCellValue(dessert.productCode?.toString() ?? ''),
+          if (selectedColumns.contains('itemCode'))
+            TextCellValue(dessert.itemCode?.toString() ?? ''),
+          if (selectedColumns.contains('productName'))
+            TextCellValue(dessert.productName ?? ''),
+          if (selectedColumns.contains('generalUnit'))
+            TextCellValue(dessert.generalUnit?.toString() ?? ''),
+          if (selectedColumns.contains('taxType'))
+            TextCellValue(dessert.taxType?.toString() ?? ''),
+          if (selectedColumns.contains('price'))
+            TextCellValue(dessert.price?.toString() ?? ''),
+          if (selectedColumns.contains('unitWeight'))
+            TextCellValue(dessert.unitWeight?.toString() ?? ''),
+          if (selectedColumns.contains('pretare'))
+            TextCellValue(dessert.pretare?.toString() ?? ''),
+          if (selectedColumns.contains('limitHigh'))
+            TextCellValue(dessert.limitHigh?.toString() ?? ''),
+          if (selectedColumns.contains('limitLow'))
+            TextCellValue(dessert.limitLow?.toString() ?? ''),
+        ]);
+      }
+
+      // 让用户选择文件夹
+
+      final result = await FilePicker.platform.getDirectoryPath();
+      if (result != null) {
+        final filePath = path.join(result, 'ProductList.xlsx');
+        final file = File(filePath);
+
+        // 将Excel数据保存到文件
+        await file.writeAsBytes(excel.save()!);
+        return ('OK,${localizedStrings.gTipSaveSuccess} $filePath');
+      } else {
+        return (localizedStrings.gTipFolderNoSelected);
+      }
+    } catch (e) {
+      return ('${localizedStrings.gTipSaveFail} $e');
+    }
+  }
+
   Future<void> performImport() async {
     String msg = await handleImportExcel();
     if (context.mounted && msg.isNotEmpty) {
       showErrorDialog(context, msg);
     }
+  }
+
+  Future<String> pickFiles() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      // initialDirectory: directory,
+      allowMultiple: false,
+      type: FileType.custom,
+      allowedExtensions: ['xlsx'],
+    );
+    String filePath = '';
+    if (result != null) {
+      filePath = result.files.single.path!;
+    }
+
+    return filePath;
   }
 
   Future<String> handleImportExcel() async {
@@ -1318,13 +712,13 @@ class PluEidtPageState extends State<PluEidtPage> {
       return "";
     }
     await importDataFromXlsx(filePath);
-    if (_pluInfoDataSource.pluInfoList.isEmpty) {
+    if (dataModels.isEmpty) {
       return localizedStrings.gTipNoData;
     }
 
-    // setState(() {
-    //   _dessertsDataSource.updateSelectedDesserts(_dessertSelections);
-    // });
+    setState(() {
+      _onDataChanged();
+    });
 
     return localizedStrings.gTipImportPluOK;
   }
@@ -1332,7 +726,7 @@ class PluEidtPageState extends State<PluEidtPage> {
   Future<void> importDataFromXlsx(String filePath) async {
     // 读取Excel文件
     Excel? excel = Excel.decodeBytes(await File(filePath).readAsBytes());
-    _pluInfoDataSource.pluInfoList = [];
+    dataModels = [];
     if (excel.tables.isEmpty) {
       return; //要弹框提示
     }
@@ -1414,8 +808,9 @@ class PluEidtPageState extends State<PluEidtPage> {
               : 0.0,
           rowData.containsKey('creatAt') ? rowData['creatAt'].toString() : '',
         );
+        PluDataModel pluDataModel = PluDataModel(pluData: dessert);
 
-        _pluInfoDataSource.pluInfoList.add(dessert);
+        dataModels.add(pluDataModel);
       }
     }
 
@@ -1427,84 +822,595 @@ class PluEidtPageState extends State<PluEidtPage> {
     return (num * multiplier).round() / multiplier;
   }
 
-  Future<String> writeDessertsToExcel(List<PluData> desserts) async {
-    try {
-      final excel = Excel.createExcel();
-      final sheet = excel['Sheet1'];
+  //保存到数据库的类型：全部下发，增量下发
+  // 保存到数据库对话框，选择保存类型
+  void _showSaveDatabaseDialog(BuildContext context) {
+    String localSaveType = _saveType; // 临时变量用于管理对话框内的状态
 
-      // 写入表头
-      sheet.appendRow([
-        if (_pluInfoDataSource.selectedColumns.contains('plu'))
-          TextCellValue('PLU'),
-        if (_pluInfoDataSource.selectedColumns.contains('productCode'))
-          TextCellValue('ProductCode'),
-        if (_pluInfoDataSource.selectedColumns.contains('itemCode'))
-          TextCellValue('ItemCode'),
-        if (_pluInfoDataSource.selectedColumns.contains('productName'))
-          TextCellValue('ProductName'),
-        if (_pluInfoDataSource.selectedColumns.contains('generalUnit'))
-          TextCellValue('GeneralUnit'),
-        if (_pluInfoDataSource.selectedColumns.contains('taxType'))
-          TextCellValue('TaxType'),
-        if (_pluInfoDataSource.selectedColumns.contains('price'))
-          TextCellValue('Price'),
-        if (_pluInfoDataSource.selectedColumns.contains('unitWeight'))
-          TextCellValue('UnitWeight'),
-        if (_pluInfoDataSource.selectedColumns.contains('pretare'))
-          TextCellValue('PreTare'),
-        if (_pluInfoDataSource.selectedColumns.contains('limitHigh'))
-          TextCellValue('LimitHigh'),
-        if (_pluInfoDataSource.selectedColumns.contains('limitLow'))
-          TextCellValue('LimitLow'),
-      ]);
+    showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Dialog(
+              backgroundColor: Colors.transparent,
+              child: Container(
+                width: 500,
+                height: 300,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  borderRadius: BorderRadius.circular(0),
+                ),
+                child: Column(
+                  children: [
+                    // 头部
+                    ...dialogHeadStyle(
+                        context, localizedStrings.gTitleConfirm, false),
 
-      // 写入数据行
-      for (var dessert in desserts) {
-        sheet.appendRow([
-          if (_pluInfoDataSource.selectedColumns.contains('plu'))
-            TextCellValue(dessert.plu?.toString() ?? ''),
-          if (_pluInfoDataSource.selectedColumns.contains('productCode'))
-            TextCellValue(dessert.productCode?.toString() ?? ''),
-          if (_pluInfoDataSource.selectedColumns.contains('itemCode'))
-            TextCellValue(dessert.itemCode?.toString() ?? ''),
-          if (_pluInfoDataSource.selectedColumns.contains('productName'))
-            TextCellValue(dessert.productName ?? ''),
-          if (_pluInfoDataSource.selectedColumns.contains('generalUnit'))
-            TextCellValue(dessert.generalUnit?.toString() ?? ''),
-          if (_pluInfoDataSource.selectedColumns.contains('taxType'))
-            TextCellValue(dessert.taxType?.toString() ?? ''),
-          if (_pluInfoDataSource.selectedColumns.contains('price'))
-            TextCellValue(dessert.price?.toString() ?? ''),
-          if (_pluInfoDataSource.selectedColumns.contains('unitWeight'))
-            TextCellValue(dessert.unitWeight?.toString() ?? ''),
-          if (_pluInfoDataSource.selectedColumns.contains('pretare'))
-            TextCellValue(dessert.pretare?.toString() ?? ''),
-          if (_pluInfoDataSource.selectedColumns.contains('limitHigh'))
-            TextCellValue(dessert.limitHigh?.toString() ?? ''),
-          if (_pluInfoDataSource.selectedColumns.contains('limitLow'))
-            TextCellValue(dessert.limitLow?.toString() ?? ''),
-        ]);
+                    // 中部
+                    Expanded(
+                      child: Container(
+                        padding: EdgeInsets.all(20),
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              width: 400,
+                              child: RadioListTile(
+                                title: Text(
+                                  localizedStrings.gTipDownloadAllPlu,
+                                  style: getTextStyle(),
+                                ),
+                                value: '1',
+                                groupValue: localSaveType,
+                                onChanged: (value) {
+                                  setState(() {
+                                    localSaveType = '1';
+                                  });
+                                },
+                              ),
+                            ),
+                            SizedBox(
+                              width: 400,
+                              child: RadioListTile(
+                                title: Text(
+                                  localizedStrings.gTipUpdatePlu,
+                                  style: getTextStyle(),
+                                ),
+                                value: '2',
+                                groupValue: localSaveType,
+                                onChanged: (value) {
+                                  setState(() {
+                                    localSaveType = '2';
+                                  });
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    // 底部
+                    Container(
+                      height: 96,
+                      width: 400,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor:
+                                    Theme.of(context).colorScheme.onPrimary,
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.primary,
+                                fixedSize: const Size(double.infinity, 48),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.zero,
+                                ),
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _saveType = localSaveType; // 更新外部状态
+                                });
+                                Navigator.of(ctx).pop(false);
+                                setState(() {
+                                  isSendDb = true;
+                                });
+                                sendAllData(_saveType);
+                              },
+                              child: Text(
+                                localizedStrings.gTitleConfirm,
+                                style: getTextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 20),
+                          Expanded(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant,
+                                backgroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainerHighest,
+                                fixedSize: const Size(double.infinity, 48),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.zero,
+                                ),
+                              ),
+                              onPressed: () {
+                                Navigator.of(ctx).pop(false);
+                              },
+                              child: Text(
+                                localizedStrings.gBtnCancel,
+                                style: getTextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  String checkImportData(List<PluDataModel> dataSource) {
+    for (var dataRow in dataSource) {
+      if (!dataRow.isSelected) {
+        continue;
       }
 
-      // 让用户选择文件夹
+      // 检查PLU相关条件
+      if (dataRow.pluData.plu == null) {
+        return '${localizedStrings.gPluPlu}  null. ${localizedStrings.gPluPluName} : ${dataRow..pluData.productName}';
+      }
+      if (dataRow.pluData.plu == 0) {
+        return '${localizedStrings.gPluPlu} : 1-99999. ${localizedStrings.gPluPluName} : ${dataRow..pluData.productName}';
+      }
 
-      final result = await FilePicker.platform.getDirectoryPath();
-      if (result != null) {
-        final filePath = path.join(result, 'ProductList.xlsx');
-        final file = File(filePath);
+      // 检查Product Name相关条件
+      if (dataRow.pluData.productName == null) {
+        return '${localizedStrings.gPluPluName} null. ${localizedStrings.gPluPlu} : ${dataRow.pluData.plu}';
+      }
+      if (dataRow.pluData.productName == '') {
+        return "${localizedStrings.gPluPluName}   . ${localizedStrings.gPluPlu} : ${dataRow.pluData.plu}";
+      }
 
-        // 将Excel数据保存到文件
-        await file.writeAsBytes(excel.save()!);
-        return ('OK,${localizedStrings.gTipSaveSuccess} $filePath');
+      // 检查是否有PLU值重复的情况
+      List<int?> pluValues = dataSource.map((row) => row.pluData.plu).toList();
+      int pluCount =
+          pluValues.where((plu) => plu == dataRow.pluData.plu).length;
+      if (pluCount > 1) {
+        return '${localizedStrings.gPluPlu} ${localizedStrings.gTipPluDuplicated}.  ${localizedStrings.gPluPlu}: ${dataRow.pluData.plu}';
+      }
+    }
+    return '';
+  }
+
+  //下发全部PLU
+  void sendAllData(String saveType) {
+    if (dataModels.isEmpty) {
+      isSendDb = false;
+      return showErrorDialog(context, localizedStrings.gTipNoData);
+    }
+    bool selectRow = false;
+    for (var dessert in dataModels) {
+      if (dessert.isSelected) {
+        selectRow = true;
+        break;
+      }
+    }
+    if (!selectRow) {
+      isSendDb = false;
+      return showErrorDialog(context, localizedStrings.gTipNoDataSelected);
+    }
+    String msg = checkImportData(dataModels);
+    if (msg != "") {
+      isSendDb = false;
+      return showErrorDialog(context, msg);
+    }
+    if (saveType == "1") {
+      PublicFunctions.delAllProduct();
+      //全部下发，先清除
+    }
+    sendDataToSrv(saveType);
+  }
+
+  void sendDataToSrv(String saveType) {
+    List<PluInfoList> pluList = [];
+    for (var info in dataModels) {
+      if (info.isSelected) {
+        pluList.add(PluInfoList(
+            recId: 0,
+            plu: info.pluData.plu.toString(),
+            productCode: info.pluData.productCode.toString(),
+            itemCode: info.pluData.itemCode.toString(),
+            category:
+                info.pluData.category == null ? '-' : info.pluData.category!,
+            productName: info.pluData.productName!,
+            generalUnit: info.pluData.generalUnit.toString(),
+            taxType: info.pluData.taxType.toString(),
+            price: info.pluData.price.toString(),
+            unitWeight: info.pluData.unitWeight.toString(),
+            pretare: info.pluData.pretare.toString(),
+            limitHigh: info.pluData.limitHigh.toString(),
+            limitLow: info.pluData.limitLow.toString(),
+            creatAt: ''));
+      }
+    }
+    sendPluListInBatches(pluList, saveType);
+  }
+
+  void sendPluListInBatches(List<PluInfoList> pluList, String saveType) {
+    const batchSize = 100;
+    int totalItems = pluList.length;
+
+    // 创建一个定时器的流控制器
+    final StreamController<Timer> timerController = StreamController<Timer>();
+
+    // 创建一个定时器，每隔4秒向流中添加一个新的定时器实例
+    var timer = Timer.periodic(const Duration(milliseconds: 50), (Timer t) {
+      timerController.add(t);
+    });
+
+    // 创建一个索引，用于跟踪当前发送到哪个批次了
+    int currentIndex = 0;
+
+    // 监听定时器流，当有新的定时器实例时，发送下一批数据
+    timerController.stream.listen((Timer timer) {
+      if (currentIndex < totalItems) {
+        int endIndex = currentIndex + batchSize;
+        endIndex = endIndex < totalItems ? endIndex : totalItems;
+        List<PluInfoList> batch = pluList.sublist(currentIndex, endIndex);
+        String jsonData = jsonEncode(batch);
+        if (saveType == "1") {
+          PublicFunctions.addProduct(jsonData);
+        } else {
+          PublicFunctions.modifyProduct(jsonData);
+        }
+
+        currentIndex += batchSize;
       } else {
-        return (localizedStrings.gTipFolderNoSelected);
+        // 所有数据发送完毕，关闭定时器流控制器
+        timerController.close();
+        timer.cancel();
+        eventBus.fire(EventPLuDataSavedOK(''));
       }
-    } catch (e) {
-      return ('${localizedStrings.gTipSaveFail} $e');
+    });
+  }
+
+  void showAddRawInfoDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 点击对话框外部不关闭对话框
+      builder: (BuildContext context) {
+        return AddPluInfoDialog(
+            type: 0,
+            pluInfo: PluData(
+              0,
+              0,
+              0,
+              0,
+              '0',
+              '0',
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              '0',
+            ),
+            onSave: (PluData pluData) {
+              setState(() {
+                dataModels.add(PluDataModel(pluData: pluData));
+                _onDataChanged();
+              });
+            });
+      },
+    );
+  }
+
+  Widget showIconBtnList() {
+    return Row(
+      children: [
+        showIconBtn(
+          '',
+          Icons.add,
+          colorScheme.primary,
+          () {
+            showAddRawInfoDialog();
+          },
+        ),
+        SizedBox(
+          width: regularPadding,
+        ),
+        showIconBtn('', Icons.settings, colorScheme.primary, () async {
+          _showMultiSelectDialog(context);
+        }),
+        SizedBox(
+          width: regularPadding,
+        ),
+        showIconBtn('', Icons.download, colorScheme.onTertiaryFixedVariant,
+            () async {
+          List<PluDataModel> selectedPluInfos = [];
+          if (dataModels.isEmpty) {
+            return showErrorDialog(context, localizedStrings.gTipNoData);
+          }
+          bool selectRow = false;
+          for (var dessert in dataModels) {
+            if (dessert.isSelected) {
+              selectedPluInfos.add(dessert);
+              selectRow = true;
+            }
+          }
+          if (!selectRow) {
+            isSendDb = false;
+            return showErrorDialog(
+                context, localizedStrings.gTipNoDataSelected);
+          }
+          String msg = checkImportData(selectedPluInfos);
+          if (msg != "") {
+            isSendDb = false;
+            return showErrorDialog(context, msg);
+          }
+
+          String msgStr = await downloadFormExcel(selectedPluInfos);
+          if (!msgStr.contains("OK")) {
+            showTipInfo(msgStr, context);
+            return;
+          }
+          List<String> splitted = msgStr.split(',');
+          if (splitted.length != 2) {
+            return;
+          }
+          if (mounted) {
+            _showDownloadTypeDialog(context, splitted[1]);
+          }
+        }),
+        SizedBox(
+          width: regularPadding,
+        ),
+        showIconBtn('', Icons.delete_forever_outlined, colorScheme.error, () {
+          _deleteSelectedItems();
+        }),
+      ],
+    );
+  }
+
+  _showMultiSelectDialog(BuildContext content) {
+    Map<String, FieldNameStatus> colNamesMap = {};
+    for (var item in _columnVisibility.entries) {
+      colNamesMap[item.key] =
+          FieldNameStatus(getColumnName(item.key), item.value);
+    }
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return MultiSelectDialog(
+          options: colNamesMap,
+          context: context,
+        );
+      },
+    ).then((value) {
+      if (value != null) {
+        List<String> selectedOptions = value;
+        for (var item in _columnVisibility.entries) {
+          if (selectedOptions.contains(item.key)) {
+            _columnVisibility[item.key] = true;
+          } else {
+            _columnVisibility[item.key] = false;
+          }
+        }
+        setState(() {
+          _onDataChanged();
+        });
+      }
+    });
+  }
+
+  //确定下发类型：全部下发，增量下发
+  void _showDownloadTypeDialog(BuildContext context, String filePath) {
+    String localDownloadType = _downloadType; // 临时变量用于管理对话框内的状态
+
+    showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Dialog(
+              backgroundColor: Colors.transparent,
+              child: Container(
+                width: 500,
+                height: 300,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  borderRadius: BorderRadius.circular(0),
+                ),
+                child: Column(
+                  children: [
+                    // 头部
+                    ...dialogHeadStyle(
+                        context, localizedStrings.gTitleConfirm, false),
+
+                    // 中部
+                    Expanded(
+                      child: Container(
+                        padding: EdgeInsets.all(20),
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              width: 400,
+                              child: RadioListTile(
+                                title: Text(
+                                  localizedStrings.gTipDownloadAllPlu,
+                                  style: getTextStyle(),
+                                ),
+                                value: '1',
+                                groupValue: localDownloadType,
+                                onChanged: (value) {
+                                  setState(() {
+                                    localDownloadType = '1';
+                                  });
+                                },
+                              ),
+                            ),
+                            SizedBox(
+                              width: 400,
+                              child: RadioListTile(
+                                title: Text(
+                                  localizedStrings.gTipUpdatePlu,
+                                  style: getTextStyle(),
+                                ),
+                                value: '2',
+                                groupValue: localDownloadType,
+                                onChanged: (value) {
+                                  setState(() {
+                                    localDownloadType = '2';
+                                  });
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    // 底部
+                    Container(
+                      height: 96,
+                      width: 400,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor:
+                                    Theme.of(context).colorScheme.onPrimary,
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.primary,
+                                fixedSize: const Size(double.infinity, 48),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.zero,
+                                ),
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _downloadType = localDownloadType; // 更新外部状态
+                                });
+                                Navigator.of(ctx).pop(false);
+                                selectDownloadType(_downloadType, filePath);
+                              },
+                              child: Text(
+                                localizedStrings.gBtnConfirm,
+                                style: getTextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 20),
+                          Expanded(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant,
+                                backgroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainerHighest,
+                                fixedSize: const Size(double.infinity, 48),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.zero,
+                                ),
+                              ),
+                              onPressed: () {
+                                Navigator.of(ctx).pop(false);
+                              },
+                              child: Text(
+                                localizedStrings.gBtnCancel,
+                                style: getTextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void selectDownloadType(String type, String filePath) {
+    if (type == '1') {
+      String sendJson = getSendMsg(1, filePath);
+      showSelScaleDialog(1, sendJson);
+    } else {
+      String sendJson = getSendMsg(2, filePath);
+      showSelScaleDialog(1, sendJson);
     }
   }
 
-  Future<String> downloadFormExcel(List<PluData> desserts) async {
+  void showSelScaleDialog(int funcNo, String msg) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 允许点击空白处关闭对话框
+      builder: (context) {
+        return SelectScalesPageNew(
+          funcNo: funcNo,
+          sendMsgStr: msg,
+        );
+      },
+    );
+  }
+
+  String getSendMsg(int type, String fmtPath) {
+    if (type == 1) {
+      myScaleCmd.cmdMode = "down_plu_to_scale";
+    } else {
+      myScaleCmd.cmdMode = "insert_plu_to_scale";
+    }
+
+    myDownLoadPluFile.scaleModel = 'TMax';
+    myDownLoadPluFile.filePath = fmtPath;
+    myDownLoadPluFile.nameMaxLen = 30;
+    myScaleCmd.cmdData = json.encode(myDownLoadPluFile);
+    return jsonEncode(myScaleCmd);
+  }
+
+  Future<String> downloadFormExcel(List<PluDataModel> desserts) async {
     try {
       final excel = Excel.createExcel();
       final sheet = excel['Sheet1'];
@@ -1525,15 +1431,15 @@ class PluEidtPageState extends State<PluEidtPage> {
       // 写入数据行
       for (var dessert in desserts) {
         sheet.appendRow([
-          TextCellValue(dessert.plu?.toString() ?? ''),
-          TextCellValue(dessert.productName ?? ''),
-          TextCellValue(dessert.generalUnit?.toString() ?? ''),
-          TextCellValue(dessert.taxType?.toString() ?? ''),
-          TextCellValue(dessert.price?.toString() ?? ''),
-          TextCellValue(dessert.unitWeight?.toString() ?? ''),
-          TextCellValue(dessert.pretare?.toString() ?? ''),
-          TextCellValue(dessert.limitHigh?.toString() ?? ''),
-          TextCellValue(dessert.limitLow?.toString() ?? ''),
+          TextCellValue(dessert.pluData.plu?.toString() ?? ''),
+          TextCellValue(dessert.pluData.productName ?? ''),
+          TextCellValue(dessert.pluData.generalUnit?.toString() ?? ''),
+          TextCellValue(dessert.pluData.taxType?.toString() ?? ''),
+          TextCellValue(dessert.pluData.price?.toString() ?? ''),
+          TextCellValue(dessert.pluData.unitWeight?.toString() ?? ''),
+          TextCellValue(dessert.pluData.pretare?.toString() ?? ''),
+          TextCellValue(dessert.pluData.limitHigh?.toString() ?? ''),
+          TextCellValue(dessert.pluData.limitLow?.toString() ?? ''),
         ]);
       }
 
@@ -1557,17 +1463,491 @@ class PluEidtPageState extends State<PluEidtPage> {
     return directory;
   }
 
-  void showSnackBar(String msg) {
-    setState(() {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(msg,
-              style: TextStyle(
-                fontSize: 14,
-              )), ////此处需要秤回复
-          duration: const Duration(seconds: 6),
-          backgroundColor: msg.contains('OK')
-              ? Theme.of(context).colorScheme.onTertiaryFixedVariant
-              : Theme.of(context).colorScheme.error));
-    });
+  TextStyle getTextStyle({Color? color}) {
+    //返回一个文本样式
+    color ??= colorScheme.onSurface;
+    return textTheme.bodySmall!.apply(
+      color: color,
+    );
+  }
+
+  TextStyle getTitleTextStyle({Color? color}) {
+    //返回一个文本样式
+    color ??= colorScheme.onSurface;
+    return textTheme.bodyMedium!.apply(
+      color: color,
+    );
+  }
+
+  GridColumn getColumnWidget(double width, String columnName, String title) {
+    return GridColumn(
+      width: width,
+      columnName: columnName,
+      label: Container(
+        color: colorScheme.surfaceDim,
+        padding: const EdgeInsets.all(8.0),
+        alignment: Alignment.centerLeft,
+        child: Text(
+          title,
+          style: getTextStyle(color: colorScheme.onSurface),
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.only(left: regularPadding),
+            height: leftBarIconHeight,
+            child: buildButtonRow(),
+          ),
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.only(
+                  left: regularPadding, right: regularPadding),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  double _width = constraints.maxWidth;
+
+                  _width = _width - 50 - 80 * 2;
+                  int count = 0;
+                  for (var key in _columnVisibility.keys) {
+                    if (_columnVisibility[key]!) {
+                      count++;
+                    }
+                  }
+
+                  double itemWidth = _width / (count);
+
+                  itemWidth = itemWidth < 100 ? 100 : itemWidth;
+
+                  return SfDataGrid(
+                    headerRowHeight: 48.0,
+                    frozenColumnsCount: 1,
+                    footerFrozenColumnsCount: 2,
+                    columnWidthMode: ColumnWidthMode.fill,
+                    gridLinesVisibility: GridLinesVisibility.horizontal,
+                    headerGridLinesVisibility: GridLinesVisibility.none,
+                    selectionMode: SelectionMode.none,
+                    columnResizeMode: ColumnResizeMode.onResize,
+                    allowSorting: false,
+                    onColumnResizeUpdate: (detail) {
+                      setState(() {
+                        columnWidth[detail.column.columnName] = detail.width;
+                      });
+
+                      return true;
+                    },
+                    source: _dataSource ??
+                        NationDataSource(
+                          dataModels: _getCurrentPageData(),
+                          allSelectedNotifier: allSelectedNotifier,
+                          updateAllSelectedStatus: _updateAllSelectedStatus,
+                          onEdit: _handleEdit,
+                          onDelete: _handleDelete,
+                          columnVisibility: _columnVisibility,
+                        ),
+                    columns: [
+                      GridColumn(
+                        width: 50,
+                        allowSorting: false,
+                        columnName: 'select',
+                        label: ValueListenableBuilder<bool>(
+                          valueListenable: allSelectedNotifier,
+                          builder: (context, value, child) {
+                            return Container(
+                                color: colorScheme.surfaceDim,
+                                padding: const EdgeInsets.all(8.0),
+                                alignment: Alignment.centerLeft,
+                                child: Checkbox(
+                                  value: value,
+                                  onChanged: (bool? newValue) {
+                                    allSelectedNotifier.value =
+                                        newValue ?? false;
+                                  },
+                                ));
+                          },
+                        ),
+                      ),
+                      if (_columnVisibility['plu']!)
+                        getColumnWidget(
+                            itemWidth, 'plu', localizedStrings.gPluPlu),
+                      if (_columnVisibility['productName']!)
+                        getColumnWidget(itemWidth, 'productName',
+                            localizedStrings.gPluPluName),
+                      if (_columnVisibility['category']!)
+                        getColumnWidget(itemWidth, 'category',
+                            localizedStrings.gPluCategory),
+                      if (_columnVisibility['price']!)
+                        getColumnWidget(
+                            itemWidth, 'price', localizedStrings.gPluPrice),
+                      if (_columnVisibility['generalUnit']!)
+                        getColumnWidget(itemWidth, 'generalUnit',
+                            localizedStrings.gPluWgtUnit),
+                      if (_columnVisibility['taxType']!)
+                        getColumnWidget(
+                            itemWidth, 'taxType', localizedStrings.gPluTaxType),
+                      if (_columnVisibility['unitWeight']!)
+                        getColumnWidget(itemWidth, 'unitWeight',
+                            localizedStrings.gPluUnitWgt),
+                      if (_columnVisibility['pretare']!)
+                        getColumnWidget(
+                            itemWidth, 'pretare', localizedStrings.gPluPretare),
+                      if (_columnVisibility['limitHigh']!)
+                        getColumnWidget(itemWidth, 'limitHigh',
+                            localizedStrings.gPluLimitHigh),
+                      if (_columnVisibility['limitLow']!)
+                        getColumnWidget(itemWidth, 'limitLow',
+                            localizedStrings.gPluLimitLow),
+                      if (_columnVisibility['productCode']!)
+                        getColumnWidget(itemWidth, 'productCode',
+                            localizedStrings.gPluPluCode),
+                      if (_columnVisibility['itemCode']!)
+                        getColumnWidget(itemWidth, 'itemCode',
+                            localizedStrings.gPluItemCode),
+                      GridColumn(
+                        width: 80,
+                        allowSorting: false,
+                        columnName: 'edit',
+                        label: Container(
+                          color: colorScheme.surfaceDim,
+                          padding: const EdgeInsets.all(8.0),
+                          alignment: Alignment.centerLeft,
+                          child: Text(localizedStrings.gBtnEdit),
+                        ),
+                      ),
+                      GridColumn(
+                        width: 80,
+                        allowSorting: false,
+                        columnName: 'delete',
+                        label: Container(
+                          color: colorScheme.surfaceDim,
+                          padding: const EdgeInsets.all(8.0),
+                          alignment: Alignment.centerLeft,
+                          child: Text(localizedStrings.gBtnDelete),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ),
+
+          // 分页控件
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            // decoration: BoxDecoration(
+            //   border: Border(
+            //     top: BorderSide(color: const Color.fromARGB(255, 44, 9, 197)!),
+            //   ),
+            // ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // 页码导航
+                Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.first_page),
+                      onPressed: currentPage > 1 ? () => _changePage(1) : null,
+                      disabledColor: Colors.grey[300],
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.chevron_left),
+                      onPressed: currentPage > 1
+                          ? () => _changePage(currentPage - 1)
+                          : null,
+                      disabledColor: Colors.grey[300],
+                    ),
+                    Text(
+                      localizedStrings.tipPageSequnce +
+                          ' $currentPage / $totalPages ${localizedStrings.tipPage}',
+                      style: getTitleTextStyle(),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.chevron_right),
+                      onPressed: currentPage < totalPages
+                          ? () => _changePage(currentPage + 1)
+                          : null,
+                      disabledColor: Colors.grey[300],
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.last_page),
+                      onPressed: currentPage < totalPages
+                          ? () => _changePage(totalPages)
+                          : null,
+                      disabledColor: Colors.grey[300],
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  width: largePadding,
+                ),
+                Row(
+                  children: [
+                    DropdownButton<int>(
+                      value: pageSize,
+                      items: [50, 100].map((size) {
+                        return DropdownMenuItem(
+                          value: size,
+                          child: Text('$size', style: getTitleTextStyle()),
+                        );
+                      }).toList(),
+                      onChanged: (size) {
+                        if (size != null) {
+                          _changePageSize(size);
+                        }
+                      },
+                      underline: Container(),
+                    ),
+                    Text(
+                      '/ ${localizedStrings.tipPage}',
+                      style: getTitleTextStyle(),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// 数据模型
+
+class PluDataModel {
+  final PluData pluData;
+  bool isSelected;
+
+  PluDataModel({
+    required this.pluData,
+    this.isSelected = false,
+  });
+
+  // 复制方法，用于编辑时创建新对象
+
+  PluDataModel copyWith({
+    PluData? pluData,
+    bool? isSelected,
+  }) {
+    return PluDataModel(
+      pluData: pluData ?? this.pluData,
+      isSelected: isSelected ?? this.isSelected,
+    );
+  }
+}
+
+class NationDataSource extends DataGridSource {
+  NationDataSource({
+    required List<PluDataModel> dataModels,
+    required this.allSelectedNotifier,
+    required this.updateAllSelectedStatus,
+    required this.onEdit,
+    required this.onDelete,
+    required Map<String, bool> columnVisibility,
+  }) {
+    _dataModels = dataModels.map<DataGridRow>((e) {
+      final cells = <DataGridCell>[];
+      // 固定列 'select' 始终添加
+      cells.add(
+        DataGridCell<bool>(columnName: 'select', value: e.isSelected),
+      );
+      // 根据列可见性动态添加其他列
+      columnVisibility.forEach((key, value) {
+        if (value) {
+          switch (key) {
+            case 'plu':
+              cells.add(
+                DataGridCell<int>(columnName: 'plu', value: e.pluData.plu),
+              );
+              break;
+            case 'productName':
+              cells.add(
+                DataGridCell<String>(
+                  columnName: 'productName',
+                  value: e.pluData.productName,
+                ),
+              );
+              break;
+            case 'category':
+              cells.add(
+                DataGridCell<String>(
+                  columnName: 'category',
+                  value: e.pluData.category,
+                ),
+              );
+              break;
+            case 'price':
+              cells.add(
+                DataGridCell<String>(
+                    columnName: 'price', value: e.pluData.price.toString()),
+              );
+              break;
+
+            case 'generalUnit':
+              cells.add(
+                DataGridCell<int>(
+                  columnName: 'generalUnit',
+                  value: e.pluData.generalUnit,
+                ),
+              );
+              break;
+            case 'taxType':
+              cells.add(
+                DataGridCell<int>(
+                  columnName: 'taxType',
+                  value: e.pluData.taxType,
+                ),
+              );
+              break;
+            case 'unitWeight':
+              cells.add(
+                DataGridCell<double>(
+                  columnName: 'unitWeight',
+                  value: e.pluData.unitWeight,
+                ),
+              );
+              break;
+            case 'pretare':
+              cells.add(
+                DataGridCell<double>(
+                  columnName: 'pretare',
+                  value: e.pluData.pretare,
+                ),
+              );
+              break;
+            case 'limitHigh':
+              cells.add(
+                DataGridCell<double>(
+                  columnName: 'limitHigh',
+                  value: e.pluData.limitHigh,
+                ),
+              );
+              break;
+            case 'limitLow':
+              cells.add(
+                DataGridCell<double>(
+                  columnName: 'limitLow',
+                  value: e.pluData.limitLow,
+                ),
+              );
+              break;
+
+            case 'productCode':
+              cells.add(
+                DataGridCell<int>(
+                  columnName: 'productCode',
+                  value: e.pluData.productCode,
+                ),
+              );
+              break;
+            case 'itemCode':
+              cells.add(
+                DataGridCell<int>(
+                  columnName: 'itemCode',
+                  value: e.pluData.itemCode,
+                ),
+              );
+              break;
+          }
+        }
+      });
+
+      cells.add(
+        DataGridCell<bool>(columnName: 'edit', value: false),
+      );
+      cells.add(
+        DataGridCell<bool>(columnName: 'delete', value: false),
+      );
+      return DataGridRow(cells: cells);
+    }).toList();
+    _originalDataModels = dataModels;
+  }
+
+  late List<PluDataModel> _originalDataModels;
+
+  final ValueNotifier<bool> allSelectedNotifier;
+
+  final VoidCallback updateAllSelectedStatus;
+
+  final Function(PluDataModel, int) onEdit; // 编辑回调
+
+  final Function(PluDataModel) onDelete; // 删除回调
+
+  List<DataGridRow> _dataModels = [];
+
+  @override
+  List<DataGridRow> get rows => _dataModels;
+
+  @override
+  DataGridRowAdapter? buildRow(DataGridRow row) {
+    final index = _dataModels.indexOf(row);
+
+    final dataModel = _originalDataModels[index];
+
+    return DataGridRowAdapter(
+      cells: row.getCells().map<Widget>((dataGridCell) {
+        if (dataGridCell.columnName == 'select') {
+          return Checkbox(
+            value: dataModel.isSelected,
+            onChanged: (bool? newValue) {
+              setState(() {
+                dataModel.isSelected = newValue ?? false;
+
+                updateAllSelectedStatus();
+              });
+            },
+          );
+        } else if (dataGridCell.columnName == 'edit') {
+          return IconButton(
+            icon: const Icon(Icons.edit),
+            color: Color(0xff004D8A),
+            onPressed: () {
+              // 触发编辑回调
+              onEdit(dataModel, index);
+            },
+          );
+        } else if (dataGridCell.columnName == 'delete') {
+          return IconButton(
+            icon: const Icon(Icons.delete_forever_outlined),
+            color: Color(0xffF13851),
+            onPressed: () {
+              // 触发删除回调
+
+              onDelete(dataModel);
+            },
+          );
+        }
+
+        return Container(
+          alignment: Alignment.centerLeft,
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            dataGridCell.value.toString(),
+            style: const TextStyle(
+              fontFamily: "alibaba",
+              color: Color(0xff606060),
+              fontSize: 14,
+            ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  void setState(VoidCallback callback) {
+    callback();
+    notifyListeners();
   }
 }

@@ -402,6 +402,48 @@ class FlowRatePageState extends State<FlowRatePage>
     return processWgtList;
   }
 
+  ColorScheme get colorScheme => Theme.of(context).colorScheme;
+  TextTheme get textTheme => Theme.of(context).textTheme;
+
+  showNormalText(String title, Color color) {
+    return Text(
+      title,
+      style: getTextStyle(color: color),
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+
+  TextStyle getTextStyle({Color? color}) {
+    //返回一个文本样式
+    color ??= colorScheme.onSurface;
+    return textTheme.bodySmall!.apply(
+      color: color,
+    );
+  }
+
+  TextStyle getTitleTextStyle({Color? color}) {
+    //返回一个文本样式
+    color ??= colorScheme.onSurface;
+    return textTheme.bodyMedium!.apply(
+      color: color,
+    );
+  }
+
+  showRenderCellText(String context) {
+    return Text(context,
+        style: getTextStyle(color: colorScheme.onSurfaceVariant),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis);
+  }
+
+  showRenderTitleText(String title) {
+    return Text(title,
+        style: getTextStyle(color: colorScheme.onSurface),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis);
+  }
+
   showWgtTable() {
     return Expanded(child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
@@ -414,7 +456,7 @@ class FlowRatePageState extends State<FlowRatePage>
       //80 序号
       double columnWidth = tableWidth / columnCount;
       return Container(
-        color: Theme.of(context).colorScheme.surface,
+        color: colorScheme.surface,
         child: StickyTable(
           controller: _scrollController, // 传递 ScrollController
           // 修改 data 属性
@@ -448,19 +490,16 @@ class FlowRatePageState extends State<FlowRatePage>
             // 添加点击行背景色
             if (row == clickedRow) {
               return BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerLow,
+                color: colorScheme.surfaceContainerLow,
                 border: Border(
-                  bottom: BorderSide(
-                      color: Theme.of(context).colorScheme.primary, width: 1),
+                  bottom: BorderSide(color: colorScheme.primary, width: 1),
                 ),
               );
             }
             return BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
+              color: colorScheme.surface,
               border: Border(
-                bottom: BorderSide(
-                    color: Theme.of(context).colorScheme.outlineVariant,
-                    width: 1),
+                bottom: BorderSide(color: colorScheme.outlineVariant, width: 1),
               ),
             );
           },
@@ -483,17 +522,15 @@ class FlowRatePageState extends State<FlowRatePage>
               },
               // 修改 renderCell 方法
               renderCell: (context, title, data, row, column) {
-                return Text(
+                return showRenderCellText(
                     (data as FlowRateFromDb).flowRateHeader!.recId.toString());
               },
               renderTitle: (context, title) {
                 return SizedBox(
                   width: 80 - 20,
-                  child: Text(
+                  child: showNormalText(
                     title.title,
-                    overflow: TextOverflow.ellipsis,
-                    style:
-                        TextStyle(color: Theme.of(context).colorScheme.primary),
+                    colorScheme.primary,
                   ),
                 );
               },
@@ -507,11 +544,17 @@ class FlowRatePageState extends State<FlowRatePage>
               onCellClick: (context, title, data, row, column) {},
               // 修改 renderCell 方法
               renderCell: (context, title, data, row, column) {
-                return Text((data as FlowRateFromDb)
+                return showRenderCellText((data as FlowRateFromDb)
                         .flowRateHeader!
                         .totalWeight!
                         .toString() +
                     data.flowRateHeader!.wgtUnit!);
+              },
+              renderTitle: (context, title) {
+                return SizedBox(
+                  width: columnWidth - 20,
+                  child: showRenderTitleText(title.title),
+                );
               },
             ),
             StickyTableColumn(
@@ -523,9 +566,15 @@ class FlowRatePageState extends State<FlowRatePage>
               onCellClick: (context, title, data, row, column) {},
               // 修改 renderCell 方法
               renderCell: (context, title, data, row, column) {
-                return Text(
+                return showRenderCellText(
                     //修改了此处
                     '${(data as FlowRateFromDb).flowRateHeader!.totalTime}s');
+              },
+              renderTitle: (context, title) {
+                return SizedBox(
+                  width: columnWidth - 20,
+                  child: showRenderTitleText(title.title),
+                );
               },
             ),
             StickyTableColumn(
@@ -542,8 +591,14 @@ class FlowRatePageState extends State<FlowRatePage>
               },
               // 修改 renderCell 方法
               renderCell: (context, title, data, row, column) {
-                return Text(
+                return showRenderCellText(
                     '${(data as FlowRateFromDb).flowRateHeader!.averageFlowRate}${data.flowRateHeader!.wgtUnit!}/s');
+              },
+              renderTitle: (context, title) {
+                return SizedBox(
+                  width: columnWidth - 20,
+                  child: showRenderTitleText(title.title),
+                );
               },
             ),
             StickyTableColumn(
@@ -555,9 +610,15 @@ class FlowRatePageState extends State<FlowRatePage>
               onCellClick: (context, title, data, row, column) {},
               // 修改 renderCell 方法
               renderCell: (context, title, data, row, column) {
-                return Text(
+                return showRenderCellText(
                     //修改了此处
                     '${(data as FlowRateFromDb).flowRateHeader!.maxFlowRate}${data.flowRateHeader!.wgtUnit!}/s');
+              },
+              renderTitle: (context, title) {
+                return SizedBox(
+                  width: columnWidth - 20,
+                  child: showRenderTitleText(title.title),
+                );
               },
             ),
             StickyTableColumn(
@@ -569,9 +630,15 @@ class FlowRatePageState extends State<FlowRatePage>
               onCellClick: (context, title, data, row, column) {},
               // 修改 renderCell 方法
               renderCell: (context, title, data, row, column) {
-                return Text(
+                return showRenderCellText(
                     //修改了此处
                     '${(data as FlowRateFromDb).flowRateHeader!.minFlowRate}${data.flowRateHeader!.wgtUnit!}/s');
+              },
+              renderTitle: (context, title) {
+                return SizedBox(
+                  width: columnWidth - 20,
+                  child: showRenderTitleText(title.title),
+                );
               },
             ),
           ],
@@ -592,7 +659,7 @@ class FlowRatePageState extends State<FlowRatePage>
       //80 序号
       double columnWidth = tableWidth / columnCount;
       return Container(
-        color: Theme.of(context).colorScheme.surface,
+        color: colorScheme.surface,
         child: StickyTable(
           controller: _folwDataScrollCtl, // 传递 ScrollController
           // 修改 data 属性
@@ -626,19 +693,16 @@ class FlowRatePageState extends State<FlowRatePage>
             // 添加点击行背景色
             if (row == -1) {
               return BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerLow,
+                color: colorScheme.surfaceContainerLow,
                 border: Border(
-                  bottom: BorderSide(
-                      color: Theme.of(context).colorScheme.primary, width: 1),
+                  bottom: BorderSide(color: colorScheme.primary, width: 1),
                 ),
               );
             }
             return BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
+              color: colorScheme.surface,
               border: Border(
-                bottom: BorderSide(
-                    color: Theme.of(context).colorScheme.outlineVariant,
-                    width: 1),
+                bottom: BorderSide(color: colorScheme.outlineVariant, width: 1),
               ),
             );
           },
@@ -657,16 +721,14 @@ class FlowRatePageState extends State<FlowRatePage>
               },
               // 修改 renderCell 方法
               renderCell: (context, title, data, row, column) {
-                return Text((data as RateInfo).id.toString());
+                return showRenderCellText((data as RateInfo).id.toString());
               },
               renderTitle: (context, title) {
                 return SizedBox(
                   width: columnWidth - 20,
-                  child: Text(
+                  child: showNormalText(
                     title.title,
-                    overflow: TextOverflow.ellipsis,
-                    style:
-                        TextStyle(color: Theme.of(context).colorScheme.primary),
+                    colorScheme.primary,
                   ),
                 );
               },
@@ -680,7 +742,13 @@ class FlowRatePageState extends State<FlowRatePage>
               onCellClick: (context, title, data, row, column) {},
               // 修改 renderCell 方法
               renderCell: (context, title, data, row, column) {
-                return Text((data as RateInfo).time.toString());
+                return showRenderCellText((data as RateInfo).time.toString());
+              },
+              renderTitle: (context, title) {
+                return SizedBox(
+                  width: columnWidth - 20,
+                  child: showRenderTitleText(title.title),
+                );
               },
             ),
             StickyTableColumn(
@@ -692,7 +760,13 @@ class FlowRatePageState extends State<FlowRatePage>
               onCellClick: (context, title, data, row, column) {},
               // 修改 renderCell 方法
               renderCell: (context, title, data, row, column) {
-                return Text((data as RateInfo).rate.toString());
+                return showRenderCellText((data as RateInfo).rate.toString());
+              },
+              renderTitle: (context, title) {
+                return SizedBox(
+                  width: columnWidth - 20,
+                  child: showRenderTitleText(title.title),
+                );
               },
             ),
           ],
@@ -732,7 +806,7 @@ class FlowRatePageState extends State<FlowRatePage>
         flex: 1,
         child: Container(
           padding: EdgeInsets.all(5),
-          color: Theme.of(context).colorScheme.surfaceDim,
+          color: colorScheme.surfaceDim,
           child: Column(children: [
             LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
@@ -767,7 +841,7 @@ class FlowRatePageState extends State<FlowRatePage>
                       style: TextStyle(
                           fontSize: 80,
                           fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.primary),
+                          color: colorScheme.primary),
                     ),
                   )),
               Text(unit),
@@ -885,7 +959,7 @@ class FlowRatePageState extends State<FlowRatePage>
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Container(
-        color: Theme.of(context).colorScheme.surface,
+        color: colorScheme.surface,
         child: Padding(
           padding: const EdgeInsets.all(0.0),
           child: Column(
@@ -898,7 +972,7 @@ class FlowRatePageState extends State<FlowRatePage>
                     showScaleList(),
                     Container(
                       width: 14,
-                      color: Theme.of(context).colorScheme.surfaceDim,
+                      color: colorScheme.surfaceDim,
                     ),
                     Expanded(
                       child: Column(
@@ -906,7 +980,7 @@ class FlowRatePageState extends State<FlowRatePage>
                           Expanded(flex: 10, child: _buildTopSection(context)),
                           Container(
                             height: 14,
-                            color: Theme.of(context).colorScheme.surfaceDim,
+                            color: colorScheme.surfaceDim,
                           ),
                           _buildToggleSection(context),
                           _buildChartOrTableSection(context)
@@ -935,7 +1009,7 @@ class FlowRatePageState extends State<FlowRatePage>
   Widget _buildSpacer(BuildContext context) {
     return Container(
       height: regularPadding,
-      color: Theme.of(context).colorScheme.surfaceDim,
+      color: colorScheme.surfaceDim,
     );
   }
 
@@ -999,7 +1073,7 @@ class FlowRatePageState extends State<FlowRatePage>
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: colorScheme.primary,
                 ),
               ),
             );
@@ -1016,28 +1090,22 @@ class FlowRatePageState extends State<FlowRatePage>
             flex: 1,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                foregroundColor: Theme.of(context).colorScheme.primary,
-                backgroundColor: Theme.of(context).colorScheme.surface,
+                foregroundColor: colorScheme.primary,
+                backgroundColor: colorScheme.surface,
                 fixedSize: const Size(double.infinity, 48),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.zero,
                   side: BorderSide(
-                    color: isStart
-                        ? Theme.of(context).colorScheme.outline
-                        : Theme.of(context).colorScheme.primary,
+                    color: isStart ? colorScheme.outline : colorScheme.primary,
                   ),
                 ),
               ),
               onPressed: isStart
                   ? null
                   : () => PublicFunctions.performZeroWithScaleId(selScaleId),
-              child: Text(
+              child: showNormalText(
                 localizedStrings.iBtnZero,
-                style: TextStyle(
-                  fontWeight: FontWeight.normal,
-                  color: Theme.of(context).colorScheme.primary,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                colorScheme.primary,
               ),
             ),
           );
@@ -1050,28 +1118,22 @@ class FlowRatePageState extends State<FlowRatePage>
             flex: 1,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                foregroundColor: Theme.of(context).colorScheme.primary,
-                backgroundColor: Theme.of(context).colorScheme.surface,
+                foregroundColor: colorScheme.primary,
+                backgroundColor: colorScheme.surface,
                 fixedSize: const Size(double.infinity, 48),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.zero,
                   side: BorderSide(
-                    color: isStart
-                        ? Theme.of(context).colorScheme.outline
-                        : Theme.of(context).colorScheme.primary,
+                    color: isStart ? colorScheme.outline : colorScheme.primary,
                   ),
                 ),
               ),
               onPressed: isStart
                   ? null
                   : () => PublicFunctions.performTareWithScaleId(selScaleId),
-              child: Text(
+              child: showNormalText(
                 localizedStrings.gBtnTare,
-                style: TextStyle(
-                  fontWeight: FontWeight.normal,
-                  color: Theme.of(context).colorScheme.primary,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                colorScheme.primary,
               ),
             ),
           );
@@ -1082,8 +1144,8 @@ class FlowRatePageState extends State<FlowRatePage>
       flex: 1,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          foregroundColor: Theme.of(context).colorScheme.onPrimary,
-          backgroundColor: Theme.of(context).colorScheme.primary,
+          foregroundColor: colorScheme.onPrimary,
+          backgroundColor: colorScheme.primary,
           fixedSize: const Size(double.infinity, 48),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.zero,
@@ -1102,13 +1164,9 @@ class FlowRatePageState extends State<FlowRatePage>
             }
           });
         },
-        child: Text(
+        child: showNormalText(
           isStart ? localizedStrings.gBtnEnd : localizedStrings.gBtnStart,
-          style: TextStyle(
-            fontWeight: FontWeight.normal,
-            color: Theme.of(context).colorScheme.onPrimary,
-            overflow: TextOverflow.ellipsis,
-          ),
+          colorScheme.onPrimary,
         ),
       ),
     );
@@ -1119,7 +1177,7 @@ class FlowRatePageState extends State<FlowRatePage>
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(5),
-        color: Theme.of(context).colorScheme.surfaceDim,
+        color: colorScheme.surfaceDim,
         child: Column(
           children: [
             _buildTotalInfoTitle(context, title),
@@ -1160,7 +1218,7 @@ class FlowRatePageState extends State<FlowRatePage>
                 style: TextStyle(
                   fontSize: 80,
                   fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: colorScheme.primary,
                 ),
               ),
             ),
@@ -1199,8 +1257,8 @@ class FlowRatePageState extends State<FlowRatePage>
       width: 150,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          foregroundColor: Theme.of(context).colorScheme.onPrimary,
-          backgroundColor: Theme.of(context).colorScheme.primary,
+          foregroundColor: colorScheme.onPrimary,
+          backgroundColor: colorScheme.primary,
           fixedSize: const Size(double.infinity, 48),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.zero,
@@ -1262,13 +1320,9 @@ class FlowRatePageState extends State<FlowRatePage>
             }
           }
         },
-        child: Text(
+        child: showNormalText(
           localizedStrings.gBtnExport,
-          style: TextStyle(
-            fontWeight: FontWeight.normal,
-            color: Theme.of(context).colorScheme.onPrimary,
-            overflow: TextOverflow.ellipsis,
-          ),
+          colorScheme.onPrimary,
         ),
       ),
     );
@@ -1277,7 +1331,7 @@ class FlowRatePageState extends State<FlowRatePage>
   Widget _buildToggleSection(BuildContext context) {
     return Container(
       height: 30,
-      color: Theme.of(context).colorScheme.surface,
+      color: colorScheme.surface,
       child: Row(
         children: [
           _buildFlowRateLabel(context),
@@ -1309,8 +1363,8 @@ class FlowRatePageState extends State<FlowRatePage>
           width: 150,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              foregroundColor: Theme.of(context).colorScheme.onPrimary,
-              backgroundColor: Theme.of(context).colorScheme.primary,
+              foregroundColor: colorScheme.onPrimary,
+              backgroundColor: colorScheme.primary,
               fixedSize: const Size(double.infinity, 48),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.zero,
@@ -1321,15 +1375,11 @@ class FlowRatePageState extends State<FlowRatePage>
                 showDataTable = !showDataTable;
               });
             },
-            child: Text(
+            child: showNormalText(
               showDataTable
                   ? localizedStrings.fShowCurveChart
                   : localizedStrings.fShowDataTable,
-              style: TextStyle(
-                fontWeight: FontWeight.normal,
-                color: Theme.of(context).colorScheme.onPrimary,
-                overflow: TextOverflow.ellipsis,
-              ),
+              colorScheme.onPrimary,
             ),
           ),
         ),
@@ -1340,7 +1390,7 @@ class FlowRatePageState extends State<FlowRatePage>
   Widget _buildCurrentWeightSection(BuildContext context) {
     return Container(
       height: 100,
-      color: Theme.of(context).colorScheme.surface,
+      color: colorScheme.surface,
       padding: const EdgeInsets.only(
           top: regularPadding, right: regularPadding, bottom: regularPadding),
       child: Row(
@@ -1348,7 +1398,7 @@ class FlowRatePageState extends State<FlowRatePage>
           Expanded(
             flex: 4,
             child: Container(
-              color: Theme.of(context).colorScheme.surfaceDim,
+              color: colorScheme.surfaceDim,
               child: Column(
                 children: [
                   _buildWeightLabel(context),
@@ -1394,7 +1444,7 @@ class FlowRatePageState extends State<FlowRatePage>
                 style: TextStyle(
                   fontSize: 80,
                   fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: colorScheme.primary,
                 ),
               ),
             );
@@ -1453,7 +1503,7 @@ class FlowRatePageState extends State<FlowRatePage>
     return Flexible(
       flex: 18,
       child: Container(
-        color: Theme.of(context).colorScheme.surface,
+        color: colorScheme.surface,
         child: Column(
           children: [
             const SizedBox(height: 5),
@@ -1471,7 +1521,7 @@ class FlowRatePageState extends State<FlowRatePage>
       flex: 6,
       child: Container(
         padding: const EdgeInsets.only(top: 5),
-        color: Theme.of(context).colorScheme.surface,
+        color: colorScheme.surface,
         child: Row(
           children: [
             showDataTable
@@ -1492,7 +1542,7 @@ class FlowRatePageState extends State<FlowRatePage>
 
   showScaleList() {
     return AnimatedContainer(
-      color: Theme.of(context).colorScheme.surface,
+      color: colorScheme.surface,
       width: 234,
       duration: Duration(milliseconds: 300),
       child: Column(
@@ -1521,9 +1571,7 @@ class FlowRatePageState extends State<FlowRatePage>
               ? Expanded(
                   child: Text(
                   localizedStrings.fScaleList,
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurface,
-                      fontSize: 16),
+                  style: TextStyle(color: colorScheme.onSurface, fontSize: 16),
                 ))
               : SizedBox(
                   width: 0,
@@ -1581,10 +1629,12 @@ class _LineChartSample5State extends State<LineChartSample5> {
 
   List<FlSpot> allSpots = [];
 
+  ColorScheme get colorScheme => Theme.of(context).colorScheme;
+
   Widget bottomTitleWidgets(double value, TitleMeta meta, double chartWidth) {
     final style = TextStyle(
       fontWeight: FontWeight.bold,
-      color: Theme.of(context).colorScheme.primary,
+      color: colorScheme.primary,
       fontFamily: 'Digital',
       fontSize: 12,
     );
@@ -1782,7 +1832,7 @@ class _LineChartSample5State extends State<LineChartSample5> {
                   ) {
                     return spotIndexes.map((index) {
                       return TouchedSpotIndicatorData(
-                        FlLine(color: Theme.of(context).colorScheme.primary),
+                        FlLine(color: colorScheme.primary),
                         FlDotData(
                           show: true,
                           getDotPainter: (spot, percent, barData, index) =>
@@ -1805,15 +1855,14 @@ class _LineChartSample5State extends State<LineChartSample5> {
                     }).toList();
                   },
                   touchTooltipData: LineTouchTooltipData(
-                    getTooltipColor: (touchedSpot) =>
-                        Theme.of(context).colorScheme.primary,
+                    getTooltipColor: (touchedSpot) => colorScheme.primary,
                     tooltipRoundedRadius: 8,
                     getTooltipItems: (List<LineBarSpot> lineBarsSpot) {
                       return lineBarsSpot.map((lineBarSpot) {
                         return LineTooltipItem(
                           lineBarSpot.y.toString(),
                           TextStyle(
-                            color: Theme.of(context).colorScheme.onPrimary,
+                            color: colorScheme.onPrimary,
                             fontWeight: FontWeight.bold,
                           ),
                         );
@@ -1839,7 +1888,7 @@ class _LineChartSample5State extends State<LineChartSample5> {
                         return Text(
                           value.toString(),
                           style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
+                            color: colorScheme.primary,
                             fontSize: 12,
                           ),
                         );

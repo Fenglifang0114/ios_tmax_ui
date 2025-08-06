@@ -1065,3 +1065,245 @@ class _NewMutiScaleListWidgetState extends State<NewMutiScaleListWidget> {
     );
   }
 }
+
+//  新的可以选择多台秤的列表
+// 封装成 StatefulWidget
+class NewMutiScaleListWifiWidget extends StatefulWidget {
+  final double listWidth;
+  final List<int> selScaleList;
+
+  final Function(Scale) clickScale;
+
+  const NewMutiScaleListWifiWidget({
+    super.key,
+    required this.listWidth,
+    required this.selScaleList,
+    required this.clickScale,
+  });
+
+  @override
+  State<NewMutiScaleListWifiWidget> createState() =>
+      _NewMutiScaleListWifiWidgetState();
+}
+
+class _NewMutiScaleListWifiWidgetState
+    extends State<NewMutiScaleListWifiWidget> {
+  Timer? _timer;
+
+  List<Scale> scaleNetItems = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    _timer = Timer.periodic(
+      Duration(milliseconds: 2000),
+      (timer) {
+        if (mounted) {
+          setState(() {});
+        }
+      },
+    );
+    for (int i = 0; i < myAllScalesList.length; i++) {
+      if (myAllScalesList[i].tMedia == 1) {
+        scaleNetItems.add(myAllScalesList[i]);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Theme.of(context).colorScheme.surface,
+      width: widget.listWidth,
+      child: Column(
+        children: [
+          SizedBox(height: smallPadding),
+          scaleNetItems.isEmpty
+              ? showNoDeviceWidget(context)
+              : Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    child: ListView.separated(
+                      itemCount: scaleNetItems.length,
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: smallPadding),
+                      itemBuilder: (context, index) {
+                        final scale = scaleNetItems[index];
+
+                        bool isSelect =
+                            (widget.selScaleList.contains(scale.scaleId));
+                        return MouseRegion(
+                            cursor: SystemMouseCursors.click,
+                            child: GestureDetector(
+                                onTap: () => widget.clickScale(scale),
+                                child: Container(
+                                  height: scaleItemHeight,
+                                  color: !isSelect
+                                      ? Theme.of(context)
+                                          .colorScheme
+                                          .surfaceContainerLow
+                                      : scale.isOnline
+                                          ? Theme.of(context)
+                                              .colorScheme
+                                              .primary
+                                          : Theme.of(context).colorScheme.error,
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                          width: scaleItemHeight,
+                                          height: scaleItemHeight,
+                                          alignment: Alignment.center,
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(4)),
+                                              color: !isSelect
+                                                  ? Theme.of(context)
+                                                      .colorScheme
+                                                      .surfaceContainerLowest
+                                                  : Theme.of(context)
+                                                      .colorScheme
+                                                      .surface
+                                                      // 使用 withValues 替代 withOpacity
+                                                      .withValues(alpha: 0.1),
+                                            ),
+                                            width: scaleInnerItemHeight,
+                                            height: scaleInnerItemHeight,
+                                            child: scale.tMedia == 0
+                                                ? Container(
+                                                    alignment: Alignment.center,
+                                                    width: iconMenuSize,
+                                                    height: iconMenuSize,
+                                                    child: getSvgIcon(
+                                                        serialPortSvgIcon(),
+                                                        iconMenuSize,
+                                                        iconMenuSize,
+                                                        (!isSelect)
+                                                            ? Theme.of(context)
+                                                                .colorScheme
+                                                                .primary
+                                                            : Theme.of(context)
+                                                                .colorScheme
+                                                                .onPrimary))
+                                                : Icon(
+                                                    size: iconMenuSize,
+                                                    Icons.wifi,
+                                                    color: !isSelect
+                                                        ? Theme.of(context)
+                                                            .colorScheme
+                                                            .primary
+                                                        : Theme.of(context)
+                                                            .colorScheme
+                                                            .onPrimary,
+                                                  ),
+                                          )),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            Text(
+                                              scale.scaleName,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall!
+                                                  .apply(
+                                                    color: !isSelect
+                                                        ? Theme.of(context)
+                                                            .colorScheme
+                                                            .primary
+                                                        : Theme.of(context)
+                                                            .colorScheme
+                                                            .onPrimary,
+                                                  ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  scale.isOnline
+                                                      ? localizedStrings
+                                                          .gTipOnline
+                                                      : localizedStrings
+                                                          .gTipOffline,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodySmall!
+                                                      .apply(
+                                                        color: isSelect
+                                                            ? Theme.of(context)
+                                                                .colorScheme
+                                                                .onPrimary
+                                                            : scale.isOnline
+                                                                ? Theme.of(
+                                                                        context)
+                                                                    .colorScheme
+                                                                    .onTertiaryFixedVariant
+                                                                : Theme.of(
+                                                                        context)
+                                                                    .colorScheme
+                                                                    .error,
+                                                      ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                                Checkbox(
+                                                  value: widget.selScaleList
+                                                      .contains(scale.scaleId),
+                                                  side: WidgetStateBorderSide
+                                                      .resolveWith(
+                                                          (Set<WidgetState>
+                                                              states) {
+                                                    if (states.contains(
+                                                        WidgetState.selected)) {
+                                                      return BorderSide(
+                                                          color: Colors.white);
+                                                    }
+                                                    return BorderSide(
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .surfaceContainerHighest);
+                                                  }),
+                                                  fillColor: WidgetStateProperty
+                                                      .resolveWith<Color>(
+                                                          (Set<WidgetState>
+                                                              states) {
+                                                    return Colors.transparent;
+                                                  }),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.zero,
+                                                  ),
+                                                  onChanged: (bool? value) {
+                                                    widget.clickScale(scale);
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )));
+                      },
+                    ),
+                  ),
+                ),
+        ],
+      ),
+    );
+  }
+}

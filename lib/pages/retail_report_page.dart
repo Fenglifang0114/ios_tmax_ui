@@ -7,9 +7,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:t_max/data/home_page_common_data.dart';
+import 'package:t_max/data/icons.dart';
+import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
-import 'package:t_max/widget/custom_button.dart';
+import 'package:t_max/widget/common_widget.dart';
+import 'package:t_max/widget/outline_btn_new.dart';
+import 'package:t_max/widget/page_info.dart';
+import 'package:t_max/widget/scale_list.dart';
+import 'package:t_max/widget/show_error_dialog.dart';
 import '../data/comscaleinfo_data.dart';
 import '../data/detail_info.dart';
 import '../data/downloadresponse.dart';
@@ -18,7 +24,6 @@ import '../data/manager_scale_channel.dart';
 import '../data/pak_info_data.dart';
 import '../data/scalelist_data.dart';
 import '../data/service_status_data.dart';
-import '../widget/page_head.dart';
 
 const String srvUninstalled = "status1"; //服务未安装
 const String srvinstalled = "status2"; //服务已安装  服务未启动
@@ -53,6 +58,7 @@ class RetailReportPageState extends State<RetailReportPage> {
   String srvStatusMsg = "";
 
   Timer? _statusTimer;
+  List<int> mySelScaleIdList = [];
 
   // 开始定时器
   void startTimer() {
@@ -123,6 +129,13 @@ class RetailReportPageState extends State<RetailReportPage> {
         String dataString = event.obj;
         try {
           mySrvScaleList = srvScaleListFromJson(dataString);
+          if (mySrvScaleList.isNotEmpty) {
+            for (int i = 0; i < mySrvScaleList.length; i++) {
+              if (!mySelScaleIdList.contains(mySrvScaleList[i].scaleId)) {
+                mySelScaleIdList.add(mySrvScaleList[i].scaleId);
+              }
+            }
+          }
           setState(() {});
         } catch (e) {
           return;
@@ -180,7 +193,7 @@ class RetailReportPageState extends State<RetailReportPage> {
 
               break;
           }
-          _showErrorDialog(context, msgStr);
+          showErrorDialog(context, msgStr);
         }
       }
     });
@@ -230,9 +243,12 @@ class RetailReportPageState extends State<RetailReportPage> {
   }
 
   void netScaleOpenBill() {
-    if (myNetScaleList.isNotEmpty) {
-      for (int i = 0; i < myNetScaleList.length; i++) {
-        PublicFunctions.openBillSend(myNetScaleList[i].scaleId!);
+    if (myAllScalesList.isNotEmpty) {
+      for (int i = 0; i < myAllScalesList.length; i++) {
+        //只管理wifi的秤
+        if (myAllScalesList[i].tMedia == 1) {
+          PublicFunctions.openBillSend(myAllScalesList[i].scaleId);
+        }
       }
     }
   }
@@ -258,6 +274,130 @@ class RetailReportPageState extends State<RetailReportPage> {
     super.dispose();
   }
 
+  Widget customTitle(String title) {
+    return Text(
+      title,
+      style: Theme.of(context).textTheme.bodySmall!.apply(
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+
+  Widget showTitleName(String title) {
+    return SizedBox(
+      height: 42,
+      child: Row(children: [
+        Expanded(
+          child: Container(
+            alignment: Alignment.centerLeft,
+            child: customTitle(title),
+          ),
+        ),
+      ]),
+    );
+  }
+
+  TextStyle getTextStyle({Color? color}) {
+    return Theme.of(context).textTheme.bodySmall!.apply(
+          color: color ?? Theme.of(context).colorScheme.onSurface,
+        );
+  }
+
+  TextStyle getTitleTextStyle({Color? color}) {
+    //返回一个文本样式
+    color ??= colorScheme.onSurface;
+    return Theme.of(context).textTheme.bodyMedium!.apply(
+          color: color,
+        );
+  }
+
+  ColorScheme get colorScheme => Theme.of(context).colorScheme;
+
+  Widget myHeadInfo(
+      dynamic context, double maxWidth, String pageTitle, String helpInfo,
+      {bool showHelp = true}) {
+    return Container(
+        height: pageTopTitleHeight,
+        color: Theme.of(context).colorScheme.surface,
+        child: Column(children: [
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                subTitle(context, maxWidth, pageTitle),
+                Row(
+                  children: [
+                    SizedBox(
+                      child: Text(
+                        localizedStrings.gTipServiceStatus,
+                        textAlign: TextAlign.right,
+                        overflow: TextOverflow.ellipsis,
+                        style: getTextStyle(),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    SizedBox(
+                      child: Text(srvStatusMsg,
+                          style: getTextStyle(
+                              color: srvStatus.contains(srvStarted)
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context).colorScheme.error),
+                          overflow: TextOverflow.ellipsis),
+                    )
+                  ],
+                ),
+                if (showHelp)
+                  Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                    PageInfoButton(helpInfo: helpInfo, onRefresh: () {}),
+                    const SizedBox(
+                      width: largePadding,
+                    ),
+                  ])
+              ],
+            ),
+          ),
+        ]));
+  }
+
+  Widget subTitle(
+    dynamic context,
+    double maxWidth,
+    String pageTitle,
+  ) {
+    return Row(
+      children: [
+        SizedBox(
+          width: largePadding,
+        ),
+        SizedBox(
+          child: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: getSvgIcon(returnSvgIcon(), 28, 28,
+                  Theme.of(context).colorScheme.primary)),
+        ),
+        SizedBox(
+          width: regularPadding,
+        ),
+        SizedBox(
+          width: maxWidth,
+          child: Text(
+            pageTitle,
+            style: Theme.of(context).textTheme.labelMedium!.apply(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     double maxWidth = MediaQuery.of(context).size.width;
@@ -274,179 +414,198 @@ class RetailReportPageState extends State<RetailReportPage> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                pageHeadInfo(
+                myHeadInfo(
                     context,
                     maxWidth - headWidthPadding,
                     localizedStrings.menuRetailReport,
                     localizedStrings.gTipRetailDetailPageHelp),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                SizedBox(
-                                  width: 200,
-                                  child: Text(
-                                    localizedStrings.gTipServiceStatus,
-                                    textAlign: TextAlign.right,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                SizedBox(
-                                  width: 200,
-                                  child: Text(srvStatusMsg,
-                                      style: TextStyle(
-                                          color: srvStatus.contains(srvStarted)
-                                              ? Theme.of(context)
-                                                  .colorScheme
-                                                  .primary
-                                              : Theme.of(context)
-                                                  .colorScheme
-                                                  .error),
-                                      overflow: TextOverflow.ellipsis),
-                                )
-                              ],
-                            ),
-                            CustomOutlinedButton(
-                                btnWidth: 100,
-                                btnHeight: 50,
-                                icon: Icons.refresh,
-                                text: localizedStrings.rRefreshListBtn,
-                                onPressed: () {
-                                  PublicFunctions.getDetailListSrv1();
-                                }),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            CustomOutlinedButton(
-                                btnWidth: 100,
-                                btnHeight: 50,
-                                icon: Icons.save,
-                                text: localizedStrings.gBtnExport,
-                                onPressed: exportFlag ? exportToCsv : null),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            PopupMenuButton<String>(
-                                onSelected: _performActionForOption,
-                                tooltip: '',
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                itemBuilder: (BuildContext context) {
-                                  return [
-                                    PopupMenuItem<String>(
-                                      value: 'Install',
-                                      child: Text(
-                                        localizedStrings.gTipInstallService,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                    PopupMenuItem<String>(
-                                      value: 'Start',
-                                      child: Text(
-                                        localizedStrings.gTipStartService,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                    PopupMenuItem<String>(
-                                      value: 'Stop',
-                                      child: Text(
-                                        localizedStrings.gTipStopService,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                    PopupMenuItem<String>(
-                                      value: 'Uninstall',
-                                      child: Text(
-                                        localizedStrings.gTipUninstallService,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ];
-                                },
-                                child: Container(
-                                  width: 120,
-                                  height: 50,
-                                  decoration: BoxDecoration(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      localizedStrings.gTipService,
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onPrimary),
-                                    ),
-                                  ),
-                                ))
-                          ],
-                        ),
-                        SizedBox(
-                          width: maxWidth - 20,
-                          height: maxheight - 230,
-                          child: Scrollbar(
-                            controller: _scrollController,
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              controller: _scrollController,
-                              child: Container(
-                                padding: const EdgeInsets.all(10),
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.vertical, // 垂直滚动
-                                  controller: _scrollController1,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      SizedBox(
-                                        width:
-                                            maxWidth < 1000 ? 1000 : maxWidth,
-                                        height: maxheight - 110,
-                                        child: ListView.builder(
-                                          itemCount: transactions.length,
-                                          itemBuilder: (context, index) {
-                                            return Column(
-                                              children: [
-                                                buildCartTitle(
-                                                    transactions[index]),
-                                                if (transactions[index]
-                                                    .isExpanded)
-                                                  buildCardDetail(
-                                                      transactions[index]),
-                                              ],
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                )
+                Container(
+                  height: regularPadding,
+                  color: colorScheme.surfaceDim,
+                ),
+                showContent(maxWidth, maxheight),
               ])),
     );
+  }
+
+  Widget showContent(double maxWidth, double maxheight) {
+    return Expanded(
+      child: Padding(
+          padding: const EdgeInsets.only(right: regularPadding),
+          child: Row(
+            children: [
+              showScaleList(),
+              Container(
+                width: regularPadding,
+                color: colorScheme.surfaceDim,
+              ),
+              Expanded(
+                child: Column(
+                  children: [
+                    showBtnList(),
+                    showDataList(maxWidth, maxheight),
+                  ],
+                ),
+              )
+            ],
+          )),
+    );
+  }
+
+  Widget showBtnList() {
+    return Container(
+      height: pageTopTitleHeight,
+      padding: const EdgeInsets.only(left: regularPadding),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          showInstallRow(),
+          Row(
+            children: [
+              showTextButton(context, 40, localizedStrings.rRefreshListBtn, () {
+                PublicFunctions.getDetailListSrv1();
+              }, colorScheme.onPrimary, colorScheme.primary,
+                  colorScheme.onPrimary),
+              SizedBox(
+                width: largePadding,
+              ),
+              showTextButton(
+                  context,
+                  40,
+                  localizedStrings.gBtnExport,
+                  exportFlag ? exportToCsv : null,
+                  colorScheme.onPrimary,
+                  colorScheme.primary,
+                  colorScheme.onPrimary)
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget showScaleList() {
+    return Container(
+      width: appScaleListWidth,
+      color: Theme.of(context).colorScheme.surfaceTint,
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height,
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            SizedBox(
+              height: regularPadding,
+            ),
+            Expanded(
+              child: NewMutiScaleListWifiWidget(
+                listWidth: appScaleListWidth, // 列表宽度
+                selScaleList: mySelScaleIdList,
+                clickScale: (scale) {
+                  setState(() {
+                    addOrRemoveSelScale(scale.scaleId);
+                  });
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget showDataList(double maxWidth, double maxheight) {
+    return SizedBox(
+      width: maxWidth,
+      height: maxheight - 254,
+      child: Scrollbar(
+        controller: _scrollController,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          controller: _scrollController,
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical, // 垂直滚动
+              controller: _scrollController1,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: maxWidth < 1000 ? 1000 : maxWidth,
+                    height: maxheight - 110,
+                    child: ListView.builder(
+                      itemCount: transactions.length,
+                      itemBuilder: (context, index) {
+                        return Column(
+                          children: [
+                            buildCartTitle(transactions[index]),
+                            if (transactions[index].isExpanded)
+                              buildCardDetail(transactions[index]),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget showInstallRow() {
+    return Row(
+      children: [
+        CustomGeneralButton(
+          text: localizedStrings.gTipInstallService,
+          maxWidth: 200,
+          onPressed: () {
+            _performActionForOption('Install');
+          },
+        ),
+        SizedBox(
+          width: largePadding,
+        ),
+        CustomGeneralButton(
+          text: localizedStrings.gTipStartService,
+          maxWidth: 200,
+          onPressed: () {
+            _performActionForOption('Start');
+          },
+        ),
+        SizedBox(
+          width: largePadding,
+        ),
+        CustomGeneralButton(
+          text: localizedStrings.gTipStopService,
+          maxWidth: 200,
+          onPressed: () {
+            _performActionForOption('Stop');
+          },
+        ),
+        SizedBox(
+          width: largePadding,
+        ),
+        CustomGeneralButton(
+          text: localizedStrings.gTipUninstallService,
+          maxWidth: 200,
+          onPressed: () {
+            _performActionForOption('Uninstall');
+          },
+        ),
+      ],
+    );
+  }
+
+  void addOrRemoveSelScale(int scaleId) {
+    if (mySelScaleIdList.contains(scaleId)) {
+      mySelScaleIdList.remove(scaleId);
+    } else {
+      mySelScaleIdList.add(scaleId);
+    }
+    setScaleRelStatus(scaleId, getStatus(scaleId));
   }
 
   void _performActionForOption(String option) {
@@ -460,7 +619,7 @@ class RetailReportPageState extends State<RetailReportPage> {
           srvStatus = "";
           srvStatusMsg = localizedStrings.gTipWait;
         } else {
-          _showErrorDialog(context, srvStatusMsg);
+          showErrorDialog(context, srvStatusMsg);
         }
 
         break;
@@ -472,7 +631,7 @@ class RetailReportPageState extends State<RetailReportPage> {
           srvStatus = "";
           srvStatusMsg = localizedStrings.gTipWait;
         } else {
-          _showErrorDialog(context, srvStatusMsg);
+          showErrorDialog(context, srvStatusMsg);
         }
         break;
       case 'Stop':
@@ -483,7 +642,7 @@ class RetailReportPageState extends State<RetailReportPage> {
           srvStatus = "";
           srvStatusMsg = localizedStrings.gTipWait;
         } else {
-          _showErrorDialog(context, srvStatusMsg);
+          showErrorDialog(context, srvStatusMsg);
         }
         break;
       case 'Uninstall':
@@ -495,7 +654,7 @@ class RetailReportPageState extends State<RetailReportPage> {
 
           srvStatusMsg = localizedStrings.gTipWait;
         } else {
-          _showErrorDialog(context, srvStatusMsg);
+          showErrorDialog(context, srvStatusMsg);
         }
 
         break;
@@ -519,7 +678,6 @@ class RetailReportPageState extends State<RetailReportPage> {
         SrvScaleInfo(scaleId: scaleId, srvId: serviceId, isUsed: !status);
     String dataStr = json.encode(srvInfo);
     PublicFunctions.setScaleSrvStatus(dataStr);
-    setState(() {});
   }
 
   bool getStatus(int scaleId) {
@@ -535,148 +693,6 @@ class RetailReportPageState extends State<RetailReportPage> {
     return false;
   }
 
-  Widget myDrawer() {
-    return Column(
-      children: [
-        SizedBox(
-          height: 50, // 设置抽屉头部高度为100像素
-          child: Container(
-            color: Theme.of(context).colorScheme.primary,
-            child: Center(
-              child: Text(
-                localizedStrings.gTipScaleList,
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-        ),
-        showNetScaleList()
-        // 抽屉其他内容
-      ],
-    );
-  }
-
-  Widget showNetScaleList() {
-    return Expanded(
-      child: ListView.builder(
-        itemCount: scaleNetItems.length,
-        itemBuilder: (context, index) {
-          return SizedBox(
-            child: Column(
-              children: [
-                ListTile(
-                  selected: selScaleId == scaleNetItems[index].scaleId,
-                  dense: true,
-                  title: Tooltip(
-                    richMessage: TextSpan(
-                      text: '${scaleNetItems[index].ip!}\r\n\r\n',
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold),
-                      children: <InlineSpan>[
-                        TextSpan(
-                          text:
-                              'Model:${scaleNetItems[index].scaleModel! == "TMax" ? "" : scaleNetItems[index].scaleModel!}\r\nSN:${scaleNetItems[index].scaleModel! == "TMax" ? "" : scaleNetItems[index].scaleSn!}\r\nPort:${scaleNetItems[index].port!}',
-                          style: const TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.normal),
-                        ),
-                      ],
-                    ),
-                    child: Text(
-                      scaleNetItems[index].scaleName!,
-                      maxLines: 1, // 设置文本最大行数为1
-                      style: const TextStyle(
-                        fontSize: 16,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ),
-                  subtitle: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(
-                        width: 100,
-                        child: Text(
-                          scaleNetItems[index].isOnline!
-                              ? localizedStrings.gTipOnline
-                              : localizedStrings.gTipOffline,
-                          maxLines: 1, // 设置文本最大行数为1
-                          style: TextStyle(
-                            fontSize: 14,
-                            overflow: TextOverflow.ellipsis,
-                            color: scaleNetItems[index].isOnline!
-                                ? Theme.of(context)
-                                    .colorScheme
-                                    .onTertiaryFixedVariant
-                                : Theme.of(context).colorScheme.error,
-                          ),
-                        ),
-                      ),
-                      const Icon(Icons.wifi)
-                    ],
-                  ),
-                  selectedTileColor: Theme.of(context).colorScheme.primary,
-                  trailing: Tooltip(
-                    message: localizedStrings.rJoinManagementTip,
-                    child: IconButton(
-                        onPressed: () {
-                          setScaleRelStatus(scaleNetItems[index].scaleId!,
-                              getStatus(scaleNetItems[index].scaleId!));
-                        },
-                        icon: Icon(
-                          getStatus(scaleNetItems[index].scaleId!)
-                              ? Icons.check_box
-                              : Icons.check_box_outline_blank,
-                          color: Theme.of(context).colorScheme.primary,
-                        )),
-                  ),
-                  onTap: () {},
-                )
-              ],
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  void _showErrorDialog(BuildContext context, String tipStr) {
-    showDialog(
-      context: context,
-      builder: (BuildContext ctx) {
-        return AlertDialog(
-          title: Text(
-            localizedStrings.gTitleConfirm,
-            style: TextStyle(color: Theme.of(context).colorScheme.primary),
-          ),
-          content: SizedBox(
-            width: 300,
-            height: 70,
-            child: Text(
-              tipStr,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          actions: <Widget>[
-            SizedBox(
-              height: 30,
-              child: OutlinedButton(
-                child: Text(localizedStrings.gBtnConfirm),
-                onPressed: () {
-                  Navigator.of(ctx).pop(true); // 跳转
-                },
-              ),
-            )
-          ],
-        );
-      },
-    ).then((confirmed) {
-      if (confirmed) {}
-    });
-  }
-
   Widget buildCardDetail(TransactionWithExpansion tran) {
     return Column(
       // children: tran.details.map((detail) {
@@ -684,13 +700,23 @@ class RetailReportPageState extends State<RetailReportPage> {
           .where((detail) => detail.pluReturnFlag != "Cancel")
           .map((detail) {
         return Card(
+          color: colorScheme.surface,
           elevation: 1,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(0),
+          ),
           child: ListTile(
             title: Row(
               children: [
-                Text('PLU：${detail.pluNum}'),
+                Text(
+                  'PLU：${detail.pluNum}',
+                  style: getTextStyle(),
+                ),
                 const Text('        '),
-                Text('Name：${detail.pluName}'),
+                Text(
+                  'Name：${detail.pluName}',
+                  style: getTextStyle(),
+                ),
               ],
             ),
             subtitle: Row(
@@ -720,25 +746,32 @@ class RetailReportPageState extends State<RetailReportPage> {
   Widget buildDetailText(String detail) {
     return Expanded(
       flex: 1,
-      child: Text(detail),
+      child: Text(
+        detail,
+        style: getTextStyle(color: colorScheme.onSurface),
+      ),
     );
   }
 
   Widget buildCartTitle(TransactionWithExpansion tran) {
     return Card(
       elevation: 1, //阴影宽度
+      color: colorScheme.surfaceDim,
       shadowColor: Theme.of(context).colorScheme.primary,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(0),
+      ),
       child: ListTile(
         title: Row(
           children: [
             Text(
               '${tran.total.scaleModel}/${tran.total.scaleSn}',
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: getTitleTextStyle(color: colorScheme.primary),
             ),
             const Text('        '),
             Text(
               'ID：${tran.total.settleAccountTimes}',
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: getTitleTextStyle(color: colorScheme.primary),
             ),
           ],
         ),
@@ -891,20 +924,11 @@ class RetailReportPageState extends State<RetailReportPage> {
               .join('\n'),
         );
         if (mounted && context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                content: Text('OK    ${file.path}'),
-                backgroundColor:
-                    Theme.of(context).colorScheme.onTertiaryFixedVariant),
-          );
+          showErrorDialog(context, 'OK    ${file.path}');
         }
       } catch (e) {
         if (mounted && context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                content: Text(e.toString()),
-                backgroundColor: Theme.of(context).colorScheme.error),
-          );
+          showErrorDialog(context, e.toString());
         }
       }
     }

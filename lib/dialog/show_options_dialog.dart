@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:t_max/widget/dialog_head_style.dart';
 import '../data/language.dart';
 import '../data/plu_field_status_data.dart';
-import '../widget/custom_button.dart';
 
 class MultiSelectDialog extends StatefulWidget {
   final Map<String, FieldNameStatus> options;
@@ -29,10 +29,6 @@ class MultiSelectDialogState extends State<MultiSelectDialog> {
         _selectedOptions.add(option);
       }
     });
-  }
-
-  void _closeDialog() {
-    Navigator.of(context).pop(_selectedOptions);
   }
 
   @override
@@ -64,64 +60,137 @@ class MultiSelectDialogState extends State<MultiSelectDialog> {
     });
   }
 
+  ColorScheme get colorScheme => Theme.of(context).colorScheme;
+  TextTheme get textTheme => Theme.of(context).textTheme;
+
+  TextStyle getTextStyle({Color? color}) {
+    //返回一个文本样式
+    color ??= colorScheme.onSurface;
+    return textTheme.bodySmall!.apply(
+      color: color,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: getDialogTitle(
-          context, localizedStrings.gPluField, Icons.edit_note_outlined, 300),
-      content: SizedBox(
-        height: 400,
-        child: SingleChildScrollView(
-            child: Column(
-          children: [
-            CheckboxListTile(
-              title: Text(
-                localizedStrings.gSelectAll,
-                style: TextStyle(overflow: TextOverflow.ellipsis),
-              ),
-              value: isSelectAll,
-              onChanged: (bool? newValue) {
-                setState(() {
-                  isSelectAll = newValue!;
-                  selectAll(newValue);
-                });
-              },
-            ),
-            Column(
-              children: widget.options.entries.map((entry) {
-                return CheckboxListTile(
-                  title: SizedBox(
-                    width: 300,
-                    child: Text(
-                      entry.value.field,
-                      style: TextStyle(fontSize: 14),
-                      overflow: TextOverflow.ellipsis,
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      child: Container(
+          width: 630,
+          height: 493,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: BorderRadius.circular(0),
+          ),
+          child: Column(
+            children: [
+              // 头部
+              ...dialogHeadStyle(context, localizedStrings.gPluField, false),
+
+              // 中部
+              Expanded(
+                  child: Container(
+                      padding: EdgeInsets.all(20),
+                      child: Column(children: [
+                        CheckboxListTile(
+                          title: Text(
+                            localizedStrings.gSelectAll,
+                            style: TextStyle(overflow: TextOverflow.ellipsis),
+                          ),
+                          value: isSelectAll,
+                          onChanged: (bool? newValue) {
+                            setState(() {
+                              isSelectAll = newValue!;
+                              selectAll(newValue);
+                            });
+                          },
+                        ),
+                        GridView.count(
+                          shrinkWrap: true, // 使 GridView 适应内容高度
+                          physics: const NeverScrollableScrollPhysics(), // 禁止滚动
+                          crossAxisCount: 3, // 设置列数为 3
+                          crossAxisSpacing: 8.0, // 水平间距
+                          mainAxisSpacing: 0.0, // 适当减小垂直间距
+                          childAspectRatio: 5, // 设置子组件宽高比，可按需调整
+                          children: widget.options.entries.map((entry) {
+                            return CheckboxListTile(
+                              title: Text(
+                                entry.value.field,
+                                style: getTextStyle(),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              value: _selectedOptions.contains(entry.key),
+                              onChanged: closeButtonEnabled
+                                  ? (value) => _toggleOption(entry.key)
+                                  : null,
+                            );
+                          }).toList(),
+                        ),
+                      ]))),
+
+              // 底部
+              Container(
+                height: 96,
+                width: 400,
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor:
+                              Theme.of(context).colorScheme.onPrimary,
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                          fixedSize: const Size(double.infinity, 48),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.zero,
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop(_selectedOptions);
+                        },
+                        child: Text(
+                          localizedStrings.gBtnConfirm,
+                          style: getTextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
                     ),
-                  ),
-                  value: _selectedOptions.contains(entry.key),
-                  onChanged: closeButtonEnabled
-                      ? (value) => _toggleOption(entry.key)
-                      : null,
-                );
-              }).toList(),
-            ),
-          ],
-        )),
-      ),
-      actions: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            CustomOutlinedButton(
-              btnWidth: 130,
-              btnHeight: 40,
-              icon: Icons.exit_to_app,
-              text: localizedStrings.gBtnExit,
-              onPressed: closeButtonEnabled ? _closeDialog : null,
-            ),
-          ],
-        ),
-      ],
+                    SizedBox(width: 20),
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor:
+                              Theme.of(context).colorScheme.onSurfaceVariant,
+                          backgroundColor: Theme.of(context)
+                              .colorScheme
+                              .surfaceContainerHighest,
+                          fixedSize: const Size(double.infinity, 48),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.zero,
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          localizedStrings.gBtnCancel,
+                          style: getTextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ],
+          )),
     );
   }
 }
