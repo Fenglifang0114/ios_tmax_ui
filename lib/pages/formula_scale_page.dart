@@ -266,8 +266,6 @@ class FormulationScalePageState extends State<FormulationScalePage>
             clickedDarftRow = null; // 重置点击行状态
             selectedDarfFma = null; // 重置选中的配方称重记录和配方明细
           });
-
-          print(darfFmaInfoList.length);
         } else {
           setState(() {
             darfFmaInfoList = []; //暂存的配方记录

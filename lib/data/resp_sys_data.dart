@@ -1,0 +1,683 @@
+// 系统数据0通道返回数据
+import 'dart:async';
+import 'dart:convert';
+import 'package:t_max/data/cominfoslist_data.dart';
+import 'package:t_max/data/comscaleinfo_data.dart';
+import 'package:t_max/data/license_data.dart';
+import 'package:t_max/data/modifyresult_data.dart';
+import 'package:t_max/data/pak_info_data.dart';
+import 'package:t_max/data/plu_info_list_data.dart';
+import 'package:t_max/data/scale_info_from_db.dart';
+import 'package:t_max/data/scalelist_data.dart';
+import 'package:t_max/data/settingparam_data.dart';
+import 'package:t_max/data/userinfo_data.dart';
+import 'package:t_max/data/wifi_list_info.dart';
+import '../data/ipinfodata.dart';
+import '../data/manager_scale_channel.dart';
+import '../data/wifi_pwd_info.dart';
+import '../eventbus/eventbus.dart';
+
+class RespSysMsgType {
+  static const String respPortsList = 'resp_ports_list';
+  static const String respScalesList = 'resp_scales_list';
+  static const String respScaleModify = 'resp_scale_modify';
+  static const String respProductList = 'resp_product_list';
+  static const String respUserList = 'resp_user_list';
+  static const String respGetLicense = 'resp_get_license';
+  static const String respCheckLicenseKey = 'resp_check_license_key';
+  static const String respGetApList = 'resp_get_ap_list';
+  static const String respGetIpInfo = 'resp_get_ip_info';
+  static const String respUpdateLicense = 'resp_update_license';
+  static const String respScaleDel = 'resp_scale_del';
+  static const String respScaleAdd = 'resp_scale_add';
+  static const String respDetailList = 'resp_detail_list';
+  static const String respNewDetail = 'resp_new_detail';
+  static const String respDetailAdd = 'resp_detail_add';
+  static const String respWifiPwdList = 'resp_wifi_pwd_list';
+  static const String respScaleOnline = 'resp_scale_online';
+  static const String respGetScaleSrvList = 'resp_get_scale_srv_list';
+  static const String respDoServiceAction = 'resp_do_service_action';
+  static const String respRawTypeList = 'resp_raw_type_list';
+  static const String respFormulaTypeList = 'resp_formula_type_list';
+  static const String respRawList = 'resp_raw_list';
+  static const String respRawDataAdd = 'resp_raw_data_add';
+  static const String respRawDataDelete = 'resp_raw_data_delete';
+  static const String respRawDataEdit = 'resp_raw_data_edit';
+  static const String respFormulaTypeAdd = 'resp_formula_type_add';
+  static const String respFmaTypeEdit = 'resp_fma_type_edit';
+  static const String respFmaTypeDelete = 'resp_fma_type_delete';
+  static const String respFormulaList = 'resp_formula_list';
+  static const String respFormulaAdd = 'resp_formula_add';
+  static const String respFormulaUpdate = 'resp_formula_update';
+  static const String respFormulaDelete = 'resp_formula_delete';
+  static const String respFormulaRecList = 'resp_formula_rec_list';
+  static const String respFormulaRecAdd = 'resp_formula_rec_add';
+  static const String respRawTypeAdd = 'resp_raw_type_add';
+  static const String respRawTypeEdit = 'resp_raw_type_edit';
+  static const String respFlowRateList = 'resp_flow_rate_list';
+  static const String respFlowRateAdd = 'resp_flow_rate_add';
+  static const String respGetAllWgtRecList = 'resp_get_all_wgt_rec_list';
+  static const String respGetUiConfig = 'resp_get_ui_config';
+  static const String respUpdateUiConfig = 'resp_update_ui_config';
+  static const String respDelWgtRec = 'resp_del_wgt_rec';
+  static const String respAddWgtRec = 'resp_add_wgt_rec';
+  static const String respExportAllRecs = 'resp_export_all_recs';
+  static const String respWifiPwdAdd = 'resp_wifi_pwd_add';
+  static const String respGetAutoNext = 'resp_get_auto_next';
+  static const String respGetDraftFmaWgtRecList =
+      'resp_get_draft_fma_wgt_rec_list';
+  static const String respCreateDraftFmaWgtRecList =
+      'resp_create_draft_fma_wgt_rec_list';
+  static const String respUpdateDraftFmaWgtRecList =
+      'resp_update_draft_fma_wgt_rec_list';
+  static const String respDeleteDraftFmaWgtRecList =
+      'resp_delete_draft_fma_wgt_rec_list';
+  static const String respRawTypeDelete = 'resp_raw_type_delete';
+  static const String respAddSysUser = 'resp_add_sys_user';
+  static const String respDeleteSysUser = 'resp_delete_sys_user';
+  static const String respUpdateSysUser = 'resp_update_sys_user';
+  static const String respDisableSysUser = 'resp_disable_sys_user';
+  static const String respChangePassword = 'resp_change_password';
+  static const String respLogin = 'resp_login';
+  static const String respGetAllUsers = 'resp_get_all_users';
+  static const String respGetUserDetail = 'resp_get_user_detail';
+
+  static final Map<String, Function> handlers = {
+    RespSysMsgType.respPortsList: handlePortsList,
+    RespSysMsgType.respScalesList: handleScalesList,
+    RespSysMsgType.respScaleModify: handleScaleModify,
+    RespSysMsgType.respProductList: handleProductList,
+    RespSysMsgType.respUserList: handleUserList,
+    RespSysMsgType.respGetLicense: handleGetLicense,
+    RespSysMsgType.respCheckLicenseKey: handleCheckLicenseKey,
+    RespSysMsgType.respGetApList: handleGetApList,
+    RespSysMsgType.respGetIpInfo: handleGetIpInfo,
+    RespSysMsgType.respUpdateLicense: handleUpdateLicense,
+    RespSysMsgType.respScaleDel: handleScaleDel,
+    RespSysMsgType.respScaleAdd: handleScaleAdd,
+    RespSysMsgType.respDetailList: handleDetailList,
+    RespSysMsgType.respNewDetail: handleNewDetail,
+    RespSysMsgType.respDetailAdd: handleDetailAdd,
+    RespSysMsgType.respWifiPwdList: handleWifiPwdList,
+    RespSysMsgType.respScaleOnline: handleScaleOnline,
+    RespSysMsgType.respGetScaleSrvList: handleGetScaleSrvList,
+    RespSysMsgType.respDoServiceAction: handleDoServiceAction,
+    RespSysMsgType.respRawTypeList: handleRawTypeList,
+    RespSysMsgType.respFormulaTypeList: handleFormulaTypeList,
+    RespSysMsgType.respRawList: handleRawList,
+    RespSysMsgType.respRawDataAdd: handleRawDataAdd,
+    RespSysMsgType.respRawDataDelete: handleRawDataDelete,
+    RespSysMsgType.respRawDataEdit: handleRawDataEdit,
+    RespSysMsgType.respFormulaTypeAdd: handleFormulaTypeAdd,
+    RespSysMsgType.respFmaTypeEdit: handleFmaTypeEdit,
+    RespSysMsgType.respFmaTypeDelete: handleFmaTypeDelete,
+    RespSysMsgType.respFormulaList: handleFormulaList,
+    RespSysMsgType.respFormulaAdd: handleFormulaAdd,
+    RespSysMsgType.respFormulaUpdate: handleFormulaUpdate,
+    RespSysMsgType.respFormulaDelete: handleFormulaDelete,
+    RespSysMsgType.respFormulaRecList: handleFormulaRecList,
+    RespSysMsgType.respFormulaRecAdd: handleFormulaRecAdd,
+    RespSysMsgType.respRawTypeAdd: handleRawTypeAdd,
+    RespSysMsgType.respRawTypeEdit: handleRawTypeEdit,
+    RespSysMsgType.respFlowRateList: handleFlowRateList,
+    RespSysMsgType.respFlowRateAdd: handleFlowRateAdd,
+    RespSysMsgType.respGetAllWgtRecList: handleGetAllWgtRecList,
+    RespSysMsgType.respGetUiConfig: handleGetUiConfig,
+    RespSysMsgType.respUpdateUiConfig: handleUpdateUiConfig,
+    RespSysMsgType.respDelWgtRec: handleDelWgtRec,
+    RespSysMsgType.respAddWgtRec: handleAddWgtRec,
+    RespSysMsgType.respExportAllRecs: handleExportAllRecs,
+    RespSysMsgType.respWifiPwdAdd: handleWifiPwdAdd,
+    RespSysMsgType.respGetAutoNext: handleGetAutoNext,
+    RespSysMsgType.respGetDraftFmaWgtRecList: handleGetDraftFmaWgtRecList,
+    RespSysMsgType.respCreateDraftFmaWgtRecList: handleCreateDraftFmaWgtRecList,
+    RespSysMsgType.respUpdateDraftFmaWgtRecList: handleUpdateDraftFmaWgtRecList,
+    RespSysMsgType.respDeleteDraftFmaWgtRecList: handleDeleteDraftFmaWgtRecList,
+    RespSysMsgType.respRawTypeDelete: handleRawTypeDelete,
+    RespSysMsgType.respAddSysUser: handleAddSysUser,
+    RespSysMsgType.respDeleteSysUser: handleDeleteSysUser,
+    RespSysMsgType.respUpdateSysUser: handleUpdateSysUser,
+    RespSysMsgType.respDisableSysUser: handleDisableSysUser,
+    RespSysMsgType.respChangePassword: handleChangePassword,
+    RespSysMsgType.respLogin: handleLogin,
+    RespSysMsgType.respGetAllUsers: handleGetAllUsers,
+    RespSysMsgType.respGetUserDetail: handleGetUserDetail,
+  };
+
+  static void handlePortsList(dynamic jsonData) {
+    String dataString;
+    dataString = jsonData['MsgBody'];
+    List<String> dataList = <String>[];
+    for (var value in const JsonDecoder().convert(dataString)) {
+      dataList.add(value);
+    }
+    myComInfoList.msgBody = dataList;
+    Map<String, dynamic> map = json.decode(json.encode(myComInfoList));
+    dynamic mobj = ComInfoList.fromJson(map);
+    eventBus.fire(EventComInfoList(mobj));
+  }
+
+  static void handleScalesList(dynamic jsonData) {
+    pasterScaleList(jsonData['MsgBody']);
+  }
+
+  static void handleScaleModify(dynamic jsonData) {
+    pasterModifyAck(jsonData['MsgBody']);
+  }
+
+  static void handleProductList(dynamic jsonData) {
+    pasterProductList(jsonData['MsgBody']);
+  }
+
+  static void handleUserList(dynamic jsonData) {
+    pasterUserList(jsonData['MsgBody']);
+  }
+
+  static void handleGetLicense(dynamic jsonData) {
+    pasterLicense(jsonData['MsgBody']);
+  }
+
+  static void handleCheckLicenseKey(dynamic jsonData) {
+    pasterLicenseKey(jsonData['MsgBody']);
+  }
+
+  static void handleGetApList(dynamic jsonData) {
+    pasterWifiList(jsonData['MsgBody']);
+  }
+
+  static void handleGetIpInfo(dynamic jsonData) {
+    pasterIpInfo(jsonData['MsgBody']);
+  }
+
+  static void handleUpdateLicense(dynamic jsonData) {
+    var dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespUpdateLic(dataString));
+  }
+
+  static void handleScaleDel(dynamic jsonData) {
+    var dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespDelScale(dataString));
+  }
+
+  static void handleScaleAdd(dynamic jsonData) {
+    var dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespAddScale(dataString));
+  }
+
+  static void handleDetailList(dynamic jsonData) {
+    var dataString = jsonData['MsgBody'];
+
+    try {
+      PakInfo pakInfo = pakInfoFromJson(dataString);
+      if (pakInfo.pagId == 1) {
+        myDetailPakList = [];
+      }
+      if (pakInfo.msgBody == "null") {
+        return;
+      }
+      myDetailPakList.add(pakInfo);
+      if (pakInfo.pakCount == myDetailPakList.length) {
+        //先把包排序
+        myDetailPakList.sort((a, b) => a.pagId.compareTo(b.pagId));
+        for (int i = 0; i < myDetailPakList.length; i++) {
+          myDetailRevPak.msgBody.write(myDetailPakList[i].msgBody);
+        }
+        eventBus.fire(EventRespDetailInfo(''));
+        myDetailPakList = [];
+      }
+    } catch (e) {
+      return;
+    }
+  }
+
+  static void handleNewDetail(dynamic jsonData) {
+    var dataString = jsonData['MsgBody'];
+
+    try {
+      PakInfo pakInfo = pakInfoFromJson(dataString);
+      if (pakInfo.pagId == 1) {
+        myDetailPakList = [];
+      }
+      if (pakInfo.msgBody == "null") {
+        return;
+      }
+      myDetailPakList.add(pakInfo);
+      if (pakInfo.pakCount == myDetailPakList.length) {
+        //先把包排序
+        myDetailPakList.sort((a, b) => a.pagId.compareTo(b.pagId));
+        for (int i = 0; i < myDetailPakList.length; i++) {
+          myDetailRevPak.msgBody.write(myDetailPakList[i].msgBody);
+        }
+        eventBus.fire(EventRespNewDetailInfo(''));
+        myDetailPakList = [];
+      }
+    } catch (e) {
+      return;
+    }
+  }
+
+  static void handleDetailAdd(dynamic jsonData) {
+    var dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespDetailAdd(dataString));
+  }
+
+  static void handleWifiPwdList(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    if (dataString.isNotEmpty) {
+      myWifiPwdInfoList = wifiPwdInfoListFromJson(dataString);
+    }
+  }
+
+  static void handleScaleOnline(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    try {
+      final jsonInfo = json.decode(dataString);
+      ScaleIsOnline scaleOnline;
+      scaleOnline = ScaleIsOnline.fromJson(jsonInfo);
+      for (var scale in myAllScalesList) {
+        if (scale.scaleId == scaleOnline.scaleId) {
+          // 现在可以正常更新状态
+          scale.isOnline = scaleOnline.isOnline!;
+          eventBus.fire(EventRespScaleOnline(''));
+          break;
+        }
+      }
+    } catch (e) {
+      return;
+    }
+  }
+
+  static void handleGetScaleSrvList(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespScaleSrvList(dataString));
+  }
+
+  static void handleDoServiceAction(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespDoSrvAction(dataString));
+  }
+
+  static void handleRawTypeList(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespGetRawTypeList(dataString));
+  }
+
+  static void handleFormulaTypeList(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespGetFormulaTypeList(dataString));
+  }
+
+  static void handleRawList(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespGetRawDataList(dataString));
+  }
+
+  static void handleRawDataAdd(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespAddRawData(dataString));
+  }
+
+  static void handleRawDataDelete(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespAddRawData(dataString));
+  }
+
+  static void handleRawDataEdit(dynamic jsonData) {
+    eventBus.fire(EventRespEditRawData(''));
+  }
+
+  static void handleFormulaTypeAdd(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespAddFormulaType(dataString));
+  }
+
+  static void handleFmaTypeEdit(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespAddFormulaType(dataString));
+  }
+
+  static void handleFmaTypeDelete(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespAddFormulaType(dataString));
+  }
+
+  static void handleFormulaList(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespFormulaList(dataString));
+  }
+
+  static void handleFormulaAdd(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespAddFormula(dataString));
+  }
+
+  static void handleFormulaUpdate(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespAddFormula(dataString));
+  }
+
+  static void handleFormulaDelete(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespAddFormula(dataString));
+  }
+
+  static void handleFormulaRecList(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespFormulaRecList(dataString));
+  }
+
+  static void handleFormulaRecAdd(dynamic jsonData) {
+    eventBus.fire(EventRespFormulaRecAdd(''));
+  }
+
+  static void handleRawTypeAdd(dynamic jsonData) {
+    eventBus.fire(EventRespRawTypeAdd(''));
+  }
+
+  static void handleRawTypeEdit(dynamic jsonData) {
+    eventBus.fire(EventRespRawTypeAdd(''));
+  }
+
+  static void handleFlowRateList(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespFlowRateList(dataString));
+  }
+
+  static void handleFlowRateAdd(dynamic jsonData) {
+    eventBus.fire(EventRespFlowRateAdd(''));
+  }
+
+  static void handleGetAllWgtRecList(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespGetAllWgtRecs(dataString));
+  }
+
+  static void handleGetUiConfig(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    handleGetUIConf(dataString);
+  }
+
+  static void handleWifiPwdAdd(dynamic jsonData) {
+    eventBus.fire(EventRevWifiPwdAdd(''));
+  }
+
+  static void handleUpdateUiConfig(dynamic jsonData) {
+    eventBus.fire(EventUpdateSettingParam(''));
+  }
+
+  static void handleDelWgtRec(dynamic jsonData) {
+    eventBus.fire(EventDelAllWgtRecs(''));
+  }
+
+  static void handleAddWgtRec(dynamic jsonData) {
+    eventBus.fire(EventAddWgtRec(''));
+  }
+
+  static void handleExportAllRecs(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventExportAllRecs(dataString));
+  }
+
+  static void handleGetAutoNext(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespGetAutoNext(dataString));
+  }
+
+  static void handleGetDraftFmaWgtRecList(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespGetDraftFmaWgtRecList(dataString));
+  }
+
+  static void handleCreateDraftFmaWgtRecList(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespCreateDraftFmaWgtRecList(dataString));
+  }
+
+  static void handleUpdateDraftFmaWgtRecList(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespUpdateDraftFmaWgtRecList(dataString));
+  }
+
+  static void handleDeleteDraftFmaWgtRecList(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespDelDraftFmaWgtRecList(dataString));
+  }
+
+  static void handleRawTypeDelete(dynamic jsonData) {
+    eventBus.fire(EventRespRawTypeAdd(''));
+  }
+
+  static void handleGetUIConf(String data) {
+    var jsonData = json.decode(data);
+    mySettingParam = SettingParam.fromJson(jsonData);
+
+    eventBus.fire(EventSettingParam(mySettingParam));
+  }
+
+  static void pasterLicense(String jsonDataString) {
+    if (jsonDataString.isNotEmpty) {
+      var jsonData = json.decode(jsonDataString);
+      try {
+        List<dynamic> jsonList = json.decode(jsonDataString);
+        if (jsonList.isNotEmpty) {
+          myLicenseInfo.pId = jsonList[0]['Id'];
+        }
+      } catch (e) {
+        myLicenseInfo.pId = '';
+      }
+
+      try {
+        myLicenseData = LicenseData.fromJson(jsonData);
+      } catch (e) {
+        myLicenseData = LicenseData([]);
+      }
+      if (myLicenseData.licList.isNotEmpty) {
+        LicenseSetting().setLicInfo();
+      }
+    }
+    eventBus.fire(EventLicenseData(jsonDataString));
+  }
+
+  static void pasterLicenseKey(String jsonDataString) {
+    eventBus.fire(EventCheckLicenseKey(jsonDataString));
+  }
+
+  static void pasterProductList(String jsonDataString) {
+    String jsonStrings = jsonDataString;
+    // final jsonResponse = json.decode(jsonStrings);
+
+    myPluListFormDb = pluInfoListFromJson(jsonStrings);
+    if (myPluListFormDb.isNotEmpty) {
+      eventBus.fire(EventProductRecList(myPluListFormDb));
+    } else {
+      myPluListFormDb.clear();
+      eventBus.fire(EventProductRecList(myPluListFormDb));
+    }
+  }
+
+  static void pasterUserList(String jsonDataString) {
+    String jsonStrings = jsonDataString;
+    final jsonResponse = json.decode(jsonStrings);
+    myUserInfoList = UserInfoList.fromJson(jsonResponse);
+    if (myUserInfoList.userInfo!.isNotEmpty) {
+      eventBus.fire(EventUserInfoList(myUserInfoList));
+    } else {
+      myUserInfoList.userInfo?.clear();
+      eventBus.fire(EventUserInfoList(myUserInfoList));
+    }
+  }
+
+  static void handleAddSysUser(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespAddSysUser(dataString));
+  }
+
+  static void handleDeleteSysUser(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespDeleteSysUser(dataString));
+  }
+
+  static void handleUpdateSysUser(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespUpdateSysUser(dataString));
+  }
+
+  static void handleDisableSysUser(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespDisableSysUser(dataString));
+  }
+
+  static void handleChangePassword(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespChangePassword(dataString));
+  }
+
+  static void handleLogin(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespLogin(dataString));
+  }
+
+  static void handleGetAllUsers(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespGetAllUsers(dataString));
+  }
+
+  static void handleGetUserDetail(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespGetUserDetail(dataString));
+  }
+}
+
+Future<void> pasterScaleList(String jsonDataString) async {
+  String jsonStrings = jsonDataString;
+  final jsonResponse = json.decode(jsonStrings);
+  myScaleTotalInfo = ScaleTotalInfo.fromJson(jsonResponse);
+
+  if (myScaleTotalInfo.scaleDataList!.isNotEmpty) {
+    final tempScalesList = ScaleParser.parseScales(jsonStrings);
+
+    for (int i = 0; i < tempScalesList.length; i++) {
+      var tempScale = tempScalesList[i];
+      // 查找 myAllScalesList 中是否存在相同 scaleId 的项
+      final existingIndex = myAllScalesList
+          .indexWhere((scale) => scale.scaleId == tempScale.scaleId);
+      if (existingIndex == -1) {
+        // 若不存在，则添加新项
+        myAllScalesList.add(tempScale);
+        String url = GetUrl.getUrl(tempScale.scaleId);
+        manager.connect(tempScale.scaleId, url);
+      } else {
+        // 若存在，则更新相应项的属性
+        var existingScale = myAllScalesList[existingIndex];
+        tempScale.isOnline = existingScale.isOnline;
+        tempScale.scaleModel = existingScale.scaleModel;
+        tempScale.scaleSn = existingScale.scaleSn;
+      }
+    }
+    myAllScalesList = List<Scale>.from(tempScalesList);
+
+    for (var key in manager.connections.keys) {
+      final existingIndex =
+          myAllScalesList.indexWhere((scale) => scale.scaleId == key);
+      if (existingIndex == -1) {
+        // 若 myAllScalesList 中不存在该 scaleId，则关闭连接
+        manager.dispose(key);
+      }
+    }
+  } else {
+    myAllScalesList.clear();
+    for (var key in manager.connections.keys) {
+      manager.dispose(key);
+    }
+  }
+  eventBus.fire(EventRespAddScale('scale list'));
+}
+
+Future pasterComMediaInfo(
+    String jsonDataString, ScaleDataInfo scaleInfo) async {
+  final jsonResponse = json.decode(jsonDataString);
+  myCurrentPort = CurrentPort.fromJson(jsonResponse);
+
+  getComScaleList(scaleInfo, myCurrentPort);
+}
+
+Future pasterNetMediaInfo(
+    String jsonDataString, ScaleDataInfo scaleInfo) async {
+  final jsonResponse = json.decode(jsonDataString);
+  myNetInfo = NetInfo.fromJson(jsonResponse);
+  getNetScaleList(scaleInfo, myNetInfo);
+}
+
+Future pasterWifiList(String jsonDataString) async {
+  String jsonStrings = jsonDataString;
+  final jsonResponse = json.decode(jsonStrings);
+  myWifiListInfo = WifiListInfo.fromJson(jsonResponse);
+
+  if (myWifiListInfo.wifidatalist!.isNotEmpty) {
+    eventBus.fire(EventWiFiListInfo(myWifiListInfo));
+  }
+}
+
+Future pasterIpInfo(String jsonDataString) async {
+  String jsonStrings = jsonDataString;
+  final jsonResponse = json.decode(jsonStrings);
+  myIpInfoData = IpInfoData.fromJson(jsonResponse);
+  eventBus.fire(EventIpInfoData(myIpInfoData));
+}
+
+void getComScaleList(ScaleDataInfo scaleInfo, CurrentPort mediaJson) {
+  ComScaleInfo tempScaleInfo =
+      ComScaleInfo(1, 1, true, "", 1, 1, 1, 1, "", "", false, "");
+  tempScaleInfo.scaleModel = scaleInfo.scaleModel!;
+
+  tempScaleInfo.isOnline = scaleInfo.isOnline!;
+  tempScaleInfo.scaleId = scaleInfo.scaleId!;
+  tempScaleInfo.tMedia = scaleInfo.tMedia!;
+  tempScaleInfo.scaleSn = scaleInfo.scaleSn!;
+  tempScaleInfo.isDefault = scaleInfo.isDefault!;
+  tempScaleInfo.scaleName = scaleInfo.scaleName!;
+
+  tempScaleInfo.portName = myCurrentPort.devPath!;
+  tempScaleInfo.baudRate = myCurrentPort.baud!;
+  tempScaleInfo.dataBits = myCurrentPort.dataBits!;
+  tempScaleInfo.parity = myCurrentPort.parity!;
+  tempScaleInfo.stopBits = myCurrentPort.stopBits!;
+  // 查找是否存在相同 scaleId 的秤信息
+  final existingIndex = myComScaleList
+      .indexWhere((scale) => scale.scaleId == tempScaleInfo.scaleId);
+  if (existingIndex != -1) {
+    return;
+  } else {}
+  myComScaleList.add(tempScaleInfo);
+  String url = GetUrl.getUrl(scaleInfo.scaleId!);
+
+  manager.connect(scaleInfo.scaleId!, url);
+}
+
+void getNetScaleList(ScaleDataInfo scaleInfo, NetInfo netInfo) {
+  NetScaleInfoLocal newNetScale = NetScaleInfoLocal();
+  newNetScale.scaleModel = scaleInfo.scaleModel!;
+  newNetScale.isOnline = scaleInfo.isOnline!;
+  newNetScale.scaleId = scaleInfo.scaleId!;
+  newNetScale.scaleSn = scaleInfo.scaleSn!;
+  newNetScale.tMedia = scaleInfo.tMedia!;
+  newNetScale.isDefault = scaleInfo.isDefault!;
+  newNetScale.scaleCat = scaleInfo.scaleCat!;
+  newNetScale.ip = netInfo.ip;
+  newNetScale.port = netInfo.port;
+  newNetScale.scaleName = scaleInfo.scaleName!;
+  NetScaleListMgr.addScale(myNetScaleList, newNetScale);
+  String url = GetUrl.getUrl(scaleInfo.scaleId!);
+  manager.connect(scaleInfo.scaleId!, url);
+  if (myDefScaleInfo.defScaleId == scaleInfo.scaleId!) {
+    DefScaleInfo.getDefScaleInfo(scaleInfo.scaleId!);
+  }
+}
+
+pasterModifyAck(String jsonDataString) {
+  String jsonStrings = jsonDataString;
+  final jsonResponse = json.decode(jsonStrings);
+  myModifyAck = ModifyAck.fromJson(jsonResponse);
+
+  eventBus.fire(EventRespScaleModify(myModifyAck));
+}

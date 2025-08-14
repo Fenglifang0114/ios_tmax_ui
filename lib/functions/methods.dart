@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:t_max/data/new_get_recs.dart';
 import 'package:t_max/data/req_formula_data.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
+import 'package:t_max/data/sys_user_req.dart';
 import 'package:t_max/data/writelog.dart';
 
 import '../common/web_socket_channel.dart';
@@ -444,6 +445,67 @@ class PublicFunctions {
   static void killBootCommander() {
     myScaleCmd.cmdMode = "kill_boot_commander";
     myScaleCmd.cmdData = '';
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //验证登录
+  static void login(String userName, String password) {
+    SysUserReq sysUserReq = SysUserReq(userName, password);
+    String jsonStr = jsonEncode(sysUserReq);
+    myScaleCmd.cmdMode = "login";
+    myScaleCmd.cmdData = jsonStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //获取用户信息
+  static void getUserInfo(String userName) {
+    SysUserNameReq sysUserNameReq = SysUserNameReq(userName);
+    String jsonStr = jsonEncode(sysUserNameReq);
+    myScaleCmd.cmdMode = "get_user_detail";
+    myScaleCmd.cmdData = jsonStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //获取所有用户
+  static void getAllSysUsers() {
+    myScaleCmd.cmdMode = "get_all_users";
+    myScaleCmd.cmdData = '';
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //新增用户信息
+  static void addSysUser(String jsonData) {
+    myScaleCmd.cmdMode = "add_sys_user";
+    myScaleCmd.cmdData = jsonData;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //修改密码
+  static void modifyPwd(String jsonData) {
+    myScaleCmd.cmdMode = "change_password";
+    myScaleCmd.cmdData = jsonData;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //删除用户
+  static void deleteSysUser(String jsonData) {
+    myScaleCmd.cmdMode = "delete_sys_user";
+    myScaleCmd.cmdData = jsonData;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+// 禁用用户
+
+  static void enableSysUser(String jsonData) {
+    myScaleCmd.cmdMode = "disable_sys_user";
+    myScaleCmd.cmdData = jsonData;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //修改用户
+  static void updateSysUser(String jsonData) {
+    myScaleCmd.cmdMode = "update_sys_user";
+    myScaleCmd.cmdData = jsonData;
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
 

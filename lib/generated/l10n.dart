@@ -7800,6 +7800,296 @@ class S {
       args: [],
     );
   }
+
+  /// `Username or password error`
+  String get tipLoginError {
+    return Intl.message(
+      'Username or password error',
+      name: 'tipLoginError',
+      desc: 'Tip for login error',
+      args: [],
+    );
+  }
+
+  /// `Please enter a username`
+  String get tipLoginUsernameEmpty {
+    return Intl.message(
+      'Please enter a username',
+      name: 'tipLoginUsernameEmpty',
+      desc: 'Tip for empty username',
+      args: [],
+    );
+  }
+
+  /// `Username cannot be empty`
+  String get tipLoginUsernameNotEmpty {
+    return Intl.message(
+      'Username cannot be empty',
+      name: 'tipLoginUsernameNotEmpty',
+      desc: 'Tip for non-empty username',
+      args: [],
+    );
+  }
+
+  /// `Please enter a password`
+  String get tipLoginPasswordEmpty {
+    return Intl.message(
+      'Please enter a password',
+      name: 'tipLoginPasswordEmpty',
+      desc: 'Tip for empty password',
+      args: [],
+    );
+  }
+
+  /// `Password cannot be empty`
+  String get tipLoginPasswordNotEmpty {
+    return Intl.message(
+      'Password cannot be empty',
+      name: 'tipLoginPasswordNotEmpty',
+      desc: 'Tip for non-empty password',
+      args: [],
+    );
+  }
+
+  /// `Login`
+  String get btnLogin {
+    return Intl.message(
+      'Login',
+      name: 'btnLogin',
+      desc: 'Button for login',
+      args: [],
+    );
+  }
+
+  /// `Super Admin`
+  String get superAdmin {
+    return Intl.message(
+      'Super Admin',
+      name: 'superAdmin',
+      desc: 'Super administrator',
+      args: [],
+    );
+  }
+
+  /// `Admin`
+  String get admin {
+    return Intl.message(
+      'Admin',
+      name: 'admin',
+      desc: 'Administrator',
+      args: [],
+    );
+  }
+
+  /// `Operator`
+  String get operator {
+    return Intl.message(
+      'Operator',
+      name: 'operator',
+      desc: 'Operator',
+      args: [],
+    );
+  }
+
+  /// `User name`
+  String get userUsername {
+    return Intl.message(
+      'User name',
+      name: 'userUsername',
+      desc: 'Username',
+      args: [],
+    );
+  }
+
+  /// `Role`
+  String get userRole {
+    return Intl.message('Role', name: 'userRole', desc: 'Role', args: []);
+  }
+
+  /// `Phone number`
+  String get userPhone {
+    return Intl.message(
+      'Phone number',
+      name: 'userPhone',
+      desc: 'Phone number',
+      args: [],
+    );
+  }
+
+  /// `Email`
+  String get userEmail {
+    return Intl.message('Email', name: 'userEmail', desc: 'Email', args: []);
+  }
+
+  /// `Creator`
+  String get userCreator {
+    return Intl.message(
+      'Creator',
+      name: 'userCreator',
+      desc: 'Creator',
+      args: [],
+    );
+  }
+
+  /// `Enabled`
+  String get userIsEnabled {
+    return Intl.message(
+      'Enabled',
+      name: 'userIsEnabled',
+      desc: 'Is enabled',
+      args: [],
+    );
+  }
+
+  /// `Password`
+  String get userPassword {
+    return Intl.message(
+      'Password',
+      name: 'userPassword',
+      desc: 'Password',
+      args: [],
+    );
+  }
+
+  /// `Confirm password`
+  String get userConfirmPassword {
+    return Intl.message(
+      'Confirm password',
+      name: 'userConfirmPassword',
+      desc: 'Confirm password',
+      args: [],
+    );
+  }
+
+  /// `New password`
+  String get userNewPassword {
+    return Intl.message(
+      'New password',
+      name: 'userNewPassword',
+      desc: 'New password',
+      args: [],
+    );
+  }
+
+  /// `Add user`
+  String get userAdd {
+    return Intl.message(
+      'Add user',
+      name: 'userAdd',
+      desc: 'Add user',
+      args: [],
+    );
+  }
+
+  /// `Edit user`
+  String get userUpdate {
+    return Intl.message(
+      'Edit user',
+      name: 'userUpdate',
+      desc: 'Update user',
+      args: [],
+    );
+  }
+
+  /// `User management`
+  String get userManagement {
+    return Intl.message(
+      'User management',
+      name: 'userManagement',
+      desc: 'User management',
+      args: [],
+    );
+  }
+
+  /// `Basic information`
+  String get userBasicInfo {
+    return Intl.message(
+      'Basic information',
+      name: 'userBasicInfo',
+      desc: 'Basic information',
+      args: [],
+    );
+  }
+
+  /// `Configuration permissions`
+  String get userConfigPermissions {
+    return Intl.message(
+      'Configuration permissions',
+      name: 'userConfigPermissions',
+      desc: 'Configuration permissions',
+      args: [],
+    );
+  }
+
+  /// `Application permissions`
+  String get userAppPermissions {
+    return Intl.message(
+      'Application permissions',
+      name: 'userAppPermissions',
+      desc: 'Application permissions',
+      args: [],
+    );
+  }
+
+  /// `Default initial application`
+  String get userDefaultApp {
+    return Intl.message(
+      'Default initial application',
+      name: 'userDefaultApp',
+      desc: 'Default initial application',
+      args: [],
+    );
+  }
+
+  /// `Password not same`
+  String get tipPasswordNotSame {
+    return Intl.message(
+      'Password not same',
+      name: 'tipPasswordNotSame',
+      desc: 'Tip for password not same',
+      args: [],
+    );
+  }
+
+  /// `Change password`
+  String get titleChangePassword {
+    return Intl.message(
+      'Change password',
+      name: 'titleChangePassword',
+      desc: 'Title for change password',
+      args: [],
+    );
+  }
+
+  /// `Logout`
+  String get titleLogout {
+    return Intl.message(
+      'Logout',
+      name: 'titleLogout',
+      desc: 'Title for logout',
+      args: [],
+    );
+  }
+
+  /// `No permission`
+  String get tipNoPermission {
+    return Intl.message(
+      'No permission',
+      name: 'tipNoPermission',
+      desc: 'Tip for no permission',
+      args: [],
+    );
+  }
+
+  /// `Username already exists`
+  String get tipUserNameExist {
+    return Intl.message(
+      'Username already exists',
+      name: 'tipUserNameExist',
+      desc: 'Tip for username exist',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

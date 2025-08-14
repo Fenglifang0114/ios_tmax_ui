@@ -90,11 +90,11 @@ Set<int> freeAppMenuIds = {
 
 //零售的appId
 Set<int> retailAppMenuIds = {
-  MenuId.labelDesignPage.index,
-  MenuId.receiptDesignPage.index,
+  MenuId.appLabelDesignPage.index,
+  MenuId.appRcpDesignPage.index,
 };
 
-//零售的appId
+//零售的appId 付费的
 Set<int> industrialAppMenuIds = {
   MenuId.weightDataCollectionPage.index,
   MenuId.checkWeighersPage.index,
@@ -123,12 +123,13 @@ enum MenuId {
   downloadLabelPage,
   downReciptPage,
   retailReportPage,
-  headerFooterPage,
   weightDataCollectionPage,
   checkWeighersPage,
   takeInPage,
   takeOutPage,
   formulationScalePage,
   flowRatePage,
-  calibrationPage;
+  calibrationPage,
+  appLabelDesignPage,
+  appRcpDesignPage,
 }

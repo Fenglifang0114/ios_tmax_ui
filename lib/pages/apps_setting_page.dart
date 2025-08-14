@@ -540,7 +540,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
 
   bool getAppSwithState(int id) {
     bool isAdded = getIsAddedApp(id);
-    bool isConfigCertified = getIsConfigCertified(id);
+    bool isConfigCertified = getIsAppCertified(id);
     if (isFreeApp(id) && !isAdded) {
       return false;
     }
@@ -564,7 +564,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
     final textTheme = Theme.of(context).textTheme;
     if (allAppsMenus.isEmpty) return SizedBox();
 
-    bool isConfigCertified = getIsConfigCertified(id);
+    bool isConfigCertified = getIsAppCertified(id);
     bool isAdded = getIsAddedApp(id);
     bool isFreed = isFreeApp(id);
     RouteData tempApp = allAppsMenus.firstWhere((element) => element.id == id);

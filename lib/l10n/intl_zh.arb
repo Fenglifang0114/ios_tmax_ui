@@ -3219,7 +3219,127 @@
     "gTipPleaseStableWeight": "请先稳定重量.",
     "@gTipPleaseStableWeight": {
         "description": "Tip to please first stable the weight"
-    }
+    },
+    "tipLoginError": "用户名或密码错误",
+    "@tipLoginError": {
+        "description": "Tip for login error"
+    },
+    "tipLoginUsernameEmpty": "请输入用户名",
+    "@tipLoginUsernameEmpty": {
+        "description": "Tip for empty username"
+    },
+    "tipLoginUsernameNotEmpty": "用户名不能为空",
+    "@tipLoginUsernameNotEmpty": {
+        "description": "Tip for non-empty username"
+    },
+    "tipLoginPasswordEmpty": "请输入密码",
+    "@tipLoginPasswordEmpty": {
+        "description": "Tip for empty password"
+    },
+    "tipLoginPasswordNotEmpty": "密码不能为空",
+    "@tipLoginPasswordNotEmpty": {
+        "description": "Tip for non-empty password"
+    },
+    "btnLogin": "登录",
+    "@btnLogin": {
+        "description": "Button for login"
+    },
+    "superAdmin": "超级管理员",
+    "@superAdmin": {
+        "description": "Super administrator"
+    },
+    "admin": "管理员",
+    "@admin": {
+        "description": "Administrator"
+    },
+    "operator": "操作员",
+    "@operator": {
+        "description": "Operator"
+    },
+    "userUsername": "用户名",
+    "@userUsername": {
+        "description": "Username"
+    },
+    "userRole": "角色",
+    "@userRole": {
+        "description": "Role"
+    },
+    "userPhone": "电话号码",
+    "@userPhone": {
+        "description": "Phone number"
+    },
+    "userEmail": "邮箱",
+    "@userEmail": {
+        "description": "Email"
+    },
+    "userCreator": "创建人",
+    "@userCreator": {
+        "description": "Creator"
+    },
+    "userIsEnabled": "是否启用",
+    "@userIsEnabled": {
+        "description": "Is enabled"
+    },
+    "userPassword": "密码",
+    "@userPassword": {
+        "description": "Password"
+    },
+    "userConfirmPassword": "确认密码",
+    "@userConfirmPassword": {
+        "description": "Confirm password"
+    },
+    "userNewPassword": "新密码",
+    "@userNewPassword": {
+        "description": "New password"
+    },
+    "userAdd": "新增用户",
+    "@userAdd": {
+        "description": "Add user"
+    },
+    "userUpdate": "修改用户",
+    "@userUpdate": {
+        "description": "Update user"
+    },
+    "userManagement": "用户管理",
+    "@userManagement": {
+        "description": "User management"
+    },
+    "userBasicInfo": "基本信息",
+    "@userBasicInfo": {
+        "description": "Basic information"
+    },
+    "userConfigPermissions": "配置权限",
+    "@userConfigPermissions": {
+        "description": "Configuration permissions"
+    },
+    "userAppPermissions": "应用权限",
+    "@userAppPermissions": {
+        "description": "Application permissions"
+    },
+    "userDefaultApp": "默认初始应用",
+    "@userDefaultApp": {
+        "description": "Default initial application"
+    },
+    "tipPasswordNotSame": "密码不一致",
+    "@tipPasswordNotSame": {
+        "description": "Tip for password not same"
+    },
+    "titleChangePassword": "修改密码",
+    "@titleChangePassword": {
+        "description": "Title for change password"
+    },
+    "titleLogout": "登出",
+    "@titleLogout": {
+        "description": "Title for logout"
+    },
+    "tipNoPermission": "没有权限",
+    "@tipNoPermission": {
+        "description": "Tip for no permission"
+    },
+    "tipUserNameExist": "用户名已存在",
+    "@tipUserNameExist": {
+        "description": "Tip for username exist"
+    } 
 }
 
 

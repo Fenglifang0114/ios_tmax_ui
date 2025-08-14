@@ -8,8 +8,10 @@ import '../dialog/page_help_dialog.dart';
 class PageInfoButton extends StatefulWidget {
   final VoidCallback onRefresh;
   final String helpInfo;
+  final Color? color;
+
   const PageInfoButton(
-      {required this.helpInfo, required this.onRefresh, super.key});
+      {required this.helpInfo, required this.onRefresh, this.color, super.key});
 
   @override
   PageInfoButtonState createState() => PageInfoButtonState();
@@ -18,6 +20,13 @@ class PageInfoButton extends StatefulWidget {
 class PageInfoButtonState extends State<PageInfoButton> {
   bool isHovered = false;
   bool isPressed = false;
+
+  Color getColor() {
+    if (widget.color != null) {
+      return widget.color!;
+    }
+    return Theme.of(context).colorScheme.primary;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,36 +49,7 @@ class PageInfoButtonState extends State<PageInfoButton> {
         });
         // 处理按钮点击事件
       },
-      icon: getSvgIcon(aboutSvgIcon(), topIconSize, topIconSize,
-          Theme.of(context).colorScheme.primary),
+      icon: getSvgIcon(aboutSvgIcon(), topIconSize, topIconSize, getColor()),
     );
-
-    // InkWell(
-    //   onTap: () {
-    //     setState(() {
-    //       isPressed = !isPressed;
-    //       showDialog(
-    //         context: context,
-    //         barrierDismissible: false, // 允许点击空白处关闭对话框
-    //         builder: (context) {
-    //           return PageHelpInfoDialog(
-    //             helpInfo: widget.helpInfo,
-    //           );
-    //         },
-    //       ).then((value) => setState(() {
-    //             isPressed = !isPressed;
-    //             widget.onRefresh();
-    //           }));
-    //     });
-    //     // 处理按钮点击事件
-    //   },
-    //   onHover: (value) {
-    //     setState(() {
-    //       isHovered = value;
-    //     });
-    //   },
-    //   child: getSvgIcon(aboutSvgIcon(), topIconSize, topIconSize,
-    //       Theme.of(context).colorScheme.primary),
-    // );
   }
 }

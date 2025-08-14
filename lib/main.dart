@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/functions/methods.dart';
+import 'package:t_max/pages/home_page.dart';
+import 'package:t_max/pages/login_page.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:window_size/window_size.dart';
 import 'common/web_socket_channel.dart';
@@ -116,25 +118,29 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     connectService();
     return MaterialApp(
-
-        //自定义主题
-        theme: themeColor(colorTheme, savedDarkMode),
-        // 国际化
-        localizationsDelegates: const [
-          // 本地化的代理类
-          S.delegate,
-          GlobalMaterialLocalizations.delegate, //为使material组件支持多语言
-          GlobalCupertinoLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate, // 定义组件默认的文本方向，从左到右或从右到左
-        ],
-        // 应用支持的语言列表
-        supportedLocales: S.delegate.supportedLocales,
-        // locale: Locale('en', 'US'),
-        locale:
-            Locale(savedLanguage.split('_')[0], savedLanguage.split('_')[1]),
-        //去掉右上角debug图标
-        debugShowCheckedModeBanner: false,
-        home: mySystemVersionInfo.getHomePage()); //const TrialPage());
+      //自定义主题
+      theme: themeColor(colorTheme, savedDarkMode),
+      // 国际化
+      localizationsDelegates: const [
+        // 本地化的代理类
+        S.delegate,
+        GlobalMaterialLocalizations.delegate, //为使material组件支持多语言
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate, // 定义组件默认的文本方向，从左到右或从右到左
+      ],
+      // 应用支持的语言列表
+      supportedLocales: S.delegate.supportedLocales,
+      // locale: Locale('en', 'US'),
+      locale: Locale(savedLanguage.split('_')[0], savedLanguage.split('_')[1]),
+      //去掉右上角debug图标
+      debugShowCheckedModeBanner: false,
+      initialRoute: '/login',
+      routes: {
+        '/login': (context) => const LoginPage(),
+        '/home': (context) => MyHomePage(),
+      },
+      // home:LoginPage()
+    ); //mySystemVersionInfo.getHomePage()); //const TrialPage());
   }
 
   Future<bool> checkServerExists() async {

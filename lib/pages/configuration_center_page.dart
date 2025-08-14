@@ -1,8 +1,9 @@
 //配置Config的页面 按年收费
 
 import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/icons.dart';
 import 'package:t_max/data/language.dart';
@@ -12,16 +13,6 @@ import 'package:t_max/dialog/license_info.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/pages/apps_setting_page.dart';
-import 'package:t_max/pages/check_weighers_page.dart';
-import 'package:t_max/pages/flow_rate_page.dart';
-import 'package:t_max/pages/formula_scale_page.dart';
-import 'package:t_max/pages/labeldesign_page.dart';
-import 'package:t_max/pages/receipt_design_page.dart';
-import 'package:t_max/pages/retail_report_page.dart';
-import 'package:t_max/pages/take_in_page.dart';
-import 'package:t_max/pages/take_out_page.dart';
-import 'package:t_max/pages/weighing.dart';
-import 'package:t_max/pages/weight_collection_page.dart';
 import 'package:t_max/widget/common_widget.dart';
 import 'package:t_max/widget/show_license_res.dart';
 
@@ -83,6 +74,64 @@ class _ConfigurationPageState extends State<ConfigurationPage>
     super.didChangeDependencies();
   }
 
+  void goToInitPage() {
+    if (mySysUser.roleId == superAdminRoleId ||
+        mySysUser.roleId == adminRoleId) {
+      return;
+    }
+    if (mySysUser.pageIdList == null) {
+      return;
+    }
+    int initPage = mySysUser.initialPageId!;
+    if (!mySysUser.pageIdList!.contains(initPage)) {
+      return;
+    }
+    bool isSelPage = getIsAddedConfig(initPage) ||
+        selectedAppsPaidMenuIds.contains(initPage);
+    if (!isSelPage) {
+      return;
+    }
+
+    //从config中找到initPage
+    RouteData? initRoute =
+        allConfigMenus.firstWhere((element) => element.id == initPage,
+            orElse: () => RouteData(
+                  title: '',
+                  subtitle: '',
+                  id: -1,
+                  iconPath: '',
+                  routeName: '',
+                ));
+    if (initRoute.id != -1) {
+      bool isPermission = getUserPermission(initRoute.id);
+      bool isFree = isFreeConfig(initRoute.id);
+      bool isConfigCertified = myTConLicInfo.isValid;
+      if (isPermission && (isFree || isConfigCertified)) {
+        widget.onNavigate(initRoute.routeName!);
+        return;
+      }
+    }
+    //如果没有找到，就找app
+    RouteData? initAppRoute =
+        allAppsMenus.firstWhere((element) => element.id == initPage,
+            orElse: () => RouteData(
+                  title: '',
+                  subtitle: '',
+                  id: -1,
+                  iconPath: '',
+                  routeName: '',
+                ));
+    if (initAppRoute.id != -1) {
+      bool isPermission = getUserPermission(initAppRoute.id);
+      bool isFree = isFreeApp(initAppRoute.id);
+      bool isAppCertified = getIsAppCertified(initAppRoute.id);
+
+      if (isPermission && (isFree || isAppCertified)) {
+        goAppPage(initAppRoute, context, widget.onNavigate);
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -98,6 +147,12 @@ class _ConfigurationPageState extends State<ConfigurationPage>
           if (jsonStr.isNotEmpty) {}
         });
         updateResCtl();
+      }
+    });
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      if (firstLogin) {
+        firstLogin = false;
+        goToInitPage();
       }
     });
   }
@@ -229,7 +284,6 @@ class _ConfigurationPageState extends State<ConfigurationPage>
                             ? Theme.of(context).colorScheme.onPrimary
                             : colorScheme.onSurface),
                     textAlign: TextAlign.left,
-
                     overflow: TextOverflow.ellipsis, // 超出部分用省略号表示
                   ),
                 ),
@@ -280,65 +334,7 @@ class _ConfigurationPageState extends State<ConfigurationPage>
       child: GestureDetector(
           onTap: () {
             // 点击卡片跳转页面
-            if (tempMenu.id == MenuId.formulationScalePage.index) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const FormulationScalePage()),
-              );
-            } else if (tempMenu.id == MenuId.weightModePage.index) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const WeightModePage()),
-              );
-            } else if (tempMenu.id == MenuId.labelDesignPage.index) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const LabelDesignPage(type: "app")),
-              );
-            } else if (tempMenu.id == MenuId.receiptDesignPage.index) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const ReceiptDesignPage(type: "app")),
-              );
-            } else if (tempMenu.id == MenuId.retailReportPage.index) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const RetailReportPage()),
-              );
-            } else if (tempMenu.id == MenuId.weightDataCollectionPage.index) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const WeightDataCollectionPage()),
-              );
-            } else if (tempMenu.id == MenuId.checkWeighersPage.index) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const CheckWeighersPage()),
-              );
-            } else if (tempMenu.id == MenuId.takeInPage.index) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const TakeInPage()),
-              );
-            } else if (tempMenu.id == MenuId.takeOutPage.index) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const TakeOutPage()),
-              );
-            } else if (tempMenu.id == MenuId.flowRatePage.index) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const FlowRatePage()),
-              );
-            } else {
-              widget.onNavigate(tempMenu.routeName!);
-            }
+            goAppPage(tempMenu, context, widget.onNavigate);
           },
           child: AnimatedContainer(
               padding: EdgeInsets.all(20),
@@ -447,17 +443,20 @@ class _ConfigurationPageState extends State<ConfigurationPage>
                     ],
                   ),
                 ),
-                showTextButton(
-                    context, btnHeight, localizedStrings.gBtnConfigSetting, () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const AppsSettingPage()),
-                  ).then((value) {
-                    setState(() {});
-                  });
-                }, colorScheme.onPrimary, colorScheme.primary,
-                    colorScheme.onPrimary)
+                if (mySysUser.roleId == adminRoleId ||
+                    mySysUser.roleId == superAdminRoleId)
+                  showTextButton(
+                      context, btnHeight, localizedStrings.gBtnConfigSetting,
+                      () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const AppsSettingPage()),
+                    ).then((value) {
+                      setState(() {});
+                    });
+                  }, colorScheme.onPrimary, colorScheme.primary,
+                      colorScheme.onPrimary)
               ],
             ),
           ),
@@ -494,7 +493,10 @@ class _ConfigurationPageState extends State<ConfigurationPage>
                                 selectedConfigPaidMenuIds.contains(menu.id);
                             bool isConfigCertified = myTConLicInfo.isValid;
                             bool isFree = isFreeConfig(menu.id);
-                            return isAdded && (isConfigCertified || isFree);
+                            bool isPermission = getUserPermission(menu.id);
+                            return isAdded &&
+                                isPermission &&
+                                (isConfigCertified || isFree);
                           }).map((menu) {
                             return SizedBox(
                               width: itemWidth,
@@ -529,10 +531,13 @@ class _ConfigurationPageState extends State<ConfigurationPage>
                           children: allAppsMenus.where((menu) {
                             bool isAdded =
                                 selectedAppsPaidMenuIds.contains(menu.id);
-                            bool isConfigCertified =
-                                getIsConfigCertified(menu.id);
+                            bool isConfigCertified = getIsAppCertified(menu.id);
                             bool isFree = isFreeApp(menu.id);
-                            return isAdded && (isConfigCertified || isFree);
+                            bool isPermission = getUserPermission(menu.id);
+
+                            return isAdded &&
+                                isPermission &&
+                                (isConfigCertified || isFree);
                           }).map((menu) {
                             return SizedBox(
                               width: itemWidth,

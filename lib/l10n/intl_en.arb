@@ -3219,5 +3219,125 @@
     "gTipPleaseStableWeight": "Please first stable the weight.",
     "@gTipPleaseStableWeight": {
         "description": "Tip to please first stable the weight"
-    }
+    },
+    "tipLoginError": "Username or password error",
+    "@tipLoginError": {
+        "description": "Tip for login error"
+    },
+    "tipLoginUsernameEmpty": "Please enter a username",
+    "@tipLoginUsernameEmpty": {
+        "description": "Tip for empty username"
+    },
+    "tipLoginUsernameNotEmpty": "Username cannot be empty",
+    "@tipLoginUsernameNotEmpty": {
+        "description": "Tip for non-empty username"
+    },
+    "tipLoginPasswordEmpty": "Please enter a password",
+    "@tipLoginPasswordEmpty": {
+        "description": "Tip for empty password"
+    },
+    "tipLoginPasswordNotEmpty": "Password cannot be empty",
+    "@tipLoginPasswordNotEmpty": {
+        "description": "Tip for non-empty password"
+    },
+    "btnLogin": "Login",
+    "@btnLogin": {
+        "description": "Button for login"
+    },
+    "superAdmin": "Super Admin",
+    "@superAdmin": {
+        "description": "Super administrator"
+    },
+    "admin": "Admin",
+    "@admin": {
+        "description": "Administrator"
+    },
+    "operator": "Operator",
+    "@operator": {
+        "description": "Operator"
+    },
+    "userUsername": "User name",
+    "@userUsername": {
+        "description": "Username"
+    },
+    "userRole": "Role",
+    "@userRole": {
+        "description": "Role"
+    },
+    "userPhone": "Phone number",
+    "@userPhone": {
+        "description": "Phone number"
+    },
+    "userEmail": "Email",
+    "@userEmail": {
+        "description": "Email"
+    },
+    "userCreator": "Creator",
+    "@userCreator": {
+        "description": "Creator"
+    },
+    "userIsEnabled": "Enabled",
+    "@userIsEnabled": {
+        "description": "Is enabled"
+    },
+    "userPassword": "Password",
+    "@userPassword": {
+        "description": "Password"
+    },
+    "userConfirmPassword": "Confirm password",
+    "@userConfirmPassword": {
+        "description": "Confirm password"
+    },
+    "userNewPassword": "New password",
+    "@userNewPassword": {
+        "description": "New password"
+    },
+    "userAdd": "Add user",
+    "@userAdd": {
+        "description": "Add user"
+    },
+    "userUpdate": "Edit user",
+    "@userUpdate": {
+        "description": "Update user"
+    },
+    "userManagement": "User management",
+    "@userManagement": {
+        "description": "User management"
+    },
+    "userBasicInfo": "Basic information",
+    "@userBasicInfo": {
+        "description": "Basic information"
+    },
+    "userConfigPermissions": "Configuration permissions",
+    "@userConfigPermissions": {
+        "description": "Configuration permissions"
+    },
+    "userAppPermissions": "Application permissions",
+    "@userAppPermissions": {
+        "description": "Application permissions"
+    },
+    "userDefaultApp": "Default initial application",
+    "@userDefaultApp": {
+        "description": "Default initial application"
+    },
+    "tipPasswordNotSame": "Password not same",
+    "@tipPasswordNotSame": {
+        "description": "Tip for password not same"
+    },
+    "titleChangePassword": "Change password",
+    "@titleChangePassword": {
+        "description": "Title for change password"
+    },
+    "titleLogout": "Logout",
+    "@titleLogout": {
+        "description": "Title for logout"
+    },
+    "tipNoPermission": "No permission",
+    "@tipNoPermission": {
+        "description": "Tip for no permission"
+    },
+    "tipUserNameExist": "Username already exists",
+    "@tipUserNameExist": {
+        "description": "Tip for username exist"
+    } 
 }    

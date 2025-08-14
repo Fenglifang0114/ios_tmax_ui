@@ -746,3 +746,43 @@ class EventRespDelDraftFmaWgtRecList {
   dynamic obj;
   EventRespDelDraftFmaWgtRecList(this.obj);
 }
+
+class EventRespAddSysUser {
+  dynamic obj;
+  EventRespAddSysUser(this.obj);
+}
+
+class EventRespDeleteSysUser {
+  dynamic obj;
+  EventRespDeleteSysUser(this.obj);
+}
+
+class EventRespUpdateSysUser {
+  dynamic obj;
+  EventRespUpdateSysUser(this.obj);
+}
+
+class EventRespDisableSysUser {
+  dynamic obj;
+  EventRespDisableSysUser(this.obj);
+}
+
+class EventRespChangePassword {
+  dynamic obj;
+  EventRespChangePassword(this.obj);
+}
+
+class EventRespLogin {
+  dynamic obj;
+  EventRespLogin(this.obj);
+}
+
+class EventRespGetAllUsers {
+  dynamic obj;
+  EventRespGetAllUsers(this.obj);
+}
+
+class EventRespGetUserDetail {
+  dynamic obj;
+  EventRespGetUserDetail(this.obj);
+}

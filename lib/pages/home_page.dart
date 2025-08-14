@@ -11,6 +11,7 @@ import 'package:t_max/data/company_info.dart';
 import 'package:t_max/data/comscaleinfo_data.dart';
 import 'package:t_max/data/dialog_data.dart';
 import 'package:t_max/data/downloadresponse.dart';
+import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/icons.dart';
 import 'package:t_max/data/language.dart';
@@ -22,6 +23,7 @@ import 'package:t_max/data/screen_mgr.dart';
 import 'package:t_max/dialog/company_info_dialog.dart';
 import 'package:t_max/dialog/exit_app_dialog.dart';
 import 'package:t_max/dialog/language_setting.dart';
+import 'package:t_max/dialog/sys_user_pwd.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/generated/l10n.dart';
@@ -50,7 +52,6 @@ class MyHomePageState extends State<MyHomePage>
   DateTime dataTimeNow = DateTime.now();
 
   dynamic _eventbus1; // 监听事件
-  dynamic _eventbus3; // 监听事件
   dynamic _eventbus4; // 监听事件
   dynamic _eventbus5; // 监听事件
   dynamic _eventbus6; // 监听事件
@@ -228,7 +229,7 @@ class MyHomePageState extends State<MyHomePage>
   @override
   void dispose() {
     _eventbus1.cancel();
-    _eventbus3.cancel();
+
     _eventbus4.cancel();
     _eventbus5.cancel();
     _eventbus6.cancel();
@@ -428,53 +429,30 @@ class MyHomePageState extends State<MyHomePage>
                                 child: PageInfoButton(
                                     helpInfo: generateHelpTitle(
                                         getPageId(_selectedNavRoute)),
-                                    onRefresh: () {}),
+                                    onRefresh: () {},
+                                    color: colorScheme.surfaceContainerHighest),
                               ),
                             Tooltip(
                               message: localizedStrings.menuConfiguration,
                               child: IconButton(
-                                icon: getSvgIcon(appsSvgIcon(), topIconSize,
-                                    topIconSize, colorScheme.primary),
+                                icon: getSvgIcon(
+                                    appsSvgIcon(),
+                                    topIconSize,
+                                    topIconSize,
+                                    colorScheme.surfaceContainerHighest),
                                 onPressed: () {
                                   _navigateContent('/settingsConfig');
                                 },
                               ),
                             ),
-                            PopupMenuButton<String>(
-                              tooltip: localizedStrings.menuLanguageSetting,
-                              icon: getSvgIcon(settingSvgIcon(), topIconSize,
-                                  topIconSize, colorScheme.primary),
-                              offset: Offset(-15, 40),
-                              color: colorScheme.onInverseSurface
-                                  .withValues(alpha: 0.7),
-                              itemBuilder: (BuildContext context) =>
-                                  <PopupMenuEntry<String>>[
-                                PopupMenuItem(
-                                  value: '1',
-                                  child: Text(
-                                    localizedStrings.menuLanguageSetting,
-                                    style: textTheme.bodySmall!.apply(
-                                      // 根据选中状态改变颜色
-                                      color: colorScheme.surface,
-                                    ),
-                                  ),
-                                  onTap: () {
-                                    Future.delayed(
-                                      Duration.zero,
-                                      () {
-                                        showSetLanguageDialog();
-                                      },
-                                    );
-                                  },
-                                ),
-                                PopupMenuDivider(height: 1.0),
-                              ],
-                            ),
                             Tooltip(
                               message: localizedStrings.menuSystemInformation,
                               child: IconButton(
-                                icon: getSvgIcon(infoSvgIcon(), topIconSize,
-                                    topIconSize, colorScheme.primary),
+                                icon: getSvgIcon(
+                                    infoSvgIcon(),
+                                    topIconSize,
+                                    topIconSize,
+                                    colorScheme.surfaceContainerHighest),
                                 onPressed: () {
                                   // showLicenseDialog(context);
                                   showDialog(
@@ -487,6 +465,30 @@ class MyHomePageState extends State<MyHomePage>
                                 },
                               ),
                             ),
+                            SizedBox(
+                              width: regularPadding,
+                            ),
+                            Image.asset(
+                              'assets/images/person.png',
+                              width: 24.0,
+                              height: 24.0,
+                            ),
+                            SizedBox(
+                              width: regularPadding,
+                            ),
+                            SizedBox(
+                              child: Text(
+                                mySysUser.userName ?? '未登录',
+                                style: textTheme.bodySmall!.apply(
+                                  color: colorScheme.onSurface,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            SizedBox(
+                              width: regularPadding,
+                            ),
+                            showSysSetting(colorScheme, textTheme),
                             SizedBox(
                               width: regularPadding,
                             )
@@ -538,6 +540,101 @@ class MyHomePageState extends State<MyHomePage>
     );
   }
 
+  Widget showSysSetting(ColorScheme colorScheme, TextTheme textTheme) {
+    return PopupMenuButton<String>(
+      tooltip: localizedStrings.gSystemSetting,
+      splashRadius: 20,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(0),
+      ),
+      icon: Icon(
+        Icons.settings,
+        color: colorScheme.surfaceContainerHighest,
+      ),
+      offset: Offset(-15, 40),
+      color: colorScheme.onSurfaceVariant,
+      itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+        if (mySysUser.roleId == 1 || mySysUser.roleId == 2)
+          PopupMenuItem(
+            value: '1',
+            child: Text(
+              localizedStrings.userManagement,
+              style: textTheme.bodySmall!.apply(
+                // 根据选中状态改变颜色
+                color: colorScheme.surface,
+              ),
+            ),
+            onTap: () {
+              Future.delayed(
+                Duration.zero,
+                () {
+                  _navigateContent('/settingsUser');
+                },
+              );
+            },
+          ),
+        if (mySysUser.roleId == 1 || mySysUser.roleId == 2)
+          PopupMenuDivider(height: 1.0),
+        PopupMenuItem(
+          value: '2',
+          child: Text(
+            localizedStrings.titleChangePassword,
+            style: textTheme.bodySmall!.apply(
+              // 根据选中状态改变颜色
+              color: colorScheme.surface,
+            ),
+          ),
+          onTap: () {
+            Future.delayed(
+              Duration.zero,
+              () {
+                showModifyPwdDialog();
+              },
+            );
+          },
+        ),
+        PopupMenuDivider(height: 1.0),
+        PopupMenuItem(
+          value: '3',
+          child: Text(
+            localizedStrings.menuLanguageSetting,
+            style: textTheme.bodySmall!.apply(
+              // 根据选中状态改变颜色
+              color: colorScheme.surface,
+            ),
+          ),
+          onTap: () {
+            Future.delayed(
+              Duration.zero,
+              () {
+                showSetLanguageDialog();
+              },
+            );
+          },
+        ),
+        PopupMenuDivider(height: 1.0),
+        PopupMenuItem(
+          value: '4',
+          child: Text(
+            localizedStrings.titleLogout,
+            style: textTheme.bodySmall!.apply(
+              // 根据选中状态改变颜色
+              color: colorScheme.surface,
+            ),
+          ),
+          onTap: () {
+            firstLogin = true;
+            Navigator.of(context).pushNamedAndRemoveUntil(
+              '/login',
+              (Route<dynamic> route) => false,
+            );
+          },
+        ),
+        PopupMenuDivider(height: 1.0),
+      ],
+    );
+  }
+
   int getPageId(String routeName) {
     int pageId = 9999;
     for (var item in getAllConfigMenus()) {
@@ -571,6 +668,16 @@ class MyHomePageState extends State<MyHomePage>
         });
       }
     });
+  }
+
+  void showModifyPwdDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 允许点击空白处关闭对话框
+      builder: (context) {
+        return const ModifyPwdPage();
+      },
+    );
   }
 }
 

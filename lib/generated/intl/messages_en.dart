@@ -22,6 +22,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "admin": MessageLookupByLibrary.simpleMessage("Admin"),
     "advanced_setting_title": MessageLookupByLibrary.simpleMessage("Advanced"),
     "appAddressTitle": MessageLookupByLibrary.simpleMessage("Address"),
     "appCompanyTitle": MessageLookupByLibrary.simpleMessage("Company"),
@@ -47,6 +48,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "btnFreeFormulaMode": MessageLookupByLibrary.simpleMessage(
       "Free formula mode",
     ),
+    "btnLogin": MessageLookupByLibrary.simpleMessage("Login"),
     "btnNormalMode": MessageLookupByLibrary.simpleMessage("Normal mode"),
     "btnRestart": MessageLookupByLibrary.simpleMessage("Restart"),
     "btnTemporarySave": MessageLookupByLibrary.simpleMessage("Temporary Save"),
@@ -1157,6 +1159,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "menuWifiSetting": MessageLookupByLibrary.simpleMessage("Wi-Fi Setting"),
     "new_license_text": MessageLookupByLibrary.simpleMessage("New License:"),
+    "operator": MessageLookupByLibrary.simpleMessage("Operator"),
     "output_confirm_info": MessageLookupByLibrary.simpleMessage(
       "Please confirm the folder name!",
     ),
@@ -1433,30 +1436,81 @@ class MessageLookup extends MessageLookupByLibrary {
     "subTitleWifiSetting": MessageLookupByLibrary.simpleMessage(
       "Obtain static/dynamic IP addresses and connect to Wi-Fi.",
     ),
+    "superAdmin": MessageLookupByLibrary.simpleMessage("Super Admin"),
     "tipEnsureWeightCorrect": MessageLookupByLibrary.simpleMessage(
       "Please ensure the current weight data is correct. Do you want to continue?",
     ),
     "tipFormulaDataError": MessageLookupByLibrary.simpleMessage(
       "Formula data error!",
     ),
+    "tipLoginError": MessageLookupByLibrary.simpleMessage(
+      "Username or password error",
+    ),
+    "tipLoginPasswordEmpty": MessageLookupByLibrary.simpleMessage(
+      "Please enter a password",
+    ),
+    "tipLoginPasswordNotEmpty": MessageLookupByLibrary.simpleMessage(
+      "Password cannot be empty",
+    ),
+    "tipLoginUsernameEmpty": MessageLookupByLibrary.simpleMessage(
+      "Please enter a username",
+    ),
+    "tipLoginUsernameNotEmpty": MessageLookupByLibrary.simpleMessage(
+      "Username cannot be empty",
+    ),
+    "tipNoPermission": MessageLookupByLibrary.simpleMessage("No permission"),
     "tipNoRawMaterialWeightData": MessageLookupByLibrary.simpleMessage(
       "No raw material weight data, no need to save temporarily",
     ),
     "tipPage": MessageLookupByLibrary.simpleMessage("Page"),
     "tipPageSequnce": MessageLookupByLibrary.simpleMessage(""),
     "tipPageTotal": MessageLookupByLibrary.simpleMessage("Total"),
+    "tipPasswordNotSame": MessageLookupByLibrary.simpleMessage(
+      "Password not same",
+    ),
     "tipTemporarySaveFormulaRecord": MessageLookupByLibrary.simpleMessage(
       "Temporary Storage Record",
+    ),
+    "tipUserNameExist": MessageLookupByLibrary.simpleMessage(
+      "Username already exists",
+    ),
+    "titleChangePassword": MessageLookupByLibrary.simpleMessage(
+      "Change password",
     ),
     "titleConfidentialWeighingMode": MessageLookupByLibrary.simpleMessage(
       "Confidential Weighing Mode",
     ),
+    "titleLogout": MessageLookupByLibrary.simpleMessage("Logout"),
     "txt_serial_port_connected": MessageLookupByLibrary.simpleMessage(
       "Serial port connected",
     ),
     "txt_serial_port_connected_fail": MessageLookupByLibrary.simpleMessage(
       "Unable to connect",
     ),
+    "userAdd": MessageLookupByLibrary.simpleMessage("Add user"),
+    "userAppPermissions": MessageLookupByLibrary.simpleMessage(
+      "Application permissions",
+    ),
+    "userBasicInfo": MessageLookupByLibrary.simpleMessage("Basic information"),
+    "userConfigPermissions": MessageLookupByLibrary.simpleMessage(
+      "Configuration permissions",
+    ),
+    "userConfirmPassword": MessageLookupByLibrary.simpleMessage(
+      "Confirm password",
+    ),
+    "userCreator": MessageLookupByLibrary.simpleMessage("Creator"),
+    "userDefaultApp": MessageLookupByLibrary.simpleMessage(
+      "Default initial application",
+    ),
+    "userEmail": MessageLookupByLibrary.simpleMessage("Email"),
+    "userIsEnabled": MessageLookupByLibrary.simpleMessage("Enabled"),
+    "userManagement": MessageLookupByLibrary.simpleMessage("User management"),
+    "userNewPassword": MessageLookupByLibrary.simpleMessage("New password"),
+    "userPassword": MessageLookupByLibrary.simpleMessage("Password"),
+    "userPhone": MessageLookupByLibrary.simpleMessage("Phone number"),
+    "userRole": MessageLookupByLibrary.simpleMessage("Role"),
+    "userUpdate": MessageLookupByLibrary.simpleMessage("Edit user"),
+    "userUsername": MessageLookupByLibrary.simpleMessage("User name"),
     "user_edit": MessageLookupByLibrary.simpleMessage("User Edit"),
     "user_error_message1": MessageLookupByLibrary.simpleMessage(
       "The User Id and Username cannot be empty!",
