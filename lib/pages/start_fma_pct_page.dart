@@ -2369,7 +2369,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
 
   performLowRow(double currentTempWgtValue) {
     //重量轻时执行下一步的操作
-    print(clickedRow.toString());
+    // print(clickedRow.toString());
 
     processWgtList[clickedRow].currentWgt =
         currentTempWgtValue + processWgtList[clickedRow].currentWgt!;

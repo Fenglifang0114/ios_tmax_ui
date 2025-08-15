@@ -167,7 +167,7 @@ class LoginPageState extends State<LoginPage>
   Widget build(BuildContext context) {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     TextTheme textTheme = Theme.of(context).textTheme;
-    double _height = MediaQuery.of(context).size.height;
+    double tHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(40), // 自定义高度
@@ -203,7 +203,7 @@ class LoginPageState extends State<LoginPage>
                     ),
                   ),
                   SizedBox(
-                    height: _height - 130,
+                    height: tHeight - 130,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [

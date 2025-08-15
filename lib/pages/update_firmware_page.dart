@@ -537,6 +537,10 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
       if (mounted) {
         myRespDataFromScale = event.obj;
         setState(() {
+          if (myRespDataFromScale.msgBody.contains('fail')) {
+            scaleTimerMap[myRespDataFromScale.scaleId]?.cancel();
+          }
+
           if (!scaleResMap[myRespDataFromScale.scaleId]!.res.contains('ok')) {
             scaleResMap[myRespDataFromScale.scaleId]!.res =
                 myRespDataFromScale.msgBody;
@@ -544,13 +548,6 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
 
           if (checkAllNotEmpty()) {
             isDownloading = false;
-          }
-          if (myRespDataFromScale.msgBody.contains("connection")) {
-            showForceDialog(context, localizedStrings.gTipDeviceLost,
-                myRespDataFromScale.scaleId);
-          } else if (myRespDataFromScale.msgBody.contains("match")) {
-            showForceDialog(context, localizedStrings.gTipModelNotMatch,
-                myRespDataFromScale.scaleId);
           }
         });
       }
@@ -625,7 +622,6 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
       if (myRespDataFromScale.msgBody.contains('ok')) {
         scaleResMap[scaleId]!.process = 1;
       }
-
       scaleResMap[scaleId]!.res = myRespDataFromScale.msgBody;
     }
   }
@@ -742,9 +738,9 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
                             PublicFunctions.killBootCommander();
                             setState(() {
                               isDownloading = true;
-
                               for (var entry in scaleResMap.entries) {
                                 entry.value.res = "";
+                                scaleResMap[entry.key]!.process = 0;
                               }
                             });
 
@@ -1079,7 +1075,9 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
 
   bool checkAllNotEmpty() {
     for (var value in scaleResMap.values) {
-      if (value.res.isEmpty) {
+      if (!(value.res.contains('ok') ||
+          value.res.contains('fail') ||
+          value.res.contains('error'))) {
         return false;
       }
     }
@@ -1120,12 +1118,15 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
         }
         if (tempScale.tMedia != comScaleType) {
           final timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-            if (scaleResMap[id]!.res != "") {
+            if (scaleResMap[id]!.res.contains('ok')) {
               // setState(() {
               scaleResMap[id]!.process = 1;
               // });
               timer.cancel();
-            } else if (scaleResMap[id]!.process < 0.9) {
+            } else if (scaleResMap[id]!.process < 0.9 &&
+                !scaleResMap[id]!
+                    .res
+                    .contains(localizedStrings.gTipRebootForUpdate)) {
               setState(() {
                 scaleResMap[id]!.process += 0.9 / downTime;
               });
@@ -1224,16 +1225,16 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
   void useSerialPortUpdate(String force, int scaleId) {
     PublicFunctions.sendFormatToScale("${widget.sendMsgStr} ,$force", scaleId);
     setState(() {
-      scaleResMap[scaleId]!.res = localizedStrings.gTipWait;
+      scaleResMap[scaleId]!.res = localizedStrings.gTipRebootForUpdate;
       isDownloading = true;
     });
-    Timer(const Duration(seconds: 10), () {
-      if (!(_progress > 0) && isDownloading) {
-        setState(() {
-          scaleResMap[scaleId]!.res = localizedStrings.gTipRebootForUpdate;
-        });
-      }
-    });
+    // Timer(const Duration(seconds: 2), () {
+    //   if (!(_progress > 0) && isDownloading) {
+    //     setState(() {
+    //       scaleResMap[scaleId]!.res = localizedStrings.gTipRebootForUpdate;
+    //     });
+    //   }
+    // });
   }
 }
 
