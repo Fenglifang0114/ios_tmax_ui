@@ -595,13 +595,17 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
                                             wgtStableSvgIcon(),
                                             iconBtnSize,
                                             iconBtnSize,
-                                            isStart && _isHigh
+                                            lowValue == 0 && highValue == 0
                                                 ? Theme.of(context)
                                                     .colorScheme
                                                     .error
-                                                : Theme.of(context)
-                                                    .colorScheme
-                                                    .outlineVariant)),
+                                                : isStart && _isHigh
+                                                    ? Theme.of(context)
+                                                        .colorScheme
+                                                        .error
+                                                    : Theme.of(context)
+                                                        .colorScheme
+                                                        .outlineVariant)),
                                     SizedBox(
                                         width: 10,
                                         height: 10,
@@ -609,13 +613,17 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
                                             wgtStableSvgIcon(),
                                             iconBtnSize,
                                             iconBtnSize,
-                                            isStart && _isOK
+                                            lowValue == 0 && highValue == 0
                                                 ? Theme.of(context)
                                                     .colorScheme
                                                     .onTertiaryFixedVariant
-                                                : Theme.of(context)
-                                                    .colorScheme
-                                                    .outlineVariant)),
+                                                : isStart && _isOK
+                                                    ? Theme.of(context)
+                                                        .colorScheme
+                                                        .onTertiaryFixedVariant
+                                                    : Theme.of(context)
+                                                        .colorScheme
+                                                        .outlineVariant)),
                                     SizedBox(
                                         width: 10,
                                         height: 10,
@@ -623,13 +631,17 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
                                             wgtStableSvgIcon(),
                                             iconBtnSize,
                                             iconBtnSize,
-                                            isStart && _isLow
+                                            lowValue == 0 && highValue == 0
                                                 ? Theme.of(context)
                                                     .colorScheme
                                                     .onTertiaryContainer
-                                                : Theme.of(context)
-                                                    .colorScheme
-                                                    .outlineVariant)),
+                                                : isStart && _isLow
+                                                    ? Theme.of(context)
+                                                        .colorScheme
+                                                        .onTertiaryContainer
+                                                    : Theme.of(context)
+                                                        .colorScheme
+                                                        .outlineVariant)),
                                   ],
                                 ),
                               )
@@ -851,7 +863,8 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
 
   void _addWeightToReport() {
     PluData? tempPlu = PluData(null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null);
+        null, null, null, null, null, null, null, null, null, null);
+
     if (selectedPluData != null) {
       tempPlu = selectedPluData;
     }

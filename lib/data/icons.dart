@@ -62,9 +62,10 @@ String getMenuIconPath(int pageId) {
     return serialSvgIcon();
   } else if (pageId == MenuId.basicDataCollectionPage.index) {
     return basicDataSvgIcon();
-  } else if (pageId == MenuId.parameterSettingPage.index) {
-    return parameterSvgIcon();
   }
+  //  else if (pageId == MenuId.parameterSettingPage.index) {
+  //   return parameterSvgIcon();
+  // }
   return '';
 }
 
@@ -298,4 +299,32 @@ String appSettingSvgIcon() {
 
 String appOnOffSvgIcon() {
   return 'assets/images/appOnOff.svg';
+}
+
+String basicDataTitleSvgIcon() {
+  return 'assets/images/basicDataTitle.svg';
+}
+
+String formatTitleSvgIcon() {
+  return 'assets/images/formatTitle.svg';
+}
+
+String pluTemplateSvgIcon() {
+  return 'assets/images/pluTemplate.svg';
+}
+
+String addSvgIcon() {
+  return 'assets/images/add.svg';
+}
+
+String enabledSvgIcon() {
+  return 'assets/images/enabled.svg';
+}
+
+String disabledSvgIcon() {
+  return 'assets/images/disabled.svg';
+}
+
+String downloadToScaleSvgIcon() {
+  return 'assets/images/downloadToScale.svg';
 }

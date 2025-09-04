@@ -77,6 +77,8 @@ String reqAddSysUserToJson(ReqAddSysUser data) => json.encode(data.toJson());
 
 class ReqAddSysUser {
   String? userName;
+  String? nickName;
+
   int? roleId;
   String? password;
   bool? isEnabled;
@@ -90,6 +92,7 @@ class ReqAddSysUser {
 
   ReqAddSysUser({
     this.userName,
+    this.nickName,
     this.roleId,
     this.password,
     this.isEnabled,
@@ -104,6 +107,7 @@ class ReqAddSysUser {
 
   factory ReqAddSysUser.fromJson(Map<String, dynamic> json) => ReqAddSysUser(
         userName: json["Username"],
+        nickName: json["NickName"],
         roleId: json["RoleId"],
         password: json["Password"],
         isEnabled: json["IsEnabled"],
@@ -120,6 +124,7 @@ class ReqAddSysUser {
 
   Map<String, dynamic> toJson() => {
         "Username": userName,
+        "NickName": nickName,
         "RoleId": roleId,
         "Password": password,
         "IsEnabled": isEnabled,
@@ -225,6 +230,8 @@ class ReqUpdateSysUser {
 class UpdateUser {
   int? userId;
   String? userName;
+  String? nickName;
+
   int? roleId;
   String? password;
   bool? isEnabled;
@@ -240,6 +247,7 @@ class UpdateUser {
   UpdateUser({
     this.userId,
     this.userName,
+    this.nickName,
     this.roleId,
     this.password,
     this.isEnabled,
@@ -256,6 +264,7 @@ class UpdateUser {
   factory UpdateUser.fromJson(Map<String, dynamic> json) => UpdateUser(
         userId: json["userId"],
         userName: json["userName"],
+        nickName: json["nickName"],
         roleId: json["roleId"],
         password: json["password"],
         isEnabled: json["isEnabled"],
@@ -265,10 +274,10 @@ class UpdateUser {
         remark: json["remark"],
         createdTime: json["createdTime"] == null
             ? null
-            : DateTime.parse(json["createdTime"]),
+            : DateTime.parse(json["createdTime"]).toLocal(),
         updatedTime: json["updatedTime"] == null
             ? null
-            : DateTime.parse(json["updatedTime"]),
+            : DateTime.parse(json["updatedTime"]).toLocal(),
         createdBy: json["createdBy"],
         updatedBy: json["updatedBy"],
       );
@@ -276,6 +285,7 @@ class UpdateUser {
   Map<String, dynamic> toJson() => {
         "userId": userId,
         "userName": userName,
+        "nickName": nickName,
         "roleId": roleId,
         "password": password,
         "isEnabled": isEnabled,

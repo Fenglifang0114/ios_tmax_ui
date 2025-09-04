@@ -9,7 +9,6 @@ import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/icons.dart';
 import 'package:t_max/data/new_get_recs.dart';
 import 'package:t_max/data/plu_data_source.dart';
-import 'package:t_max/data/plu_info_list_data.dart';
 import 'package:t_max/data/reqweightdata_data.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/data/settingparam_data.dart';
@@ -54,6 +53,8 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
 
   final double scaleWgtWidth = 351;
   late Timer updateTimer; //刷新数据
+  // 添加定时器变量
+  Timer? _scaleCheckTimer;
 
   late TableState _tableState;
 
@@ -87,6 +88,15 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     PublicFunctions.getProductList();
 
     startTimer();
+    // 初始化定时器，每隔10秒执行一次检查
+    _scaleCheckTimer = Timer.periodic(Duration(seconds: 10), (timer) {
+      checkSameScale();
+    });
+
+    // 初始加载时立即检查一次
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkSameScale();
+    });
 
     eventBus1 = eventBus.on<EventUpdateSettingParam>().listen((event) {
       if (mounted) {
@@ -182,24 +192,38 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     eventBus9 = eventBus.on<EventProductRecList>().listen((event) {
       if (mounted) {
         setState(() {
-          List<PluInfoList> pluInfoList = event.obj;
+          List<PluDataFromDb> pluInfoList = event.obj;
           for (int i = 0; i < pluInfoList.length; i++) {
-            PluData newPlu =
-                PluData(0, 0, 0, 0, '', '', 0, 0, 0, 0, 0, 0, 0, '');
+            PluData newPlu = PluData(
+                0, 0, 0, 0, '', '', 0, 0, 0, 0, 0, 0, 0, '', false, '', 0, 0);
+            newPlu.enabled = pluInfoList[i].enabled ?? true;
+            if (!pluInfoList[i].enabled!) {
+              continue;
+            }
             newPlu.recId = pluInfoList[i].recId;
-            newPlu.plu = int.tryParse(pluInfoList[i].plu) ?? 0;
-            newPlu.productCode = int.tryParse(pluInfoList[i].productCode) ?? 0;
-            newPlu.itemCode = int.tryParse(pluInfoList[i].itemCode) ?? 0;
+            newPlu.plu = int.tryParse(pluInfoList[i].plu ?? '0') ?? 0;
+            newPlu.productCode =
+                int.tryParse(pluInfoList[i].productCode ?? '0') ?? 0;
+            newPlu.itemCode = int.tryParse(pluInfoList[i].itemCode ?? '0') ?? 0;
             newPlu.category = pluInfoList[i].category;
             newPlu.productName = pluInfoList[i].productName;
-            newPlu.price = double.tryParse(pluInfoList[i].price) ?? 0;
-            newPlu.taxType = int.tryParse(pluInfoList[i].taxType) ?? 0;
-            newPlu.generalUnit = int.tryParse(pluInfoList[i].generalUnit) ?? 0;
-            newPlu.unitWeight = double.tryParse(pluInfoList[i].unitWeight) ?? 0;
-            newPlu.pretare = double.tryParse(pluInfoList[i].pretare) ?? 0;
-            newPlu.limitHigh = double.tryParse(pluInfoList[i].limitHigh) ?? 0;
-            newPlu.limitLow = double.tryParse(pluInfoList[i].limitLow) ?? 0;
-            newPlu.creatAt = pluInfoList[i].creatAt ?? " ";
+            newPlu.price = double.tryParse(pluInfoList[i].price ?? '0') ?? 0;
+            newPlu.taxType = int.tryParse(pluInfoList[i].taxType ?? '0') ?? 0;
+            newPlu.generalUnit =
+                int.tryParse(pluInfoList[i].generalUnit ?? '0') ?? 0;
+            newPlu.unitWeight =
+                double.tryParse(pluInfoList[i].unitWeight ?? '0') ?? 0;
+            newPlu.pretare =
+                double.tryParse(pluInfoList[i].pretare ?? '0') ?? 0;
+            newPlu.limitHigh =
+                double.tryParse(pluInfoList[i].limitHigh ?? '0') ?? 0;
+            newPlu.limitLow =
+                double.tryParse(pluInfoList[i].limitLow ?? '0') ?? 0;
+            newPlu.creatAt = pluInfoList[i].createdAt?.toIso8601String() ?? " ";
+            newPlu.updateAt =
+                pluInfoList[i].updatedAt?.toIso8601String() ?? " ";
+            newPlu.createBy = pluInfoList[i].createBy;
+            newPlu.updateBy = pluInfoList[i].updateBy;
             myPluInfoList.add(newPlu);
           }
 
@@ -232,6 +256,17 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
         }
       }
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    setState(() {
+      for (var item in myReportFeildsMap.keys) {
+        _tableState.visibleColumns[item]!.isSelect =
+            myReportFeildsMap[item]!.isSelect;
+      }
+    });
+    super.didChangeDependencies();
   }
 
   @override
@@ -467,6 +502,43 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     return scaleName;
   }
 
+  //实时查看是否是同一台秤，如果是的话，给出提示，并去掉一个
+  void checkSameScale() {
+    if (mySelScaleIdList.length > 1) {
+      Map<int, dynamic> scaleMap = {};
+      for (var scale in myAllScalesList) {
+        scaleMap[scale.scaleId] = scale;
+      }
+
+      // 分离已选择的串口秤和WiFi秤
+      List<Scale> serialScales = [];
+      List<Scale> wifiScales = [];
+
+      for (var scaleId in mySelScaleIdList) {
+        var scale = scaleMap[scaleId];
+        if (scale.tMedia == comScaleType) {
+          serialScales.add(scale);
+        } else if (scale.tMedia == netScaleType) {
+          wifiScales.add(scale);
+        }
+      }
+
+      for (var serialScale in serialScales) {
+        for (var wifiScale in wifiScales) {
+          if (wifiScale.scaleModel == serialScale.scaleModel &&
+              wifiScale.scaleSn == serialScale.scaleSn) {
+            // 显示冲突提示对话框
+            showTipInfo(localizedStrings.tipSameScale, context);
+            if (mySelScaleIdList.contains(wifiScale.scaleId)) {
+              addOrRemoveSelScale(wifiScale.scaleId);
+            }
+            break;
+          }
+        }
+      }
+    }
+  }
+
   void addOrRemoveSelScale(int scaleId) {
     if (mySelScaleIdList.contains(scaleId)) {
       mySelScaleIdList.remove(scaleId);
@@ -479,6 +551,8 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
       mySelScaleIdList.add(scaleId);
       PublicFunctions.getWeight(scaleId);
     }
+    setState(() {});
+    checkSameScale();
   }
 
   Widget showScaleWgt(BuildContext context, double width) {
@@ -979,22 +1053,8 @@ void sendDataToDb(
 
   // 处理 PluData
   final tempPlu = selPlu ??
-      PluData(
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-      );
+      PluData(null, null, null, null, null, null, null, null, null, null, null,
+          null, null, null, null, null, null, null);
 
   final newAddRec = ReqAddWgtRec()
     ..mode = mySettingParam.scaleMode

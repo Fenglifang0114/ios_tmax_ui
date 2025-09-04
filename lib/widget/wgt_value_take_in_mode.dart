@@ -868,7 +868,7 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
 
   void _addWeightToReport(String wgtValue) {
     PluData? tempPlu = PluData(null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null);
+        null, null, null, null, null, null, null, null, null, null);
     if (selectedPluData != null) {
       tempPlu = selectedPluData;
     }

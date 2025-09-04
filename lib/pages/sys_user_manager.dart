@@ -301,6 +301,31 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
     });
   }
 
+  void deleteUser(Object? data) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 点击对话框外部不关闭对话框
+      builder: (BuildContext context) {
+        return ShowNormalTipDialog(
+          title: localizedStrings.fTipTitle,
+          msg: localizedStrings.fConfirmDelete,
+        );
+      },
+    ).then((value) {
+      if (value) {
+        ReqDelSysUsers reqDelSysUsers = ReqDelSysUsers(
+          userIds: [
+            (data as SysUserFromDb).userId!,
+          ],
+        );
+
+        PublicFunctions.deleteSysUser(reqDelSysUsersToJson(reqDelSysUsers));
+      } else {
+        return;
+      }
+    });
+  }
+
   showUserTable() {
     return Expanded(
       child: Container(
@@ -308,7 +333,7 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
           color: colorScheme.surface,
           child: LayoutBuilder(builder: (context, constraints) {
             double totalWidth = constraints.maxWidth;
-            double cellWidth = (totalWidth - 120 - 60 - 200 - 200 - 100) / 4;
+            double cellWidth = (totalWidth - 120 - 60 - 200 - 200 - 100) / 5;
             cellWidth = cellWidth > 150 ? cellWidth : 150;
 
             return StickyTable(
@@ -316,12 +341,8 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
               // 修改 data 属性
               data: searchUserList.isEmpty
                   ? []
-                  : sort
-                      ? searchUserList
-                          .where((user) => user.userId != 1) // 排除userId=1的用户
-                          .toList()
-                          .reversed
-                          .toList()
+                  : mySysUser.roleId == superAdminRoleId // 如果是管理员角色
+                      ? searchUserList.toList()
                       : searchUserList
                           .where((user) => user.userId != 1) // 排除userId=1的用户
                           .toList(),
@@ -368,12 +389,35 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
                     return Checkbox(
                       value: selectedUserRows
                           .contains((data as SysUserFromDb).userId),
-                      onChanged: mySysUser.roleId == adminRoleId &&
-                              (data).roleId == adminRoleId
+                      onChanged: mySysUser.roleId == superAdminRoleId &&
+                              (data).roleId == superAdminRoleId
                           ? null
-                          : (value) {
-                              toggleFmaSelection(data);
-                            },
+                          : mySysUser.roleId == adminRoleId &&
+                                  (data).roleId == adminRoleId
+                              ? null
+                              : (value) {
+                                  toggleFmaSelection(data);
+                                },
+                    );
+                  },
+                ),
+                StickyTableColumn(
+                  localizedStrings.userAccount,
+                  fixedStart: true,
+                  showSort: true,
+                  sort: sort,
+                  columnWidth: FixedColumnWidth(cellWidth),
+                  alignment: Alignment.centerLeft,
+                  onTitleClick: (context, title) {},
+                  // 修改 renderCell 方法
+                  renderCell: (context, title, data, row, column) {
+                    return showRenderCellText(
+                      (data as SysUserFromDb).userName!,
+                    );
+                  },
+                  renderTitle: (context, title) {
+                    return showRenderTitleText(
+                      title.title,
                     );
                   },
                 ),
@@ -388,7 +432,7 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
                   // 修改 renderCell 方法
                   renderCell: (context, title, data, row, column) {
                     return showRenderCellText(
-                      (data as SysUserFromDb).userName!,
+                      (data as SysUserFromDb).nickName!,
                     );
                   },
                   renderTitle: (context, title) {
@@ -543,74 +587,79 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         MaterialButton(
-                          onPressed: (data as SysUserFromDb).userId ==
-                                      mySysUser.userId ||
-                                  !data.isEnabled! ||
-                                  (mySysUser.roleId == 2 && data.roleId! == 2)
-                              ? null
-                              : () {
+                          onPressed: mySysUser.roleId == superAdminRoleId
+                              ? () {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => AddSysUserPage(
                                                 sysUserList: allUserList,
-                                                initUserInfo: data,
+                                                initUserInfo:
+                                                    data as SysUserFromDb,
                                                 type: 2,
+                                                isSuperAccount:
+                                                    data.userId == 1,
                                               )));
-                                },
+                                }
+                              : mySysUser.roleId == 1 ||
+                                      //如果是管理员角色，那么只能编辑非管理员和非超级管理员的用户
+                                      (data as SysUserFromDb).roleId ==
+                                          superAdminRoleId ||
+                                      (data).roleId == adminRoleId ||
+                                      (data).userId == mySysUser.userId ||
+                                      !data.isEnabled! ||
+                                      (mySysUser.roleId == 2 &&
+                                          data.roleId! == 2)
+                                  ? null
+                                  : () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  AddSysUserPage(
+                                                    sysUserList: allUserList,
+                                                    initUserInfo: data,
+                                                    type: 2,
+                                                    isSuperAccount:
+                                                        data.userId == 1,
+                                                  )));
+                                    },
                           minWidth: 0,
                           child: Center(
                               child: Icon(
                             size: 20,
                             Icons.edit_outlined,
-                            color: (data).userId == mySysUser.userId ||
-                                    !data.isEnabled! ||
-                                    (mySysUser.roleId == 2 && data.roleId! == 2)
-                                ? colorScheme.surfaceContainerHighest
-                                : colorScheme.primary,
+                            color: mySysUser.roleId == 1
+                                ? colorScheme.primary
+                                : (data as SysUserFromDb).userId ==
+                                            mySysUser.userId ||
+                                        !data.isEnabled! ||
+                                        (mySysUser.roleId == 2 &&
+                                            data.roleId! == 2)
+                                    ? colorScheme.surfaceContainerHighest
+                                    : colorScheme.primary,
                           )),
                         ),
                         MaterialButton(
-                          onPressed: (data).userId == mySysUser.userId ||
-                                  (mySysUser.roleId == 2 && data.roleId! == 2)
-                              ? null
-                              : () {
-                                  Future.delayed(const Duration(seconds: 1),
-                                      () {
-                                    showDialog(
-                                      context: context,
-                                      barrierDismissible:
-                                          false, // 点击对话框外部不关闭对话框
-                                      builder: (BuildContext context) {
-                                        return ShowNormalTipDialog(
-                                          title: localizedStrings.fTipTitle,
-                                          msg: localizedStrings.fConfirmDelete,
-                                        );
-                                      },
-                                    ).then((value) {
-                                      if (value) {
-                                        ReqDelSysUsers reqDelSysUsers =
-                                            ReqDelSysUsers(
-                                          userIds: [
-                                            (data).userId!,
-                                          ],
-                                        );
-
-                                        PublicFunctions.deleteSysUser(
-                                            reqDelSysUsersToJson(
-                                                reqDelSysUsers));
-                                      } else {
-                                        return;
-                                      }
-                                    });
-                                  });
-                                },
+                          onPressed: mySysUser.roleId == 1
+                              ? () {
+                                  deleteUser(data);
+                                }
+                              : (data as SysUserFromDb).userId ==
+                                          mySysUser.userId ||
+                                      (mySysUser.roleId == 2 &&
+                                          data.roleId! == 2)
+                                  ? null
+                                  : () {
+                                      deleteUser(data);
+                                    },
                           minWidth: 0,
                           child: Center(
                               child: Icon(
                             size: 20,
                             Icons.delete_forever_outlined,
-                            color: (data).userId == mySysUser.userId ||
+                            color: (data as SysUserFromDb).userId ==
+                                        mySysUser.userId ||
                                     (mySysUser.roleId == 2 && data.roleId! == 2)
                                 ? colorScheme.surfaceContainerHighest
                                 : colorScheme.error,
@@ -833,6 +882,7 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
                         sysUserList: allUserList,
                         initUserInfo: SysUserFromDb(),
                         type: 1,
+                        isSuperAccount: false,
                       )));
         }, colorScheme.onPrimary, colorScheme.onTertiaryFixedVariant,
             colorScheme.surface),

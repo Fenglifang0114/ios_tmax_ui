@@ -17,8 +17,11 @@ import '../data/language.dart';
 
 const int step1 = 1; //步骤1
 const int step2 = 2; //步骤2
-const int step3 = 3; //步骤3
-const int step4 = 4; //步骤4
+const int step3 = 3; //步骤2
+const int step4 = 4; //步骤3
+const int step5 = 5; //步骤4
+
+const double thisScaleListWidth = 251;
 
 class CalibrationPage extends StatefulWidget {
   const CalibrationPage({super.key});
@@ -65,6 +68,7 @@ class CalibrationPageState extends State<CalibrationPage> {
   String initialGravAcc = '';
   String initialDecimal = '';
   String initialGaduation1 = '';
+  String currentWgtUnit = '';
 
   dynamic eventBus1; //接收秤数据
   dynamic eventBus2; //接收秤数据
@@ -88,6 +92,9 @@ class CalibrationPageState extends State<CalibrationPage> {
   Timer? startTimer;
   Timer? innerTimer;
   Timer? calHeartBeatTimer;
+
+  double oldWeight = 0;
+  double newWeight = 0;
 
   void startCntAliveTimer(int time) {
     if (_cntAliveTimer != null) {
@@ -180,7 +187,7 @@ class CalibrationPageState extends State<CalibrationPage> {
         ChannelResponse tempRespData = ChannelResponse('', '', 0);
         tempRespData = event.obj;
         if (mounted) {
-          if (!tempRespData.msgBody.contains('ok') && curStep == step4) {
+          if (!tempRespData.msgBody.contains('ok') && curStep == step5) {
             setState(() {
               isFinish = true;
               isCalSuccess = false;
@@ -193,7 +200,7 @@ class CalibrationPageState extends State<CalibrationPage> {
                 curStep = 1;
               }
             });
-          } else if (tempRespData.msgBody.contains('ok') && curStep == step4) {
+          } else if (tempRespData.msgBody.contains('ok') && curStep == step5) {
             setState(() {
               isFinish = true;
               isCalSuccess = true;
@@ -217,10 +224,12 @@ class CalibrationPageState extends State<CalibrationPage> {
               }
             });
           } else {
-            if (curStep == step4) {
+            if (curStep == step5) {
               setState(() {
                 isFinish = true;
                 isCalSuccess = true;
+                newWeight = double.parse(weightInfo!.weightVal.toString());
+                currentWgtUnit = weightInfo!.weightUnit.toString();
               });
             }
           }
@@ -538,7 +547,7 @@ class CalibrationPageState extends State<CalibrationPage> {
   }
 
   void changeScale(int scaleId) {
-    if (curStep != step1 && curStep != step4) {
+    if (curStep != step1 && curStep != step5) {
       showDialog(
         context: context,
         barrierDismissible: false, // 点击对话框外部不关闭对话框
@@ -581,7 +590,7 @@ class CalibrationPageState extends State<CalibrationPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                   Container(
-                    width: scaleListWidth,
+                    width: thisScaleListWidth,
                     color: Theme.of(context).colorScheme.surfaceTint,
                     child: SizedBox(
                       height: MediaQuery.of(context).size.height,
@@ -593,7 +602,7 @@ class CalibrationPageState extends State<CalibrationPage> {
                           ),
                           Expanded(
                             child: NewAllScaleListWidget(
-                              listWidth: scaleListWidth, // 列表宽度
+                              listWidth: thisScaleListWidth, // 列表宽度
                               selScaleId: selScaleId,
                               clickScale: (scale) {
                                 setState(() {
@@ -1048,7 +1057,9 @@ class CalibrationPageState extends State<CalibrationPage> {
                 ? showStep2()
                 : curStep == step3
                     ? showStep3()
-                    : showStep4(),
+                    : curStep == step4
+                        ? showStep4()
+                        : showStep5(),
       ),
       showBtnRow()
     ];
@@ -1146,6 +1157,105 @@ class CalibrationPageState extends State<CalibrationPage> {
   }
 
   Widget showStep3() {
+    return Container(
+      height: leftBarIconHeight,
+      alignment: Alignment.center,
+      child: Column(
+        children: [
+          Expanded(child: SizedBox()),
+          Container(
+            padding: EdgeInsets.all(largePadding),
+            child: getSvgIcon(
+                stableLightSvgIcon(),
+                60,
+                60,
+                weightInfo!.isStable!
+                    ? Theme.of(context).colorScheme.onTertiaryFixedVariant
+                    : Theme.of(context).colorScheme.onSurfaceVariant),
+          ),
+          SizedBox(
+            height: 100,
+            child: Row(
+              children: [
+                Expanded(
+                    flex: 5, // 分配比例
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          width: 230,
+                          child: Text(
+                            localizedStrings.gTipBeforeCalibration + ":  ",
+                            style: Theme.of(context).textTheme.bodySmall!.apply(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        SizedBox(
+                          height: regularPadding,
+                        ),
+                        Container(
+                            width: 230,
+                            height: 40,
+                            alignment: Alignment.center,
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    width: 180,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .surfaceContainerLowest,
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      weightInfo!.weightVal.toString(),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall!
+                                          .apply(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface,
+                                          ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                  ),
+                                  Container(
+                                    width: 50,
+                                    height: 40,
+                                    alignment: Alignment.center,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .surfaceContainerLowest,
+                                    child: Text(
+                                      weightInfo!.weightUnit.toString(),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall!
+                                          .apply(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface,
+                                          ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                  ),
+                                ])),
+                      ],
+                    )),
+              ],
+            ),
+          ),
+          Expanded(child: SizedBox()),
+        ],
+      ),
+    );
+  }
+
+  Widget showStep4() {
     return Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
       Container(
         padding: EdgeInsets.all(largePadding),
@@ -1166,14 +1276,14 @@ class CalibrationPageState extends State<CalibrationPage> {
               children: [
                 TextSpan(
                   text: localizedStrings.gTipPleaseLoadWeight,
-                  style: Theme.of(context).textTheme.bodyLarge!.apply(
+                  style: Theme.of(context).textTheme.bodySmall!.apply(
                         color: Theme.of(context).colorScheme.onSurface,
                         overflow: TextOverflow.ellipsis,
                       ),
                 ),
                 TextSpan(
                   text: '  ${scaleRangeCtl.text} ${scaleUnitCtl.text}',
-                  style: Theme.of(context).textTheme.bodyLarge!.apply(
+                  style: Theme.of(context).textTheme.bodySmall!.apply(
                         color: Theme.of(context)
                             .colorScheme
                             .onTertiaryFixedVariant,
@@ -1194,7 +1304,7 @@ class CalibrationPageState extends State<CalibrationPage> {
     ]);
   }
 
-  Widget showStep4() {
+  Widget showStep5() {
     return !isFinish
         ? SizedBox()
         : Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -1216,7 +1326,7 @@ class CalibrationPageState extends State<CalibrationPage> {
                   isCalSuccess
                       ? localizedStrings.gTipCalibrationSuccess
                       : localizedStrings.gTipCalibrationFailed,
-                  style: Theme.of(context).textTheme.bodyLarge!.apply(
+                  style: Theme.of(context).textTheme.bodySmall!.apply(
                         color: isCalSuccess
                             ? Theme.of(context)
                                 .colorScheme
@@ -1225,6 +1335,43 @@ class CalibrationPageState extends State<CalibrationPage> {
                       ),
                 ),
               ),
+              if (isCalSuccess)
+                Container(
+                  height: 48,
+                  alignment: Alignment.center,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        localizedStrings.gTipBeforeCalibration +
+                            ":  ${oldWeight.toString()} $currentWgtUnit",
+                        style: Theme.of(context).textTheme.bodySmall!.apply(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Text(
+                        localizedStrings.gTipAfterCalibration +
+                            ":  ${newWeight.toString()} $currentWgtUnit",
+                        style: Theme.of(context).textTheme.bodySmall!.apply(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Text(
+                        localizedStrings.gTipErrorValue +
+                            ":  ${(newWeight - oldWeight).toStringAsFixed(3)} $currentWgtUnit",
+                        style: Theme.of(context).textTheme.bodySmall!.apply(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                      ),
+                    ],
+                  ),
+                ),
             ])
           ]);
   }
@@ -1242,16 +1389,16 @@ class CalibrationPageState extends State<CalibrationPage> {
                 : Theme.of(context).colorScheme.onSurfaceVariant),
       ),
       Column(children: [
-        Container(
-          height: 48,
-          alignment: Alignment.center,
-          child: Text(
-            localizedStrings.gTipPleaseEmptyScalePan,
-            style: Theme.of(context).textTheme.bodyLarge!.apply(
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-          ),
-        ),
+        // Container(
+        //   height: 48,
+        //   alignment: Alignment.center,
+        //   child: Text(
+        //     localizedStrings.gTipPleaseEmptyScalePan,
+        //     style: Theme.of(context).textTheme.bodySmall!.apply(
+        //           color: Theme.of(context).colorScheme.onSurface,
+        //         ),
+        //   ),
+        // ),
         Image.asset(
           'assets/images/calibration1.png',
           width: 600,
@@ -1266,7 +1413,7 @@ class CalibrationPageState extends State<CalibrationPage> {
     return SizedBox(
         height: 100,
         child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          curStep == step4 || curStep == step1
+          curStep == step5 || curStep == step1
               ? SizedBox()
               : showTextButton(
                   context, btnHeight, localizedStrings.gBtnPrevious, () {
@@ -1277,7 +1424,7 @@ class CalibrationPageState extends State<CalibrationPage> {
                   Theme.of(context).colorScheme.onPrimary,
                   Theme.of(context).colorScheme.onSurfaceVariant,
                   Theme.of(context).colorScheme.onSurfaceVariant),
-          curStep == step4
+          curStep == step5
               ? SizedBox()
               : SizedBox(
                   width: largePadding,
@@ -1285,10 +1432,12 @@ class CalibrationPageState extends State<CalibrationPage> {
           showTextButton(
               context,
               btnHeight,
-              curStep == step4
+              curStep == step5 && !isCalSuccess
                   ? localizedStrings.gTipCalibrationAgain
-                  : localizedStrings.fNextStepBtn,
-              curStep == step3 && scaleRangeCtl.text == ''
+                  : curStep == step5 && isCalSuccess
+                      ? "完成"
+                      : localizedStrings.fNextStepBtn,
+              curStep == step4 && scaleRangeCtl.text == ''
                   ? null
                   : isStart && weightInfo!.isStable!
                       ? () {
@@ -1300,10 +1449,15 @@ class CalibrationPageState extends State<CalibrationPage> {
                             } else if (curStep == step2) {
                               curStep = step3;
                             } else if (curStep == step3) {
+                              oldWeight = double.parse(
+                                  weightInfo!.weightVal.toString());
+                              oldWeight <= 0 ? oldWeight = 0 : oldWeight;
                               curStep = step4;
+                            } else if (curStep == step4) {
+                              curStep = step5;
                               PublicFunctions.calibrationWeight(
                                   selScaleId, scaleRangeCtl.text);
-                            } else if (curStep == step4) {
+                            } else if (curStep == step5) {
                               curStep = step1;
                               // isFinish = true?
                             }
@@ -1331,7 +1485,7 @@ class CalibrationPageState extends State<CalibrationPage> {
             alignment: Alignment.centerLeft,
             child: Text(
               '$curStep. $stepTip ',
-              style: Theme.of(context).textTheme.bodyLarge!.apply(
+              style: Theme.of(context).textTheme.bodySmall!.apply(
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
             ),
@@ -1345,11 +1499,14 @@ class CalibrationPageState extends State<CalibrationPage> {
     switch (stepIndex) {
       case step1:
         return localizedStrings.gTipEmptyScalePanThenNext;
+      case step3:
+        return localizedStrings.gTipPlaceCalibrationWeight +
+            " ${scaleRangeCtl.text} kg";
       case step2:
         return localizedStrings.gTipSetCalibrationWeightThenNext;
-      case step3:
-        return localizedStrings.gTipLoadWeightThenNext;
       case step4:
+        return localizedStrings.gTipLoadWeightThenNext;
+      case step5:
         return localizedStrings.gTipCalResult;
       default:
         return "";
@@ -1360,11 +1517,13 @@ class CalibrationPageState extends State<CalibrationPage> {
     switch (stepIndex) {
       case step1:
         return localizedStrings.gTipEmptyScalePan;
+      case step3:
+        return localizedStrings.gTipPlaceCalibrationWeight;
       case step2:
         return localizedStrings.gTipSetCalibrationWeight;
-      case step3:
-        return localizedStrings.gTipPlaceWeight;
       case step4:
+        return localizedStrings.gTipPlaceWeight;
+      case step5:
         return localizedStrings.gTipCalibrationResult;
       default:
         return "";
@@ -1405,7 +1564,7 @@ class CalibrationPageState extends State<CalibrationPage> {
           : Theme.of(context).colorScheme.primary; // 已完成的步骤左线颜色
     }
 
-    if (isFinish && curStep == step4) {
+    if (isFinish && curStep == step5) {
       fillingColor =
           Theme.of(context).colorScheme.onTertiaryFixedVariant; // 已完成的步骤颜色
       textColor =
@@ -1420,10 +1579,10 @@ class CalibrationPageState extends State<CalibrationPage> {
     }
 
     if (stepIndex == step1) {
-      leftLineColor = Theme.of(context).colorScheme.surface;
+      leftLineColor = Colors.transparent;
     }
-    if (stepIndex == step4) {
-      rightLineColor = Theme.of(context).colorScheme.surface;
+    if (stepIndex == step5) {
+      rightLineColor = Colors.transparent;
     }
 
     return Expanded(
@@ -1467,14 +1626,16 @@ class CalibrationPageState extends State<CalibrationPage> {
                 ),
               ],
             ),
+            SizedBox(height: 10),
             Container(
-                alignment: Alignment.center,
+                alignment: Alignment.topCenter,
+                height: 40,
                 child: Text(
                   getStepTitle(stepIndex),
                   style: Theme.of(context).textTheme.bodySmall!.apply(
                         color: textColor, // 文字颜色
                       ),
-                  overflow: TextOverflow.ellipsis, // 超出部分省略号处理
+                  // overflow: TextOverflow.ellipsis, // 超出部分省略号处理
                 ))
           ],
         ),
@@ -1497,7 +1658,7 @@ class CalibrationPageState extends State<CalibrationPage> {
                 selScaleId == -1
                     ? null
                     : () {
-                        if (curStep != step1 && curStep != step4) {
+                        if (curStep != step1 && curStep != step5) {
                           showCalibrationWarning();
                           return;
                         }
@@ -1544,13 +1705,14 @@ class CalibrationPageState extends State<CalibrationPage> {
         padding: const EdgeInsets.only(
           top: largePadding,
         ),
-        height: leftBarIconHeight,
+        height: 100, //leftBarIconHeight,
         child: Row(
           children: [
             buildStepInfo(step1),
             buildStepInfo(step2),
             buildStepInfo(step3),
             buildStepInfo(step4),
+            buildStepInfo(step5),
           ],
         ));
   }

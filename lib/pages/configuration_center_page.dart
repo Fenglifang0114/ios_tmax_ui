@@ -138,7 +138,7 @@ class _ConfigurationPageState extends State<ConfigurationPage>
     _tabController = TabController(
         length: 2,
         vsync: this,
-        initialIndex: 1); //管理员初始化为initialIndex: 0 操作员initialIndex: 1
+        initialIndex: 0); //管理员初始化为initialIndex: 0 操作员initialIndex: 1
 
     eventbus2 = eventBus.on<EventRespUpdateLic>().listen((event) {
       if (mounted) {

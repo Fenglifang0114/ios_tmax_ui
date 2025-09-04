@@ -1,53 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:data_table_2/data_table_2.dart';
-
-class RestorablePluSelections extends RestorableProperty<Set<int>> {
-  Set<int> _dessertSelections = {};
-
-  /// Returns whether or not a dessert row is selected by index.
-  bool isSelected(int index) => _dessertSelections.contains(index);
-
-  /// Takes a list of [PluData]s and saves the row indices of selected rows
-  /// into a [Set].
-  void setDessertSelections(List<PluData> desserts) {
-    final updatedSet = <int>{};
-    for (var i = 0; i < desserts.length; i += 1) {
-      var dessert = desserts[i];
-      if (dessert.selected) {
-        updatedSet.add(i);
-      }
-    }
-    _dessertSelections = updatedSet;
-    notifyListeners();
-  }
-
-  @override
-  Set<int> createDefaultValue() => _dessertSelections;
-
-  @override
-  Set<int> fromPrimitives(Object? data) {
-    final selectedItemIndices = data as List<dynamic>;
-    _dessertSelections = {
-      ...selectedItemIndices.map<int>((dynamic id) => id as int),
-    };
-    return _dessertSelections;
-  }
-
-  @override
-  void initWithValue(Set<int> value) {
-    _dessertSelections = value;
-  }
-
-  @override
-  Object toPrimitives() => _dessertSelections.toList();
-}
-
-int _idCounter = 0;
+import 'dart:convert';
 
 List<PluData> myPluInfoList = [];
 
-/// Domain model entity
 class PluData {
   int? recId;
   int? plu;
@@ -63,8 +17,11 @@ class PluData {
   double? limitHigh;
   double? limitLow;
   String? creatAt;
+  bool? enabled;
+  String? updateAt;
+  int? createBy;
+  int? updateBy;
 
-  bool selected = false;
   PluData(
     this.recId,
     this.plu,
@@ -80,507 +37,188 @@ class PluData {
     this.limitHigh,
     this.limitLow,
     this.creatAt,
+    this.enabled,
+    this.updateAt,
+    this.createBy,
+    this.updateBy,
   );
-
-  final int id = _idCounter++;
 }
 
-/// Data source implementing standard Flutter's DataTableSource abstract class
-/// which is part of DataTable and PaginatedDataTable synchronous data fecthin API.
-/// This class uses static collection of deserts as a data store, projects it into
-/// DataRows, keeps track of selected items, provides sprting capability
-class PluInfoDataSource extends DataTableSource {
-  PluInfoDataSource.empty(this.context) {
-    pluInfoList = [];
-    _pluInfos = [];
-  }
+List<PluDataFromDb> pluDataFromDbFromJson(String str) =>
+    List<PluDataFromDb>.from(
+        json.decode(str).map((x) => PluDataFromDb.fromJson(x)));
 
-  PluInfoDataSource(this.context,
-      [sortedByCalories = false,
-      this.hasRowTaps = false,
-      this.hasRowHeightOverrides = false,
-      this.hasZebraStripes = false]) {
-    pluInfoList = _pluInfos;
-    if (sortedByCalories) {
-      sort((d) => d.plu!, true);
-    }
-  }
+String pluDataFromDbToJson(List<PluDataFromDb> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-  final BuildContext context;
-  late List<PluData> pluInfoList;
-  // Add row tap handlers and show snackbar
-  bool hasRowTaps = false;
-  // Override height values for certain rows
-  bool hasRowHeightOverrides = false;
-  // Color each Row by index's parity
-  bool hasZebraStripes = false;
+class PluDataFromDb {
+  int? recId;
+  String? plu;
+  String? productCode;
+  String? itemCode;
+  String? category;
+  String? productName;
+  String? generalUnit;
+  String? taxType;
+  String? price;
+  String? unitWeight;
+  String? pretare;
+  String? limitHigh;
+  String? limitLow;
+  DateTime? createdAt;
+  DateTime? updatedAt;
+  int? createBy;
+  int? updateBy;
+  bool? enabled;
 
-  List<String> selectedColumns = [];
+  PluDataFromDb({
+    this.recId,
+    this.plu,
+    this.productCode,
+    this.itemCode,
+    this.category,
+    this.productName,
+    this.generalUnit,
+    this.taxType,
+    this.price,
+    this.unitWeight,
+    this.pretare,
+    this.limitHigh,
+    this.limitLow,
+    this.createdAt,
+    this.updatedAt,
+    this.createBy,
+    this.updateBy,
+    this.enabled,
+  });
 
-  void sort<T>(Comparable<T> Function(PluData d) getField, bool ascending) {
-    pluInfoList.sort((a, b) {
-      final aValue = getField(a);
-      final bValue = getField(b);
-      return ascending
-          ? Comparable.compare(aValue, bValue)
-          : Comparable.compare(bValue, aValue);
-    });
-    notifyListeners();
-  }
+  PluDataFromDb copyWith({
+    int? recId,
+    String? plu,
+    String? productCode,
+    String? itemCode,
+    String? category,
+    String? productName,
+    String? generalUnit,
+    String? taxType,
+    String? price,
+    String? unitWeight,
+    String? pretare,
+    String? limitHigh,
+    String? limitLow,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    int? createBy,
+    int? updateBy,
+    bool? enabled,
+  }) =>
+      PluDataFromDb(
+        recId: recId ?? this.recId,
+        plu: plu ?? this.plu,
+        productCode: productCode ?? this.productCode,
+        itemCode: itemCode ?? this.itemCode,
+        category: category ?? this.category,
+        productName: productName ?? this.productName,
+        generalUnit: generalUnit ?? this.generalUnit,
+        taxType: taxType ?? this.taxType,
+        price: price ?? this.price,
+        unitWeight: unitWeight ?? this.unitWeight,
+        pretare: pretare ?? this.pretare,
+        limitHigh: limitHigh ?? this.limitHigh,
+        limitLow: limitLow ?? this.limitLow,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+        createBy: createBy ?? this.createBy,
+        updateBy: updateBy ?? this.updateBy,
+        enabled: enabled ?? this.enabled,
+      );
 
-  void updateSelectedDesserts(RestorablePluSelections selectedRows) {
-    _selectedCount = 0;
-    for (var i = 0; i < pluInfoList.length; i += 1) {
-      var dessert = pluInfoList[i];
-      if (selectedRows.isSelected(i)) {
-        dessert.selected = true;
-        _selectedCount += 1;
-      } else {
-        dessert.selected = false;
-      }
-    }
-    notifyListeners();
-  }
+  factory PluDataFromDb.fromJson(Map<String, dynamic> json) => PluDataFromDb(
+        recId: json["RecId"],
+        plu: json["Plu"],
+        productCode: json["ProductCode"],
+        itemCode: json["ItemCode"],
+        category: json["Category"],
+        productName: json["ProductName"],
+        generalUnit: json["GeneralUnit"],
+        taxType: json["TaxType"],
+        price: json["Price"],
+        unitWeight: json["UnitWeight"],
+        pretare: json["Pretare"],
+        limitHigh: json["LimitHigh"],
+        limitLow: json["LimitLow"],
+        createdAt: json["CreatedAt"] == null
+            ? null
+            : DateTime.parse(json["CreatedAt"]).toLocal(),
+        updatedAt: json["UpdatedAt"] == null
+            ? null
+            : DateTime.parse(json["UpdatedAt"]).toLocal(),
+        createBy: json["CreateBy"],
+        updateBy: json["UpdateBy"],
+        enabled: json["Enabled"],
+      );
 
-  @override
-  DataRow getRow(int index, [Color? color]) {
-    assert(index >= 0);
-    if (index >= pluInfoList.length) throw 'index > _desserts.length';
-    final pluInfo = pluInfoList[index];
-
-    List<DataCell> cells = [];
-
-    for (var filedName in selectedColumns) {
-      switch (filedName) {
-        case 'plu':
-          cells.add(
-            DataCell(Container(
-              padding: const EdgeInsets.symmetric(horizontal: 0),
-              child: Tooltip(
-                  message: "1-99999",
-                  child: TextField(
-                    controller:
-                        TextEditingController(text: pluInfo.plu.toString()),
-                    style: const TextStyle(fontSize: 14),
-                    textAlign: TextAlign.right,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(
-                          RegExp(r'^[1-9]\d{0,4}$')),
-                      LengthLimitingTextInputFormatter(5),
-                    ],
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide.none, // 去除边框
-                      ),
-                    ),
-                    onChanged: (value) {
-                      // 更新数据
-                      // _dessertsDataSource.desserts[index].calories = num.tryParse(value)?? 0;
-                      pluInfoList[index].plu = int.tryParse(value) ?? 0;
-                    },
-                  )),
-            )),
-          );
-          break;
-        case "productCode":
-          cells.add(
-            DataCell(Container(
-              padding: const EdgeInsets.symmetric(horizontal: 0.0),
-              child: Tooltip(
-                  message: "1-9999999999999",
-                  child: TextField(
-                    controller: TextEditingController(
-                        text: (pluInfo.productCode).toString()),
-                    style: const TextStyle(
-                        fontSize: 14, overflow: TextOverflow.ellipsis),
-                    textAlign: TextAlign.right,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(
-                          RegExp(r'^[1-9]\d{0,12}$')),
-                      LengthLimitingTextInputFormatter(13),
-                    ],
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide.none, // 去除边框
-                      ),
-                    ),
-                    onChanged: (value) {
-                      // 更新数据
-                      // _dessertsDataSource.desserts[index].calories = num.tryParse(value)?? 0;
-                      pluInfoList[index].productCode = int.tryParse(value) ?? 0;
-                    },
-                  )),
-            )),
-          );
-
-          break;
-        case "itemCode":
-          cells.add(
-            DataCell(Container(
-              padding: const EdgeInsets.symmetric(horizontal: 0.0),
-              child: Tooltip(
-                  message: "1-9999999999999",
-                  child: TextField(
-                    controller: TextEditingController(
-                        text: (pluInfo.itemCode).toString()),
-                    style: const TextStyle(
-                      fontSize: 14,
-                    ),
-                    textAlign: TextAlign.right,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(
-                          RegExp(r'^[1-9]\d{0,12}$')),
-                      LengthLimitingTextInputFormatter(13),
-                    ],
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide.none, // 去除边框
-                      ),
-                    ),
-                    onChanged: (value) {
-                      // 更新数据
-                      // _dessertsDataSource.desserts[index].calories = num.tryParse(value)?? 0;
-                      pluInfoList[index].itemCode = int.tryParse(value) ?? 0;
-                    },
-                  )),
-            )),
-          );
-          break;
-        case "category":
-          cells.add(
-            DataCell(Container(
-              padding: const EdgeInsets.symmetric(horizontal: 0.0),
-              child: Tooltip(
-                  message: "Length:30",
-                  child: TextField(
-                    controller: TextEditingController(
-                        text: (pluInfo.category).toString()),
-                    style: const TextStyle(
-                      fontSize: 14,
-                    ),
-                    textAlign: TextAlign.right,
-                    maxLines: 2,
-                    minLines: 1,
-                    inputFormatters: [
-                      LengthLimitingTextInputFormatter(30),
-                    ],
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide.none, // 去除边框
-                      ),
-                    ),
-                    onChanged: (value) {
-                      // 更新数据
-                      // _dessertsDataSource.desserts[index].calories = num.tryParse(value)?? 0;
-                      pluInfoList[index].category = value;
-                    },
-                  )),
-            )),
-          );
-          break;
-        case "productName":
-          cells.add(
-            DataCell(Container(
-              // width: 200,
-              padding: const EdgeInsets.symmetric(horizontal: 0.0),
-              child: Tooltip(
-                  message: "Length:30",
-                  child: TextField(
-                    controller: TextEditingController(
-                        text: (pluInfo.productName).toString()),
-                    style: const TextStyle(
-                        fontSize: 14, overflow: TextOverflow.ellipsis),
-                    textAlign: TextAlign.right,
-                    maxLines: 2,
-                    minLines: 1,
-                    inputFormatters: [
-                      // FilteringTextInputFormatter.allow(RegExp(r'^[1-9]\d*$')),
-                      LengthLimitingTextInputFormatter(30),
-                    ],
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide.none, // 去除边框
-                      ),
-                    ),
-                    onChanged: (value) {
-                      // 更新数据
-                      pluInfoList[index].productName = value;
-                    },
-                  )),
-            )),
-          );
-          break;
-        case "generalUnit":
-          cells.add(
-            DataCell(Container(
-                padding: const EdgeInsets.symmetric(horizontal: 0.0),
-                child: Tooltip(
-                  message:
-                      "wgt:0-g,1-kg,2-lb,3-oz,4-lboz,5-tj,6-hj,7-t \r\nprice:0-kg,1-100g,2-pcs",
-                  child: TextField(
-                    controller: TextEditingController(
-                        text: (pluInfo.generalUnit).toString()),
-                    style: const TextStyle(
-                      fontSize: 14,
-                    ),
-                    textAlign: TextAlign.right,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'^[0-7]$')),
-                      LengthLimitingTextInputFormatter(1),
-                    ],
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide.none, // 去除边框
-                      ),
-                    ),
-                    onChanged: (value) {
-                      // 更新数据
-                      pluInfoList[index].generalUnit = int.tryParse(value) ?? 0;
-                    },
-                  ),
-                ))),
-          );
-          break;
-        case "taxType":
-          cells.add(
-            DataCell(Container(
-              padding: const EdgeInsets.symmetric(horizontal: 0.0),
-              child: Tooltip(
-                  message: "0-tax1,1-tax2,2-tax3",
-                  child: TextField(
-                    controller: TextEditingController(
-                        text: (pluInfo.taxType).toString()),
-                    style: const TextStyle(
-                      fontSize: 14,
-                    ),
-                    textAlign: TextAlign.right,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'^[0-2]$')),
-                      LengthLimitingTextInputFormatter(1),
-                    ],
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide.none, // 去除边框
-                      ),
-                    ),
-                    onChanged: (value) {
-                      // 更新数据
-                      // _dessertsDataSource.desserts[index].calories = num.tryParse(value)?? 0;
-                      pluInfoList[index].taxType = int.tryParse(value) ?? 0;
-                    },
-                  )),
-            )),
-          );
-          break;
-        case "price":
-          cells.add(
-            DataCell(Container(
-              padding: const EdgeInsets.symmetric(horizontal: 0.0),
-              child: TextField(
-                controller:
-                    TextEditingController(text: (pluInfo.price).toString()),
-                style: const TextStyle(
-                  fontSize: 14,
-                ),
-                textAlign: TextAlign.right,
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp("[0-9.]")),
-                  LengthLimitingTextInputFormatter(6),
-                ],
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide.none, // 去除边框
-                  ),
-                ),
-                onChanged: (value) {
-                  // 更新数据
-                  // _dessertsDataSource.desserts[index].calories = num.tryParse(value)?? 0;
-                  pluInfoList[index].price = double.tryParse(value) ?? 0.0;
-                },
-              ),
-            )),
-          );
-          break;
-        case "unitWeight":
-          cells.add(
-            DataCell(Container(
-              padding: const EdgeInsets.symmetric(horizontal: 0.0),
-              child: Tooltip(
-                  message: "Unit: g",
-                  child: TextField(
-                    controller: TextEditingController(
-                        text: (pluInfo.unitWeight).toString()),
-                    style: const TextStyle(
-                      fontSize: 14,
-                    ),
-                    textAlign: TextAlign.right,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp("[0-9.]")),
-                      LengthLimitingTextInputFormatter(6),
-                    ],
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide.none, // 去除边框
-                      ),
-                    ),
-                    onChanged: (value) {
-                      // 更新数据
-                      // _dessertsDataSource.desserts[index].calories = num.tryParse(value)?? 0;
-                      pluInfoList[index].unitWeight =
-                          double.tryParse(value) ?? 0;
-                    },
-                  )),
-            )),
-          );
-          break;
-        case "pretare":
-          cells.add(
-            DataCell(Container(
-              padding: const EdgeInsets.symmetric(horizontal: 0.0),
-              child: Tooltip(
-                  message: "Unit: kg",
-                  child: TextField(
-                    controller: TextEditingController(
-                        text: (pluInfo.pretare).toString()),
-                    style: const TextStyle(
-                      fontSize: 14,
-                    ),
-                    textAlign: TextAlign.right,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp("[0-9.]")),
-                      LengthLimitingTextInputFormatter(6),
-                    ],
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide.none, // 去除边框
-                      ),
-                    ),
-                    onChanged: (value) {
-                      // 更新数据
-                      // _dessertsDataSource.desserts[index].calories = num.tryParse(value)?? 0;
-                      pluInfoList[index].pretare = double.tryParse(value) ?? 0;
-                    },
-                  )),
-            )),
-          );
-          break;
-        case "limitHigh":
-          cells.add(
-            DataCell(Container(
-              padding: const EdgeInsets.symmetric(horizontal: 0.0),
-              child: Tooltip(
-                  message: "Same as Weight Unit  Or PCS(when have unit weight)",
-                  child: TextField(
-                    controller: TextEditingController(
-                        text: (pluInfo.limitHigh).toString()),
-                    style: const TextStyle(
-                      fontSize: 14,
-                    ),
-                    textAlign: TextAlign.right,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp("[0-9.]")),
-                      LengthLimitingTextInputFormatter(6),
-                    ],
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide.none, // 去除边框
-                      ),
-                    ),
-                    onChanged: (value) {
-                      // 更新数据
-                      // _dessertsDataSource.desserts[index].calories = num.tryParse(value)?? 0;
-                      pluInfoList[index].limitHigh =
-                          double.tryParse(value) ?? 0;
-                    },
-                  )),
-            )),
-          );
-          break;
-        case "limitLow":
-          cells.add(
-            DataCell(Container(
-              padding: const EdgeInsets.symmetric(horizontal: 0.0),
-              child: Tooltip(
-                  message: "Same as Weight Unit  Or PCS(when have unit weight)",
-                  child: TextField(
-                    controller: TextEditingController(
-                        text: (pluInfo.limitLow).toString()),
-                    style: const TextStyle(
-                      fontSize: 14,
-                    ),
-                    textAlign: TextAlign.right,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp("[0-9.]")),
-                      LengthLimitingTextInputFormatter(6),
-                    ],
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide.none, // 去除边框
-                      ),
-                    ),
-                    onChanged: (value) {
-                      // 更新数据
-                      // _dessertsDataSource.desserts[index].calories = num.tryParse(value)?? 0;
-                      pluInfoList[index].limitLow =
-                          double.tryParse(value) ?? 0.0;
-                    },
-                  )),
-            )),
-          );
-          break;
-      }
-    }
-
-    return DataRow2.byIndex(
-      index: index,
-      selected: pluInfo.selected,
-      color: color != null
-          ? WidgetStateProperty.all(color)
-          : (hasZebraStripes && index.isEven
-              ? WidgetStateProperty.all(Theme.of(context).highlightColor)
-              : null),
-      onSelectChanged: (value) {
-        if (pluInfo.selected != value) {
-          _selectedCount += value! ? 1 : -1;
-          assert(_selectedCount >= 0);
-          pluInfo.selected = value;
-          notifyListeners();
-        }
-      },
-      specificRowHeight:
-          hasRowHeightOverrides && pluInfo.generalUnit! >= 25 ? 100 : null,
-      cells: cells,
-    );
-  }
-
-  @override
-  int get rowCount => pluInfoList.length;
-
-  @override
-  bool get isRowCountApproximate => false;
-
-  @override
-  int get selectedRowCount => _selectedCount;
-
-  void selectAll(bool? checked) {
-    for (final dessert in pluInfoList) {
-      dessert.selected = checked ?? false;
-    }
-    _selectedCount = (checked ?? false) ? pluInfoList.length : 0;
-    notifyListeners();
-  }
+  Map<String, dynamic> toJson() => {
+        "RecId": recId,
+        "Plu": plu,
+        "ProductCode": productCode,
+        "ItemCode": itemCode,
+        "Category": category,
+        "ProductName": productName,
+        "GeneralUnit": generalUnit,
+        "TaxType": taxType,
+        "Price": price,
+        "UnitWeight": unitWeight,
+        "Pretare": pretare,
+        "LimitHigh": limitHigh,
+        "LimitLow": limitLow,
+        "CreatedAt": createdAt?.toIso8601String(),
+        "UpdatedAt": updatedAt?.toIso8601String(),
+        "CreateBy": createBy,
+        "UpdateBy": updateBy,
+        "Enabled": enabled,
+      };
 }
 
-int _selectedCount = 0;
+String reqEnabledPluToJson(ReqEnabledPlu data) => json.encode(data.toJson());
 
-List<PluData> _pluInfos = <PluData>[];
+class ReqEnabledPlu {
+  List<int>? pluList;
+  bool? enabled;
+  int? updateBy;
 
-// _showSnackbar(BuildContext context, String text, [Color? color]) {
-//   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-//     backgroundColor: color,
-//     duration: const Duration(seconds: 1),
-//     content: Text(text),
-//   ));
-// }
+  ReqEnabledPlu({
+    this.pluList,
+    this.enabled,
+    this.updateBy,
+  });
 
-const noData = 'No data';
+  factory ReqEnabledPlu.fromJson(Map<String, dynamic> json) => ReqEnabledPlu(
+        pluList: json["PluList"] == null
+            ? []
+            : List<int>.from(json["PluList"]!.map((x) => x)),
+        enabled: json["Enabled"],
+        updateBy: json["UpdateBy"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "PluList":
+            pluList == null ? [] : List<dynamic>.from(pluList!.map((x) => x)),
+        "Enabled": enabled,
+        "UpdateBy": updateBy,
+      };
+}
+
+String reqDelPluToJson(ReqDelPlu data) => json.encode(data.toJson());
+
+class ReqDelPlu {
+  List<int>? recId;
+
+  ReqDelPlu({
+    this.recId,
+  });
+
+  Map<String, dynamic> toJson() => {
+        "RecId": recId == null ? [] : List<dynamic>.from(recId!.map((x) => x)),
+      };
+}

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
-import 'package:t_max/data/license_data.dart';
 import 'package:t_max/data/routes_data.dart';
 import 'package:t_max/data/sys_user_from_db.dart';
 import 'package:t_max/data/sys_user_req.dart';
@@ -15,30 +14,33 @@ class AddSysUserPage extends StatefulWidget {
   final List<SysUserFromDb> sysUserList;
   final SysUserFromDb initUserInfo;
   final int type; // 1:添加 2:修改
-  const AddSysUserPage(
-      {super.key,
-      required this.sysUserList,
-      required this.initUserInfo,
-      required this.type});
+  final bool isSuperAccount; // 是否是超级管理员账号
+  const AddSysUserPage({
+    super.key,
+    required this.sysUserList,
+    required this.initUserInfo,
+    required this.type,
+    required this.isSuperAccount,
+  });
 
   @override
   State<AddSysUserPage> createState() => AddSysUserPageState();
 }
 
 class AddSysUserPageState extends State<AddSysUserPage> {
-  TextEditingController userNameCtl = TextEditingController();
+  TextEditingController userNameCtl = TextEditingController(); //登录名
+  TextEditingController nickNameCtl = TextEditingController(); //用户名
+
   TextEditingController phoneCtl = TextEditingController();
   TextEditingController emailCtl = TextEditingController();
   TextEditingController pwd1Ctl = TextEditingController();
   TextEditingController pwd2Ctl = TextEditingController();
 
-  bool isEncrypted = false; // 保密初始值为 false
-  bool needContainer = false; // 保密初始值为 false
-  bool freeMode = false;
+  List<bool> seePwdList = [false, false];
 
   dynamic _eventbus2;
-
   String? selectedRole = 'operator'; // 默认选中操作员
+
   int? initPageId;
 
   final ScrollController _scrollController = ScrollController();
@@ -48,6 +50,8 @@ class AddSysUserPageState extends State<AddSysUserPage> {
 
   final Set<int> selectedConfigIds = {};
   final Set<int> selectedAppIds = {};
+  bool isSelectAllConfig = false;
+  bool isSelectAllApp = false;
 
   ColorScheme get colorScheme => Theme.of(context).colorScheme;
   TextTheme get textTheme => Theme.of(context).textTheme;
@@ -56,11 +60,15 @@ class AddSysUserPageState extends State<AddSysUserPage> {
     if (widget.type == 2) {
       PublicFunctions.getUserInfo(widget.initUserInfo.userName!);
       userNameCtl.text = widget.initUserInfo.userName!;
+      nickNameCtl.text = widget.initUserInfo.nickName!;
+
       phoneCtl.text = widget.initUserInfo.phone!;
       emailCtl.text = widget.initUserInfo.email!;
-
       int roleId = widget.initUserInfo.roleId!;
-      if (roleId == 2) {
+
+      if (widget.isSuperAccount) {
+        selectedRole = 'super_admin';
+      } else if (roleId == 2) {
         selectedRole = 'admin';
       } else {
         selectedRole = 'operator';
@@ -114,6 +122,8 @@ class AddSysUserPageState extends State<AddSysUserPage> {
             selectedAppIds.add(pageId);
           }
         }
+        isSelectAllConfig = selectedConfigIds.length == allConfigMenus.length;
+        isSelectAllApp = selectedAppIds.length == allAppsMenus.length;
       });
     }
   }
@@ -155,6 +165,40 @@ class AddSysUserPageState extends State<AddSysUserPage> {
     );
   }
 
+  showPwdName(String itemName, bool isRequired, int passwordIndex) {
+    return SizedBox(
+      height: 42,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          RichText(
+            text: TextSpan(
+              children: [
+                if (!isRequired)
+                  TextSpan(
+                      text: '*', style: getTextStyle(color: colorScheme.error)),
+                TextSpan(
+                    text: ' $itemName',
+                    style: textTheme.bodySmall?.apply(
+                        color: colorScheme.onSurface,
+                        overflow: TextOverflow.ellipsis)),
+              ],
+            ),
+          ),
+          IconButton(
+              onPressed: () => setState(
+                  () => seePwdList[passwordIndex] = !seePwdList[passwordIndex]),
+              icon: Icon(
+                seePwdList[passwordIndex]
+                    ? Icons.visibility
+                    : Icons.visibility_off,
+                size: 18,
+              ))
+        ],
+      ),
+    );
+  }
+
   //输入框
   showInputBox(TextEditingController controller, String hintText) {
     return SizedBox(
@@ -181,7 +225,8 @@ class AddSysUserPageState extends State<AddSysUserPage> {
 
   //输入密码框
 
-  showInputPwdBox(TextEditingController controller, String hintText) {
+  showInputPwdBox(
+      TextEditingController controller, String hintText, bool seePwd) {
     return SizedBox(
       height: 48,
       child: TextField(
@@ -196,7 +241,7 @@ class AddSysUserPageState extends State<AddSysUserPage> {
           counterText: '',
         ),
         maxLength: 15,
-        obscureText: true,
+        obscureText: !seePwd,
         obscuringCharacter: '*',
         style: getTextStyle(),
         onChanged: (value) {
@@ -212,6 +257,7 @@ class AddSysUserPageState extends State<AddSysUserPage> {
       return false;
     }
     if (userNameCtl.text.isEmpty ||
+        nickNameCtl.text.isEmpty ||
         phoneCtl.text.isEmpty ||
         emailCtl.text.isEmpty) {
       return false;
@@ -237,6 +283,8 @@ class AddSysUserPageState extends State<AddSysUserPage> {
     List<int> tempAppIds = [];
 
     tempUser.userName = userNameCtl.text;
+    tempUser.nickName = nickNameCtl.text;
+
     tempUser.phone = phoneCtl.text;
     tempUser.email = emailCtl.text;
     tempUser.password = pwd1Ctl.text;
@@ -275,6 +323,8 @@ class AddSysUserPageState extends State<AddSysUserPage> {
 
     tempUser.userId = widget.initUserInfo.userId;
     tempUser.userName = userNameCtl.text;
+    tempUser.nickName = nickNameCtl.text;
+
     tempUser.phone = phoneCtl.text;
     tempUser.email = emailCtl.text;
     tempUser.isEnabled = true;
@@ -286,19 +336,24 @@ class AddSysUserPageState extends State<AddSysUserPage> {
       tempUser.password = pwd1Ctl.text;
     }
 
-    if (selectedRole == "admin") {
-      tempUser.roleId = 2;
+    if (widget.isSuperAccount) {
+      tempUser.roleId = 1;
       tempUser.initialPageId = 0;
     } else {
-      tempUser.roleId = 3;
-      for (var item in selectedConfigIds) {
-        tempAppIds.add(item);
-      }
-      for (var item in selectedAppIds) {
-        tempAppIds.add(item);
-      }
+      if (selectedRole == "admin") {
+        tempUser.roleId = 2;
+        tempUser.initialPageId = 0;
+      } else {
+        tempUser.roleId = 3;
+        for (var item in selectedConfigIds) {
+          tempAppIds.add(item);
+        }
+        for (var item in selectedAppIds) {
+          tempAppIds.add(item);
+        }
 
-      tempUser.initialPageId = initPageId;
+        tempUser.initialPageId = initPageId;
+      }
     }
 
     tempUser.remark = '';
@@ -353,7 +408,7 @@ class AddSysUserPageState extends State<AddSysUserPage> {
                           for (var item in widget.sysUserList) {
                             if (item.userName == userNameCtl.text) {
                               showTipInfo(
-                                  localizedStrings.tipUserNameExist, context);
+                                  localizedStrings.tipAccountExist, context);
                               return;
                             }
                           }
@@ -364,7 +419,7 @@ class AddSysUserPageState extends State<AddSysUserPage> {
                             if (item.userName == userNameCtl.text &&
                                 item.userId != widget.initUserInfo.userId) {
                               showTipInfo(
-                                  localizedStrings.tipUserNameExist, context);
+                                  localizedStrings.tipAccountExist, context);
                               return;
                             }
                           }
@@ -409,6 +464,8 @@ class AddSysUserPageState extends State<AddSysUserPage> {
         )));
   }
 
+  final double inputWidth = 280;
+
   Widget showMiddlePart(double widthFor3Item) {
     return Expanded(
       child: Scrollbar(
@@ -427,11 +484,11 @@ class AddSysUserPageState extends State<AddSysUserPage> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         SizedBox(
-                          width: 300,
+                          width: inputWidth,
                           height: 90,
                           child: Column(children: [
                             showItemName(
-                                localizedStrings.userUsername + ' ', false),
+                                localizedStrings.userAccount + ' ', false),
                             showInputBox(userNameCtl, ''),
                           ]),
                         ),
@@ -439,7 +496,19 @@ class AddSysUserPageState extends State<AddSysUserPage> {
                           width: largePadding,
                         ),
                         SizedBox(
-                          width: 300,
+                          width: inputWidth,
+                          height: 90,
+                          child: Column(children: [
+                            showItemName(
+                                localizedStrings.userUsername + ' ', false),
+                            showInputBox(nickNameCtl, ''),
+                          ]),
+                        ),
+                        SizedBox(
+                          width: largePadding,
+                        ),
+                        SizedBox(
+                          width: inputWidth,
                           height: 90,
                           child: Column(children: [
                             showItemName(
@@ -451,7 +520,7 @@ class AddSysUserPageState extends State<AddSysUserPage> {
                           width: largePadding,
                         ),
                         SizedBox(
-                          width: 300,
+                          width: inputWidth,
                           height: 90,
                           child: Column(children: [
                             showItemName(
@@ -467,25 +536,26 @@ class AddSysUserPageState extends State<AddSysUserPage> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         SizedBox(
-                          width: 300,
+                          width: inputWidth,
                           height: 90,
                           child: Column(children: [
-                            showItemName(localizedStrings.userPassword + ' ',
-                                widget.type == 2 ? true : false),
-                            showInputPwdBox(pwd1Ctl, ''),
+                            showPwdName(localizedStrings.userPassword + ' ',
+                                widget.type == 2 ? true : false, 0),
+                            showInputPwdBox(pwd1Ctl, '', seePwdList[0]),
                           ]),
                         ),
                         SizedBox(
                           width: largePadding,
                         ),
                         SizedBox(
-                          width: 300,
+                          width: inputWidth,
                           height: 90,
                           child: Column(children: [
-                            showItemName(
+                            showPwdName(
                                 localizedStrings.userConfirmPassword + ' ',
-                                widget.type == 2 ? true : false),
-                            showInputPwdBox(pwd2Ctl, ''),
+                                widget.type == 2 ? true : false,
+                                1),
+                            showInputPwdBox(pwd2Ctl, '', seePwdList[1]),
                           ]),
                         ),
                       ])),
@@ -497,7 +567,33 @@ class AddSysUserPageState extends State<AddSysUserPage> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       // 管理员选项
-                      if (mySysUser.roleId == superAdminRoleId)
+                      if (widget.isSuperAccount)
+                        Row(
+                          children: [
+                            Radio<String>(
+                              value: 'super_admin',
+                              groupValue: selectedRole,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedRole = value;
+                                });
+                              },
+                            ),
+                            SizedBox(
+                              width: 150,
+                              child: Text(
+                                localizedStrings.superAdmin,
+                                style: getTextStyle(),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            )
+                          ],
+                        ),
+                      // 水平间距
+                      if (widget.isSuperAccount) SizedBox(width: 20),
+
+                      if (mySysUser.roleId == superAdminRoleId &&
+                          !widget.isSuperAccount)
                         Row(
                           children: [
                             Radio<String>(
@@ -520,30 +616,33 @@ class AddSysUserPageState extends State<AddSysUserPage> {
                           ],
                         ),
                       // 水平间距
-                      if (mySysUser.roleId == superAdminRoleId)
+                      if (mySysUser.roleId == superAdminRoleId &&
+                          !widget.isSuperAccount)
                         SizedBox(width: 20),
                       // 操作员选项
-                      Row(
-                        children: [
-                          Radio<String>(
-                            value: 'operator',
-                            groupValue: selectedRole,
-                            onChanged: (value) {
-                              setState(() {
-                                selectedRole = value;
-                              });
-                            },
-                          ),
-                          SizedBox(
-                            width: 150,
-                            child: Text(
-                              localizedStrings.operator,
-                              style: getTextStyle(),
-                              overflow: TextOverflow.ellipsis,
+                      if (!widget.isSuperAccount)
+                        Row(
+                          children: [
+                            Radio<String>(
+                              value: 'operator',
+                              groupValue: selectedRole,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedRole = value;
+                                });
+                              },
                             ),
-                          )
-                        ],
-                      ),
+                            if (!widget.isSuperAccount)
+                              SizedBox(
+                                width: 150,
+                                child: Text(
+                                  localizedStrings.operator,
+                                  style: getTextStyle(),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              )
+                          ],
+                        ),
                     ],
                   )),
               if (selectedRole == 'operator') ...operatorPart(),
@@ -571,12 +670,74 @@ class AddSysUserPageState extends State<AddSysUserPage> {
   List<Widget> operatorPart() {
     return [
       showTitlePart(localizedStrings.userConfigPermissions),
+      selAllConfig(),
       showConfigSettingWidget(),
       showTitlePart(localizedStrings.userAppPermissions),
+      selAllApp(),
       showAppSettingWidget(),
       showTitlePart(localizedStrings.userDefaultApp),
       showDefaultAppWidget(),
     ];
+  }
+
+  Widget selAllConfig() {
+    return Container(
+      padding: const EdgeInsets.only(
+          left: 20, right: 20, bottom: regularPadding, top: 8),
+      child: Row(children: [
+        Checkbox(
+          value: isSelectAllConfig,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(0),
+          ),
+          onChanged: (value) {
+            setState(() {
+              isSelectAllConfig = value ?? false;
+              if (isSelectAllConfig) {
+                // 全选：添加所有配置ID
+                selectedConfigIds.addAll(
+                  allConfigMenus.map((item) => item.id).toList(),
+                );
+              } else {
+                // 取消全选：清空选择
+                selectedConfigIds.clear();
+              }
+            });
+          },
+        ),
+        Text(localizedStrings.gSelectAll, style: textTheme.bodySmall),
+      ]),
+    );
+  }
+
+  Widget selAllApp() {
+    return Container(
+      padding: const EdgeInsets.only(
+          left: 20, right: 20, bottom: regularPadding, top: 8),
+      child: Row(children: [
+        Checkbox(
+          value: isSelectAllApp,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(0),
+          ),
+          onChanged: (value) {
+            setState(() {
+              isSelectAllApp = value ?? false;
+              if (isSelectAllApp) {
+                // 全选：添加所有配置ID
+                selectedAppIds.addAll(
+                  allAppsMenus.map((item) => item.id).toList(),
+                );
+              } else {
+                // 取消全选：清空选择
+                selectedAppIds.clear();
+              }
+            });
+          },
+        ),
+        Text(localizedStrings.gSelectAll, style: textTheme.bodySmall),
+      ]),
+    );
   }
 
   Widget showConfigSettingWidget() {
@@ -671,6 +832,9 @@ class AddSysUserPageState extends State<AddSysUserPage> {
                         selectedConfigIds.remove(id);
                       }
                       initPageId = null;
+                      // 同步更新全选状态
+                      isSelectAllConfig =
+                          selectedConfigIds.length == allConfigMenus.length;
                     });
                   }, // 未认证时不可选
                 ),
@@ -724,6 +888,8 @@ class AddSysUserPageState extends State<AddSysUserPage> {
                         selectedAppIds.remove(id);
                       }
                       initPageId = null;
+                      isSelectAllApp =
+                          selectedAppIds.length == allAppsMenus.length;
                     });
                   }, // 未认证时不可选
                 ),

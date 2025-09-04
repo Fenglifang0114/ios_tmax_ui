@@ -2836,11 +2836,15 @@
     "@gTipEmptyScalePan": {
         "description": "This is a tip to empty the scale pan."
     },
+    "gTipPlaceCalibrationWeight": "Place the calibration weight",
+    "@gTipPlaceCalibrationWeight": {
+        "description": "This is a tip to place the calibration weight."
+    },
     "gTipSetCalibrationWeight": "Set calibration weight",
     "@gTipSetCalibrationWeight": {
         "description": "This is a tip to set the calibration weight."
     },
-    "gTipPlaceWeight": "Place the weight",
+    "gTipPlaceWeight": "Calibration",
     "@gTipPlaceWeight": {
         "description": "This is a tip to place the weight."
     },
@@ -2860,17 +2864,17 @@
     "@gTipSetCalibrationWeightThenNext": {
         "description": "This is a tip to set the calibration weight and click next."
     },
-    "gTipLoadWeightThenNext": "Please load the weight, wait for the green light to turn on and click next",
+    "gTipLoadWeightThenNext": "Please wait for the green light to turn on and click next",
     "@gTipLoadWeightThenNext": {
-        "description": "This is a tip to load the weight, wait for the green light to turn on and click next."
+        "description": "This is a tip to wait for the green light to turn on and click next."
     },
     "gTipPleaseEmptyScalePan": "Please empty the scale pan",
     "@gTipPleaseEmptyScalePan": {
         "description": "This is a tip to ask to empty the scale pan."
     },
-    "gTipPleaseLoadWeight": "Please load the weight",
+    "gTipPleaseLoadWeight": "Please confirm the weight",
     "@gTipPleaseLoadWeight": {
-        "description": "This is a tip to ask to load the weight."
+        "description": "This is a tip to ask to confirm the weight."
     },
     "gTipCalResult": "If calibration fails, please click 'Recalibrate'.",
     "@gTipCalResult": { 
@@ -2903,6 +2907,18 @@
     "gTipCalibrationWeight": "Please enter the calibration weight",
     "@gTipCalibrationWeight": {
         "description": "This is a prompt to ask the user to input the calibration weight."
+    },
+    "gTipBeforeCalibration": "Before Calibration",
+    "@gTipBeforeCalibration": {
+        "description": "This is a prompt about calibration before."
+    },
+    "gTipAfterCalibration": "After Calibration",
+    "@gTipAfterCalibration": {
+        "description": "This is a promPt about calibration after."
+    },
+    "gTipErrorValue": "Error Value",
+    "@gTipErrorValue": {
+        "description": "This is a prompt to tell the user the error value."
     },
     "gTxtDecimal": "Decimal",
     "@gTxtDecimal": {
@@ -3256,6 +3272,10 @@
     "@operator": {
         "description": "Operator"
     },
+    "userAccount": "Account",
+    "@userAccount": {
+        "description": "Account"
+    },
     "userUsername": "User name",
     "@userUsername": {
         "description": "Username"
@@ -3336,8 +3356,60 @@
     "@tipNoPermission": {
         "description": "Tip for no permission"
     },
-    "tipUserNameExist": "Username already exists",
-    "@tipUserNameExist": {
-        "description": "Tip for username exist"
-    } 
+    "tipAccountExist": "Account already exists",
+    "@tipAccountExist": {
+        "description": "Tip for account exist"
+    },
+    "menuData": "Data",
+    "@menuData": {
+        "description": "Menu data"
+    },
+    "menuFormat": "Format",
+    "@menuFormat": {
+        "description": "Menu format"
+    },
+    "gBtnSelect": "Select",
+    "@gBtnSelect": {
+        "description": "Button for select"
+    },
+    "gTipConfirmContinue": "Please confirm to continue.",
+    "@gTipConfirmContinue": {
+        "description": "Tip for confirm continue"
+    },     
+    "gBtnEnable": "Activate",
+    "@gBtnEnable": {
+        "description": "Button for activate"
+    },
+    "gBtnDisable": "Deactivate",
+    "@gBtnDisable": {
+        "description": "Button for deactivate"
+    },     
+    "gTipImportPluSame": "Duplicate PLU ignored during import",
+    "@gTipImportPluSame": {
+        "description": "Tip for import plu same"
+    },
+    "gTipDownPluDisabled": "Some PLUs have been deactivated and cannot be downloaded.",
+    "@gTipDownPluDisabled": {
+        "description": "Tip for download plu disabled"
+    },
+    "fInputDataIncomplete": "Input data incomplete",
+    "@fInputDataIncomplete": {
+        "description": "Tip for input data incomplete"
+    },
+    "fPluExist": "PLU already exists",
+    "@fPluExist": {
+        "description": "Tip for plu exist"
+    },
+    "tipJumpPage": "Jump to",
+    "@tipJumpPage": {
+        "description": "Tip for jump page"
+    },
+    "tipBluetoothDisconnect": "Note: This setting requires Bluetooth to be disconnected from other devices!",
+    "@tipBluetoothDisconnect": {
+        "description": "Tip for bluetooth disconnect"
+    },
+    "tipSameScale": "Same scale can't connect simultaneously.",
+    "@tipSameScale": {
+        "description": "Tip for same scale"
+    }
 }    

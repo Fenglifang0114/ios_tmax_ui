@@ -1,5 +1,6 @@
 //重量收集页面 20250522
 
+import 'dart:async';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,6 @@ import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/icons.dart';
 import 'package:t_max/data/new_get_recs.dart';
 import 'package:t_max/data/plu_data_source.dart';
-import 'package:t_max/data/plu_info_list_data.dart';
 import 'package:t_max/data/reqweightdata_data.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/data/settingparam_data.dart';
@@ -47,15 +47,14 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
   List<int> mySelScaleIdList = [];
   List<ScaleRecInfo> allWgtRecList = [];
 
-  PluData? selectedPluData; // 用于存储选中的PluData
-
   final double scaleWgtWidth = 351;
-
   late TableState _tableState;
 
   bool firstGetRec = true;
   bool totalWgtStble = false;
   bool needUpdate = false;
+  // 添加定时器变量
+  Timer? _scaleCheckTimer;
 
   dynamic eventBus1;
   dynamic eventBus2;
@@ -64,7 +63,6 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
   dynamic eventBus4;
   dynamic eventBus6;
   dynamic eventBus7;
-
   dynamic eventBus9;
   dynamic eventBus10;
   dynamic eventBus11;
@@ -81,7 +79,15 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
 
     PublicFunctions.getUIConfNormal(wgtCheckMode);
     PublicFunctions.getProductList();
+// 初始化定时器，每隔10秒执行一次检查
+    _scaleCheckTimer = Timer.periodic(Duration(seconds: 10), (timer) {
+      checkSameScale();
+    });
 
+    // 初始加载时立即检查一次
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkSameScale();
+    });
     eventBus1 = eventBus.on<EventUpdateSettingParam>().listen((event) {
       if (mounted) {
         setState(() {
@@ -154,30 +160,42 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
     eventBus9 = eventBus.on<EventProductRecList>().listen((event) {
       if (mounted) {
         setState(() {
-          List<PluInfoList> pluInfoList = event.obj;
+          List<PluDataFromDb> pluInfoList = event.obj;
           for (int i = 0; i < pluInfoList.length; i++) {
-            PluData newPlu =
-                PluData(0, 0, 0, 0, '', '', 0, 0, 0, 0, 0, 0, 0, '');
+            PluData newPlu = PluData(
+                0, 0, 0, 0, '', '', 0, 0, 0, 0, 0, 0, 0, '', true, '', 0, 0);
+
+            newPlu.enabled = pluInfoList[i].enabled ?? true;
+            if (!pluInfoList[i].enabled!) {
+              continue;
+            }
             newPlu.recId = pluInfoList[i].recId;
-            newPlu.plu = int.tryParse(pluInfoList[i].plu) ?? 0;
-            newPlu.productCode = int.tryParse(pluInfoList[i].productCode) ?? 0;
-            newPlu.itemCode = int.tryParse(pluInfoList[i].itemCode) ?? 0;
+            newPlu.plu = int.tryParse(pluInfoList[i].plu ?? '0') ?? 0;
+            newPlu.productCode =
+                int.tryParse(pluInfoList[i].productCode ?? '0') ?? 0;
+            newPlu.itemCode = int.tryParse(pluInfoList[i].itemCode ?? '0') ?? 0;
             newPlu.category = pluInfoList[i].category;
             newPlu.productName = pluInfoList[i].productName;
-            newPlu.price = double.tryParse(pluInfoList[i].price) ?? 0;
-            newPlu.taxType = int.tryParse(pluInfoList[i].taxType) ?? 0;
-            newPlu.generalUnit = int.tryParse(pluInfoList[i].generalUnit) ?? 0;
-            newPlu.unitWeight = double.tryParse(pluInfoList[i].unitWeight) ?? 0;
-            newPlu.pretare = double.tryParse(pluInfoList[i].pretare) ?? 0;
-            newPlu.limitHigh = double.tryParse(pluInfoList[i].limitHigh) ?? 0;
-            newPlu.limitLow = double.tryParse(pluInfoList[i].limitLow) ?? 0;
-            newPlu.creatAt = pluInfoList[i].creatAt ?? " ";
+            newPlu.price = double.tryParse(pluInfoList[i].price ?? '0') ?? 0;
+            newPlu.taxType = int.tryParse(pluInfoList[i].taxType ?? '0') ?? 0;
+            newPlu.generalUnit =
+                int.tryParse(pluInfoList[i].generalUnit ?? '0') ?? 0;
+            newPlu.unitWeight =
+                double.tryParse(pluInfoList[i].unitWeight ?? '0') ?? 0;
+            newPlu.pretare =
+                double.tryParse(pluInfoList[i].pretare ?? '0') ?? 0;
+            newPlu.limitHigh =
+                double.tryParse(pluInfoList[i].limitHigh ?? '0') ?? 0;
+            newPlu.limitLow =
+                double.tryParse(pluInfoList[i].limitLow ?? '0') ?? 0;
+            newPlu.creatAt = pluInfoList[i].createdAt?.toIso8601String() ?? " ";
+            newPlu.updateAt =
+                pluInfoList[i].updatedAt?.toIso8601String() ?? " ";
+            newPlu.createBy = pluInfoList[i].createBy;
+            newPlu.updateBy = pluInfoList[i].updateBy;
+
             myPluInfoList.add(newPlu);
           }
-
-          // getProductNameList();
-          // getWeight();
-          // getRecords();
         });
       }
     });
@@ -207,6 +225,17 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
   }
 
   @override
+  void didChangeDependencies() {
+    setState(() {
+      for (var item in myReportFeildsMap.keys) {
+        _tableState.visibleColumns[item]!.isSelect =
+            myReportFeildsMap[item]!.isSelect;
+      }
+    });
+    super.didChangeDependencies();
+  }
+
+  @override
   void dispose() {
     eventBus1.cancel();
     eventBus2.cancel();
@@ -225,12 +254,11 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
       PublicFunctions.stopWeight(item);
     }
     myPluInfoList.clear();
-
     totalWgtUnitCtl.clear();
     totalWeightNotifier.dispose();
     totalWgtStableNotifier.dispose();
-
     _tableState.dispose();
+    _scaleCheckTimer?.cancel();
 
     super.dispose();
   }
@@ -419,6 +447,43 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
     return scaleName;
   }
 
+//实时查看是否是同一台秤，如果是的话，给出提示，并去掉一个
+  void checkSameScale() {
+    if (mySelScaleIdList.length > 1) {
+      Map<int, dynamic> scaleMap = {};
+      for (var scale in myAllScalesList) {
+        scaleMap[scale.scaleId] = scale;
+      }
+
+      // 分离已选择的串口秤和WiFi秤
+      List<Scale> serialScales = [];
+      List<Scale> wifiScales = [];
+
+      for (var scaleId in mySelScaleIdList) {
+        var scale = scaleMap[scaleId];
+        if (scale.tMedia == comScaleType) {
+          serialScales.add(scale);
+        } else if (scale.tMedia == netScaleType) {
+          wifiScales.add(scale);
+        }
+      }
+
+      for (var serialScale in serialScales) {
+        for (var wifiScale in wifiScales) {
+          if (wifiScale.scaleModel == serialScale.scaleModel &&
+              wifiScale.scaleSn == serialScale.scaleSn) {
+            // 显示冲突提示对话框
+            showTipInfo(localizedStrings.tipSameScale, context);
+            if (mySelScaleIdList.contains(wifiScale.scaleId)) {
+              addOrRemoveSelScale(wifiScale.scaleId);
+            }
+            break;
+          }
+        }
+      }
+    }
+  }
+
   void addOrRemoveSelScale(int scaleId) {
     if (mySelScaleIdList.contains(scaleId)) {
       mySelScaleIdList.remove(scaleId);
@@ -431,6 +496,8 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
       mySelScaleIdList.add(scaleId);
       PublicFunctions.getWeight(scaleId);
     }
+    setState(() {}); // 强制刷新界面
+    checkSameScale();
   }
 
   Widget showScaleWgt(BuildContext context, double width) {
@@ -776,6 +843,10 @@ void sendDataToDb(
         null,
         null,
         null,
+        false,
+        '',
+        0,
+        0,
       );
 
   final newAddRec = ReqAddWgtRec()

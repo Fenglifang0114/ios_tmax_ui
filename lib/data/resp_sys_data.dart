@@ -6,7 +6,7 @@ import 'package:t_max/data/comscaleinfo_data.dart';
 import 'package:t_max/data/license_data.dart';
 import 'package:t_max/data/modifyresult_data.dart';
 import 'package:t_max/data/pak_info_data.dart';
-import 'package:t_max/data/plu_info_list_data.dart';
+import 'package:t_max/data/plu_data_source.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/data/scalelist_data.dart';
 import 'package:t_max/data/settingparam_data.dart';
@@ -81,6 +81,9 @@ class RespSysMsgType {
   static const String respLogin = 'resp_login';
   static const String respGetAllUsers = 'resp_get_all_users';
   static const String respGetUserDetail = 'resp_get_user_detail';
+  static const String respPluAdd = 'resp_product_add';
+  static const String respProductAddOne = 'resp_product_add_one';
+  static const String respGetLastProductRec = 'resp_get_last_product_rec';
 
   static final Map<String, Function> handlers = {
     RespSysMsgType.respPortsList: handlePortsList,
@@ -142,6 +145,9 @@ class RespSysMsgType {
     RespSysMsgType.respLogin: handleLogin,
     RespSysMsgType.respGetAllUsers: handleGetAllUsers,
     RespSysMsgType.respGetUserDetail: handleGetUserDetail,
+    RespSysMsgType.respPluAdd: handleRespPluAdd,
+    RespSysMsgType.respProductAddOne: handleRespProductAddOne,
+    RespSysMsgType.respGetLastProductRec: handleRespGetLastProductRec,
   };
 
   static void handlePortsList(dynamic jsonData) {
@@ -278,6 +284,10 @@ class RespSysMsgType {
         if (scale.scaleId == scaleOnline.scaleId) {
           // 现在可以正常更新状态
           scale.isOnline = scaleOnline.isOnline!;
+          if (scaleOnline.isOnline!) {
+            scale.scaleModel = scaleOnline.modelName!;
+            scale.scaleSn = scaleOnline.sn!;
+          }
           eventBus.fire(EventRespScaleOnline(''));
           break;
         }
@@ -486,7 +496,7 @@ class RespSysMsgType {
     String jsonStrings = jsonDataString;
     // final jsonResponse = json.decode(jsonStrings);
 
-    myPluListFormDb = pluInfoListFromJson(jsonStrings);
+    var myPluListFormDb = pluDataFromDbFromJson(jsonStrings);
     if (myPluListFormDb.isNotEmpty) {
       eventBus.fire(EventProductRecList(myPluListFormDb));
     } else {
@@ -545,6 +555,20 @@ class RespSysMsgType {
   static void handleGetUserDetail(dynamic jsonData) {
     String dataString = jsonData['MsgBody'];
     eventBus.fire(EventRespGetUserDetail(dataString));
+  }
+
+  static void handleRespPluAdd(dynamic jsonData) {
+    eventBus.fire(EventRespPluAdd(''));
+  }
+
+  static void handleRespProductAddOne(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespProductAddOne(dataString));
+  }
+
+  static void handleRespGetLastProductRec(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespGetLastProductRec(dataString));
   }
 }
 

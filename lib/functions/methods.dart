@@ -93,14 +93,32 @@ class PublicFunctions {
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
 
+  static void getLastProductRec() {
+    myScaleCmd.cmdMode = "get_last_product_rec";
+    myScaleCmd.cmdData = "";
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
   static void addProduct(String str) {
     myScaleCmd.cmdMode = "add_product";
     myScaleCmd.cmdData = str;
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
 
+  static void addOneProduct(String str) {
+    myScaleCmd.cmdMode = "add_one_product";
+    myScaleCmd.cmdData = str;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
   static void modifyProduct(String str) {
     myScaleCmd.cmdMode = "modify_product";
+    myScaleCmd.cmdData = str;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  static void enablePlu(String str) {
+    myScaleCmd.cmdMode = "update_enabled_plu";
     myScaleCmd.cmdData = str;
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
@@ -677,28 +695,32 @@ class PublicFunctions {
 
   static void modifyBtPowerStrong(int scaleId) {
     myScaleCmd.cmdMode = "send_data_to_bt";
-    myScaleCmd.cmdData = "TTM:TPL-(+10)";
+    // myScaleCmd.cmdData = "TTM:TPL-(+10)";
+    myScaleCmd.cmdData = "AT+RFPOWER=78,14,14,14";
     sendMsg(scaleId, jsonEncode(myScaleCmd));
     writelog(jsonEncode(myScaleCmd));
   }
 
   static void modifyBtPowerNormal(int scaleId) {
     myScaleCmd.cmdMode = "send_data_to_bt";
-    myScaleCmd.cmdData = "TTM:TPL-(+6)";
+    // myScaleCmd.cmdData = "TTM:TPL-(+6)";
+    myScaleCmd.cmdData = "AT+RFPOWER=78,11,11,11";
     sendMsg(scaleId, jsonEncode(myScaleCmd));
     writelog(jsonEncode(myScaleCmd));
   }
 
   static void modifyBtPowerWeak(int scaleId) {
     myScaleCmd.cmdMode = "send_data_to_bt";
-    myScaleCmd.cmdData = "TTM:TPL-(0)";
+    // myScaleCmd.cmdData = "TTM:TPL-(0)";
+    myScaleCmd.cmdData = "AT+RFPOWER=78,5,5,5";
     sendMsg(scaleId, jsonEncode(myScaleCmd));
     writelog(jsonEncode(myScaleCmd));
   }
 
   static void getBtName(int scaleId) {
     myScaleCmd.cmdMode = "send_data_to_bt";
-    myScaleCmd.cmdData = "TTM:NAM-?";
+    // myScaleCmd.cmdData = "TTM:NAM-?";
+    myScaleCmd.cmdData = "AT+BLENAME?";
     sendMsg(scaleId, jsonEncode(myScaleCmd));
   }
 

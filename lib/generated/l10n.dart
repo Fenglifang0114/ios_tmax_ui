@@ -6829,6 +6829,16 @@ class S {
     );
   }
 
+  /// `Place the calibration weight`
+  String get gTipPlaceCalibrationWeight {
+    return Intl.message(
+      'Place the calibration weight',
+      name: 'gTipPlaceCalibrationWeight',
+      desc: 'This is a tip to place the calibration weight.',
+      args: [],
+    );
+  }
+
   /// `Set calibration weight`
   String get gTipSetCalibrationWeight {
     return Intl.message(
@@ -6839,10 +6849,10 @@ class S {
     );
   }
 
-  /// `Place the weight`
+  /// `Calibration`
   String get gTipPlaceWeight {
     return Intl.message(
-      'Place the weight',
+      'Calibration',
       name: 'gTipPlaceWeight',
       desc: 'This is a tip to place the weight.',
       args: [],
@@ -6889,13 +6899,13 @@ class S {
     );
   }
 
-  /// `Please load the weight, wait for the green light to turn on and click next`
+  /// `Please wait for the green light to turn on and click next`
   String get gTipLoadWeightThenNext {
     return Intl.message(
-      'Please load the weight, wait for the green light to turn on and click next',
+      'Please wait for the green light to turn on and click next',
       name: 'gTipLoadWeightThenNext',
       desc:
-          'This is a tip to load the weight, wait for the green light to turn on and click next.',
+          'This is a tip to wait for the green light to turn on and click next.',
       args: [],
     );
   }
@@ -6910,12 +6920,12 @@ class S {
     );
   }
 
-  /// `Please load the weight`
+  /// `Please confirm the weight`
   String get gTipPleaseLoadWeight {
     return Intl.message(
-      'Please load the weight',
+      'Please confirm the weight',
       name: 'gTipPleaseLoadWeight',
-      desc: 'This is a tip to ask to load the weight.',
+      desc: 'This is a tip to ask to confirm the weight.',
       args: [],
     );
   }
@@ -6996,6 +7006,36 @@ class S {
       'Please enter the calibration weight',
       name: 'gTipCalibrationWeight',
       desc: 'This is a prompt to ask the user to input the calibration weight.',
+      args: [],
+    );
+  }
+
+  /// `Before Calibration`
+  String get gTipBeforeCalibration {
+    return Intl.message(
+      'Before Calibration',
+      name: 'gTipBeforeCalibration',
+      desc: 'This is a prompt about calibration before.',
+      args: [],
+    );
+  }
+
+  /// `After Calibration`
+  String get gTipAfterCalibration {
+    return Intl.message(
+      'After Calibration',
+      name: 'gTipAfterCalibration',
+      desc: 'This is a promPt about calibration after.',
+      args: [],
+    );
+  }
+
+  /// `Error Value`
+  String get gTipErrorValue {
+    return Intl.message(
+      'Error Value',
+      name: 'gTipErrorValue',
+      desc: 'This is a prompt to tell the user the error value.',
       args: [],
     );
   }
@@ -7891,6 +7931,16 @@ class S {
     );
   }
 
+  /// `Account`
+  String get userAccount {
+    return Intl.message(
+      'Account',
+      name: 'userAccount',
+      desc: 'Account',
+      args: [],
+    );
+  }
+
   /// `User name`
   String get userUsername {
     return Intl.message(
@@ -8081,12 +8131,137 @@ class S {
     );
   }
 
-  /// `Username already exists`
-  String get tipUserNameExist {
+  /// `Account already exists`
+  String get tipAccountExist {
     return Intl.message(
-      'Username already exists',
-      name: 'tipUserNameExist',
-      desc: 'Tip for username exist',
+      'Account already exists',
+      name: 'tipAccountExist',
+      desc: 'Tip for account exist',
+      args: [],
+    );
+  }
+
+  /// `Data`
+  String get menuData {
+    return Intl.message('Data', name: 'menuData', desc: 'Menu data', args: []);
+  }
+
+  /// `Format`
+  String get menuFormat {
+    return Intl.message(
+      'Format',
+      name: 'menuFormat',
+      desc: 'Menu format',
+      args: [],
+    );
+  }
+
+  /// `Select`
+  String get gBtnSelect {
+    return Intl.message(
+      'Select',
+      name: 'gBtnSelect',
+      desc: 'Button for select',
+      args: [],
+    );
+  }
+
+  /// `Please confirm to continue.`
+  String get gTipConfirmContinue {
+    return Intl.message(
+      'Please confirm to continue.',
+      name: 'gTipConfirmContinue',
+      desc: 'Tip for confirm continue',
+      args: [],
+    );
+  }
+
+  /// `Activate`
+  String get gBtnEnable {
+    return Intl.message(
+      'Activate',
+      name: 'gBtnEnable',
+      desc: 'Button for activate',
+      args: [],
+    );
+  }
+
+  /// `Deactivate`
+  String get gBtnDisable {
+    return Intl.message(
+      'Deactivate',
+      name: 'gBtnDisable',
+      desc: 'Button for deactivate',
+      args: [],
+    );
+  }
+
+  /// `Duplicate PLU ignored during import`
+  String get gTipImportPluSame {
+    return Intl.message(
+      'Duplicate PLU ignored during import',
+      name: 'gTipImportPluSame',
+      desc: 'Tip for import plu same',
+      args: [],
+    );
+  }
+
+  /// `Some PLUs have been deactivated and cannot be downloaded.`
+  String get gTipDownPluDisabled {
+    return Intl.message(
+      'Some PLUs have been deactivated and cannot be downloaded.',
+      name: 'gTipDownPluDisabled',
+      desc: 'Tip for download plu disabled',
+      args: [],
+    );
+  }
+
+  /// `Input data incomplete`
+  String get fInputDataIncomplete {
+    return Intl.message(
+      'Input data incomplete',
+      name: 'fInputDataIncomplete',
+      desc: 'Tip for input data incomplete',
+      args: [],
+    );
+  }
+
+  /// `PLU already exists`
+  String get fPluExist {
+    return Intl.message(
+      'PLU already exists',
+      name: 'fPluExist',
+      desc: 'Tip for plu exist',
+      args: [],
+    );
+  }
+
+  /// `Jump to`
+  String get tipJumpPage {
+    return Intl.message(
+      'Jump to',
+      name: 'tipJumpPage',
+      desc: 'Tip for jump page',
+      args: [],
+    );
+  }
+
+  /// `Note: This setting requires Bluetooth to be disconnected from other devices!`
+  String get tipBluetoothDisconnect {
+    return Intl.message(
+      'Note: This setting requires Bluetooth to be disconnected from other devices!',
+      name: 'tipBluetoothDisconnect',
+      desc: 'Tip for bluetooth disconnect',
+      args: [],
+    );
+  }
+
+  /// `Same scale can't connect simultaneously.`
+  String get tipSameScale {
+    return Intl.message(
+      'Same scale can\'t connect simultaneously.',
+      name: 'tipSameScale',
+      desc: 'Tip for same scale',
       args: [],
     );
   }

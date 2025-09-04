@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/language.dart';
 import 'package:t_max/data/new_get_recs.dart';
@@ -192,7 +193,7 @@ class WgtDataTable extends StatelessWidget {
                                                   .colorScheme
                                                   .surface,
                                           child: DataTable(
-                                              columns: _buildColumns(
+                                              columns: _buildDataColumns(
                                                   context, tableState),
                                               rows: [
                                                 DataRow(
@@ -262,7 +263,7 @@ class WgtDataTable extends StatelessWidget {
                         onPressed: tableState.previousPage,
                       ),
                       Text(
-                        '${localizedStrings.tipPageSequnce} ${tableState.currentPage} ${localizedStrings.tipPage} / ${localizedStrings.tipPageTotal} ${(tableState._totalCount / tableState._itemsPerPage).ceil()} ${localizedStrings.tipPage}  ',
+                        '${localizedStrings.tipPageSequnce} ${tableState.currentPage}   /  ${(tableState._totalCount / tableState._itemsPerPage).ceil()} ${localizedStrings.tipPage}  ',
                       ),
                       IconButton(
                         icon: Icon(Icons.chevron_right),
@@ -276,7 +277,7 @@ class WgtDataTable extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        '${tableState._itemsPerPage}/${localizedStrings.tipPage}   ${localizedStrings.tipPageTotal} ${tableState._totalCount}  ',
+                        '  ${localizedStrings.tipPageTotal} ${tableState._totalCount}  ',
                       ),
                     ],
                   ),
@@ -299,74 +300,282 @@ class WgtDataTable extends StatelessWidget {
     return itemNum;
   }
 
-  // 构建表格列
+  // 新增一个用于数据行的列构建方法（无排序功能）
+  List<DataColumn> _buildDataColumns(
+      BuildContext context, TableState tableState) {
+    return [
+      if (tableState.visibleColumns['Id']!.isSelect)
+        _getDataColumnWithoutSort(
+          context,
+          tableState.visibleColumns['Id']!.showName,
+          width: 60,
+        ),
+      if (tableState.visibleColumns['Date Time']!.isSelect)
+        _getDataColumnWithoutSort(
+          context,
+          tableState.visibleColumns['Date Time']!.showName,
+        ),
+      if (tableState.visibleColumns['PLU']!.isSelect)
+        _getDataColumnWithoutSort(
+          context,
+          tableState.visibleColumns['PLU']!.showName,
+        ),
+      if (tableState.visibleColumns['Product Code']!.isSelect)
+        _getDataColumnWithoutSort(
+          context,
+          tableState.visibleColumns['Product Code']!.showName,
+        ),
+      if (tableState.visibleColumns['Item Code']!.isSelect)
+        _getDataColumnWithoutSort(
+          context,
+          tableState.visibleColumns['Item Code']!.showName,
+        ),
+      if (tableState.visibleColumns['PLU Name']!.isSelect)
+        _getDataColumnWithoutSort(
+          context,
+          tableState.visibleColumns['PLU Name']!.showName,
+        ),
+      if (tableState.visibleColumns['Price']!.isSelect)
+        _getDataColumnWithoutSort(
+          context,
+          tableState.visibleColumns['Price']!.showName,
+        ),
+      if (tableState.visibleColumns['GeneralUnit']!.isSelect)
+        _getDataColumnWithoutSort(
+          context,
+          tableState.visibleColumns['GeneralUnit']!.showName,
+        ),
+      if (tableState.visibleColumns['TaxType']!.isSelect)
+        _getDataColumnWithoutSort(
+          context,
+          tableState.visibleColumns['TaxType']!.showName,
+        ),
+      if (tableState.visibleColumns['UnitWeight']!.isSelect)
+        _getDataColumnWithoutSort(
+          context,
+          tableState.visibleColumns['UnitWeight']!.showName,
+        ),
+      if (tableState.visibleColumns['LimitHigh']!.isSelect)
+        _getDataColumnWithoutSort(
+          context,
+          tableState.visibleColumns['LimitHigh']!.showName,
+        ),
+      if (tableState.visibleColumns['LimitLow']!.isSelect)
+        _getDataColumnWithoutSort(
+          context,
+          tableState.visibleColumns['LimitLow']!.showName,
+        ),
+      if (tableState.visibleColumns['Weight']!.isSelect)
+        _getDataColumnWithoutSort(
+          context,
+          tableState.visibleColumns['Weight']!.showName,
+        ),
+      if (tableState.visibleColumns['Weight Unit']!.isSelect)
+        _getDataColumnWithoutSort(
+          context,
+          tableState.visibleColumns['Weight Unit']!.showName,
+        ),
+      if (tableState.visibleColumns['Pretare']!.isSelect)
+        _getDataColumnWithoutSort(
+          context,
+          tableState.visibleColumns['Pretare']!.showName,
+        ),
+      if (tableState.visibleColumns['Scale Name']!.isSelect)
+        _getDataColumnWithoutSort(
+          context,
+          tableState.visibleColumns['Scale Name']!.showName,
+        ),
+      DataColumn(label: Container(width: 90)),
+    ];
+  }
+
+// 新增一个不带排序功能的列构建方法
+  DataColumn _getDataColumnWithoutSort(BuildContext context, String title,
+      {double? width}) {
+    width ??= 150;
+    return DataColumn(
+      headingRowAlignment: MainAxisAlignment.start,
+      label: SizedBox(
+        width: width,
+        child: Text(
+          title,
+          style: Theme.of(context)
+              .textTheme
+              .bodySmall!
+              .apply(color: Theme.of(context).colorScheme.onSurface),
+          textAlign: TextAlign.left,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ),
+    );
+  }
+
   List<DataColumn> _buildColumns(BuildContext context, TableState tableState) {
     return [
       if (tableState.visibleColumns['Id']!.isSelect)
-        getDataColumn(context, tableState.visibleColumns['Id']!.showName,
-            width: 60),
+        getDataColumn(
+          context,
+          tableState.visibleColumns['Id']!.showName,
+          width: 60,
+          columnKey: 'Id',
+          tableState: tableState,
+        ),
       if (tableState.visibleColumns['Date Time']!.isSelect)
         getDataColumn(
-            context, tableState.visibleColumns['Date Time']!.showName),
+          context,
+          tableState.visibleColumns['Date Time']!.showName,
+          columnKey: 'Date Time',
+          tableState: tableState,
+        ),
       if (tableState.visibleColumns['PLU']!.isSelect)
-        getDataColumn(context, tableState.visibleColumns['PLU']!.showName),
+        getDataColumn(
+          context,
+          tableState.visibleColumns['PLU']!.showName,
+          columnKey: 'PLU',
+          tableState: tableState,
+        ),
       if (tableState.visibleColumns['Product Code']!.isSelect)
         getDataColumn(
-            context, tableState.visibleColumns['Product Code']!.showName),
+          context,
+          tableState.visibleColumns['Product Code']!.showName,
+          columnKey: 'Product Code',
+          tableState: tableState,
+        ),
       if (tableState.visibleColumns['Item Code']!.isSelect)
         getDataColumn(
-            context, tableState.visibleColumns['Item Code']!.showName),
+          context,
+          tableState.visibleColumns['Item Code']!.showName,
+          columnKey: 'Item Code',
+          tableState: tableState,
+        ),
       if (tableState.visibleColumns['PLU Name']!.isSelect)
-        getDataColumn(context, tableState.visibleColumns['PLU Name']!.showName),
+        getDataColumn(
+          context,
+          tableState.visibleColumns['PLU Name']!.showName,
+          columnKey: 'PLU Name',
+          tableState: tableState,
+        ),
       if (tableState.visibleColumns['Price']!.isSelect)
-        getDataColumn(context, tableState.visibleColumns['Price']!.showName),
+        getDataColumn(
+          context,
+          tableState.visibleColumns['Price']!.showName,
+          columnKey: 'Price',
+          tableState: tableState,
+        ),
       if (tableState.visibleColumns['GeneralUnit']!.isSelect)
         getDataColumn(
-            context, tableState.visibleColumns['GeneralUnit']!.showName),
+          context,
+          tableState.visibleColumns['GeneralUnit']!.showName,
+          columnKey: 'GeneralUnit',
+          tableState: tableState,
+        ),
       if (tableState.visibleColumns['TaxType']!.isSelect)
-        getDataColumn(context, tableState.visibleColumns['TaxType']!.showName),
+        getDataColumn(
+          context,
+          tableState.visibleColumns['TaxType']!.showName,
+          columnKey: 'TaxType',
+          tableState: tableState,
+        ),
       if (tableState.visibleColumns['UnitWeight']!.isSelect)
         getDataColumn(
-            context, tableState.visibleColumns['UnitWeight']!.showName),
+          context,
+          tableState.visibleColumns['UnitWeight']!.showName,
+          columnKey: 'UnitWeight',
+          tableState: tableState,
+        ),
       if (tableState.visibleColumns['LimitHigh']!.isSelect)
         getDataColumn(
-            context, tableState.visibleColumns['LimitHigh']!.showName),
+          context,
+          tableState.visibleColumns['LimitHigh']!.showName,
+          columnKey: 'LimitHigh',
+          tableState: tableState,
+        ),
       if (tableState.visibleColumns['LimitLow']!.isSelect)
-        getDataColumn(context, tableState.visibleColumns['LimitLow']!.showName),
+        getDataColumn(
+          context,
+          tableState.visibleColumns['LimitLow']!.showName,
+          columnKey: 'LimitLow',
+          tableState: tableState,
+        ),
       if (tableState.visibleColumns['Weight']!.isSelect)
-        getDataColumn(context, tableState.visibleColumns['Weight']!.showName),
+        getDataColumn(
+          context,
+          tableState.visibleColumns['Weight']!.showName,
+          columnKey: 'Weight',
+          tableState: tableState,
+        ),
       if (tableState.visibleColumns['Weight Unit']!.isSelect)
         getDataColumn(
-            context, tableState.visibleColumns['Weight Unit']!.showName),
+          context,
+          tableState.visibleColumns['Weight Unit']!.showName,
+          columnKey: 'Weight Unit',
+          tableState: tableState,
+        ),
       if (tableState.visibleColumns['Pretare']!.isSelect)
-        getDataColumn(context, tableState.visibleColumns['Pretare']!.showName),
+        getDataColumn(
+          context,
+          tableState.visibleColumns['Pretare']!.showName,
+          columnKey: 'Pretare',
+          tableState: tableState,
+        ),
       if (tableState.visibleColumns['Scale Name']!.isSelect)
         getDataColumn(
-            context, tableState.visibleColumns['Scale Name']!.showName),
-      DataColumn(
-          label: Container(
-        width: 90,
-      )),
+          context,
+          tableState.visibleColumns['Scale Name']!.showName,
+          columnKey: 'Scale Name',
+          tableState: tableState,
+        ),
+      DataColumn(label: Container(width: 90)),
     ];
   }
 
   DataColumn getDataColumn(BuildContext context, String title,
-      {double? width}) {
+      {double? width, String? columnKey, required TableState tableState}) {
     width ??= 150;
+    final isSorted = sortColumnName == columnKey;
     return DataColumn(
-        headingRowAlignment: MainAxisAlignment.start,
-        label: SizedBox(
+      headingRowAlignment: MainAxisAlignment.start,
+      label: InkWell(
+        onTap: () {
+          if (sortColumnName == columnKey!) {
+            if (sortDirectValue == DataGridSortDirection.ascending) {
+              sortDirectValue = DataGridSortDirection.descending;
+            } else {
+              sortDirectValue = DataGridSortDirection.ascending;
+            }
+          } else {
+            sortDirectValue = DataGridSortDirection.ascending;
+          }
+          sortColumnName = columnKey;
+
+          tableState.loadPage(1);
+        },
+        child: SizedBox(
           width: width,
-          child: Text(
-            title,
-            style: Theme.of(context)
-                .textTheme
-                .bodySmall!
-                .apply(color: Theme.of(context).colorScheme.onSurface),
-            textAlign: TextAlign.left,
-            overflow: TextOverflow.ellipsis,
+          child: Row(
+            children: [
+              Text(
+                title,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodySmall!
+                    .apply(color: Theme.of(context).colorScheme.onSurface),
+                textAlign: TextAlign.left,
+                overflow: TextOverflow.ellipsis,
+              ),
+              if (isSorted)
+                Icon(
+                  sortDirectValue == DataGridSortDirection.ascending
+                      ? Icons.arrow_upward
+                      : Icons.arrow_downward,
+                  size: 16,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+            ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 
   // 构建主行数据单元格
@@ -675,7 +884,7 @@ class TableState with ChangeNotifier {
   // 分页状态
   int _currentPage = 1;
   int get currentPage => _currentPage;
-  final int _itemsPerPage = 100;
+  final int _itemsPerPage = 20;
   int _totalCount = 0; // 总数据条数
 
   // 模拟数据

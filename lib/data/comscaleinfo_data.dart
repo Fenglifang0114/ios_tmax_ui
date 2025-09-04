@@ -241,19 +241,27 @@ getDefScaleInfo(int defId) {
 class ScaleIsOnline {
   int? scaleId;
   bool? isOnline;
+  String? modelName;
+  String? sn;
 
   ScaleIsOnline({
     this.scaleId,
     this.isOnline,
+    this.modelName,
+    this.sn,
   });
 
   factory ScaleIsOnline.fromJson(Map<String, dynamic> json) => ScaleIsOnline(
         scaleId: json["scaleId"],
         isOnline: json["isOnline"],
+        modelName: json["modelName"],
+        sn: json["sn"],
       );
 
   Map<String, dynamic> toJson() => {
         "scaleId": scaleId,
         "isOnline": isOnline,
+        "modelName": modelName,
+        "sn": sn,
       };
 }

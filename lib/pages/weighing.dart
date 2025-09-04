@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/received_wgt_value.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
+import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/widget/scale_list.dart';
 import 'package:t_max/widget/wgt_value_widget.dart';
 import '../../eventbus/eventbus.dart';
@@ -24,9 +27,22 @@ class WeightModePageState extends State<WeightModePage> {
   dynamic eventBus5;
   dynamic eventBus6;
 
+  // 添加定时器变量
+  Timer? _scaleCheckTimer;
+
   @override
   void initState() {
     super.initState();
+    // 初始化定时器，每隔10秒执行一次检查
+    _scaleCheckTimer = Timer.periodic(Duration(seconds: 5), (timer) {
+      checkSameScale();
+    });
+
+    // 初始加载时立即检查一次
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkSameScale();
+    });
+
     eventBus5 = eventBus.on<EventRegWeightResp>().listen((event) {
       if (mounted) {
         myRespDataFromScale = event.obj;
@@ -47,6 +63,7 @@ class WeightModePageState extends State<WeightModePage> {
   void dispose() {
     eventBus5.cancel();
     eventBus6.cancel();
+    _scaleCheckTimer?.cancel();
 
     for (var item in mySelScaleIdList) {
       PublicFunctions.stopWeight(item);
@@ -130,6 +147,43 @@ class WeightModePageState extends State<WeightModePage> {
     );
   }
 
+  //实时查看是否是同一台秤，如果是的话，给出提示，并去掉一个
+  void checkSameScale() {
+    if (mySelScaleIdList.length > 1) {
+      Map<int, dynamic> scaleMap = {};
+      for (var scale in myAllScalesList) {
+        scaleMap[scale.scaleId] = scale;
+      }
+
+      // 分离已选择的串口秤和WiFi秤
+      List<Scale> serialScales = [];
+      List<Scale> wifiScales = [];
+
+      for (var scaleId in mySelScaleIdList) {
+        var scale = scaleMap[scaleId];
+        if (scale.tMedia == comScaleType) {
+          serialScales.add(scale);
+        } else if (scale.tMedia == netScaleType) {
+          wifiScales.add(scale);
+        }
+      }
+
+      for (var serialScale in serialScales) {
+        for (var wifiScale in wifiScales) {
+          if (wifiScale.scaleModel == serialScale.scaleModel &&
+              wifiScale.scaleSn == serialScale.scaleSn) {
+            // 显示冲突提示对话框
+            showTipInfo(localizedStrings.tipSameScale, context);
+            if (mySelScaleIdList.contains(wifiScale.scaleId)) {
+              addOrRemoveSelScale(wifiScale.scaleId);
+            }
+            break;
+          }
+        }
+      }
+    }
+  }
+
   void addOrRemoveSelScale(int scaleId) {
     if (mySelScaleIdList.contains(scaleId)) {
       mySelScaleIdList.remove(scaleId);
@@ -139,6 +193,7 @@ class WeightModePageState extends State<WeightModePage> {
       PublicFunctions.getWeight(scaleId);
     }
     setState(() {}); // 强制刷新界面
+    checkSameScale();
   }
 
   String getScaleName(int scaleId) {

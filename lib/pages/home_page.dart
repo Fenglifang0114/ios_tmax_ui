@@ -44,10 +44,9 @@ class MyHomePageState extends State<MyHomePage>
   final GlobalKey<NavigatorState> _contentNavigatorKey = GlobalKey();
   String _selectedNavRoute = '/';
   String lastRouteName = defualtSelectPage; //除了设置外的最后一个路由
-  bool _showNavigation = true; // 控制导航栏显示
+  bool _showNavigation = false; // 控制导航栏显示
 
   bool isLeftBarCollapsed = false;
-  bool isExpanded = true; // 侧边栏是否展开
   bool isResize = false;
   DateTime dataTimeNow = DateTime.now();
 
@@ -65,7 +64,7 @@ class MyHomePageState extends State<MyHomePage>
   void didChangeDependencies() {
     super.didChangeDependencies();
     localizedStrings = S.of(context);
-    Future.delayed(const Duration(milliseconds: 1000), () {
+    Future.delayed(const Duration(milliseconds: 10), () {
       setState(() {
         _navigateContent(defualtSelectPage);
       });
@@ -258,42 +257,126 @@ class MyHomePageState extends State<MyHomePage>
     }
   }
 
-  Widget showNavigationBar(bool isExpanded, List<RouteData> demos) {
-    return MouseRegion(
-      onEnter: (_) {
-        setState(() {
-          _isHovering = true;
-        });
+  Widget showNavigationBar() {
+    // 获取层级菜单数据
+    final hierarchicalMenus = getHierarchicalConfigMenus();
+
+    return ListView.builder(
+      itemCount: hierarchicalMenus.length,
+      itemBuilder: (context, index) {
+        final group = hierarchicalMenus[index];
+        return _buildMenuGroup(group, index);
       },
-      onExit: (_) {
-        setState(() {
-          _isHovering = false;
-        });
-      },
-      child: ScrollbarTheme(
-        data: ScrollbarThemeData(
-          thumbColor:
-              WidgetStateProperty.all(Theme.of(context).colorScheme.onPrimary),
-          radius: const Radius.circular(4.0), // 设置滚动条圆角
-        ),
-        child: Scrollbar(
-          thumbVisibility: _isHovering,
-          controller: _scrollController,
-          child: ListView.builder(
-            controller: _scrollController,
-            primary: false,
-            itemBuilder: (context, index) => MenuItem(
-              demo: demos[index],
-              isExpanded: isExpanded,
-              isSelected: demos[index].routeName! == _selectedNavRoute,
-              onTap: () => _navigateContent(demos[index].routeName!),
-            ),
-            itemCount: demos.length,
-          ),
-        ),
-      ),
     );
   }
+
+  final Map<int, bool> _expandedStates = {};
+
+// 构建菜单组
+  Widget _buildMenuGroup(RouteDataGroup group, int groupIndex) {
+    if (group.children.isEmpty) {
+      return Container();
+    }
+
+    // 特殊处理"多台秤管理"组 - 直接作为菜单项跳转
+    if (group.title == localizedStrings.menuMultiScaleManagement) {
+      // 获取第一个有效路由项
+      final effectiveRoute = group.children.firstWhere(
+        (item) => item is RouteData,
+        orElse: () => RouteData(
+          id: 0,
+          title: '',
+          subtitle: '',
+          routeName: '',
+          iconPath: '',
+        ),
+      ) as RouteData?;
+
+      return effectiveRoute != null
+          ? _buildMenuItem(effectiveRoute, showIcon: true)
+          : Container();
+    }
+
+    return ExpansionTile(
+      title: Text(group.title,
+          style: Theme.of(context).textTheme.bodySmall!.apply(
+                color: Theme.of(context).colorScheme.onPrimary,
+              )),
+      shape: Border(),
+      leading: getSvgIcon(
+          group.iconPath, 22, 22, Theme.of(context).colorScheme.onPrimary),
+      trailing: Icon(
+        (_expandedStates[groupIndex] ?? false)
+            ? Icons.expand_less
+            : Icons.expand_more,
+        color: Theme.of(context).colorScheme.onPrimary, // 设置图标颜色
+        size: 20, // 可选：调整图标大小
+      ),
+      onExpansionChanged: (isExpanded) {
+        setState(() {
+          _expandedStates[groupIndex] = isExpanded;
+        });
+      },
+      children: group.children.map((item) {
+        // 判断子项类型并构建
+        if (item is RouteDataGroup) {
+          return _buildMenuGroup(item, groupIndex); // 支持嵌套组
+        } else if (item is RouteData) {
+          return _buildMenuItem(item, isSubMenu: true);
+        }
+        return Container();
+      }).toList(),
+    );
+  }
+
+// 构建菜单项（增加isSubMenu参数）
+  Widget _buildMenuItem(RouteData item,
+      {bool showIcon = false, bool isSubMenu = false}) {
+    return MenuItem(
+      showIcon: showIcon,
+      demo: item,
+      isExpanded: true,
+      isSelected: item.routeName == _selectedNavRoute, // 选中状态
+      onTap: () => _navigateContent(item.routeName!), // 点击回调
+    );
+  }
+
+  // Widget showNavigationBar(List<RouteData> demos) {
+  //   return MouseRegion(
+  //     onEnter: (_) {
+  //       setState(() {
+  //         _isHovering = true;
+  //       });
+  //     },
+  //     onExit: (_) {
+  //       setState(() {
+  //         _isHovering = false;
+  //       });
+  //     },
+  //     child: ScrollbarTheme(
+  //       data: ScrollbarThemeData(
+  //         thumbColor:
+  //             WidgetStateProperty.all(Theme.of(context).colorScheme.onPrimary),
+  //         radius: const Radius.circular(4.0), // 设置滚动条圆角
+  //       ),
+  //       child: Scrollbar(
+  //         thumbVisibility: _isHovering,
+  //         controller: _scrollController,
+  //         child: ListView.builder(
+  //           controller: _scrollController,
+  //           primary: false,
+  //           itemBuilder: (context, index) => MenuItem(
+  //             demo: demos[index],
+  //             isExpanded: true,
+  //             isSelected: demos[index].routeName! == _selectedNavRoute,
+  //             onTap: () => _navigateContent(demos[index].routeName!),
+  //           ),
+  //           itemCount: demos.length,
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -309,65 +392,57 @@ class MyHomePageState extends State<MyHomePage>
           // 动态显示的左侧导航栏
           if (_showNavigation)
             Container(
-              width: isExpanded ? leftBarWidth : leftBarLittleWidth,
+              width: leftBarWidth,
               color: Theme.of(context).colorScheme.primary, // 可替换为实际内容
               child: Column(children: [
                 SizedBox(
                   height: leftBarIconHeight,
-                  width: isExpanded ? leftBarWidth : leftBarLittleWidth,
+                  width: leftBarWidth,
                   child: Row(
                     children: [
                       IconButton(
                         padding: EdgeInsets.only(left: largePadding),
                         iconSize: iconAppSize,
-                        onPressed: () {
-                          setState(() {
-                            isExpanded = !isExpanded;
-                          });
-                        },
+                        onPressed: () {},
                         icon: Image.asset(
                           logoIconPath,
                           width: iconAppSize,
                           height: iconAppSize,
                         ),
                       ),
-                      isExpanded
-                          ? Expanded(
-                              child: Container(
-                                  padding:
-                                      EdgeInsets.only(left: regularPadding),
-                                  child: Text(
-                                    myAppName.appName!,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headlineSmall!
-                                        .apply(
-                                            // 根据选中状态改变颜色
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onPrimary),
-                                  )))
-                          : SizedBox()
+                      Expanded(
+                          child: Container(
+                              padding: EdgeInsets.only(left: regularPadding),
+                              child: Text(
+                                myAppName.appName!,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headlineSmall!
+                                    .apply(
+                                        // 根据选中状态改变颜色
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary),
+                              )))
                     ],
                   ),
                 ),
                 Expanded(
-                  child: showNavigationBar(isExpanded, getCurrentConfigMenus()),
+                  // child: showNavigationBar(getCurrentConfigMenus()),
+                  child: showNavigationBar(),
                 ),
-                if (isExpanded)
-                  SizedBox(
-                    height: largePadding,
-                  ),
-                if (isExpanded)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                          width: 120,
-                          height: 40,
-                          child: Image.asset(companyImage)),
-                    ],
-                  ),
+                SizedBox(
+                  height: largePadding,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                        width: 120,
+                        height: 40,
+                        child: Image.asset(companyImage)),
+                  ],
+                ),
                 SizedBox(
                   height: largePadding,
                 )
@@ -478,7 +553,7 @@ class MyHomePageState extends State<MyHomePage>
                             ),
                             SizedBox(
                               child: Text(
-                                mySysUser.userName ?? '未登录',
+                                mySysUser.nickName ?? '',
                                 style: textTheme.bodySmall!.apply(
                                   color: colorScheme.onSurface,
                                 ),
@@ -689,11 +764,15 @@ const double barBetweenHeight = 13;
 class MenuItem extends StatelessWidget {
   const MenuItem({
     super.key,
+    this.showIcon = false, // 是否显示图标
+
     required this.demo,
     this.isExpanded = true,
     required this.isSelected, // 新增选中状态
     required this.onTap, // 新增点击回调
   });
+
+  final bool showIcon; // 是否显示图标
 
   final RouteData demo;
   final bool isExpanded;
@@ -710,14 +789,18 @@ class MenuItem extends StatelessWidget {
           height: 52, // 固定高度
           child: Material(
             color: isSelected
-                ? Color.fromARGB(51, 0, 0, 0) //透明度百分比20% *255
+                ? Colors.black.withValues(alpha: 0.2) //透明度百分比20% *255
                 : Theme.of(context).colorScheme.primary,
             child: MergeSemantics(
               child: InkWell(
                 onTap: onTap, // 绑定点击回调
                 child: Padding(
                     padding: EdgeInsetsDirectional.only(
-                      start: isExpanded ? 20 : barLeftWidth,
+                      start: showIcon
+                          ? 14
+                          : isExpanded
+                              ? 42
+                              : barLeftWidth,
                       end: 5,
                     ),
                     child: Container(
@@ -725,10 +808,11 @@ class MenuItem extends StatelessWidget {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          SizedBox(
-                            child: getSvgIcon(demo.iconPath, 22, 22,
-                                Theme.of(context).colorScheme.onPrimary),
-                          ),
+                          if (showIcon)
+                            SizedBox(
+                              child: getSvgIcon(demo.iconPath, 22, 22,
+                                  Theme.of(context).colorScheme.onPrimary),
+                            ),
                           if (isExpanded) ...[
                             SizedBox(
                               width: 10,

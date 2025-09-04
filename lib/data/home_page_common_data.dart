@@ -73,7 +73,7 @@ Set<int> paidConfigMenuIds = {
   MenuId.receiptDesignPage.index,
   MenuId.serialOutputDesignPage.index,
   MenuId.basicDataCollectionPage.index,
-  MenuId.parameterSettingPage.index,
+  // MenuId.parameterSettingPage.index,
 };
 
 // 存储用户选择要添加的付费菜单 ID
@@ -117,7 +117,7 @@ enum MenuId {
   receiptDesignPage,
   serialOutputDesignPage,
   basicDataCollectionPage,
-  parameterSettingPage,
+  // parameterSettingPage,
   weightModePage,
   pluEditPage,
   downloadLabelPage,

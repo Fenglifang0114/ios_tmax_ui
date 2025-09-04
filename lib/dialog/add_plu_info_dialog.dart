@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/language.dart';
 import 'package:t_max/data/plu_data_source.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
@@ -9,9 +10,11 @@ class AddPluInfoDialog extends StatefulWidget {
   const AddPluInfoDialog(
       {super.key,
       required this.type,
+      required this.pluList,
       required this.pluInfo,
       required this.onSave});
   final int type; // 0:添加 1:编辑
+  final List<int> pluList; //PLU的列表
   final PluData pluInfo;
   final Function(PluData) onSave;
   @override
@@ -483,6 +486,27 @@ class AddPluInfoDialogState extends State<AddPluInfoDialog> {
     return true;
   }
 
+  bool checkPluExist() {
+    if (widget.type == 0) {
+      if (widget.pluList.contains(int.parse(pluCtl.text))) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    if (widget.type == 1) {
+      if (widget.pluList.contains(int.parse(pluCtl.text)) &&
+          int.parse(pluCtl.text) != widget.pluInfo.plu) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -547,7 +571,12 @@ class AddPluInfoDialogState extends State<AddPluInfoDialog> {
                         ),
                         onPressed: () {
                           if (!checkOk()) {
-                            showTipInfo('数据输入不完整', context);
+                            showTipInfo(
+                                localizedStrings.fInputDataIncomplete, context);
+                            return;
+                          }
+                          if (checkPluExist()) {
+                            showTipInfo(localizedStrings.fPluExist, context);
                             return;
                           }
 
@@ -569,22 +598,51 @@ class AddPluInfoDialogState extends State<AddPluInfoDialog> {
                           if (itemCodeCtl.text.isEmpty) {
                             itemCodeCtl.text = '0';
                           }
+                          PluData newPlu = PluData(0, 0, 0, 0, '', '', 0, 0, 0,
+                              0, 0, 0, 0, '', true, '', 0, 0);
 
-                          PluData newPlu = PluData(
-                              0,
-                              int.parse(pluCtl.text),
-                              int.parse(pluCodeCtl.text),
-                              int.parse(itemCodeCtl.text),
-                              categoryCtl.text,
-                              pluNameCtl.text,
-                              int.parse(wgtUnitCtl.text),
-                              int.parse(taxTypeCtl.text),
-                              double.parse(priceCtl.text),
-                              double.parse(unitWgtCtl.text),
-                              double.parse(pretareCtl.text),
-                              double.parse(limitHighCtl.text),
-                              double.parse(limitLowCtl.text),
-                              '');
+                          if (widget.type == 0) {
+                            newPlu = PluData(
+                                0,
+                                int.parse(pluCtl.text),
+                                int.parse(pluCodeCtl.text),
+                                int.parse(itemCodeCtl.text),
+                                categoryCtl.text,
+                                pluNameCtl.text,
+                                int.parse(wgtUnitCtl.text),
+                                int.parse(taxTypeCtl.text),
+                                double.parse(priceCtl.text),
+                                double.parse(unitWgtCtl.text),
+                                double.parse(pretareCtl.text),
+                                double.parse(limitHighCtl.text),
+                                double.parse(limitLowCtl.text),
+                                '',
+                                true,
+                                '',
+                                0,
+                                0);
+                          } else {
+                            newPlu = PluData(
+                                widget.pluInfo.recId,
+                                int.parse(pluCtl.text),
+                                int.parse(pluCodeCtl.text),
+                                int.parse(itemCodeCtl.text),
+                                categoryCtl.text,
+                                pluNameCtl.text,
+                                int.parse(wgtUnitCtl.text),
+                                int.parse(taxTypeCtl.text),
+                                double.parse(priceCtl.text),
+                                double.parse(unitWgtCtl.text),
+                                double.parse(pretareCtl.text),
+                                double.parse(limitHighCtl.text),
+                                double.parse(limitLowCtl.text),
+                                widget.pluInfo.creatAt,
+                                widget.pluInfo.enabled,
+                                DateTime.now().toIso8601String(),
+                                widget.pluInfo.createBy,
+                                mySysUser.userId);
+                          }
+
                           widget.onSave(newPlu);
                           Navigator.pop(context);
                         },

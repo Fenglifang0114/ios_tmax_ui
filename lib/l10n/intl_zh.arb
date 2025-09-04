@@ -2836,11 +2836,15 @@
     "@gTipEmptyScalePan": {
         "description": "This is a tip to empty the scale pan."
     },
+    "gTipPlaceCalibrationWeight": "放置标定重量",
+    "@gTipPlaceCalibrationWeight": {
+        "description": "This is a tip to place the calibration weight."
+    },
     "gTipSetCalibrationWeight": "设置校准重量",
     "@gTipSetCalibrationWeight": {
         "description": "This is a tip to set the calibration weight."
     },
-    "gTipPlaceWeight": "放置砝码",
+    "gTipPlaceWeight": "校准",
     "@gTipPlaceWeight": {
         "description": "This is a tip to place the weight."
     },
@@ -2860,17 +2864,17 @@
     "@gTipSetCalibrationWeightThenNext": {
         "description": "This is a tip to set the calibration weight and click next."
     },
-    "gTipLoadWeightThenNext": "请加载砝码，等待绿灯亮起后点击下一步",
+    "gTipLoadWeightThenNext": "请等待绿灯亮起后点击下一步",
     "@gTipLoadWeightThenNext": {
-        "description": "This is a tip to load the weight, wait for the green light to turn on and click next."
+        "description": "This is a tip to wait for the green light to turn on and click next."
     },
     "gTipPleaseEmptyScalePan": "请清空秤盘",
     "@gTipPleaseEmptyScalePan": {
         "description": "This is a tip to ask to empty the scale pan."
     },
-    "gTipPleaseLoadWeight": "请加载砝码",
+    "gTipPleaseLoadWeight": "请确认砝码",
     "@gTipPleaseLoadWeight": {
-        "description": "This is a tip to ask to load the weight."
+        "description": "This is a tip to ask to confirm the weight."
     },
     "gTipCalResult": "如果校准失败，请点击'重新校准'",
     "@gTipCalResult": { 
@@ -2903,6 +2907,18 @@
     "gTipCalibrationWeight": "请输入校准重量",
     "@gTipCalibrationWeight": {
         "description": "This is a prompt to ask the user to input the calibration weight."
+    },
+    "gTipBeforeCalibration": "标定前",
+    "@gTipBeforeCalibration": {
+        "description": "This is a prompt about calibration before."
+    },
+    "gTipAfterCalibration": "标定后",
+    "@gTipAfterCalibration": {
+        "description": "This is a promPt about calibration after."
+    },
+    "gTipErrorValue": "误差值",
+    "@gTipErrorValue": {
+        "description": "This is a prompt to tell the user the error value."
     },
     "gTxtDecimal": "小数点",
     "@gTxtDecimal": {
@@ -3256,6 +3272,10 @@
     "@operator": {
         "description": "Operator"
     },
+    "userAccount": "账号",
+    "@userAccount": {
+        "description": "Account"
+    },
     "userUsername": "用户名",
     "@userUsername": {
         "description": "Username"
@@ -3336,10 +3356,62 @@
     "@tipNoPermission": {
         "description": "Tip for no permission"
     },
-    "tipUserNameExist": "用户名已存在",
-    "@tipUserNameExist": {
-        "description": "Tip for username exist"
-    } 
+    "tipAccountExist": "账号已存在",
+    "@tipAccountExist": {
+        "description": "Tip for account exist"
+    },
+    "menuData": "数据",
+    "@menuData": {
+        "description": "Menu data"
+    },
+    "menuFormat": "格式",
+    "@menuFormat": {
+        "description": "Menu format"
+    },
+    "gBtnSelect": "选择",
+    "@gBtnSelect": {
+        "description": "Button for select"
+    },
+    "gTipConfirmContinue": "请确认是否继续？",
+    "@gTipConfirmContinue": {
+        "description": "Tip for confirm continue"
+    },     
+    "gBtnEnable": "启用",
+    "@gBtnEnable": {
+        "description": "Button for enable"
+    },
+    "gBtnDisable": "停用",
+    "@gBtnDisable": {
+        "description": "Button for disable"
+    },
+    "gTipImportPluSame": "重复的PLU已忽略",
+    "@gTipImportPluSame": {
+        "description": "Tip for import plu same"
+    },
+    "gTipDownPluDisabled": "不能下发停用的PLU ,请重新选择",
+    "@gTipDownPluDisabled": {
+        "description": "Tip for download plu disabled"
+    },
+    "fInputDataIncomplete": "数据输入不完整",
+    "@fInputDataIncomplete": {
+        "description": "Tip for input data incomplete"
+    },
+    "fPluExist": "PLU已存在",
+    "@fPluExist": {
+        "description": "Tip for plu exist"
+    },
+    "tipJumpPage": "跳转",
+    "@tipJumpPage": {
+        "description": "Tip for jump page"
+    },
+    "tipBluetoothDisconnect": "提示：此功能需要将蓝牙与其他设备断开连接!",
+    "@tipBluetoothDisconnect": {
+        "description": "Tip for bluetooth disconnect"
+    },
+    "tipSameScale": "同一台秤不能同时连接",
+    "@tipSameScale": {
+        "description": "Tip for same scale"
+    }
 }
 
 

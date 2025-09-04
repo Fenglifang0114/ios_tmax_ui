@@ -7,7 +7,9 @@ import 'package:t_max/data/comscaleinfo_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/icons.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
+import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/widget/common_widget.dart';
+import 'package:t_max/widget/show_error_dialog.dart';
 import '../data/downloadresponse.dart';
 import '../data/language.dart';
 import '../eventbus/eventbus.dart';
@@ -735,16 +737,30 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
                     localizedStrings.gBtnConfirm,
                     !isDownloading && checkSelect()
                         ? () {
-                            PublicFunctions.killBootCommander();
-                            setState(() {
-                              isDownloading = true;
-                              for (var entry in scaleResMap.entries) {
-                                entry.value.res = "";
-                                scaleResMap[entry.key]!.process = 0;
+                            showDialog(
+                              context: context,
+                              barrierDismissible: false, // 点击对话框外部不关闭对话框
+                              builder: (BuildContext context) {
+                                return ShowNormalTipDialog(
+                                  title: localizedStrings.fTipTitle,
+                                  msg: localizedStrings.gTipConfirmContinue,
+                                );
+                              },
+                            ).then((value) {
+                              if (value) {
+                                PublicFunctions.killBootCommander();
+                                setState(() {
+                                  isDownloading = true;
+                                  for (var entry in scaleResMap.entries) {
+                                    entry.value.res = "";
+                                    scaleResMap[entry.key]!.process = 0;
+                                  }
+                                });
+                                performSend();
+                              } else {
+                                return;
                               }
                             });
-
-                            performSend();
                           }
                         : null,
                     Theme.of(context).colorScheme.onPrimary,

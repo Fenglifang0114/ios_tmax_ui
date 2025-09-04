@@ -33,6 +33,8 @@ class BluetoothPageState extends State<BluetoothPage> {
   int selScaleId = -1;
 
   List<Scale> comScalesList = [];
+  ColorScheme get colorScheme => Theme.of(context).colorScheme;
+  TextTheme get textTheme => Theme.of(context).textTheme;
 
   @override
   void initState() {
@@ -72,12 +74,13 @@ class BluetoothPageState extends State<BluetoothPage> {
           myRespDataFromScale = event.obj;
           isSetting = false;
           if (myRespDataFromScale.msgBody.isNotEmpty) {
-            if (myRespDataFromScale.msgBody.contains("TTM:NAM")) {
+            // if (myRespDataFromScale.msgBody.contains("TTM:NAM")) {
+            if (myRespDataFromScale.msgBody.contains("+BLENAME:")) {
               _deviceNameController.text =
                   getBtName(myRespDataFromScale.msgBody);
-            }
-
-            if (myRespDataFromScale.msgBody.contains('time out')) {
+            } else if (myRespDataFromScale.msgBody.contains("OK")) {
+              showTipInfo(localizedStrings.fSuccessMsg, context);
+            } else if (myRespDataFromScale.msgBody.contains('time out')) {
               showTipInfo(localizedStrings.gTipTimeOut, context);
             } else {
               showTipInfo(myRespDataFromScale.msgBody, context);
@@ -100,11 +103,14 @@ class BluetoothPageState extends State<BluetoothPage> {
   }
 
   String getBtName(String data) {
-    int start = data.indexOf('TTM:NAM-') + 'TTM:NAM-'.length;
-    int end = data.indexOf('\r\n\u0000');
-
-    String result = data.substring(start, end);
-    return result;
+    int blNameIndex = data.indexOf('+BLENAME:');
+    String afterBlName = data.substring(blNameIndex + '+BLENAME:'.length);
+    int newlineIndex = afterBlName.indexOf('\r\n');
+    if (newlineIndex != -1) {
+      return afterBlName.substring(0, newlineIndex);
+    } else {
+      return afterBlName;
+    }
   }
 
   @override
@@ -187,6 +193,12 @@ class BluetoothPageState extends State<BluetoothPage> {
         ));
   }
 
+  TextStyle getTextStyle({Color? color}) {
+    return Theme.of(context).textTheme.bodySmall!.apply(
+          color: color ?? Theme.of(context).colorScheme.onSurface,
+        );
+  }
+
   Widget showRightWigdet() {
     return Expanded(
         child: Container(
@@ -206,8 +218,18 @@ class BluetoothPageState extends State<BluetoothPage> {
                 height: 42,
                 alignment: Alignment.centerLeft,
                 child: Text(
+                  localizedStrings.tipBluetoothDisconnect,
+                  overflow: TextOverflow.ellipsis,
+                  style: getTextStyle(color: colorScheme.error),
+                ),
+              ),
+              Container(
+                height: 42,
+                alignment: Alignment.centerLeft,
+                child: Text(
                   localizedStrings.gDeviceName,
                   overflow: TextOverflow.ellipsis,
+                  style: getTextStyle(),
                 ),
               ),
               SizedBox(
@@ -237,6 +259,7 @@ class BluetoothPageState extends State<BluetoothPage> {
                                 onChanged: (value) {
                                   setState(() {});
                                 },
+                                style: getTextStyle(),
                               ),
                             ),
                             SizedBox(
@@ -304,8 +327,9 @@ class BluetoothPageState extends State<BluetoothPage> {
                 height: 42,
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  localizedStrings.gDeviceName,
+                  localizedStrings.gBluetoothEmissionPower,
                   overflow: TextOverflow.ellipsis,
+                  style: getTextStyle(),
                 ),
               ),
               SizedBox(
@@ -346,13 +370,7 @@ class BluetoothPageState extends State<BluetoothPage> {
                                     value: entry.key,
                                     child: Text(
                                       entry.value,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall!
-                                          .apply(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .onSurface),
+                                      style: getTextStyle(),
                                     ),
                                   );
                                 }).toList(),
@@ -371,17 +389,17 @@ class BluetoothPageState extends State<BluetoothPage> {
                         isSetting || selScaleId == -1
                             ? null
                             : () {
-                                try {
-                                  setState(() {
-                                    sendBluetoothName();
-                                  });
-                                } catch (e) {
-                                  setState(() {
-                                    showTipInfo(
-                                        localizedStrings.gMsgSerialError,
-                                        context);
-                                  });
+                                if (emissionPowerVale == 'Strong') {
+                                  PublicFunctions.modifyBtPowerStrong(
+                                      myDefScaleInfo.defScaleId!);
+                                } else if (emissionPowerVale == 'Normal') {
+                                  PublicFunctions.modifyBtPowerNormal(
+                                      myDefScaleInfo.defScaleId!);
+                                } else {
+                                  PublicFunctions.modifyBtPowerWeak(
+                                      myDefScaleInfo.defScaleId!);
                                 }
+                                _startTimer(15);
                               },
                         Theme.of(context).colorScheme.onPrimary,
                         Theme.of(context).colorScheme.primary,

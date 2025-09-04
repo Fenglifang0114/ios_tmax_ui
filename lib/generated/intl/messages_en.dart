@@ -254,6 +254,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Formula Data",
     ),
     "fIngredientsRecordTitle": MessageLookupByLibrary.simpleMessage("Record"),
+    "fInputDataIncomplete": MessageLookupByLibrary.simpleMessage(
+      "Input data incomplete",
+    ),
     "fInputErrorHint": MessageLookupByLibrary.simpleMessage(
       "Please enter the error.",
     ),
@@ -313,6 +316,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "fPleaseSelectCategory": MessageLookupByLibrary.simpleMessage(
       "Please select a category",
     ),
+    "fPluExist": MessageLookupByLibrary.simpleMessage("PLU already exists"),
     "fPublic": MessageLookupByLibrary.simpleMessage("Public"),
     "fQualificationStatus": MessageLookupByLibrary.simpleMessage("Pass"),
     "fQualified": MessageLookupByLibrary.simpleMessage("√"),
@@ -433,12 +437,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "gBtnConnect": MessageLookupByLibrary.simpleMessage("Connect"),
     "gBtnDelete": MessageLookupByLibrary.simpleMessage("Delete"),
     "gBtnDeleteAll": MessageLookupByLibrary.simpleMessage("Delete All"),
+    "gBtnDisable": MessageLookupByLibrary.simpleMessage("Deactivate"),
     "gBtnDownload": MessageLookupByLibrary.simpleMessage("Download"),
     "gBtnDownloadDefaultFormat": MessageLookupByLibrary.simpleMessage(
       "Default Format",
     ),
     "gBtnDynamic": MessageLookupByLibrary.simpleMessage("Dynamic"),
     "gBtnEdit": MessageLookupByLibrary.simpleMessage("Edit"),
+    "gBtnEnable": MessageLookupByLibrary.simpleMessage("Activate"),
     "gBtnEnd": MessageLookupByLibrary.simpleMessage("End"),
     "gBtnExit": MessageLookupByLibrary.simpleMessage("Exit"),
     "gBtnExport": MessageLookupByLibrary.simpleMessage("Export"),
@@ -461,6 +467,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "gBtnSave": MessageLookupByLibrary.simpleMessage("Save"),
     "gBtnSaveDataBase": MessageLookupByLibrary.simpleMessage("Save To Local"),
     "gBtnSaveExcel": MessageLookupByLibrary.simpleMessage("Save To Excel"),
+    "gBtnSelect": MessageLookupByLibrary.simpleMessage("Select"),
     "gBtnSelectDate": MessageLookupByLibrary.simpleMessage("Select Date"),
     "gBtnSelectFile": MessageLookupByLibrary.simpleMessage("Select File"),
     "gBtnSelectPluFile": MessageLookupByLibrary.simpleMessage(
@@ -608,6 +615,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipAdvancedConfiguration": MessageLookupByLibrary.simpleMessage(
       "Advanced Configuration",
     ),
+    "gTipAfterCalibration": MessageLookupByLibrary.simpleMessage(
+      "After Calibration",
+    ),
     "gTipAlignment": MessageLookupByLibrary.simpleMessage("Alignment"),
     "gTipAllConfigFunctions": MessageLookupByLibrary.simpleMessage(
       "All configuration functions",
@@ -616,6 +626,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipAutoNextStep": MessageLookupByLibrary.simpleMessage("Auto Next Step"),
     "gTipBasicDataPageHelp": MessageLookupByLibrary.simpleMessage(
       "1. Click [Get Basic Data];\n2. T-Config will automatically collect basic data from the scale and display it synchronously on the interface.\n3. You can click the menu bar button in the upper left corner to select the device you want to switch to.",
+    ),
+    "gTipBeforeCalibration": MessageLookupByLibrary.simpleMessage(
+      "Before Calibration",
     ),
     "gTipCalResult": MessageLookupByLibrary.simpleMessage(
       "If calibration fails, please click \'Recalibrate\'.",
@@ -639,6 +652,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "gTipCheckWgtPageHelp": MessageLookupByLibrary.simpleMessage(
       "1. Click [Edit] to set the upper and lower limits (the judgment is based on the upper and lower limits set in the background, not on the scale). After setting, place the weight and the corresponding alarm light will light up;\n2. Click [Save] to save the current weighing record;\n3. Click [Show Reports] to display the report;\n4. Click [Setting] to set automatic saving. (Can be set to save when OK, HIGH, LOW, ALL.)\n5. You can also set the date format and delimiter for data export;\n6. Enter the PLU number or name in the [PLU Name] column to call the PLU in the backend database; (The PLU here is not the PLU on the scale)\n7. Click [Report Setting] to select the information displayed for weighing data; (Currently, there are no functional variables available: Product Code, Item Code, User Name, User NO）\n8. Click the arrow in a column of the report title row will sort the report in ascending/descending order.\n9.Click [Export] to export all saved data (xlsx).\n\nNote:\n1. The units for the upper and lower limits are the currently selected units on the scale. After setting the upper and lower limits in the software, the values of the upper and lower limits will not undergo unit conversion when switching units through the scale.\n2. At present, the software determines the upper and lower limits from zero, while on the scale, it starts from 20d.\n",
+    ),
+    "gTipConfirmContinue": MessageLookupByLibrary.simpleMessage(
+      "Please confirm to continue.",
     ),
     "gTipConfirmDeleteAll": MessageLookupByLibrary.simpleMessage(
       "Are you sure you want to delete all data?",
@@ -671,6 +687,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipDeviceTimePageHelp": MessageLookupByLibrary.simpleMessage(
       "1. Click [Set Date/Time].\n2. Manually set or synchronize the date and time of the PC device.\n",
     ),
+    "gTipDownPluDisabled": MessageLookupByLibrary.simpleMessage(
+      "Some PLUs have been deactivated and cannot be downloaded.",
+    ),
     "gTipDownloadAllPlu": MessageLookupByLibrary.simpleMessage(
       "Clear all then download",
     ),
@@ -690,6 +709,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipErrorIp": MessageLookupByLibrary.simpleMessage(
       "Incorrect address! e.g. xxx.xxx.xxx.xxx",
     ),
+    "gTipErrorValue": MessageLookupByLibrary.simpleMessage("Error Value"),
     "gTipExitApp": MessageLookupByLibrary.simpleMessage(
       "Are you sure to exit the system?",
     ),
@@ -761,6 +781,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipImportPluOK": MessageLookupByLibrary.simpleMessage(
       "Note: When the cell is empty, it will be written as 0 or - .",
     ),
+    "gTipImportPluSame": MessageLookupByLibrary.simpleMessage(
+      "Duplicate PLU ignored during import",
+    ),
     "gTipIncrementWgtPageHelp": MessageLookupByLibrary.simpleMessage(
       "1. Click [Start] to activate increment weighing function. (Only record the increment of the weighing value during loading.)\n2. Click [Save] to save the current weighing record;\n3. Click [Show Reports] to display the report;\n4. Click [Setting] to set automatic saving.\n5. You can also set the date format and delimiter for data export;\n6. Enter the PLU number or name in the PLU Name column to call the PLU in the backend database; (The PLU here is not the PLU on the scale)\n7. Click [Report Setting] to select the information displayed for weighing data; (Currently, there are no functional variables available: Product Code, Item Code, User Name, User NO）\n8. Click the arrow in a column of the report title row will sort the report in ascending/descending order.\n9.Click [Export] to export all saved data (xlsx).\n10.Click [End] to stop the function.\n\nNote: \nThe weight in the report refers to the increment rather than all the weight on the scale.\n",
     ),
@@ -791,7 +814,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "This application is used to download print format.",
     ),
     "gTipLoadWeightThenNext": MessageLookupByLibrary.simpleMessage(
-      "Please load the weight, wait for the green light to turn on and click next",
+      "Please wait for the green light to turn on and click next",
     ),
     "gTipManual": MessageLookupByLibrary.simpleMessage("Manual"),
     "gTipManualZero": MessageLookupByLibrary.simpleMessage("Manual Zero Reset"),
@@ -820,12 +843,15 @@ class MessageLookup extends MessageLookupByLibrary {
       "Performing operation...",
     ),
     "gTipPerpetual": MessageLookupByLibrary.simpleMessage("Perpetual"),
-    "gTipPlaceWeight": MessageLookupByLibrary.simpleMessage("Place the weight"),
+    "gTipPlaceCalibrationWeight": MessageLookupByLibrary.simpleMessage(
+      "Place the calibration weight",
+    ),
+    "gTipPlaceWeight": MessageLookupByLibrary.simpleMessage("Calibration"),
     "gTipPleaseEmptyScalePan": MessageLookupByLibrary.simpleMessage(
       "Please empty the scale pan",
     ),
     "gTipPleaseLoadWeight": MessageLookupByLibrary.simpleMessage(
-      "Please load the weight",
+      "Please confirm the weight",
     ),
     "gTipPleaseStableWeight": MessageLookupByLibrary.simpleMessage(
       "Please first stable the weight.",
@@ -1112,6 +1138,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "menuCalibration": MessageLookupByLibrary.simpleMessage("Calibration"),
     "menuCheckWeighing": MessageLookupByLibrary.simpleMessage("Check Weighing"),
     "menuConfiguration": MessageLookupByLibrary.simpleMessage("Configuration"),
+    "menuData": MessageLookupByLibrary.simpleMessage("Data"),
     "menuDeviceTime": MessageLookupByLibrary.simpleMessage("Device Time"),
     "menuFirmwareUpdate": MessageLookupByLibrary.simpleMessage(
       "Firmware Update",
@@ -1119,6 +1146,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "menuFlowRate": MessageLookupByLibrary.simpleMessage(
       "Liquid Filling Speed",
     ),
+    "menuFormat": MessageLookupByLibrary.simpleMessage("Format"),
     "menuFormula": MessageLookupByLibrary.simpleMessage("Formula"),
     "menuIncrementWeighing": MessageLookupByLibrary.simpleMessage(
       "Increment Weighing",
@@ -1437,12 +1465,19 @@ class MessageLookup extends MessageLookupByLibrary {
       "Obtain static/dynamic IP addresses and connect to Wi-Fi.",
     ),
     "superAdmin": MessageLookupByLibrary.simpleMessage("Super Admin"),
+    "tipAccountExist": MessageLookupByLibrary.simpleMessage(
+      "Account already exists",
+    ),
+    "tipBluetoothDisconnect": MessageLookupByLibrary.simpleMessage(
+      "Note: This setting requires Bluetooth to be disconnected from other devices!",
+    ),
     "tipEnsureWeightCorrect": MessageLookupByLibrary.simpleMessage(
       "Please ensure the current weight data is correct. Do you want to continue?",
     ),
     "tipFormulaDataError": MessageLookupByLibrary.simpleMessage(
       "Formula data error!",
     ),
+    "tipJumpPage": MessageLookupByLibrary.simpleMessage("Jump to"),
     "tipLoginError": MessageLookupByLibrary.simpleMessage(
       "Username or password error",
     ),
@@ -1468,11 +1503,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "tipPasswordNotSame": MessageLookupByLibrary.simpleMessage(
       "Password not same",
     ),
+    "tipSameScale": MessageLookupByLibrary.simpleMessage(
+      "Same scale can\'t connect simultaneously.",
+    ),
     "tipTemporarySaveFormulaRecord": MessageLookupByLibrary.simpleMessage(
       "Temporary Storage Record",
-    ),
-    "tipUserNameExist": MessageLookupByLibrary.simpleMessage(
-      "Username already exists",
     ),
     "titleChangePassword": MessageLookupByLibrary.simpleMessage(
       "Change password",
@@ -1487,6 +1522,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "txt_serial_port_connected_fail": MessageLookupByLibrary.simpleMessage(
       "Unable to connect",
     ),
+    "userAccount": MessageLookupByLibrary.simpleMessage("Account"),
     "userAdd": MessageLookupByLibrary.simpleMessage("Add user"),
     "userAppPermissions": MessageLookupByLibrary.simpleMessage(
       "Application permissions",

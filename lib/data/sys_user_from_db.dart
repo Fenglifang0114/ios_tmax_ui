@@ -13,6 +13,7 @@ String sysUserDetailFromDbToJson(SysUserDetailFromDb data) =>
 class SysUserDetailFromDb {
   int? userId;
   String? userName;
+  String? nickName;
   String? password;
   String? email;
   String? phone;
@@ -25,6 +26,7 @@ class SysUserDetailFromDb {
   SysUserDetailFromDb({
     this.userId,
     this.userName,
+    this.nickName,
     this.password,
     this.email,
     this.phone,
@@ -39,6 +41,7 @@ class SysUserDetailFromDb {
       SysUserDetailFromDb(
         userId: json["userId"],
         userName: json["userName"],
+        nickName: json["nickName"],
         password: json["password"],
         email: json["email"],
         phone: json["phone"],
@@ -54,6 +57,7 @@ class SysUserDetailFromDb {
   Map<String, dynamic> toJson() => {
         "userId": userId,
         "userName": userName,
+        "nickName": nickName,
         "password": password,
         "email": email,
         "phone": phone,
@@ -82,6 +86,8 @@ String sysUserFromDbToJson(List<SysUserFromDb> data) =>
 class SysUserFromDb {
   int? userId;
   String? userName;
+  String? nickName;
+
   int? roleId;
   String? password;
   bool? isEnabled;
@@ -97,6 +103,7 @@ class SysUserFromDb {
   SysUserFromDb({
     this.userId,
     this.userName,
+    this.nickName,
     this.roleId,
     this.password,
     this.isEnabled,
@@ -113,6 +120,7 @@ class SysUserFromDb {
   factory SysUserFromDb.fromJson(Map<String, dynamic> json) => SysUserFromDb(
         userId: json["UserId"],
         userName: json["UserName"],
+        nickName: json["NickName"],
         roleId: json["RoleId"],
         password: json["Password"],
         isEnabled: json["IsEnabled"],
@@ -122,10 +130,10 @@ class SysUserFromDb {
         remark: json["Remark"],
         createdTime: json["CreatedTime"] == null
             ? null
-            : DateTime.parse(json["CreatedTime"]),
+            : DateTime.parse(json["CreatedTime"]).toLocal(),
         updatedTime: json["UpdatedTime"] == null
             ? null
-            : DateTime.parse(json["UpdatedTime"]),
+            : DateTime.parse(json["UpdatedTime"]).toLocal(),
         createdBy: json["CreatedBy"],
         updatedBy: json["UpdatedBy"],
       );
@@ -133,6 +141,7 @@ class SysUserFromDb {
   Map<String, dynamic> toJson() => {
         "UserId": userId,
         "UserName": userName,
+        "NickName": nickName,
         "RoleId": roleId,
         "Password": password,
         "IsEnabled": isEnabled,

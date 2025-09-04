@@ -215,6 +215,7 @@ class _StickyTableState<T> extends State<StickyTable<T>> {
           child: Scrollbar(
             controller: scrollController, // 确保 Scrollbar 使用相同的 ScrollController
             thumbVisibility: true,
+            thickness: onlyTitle ? 0 : 8,
             child: SingleChildScrollView(
               controller:
                   scrollController, // 确保 SingleChildScrollView 使用相同的 ScrollController

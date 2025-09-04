@@ -15,30 +15,8 @@ class WeightReportDataSource extends DataGridSource {
   }
 
   int pageIndex = 1;
-  final int _pageSize = 100; // 每页 100 条数据
+  final int _pageSize = 20; // 每页 100 条数据
   bool _isLoading = false;
-
-  // void loadPage(int page, {int scaleId = 1}) {
-  //   if (_isLoading) return;
-  //   _isLoading = true;
-
-  //   // 清空当前数据
-  //   weightReportData.clear();
-  //   notifyListeners();
-
-  //   // 通过接口获取新一页数据，同时传递排序信息
-  //   PublicFunctions.getRecords(
-  //     scaleId,
-  //     wgtMode,
-  //     page,
-  //     _pageSize,
-  //     sortColumnName.toString(),
-  //     sortDirectValue.name,
-  //   );
-
-  //   // 更新页码
-  //   pageIndex = page;
-  // }
 
   void loadPage(int page) {
     if (_isLoading) return;

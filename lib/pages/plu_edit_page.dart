@@ -1,18 +1,19 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:path/path.dart' as path;
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:t_max/data/download_prt_fmt.dart';
+import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
+import 'package:t_max/data/icons.dart';
 import 'package:t_max/data/language.dart';
 import 'package:t_max/data/plu_data_source.dart';
 import 'package:t_max/data/plu_field_status_data.dart';
-import 'package:t_max/data/plu_info_list_data.dart';
 import 'package:t_max/data/scalecmd_data.dart';
 import 'package:t_max/dialog/add_plu_info_dialog.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
@@ -20,6 +21,7 @@ import 'package:t_max/dialog/show_options_dialog.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/pages/update_firmware_page.dart';
+import 'package:t_max/widget/common_widget.dart';
 import 'package:t_max/widget/dialog_head_style.dart';
 import 'package:t_max/widget/outline_btn_new.dart';
 import 'package:t_max/widget/show_error_dialog.dart';
@@ -38,14 +40,24 @@ class _PluEidtPageState extends State<PluEidtPage> {
   Timer? gettingDataTimer;
   dynamic _eventbus1;
   dynamic _eventbus2;
+  dynamic _eventbus3;
+  dynamic _eventbus4;
 
   bool showCustomArrow = false;
   bool sortArrowsAlwaysVisible = false;
   bool isSendDb = false;
+  bool isImporting = false;
+
   String _saveType = "1";
   String _downloadType = "1";
-
+  bool canSelect = false;
+  bool shouldToggleAll = false; // 是否全选
+  String _sortField = ''; // 当前排序列名
+  bool _sortAscending = true; // 排序方向
+  NationDataSource? _dataSource;
   List<PluDataModel> dataModels = <PluDataModel>[];
+  List<PluDataModel> importPlu = <PluDataModel>[];
+  TextEditingController pageController = TextEditingController(text: "1");
 
   final columnWidth = {
     'select': 50.0,
@@ -61,8 +73,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
     'limitLow': double.nan,
     'productCode': double.nan,
     'itemCode': double.nan,
-    'edit': double.nan,
-    'delete': double.nan,
+    'enable': double.nan,
   };
 
   final ValueNotifier<bool> allSelectedNotifier = ValueNotifier<bool>(false);
@@ -70,18 +81,13 @@ class _PluEidtPageState extends State<PluEidtPage> {
   // 分页控制变量
 
   int currentPage = 1;
-
-  int pageSize = 50;
-
+  int pageSize = 20;
   int totalPages = 1;
 
   // 计算总页数
-
   void _calculateTotalPages() {
     totalPages = (dataModels.length / pageSize).ceil();
-
     if (totalPages == 0) totalPages = 1;
-
     if (currentPage > totalPages) {
       currentPage = totalPages;
     }
@@ -90,20 +96,13 @@ class _PluEidtPageState extends State<PluEidtPage> {
   // 切换到指定页
 
   void _changePage(int page) {
+    if (page < 1) {
+      page = 1;
+    } else if (page > totalPages) {
+      page = totalPages;
+    }
     setState(() {
       currentPage = page;
-
-      _updateDataSource();
-    });
-  }
-
-  // 更新每页显示数量
-
-  void _changePageSize(int size) {
-    setState(() {
-      pageSize = size;
-      currentPage = 1;
-      _calculateTotalPages();
       _updateDataSource();
     });
   }
@@ -123,22 +122,20 @@ class _PluEidtPageState extends State<PluEidtPage> {
     );
   }
 
-  NationDataSource? _dataSource;
-
   // 更新数据源
 
   void _updateDataSource() {
     _dataSource = NationDataSource(
       dataModels: _getCurrentPageData(),
-
       allSelectedNotifier: allSelectedNotifier,
-
       updateAllSelectedStatus: _updateAllSelectedStatus,
-
-      onEdit: _handleEdit,
-
-      onDelete: _handleDelete,
+      onEnabled: _handleEnabled,
       columnVisibility: _columnVisibility, // 传递列可见性配置
+      textScheme: textTheme,
+      colorScheme: colorScheme,
+      canSelect: canSelect,
+      enableTitle: localizedStrings.gBtnEnable,
+      disableTitle: localizedStrings.gBtnDisable,
     );
   }
 
@@ -154,60 +151,68 @@ class _PluEidtPageState extends State<PluEidtPage> {
 
   void _onDataChanged() {
     _calculateTotalPages();
-
     _updateDataSource();
   }
 
-  // 添加示例数据用于测试分页
-
-  void _addSampleData() {
-    dataModels.addAll([
-      PluDataModel(
-          pluData: PluData(1, 001, 0, 0, '55', 'productName', 0, 0, 5.55, 5.55,
-              0.23, 5.6, 5.33, '')),
-      PluDataModel(
-          pluData: PluData(1, 001, 0, 0, '55', 'productName', 0, 0, 5.55, 5.55,
-              0.23, 5.6, 5.33, '')),
-      PluDataModel(
-          pluData: PluData(1, 001, 0, 0, '55', 'productName', 0, 0, 5.55, 5.55,
-              0.23, 5.6, 5.33, '')),
-    ]);
-  }
-
-  // 删除选中项并更新分页
-
-  void _deleteSelectedItems() {
+  void _deleteSelectedItems() async {
+    List<int> recIds = [];
     setState(() {
+      for (var model in dataModels) {
+        if (model.isSelected) {
+          recIds.add(model.pluData.recId!);
+        }
+      }
       dataModels.removeWhere((model) => model.isSelected);
-
       _onDataChanged();
     });
+
+    ReqDelPlu reqDelPlu = ReqDelPlu();
+    reqDelPlu.recId = recIds;
+    //分批删除
+    int batchSize = 1000;
+    for (int i = 0; i < recIds.length; i += batchSize) {
+      int end = i + batchSize;
+      if (end > recIds.length) {
+        end = recIds.length;
+      }
+      List<int> batch = recIds.sublist(i, end);
+      ReqDelPlu reqDelPlu = ReqDelPlu();
+      reqDelPlu.recId = batch;
+      String jsonStr = reqDelPluToJson(reqDelPlu);
+      PublicFunctions.delProduct(jsonStr);
+      // 等待100毫秒
+      await Future.delayed(const Duration(milliseconds: 50));
+    }
   }
 
-  // 处理编辑
-
-  void _handleEdit(PluDataModel model, int index) {
-    // 找到原始数据中的索引
-
-    final originalIndex = dataModels.indexOf(model);
-
-    if (originalIndex == -1) return;
-
-    // 显示编辑对话框
-    showDialog(
-      context: context,
-      builder: (context) => AddPluInfoDialog(
-        type: 1,
-        pluInfo: model.pluData,
-        onSave: (updatedPlu) {
-          setState(() {
-            dataModels[originalIndex] = PluDataModel(pluData: updatedPlu);
-
-            _onDataChanged();
-          });
-        },
-      ),
-    );
+  void _updateEnabledItems(bool enabled) async {
+    List<int> recIds = [];
+    setState(() {
+      for (var model in dataModels) {
+        if (model.isSelected) {
+          model.pluData.enabled = enabled;
+          recIds.add(model.pluData.recId!);
+        }
+      }
+      _onDataChanged();
+    });
+    //分批次启用或禁用
+    int batchSize = 1000;
+    for (int i = 0; i < recIds.length; i += batchSize) {
+      int end = i + batchSize;
+      if (end > recIds.length) {
+        end = recIds.length;
+      }
+      List<int> batch = recIds.sublist(i, end);
+      ReqEnabledPlu reqEnabledPlu = ReqEnabledPlu();
+      reqEnabledPlu.pluList = batch;
+      reqEnabledPlu.enabled = enabled;
+      reqEnabledPlu.updateBy = mySysUser.userId;
+      String jsonStr = reqEnabledPluToJson(reqEnabledPlu);
+      PublicFunctions.enablePlu(jsonStr);
+      // 等待100毫秒
+      await Future.delayed(const Duration(milliseconds: 50));
+    }
   }
 
   // 定义可选列配置，固定列不参与选择
@@ -254,10 +259,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
         return localizedStrings.gPluPluCode;
       case 'itemCode':
         return localizedStrings.gPluItemCode;
-      case 'edit':
-        return '编辑';
-      case 'delete':
-        return '删除';
+
       default:
         return columnName;
     }
@@ -265,57 +267,110 @@ class _PluEidtPageState extends State<PluEidtPage> {
 
   // 处理删除单行
 
-  void _handleDelete(PluDataModel model) {
+  void _handleEnabled(PluDataModel model) {
     setState(() {
-      dataModels.remove(model);
-
+      // 处理启用状态
+      model.pluData.enabled ??= true;
+      if (model.pluData.enabled!) {
+        model.pluData.enabled = false;
+      } else {
+        model.pluData.enabled = true;
+      }
       _onDataChanged();
     });
+    ReqEnabledPlu reqEnabledPlu = ReqEnabledPlu();
+    reqEnabledPlu.pluList = [model.pluData.recId ?? 0];
+    reqEnabledPlu.enabled = model.pluData.enabled;
+    reqEnabledPlu.updateBy = mySysUser.userId;
+    String jsonStr = reqEnabledPluToJson(reqEnabledPlu);
+    PublicFunctions.enablePlu(jsonStr);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // 仅在数据源未初始化时创建实例
+
+    _dataSource ??= NationDataSource(
+      dataModels: [], // 实际数据
+      allSelectedNotifier: ValueNotifier(false),
+      updateAllSelectedStatus: () {},
+
+      onEnabled: (model) {},
+      columnVisibility: {},
+      // 现在可以安全访问主题
+      textScheme: Theme.of(context).textTheme,
+      colorScheme: Theme.of(context).colorScheme,
+      canSelect: canSelect,
+      enableTitle: localizedStrings.gBtnEnable,
+      disableTitle: localizedStrings.gBtnDisable,
+    );
+
+    allSelectedNotifier.addListener(() {
+      if (shouldToggleAll) {
+        shouldToggleAll = false;
+        if (allSelectedNotifier.value) {
+          _selectAll();
+        } else {
+          _deselectAll();
+        }
+      } else {}
+    });
+
+    _initPagination();
+    PublicFunctions.getProductList();
   }
 
   @override
   void initState() {
     super.initState();
 
-    allSelectedNotifier.addListener(() {
-      if (allSelectedNotifier.value) {
-        _selectAll();
-      } else {
-        _deselectAll();
-      }
-    });
-
-    _addSampleData();
-    _initPagination();
-    PublicFunctions.getProductList();
     _eventbus1 = eventBus.on<EventPLuDataSavedOK>().listen((event) {
       if (mounted) {
         setState(() {
           isSendDb = false;
         });
-        showErrorDialog(context, localizedStrings.gTipSaveDbOk);
+        dataModels.clear();
+        PublicFunctions.getProductList();
+        setState(() {
+          _getingData = false;
+        });
+        if (isImportAll) {
+          isImportAll = false;
+          showErrorDialog(context, localizedStrings.gTipImportPluSame);
+        }
       }
     });
 
     _eventbus2 = eventBus.on<EventProductRecList>().listen((event) {
       if (mounted) {
-        List<PluInfoList> pluInfoList = event.obj;
+        List<PluDataFromDb> pluInfoList = event.obj;
         for (int i = 0; i < pluInfoList.length; i++) {
-          PluData newPlu = PluData(0, 0, 0, 0, '', '', 0, 0, 0, 0, 0, 0, 0, '');
+          PluData newPlu = PluData(
+              0, 0, 0, 0, '', '', 0, 0, 0, 0, 0, 0, 0, '', false, '', 0, 0);
+          newPlu.enabled = pluInfoList[i].enabled ?? false;
           newPlu.recId = pluInfoList[i].recId;
-          newPlu.plu = int.tryParse(pluInfoList[i].plu) ?? 0;
-          newPlu.productCode = int.tryParse(pluInfoList[i].productCode) ?? 0;
-          newPlu.itemCode = int.tryParse(pluInfoList[i].itemCode) ?? 0;
+          newPlu.plu = int.tryParse(pluInfoList[i].plu ?? '0') ?? 0;
+          newPlu.productCode =
+              int.tryParse(pluInfoList[i].productCode ?? '0') ?? 0;
+          newPlu.itemCode = int.tryParse(pluInfoList[i].itemCode ?? '0') ?? 0;
           newPlu.category = pluInfoList[i].category;
           newPlu.productName = pluInfoList[i].productName;
-          newPlu.price = double.tryParse(pluInfoList[i].price) ?? 0;
-          newPlu.taxType = int.tryParse(pluInfoList[i].taxType) ?? 0;
-          newPlu.generalUnit = int.tryParse(pluInfoList[i].generalUnit) ?? 0;
-          newPlu.unitWeight = double.tryParse(pluInfoList[i].unitWeight) ?? 0;
-          newPlu.pretare = double.tryParse(pluInfoList[i].pretare) ?? 0;
-          newPlu.limitHigh = double.tryParse(pluInfoList[i].limitHigh) ?? 0;
-          newPlu.limitLow = double.tryParse(pluInfoList[i].limitLow) ?? 0;
-          newPlu.creatAt = pluInfoList[i].creatAt ?? " ";
+          newPlu.price = double.tryParse(pluInfoList[i].price ?? '0') ?? 0;
+          newPlu.taxType = int.tryParse(pluInfoList[i].taxType ?? '0') ?? 0;
+          newPlu.generalUnit =
+              int.tryParse(pluInfoList[i].generalUnit ?? '0') ?? 0;
+          newPlu.unitWeight =
+              double.tryParse(pluInfoList[i].unitWeight ?? '0') ?? 0;
+          newPlu.pretare = double.tryParse(pluInfoList[i].pretare ?? '0') ?? 0;
+          newPlu.limitHigh =
+              double.tryParse(pluInfoList[i].limitHigh ?? '0') ?? 0;
+          newPlu.limitLow =
+              double.tryParse(pluInfoList[i].limitLow ?? '0') ?? 0;
+          newPlu.creatAt = pluInfoList[i].createdAt?.toIso8601String() ?? " ";
+          newPlu.updateAt = pluInfoList[i].updatedAt?.toIso8601String() ?? " ";
+          newPlu.createBy = pluInfoList[i].createBy;
+          newPlu.updateBy = pluInfoList[i].updateBy;
 
           PluDataModel tempData = PluDataModel(pluData: newPlu);
 
@@ -327,13 +382,69 @@ class _PluEidtPageState extends State<PluEidtPage> {
         });
       }
     });
+
+    _eventbus3 = eventBus.on<EventRespProductAddOne>().listen((event) {
+      if (mounted) {
+        PublicFunctions.getLastProductRec();
+      }
+    });
+
+    _eventbus4 = eventBus.on<EventRespGetLastProductRec>().listen((event) {
+      if (mounted) {
+        String jsonData = event.obj;
+        // print('Received JSON data: $jsonData');
+
+        PluDataFromDb? pluInfo =
+            jsonDecode(jsonData) != null && jsonDecode(jsonData).isNotEmpty
+                ? PluDataFromDb.fromJson(jsonDecode(jsonData))
+                : null;
+
+        if (pluInfo == null) {
+          return;
+        }
+
+        PluData newPlu = PluData(
+            0, 0, 0, 0, '', '', 0, 0, 0, 0, 0, 0, 0, '', false, '', 0, 0);
+        newPlu.enabled = pluInfo.enabled ?? false;
+        newPlu.recId = pluInfo.recId;
+        newPlu.plu = int.tryParse(pluInfo.plu ?? '0') ?? 0;
+        newPlu.productCode = int.tryParse(pluInfo.productCode ?? '0') ?? 0;
+        newPlu.itemCode = int.tryParse(pluInfo.itemCode ?? '0') ?? 0;
+        newPlu.category = pluInfo.category;
+        newPlu.productName = pluInfo.productName;
+        newPlu.price = double.tryParse(pluInfo.price ?? '0') ?? 0;
+        newPlu.taxType = int.tryParse(pluInfo.taxType ?? '0') ?? 0;
+        newPlu.generalUnit = int.tryParse(pluInfo.generalUnit ?? '0') ?? 0;
+        newPlu.unitWeight = double.tryParse(pluInfo.unitWeight ?? '0') ?? 0;
+        newPlu.pretare = double.tryParse(pluInfo.pretare ?? '0') ?? 0;
+        newPlu.limitHigh = double.tryParse(pluInfo.limitHigh ?? '0') ?? 0;
+        newPlu.limitLow = double.tryParse(pluInfo.limitLow ?? '0') ?? 0;
+        newPlu.creatAt = pluInfo.createdAt?.toIso8601String() ?? " ";
+        newPlu.updateAt = pluInfo.updatedAt?.toIso8601String() ?? " ";
+        newPlu.createBy = pluInfo.createBy;
+        newPlu.updateBy = pluInfo.updateBy;
+
+        PluDataModel tempData = PluDataModel(pluData: newPlu);
+
+        dataModels.add(tempData);
+        setState(() {
+          _onDataChanged();
+        });
+      }
+    });
   }
 
   @override
   void dispose() {
     _eventbus1.cancel();
     _eventbus2.cancel();
+    _eventbus3.cancel();
+    _eventbus4.cancel();
+
+    allSelectedNotifier.dispose();
     gettingDataTimer?.cancel();
+
+    dataModels.clear();
 
     super.dispose();
   }
@@ -342,14 +453,12 @@ class _PluEidtPageState extends State<PluEidtPage> {
 
   void _updateAllSelectedStatus() {
     final currentPageData = _getCurrentPageData();
-
     final allSelected = currentPageData.every((model) => model.isSelected);
-
-    final allUnselected = currentPageData.every((model) => !model.isSelected);
-
+    // final allUnselected = currentPageData.every((model) => !model.isSelected);
     if (allSelected) {
       allSelectedNotifier.value = true;
-    } else if (allUnselected) {
+    } else {
+      setState(() {});
       allSelectedNotifier.value = false;
     }
   }
@@ -370,13 +479,14 @@ class _PluEidtPageState extends State<PluEidtPage> {
     });
   }
 
-  showIconBtn(String tip, IconData icon, Color color, Function() onPressed) {
+  showIconBtn(String tip, Widget icon, Color color, Function()? onPressed) {
     return Tooltip(
         message: tip, // 提示信息
         child: IconButton(
           iconSize: 24,
-          color: colorScheme.onPrimary,
+          color: colorScheme.primary,
           style: IconButton.styleFrom(
+            disabledBackgroundColor: colorScheme.surfaceDim,
             backgroundColor: color,
             shape: RoundedRectangleBorder(
               // 设置为矩形形状
@@ -385,35 +495,41 @@ class _PluEidtPageState extends State<PluEidtPage> {
             fixedSize: const Size(40, 40), // 设置固定大小
           ),
           onPressed: onPressed,
-          icon: Icon(icon),
+          icon: icon,
         ));
   }
 
   Widget buildButtonRow() {
     // 收集所有按钮的文本
-    final List<String> buttonTexts = [
-      localizedStrings.gBtnGetDataFormDb,
-      localizedStrings.gBtnSaveDataBase,
-      localizedStrings.gBtnImport,
-      localizedStrings.gBtnExport,
-      localizedStrings.gBtnGetPluTemplate,
-    ];
-
-    // 计算每个文本的长度（作为宽度分配的依据）
-    final textLengths = buttonTexts.map((text) => text.length).toList();
-
-    final totalLength =
-        textLengths.fold<int>(0, (sum, length) => sum + length as int);
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        showTextBtnList(buttonTexts, textLengths, totalLength),
+        showTextButton(
+            context,
+            40,
+            canSelect
+                ? localizedStrings.gBtnCancel
+                : localizedStrings.gBtnSelect,
+            isImporting
+                ? null
+                : () {
+                    setState(() {
+                      canSelect = !canSelect;
+                      shouldToggleAll = true;
+                      allSelectedNotifier.value = false;
+                      _updateDataSource();
+                    });
+                  },
+            colorScheme.onPrimary,
+            canSelect ? colorScheme.error : colorScheme.primary,
+            colorScheme.surface),
+
         // 右侧图标按钮部分保持不变
         Container(
-          width: regularPadding * 4 + 40 * 4,
+          // width: regularPadding * 4 + 40 * 4,
           alignment: Alignment.centerRight,
-          child: showIconBtnList(),
+          child: canSelect ? showCancelBtnList() : showSelectBtnList(),
         ),
       ],
     );
@@ -469,14 +585,14 @@ class _PluEidtPageState extends State<PluEidtPage> {
                   _showSaveDatabaseDialog(context);
                 },
               ),
-              const SizedBox(width: regularPadding),
-              CustomGeneralButton(
-                text: buttonTexts[2],
-                maxWidth: buttonMaxWidths[2],
-                onPressed: () {
-                  performImport();
-                },
-              ),
+              // const SizedBox(width: regularPadding),
+              // CustomGeneralButton(
+              //   text: buttonTexts[2],
+              //   maxWidth: buttonMaxWidths[2],
+              //   onPressed: () {
+              //     performImport();
+              //   },
+              // ),
               const SizedBox(width: regularPadding),
               CustomGeneralButton(
                 text: buttonTexts[3],
@@ -499,21 +615,19 @@ class _PluEidtPageState extends State<PluEidtPage> {
                     return showErrorDialog(
                         context, localizedStrings.gTipNoDataSelected);
                   }
-
                   String msg = await writeDessertsToExcel(selectedPluInfos);
-
                   showTipInfo(msg, context);
                 },
               ),
               const SizedBox(width: regularPadding),
-              CustomGeneralButton(
-                text: buttonTexts[4],
-                maxWidth: buttonMaxWidths[4],
-                onPressed: () async {
-                  String msg = await performExportTemplate();
-                  showErrorDialog(context, msg);
-                },
-              ),
+              // CustomGeneralButton(
+              //   text: buttonTexts[4],
+              //   maxWidth: buttonMaxWidths[4],
+              //   onPressed: () async {
+              //     String msg = await performExportTemplate();
+              //     showErrorDialog(context, msg);
+              //   },
+              // ),
             ],
           );
         },
@@ -636,6 +750,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
         if (selectedColumns.contains('pretare')) TextCellValue('PreTare'),
         if (selectedColumns.contains('limitHigh')) TextCellValue('LimitHigh'),
         if (selectedColumns.contains('limitLow')) TextCellValue('LimitLow'),
+        TextCellValue('Enable'),
       ]);
 
       // 写入数据行
@@ -663,6 +778,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
             TextCellValue(dessert.limitHigh?.toString() ?? ''),
           if (selectedColumns.contains('limitLow'))
             TextCellValue(dessert.limitLow?.toString() ?? ''),
+          TextCellValue(dessert.enabled == true ? 'true' : 'false'),
         ]);
       }
 
@@ -685,9 +801,23 @@ class _PluEidtPageState extends State<PluEidtPage> {
   }
 
   Future<void> performImport() async {
-    String msg = await handleImportExcel();
-    if (context.mounted && msg.isNotEmpty) {
+    List<int> nowPluList = [];
+    for (var element in dataModels) {
+      nowPluList.add(element.pluData.plu ?? 0);
+    }
+    String filePath = await pickFiles();
+    if (filePath.isEmpty) {
+      setState(() {
+        isImporting = false;
+      });
+      return;
+    }
+    String msg = await handleImportExcel(nowPluList, filePath);
+    if (context.mounted && msg.isNotEmpty && mounted) {
       showErrorDialog(context, msg);
+      setState(() {
+        isImporting = false;
+      });
     }
   }
 
@@ -706,27 +836,45 @@ class _PluEidtPageState extends State<PluEidtPage> {
     return filePath;
   }
 
-  Future<String> handleImportExcel() async {
-    String filePath = await pickFiles();
-    if (filePath == '') {
-      return "";
-    }
-    await importDataFromXlsx(filePath);
-    if (dataModels.isEmpty) {
+  Future<String> handleImportExcel(
+      List<int> nowPluList, String filePath) async {
+    importPlu.clear();
+    await importDataFromXlsx(filePath, nowPluList);
+
+    if (importPlu.isEmpty) {
       return localizedStrings.gTipNoData;
     }
+    if (importPlu.isNotEmpty) {
+      addDataToSrv();
 
-    setState(() {
-      _onDataChanged();
-    });
+      setState(() {
+        _onDataChanged();
+      });
+    }
+
+    //新增的PLU列表
 
     return localizedStrings.gTipImportPluOK;
   }
 
-  Future<void> importDataFromXlsx(String filePath) async {
+  bool isImportAll = false; //是否全部导入，有重复的PLU会去掉
+  bool checkImportPLu(int plu, List<int> nowPluList) {
+    if (nowPluList.isEmpty) {
+      return true;
+    }
+    for (var item in nowPluList) {
+      if (item == plu) {
+        isImportAll = true;
+        return false;
+      }
+    }
+    return true;
+  }
+
+  Future<void> importDataFromXlsx(String filePath, List<int> nowPluList) async {
     // 读取Excel文件
     Excel? excel = Excel.decodeBytes(await File(filePath).readAsBytes());
-    dataModels = [];
+
     if (excel.tables.isEmpty) {
       return; //要弹框提示
     }
@@ -807,10 +955,22 @@ class _PluEidtPageState extends State<PluEidtPage> {
               ? double.tryParse(rowData['LimitLow'].toString()) ?? 0
               : 0.0,
           rowData.containsKey('creatAt') ? rowData['creatAt'].toString() : '',
+          rowData.containsKey('ebabled')
+              ? rowData['ebabled'].toString() == '1'
+              : true,
+          rowData.containsKey('updateAt') ? rowData['updateAt'].toString() : '',
+          rowData.containsKey('createBy')
+              ? int.tryParse(rowData['createBy'].toString()) ?? 0
+              : 0,
+          rowData.containsKey('updateBy')
+              ? int.tryParse(rowData['updateBy'].toString()) ?? 0
+              : 0,
         );
         PluDataModel pluDataModel = PluDataModel(pluData: dessert);
 
-        dataModels.add(pluDataModel);
+        if (checkImportPLu(dessert.plu ?? 0, nowPluList)) {
+          importPlu.add(pluDataModel);
+        }
       }
     }
 
@@ -1034,31 +1194,59 @@ class _PluEidtPageState extends State<PluEidtPage> {
   }
 
   void sendDataToSrv(String saveType) {
-    List<PluInfoList> pluList = [];
+    List<PluDataFromDb> pluList = [];
     for (var info in dataModels) {
       if (info.isSelected) {
-        pluList.add(PluInfoList(
-            recId: 0,
-            plu: info.pluData.plu.toString(),
-            productCode: info.pluData.productCode.toString(),
-            itemCode: info.pluData.itemCode.toString(),
-            category:
-                info.pluData.category == null ? '-' : info.pluData.category!,
-            productName: info.pluData.productName!,
-            generalUnit: info.pluData.generalUnit.toString(),
-            taxType: info.pluData.taxType.toString(),
-            price: info.pluData.price.toString(),
-            unitWeight: info.pluData.unitWeight.toString(),
-            pretare: info.pluData.pretare.toString(),
-            limitHigh: info.pluData.limitHigh.toString(),
-            limitLow: info.pluData.limitLow.toString(),
-            creatAt: ''));
+        pluList.add(PluDataFromDb(
+          recId: 0,
+          plu: info.pluData.plu.toString(),
+          productCode: info.pluData.productCode.toString(),
+          itemCode: info.pluData.itemCode.toString(),
+          category:
+              info.pluData.category == null ? '-' : info.pluData.category!,
+          productName: info.pluData.productName!,
+          generalUnit: info.pluData.generalUnit.toString(),
+          taxType: info.pluData.taxType.toString(),
+          price: info.pluData.price.toString(),
+          unitWeight: info.pluData.unitWeight.toString(),
+          pretare: info.pluData.pretare.toString(),
+          limitHigh: info.pluData.limitHigh.toString(),
+          limitLow: info.pluData.limitLow.toString(),
+          enabled: info.pluData.enabled,
+          createBy: info.pluData.createBy,
+          updateBy: info.pluData.updateBy,
+        ));
       }
     }
     sendPluListInBatches(pluList, saveType);
   }
 
-  void sendPluListInBatches(List<PluInfoList> pluList, String saveType) {
+  void addDataToSrv() {
+    List<PluDataFromDb> pluList = [];
+    for (var info in importPlu) {
+      pluList.add(PluDataFromDb(
+        recId: 0,
+        plu: info.pluData.plu.toString(),
+        productCode: info.pluData.productCode.toString(),
+        itemCode: info.pluData.itemCode.toString(),
+        category: info.pluData.category == null ? '-' : info.pluData.category!,
+        productName: info.pluData.productName!,
+        generalUnit: info.pluData.generalUnit.toString(),
+        taxType: info.pluData.taxType.toString(),
+        price: info.pluData.price.toString(),
+        unitWeight: info.pluData.unitWeight.toString(),
+        pretare: info.pluData.pretare.toString(),
+        limitHigh: info.pluData.limitHigh.toString(),
+        limitLow: info.pluData.limitLow.toString(),
+        enabled: info.pluData.enabled,
+        createBy: info.pluData.createBy,
+        updateBy: info.pluData.updateBy,
+      ));
+    }
+    sendPluListInBatches(pluList, "1");
+  }
+
+  void sendPluListInBatches(List<PluDataFromDb> pluList, String saveType) {
     const batchSize = 100;
     int totalItems = pluList.length;
 
@@ -1078,7 +1266,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
       if (currentIndex < totalItems) {
         int endIndex = currentIndex + batchSize;
         endIndex = endIndex < totalItems ? endIndex : totalItems;
-        List<PluInfoList> batch = pluList.sublist(currentIndex, endIndex);
+        List<PluDataFromDb> batch = pluList.sublist(currentIndex, endIndex);
         String jsonData = jsonEncode(batch);
         if (saveType == "1") {
           PublicFunctions.addProduct(jsonData);
@@ -1096,7 +1284,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
     });
   }
 
-  void showAddRawInfoDialog() {
+  void showAddPluDialog() {
     showDialog(
       context: context,
       barrierDismissible: false, // 点击对话框外部不关闭对话框
@@ -1118,82 +1306,301 @@ class _PluEidtPageState extends State<PluEidtPage> {
               0,
               0,
               '0',
+              true,
+              '',
+              0,
+              0,
             ),
+            pluList: getPluList(),
             onSave: (PluData pluData) {
-              setState(() {
-                dataModels.add(PluDataModel(pluData: pluData));
-                _onDataChanged();
-              });
+              String jsonData = jsonEncode(PluDataFromDb(
+                recId: 0,
+                plu: pluData.plu.toString(),
+                productCode: pluData.productCode.toString(),
+                itemCode: pluData.itemCode.toString(),
+                category: pluData.category == null ? '-' : pluData.category!,
+                productName: pluData.productName!,
+                generalUnit: pluData.generalUnit.toString(),
+                taxType: pluData.taxType.toString(),
+                price: pluData.price.toString(),
+                unitWeight: pluData.unitWeight.toString(),
+                pretare: pluData.pretare.toString(),
+                limitHigh: pluData.limitHigh.toString(),
+                limitLow: pluData.limitLow.toString(),
+                createBy: mySysUser.userId,
+                updateBy: mySysUser.userId,
+              ));
+
+              PublicFunctions.addOneProduct(jsonData);
             });
       },
     );
   }
 
-  Widget showIconBtnList() {
+  bool checkSelectPlu() {
+    bool res = false;
+    List<PluDataModel> selectedPluInfos = [];
+    if (dataModels.isEmpty) {
+      return res;
+    }
+
+    for (var dessert in dataModels) {
+      if (dessert.isSelected) {
+        selectedPluInfos.add(dessert);
+
+        res = true;
+        break;
+      }
+    }
+
+    return res;
+  }
+
+  Widget showSelectBtnList() {
     return Row(
       children: [
         showIconBtn(
-          '',
-          Icons.add,
+          localizedStrings.gBtnAdd,
+          getSvgIcon(addSvgIcon(), 24, 24, colorScheme.onPrimary),
           colorScheme.primary,
-          () {
-            showAddRawInfoDialog();
-          },
+          isImporting
+              ? null
+              : () {
+                  showAddPluDialog();
+                },
         ),
         SizedBox(
           width: regularPadding,
         ),
-        showIconBtn('', Icons.settings, colorScheme.primary, () async {
-          _showMultiSelectDialog(context);
-        }),
+        //导入
+        showIconBtn(
+            localizedStrings.gBtnImport,
+            getSvgIcon(importSvgIcon(), 24, 24, colorScheme.onPrimary),
+            colorScheme.primary,
+            isImporting
+                ? null
+                : () {
+                    setState(() {
+                      isImporting = true;
+                    });
+                    performImport();
+                  }),
         SizedBox(
           width: regularPadding,
         ),
-        showIconBtn('', Icons.download, colorScheme.onTertiaryFixedVariant,
-            () async {
-          List<PluDataModel> selectedPluInfos = [];
-          if (dataModels.isEmpty) {
-            return showErrorDialog(context, localizedStrings.gTipNoData);
-          }
-          bool selectRow = false;
-          for (var dessert in dataModels) {
-            if (dessert.isSelected) {
-              selectedPluInfos.add(dessert);
-              selectRow = true;
-            }
-          }
-          if (!selectRow) {
-            isSendDb = false;
-            return showErrorDialog(
-                context, localizedStrings.gTipNoDataSelected);
-          }
-          String msg = checkImportData(selectedPluInfos);
-          if (msg != "") {
-            isSendDb = false;
-            return showErrorDialog(context, msg);
-          }
-
-          String msgStr = await downloadFormExcel(selectedPluInfos);
-          if (!msgStr.contains("OK")) {
-            showTipInfo(msgStr, context);
-            return;
-          }
-          List<String> splitted = msgStr.split(',');
-          if (splitted.length != 2) {
-            return;
-          }
-          if (mounted) {
-            _showDownloadTypeDialog(context, splitted[1]);
-          }
-        }),
+        //设置
+        showIconBtn(
+            localizedStrings.gBtnReportSetting,
+            getSvgIcon(reportSettingSvgIcon(), 24, 24, colorScheme.onPrimary),
+            colorScheme.primary,
+            isImporting
+                ? null
+                : () async {
+                    _showMultiSelectDialog(context);
+                  }),
         SizedBox(
           width: regularPadding,
         ),
-        showIconBtn('', Icons.delete_forever_outlined, colorScheme.error, () {
-          _deleteSelectedItems();
-        }),
+        //模板
+        showIconBtn(
+            localizedStrings.gBtnGetPluTemplate,
+            getSvgIcon(pluTemplateSvgIcon(), 24, 24, colorScheme.onPrimary),
+            colorScheme.primary,
+            isImporting
+                ? null
+                : () async {
+                    String msg = await performExportTemplate();
+                    if (mounted) {
+                      showErrorDialog(context, msg);
+                    }
+                  }),
+        SizedBox(
+          width: regularPadding,
+        ),
       ],
     );
+  }
+
+  Widget showCancelBtnList() {
+    return Row(
+      children: [
+        //导出
+        showIconBtn(
+          localizedStrings.gBtnExport,
+          getSvgIcon(
+              exportSvgIcon(),
+              24,
+              24,
+              checkSelectPlu()
+                  ? colorScheme.onPrimary
+                  : colorScheme.surfaceContainerHighest),
+          colorScheme.primary,
+          checkSelectPlu()
+              ? () async {
+                  List<PluData> selectedPluInfos = [];
+                  if (dataModels.isEmpty) {
+                    return showErrorDialog(
+                        context, localizedStrings.gTipNoData);
+                  }
+                  bool selectRow = false;
+                  for (var dessert in dataModels) {
+                    if (dessert.isSelected) {
+                      selectedPluInfos.add(dessert.pluData);
+                      selectRow = true;
+                    }
+                  }
+                  if (!selectRow) {
+                    isSendDb = false;
+                    return showErrorDialog(
+                        context, localizedStrings.gTipNoDataSelected);
+                  }
+                  String msg = await writeDessertsToExcel(selectedPluInfos);
+                  showErrorDialog(context, msg);
+                }
+              : null,
+        ),
+//下发
+        SizedBox(
+          width: regularPadding,
+        ),
+        showIconBtn(
+          localizedStrings.gBtnDownload,
+          getSvgIcon(
+              downloadToScaleSvgIcon(),
+              24,
+              24,
+              checkSelectPlu()
+                  ? colorScheme.onPrimary
+                  : colorScheme.surfaceContainerHighest),
+          colorScheme.onTertiaryFixedVariant,
+          !checkSelectPlu()
+              ? null
+              : () async {
+                  List<PluDataModel> selectedPluInfos = [];
+
+                  bool selectRow = false;
+                  for (var dessert in dataModels) {
+                    if (dessert.isSelected) {
+                      selectedPluInfos.add(dessert);
+                      selectRow = true;
+                    }
+                  }
+                  if (!selectRow) {
+                    isSendDb = false;
+                    return showErrorDialog(
+                        context, localizedStrings.gTipNoDataSelected);
+                  }
+                  for (var dessert in selectedPluInfos) {
+                    if (dessert.pluData.enabled == false) {
+                      isSendDb = false;
+                      return showErrorDialog(
+                          context, localizedStrings.gTipDownPluDisabled);
+                    }
+                  }
+
+                  String msg = checkImportData(selectedPluInfos);
+                  if (msg != "") {
+                    isSendDb = false;
+                    return showErrorDialog(context, msg);
+                  }
+
+                  String msgStr = await downloadFormExcel(selectedPluInfos);
+                  if (!msgStr.contains("OK") && mounted) {
+                    showTipInfo(msgStr, context);
+                    return;
+                  }
+                  List<String> splitted = msgStr.split(',');
+                  if (splitted.length != 2) {
+                    return;
+                  }
+                  if (mounted) {
+                    _showDownloadTypeDialog(context, splitted[1]);
+                  }
+                },
+        ),
+        SizedBox(
+          width: regularPadding,
+        ),
+        //批量启用
+        showIconBtn(
+          localizedStrings.gBtnEnable,
+          getSvgIcon(
+              enabledSvgIcon(),
+              24,
+              24,
+              checkSelectPlu()
+                  ? colorScheme.onPrimary
+                  : colorScheme.surfaceContainerHighest),
+          colorScheme.onTertiaryFixedVariant,
+          !checkSelectPlu()
+              ? null
+              : () {
+                  _updateEnabledItems(true);
+                },
+        ),
+        SizedBox(
+          width: regularPadding,
+        ),
+        //批量停用
+        showIconBtn(
+          localizedStrings.gBtnDisable,
+          getSvgIcon(
+              disabledSvgIcon(),
+              24,
+              24,
+              checkSelectPlu()
+                  ? colorScheme.onPrimary
+                  : colorScheme.surfaceContainerHighest),
+          colorScheme.error,
+          !checkSelectPlu()
+              ? null
+              : () {
+                  _updateEnabledItems(false);
+                },
+        ),
+        SizedBox(
+          width: regularPadding,
+        ),
+
+        //批量删除
+        showIconBtn(
+          localizedStrings.gBtnDelete,
+          getSvgIcon(
+              deleteSvgIcon(),
+              24,
+              24,
+              checkSelectPlu()
+                  ? colorScheme.onPrimary
+                  : colorScheme.surfaceContainerHighest),
+          colorScheme.error,
+          !checkSelectPlu()
+              ? null
+              : () {
+                  showDeleteDialog();
+                },
+        ),
+        SizedBox(
+          width: regularPadding,
+        ),
+      ],
+    );
+  }
+
+  void showDeleteDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 点击对话框外部不关闭对话框
+      builder: (BuildContext context) {
+        return ShowDeleteTipDialog(
+          title: localizedStrings.fTipTitle,
+          msg: localizedStrings.fConfirmDelete,
+        );
+      },
+    ).then((value) {
+      if (value) {
+        _deleteSelectedItems();
+      }
+    });
   }
 
   _showMultiSelectDialog(BuildContext content) {
@@ -1479,22 +1886,166 @@ class _PluEidtPageState extends State<PluEidtPage> {
     );
   }
 
+  void _sortData() {
+    if (_sortField == '') return; // 无排序字段时不执行
+
+    if (dataModels.isEmpty) return;
+
+    setState(() {
+      // 根据排序字段和方向对数据源进行排序
+      dataModels.sort((a, b) {
+        dynamic valueA;
+        dynamic valueB;
+
+        switch (_sortField) {
+          case 'plu':
+            valueA = a.pluData.plu;
+            valueB = b.pluData.plu;
+            break;
+          case 'productName':
+            valueA = a.pluData.productName;
+            valueB = b.pluData.productName;
+            break;
+
+          case 'category':
+            valueA = a.pluData.category;
+            valueB = b.pluData.category;
+            break;
+          case 'generalUnit':
+            valueA = a.pluData.generalUnit;
+            valueB = b.pluData.generalUnit;
+            break;
+          case 'taxType':
+            valueA = a.pluData.taxType;
+            valueB = b.pluData.taxType;
+            break;
+          case 'price':
+            valueA = a.pluData.price;
+            valueB = b.pluData.price;
+            break;
+          case 'unitWeight':
+            valueA = a.pluData.unitWeight;
+            valueB = b.pluData.unitWeight;
+            break;
+          case 'pretare':
+            valueA = a.pluData.pretare;
+            valueB = b.pluData.pretare;
+            break;
+          case 'limitHigh':
+            valueA = a.pluData.limitHigh;
+            valueB = b.pluData.limitHigh;
+            break;
+          case 'limitLow':
+            valueA = a.pluData.limitLow;
+            valueB = b.pluData.limitLow;
+            break;
+          case 'productCode':
+            valueA = a.pluData.productCode;
+            valueB = b.pluData.productCode;
+            break;
+          case 'itemCode':
+            valueA = a.pluData.itemCode;
+            valueB = b.pluData.itemCode;
+            break;
+
+          // 添加其他需要排序的字段
+          default:
+            valueA = 0;
+            valueB = 0;
+        }
+
+        // 执行比较
+        if (valueA is Comparable && valueB is Comparable) {
+          return _sortAscending
+              ? valueA.compareTo(valueB)
+              : valueB.compareTo(valueA);
+        }
+        return 0;
+      });
+
+      _updateDataSource();
+    });
+  }
+
   GridColumn getColumnWidget(double width, String columnName, String title) {
     return GridColumn(
       width: width,
+      allowSorting: true,
       columnName: columnName,
-      label: Container(
-        color: colorScheme.surfaceDim,
-        padding: const EdgeInsets.all(8.0),
-        alignment: Alignment.centerLeft,
-        child: Text(
-          title,
-          style: getTextStyle(color: colorScheme.onSurface),
-          overflow: TextOverflow.ellipsis,
-          maxLines: 1,
+      label: InkWell(
+        onTap: () {
+          setState(() {
+            if (_sortField == columnName) {
+              // 如果已经是当前排序字段，则切换排序顺序
+              _sortAscending = !_sortAscending;
+            } else {
+              // 否则设置为新的排序字段，默认升序
+              _sortField = columnName;
+              _sortAscending = true;
+            }
+            _sortData();
+          });
+        },
+        child: Container(
+          color: colorScheme.surfaceDim,
+          padding: const EdgeInsets.all(8.0),
+          alignment: Alignment.centerLeft,
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  title,
+                  style: getTitleTextStyle(color: colorScheme.onSurface),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+              ),
+              if (_sortField == columnName)
+                Icon(
+                    _sortAscending
+                        ? Icons.arrow_drop_up_outlined
+                        : Icons.arrow_drop_down_outlined,
+                    size: 22),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  void performModifyPlu(PluDataModel modifyPlu) {
+    PluDataFromDb editPlus = PluDataFromDb();
+    editPlus = PluDataFromDb(
+      recId: modifyPlu.pluData.recId,
+      plu: modifyPlu.pluData.plu.toString(),
+      productCode: modifyPlu.pluData.productCode.toString(),
+      itemCode: modifyPlu.pluData.itemCode.toString(),
+      category: modifyPlu.pluData.category == null
+          ? '-'
+          : modifyPlu.pluData.category!,
+      productName: modifyPlu.pluData.productName!,
+      generalUnit: modifyPlu.pluData.generalUnit.toString(),
+      taxType: modifyPlu.pluData.taxType.toString(),
+      price: modifyPlu.pluData.price.toString(),
+      unitWeight: modifyPlu.pluData.unitWeight.toString(),
+      pretare: modifyPlu.pluData.pretare.toString(),
+      limitHigh: modifyPlu.pluData.limitHigh.toString(),
+      limitLow: modifyPlu.pluData.limitLow.toString(),
+      enabled: modifyPlu.pluData.enabled,
+      createBy: modifyPlu.pluData.createBy,
+      updateBy: mySysUser.userId,
+    );
+
+    String jsonData = jsonEncode(editPlus);
+    PublicFunctions.modifyProduct(jsonData);
+  }
+
+  List<int> getPluList() {
+    List<int> pluList = [];
+    for (var item in dataModels) {
+      pluList.add(item.pluData.plu!);
+    }
+    return pluList;
   }
 
   @override
@@ -1513,9 +2064,13 @@ class _PluEidtPageState extends State<PluEidtPage> {
                   left: regularPadding, right: regularPadding),
               child: LayoutBuilder(
                 builder: (context, constraints) {
-                  double _width = constraints.maxWidth;
+                  double tableWidth = constraints.maxWidth;
+                  if (canSelect) {
+                    tableWidth = tableWidth - 50 - 120;
+                  } else {
+                    tableWidth = tableWidth - 120;
+                  }
 
-                  _width = _width - 50 - 80 * 2;
                   int count = 0;
                   for (var key in _columnVisibility.keys) {
                     if (_columnVisibility[key]!) {
@@ -1523,25 +2078,51 @@ class _PluEidtPageState extends State<PluEidtPage> {
                     }
                   }
 
-                  double itemWidth = _width / (count);
+                  double itemWidth = tableWidth / (count);
 
-                  itemWidth = itemWidth < 100 ? 100 : itemWidth;
+                  itemWidth = itemWidth < 150 ? 150 : itemWidth;
 
                   return SfDataGrid(
                     headerRowHeight: 48.0,
-                    frozenColumnsCount: 1,
-                    footerFrozenColumnsCount: 2,
+                    frozenColumnsCount: canSelect ? 1 : 0,
+                    footerFrozenColumnsCount: 1,
                     columnWidthMode: ColumnWidthMode.fill,
                     gridLinesVisibility: GridLinesVisibility.horizontal,
                     headerGridLinesVisibility: GridLinesVisibility.none,
                     selectionMode: SelectionMode.none,
                     columnResizeMode: ColumnResizeMode.onResize,
                     allowSorting: false,
+                    onCellTap: (details) {
+                      // 获取点击的行索引
+                      int index = (currentPage - 1) * pageSize;
+                      int rowIndex = details.rowColumnIndex.rowIndex;
+                      rowIndex = rowIndex + index;
+
+                      if (rowIndex > 0) {
+                        var dataRow = dataModels[rowIndex - 1];
+
+                        showDialog(
+                          context: context,
+                          builder: (context) => AddPluInfoDialog(
+                            type: 1,
+                            pluList: getPluList(),
+                            pluInfo: dataRow.pluData,
+                            onSave: (updatedPlu) {
+                              setState(() {
+                                dataModels[rowIndex - 1] =
+                                    PluDataModel(pluData: updatedPlu);
+                                _onDataChanged();
+                                performModifyPlu(dataModels[rowIndex - 1]);
+                              });
+                            },
+                          ),
+                        );
+                      }
+                    },
                     onColumnResizeUpdate: (detail) {
                       setState(() {
                         columnWidth[detail.column.columnName] = detail.width;
                       });
-
                       return true;
                     },
                     source: _dataSource ??
@@ -1549,32 +2130,38 @@ class _PluEidtPageState extends State<PluEidtPage> {
                           dataModels: _getCurrentPageData(),
                           allSelectedNotifier: allSelectedNotifier,
                           updateAllSelectedStatus: _updateAllSelectedStatus,
-                          onEdit: _handleEdit,
-                          onDelete: _handleDelete,
+                          onEnabled: _handleEnabled,
                           columnVisibility: _columnVisibility,
+                          textScheme: textTheme,
+                          colorScheme: colorScheme,
+                          canSelect: canSelect,
+                          enableTitle: localizedStrings.gBtnEnable,
+                          disableTitle: localizedStrings.gBtnDisable,
                         ),
                     columns: [
-                      GridColumn(
-                        width: 50,
-                        allowSorting: false,
-                        columnName: 'select',
-                        label: ValueListenableBuilder<bool>(
-                          valueListenable: allSelectedNotifier,
-                          builder: (context, value, child) {
-                            return Container(
-                                color: colorScheme.surfaceDim,
-                                padding: const EdgeInsets.all(8.0),
-                                alignment: Alignment.centerLeft,
-                                child: Checkbox(
-                                  value: value,
-                                  onChanged: (bool? newValue) {
-                                    allSelectedNotifier.value =
-                                        newValue ?? false;
-                                  },
-                                ));
-                          },
+                      if (canSelect)
+                        GridColumn(
+                          width: 50,
+                          allowSorting: false,
+                          columnName: 'select',
+                          label: ValueListenableBuilder<bool>(
+                            valueListenable: allSelectedNotifier,
+                            builder: (context, value, child) {
+                              return Container(
+                                  color: colorScheme.surfaceDim,
+                                  padding: const EdgeInsets.all(8.0),
+                                  alignment: Alignment.centerLeft,
+                                  child: Checkbox(
+                                    value: value,
+                                    onChanged: (bool? newValue) {
+                                      shouldToggleAll = true;
+                                      allSelectedNotifier.value =
+                                          newValue ?? false;
+                                    },
+                                  ));
+                            },
+                          ),
                         ),
-                      ),
                       if (_columnVisibility['plu']!)
                         getColumnWidget(
                             itemWidth, 'plu', localizedStrings.gPluPlu),
@@ -1612,25 +2199,14 @@ class _PluEidtPageState extends State<PluEidtPage> {
                         getColumnWidget(itemWidth, 'itemCode',
                             localizedStrings.gPluItemCode),
                       GridColumn(
-                        width: 80,
+                        width: 120,
                         allowSorting: false,
-                        columnName: 'edit',
+                        columnName: 'enable',
                         label: Container(
                           color: colorScheme.surfaceDim,
                           padding: const EdgeInsets.all(8.0),
                           alignment: Alignment.centerLeft,
-                          child: Text(localizedStrings.gBtnEdit),
-                        ),
-                      ),
-                      GridColumn(
-                        width: 80,
-                        allowSorting: false,
-                        columnName: 'delete',
-                        label: Container(
-                          color: colorScheme.surfaceDim,
-                          padding: const EdgeInsets.all(8.0),
-                          alignment: Alignment.centerLeft,
-                          child: Text(localizedStrings.gBtnDelete),
+                          child: Text(localizedStrings.gStatus),
                         ),
                       ),
                     ],
@@ -1657,14 +2233,12 @@ class _PluEidtPageState extends State<PluEidtPage> {
                     IconButton(
                       icon: const Icon(Icons.first_page),
                       onPressed: currentPage > 1 ? () => _changePage(1) : null,
-                      disabledColor: Colors.grey[300],
                     ),
                     IconButton(
                       icon: const Icon(Icons.chevron_left),
                       onPressed: currentPage > 1
                           ? () => _changePage(currentPage - 1)
                           : null,
-                      disabledColor: Colors.grey[300],
                     ),
                     Text(
                       localizedStrings.tipPageSequnce +
@@ -1676,42 +2250,77 @@ class _PluEidtPageState extends State<PluEidtPage> {
                       onPressed: currentPage < totalPages
                           ? () => _changePage(currentPage + 1)
                           : null,
-                      disabledColor: Colors.grey[300],
                     ),
                     IconButton(
                       icon: const Icon(Icons.last_page),
                       onPressed: currentPage < totalPages
                           ? () => _changePage(totalPages)
                           : null,
-                      disabledColor: Colors.grey[300],
+                    ),
+                    SizedBox(
+                      width: regularPadding,
+                    ),
+                    Text(
+                      localizedStrings.tipJumpPage,
+                      style: getTitleTextStyle(),
+                    ),
+                    SizedBox(
+                      width: regularPadding,
+                    ),
+                    SizedBox(
+                      width: 70,
+                      height: 38,
+                      child: TextField(
+                        controller: pageController,
+                        enabled: totalPages > 1,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly, // 只允许输入数字
+                        ],
+                        textAlign: TextAlign.center,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(0.0))),
+                          hintText: '',
+                          hintStyle: TextStyle(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface, // 设置提示文本颜色
+                          ),
+                        ),
+                        style: Theme.of(context).textTheme.bodySmall!.apply(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+
+                        maxLines: 1,
+                        minLines: 1,
+                        expands: false,
+
+                        // 监听回车键
+                        onSubmitted: (value) {
+                          if (value.isEmpty) {
+                            return;
+                          }
+
+                          if (int.parse(value) > 0) {
+                            int page = int.tryParse(value) ?? 1;
+                            _changePage(page);
+                          }
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      width: regularPadding,
+                    ),
+                    Text(
+                      localizedStrings.tipPage,
+                      style: getTitleTextStyle(),
                     ),
                   ],
                 ),
                 SizedBox(
                   width: largePadding,
-                ),
-                Row(
-                  children: [
-                    DropdownButton<int>(
-                      value: pageSize,
-                      items: [50, 100].map((size) {
-                        return DropdownMenuItem(
-                          value: size,
-                          child: Text('$size', style: getTitleTextStyle()),
-                        );
-                      }).toList(),
-                      onChanged: (size) {
-                        if (size != null) {
-                          _changePageSize(size);
-                        }
-                      },
-                      underline: Container(),
-                    ),
-                    Text(
-                      '/ ${localizedStrings.tipPage}',
-                      style: getTitleTextStyle(),
-                    ),
-                  ],
                 ),
               ],
             ),
@@ -1751,16 +2360,23 @@ class NationDataSource extends DataGridSource {
     required List<PluDataModel> dataModels,
     required this.allSelectedNotifier,
     required this.updateAllSelectedStatus,
-    required this.onEdit,
-    required this.onDelete,
+    required this.onEnabled,
     required Map<String, bool> columnVisibility,
+    required TextTheme textScheme,
+    required ColorScheme colorScheme,
+    required this.canSelect,
+    required this.enableTitle,
+    required this.disableTitle,
   }) {
     _dataModels = dataModels.map<DataGridRow>((e) {
       final cells = <DataGridCell>[];
       // 固定列 'select' 始终添加
-      cells.add(
-        DataGridCell<bool>(columnName: 'select', value: e.isSelected),
-      );
+      if (canSelect) {
+        cells.add(
+          DataGridCell<bool>(columnName: 'select', value: e.isSelected),
+        );
+      }
+
       // 根据列可见性动态添加其他列
       columnVisibility.forEach((key, value) {
         if (value) {
@@ -1863,27 +2479,33 @@ class NationDataSource extends DataGridSource {
       });
 
       cells.add(
-        DataGridCell<bool>(columnName: 'edit', value: false),
-      );
-      cells.add(
-        DataGridCell<bool>(columnName: 'delete', value: false),
+        DataGridCell<String>(
+            columnName: 'enable',
+            value: e.pluData.enabled == null
+                ? enableTitle
+                : e.pluData.enabled!
+                    ? enableTitle
+                    : disableTitle),
       );
       return DataGridRow(cells: cells);
     }).toList();
     _originalDataModels = dataModels;
+    _textScheme = textScheme;
+    _colorScheme = colorScheme;
   }
 
   late List<PluDataModel> _originalDataModels;
-
   final ValueNotifier<bool> allSelectedNotifier;
-
   final VoidCallback updateAllSelectedStatus;
 
-  final Function(PluDataModel, int) onEdit; // 编辑回调
-
-  final Function(PluDataModel) onDelete; // 删除回调
+  final Function(PluDataModel) onEnabled; // 删除回调
+  final bool canSelect;
+  final String enableTitle;
+  final String disableTitle;
 
   List<DataGridRow> _dataModels = [];
+  late TextTheme _textScheme;
+  late ColorScheme _colorScheme;
 
   @override
   List<DataGridRow> get rows => _dataModels;
@@ -1893,53 +2515,61 @@ class NationDataSource extends DataGridSource {
     final index = _dataModels.indexOf(row);
 
     final dataModel = _originalDataModels[index];
+    var colorScheme = _colorScheme;
+    var textScheme = _textScheme;
 
     return DataGridRowAdapter(
       cells: row.getCells().map<Widget>((dataGridCell) {
-        if (dataGridCell.columnName == 'select') {
+        if (dataGridCell.columnName == 'select' && canSelect) {
           return Checkbox(
             value: dataModel.isSelected,
             onChanged: (bool? newValue) {
               setState(() {
                 dataModel.isSelected = newValue ?? false;
-
                 updateAllSelectedStatus();
               });
             },
           );
-        } else if (dataGridCell.columnName == 'edit') {
-          return IconButton(
-            icon: const Icon(Icons.edit),
-            color: Color(0xff004D8A),
-            onPressed: () {
-              // 触发编辑回调
-              onEdit(dataModel, index);
-            },
-          );
-        } else if (dataGridCell.columnName == 'delete') {
-          return IconButton(
-            icon: const Icon(Icons.delete_forever_outlined),
-            color: Color(0xffF13851),
-            onPressed: () {
-              // 触发删除回调
-
-              onDelete(dataModel);
-            },
-          );
+        } else if (dataGridCell.columnName == 'enable') {
+          return Container(
+              alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.all(8.0),
+              child: TextButton(
+                onPressed: () {
+                  onEnabled(dataModel);
+                },
+                child: Text(
+                  dataGridCell.value.toString(),
+                  style: TextStyle(
+                    fontFamily: "alibaba",
+                    color: dataModel.pluData.enabled == null
+                        ? colorScheme.onTertiaryFixedVariant
+                        : dataModel.pluData.enabled!
+                            ? colorScheme.onTertiaryFixedVariant
+                            : colorScheme.error,
+                    fontSize: 14,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+              ));
         }
 
-        return Container(
-          alignment: Alignment.centerLeft,
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            dataGridCell.value.toString(),
-            style: const TextStyle(
-              fontFamily: "alibaba",
-              color: Color(0xff606060),
-              fontSize: 14,
+        return MouseRegion(
+          cursor: SystemMouseCursors.click, // 手型光标
+          child: Container(
+            alignment: Alignment.centerLeft,
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              dataGridCell.value.toString(),
+              style: TextStyle(
+                fontFamily: "alibaba",
+                color: colorScheme.onSurfaceVariant,
+                fontSize: 14,
+              ),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
             ),
-            overflow: TextOverflow.ellipsis,
-            maxLines: 1,
           ),
         );
       }).toList(),

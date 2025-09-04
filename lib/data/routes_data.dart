@@ -1,5 +1,6 @@
 //所有的路由
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/icons.dart';
@@ -20,7 +21,6 @@ import 'package:t_max/pages/multi_scale_management_page.dart';
 import 'package:t_max/pages/plu_edit_page.dart';
 import 'package:t_max/pages/receipt_design_page.dart';
 import 'package:t_max/pages/retail_report_page.dart';
-import 'package:t_max/pages/set_system_parameter.dart';
 import 'package:t_max/pages/set_system_time.dart';
 import 'package:t_max/pages/sys_user_manager.dart';
 import 'package:t_max/pages/take_in_page.dart';
@@ -53,7 +53,7 @@ List<int> allPaidConfigMenu = [
   MenuId.receiptDesignPage.index,
   MenuId.serialOutputDesignPage.index,
   MenuId.basicDataCollectionPage.index,
-  MenuId.parameterSettingPage.index,
+  // MenuId.parameterSettingPage.index,
 ];
 
 List<RouteData> getAllConfigMenus() {
@@ -121,12 +121,12 @@ List<RouteData> getAllConfigMenus() {
       subtitle: localizedStrings.subTitleBasicDataCollection,
       iconPath: basicDataSvgIcon(),
     ),
-    RouteData(
-        id: MenuId.parameterSettingPage.index,
-        title: localizedStrings.menuParameterSetting,
-        routeName: "/parameterSetting",
-        subtitle: localizedStrings.subTitleParameterSetting,
-        iconPath: parameterSvgIcon()),
+    // RouteData(
+    //     id: MenuId.parameterSettingPage.index,
+    //     title: localizedStrings.menuParameterSetting,
+    //     routeName: "/parameterSetting",
+    //     subtitle: localizedStrings.subTitleParameterSetting,
+    //     iconPath: parameterSvgIcon()),
     RouteData(
         id: MenuId.calibrationPage.index,
         title: localizedStrings.menuWeighingSetting,
@@ -192,9 +192,11 @@ String generateTitle(int pageId) {
     return localizedStrings.menuSerialOutputDesign;
   } else if (pageId == MenuId.basicDataCollectionPage.index) {
     return localizedStrings.menuBasicDataCollection;
-  } else if (pageId == MenuId.parameterSettingPage.index) {
-    return localizedStrings.menuParameterSetting;
-  } else if (pageId == MenuId.weightModePage.index) {
+  }
+  // else if (pageId == MenuId.parameterSettingPage.index) {
+  //   return localizedStrings.menuParameterSetting;
+  // }
+  else if (pageId == MenuId.weightModePage.index) {
     return localizedStrings.menuWeighing;
   } else if (pageId == MenuId.pluEditPage.index) {
     return localizedStrings.menuPluManagement;
@@ -243,9 +245,11 @@ String generateHelpTitle(int pageId) {
     return localizedStrings.gTipSerialDesignPageHelp;
   } else if (pageId == MenuId.basicDataCollectionPage.index) {
     return localizedStrings.gTipBasicDataPageHelp;
-  } else if (pageId == MenuId.parameterSettingPage.index) {
-    return localizedStrings.gTipParameterSettingPageHelp;
-  } else if (pageId == MenuId.pluEditPage.index) {
+  }
+  // else if (pageId == MenuId.parameterSettingPage.index) {
+  //   return localizedStrings.gTipParameterSettingPageHelp;
+  // }
+  else if (pageId == MenuId.pluEditPage.index) {
     return localizedStrings.gTipPlueditPageHelp;
   } else if (pageId == MenuId.downloadLabelPage.index) {
     return localizedStrings.gTipLabelFmtDownPageHelp;
@@ -440,9 +444,11 @@ Widget buildPageContent(dynamic Function(String) navigateContent,
     return CustomSerialProtocol();
   } else if (pageId == MenuId.basicDataCollectionPage.index) {
     return BasicDataPage();
-  } else if (pageId == MenuId.parameterSettingPage.index) {
-    return SetParameterPage();
-  } else if (pageId == MenuId.weightModePage.index) {
+  }
+  //  else if (pageId == MenuId.parameterSettingPage.index) {
+  //   return SetParameterPage();
+  // }
+  else if (pageId == MenuId.weightModePage.index) {
     return WeightModePage();
   } else if (pageId == MenuId.pluEditPage.index) {
     return PluEidtPage();
@@ -544,4 +550,108 @@ void goAppPage(RouteData appRoute, BuildContext context,
     navigateContent(appRoute.routeName!);
   }
   return;
+}
+
+//配置页面的功能要分类
+//一级标题multi Scale Management 包含的页面为MenuId.multiScaleManagement.index 没有二级标题
+
+//一级标题Setting 包含的二级标题为
+//MenuId.setSystemTimePage.index,
+//MenuId.btSettingPage.index,
+//MenuId.wifiSettingPage.index,
+//MenuId.updateFirmwarePage.index
+//MenuId.updateFirmwarePage.index,
+
+//一级标题Format 包含的二级标题为
+//MenuId.labelDesignPage.index,
+//MenuId.receiptDesignPage.index,
+//MenuId.serialOutputDesignPage.index,
+//MenuId.downloadLabelPage.index,
+// MenuId.downReciptPage.index,
+
+//一级标题Basic Data 包含的二级标题为
+//MenuId.basicDataCollectionPage.index,
+// MenuId.pluEditPage.index,
+
+class RouteDataGroup {
+  final String title;
+  final List<dynamic> children; // 可以包含RouteData或RouteDataGroup
+  bool isExpanded; // 控制展开/收起状态
+  final String iconPath;
+
+  RouteDataGroup({
+    required this.title,
+    required this.children,
+    this.isExpanded = false,
+    this.iconPath = '',
+  });
+}
+
+// 添加新的获取层级菜单方法
+List<RouteDataGroup> getHierarchicalConfigMenus() {
+  // 获取原始权限过滤后的菜单列表
+  final originalMenus = getCurrentConfigMenus();
+
+  return [
+    // 多秤管理组
+    RouteDataGroup(
+      title: localizedStrings.menuMultiScaleManagement,
+      iconPath: multiScaleSvgIcon(),
+      children: [
+        // 使用firstWhereOrNull避免找不到时抛出异常
+        originalMenus
+            .firstWhereOrNull((m) => m.id == MenuId.multiScaleManagement.index)
+      ]
+          // 过滤空值
+          .whereType<RouteData>()
+          .toList(),
+    ),
+
+    // 设置组
+    RouteDataGroup(
+      title: localizedStrings.gBtnSetting,
+      iconPath: settingSvgIcon(),
+      children: [
+        originalMenus
+            .firstWhereOrNull((m) => m.id == MenuId.setSystemTimePage.index),
+        originalMenus
+            .firstWhereOrNull((m) => m.id == MenuId.wifiSettingPage.index),
+        originalMenus
+            .firstWhereOrNull((m) => m.id == MenuId.btSettingPage.index),
+        originalMenus
+            .firstWhereOrNull((m) => m.id == MenuId.updateFirmwarePage.index),
+        originalMenus
+            .firstWhereOrNull((m) => m.id == MenuId.calibrationPage.index),
+      ].whereType<RouteData>().toList(),
+    ),
+
+    // 格式组
+    RouteDataGroup(
+      title: localizedStrings.menuFormat,
+      iconPath: formatTitleSvgIcon(),
+      children: [
+        originalMenus
+            .firstWhereOrNull((m) => m.id == MenuId.labelDesignPage.index),
+        originalMenus
+            .firstWhereOrNull((m) => m.id == MenuId.receiptDesignPage.index),
+        originalMenus.firstWhereOrNull(
+            (m) => m.id == MenuId.serialOutputDesignPage.index),
+        originalMenus
+            .firstWhereOrNull((m) => m.id == MenuId.downloadLabelPage.index),
+        originalMenus
+            .firstWhereOrNull((m) => m.id == MenuId.downReciptPage.index),
+      ].whereType<RouteData>().toList(),
+    ),
+
+    // 基础数据组
+    RouteDataGroup(
+      title: localizedStrings.menuData,
+      iconPath: basicDataTitleSvgIcon(),
+      children: [
+        originalMenus.firstWhereOrNull(
+            (m) => m.id == MenuId.basicDataCollectionPage.index),
+        originalMenus.firstWhereOrNull((m) => m.id == MenuId.pluEditPage.index),
+      ].whereType<RouteData>().toList(),
+    ),
+  ];
 }

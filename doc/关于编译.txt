@@ -1,0 +1,6 @@
+1.excel插件有个bug
+Unhandled Exception: Exception: custom numFmtId starts at 164 but found a value of 41 
+
+目前没有解决这个问题，自己手动解决，如果遇到问题的话。特别是更新flutter版本的时候，要注意导入导出的问题。
+
+2.

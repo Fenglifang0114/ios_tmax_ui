@@ -786,3 +786,18 @@ class EventRespGetUserDetail {
   dynamic obj;
   EventRespGetUserDetail(this.obj);
 }
+
+class EventRespPluAdd {
+  dynamic obj;
+  EventRespPluAdd(this.obj);
+}
+
+class EventRespProductAddOne {
+  dynamic obj;
+  EventRespProductAddOne(this.obj);
+}
+
+class EventRespGetLastProductRec {
+  dynamic obj;
+  EventRespGetLastProductRec(this.obj);
+}

@@ -16,6 +16,7 @@ import 'data/setting_version_info.dart';
 import 'eventbus/eventbus.dart';
 import 'generated/l10n.dart';
 import 'widget/theme_color.dart';
+import 'package:flutter/gestures.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -120,6 +121,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       //自定义主题
       theme: themeColor(colorTheme, savedDarkMode),
+      scrollBehavior: DesktopScrollBehavior(), //触屏支持滚动
       // 国际化
       localizationsDelegates: const [
         // 本地化的代理类
@@ -171,4 +173,17 @@ class MyApp extends StatelessWidget {
       connectChannel0();
     }
   }
+}
+
+// 自定义滚动行为，支持触摸和鼠标设备
+class DesktopScrollBehavior extends MaterialScrollBehavior {
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch, // 支持触摸设备
+        PointerDeviceKind.mouse, // 支持鼠标设备
+        // 可以根据需要添加其他设备类型
+        // PointerDeviceKind.stylus,
+        // PointerDeviceKind.invertedStylus,
+        // PointerDeviceKind.trackpad,
+      };
 }
