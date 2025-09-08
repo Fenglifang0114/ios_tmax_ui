@@ -72,7 +72,7 @@ Map<String, ReportShowName> myReportFeildsMap = {
   'Weight Unit': ReportShowName(localizedStrings.gRptWeightUnit, true),
   'Pretare': ReportShowName(localizedStrings.gPluPretare, false),
   // 'User NO.': ReportShowName('User NO.', false),
-  // 'User Name': ReportShowName('User Name', true),
+  'User Name': ReportShowName(localizedStrings.operator, true),
   'Scale Name': ReportShowName(localizedStrings.gScaleName, true),
 };
 
@@ -120,6 +120,9 @@ void updateMyReportFeildsMap() {
         break;
       case 'Scale Name':
         value.showName = localizedStrings.gScaleName;
+        break;
+      case 'User Name':
+        value.showName = localizedStrings.operator;
         break;
       case 'Weight':
         value.showName = localizedStrings.gRptWeight;

@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/icons.dart';
 import 'package:t_max/data/new_get_recs.dart';
@@ -1079,8 +1080,8 @@ void sendDataToDb(
         ? totalWeight.toStringAsFixed(0)
         : totalWeight.toString(),
     weightUnit: baseUnit,
-    userNo: '0',
-    userName: 'admin',
+    userNo: mySysUser.userId.toString(),
+    userName: mySysUser.nickName,
     scaleMode: mySettingParam.scaleMode.toString(),
   );
 

@@ -380,6 +380,11 @@ class WgtDataTable extends StatelessWidget {
           context,
           tableState.visibleColumns['Pretare']!.showName,
         ),
+      if (tableState.visibleColumns['User Name']!.isSelect)
+        _getDataColumnWithoutSort(
+          context,
+          tableState.visibleColumns['User Name']!.showName,
+        ),
       if (tableState.visibleColumns['Scale Name']!.isSelect)
         _getDataColumnWithoutSort(
           context,
@@ -516,6 +521,13 @@ class WgtDataTable extends StatelessWidget {
           context,
           tableState.visibleColumns['Pretare']!.showName,
           columnKey: 'Pretare',
+          tableState: tableState,
+        ),
+      if (tableState.visibleColumns['User Name']!.isSelect)
+        getDataColumn(
+          context,
+          tableState.visibleColumns['User Name']!.showName,
+          columnKey: 'User Name',
           tableState: tableState,
         ),
       if (tableState.visibleColumns['Scale Name']!.isSelect)
@@ -679,6 +691,12 @@ class WgtDataTable extends StatelessWidget {
         item.scaleRec.header!.pretare.toString(),
       ));
     }
+    if (tableState.visibleColumns['User Name']!.isSelect) {
+      cells.add(getDataCell(
+        context,
+        item.scaleRec.header!.userName.toString(),
+      ));
+    }
     if (tableState.visibleColumns['Scale Name']!.isSelect) {
       cells.add(getDataCell(
         context,
@@ -833,6 +851,7 @@ class WgtDataTable extends StatelessWidget {
         '',
       ));
     }
+
     if (tableState.visibleColumns['Scale Name']!.isSelect) {
       cells.add(getDataCellDetail(
         context,
@@ -876,7 +895,7 @@ class TableState with ChangeNotifier {
     'Weight Unit': ReportShowName(localizedStrings.gRptWeightUnit, true),
     'Pretare': ReportShowName(localizedStrings.gPluPretare, false),
     // 'User NO.': ReportShowName('User NO.', false),
-    // 'User Name': ReportShowName('User Name', true),
+    'User Name': ReportShowName(localizedStrings.operator, true),
     'Scale Name': ReportShowName(localizedStrings.gScaleName, true),
   };
   Map<String, ReportShowName> get visibleColumns => _visibleColumns;

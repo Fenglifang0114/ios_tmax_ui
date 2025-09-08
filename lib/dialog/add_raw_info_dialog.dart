@@ -74,7 +74,7 @@ class AddRawDialogState extends State<AddRawDialog> {
   showTypeDropDownButton(String hintText, TextEditingController valueCtl) {
     return Container(
         height: 48,
-        padding: const EdgeInsets.only(left: 5, right: 10),
+        padding: const EdgeInsets.only(left: 10, right: 10),
         decoration: BoxDecoration(
           border: Border.all(
               color: Theme.of(context).colorScheme.outlineVariant), // 设置边框颜色
@@ -88,23 +88,31 @@ class AddRawDialogState extends State<AddRawDialog> {
                 ? [
                     DropdownMenuItem<String>(
                       value: null,
-                      child: Text(localizedStrings.fPleaseSelectCategory,
-                          style: Theme.of(context).textTheme.bodySmall!.apply(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .surfaceContainerHighest,
-                              )),
+                      child: Text(
+                        localizedStrings.fPleaseSelectCategory,
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                              // 设置提示文本样式
+                              fontSize: 12,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainerHighest,
+                            ),
+                      ),
                     )
                   ]
                 : [
                     DropdownMenuItem<String>(
                       value: null,
-                      child: Text(localizedStrings.fPleaseSelectCategory,
-                          style: Theme.of(context).textTheme.bodySmall!.apply(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .surfaceContainerHighest,
-                              )),
+                      child: Text(
+                        localizedStrings.fPleaseSelectCategory,
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                              // 设置提示文本样式
+                              fontSize: 12,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainerHighest,
+                            ),
+                      ),
                     ),
                     ...rawTypeList.map((CategoryTypeList item) {
                       return DropdownMenuItem<String>(
@@ -231,6 +239,16 @@ class AddRawDialogState extends State<AddRawDialog> {
                                               Radius.circular(0.0))),
                                       hintText: localizedStrings
                                           .fInputRawMaterialIdHint,
+                                      hintStyle: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall!
+                                          .copyWith(
+                                            // 设置提示文本样式
+                                            fontSize: 12,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .surfaceContainerHighest,
+                                          ),
                                       suffixIconConstraints:
                                           BoxConstraints.tight(Size(40, 40)),
                                     ),
@@ -295,6 +313,16 @@ class AddRawDialogState extends State<AddRawDialog> {
                                               Radius.circular(0.0))),
                                       hintText: localizedStrings
                                           .fInputRawMaterialNameHint,
+                                      hintStyle: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall!
+                                          .copyWith(
+                                            // 设置提示文本样式
+                                            fontSize: 12,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .surfaceContainerHighest,
+                                          ),
                                       suffixIconConstraints:
                                           BoxConstraints.tight(Size(40, 40)),
                                     ),
@@ -627,7 +655,7 @@ class EditRawDialogState extends State<EditRawDialog> {
   showTypeDropDownButton(String hintText, TextEditingController valueCtl) {
     return Container(
         height: 48,
-        padding: const EdgeInsets.only(left: 5, right: 10),
+        padding: const EdgeInsets.only(left: 10, right: 10),
         decoration: BoxDecoration(
           border: Border.all(
               color: Theme.of(context).colorScheme.outlineVariant), // 设置边框颜色
@@ -737,8 +765,8 @@ class EditRawDialogState extends State<EditRawDialog> {
                           child: Row(children: [
                             Expanded(
                               child: Container(
-                                  padding:
-                                      const EdgeInsets.only(left: 5, right: 5),
+                                  padding: const EdgeInsets.only(
+                                      left: 10, right: 10),
                                   decoration: BoxDecoration(
                                     border: Border.all(
                                       color: Theme.of(context)
@@ -805,8 +833,8 @@ class EditRawDialogState extends State<EditRawDialog> {
                           child: Row(children: [
                             Expanded(
                               child: Container(
-                                  padding:
-                                      const EdgeInsets.only(left: 5, right: 5),
+                                  padding: const EdgeInsets.only(
+                                      left: 10, right: 10),
                                   decoration: BoxDecoration(
                                     border: Border.all(
                                       color: Theme.of(context)
@@ -822,6 +850,18 @@ class EditRawDialogState extends State<EditRawDialog> {
                                       border: InputBorder.none,
                                       hintText: localizedStrings
                                           .fInputRawMaterialNameHint,
+                                      contentPadding:
+                                          EdgeInsets.symmetric(vertical: 10),
+                                      hintStyle: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall!
+                                          .copyWith(
+                                            // 设置提示文本样式
+                                            fontSize: 12,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .surfaceContainerHighest,
+                                          ),
                                       suffixIconConstraints:
                                           BoxConstraints.tight(Size(40, 40)),
                                     ),

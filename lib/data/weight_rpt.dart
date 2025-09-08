@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+import 'package:t_max/data/g_data.dart';
 import '../functions/methods.dart';
 import 'record_data.dart';
 import 'scalecmd_data.dart';
@@ -395,8 +396,8 @@ void sendRptDataToDB(
   myAddScaleRecord.limitLow = currentData.limitLow;
   myAddScaleRecord.weight = currentData.weight;
   myAddScaleRecord.weightUnit = currentData.weightUnit;
-  myAddScaleRecord.userNo = currentData.userNo;
-  myAddScaleRecord.userName = currentData.userName;
+  myAddScaleRecord.userNo = mySysUser.userId.toString();
+  myAddScaleRecord.userName = mySysUser.nickName;
   myAddScaleRecord.scaleName = currentData.scaleName;
   myAddScaleRecord.scaleMode = wgtMode;
 

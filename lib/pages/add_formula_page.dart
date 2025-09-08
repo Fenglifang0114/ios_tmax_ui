@@ -1671,11 +1671,6 @@ class AddFormulaPageState extends State<AddFormulaPage> {
           res = false;
           return;
         }
-        if (item.header!.formulaHeader!.formulaName == formulaNameCtl.text) {
-          showTipInfo(localizedStrings.fFormulaNameDuplicate, context);
-          res = false;
-          return;
-        }
       }
     }
     if (!res) {

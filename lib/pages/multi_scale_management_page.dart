@@ -58,6 +58,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
   bool isEditing = false;
   bool _isNetPort = false;
   bool isDel = false; //是否执行删除
+  bool isDC500 = false; //是否是旧的版本的秤
 
   dynamic _eventbus1;
   dynamic _eventbus2;
@@ -482,20 +483,28 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
               });
             })),
         buildItemInfo(
-            showItemName(context, localizedStrings.gDataBits, false),
-            showDropDownButton(context, '', dataBitCtl, dataBitsList, (value) {
-              setState(() {
-                if (dataBitsList.contains(value)) {
-                  dataBitCtl.text = value!;
-                }
-              });
-            }),
-            SizedBox(
-              width: inputWidth,
+          showItemName(context, localizedStrings.gDataBits, false),
+          showDropDownButton(context, '', dataBitCtl, dataBitsList, (value) {
+            setState(() {
+              if (dataBitsList.contains(value)) {
+                dataBitCtl.text = value!;
+              }
+            });
+          }),
+          showItemName(context, "DC500", false),
+          Container(
+            width: inputWidth,
+            alignment: Alignment.centerLeft,
+            child: Checkbox(
+              value: isDC500,
+              onChanged: (bool? newValue) {
+                setState(() {
+                  isDC500 = newValue ?? false;
+                });
+              },
             ),
-            SizedBox(
-              width: inputWidth,
-            )),
+          ),
+        ),
         SizedBox(
           height: regularPadding,
         ),
@@ -1360,8 +1369,12 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
     myMediaConf.type = 0;
     addNetScale.scaleId = 10;
     addNetScale.scaleModel = 'TMax';
+    if (isDC500) {
+      addNetScale.scaleModel = 'DC500';
+    }
     addNetScale.mediaConf = myMediaConf;
     PublicFunctions.sendAddScale(jsonEncode(addNetScale));
+    isDC500 = false;
   }
 
   bool isValidScaleName(String name) {

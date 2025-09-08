@@ -1465,15 +1465,6 @@ class EditFormulaPageState extends State<EditFormulaPage> {
       return;
     }
 
-    for (var item in formulaDataList) {
-      if (item.header!.formulaHeader!.formulaName == formulaNameCtl.text &&
-          item.header!.formulaHeader!.formulaId !=
-              widget.editFormulaInfo.header!.formulaHeader!.formulaId) {
-        showTipInfo(localizedStrings.fFormulaNameDuplicate, context);
-        return;
-      }
-    }
-
     //查找配方类别的ID
     int categoryId = 0;
     for (var item in formulaTypeList) {
