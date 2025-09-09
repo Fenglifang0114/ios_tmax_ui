@@ -331,6 +331,7 @@ class AddSysUserPageState extends State<AddSysUserPage> {
     tempUser.createdBy = widget.initUserInfo.createdBy;
     tempUser.createdTime = widget.initUserInfo.createdTime;
     tempUser.password = widget.initUserInfo.password;
+    tempUser.updatedTime = widget.initUserInfo.createdTime;
 
     if (pwd1Ctl.text.isNotEmpty && pwd2Ctl.text.isNotEmpty) {
       tempUser.password = pwd1Ctl.text;

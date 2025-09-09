@@ -643,6 +643,9 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
                         MaterialButton(
                           onPressed: mySysUser.roleId == 1
                               ? () {
+                                  if ((data as SysUserFromDb).roleId == 1) {
+                                    return;
+                                  }
                                   deleteUser(data);
                                 }
                               : (data as SysUserFromDb).userId ==
