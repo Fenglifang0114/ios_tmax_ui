@@ -6,6 +6,7 @@ import 'package:t_max/data/darf_fma_data_from_db.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/formula_scale_data.dart';
 import 'package:t_max/data/formula_wgt_process_data.dart';
+import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/get_auto_next_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/icons.dart';
@@ -90,6 +91,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
   late Scale myScale;
 
   bool autoNextStep = false;
+  bool autoTare = false;
   final TextEditingController stableTimeCtl = TextEditingController();
   Timer? autoNextStepTimer;
   int stableDurationCounter = 0; // 稳定时长计数器
@@ -543,11 +545,10 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
         if (dataStr != '') {
           setState(() {
             autoNextStep = getAutoNextFormDbFromJson(dataStr).autoNext;
-
             autoNextStepNotifier.value = autoNextStep;
-
             stableTime = getAutoNextFormDbFromJson(dataStr).stableTime;
             stableTimeCtl.text = stableTime.toString();
+            autoTare = getAutoNextFormDbFromJson(dataStr).autoTare;
           });
         } else {
           setState(() {
@@ -671,7 +672,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
     }
     RecHeader recHeader = RecHeader(
       recordId: recRecNumber, //配方订单编号
-      recHeaderOperator: 'admin', //操作员
+      recHeaderOperator: mySysUser.nickName!, //操作员
       formulaId: myFmaInfo.header!.formulaHeader!.formulaId, //配方ID
       formulaTypeName: myFmaInfo.header!.formulaHeader!.formulaName, //配方名称
       totalWeight: myFmaInfo.header!.formulaHeader!.totalWeight!, //总重量
@@ -709,6 +710,10 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
         actualErrorWgt: wgtRec.currentErrorWgt, //实际误差重量
         actualErrorPct: wgtRec.currentErrorPct, //实际误差百分比
         isQualified: wgtRec.isOK, //是否合格
+        scaleId: myScale.scaleId,
+        scaleName: myScale.scaleName,
+        scaleModel: myScale.scaleModel, //秤型号
+        scaleSn: myScale.scaleSn, //秤SN
       );
       reqRecDetailList.add(recDetail);
     }
@@ -754,6 +759,9 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
                               );
                             },
                           ).then((value) {
+                            if (value == null) {
+                              return;
+                            }
                             if (value) {
                               // 保存
                               saveFmaRec(isAllOK);
@@ -872,6 +880,9 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
                             );
                           },
                         ).then((value) {
+                          if (value == null) {
+                            return;
+                          }
                           if (value) {
                             setState(() {
                               startFormula = true;
@@ -939,7 +950,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
     DarfHeader header = DarfHeader(
       recId: 0,
       orderId: recRecNumber, //配方订单编号
-      createdBy: 'admin', //操作员
+      createdBy: mySysUser.nickName!, //操作员
       formulaId: myFmaInfo.header!.formulaHeader!.formulaId, //配方ID
 
       status: 0,
@@ -2877,6 +2888,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
     ReqAutoNext reqAutoNext = ReqAutoNext(
       autoNext: autoNextStep,
       stableTime: stableTime,
+      autoTare: true,
     );
 
     PublicFunctions.updateAutoNext(reqAutoNextToJson(reqAutoNext));

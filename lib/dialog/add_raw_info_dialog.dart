@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/formula_scale_data.dart';
+import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/language.dart';
 import 'package:t_max/data/req_formula_data.dart';
+import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/dialog/raw_type_mgr.dart';
 import 'package:t_max/eventbus/eventbus.dart';
@@ -37,6 +39,7 @@ class AddRawDialogState extends State<AddRawDialog> {
   TextEditingController rawNameCtl = TextEditingController();
   TextEditingController rawRemarkCtl = TextEditingController();
   TextEditingController rawTypeCtl = TextEditingController();
+  TextEditingController scaleNameCtl = TextEditingController();
   dynamic _eventbus1;
 
   @override
@@ -143,6 +146,79 @@ class AddRawDialogState extends State<AddRawDialog> {
                 )));
   }
 
+//选择秤
+  showScaleDropDownBtn(String hintText) {
+    return Container(
+        height: 48,
+        padding: const EdgeInsets.only(left: 10, right: 10),
+        decoration: BoxDecoration(
+          border: Border.all(
+              color: Theme.of(context).colorScheme.outlineVariant), // 设置边框颜色
+          borderRadius: BorderRadius.circular(0), // 设置圆角
+        ),
+        child: DropdownButton(
+            underline: SizedBox(),
+            isExpanded: true,
+            value: scaleNameCtl.text == "" ? null : scaleNameCtl.text,
+            items: myAllScalesList.isEmpty
+                ? [
+                    DropdownMenuItem<String>(
+                      value: null,
+                      child: Text(
+                        hintText,
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                              // 设置提示文本样式
+                              fontSize: 12,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainerHighest,
+                            ),
+                      ),
+                    )
+                  ]
+                : [
+                    DropdownMenuItem<String>(
+                      value: null,
+                      child: Text(
+                        hintText,
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                              // 设置提示文本样式
+                              fontSize: 12,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainerHighest,
+                            ),
+                      ),
+                    ),
+                    ...myAllScalesList.map((Scale item) {
+                      return DropdownMenuItem<String>(
+                        value: item.scaleId.toString(),
+                        child: Text("${item.scaleId}:${item.scaleName}",
+                            style: Theme.of(context).textTheme.bodySmall!.apply(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                )),
+                      );
+                    })
+                  ],
+            onChanged: (value) {
+              if (value == null) {
+                setState(() {
+                  scaleNameCtl.text = '';
+                });
+
+                return;
+              }
+
+              setState(() {
+                scaleNameCtl.text = value.toString();
+              });
+            },
+            style: Theme.of(context).textTheme.bodySmall!.apply(
+                  color: Theme.of(context).colorScheme.onSurface,
+                )));
+  }
+
   // 显示原料类型管理的对话框
   void showRawTypeMgrDialog() {
     showDialog(
@@ -178,7 +254,7 @@ class AddRawDialogState extends State<AddRawDialog> {
       backgroundColor: Colors.transparent,
       child: Container(
         width: 610,
-        height: 493,
+        height: 593,
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(0),
@@ -415,6 +491,49 @@ class AddRawDialogState extends State<AddRawDialog> {
                 ]),
               ),
               SizedBox(
+                height: 90,
+                width: 582,
+                child: Row(children: [
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                      flex: 1,
+                      child: Column(children: [
+                        SizedBox(
+                          height: 42,
+                          child: Row(children: [
+                            Expanded(
+                              child: Container(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  '选择设备',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .apply(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
+                                      ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ),
+                          ]),
+                        ),
+                        showScaleDropDownBtn('请选择设备'),
+                      ])),
+                  SizedBox(
+                    width: largePadding,
+                  ),
+                  Expanded(flex: 1, child: SizedBox()),
+                  SizedBox(
+                    width: largePadding,
+                  ),
+                ]),
+              ),
+              SizedBox(
                 height: 160,
                 width: 582,
                 child: Row(
@@ -461,24 +580,15 @@ class AddRawDialogState extends State<AddRawDialog> {
                         ),
                       ),
                       onPressed:
-                          (rawCodeCtl.text.isEmpty || rawNameCtl.text.isEmpty
-                              // || rawTypeCtl.text.isEmpty
-                              )
+                          (rawCodeCtl.text.isEmpty || rawNameCtl.text.isEmpty)
                               ? null
                               : () {
                                   // 检查原料是否已经存在
                                   for (var item in rawDataList) {
-                                    if (item.rawMaterial.materialName ==
-                                        rawNameCtl.text) {
-                                      showTipInfo(
-                                          localizedStrings.fRawIdDuplicate,
-                                          context);
-                                      return;
-                                    }
                                     if (item.rawMaterial.materialId ==
                                         rawCodeCtl.text) {
                                       showTipInfo(
-                                          localizedStrings.fRawNameDuplicate,
+                                          localizedStrings.fRawIdDuplicate,
                                           context);
                                       return;
                                     }
@@ -489,16 +599,20 @@ class AddRawDialogState extends State<AddRawDialog> {
                                     typeId = 0;
                                     // return;
                                   }
+                                  int? scaleId = 0;
+                                  if (scaleNameCtl.text != "") {
+                                    scaleId = int.tryParse(scaleNameCtl.text);
+                                  }
                                   AddRawData data = AddRawData(
-                                    materialId: rawCodeCtl.text,
-                                    materialName: rawNameCtl.text,
-                                    categoryId: typeId,
-                                    ingredient: rawRemarkCtl.text,
-                                    createdBy: "admin",
-                                    updatedBy: "admin",
-                                    remark: "",
-                                    remark1: "",
-                                  );
+                                      materialId: rawCodeCtl.text,
+                                      materialName: rawNameCtl.text,
+                                      categoryId: typeId,
+                                      ingredient: rawRemarkCtl.text,
+                                      createdBy: mySysUser.nickName!,
+                                      updatedBy: mySysUser.nickName!,
+                                      remark: "",
+                                      remark1: "",
+                                      scaleId: scaleId);
                                   PublicFunctions.addRawData(data);
                                   Navigator.pop(context);
                                 },
@@ -616,6 +730,8 @@ class EditRawDialogState extends State<EditRawDialog> {
   TextEditingController rawNameCtl = TextEditingController();
   TextEditingController rawRemarkCtl = TextEditingController();
   TextEditingController rawTypeCtl = TextEditingController();
+  TextEditingController scaleIdCtl = TextEditingController();
+
   dynamic _eventbus1;
 
   @override
@@ -625,6 +741,10 @@ class EditRawDialogState extends State<EditRawDialog> {
     rawNameCtl.text = widget.rawData.rawMaterial.materialName;
     rawRemarkCtl.text = widget.rawData.rawMaterial.ingredient;
     rawTypeCtl.text = widget.rawData.rawCategoryName;
+    scaleIdCtl.text = (widget.rawData.rawMaterial.scaleId == 0 ||
+            widget.rawData.rawMaterial.scaleId == null)
+        ? ""
+        : widget.rawData.rawMaterial.scaleId.toString();
     _eventbus1 = eventBus.on<EventRespGetRawTypeList>().listen((event) {
       if (mounted) {
         String dataStr = event.obj;
@@ -698,6 +818,79 @@ class EditRawDialogState extends State<EditRawDialog> {
         ));
   }
 
+  //选择秤
+  showScaleDropDownBtn(String hintText) {
+    return Container(
+        height: 48,
+        padding: const EdgeInsets.only(left: 10, right: 10),
+        decoration: BoxDecoration(
+          border: Border.all(
+              color: Theme.of(context).colorScheme.outlineVariant), // 设置边框颜色
+          borderRadius: BorderRadius.circular(0), // 设置圆角
+        ),
+        child: DropdownButton(
+            underline: SizedBox(),
+            isExpanded: true,
+            value: scaleIdCtl.text == "" ? null : scaleIdCtl.text,
+            items: myAllScalesList.isEmpty
+                ? [
+                    DropdownMenuItem<String>(
+                      value: null,
+                      child: Text(
+                        hintText,
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                              // 设置提示文本样式
+                              fontSize: 12,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainerHighest,
+                            ),
+                      ),
+                    )
+                  ]
+                : [
+                    DropdownMenuItem<String>(
+                      value: null,
+                      child: Text(
+                        hintText,
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                              // 设置提示文本样式
+                              fontSize: 12,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainerHighest,
+                            ),
+                      ),
+                    ),
+                    ...myAllScalesList.map((Scale item) {
+                      return DropdownMenuItem<String>(
+                        value: item.scaleId.toString(),
+                        child: Text("${item.scaleId}:${item.scaleName}",
+                            style: Theme.of(context).textTheme.bodySmall!.apply(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                )),
+                      );
+                    })
+                  ],
+            onChanged: (value) {
+              if (value == null) {
+                setState(() {
+                  scaleIdCtl.text = '';
+                });
+
+                return;
+              }
+
+              setState(() {
+                scaleIdCtl.text = value.toString();
+              });
+            },
+            style: Theme.of(context).textTheme.bodySmall!.apply(
+                  color: Theme.of(context).colorScheme.onSurface,
+                )));
+  }
+
   //// 显示原料类型管理的对话框
   void showRawTypeMgrDialog() {
     showDialog(
@@ -717,7 +910,7 @@ class EditRawDialogState extends State<EditRawDialog> {
       backgroundColor: Colors.transparent,
       child: Container(
         width: 610,
-        height: 493,
+        height: 593,
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(0),
@@ -949,6 +1142,49 @@ class EditRawDialogState extends State<EditRawDialog> {
                 ]),
               ),
               SizedBox(
+                height: 90,
+                width: 582,
+                child: Row(children: [
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                      flex: 1,
+                      child: Column(children: [
+                        SizedBox(
+                          height: 42,
+                          child: Row(children: [
+                            Expanded(
+                              child: Container(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  '选择设备',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .apply(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
+                                      ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ),
+                          ]),
+                        ),
+                        showScaleDropDownBtn('请选择设备'),
+                      ])),
+                  SizedBox(
+                    width: largePadding,
+                  ),
+                  Expanded(flex: 1, child: SizedBox()),
+                  SizedBox(
+                    width: largePadding,
+                  ),
+                ]),
+              ),
+              SizedBox(
                 height: 116,
                 width: 582,
                 child: Row(children: [
@@ -1045,31 +1281,36 @@ class EditRawDialogState extends State<EditRawDialog> {
                           borderRadius: BorderRadius.zero,
                         ),
                       ),
-                      onPressed:
-                          (rawCodeCtl.text.isEmpty || rawNameCtl.text.isEmpty
-                              // ||   rawTypeCtl.text.isEmpty
-                              )
-                              ? null
-                              : () {
-                                  int typeId = getRawTypeId(rawTypeCtl.text);
-                                  if (typeId == -1) {
-                                    return;
-                                  }
-                                  EditRawData data = EditRawData(
-                                    recId: widget.rawData.rawMaterial.recId,
-                                    materialId: rawCodeCtl.text,
-                                    materialName: rawNameCtl.text,
-                                    categoryId: typeId,
-                                    ingredient: rawRemarkCtl.text,
-                                    createdBy: "admin",
-                                    updatedBy: "admin",
-                                    remark: "",
-                                    remark1: "",
-                                  );
-                                  PublicFunctions.editRawData(data);
+                      onPressed: (rawCodeCtl.text.isEmpty ||
+                              rawNameCtl.text.isEmpty
+                          // ||   rawTypeCtl.text.isEmpty
+                          )
+                          ? null
+                          : () {
+                              int typeId = getRawTypeId(rawTypeCtl.text);
+                              if (typeId == -1) {
+                                return;
+                              }
+                              int scaleId = 0;
+                              if (scaleIdCtl.text.isNotEmpty) {
+                                scaleId = int.parse(scaleIdCtl.text);
+                              }
+                              EditRawData data = EditRawData(
+                                recId: widget.rawData.rawMaterial.recId,
+                                materialId: rawCodeCtl.text,
+                                materialName: rawNameCtl.text,
+                                categoryId: typeId,
+                                ingredient: rawRemarkCtl.text,
+                                createdBy: widget.rawData.rawMaterial.createdBy,
+                                updatedBy: mySysUser.nickName!,
+                                remark: "",
+                                remark1: "",
+                                scaleId: scaleId,
+                              );
+                              PublicFunctions.editRawData(data);
 
-                                  Navigator.pop(context);
-                                },
+                              Navigator.pop(context);
+                            },
                       child: Text(
                         localizedStrings.gBtnConfirm,
                         style: TextStyle(

@@ -1,14 +1,20 @@
+import 'dart:async';
 import 'dart:io';
-
+import 'package:excel/excel.dart' as excel;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:t_max/data/darf_fma_data_from_db.dart';
+import 'package:t_max/data/fma_import_func.dart';
 import 'package:t_max/data/fma_rec_list_db_data.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/formula_scale_data.dart';
+import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
+import 'package:t_max/data/icons.dart';
+import 'package:t_max/data/import_fma_data.dart';
 import 'package:t_max/data/req_formula_data.dart';
+import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/dialog/add_fma_wgt_dialog.dart';
 import 'package:t_max/dialog/add_raw_info_dialog.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
@@ -23,11 +29,14 @@ import 'package:t_max/pages/fma_wgt_rec_page.dart';
 import 'package:t_max/pages/start_darft_fma_pct_page.dart';
 import 'package:t_max/pages/start_fma_pct_page.dart';
 import 'package:t_max/pages/start_fma_secret_page.dart';
+import 'package:t_max/widget/common_widget.dart';
+import 'package:t_max/widget/dialog_head_style.dart';
 import 'package:t_max/widget/formula_widget.dart';
 import 'package:t_max/data/formula_from_db_data.dart';
 import 'package:t_max/widget/page_head.dart';
 import 'package:t_max/widget/scale_list.dart';
 import 'package:t_max/widget/sticky_table.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../data/language.dart';
 
 // 定义 EncryptedValue 枚举
@@ -73,10 +82,8 @@ class FormulationScalePageState extends State<FormulationScalePage>
   int? clickedFmaRow; // 添加点击行状态
   int? clickedDarftRow; // 添加点击行状态
   int? _selectedRawIndex; // 新增状态，用于记录当前被点击的原料 index
-  int? _selectedFmaIndex; // 新增状态，用于记录当前被点击的配方 index
-  // int? _selectedDarftIndex; // 新增状态，用于记录当前被点击的配方 index
-  // 定义 FocusNode
-  // final FocusNode _searchFocusNode = FocusNode();
+  int? selectedFmaIndex; // 新增状态，用于记录当前被点击的配方 index
+
   final TextEditingController _searchFmaIdCtl = TextEditingController();
   final TextEditingController searchFmaEncryptedCtl = TextEditingController();
   final TextEditingController isFmaEncryptedCtl = TextEditingController();
@@ -97,6 +104,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
 
   List<DarfFmaInfo> searchDarfFmaInfoList = []; //暂存的配方称重记录和配方明细
   DarfFmaInfo? selectedDarfFma; //选中的配方称重记录和配方明细
+  Timer? _onlineTimer;
 
   dynamic _eventbus1;
   dynamic _eventbus2;
@@ -110,10 +118,14 @@ class FormulationScalePageState extends State<FormulationScalePage>
   dynamic _eventbus10;
   dynamic _eventbus11;
   dynamic _eventbus12;
+  dynamic _eventbus13;
+  dynamic _eventbus14;
+  dynamic _eventbus15;
 
   @override
   void initState() {
     super.initState();
+    startTestScaleOnline();
 
     _tabController = TabController(length: 3, vsync: this);
 
@@ -152,9 +164,11 @@ class FormulationScalePageState extends State<FormulationScalePage>
           setState(() {
             _selectedRawIndex = -1; // 重置选中的原料 index
             clickedRow = null; // 重置点击行状态
-            rawFormulaList = [];
+            // rawFormulaList = [];
 
-            rawDataList = rawDataInfoFromJson(dataStr);
+            List<RawDataInfo> temp = rawDataInfoFromJson(dataStr);
+
+            rawDataList.addAll(temp);
             searchRawList = List.from(rawDataList);
           });
         } else {
@@ -186,18 +200,20 @@ class FormulationScalePageState extends State<FormulationScalePage>
         String dataStr = event.obj;
         if (dataStr != '' && dataStr != 'null') {
           setState(() {
-            _selectedFmaIndex = -1; // 重置选中的原料 index
+            selectedFmaIndex = -1; // 重置选中的原料 index
             selectedFormula = null; // 重置选中的配方
             selectedDetail.rawMaterialTypeName = null; // 重置选中的原料类型名称
             selectedDetail = Detail(); // 重置选中的原料
             clickedFmaRow = null; // 重置点击行状态
 
-            formulaDataList = formulaInfoDbFromJson(dataStr);
+            List<FormulaInfoDb> tempFmaDataList =
+                formulaInfoDbFromJson(dataStr);
+            formulaDataList.addAll(tempFmaDataList);
             searchFmaList = List.from(formulaDataList);
           });
         } else {
           setState(() {
-            _selectedFmaIndex = -1; // 重置选中的原料 index
+            selectedFmaIndex = -1; // 重置选中的原料 index
             selectedFormula = null; // 重置选中的配方
             selectedDetail.rawMaterialTypeName = null; // 重置选中的原料类型名称
             selectedDetail = Detail(); // 重置选中的原料
@@ -284,6 +300,21 @@ class FormulationScalePageState extends State<FormulationScalePage>
         PublicFunctions.getDraftRecords();
       }
     });
+    _eventbus13 = eventBus.on<EventRespCheckNetScale>().listen((event) {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+    _eventbus14 = eventBus.on<EventRespScaleOnline>().listen((event) {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+    _eventbus15 = eventBus.on<EventPLuDataSavedOK>().listen((event) {
+      if (mounted) {
+        // PublicFunctions.getRawList();
+      }
+    });
 
     //初始化完成再做一次数据加载
 
@@ -333,6 +364,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
     searchDarfFmaInfoList.clear();
 
     selectedDetail = Detail(); // 重置选中的原料
+    stopTestScaleOnline();
 
     _eventbus1?.cancel();
     _eventbus2?.cancel();
@@ -346,6 +378,27 @@ class FormulationScalePageState extends State<FormulationScalePage>
     _eventbus10?.cancel();
     _eventbus11?.cancel();
     _eventbus12?.cancel();
+    _eventbus13?.cancel();
+    _eventbus14?.cancel();
+    _eventbus15?.cancel();
+  }
+
+  void startTestScaleOnline() {
+    _onlineTimer?.cancel();
+
+    _onlineTimer = Timer.periodic(Duration(seconds: 5), (Timer timer) {
+      for (var scale in myAllScalesList) {
+        if (scale.tMedia == comScaleType) {
+          PublicFunctions.checkSerialPort(scale.scaleId);
+        }
+      }
+    });
+  }
+
+  void stopTestScaleOnline() {
+    // 停止发送在线状态
+    _onlineTimer?.cancel();
+    _onlineTimer = null;
   }
 
   @override
@@ -383,17 +436,13 @@ class FormulationScalePageState extends State<FormulationScalePage>
                             if (_selectedTabIndex == 0) showFormulaSearch(),
                             if (_selectedTabIndex == 1) showRawSearch(),
                             if (_selectedTabIndex == 2) showDarftFmaSearch(),
-                            // if (_selectedTabIndex == 2) showDarftFmaSearch(),
                             if (_selectedTabIndex == 0) showFormulaTable(),
                             if (_selectedTabIndex == 1) showRawTable(),
                             if (_selectedTabIndex == 2) showDarftFmaTable(),
                             SizedBox(height: 14),
-                            // _showBottomSection
-                            //     ?
                             if (_selectedTabIndex == 0) showFormulaBottom(),
                             if (_selectedTabIndex == 1) showRawBottom(),
                             if (_selectedTabIndex == 2) showDarftFmaBottom(),
-
                             Container(
                               height: 14,
                               color: colorScheme.surface,
@@ -921,6 +970,30 @@ class FormulationScalePageState extends State<FormulationScalePage>
               },
             ),
             StickyTableColumn(
+              localizedStrings.gDeviceName,
+              showSort: true,
+              columnWidth: const FixedColumnWidth(130),
+              alignment: Alignment.centerLeft,
+              sort: false,
+              renderCell: (context, title, data, row, column) {
+                // 显示 materialId 字段
+                String scaleName = '-';
+                for (var scale in myAllScalesList) {
+                  if (scale.scaleId ==
+                      (data as RawDataInfo).rawMaterial.scaleId) {
+                    scaleName = scale.scaleName;
+                    break;
+                  }
+                }
+                return showRenderCellText(scaleName);
+              },
+              renderTitle: (context, title) {
+                return showRenderTitleText(
+                  title.title,
+                );
+              },
+            ),
+            StickyTableColumn(
               localizedStrings.fRawMaterialTypeNameCol,
               showSort: true,
               sort: false,
@@ -1051,6 +1124,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
                         );
                       },
                     ).then((value) {
+                      if (value == null) {
+                        return;
+                      }
                       if (value) {
                         PublicFunctions.deleteRawData(
                             (data as RawDataInfo).rawMaterial.recId);
@@ -1373,6 +1449,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
                         );
                       },
                     ).then((value) {
+                      if (value == null) {
+                        return;
+                      }
                       if (value) {
                         PublicFunctions.deleteDraftRecord(
                             (data as DarfFmaInfo).fmaRec!.header!.orderId!);
@@ -1431,10 +1510,10 @@ class FormulationScalePageState extends State<FormulationScalePage>
               selectedFormula = searchFmaList[row];
               if (selectedFormula!.details!.isEmpty) {
                 selectedDetail = Detail();
-                _selectedFmaIndex = -1;
+                selectedFmaIndex = -1;
               } else {
                 selectedDetail = selectedFormula!.details![0];
-                _selectedFmaIndex = 0;
+                selectedFmaIndex = 0;
               }
             });
           },
@@ -1672,9 +1751,6 @@ class FormulationScalePageState extends State<FormulationScalePage>
                         .formulaHeader!
                         .formulaKey!;
 
-                    // final formulaName =
-                    //     (data).header!.formulaHeader!.formulaName!;
-
                     final hasHistory = fmaRecFromDbList.any(
                         (record) => record.header?.formulaKey == formulaKey);
 
@@ -1798,6 +1874,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
                           );
                         },
                       ).then((value) {
+                        if (value == null) {
+                          return;
+                        }
                         if (value) {
                           //需要先验证是否有配方使用才能删除。
 
@@ -1840,6 +1919,115 @@ class FormulationScalePageState extends State<FormulationScalePage>
         ),
       ),
     );
+  }
+
+  bool checkScaleOnline(FormulaInfoDb? selectedFormula) {
+    if (selectedFormula == null) {
+      return false;
+    }
+    if (selScaleId == -1 &&
+        (selectedFormula.header!.formulaHeader!.isEncrypted! ||
+            selectedFormula.header!.formulaHeader!.needContainer!)) {
+      showTipInfo(localizedStrings.gTipSelectDeviceFirst, context);
+      return false;
+    }
+
+    if (selectedFormula.header!.formulaHeader!.isEncrypted! ||
+        selectedFormula.header!.formulaHeader!.needContainer!) {
+      if (!checkOnline(selScaleId)) {
+        return false;
+      }
+    }
+
+    if (selectedFormula.header!.formulaHeader!.isEncrypted!) {
+      return true;
+    }
+
+    List<Detail>? details = selectedFormula.details;
+
+    for (var detail in details!) {
+      int scaleId = findScaleIdFromRaw(detail.formulaDetail!.materialId!);
+
+      if (scaleId == 0 && selScaleId == -1) {
+        showTipInfo(localizedStrings.gTipSelectDeviceFirst, context);
+        return false;
+      }
+      if (scaleId == 0) {
+        scaleId = selScaleId;
+      }
+      if (!checkOnline(scaleId)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  bool checkOnline(int scaleId) {
+    for (var scale in myAllScalesList) {
+      if (scale.scaleId == scaleId) {
+        if (!scale.isOnline) {
+          showTipInfo(
+              "${scale.scaleName} ${localizedStrings.gTipOffline}", context);
+          return false;
+        } else {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  bool checkDarftScaleOnline(DarfFmaInfo? darftFma) {
+    if (darftFma == null) {
+      return false;
+    }
+    if (selScaleId == -1 &&
+        (darftFma.fmaInfo!.header!.formulaHeader!.isEncrypted! ||
+            darftFma.fmaInfo!.header!.formulaHeader!.needContainer!)) {
+      showTipInfo(localizedStrings.gTipSelectDeviceFirst, context);
+      return false;
+    }
+
+    if (darftFma.fmaInfo!.header!.formulaHeader!.isEncrypted! ||
+        darftFma.fmaInfo!.header!.formulaHeader!.needContainer!) {
+      if (!checkOnline(selScaleId)) {
+        return false;
+      }
+    }
+
+    if (darftFma.fmaInfo!.header!.formulaHeader!.isEncrypted!) {
+      return true;
+    }
+
+    List<Detail>? details = darftFma.fmaInfo!.details;
+
+    for (var detail in details!) {
+      int scaleId = findScaleIdFromRaw(detail.formulaDetail!.materialId!);
+
+      if (scaleId == 0 && selScaleId == -1) {
+        showTipInfo(localizedStrings.gTipSelectDeviceFirst, context);
+        return false;
+      }
+
+      if (scaleId == 0) {
+        scaleId = selScaleId;
+      }
+
+      if (!checkOnline(scaleId)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  int findScaleIdFromRaw(String materialId) {
+    for (var raw in rawDataList) {
+      if (raw.rawMaterial.materialId == materialId) {
+        return raw.rawMaterial.scaleId ?? 0;
+      }
+    }
+
+    return 0;
   }
 
   showFormulaBottom() {
@@ -1963,9 +2151,14 @@ class FormulationScalePageState extends State<FormulationScalePage>
                         borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
                       ),
                     ),
-                    onPressed: (selectedFormula == null || selScaleId == -1)
+                    onPressed: (selectedFormula == null)
                         ? null
                         : () {
+                            bool isOk = checkScaleOnline(selectedFormula);
+                            if (!isOk) {
+                              return;
+                            }
+                            stopTestScaleOnline();
                             startWeighting();
                           },
                     child: Text(
@@ -2205,9 +2398,13 @@ class FormulationScalePageState extends State<FormulationScalePage>
                         borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
                       ),
                     ),
-                    onPressed: (selectedDarfFma == null || selScaleId == -1)
+                    onPressed: (selectedDarfFma == null)
                         ? null
                         : () {
+                            bool isOk = checkDarftScaleOnline(selectedDarfFma);
+                            if (!isOk) {
+                              return;
+                            }
                             startDarftWeighting();
                           },
                     child: Text(
@@ -2321,7 +2518,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     fromDarft: false,
                   ),
                 ),
-              );
+              ).then((value) {
+                startTestScaleOnline();
+              });
             }
           }
         });
@@ -2337,7 +2536,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
               fromDarft: false,
             ),
           ),
-        );
+        ).then((value) {
+          startTestScaleOnline();
+        });
       }
     } else {
       //检查配方是重量模式还是百分比模式
@@ -2372,7 +2573,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     ,
                   ),
                 ),
-              );
+              ).then((value) {
+                startTestScaleOnline();
+              });
             }
           }
         });
@@ -2390,7 +2593,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 selectDarftInfo: null // 这里传入null，因为不是草稿配方称重，所以不需要草稿信息
                 ),
           ),
-        );
+        ).then((value) {
+          startTestScaleOnline();
+        });
       }
     }
   }
@@ -2556,14 +2761,6 @@ class FormulationScalePageState extends State<FormulationScalePage>
                             for (var formula in rawFormulaList)
                               InkWell(
                                 onTap: () {
-                                  //跳出配方详情
-                                  if (selScaleId == -1) {
-                                    showTipInfo(
-                                        localizedStrings.gTipSelectDeviceFirst,
-                                        context);
-                                    return;
-                                  }
-
                                   showDialog(
                                       context: context,
                                       builder: (context) {
@@ -2574,7 +2771,13 @@ class FormulationScalePageState extends State<FormulationScalePage>
                                       }).then((value) {
                                     if (value) {
                                       selectedFormula = formula;
-
+                                      //判断秤是否在线
+                                      bool isOk =
+                                          checkScaleOnline(selectedFormula);
+                                      if (!isOk) {
+                                        return;
+                                      }
+                                      stopTestScaleOnline();
                                       startWeighting();
                                     }
                                   });
@@ -2866,34 +3069,46 @@ class FormulationScalePageState extends State<FormulationScalePage>
           icon: Icon(Icons.add_box_outlined),
         ),
         SizedBox(
-          width: 12,
+          width: regularPadding,
         ),
-
-        IconButton(
-          iconSize: 24,
-          color: colorScheme.onPrimary,
-          focusColor: colorScheme.outline,
-          hoverColor: colorScheme.outline,
-          style: IconButton.styleFrom(
-            backgroundColor: colorScheme.surfaceContainerLow,
-            shape: RoundedRectangleBorder(
-              // 设置为矩形形状
-              borderRadius: BorderRadius.zero, // 没有圆角，即正方形
-            ),
-            fixedSize: const Size(40, 40), // 设置固定大小
-          ),
-          onPressed: () {
-            exportRaw();
-          },
-          icon: Icon(
-            Icons.file_upload_outlined,
-            color: colorScheme.primary,
-          ),
+        buildIconBtn(localizedStrings.gBtnExport, exportSvgIcon(), exportRaw),
+        SizedBox(
+          width: regularPadding,
         ),
+        buildIconBtn(localizedStrings.gBtnImport, importSvgIcon(), importRaw),
+        SizedBox(
+          width: regularPadding,
+        ),
+        buildIconBtn(localizedStrings.fGetRawTemplateBtn, rawTemplateSvgIcon(),
+            getRawTemplate),
         SizedBox(
           width: 20,
         ),
       ]),
+    );
+  }
+
+  Widget buildIconBtn(String tip, String iconPath, Function() onPressed) {
+    return Tooltip(
+      message: tip,
+      child: IconButton(
+        iconSize: 24,
+        color: colorScheme.onPrimary,
+        focusColor: colorScheme.outline,
+        hoverColor: colorScheme.outline,
+        style: IconButton.styleFrom(
+          backgroundColor: colorScheme.surfaceContainerLow,
+          shape: RoundedRectangleBorder(
+            // 设置为矩形形状
+            borderRadius: BorderRadius.zero, // 没有圆角，即正方形
+          ),
+          fixedSize: const Size(40, 40), // 设置固定大小
+        ),
+        onPressed: () {
+          onPressed();
+        },
+        icon: getSvgIcon(iconPath, 24, 24, colorScheme.primary),
+      ),
     );
   }
 
@@ -2941,8 +3156,392 @@ class FormulationScalePageState extends State<FormulationScalePage>
     );
   }
 
+  void getRawTemplate() async {
+    final directory = Directory.current.path;
+    String? outputFile = (await FilePicker.platform.saveFile(
+      initialDirectory: directory,
+      type: FileType.custom,
+      dialogTitle: 'Output file:',
+      allowedExtensions: ["xlsx"],
+      fileName: 'Ingredient_template.xlsx',
+    ));
+    if (outputFile == null) return;
+
+    if (!outputFile.contains(".xlsx")) {
+      outputFile = "$outputFile.xlsx";
+    }
+    String filePath = outputFile;
+    ExportResult result = await exportRawTemplate(filePath);
+    if (result.isSuccess) {
+      showExportDialog(filePath);
+    } else {
+      if (context.mounted) {
+        showTipInfo(result.errorMessage!, context);
+      }
+    }
+  }
+
+  Future<ExportResult> exportRawTemplate(String filePath) async {
+    try {
+      final tempExcel = excel.Excel.createExcel();
+      final sheet = tempExcel['Sheet1'];
+
+      // 写入表头
+      sheet.appendRow([
+        excel.TextCellValue('Ingredient Id'),
+        excel.TextCellValue('Ingredient Name'),
+        excel.TextCellValue('Device Name'),
+        excel.TextCellValue('Category'),
+        excel.TextCellValue('Ingredient Notes'),
+      ]);
+
+      // 写入数据行
+
+      sheet.appendRow([
+        excel.TextCellValue('TS-1001'),
+        excel.TextCellValue('Water'),
+        excel.TextCellValue('XD-101'),
+        excel.TextCellValue('Liquid'),
+        excel.TextCellValue('Slowly pour in while stirring.'),
+      ]);
+
+      sheet.appendRow([
+        excel.TextCellValue('This field is required and cannot be duplicated'),
+        excel.TextCellValue('This field is required'),
+        excel.TextCellValue('This field is not required'),
+        excel.TextCellValue('This field is not required'),
+        excel.TextCellValue('This field is not required'),
+      ]);
+
+      final file = File(filePath);
+
+      // 将Excel数据保存到文件
+      await file.writeAsBytes(tempExcel.save()!);
+
+      return ExportResult(isSuccess: true);
+    } catch (e) {
+      String errorMessage = localizedStrings.gTipExportError;
+      if (e is FileSystemException) {
+        errorMessage = localizedStrings.gTipExportFileError;
+      } else if (e is IOException) {
+        errorMessage = localizedStrings.gTipExportIOError;
+      } else if (e is PathNotFoundException) {
+        errorMessage = localizedStrings.gTipExportPathError;
+      }
+      return ExportResult(isSuccess: false, errorMessage: errorMessage);
+    }
+  }
+
+  void getFmaTemplate() async {
+    final directory = Directory.current.path;
+    String? outputFile = (await FilePicker.platform.saveFile(
+      initialDirectory: directory,
+      type: FileType.custom,
+      dialogTitle: 'Output file:',
+      allowedExtensions: ["xlsx"],
+      fileName: 'Formula_template.xlsx',
+    ));
+    if (outputFile == null) return;
+
+    if (!outputFile.contains(".xlsx")) {
+      outputFile = "$outputFile.xlsx";
+    }
+    String filePath = outputFile;
+    ExportResult result = await exportFmaTemplate(filePath);
+    if (result.isSuccess) {
+      showExportDialog(filePath);
+    } else {
+      if (context.mounted) {
+        showTipInfo(result.errorMessage!, context);
+      }
+    }
+  }
+
+  Future<ExportResult> exportFmaTemplate(String filePath) async {
+    try {
+      final tempExcel = excel.Excel.createExcel();
+      final sheet = tempExcel['Sheet1'];
+
+      // 写入表头
+      sheet.appendRow([
+        excel.TextCellValue('Formula Id'),
+        excel.TextCellValue('Formula Name'),
+        excel.TextCellValue('Mode'),
+        excel.TextCellValue('Weight Unit'),
+        excel.TextCellValue('Category'),
+        excel.TextCellValue('Confidential'),
+        excel.TextCellValue('Need Container'),
+        excel.TextCellValue('Ingredient No.'),
+        excel.TextCellValue('Ingredient Id'),
+        excel.TextCellValue('Ingredient Name'),
+        excel.TextCellValue('Ingredient Weight/Percent'),
+        excel.TextCellValue('Allow Error'),
+      ]);
+
+      // 写入数据行
+
+      sheet.appendRow([
+        excel.TextCellValue('1001'),
+        excel.TextCellValue('F1001'),
+        excel.TextCellValue('weight'),
+        excel.TextCellValue('kg'),
+        excel.TextCellValue('mixed'),
+        excel.TextCellValue('yes'),
+        excel.TextCellValue('yes'),
+        excel.TextCellValue('1'),
+        excel.TextCellValue('TS-1001'),
+        excel.TextCellValue('Water'),
+        excel.TextCellValue('8.88'),
+        excel.TextCellValue('0.1'),
+      ]);
+      sheet.appendRow([
+        excel.TextCellValue('1001'),
+        excel.TextCellValue('F1001'),
+        excel.TextCellValue('weight'),
+        excel.TextCellValue('kg'),
+        excel.TextCellValue('mixed'),
+        excel.TextCellValue('yes'),
+        excel.TextCellValue('yes'),
+        excel.TextCellValue('2'),
+        excel.TextCellValue('TS-1002'),
+        excel.TextCellValue(''),
+        excel.TextCellValue('1.88'),
+        excel.TextCellValue('0.05'),
+      ]);
+      sheet.appendRow([
+        excel.TextCellValue('1001'),
+        excel.TextCellValue('F1001'),
+        excel.TextCellValue('weight'),
+        excel.TextCellValue('kg'),
+        excel.TextCellValue('mixed'),
+        excel.TextCellValue('yes'),
+        excel.TextCellValue('yes'),
+        excel.TextCellValue('3'),
+        excel.TextCellValue('TS-1003'),
+        excel.TextCellValue(''),
+        excel.TextCellValue('2.88'),
+        excel.TextCellValue('0.08'),
+      ]);
+      /////////////////
+      sheet.appendRow([
+        excel.TextCellValue('1002'),
+        excel.TextCellValue('F1002'),
+        excel.TextCellValue('percent'),
+        excel.TextCellValue(''),
+        excel.TextCellValue(''),
+        excel.TextCellValue('no'),
+        excel.TextCellValue('no'),
+        excel.TextCellValue('1'),
+        excel.TextCellValue('TS-1001'),
+        excel.TextCellValue('Water'),
+        excel.TextCellValue('30'),
+        excel.TextCellValue('2'),
+      ]);
+      sheet.appendRow([
+        excel.TextCellValue('1002'),
+        excel.TextCellValue('F1002'),
+        excel.TextCellValue('percent'),
+        excel.TextCellValue(''),
+        excel.TextCellValue(''),
+        excel.TextCellValue('no'),
+        excel.TextCellValue('no'),
+        excel.TextCellValue('2'),
+        excel.TextCellValue('TS-1002'),
+        excel.TextCellValue(''),
+        excel.TextCellValue('50'),
+        excel.TextCellValue('1.5'),
+      ]);
+      sheet.appendRow([
+        excel.TextCellValue('1002'),
+        excel.TextCellValue('F1002'),
+        excel.TextCellValue('percent'),
+        excel.TextCellValue(''),
+        excel.TextCellValue(''),
+        excel.TextCellValue('no'),
+        excel.TextCellValue('no'),
+        excel.TextCellValue('3'),
+        excel.TextCellValue('TS-1003'),
+        excel.TextCellValue(''),
+        excel.TextCellValue('20'),
+        excel.TextCellValue('0.5'),
+      ]);
+
+      sheet.appendRow([
+        excel.TextCellValue('This field is required and cannot be duplicated'),
+        excel.TextCellValue('This field is required'),
+        excel.TextCellValue('This field is required'),
+        excel.TextCellValue('This field is required when mode is weight'),
+        excel.TextCellValue('This field is not required'),
+        excel.TextCellValue('This field is required'),
+        excel.TextCellValue('This field is required  yes/no'),
+        excel.TextCellValue('This field is required'),
+        excel.TextCellValue('This field is required'),
+        excel.TextCellValue('This field is not required'),
+        excel.TextCellValue(
+            'This field is required > 0 and decimal format less than 3'),
+        excel.TextCellValue(
+            'This field is required > 0 and decimal format less than 3'),
+      ]);
+
+      final file = File(filePath);
+
+      // 将Excel数据保存到文件
+      await file.writeAsBytes(tempExcel.save()!);
+
+      return ExportResult(isSuccess: true);
+    } catch (e) {
+      String errorMessage = localizedStrings.gTipExportError;
+      if (e is FileSystemException) {
+        errorMessage = localizedStrings.gTipExportFileError;
+      } else if (e is IOException) {
+        errorMessage = localizedStrings.gTipExportIOError;
+      } else if (e is PathNotFoundException) {
+        errorMessage = localizedStrings.gTipExportPathError;
+      }
+      return ExportResult(isSuccess: false, errorMessage: errorMessage);
+    }
+  }
+
+  void importRaw() async {
+    //选择一个csv文件
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['xlsx'],
+    );
+    if (result == null) return;
+    File file = File(result.files.single.path!);
+    //读取csv文件
+    List<List<String>> dataList = await importRawFromExcel(file);
+    if (dataList.isEmpty) {
+      return;
+    }
+    sendRawListInBatches(dataList);
+  }
+
+  void sendRawListInBatches(List<List<String>> dataList) {
+    const batchSize = 100;
+    int totalItems = dataList[0].length;
+
+    // 创建一个定时器的流控制器
+    final StreamController<Timer> timerController = StreamController<Timer>();
+
+    // 创建一个定时器，每隔4秒向流中添加一个新的定时器实例
+    var timer = Timer.periodic(const Duration(milliseconds: 500), (Timer t) {
+      timerController.add(t);
+    });
+
+    // 创建一个索引，用于跟踪当前发送到哪个批次了
+    int currentIndex = 0;
+
+    // 监听定时器流，当有新的定时器实例时，发送下一批数据
+    timerController.stream.listen((Timer timer) {
+      debugPrint('Sending batch ${currentIndex + 1}...');
+      if (currentIndex < totalItems) {
+        int endIndex = currentIndex + batchSize;
+        endIndex = endIndex < totalItems ? endIndex : totalItems;
+        List<RawInfo> batch = [];
+
+        for (int i = currentIndex; i < endIndex; i++) {
+          RawInfo rawInfo = RawInfo(
+            materialId: dataList[0][i],
+            materialName: dataList[1][i],
+            scaleId: int.tryParse(dataList[2][i]) ?? 0,
+            categoryName: dataList[3][i],
+            ingredient: dataList[4][i],
+          );
+          batch.add(rawInfo);
+        }
+
+        ImportRawList importRawList = ImportRawList(
+          rawInfo: batch,
+          createdBy: mySysUser.nickName!,
+        );
+
+        String jsonStr = importRawListToJson(importRawList);
+        PublicFunctions.importRawList(jsonStr);
+
+        currentIndex += batchSize;
+      } else {
+        // 所有数据发送完毕，关闭定时器流控制器
+        timerController.close();
+        timer.cancel();
+        eventBus.fire(EventPLuDataSavedOK(''));
+      }
+    });
+  }
+
+  bool checkRawExist(String materialId) {
+    return rawDataList
+        .any((element) => element.rawMaterial.materialId == materialId);
+  }
+
+  bool checkScaleExist(String scaleName) {
+    return myAllScalesList.any((element) => element.scaleName == scaleName);
+  }
+
+  void importFormula() async {
+    //选择一个xlsx文件
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['xlsx'],
+    );
+    if (result == null) return;
+    File file = File(result.files.single.path!);
+    //读取xlsx文件
+    List<ImportFmaInfo> dataList = await importFormulasFromExcel(file, context);
+    if (dataList.isEmpty) {
+      return;
+    }
+    sendFmaListInBatches(dataList);
+  }
+
+  void sendFmaListInBatches(List<ImportFmaInfo> dataList) {
+    const batchSize = 100;
+    int totalItems = dataList.length;
+
+    // 创建一个定时器的流控制器
+    final StreamController<Timer> timerController = StreamController<Timer>();
+
+    // 创建一个定时器，每隔4秒向流中添加一个新的定时器实例
+    var timer = Timer.periodic(const Duration(milliseconds: 500), (Timer t) {
+      timerController.add(t);
+    });
+
+    // 创建一个索引，用于跟踪当前发送到哪个批次了
+    int currentIndex = 0;
+
+    // 监听定时器流，当有新的定时器实例时，发送下一批数据
+    timerController.stream.listen((Timer timer) {
+      debugPrint('Sending batch ${currentIndex + 1}...');
+      if (currentIndex < totalItems) {
+        int endIndex = currentIndex + batchSize;
+        endIndex = endIndex < totalItems ? endIndex : totalItems;
+        List<ImportFmaInfo> batch = [];
+
+        for (int i = currentIndex; i < endIndex; i++) {
+          batch.add(dataList[i]);
+        }
+
+        FmaImportFmt importFmaList = FmaImportFmt(
+          fmaInfo: batch,
+          createBy: mySysUser.nickName!,
+        );
+
+        String jsonStr = importFmaInfoToJson(importFmaList);
+        PublicFunctions.importFmaList(jsonStr);
+
+        currentIndex += batchSize;
+      } else {
+        // 所有数据发送完毕，关闭定时器流控制器
+        timerController.close();
+        timer.cancel();
+        eventBus.fire(EventPLuDataSavedOK(''));
+      }
+    });
+  }
+
   //导出原料的json文件，只要导出勾选的原料
-  exportRaw() async {
+  void exportRaw() async {
     if (selectedRows.isEmpty) {
       showTipInfo(localizedStrings.gTipNoDataSelected, context);
       return;
@@ -2951,38 +3550,221 @@ class FormulationScalePageState extends State<FormulationScalePage>
     for (var row in selectedRows) {
       exportRawList.add(searchRawList[row]);
     }
-    String jsonString = rawDataInfoToJson(exportRawList);
 
     final directory = Directory.current.path;
     String? outputFile = (await FilePicker.platform.saveFile(
       initialDirectory: directory,
       type: FileType.custom,
       dialogTitle: 'Output file:',
-      allowedExtensions: ["json"],
-      fileName: 'components.json',
+      allowedExtensions: ["xlsx"],
+      fileName: 'components.xlsx',
     ));
-    if (outputFile != null) {
-      if (!outputFile.contains(".json")) {
-        outputFile = "$outputFile.json";
-      }
-      String filePath = outputFile;
+    if (outputFile == null) return;
 
-      // 将 CSV 数据写入文件
-      try {
-        // 尝试将数据转换为 CSV 格式
-        String csv = jsonString;
-        File file = File(filePath);
-        await file.writeAsString(csv);
-        // 显示导出成功提示
-        if (mounted) {
-          showTipInfo(localizedStrings.fSaveSuccess, context);
-        }
-      } catch (e) {
-        // 处理写入文件时可能出现的异常，并显示错误提示
-        if (mounted) {
-          showTipInfo('$e', context);
-        }
+    if (!outputFile.contains(".xlsx")) {
+      outputFile = "$outputFile.xlsx";
+    }
+    String filePath = outputFile;
+
+    // 将 CSV 数据写入文件
+    ExportResult result = await exportRawListToExcel(exportRawList, filePath);
+
+    if (result.isSuccess) {
+      showExportDialog(filePath);
+    } else {
+      if (context.mounted) {
+        showTipInfo(result.errorMessage!, context);
       }
+    }
+  }
+
+  void showExportDialog(String filePath) {
+    final BuildContext currentContext = context;
+    if (currentContext.mounted) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            backgroundColor: Colors.transparent,
+            child: Container(
+              width: 610,
+              height: 493,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius: BorderRadius.circular(0),
+              ),
+              child: Column(
+                children: [
+                  // 头部
+                  ...dialogHeadStyle(
+                      context, localizedStrings.gTipExportSuccess, true),
+
+                  Container(
+                    padding: EdgeInsets.only(top: 20),
+                    child: Row(children: [
+                      Expanded(
+                        child: Container(
+                          alignment: Alignment.center,
+                          child: getSvgIcon(exportSuccessSvgIcon(), 178, 178,
+                              colorScheme.onTertiaryFixedVariant),
+                        ),
+                      ),
+                    ]),
+                  ),
+
+                  // 中部
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      child: Row(children: [
+                        Expanded(
+                          child: Container(
+                            alignment: Alignment.center,
+                            child: SelectableText(
+                              filePath,
+                              style: textTheme.bodyMedium,
+                            ),
+                          ),
+                        ),
+                      ]),
+                    ),
+                  ),
+
+                  // 底部
+                  Container(
+                    height: 96,
+                    width: 610,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 20,
+                        ),
+                        showTextButton(
+                            context, btnHeight, localizedStrings.gBtnCancel,
+                            () {
+                          Navigator.pop(context);
+                        }, colorScheme.onPrimary, colorScheme.error,
+                            colorScheme.onPrimary),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        showTextButton(context, btnHeight,
+                            localizedStrings.gBtnOpenFileLocation, () async {
+                          // 打开文件所在文件夹或直接打开文件
+                          if (Platform.isWindows) {
+                            // Windows: 打开文件所在文件夹并选中文件
+                            await Process.run(
+                                'explorer.exe', ['/select,', filePath]);
+                          } else if (Platform.isMacOS) {
+                            // macOS: 在Finder中显示文件
+                            await Process.run('open', ['-R', filePath]);
+                          } else if (Platform.isLinux) {
+                            // Linux: 打开文件所在目录
+                            String directory = Directory(filePath).parent.path;
+                            await Process.run('xdg-open', [directory]);
+                          }
+                          if (context.mounted) {
+                            Navigator.pop(context);
+                          }
+                        }, colorScheme.onPrimary, colorScheme.primary,
+                            colorScheme.onPrimary),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        showTextButton(
+                            context, btnHeight, localizedStrings.gBtnOpenFile,
+                            () async {
+                          // 直接打开文件
+                          final Uri fileUri = Uri.file(filePath);
+                          if (await canLaunchUrl(fileUri)) {
+                            await launchUrl(fileUri);
+                          } else {
+                            // 如果无法直接打开，则打开文件所在目录
+                            String directory = Directory(filePath).parent.path;
+                            final Uri dirUri = Uri.file(directory);
+                            if (await canLaunchUrl(dirUri)) {
+                              await launchUrl(dirUri);
+                            }
+                          }
+                          if (context.mounted) {
+                            Navigator.pop(context);
+                          }
+                        }, colorScheme.onPrimary, colorScheme.primary,
+                            colorScheme.onPrimary),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    }
+  }
+
+  Future<ExportResult> exportRawListToExcel(
+      List<RawDataInfo> rawList, String filePath) async {
+    try {
+      final exportExcel = excel.Excel.createExcel();
+      final sheet = exportExcel['Sheet1'];
+
+      // 写入表头
+      sheet.appendRow([
+        excel.TextCellValue('Ingredient Id'),
+        excel.TextCellValue('Ingredient Name'),
+        excel.TextCellValue('Device Name'),
+        excel.TextCellValue('Category'),
+        excel.TextCellValue('Ingredient Notes'),
+        excel.TextCellValue('Create Time'),
+        excel.TextCellValue('Update Time'),
+      ]);
+
+      // 写入数据行
+
+      for (var rowIndex = 0; rowIndex < rawList.length; rowIndex++) {
+        final raw = rawList[rowIndex];
+        String scaleName = '';
+
+        // 查找秤的名称
+        for (var scale in myAllScalesList) {
+          if (scale.scaleId == raw.rawMaterial.scaleId) {
+            scaleName = scale.scaleName;
+            break;
+          }
+        }
+
+        sheet.appendRow([
+          excel.TextCellValue(rawList[rowIndex].rawMaterial.materialId),
+          excel.TextCellValue(rawList[rowIndex].rawMaterial.materialName),
+          excel.TextCellValue(scaleName),
+          excel.TextCellValue(rawList[rowIndex].rawCategoryName == "-"
+              ? ""
+              : rawList[rowIndex].rawCategoryName),
+          excel.TextCellValue(rawList[rowIndex].rawMaterial.ingredient),
+          excel.TextCellValue(DateFormat('yyyy-MM-dd HH:mm:ss')
+              .format(rawList[rowIndex].rawMaterial.createdAt)),
+          excel.TextCellValue(DateFormat('yyyy-MM-dd HH:mm:ss')
+              .format(rawList[rowIndex].rawMaterial.updatedAt)),
+        ]);
+      }
+      final file = File(filePath);
+      await file.writeAsBytes(exportExcel.save()!);
+
+      return ExportResult(isSuccess: true);
+    } catch (e) {
+      String errorMessage = localizedStrings.gTipExportError;
+      if (e is FileSystemException) {
+        errorMessage = localizedStrings.gTipExportFileError;
+      } else if (e is IOException) {
+        errorMessage = localizedStrings.gTipExportIOError;
+      } else if (e is PathNotFoundException) {
+        errorMessage = localizedStrings.gTipExportPathError;
+      }
+
+      return ExportResult(isSuccess: false, errorMessage: errorMessage);
     }
   }
 
@@ -3040,7 +3822,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
           width: 20,
         ),
         SizedBox(
-            width: 245,
+            width: 180,
             height: 40,
             child: Align(
               alignment: Alignment.centerLeft,
@@ -3089,7 +3871,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
           width: 14,
         ),
         Container(
-          width: 245,
+          width: 180,
           height: 40,
           padding: const EdgeInsets.only(left: 16, right: 20),
           decoration: BoxDecoration(
@@ -3159,7 +3941,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
           width: 14,
         ),
         Container(
-          width: 245,
+          width: 180,
           height: 40,
           padding: const EdgeInsets.only(left: 16, right: 20),
           decoration: BoxDecoration(
@@ -3258,17 +4040,19 @@ class FormulationScalePageState extends State<FormulationScalePage>
           width: 12,
         ),
         //导入配方
-        // showIconButton(localizedStrings.fImportFmaBtn,
-        // //     Icons.file_download_outlined, () {}),
-        // SizedBox(
-        //   width: 12,
-        // ),
+        showIconButton(localizedStrings.gBtnImport,
+            Icons.file_download_outlined, importFormula),
+        SizedBox(
+          width: 12,
+        ),
         //导出配方
-        showIconButton(
-            localizedStrings.fExportFmaBtn, Icons.file_upload_outlined, () {
+        showIconButton(localizedStrings.gBtnExport, Icons.file_upload_outlined,
+            () {
           //导出配方
           exportFormula();
         }),
+        buildIconBtn(localizedStrings.fGetFmaTemplateBtn, rawTemplateSvgIcon(),
+            getFmaTemplate),
         SizedBox(
           width: 20,
         ),
@@ -3346,4 +4130,259 @@ class FormulationScalePageState extends State<FormulationScalePage>
       }).toList();
     });
   }
+
+  int checkScaleName(String scaleName) {
+    for (var scale in myAllScalesList) {
+      if (scaleName == scale.scaleName) {
+        return scale.scaleId;
+      }
+    }
+    return 0;
+  }
+
+  Future<List<List<String>>> importRawFromExcel(File file) async {
+    try {
+      // 1. 读取Excel文件
+      final bytes = await file.readAsBytes();
+      final excelData = excel.Excel.decodeBytes(bytes);
+
+      if (excelData.tables.isEmpty) {
+        showTipInfo('没有数据导入', context);
+        return [];
+      }
+
+      // 获取第一个工作表
+      final sheet = excelData.tables.values.first;
+      if (sheet.rows.isEmpty) {
+        showTipInfo('没有数据导入', context);
+        return [];
+      }
+
+      // 2. 解析表头并验证
+      List<String> headers = [];
+      for (var cell in sheet.rows[0]) {
+        if (cell != null && cell.value != null) {
+          headers.add(cell.value.toString());
+        }
+      }
+
+      bool res = _validateHeaders(headers);
+      if (!res) {
+        return [];
+      }
+
+      //验证数据，导入所有的ID列，判断不能重复，也不能存在
+      List<String> idList = [];
+      List<String> nameList = [];
+      List<String> scaleIdList = [];
+      List<String> typeList = [];
+      List<String> notesList = [];
+      //找出'Ingredient Id',列,并判断这列的值都不重复，且不为空
+
+      for (int row = 1; row < sheet.maxRows; row++) {
+        for (int col = 0; col < sheet.maxColumns; col++) {
+          if (headers[col] == 'Ingredient Name') {
+            final cellValue = sheet
+                .cell(excel.CellIndex.indexByColumnRow(
+                    columnIndex: col, rowIndex: row))
+                .value;
+            String name = cellValue != null ? cellValue.toString().trim() : '';
+            if (name.isEmpty) {
+              showTipInfo('第${row + 1}行: Ingredient Name 不能为空', context);
+              return [];
+            }
+            nameList.add(name);
+            continue;
+          }
+          if (headers[col] == 'Device Name') {
+            final cellValue = sheet
+                .cell(excel.CellIndex.indexByColumnRow(
+                    columnIndex: col, rowIndex: row))
+                .value;
+            String scale = cellValue != null ? cellValue.toString().trim() : '';
+            int scaleId = 0;
+            if (scale.isNotEmpty) {
+              scaleId = checkScaleName(scale);
+              if (scaleId == 0) {
+                showTipInfo('第${row + 1}行: Device Name 不存在', context);
+                return [];
+              }
+            }
+            scaleIdList.add(scaleId.toString());
+            continue;
+          }
+          if (headers[col] == 'Ingredient Id') {
+            final cellValue = sheet
+                .cell(excel.CellIndex.indexByColumnRow(
+                    columnIndex: col, rowIndex: row))
+                .value;
+            String id = cellValue != null ? cellValue.toString().trim() : '';
+            if (id.isEmpty) {
+              showTipInfo('第${row + 1}行: Ingredient Id 不能为空', context);
+              return [];
+            }
+            if (idList.contains(id)) {
+              showTipInfo('第${row + 1}行: Ingredient Id "$id" 重复', context);
+              return [];
+            }
+            if (checkRawExist(id)) {
+              showTipInfo('第${row + 1}行: Ingredient Id "$id" 已存在', context);
+              return [];
+            }
+            idList.add(id);
+            continue;
+          }
+          if (headers[col] == 'Category') {
+            final cellValue = sheet
+                .cell(excel.CellIndex.indexByColumnRow(
+                    columnIndex: col, rowIndex: row))
+                .value;
+            String type = cellValue != null ? cellValue.toString().trim() : '';
+            typeList.add(type);
+          }
+          if (headers[col] == 'Ingredient Notes') {
+            final cellValue = sheet
+                .cell(excel.CellIndex.indexByColumnRow(
+                    columnIndex: col, rowIndex: row))
+                .value;
+            String notes = cellValue != null ? cellValue.toString().trim() : '';
+            notesList.add(notes);
+            continue;
+          }
+        }
+      }
+
+      List<List<String>> info = [];
+      info.add(idList);
+      info.add(nameList);
+      info.add(scaleIdList);
+      info.add(typeList);
+      info.add(notesList);
+
+      return info;
+    } catch (e) {
+      print('Excel导入错误: $e');
+      showTipInfo("导入失败：${e.toString()}", context);
+      return [];
+    }
+  }
+
+// 辅助方法：预加载所有有效的设备名称（用Set存储，O(1)查询）
+  Set<String> _getValidScaleNames() {
+    // 假设从数据库或缓存获取所有有效设备名称
+    // 示例：return Set.from(scaleList.map((s) => s.name));
+    return {};
+  }
+
+// 原有的获取单元格值的方法（保持不变）
+  String _getValue(List<excel.Data?> row, int index) {
+    if (index < 0 || index >= row.length) return "";
+    final cell = row[index];
+    return cell?.value?.toString() ?? "";
+  }
+
+  // Future<List<RawInfo>> importFromExcel(File file) async {
+  //   try {
+  //     // 读取Excel文件
+  //     final bytes = await file.readAsBytes();
+  //     final excelData = excel.Excel.decodeBytes(bytes);
+
+  //     if (excelData.tables.isEmpty) {
+  //       throw Exception('Excel文件为空或格式不正确');
+  //     }
+
+  //     // 获取第一个工作表
+  //     final sheet = excelData.tables.values.first;
+  //     if (sheet.rows.isEmpty) {
+  //       throw Exception('Excel工作表为空');
+  //     }
+
+  //     // 获取表头并验证
+
+  //     List<String> headers = [];
+  //     for (var cell in sheet.rows[0]) {
+  //       if (cell != null && cell.value != null) {
+  //         headers.add(cell.value.toString());
+  //       }
+  //     }
+
+  //     _validateHeaders(headers);
+
+  //     // 解析数据行
+  //     final dataList = <RawInfo>[];
+
+  //     for (var i = 1; i < sheet.rows.length; i++) {
+  //       final row = sheet.rows[i];
+  //       if (row.isEmpty) continue;
+
+  //       // 创建数据对象
+  //       final data = RawInfo(
+  //         materialId: _getValue(row, headers.indexOf('Ingredient Id')),
+  //         materialName: _getValue(row, headers.indexOf('Ingredient Name')),
+  //         categoryName: _getValue(row, headers.indexOf('Category')),
+  //         ingredient: _getValue(row, headers.indexOf('Ingredient Notes')),
+  //         scaleName: _getValue(row, headers.indexOf('Device Name')),
+  //       );
+
+  //       if (data.materialId == "" || data.materialName == "") {
+  //         showTipInfo("Ingredient Id or Name is empty", context);
+  //         return [];
+  //       }
+
+  //       if (checkRawExist(data.materialId)) {
+  //         showTipInfo(
+  //             localizedStrings.fRawIdDuplicate + data.materialId!, context);
+  //         return [];
+  //       }
+
+  //       if (data.scaleName != "") {
+  //         int scaleId = checkScaleName(data.scaleName);
+  //         if (scaleId == 0) {
+  //           showTipInfo("Device Name is not exist: " + data.scaleName, context);
+  //           return [];
+  //         }
+  //       }
+
+  //       dataList.add(data);
+  //     }
+
+  //     return dataList;
+  //   } catch (e) {
+  //     // 可以添加更详细的错误处理
+  //     print('Excel导入错误: $e');
+  //     return [];
+  //   }
+  // }
+
+// 辅助方法：从Excel行中获取值
+  // String _getValue(List<excel.Data?> row, int index) {
+  //   if (index < 0 || index >= row.length) return '';
+  //   return row[index]?.value?.toString().trim() ?? '';
+  // }
+
+  // 验证CSV表头是否包含所有必要字段
+  bool _validateHeaders(List<String> headers) {
+    const requiredHeaders = [
+      'Ingredient Id',
+      'Ingredient Name',
+      'Category',
+      'Ingredient Notes',
+      'Device Name',
+    ];
+
+    for (final header in requiredHeaders) {
+      if (!headers.contains(header)) {
+        showTipInfo("CSV文件缺少必要的列: $header", context);
+        return false;
+      }
+    }
+    return true;
+  }
+}
+
+class ExportResult {
+  final bool isSuccess;
+  final String? errorMessage;
+
+  ExportResult({required this.isSuccess, this.errorMessage});
 }

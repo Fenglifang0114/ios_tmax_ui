@@ -16,13 +16,6 @@ class LanguageSettingPageState extends State<LanguageSettingPage> {
   List<String> languageList = [
     '中文',
     'English',
-    'Русский',
-    'Português',
-    'Italiano',
-    'Français',
-    'Deutsch',
-    '日本語',
-    '한국어'
   ];
   dynamic localizedStrings;
 

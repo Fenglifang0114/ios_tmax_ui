@@ -70,6 +70,7 @@ class AddRawData {
   String updatedBy;
   String remark;
   String remark1;
+  int? scaleId;
 
   AddRawData({
     required this.materialId,
@@ -80,6 +81,7 @@ class AddRawData {
     required this.updatedBy,
     required this.remark,
     required this.remark1,
+    this.scaleId,
   });
 
   Map<String, dynamic> toJson() => {
@@ -91,6 +93,7 @@ class AddRawData {
         "UpdatedBy": updatedBy,
         "Remark": remark,
         "Remark1": remark1,
+        "ScaleId": scaleId,
       };
 }
 
@@ -106,18 +109,19 @@ class EditRawData {
   String updatedBy;
   String remark;
   String remark1;
+  int? scaleId;
 
-  EditRawData({
-    required this.recId,
-    required this.materialId,
-    required this.materialName,
-    required this.categoryId,
-    required this.ingredient,
-    required this.createdBy,
-    required this.updatedBy,
-    required this.remark,
-    required this.remark1,
-  });
+  EditRawData(
+      {required this.recId,
+      required this.materialId,
+      required this.materialName,
+      required this.categoryId,
+      required this.ingredient,
+      required this.createdBy,
+      required this.updatedBy,
+      required this.remark,
+      required this.remark1,
+      this.scaleId});
 
   Map<String, dynamic> toJson() => {
         "RecID": recId,
@@ -129,6 +133,7 @@ class EditRawData {
         "UpdatedBy": updatedBy,
         "Remark": remark,
         "Remark1": remark1,
+        "ScaleId": scaleId,
       };
 }
 
@@ -289,5 +294,75 @@ class DeleteDraftFmaId {
   DeleteDraftFmaId({required this.orderId});
   Map<String, dynamic> toJson() => {
         "OrderID": orderId,
+      };
+}
+
+// To parse this JSON data, do
+//
+//     final importRawList = importRawListFromJson(jsonString);
+
+ImportRawList importRawListFromJson(String str) =>
+    ImportRawList.fromJson(json.decode(str));
+
+String importRawListToJson(ImportRawList data) => json.encode(data.toJson());
+
+class ImportRawList {
+  String createdBy;
+  List<RawInfo> rawInfo;
+
+  ImportRawList({
+    required this.createdBy,
+    required this.rawInfo,
+  });
+
+  factory ImportRawList.fromJson(Map<String, dynamic> json) => ImportRawList(
+        createdBy: json["CreatedBy"],
+        rawInfo:
+            List<RawInfo>.from(json["RawInfo"].map((x) => RawInfo.fromJson(x))),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "CreatedBy": createdBy,
+        "RawInfo": List<dynamic>.from(rawInfo.map((x) => x.toJson())),
+      };
+}
+
+class RawInfo {
+  String? materialId;
+  String? materialName;
+  String? categoryName;
+  String? ingredient;
+  String? scaleName;
+  int? categoryId;
+  int? scaleId;
+
+  RawInfo({
+    this.materialId,
+    this.materialName,
+    this.categoryName,
+    this.ingredient,
+    this.scaleName,
+    this.categoryId,
+    this.scaleId,
+  });
+
+  factory RawInfo.fromJson(Map<String, dynamic> json) => RawInfo(
+        materialId: json["MaterialID"],
+        materialName: json["MaterialName"],
+        categoryName: json["CategoryName"],
+        ingredient: json["Ingredient"],
+        scaleName: json["ScaleName"],
+        categoryId: json["CategoryId"],
+        scaleId: json["ScaleId"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "MaterialID": materialId,
+        "MaterialName": materialName,
+        "CategoryName": categoryName,
+        "Ingredient": ingredient,
+        "ScaleName": scaleName,
+        "CategoryId": categoryId,
+        "ScaleId": scaleId,
       };
 }

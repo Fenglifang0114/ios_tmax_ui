@@ -301,6 +301,18 @@ class PublicFunctions {
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
 
+  static void importRawList(String jsonStr) {
+    myScaleCmd.cmdMode = "import_raw_list";
+    myScaleCmd.cmdData = jsonStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  static void importFmaList(String jsonStr) {
+    myScaleCmd.cmdMode = "import_fma_list";
+    myScaleCmd.cmdData = jsonStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
   static void addRawData(AddRawData data) {
     myScaleCmd.cmdMode = "add_raw_data";
     String jsonStr = addRawDataToJson(data);

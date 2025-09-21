@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/formula_from_db_data.dart';
 import 'package:t_max/data/formula_scale_data.dart';
+import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/req_formula_data.dart';
 import 'package:t_max/dialog/add_raw_info_dialog.dart';
@@ -281,6 +282,9 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
                             );
                           },
                         ).then((value) {
+                          if (value == null) {
+                            return;
+                          }
                           if (value) {
                             // 保存
                             setState(() {
@@ -780,7 +784,7 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
               child: InkWell(
             onTap: () {
               setState(() {
-                if (selectedIndex == index) {
+                if (selectedIndex == index && !isHaveDarft) {
                   selectedIndex = -1;
                 } else {
                   selectedIndex = index;
@@ -1516,8 +1520,8 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
       materialCount: addFormulaRawList.length,
       isEncrypted: isEncrypted,
       needContainer: needContainer,
-      createdBy: 'admin',
-      updatedBy: 'admin',
+      createdBy: widget.editFormulaInfo.header!.formulaHeader!.createdBy,
+      updatedBy: mySysUser.nickName!,
       remark: remarkCtl.text,
     );
     ReqFormulaAddInfo tempReqAddF = ReqFormulaAddInfo(

@@ -747,6 +747,9 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
                                 );
                               },
                             ).then((value) {
+                              if (value == null) {
+                                return;
+                              }
                               if (value) {
                                 PublicFunctions.killBootCommander();
                                 setState(() {

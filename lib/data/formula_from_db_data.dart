@@ -143,6 +143,7 @@ class RawMaterialDb {
   String? updatedBy;
   String? remark;
   String? remark1;
+  int? scaleId;
 
   RawMaterialDb({
     this.recId,
@@ -156,6 +157,7 @@ class RawMaterialDb {
     this.updatedBy,
     this.remark,
     this.remark1,
+    this.scaleId,
   });
 
   factory RawMaterialDb.fromJson(Map<String, dynamic> json) => RawMaterialDb(
@@ -174,6 +176,7 @@ class RawMaterialDb {
         updatedBy: json["UpdatedBy"],
         remark: json["Remark"],
         remark1: json["Remark1"],
+        scaleId: json["ScaleId"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -188,6 +191,7 @@ class RawMaterialDb {
         "UpdatedBy": updatedBy,
         "Remark": remark,
         "Remark1": remark1,
+        "ScaleId": scaleId,
       };
 }
 

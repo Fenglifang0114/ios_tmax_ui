@@ -400,6 +400,9 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
                                               );
                                             },
                                           ).then((confirmed) {
+                                            if (confirmed == null) {
+                                              return;
+                                            }
                                             if (confirmed) {
                                               getJsonString();
                                               if (myHeaderFooterList

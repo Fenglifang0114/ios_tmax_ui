@@ -561,6 +561,9 @@ class SetParameterPageState extends State<SetParameterPage> {
                         );
                       },
                     ).then((value) {
+                      if (value == null) {
+                        return;
+                      }
                       if (value) {
                         if (changedEepromInfos.isNotEmpty) {
                           submitParameter(changedEepromInfos);

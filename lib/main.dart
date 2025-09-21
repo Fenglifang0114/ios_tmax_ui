@@ -17,8 +17,58 @@ import 'eventbus/eventbus.dart';
 import 'generated/l10n.dart';
 import 'widget/theme_color.dart';
 import 'package:flutter/gestures.dart';
+import 'package:win32/win32.dart';
+
+const String serviceName = "TmaxService";
+const bool isServiceVersion = true; //是否是服务版本
 
 Future<void> main() async {
+  if (isServiceVersion) {
+    //如果是服务的话，先检测服务是否开启
+    try {
+      // 检查服务是否安装
+      bool isInstalled = await checkServiceInstalled();
+      if (!isInstalled) {
+        // 弹框提示服务未安装
+        MessageBox(
+          HWND_DESKTOP,
+          TEXT("Service $serviceName uninstalled"),
+          TEXT("Error"),
+          MB_ICONERROR | MB_OK,
+        );
+        return;
+      }
+
+      // 检查服务是否正在运行
+      bool isRunning = await checkServiceRunning();
+      if (isRunning) {
+        debugPrint("service $serviceName is running");
+      } else {
+        bool startSuccess = await startServiceWithAdmin(serviceName);
+
+        if (startSuccess) {
+          debugPrint("service $serviceName start success");
+          sleep(Duration(seconds: 2));
+        } else {
+          MessageBox(
+            HWND_DESKTOP,
+            TEXT("Service $serviceName start failed"),
+            TEXT("Error"),
+            MB_ICONERROR | MB_OK,
+          );
+          return;
+        }
+      }
+    } catch (e) {
+      MessageBox(
+        HWND_DESKTOP,
+        TEXT("Error: $e"),
+        TEXT("Error"),
+        MB_ICONERROR | MB_OK,
+      );
+      return;
+    }
+  }
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
   await setWindowOptions();
@@ -186,4 +236,101 @@ class DesktopScrollBehavior extends MaterialScrollBehavior {
         // PointerDeviceKind.invertedStylus,
         // PointerDeviceKind.trackpad,
       };
+}
+
+// 检查服务是否安装
+Future<bool> checkServiceInstalled() async {
+  try {
+    ProcessResult result = await Process.run(
+        'sc',
+        [
+          'query',
+          serviceName,
+        ],
+        runInShell: true);
+
+    // 检查命令输出，判断服务是否存在
+    return result.exitCode == 0 &&
+        result.stdout.toString().contains("SERVICE_NAME: $serviceName");
+  } catch (e) {
+    debugPrint("check service installed error: $e");
+
+    return false;
+  }
+}
+
+// 检查服务是否正在运行
+Future<bool> checkServiceRunning() async {
+  try {
+    ProcessResult result = await Process.run(
+        'sc',
+        [
+          'query',
+          serviceName,
+        ],
+        runInShell: true);
+
+    // 服务状态为RUNNING表示正在运行
+    return result.stdout.toString().contains("STATE              : 4  RUNNING");
+  } catch (e) {
+    debugPrint("check service running error: $e");
+    return false;
+  }
+}
+
+Future<bool> startServiceWithAdmin(String serviceName) async {
+  try {
+    // 检查当前是否具有管理员权限
+    bool isAdmin = await _checkAdminPrivileges();
+
+    if (!isAdmin) {
+      // 请求管理员权限并重新启动程序
+      return await _runAsAdministrator(serviceName);
+    } else {
+      // 已有管理员权限，直接启动服务
+      return await _startService(serviceName);
+    }
+  } catch (e) {
+    debugPrint('start service with admin error: $e');
+    return false;
+  }
+}
+
+Future<bool> _checkAdminPrivileges() async {
+  try {
+    // 尝试访问需要管理员权限的系统目录
+    final result = await Process.run('net', ['session'], runInShell: true);
+    return result.exitCode == 0;
+  } catch (e) {
+    return false;
+  }
+}
+
+Future<bool> _runAsAdministrator(String serviceName) async {
+  try {
+    // 直接使用PowerShell以管理员身份启动sc命令
+    final script = '''
+      \$proc = Start-Process -FilePath "sc" -ArgumentList "start", "$serviceName" -Verb RunAs -PassThru -WindowStyle Hidden
+      \$proc.WaitForExit()
+      exit \$proc.ExitCode
+    ''';
+
+    final result =
+        await Process.run('powershell', ['-Command', script], runInShell: true);
+    return result.exitCode == 0;
+  } catch (e) {
+    debugPrint('管理员权限启动失败: $e');
+    return false;
+  }
+}
+
+Future<bool> _startService(String serviceName) async {
+  try {
+    final result = await Process.run('sc', ['start', serviceName]);
+    return result.exitCode == 0 &&
+        (result.stdout.toString().contains('START_PENDING') ||
+            result.stdout.toString().contains('SUCCESS'));
+  } catch (e) {
+    return false;
+  }
 }

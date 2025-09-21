@@ -558,6 +558,9 @@ class CalibrationPageState extends State<CalibrationPage> {
           );
         },
       ).then((value) {
+        if (value == null) {
+          return;
+        }
         if (value) {
           performChangeScale(scaleId);
         } else {

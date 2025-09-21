@@ -197,7 +197,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "fEditRawMaterialTypeBtn": MessageLookupByLibrary.simpleMessage(
       "Edit Ingredient Category",
     ),
-    "fExportFmaBtn": MessageLookupByLibrary.simpleMessage("Export Formula"),
     "fExportRecordsBtn": MessageLookupByLibrary.simpleMessage("Export Records"),
     "fFlowRate": MessageLookupByLibrary.simpleMessage("Liquid Filling Speed"),
     "fFlowRateMeasurement": MessageLookupByLibrary.simpleMessage(
@@ -239,11 +238,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "fFormulaUnqualifiedMsg": MessageLookupByLibrary.simpleMessage(
       "Formula not meeting standard. Confirm completion?",
     ),
+    "fGetFmaTemplateBtn": MessageLookupByLibrary.simpleMessage(
+      "Get Formula Template",
+    ),
+    "fGetRawTemplateBtn": MessageLookupByLibrary.simpleMessage(
+      "Get Raw Material Template",
+    ),
     "fHighSpeed": MessageLookupByLibrary.simpleMessage("High Speed"),
     "fHistoricalWeighingRecordsBtn": MessageLookupByLibrary.simpleMessage(
       "Records",
     ),
-    "fImportFmaBtn": MessageLookupByLibrary.simpleMessage("Import Formula"),
     "fIncompleteStatus": MessageLookupByLibrary.simpleMessage("Incomplete"),
     "fIngredientCountLabel": MessageLookupByLibrary.simpleMessage("Quantity"),
     "fIngredientOrder": MessageLookupByLibrary.simpleMessage("Order"),
@@ -313,9 +317,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "fNoRecordTip": MessageLookupByLibrary.simpleMessage("No records"),
     "fOrderNo": MessageLookupByLibrary.simpleMessage("No."),
     "fPctMode": MessageLookupByLibrary.simpleMessage("Percentage"),
-    "fPleaseSelectCategory": MessageLookupByLibrary.simpleMessage(
-      "Please select a category",
-    ),
+    "fPleaseSelectCategory": MessageLookupByLibrary.simpleMessage("Category"),
     "fPluExist": MessageLookupByLibrary.simpleMessage("PLU already exists"),
     "fPublic": MessageLookupByLibrary.simpleMessage("Public"),
     "fQualificationStatus": MessageLookupByLibrary.simpleMessage("Pass"),
@@ -346,9 +348,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "fSaveAndNewBtn": MessageLookupByLibrary.simpleMessage("Save and New"),
     "fSaveSuccess": MessageLookupByLibrary.simpleMessage("Save successful"),
     "fScaleList": MessageLookupByLibrary.simpleMessage("Scale List"),
-    "fSearchHint": MessageLookupByLibrary.simpleMessage("Search by ID or Name"),
+    "fSearchHint": MessageLookupByLibrary.simpleMessage("ID or Name"),
     "fSelectConfidentialityStatusMsg": MessageLookupByLibrary.simpleMessage(
-      "Select Confidentiality Status",
+      "Confidential",
     ),
     "fSelectFormulaModeHint": MessageLookupByLibrary.simpleMessage(
       "Please select the formula mode.",
@@ -460,6 +462,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "gBtnModify": MessageLookupByLibrary.simpleMessage("Modify"),
     "gBtnNewFormat": MessageLookupByLibrary.simpleMessage("New Format"),
     "gBtnNext": MessageLookupByLibrary.simpleMessage("Next Step"),
+    "gBtnOpenFile": MessageLookupByLibrary.simpleMessage("Open File"),
+    "gBtnOpenFileLocation": MessageLookupByLibrary.simpleMessage(
+      "Open File Location",
+    ),
     "gBtnOpenSerialPort": MessageLookupByLibrary.simpleMessage("Open Port"),
     "gBtnPrevious": MessageLookupByLibrary.simpleMessage("Previous Step"),
     "gBtnRemove": MessageLookupByLibrary.simpleMessage("Remove"),
@@ -624,6 +630,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "gTipAuto": MessageLookupByLibrary.simpleMessage("Auto"),
     "gTipAutoNextStep": MessageLookupByLibrary.simpleMessage("Auto Next Step"),
+    "gTipAutoTare": MessageLookupByLibrary.simpleMessage("Auto Tare"),
     "gTipBasicDataPageHelp": MessageLookupByLibrary.simpleMessage(
       "1. Click [Get Basic Data];\n2. T-Config will automatically collect basic data from the scale and display it synchronously on the interface.\n3. You can click the menu bar button in the upper left corner to select the device you want to switch to.",
     ),
@@ -713,7 +720,19 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipExitApp": MessageLookupByLibrary.simpleMessage(
       "Are you sure to exit the system?",
     ),
+    "gTipExportError": MessageLookupByLibrary.simpleMessage(
+      "Unknown export error",
+    ),
     "gTipExportFail": MessageLookupByLibrary.simpleMessage("Export failed"),
+    "gTipExportFileError": MessageLookupByLibrary.simpleMessage(
+      "Export file error or file is occupied",
+    ),
+    "gTipExportIOError": MessageLookupByLibrary.simpleMessage(
+      "Export IO error",
+    ),
+    "gTipExportPathError": MessageLookupByLibrary.simpleMessage(
+      "Export path error",
+    ),
     "gTipExportSuccess": MessageLookupByLibrary.simpleMessage(
       "Export successful",
     ),
@@ -1486,6 +1505,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tipLoginPasswordNotEmpty": MessageLookupByLibrary.simpleMessage(
       "Password cannot be empty",
+    ),
+    "tipLoginRemember": MessageLookupByLibrary.simpleMessage(
+      "Remember password",
     ),
     "tipLoginUsernameEmpty": MessageLookupByLibrary.simpleMessage(
       "Please enter a username",

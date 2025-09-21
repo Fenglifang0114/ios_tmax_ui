@@ -14,6 +14,10 @@ class FormulaWgtProcessData {
   double? currentErrorWgt; //实际误差重量
   double? currentErrorPct; //实际误差百分比
   String? isOK; //是否OK
+  int? scaleId; //秤号
+  String? scaleName; //秤名
+  String? scaleModel; //秤型
+  String? scaleSn; //秤序列号
 
   FormulaWgtProcessData({
     this.no,
@@ -30,5 +34,9 @@ class FormulaWgtProcessData {
     this.currentErrorWgt,
     this.currentErrorPct,
     this.isOK,
+    this.scaleId,
+    this.scaleName,
+    this.scaleModel,
+    this.scaleSn,
   });
 }

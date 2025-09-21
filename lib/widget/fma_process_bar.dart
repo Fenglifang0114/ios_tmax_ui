@@ -37,10 +37,16 @@ class CustomProgressBar extends StatelessWidget {
         return (val / minValue) * maxWidth * belowMinRatio;
       } else if (val <= maxValue) {
         // 最小值和最大值之间部分
+        if (maxValue - minValue == 0) {
+          return maxWidth * belowMinRatio;
+        }
         return maxWidth * belowMinRatio +
             ((val - minValue) / (maxValue - minValue)) * maxWidth * minMaxRatio;
       } else {
         // 最大值以上部分
+        if (maxValue - minValue == 0) {
+          return maxWidth * (belowMinRatio + minMaxRatio);
+        }
         return maxWidth * (belowMinRatio + minMaxRatio) +
             ((val - maxValue) / (maxValue - minValue)) *
                 maxWidth *

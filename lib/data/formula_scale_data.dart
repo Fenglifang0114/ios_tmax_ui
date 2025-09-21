@@ -42,6 +42,7 @@ class RawMaterial {
   String updatedBy;
   String remark;
   String remark1;
+  int? scaleId;
 
   RawMaterial({
     required this.recId,
@@ -55,6 +56,7 @@ class RawMaterial {
     required this.updatedBy,
     required this.remark,
     required this.remark1,
+    this.scaleId,
   });
 
   factory RawMaterial.fromJson(Map<String, dynamic> json) => RawMaterial(
@@ -69,6 +71,7 @@ class RawMaterial {
         updatedBy: json["UpdatedBy"],
         remark: json["Remark"],
         remark1: json["Remark1"],
+        scaleId: json["ScaleId"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -83,6 +86,7 @@ class RawMaterial {
         "UpdatedBy": updatedBy,
         "Remark": remark,
         "Remark1": remark1,
+        "ScaleId": scaleId,
       };
 }
 
@@ -540,4 +544,3 @@ class FormulaWgtRecList {
 // To parse this JSON data, do
 //
 //     final formulaInfoDb = formulaInfoDbFromJson(jsonString);
- 

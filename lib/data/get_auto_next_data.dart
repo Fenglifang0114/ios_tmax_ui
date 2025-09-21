@@ -16,11 +16,13 @@ class GetAutoNextFormDb {
   int recId;
   bool autoNext;
   int stableTime;
+  bool autoTare;
 
   GetAutoNextFormDb({
     required this.recId,
     required this.autoNext,
     required this.stableTime,
+    required this.autoTare,
   });
 
   factory GetAutoNextFormDb.fromJson(Map<String, dynamic> json) =>
@@ -28,12 +30,14 @@ class GetAutoNextFormDb {
         recId: json["RecID"],
         autoNext: json["AutoNext"],
         stableTime: json["StableTime"],
+        autoTare: json["AutoTare"],
       );
 
   Map<String, dynamic> toJson() => {
         "RecID": recId,
         "AutoNext": autoNext,
         "StableTime": stableTime,
+        "AutoTare": autoTare,
       };
 }
 
@@ -42,19 +46,23 @@ String reqAutoNextToJson(ReqAutoNext data) => json.encode(data.toJson());
 class ReqAutoNext {
   bool autoNext;
   int stableTime;
+  bool autoTare;
 
   ReqAutoNext({
     required this.autoNext,
     required this.stableTime,
+    required this.autoTare,
   });
 
   factory ReqAutoNext.fromJson(Map<String, dynamic> json) => ReqAutoNext(
         autoNext: json["AutoNext"],
         stableTime: json["StableTime"],
+        autoTare: json["AutoTare"],
       );
 
   Map<String, dynamic> toJson() => {
         "AutoNext": autoNext,
         "StableTime": stableTime,
+        "AutoTare": autoTare,
       };
 }

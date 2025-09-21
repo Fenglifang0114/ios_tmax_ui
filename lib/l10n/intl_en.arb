@@ -1832,11 +1832,11 @@
     "@fRawMaterialListTab": {
         "description": "Tab label for raw material list"
     },
-    "fSearchHint": "Search by ID or Name",
+    "fSearchHint": "ID or Name",
     "@fSearchHint": {
         "description": "Hint text for search input"
     },
-    "fPleaseSelectCategory": "Please select a category",
+    "fPleaseSelectCategory": "Category",
     "@fPleaseSelectCategory": {
         "description": "Placeholder for category dropdown"
     },
@@ -1852,13 +1852,13 @@
     "@fHistoricalWeighingRecordsBtn": {
         "description": "Button to view historical weighing records"
     },
-    "fImportFmaBtn": "Import Formula",
-    "@fImportFmaBtn": {
-        "description": "Button to import formulas"
+    "fGetFmaTemplateBtn": "Get Formula Template",
+    "@fGetFmaTemplateBtn": {
+        "description": "Button to get formula template"
     },
-    "fExportFmaBtn": "Export Formula",
-    "@fExportFmaBtn": {
-        "description": "Button to export formulas"
+    "fGetRawTemplateBtn": "Get Raw Material Template",
+    "@fGetRawTemplateBtn": {
+        "description": "Button to get raw material template"
     },
     "fFmaNameLabel": "Name",
     "@fFmaNameLabel": {
@@ -2276,7 +2276,7 @@
     "@fAbandonBtn": {
         "description": "This is a abandon button"
     },
-    "fSelectConfidentialityStatusMsg": "Select Confidentiality Status",
+    "fSelectConfidentialityStatusMsg": "Confidential",
     "@fSelectConfidentialityStatusMsg": {
         "description": "This is used to prompt the user to select the confidentiality status of relevant content."
     },
@@ -2319,6 +2319,10 @@
     "gTipAutoNextStep": "Auto Next Step",
     "@gTipAutoNextStep": {
         "description": "Prompt message indicating automatic mode"
+    },
+    "gTipAutoTare": "Auto Tare",
+    "@gTipAutoTare": {
+        "description": "Prompt message indicating automatic tare"
     },
     "fDeviceDisconnected": "Device disconnected, please check the connection.",
     "@fDeviceDisconnected": {
@@ -3260,6 +3264,10 @@
     "@btnLogin": {
         "description": "Button for login"
     },
+    "tipLoginRemember": "Remember password",
+    "@tipLoginRemember": {
+        "description": "Tip for remember password"
+    },
     "superAdmin": "Super Admin",
     "@superAdmin": {
         "description": "Super administrator"
@@ -3411,5 +3419,29 @@
     "tipSameScale": "Same scale can't connect simultaneously.",
     "@tipSameScale": {
         "description": "Tip for same scale"
+    },    
+    "gBtnOpenFileLocation": "Open File Location",
+    "@gBtnOpenFileLocation": {
+        "description": "Button for open file location"
+    },
+    "gBtnOpenFile": "Open File",
+    "@gBtnOpenFile": {
+        "description": "Button for open file"
+    },
+    "gTipExportError": "Unknown export error",
+    "@gTipExportError": {
+    "description": "Tip for export error"
+    },
+    "gTipExportFileError": "Export file error or file is occupied",
+    "@gTipExportFileError": {
+    "description": "Tip for export file error"
+    },
+    "gTipExportIOError": "Export IO error",
+    "@gTipExportIOError": {
+    "description": "Tip for export IO error"
+    },
+    "gTipExportPathError": "Export path error",
+    "@gTipExportPathError": {
+    "description": "Tip for export path error"
     }
 }    

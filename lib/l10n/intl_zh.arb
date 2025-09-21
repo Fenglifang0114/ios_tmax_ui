@@ -1832,11 +1832,11 @@
     "@fRawMaterialListTab": {
         "description": "Tab label for raw material list"
     },
-    "fSearchHint": "按编号或名称搜索",
+    "fSearchHint": "编号或名称",
     "@fSearchHint": {
         "description": "Hint text for search input"
     },
-    "fPleaseSelectCategory": "请选择类别",
+    "fPleaseSelectCategory": "类别",
     "@fPleaseSelectCategory": {
         "description": "Placeholder for category dropdown"
     },
@@ -1852,13 +1852,13 @@
     "@fHistoricalWeighingRecordsBtn": {
         "description": "Button to view historical weighing records"
     },
-    "fImportFmaBtn": "导入配方",
-    "@fImportFmaBtn": {
-        "description": "Button to import formulas"
+    "fGetFmaTemplateBtn": "获取配方模板",
+    "@fGetFmaTemplateBtn": {
+        "description": "Button to get formula template"
     },
-    "fExportFmaBtn": "导出配方",
-    "@fExportFmaBtn": {
-        "description": "Button to export formulas"
+    "fGetRawTemplateBtn": "获取原料模板",
+    "@fGetRawTemplateBtn": {
+        "description": "Button to get raw material template"
     },
     "fFmaNameLabel": "配方名称",
     "@fFmaNameLabel": {
@@ -2276,7 +2276,7 @@
     "@fAbandonBtn": {
         "description": "This is a abandon button"
     },
-    "fSelectConfidentialityStatusMsg": "请选择保密状态",
+    "fSelectConfidentialityStatusMsg": "保密状态",
     "@fSelectConfidentialityStatusMsg": {
         "description": "This is used to prompt the user to select the confidentiality status of relevant content."
     },
@@ -2319,7 +2319,11 @@
     "gTipAutoNextStep": "自动下一步",
     "@gTipAutoNextStep": {
         "description": "Prompt message indicating automatic mode"
-    },    
+    },
+    "gTipAutoTare": "自动扣重",
+    "@gTipAutoTare": {
+        "description": "Prompt message indicating automatic tare"
+    },
     "fDeviceDisconnected": "设备断线，请检查连接.",
     "@fDeviceDisconnected": {
         "description": "Prompt when the device is disconnected"
@@ -3260,6 +3264,10 @@
     "@btnLogin": {
         "description": "Button for login"
     },
+    "tipLoginRemember": "记住密码",
+    "@tipLoginRemember": {
+        "description": "Tip for remember password"
+    },
     "superAdmin": "超级管理员",
     "@superAdmin": {
         "description": "Super administrator"
@@ -3411,6 +3419,30 @@
     "tipSameScale": "同一台秤不能同时连接",
     "@tipSameScale": {
         "description": "Tip for same scale"
+    },    
+    "gBtnOpenFileLocation": "打开文件位置",
+    "@gBtnOpenFileLocation": {
+        "description": "Button for open file location"
+    },
+    "gBtnOpenFile": "打开文件",
+    "@gBtnOpenFile": {
+        "description": "Button for open file"
+    },
+    "gTipExportError": "导出未知错误",
+    "@gTipExportError": {
+        "description": "Tip for export error"
+    },
+    "gTipExportFileError": "导出文件错误或文件被占用",
+    "@gTipExportFileError": {
+        "description": "Tip for export file error"
+    },
+    "gTipExportIOError": "导出IO错误",
+    "@gTipExportIOError": {
+        "description": "Tip for export io error"
+    },
+    "gTipExportPathError": "导出路径错误",
+    "@gTipExportPathError": {
+        "description": "Tip for export path error"
     }
 }
 

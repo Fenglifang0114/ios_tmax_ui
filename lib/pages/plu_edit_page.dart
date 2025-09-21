@@ -846,7 +846,6 @@ class _PluEidtPageState extends State<PluEidtPage> {
     }
     if (importPlu.isNotEmpty) {
       addDataToSrv();
-
       setState(() {
         _onDataChanged();
       });
@@ -1404,7 +1403,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
         //模板
         showIconBtn(
             localizedStrings.gBtnGetPluTemplate,
-            getSvgIcon(pluTemplateSvgIcon(), 24, 24, colorScheme.onPrimary),
+            getSvgIcon(rawTemplateSvgIcon(), 24, 24, colorScheme.onPrimary),
             colorScheme.primary,
             isImporting
                 ? null

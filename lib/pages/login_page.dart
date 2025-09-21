@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:t_max/data/company_info.dart';
 import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
@@ -30,6 +31,9 @@ class LoginPageState extends State<LoginPage>
 
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _rememberController =
+      TextEditingController(text: "false");
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
   String backImgPath = 'assets/images/background.png';
@@ -54,6 +58,21 @@ class LoginPageState extends State<LoginPage>
   void didChangeDependencies() {
     super.didChangeDependencies();
     localizedStrings = S.of(context);
+    getPasswordSetting();
+  }
+
+  void getPasswordSetting() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String account = prefs.getString('account') ?? '';
+    String password = prefs.getString('password') ?? '';
+    bool isRemember = prefs.getBool('isRemember') ?? false;
+    if (isRemember) {
+      setState(() {
+        _usernameController.text = account;
+        _passwordController.text = password;
+        _rememberController.text = "true";
+      });
+    }
   }
 
   @override
@@ -118,6 +137,8 @@ class LoginPageState extends State<LoginPage>
           String dataString = event.obj;
           if (dataString.contains('ok')) {
             PublicFunctions.getUserInfo(_usernameController.text);
+            savePasswordSetting(_usernameController.text,
+                _passwordController.text, _rememberController.text == "true");
           } else {
             _isLoading = false;
             showTipInfo(localizedStrings.tipLoginError, context);
@@ -163,6 +184,13 @@ class LoginPageState extends State<LoginPage>
     super.dispose();
   }
 
+  void savePasswordSetting(String account, String password, bool isSave) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('account', account);
+    await prefs.setString('password', password);
+    await prefs.setBool('isRemember', isSave);
+  }
+
   @override
   Widget build(BuildContext context) {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
@@ -189,19 +217,19 @@ class LoginPageState extends State<LoginPage>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  SizedBox(
-                    height: 50,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Image.asset(
-                          'assets/images/company.png',
-                          width: 138,
-                          height: 50,
-                        ),
-                      ],
-                    ),
-                  ),
+                  // SizedBox(
+                  //   height: 50,
+                  //   child: Row(
+                  //     mainAxisAlignment: MainAxisAlignment.start,
+                  //     children: [
+                  //       Image.asset(
+                  //         'assets/images/company.png',
+                  //         width: 138,
+                  //         height: 50,
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
                   SizedBox(
                     height: tHeight - 130,
                     child: Row(
@@ -340,7 +368,44 @@ class LoginPageState extends State<LoginPage>
                                   ),
                                 ),
                                 SizedBox(
-                                  height: 48,
+                                    width: double.infinity,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Checkbox(
+                                          activeColor: colorScheme.primary,
+                                          value: _rememberController.text ==
+                                              "true",
+                                          side: BorderSide(
+                                              width: 1.0,
+                                              color: colorScheme.surface),
+                                          onChanged: (value) {
+                                            setState(() {
+                                              if (value == null) return;
+                                              if (value) {
+                                                _rememberController.text =
+                                                    "true";
+                                              } else {
+                                                _rememberController.text =
+                                                    "false";
+                                              }
+                                            });
+                                          },
+                                        ),
+                                        Text(
+                                          localizedStrings.tipLoginRemember,
+                                          style: textTheme.bodySmall!.apply(
+                                            color: colorScheme.surface,
+                                          ),
+                                        ),
+                                      ],
+                                    )),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                SizedBox(
+                                  height: btnHeight,
                                   width: double.infinity,
                                   child: ElevatedButton(
                                     onPressed: _isLoading ? null : _submitLogin,

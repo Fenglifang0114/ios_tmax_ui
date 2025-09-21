@@ -84,6 +84,7 @@ class RespSysMsgType {
   static const String respPluAdd = 'resp_product_add';
   static const String respProductAddOne = 'resp_product_add_one';
   static const String respGetLastProductRec = 'resp_get_last_product_rec';
+  static const String respImportRawList = 'resp_raw_list_import';
 
   static final Map<String, Function> handlers = {
     RespSysMsgType.respPortsList: handlePortsList,
@@ -148,6 +149,7 @@ class RespSysMsgType {
     RespSysMsgType.respPluAdd: handleRespPluAdd,
     RespSysMsgType.respProductAddOne: handleRespProductAddOne,
     RespSysMsgType.respGetLastProductRec: handleRespGetLastProductRec,
+    RespSysMsgType.respImportRawList: handleRespImportRawList,
   };
 
   static void handlePortsList(dynamic jsonData) {
@@ -569,6 +571,11 @@ class RespSysMsgType {
   static void handleRespGetLastProductRec(dynamic jsonData) {
     String dataString = jsonData['MsgBody'];
     eventBus.fire(EventRespGetLastProductRec(dataString));
+  }
+
+  static void handleRespImportRawList(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespImportRawList(dataString));
   }
 }
 

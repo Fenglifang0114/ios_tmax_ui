@@ -131,16 +131,22 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
   void initEventBus() {
     _eventbus1 = eventBus.on<EventRespDelScale>().listen((event) {
       if (mounted) {
+        String dataStr = event.obj;
         setState(() {
-          String dataStr = event.obj;
+          isDel = false;
           if (dataStr.isNotEmpty) {
-            dataStr.contains('ok')
-                ? showTipInfo(localizedStrings.fSuccessMsg, context)
-                : showTipInfo(dataStr, context);
-            if (dataStr.contains('ok') && isDel) {
+            if (dataStr.contains('ok')) {
+              selScaleId = -1;
+              showTipInfo(localizedStrings.fSuccessMsg, context);
               PublicFunctions.getScaleList();
-              isDel = false;
+              return;
             }
+            if (dataStr.contains('fail') && dataStr.contains('formula')) {
+              showTipInfo(localizedStrings.fRawInUseDeleteErrorMsg, context);
+              return;
+            }
+
+            showTipInfo(dataStr, context);
           }
         });
       }
@@ -708,7 +714,11 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
                 context,
                 Theme.of(context).colorScheme,
                 Theme.of(context).textTheme,
-                (isAddScale || isTesting) || isRename || isDel || isComSetting
+                (isAddScale || isTesting) ||
+                        isRename ||
+                        isDel ||
+                        isComSetting ||
+                        selScaleId == -1
                     ? null
                     : () {
                         setState(() {
@@ -1410,7 +1420,6 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
     delScale.scaleId = selScaleId;
     String delStr = jsonEncode(delScale);
     PublicFunctions.sendDelScale(delStr);
-    selScaleId = -1;
   }
 
   void sendStaticIpInfo(String ip, String gateway, String netmask) {

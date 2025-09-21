@@ -4311,20 +4311,20 @@ class S {
     );
   }
 
-  /// `Search by ID or Name`
+  /// `ID or Name`
   String get fSearchHint {
     return Intl.message(
-      'Search by ID or Name',
+      'ID or Name',
       name: 'fSearchHint',
       desc: 'Hint text for search input',
       args: [],
     );
   }
 
-  /// `Please select a category`
+  /// `Category`
   String get fPleaseSelectCategory {
     return Intl.message(
-      'Please select a category',
+      'Category',
       name: 'fPleaseSelectCategory',
       desc: 'Placeholder for category dropdown',
       args: [],
@@ -4361,22 +4361,22 @@ class S {
     );
   }
 
-  /// `Import Formula`
-  String get fImportFmaBtn {
+  /// `Get Formula Template`
+  String get fGetFmaTemplateBtn {
     return Intl.message(
-      'Import Formula',
-      name: 'fImportFmaBtn',
-      desc: 'Button to import formulas',
+      'Get Formula Template',
+      name: 'fGetFmaTemplateBtn',
+      desc: 'Button to get formula template',
       args: [],
     );
   }
 
-  /// `Export Formula`
-  String get fExportFmaBtn {
+  /// `Get Raw Material Template`
+  String get fGetRawTemplateBtn {
     return Intl.message(
-      'Export Formula',
-      name: 'fExportFmaBtn',
-      desc: 'Button to export formulas',
+      'Get Raw Material Template',
+      name: 'fGetRawTemplateBtn',
+      desc: 'Button to get raw material template',
       args: [],
     );
   }
@@ -5422,10 +5422,10 @@ class S {
     );
   }
 
-  /// `Select Confidentiality Status`
+  /// `Confidential`
   String get fSelectConfidentialityStatusMsg {
     return Intl.message(
-      'Select Confidentiality Status',
+      'Confidential',
       name: 'fSelectConfidentialityStatusMsg',
       desc:
           'This is used to prompt the user to select the confidentiality status of relevant content.',
@@ -5530,6 +5530,16 @@ class S {
       'Auto Next Step',
       name: 'gTipAutoNextStep',
       desc: 'Prompt message indicating automatic mode',
+      args: [],
+    );
+  }
+
+  /// `Auto Tare`
+  String get gTipAutoTare {
+    return Intl.message(
+      'Auto Tare',
+      name: 'gTipAutoTare',
+      desc: 'Prompt message indicating automatic tare',
       args: [],
     );
   }
@@ -7901,6 +7911,16 @@ class S {
     );
   }
 
+  /// `Remember password`
+  String get tipLoginRemember {
+    return Intl.message(
+      'Remember password',
+      name: 'tipLoginRemember',
+      desc: 'Tip for remember password',
+      args: [],
+    );
+  }
+
   /// `Super Admin`
   String get superAdmin {
     return Intl.message(
@@ -8262,6 +8282,66 @@ class S {
       'Same scale can\'t connect simultaneously.',
       name: 'tipSameScale',
       desc: 'Tip for same scale',
+      args: [],
+    );
+  }
+
+  /// `Open File Location`
+  String get gBtnOpenFileLocation {
+    return Intl.message(
+      'Open File Location',
+      name: 'gBtnOpenFileLocation',
+      desc: 'Button for open file location',
+      args: [],
+    );
+  }
+
+  /// `Open File`
+  String get gBtnOpenFile {
+    return Intl.message(
+      'Open File',
+      name: 'gBtnOpenFile',
+      desc: 'Button for open file',
+      args: [],
+    );
+  }
+
+  /// `Unknown export error`
+  String get gTipExportError {
+    return Intl.message(
+      'Unknown export error',
+      name: 'gTipExportError',
+      desc: 'Tip for export error',
+      args: [],
+    );
+  }
+
+  /// `Export file error or file is occupied`
+  String get gTipExportFileError {
+    return Intl.message(
+      'Export file error or file is occupied',
+      name: 'gTipExportFileError',
+      desc: 'Tip for export file error',
+      args: [],
+    );
+  }
+
+  /// `Export IO error`
+  String get gTipExportIOError {
+    return Intl.message(
+      'Export IO error',
+      name: 'gTipExportIOError',
+      desc: 'Tip for export IO error',
+      args: [],
+    );
+  }
+
+  /// `Export path error`
+  String get gTipExportPathError {
+    return Intl.message(
+      'Export path error',
+      name: 'gTipExportPathError',
+      desc: 'Tip for export path error',
       args: [],
     );
   }

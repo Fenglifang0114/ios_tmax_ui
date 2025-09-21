@@ -11,6 +11,23 @@ import 'package:t_max/data/language.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/data/formula_from_db_data.dart';
 
+// 定义排序字段枚举
+enum SortField {
+  orderNo,
+  fmaId,
+  fmaName,
+  totalWeight,
+  actualWeight,
+  createdAt,
+}
+
+// 定义排序方向枚举
+enum SortDirection {
+  ascending,
+  descending,
+  none,
+}
+
 // 定义 EncryptedValue 枚举
 enum EncryptedValue {
   confidential,
@@ -22,9 +39,9 @@ extension EncryptedValueExtension on EncryptedValue {
   String getTranslation(BuildContext context) {
     switch (this) {
       case EncryptedValue.confidential:
-        return localizedStrings.fConfidential; // 这里可以替换为翻译函数
+        return localizedStrings.fConfidential;
       case EncryptedValue.public:
-        return localizedStrings.fPublic; // 这里可以替换为翻译函数
+        return localizedStrings.fPublic;
     }
   }
 }
@@ -32,6 +49,7 @@ extension EncryptedValueExtension on EncryptedValue {
 class OneFmaWgtRecPage extends StatefulWidget {
   const OneFmaWgtRecPage({super.key, required this.oneFmaRecList});
   final List<FmaRecFromDb> oneFmaRecList;
+
   @override
   State<OneFmaWgtRecPage> createState() => OneFmaWgtRecPageState();
 }
@@ -39,44 +57,202 @@ class OneFmaWgtRecPage extends StatefulWidget {
 class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  bool sort = false;
 
-  bool selectAll = false; // 添加全选状态
-  int? clickedRow; // 添加点击行状态
-  // 定义 FocusNode
-  // final FocusNode _searchFocusNode = FocusNode();
+  // 排序相关状态
+  SortField? _currentSortField;
+  SortDirection _currentSortDirection = SortDirection.none;
+
+  // 选择相关状态
+  bool _isAllSelected = false;
+  bool _isAllPagesSelected = false;
+  late List<bool> _selectedRows = [];
+
+  // 分页相关状态
+  int _currentPage = 1;
+  final int _rowsPerPage = 20;
+  int _totalPages = 1;
+
+  // 搜索和控制器
   final TextEditingController _searchCtl = TextEditingController();
   final TextEditingController encryptedCtl = TextEditingController();
   final TextEditingController formulaTypeCtl = TextEditingController();
   final TextEditingController rawTypeCtl = TextEditingController();
-  FormulaInfoDb? selectedFormula; //选中的配方，用于展示原料列表
-  Detail selectedDetail = Detail(); //配方中选中的原料
-  NetScaleInfoLocal defNetScaleInfo = NetScaleInfoLocal(); //默认秤
-  List<NetScaleInfoLocal> scaleNetItems = []; //秤列表
+
+  // 数据和其他状态
+  FormulaInfoDb? selectedFormula;
+  Detail selectedDetail = Detail();
+  NetScaleInfoLocal defNetScaleInfo = NetScaleInfoLocal();
+  List<NetScaleInfoLocal> scaleNetItems = [];
 
   List<FmaRecFromDb> fmaRecList = [];
+  List<FmaRecFromDb> _filteredList = [];
+  List<FmaRecFromDb> _currentPageList = [];
+  final List<bool> _isExpanded = [];
+
   ScrollController scrollController = ScrollController();
   ScrollController scrollController1 = ScrollController();
-
-  final List<bool> _isExpanded = [];
-  bool _isAllSelected = false;
-  late List<bool> _selectedRows;
 
   @override
   void initState() {
     super.initState();
 
     fmaRecList = widget.oneFmaRecList;
+    _filteredList = List.from(fmaRecList);
+    _calculateTotalPages();
+    _updateCurrentPageList();
 
-    for (var i = 0; i < fmaRecList.length; i++) {
+    for (var i = 0; i < _currentPageList.length; i++) {
       _isExpanded.add(false);
     }
-    _selectedRows = List.generate(fmaRecList.length, (index) => false);
+    _selectedRows = List.generate(_currentPageList.length, (index) => false);
 
     _tabController = TabController(length: 2, vsync: this);
+
+    // 监听搜索框变化
+    _searchCtl.addListener(_onSearchTextChanged);
   }
 
-  void _toggleAllSelection() {
+  // 计算总页数
+  void _calculateTotalPages() {
+    _totalPages = (_filteredList.length / _rowsPerPage).ceil();
+    if (_totalPages < 1) _totalPages = 1;
+    if (_currentPage > _totalPages) _currentPage = _totalPages;
+  }
+
+  // 更新当前页数据
+  void _updateCurrentPageList() {
+    final startIndex = (_currentPage - 1) * _rowsPerPage;
+    int endIndex = startIndex + _rowsPerPage;
+    if (endIndex > _filteredList.length) {
+      endIndex = _filteredList.length;
+    }
+
+    setState(() {
+      _currentPageList = _filteredList.sublist(startIndex, endIndex);
+      _isExpanded.clear();
+      for (var i = 0; i < _currentPageList.length; i++) {
+        _isExpanded.add(false);
+      }
+    });
+  }
+
+  // 搜索文本变化处理
+  void _onSearchTextChanged() {
+    final searchText = _searchCtl.text.toLowerCase();
+
+    setState(() {
+      if (searchText.isEmpty) {
+        _filteredList = List.from(fmaRecList);
+      } else {
+        _filteredList = fmaRecList.where((item) {
+          return (item.header?.recordId?.toLowerCase().contains(searchText) ??
+                  false) ||
+              (item.header?.formulaId?.toLowerCase().contains(searchText) ??
+                  false) ||
+              (item.header?.formulaName?.toLowerCase().contains(searchText) ??
+                  false);
+        }).toList();
+      }
+
+      _currentPage = 1;
+      _calculateTotalPages();
+      _updateCurrentPageList();
+      _sortData(); // 保持排序状态
+    });
+  }
+
+  // 排序数据
+  void _sortData() {
+    if (_currentSortField == null ||
+        _currentSortDirection == SortDirection.none) {
+      return;
+    }
+
+    setState(() {
+      _filteredList.sort((a, b) {
+        int comparisonResult = 0;
+
+        switch (_currentSortField!) {
+          case SortField.orderNo:
+            comparisonResult =
+                (a.header?.recordId ?? "").compareTo(b.header?.recordId ?? "");
+            break;
+          case SortField.fmaId:
+            comparisonResult = (a.header?.formulaId ?? "")
+                .compareTo(b.header?.formulaId ?? "");
+            break;
+          case SortField.fmaName:
+            comparisonResult = (a.header?.formulaName ?? "")
+                .compareTo(b.header?.formulaName ?? "");
+            break;
+          case SortField.totalWeight:
+            comparisonResult = (a.header?.actualFmaTotalWgt ?? 0)
+                .compareTo(b.header?.actualFmaTotalWgt ?? 0);
+            break;
+          case SortField.actualWeight:
+            comparisonResult = (a.header?.actualTotalWeight ?? 0)
+                .compareTo(b.header?.actualTotalWeight ?? 0);
+            break;
+          case SortField.createdAt:
+            comparisonResult = (a.header?.recordSaveTime ?? DateTime(0))
+                .compareTo(b.header?.recordSaveTime ?? DateTime(0));
+            break;
+        }
+
+        return _currentSortDirection == SortDirection.ascending
+            ? comparisonResult
+            : -comparisonResult;
+      });
+
+      _updateCurrentPageList();
+    });
+  }
+
+  // 切换排序字段和方向
+  void _toggleSort(SortField field) {
+    setState(() {
+      if (_currentSortField == field) {
+        // 切换排序方向
+        switch (_currentSortDirection) {
+          case SortDirection.ascending:
+            _currentSortDirection = SortDirection.descending;
+            break;
+          case SortDirection.descending:
+            _currentSortDirection = SortDirection.none;
+            _currentSortField = null;
+            break;
+          case SortDirection.none:
+            _currentSortDirection = SortDirection.ascending;
+            _currentSortField = field;
+            break;
+        }
+      } else {
+        // 新的排序字段，默认升序
+        _currentSortField = field;
+        _currentSortDirection = SortDirection.ascending;
+      }
+      _sortData();
+    });
+  }
+
+  // 获取排序图标
+  Widget? _getSortIcon(SortField field) {
+    if (_currentSortField != field) {
+      return null;
+    }
+
+    switch (_currentSortDirection) {
+      case SortDirection.ascending:
+        return const Icon(Icons.arrow_upward, size: 16);
+      case SortDirection.descending:
+        return const Icon(Icons.arrow_downward, size: 16);
+      case SortDirection.none:
+        return null;
+    }
+  }
+
+  // 全选当前页
+  void _toggleAllPageSelection() {
     setState(() {
       _isAllSelected = !_isAllSelected;
       for (int i = 0; i < _selectedRows.length; i++) {
@@ -85,11 +261,33 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
     });
   }
 
+  // 切换单行选择
   void _toggleRowSelection(int index) {
     setState(() {
       _selectedRows[index] = !_selectedRows[index];
       _isAllSelected = _selectedRows.every((element) => element);
+      _isAllPagesSelected = false; // 取消全选所有页状态
     });
+  }
+
+  // 切换到指定页
+  void _goToPage(int page) {
+    if (page < 1 || page > _totalPages) return;
+
+    setState(() {
+      _currentPage = page;
+      _updateCurrentPageList();
+    });
+  }
+
+  // 上一页
+  void _prevPage() {
+    _goToPage(_currentPage - 1);
+  }
+
+  // 下一页
+  void _nextPage() {
+    _goToPage(_currentPage + 1);
   }
 
   @override
@@ -106,18 +304,17 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
 
   @override
   Widget build(BuildContext context) {
-    // final width = MediaQuery.of(context).size.width;
     return Scaffold(
         body: Container(
-      color: Theme.of(context).colorScheme.surfaceDim, //对接时修改颜色值
+      color: Theme.of(context).colorScheme.surfaceDim,
       child: Padding(
         padding: const EdgeInsets.all(0.0),
         child: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
           double availableHeight = constraints.maxHeight;
-          double otherChildrenHeight = 54 + 1 + 70 + 14 + 65;
-          // 计算 showFormulaTable 可用的高度
+          double otherChildrenHeight = 54 + 1 + 70 + 14 + 65 + 50; // 增加分页控件高度
           double formulaTableHeight = availableHeight - otherChildrenHeight;
+
           return Column(
             children: [
               showTitleAndReturn(),
@@ -128,6 +325,7 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
               ),
               showFormulaSearch(),
               showFormulaTable(formulaTableHeight),
+              _buildPaginationControls(),
               Container(
                 height: 14,
                 color: Theme.of(context).colorScheme.surface,
@@ -139,7 +337,47 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
     ));
   }
 
-  showFormulaTable(double formulaTableHeight) {
+  // 构建分页控件
+  Widget _buildPaginationControls() {
+    return Container(
+      height: 50,
+      color: Theme.of(context).colorScheme.surface,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.first_page),
+            onPressed: _currentPage == 1 ? null : () => _goToPage(1),
+          ),
+          IconButton(
+            icon: const Icon(Icons.navigate_before),
+            onPressed: _currentPage == 1 ? null : _prevPage,
+          ),
+          Text(
+            '$_currentPage / $_totalPages',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          IconButton(
+            icon: const Icon(Icons.navigate_next),
+            onPressed: _currentPage == _totalPages ? null : _nextPage,
+          ),
+          IconButton(
+            icon: const Icon(Icons.last_page),
+            onPressed: _currentPage == _totalPages
+                ? null
+                : () => _goToPage(_totalPages),
+          ),
+          Text(
+            '${'          当前'} ${_currentPageList.length}            ${'共'} ${_filteredList.length} ${'条'}',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget showFormulaTable(double formulaTableHeight) {
     return Expanded(
       flex: 7,
       child: Scrollbar(
@@ -148,7 +386,6 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
           scrollDirection: Axis.horizontal,
           controller: scrollController,
           child: Container(
-            // padding: const EdgeInsets.all(10),
             width: 3000,
             height: formulaTableHeight,
             decoration: BoxDecoration(
@@ -157,10 +394,9 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
                     width: 0.2,
                     color: Theme.of(context).colorScheme.onSurface)),
             child: SingleChildScrollView(
-              scrollDirection: Axis.vertical, // 水平滚动
+              scrollDirection: Axis.vertical,
               controller: scrollController1,
-              child: //   return Expanded(
-                  Container(
+              child: Container(
                 padding: const EdgeInsets.only(left: 20, right: 20),
                 color: Theme.of(context).colorScheme.surface,
                 child: Column(
@@ -172,136 +408,177 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
                       color: Theme.of(context).colorScheme.secondaryContainer,
                       child: Row(
                         children: [
+                          // 全选复选框
                           Checkbox(
                             value: _isAllSelected,
+                            tristate: true,
                             onChanged: (bool? value) {
-                              _toggleAllSelection();
+                              _toggleAllPageSelection();
                             },
                           ),
+                          // 订单号（可排序）
                           Expanded(
-                            child: Text(
-                              localizedStrings.fOrderNo ?? "Order No",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall!
-                                  .apply(
-                                    color:
-                                        Theme.of(context).colorScheme.onSurface,
+                            child: InkWell(
+                              onTap: () => _toggleSort(SortField.orderNo),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    localizedStrings.fOrderNo ?? "Order No",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall!
+                                        .apply(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface,
+                                        ),
                                   ),
+                                  if (_getSortIcon(SortField.orderNo) != null)
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 4.0),
+                                      child: _getSortIcon(SortField.orderNo),
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          // 配方ID（可排序）
+                          Expanded(
+                            child: InkWell(
+                              onTap: () => _toggleSort(SortField.fmaId),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    localizedStrings.fFmaIdLabel,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall!
+                                        .apply(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface,
+                                        ),
+                                  ),
+                                  if (_getSortIcon(SortField.fmaId) != null)
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 4.0),
+                                      child: _getSortIcon(SortField.fmaId),
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          // 配方名称（可排序）
+                          Expanded(
+                            child: InkWell(
+                              onTap: () => _toggleSort(SortField.fmaName),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    localizedStrings.fFmaNameLabel,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall!
+                                        .apply(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface,
+                                        ),
+                                  ),
+                                  if (_getSortIcon(SortField.fmaName) != null)
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 4.0),
+                                      child: _getSortIcon(SortField.fmaName),
+                                    ),
+                                ],
+                              ),
                             ),
                           ),
                           Expanded(
-                              child: Text(
-                            localizedStrings.fFmaIdLabel,
-                            style: Theme.of(context).textTheme.bodySmall!.apply(
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
-                                ),
-                          )),
+                            child: titleText(localizedStrings.fMaterialNameCol),
+                          ),
                           Expanded(
-                              child: Text(
-                            localizedStrings.fFmaNameLabel,
-                            style: Theme.of(context).textTheme.bodySmall!.apply(
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
-                                ),
-                          )),
+                              child:
+                                  titleText(localizedStrings.fMaterialIdCol)),
                           Expanded(
-                              child: Text(
-                            localizedStrings.fMaterialNameCol,
-                            style: Theme.of(context).textTheme.bodySmall!.apply(
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
-                                ),
-                          )),
+                              child: titleText(localizedStrings.fFmaModeCol)),
                           Expanded(
-                              child: Text(
-                            localizedStrings.fMaterialIdCol,
-                            style: Theme.of(context).textTheme.bodySmall!.apply(
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
-                                ),
-                          )),
+                            child: titleText(localizedStrings.fConfidential),
+                          ),
+
+                          // 配方总重量（可排序）
                           Expanded(
-                              child: Text(
-                            localizedStrings.fFmaModeCol,
-                            style: Theme.of(context).textTheme.bodySmall!.apply(
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
-                                ),
-                          )),
+                            child: InkWell(
+                              onTap: () => _toggleSort(SortField.totalWeight),
+                              child: Row(
+                                children: [
+                                  titleText(
+                                      localizedStrings.fFormulaTotalWeight),
+                                  if (_getSortIcon(SortField.totalWeight) !=
+                                      null)
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 4.0),
+                                      child:
+                                          _getSortIcon(SortField.totalWeight),
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          // 实际总重量（可排序）
                           Expanded(
-                              child: Text(
-                            localizedStrings.fConfidential,
-                            style: Theme.of(context).textTheme.bodySmall!.apply(
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
-                                ),
-                          )),
+                            child: InkWell(
+                              onTap: () => _toggleSort(SortField.actualWeight),
+                              child: Row(
+                                children: [
+                                  titleText(
+                                      localizedStrings.fActualTotalWeight),
+                                  if (_getSortIcon(SortField.actualWeight) !=
+                                      null)
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 4.0),
+                                      child:
+                                          _getSortIcon(SortField.actualWeight),
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ),
                           Expanded(
-                              child: Text(
-                            localizedStrings.fFormulaTotalWeight,
-                            style: Theme.of(context).textTheme.bodySmall!.apply(
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
-                                ),
-                          )),
+                            child: titleText(
+                                localizedStrings.fMaterialSingleWeight),
+                          ),
                           Expanded(
-                              child: Text(
-                            localizedStrings.fActualTotalWeight,
-                            style: Theme.of(context).textTheme.bodySmall!.apply(
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
-                                ),
-                          )),
+                            child:
+                                titleText(localizedStrings.fActualSingleWeight),
+                          ),
                           Expanded(
-                              child: Text(
-                            localizedStrings.fMaterialSingleWeight,
-                            style: Theme.of(context).textTheme.bodySmall!.apply(
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
-                                ),
-                          )),
+                            child: titleText(localizedStrings.fAllowableError),
+                          ),
                           Expanded(
-                              child: Text(
-                            localizedStrings.fActualSingleWeight,
-                            style: Theme.of(context).textTheme.bodySmall!.apply(
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
-                                ),
-                          )),
+                              child: titleText(localizedStrings.fActualError)),
                           Expanded(
-                              child: Text(
-                            localizedStrings.fAllowableError,
-                            style: Theme.of(context).textTheme.bodySmall!.apply(
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
-                                ),
-                          )),
+                              child: titleText(
+                                  localizedStrings.fQualificationStatus)),
                           Expanded(
-                              child: Text(
-                            localizedStrings.fActualError,
-                            style: Theme.of(context).textTheme.bodySmall!.apply(
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
-                                ),
-                          )),
+                              child: titleText(localizedStrings.gDeviceName)),
+
+                          // 创建时间（可排序）
                           Expanded(
-                              child: Text(
-                            localizedStrings.fQualificationStatus,
-                            style: Theme.of(context).textTheme.bodySmall!.apply(
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
-                                ),
-                          )),
-                          Expanded(
-                              child: Text(
-                            localizedStrings.fCreatedAtCol,
-                            style: Theme.of(context).textTheme.bodySmall!.apply(
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
-                                ),
-                          )),
+                            child: InkWell(
+                              onTap: () => _toggleSort(SortField.createdAt),
+                              child: Row(
+                                children: [
+                                  titleText(localizedStrings.fCreatedAtCol),
+                                  if (_getSortIcon(SortField.createdAt) != null)
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 4.0),
+                                      child: _getSortIcon(SortField.createdAt),
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ),
                           const SizedBox(width: 60, child: Text('')),
                         ],
                       ),
@@ -313,394 +590,321 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
                     ),
                     SizedBox(
                       height: formulaTableHeight,
-                      child: ListView.builder(
-                        itemCount: fmaRecList.length,
-                        itemBuilder: (context, index) {
-                          final rowData = fmaRecList[index];
-                          return Column(
-                            children: [
-                              // 主行
-                              Container(
-                                height: 40,
-                                color: const Color.fromARGB(255, 247, 247, 247),
-                                child: Row(
+                      child: _currentPageList.isEmpty
+                          ? Center(
+                              child: Text(localizedStrings.fNoDataAvailable),
+                            )
+                          : ListView.builder(
+                              itemCount: _currentPageList.length,
+                              itemBuilder: (context, index) {
+                                final rowData = _currentPageList[index];
+                                return Column(
                                   children: [
-                                    Checkbox(
-                                      value: _selectedRows[index],
-                                      onChanged: (bool? value) {
-                                        _toggleRowSelection(index);
-                                      },
-                                    ),
-                                    Expanded(
-                                        child: Text(
-                                      rowData.header?.recordId ?? "",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall!
-                                          .apply(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSurface,
+                                    // 主行
+                                    Container(
+                                      height: 40,
+                                      color: const Color.fromARGB(
+                                          255, 247, 247, 247),
+                                      child: Row(
+                                        children: [
+                                          Checkbox(
+                                            value: _selectedRows[index],
+                                            onChanged: (bool? value) {
+                                              _toggleRowSelection(index);
+                                            },
                                           ),
-                                    )),
-                                    Expanded(
-                                        child: Text(
-                                      rowData.header!.formulaId ?? "",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall!
-                                          .apply(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSurface,
+                                          Expanded(
+                                            child: titleText(
+                                                rowData.header?.recordId ?? ""),
                                           ),
-                                    )),
-                                    Expanded(
-                                        child: Text(
-                                      rowData.header!.formulaName ?? "",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall!
-                                          .apply(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSurface,
+                                          Expanded(
+                                            child: titleText(
+                                                rowData.header!.formulaId ??
+                                                    ""),
                                           ),
-                                    )),
-                                    Expanded(child: Text('')),
-                                    Expanded(child: Text('')),
-                                    Expanded(
-                                        child: Text(
-                                      rowData.header!.formulaMode! == 'wgt'
-                                          ? localizedStrings.fWeightMode
-                                          : localizedStrings.fPctMode,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall!
-                                          .apply(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSurface,
+                                          Expanded(
+                                            child: titleText(
+                                                rowData.header!.formulaName ??
+                                                    ""),
                                           ),
-                                    )),
-                                    Expanded(
-                                        child: Text(
-                                      " ${rowData.header!.isEncrypted.toString() == "true" ? localizedStrings.fConfidential : localizedStrings.fPublic}",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall!
-                                          .apply(
-                                              color: rowData.header!.isEncrypted
+                                          Expanded(child: Text('')),
+                                          Expanded(child: Text('')),
+                                          Expanded(
+                                            child: titleText(rowData
+                                                        .header!.formulaMode! ==
+                                                    'wgt'
+                                                ? localizedStrings.fWeightMode
+                                                : localizedStrings.fPctMode),
+                                          ),
+                                          Expanded(
+                                              child: Text(
+                                            " ${rowData.header!.isEncrypted.toString() == "true" ? localizedStrings.fConfidential : localizedStrings.fPublic}",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall!
+                                                .apply(
+                                                    color: rowData.header!
+                                                                .isEncrypted
+                                                                .toString() ==
+                                                            "false"
+                                                        ? Theme.of(context)
+                                                            .colorScheme
+                                                            .onTertiaryFixedVariant
+                                                        : Theme.of(context)
+                                                            .colorScheme
+                                                            .error),
+                                          )),
+                                          Expanded(
+                                            child: titleText(
+                                              "${rowData.header!.actualFmaTotalWgt!.toStringAsFixed(3)} ${rowData.header!.totalWeightUnit}",
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: titleText(
+                                              "${rowData.header!.actualTotalWeight!.toStringAsFixed(3)} ${rowData.header!.totalWeightUnit}",
+                                            ),
+                                          ),
+                                          Expanded(child: Text('')),
+                                          Expanded(child: Text('')),
+                                          Expanded(child: Text('')),
+                                          Expanded(child: Text('')),
+                                          Expanded(
+                                            child: Text(
+                                              rowData.header!.isQualified
                                                           .toString() ==
-                                                      "false"
-                                                  ? Theme.of(context)
-                                                      .colorScheme
-                                                      .onTertiaryFixedVariant
-                                                  : Theme.of(context)
-                                                      .colorScheme
-                                                      .error),
-                                    )),
-                                    Expanded(
-                                        child: Text(
-                                      "${rowData.header!.actualFmaTotalWgt!.toStringAsFixed(3)} ${rowData.header!.totalWeightUnit}",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall!
-                                          .apply(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSurface,
+                                                      "yes"
+                                                  ? localizedStrings.fQualified
+                                                  : localizedStrings
+                                                      .fUnqualified,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall!
+                                                  .apply(
+                                                      color: rowData.header!
+                                                                  .isQualified
+                                                                  .toString() ==
+                                                              "yes"
+                                                          ? Theme.of(context)
+                                                              .colorScheme
+                                                              .onTertiaryFixedVariant
+                                                          : Theme.of(context)
+                                                              .colorScheme
+                                                              .error),
+                                            ),
                                           ),
-                                    )),
-                                    Expanded(
-                                        child: Text(
-                                      "${rowData.header!.actualTotalWeight!.toStringAsFixed(3)} ${rowData.header!.totalWeightUnit}",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall!
-                                          .apply(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSurface,
+                                          Expanded(
+                                              child: Text(
+                                            '',
+                                          )),
+                                          Expanded(
+                                            child: titleText(
+                                              rowData.header!.recordSaveTime !=
+                                                      null
+                                                  ? DateFormat(
+                                                          'yyyy-MM-dd HH:mm:ss')
+                                                      .format(rowData.header!
+                                                          .recordSaveTime!)
+                                                  : '',
+                                            ),
                                           ),
-                                    )),
-                                    Expanded(child: Text('')),
-                                    Expanded(child: Text('')),
-                                    Expanded(child: Text('')),
-                                    Expanded(child: Text('')),
-                                    Expanded(
-                                      child: Text(
-                                        rowData.header!.isQualified
-                                                    .toString() ==
-                                                "yes"
-                                            ? localizedStrings.fQualified
-                                            : localizedStrings.fUnqualified,
-                                        style: Theme.of(
-                                                context)
-                                            .textTheme
-                                            .bodySmall!
-                                            .apply(
-                                                color: rowData
-                                                            .header!.isQualified
-                                                            .toString() ==
-                                                        "yes"
-                                                    ? Theme.of(context)
-                                                        .colorScheme
-                                                        .onTertiaryFixedVariant
-                                                    : Theme.of(context)
-                                                        .colorScheme
-                                                        .error),
+                                          SizedBox(
+                                            width: 60,
+                                            child: IconButton(
+                                              icon: Icon(
+                                                _isExpanded[index]
+                                                    ? Icons.expand_less
+                                                    : Icons.expand_more,
+                                              ),
+                                              onPressed: () {
+                                                setState(() {
+                                                  _isExpanded[index] =
+                                                      !_isExpanded[index];
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                    Expanded(
-                                        // 格式化日期时间，显示本地时区的年月日时分秒
-                                        child: Text(
-                                      rowData.header!.recordSaveTime != null
-                                          ? DateFormat('yyyy-MM-dd HH:mm:ss')
-                                              .format(rowData
-                                                  .header!.recordSaveTime!)
-                                          : '',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall!
-                                          .apply(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSurface,
-                                          ),
-                                    )),
-                                    SizedBox(
-                                      width: 60,
-                                      child: IconButton(
-                                        icon: Icon(
-                                          _isExpanded[index]
-                                              ? Icons.expand_less
-                                              : Icons.expand_more,
-                                        ),
-                                        onPressed: () {
-                                          setState(() {
-                                            _isExpanded[index] =
-                                                !_isExpanded[index];
-                                          });
-                                        },
+                                    Divider(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .outlineVariant,
+                                      thickness: 1,
+                                      height: 1,
+                                    ),
+
+                                    // 展开的明细行
+                                    Visibility(
+                                      visible: _isExpanded[index],
+                                      child: Column(
+                                        children:
+                                            rowData.details
+                                                    ?.asMap()
+                                                    .entries
+                                                    .map<Widget>((entry) {
+                                                  final detailIndex = entry.key;
+                                                  final detail = entry.value;
+                                                  return Column(
+                                                    children: [
+                                                      Container(
+                                                        height: 40,
+                                                        color: Colors.white,
+                                                        child: SizedBox(
+                                                          height: 38,
+                                                          child: Row(
+                                                            children: [
+                                                              const SizedBox(
+                                                                  width:
+                                                                      48), // 对齐复选框位置
+                                                              const Expanded(
+                                                                  child:
+                                                                      Text('')),
+                                                              Expanded(
+                                                                  child:
+                                                                      Text('')),
+                                                              Expanded(
+                                                                  child:
+                                                                      Text('')),
+                                                              Expanded(
+                                                                child:
+                                                                    subTitleText(
+                                                                  detail.sequence ==
+                                                                          0
+                                                                      ? localizedStrings
+                                                                          .fFmaContainer
+                                                                      : detail.materialName ??
+                                                                          "",
+                                                                ),
+                                                              ),
+                                                              Expanded(
+                                                                child:
+                                                                    subTitleText(
+                                                                  detail.materialId ??
+                                                                      '',
+                                                                ),
+                                                              ),
+                                                              Expanded(
+                                                                  child:
+                                                                      Text('')),
+                                                              Expanded(
+                                                                  child:
+                                                                      Text('')),
+                                                              Expanded(
+                                                                  child:
+                                                                      Text('')),
+                                                              Expanded(
+                                                                  child:
+                                                                      Text('')),
+                                                              Expanded(
+                                                                  child:
+                                                                      subTitleText(
+                                                                detail.sequence ==
+                                                                            0 ||
+                                                                        rowData.header!.isEncrypted.toString() ==
+                                                                            "true"
+                                                                    ? '-'
+                                                                    : "${detail.targetWgt.toString()} ${rowData.header!.totalWeightUnit!}",
+                                                              )),
+
+                                                              Expanded(
+                                                                  child:
+                                                                      subTitleText(
+                                                                (detail.sequence ==
+                                                                            0 ||
+                                                                        rowData.header!.isEncrypted.toString() !=
+                                                                            "true")
+                                                                    ? '${detail.actualWeight.toString()} ${rowData.header!.totalWeightUnit!}'
+                                                                    : "-",
+                                                              )),
+                                                              Expanded(
+                                                                child:
+                                                                    subTitleText(
+                                                                  detail.sequence ==
+                                                                              0 ||
+                                                                          rowData.header!.isEncrypted.toString() ==
+                                                                              "true"
+                                                                      ? '-'
+                                                                      : rowData.header!.formulaMode! ==
+                                                                              "pct"
+                                                                          ? "${double.parse((detail.allowableError! * rowData.header!.actualFmaTotalWgt! / 100).toStringAsFixed(3)).toString()} ${rowData.header!.totalWeightUnit!}"
+                                                                          : "${detail.allowableError!.toString()} ${rowData.header!.totalWeightUnit!}",
+                                                                ),
+                                                              ),
+                                                              Expanded(
+                                                                  child:
+                                                                      subTitleText(
+                                                                detail.sequence ==
+                                                                            0 ||
+                                                                        rowData.header!.isEncrypted.toString() ==
+                                                                            "true"
+                                                                    ? '-'
+                                                                    : "${detail.actualErrorWgt.toString()} ${rowData.header!.totalWeightUnit!}",
+                                                              )),
+                                                              Expanded(
+                                                                  child: Text(
+                                                                detail.sequence ==
+                                                                            0 ||
+                                                                        rowData.header!.isEncrypted.toString() ==
+                                                                            "true"
+                                                                    ? '-'
+                                                                    : detail.isQualified.toString() ==
+                                                                            "ok"
+                                                                        ? localizedStrings
+                                                                            .fQualified
+                                                                        : localizedStrings
+                                                                            .fUnqualified,
+                                                                style: Theme.of(
+                                                                        context)
+                                                                    .textTheme
+                                                                    .bodySmall!
+                                                                    .apply(
+                                                                        color: detail.isQualified.toString() ==
+                                                                                "ok"
+                                                                            ? Theme.of(context).colorScheme.onTertiaryFixedVariant
+                                                                            : Theme.of(context).colorScheme.error),
+                                                              )),
+                                                              Expanded(
+                                                                  child:
+                                                                      subTitleText(
+                                                                detail.scaleName ??
+                                                                    '-',
+                                                              )),
+                                                              Expanded(
+                                                                  child:
+                                                                      Text('')),
+                                                              SizedBox(
+                                                                width: 60,
+                                                                child: Text(''),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      // 判断是否为最后一个元素，不是则显示分割线
+                                                      if (detailIndex <
+                                                          (rowData.details
+                                                                      ?.length ??
+                                                                  0) -
+                                                              1)
+                                                        Divider(
+                                                          color: Theme.of(
+                                                                  context)
+                                                              .colorScheme
+                                                              .outlineVariant,
+                                                          thickness: 1,
+                                                          height: 1,
+                                                        )
+                                                    ],
+                                                  );
+                                                }).toList() ??
+                                                [],
                                       ),
                                     ),
                                   ],
-                                ),
-                              ),
-                              Divider(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .outlineVariant,
-                                thickness: 1,
-                                height: 1,
-                              ),
-
-                              // 展开的明细行
-                              Visibility(
-                                visible: _isExpanded[index],
-                                child: Column(
-                                  children: rowData.details
-                                          ?.asMap()
-                                          .entries
-                                          .map<Widget>((entry) {
-                                        final detailIndex = entry.key;
-                                        final detail = entry.value;
-                                        return Column(
-                                          children: [
-                                            Container(
-                                              height: 40,
-                                              color: Colors.white,
-                                              child: SizedBox(
-                                                height: 38,
-                                                child: Row(
-                                                  children: [
-                                                    const SizedBox(
-                                                        width: 48), // 对齐复选框位置
-                                                    const Expanded(
-                                                        child: Text('')),
-                                                    Expanded(child: Text('')),
-                                                    Expanded(child: Text('')),
-                                                    Expanded(
-                                                      child: Text(
-                                                        detail.sequence == 0
-                                                            ? localizedStrings
-                                                                .fFmaContainer
-                                                            : detail.materialName ??
-                                                                "",
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .bodySmall!
-                                                            .apply(
-                                                              color: Theme.of(
-                                                                      context)
-                                                                  .colorScheme
-                                                                  .onSurfaceVariant,
-                                                            ),
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      child: Text(
-                                                        detail.materialId ?? '',
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .bodySmall!
-                                                            .apply(
-                                                              color: Theme.of(
-                                                                      context)
-                                                                  .colorScheme
-                                                                  .onSurfaceVariant,
-                                                            ),
-                                                      ),
-                                                    ),
-                                                    Expanded(child: Text('')),
-                                                    Expanded(child: Text('')),
-                                                    Expanded(child: Text('')),
-                                                    Expanded(child: Text('')),
-                                                    Expanded(
-                                                        child: Text(
-                                                      detail.sequence == 0 ||
-                                                              rowData.header!
-                                                                      .isEncrypted
-                                                                      .toString() ==
-                                                                  "true"
-                                                          ? '-'
-                                                          : "${detail.targetWgt.toString()} ${rowData.header!.totalWeightUnit!}",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodySmall!
-                                                          .apply(
-                                                            color: Theme.of(
-                                                                    context)
-                                                                .colorScheme
-                                                                .onSurfaceVariant,
-                                                          ),
-                                                    )),
-
-                                                    Expanded(
-                                                        child: Text(
-                                                      (detail.sequence == 0 ||
-                                                              (rowData.header!
-                                                                      .isEncrypted
-                                                                      .toString() !=
-                                                                  "true"))
-                                                          ? '${detail.actualWeight.toString()} ${rowData.header!.totalWeightUnit!}'
-                                                          : "-",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodySmall!
-                                                          .apply(
-                                                            color: Theme.of(
-                                                                    context)
-                                                                .colorScheme
-                                                                .onSurfaceVariant,
-                                                          ),
-                                                    )),
-                                                    Expanded(
-                                                      child: Text(
-                                                        detail.sequence == 0 ||
-                                                                rowData.header!
-                                                                        .isEncrypted
-                                                                        .toString() ==
-                                                                    "true"
-                                                            ? '-'
-                                                            : rowData.header!
-                                                                        .formulaMode! ==
-                                                                    "pct"
-                                                                ? "${double.parse((detail.allowableError! * rowData.header!.actualFmaTotalWgt! / 100).toStringAsFixed(3)).toString()} ${rowData.header!.totalWeightUnit!}"
-                                                                : "${detail.allowableError!.toString()} ${rowData.header!.totalWeightUnit!}",
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .bodySmall!
-                                                            .apply(
-                                                              color: Theme.of(
-                                                                      context)
-                                                                  .colorScheme
-                                                                  .onSurfaceVariant,
-                                                            ),
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                        child: Text(
-                                                      detail.sequence == 0 ||
-                                                              rowData.header!
-                                                                      .isEncrypted
-                                                                      .toString() ==
-                                                                  "true"
-                                                          ? '-'
-                                                          : "${detail.actualErrorWgt.toString()} ${rowData.header!.totalWeightUnit!}",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodySmall!
-                                                          .apply(
-                                                            color: Theme.of(
-                                                                    context)
-                                                                .colorScheme
-                                                                .onSurfaceVariant,
-                                                          ),
-                                                    )),
-                                                    Expanded(
-                                                        child: Text(
-                                                      detail.sequence == 0 ||
-                                                              rowData.header!
-                                                                      .isEncrypted
-                                                                      .toString() ==
-                                                                  "true"
-                                                          ? '-'
-                                                          : detail.isQualified
-                                                                      .toString() ==
-                                                                  "ok"
-                                                              ? localizedStrings
-                                                                  .fQualified
-                                                              : localizedStrings
-                                                                  .fUnqualified,
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodySmall!
-                                                          .apply(
-                                                              color: detail
-                                                                          .isQualified
-                                                                          .toString() ==
-                                                                      "ok"
-                                                                  ? Theme.of(
-                                                                          context)
-                                                                      .colorScheme
-                                                                      .onTertiaryFixedVariant
-                                                                  : Theme.of(
-                                                                          context)
-                                                                      .colorScheme
-                                                                      .error),
-                                                    )),
-                                                    Expanded(child: Text('')),
-                                                    SizedBox(
-                                                      width: 60,
-                                                      child: Text(''),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            // 判断是否为最后一个元素，不是则显示分割线
-                                            if (detailIndex <
-                                                (rowData.details?.length ?? 0) -
-                                                    1)
-                                              Divider(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .outlineVariant,
-                                                thickness: 1,
-                                                height: 1,
-                                              )
-                                          ],
-                                        );
-                                      }).toList() ??
-                                      [],
-                                ),
-                              ),
-                            ],
-                          );
-                        },
-                      ),
+                                );
+                              },
+                            ),
                     ),
                   ],
                 ),
@@ -712,7 +916,25 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
     );
   }
 
-  showTitleAndReturn() {
+  Widget titleText(String data) {
+    return Text(
+      data,
+      style: Theme.of(context).textTheme.bodySmall!.apply(
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+    );
+  }
+
+  Widget subTitleText(String data) {
+    return Text(
+      data,
+      style: Theme.of(context).textTheme.bodySmall!.apply(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+    );
+  }
+
+  Widget showTitleAndReturn() {
     return Container(
       height: 54,
       color: Theme.of(context).colorScheme.surface,
@@ -726,9 +948,9 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
                     Icons.keyboard_double_arrow_left_outlined,
                     size: 20,
                     color: Theme.of(context).colorScheme.primary,
-                  ), // 返回图标
+                  ),
                   onPressed: () {
-                    Navigator.pop(context); // 返回到上一个页面
+                    Navigator.pop(context);
                   },
                 ),
                 Text(
@@ -740,23 +962,22 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
-                ), // 标题文本
+                ),
               ],
             ),
           ),
-          SizedBox(
-            width: 20,
-          )
+          const SizedBox(width: 20),
         ],
       ),
     );
   }
 
   bool getExportStatus() {
-    //查找是否有选中的行
+    // 检查当前页是否有选中的行
     bool hasSelectedRow = _selectedRows.any((element) => element);
 
-    return hasSelectedRow;
+    // 如果是全选所有页，也视为有选中行
+    return hasSelectedRow || _isAllPagesSelected;
   }
 
   // 导出选中数据到 CSV 文件
@@ -799,111 +1020,137 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
       ];
 
       List<List<dynamic>> csvData = [header];
+      List<FmaRecFromDb> exportList = [];
 
-      // 遍历选中的行
-      for (int i = 0; i < _selectedRows.length; i++) {
-        if (_selectedRows[i]) {
-          final rowData = fmaRecList[i];
-          final headerData = rowData.header;
-
-          // 添加表头数据
-          final headerRow = [
-            headerData?.recordId ?? "",
-            headerData?.formulaId ?? "",
-            headerData?.formulaName ?? "",
-            "",
-            "",
-            headerData?.formulaMode == 'wgt'
-                ? localizedStrings.fWeightMode
-                : localizedStrings.fPctMode,
-            headerData?.isEncrypted.toString() == "true"
-                ? localizedStrings.fConfidential
-                : localizedStrings.fPublic,
-            "${headerData?.actualFmaTotalWgt} ${headerData?.totalWeightUnit}",
-            "${headerData?.actualTotalWeight} ${headerData?.totalWeightUnit}",
-            "",
-            "",
-            "",
-            "",
-            headerData?.isQualified.toString() == "yes"
-                ? localizedStrings.fQualified
-                : localizedStrings.fUnqualified,
-            headerData?.recordSaveTime != null
-                ? DateFormat('yyyy-MM-dd HH:mm:ss')
-                    .format(headerData!.recordSaveTime!)
-                : ''
-          ];
-          csvData.add(headerRow);
-
-          // 添加明细数据
-          if (rowData.details != null) {
-            for (final detail in rowData.details!) {
-              final detailRow = [
-                "",
-                "",
-                "",
-                detail.sequence == 0
-                    ? localizedStrings.fFmaContainer
-                    : detail.materialName ?? "",
-                detail.materialId ?? "",
-                "",
-                "",
-                "",
-                "",
-                detail.sequence == 0 ||
-                        headerData!.isEncrypted.toString() == "true"
-                    ? '-'
-                    : "${detail.targetWgt.toString()} ${headerData.totalWeightUnit!}",
-                (detail.sequence == 0 ||
-                        headerData!.isEncrypted.toString() != "true")
-                    ? '${detail.actualWeight.toString()} ${headerData!.totalWeightUnit!}'
-                    : "-",
-                detail.sequence == 0 ||
-                        headerData.isEncrypted.toString() == "true"
-                    ? '-'
-                    : headerData.formulaMode! == "pct"
-                        ? "${double.parse((detail.allowableError! * headerData.actualFmaTotalWgt! / 100).toStringAsFixed(3)).toString()} ${headerData.totalWeightUnit!}"
-                        : "${detail.allowableError!.toString()} ${headerData.totalWeightUnit!}",
-                detail.sequence == 0 ||
-                        headerData.isEncrypted.toString() == "true"
-                    ? '-'
-                    : "${detail.actualErrorWgt.toString()} ${headerData.totalWeightUnit!}",
-                detail.sequence == 0 ||
-                        headerData.isEncrypted.toString() == "true"
-                    ? '-'
-                    : detail.isQualified.toString() == "ok"
-                        ? localizedStrings.fQualified
-                        : localizedStrings.fUnqualified,
-                ""
-              ];
-              csvData.add(detailRow);
-            }
+      // 确定需要导出的数据
+      if (_isAllPagesSelected) {
+        // 导出所有数据
+        exportList = List.from(_filteredList);
+      } else {
+        // 只导出当前页选中的数据
+        for (int i = 0; i < _selectedRows.length; i++) {
+          if (_selectedRows[i]) {
+            exportList.add(_currentPageList[i]);
           }
         }
       }
 
-      // 生成 CSV 内容
+      // 遍历需要导出的数据
+      for (final rowData in exportList) {
+        final headerData = rowData.header;
+
+        // 添加表头数据
+        final headerRow = [
+          headerData?.recordId ?? "",
+          headerData?.formulaId ?? "",
+          headerData?.formulaName ?? "",
+          "",
+          "",
+          headerData?.formulaMode == 'wgt'
+              ? localizedStrings.fWeightMode
+              : localizedStrings.fPctMode,
+          headerData?.isEncrypted.toString() == "true"
+              ? localizedStrings.fConfidential
+              : localizedStrings.fPublic,
+          "${headerData?.actualFmaTotalWgt} ${headerData?.totalWeightUnit}",
+          "${(headerData?.actualTotalWeight ?? 0.0).toStringAsFixed(3)} ${headerData?.totalWeightUnit}",
+          "",
+          "",
+          "",
+          "",
+          headerData?.isQualified.toString() == "yes"
+              ? localizedStrings.fQualified
+              : localizedStrings.fUnqualified,
+          headerData?.recordSaveTime != null
+              ? DateFormat('yyyy-MM-dd HH:mm:ss')
+                  .format(headerData!.recordSaveTime!)
+              : ''
+        ];
+        csvData.add(headerRow);
+
+        // 添加明细数据
+        if (rowData.details != null) {
+          for (final detail in rowData.details!) {
+            final detailRow = [
+              "",
+              "",
+              "",
+              detail.sequence == 0
+                  ? localizedStrings.fFmaContainer
+                  : detail.materialName ?? "",
+              detail.materialId ?? "",
+              "",
+              "",
+              "",
+              "",
+              detail.sequence == 0 ||
+                      headerData!.isEncrypted.toString() == "true"
+                  ? '-'
+                  : "${detail.targetWgt.toString()} ${headerData.totalWeightUnit!}",
+              (detail.sequence == 0 ||
+                      headerData!.isEncrypted.toString() != "true")
+                  ? '${(detail.actualWeight ?? 0.0).toStringAsFixed(3)} ${headerData!.totalWeightUnit!}'
+                  : "-",
+              detail.sequence == 0 ||
+                      headerData.isEncrypted.toString() == "true"
+                  ? '-'
+                  : headerData.formulaMode! == "pct"
+                      ? "${double.parse((detail.allowableError! * headerData.actualFmaTotalWgt! / 100).toStringAsFixed(3)).toString()} ${headerData.totalWeightUnit!}"
+                      : "${detail.allowableError!.toString()} ${headerData.totalWeightUnit!}",
+              detail.sequence == 0 ||
+                      headerData.isEncrypted.toString() == "true"
+                  ? '-'
+                  : "${detail.actualErrorWgt.toString()} ${headerData.totalWeightUnit!}",
+              detail.sequence == 0 ||
+                      headerData.isEncrypted.toString() == "true"
+                  ? '-'
+                  : detail.isQualified.toString() == "ok"
+                      ? localizedStrings.fQualified
+                      : localizedStrings.fUnqualified,
+              ""
+            ];
+            csvData.add(detailRow);
+          }
+        }
+      }
+
       final csv = const ListToCsvConverter().convert(csvData);
       final file = File(path);
-      // 将 CSV 内容写入文件
       await file.writeAsString(csv);
-      // 提示导出成功
-      if (mounted) // 确保组件仍然挂载
-      {
+      if (mounted) {
         showTipInfo(localizedStrings.fSaveSuccess, context);
       }
     } catch (e) {
-      // 提示导出失败
-      // print("Export failed: $e");
+      if (mounted) {
+        showTipInfo('${localizedStrings.gTipExportFail}: $e', context);
+      }
     }
   }
 
-  showFormulaSearch() {
+  Widget showFormulaSearch() {
     return Container(
       height: 70,
       color: Theme.of(context).colorScheme.surface,
       child: Row(children: [
-        Spacer(),
+        const SizedBox(width: 20),
+        // 添加搜索框
+        SizedBox(
+          width: 300,
+          height: 40,
+          child: TextField(
+            controller: _searchCtl,
+            decoration: InputDecoration(
+              // hintText: 'localizedStrings.fSearchByOrderNoFmaIdOrName',
+              prefixIcon: const Icon(Icons.search),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(0),
+              ),
+              contentPadding: const EdgeInsets.symmetric(vertical: 0),
+            ),
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+        ),
+        const Spacer(),
         SizedBox(
           width: 200,
           height: 40,
@@ -914,13 +1161,12 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
                   Theme.of(context).colorScheme.onTertiaryFixedVariant,
               fixedSize: const Size(double.infinity, 48),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
+                borderRadius: BorderRadius.zero,
               ),
             ),
             onPressed: (!getExportStatus())
                 ? null
                 : () {
-                    // 实现导出选择的配方称重明细
                     exportSelectedDataToCSV();
                   },
             child: Text(
@@ -932,9 +1178,7 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
             ),
           ),
         ),
-        SizedBox(
-          width: 20,
-        ),
+        const SizedBox(width: 20),
       ]),
     );
   }

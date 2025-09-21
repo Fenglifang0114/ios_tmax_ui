@@ -317,10 +317,7 @@ class AddFormulaPageState extends State<AddFormulaPage> {
             onChanged: freeMode
                 ? null
                 : (FormulaMode? newValue) {
-                    // 处理下拉列表项选择事件
                     if (newValue != null) {
-                      // 在这里处理选择的值
-
                       if (addFormulaRawList.isEmpty) {
                         setState(() {
                           valueCtl.text = newValue
@@ -339,14 +336,21 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                             );
                           },
                         ).then((value) {
+                          if (value == null) {
+                            return;
+                          }
                           if (value) {
-                            // 保存
                             setState(() {
                               valueCtl.text = newValue
                                   .toString()
                                   .split('.')
                                   .last; // 更新 valueCtl 的值
                               addFormulaRawList.clear();
+                              totalWgt = 0;
+                              errorCtl.text = '';
+                              wgtCtl.text = '';
+                              rawMaterialCtl.clear();
+                              selectedIndex = -1;
                             });
                           } else {
                             return;
@@ -735,36 +739,40 @@ class AddFormulaPageState extends State<AddFormulaPage> {
     );
   }
 
+  void performPctMode() {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 点击对话框外部不关闭对话框
+      builder: (BuildContext context) {
+        return ShowNormalTipDialog(
+          title: localizedStrings.fTipTitle,
+          msg: localizedStrings.fConfirmClearAndEnterFreeModeMsg,
+        );
+      },
+    ).then((value) {
+      if (value == null) {
+        return;
+      }
+      if (value) {
+        // 保存
+        setState(() {
+          freeMode = !freeMode;
+          addFormulaRawList.clear();
+          //将模式改为wgt
+          formulaModeCtl.text = FormulaMode.wgt.name;
+          formulaUnitCtl.text = FormulaWgtUnit.g.name;
+          totalWgt = 0;
+        });
+      } else {
+        return;
+      }
+    });
+  }
+
   void performSwitchFreeMode() {
     if (!freeMode && myAllScalesList.isEmpty) {
       showNoDeviceDialog();
       return;
-    }
-    void performPctMode() {
-      showDialog(
-        context: context,
-        barrierDismissible: false, // 点击对话框外部不关闭对话框
-        builder: (BuildContext context) {
-          return ShowNormalTipDialog(
-            title: localizedStrings.fTipTitle,
-            msg: localizedStrings.fConfirmClearAndEnterFreeModeMsg,
-          );
-        },
-      ).then((value) {
-        if (value) {
-          // 保存
-          setState(() {
-            freeMode = !freeMode;
-            addFormulaRawList.clear();
-            //将模式改为wgt
-            formulaModeCtl.text = FormulaMode.wgt.name;
-            formulaUnitCtl.text = FormulaWgtUnit.g.name;
-            totalWgt = 0;
-          });
-        } else {
-          return;
-        }
-      });
     }
 
     if (formulaModeCtl.text == FormulaMode.pct.name) {
@@ -1792,6 +1800,11 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                     onPressed: () {
                       setState(() {
                         addFormulaRawList.clear();
+                        totalWgt = 0;
+                        errorCtl.text = '';
+                        wgtCtl.text = '';
+                        rawMaterialCtl.clear();
+                        selectedIndex = -1;
                       });
                     },
                     child: Text(

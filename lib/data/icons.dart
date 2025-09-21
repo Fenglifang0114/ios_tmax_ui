@@ -221,6 +221,10 @@ String exportSvgIcon() {
   return 'assets/images/export.svg';
 }
 
+String exportSuccessSvgIcon() {
+  return 'assets/images/exportSuccess.svg';
+}
+
 String importSvgIcon() {
   return 'assets/images/import.svg';
 }
@@ -309,7 +313,7 @@ String formatTitleSvgIcon() {
   return 'assets/images/formatTitle.svg';
 }
 
-String pluTemplateSvgIcon() {
+String rawTemplateSvgIcon() {
   return 'assets/images/pluTemplate.svg';
 }
 

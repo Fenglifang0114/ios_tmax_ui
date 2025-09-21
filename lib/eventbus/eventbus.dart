@@ -801,3 +801,8 @@ class EventRespGetLastProductRec {
   dynamic obj;
   EventRespGetLastProductRec(this.obj);
 }
+
+class EventRespImportRawList {
+  dynamic obj;
+  EventRespImportRawList(this.obj);
+}

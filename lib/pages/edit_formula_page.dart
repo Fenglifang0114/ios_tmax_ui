@@ -4,6 +4,7 @@ import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/formula_from_db_data.dart';
 
 import 'package:t_max/data/formula_scale_data.dart';
+import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/req_formula_data.dart';
 import 'package:t_max/dialog/add_raw_info_dialog.dart';
@@ -275,6 +276,9 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                       );
                     },
                   ).then((value) {
+                    if (value == null) {
+                      return;
+                    }
                     if (value) {
                       // 保存
                       setState(() {
@@ -283,6 +287,11 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                             .split('.')
                             .last; // 更新 valueCtl 的值
                         addFormulaRawList.clear();
+                        totalWgt = 0;
+                        errorCtl.text = '';
+                        wgtCtl.text = '';
+                        rawMaterialCtl.clear();
+                        selectedIndex = -1;
                       });
                     } else {
                       return;
@@ -1484,8 +1493,8 @@ class EditFormulaPageState extends State<EditFormulaPage> {
       materialCount: addFormulaRawList.length,
       isEncrypted: isEncrypted,
       needContainer: needContainer,
-      createdBy: 'admin',
-      updatedBy: 'admin',
+      createdBy: widget.editFormulaInfo.header!.formulaHeader!.createdBy,
+      updatedBy: mySysUser.nickName!,
       remark: remarkCtl.text,
     );
     ReqFormulaAddInfo tempReqAddF = ReqFormulaAddInfo(
@@ -1569,6 +1578,11 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                     onPressed: () {
                       setState(() {
                         addFormulaRawList.clear();
+                        totalWgt = 0;
+                        errorCtl.text = '';
+                        wgtCtl.text = '';
+                        rawMaterialCtl.clear();
+                        selectedIndex = -1;
                       });
                     },
                     child: Text(

@@ -6,6 +6,7 @@ import 'package:t_max/data/darf_fma_data_from_db.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/formula_scale_data.dart';
 import 'package:t_max/data/formula_wgt_process_data.dart';
+import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/get_auto_next_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/req_add_fma_rec_data.dart';
@@ -44,34 +45,33 @@ class DarftFmaPctWgtPage extends StatefulWidget {
 
 class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
     with SingleTickerProviderStateMixin {
-  bool sort = false;
   final ScrollController _scrollController =
       ScrollController(); // 添加 ScrollController
-
-  bool selectAll = false; // 添加全选状态
-  int clickedRow = 0; // 添加点击行状态
   final TextEditingController encryptedCtl = TextEditingController();
   final TextEditingController formulaTypeCtl = TextEditingController();
   final TextEditingController rawTypeCtl = TextEditingController();
   FormulaWgtProcessData selectedProcessWgt = FormulaWgtProcessData(); //选中的原料重量
   List<FormulaWgtProcessData> processWgtList = []; //配方中的原料重量集合
 
-  double initTotalWeight = 1000.0; //总重量百分比模式传入的总重量
   String totalUnit = 'g'; //总重量百分比模式传入的总重量单位
-  bool isWgtStart = false; //是否开始重量
+  String recRecNumber = ''; //配方订单编号
+  String fmaUnit = 'g'; //配方重量单位
+
+  bool selectAll = false; // 添加全选状态
+  bool sort = false;
   bool isShowTipDialog = false; //是否显示提示对话框
   bool enableSelRaw = false; //是否启用选择原料  按顺序制作，需要添加补充的时候再去做选择物料
-  bool startFormula = false; //是否开始配方  配方开始后，归零和扣重不能使用
-  String recRecNumber = ''; //配方订单编号
-  double currentRawWgt = 0.000; //当前的原料重量 默认为0
-  String fmaUnit = 'g'; //配方重量单位
+  bool autoTare = false; //是否开启自动扣重  归零和扣重不能使用
   bool isEnableNext = true; //是否禁用下一个
   bool isFinish = false; //是否完成
+  bool autoNextStep = false;
+
+  Map<int, bool> scaleMap = {}; //scaleId , isWgtStart
+  Map<String, int> rawScaleMap = {}; //原料名称，秤ID
+
+  double initTotalWeight = 1000.0; //总重量百分比模式传入的总重量
+  double currentRawWgt = 0.000; //当前的原料重量 默认为0
   double needTotalWgt = 0.000; //需要的总重量 默认为0  这个主要是修正后的重量
-
-  FormulaInfoDb myFmaInfo = FormulaInfoDb(); //当前配方信息
-
-  final ValueNotifier<String> currentWgtStrNotifier = ValueNotifier('----');
 
   dynamic _eventbus1;
   dynamic _eventbus2;
@@ -86,17 +86,23 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
 
   Timer? setWgtStartFalseTimer; // 用于每3秒将isWgtStart设置为false的定时器
   Timer? checkWgtStartTimer; // 用于每5秒检查isWgtStart的定时器
+  Timer? autoNextStepTimer;
+  Timer? _cntAliveTimer;
+
+  int stableDurationCounter = 0; // 稳定时长计数器
+  int clickedRow = 0; // 添加点击行状态
+  int stableTime = 0;
 
   late Scale myScale;
 
-  bool autoNextStep = false;
   final TextEditingController stableTimeCtl = TextEditingController();
-  Timer? autoNextStepTimer;
-  int stableDurationCounter = 0; // 稳定时长计数器
   final ValueNotifier<bool> autoNextStepNotifier = ValueNotifier(false);
-  int stableTime = 0;
+  final ValueNotifier<String> currentWgtStrNotifier = ValueNotifier('----');
 
-  Timer? _cntAliveTimer;
+  FormulaInfoDb myFmaInfo = FormulaInfoDb(); //当前配方信息
+  ColorScheme get colorScheme => Theme.of(context).colorScheme;
+  TextTheme get textTheme => Theme.of(context).textTheme;
+
   // 启动发送存活消息的定时器
   void startCntAliveTimer(int time) {
     _cntAliveTimer?.cancel();
@@ -119,7 +125,9 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
     setWgtStartFalseTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
       if (mounted) {
         setState(() {
-          isWgtStart = false;
+          for (var key in scaleMap.keys) {
+            scaleMap[key] = false;
+          }
         });
       }
     });
@@ -128,9 +136,10 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
   // 每5秒判断一下isWgtStart是不是false，是false的话，就重新发送请求开启连续发送
   void startCheckWgtStartTimer() {
     checkWgtStartTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
-      if (isWgtStart == false) {
-        // 重新发送请求开启连续发送
-        PublicFunctions.getWeight(widget.selScaleId);
+      for (var key in scaleMap.keys) {
+        if (scaleMap[key] == false) {
+          PublicFunctions.getWeight(key);
+        }
       }
     });
   }
@@ -146,7 +155,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
       } else if (myReqWeightCountine.msgBody != null &&
           myReqWeightCountine.msgBody!.isStable &&
           isEnableNext &&
-          isWgtStart &&
+          scaleMap[myScale.scaleId]! &&
           checkValueIsOk() == 'ok') {
         stableDurationCounter++;
         if (stableDurationCounter >= stableTime * 20) {
@@ -184,6 +193,46 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
     }
   }
 
+  //初始化秤的列表
+  void initScaleMap() {
+    if (myFmaInfo.header!.formulaHeader!.needContainer!) {
+      scaleMap[widget.selScaleId] = false;
+    }
+    for (var detail in myFmaInfo.details!) {
+      String materialId = detail.formulaDetail!.materialId!;
+
+      // 如果已经处理过该原料，跳过
+      if (rawScaleMap.containsKey(materialId)) {
+        continue;
+      }
+
+      int scaleId = findScaleIdFromRaw(materialId);
+
+      if (scaleId != 0) {
+        // 找到特定秤
+        rawScaleMap[materialId] = scaleId;
+        if (!scaleMap.containsKey(scaleId)) {
+          scaleMap[scaleId] = false;
+        }
+      } else {
+        // 使用默认秤
+        rawScaleMap[materialId] = widget.selScaleId;
+        if (!scaleMap.containsKey(widget.selScaleId)) {
+          scaleMap[widget.selScaleId] = false;
+        }
+      }
+    }
+  }
+
+  int findScaleIdFromRaw(String materialId) {
+    for (var raw in rawDataList) {
+      if (raw.rawMaterial.materialId == materialId) {
+        return raw.rawMaterial.scaleId ?? 0;
+      }
+    }
+    return 0;
+  }
+
   // 如果是暂存的配方数据，则需要将暂存的数据赋值给processWgtList
   void initDarftFmaData() {
     double lastNeedTotalWgt = needTotalWgt; // 保存上一次的总重量
@@ -201,6 +250,11 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
           if (wgt.no == detail.seq) {
             wgt.currentWgt =
                 double.parse((detail.actualWeight ?? 0.0).toStringAsFixed(3));
+            wgt.scaleId = detail.scaleId;
+            wgt.scaleName = detail.scaleName;
+            wgt.scaleModel = detail.scaleModel;
+            wgt.scaleSn = detail.scaleSn;
+
             break; // 找到后跳出循环
           }
         }
@@ -475,6 +529,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
     }
     if (processWgtList.isNotEmpty) {
       selectedProcessWgt = processWgtList[0]; //默认选中第一个原料重量
+      _switchScaleByRawId(selectedProcessWgt.rawId!);
     }
   }
 
@@ -493,14 +548,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
     myFmaInfo = widget.selectFormula;
     fmaUnit = widget.fmaUnit; //获取传入的配方单位
 
-    //将传入的配方信息赋值给processWgtList
-    for (var scale in myAllScalesList) {
-      if (scale.scaleId == widget.selScaleId) {
-        myScale = scale;
-        break;
-      }
-    }
-
+    initScaleMap();
     initTotalWgtUnit(); //初始化百分比的总重量和单位
     initWgtList();
     initDarftFmaData(); //暂存的配方数据写入
@@ -618,11 +666,12 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
         setState(() {
           ReqWeightCountine tempWeight = ReqWeightCountine();
           tempWeight = event.obj;
+          if (scaleMap.containsKey(tempWeight.scaleId)) {
+            scaleMap[tempWeight.scaleId!] = true;
+          }
           if (tempWeight.scaleId == myScale.scaleId) {
             myReqWeightCountine = tempWeight;
 
-            // isCnting = true;
-            isWgtStart = true;
             if (myReqWeightCountine.msgBody!.weightUnit !=
                     myFmaInfo.header!.formulaHeader!.formulaUnit &&
                 isShowTipDialog == false) {
@@ -658,11 +707,10 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
         if (dataStr != '') {
           setState(() {
             autoNextStep = getAutoNextFormDbFromJson(dataStr).autoNext;
-
             autoNextStepNotifier.value = autoNextStep;
-
             stableTime = getAutoNextFormDbFromJson(dataStr).stableTime;
             stableTimeCtl.text = stableTime.toString();
+            autoTare = getAutoNextFormDbFromJson(dataStr).autoTare;
           });
         } else {
           setState(() {
@@ -745,7 +793,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
           processWgtList.clear();
           currentRawWgt = 0.0;
           clickedRow = 0;
-          startFormula = false;
+
           isEnableNext = true;
 
           initWgtList();
@@ -785,7 +833,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
     }
     RecHeader recHeader = RecHeader(
       recordId: recRecNumber, //配方订单编号
-      recHeaderOperator: 'admin', //操作员
+      recHeaderOperator: mySysUser.nickName!, //操作员
       formulaId: myFmaInfo.header!.formulaHeader!.formulaId, //配方ID
       formulaTypeName: myFmaInfo.header!.formulaHeader!.formulaName, //配方名称
       totalWeight: myFmaInfo.header!.formulaHeader!.totalWeight!, //总重量
@@ -823,6 +871,10 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
         actualErrorWgt: wgtRec.currentErrorWgt, //实际误差重量
         actualErrorPct: wgtRec.currentErrorPct, //实际误差百分比
         isQualified: wgtRec.isOK, //是否合格
+        scaleId: wgtRec.scaleId, //秤ID
+        scaleName: wgtRec.scaleName, //秤名称
+        scaleModel: wgtRec.scaleModel, //秤型号
+        scaleSn: wgtRec.scaleSn, //秤SN
       );
       reqRecDetailList.add(recDetail);
     }
@@ -891,7 +943,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
     DarfHeader header = DarfHeader(
       recId: 0,
       orderId: recRecNumber, //配方订单编号
-      createdBy: 'admin', //操作员
+      createdBy: mySysUser.nickName!, //操作员
       formulaId: myFmaInfo.header!.formulaHeader!.formulaId, //配方ID
 
       status: 0,
@@ -906,10 +958,16 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
     String jsonStr = darfFmaInfoFromDbToJson(tempDarfFmaInfo);
 
     PublicFunctions.updateDraftRecord(jsonStr);
-    PublicFunctions.stopWeight(widget.selScaleId);
+    stopAllWgt();
     PublicFunctions.getDraftRecords();
     if (mounted) {
       Navigator.pop(context);
+    }
+  }
+
+  void stopAllWgt() {
+    for (var key in scaleMap.keys) {
+      PublicFunctions.stopWeight(key);
     }
   }
 
@@ -926,11 +984,13 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
           );
         },
       ).then((value) {
+        if (value == null) {
+          return;
+        }
         if (value) {
           // 保存
           saveFmaRec(isAllOK);
-
-          PublicFunctions.stopWeight(widget.selScaleId);
+          stopAllWgt();
           if (mounted) {
             Navigator.pop(context);
           }
@@ -940,7 +1000,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
       });
     } else {
       saveFmaRec(isAllOK);
-      PublicFunctions.stopWeight(widget.selScaleId);
+      stopAllWgt();
       Navigator.pop(context);
     }
   }
@@ -959,13 +1019,13 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
       ).then((value) {
         if (value) {
           setState(() {
-            PublicFunctions.stopWeight(widget.selScaleId);
+            stopAllWgt();
             Navigator.pop(context);
           });
         }
       });
     } else {
-      PublicFunctions.stopWeight(widget.selScaleId);
+      stopAllWgt();
       Navigator.pop(context);
     }
   }
@@ -974,7 +1034,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
   Widget showBottomBtn() {
     return Container(
         height: 76,
-        color: Theme.of(context).colorScheme.surface,
+        color: colorScheme.surface,
         child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           ConstrainedBox(
             constraints: BoxConstraints(maxWidth: maxWidth),
@@ -987,9 +1047,9 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                         performFinishBtn();
                       }
                     : null,
-                Theme.of(context).colorScheme.onPrimary,
-                Theme.of(context).colorScheme.primary,
-                Theme.of(context).colorScheme.onPrimary),
+                colorScheme.onPrimary,
+                colorScheme.primary,
+                colorScheme.onPrimary),
           ),
           SizedBox(width: regularPadding),
           ConstrainedBox(
@@ -1004,9 +1064,9 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                         //已完成，不能暂存，只能结束
                         performDarfFmaSave();
                       },
-                Theme.of(context).colorScheme.onPrimary,
-                Theme.of(context).colorScheme.primary,
-                Theme.of(context).colorScheme.onPrimary),
+                colorScheme.onPrimary,
+                colorScheme.primary,
+                colorScheme.onPrimary),
           ),
           SizedBox(width: regularPadding),
           ConstrainedBox(
@@ -1020,9 +1080,9 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                         performAbandonBtn();
                       }
                     : null,
-                Theme.of(context).colorScheme.onPrimary,
-                Theme.of(context).colorScheme.error,
-                Theme.of(context).colorScheme.onPrimary),
+                colorScheme.onPrimary,
+                colorScheme.error,
+                colorScheme.onPrimary),
           ),
           SizedBox(width: regularPadding),
           ConstrainedBox(
@@ -1036,9 +1096,9 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                         showDeleteDialog();
                       }
                     : null,
-                Theme.of(context).colorScheme.onPrimary,
-                Theme.of(context).colorScheme.error,
-                Theme.of(context).colorScheme.onPrimary),
+                colorScheme.onPrimary,
+                colorScheme.error,
+                colorScheme.onPrimary),
           ),
         ]));
   }
@@ -1048,7 +1108,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
     // final width = MediaQuery.of(context).size.width;
     return Scaffold(
         body: Container(
-      color: Theme.of(context).colorScheme.surfaceDim, //对接时修改颜色值
+      color: colorScheme.surfaceDim, //对接时修改颜色值
       child:
           // Padding(
           //   padding: const EdgeInsets.all(14.0),
@@ -1060,19 +1120,19 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
               children: [
                 showTitleBar(),
                 Divider(
-                  color: Theme.of(context).colorScheme.outline,
+                  color: colorScheme.outline,
                   thickness: 1,
                   height: 1,
                 ),
                 showFormulaInfoAndWgt(),
                 Divider(
-                  color: Theme.of(context).colorScheme.outline,
+                  color: colorScheme.outline,
                   thickness: 1,
                   height: 1,
                 ),
                 Container(
                     height: 42,
-                    color: Theme.of(context).colorScheme.surface,
+                    color: colorScheme.surface,
                     child: Row(children: [
                       SizedBox(
                         width: 17,
@@ -1080,8 +1140,8 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                       Expanded(
                         child: Text(
                           localizedStrings.fIngredientsRecordTitle,
-                          style: Theme.of(context).textTheme.labelMedium!.apply(
-                              color: Theme.of(context).colorScheme.onSurface),
+                          style: textTheme.labelMedium!
+                              .apply(color: colorScheme.onSurface),
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                         ),
@@ -1125,8 +1185,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                                   SizedBox(width: smallPadding),
                                   Icon(
                                     Icons.mode_edit_outlined,
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
+                                    color: colorScheme.primary,
                                   ),
                                 ],
                               )),
@@ -1137,7 +1196,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                 showWgtTable(),
                 Container(
                   height: 14,
-                  color: Theme.of(context).colorScheme.surface,
+                  color: colorScheme.surface,
                 ),
                 showBottomBtn(),
               ],
@@ -1147,6 +1206,29 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
         // ),
       ),
     ));
+  }
+
+  Widget _buildScaleName() {
+    return Container(
+      height: 28,
+      color: colorScheme.surface,
+      alignment: Alignment.centerLeft,
+      child: Row(children: [
+        // 显示标签部分，设置固定宽度
+        Expanded(
+          child: Text(
+            '${localizedStrings.gDeviceName} : ${myScale.scaleName}',
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium!
+                .apply(color: colorScheme.onSurface),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+          ),
+        ),
+        // 显示编号内容部分，用 Expanded 约束宽度
+      ]),
+    );
   }
 
   Widget showRawWgtAndUnit(int index, Color? textColor) {
@@ -1207,7 +1289,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
           double columnWidth = tableWidth / columnCount;
           return Container(
             padding: const EdgeInsets.only(left: 20, right: 20),
-            color: Theme.of(context).colorScheme.surface,
+            color: colorScheme.surface,
             child: StickyTable(
               controller: _scrollController, // 传递 ScrollController
               // 修改 data 属性
@@ -1225,6 +1307,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                   setState(() {
                     clickedRow = row;
                     selectedProcessWgt = processWgtList[row];
+                    _switchScaleByRawId(selectedProcessWgt.rawId!);
                   });
                 }
               },
@@ -1233,20 +1316,17 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                 // 添加点击行背景色
                 if (row == clickedRow) {
                   return BoxDecoration(
-                    color: Theme.of(context).colorScheme.surfaceContainerLow,
+                    color: colorScheme.surfaceContainerLow,
                     border: Border(
-                      bottom: BorderSide(
-                          color: Theme.of(context).colorScheme.primary,
-                          width: 1),
+                      bottom: BorderSide(color: colorScheme.primary, width: 1),
                     ),
                   );
                 }
                 return BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
+                  color: colorScheme.surface,
                   border: Border(
-                    bottom: BorderSide(
-                        color: Theme.of(context).colorScheme.outlineVariant,
-                        width: 1),
+                    bottom:
+                        BorderSide(color: colorScheme.outlineVariant, width: 1),
                   ),
                 );
               },
@@ -1264,7 +1344,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                     return Text(
                       (data as FormulaWgtProcessData).no.toString(),
                       style: getTextStyle(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        color: colorScheme.onSurfaceVariant,
                       ),
                     );
                   },
@@ -1275,7 +1355,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                         title.title,
                         overflow: TextOverflow.ellipsis,
                         style: getTextStyle(
-                          color: Theme.of(context).colorScheme.onSurface,
+                          color: colorScheme.onSurface,
                         ),
                       ),
                     );
@@ -1293,7 +1373,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                     return Text(
                       (data as FormulaWgtProcessData).rawId!,
                       style: getTextStyle(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        color: colorScheme.onSurfaceVariant,
                       ),
                     );
                   },
@@ -1316,7 +1396,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                             ? localizedStrings.fFmaContainer
                             : (data).rawName!,
                         style: getTextStyle(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          color: colorScheme.onSurfaceVariant,
                         ));
                   },
                   renderTitle: (context, title) {
@@ -1336,7 +1416,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                       return Text(
                         (data as FormulaWgtProcessData).targetPct.toString(),
                         style: getTextStyle(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          color: colorScheme.onSurfaceVariant,
                         ),
                         overflow: TextOverflow.ellipsis,
                       );
@@ -1360,7 +1440,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                             ? "-"
                             : (data).targetWgt.toString(),
                         style: getTextStyle(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          color: colorScheme.onSurfaceVariant,
                         ));
                   },
                   renderTitle: (context, title) {
@@ -1379,7 +1459,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                     return Text(
                         (data as FormulaWgtProcessData).currentWgt.toString(),
                         style: getTextStyle(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          color: colorScheme.onSurfaceVariant,
                         ));
                   },
                   renderTitle: (context, title) {
@@ -1401,7 +1481,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                             ? "-"
                             : "± ${(data).errorWgt}",
                         style: getTextStyle(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          color: colorScheme.onSurfaceVariant,
                         ));
                   },
                   renderTitle: (context, title) {
@@ -1423,7 +1503,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                             ? "-"
                             : (data).currentErrorWgt.toString(),
                         style: getTextStyle(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          color: colorScheme.onSurfaceVariant,
                         ));
                   },
                   renderTitle: (context, title) {
@@ -1476,15 +1556,15 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                                     : (data).isOK! == "ok"
                                         ? localizedStrings.fQualified
                                         : localizedStrings.fUnqualified,
-                            style: Theme.of(context).textTheme.bodySmall!.apply(
-                                  color: (data).isOK! == "no"
-                                      ? Theme.of(context).colorScheme.primary
-                                      : (data).isOK! == "ok"
-                                          ? Theme.of(context)
-                                              .colorScheme
-                                              .onTertiaryFixedVariant
-                                          : Theme.of(context).colorScheme.error,
-                                ),
+                            style: textTheme.bodySmall!.apply(
+                              color: (data).isOK! == "no"
+                                  ? colorScheme.primary
+                                  : (data).isOK! == "ok"
+                                      ? Theme.of(context)
+                                          .colorScheme
+                                          .onTertiaryFixedVariant
+                                      : colorScheme.error,
+                            ),
                           ), // 显示原料重量和单位
                         ),
                       ),
@@ -1514,7 +1594,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                 //           child: Icon(
                 //         size: 20,
                 //         Icons.add_comment_outlined,
-                //         color: Theme.of(context).colorScheme.primary,
+                //         color: colorScheme.primary,
                 //       )),
                 //     );
                 //   },
@@ -1533,18 +1613,18 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
 
   TextStyle getTextStyle({Color? color}) {
     //返回一个文本样式
-    color ??= Theme.of(context).colorScheme.onSurface;
-    return Theme.of(context).textTheme.bodySmall!.apply(
-          color: color,
-        );
+    color ??= colorScheme.onSurface;
+    return textTheme.bodySmall!.apply(
+      color: color,
+    );
   }
 
   TextStyle getTitleTextStyle({Color? color}) {
     //返回一个文本样式
-    color ??= Theme.of(context).colorScheme.onSurface;
-    return Theme.of(context).textTheme.bodyMedium!.apply(
-          color: color,
-        );
+    color ??= colorScheme.onSurface;
+    return textTheme.bodyMedium!.apply(
+      color: color,
+    );
   }
 
   showFCode() {
@@ -1588,7 +1668,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
   showFormulaName() {
     return Container(
       height: 28,
-      color: Theme.of(context).colorScheme.surface,
+      color: colorScheme.surface,
       alignment: Alignment.centerLeft,
       child: Row(children: [
         // 显示标签部分，设置固定宽度
@@ -1599,8 +1679,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
           ),
           child: Text(
             localizedStrings.fFmaNameLabel + ": ",
-            style: getTitleTextStyle(
-                color: Theme.of(context).colorScheme.onSurfaceVariant),
+            style: getTitleTextStyle(color: colorScheme.onSurfaceVariant),
             overflow: TextOverflow.ellipsis,
             maxLines: 1,
           ),
@@ -1643,7 +1722,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
               flex: 1,
               child: Container(
                 height: 28,
-                color: Theme.of(context).colorScheme.surface,
+                color: colorScheme.surface,
                 alignment: Alignment.centerLeft,
                 child: Row(children: [
                   // 显示标签部分
@@ -1652,7 +1731,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                     child: Text(
                       localizedStrings.fFmaIdLabel + ": ",
                       style: getTitleTextStyle(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        color: colorScheme.onSurfaceVariant,
                       ),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
@@ -1667,7 +1746,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
               flex: 1,
               child: Container(
                 height: 28,
-                color: Theme.of(context).colorScheme.surface,
+                color: colorScheme.surface,
                 alignment: Alignment.centerLeft,
                 child: Row(children: [
                   Flexible(
@@ -1675,7 +1754,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                     child: Text(
                       localizedStrings.fTotalWeightLabel + ": ",
                       style: getTitleTextStyle(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        color: colorScheme.onSurfaceVariant,
                       ),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
@@ -1691,7 +1770,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
         showFormulaName(),
         Container(
           height: 40,
-          color: Theme.of(context).colorScheme.surface,
+          color: colorScheme.surface,
           alignment: Alignment.centerLeft,
           child: Row(children: [
             // 显示标签部分，设置固定宽度
@@ -1715,10 +1794,10 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                       myFmaInfo.header!.formulaHeader!.remark == null
                   ? ""
                   : myFmaInfo.header!.formulaHeader!.remark!,
-              style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    fontSize: 12,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+              style: textTheme.bodySmall!.copyWith(
+                fontSize: 12,
+                color: colorScheme.onSurfaceVariant,
+              ),
             ),
           ),
         )
@@ -1760,7 +1839,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
     return Expanded(
         flex: 20,
         child: Container(
-            color: Theme.of(context).colorScheme.surface,
+            color: colorScheme.surface,
             alignment: Alignment.center,
             child: Row(children: [
               Expanded(
@@ -1786,12 +1865,11 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                             alignment: Alignment.center,
                             child: Text(
                               localizedStrings.fFormulaCompletedTip,
-                              style:
-                                  Theme.of(context).textTheme.bodyMedium!.apply(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurfaceVariant,
-                                      ),
+                              style: textTheme.bodyMedium!.apply(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant,
+                              ),
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
@@ -1800,36 +1878,35 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
             ])));
   }
 
+  void _switchScaleByRawId(String rawId) {
+    int targetScaleId = widget.selScaleId; // 默认使用选中的秤
+
+    if (rawId == '-') {
+      targetScaleId = widget.selScaleId;
+    } else {
+      targetScaleId = rawScaleMap[rawId] ?? widget.selScaleId;
+    }
+
+    for (var scale in myAllScalesList) {
+      if (scale.scaleId == targetScaleId) {
+        myScale = scale;
+        break;
+      }
+    }
+  }
+
   showWgtAndProcess() {
     return Expanded(
       flex: 20,
       child: Column(children: [
-        Container(
-          height: 28,
-          color: Theme.of(context).colorScheme.surface,
-          alignment: Alignment.centerLeft,
-          child: Row(children: [
-            // 显示标签部分，设置固定宽度
-            Expanded(
-              child: Text(
-                localizedStrings.fIngredientsDataLabel,
-                style: Theme.of(context).textTheme.bodyMedium!.apply(
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-              ),
-            ),
-            // 显示编号内容部分，用 Expanded 约束宽度
-          ]),
-        ),
+        _buildScaleName(),
         Expanded(
             child: SizedBox(
           child: Row(children: [
             Expanded(
                 flex: 3,
                 child: Container(
-                  color: Theme.of(context).colorScheme.surfaceDim,
+                  color: colorScheme.surfaceDim,
                   child: Column(children: [
                     Expanded(
                         flex: 3,
@@ -1849,8 +1926,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                                     .textTheme
                                     .titleLarge!
                                     .apply(
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
+                                      color: colorScheme.primary,
                                     ),
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -1920,7 +1996,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
             Expanded(
                 flex: 2,
                 child: Container(
-                  color: Theme.of(context).colorScheme.surfaceDim,
+                  color: colorScheme.surfaceDim,
                   child: Column(children: [
                     Expanded(
                         flex: 1,
@@ -2014,7 +2090,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
             Expanded(
                 flex: 2,
                 child: Container(
-                  color: Theme.of(context).colorScheme.surfaceDim,
+                  color: colorScheme.surfaceDim,
                   child: Column(children: [
                     Expanded(
                         flex: 1,
@@ -2107,7 +2183,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
             Expanded(
                 flex: 6,
                 child: Container(
-                  color: Theme.of(context).colorScheme.surfaceDim,
+                  color: colorScheme.surfaceDim,
                   child: Column(children: [
                     Expanded(
                         flex: 1,
@@ -2256,34 +2332,25 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                           Expanded(
                               child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              foregroundColor:
-                                  Theme.of(context).colorScheme.primary,
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.surface,
+                              foregroundColor: colorScheme.primary,
+                              backgroundColor: colorScheme.surface,
                               fixedSize: const Size(double.infinity, 48),
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
                                   side: BorderSide(
-                                    color: startFormula
-                                        ? Theme.of(context).colorScheme.outline
-                                        : Theme.of(context).colorScheme.primary,
+                                    color: colorScheme.primary,
                                   )),
                             ),
-                            onPressed: startFormula
-                                ? null
-                                : () {
-                                    PublicFunctions.performZeroWithScaleId(
-                                        widget.selScaleId);
-                                  },
+                            onPressed: () {
+                              PublicFunctions.performZeroWithScaleId(
+                                  widget.selScaleId);
+                            },
                             child: Text(
                               localizedStrings.iBtnZero,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall!
-                                  .apply(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                  ),
+                              style:
+                                  Theme.of(context).textTheme.bodySmall!.apply(
+                                        color: colorScheme.primary,
+                                      ),
                               overflow: TextOverflow.ellipsis,
                             ),
                           )),
@@ -2299,38 +2366,28 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                           Expanded(
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                foregroundColor:
-                                    Theme.of(context).colorScheme.primary,
-                                backgroundColor:
-                                    Theme.of(context).colorScheme.surface,
+                                foregroundColor: colorScheme.primary,
+                                backgroundColor: colorScheme.surface,
                                 fixedSize: const Size(double.infinity, 48),
                                 shape: RoundedRectangleBorder(
                                     borderRadius:
                                         BorderRadius.zero, // 可以根据需要调整圆角
                                     side: BorderSide(
-                                      color: startFormula
-                                          ? Theme.of(context)
-                                              .colorScheme
-                                              .outline
-                                          : Theme.of(context)
-                                              .colorScheme
-                                              .primary,
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
                                     )),
                               ),
-                              onPressed: startFormula
-                                  ? null
-                                  : () {
-                                      PublicFunctions.performTareWithScaleId(
-                                          widget.selScaleId);
-                                    },
+                              onPressed: () {
+                                PublicFunctions.performTareWithScaleId(
+                                    myScale.scaleId);
+                              },
                               child: Text(
                                 localizedStrings.gBtnTare,
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodySmall!
                                     .apply(
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
+                                      color: colorScheme.primary,
                                     ),
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -2348,10 +2405,8 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                           Expanded(
                               child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              foregroundColor:
-                                  Theme.of(context).colorScheme.onPrimary,
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.primary,
+                              foregroundColor: colorScheme.onPrimary,
+                              backgroundColor: colorScheme.primary,
                               fixedSize: const Size(double.infinity, 48),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
@@ -2366,7 +2421,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                               //下一步  修改了此处
                               localizedStrings.fNextStepBtn,
                               style: getTextStyle(
-                                color: Theme.of(context).colorScheme.onPrimary,
+                                color: colorScheme.onPrimary,
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -2400,7 +2455,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                 width: 20,
               ),
               VerticalDivider(
-                color: Theme.of(context).colorScheme.outline,
+                color: colorScheme.outline,
                 width: 1,
               ),
               SizedBox(
@@ -2428,15 +2483,14 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
       showTipInfo(localizedStrings.fStableOperationHint, context);
       return;
     }
-    //判断是否已经开始,开始后就不能再归零扣重了
-    if (!startFormula) {
-      startFormula = true;
-    }
+
     if (selectedProcessWgt.no == 0) {
       //如果是第一个原料，直接赋值，这个原料是容器，直接赋值，执行扣重
       selectedProcessWgt.currentWgt = currentRawWgt;
       selectedProcessWgt.isOK = okStr;
-      PublicFunctions.performTareWithScaleId(widget.selScaleId);
+      if (autoTare) {
+        PublicFunctions.performTareWithScaleId(myScale.scaleId);
+      }
       //然后去找下一个原料
       findNextRaw();
       return;
@@ -2491,7 +2545,10 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
         } else if (value == 2) {
           //接受修正
           handleReviseWgt(currentTempWgtValue);
-          PublicFunctions.performTareWithScaleId(widget.selScaleId);
+
+          if (autoTare) {
+            PublicFunctions.performTareWithScaleId(myScale.scaleId);
+          }
           setState(() {});
         } else {
           return;
@@ -2516,7 +2573,17 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
             processWgtList[clickedRow].targetWgt!);
     processWgtList[clickedRow].currentErrorWgt = double.parse(
         processWgtList[clickedRow].currentErrorWgt!.toStringAsFixed(3));
-    PublicFunctions.performTareWithScaleId(widget.selScaleId);
+
+    if (currentTempWgtValue > 0) {
+      processWgtList[clickedRow].scaleId = myScale.scaleId;
+      processWgtList[clickedRow].scaleName = myScale.scaleName;
+      processWgtList[clickedRow].scaleModel = myScale.scaleModel;
+      processWgtList[clickedRow].scaleSn = myScale.scaleSn;
+    }
+
+    if (autoTare) {
+      PublicFunctions.performTareWithScaleId(myScale.scaleId);
+    }
     // 从当前行的下一行开始向后查找
     int nextIndex = -1;
     for (int i = clickedRow + 1; i < processWgtList.length; i++) {
@@ -2542,13 +2609,14 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
     if (nextIndex != -1) {
       clickedRow = nextIndex;
       selectedProcessWgt = processWgtList[clickedRow];
+      _switchScaleByRawId(selectedProcessWgt.rawId!);
     } else {
       // 若都没找到，回到第一行
       clickedRow = 0;
       selectedProcessWgt = processWgtList[0];
+      _switchScaleByRawId(selectedProcessWgt.rawId!);
     }
     currentRawWgt = 0.0;
-    startFormula = true;
   }
 
   //重新计算需要的重量
@@ -2612,6 +2680,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
       nextItem = processWgtList
           .firstWhere((item) => item.isOK != 'ok' && item.no != 0); // 排除容器项
       selectedProcessWgt = nextItem; // 更新选中的原料重量项
+      _switchScaleByRawId(selectedProcessWgt.rawId!);
       //如果有容器
       if (myFmaInfo.header != null &&
           myFmaInfo.header!.formulaHeader != null &&
@@ -2652,6 +2721,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
       clickedRow = nextIndex;
 
       selectedProcessWgt = processWgtList[clickedRow]; // 更新选中的原料重量项
+      _switchScaleByRawId(selectedProcessWgt.rawId!);
       //如果有容器
       if (myFmaInfo.header != null &&
           myFmaInfo.header!.formulaHeader != null &&
@@ -2685,6 +2755,13 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
           targetItem.currentWgt = tmpCurrWgt + targetItem.currentWgt!;
           targetItem.currentWgt =
               double.parse(targetItem.currentWgt!.toStringAsFixed(3));
+
+          if (tmpCurrWgt > 0) {
+            targetItem.scaleId = myScale.scaleId;
+            targetItem.scaleName = myScale.scaleName;
+            targetItem.scaleModel = myScale.scaleModel;
+            targetItem.scaleSn = myScale.scaleSn;
+          }
 
           //重新计算所有的数据
           recalculateWgtList(lastNeedTotalWgt);
@@ -2725,7 +2802,17 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                 double.parse(targetItem.currentErrorPct!.toStringAsFixed(3));
           }
         }
-        PublicFunctions.performTareWithScaleId(widget.selScaleId);
+
+        if (currentRawWgt > 0) {
+          targetItem.scaleId = myScale.scaleId;
+          targetItem.scaleName = myScale.scaleName;
+          targetItem.scaleModel = myScale.scaleModel;
+          targetItem.scaleSn = myScale.scaleSn;
+        }
+
+        if (autoTare) {
+          PublicFunctions.performTareWithScaleId(myScale.scaleId);
+        }
         //查找下一个
         findOkNextRaw();
 
@@ -2741,7 +2828,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
   showTitleBar() {
     return Container(
       height: 54,
-      color: Theme.of(context).colorScheme.surface,
+      color: colorScheme.surface,
       child: Row(
         children: [
           SizedBox(
@@ -2753,14 +2840,37 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
             style: Theme.of(context)
                 .textTheme
                 .labelMedium!
-                .apply(color: Theme.of(context).colorScheme.onSurface),
+                .apply(color: colorScheme.onSurface),
           )),
+          Text(
+            localizedStrings.gTipAutoTare,
+            style: getTextStyle(),
+          ),
+          SizedBox(
+            width: regularPadding,
+          ),
+          IconButton(
+              onPressed: () {
+                setState(() {
+                  autoTare = !autoTare;
+                });
+                setAutoNext();
+              },
+              icon: Icon(
+                autoTare ? Icons.toggle_on_outlined : Icons.toggle_off_outlined,
+                color: autoTare
+                    ? colorScheme.onTertiaryFixedVariant
+                    : colorScheme.onSurface,
+              )),
+          SizedBox(
+            width: regularPadding,
+          ),
           Text(
             localizedStrings.gTipAutoNextStep,
             style: Theme.of(context)
                 .textTheme
                 .bodySmall!
-                .apply(color: Theme.of(context).colorScheme.onSurface),
+                .apply(color: colorScheme.onSurface),
           ),
           SizedBox(
             width: regularPadding,
@@ -2781,8 +2891,8 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                     ? Icons.toggle_on_outlined
                     : Icons.toggle_off_outlined,
                 color: autoNextStep
-                    ? Theme.of(context).colorScheme.onTertiaryFixedVariant
-                    : Theme.of(context).colorScheme.onSurface,
+                    ? colorScheme.onTertiaryFixedVariant
+                    : colorScheme.onSurface,
               )),
           SizedBox(
             width: regularPadding,
@@ -2793,7 +2903,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
               style: Theme.of(context)
                   .textTheme
                   .bodySmall!
-                  .apply(color: Theme.of(context).colorScheme.onSurface),
+                  .apply(color: colorScheme.onSurface),
             ),
           if (autoNextStep)
             SizedBox(
@@ -2825,8 +2935,8 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                       value: item,
                       child: Text(
                         item,
-                        style: Theme.of(context).textTheme.bodySmall!.apply(
-                            color: Theme.of(context).colorScheme.onSurface),
+                        style: textTheme.bodySmall!
+                            .apply(color: colorScheme.onSurface),
                       ),
                     );
                   })
@@ -2841,7 +2951,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                 style: Theme.of(context)
                     .textTheme
                     .bodySmall!
-                    .apply(color: Theme.of(context).colorScheme.onSurface),
+                    .apply(color: colorScheme.onSurface),
               ),
             ),
           SizedBox(
@@ -2854,10 +2964,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
 
   void setAutoNext() {
     ReqAutoNext reqAutoNext = ReqAutoNext(
-      autoNext: autoNextStep,
-      stableTime: stableTime,
-    );
-
+        autoNext: autoNextStep, stableTime: stableTime, autoTare: autoTare);
     PublicFunctions.updateAutoNext(reqAutoNextToJson(reqAutoNext));
   }
 
@@ -2866,9 +2973,9 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
         message: tip, // 提示信息
         child: IconButton(
           iconSize: 24,
-          color: Theme.of(context).colorScheme.onPrimary,
+          color: colorScheme.onPrimary,
           style: IconButton.styleFrom(
-            backgroundColor: Theme.of(context).colorScheme.primary,
+            backgroundColor: colorScheme.primary,
             shape: RoundedRectangleBorder(
               // 设置为矩形形状
               borderRadius: BorderRadius.zero, // 没有圆角，即正方形
@@ -2885,11 +2992,11 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
       message: tip, // 提示信息
       child: IconButton(
         iconSize: 24,
-        color: Theme.of(context).colorScheme.onPrimary,
-        focusColor: Theme.of(context).colorScheme.outline,
-        hoverColor: Theme.of(context).colorScheme.outline,
+        color: colorScheme.onPrimary,
+        focusColor: colorScheme.outline,
+        hoverColor: colorScheme.outline,
         style: IconButton.styleFrom(
-          backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
+          backgroundColor: colorScheme.surfaceContainerLow,
           shape: RoundedRectangleBorder(
             // 设置为矩形形状
             borderRadius: BorderRadius.zero, // 没有圆角，即正方形
@@ -2899,7 +3006,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
         onPressed: onPressed,
         icon: Icon(
           icon,
-          color: Theme.of(context).colorScheme.primary,
+          color: colorScheme.primary,
         ),
       ),
     );

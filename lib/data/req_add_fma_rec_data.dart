@@ -51,6 +51,10 @@ class RecDetail {
   double? actualErrorWgt;
   double? actualErrorPct;
   String? isQualified;
+  int? scaleId;
+  String? scaleName;
+  String? scaleModel;
+  String? scaleSn;
 
   RecDetail({
     this.recId,
@@ -67,6 +71,10 @@ class RecDetail {
     this.actualErrorWgt,
     this.actualErrorPct,
     this.isQualified,
+    this.scaleId,
+    this.scaleName,
+    this.scaleModel,
+    this.scaleSn,
   });
 
   factory RecDetail.fromJson(Map<String, dynamic> json) => RecDetail(
@@ -84,6 +92,10 @@ class RecDetail {
         actualErrorWgt: json["ActualErrorWgt"],
         actualErrorPct: json["ActualErrorPct"],
         isQualified: json["IsQualified"],
+        scaleId: json["ScaleId"],
+        scaleName: json["ScaleName"],
+        scaleModel: json["ScaleModel"],
+        scaleSn: json["ScaleSn"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -101,6 +113,10 @@ class RecDetail {
         "ActualErrorWgt": actualErrorWgt,
         "ActualErrorPct": actualErrorPct,
         "IsQualified": isQualified,
+        "ScaleId": scaleId,
+        "ScaleName": scaleName,
+        "ScaleModel": scaleModel,
+        "ScaleSn": scaleSn,
       };
 }
 

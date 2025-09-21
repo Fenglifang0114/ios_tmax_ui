@@ -55,6 +55,10 @@ class DarfDetail {
   String? remark;
   String? remark1;
   String? remark2;
+  int? scaleId;
+  String? scaleName;
+  String? scaleModel;
+  String? scaleSn;
 
   DarfDetail({
     this.recId,
@@ -67,6 +71,10 @@ class DarfDetail {
     this.remark,
     this.remark1,
     this.remark2,
+    this.scaleId,
+    this.scaleName,
+    this.scaleModel,
+    this.scaleSn,
   });
 
   factory DarfDetail.fromJson(Map<String, dynamic> json) => DarfDetail(
@@ -80,6 +88,10 @@ class DarfDetail {
         remark: json["Remark"],
         remark1: json["Remark1"],
         remark2: json["Remark2"],
+        scaleId: json["ScaleId"],
+        scaleName: json["ScaleName"],
+        scaleModel: json["ScaleModel"],
+        scaleSn: json["ScaleSn"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -93,6 +105,10 @@ class DarfDetail {
         "Remark": remark,
         "Remark1": remark1,
         "Remark2": remark2,
+        "ScaleId": scaleId,
+        "ScaleName": scaleName,
+        "ScaleModel": scaleModel,
+        "ScaleSn": scaleSn,
       };
 }
 

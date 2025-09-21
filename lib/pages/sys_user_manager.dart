@@ -312,6 +312,9 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
         );
       },
     ).then((value) {
+      if (value == null) {
+        return;
+      }
       if (value) {
         ReqDelSysUsers reqDelSysUsers = ReqDelSysUsers(
           userIds: [
@@ -909,6 +912,9 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
                         );
                       },
                     ).then((value) {
+                      if (value == null) {
+                        return;
+                      }
                       if (value) {
                         ReqDelSysUsers reqDelSysUsers = ReqDelSysUsers(
                             userIds: selectedUserRows.map((e) => e).toList());

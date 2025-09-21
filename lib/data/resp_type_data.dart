@@ -567,6 +567,12 @@ class RespMsgType {
       myFactoryInfoFromScale = FactoryInfoFromScale("", "");
       myOnlineInfo.factInfo = myFactoryInfoFromScale;
       myOnlineInfo.scaleId = id;
+      for (var tempScale in myAllScalesList) {
+        if (tempScale.scaleId == id) {
+          tempScale.isOnline = false;
+          break;
+        }
+      }
 
       return eventBus.fire(EventRespCheckNetScale(myOnlineInfo));
     }

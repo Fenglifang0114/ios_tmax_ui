@@ -59,7 +59,7 @@ class _CustomDialogViewState extends State<CustomDialogView> {
   @override
   void initState() {
     super.initState();
-    _timer = Timer(const Duration(seconds: 3), () {
+    _timer = Timer(const Duration(seconds: 5), () {
       // 时间到后调用关闭回调
       widget.onClose();
     });
@@ -77,7 +77,7 @@ class _CustomDialogViewState extends State<CustomDialogView> {
       child: Container(
         padding: const EdgeInsets.all(10),
         width: 500,
-        height: 80,
+        height: 120,
         color: const Color.fromRGBO(0, 0, 0, 0.8),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -87,13 +87,12 @@ class _CustomDialogViewState extends State<CustomDialogView> {
                 child: Center(
               child: Text(
                 widget.message,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.normal,
-                  decoration: TextDecoration.none,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      fontSize: 16,
+                    ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ))
           ],

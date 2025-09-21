@@ -65,6 +65,10 @@ class DetailRec {
   DateTime? lastWeighingTime;
   String? recRemark;
   String? recRemark1;
+  int? scaleId;
+  String? scaleName;
+  String? scaleModel;
+  String? scaleSn;
 
   DetailRec({
     this.recId,
@@ -95,6 +99,10 @@ class DetailRec {
     this.lastWeighingTime,
     this.recRemark,
     this.recRemark1,
+    this.scaleId,
+    this.scaleName,
+    this.scaleModel,
+    this.scaleSn,
   });
 
   factory DetailRec.fromJson(Map<String, dynamic> json) => DetailRec(
@@ -132,6 +140,10 @@ class DetailRec {
             : DateTime.parse(json["LastWeighingTime"]).toLocal(),
         recRemark: json["RecRemark"],
         recRemark1: json["RecRemark1"],
+        scaleId: json["ScaleId"],
+        scaleName: json["ScaleName"],
+        scaleModel: json["ScaleModel"],
+        scaleSn: json["ScaleSN"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -163,6 +175,10 @@ class DetailRec {
         "LastWeighingTime": lastWeighingTime?.toIso8601String(),
         "RecRemark": recRemark,
         "RecRemark1": recRemark1,
+        "ScaleId": scaleId,
+        "ScaleName": scaleName,
+        "ScaleModel": scaleModel,
+        "ScaleSN": scaleSn,
       };
 }
 
