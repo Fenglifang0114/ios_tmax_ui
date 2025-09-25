@@ -11,7 +11,6 @@ import 'package:t_max/data/req_formula_data.dart';
 import 'package:t_max/dialog/add_raw_info_dialog.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/dialog/fma_type_mgr.dart';
-import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/widget/common_widget.dart';
 import 'package:t_max/widget/dialog_head_style.dart';
@@ -53,10 +52,6 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
   };
 
   int selectedIndex = -1;
-
-  dynamic _eventbus3;
-  dynamic _eventbus4;
-  dynamic _eventbus5;
 
   @override
   void initState() {
@@ -111,59 +106,12 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
       totalWgt =
           widget.editFormulaInfo.header!.formulaHeader!.totalWeight!; // 总权重
     }
-
-    _eventbus3 = eventBus.on<EventRespAddFormula>().listen((event) {
-      if (mounted) {
-        PublicFunctions.getFormulaList();
-        showTipInfo(localizedStrings.fAddSuccessMsg, context);
-      }
-    });
-    _eventbus4 = eventBus.on<EventRespFormulaList>().listen((event) {
-      if (mounted) {
-        String dataStr = event.obj;
-        if (dataStr != '' && dataStr != 'null') {
-          setState(() {
-            formulaDataList = formulaInfoDbFromJson(dataStr);
-            // print(formulaDataList.length);
-          });
-        } else {
-          setState(() {
-            formulaDataList = [];
-          });
-        }
-      }
-    });
-
-    _eventbus5 = eventBus.on<EventRespGetRawDataList>().listen((event) {
-      if (mounted) {
-        String dataStr = event.obj;
-        if (dataStr != '' && dataStr != 'null') {
-          setState(() {
-            rawDataList = rawDataInfoFromJson(dataStr);
-            if (rawDataList.isNotEmpty) {
-              selectedRawDataInfo = rawDataList.last;
-              rawMaterialCtl.text =
-                  '${selectedRawDataInfo!.rawMaterial.materialId} ${selectedRawDataInfo!.rawMaterial.materialName}';
-              selectedIndex = -1; // 重置选中索引
-              wgtCtl.text = '';
-              errorCtl.text = '';
-            }
-          });
-        } else {
-          setState(() {
-            rawDataList = [];
-          });
-        }
-      }
-    });
   }
 
   @override
   void dispose() {
     super.dispose();
-    _eventbus3.cancel();
-    _eventbus4.cancel();
-    _eventbus5.cancel();
+
     formulaCodeCtl.dispose();
     formulaNameCtl.dispose();
     formulaModeCtl.dispose();

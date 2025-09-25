@@ -616,6 +616,9 @@ class _PluEidtPageState extends State<PluEidtPage> {
                         context, localizedStrings.gTipNoDataSelected);
                   }
                   String msg = await writeDessertsToExcel(selectedPluInfos);
+                  if (!context.mounted) {
+                    return;
+                  }
                   showTipInfo(msg, context);
                 },
               ),
@@ -1253,7 +1256,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
     final StreamController<Timer> timerController = StreamController<Timer>();
 
     // 创建一个定时器，每隔4秒向流中添加一个新的定时器实例
-    var timer = Timer.periodic(const Duration(milliseconds: 50), (Timer t) {
+    Timer.periodic(const Duration(milliseconds: 50), (Timer t) {
       timerController.add(t);
     });
 
@@ -1454,6 +1457,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
                         context, localizedStrings.gTipNoDataSelected);
                   }
                   String msg = await writeDessertsToExcel(selectedPluInfos);
+                  if (!mounted) return;
                   showErrorDialog(context, msg);
                 }
               : null,
@@ -2489,7 +2493,7 @@ class NationDataSource extends DataGridSource {
       return DataGridRow(cells: cells);
     }).toList();
     _originalDataModels = dataModels;
-    _textScheme = textScheme;
+    myTextScheme = textScheme;
     _colorScheme = colorScheme;
   }
 
@@ -2503,7 +2507,7 @@ class NationDataSource extends DataGridSource {
   final String disableTitle;
 
   List<DataGridRow> _dataModels = [];
-  late TextTheme _textScheme;
+  late TextTheme myTextScheme;
   late ColorScheme _colorScheme;
 
   @override
@@ -2515,7 +2519,6 @@ class NationDataSource extends DataGridSource {
 
     final dataModel = _originalDataModels[index];
     var colorScheme = _colorScheme;
-    var textScheme = _textScheme;
 
     return DataGridRowAdapter(
       cells: row.getCells().map<Widget>((dataGridCell) {

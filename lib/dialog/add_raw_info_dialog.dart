@@ -507,7 +507,7 @@ class AddRawDialogState extends State<AddRawDialog> {
                               child: Container(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                  '选择设备',
+                                  localizedStrings.selectDevice,
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodySmall!
@@ -522,7 +522,7 @@ class AddRawDialogState extends State<AddRawDialog> {
                             ),
                           ]),
                         ),
-                        showScaleDropDownBtn('请选择设备'),
+                        showScaleDropDownBtn(localizedStrings.selectDevice),
                       ])),
                   SizedBox(
                     width: largePadding,
@@ -1158,7 +1158,7 @@ class EditRawDialogState extends State<EditRawDialog> {
                               child: Container(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                  '选择设备',
+                                  localizedStrings.selectDevice,
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodySmall!
@@ -1173,7 +1173,7 @@ class EditRawDialogState extends State<EditRawDialog> {
                             ),
                           ]),
                         ),
-                        showScaleDropDownBtn('请选择设备'),
+                        showScaleDropDownBtn(localizedStrings.selectDevice),
                       ])),
                   SizedBox(
                     width: largePadding,

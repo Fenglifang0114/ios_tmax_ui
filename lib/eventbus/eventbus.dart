@@ -806,3 +806,28 @@ class EventRespImportRawList {
   dynamic obj;
   EventRespImportRawList(this.obj);
 }
+
+class EventRespDelManyRaw {
+  dynamic obj;
+  EventRespDelManyRaw(this.obj);
+}
+
+class EventRespDelManyFma {
+  dynamic obj;
+  EventRespDelManyFma(this.obj);
+}
+
+class EventRespDelManyDraft {
+  dynamic obj;
+  EventRespDelManyDraft(this.obj);
+}
+
+class EventImportRawOK {
+  dynamic obj;
+  EventImportRawOK(this.obj);
+}
+
+class EventImportFmaOK {
+  dynamic obj;
+  EventImportFmaOK(this.obj);
+}

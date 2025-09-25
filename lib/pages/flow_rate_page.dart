@@ -1310,13 +1310,16 @@ class FlowRatePageState extends State<FlowRatePage>
               String csv = const ListToCsvConverter().convert(csvData);
               File file = File(filePath);
               await file.writeAsString(csv);
-              if (mounted) {
-                showTipInfo(localizedStrings.fSaveSuccess, context);
+              if (!context.mounted) {
+                return;
               }
+
+              showTipInfo(localizedStrings.fSaveSuccess, context);
             } catch (e) {
-              if (mounted) {
-                showTipInfo(' $e', context);
+              if (!context.mounted) {
+                return;
               }
+              showTipInfo(' $e', context);
             }
           }
         },

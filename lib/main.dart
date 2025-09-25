@@ -108,6 +108,7 @@ Future<bool> checkAndBindPort() async {
   try {
     // 尝试创建ServerSocket来绑定端口20015
     serverSocket = await ServerSocket.bind(InternetAddress.anyIPv4, 58581);
+    debugPrint(serverSocket.address.toString());
     return true; // 成功绑定端口，说明应用之前没开启，现在可以占用该端口继续
   } catch (e) {
     return false; // 端口已被占用，推测应用已在运行

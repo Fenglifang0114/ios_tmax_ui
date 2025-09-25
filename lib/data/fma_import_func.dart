@@ -5,7 +5,8 @@ import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/import_fma_data.dart';
-import 'package:t_max/dialog/custom_dialog_tip.dart';
+import 'package:t_max/data/language.dart';
+import 'package:t_max/data/scale_info_from_db.dart';
 
 //找出配方列表中是否已经存在了此配方
 bool isFormulaExist(String formulaId) {
@@ -24,8 +25,13 @@ bool isRawExist(String rawId) {
 }
 
 // 优化后的导入函数：提前校验字段，过滤无效行
-Future<List<ImportFmaInfo>> importFormulasFromExcel(
-    File file, BuildContext context) async {
+Future<ImportFmaResult> importFormulasFromExcel(File file) async {
+  ImportFmaResult result = ImportFmaResult(
+    isSuccess: false,
+    errorMessage: '',
+    importFmaInfoList: [],
+  );
+
   final stopwatch = Stopwatch()..start(); // 用于监控导入性能
   try {
     // 1. 读取Excel并解析
@@ -33,20 +39,20 @@ Future<List<ImportFmaInfo>> importFormulasFromExcel(
     final excelData = Excel.decodeBytes(bytes);
 
     if (excelData.tables.isEmpty) {
-      showTipInfo('没有数据导入：Excel文件中未找到工作表', context);
-      return [];
+      result.errorMessage = localizedStrings.noDataImport;
+      return result;
     }
 
     final sheet = excelData.tables.values.first;
     if (sheet.rows.isEmpty) {
-      showTipInfo('没有数据导入：工作表为空', context);
-      return [];
+      result.errorMessage = localizedStrings.noDataImport;
+      return result;
     }
 
     //大于1000行 提示用户一次读取1000行
-    if (sheet.rows.length > 1000) {
-      showTipInfo('请一次最多导入1000行数据', context);
-      return [];
+    if (sheet.rows.length > 1001) {
+      result.errorMessage = localizedStrings.max1000Rows;
+      return result;
     }
 
     // 2. 解析表头并映射列索引（关键优化：用索引定位列，避免多次查找）
@@ -62,24 +68,31 @@ Future<List<ImportFmaInfo>> importFormulasFromExcel(
     //验证表头是否完整
     final missingHeader = _validateHeaders(columnIndexMap.keys.toList());
     if (missingHeader.isNotEmpty) {
-      showTipInfo('导入失败：缺少必要的表头字段：$missingHeader', context);
-      return [];
+      result.errorMessage = localizedStrings.missingHeaders + '：$missingHeader';
+      return result;
     }
 
     final List<Map<String, dynamic>> validRows = [];
-    for (int rowIdx = 1; rowIdx < sheet.rows.length; rowIdx++) {
+    for (int rowIdx = 1; rowIdx < sheet.maxRows; rowIdx++) {
       final row = sheet.rows[rowIdx];
+      if (_isRowEmpty(row)) {
+        debugPrint('跳过空行: $rowIdx');
+        continue;
+      }
+
       final rowData = <String, dynamic>{};
 
       // 4.1 校验Formula Id（非空+整数）
       final formulaIdCol = columnIndexMap['Formula Id']!;
       final formulaIdValue = _getCellValue(row, formulaIdCol);
       if (formulaIdValue.isEmpty) {
-        showTipInfo('Formula Id为空, 第${rowIdx + 1}行', context);
-        return [];
+        result.errorMessage = localizedStrings.formulaIdEmpty +
+            ',${localizedStrings.tipRow}:${rowIdx + 1}';
+        return result;
       } else if (isFormulaExist(formulaIdValue)) {
-        showTipInfo('Formula Id已存在, 第${rowIdx + 1}行', context);
-        return [];
+        result.errorMessage =
+            '$formulaIdValue ${localizedStrings.formulaIdExists}, ${localizedStrings.tipRow}:${rowIdx + 1}';
+        return result;
       } else {
         rowData['formulaId'] = formulaIdValue;
       }
@@ -88,8 +101,9 @@ Future<List<ImportFmaInfo>> importFormulasFromExcel(
       final formulaNameCol = columnIndexMap['Formula Name']!;
       final formulaName = _getCellValue(row, formulaNameCol).trim();
       if (formulaName.isEmpty) {
-        showTipInfo('Formula Name为空, 第${rowIdx + 1}行', context);
-        return [];
+        result.errorMessage = localizedStrings.formulaNameEmpty +
+            ', ${localizedStrings.tipRow}:${rowIdx + 1}';
+        return result;
       } else {
         rowData['formulaName'] = formulaName;
       }
@@ -98,11 +112,13 @@ Future<List<ImportFmaInfo>> importFormulasFromExcel(
       final modeCol = columnIndexMap['Mode']!;
       final mode = _getCellValue(row, modeCol).trim().toLowerCase();
       if (mode.isEmpty) {
-        showTipInfo('Mode为空, 第${rowIdx + 1}行', context);
-        return [];
+        result.errorMessage = localizedStrings.modeEmpty +
+            ', ${localizedStrings.tipRow}:${rowIdx + 1}';
+        return result;
       } else if (!['weight', 'percent'].contains(mode)) {
-        showTipInfo('Mode必须是weight或percent（值：$mode）', context);
-        return [];
+        result.errorMessage = localizedStrings.modeInvalid +
+            '：$mode , ${localizedStrings.tipRow}:${rowIdx + 1}';
+        return result;
       } else {
         rowData['mode'] = mode;
         // 当Mode为weight时，校验Weight Unit
@@ -112,9 +128,9 @@ Future<List<ImportFmaInfo>> importFormulasFromExcel(
               ? _getCellValue(row, weightUnitCol).trim()
               : '';
           if (weightUnit.isEmpty) {
-            showTipInfo(
-                'Mode为weight时，Weight Unit不能为空, 第${rowIdx + 1}行', context);
-            return [];
+            result.errorMessage = localizedStrings.weightUnitEmpty +
+                ', ${localizedStrings.tipRow}:${rowIdx + 1}';
+            return result;
           } else {
             rowData['weightUnit'] = weightUnit;
           }
@@ -125,13 +141,15 @@ Future<List<ImportFmaInfo>> importFormulasFromExcel(
       final ingredientNoCol = columnIndexMap['Ingredient No.']!;
       final ingredientNoValue = _getCellValue(row, ingredientNoCol);
       if (ingredientNoValue.isEmpty) {
-        showTipInfo('Ingredient No.为空, 第${rowIdx + 1}行', context);
-        return [];
+        result.errorMessage = localizedStrings.ingredientNoEmpty +
+            ', ${localizedStrings.tipRow}:${rowIdx + 1}';
+        return result;
       } else {
         final ingredientNo = int.tryParse(ingredientNoValue);
         if (ingredientNo == null || ingredientNo <= 0) {
-          showTipInfo('Ingredient No.必须是正整数（值：$ingredientNoValue）', context);
-          return [];
+          result.errorMessage = localizedStrings.ingredientNoInvalid +
+              '：$ingredientNoValue , ${localizedStrings.tipRow}:${rowIdx + 1}';
+          return result;
         } else {
           rowData['ingredientNo'] = ingredientNo;
         }
@@ -141,12 +159,13 @@ Future<List<ImportFmaInfo>> importFormulasFromExcel(
       final ingredientIdCol = columnIndexMap['Ingredient Id']!;
       final ingredientId = _getCellValue(row, ingredientIdCol).trim();
       if (ingredientId.isEmpty) {
-        showTipInfo('Ingredient Id为空, 第${rowIdx + 1}行', context);
-        return [];
+        result.errorMessage = localizedStrings.ingredientIdEmpty +
+            ', ${localizedStrings.tipRow}:${rowIdx + 1}';
+        return result;
       } else if (!isRawExist(ingredientId)) {
-        showTipInfo(
-            'Ingredient Id 不存在, 第${rowIdx + 1}行，请先导入Ingredient', context);
-        return [];
+        result.errorMessage = localizedStrings.ingredientIdNotExist +
+            ', ${localizedStrings.tipRow}:${rowIdx + 1}';
+        return result;
       } else {
         rowData['ingredientId'] = ingredientId;
       }
@@ -155,12 +174,14 @@ Future<List<ImportFmaInfo>> importFormulasFromExcel(
       final weightCol = columnIndexMap['Ingredient Weight/Percent']!;
       final weightValue = _getCellValue(row, weightCol);
       if (weightValue.isEmpty) {
-        showTipInfo('Ingredient Weight/Percent为空, 第${rowIdx + 1}行', context);
-        return [];
+        result.errorMessage = localizedStrings.weightPercentEmpty +
+            ', ${localizedStrings.tipRow}:${rowIdx + 1}';
+        return result;
       } else if (!_isValidDecimal(weightValue,
           maxDecimals: 3, minValue: 0.001)) {
-        showTipInfo('Weight/Percent应> 0 且最多3位小数（值：$weightValue）', context);
-        return [];
+        result.errorMessage = localizedStrings.weightPercentInvalid +
+            '：$weightValue , ${localizedStrings.tipRow}:${rowIdx + 1}';
+        return result;
       } else {
         rowData['weightOrPercent'] = double.parse(weightValue);
       }
@@ -169,12 +190,14 @@ Future<List<ImportFmaInfo>> importFormulasFromExcel(
       final errorCol = columnIndexMap['Allow Error']!;
       final errorValue = _getCellValue(row, errorCol);
       if (errorValue.isEmpty) {
-        showTipInfo('Allow Error为空, 第${rowIdx + 1}行', context);
-        return [];
+        result.errorMessage = localizedStrings.allowErrorEmpty +
+            ', ${localizedStrings.tipRow}:${rowIdx + 1}';
+        return result;
       } else if (!_isValidDecimal(errorValue,
           maxDecimals: 3, minValue: 0.001)) {
-        showTipInfo('Allow Error必须是正数且最多3位小数（值：$errorValue）', context);
-        return [];
+        result.errorMessage = localizedStrings.allowErrorInvalid +
+            '：$errorValue , ${localizedStrings.tipRow}:${rowIdx + 1}';
+        return result;
       } else {
         rowData['allowError'] = double.parse(errorValue);
       }
@@ -245,9 +268,9 @@ Future<List<ImportFmaInfo>> importFormulasFromExcel(
       for (final row in groupRows) {
         final currentName = row['formulaName'] as String;
         if (currentName != firstFormulaName) {
-          showTipInfo('$formulaId 配方名称不一致"', context);
-
-          return []; // 找到一个不一致就终止循环，无需继续检查
+          result.errorMessage = localizedStrings.formulaNameInconsistent +
+              ', :$currentName  :$firstFormulaName';
+          return result; // 找到一个不一致就终止循环，无需继续检查
         }
       }
 
@@ -255,9 +278,9 @@ Future<List<ImportFmaInfo>> importFormulasFromExcel(
 
       for (int i = 0; i < ingredients.length; i++) {
         if (ingredients[i].ingredientNo != i + 1) {
-          showTipInfo(' $formulaId  成分编号不连续"', context);
-
-          return []; // 编号不连续，跳过该配方后续处理
+          result.errorMessage = localizedStrings.sequenceNotContinuous +
+              '：${ingredients[i].ingredientNo}';
+          return result; // 编号不连续，跳过该配方后续处理
         }
       }
 
@@ -273,11 +296,9 @@ Future<List<ImportFmaInfo>> importFormulasFromExcel(
         totalPercent = double.parse(totalPercent.toStringAsFixed(3));
         // 浮点数比较需用容差，避免精度问题（如99.9999999999或100.0000000001应视为有效）
         if (totalPercent != 100) {
-          showTipInfo(
-              '$formulaId 总和为${totalPercent.toStringAsFixed(3)}%，不等于100%',
-              context);
-
-          return []; // 编号不连续，跳过该配方后续处理
+          result.errorMessage = localizedStrings.percentNot100 +
+              '${totalPercent.toStringAsFixed(3)}%';
+          return result; // 编号不连续，跳过该配方后续处理
         }
       }
 
@@ -297,15 +318,17 @@ Future<List<ImportFmaInfo>> importFormulasFromExcel(
     stopwatch.stop();
     final msg =
         '导入完成：成功${validFormulas.length}个配方,耗时${stopwatch.elapsedMilliseconds}ms';
+    debugPrint(msg);
 
-    showTipInfo(msg, context);
-
-    return validFormulas;
+    return ImportFmaResult(
+        isSuccess: true,
+        errorMessage: localizedStrings.tipImporting,
+        importFmaInfoList: validFormulas);
   } catch (e) {
     stopwatch.stop();
-    showTipInfo(
-        '导入失败：${e.toString()}，耗时${stopwatch.elapsedMilliseconds}ms', context);
-    return [];
+
+    return ImportFmaResult(
+        isSuccess: false, errorMessage: e.toString(), importFmaInfoList: []);
   }
 }
 
@@ -330,57 +353,6 @@ bool _isValidDecimal(String value,
   return numValue != null && numValue > minValue;
 }
 
-// 工具方法：快速提取字符串（减少空值判断冗余）
-String? _getString(List<Data?> row, int? colIndex) {
-  if (colIndex == null || colIndex >= row.length) return null;
-  final value = row[colIndex]?.value;
-  return value?.toString()?.trim();
-}
-
-// 工具方法：快速解析整数（减少重复代码）
-int? _parseInt(List<Data?> row, int? colIndex) {
-  final str = _getString(row, colIndex);
-  return str == null ? null : int.tryParse(str);
-}
-
-// 工具方法：快速解析小数（减少重复代码）
-double? _parseDouble(List<Data?> row, int? colIndex) {
-  final str = _getString(row, colIndex);
-  return str == null ? null : double.tryParse(str);
-}
-
-// 工具方法：验证小数是否有效（纯内存计算）
-bool _isValidDecimalValue(double? value, int maxDecimals, double minValue) {
-  if (value == null || value <= minValue) return false;
-  // 计算小数位数（比正则更快）
-  final str = value.toStringAsFixed(maxDecimals);
-  final dotIndex = str.indexOf('.');
-  if (dotIndex == -1) return true;
-  final decimals = str.substring(dotIndex + 1).replaceAll(RegExp(r'0+$'), '');
-  return decimals.length <= maxDecimals;
-}
-
-// 统一UI提示（减少UI交互次数）
-void _showError(String msg, BuildContext context) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(msg, maxLines: 3, overflow: TextOverflow.ellipsis),
-      backgroundColor: Colors.red,
-      duration: const Duration(seconds: 5),
-    ),
-  );
-}
-
-void _showSuccess(String msg, BuildContext context) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(msg),
-      backgroundColor: Colors.green,
-      duration: const Duration(seconds: 3),
-    ),
-  );
-}
-
 String _validateHeaders(List<String> headers) {
   const requiredHeaders = [
     'Formula Id',
@@ -403,4 +375,198 @@ String _validateHeaders(List<String> headers) {
     }
   }
   return "";
+}
+
+//导入Raw数据
+int checkScaleName(String scaleName) {
+  for (var scale in myAllScalesList) {
+    if (scaleName == scale.scaleName) {
+      return scale.scaleId;
+    }
+  }
+  return 0;
+}
+
+// 判断一行是否为空的辅助函数
+bool _isRowEmpty(List<Data?> row) {
+  return row.every((cell) =>
+      cell == null ||
+      cell.value == null ||
+      cell.value.toString().trim().isEmpty);
+}
+
+Future<ImportRawResult> importRawFromExcel(File file) async {
+  ImportRawResult result =
+      ImportRawResult(isSuccess: false, errorMessage: '', importRawList: []);
+  try {
+    // 1. 读取Excel文件
+    final bytes = await file.readAsBytes();
+    final excelData = Excel.decodeBytes(bytes);
+
+    if (excelData.tables.isEmpty) {
+      result.errorMessage = localizedStrings.noDataImport;
+      return result;
+    }
+
+    // 获取第一个工作表
+    final sheet = excelData.tables.values.first;
+    if (sheet.rows.isEmpty) {
+      result.errorMessage = localizedStrings.noDataImport;
+      return result;
+    }
+    debugPrint('importRawFromExcel: ${sheet.rows.length}');
+    //删除每列都是null的行
+
+    //大于1000行 提示用户一次读取1000行
+    if (sheet.rows.length > 5001) {
+      result.errorMessage = localizedStrings.max5000Rows;
+      return result;
+    }
+
+    // 2. 解析表头并验证
+    List<String> headers = [];
+    for (var cell in sheet.rows[0]) {
+      if (cell != null && cell.value != null) {
+        headers.add(cell.value.toString());
+      }
+    }
+
+    String res = _validateRawHeaders(headers);
+    if (res != '') {
+      result.errorMessage = localizedStrings.missingHeaders + '：$res';
+      return result;
+    }
+
+    //验证数据，导入所有的ID列，判断不能重复，也不能存在
+    List<String> idList = [];
+    List<String> nameList = [];
+    List<String> scaleIdList = [];
+    List<String> typeList = [];
+    List<String> notesList = [];
+    //找出'Ingredient Id',列,并判断这列的值都不重复，且不为空
+
+    for (int rowIndex = 1; rowIndex < sheet.maxRows; rowIndex++) {
+      var rowData = sheet.rows[rowIndex];
+
+      // 跳过空行
+      if (_isRowEmpty(rowData)) {
+        debugPrint('跳过空行: $rowIndex');
+        continue;
+      }
+      for (int col = 0; col < sheet.maxColumns; col++) {
+        if (headers[col] == 'Ingredient Name') {
+          final cellValue = sheet
+              .cell(CellIndex.indexByColumnRow(
+                  columnIndex: col, rowIndex: rowIndex))
+              .value;
+          String name = cellValue != null ? cellValue.toString().trim() : '';
+          if (name.isEmpty) {
+            result.errorMessage = localizedStrings.tipRow +
+                ': ${rowIndex + 1}: ${localizedStrings.ingredientNameEmpty}';
+            return result;
+          }
+          nameList.add(name);
+          continue;
+        }
+        if (headers[col] == 'Device Name') {
+          final cellValue = sheet
+              .cell(CellIndex.indexByColumnRow(
+                  columnIndex: col, rowIndex: rowIndex))
+              .value;
+          String scale = cellValue != null ? cellValue.toString().trim() : '';
+          int scaleId = 0;
+          if (scale.isNotEmpty) {
+            scaleId = checkScaleName(scale);
+            if (scaleId == 0) {
+              result.errorMessage = localizedStrings.tipRow +
+                  ': ${rowIndex + 1}: ${localizedStrings.deviceNameNotExist}';
+              return result;
+            }
+          }
+          scaleIdList.add(scaleId.toString());
+          continue;
+        }
+        if (headers[col] == 'Ingredient Id') {
+          final cellValue = sheet
+              .cell(CellIndex.indexByColumnRow(
+                  columnIndex: col, rowIndex: rowIndex))
+              .value;
+          String id = cellValue != null ? cellValue.toString().trim() : '';
+          if (id.isEmpty) {
+            result.errorMessage = localizedStrings.tipRow +
+                ': ${rowIndex + 1}: ${localizedStrings.ingredientIdIsEmpty}';
+
+            return result;
+          }
+          if (idList.contains(id)) {
+            result.errorMessage = localizedStrings.tipRow +
+                ': ${rowIndex + 1}:  $id ${localizedStrings.fRawIdDuplicate}';
+            return result;
+          }
+          if (checkRawExist(id)) {
+            result.errorMessage = localizedStrings.tipRow +
+                ': ${rowIndex + 1}:  $id ${localizedStrings.fRawIdDuplicate}';
+            return result;
+          }
+          idList.add(id);
+          continue;
+        }
+        if (headers[col] == 'Category') {
+          final cellValue = sheet
+              .cell(CellIndex.indexByColumnRow(
+                  columnIndex: col, rowIndex: rowIndex))
+              .value;
+          String type = cellValue != null ? cellValue.toString().trim() : '';
+          typeList.add(type);
+        }
+        if (headers[col] == 'Ingredient Notes') {
+          final cellValue = sheet
+              .cell(CellIndex.indexByColumnRow(
+                  columnIndex: col, rowIndex: rowIndex))
+              .value;
+          String notes = cellValue != null ? cellValue.toString().trim() : '';
+          notesList.add(notes);
+          continue;
+        }
+      }
+    }
+
+    List<List<String>> info = [];
+    info.add(idList);
+    info.add(nameList);
+    info.add(scaleIdList);
+    info.add(typeList);
+    info.add(notesList);
+
+    result.isSuccess = true;
+    result.errorMessage = localizedStrings.tipImporting;
+    result.importRawList = info;
+    return result;
+  } catch (e) {
+    result.errorMessage = "fail：${e.toString()}";
+    return result;
+  }
+}
+
+// 验证CSV表头是否包含所有必要字段
+String _validateRawHeaders(List<String> headers) {
+  const requiredHeaders = [
+    'Ingredient Id',
+    'Ingredient Name',
+    'Category',
+    'Ingredient Notes',
+    'Device Name',
+  ];
+
+  for (final header in requiredHeaders) {
+    if (!headers.contains(header)) {
+      return header;
+    }
+  }
+  return "";
+}
+
+bool checkRawExist(String materialId) {
+  return rawDataList
+      .any((element) => element.rawMaterial.materialId == materialId);
 }

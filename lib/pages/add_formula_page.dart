@@ -3,8 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/data/formula_common.dart';
-import 'package:t_max/data/formula_from_db_data.dart';
-
 import 'package:t_max/data/formula_scale_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/icons.dart';
@@ -56,8 +54,7 @@ class AddFormulaPageState extends State<AddFormulaPage> {
 
   int selScaleId = -1;
   dynamic _eventbus1;
-  dynamic _eventbus3;
-  dynamic _eventbus4;
+
   dynamic _eventbus5;
 
   Timer? checkWgtStartTimer; // 用于每5秒检查isWgtStart的定时器
@@ -164,34 +161,11 @@ class AddFormulaPageState extends State<AddFormulaPage> {
       }
     });
 
-    _eventbus3 = eventBus.on<EventRespAddFormula>().listen((event) {
-      if (mounted) {
-        PublicFunctions.getFormulaList();
-        showTipInfo(localizedStrings.fAddSuccessMsg, context);
-      }
-    });
-    _eventbus4 = eventBus.on<EventRespFormulaList>().listen((event) {
-      if (mounted) {
-        String dataStr = event.obj;
-        if (dataStr != '' && dataStr != 'null') {
-          setState(() {
-            formulaDataList = formulaInfoDbFromJson(dataStr);
-            // print(formulaDataList.length);
-          });
-        } else {
-          setState(() {
-            formulaDataList = [];
-          });
-        }
-      }
-    });
-
     _eventbus5 = eventBus.on<EventRespGetRawDataList>().listen((event) {
       if (mounted) {
         String dataStr = event.obj;
         if (dataStr != '' && dataStr != 'null') {
           setState(() {
-            rawDataList = rawDataInfoFromJson(dataStr);
             if (rawDataList.isNotEmpty) {
               selectedRawDataInfo = rawDataList.last;
               rawMaterialCtl.text =
@@ -200,10 +174,6 @@ class AddFormulaPageState extends State<AddFormulaPage> {
               wgtCtl.text = '';
               errorCtl.text = '';
             }
-          });
-        } else {
-          setState(() {
-            rawDataList = [];
           });
         }
       }
@@ -217,8 +187,7 @@ class AddFormulaPageState extends State<AddFormulaPage> {
     _scrollController1.dispose();
     _scrollController.dispose();
     _eventbus1.cancel();
-    _eventbus3.cancel();
-    _eventbus4.cancel();
+
     _eventbus5.cancel();
     formulaCodeCtl.dispose();
     formulaNameCtl.dispose();

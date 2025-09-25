@@ -55,7 +55,7 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
   final double scaleWgtWidth = 351;
   late Timer updateTimer; //刷新数据
   // 添加定时器变量
-  Timer? _scaleCheckTimer;
+  Timer? scaleCheckTimer;
 
   late TableState _tableState;
 
@@ -90,7 +90,7 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
 
     startTimer();
     // 初始化定时器，每隔10秒执行一次检查
-    _scaleCheckTimer = Timer.periodic(Duration(seconds: 10), (timer) {
+    scaleCheckTimer = Timer.periodic(Duration(seconds: 10), (timer) {
       checkSameScale();
     });
 
@@ -290,7 +290,7 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     }
     myPluInfoList.clear();
     updateTimer.cancel();
-
+    scaleCheckTimer?.cancel();
     totalWgtUnitCtl.clear();
     totalWeightNotifier.dispose();
     totalWgtStableNotifier.dispose();

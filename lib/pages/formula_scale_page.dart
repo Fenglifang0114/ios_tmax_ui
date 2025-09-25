@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:excel/excel.dart' as excel;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:t_max/data/darf_fma_data_from_db.dart';
 import 'package:t_max/data/fma_import_func.dart';
 import 'package:t_max/data/fma_rec_list_db_data.dart';
@@ -23,20 +21,18 @@ import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/pages/add_formula_page.dart';
 import 'package:t_max/pages/all_fma_wgt_rec_page.dart';
-import 'package:t_max/pages/edit_darft_fma_page.dart';
-import 'package:t_max/pages/edit_formula_page.dart';
-import 'package:t_max/pages/fma_wgt_rec_page.dart';
 import 'package:t_max/pages/start_darft_fma_pct_page.dart';
 import 'package:t_max/pages/start_fma_pct_page.dart';
 import 'package:t_max/pages/start_fma_secret_page.dart';
-import 'package:t_max/widget/common_widget.dart';
-import 'package:t_max/widget/dialog_head_style.dart';
+import 'package:t_max/widget/f_draft_tab.dart';
+import 'package:t_max/widget/f_export.dart';
+import 'package:t_max/widget/f_fma_tab.dart';
+import 'package:t_max/widget/f_open_file.dart';
+import 'package:t_max/widget/f_raw_tab.dart';
 import 'package:t_max/widget/formula_widget.dart';
 import 'package:t_max/data/formula_from_db_data.dart';
 import 'package:t_max/widget/page_head.dart';
 import 'package:t_max/widget/scale_list.dart';
-import 'package:t_max/widget/sticky_table.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../data/language.dart';
 
 // 定义 EncryptedValue 枚举
@@ -65,24 +61,10 @@ class FormulationScalePage extends StatefulWidget {
 
 class FormulationScalePageState extends State<FormulationScalePage>
     with SingleTickerProviderStateMixin {
-  // bool _showBottomSection = false;
   int _selectedTabIndex = 0;
   late TabController _tabController;
-  bool sort = false;
-  final ScrollController _scrollController =
-      ScrollController(); // 添加 ScrollController
 
-  Set<int> selectedRows = {};
-  Set<int> selectedFmaRows = {};
-  Set<int> selectedDarftRows = {}; // 添加选中行的集合
-  bool selectAll = false; // 添加全选状态
-  bool selectFmaAll = false; // 添加全选状态
-  bool selectDraftFmaAll = false; // 添加全选状态
-  int? clickedRow; // 添加点击行状态
-  int? clickedFmaRow; // 添加点击行状态
-  int? clickedDarftRow; // 添加点击行状态
   int? _selectedRawIndex; // 新增状态，用于记录当前被点击的原料 index
-  int? selectedFmaIndex; // 新增状态，用于记录当前被点击的配方 index
 
   final TextEditingController _searchFmaIdCtl = TextEditingController();
   final TextEditingController searchFmaEncryptedCtl = TextEditingController();
@@ -95,15 +77,20 @@ class FormulationScalePageState extends State<FormulationScalePage>
   FormulaInfoDb? selectedFormula; //选中的配方，用于展示原料列表
   Detail selectedDetail = Detail(); //配方中选中的原料
 
+  RawDataInfo? selectedRaw;
+
   int selScaleId = -1; //选择的秤ID
   List<FormulaInfoDb> rawFormulaList = []; //原料和配方的关系表
   // 存储搜索结果
   List<FormulaInfoDb> searchFmaList = [];
+  List<FormulaInfoDb> selFormulas = [];
   // 存储搜索结果
   List<RawDataInfo> searchRawList = [];
+  List<RawDataInfo> selRawList = [];
 
   List<DarfFmaInfo> searchDarfFmaInfoList = []; //暂存的配方称重记录和配方明细
   DarfFmaInfo? selectedDarfFma; //选中的配方称重记录和配方明细
+  List<DarfFmaInfo> selDarftFmaList = []; //暂存的配方称重记录和配方明细
   Timer? _onlineTimer;
 
   dynamic _eventbus1;
@@ -121,6 +108,11 @@ class FormulationScalePageState extends State<FormulationScalePage>
   dynamic _eventbus13;
   dynamic _eventbus14;
   dynamic _eventbus15;
+  dynamic _eventbus16;
+  dynamic _eventbus17;
+  dynamic _eventbus18;
+  dynamic _eventbus19;
+  dynamic _eventbus20;
 
   @override
   void initState() {
@@ -163,20 +155,14 @@ class FormulationScalePageState extends State<FormulationScalePage>
         if (dataStr != '' && dataStr != 'null') {
           setState(() {
             _selectedRawIndex = -1; // 重置选中的原料 index
-            clickedRow = null; // 重置点击行状态
-            // rawFormulaList = [];
-
             List<RawDataInfo> temp = rawDataInfoFromJson(dataStr);
-
             rawDataList.addAll(temp);
             searchRawList = List.from(rawDataList);
           });
         } else {
           setState(() {
             _selectedRawIndex = -1; // 重置选中的原料 index
-            clickedRow = null; // 重置点击行状态
             rawFormulaList = [];
-
             rawDataList = [];
             searchRawList = [];
           });
@@ -185,6 +171,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
     });
     _eventbus4 = eventBus.on<EventRespAddRawData>().listen((event) {
       if (mounted) {
+        rawDataList = [];
+        searchRawList = [];
+
         PublicFunctions.getRawList();
         showTipInfo(localizedStrings.fSuccessMsg, context);
       }
@@ -200,11 +189,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
         String dataStr = event.obj;
         if (dataStr != '' && dataStr != 'null') {
           setState(() {
-            selectedFmaIndex = -1; // 重置选中的原料 index
             selectedFormula = null; // 重置选中的配方
             selectedDetail.rawMaterialTypeName = null; // 重置选中的原料类型名称
             selectedDetail = Detail(); // 重置选中的原料
-            clickedFmaRow = null; // 重置点击行状态
 
             List<FormulaInfoDb> tempFmaDataList =
                 formulaInfoDbFromJson(dataStr);
@@ -213,13 +200,11 @@ class FormulationScalePageState extends State<FormulationScalePage>
           });
         } else {
           setState(() {
-            selectedFmaIndex = -1; // 重置选中的原料 index
             selectedFormula = null; // 重置选中的配方
             selectedDetail.rawMaterialTypeName = null; // 重置选中的原料类型名称
             selectedDetail = Detail(); // 重置选中的原料
             formulaDataList = [];
             searchFmaList = [];
-            clickedFmaRow = null; // 重置点击行状态
           });
         }
       }
@@ -227,6 +212,12 @@ class FormulationScalePageState extends State<FormulationScalePage>
 
     _eventbus7 = eventBus.on<EventRespAddFormula>().listen((event) {
       if (mounted) {
+        selectedFormula = null;
+        formulaDataList = [];
+        searchFmaList = [];
+        selFormulas = [];
+
+        showTipInfo(localizedStrings.fSuccessMsg, context);
         PublicFunctions.getFormulaList();
       }
     });
@@ -235,7 +226,8 @@ class FormulationScalePageState extends State<FormulationScalePage>
       if (mounted) {
         String dataStr = event.obj;
         if (dataStr != '' && dataStr != 'null') {
-          fmaRecFromDbList = fmaRecFromDbFromJson(dataStr);
+          List<FmaRecFromDb> tempFmaRecList = fmaRecFromDbFromJson(dataStr);
+          fmaRecFromDbList.addAll(tempFmaRecList);
         } else {
           fmaRecFromDbList = [];
         }
@@ -243,6 +235,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
     });
     _eventbus9 = eventBus.on<EventRespFormulaRecAdd>().listen((event) {
       if (mounted) {
+        fmaRecFromDbList = [];
         PublicFunctions.getFormulaRecList();
       }
     });
@@ -250,6 +243,10 @@ class FormulationScalePageState extends State<FormulationScalePage>
     _eventbus10 = eventBus.on<EventRespEditRawData>().listen((event) {
       if (mounted) {
         showTipInfo(localizedStrings.fSuccessMsg, context);
+        rawDataList = [];
+        searchRawList = [];
+        formulaDataList = [];
+        searchFmaList = [];
         PublicFunctions.getRawList();
         PublicFunctions.getFormulaList();
       }
@@ -257,11 +254,15 @@ class FormulationScalePageState extends State<FormulationScalePage>
 
     _eventbus11 = eventBus.on<EventRespGetDraftFmaWgtRecList>().listen((event) {
       if (mounted) {
+        debugPrint('getDraftFmaWgtRecList');
         String dataStr = event.obj;
         if (dataStr != '' && dataStr != 'null') {
+          darfFmaInfoList = [];
+          selDarftFmaList = [];
+          selectedDarfFma = null;
           List<DarfFmaInfoListFromDb> darfFmaInfoListFromDbList =
               darfFmaInfoListFromDbFromJson(dataStr);
-          darfFmaInfoList = []; //暂存的配方记录
+
           for (var item in darfFmaInfoListFromDbList) {
             //在fmaRecFromDbList中查找对应的配方
             DarfFmaInfo tempDarfFma = DarfFmaInfo();
@@ -279,15 +280,15 @@ class FormulationScalePageState extends State<FormulationScalePage>
 
           setState(() {
             searchDarfFmaInfoList = List.from(darfFmaInfoList);
-            clickedDarftRow = null; // 重置点击行状态
+
             selectedDarfFma = null; // 重置选中的配方称重记录和配方明细
           });
         } else {
           setState(() {
             darfFmaInfoList = []; //暂存的配方记录
             searchDarfFmaInfoList = []; //暂存的配方记录
-            clickedDarftRow = null; // 重置点击行状态
-            selectedDarfFma = null; // 重置选中的配方称重记录和配方明细
+            selDarftFmaList = [];
+            selectedDarfFma = null;
           });
         }
       }
@@ -296,7 +297,10 @@ class FormulationScalePageState extends State<FormulationScalePage>
     _eventbus12 = eventBus.on<EventRespDelDraftFmaWgtRecList>().listen((event) {
       if (mounted) {
         showTipInfo(localizedStrings.fSuccessMsg, context);
-
+        darfFmaInfoList = [];
+        searchDarfFmaInfoList = [];
+        selDarftFmaList = [];
+        selectedDarfFma = null;
         PublicFunctions.getDraftRecords();
       }
     });
@@ -310,9 +314,65 @@ class FormulationScalePageState extends State<FormulationScalePage>
         setState(() {});
       }
     });
-    _eventbus15 = eventBus.on<EventPLuDataSavedOK>().listen((event) {
+    _eventbus15 = eventBus.on<EventImportRawOK>().listen((event) {
       if (mounted) {
-        // PublicFunctions.getRawList();
+        rawDataList = [];
+        searchRawList = [];
+        PublicFunctions.getRawList();
+        PublicFunctions.getRawTypeList();
+      }
+    });
+    _eventbus16 =
+        eventBus.on<EventRespCreateDraftFmaWgtRecList>().listen((event) {
+      if (mounted) {
+        showTipInfo(localizedStrings.fSuccessMsg, context);
+        setState(() {
+          darfFmaInfoList = [];
+          searchDarfFmaInfoList = [];
+        });
+
+        PublicFunctions.getDraftRecords();
+      }
+    });
+    _eventbus17 = eventBus.on<EventImportFmaOK>().listen((event) {
+      if (mounted) {
+        formulaDataList = [];
+
+        PublicFunctions.getFormulaList();
+        PublicFunctions.getFormulaTypeList();
+      }
+    });
+
+    _eventbus18 = eventBus.on<EventRespDelManyRaw>().listen((event) {
+      if (mounted) {
+        rawDataList = [];
+        searchRawList = [];
+        selRawList = [];
+        selectedRaw = null;
+        PublicFunctions.getRawList();
+      }
+    });
+    _eventbus19 = eventBus.on<EventRespDelManyFma>().listen((event) {
+      if (mounted) {
+        formulaDataList = [];
+        searchFmaList = [];
+        selFormulas = [];
+        selectedFormula = null;
+        PublicFunctions.getFormulaList();
+        darfFmaInfoList = [];
+        searchDarfFmaInfoList = [];
+        selDarftFmaList = [];
+        selectedDarfFma = null;
+        PublicFunctions.getDraftRecords();
+      }
+    });
+    _eventbus20 = eventBus.on<EventRespDelManyDraft>().listen((event) {
+      if (mounted) {
+        darfFmaInfoList = [];
+        searchDarfFmaInfoList = [];
+        selDarftFmaList = [];
+        selectedDarfFma = null;
+        PublicFunctions.getDraftRecords();
       }
     });
 
@@ -350,8 +410,6 @@ class FormulationScalePageState extends State<FormulationScalePage>
     rawTypeCtl.dispose();
     isFmaEncryptedCtl.dispose();
 
-    _scrollController.dispose();
-
     rawTypeList.clear();
     formulaTypeList.clear();
     rawDataList.clear();
@@ -381,6 +439,11 @@ class FormulationScalePageState extends State<FormulationScalePage>
     _eventbus13?.cancel();
     _eventbus14?.cancel();
     _eventbus15?.cancel();
+    _eventbus16?.cancel();
+    _eventbus17?.cancel();
+    _eventbus18?.cancel();
+    _eventbus19?.cancel();
+    _eventbus20?.cancel();
   }
 
   void startTestScaleOnline() {
@@ -399,6 +462,28 @@ class FormulationScalePageState extends State<FormulationScalePage>
     // 停止发送在线状态
     _onlineTimer?.cancel();
     _onlineTimer = null;
+  }
+
+  _updateRawDataSource() {
+    //更新原料数据源
+    // setState(() {
+    //   rawDataList.clear();
+    //   searchRawList = [];
+    // });
+    Future.delayed(const Duration(milliseconds: 100), () {
+      // PublicFunctions.getRawList();
+    });
+  }
+
+  _updateFmaDataSource() {
+    //更新FMA数据源
+    // setState(() {
+    //   formulaDataList.clear();
+    //   searchFmaList = [];
+    // });
+    Future.delayed(const Duration(milliseconds: 100), () {
+      // PublicFunctions.getFormulaList();
+    });
   }
 
   @override
@@ -433,12 +518,102 @@ class FormulationScalePageState extends State<FormulationScalePage>
                               thickness: 1,
                               height: 1,
                             ),
+                            //////////////////////////搜索部分
                             if (_selectedTabIndex == 0) showFormulaSearch(),
                             if (_selectedTabIndex == 1) showRawSearch(),
                             if (_selectedTabIndex == 2) showDarftFmaSearch(),
-                            if (_selectedTabIndex == 0) showFormulaTable(),
-                            if (_selectedTabIndex == 1) showRawTable(),
-                            if (_selectedTabIndex == 2) showDarftFmaTable(),
+
+                            //////////////////////////表格部分
+                            Expanded(
+                              flex: 8,
+                              child: IndexedStack(
+                                index: _selectedTabIndex,
+                                children: [
+                                  FormulaTab(
+                                    searchFmaList: searchFmaList,
+                                    onFormulaSelected: (formula) {
+                                      setState(() => selectedFormula = formula);
+                                    },
+                                    onMultipleSelected: (selectedFormulas) {
+                                      if (selectedFormulas.isEmpty) {
+                                        setState(() => selFormulas = []);
+                                      } else {
+                                        setState(() =>
+                                            selFormulas = selectedFormulas);
+                                      }
+                                    },
+                                    onDataChanged: _updateFmaDataSource,
+                                  ),
+                                  RawMaterialTab(
+                                    rawDataList: rawDataList,
+                                    searchRawList: searchRawList,
+                                    onRawSelected: (raw) {
+                                      if (raw != null) {
+                                        setState(() {
+                                          rawFormulaList = [];
+                                          for (var formula in formulaDataList) {
+                                            for (var detail
+                                                in formula.details!) {
+                                              if (detail
+                                                      .rawMaterialTypeName!
+                                                      .rawMaterial!
+                                                      .materialId ==
+                                                  raw.rawMaterial.materialId) {
+                                                rawFormulaList.add(formula);
+                                                break;
+                                              }
+                                            }
+                                          }
+                                        });
+                                      } else {
+                                        setState(() {
+                                          rawFormulaList = [];
+                                        });
+                                      }
+                                    },
+                                    onMultipleSelected: (selectedRaws) {
+                                      if (selectedRaws.isNotEmpty) {
+                                        setState(
+                                            () => selRawList = selectedRaws);
+                                      } else {
+                                        setState(() => selRawList = []);
+                                      }
+                                    },
+                                    onDataChanged: _updateRawDataSource,
+                                  ),
+                                  DraftFormulaTab(
+                                    searchDarfFmaInfoList:
+                                        searchDarfFmaInfoList,
+                                    onDarfFmaSelected: (DarfFmaInfo? darfFma) {
+                                      if (darfFma != null) {
+                                        setState(() {
+                                          selectedDarfFma = darfFma;
+                                        });
+                                      } else {
+                                        setState(() {
+                                          selectedDarfFma = null;
+                                        });
+                                      }
+                                    },
+                                    onMultipleSelected: (darfFmas) {
+                                      if (darfFmas.isNotEmpty) {
+                                        setState(() {
+                                          selDarftFmaList = darfFmas;
+                                        });
+                                      } else {
+                                        setState(() {
+                                          selDarftFmaList = [];
+                                        });
+                                      }
+                                      // 处理多选
+                                    },
+                                    onDataChanged: _updateFmaDataSource,
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            //////////////////////////底部
                             SizedBox(height: 14),
                             if (_selectedTabIndex == 0) showFormulaBottom(),
                             if (_selectedTabIndex == 1) showRawBottom(),
@@ -510,78 +685,6 @@ class FormulationScalePageState extends State<FormulationScalePage>
 
         return typeMatch;
       }).toList();
-    });
-  }
-
-  // 切换全选状态
-  void toggleSelectAll(bool? value) {
-    setState(() {
-      selectAll = value ?? false;
-      if (selectAll) {
-        selectedRows =
-            Set<int>.from(List.generate(rawDataList.length, (index) => index));
-      } else {
-        selectedRows.clear();
-      }
-    });
-  }
-
-  // 切换选择状态
-  void toggleSelection(int index) {
-    setState(() {
-      if (selectedRows.contains(index)) {
-        selectedRows.remove(index);
-      } else {
-        selectedRows.add(index);
-      }
-    });
-  }
-
-  // 切换全选状态
-  void toggleDarftFmaSelectAll(bool? value) {
-    setState(() {
-      selectDraftFmaAll = value ?? false;
-      if (selectDraftFmaAll) {
-        selectedDarftRows = Set<int>.from(
-            List.generate(darfFmaInfoList.length, (index) => index));
-      } else {
-        selectedDarftRows.clear();
-      }
-    });
-  }
-
-  // 切换选择状态
-  void toggleDarftFmaSelection(int index) {
-    setState(() {
-      if (selectedDarftRows.contains(index)) {
-        selectedDarftRows.remove(index);
-      } else {
-        selectedDarftRows.add(index);
-      }
-    });
-  }
-
-  // 切换全选状态
-  void toggleFmaSelectAll(bool? value) {
-    setState(() {
-      selectFmaAll = value ?? false;
-      if (selectFmaAll) {
-        selectedFmaRows = Set<int>.from(
-            List.generate(formulaDataList.length, (index) => index));
-      } else {
-        selectedFmaRows.clear();
-      }
-    });
-  }
-
-  // 切换选择状态
-  void toggleFmaSelection(int index) {
-    setState(() {
-      if (selectedFmaRows.contains(index)) {
-        selectedFmaRows.remove(index);
-      } else {
-        selectedFmaRows.add(index);
-      }
     });
   }
 
@@ -842,1081 +945,6 @@ class FormulationScalePageState extends State<FormulationScalePage>
             }(),
           );
         },
-      ),
-    );
-  }
-
-  bool checkRawDelete(Object? data) {
-    if (data == null || data is! RawDataInfo) {
-      return false;
-    }
-    final targetMaterialId = data.rawMaterial.materialId;
-    return formulaDataList.every((formula) {
-      return formula.details?.every((detail) {
-            return detail.rawMaterialTypeName!.rawMaterial!.materialId !=
-                targetMaterialId;
-          }) ??
-          true;
-    });
-  }
-
-  showRawTable() {
-    return Expanded(
-      flex: 8,
-      child: Container(
-        padding: const EdgeInsets.only(left: 20, right: 20),
-        color: colorScheme.surface,
-        child: StickyTable(
-          controller: _scrollController, // 传递 ScrollController
-          // data: List.generate(50, (index) => sort ? 50 - index : index),
-          data: searchRawList.isEmpty
-              ? []
-              : sort
-                  ? searchRawList.reversed.toList()
-                  : searchRawList,
-          defaultColumnWidth: const FixedColumnWidth(130),
-          titleHeight: 48,
-          cellHeight: 44,
-          clickedRow: clickedRow,
-          onRowClick: (row) {
-            setState(() {
-              clickedRow = row;
-              //选择原料后，找出所有的配方
-              rawFormulaList = [];
-              for (var formula in formulaDataList) {
-                for (var detail in formula.details!) {
-                  if (detail.rawMaterialTypeName!.rawMaterial!.materialId ==
-                      searchRawList[row].rawMaterial.materialId) {
-                    rawFormulaList.add(formula);
-                    break;
-                  }
-                }
-              }
-            });
-          },
-
-          cellDecoration: (context, column, data, row, columnIndex) {
-            // 添加点击行背景色
-            if (row == clickedRow) {
-              return BoxDecoration(
-                color: colorScheme.surfaceContainerLow,
-                border: Border(
-                  bottom: BorderSide(color: colorScheme.primary, width: 1),
-                ),
-              );
-            }
-            return BoxDecoration(
-              color: colorScheme.surface,
-              border: Border(
-                bottom: BorderSide(color: colorScheme.outlineVariant, width: 1),
-              ),
-            );
-          },
-          columns: [
-            StickyTableColumn(
-              "",
-              fixedStart: true,
-              columnWidth: const FixedColumnWidth(80),
-              renderTitle: (context, title) {
-                // 添加全选复选框
-                return Checkbox(value: selectAll, onChanged: toggleSelectAll);
-              },
-              renderCell: (context, title, data, row, column) {
-                return Checkbox(
-                  value: selectedRows.contains(row),
-                  onChanged: (value) {
-                    toggleSelection(row);
-                  },
-                );
-              },
-            ),
-            StickyTableColumn(
-              localizedStrings.fMaterialIdCol,
-              fixedStart: true,
-              showSort: true,
-              sort: sort,
-              columnWidth: const FixedColumnWidth(120),
-              alignment: Alignment.centerLeft,
-              onTitleClick: (context, title) {
-                // setState(() {
-                //   sort = !(title.sort ?? false);
-                // });
-              },
-              renderCell: (context, title, data, row, column) {
-                return showRenderCellText(
-                    (data as RawDataInfo).rawMaterial.materialId);
-              },
-              renderTitle: (context, title) {
-                return showRenderTitleText(
-                  title.title,
-                );
-              },
-            ),
-            StickyTableColumn(
-              localizedStrings.fMaterialNameCol,
-              showSort: true,
-              columnWidth: const FixedColumnWidth(300),
-              alignment: Alignment.centerLeft,
-              sort: false,
-              renderCell: (context, title, data, row, column) {
-                // 显示 materialId 字段
-                return showRenderCellText(
-                    (data as RawDataInfo).rawMaterial.materialName);
-              },
-              renderTitle: (context, title) {
-                return showRenderTitleText(
-                  title.title,
-                );
-              },
-            ),
-            StickyTableColumn(
-              localizedStrings.gDeviceName,
-              showSort: true,
-              columnWidth: const FixedColumnWidth(130),
-              alignment: Alignment.centerLeft,
-              sort: false,
-              renderCell: (context, title, data, row, column) {
-                // 显示 materialId 字段
-                String scaleName = '-';
-                for (var scale in myAllScalesList) {
-                  if (scale.scaleId ==
-                      (data as RawDataInfo).rawMaterial.scaleId) {
-                    scaleName = scale.scaleName;
-                    break;
-                  }
-                }
-                return showRenderCellText(scaleName);
-              },
-              renderTitle: (context, title) {
-                return showRenderTitleText(
-                  title.title,
-                );
-              },
-            ),
-            StickyTableColumn(
-              localizedStrings.fRawMaterialTypeNameCol,
-              showSort: true,
-              sort: false,
-              alignment: Alignment.centerLeft,
-              columnWidth: const FixedColumnWidth(200),
-              renderCell: (context, title, data, row, column) {
-                // 显示 materialId 字段
-                return showRenderCellText(
-                    (data as RawDataInfo).rawCategoryName);
-              },
-              renderTitle: (context, title) {
-                return showRenderTitleText(
-                  title.title,
-                );
-              },
-            ),
-            StickyTableColumn(
-              localizedStrings.fCreatedAtCol,
-              columnWidth: const FixedColumnWidth(200),
-              showSort: true,
-              alignment: Alignment.centerLeft,
-              sort: false,
-              renderCell: (context, title, data, row, column) {
-                // 显示 createdAt 字段
-                return showRenderCellText(
-                  DateFormat('yyyy-MM-dd HH:mm:ss')
-                      .format((data as RawDataInfo).rawMaterial.createdAt),
-                );
-              },
-              renderTitle: (context, title) {
-                return showRenderTitleText(
-                  title.title,
-                );
-              },
-            ),
-            StickyTableColumn(
-              localizedStrings.fUpdatedAtCol,
-              columnWidth: const FixedColumnWidth(200),
-              alignment: Alignment.centerLeft,
-              showSort: true,
-              sort: false,
-              renderCell: (context, title, data, row, column) {
-                // 显示 updatedAt 字段
-                return showRenderCellText(DateFormat('yyyy-MM-dd HH:mm:ss')
-                    .format((data as RawDataInfo).rawMaterial.updatedAt));
-              },
-              renderTitle: (context, title) {
-                return showRenderTitleText(
-                  title.title,
-                );
-              },
-            ),
-            StickyTableColumn(
-              localizedStrings.fIngredientRemark,
-              alignment: Alignment.centerLeft,
-              columnWidth: const FixedColumnWidth(400),
-              showSort: true,
-              sort: false,
-              renderCell: (context, title, data, row, column) {
-                // 显示 ingredient 字段
-                return showRenderCellText(
-                    (data as RawDataInfo).rawMaterial.ingredient);
-              },
-              renderTitle: (context, title) {
-                return showRenderTitleText(
-                  title.title,
-                );
-              },
-            ),
-            StickyTableColumn(
-              localizedStrings.fEditBtn,
-              fixedEnd: true,
-              columnWidth: const FixedColumnWidth(80),
-              renderCell: (context, title, data, row, column) {
-                return MaterialButton(
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      barrierDismissible: false, // 点击对话框外部不关闭对话框
-                      builder: (BuildContext context) {
-                        return EditRawDialog(
-                          rawData: data as RawDataInfo, // 传递当前行的数据
-                        );
-                      },
-                    ).then((value) {
-                      // 对话框关闭后可以执行一些操作，比如刷新数据
-                      setState(() {});
-                    });
-                  },
-                  // color: Colors.red,
-                  minWidth: 0,
-                  child: Center(
-                      child: Icon(
-                    size: 20,
-                    Icons.edit_outlined,
-                    color: colorScheme.primary,
-                  )),
-                );
-              },
-              renderTitle: (context, title) {
-                return showRenderTitleText(
-                  title.title,
-                );
-              },
-            ),
-            StickyTableColumn(
-              localizedStrings.gBtnDelete,
-              fixedEnd: true,
-              columnWidth: const FixedColumnWidth(80),
-              renderCell: (context, title, data, row, column) {
-                return MaterialButton(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                    //需要先验证是否有配方使用才能删除。
-                    bool res = checkRawDelete(data);
-                    if (!res) {
-                      showTipInfo(localizedStrings.fFormulaInUseDeleteErrorMsg,
-                          context);
-                      return;
-                    }
-                    showDialog(
-                      context: context,
-                      barrierDismissible: false, // 点击对话框外部不关闭对话框
-                      builder: (BuildContext context) {
-                        return ShowNormalTipDialog(
-                          title: localizedStrings.fTipTitle,
-                          msg: localizedStrings.fConfirmDelete,
-                        );
-                      },
-                    ).then((value) {
-                      if (value == null) {
-                        return;
-                      }
-                      if (value) {
-                        PublicFunctions.deleteRawData(
-                            (data as RawDataInfo).rawMaterial.recId);
-
-                        setState(() {
-                          selectAll = false;
-                          selectedRows.clear();
-                        });
-                      } else {
-                        return;
-                      }
-                    });
-                  },
-                  // color: Colors.red,
-                  minWidth: 0,
-                  child: Center(
-                      child: Icon(
-                    size: 20,
-                    Icons.delete_forever_outlined,
-                    color: colorScheme.error,
-                  )),
-                );
-              },
-              renderTitle: (context, title) {
-                return showRenderTitleText(
-                  title.title,
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  showDarftFmaTable() {
-    return Expanded(
-      flex: 7,
-      child: Container(
-        padding: const EdgeInsets.only(left: 20, right: 20),
-        color: colorScheme.surface,
-        child: StickyTable(
-          controller: _scrollController, // 传递 ScrollController
-          // 修改 data 属性
-          data: searchDarfFmaInfoList.isEmpty
-              ? []
-              : sort
-                  ? searchDarfFmaInfoList.reversed.toList()
-                  : searchDarfFmaInfoList,
-          defaultColumnWidth: const FixedColumnWidth(130),
-          titleHeight: 48,
-          cellHeight: 44,
-          clickedRow: clickedDarftRow,
-          onRowClick: (row) {
-            setState(() {
-              clickedDarftRow = row;
-              selectedDarfFma = searchDarfFmaInfoList[row];
-              // if (selectedFormula!.details!.isEmpty) {
-              //   selectedDetail = Detail();
-              //   _selectedFmaIndex = -1;
-              // } else {
-              //   selectedDetail = selectedFormula!.details![0];
-              //   _selectedFmaIndex = 0;
-              // }
-            });
-          },
-
-          cellDecoration: (context, column, data, row, columnIndex) {
-            // 添加点击行背景色
-            if (row == clickedDarftRow) {
-              return BoxDecoration(
-                color: colorScheme.surfaceContainerLow,
-                border: Border(
-                  bottom: BorderSide(color: colorScheme.primary, width: 1),
-                ),
-              );
-            }
-            return BoxDecoration(
-              color: colorScheme.surface,
-              border: Border(
-                bottom: BorderSide(color: colorScheme.outlineVariant, width: 1),
-              ),
-            );
-          },
-          columns: [
-            StickyTableColumn(
-              "",
-              fixedStart: true,
-              columnWidth: const FixedColumnWidth(80),
-              renderTitle: (context, title) {
-                // 添加全选复选框
-                return Checkbox(
-                    value: selectDraftFmaAll,
-                    onChanged: toggleDarftFmaSelectAll);
-              },
-              renderCell: (context, title, data, row, column) {
-                return Checkbox(
-                  value: selectedDarftRows.contains(row),
-                  onChanged: (value) {
-                    toggleDarftFmaSelection(row);
-                  },
-                );
-              },
-            ),
-            StickyTableColumn(
-              localizedStrings.fFmaIdLabel,
-              fixedStart: true,
-              showSort: true,
-              sort: sort,
-              columnWidth: const FixedColumnWidth(150),
-              alignment: Alignment.centerLeft,
-              onTitleClick: (context, title) {},
-              // 修改 renderCell 方法
-              renderCell: (context, title, data, row, column) {
-                return showRenderCellText((data as DarfFmaInfo)
-                    .fmaInfo!
-                    .header!
-                    .formulaHeader!
-                    .formulaId!);
-              },
-              renderTitle: (context, title) {
-                return showRenderTitleText(
-                  title.title,
-                );
-              },
-            ),
-            StickyTableColumn(
-              localizedStrings.fFmaNameLabel,
-              showSort: true,
-              sort: false,
-              alignment: Alignment.centerLeft,
-              columnWidth: const FixedColumnWidth(200),
-              onCellClick: (context, title, data, row, column) {},
-              // 修改 renderCell 方法
-              renderCell: (context, title, data, row, column) {
-                return showRenderCellText(
-                  (data as DarfFmaInfo)
-                      .fmaInfo!
-                      .header!
-                      .formulaHeader!
-                      .formulaName!,
-                );
-              },
-              renderTitle: (context, title) {
-                return showRenderTitleText(
-                  title.title,
-                );
-              },
-            ),
-            StickyTableColumn(
-              localizedStrings.fOrderNo,
-              showSort: true,
-              sort: false,
-              columnWidth: FixedColumnWidth(200),
-              alignment: Alignment.centerLeft,
-              onCellClick: (context, title, data, row, column) {},
-              // 修改 renderCell 方法
-              renderCell: (context, title, data, row, column) {
-                return showRenderCellText(
-                    (data as DarfFmaInfo).fmaRec!.header!.orderId!);
-              },
-              renderTitle: (context, title) {
-                return showRenderTitleText(
-                  title.title,
-                );
-              },
-            ),
-            // StickyTableColumn(
-            //   localizedStrings.fFmaCategoryCol,
-            //   showSort: true,
-            //   sort: false,
-            //   alignment: Alignment.centerLeft,
-            //   onCellClick: (context, title, data, row, column) {},
-            //   // 修改 renderCell 方法
-            //   renderCell: (context, title, data, row, column) {
-            //     return Text(
-            //         (data as DarfFmaInfo).fmaInfo!.header!.formulaCategoryName!,
-            //         style: textTheme.bodySmall!.copyWith(
-            //               color: colorScheme.onSurfaceVariant,
-            //             ));
-            //   },
-            //   renderTitle: (context, title) {
-            //     return Text(
-            //       title.title,
-            //       style: textTheme.bodySmall!.copyWith(
-            //             color: colorScheme.onSurface,
-            //           ),
-            //     );
-            //   },
-            // ),
-            StickyTableColumn(
-              localizedStrings.fConfidential,
-              showSort: true,
-              sort: false,
-              alignment: Alignment.centerLeft,
-              onCellClick: (context, title, data, row, column) {},
-              // 修改 renderCell 方法
-              renderCell: (context, title, data, row, column) {
-                return showRenderCellText(
-                  (data as DarfFmaInfo)
-                          .fmaInfo!
-                          .header!
-                          .formulaHeader!
-                          .isEncrypted!
-                      ? localizedStrings.fConfidential
-                      : localizedStrings.fPublic,
-                  color: data.fmaInfo!.header!.formulaHeader!.isEncrypted!
-                      ? colorScheme.error
-                      : colorScheme.onTertiaryFixedVariant,
-                );
-              },
-              renderTitle: (context, title) {
-                return showRenderTitleText(
-                  title.title,
-                );
-              },
-            ),
-            StickyTableColumn(
-              localizedStrings.fFmaModeCol,
-              showSort: true,
-              sort: false,
-              alignment: Alignment.centerLeft,
-              onCellClick: (context, title, data, row, column) {},
-              // 修改 renderCell 方法
-              renderCell: (context, title, data, row, column) {
-                return showRenderCellText(
-                  (data as DarfFmaInfo)
-                              .fmaInfo!
-                              .header!
-                              .formulaHeader!
-                              .formulaMode! ==
-                          'pct'
-                      ? localizedStrings.fPctMode
-                      : localizedStrings.fWeightMode,
-                );
-              },
-              renderTitle: (context, title) {
-                return showRenderTitleText(
-                  title.title,
-                );
-              },
-            ),
-            StickyTableColumn(
-              localizedStrings.fIngredientCountLabel,
-              showSort: true,
-              sort: false,
-              alignment: Alignment.centerLeft,
-              onCellClick: (context, title, data, row, column) {
-                // ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              },
-              // 修改 renderCell 方法
-              renderCell: (context, title, data, row, column) {
-                return showRenderCellText((data as DarfFmaInfo)
-                    .fmaInfo!
-                    .header!
-                    .formulaHeader!
-                    .materialCount!
-                    .toString());
-              },
-              renderTitle: (context, title) {
-                return showRenderTitleText(
-                  title.title,
-                );
-              },
-            ),
-
-            StickyTableColumn(
-              localizedStrings.fCreatedAtCol,
-              showSort: true,
-              sort: false,
-              alignment: Alignment.centerLeft,
-              columnWidth: FixedColumnWidth(200),
-              onCellClick: (context, title, data, row, column) {},
-              // 修改 renderCell 方法
-              renderCell: (context, title, data, row, column) {
-                return showRenderCellText(DateFormat('yyyy-MM-dd HH:mm:ss')
-                    .format((data as DarfFmaInfo).fmaRec!.header!.createdAt!));
-              },
-              renderTitle: (context, title) {
-                return showRenderTitleText(
-                  title.title,
-                );
-              },
-            ),
-
-            StickyTableColumn(
-              localizedStrings.fRemarkCol,
-              showSort: true,
-              sort: false,
-              columnWidth: const FixedColumnWidth(500),
-              alignment: Alignment.centerLeft,
-              onCellClick: (context, title, data, row, column) {},
-              // 修改 renderCell 方法
-              renderCell: (context, title, data, row, column) {
-                return showRenderCellText(
-                  (data as DarfFmaInfo).fmaInfo!.header!.formulaHeader!.remark!,
-                );
-              },
-              renderTitle: (context, title) {
-                return showRenderTitleText(
-                  title.title,
-                );
-              },
-            ),
-            StickyTableColumn(
-              localizedStrings.gBtnDelete,
-              fixedEnd: true,
-              columnWidth: const FixedColumnWidth(80),
-              renderCell: (context, title, data, row, column) {
-                return MaterialButton(
-                  onPressed: () {
-                    //删除之前先询问是否确定删除
-                    showDialog(
-                      context: context,
-                      barrierDismissible: false, // 点击对话框外部不关闭对话框
-                      builder: (BuildContext context) {
-                        return ShowNormalTipDialog(
-                          title: localizedStrings.fTipTitle,
-                          msg: localizedStrings.fConfirmDelete,
-                        );
-                      },
-                    ).then((value) {
-                      if (value == null) {
-                        return;
-                      }
-                      if (value) {
-                        PublicFunctions.deleteDraftRecord(
-                            (data as DarfFmaInfo).fmaRec!.header!.orderId!);
-                        setState(() {
-                          selectedDarftRows.clear();
-                          selectDraftFmaAll = false;
-                        });
-                      } else {
-                        return;
-                      }
-                    });
-                  },
-                  // color: Colors.red,
-                  minWidth: 0,
-                  child: Center(
-                      child: Icon(
-                    size: 20,
-                    Icons.delete_forever_outlined,
-                    color: colorScheme.error,
-                  )),
-                );
-              },
-              renderTitle: (context, title) {
-                return showRenderTitleText(
-                  title.title,
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  showFormulaTable() {
-    return Expanded(
-      flex: 7,
-      child: Container(
-        padding: const EdgeInsets.only(left: 20, right: 20),
-        color: colorScheme.surface,
-        child: StickyTable(
-          controller: _scrollController, // 传递 ScrollController
-          // 修改 data 属性
-          data: searchFmaList.isEmpty
-              ? []
-              : sort
-                  ? searchFmaList.reversed.toList()
-                  : searchFmaList,
-          defaultColumnWidth: const FixedColumnWidth(130),
-          titleHeight: 48,
-          cellHeight: 44,
-          clickedRow: clickedFmaRow,
-          onRowClick: (row) {
-            setState(() {
-              clickedFmaRow = row;
-              selectedFormula = searchFmaList[row];
-              if (selectedFormula!.details!.isEmpty) {
-                selectedDetail = Detail();
-                selectedFmaIndex = -1;
-              } else {
-                selectedDetail = selectedFormula!.details![0];
-                selectedFmaIndex = 0;
-              }
-            });
-          },
-
-          cellDecoration: (context, column, data, row, columnIndex) {
-            // 添加点击行背景色
-            if (row == clickedFmaRow) {
-              return BoxDecoration(
-                color: colorScheme.surfaceContainerLow,
-                border: Border(
-                  bottom: BorderSide(color: colorScheme.primary, width: 1),
-                ),
-              );
-            }
-            return BoxDecoration(
-              color: colorScheme.surface,
-              border: Border(
-                bottom: BorderSide(color: colorScheme.outlineVariant, width: 1),
-              ),
-            );
-          },
-          columns: [
-            StickyTableColumn(
-              "",
-              fixedStart: true,
-              columnWidth: const FixedColumnWidth(80),
-              renderTitle: (context, title) {
-                // 添加全选复选框
-                return Checkbox(
-                    value: selectFmaAll, onChanged: toggleFmaSelectAll);
-              },
-              renderCell: (context, title, data, row, column) {
-                return Checkbox(
-                  value: selectedFmaRows.contains(row),
-                  onChanged: (value) {
-                    toggleFmaSelection(row);
-                  },
-                );
-              },
-            ),
-            StickyTableColumn(
-              localizedStrings.fFmaIdLabel,
-              fixedStart: true,
-              showSort: true,
-              sort: sort,
-              columnWidth: const FixedColumnWidth(80),
-              alignment: Alignment.centerLeft,
-              onTitleClick: (context, title) {},
-              // 修改 renderCell 方法
-              renderCell: (context, title, data, row, column) {
-                return showRenderCellText(
-                  (data as FormulaInfoDb).header!.formulaHeader!.formulaId!,
-                );
-              },
-              renderTitle: (context, title) {
-                return showRenderTitleText(
-                  title.title,
-                );
-              },
-            ),
-            StickyTableColumn(
-              localizedStrings.fFmaNameLabel,
-              showSort: true,
-              sort: false,
-              alignment: Alignment.centerLeft,
-              onCellClick: (context, title, data, row, column) {},
-              // 修改 renderCell 方法
-              renderCell: (context, title, data, row, column) {
-                return showRenderCellText((data as FormulaInfoDb)
-                    .header!
-                    .formulaHeader!
-                    .formulaName!);
-              },
-              renderTitle: (context, title) {
-                return showRenderTitleText(
-                  title.title,
-                );
-              },
-            ),
-            StickyTableColumn(
-              localizedStrings.fFmaCategoryCol,
-              showSort: true,
-              sort: false,
-              alignment: Alignment.centerLeft,
-              onCellClick: (context, title, data, row, column) {},
-              // 修改 renderCell 方法
-              renderCell: (context, title, data, row, column) {
-                return showRenderCellText(
-                    (data as FormulaInfoDb).header!.formulaCategoryName!);
-              },
-              renderTitle: (context, title) {
-                return showRenderTitleText(
-                  title.title,
-                );
-              },
-            ),
-            StickyTableColumn(
-              localizedStrings.fConfidential,
-              showSort: true,
-              sort: false,
-              alignment: Alignment.centerLeft,
-              onCellClick: (context, title, data, row, column) {},
-              // 修改 renderCell 方法
-              renderCell: (context, title, data, row, column) {
-                return showRenderCellText(
-                  (data as FormulaInfoDb).header!.formulaHeader!.isEncrypted!
-                      ? localizedStrings.fConfidential
-                      : localizedStrings.fPublic,
-                  color: data.header!.formulaHeader!.isEncrypted!
-                      ? colorScheme.error
-                      : colorScheme.onTertiaryFixedVariant,
-                );
-              },
-              renderTitle: (context, title) {
-                return showRenderTitleText(
-                  title.title,
-                );
-              },
-            ),
-            StickyTableColumn(
-              localizedStrings.fFmaModeCol,
-              showSort: true,
-              sort: false,
-              alignment: Alignment.centerLeft,
-              onCellClick: (context, title, data, row, column) {},
-              // 修改 renderCell 方法
-              renderCell: (context, title, data, row, column) {
-                return showRenderCellText((data as FormulaInfoDb)
-                            .header!
-                            .formulaHeader!
-                            .formulaMode! ==
-                        'pct'
-                    ? localizedStrings.fPctMode
-                    : localizedStrings.fWeightMode);
-              },
-              renderTitle: (context, title) {
-                return showRenderTitleText(
-                  title.title,
-                );
-              },
-            ),
-            StickyTableColumn(
-              localizedStrings.fIngredientCountLabel,
-              showSort: true,
-              sort: false,
-              alignment: Alignment.centerLeft,
-              onCellClick: (context, title, data, row, column) {
-                // ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              },
-              // 修改 renderCell 方法
-              renderCell: (context, title, data, row, column) {
-                return showRenderCellText((data as FormulaInfoDb)
-                    .header!
-                    .formulaHeader!
-                    .materialCount!
-                    .toString());
-              },
-              renderTitle: (context, title) {
-                return showRenderTitleText(
-                  title.title,
-                );
-              },
-            ),
-            StickyTableColumn(
-              localizedStrings.fCreatedAtCol,
-              showSort: true,
-              sort: false,
-              alignment: Alignment.centerLeft,
-              columnWidth: FixedColumnWidth(200),
-              onCellClick: (context, title, data, row, column) {},
-              // 修改 renderCell 方法
-              renderCell: (context, title, data, row, column) {
-                return showRenderCellText(DateFormat('yyyy-MM-dd HH:mm:ss')
-                    .format((data as FormulaInfoDb)
-                        .header!
-                        .formulaHeader!
-                        .createdAt!));
-              },
-              renderTitle: (context, title) {
-                return showRenderTitleText(
-                  title.title,
-                );
-              },
-            ),
-            StickyTableColumn(
-              localizedStrings.fUpdatedAtCol,
-              showSort: true,
-              sort: false,
-              alignment: Alignment.centerLeft,
-              columnWidth: FixedColumnWidth(200),
-              onCellClick: (context, title, data, row, column) {},
-              // 修改 renderCell 方法
-              renderCell: (context, title, data, row, column) {
-                return showRenderCellText(DateFormat('yyyy-MM-dd HH:mm:ss')
-                    .format((data as FormulaInfoDb)
-                        .header!
-                        .formulaHeader!
-                        .updatedAt!));
-              },
-              renderTitle: (context, title) {
-                return showRenderTitleText(
-                  title.title,
-                );
-              },
-            ),
-            StickyTableColumn(
-              localizedStrings.fRemarkCol,
-              showSort: true,
-              sort: false,
-              columnWidth: const FixedColumnWidth(500),
-              alignment: Alignment.centerLeft,
-              onCellClick: (context, title, data, row, column) {},
-              // 修改 renderCell 方法
-              renderCell: (context, title, data, row, column) {
-                return showRenderCellText(
-                    (data as FormulaInfoDb).header!.formulaHeader!.remark!);
-              },
-              renderTitle: (context, title) {
-                return showRenderTitleText(
-                  title.title,
-                );
-              },
-            ),
-            StickyTableColumn(
-              localizedStrings.fHistoricalWeighingRecordsBtn,
-              fixedEnd: true,
-              columnWidth: const FixedColumnWidth(80),
-              renderCell: (context, title, data, row, column) {
-                return MaterialButton(
-                  onPressed: () {
-                    //检查该配方是否有历史称量记录
-
-                    final formulaKey = (data as FormulaInfoDb)
-                        .header!
-                        .formulaHeader!
-                        .formulaKey!;
-
-                    final hasHistory = fmaRecFromDbList.any(
-                        (record) => record.header?.formulaKey == formulaKey);
-
-                    if (!hasHistory) {
-                      showTipInfo(localizedStrings.fNoRecordTip, context);
-                      return;
-                    } else {
-                      //有历史记录，找出所有的该配方的历史记录列表，跳转到历史记录页面
-                      final List<FmaRecFromDb> formulaHistoryRecords =
-                          fmaRecFromDbList
-                              .where((record) =>
-                                  record.header?.formulaKey == formulaKey)
-                              .toList();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => OneFmaWgtRecPage(
-                            oneFmaRecList: formulaHistoryRecords,
-                          ),
-                        ),
-                      );
-                    }
-                  },
-                  // color: Colors.red,
-                  minWidth: 0,
-                  child: Center(
-                      child: Icon(Icons.receipt_long_sharp,
-                          size: 20, color: colorScheme.primary)),
-                );
-              },
-              renderTitle: (context, title) {
-                return showRenderTitleText(
-                  title.title,
-                );
-              },
-            ),
-            StickyTableColumn(
-              localizedStrings.fEditBtn,
-              fixedEnd: true,
-              columnWidth: const FixedColumnWidth(80),
-              renderCell: (context, title, data, row, column) {
-                return MaterialButton(
-                  onPressed: () {
-                    FormulaInfoDb? editFormulaInfo = searchFmaList[row];
-                    //先查看暂存的配方是否有未保存的草稿
-                    bool existDraft = false;
-                    for (var fma in darfFmaInfoList) {
-                      if (fma.fmaInfo!.header!.formulaHeader!.formulaId ==
-                          editFormulaInfo.header!.formulaHeader!.formulaId) {
-                        existDraft = true;
-                        break;
-                      }
-                    }
-
-                    if (existDraft) {
-                      //跳转到编辑草稿页面，限制编辑条件
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => EditDarftFmaPage(
-                                    editFormulaInfo: editFormulaInfo,
-                                  ))).then((value) {
-                        setState(() {});
-                      });
-                    } else {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => EditFormulaPage(
-                                    editFormulaInfo: editFormulaInfo,
-                                  ))).then((value) {
-                        setState(() {});
-                      });
-                    }
-                  },
-                  // color: Colors.red,
-                  minWidth: 0,
-                  child: Center(
-                      child: Icon(
-                    size: 20,
-                    Icons.edit_outlined,
-                    color: colorScheme.primary,
-                  )),
-                );
-              },
-              renderTitle: (context, title) {
-                return showRenderTitleText(
-                  title.title,
-                );
-              },
-            ),
-            StickyTableColumn(
-              localizedStrings.gBtnDelete,
-              fixedEnd: true,
-              columnWidth: const FixedColumnWidth(80),
-              renderCell: (context, title, data, row, column) {
-                return MaterialButton(
-                  onPressed: () {
-                    //删除之前先询问是否确定删除
-                    //延迟2秒
-                    Future.delayed(const Duration(seconds: 1), () {
-                      for (var fma in darfFmaInfoList) {
-                        if (fma.fmaInfo!.header!.formulaHeader!.formulaId ==
-                            (data as FormulaInfoDb)
-                                .header!
-                                .formulaHeader!
-                                .formulaId) {
-                          showTipInfo(
-                              localizedStrings.formulaDeleteError, context);
-
-                          return;
-                        }
-                      }
-                      showDialog(
-                        context: context,
-                        barrierDismissible: false, // 点击对话框外部不关闭对话框
-                        builder: (BuildContext context) {
-                          return ShowNormalTipDialog(
-                            title: localizedStrings.fTipTitle,
-                            msg: localizedStrings.fConfirmDelete,
-                          );
-                        },
-                      ).then((value) {
-                        if (value == null) {
-                          return;
-                        }
-                        if (value) {
-                          //需要先验证是否有配方使用才能删除。
-
-                          PublicFunctions.deleteFormulaData(
-                              (data as FormulaInfoDb)
-                                  .header!
-                                  .formulaHeader!
-                                  .recId!);
-                          setState(() {
-                            selectedFmaRows.clear();
-                            selectFmaAll = false;
-                          });
-                          if (mounted) {
-                            showTipInfo(
-                                localizedStrings.fDeleteSuccessMsg, context);
-                          }
-                        } else {
-                          return;
-                        }
-                      });
-                    });
-                  },
-                  // color: Colors.red,
-                  minWidth: 0,
-                  child: Center(
-                      child: Icon(
-                    size: 20,
-                    Icons.delete_forever_outlined,
-                    color: colorScheme.error,
-                  )),
-                );
-              },
-              renderTitle: (context, title) {
-                return showRenderTitleText(
-                  title.title,
-                );
-              },
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -2506,7 +1534,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
             } else {
               double totalWgt = double.parse(formulaWgt);
               String fmaUnit = formulaUnit;
-
+              if (!mounted) {
+                return;
+              }
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -2559,7 +1589,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
             } else {
               double totalWgt = double.parse(formulaWgt);
               String fmaUnit = formulaUnit;
-
+              if (!mounted) {
+                return;
+              }
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -2625,7 +1657,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
             } else {
               double totalWgt = double.parse(formulaWgt);
               String fmaUnit = formulaUnit;
-
+              if (!mounted) {
+                return;
+              }
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -2679,7 +1713,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
             } else {
               double totalWgt = double.parse(formulaWgt);
               String fmaUnit = formulaUnit;
-
+              if (!mounted) {
+                return;
+              }
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -2719,7 +1755,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
 //原料列表底部
   showRawBottom() {
     return Expanded(
-      flex: 2,
+      flex: 3,
       child: Container(
         color: colorScheme.surface,
         child: Column(children: [
@@ -2870,9 +1906,6 @@ class FormulationScalePageState extends State<FormulationScalePage>
               onTap: (index) {
                 setState(() {
                   _selectedTabIndex = index;
-                  if (index == 2) {
-                    PublicFunctions.getDraftRecords();
-                  }
                 });
               },
               // 自定义 indicator 样式，添加分隔线
@@ -3027,8 +2060,6 @@ class FormulationScalePageState extends State<FormulationScalePage>
                   });
                 },
                 style: textTheme.bodySmall!.copyWith(
-                  // 设置提示文本样式
-
                   color: colorScheme.onSurface,
                 ))),
         SizedBox(
@@ -3082,10 +2113,42 @@ class FormulationScalePageState extends State<FormulationScalePage>
         buildIconBtn(localizedStrings.fGetRawTemplateBtn, rawTemplateSvgIcon(),
             getRawTemplate),
         SizedBox(
+          width: regularPadding,
+        ),
+        buildDelIconBtn(selRawList.isEmpty
+            ? null
+            : () {
+                _deleteSelectedRaw();
+              }),
+
+        SizedBox(
           width: 20,
         ),
       ]),
     );
+  }
+
+  void _deleteSelectedRaw() {
+    if (selRawList.isEmpty) return;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return ShowNormalTipDialog(
+          title: localizedStrings.fTipTitle,
+          msg: localizedStrings.deleteRawInUseConfirm,
+        );
+      },
+    ).then((value) {
+      if (value == true) {
+        List<int> recIds = [];
+        for (var raw in selRawList) {
+          recIds.add(raw.rawMaterial.recId);
+        }
+        recIds = recIds.toSet().toList();
+        PublicFunctions.deleteAllRawData(recIds);
+      }
+    });
   }
 
   Widget buildIconBtn(String tip, String iconPath, Function() onPressed) {
@@ -3172,63 +2235,11 @@ class FormulationScalePageState extends State<FormulationScalePage>
     }
     String filePath = outputFile;
     ExportResult result = await exportRawTemplate(filePath);
+    if (!mounted) return;
     if (result.isSuccess) {
-      showExportDialog(filePath);
+      showExportDialog(filePath, context);
     } else {
-      if (context.mounted) {
-        showTipInfo(result.errorMessage!, context);
-      }
-    }
-  }
-
-  Future<ExportResult> exportRawTemplate(String filePath) async {
-    try {
-      final tempExcel = excel.Excel.createExcel();
-      final sheet = tempExcel['Sheet1'];
-
-      // 写入表头
-      sheet.appendRow([
-        excel.TextCellValue('Ingredient Id'),
-        excel.TextCellValue('Ingredient Name'),
-        excel.TextCellValue('Device Name'),
-        excel.TextCellValue('Category'),
-        excel.TextCellValue('Ingredient Notes'),
-      ]);
-
-      // 写入数据行
-
-      sheet.appendRow([
-        excel.TextCellValue('TS-1001'),
-        excel.TextCellValue('Water'),
-        excel.TextCellValue('XD-101'),
-        excel.TextCellValue('Liquid'),
-        excel.TextCellValue('Slowly pour in while stirring.'),
-      ]);
-
-      sheet.appendRow([
-        excel.TextCellValue('This field is required and cannot be duplicated'),
-        excel.TextCellValue('This field is required'),
-        excel.TextCellValue('This field is not required'),
-        excel.TextCellValue('This field is not required'),
-        excel.TextCellValue('This field is not required'),
-      ]);
-
-      final file = File(filePath);
-
-      // 将Excel数据保存到文件
-      await file.writeAsBytes(tempExcel.save()!);
-
-      return ExportResult(isSuccess: true);
-    } catch (e) {
-      String errorMessage = localizedStrings.gTipExportError;
-      if (e is FileSystemException) {
-        errorMessage = localizedStrings.gTipExportFileError;
-      } else if (e is IOException) {
-        errorMessage = localizedStrings.gTipExportIOError;
-      } else if (e is PathNotFoundException) {
-        errorMessage = localizedStrings.gTipExportPathError;
-      }
-      return ExportResult(isSuccess: false, errorMessage: errorMessage);
+      showTipInfo(result.errorMessage!, context);
     }
   }
 
@@ -3248,157 +2259,13 @@ class FormulationScalePageState extends State<FormulationScalePage>
     }
     String filePath = outputFile;
     ExportResult result = await exportFmaTemplate(filePath);
+    if (!mounted) return;
     if (result.isSuccess) {
-      showExportDialog(filePath);
+      showExportDialog(filePath, context);
     } else {
       if (context.mounted) {
         showTipInfo(result.errorMessage!, context);
       }
-    }
-  }
-
-  Future<ExportResult> exportFmaTemplate(String filePath) async {
-    try {
-      final tempExcel = excel.Excel.createExcel();
-      final sheet = tempExcel['Sheet1'];
-
-      // 写入表头
-      sheet.appendRow([
-        excel.TextCellValue('Formula Id'),
-        excel.TextCellValue('Formula Name'),
-        excel.TextCellValue('Mode'),
-        excel.TextCellValue('Weight Unit'),
-        excel.TextCellValue('Category'),
-        excel.TextCellValue('Confidential'),
-        excel.TextCellValue('Need Container'),
-        excel.TextCellValue('Ingredient No.'),
-        excel.TextCellValue('Ingredient Id'),
-        excel.TextCellValue('Ingredient Name'),
-        excel.TextCellValue('Ingredient Weight/Percent'),
-        excel.TextCellValue('Allow Error'),
-      ]);
-
-      // 写入数据行
-
-      sheet.appendRow([
-        excel.TextCellValue('1001'),
-        excel.TextCellValue('F1001'),
-        excel.TextCellValue('weight'),
-        excel.TextCellValue('kg'),
-        excel.TextCellValue('mixed'),
-        excel.TextCellValue('yes'),
-        excel.TextCellValue('yes'),
-        excel.TextCellValue('1'),
-        excel.TextCellValue('TS-1001'),
-        excel.TextCellValue('Water'),
-        excel.TextCellValue('8.88'),
-        excel.TextCellValue('0.1'),
-      ]);
-      sheet.appendRow([
-        excel.TextCellValue('1001'),
-        excel.TextCellValue('F1001'),
-        excel.TextCellValue('weight'),
-        excel.TextCellValue('kg'),
-        excel.TextCellValue('mixed'),
-        excel.TextCellValue('yes'),
-        excel.TextCellValue('yes'),
-        excel.TextCellValue('2'),
-        excel.TextCellValue('TS-1002'),
-        excel.TextCellValue(''),
-        excel.TextCellValue('1.88'),
-        excel.TextCellValue('0.05'),
-      ]);
-      sheet.appendRow([
-        excel.TextCellValue('1001'),
-        excel.TextCellValue('F1001'),
-        excel.TextCellValue('weight'),
-        excel.TextCellValue('kg'),
-        excel.TextCellValue('mixed'),
-        excel.TextCellValue('yes'),
-        excel.TextCellValue('yes'),
-        excel.TextCellValue('3'),
-        excel.TextCellValue('TS-1003'),
-        excel.TextCellValue(''),
-        excel.TextCellValue('2.88'),
-        excel.TextCellValue('0.08'),
-      ]);
-      /////////////////
-      sheet.appendRow([
-        excel.TextCellValue('1002'),
-        excel.TextCellValue('F1002'),
-        excel.TextCellValue('percent'),
-        excel.TextCellValue(''),
-        excel.TextCellValue(''),
-        excel.TextCellValue('no'),
-        excel.TextCellValue('no'),
-        excel.TextCellValue('1'),
-        excel.TextCellValue('TS-1001'),
-        excel.TextCellValue('Water'),
-        excel.TextCellValue('30'),
-        excel.TextCellValue('2'),
-      ]);
-      sheet.appendRow([
-        excel.TextCellValue('1002'),
-        excel.TextCellValue('F1002'),
-        excel.TextCellValue('percent'),
-        excel.TextCellValue(''),
-        excel.TextCellValue(''),
-        excel.TextCellValue('no'),
-        excel.TextCellValue('no'),
-        excel.TextCellValue('2'),
-        excel.TextCellValue('TS-1002'),
-        excel.TextCellValue(''),
-        excel.TextCellValue('50'),
-        excel.TextCellValue('1.5'),
-      ]);
-      sheet.appendRow([
-        excel.TextCellValue('1002'),
-        excel.TextCellValue('F1002'),
-        excel.TextCellValue('percent'),
-        excel.TextCellValue(''),
-        excel.TextCellValue(''),
-        excel.TextCellValue('no'),
-        excel.TextCellValue('no'),
-        excel.TextCellValue('3'),
-        excel.TextCellValue('TS-1003'),
-        excel.TextCellValue(''),
-        excel.TextCellValue('20'),
-        excel.TextCellValue('0.5'),
-      ]);
-
-      sheet.appendRow([
-        excel.TextCellValue('This field is required and cannot be duplicated'),
-        excel.TextCellValue('This field is required'),
-        excel.TextCellValue('This field is required'),
-        excel.TextCellValue('This field is required when mode is weight'),
-        excel.TextCellValue('This field is not required'),
-        excel.TextCellValue('This field is required'),
-        excel.TextCellValue('This field is required  yes/no'),
-        excel.TextCellValue('This field is required'),
-        excel.TextCellValue('This field is required'),
-        excel.TextCellValue('This field is not required'),
-        excel.TextCellValue(
-            'This field is required > 0 and decimal format less than 3'),
-        excel.TextCellValue(
-            'This field is required > 0 and decimal format less than 3'),
-      ]);
-
-      final file = File(filePath);
-
-      // 将Excel数据保存到文件
-      await file.writeAsBytes(tempExcel.save()!);
-
-      return ExportResult(isSuccess: true);
-    } catch (e) {
-      String errorMessage = localizedStrings.gTipExportError;
-      if (e is FileSystemException) {
-        errorMessage = localizedStrings.gTipExportFileError;
-      } else if (e is IOException) {
-        errorMessage = localizedStrings.gTipExportIOError;
-      } else if (e is PathNotFoundException) {
-        errorMessage = localizedStrings.gTipExportPathError;
-      }
-      return ExportResult(isSuccess: false, errorMessage: errorMessage);
     }
   }
 
@@ -3411,11 +2278,14 @@ class FormulationScalePageState extends State<FormulationScalePage>
     if (result == null) return;
     File file = File(result.files.single.path!);
     //读取csv文件
-    List<List<String>> dataList = await importRawFromExcel(file);
-    if (dataList.isEmpty) {
+    ImportRawResult resImport = await importRawFromExcel(file);
+    if (!mounted) return;
+    if (!resImport.isSuccess) {
+      showTipInfo(resImport.errorMessage!, context);
       return;
     }
-    sendRawListInBatches(dataList);
+    showTipInfo(resImport.errorMessage!, context);
+    sendRawListInBatches(resImport.importRawList);
   }
 
   void sendRawListInBatches(List<List<String>> dataList) {
@@ -3426,7 +2296,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
     final StreamController<Timer> timerController = StreamController<Timer>();
 
     // 创建一个定时器，每隔4秒向流中添加一个新的定时器实例
-    var timer = Timer.periodic(const Duration(milliseconds: 500), (Timer t) {
+    Timer.periodic(const Duration(milliseconds: 500), (Timer t) {
       timerController.add(t);
     });
 
@@ -3465,7 +2335,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
         // 所有数据发送完毕，关闭定时器流控制器
         timerController.close();
         timer.cancel();
-        eventBus.fire(EventPLuDataSavedOK(''));
+        eventBus.fire(EventImportRawOK(''));
       }
     });
   }
@@ -3488,11 +2358,17 @@ class FormulationScalePageState extends State<FormulationScalePage>
     if (result == null) return;
     File file = File(result.files.single.path!);
     //读取xlsx文件
-    List<ImportFmaInfo> dataList = await importFormulasFromExcel(file, context);
-    if (dataList.isEmpty) {
+    ImportFmaResult importRes = await importFormulasFromExcel(file);
+    if (!mounted) return;
+    if (!importRes.isSuccess) {
+      showTipInfo(importRes.errorMessage!, context);
+
       return;
     }
-    sendFmaListInBatches(dataList);
+
+    showTipInfo(importRes.errorMessage!, context);
+
+    sendFmaListInBatches(importRes.importFmaInfoList);
   }
 
   void sendFmaListInBatches(List<ImportFmaInfo> dataList) {
@@ -3503,7 +2379,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
     final StreamController<Timer> timerController = StreamController<Timer>();
 
     // 创建一个定时器，每隔4秒向流中添加一个新的定时器实例
-    var timer = Timer.periodic(const Duration(milliseconds: 500), (Timer t) {
+    Timer.periodic(const Duration(milliseconds: 500), (Timer t) {
       timerController.add(t);
     });
 
@@ -3535,21 +2411,18 @@ class FormulationScalePageState extends State<FormulationScalePage>
         // 所有数据发送完毕，关闭定时器流控制器
         timerController.close();
         timer.cancel();
-        eventBus.fire(EventPLuDataSavedOK(''));
+        eventBus.fire(EventImportFmaOK(''));
       }
     });
   }
 
   //导出原料的json文件，只要导出勾选的原料
   void exportRaw() async {
-    if (selectedRows.isEmpty) {
+    if (selRawList.isEmpty) {
       showTipInfo(localizedStrings.gTipNoDataSelected, context);
       return;
     }
-    List<RawDataInfo> exportRawList = [];
-    for (var row in selectedRows) {
-      exportRawList.add(searchRawList[row]);
-    }
+    List<RawDataInfo> exportRawList = selRawList;
 
     final directory = Directory.current.path;
     String? outputFile = (await FilePicker.platform.saveFile(
@@ -3557,7 +2430,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
       type: FileType.custom,
       dialogTitle: 'Output file:',
       allowedExtensions: ["xlsx"],
-      fileName: 'components.xlsx',
+      fileName: 'ingredient_list.xlsx',
     ));
     if (outputFile == null) return;
 
@@ -3568,248 +2441,44 @@ class FormulationScalePageState extends State<FormulationScalePage>
 
     // 将 CSV 数据写入文件
     ExportResult result = await exportRawListToExcel(exportRawList, filePath);
-
+    if (!mounted) return;
     if (result.isSuccess) {
-      showExportDialog(filePath);
+      showExportDialog(filePath, context);
     } else {
-      if (context.mounted) {
-        showTipInfo(result.errorMessage!, context);
-      }
-    }
-  }
-
-  void showExportDialog(String filePath) {
-    final BuildContext currentContext = context;
-    if (currentContext.mounted) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return Dialog(
-            backgroundColor: Colors.transparent,
-            child: Container(
-              width: 610,
-              height: 493,
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface,
-                borderRadius: BorderRadius.circular(0),
-              ),
-              child: Column(
-                children: [
-                  // 头部
-                  ...dialogHeadStyle(
-                      context, localizedStrings.gTipExportSuccess, true),
-
-                  Container(
-                    padding: EdgeInsets.only(top: 20),
-                    child: Row(children: [
-                      Expanded(
-                        child: Container(
-                          alignment: Alignment.center,
-                          child: getSvgIcon(exportSuccessSvgIcon(), 178, 178,
-                              colorScheme.onTertiaryFixedVariant),
-                        ),
-                      ),
-                    ]),
-                  ),
-
-                  // 中部
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.all(20),
-                      child: Row(children: [
-                        Expanded(
-                          child: Container(
-                            alignment: Alignment.center,
-                            child: SelectableText(
-                              filePath,
-                              style: textTheme.bodyMedium,
-                            ),
-                          ),
-                        ),
-                      ]),
-                    ),
-                  ),
-
-                  // 底部
-                  Container(
-                    height: 96,
-                    width: 610,
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: 20,
-                        ),
-                        showTextButton(
-                            context, btnHeight, localizedStrings.gBtnCancel,
-                            () {
-                          Navigator.pop(context);
-                        }, colorScheme.onPrimary, colorScheme.error,
-                            colorScheme.onPrimary),
-                        SizedBox(
-                          width: 20,
-                        ),
-                        showTextButton(context, btnHeight,
-                            localizedStrings.gBtnOpenFileLocation, () async {
-                          // 打开文件所在文件夹或直接打开文件
-                          if (Platform.isWindows) {
-                            // Windows: 打开文件所在文件夹并选中文件
-                            await Process.run(
-                                'explorer.exe', ['/select,', filePath]);
-                          } else if (Platform.isMacOS) {
-                            // macOS: 在Finder中显示文件
-                            await Process.run('open', ['-R', filePath]);
-                          } else if (Platform.isLinux) {
-                            // Linux: 打开文件所在目录
-                            String directory = Directory(filePath).parent.path;
-                            await Process.run('xdg-open', [directory]);
-                          }
-                          if (context.mounted) {
-                            Navigator.pop(context);
-                          }
-                        }, colorScheme.onPrimary, colorScheme.primary,
-                            colorScheme.onPrimary),
-                        SizedBox(
-                          width: 20,
-                        ),
-                        showTextButton(
-                            context, btnHeight, localizedStrings.gBtnOpenFile,
-                            () async {
-                          // 直接打开文件
-                          final Uri fileUri = Uri.file(filePath);
-                          if (await canLaunchUrl(fileUri)) {
-                            await launchUrl(fileUri);
-                          } else {
-                            // 如果无法直接打开，则打开文件所在目录
-                            String directory = Directory(filePath).parent.path;
-                            final Uri dirUri = Uri.file(directory);
-                            if (await canLaunchUrl(dirUri)) {
-                              await launchUrl(dirUri);
-                            }
-                          }
-                          if (context.mounted) {
-                            Navigator.pop(context);
-                          }
-                        }, colorScheme.onPrimary, colorScheme.primary,
-                            colorScheme.onPrimary),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      );
-    }
-  }
-
-  Future<ExportResult> exportRawListToExcel(
-      List<RawDataInfo> rawList, String filePath) async {
-    try {
-      final exportExcel = excel.Excel.createExcel();
-      final sheet = exportExcel['Sheet1'];
-
-      // 写入表头
-      sheet.appendRow([
-        excel.TextCellValue('Ingredient Id'),
-        excel.TextCellValue('Ingredient Name'),
-        excel.TextCellValue('Device Name'),
-        excel.TextCellValue('Category'),
-        excel.TextCellValue('Ingredient Notes'),
-        excel.TextCellValue('Create Time'),
-        excel.TextCellValue('Update Time'),
-      ]);
-
-      // 写入数据行
-
-      for (var rowIndex = 0; rowIndex < rawList.length; rowIndex++) {
-        final raw = rawList[rowIndex];
-        String scaleName = '';
-
-        // 查找秤的名称
-        for (var scale in myAllScalesList) {
-          if (scale.scaleId == raw.rawMaterial.scaleId) {
-            scaleName = scale.scaleName;
-            break;
-          }
-        }
-
-        sheet.appendRow([
-          excel.TextCellValue(rawList[rowIndex].rawMaterial.materialId),
-          excel.TextCellValue(rawList[rowIndex].rawMaterial.materialName),
-          excel.TextCellValue(scaleName),
-          excel.TextCellValue(rawList[rowIndex].rawCategoryName == "-"
-              ? ""
-              : rawList[rowIndex].rawCategoryName),
-          excel.TextCellValue(rawList[rowIndex].rawMaterial.ingredient),
-          excel.TextCellValue(DateFormat('yyyy-MM-dd HH:mm:ss')
-              .format(rawList[rowIndex].rawMaterial.createdAt)),
-          excel.TextCellValue(DateFormat('yyyy-MM-dd HH:mm:ss')
-              .format(rawList[rowIndex].rawMaterial.updatedAt)),
-        ]);
-      }
-      final file = File(filePath);
-      await file.writeAsBytes(exportExcel.save()!);
-
-      return ExportResult(isSuccess: true);
-    } catch (e) {
-      String errorMessage = localizedStrings.gTipExportError;
-      if (e is FileSystemException) {
-        errorMessage = localizedStrings.gTipExportFileError;
-      } else if (e is IOException) {
-        errorMessage = localizedStrings.gTipExportIOError;
-      } else if (e is PathNotFoundException) {
-        errorMessage = localizedStrings.gTipExportPathError;
-      }
-
-      return ExportResult(isSuccess: false, errorMessage: errorMessage);
+      showTipInfo(result.errorMessage!, context);
     }
   }
 
 //导出配方的json文件，只要导出勾选的配方
   exportFormula() async {
-    if (selectedFmaRows.isEmpty) {
+    if (selFormulas.isEmpty) {
       showTipInfo(localizedStrings.gTipNoDataSelected, context);
       return;
     }
-    List<FormulaInfoDb> exportFormulaList = [];
-    for (var row in selectedFmaRows) {
-      exportFormulaList.add(searchFmaList[row]);
-    }
-    String jsonString = formulaInfoDbToJson(exportFormulaList);
-
+    List<FormulaInfoDb> exportFormulaList = selFormulas;
     final directory = Directory.current.path;
     String? outputFile = (await FilePicker.platform.saveFile(
       initialDirectory: directory,
       type: FileType.custom,
       dialogTitle: 'Output file:',
-      allowedExtensions: ["json"],
-      fileName: 'formulas.json',
+      allowedExtensions: ["xlsx"],
+      fileName: 'formula_list.xlsx',
     ));
-    if (outputFile != null) {
-      if (!outputFile.contains(".json")) {
-        outputFile = "$outputFile.json";
-      }
-      String filePath = outputFile;
+    if (outputFile == null) return;
 
-      // 将 CSV 数据写入文件
-      try {
-        // 尝试将数据转换为 CSV 格式
-        String csv = jsonString;
-        File file = File(filePath);
-        await file.writeAsString(csv);
-        // 显示导出成功提示
-        if (mounted) {
-          showTipInfo(localizedStrings.fSaveSuccess, context);
-        }
-      } catch (e) {
-        // 处理写入文件时可能出现的异常，并显示错误提示
-        if (mounted) {
-          showTipInfo('$e', context);
-        }
-      }
+    if (!outputFile.contains(".xlsx")) {
+      outputFile = "$outputFile.xlsx";
+    }
+    String filePath = outputFile;
+
+    // 将 CSV 数据写入文件
+    ExportResult result =
+        await exportFormulaListToExcel(exportFormulaList, filePath);
+    if (!mounted) return;
+    if (result.isSuccess) {
+      showExportDialog(filePath, context);
+    } else {
+      showTipInfo(result.errorMessage!, context);
     }
   }
 
@@ -4054,10 +2723,43 @@ class FormulationScalePageState extends State<FormulationScalePage>
         buildIconBtn(localizedStrings.fGetFmaTemplateBtn, rawTemplateSvgIcon(),
             getFmaTemplate),
         SizedBox(
+          width: regularPadding,
+        ),
+        buildDelIconBtn(selFormulas.isEmpty
+            ? null
+            : () {
+                _deleteSelectedFmas();
+              }),
+
+        SizedBox(
           width: 20,
         ),
       ]),
     );
+  }
+
+  _deleteSelectedFmas() {
+    if (selFormulas.isEmpty) return;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return ShowNormalTipDialog(
+          title: localizedStrings.fTipTitle,
+          msg: localizedStrings.deleteFormulaWithDraftConfirm,
+        );
+      },
+    ).then((value) {
+      if (value == true) {
+        List<int> recIds = [];
+        for (var fma in selFormulas) {
+          recIds.add(fma.header!.formulaHeader!.recId!);
+        }
+        //去掉重复值
+        recIds = recIds.toSet().toList();
+        PublicFunctions.deleteAllFormulaData(recIds);
+      }
+    });
   }
 
   showDarftFmaSearch() {
@@ -4114,8 +2816,57 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     });
                   }),
             )),
+        Spacer(),
+        buildDelIconBtn(selDarftFmaList.isEmpty
+            ? null
+            : () {
+                _deleteDarftFma();
+              }),
+        SizedBox(
+          width: 20,
+        ),
       ]),
     );
+  }
+
+  Widget buildDelIconBtn(Function()? onPressed) {
+    return IconButton(
+      iconSize: 24,
+      color: colorScheme.onPrimary,
+      style: IconButton.styleFrom(
+        backgroundColor: colorScheme.error,
+        disabledBackgroundColor: colorScheme.surfaceContainerLow,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.zero,
+        ),
+        fixedSize: const Size(40, 40),
+      ),
+      onPressed: onPressed,
+      icon: Icon(Icons.delete_forever_outlined),
+    );
+  }
+
+  void _deleteDarftFma() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return ShowNormalTipDialog(
+          title: localizedStrings.fTipTitle,
+          msg: localizedStrings.fConfirmDelete,
+        );
+      },
+    ).then((value) {
+      if (value == true) {
+        List<String> orderIds = [];
+        for (var darftFma in selDarftFmaList) {
+          orderIds.add(darftFma.fmaRec?.header?.orderId ?? '');
+        }
+        //去掉重复值
+        orderIds = orderIds.toSet().toList();
+        PublicFunctions.deleteAllDraftRecord(orderIds);
+      }
+    });
   }
 
   void perforDarftSearch() {
@@ -4130,259 +2881,4 @@ class FormulationScalePageState extends State<FormulationScalePage>
       }).toList();
     });
   }
-
-  int checkScaleName(String scaleName) {
-    for (var scale in myAllScalesList) {
-      if (scaleName == scale.scaleName) {
-        return scale.scaleId;
-      }
-    }
-    return 0;
-  }
-
-  Future<List<List<String>>> importRawFromExcel(File file) async {
-    try {
-      // 1. 读取Excel文件
-      final bytes = await file.readAsBytes();
-      final excelData = excel.Excel.decodeBytes(bytes);
-
-      if (excelData.tables.isEmpty) {
-        showTipInfo('没有数据导入', context);
-        return [];
-      }
-
-      // 获取第一个工作表
-      final sheet = excelData.tables.values.first;
-      if (sheet.rows.isEmpty) {
-        showTipInfo('没有数据导入', context);
-        return [];
-      }
-
-      // 2. 解析表头并验证
-      List<String> headers = [];
-      for (var cell in sheet.rows[0]) {
-        if (cell != null && cell.value != null) {
-          headers.add(cell.value.toString());
-        }
-      }
-
-      bool res = _validateHeaders(headers);
-      if (!res) {
-        return [];
-      }
-
-      //验证数据，导入所有的ID列，判断不能重复，也不能存在
-      List<String> idList = [];
-      List<String> nameList = [];
-      List<String> scaleIdList = [];
-      List<String> typeList = [];
-      List<String> notesList = [];
-      //找出'Ingredient Id',列,并判断这列的值都不重复，且不为空
-
-      for (int row = 1; row < sheet.maxRows; row++) {
-        for (int col = 0; col < sheet.maxColumns; col++) {
-          if (headers[col] == 'Ingredient Name') {
-            final cellValue = sheet
-                .cell(excel.CellIndex.indexByColumnRow(
-                    columnIndex: col, rowIndex: row))
-                .value;
-            String name = cellValue != null ? cellValue.toString().trim() : '';
-            if (name.isEmpty) {
-              showTipInfo('第${row + 1}行: Ingredient Name 不能为空', context);
-              return [];
-            }
-            nameList.add(name);
-            continue;
-          }
-          if (headers[col] == 'Device Name') {
-            final cellValue = sheet
-                .cell(excel.CellIndex.indexByColumnRow(
-                    columnIndex: col, rowIndex: row))
-                .value;
-            String scale = cellValue != null ? cellValue.toString().trim() : '';
-            int scaleId = 0;
-            if (scale.isNotEmpty) {
-              scaleId = checkScaleName(scale);
-              if (scaleId == 0) {
-                showTipInfo('第${row + 1}行: Device Name 不存在', context);
-                return [];
-              }
-            }
-            scaleIdList.add(scaleId.toString());
-            continue;
-          }
-          if (headers[col] == 'Ingredient Id') {
-            final cellValue = sheet
-                .cell(excel.CellIndex.indexByColumnRow(
-                    columnIndex: col, rowIndex: row))
-                .value;
-            String id = cellValue != null ? cellValue.toString().trim() : '';
-            if (id.isEmpty) {
-              showTipInfo('第${row + 1}行: Ingredient Id 不能为空', context);
-              return [];
-            }
-            if (idList.contains(id)) {
-              showTipInfo('第${row + 1}行: Ingredient Id "$id" 重复', context);
-              return [];
-            }
-            if (checkRawExist(id)) {
-              showTipInfo('第${row + 1}行: Ingredient Id "$id" 已存在', context);
-              return [];
-            }
-            idList.add(id);
-            continue;
-          }
-          if (headers[col] == 'Category') {
-            final cellValue = sheet
-                .cell(excel.CellIndex.indexByColumnRow(
-                    columnIndex: col, rowIndex: row))
-                .value;
-            String type = cellValue != null ? cellValue.toString().trim() : '';
-            typeList.add(type);
-          }
-          if (headers[col] == 'Ingredient Notes') {
-            final cellValue = sheet
-                .cell(excel.CellIndex.indexByColumnRow(
-                    columnIndex: col, rowIndex: row))
-                .value;
-            String notes = cellValue != null ? cellValue.toString().trim() : '';
-            notesList.add(notes);
-            continue;
-          }
-        }
-      }
-
-      List<List<String>> info = [];
-      info.add(idList);
-      info.add(nameList);
-      info.add(scaleIdList);
-      info.add(typeList);
-      info.add(notesList);
-
-      return info;
-    } catch (e) {
-      print('Excel导入错误: $e');
-      showTipInfo("导入失败：${e.toString()}", context);
-      return [];
-    }
-  }
-
-// 辅助方法：预加载所有有效的设备名称（用Set存储，O(1)查询）
-  Set<String> _getValidScaleNames() {
-    // 假设从数据库或缓存获取所有有效设备名称
-    // 示例：return Set.from(scaleList.map((s) => s.name));
-    return {};
-  }
-
-// 原有的获取单元格值的方法（保持不变）
-  String _getValue(List<excel.Data?> row, int index) {
-    if (index < 0 || index >= row.length) return "";
-    final cell = row[index];
-    return cell?.value?.toString() ?? "";
-  }
-
-  // Future<List<RawInfo>> importFromExcel(File file) async {
-  //   try {
-  //     // 读取Excel文件
-  //     final bytes = await file.readAsBytes();
-  //     final excelData = excel.Excel.decodeBytes(bytes);
-
-  //     if (excelData.tables.isEmpty) {
-  //       throw Exception('Excel文件为空或格式不正确');
-  //     }
-
-  //     // 获取第一个工作表
-  //     final sheet = excelData.tables.values.first;
-  //     if (sheet.rows.isEmpty) {
-  //       throw Exception('Excel工作表为空');
-  //     }
-
-  //     // 获取表头并验证
-
-  //     List<String> headers = [];
-  //     for (var cell in sheet.rows[0]) {
-  //       if (cell != null && cell.value != null) {
-  //         headers.add(cell.value.toString());
-  //       }
-  //     }
-
-  //     _validateHeaders(headers);
-
-  //     // 解析数据行
-  //     final dataList = <RawInfo>[];
-
-  //     for (var i = 1; i < sheet.rows.length; i++) {
-  //       final row = sheet.rows[i];
-  //       if (row.isEmpty) continue;
-
-  //       // 创建数据对象
-  //       final data = RawInfo(
-  //         materialId: _getValue(row, headers.indexOf('Ingredient Id')),
-  //         materialName: _getValue(row, headers.indexOf('Ingredient Name')),
-  //         categoryName: _getValue(row, headers.indexOf('Category')),
-  //         ingredient: _getValue(row, headers.indexOf('Ingredient Notes')),
-  //         scaleName: _getValue(row, headers.indexOf('Device Name')),
-  //       );
-
-  //       if (data.materialId == "" || data.materialName == "") {
-  //         showTipInfo("Ingredient Id or Name is empty", context);
-  //         return [];
-  //       }
-
-  //       if (checkRawExist(data.materialId)) {
-  //         showTipInfo(
-  //             localizedStrings.fRawIdDuplicate + data.materialId!, context);
-  //         return [];
-  //       }
-
-  //       if (data.scaleName != "") {
-  //         int scaleId = checkScaleName(data.scaleName);
-  //         if (scaleId == 0) {
-  //           showTipInfo("Device Name is not exist: " + data.scaleName, context);
-  //           return [];
-  //         }
-  //       }
-
-  //       dataList.add(data);
-  //     }
-
-  //     return dataList;
-  //   } catch (e) {
-  //     // 可以添加更详细的错误处理
-  //     print('Excel导入错误: $e');
-  //     return [];
-  //   }
-  // }
-
-// 辅助方法：从Excel行中获取值
-  // String _getValue(List<excel.Data?> row, int index) {
-  //   if (index < 0 || index >= row.length) return '';
-  //   return row[index]?.value?.toString().trim() ?? '';
-  // }
-
-  // 验证CSV表头是否包含所有必要字段
-  bool _validateHeaders(List<String> headers) {
-    const requiredHeaders = [
-      'Ingredient Id',
-      'Ingredient Name',
-      'Category',
-      'Ingredient Notes',
-      'Device Name',
-    ];
-
-    for (final header in requiredHeaders) {
-      if (!headers.contains(header)) {
-        showTipInfo("CSV文件缺少必要的列: $header", context);
-        return false;
-      }
-    }
-    return true;
-  }
-}
-
-class ExportResult {
-  final bool isSuccess;
-  final String? errorMessage;
-
-  ExportResult({required this.isSuccess, this.errorMessage});
 }

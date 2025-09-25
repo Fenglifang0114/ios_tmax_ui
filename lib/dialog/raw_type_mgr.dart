@@ -116,7 +116,9 @@ class RawTypeMgrDialogState extends State<RawTypeMgrDialog> {
               localizedStrings.fRawCategoryManagement,
               true,
               onClose: () {
+                rawDataList.clear();
                 PublicFunctions.getRawList(); // 刷新原料列表
+                formulaDataList.clear();
                 PublicFunctions.getFormulaList(); // 刷新原料类型列表
                 Navigator.pop(context);
               },

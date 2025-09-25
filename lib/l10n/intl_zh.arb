@@ -3176,6 +3176,10 @@
     "@tipPageTotal": {
         "description": "This is a prompt for the total number of pages."
     },
+    "tipPageItems": "条",
+    "@tipPageItems": {
+        "description": "This is a prompt for the total number of items."
+    }, 
     "gTipSelectDeviceFirst": "请先选择一台设备",
     "@gTipSelectDeviceFirst": {
         "description": "Please select a device first."
@@ -3443,7 +3447,124 @@
     "gTipExportPathError": "导出路径错误",
     "@gTipExportPathError": {
         "description": "Tip for export path error"
+    },
+    "noDataImport": "没有数据可导入",
+    "@noDataImport": {
+        "description": "Prompt when there is no data to import from Excel file"
+    },
+    "max1000Rows": " 请一次最多导入1000行数据",
+    "@max1000Rows": {
+        "description": "Prompt when Excel file contains more than 1000 rows"
+    },
+    "max5000Rows": " 请一次最多导入5000行数据",
+    "@max5000Rows": {
+        "description": "Prompt when Excel file contains more than 5000 rows"
+    },
+    "missingHeaders": "缺少必填字段",
+    "@missingHeaders": {
+        "description": "Prompt when required headers are missing in Excel file"
+    },
+    "formulaIdEmpty": "Formula Id 不能为空",
+    "@formulaIdEmpty": {
+        "description": "Prompt when Formula Id cell is empty"
+    },
+    "formulaIdExists": "Formula Id 已存在",
+    "@formulaIdExists": {
+        "description": "Prompt when Formula Id already exists in the system"
+    },
+    "formulaNameEmpty": "Formula Name 不能为空",
+    "@formulaNameEmpty": {
+        "description": "Prompt when Formula Name cell is empty"
+    },
+    "modeEmpty": "Mode 不能为空",
+    "@modeEmpty": {
+        "description": "Prompt when Mode cell is empty"
+    },
+    "modeInvalid": "Mode 必须为 weight 或 percent",
+    "@modeInvalid": {
+        "description": "Prompt when Mode value is invalid"
+    },
+    "weightUnitEmpty": "Weight Unit 不能为空,当 Mode 为 weight 时",
+    "@weightUnitEmpty": {
+        "description": "Prompt when Weight Unit is required for weight mode"
+    },
+    "ingredientNoEmpty": "Ingredient No. 不能为空",
+    "@ingredientNoEmpty": {
+        "description": "Prompt when Ingredient Number cell is empty"
+    },
+    "ingredientNoInvalid": "Ingredient No. 必须为正整数",
+    "@ingredientNoInvalid": {
+        "description": "Prompt when Ingredient Number is invalid"
+    },
+    "ingredientIdEmpty": "Ingredient Id 不能为空",
+    "@ingredientIdEmpty": {
+        "description": "Prompt when Ingredient Id cell is empty"
+    },
+    "ingredientIdNotExist": "Ingredient Id 不存在,请先导入 Ingredient",
+    "@ingredientIdNotExist": {
+        "description": "Prompt when Ingredient Id is not found in the system"
+    },
+    "weightPercentEmpty": "Ingredient Weight/Percent 不能为空",
+    "@weightPercentEmpty": {
+        "description": "Prompt when Weight/Percent cell is empty"
+    },
+    "weightPercentInvalid": "Weight/Percent 必须 > 0 且最多保留 3 位小数",
+    "@weightPercentInvalid": {
+        "description": "Prompt when Weight/Percent value is invalid"
+    },
+    "allowErrorEmpty": "Allow Error 不能为空",
+    "@allowErrorEmpty": {
+        "description": "Prompt when Allow Error cell is empty"
+    },
+    "allowErrorInvalid": "Allow Error 必须 > 0 且最多保留 3 位小数",
+    "@allowErrorInvalid": {
+        "description": "Prompt when Allow Error value is invalid"
+    },
+    "formulaNameInconsistent": "配方名不一致",
+    "@formulaNameInconsistent": {
+        "description": "Prompt when formula names within the same group are inconsistent"
+    },
+    "sequenceNotContinuous": "原料序列号不连续",
+    "@sequenceNotContinuous": {
+        "description": "Prompt when ingredient sequence numbers are not continuous"
+    },
+    "percentNot100": "总百分比必须为 100%",
+    "@percentNot100": {
+        "description": "Prompt when percentage total is not 100%"
+    },
+    "tipRow": "行",
+    "@tipRow": {
+        "description": "Row tip"
+    },    
+    "tipImporting": "检查完成，正在导入中...",
+    "@tipImporting": {
+        "description": "Tip for importing"
+    },    
+    "ingredientIdIsEmpty": "Ingredient Id 不能为空",
+    "@ingredientIdIsEmpty": {
+        "description": "Prompt when Ingredient Id field is required"
+    },
+    "deviceNameNotExist": "Device Name 不存在",
+    "@deviceNameNotExist": {
+        "description": "Prompt when specified Device Name is not found in the system"
+    },
+    "ingredientNameEmpty": "Ingredient Name 不能为空",
+    "@ingredientNameEmpty": {
+        "description": "Prompt when Ingredient Name field is required"
+    }, 
+    "selectDevice": "选择设备",
+    "@selectDevice": {
+        "description": "Select Device"
+    },
+    "deleteRawInUseConfirm": "当前使用中的原料不会被删除，是否继续？",
+    "@deleteRawInUseConfirm": {
+        "description": "Confirm deletion of ingredients currently not in use"
+    },
+    "deleteFormulaWithDraftConfirm": "删除配方将清除其暂存记录，是否继续？",
+    "@deleteFormulaWithDraftConfirm": {
+        "description": "Confirm deletion of formula and associated drafts"
     }
+      
 }
 
 

@@ -356,6 +356,9 @@ class AddSysUserPageState extends State<AddSysUserPage> {
         tempUser.initialPageId = initPageId;
       }
     }
+    if (tempUser.userId == mySysUser.userId) {
+      mySysUser.nickName = nickNameCtl.text;
+    }
 
     tempUser.remark = '';
     tempUser.updatedBy = mySysUser.userId;

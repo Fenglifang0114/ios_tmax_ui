@@ -334,11 +334,26 @@ class PublicFunctions {
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
 
+//删除所有原料 或者多选删除
+  static void deleteAllRawData(List<int> id) {
+    myScaleCmd.cmdMode = "del_many_raw";
+    DeleteAllRawDataId data = DeleteAllRawDataId(recId: id);
+    myScaleCmd.cmdData = jsonEncode(data);
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
   //删除配方
 
   static void deleteFormulaData(int id) {
     myScaleCmd.cmdMode = "delete_formula_data";
     DeleteRawDataId data = DeleteRawDataId(recId: id);
+    myScaleCmd.cmdData = jsonEncode(data);
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  static void deleteAllFormulaData(List<int> id) {
+    myScaleCmd.cmdMode = "del_many_fma";
+    DeleteAllFormulaDataId data = DeleteAllFormulaDataId(recId: id);
     myScaleCmd.cmdData = jsonEncode(data);
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
@@ -451,6 +466,14 @@ class PublicFunctions {
   static void deleteDraftRecord(String recId) {
     myScaleCmd.cmdMode = "delete_draft_fma_wgt_rec";
     DeleteDraftFmaId myScaleCmdData = DeleteDraftFmaId(orderId: recId);
+    myScaleCmd.cmdData = jsonEncode(myScaleCmdData);
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //删除暂存的称重记录
+  static void deleteAllDraftRecord(List<String> recId) {
+    myScaleCmd.cmdMode = "del_many_draft_fma";
+    DeleteAllDraftFmaId myScaleCmdData = DeleteAllDraftFmaId(orderId: recId);
     myScaleCmd.cmdData = jsonEncode(myScaleCmdData);
     sendMsgChan0(jsonEncode(myScaleCmd));
   }

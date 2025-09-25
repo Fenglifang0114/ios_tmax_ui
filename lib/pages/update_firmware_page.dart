@@ -9,7 +9,6 @@ import 'package:t_max/data/icons.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/widget/common_widget.dart';
-import 'package:t_max/widget/show_error_dialog.dart';
 import '../data/downloadresponse.dart';
 import '../data/language.dart';
 import '../eventbus/eventbus.dart';

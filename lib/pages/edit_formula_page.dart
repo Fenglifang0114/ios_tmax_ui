@@ -52,8 +52,6 @@ class EditFormulaPageState extends State<EditFormulaPage> {
 
   int selectedIndex = -1;
 
-  dynamic _eventbus3;
-  dynamic _eventbus4;
   dynamic _eventbus5;
 
   @override
@@ -110,34 +108,11 @@ class EditFormulaPageState extends State<EditFormulaPage> {
           widget.editFormulaInfo.header!.formulaHeader!.totalWeight!; // 总权重
     }
 
-    _eventbus3 = eventBus.on<EventRespAddFormula>().listen((event) {
-      if (mounted) {
-        PublicFunctions.getFormulaList();
-        showTipInfo(localizedStrings.fAddSuccessMsg, context);
-      }
-    });
-    _eventbus4 = eventBus.on<EventRespFormulaList>().listen((event) {
-      if (mounted) {
-        String dataStr = event.obj;
-        if (dataStr != '' && dataStr != 'null') {
-          setState(() {
-            formulaDataList = formulaInfoDbFromJson(dataStr);
-            // print(formulaDataList.length);
-          });
-        } else {
-          setState(() {
-            formulaDataList = [];
-          });
-        }
-      }
-    });
-
     _eventbus5 = eventBus.on<EventRespGetRawDataList>().listen((event) {
       if (mounted) {
         String dataStr = event.obj;
         if (dataStr != '' && dataStr != 'null') {
           setState(() {
-            rawDataList = rawDataInfoFromJson(dataStr);
             if (rawDataList.isNotEmpty) {
               selectedRawDataInfo = rawDataList.last;
               rawMaterialCtl.text =
@@ -147,10 +122,6 @@ class EditFormulaPageState extends State<EditFormulaPage> {
               errorCtl.text = '';
             }
           });
-        } else {
-          setState(() {
-            rawDataList = [];
-          });
         }
       }
     });
@@ -159,8 +130,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
   @override
   void dispose() {
     super.dispose();
-    _eventbus3.cancel();
-    _eventbus4.cancel();
+
     _eventbus5.cancel();
     formulaCodeCtl.dispose();
     formulaNameCtl.dispose();

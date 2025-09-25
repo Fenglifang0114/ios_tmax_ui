@@ -369,7 +369,7 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
                 : () => _goToPage(_totalPages),
           ),
           Text(
-            '${'          当前'} ${_currentPageList.length}            ${'共'} ${_filteredList.length} ${'条'}',
+            ' ${localizedStrings.tipPageTotal} ${_filteredList.length} ${localizedStrings.tipPageItems}',
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ],
@@ -1002,21 +1002,21 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
     try {
       // 准备 CSV 表头
       final header = [
-        'Order No',
-        'Fma Id',
-        'Fma Name',
-        'Material Name',
-        'Material Id',
-        'Fma Mode',
+        'No.',
+        'Formula Id',
+        'Formula Name',
+        'Ingredient Name',
+        'Ingredient Id',
+        'Mode',
         'Confidential',
         'Formula Total Weight',
         'Actual Total Weight',
-        'Material Single Weight',
-        'Actual Single Weight',
+        'Ingredient Weight',
+        'Actual Ingredient Weight',
         'Allowable Error',
         'Actual Error',
-        'Qualification Status',
-        'Created At'
+        'Pass',
+        'Created Time'
       ];
 
       List<List<dynamic>> csvData = [header];
@@ -1058,9 +1058,7 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
           "",
           "",
           "",
-          headerData?.isQualified.toString() == "yes"
-              ? localizedStrings.fQualified
-              : localizedStrings.fUnqualified,
+          headerData?.isQualified.toString() == "yes" ? "Pass" : "Fail",
           headerData?.recordSaveTime != null
               ? DateFormat('yyyy-MM-dd HH:mm:ss')
                   .format(headerData!.recordSaveTime!)
@@ -1105,8 +1103,8 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
                       headerData.isEncrypted.toString() == "true"
                   ? '-'
                   : detail.isQualified.toString() == "ok"
-                      ? localizedStrings.fQualified
-                      : localizedStrings.fUnqualified,
+                      ? "Pass"
+                      : "Fail",
               ""
             ];
             csvData.add(detailRow);

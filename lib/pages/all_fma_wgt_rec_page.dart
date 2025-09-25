@@ -883,21 +883,21 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
   Future<void> exportWgtRecords(String path) async {
     try {
       final header = [
-        'Order No',
-        'Fma Id',
-        'Fma Name',
-        'Material Name',
-        'Material Id',
-        'Fma Mode',
+        'No.',
+        'Formula Id',
+        'Formula Name',
+        'Ingredient Name',
+        'Ingredient Id',
+        'Mode',
         'Confidential',
         'Formula Total Weight',
         'Actual Total Weight',
-        'Material Single Weight',
-        'Actual Single Weight',
+        'Ingredient Weight',
+        'Actual Ingredient Weight',
         'Allowable Error',
         'Actual Error',
-        'Qualification Status',
-        'Created At'
+        'Pass',
+        'Created Time'
       ];
 
       List<List<dynamic>> csvData = [header];
@@ -926,9 +926,7 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
             "",
             "",
             "",
-            headerData?.isQualified.toString() == "yes"
-                ? localizedStrings.fQualified
-                : localizedStrings.fUnqualified,
+            headerData?.isQualified.toString() == "yes" ? "Pass" : "Fail",
             headerData?.recordSaveTime != null
                 ? DateFormat('yyyy-MM-dd HH:mm:ss')
                     .format(headerData!.recordSaveTime!)
@@ -972,8 +970,8 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
                         headerData.isEncrypted.toString() == "true"
                     ? '-'
                     : detail.isQualified.toString() == "ok"
-                        ? localizedStrings.fQualified
-                        : localizedStrings.fUnqualified,
+                        ? "Pass"
+                        : "Fail",
                 ""
               ];
               csvData.add(detailRow);
@@ -985,6 +983,7 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
       final csv = const ListToCsvConverter().convert(csvData);
       final file = File(path);
       await file.writeAsString(csv);
+      if (!mounted) return;
       showTipInfo(localizedStrings.fSaveSuccess, context);
     } catch (e) {
       // 处理导出错误

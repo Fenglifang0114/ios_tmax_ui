@@ -145,6 +145,22 @@ class DeleteRawDataId {
       };
 }
 
+class DeleteAllFormulaDataId {
+  List<int> recId;
+  DeleteAllFormulaDataId({required this.recId});
+  Map<String, dynamic> toJson() => {
+        "RecID": recId,
+      };
+}
+
+class DeleteAllRawDataId {
+  List<int> recId;
+  DeleteAllRawDataId({required this.recId});
+  Map<String, dynamic> toJson() => {
+        "RecID": recId,
+      };
+}
+
 // To parse this JSON data, do
 //
 //     final formulaAddInfo = formulaAddInfoFromJson(jsonString);
@@ -292,6 +308,14 @@ class ReqFormulaHeader {
 class DeleteDraftFmaId {
   String orderId;
   DeleteDraftFmaId({required this.orderId});
+  Map<String, dynamic> toJson() => {
+        "OrderID": orderId,
+      };
+}
+
+class DeleteAllDraftFmaId {
+  List<String> orderId;
+  DeleteAllDraftFmaId({required this.orderId});
   Map<String, dynamic> toJson() => {
         "OrderID": orderId,
       };

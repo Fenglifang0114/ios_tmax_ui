@@ -90,6 +90,7 @@ class _RetailHomePageState extends State<RetailHomePage>
   void onWindowClose() async {
     bool isPreventClose = await windowManager.isPreventClose();
     if (isPreventClose) {
+      if (!mounted) return;
       showDialog(
         context: context,
         barrierDismissible: false, // 允许点击空白处关闭对话框

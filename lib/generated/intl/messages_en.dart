@@ -24,6 +24,12 @@ class MessageLookup extends MessageLookupByLibrary {
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "admin": MessageLookupByLibrary.simpleMessage("Admin"),
     "advanced_setting_title": MessageLookupByLibrary.simpleMessage("Advanced"),
+    "allowErrorEmpty": MessageLookupByLibrary.simpleMessage(
+      "Allow Error is empty",
+    ),
+    "allowErrorInvalid": MessageLookupByLibrary.simpleMessage(
+      "Allow Error should > 0 and up to 3 decimal places",
+    ),
     "appAddressTitle": MessageLookupByLibrary.simpleMessage("Address"),
     "appCompanyTitle": MessageLookupByLibrary.simpleMessage("Company"),
     "appEmailTitle": MessageLookupByLibrary.simpleMessage("Email"),
@@ -114,6 +120,15 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "def_fmt_sel_tip": MessageLookupByLibrary.simpleMessage(
       "Please select 1-10 print formats.",
+    ),
+    "deleteFormulaWithDraftConfirm": MessageLookupByLibrary.simpleMessage(
+      "Deleting the formula will clear its draft records. Continue?",
+    ),
+    "deleteRawInUseConfirm": MessageLookupByLibrary.simpleMessage(
+      "In-use ingredients are protected from deletion. Continue?",
+    ),
+    "deviceNameNotExist": MessageLookupByLibrary.simpleMessage(
+      "Device Name does not exist",
     ),
     "device_configuration_title": MessageLookupByLibrary.simpleMessage(
       "Device Configuration",
@@ -399,6 +414,16 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "formulaDeleteError": MessageLookupByLibrary.simpleMessage(
       "Temporary weighing records exist.",
+    ),
+    "formulaIdEmpty": MessageLookupByLibrary.simpleMessage(
+      "Formula Id is empty",
+    ),
+    "formulaIdExists": MessageLookupByLibrary.simpleMessage("already exists"),
+    "formulaNameEmpty": MessageLookupByLibrary.simpleMessage(
+      "Formula Name is empty",
+    ),
+    "formulaNameInconsistent": MessageLookupByLibrary.simpleMessage(
+      "Formula names are inconsistent",
     ),
     "gAlignment": MessageLookupByLibrary.simpleMessage("Alignment:"),
     "gAppInformation": MessageLookupByLibrary.simpleMessage("App Information"),
@@ -1096,6 +1121,24 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "iTitleHLSetting": MessageLookupByLibrary.simpleMessage("High/Low Setting"),
     "iUserInfo": MessageLookupByLibrary.simpleMessage("User Info"),
+    "ingredientIdEmpty": MessageLookupByLibrary.simpleMessage(
+      "Ingredient Id is empty",
+    ),
+    "ingredientIdIsEmpty": MessageLookupByLibrary.simpleMessage(
+      "Ingredient Id cannot be empty",
+    ),
+    "ingredientIdNotExist": MessageLookupByLibrary.simpleMessage(
+      "Ingredient Id does not exist,please import Ingredient first",
+    ),
+    "ingredientNameEmpty": MessageLookupByLibrary.simpleMessage(
+      "Ingredient Name cannot be empty",
+    ),
+    "ingredientNoEmpty": MessageLookupByLibrary.simpleMessage(
+      "Ingredient No. is empty",
+    ),
+    "ingredientNoInvalid": MessageLookupByLibrary.simpleMessage(
+      "Ingredient No. must be a positive integer",
+    ),
     "jump_confirm_info": MessageLookupByLibrary.simpleMessage(
       "Please confirm to go to the default print format page.",
     ),
@@ -1147,6 +1190,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "l_var_title": MessageLookupByLibrary.simpleMessage("Variable"),
     "l_wgt_unit_expl": MessageLookupByLibrary.simpleMessage("WeightUnit"),
     "l_wgt_unit_var": MessageLookupByLibrary.simpleMessage("WeightUnit"),
+    "max1000Rows": MessageLookupByLibrary.simpleMessage(
+      " Please import up to 1000 rows of data at a time",
+    ),
+    "max5000Rows": MessageLookupByLibrary.simpleMessage(
+      " Please import up to 5000 rows of data at a time",
+    ),
     "menuApplications": MessageLookupByLibrary.simpleMessage("Application"),
     "menuBasicDataCollection": MessageLookupByLibrary.simpleMessage(
       "Basic Data Collection",
@@ -1205,7 +1254,13 @@ class MessageLookup extends MessageLookupByLibrary {
       "Weighing Setting",
     ),
     "menuWifiSetting": MessageLookupByLibrary.simpleMessage("Wi-Fi Setting"),
+    "missingHeaders": MessageLookupByLibrary.simpleMessage("Missing fields"),
+    "modeEmpty": MessageLookupByLibrary.simpleMessage("Mode is empty"),
+    "modeInvalid": MessageLookupByLibrary.simpleMessage(
+      "Mode must be weight or percent",
+    ),
     "new_license_text": MessageLookupByLibrary.simpleMessage("New License:"),
+    "noDataImport": MessageLookupByLibrary.simpleMessage("No data to import"),
     "operator": MessageLookupByLibrary.simpleMessage("Operator"),
     "output_confirm_info": MessageLookupByLibrary.simpleMessage(
       "Please confirm the folder name!",
@@ -1346,6 +1401,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "p_unit_var": MessageLookupByLibrary.simpleMessage("Unit"),
     "p_weight_pcs_expl": MessageLookupByLibrary.simpleMessage("Weight or Pcs."),
     "p_weight_pcs_var": MessageLookupByLibrary.simpleMessage("Weight Pcs"),
+    "percentNot100": MessageLookupByLibrary.simpleMessage(
+      "Total percentage is not 100%",
+    ),
     "plu_edit": MessageLookupByLibrary.simpleMessage("PLU Edit"),
     "plu_error_message": MessageLookupByLibrary.simpleMessage(
       "PLU pretare cannot be empty.",
@@ -1386,8 +1444,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "scale_mgr_btn_def": MessageLookupByLibrary.simpleMessage("Set Default"),
     "scale_mgr_btn_rename": MessageLookupByLibrary.simpleMessage("Rename"),
     "scale_model": MessageLookupByLibrary.simpleMessage("Scale Model:"),
+    "selectDevice": MessageLookupByLibrary.simpleMessage("Select Device"),
     "select_firmware_btn": MessageLookupByLibrary.simpleMessage(
       "Select Firmware",
+    ),
+    "sequenceNotContinuous": MessageLookupByLibrary.simpleMessage(
+      "sequence numbers are not continuous",
     ),
     "serial_page_ol": MessageLookupByLibrary.simpleMessage("OL mode"),
     "serial_page_pcs": MessageLookupByLibrary.simpleMessage("Counting mode"),
@@ -1496,6 +1558,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "tipFormulaDataError": MessageLookupByLibrary.simpleMessage(
       "Formula data error!",
     ),
+    "tipImporting": MessageLookupByLibrary.simpleMessage(
+      "Checking completed, importing...",
+    ),
     "tipJumpPage": MessageLookupByLibrary.simpleMessage("Jump to"),
     "tipLoginError": MessageLookupByLibrary.simpleMessage(
       "Username or password error",
@@ -1520,11 +1585,13 @@ class MessageLookup extends MessageLookupByLibrary {
       "No raw material weight data, no need to save temporarily",
     ),
     "tipPage": MessageLookupByLibrary.simpleMessage("Page"),
+    "tipPageItems": MessageLookupByLibrary.simpleMessage("Items"),
     "tipPageSequnce": MessageLookupByLibrary.simpleMessage(""),
     "tipPageTotal": MessageLookupByLibrary.simpleMessage("Total"),
     "tipPasswordNotSame": MessageLookupByLibrary.simpleMessage(
       "Password not same",
     ),
+    "tipRow": MessageLookupByLibrary.simpleMessage("row"),
     "tipSameScale": MessageLookupByLibrary.simpleMessage(
       "Same scale can\'t connect simultaneously.",
     ),
@@ -1584,6 +1651,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "user_phone": MessageLookupByLibrary.simpleMessage("Phone:"),
     "user_remarks": MessageLookupByLibrary.simpleMessage("User Notes:"),
     "user_sex": MessageLookupByLibrary.simpleMessage("Gender:"),
+    "weightPercentEmpty": MessageLookupByLibrary.simpleMessage(
+      "Ingredient Weight/Percent is empty",
+    ),
+    "weightPercentInvalid": MessageLookupByLibrary.simpleMessage(
+      "Weight/Percent should > 0 and up to 3 decimal places",
+    ),
+    "weightUnitEmpty": MessageLookupByLibrary.simpleMessage(
+      "Weight Unit cannot be empty when Mode is weight",
+    ),
     "zero_range": MessageLookupByLibrary.simpleMessage("Zero Range:"),
   };
 }

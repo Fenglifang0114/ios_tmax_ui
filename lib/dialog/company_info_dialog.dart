@@ -124,7 +124,7 @@ class CompanyInfoDialogState extends State<CompanyInfoDialog> {
             const SizedBox(
               height: regularPadding,
             ),
-            showItemInfo(localizedStrings.appModels, "T-Max Series")
+            // showItemInfo(localizedStrings.appModels, "T-Max Series")
           ],
         ),
       ),

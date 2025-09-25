@@ -116,6 +116,7 @@ class FmaTypeMgrDialogState extends State<FmaTypeMgrDialog> {
               true,
               onClose: () {
                 PublicFunctions.getFormulaTypeList(); // 刷新类型列表
+                formulaDataList.clear();
                 PublicFunctions.getFormulaList(); // 刷新配方类型列表
                 Navigator.pop(context);
               },

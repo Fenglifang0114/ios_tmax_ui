@@ -689,36 +689,3 @@ class AddPluInfoDialogState extends State<AddPluInfoDialog> {
     );
   }
 }
-
-// 提取输入框部分为单独的组件
-class _InputSection extends StatelessWidget {
-  final InputDecoration inputDecoration;
-  final TextEditingController rawRemarkCtl;
-
-  const _InputSection(
-      {required this.inputDecoration, required this.rawRemarkCtl});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: TextField(
-            controller: rawRemarkCtl,
-            decoration: inputDecoration.copyWith(
-              hintText: localizedStrings.fInputIngredientDescHint,
-              hintStyle: TextStyle(
-                color: Theme.of(context).colorScheme.surfaceContainerHighest,
-              ),
-            ),
-            maxLines: 4,
-            style: Theme.of(context).textTheme.bodySmall!.apply(
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-            onChanged: (value) {},
-          ),
-        ),
-      ],
-    );
-  }
-}

@@ -7688,6 +7688,16 @@ class S {
     );
   }
 
+  /// `Items`
+  String get tipPageItems {
+    return Intl.message(
+      'Items',
+      name: 'tipPageItems',
+      desc: 'This is a prompt for the total number of items.',
+      args: [],
+    );
+  }
+
   /// `Please select a device first.`
   String get gTipSelectDeviceFirst {
     return Intl.message(
@@ -8342,6 +8352,291 @@ class S {
       'Export path error',
       name: 'gTipExportPathError',
       desc: 'Tip for export path error',
+      args: [],
+    );
+  }
+
+  /// `No data to import`
+  String get noDataImport {
+    return Intl.message(
+      'No data to import',
+      name: 'noDataImport',
+      desc: 'Prompt when there is no data to import from Excel file',
+      args: [],
+    );
+  }
+
+  /// ` Please import up to 1000 rows of data at a time`
+  String get max1000Rows {
+    return Intl.message(
+      ' Please import up to 1000 rows of data at a time',
+      name: 'max1000Rows',
+      desc: 'Prompt when Excel file contains more than 1000 rows',
+      args: [],
+    );
+  }
+
+  /// ` Please import up to 5000 rows of data at a time`
+  String get max5000Rows {
+    return Intl.message(
+      ' Please import up to 5000 rows of data at a time',
+      name: 'max5000Rows',
+      desc: 'Prompt when Excel file contains more than 5000 rows',
+      args: [],
+    );
+  }
+
+  /// `Missing fields`
+  String get missingHeaders {
+    return Intl.message(
+      'Missing fields',
+      name: 'missingHeaders',
+      desc: 'Prompt when required headers are missing in Excel file',
+      args: [],
+    );
+  }
+
+  /// `Formula Id is empty`
+  String get formulaIdEmpty {
+    return Intl.message(
+      'Formula Id is empty',
+      name: 'formulaIdEmpty',
+      desc: 'Prompt when Formula Id cell is empty',
+      args: [],
+    );
+  }
+
+  /// `already exists`
+  String get formulaIdExists {
+    return Intl.message(
+      'already exists',
+      name: 'formulaIdExists',
+      desc: 'Prompt when Formula Id already exists in the system',
+      args: [],
+    );
+  }
+
+  /// `Formula Name is empty`
+  String get formulaNameEmpty {
+    return Intl.message(
+      'Formula Name is empty',
+      name: 'formulaNameEmpty',
+      desc: 'Prompt when Formula Name cell is empty',
+      args: [],
+    );
+  }
+
+  /// `Mode is empty`
+  String get modeEmpty {
+    return Intl.message(
+      'Mode is empty',
+      name: 'modeEmpty',
+      desc: 'Prompt when Mode cell is empty',
+      args: [],
+    );
+  }
+
+  /// `Mode must be weight or percent`
+  String get modeInvalid {
+    return Intl.message(
+      'Mode must be weight or percent',
+      name: 'modeInvalid',
+      desc: 'Prompt when Mode value is invalid',
+      args: [],
+    );
+  }
+
+  /// `Weight Unit cannot be empty when Mode is weight`
+  String get weightUnitEmpty {
+    return Intl.message(
+      'Weight Unit cannot be empty when Mode is weight',
+      name: 'weightUnitEmpty',
+      desc: 'Prompt when Weight Unit is required for weight mode',
+      args: [],
+    );
+  }
+
+  /// `Ingredient No. is empty`
+  String get ingredientNoEmpty {
+    return Intl.message(
+      'Ingredient No. is empty',
+      name: 'ingredientNoEmpty',
+      desc: 'Prompt when Ingredient Number cell is empty',
+      args: [],
+    );
+  }
+
+  /// `Ingredient No. must be a positive integer`
+  String get ingredientNoInvalid {
+    return Intl.message(
+      'Ingredient No. must be a positive integer',
+      name: 'ingredientNoInvalid',
+      desc: 'Prompt when Ingredient Number is invalid',
+      args: [],
+    );
+  }
+
+  /// `Ingredient Id is empty`
+  String get ingredientIdEmpty {
+    return Intl.message(
+      'Ingredient Id is empty',
+      name: 'ingredientIdEmpty',
+      desc: 'Prompt when Ingredient Id cell is empty',
+      args: [],
+    );
+  }
+
+  /// `Ingredient Id does not exist,please import Ingredient first`
+  String get ingredientIdNotExist {
+    return Intl.message(
+      'Ingredient Id does not exist,please import Ingredient first',
+      name: 'ingredientIdNotExist',
+      desc: 'Prompt when Ingredient Id is not found in the system',
+      args: [],
+    );
+  }
+
+  /// `Ingredient Weight/Percent is empty`
+  String get weightPercentEmpty {
+    return Intl.message(
+      'Ingredient Weight/Percent is empty',
+      name: 'weightPercentEmpty',
+      desc: 'Prompt when Weight/Percent cell is empty',
+      args: [],
+    );
+  }
+
+  /// `Weight/Percent should > 0 and up to 3 decimal places`
+  String get weightPercentInvalid {
+    return Intl.message(
+      'Weight/Percent should > 0 and up to 3 decimal places',
+      name: 'weightPercentInvalid',
+      desc: 'Prompt when Weight/Percent value is invalid',
+      args: [],
+    );
+  }
+
+  /// `Allow Error is empty`
+  String get allowErrorEmpty {
+    return Intl.message(
+      'Allow Error is empty',
+      name: 'allowErrorEmpty',
+      desc: 'Prompt when Allow Error cell is empty',
+      args: [],
+    );
+  }
+
+  /// `Allow Error should > 0 and up to 3 decimal places`
+  String get allowErrorInvalid {
+    return Intl.message(
+      'Allow Error should > 0 and up to 3 decimal places',
+      name: 'allowErrorInvalid',
+      desc: 'Prompt when Allow Error value is invalid',
+      args: [],
+    );
+  }
+
+  /// `Formula names are inconsistent`
+  String get formulaNameInconsistent {
+    return Intl.message(
+      'Formula names are inconsistent',
+      name: 'formulaNameInconsistent',
+      desc: 'Prompt when formula names within the same group are inconsistent',
+      args: [],
+    );
+  }
+
+  /// `sequence numbers are not continuous`
+  String get sequenceNotContinuous {
+    return Intl.message(
+      'sequence numbers are not continuous',
+      name: 'sequenceNotContinuous',
+      desc: 'Prompt when ingredient sequence numbers are not continuous',
+      args: [],
+    );
+  }
+
+  /// `Total percentage is not 100%`
+  String get percentNot100 {
+    return Intl.message(
+      'Total percentage is not 100%',
+      name: 'percentNot100',
+      desc: 'Prompt when percentage total is not 100%',
+      args: [],
+    );
+  }
+
+  /// `row`
+  String get tipRow {
+    return Intl.message('row', name: 'tipRow', desc: 'Row tip', args: []);
+  }
+
+  /// `Checking completed, importing...`
+  String get tipImporting {
+    return Intl.message(
+      'Checking completed, importing...',
+      name: 'tipImporting',
+      desc: 'Tip for importing',
+      args: [],
+    );
+  }
+
+  /// `Ingredient Id cannot be empty`
+  String get ingredientIdIsEmpty {
+    return Intl.message(
+      'Ingredient Id cannot be empty',
+      name: 'ingredientIdIsEmpty',
+      desc: 'Prompt when Ingredient Id field is required',
+      args: [],
+    );
+  }
+
+  /// `Device Name does not exist`
+  String get deviceNameNotExist {
+    return Intl.message(
+      'Device Name does not exist',
+      name: 'deviceNameNotExist',
+      desc: 'Prompt when specified Device Name is not found in the system',
+      args: [],
+    );
+  }
+
+  /// `Ingredient Name cannot be empty`
+  String get ingredientNameEmpty {
+    return Intl.message(
+      'Ingredient Name cannot be empty',
+      name: 'ingredientNameEmpty',
+      desc: 'Prompt when Ingredient Name field is required',
+      args: [],
+    );
+  }
+
+  /// `Select Device`
+  String get selectDevice {
+    return Intl.message(
+      'Select Device',
+      name: 'selectDevice',
+      desc: 'Select Device',
+      args: [],
+    );
+  }
+
+  /// `In-use ingredients are protected from deletion. Continue?`
+  String get deleteRawInUseConfirm {
+    return Intl.message(
+      'In-use ingredients are protected from deletion. Continue?',
+      name: 'deleteRawInUseConfirm',
+      desc: 'Confirm deletion of ingredients currently not in use',
+      args: [],
+    );
+  }
+
+  /// `Deleting the formula will clear its draft records. Continue?`
+  String get deleteFormulaWithDraftConfirm {
+    return Intl.message(
+      'Deleting the formula will clear its draft records. Continue?',
+      name: 'deleteFormulaWithDraftConfirm',
+      desc: 'Confirm deletion of formula and associated drafts',
       args: [],
     );
   }

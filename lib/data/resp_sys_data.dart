@@ -85,6 +85,9 @@ class RespSysMsgType {
   static const String respProductAddOne = 'resp_product_add_one';
   static const String respGetLastProductRec = 'resp_get_last_product_rec';
   static const String respImportRawList = 'resp_raw_list_import';
+  static const String respDelManyRaw = 'resp_many_raw_del';
+  static const String respDelManyDraft = 'resp_many_draft_fma_del';
+  static const String respDelManyFma = 'resp_many_fma_del';
 
   static final Map<String, Function> handlers = {
     RespSysMsgType.respPortsList: handlePortsList,
@@ -150,6 +153,9 @@ class RespSysMsgType {
     RespSysMsgType.respProductAddOne: handleRespProductAddOne,
     RespSysMsgType.respGetLastProductRec: handleRespGetLastProductRec,
     RespSysMsgType.respImportRawList: handleRespImportRawList,
+    RespSysMsgType.respDelManyRaw: handleRespDelManyRaw,
+    RespSysMsgType.respDelManyFma: handleRespDelManyFma,
+    RespSysMsgType.respDelManyDraft: handleRespDelManyDraft,
   };
 
   static void handlePortsList(dynamic jsonData) {
@@ -576,6 +582,21 @@ class RespSysMsgType {
   static void handleRespImportRawList(dynamic jsonData) {
     String dataString = jsonData['MsgBody'];
     eventBus.fire(EventRespImportRawList(dataString));
+  }
+
+  static void handleRespDelManyFma(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespDelManyFma(dataString));
+  }
+
+  static void handleRespDelManyDraft(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespDelManyDraft(dataString));
+  }
+
+  static void handleRespDelManyRaw(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespDelManyRaw(dataString));
   }
 }
 

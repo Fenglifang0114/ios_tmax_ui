@@ -57,8 +57,8 @@ class MyHomePageState extends State<MyHomePage>
   dynamic _eventbus7; // 监听事件
   dynamic _eventbus8; // 监听事件
   dynamic _eventbus9; // 监听事件
-  final ScrollController _scrollController = ScrollController();
-  bool _isHovering = false; // 用于控制鼠标悬停状态
+  ScrollController scrollController = ScrollController();
+  bool isHovering = false; // 用于控制鼠标悬停状态
 
   @override
   void didChangeDependencies() {

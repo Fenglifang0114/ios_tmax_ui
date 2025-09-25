@@ -75,14 +75,12 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
 
   dynamic _eventbus1;
   dynamic _eventbus2;
-  dynamic _eventbus3;
-  dynamic _eventbus4;
+
   dynamic _eventbus5;
   dynamic _eventbus6;
-  dynamic _eventbus7;
+
   dynamic _eventbus8;
   dynamic _eventbus9;
-  dynamic _eventbus10;
 
   Timer? setWgtStartFalseTimer; // 用于每3秒将isWgtStart设置为false的定时器
   Timer? checkWgtStartTimer; // 用于每5秒检查isWgtStart的定时器
@@ -598,26 +596,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
         }
       }
     });
-    _eventbus3 = eventBus.on<EventRespGetRawDataList>().listen((event) {
-      if (mounted) {
-        String dataStr = event.obj;
-        if (dataStr != '' && dataStr != 'null') {
-          setState(() {
-            rawDataList = rawDataInfoFromJson(dataStr);
-            // print(rawDataList.length);
-          });
-        } else {
-          setState(() {
-            rawDataList = [];
-          });
-        }
-      }
-    });
-    _eventbus4 = eventBus.on<EventRespAddRawData>().listen((event) {
-      if (mounted) {
-        PublicFunctions.getRawList();
-      }
-    });
+
     _eventbus5 = eventBus.on<EventRespAddFormulaType>().listen((event) {
       if (mounted) {
         PublicFunctions.getFormulaTypeList();
@@ -629,8 +608,6 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
         String dataStr = event.obj;
         if (dataStr != '' && dataStr != 'null') {
           setState(() {
-            formulaDataList = formulaInfoDbFromJson(dataStr);
-            // print(formulaDataList.length);
             for (var formula in formulaDataList) {
               if (formula.header!.formulaHeader!.formulaId ==
                   myFmaInfo.header!.formulaHeader!.formulaId) {
@@ -647,17 +624,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
               }
             }
           });
-        } else {
-          setState(() {
-            formulaDataList = [];
-          });
         }
-      }
-    });
-
-    _eventbus7 = eventBus.on<EventRespFormulaRecAdd>().listen((event) {
-      if (mounted) {
-        PublicFunctions.getFormulaRecList();
       }
     });
 
@@ -719,13 +686,6 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
         }
       }
     });
-    _eventbus10 = eventBus.on<EventRespEditRawData>().listen((event) {
-      if (mounted) {
-        showTipInfo(localizedStrings.fSuccessMsg, context);
-        PublicFunctions.getRawList();
-        PublicFunctions.getFormulaList();
-      }
-    });
   }
 
   @override
@@ -733,14 +693,11 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
     super.dispose();
     _eventbus1.cancel();
     _eventbus2.cancel();
-    _eventbus3.cancel();
-    _eventbus4.cancel();
     _eventbus5.cancel();
     _eventbus6.cancel();
-    _eventbus7.cancel();
+
     _eventbus8.cancel();
     _eventbus9.cancel();
-    _eventbus10.cancel();
 
     stopCntAliveTimer();
     currentWgtStrNotifier.dispose();
@@ -959,6 +916,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
 
     PublicFunctions.updateDraftRecord(jsonStr);
     stopAllWgt();
+    darfFmaInfoList = [];
     PublicFunctions.getDraftRecords();
     if (mounted) {
       Navigator.pop(context);

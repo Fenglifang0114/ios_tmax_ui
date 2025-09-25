@@ -24,6 +24,10 @@ class MessageLookup extends MessageLookupByLibrary {
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "admin": MessageLookupByLibrary.simpleMessage("管理员"),
     "advanced_setting_title": MessageLookupByLibrary.simpleMessage("高级"),
+    "allowErrorEmpty": MessageLookupByLibrary.simpleMessage("Allow Error 不能为空"),
+    "allowErrorInvalid": MessageLookupByLibrary.simpleMessage(
+      "Allow Error 必须 > 0 且最多保留 3 位小数",
+    ),
     "appAddressTitle": MessageLookupByLibrary.simpleMessage("地址"),
     "appCompanyTitle": MessageLookupByLibrary.simpleMessage("公司"),
     "appEmailTitle": MessageLookupByLibrary.simpleMessage("邮箱"),
@@ -81,6 +85,15 @@ class MessageLookup extends MessageLookupByLibrary {
       "The overall print format content is out of scope",
     ),
     "def_fmt_sel_tip": MessageLookupByLibrary.simpleMessage("请选择1-10个打印格式."),
+    "deleteFormulaWithDraftConfirm": MessageLookupByLibrary.simpleMessage(
+      "删除配方将清除其暂存记录，是否继续？",
+    ),
+    "deleteRawInUseConfirm": MessageLookupByLibrary.simpleMessage(
+      "当前使用中的原料不会被删除，是否继续？",
+    ),
+    "deviceNameNotExist": MessageLookupByLibrary.simpleMessage(
+      "Device Name 不存在",
+    ),
     "device_configuration_title": MessageLookupByLibrary.simpleMessage("设备配置"),
     "device_connection_title": MessageLookupByLibrary.simpleMessage(
       "设备信息 & 连接",
@@ -260,6 +273,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "fWgtUnit": MessageLookupByLibrary.simpleMessage("重量单位"),
     "firmware_update": MessageLookupByLibrary.simpleMessage("串口更新软件"),
     "formulaDeleteError": MessageLookupByLibrary.simpleMessage("存在临时称重记录"),
+    "formulaIdEmpty": MessageLookupByLibrary.simpleMessage("Formula Id 不能为空"),
+    "formulaIdExists": MessageLookupByLibrary.simpleMessage("Formula Id 已存在"),
+    "formulaNameEmpty": MessageLookupByLibrary.simpleMessage(
+      "Formula Name 不能为空",
+    ),
+    "formulaNameInconsistent": MessageLookupByLibrary.simpleMessage("配方名不一致"),
     "gAlignment": MessageLookupByLibrary.simpleMessage("对齐方式:"),
     "gAppInformation": MessageLookupByLibrary.simpleMessage("应用信息"),
     "gAttribute": MessageLookupByLibrary.simpleMessage("属性"),
@@ -749,6 +768,24 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "iTitleHLSetting": MessageLookupByLibrary.simpleMessage("上下限设置"),
     "iUserInfo": MessageLookupByLibrary.simpleMessage("用户信息"),
+    "ingredientIdEmpty": MessageLookupByLibrary.simpleMessage(
+      "Ingredient Id 不能为空",
+    ),
+    "ingredientIdIsEmpty": MessageLookupByLibrary.simpleMessage(
+      "Ingredient Id 不能为空",
+    ),
+    "ingredientIdNotExist": MessageLookupByLibrary.simpleMessage(
+      "Ingredient Id 不存在,请先导入 Ingredient",
+    ),
+    "ingredientNameEmpty": MessageLookupByLibrary.simpleMessage(
+      "Ingredient Name 不能为空",
+    ),
+    "ingredientNoEmpty": MessageLookupByLibrary.simpleMessage(
+      "Ingredient No. 不能为空",
+    ),
+    "ingredientNoInvalid": MessageLookupByLibrary.simpleMessage(
+      "Ingredient No. 必须为正整数",
+    ),
     "jump_confirm_info": MessageLookupByLibrary.simpleMessage(
       "请确认跳转默认打印格式下发页面.",
     ),
@@ -798,6 +835,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "l_var_title": MessageLookupByLibrary.simpleMessage("变量"),
     "l_wgt_unit_expl": MessageLookupByLibrary.simpleMessage("重量单位"),
     "l_wgt_unit_var": MessageLookupByLibrary.simpleMessage("WeightUnit"),
+    "max1000Rows": MessageLookupByLibrary.simpleMessage(" 请一次最多导入1000行数据"),
+    "max5000Rows": MessageLookupByLibrary.simpleMessage(" 请一次最多导入5000行数据"),
     "menuApplications": MessageLookupByLibrary.simpleMessage("应用"),
     "menuBasicDataCollection": MessageLookupByLibrary.simpleMessage("基础数据收集"),
     "menuBluetoothSetting": MessageLookupByLibrary.simpleMessage("蓝牙设置"),
@@ -830,7 +869,13 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "menuWeighingSetting": MessageLookupByLibrary.simpleMessage("称重设置"),
     "menuWifiSetting": MessageLookupByLibrary.simpleMessage("Wi-Fi设置"),
+    "missingHeaders": MessageLookupByLibrary.simpleMessage("缺少必填字段"),
+    "modeEmpty": MessageLookupByLibrary.simpleMessage("Mode 不能为空"),
+    "modeInvalid": MessageLookupByLibrary.simpleMessage(
+      "Mode 必须为 weight 或 percent",
+    ),
     "new_license_text": MessageLookupByLibrary.simpleMessage("新认证:"),
+    "noDataImport": MessageLookupByLibrary.simpleMessage("没有数据可导入"),
     "operator": MessageLookupByLibrary.simpleMessage("操作员"),
     "output_confirm_info": MessageLookupByLibrary.simpleMessage("请确认文件夹的名字!"),
     "output_no_file": MessageLookupByLibrary.simpleMessage("没有文件匹配!"),
@@ -933,6 +978,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "p_unit_var": MessageLookupByLibrary.simpleMessage("Unit"),
     "p_weight_pcs_expl": MessageLookupByLibrary.simpleMessage("重量或者pcs."),
     "p_weight_pcs_var": MessageLookupByLibrary.simpleMessage("Weight Pcs"),
+    "percentNot100": MessageLookupByLibrary.simpleMessage("总百分比必须为 100%"),
     "plu_edit": MessageLookupByLibrary.simpleMessage("PLU 编辑"),
     "plu_error_message": MessageLookupByLibrary.simpleMessage("PLU 预扣重不能为空."),
     "plu_error_message1": MessageLookupByLibrary.simpleMessage(
@@ -963,7 +1009,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "scale_mgr_btn_def": MessageLookupByLibrary.simpleMessage("设置默认"),
     "scale_mgr_btn_rename": MessageLookupByLibrary.simpleMessage("重命名"),
     "scale_model": MessageLookupByLibrary.simpleMessage("选择机型:"),
+    "selectDevice": MessageLookupByLibrary.simpleMessage("选择设备"),
     "select_firmware_btn": MessageLookupByLibrary.simpleMessage("选择 Firmware"),
+    "sequenceNotContinuous": MessageLookupByLibrary.simpleMessage("原料序列号不连续"),
     "serial_page_ol": MessageLookupByLibrary.simpleMessage("OL 模式"),
     "serial_page_pcs": MessageLookupByLibrary.simpleMessage("计数模式"),
     "serial_page_percent": MessageLookupByLibrary.simpleMessage("百分比模式"),
@@ -1047,6 +1095,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "请确保当前重量数据正确，是否继续？",
     ),
     "tipFormulaDataError": MessageLookupByLibrary.simpleMessage("配方数据错误！"),
+    "tipImporting": MessageLookupByLibrary.simpleMessage("检查完成，正在导入中..."),
     "tipJumpPage": MessageLookupByLibrary.simpleMessage("跳转"),
     "tipLoginError": MessageLookupByLibrary.simpleMessage("用户名或密码错误"),
     "tipLoginPasswordEmpty": MessageLookupByLibrary.simpleMessage("请输入密码"),
@@ -1059,9 +1108,11 @@ class MessageLookup extends MessageLookupByLibrary {
       "没有原料重量数据，无需暂存",
     ),
     "tipPage": MessageLookupByLibrary.simpleMessage("页"),
+    "tipPageItems": MessageLookupByLibrary.simpleMessage("条"),
     "tipPageSequnce": MessageLookupByLibrary.simpleMessage("第"),
     "tipPageTotal": MessageLookupByLibrary.simpleMessage("共"),
     "tipPasswordNotSame": MessageLookupByLibrary.simpleMessage("密码不一致"),
+    "tipRow": MessageLookupByLibrary.simpleMessage("行"),
     "tipSameScale": MessageLookupByLibrary.simpleMessage("同一台秤不能同时连接"),
     "tipTemporarySaveFormulaRecord": MessageLookupByLibrary.simpleMessage(
       "暂存记录",
@@ -1105,6 +1156,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "user_phone": MessageLookupByLibrary.simpleMessage("电话:"),
     "user_remarks": MessageLookupByLibrary.simpleMessage("用户备注:"),
     "user_sex": MessageLookupByLibrary.simpleMessage("性别:"),
+    "weightPercentEmpty": MessageLookupByLibrary.simpleMessage(
+      "Ingredient Weight/Percent 不能为空",
+    ),
+    "weightPercentInvalid": MessageLookupByLibrary.simpleMessage(
+      "Weight/Percent 必须 > 0 且最多保留 3 位小数",
+    ),
+    "weightUnitEmpty": MessageLookupByLibrary.simpleMessage(
+      "Weight Unit 不能为空,当 Mode 为 weight 时",
+    ),
     "zero_range": MessageLookupByLibrary.simpleMessage("零点范围:"),
   };
 }
