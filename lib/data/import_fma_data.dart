@@ -40,6 +40,7 @@ class ImportFmaInfo {
   bool? isConfidential;
   bool? needContainer;
   List<Ingredient>? ingredients;
+  String? notes;
 
   ImportFmaInfo({
     this.formulaId,
@@ -50,6 +51,7 @@ class ImportFmaInfo {
     this.isConfidential,
     this.needContainer,
     this.ingredients,
+    this.notes,
   });
 
   factory ImportFmaInfo.fromJson(Map<String, dynamic> json) => ImportFmaInfo(
@@ -64,6 +66,7 @@ class ImportFmaInfo {
             ? []
             : List<Ingredient>.from(
                 json["Ingredients"]!.map((x) => Ingredient.fromJson(x))),
+        notes: json["Notes"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -77,6 +80,7 @@ class ImportFmaInfo {
         "Ingredients": ingredients == null
             ? []
             : List<dynamic>.from(ingredients!.map((x) => x.toJson())),
+        "Notes": notes,
       };
 }
 

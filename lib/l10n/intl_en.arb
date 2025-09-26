@@ -1856,9 +1856,9 @@
     "@fGetFmaTemplateBtn": {
         "description": "Button to get formula template"
     },
-    "fGetRawTemplateBtn": "Get Raw Material Template",
+    "fGetRawTemplateBtn": "Get Ingredient Template",
     "@fGetRawTemplateBtn": {
-        "description": "Button to get raw material template"
+        "description": "Button to get ingredient template"
     },
     "fFmaNameLabel": "Name",
     "@fFmaNameLabel": {
@@ -3563,6 +3563,18 @@
     "deleteFormulaWithDraftConfirm": "Deleting the formula will clear its draft records. Continue?",
     "@deleteFormulaWithDraftConfirm": {
         "description": "Confirm deletion of formula and associated drafts"
+    },
+    "finishBtn": "Finish",
+    "@finishBtn": {
+        "description": "This is a finish button."
+    },
+    "duplicateHeaders": "Duplicate headers",
+    "@duplicateHeaders": {
+        "description": "Prompt when duplicate headers are found in Excel file"
+    },
+    "tipValidating": "Validating data...",
+    "@tipValidating": {
+        "description": "Tip for validating data"
     }     
     
 }    

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/darf_fma_data_from_db.dart';
 import 'package:t_max/data/fma_import_func.dart';
@@ -92,6 +93,8 @@ class FormulationScalePageState extends State<FormulationScalePage>
   DarfFmaInfo? selectedDarfFma; //选中的配方称重记录和配方明细
   List<DarfFmaInfo> selDarftFmaList = []; //暂存的配方称重记录和配方明细
   Timer? _onlineTimer;
+
+  bool sendNext = false;
 
   dynamic _eventbus1;
   dynamic _eventbus2;
@@ -2277,6 +2280,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
     );
     if (result == null) return;
     File file = File(result.files.single.path!);
+    if (!mounted) return;
+    showTipInfo(localizedStrings.tipValidating, context);
+
     //读取csv文件
     ImportRawResult resImport = await importRawFromExcel(file);
     if (!mounted) return;
@@ -2288,56 +2294,89 @@ class FormulationScalePageState extends State<FormulationScalePage>
     sendRawListInBatches(resImport.importRawList);
   }
 
-  void sendRawListInBatches(List<List<String>> dataList) {
+  Future<void> sendRawListInBatches(List<List<String>> dataList) async {
     const batchSize = 100;
+
+    // 在后台isolate中准备所有批次数据
+    final List<String> allBatches = await compute(_prepareAllBatches, {
+      'dataList': dataList,
+      'batchSize': batchSize,
+      'userName': mySysUser.nickName!,
+    });
+
+    int currentBatch = 0;
+
+    for (final jsonStr in allBatches) {
+      currentBatch++;
+
+      // 让出UI控制权
+      await Future.delayed(Duration.zero);
+
+      // 等待当前批次发送完成
+      PublicFunctions.importRawList(jsonStr);
+
+      // 如果不是最后一批，等待下一批信号
+      if (currentBatch < allBatches.length) {
+        await waitAndSendNext();
+      }
+    }
+    await waitAndSendNext();
+
+    eventBus.fire(EventImportRawOK(''));
+  }
+
+// 在后台isolate中准备数据（不阻塞UI）
+  static List<String> _prepareAllBatches(Map<String, dynamic> params) {
+    final dataList = params['dataList'] as List<List<String>>;
+    final batchSize = params['batchSize'] as int;
+    final userName = params['userName'] as String;
+
+    List<String> batches = [];
     int totalItems = dataList[0].length;
 
-    // 创建一个定时器的流控制器
-    final StreamController<Timer> timerController = StreamController<Timer>();
+    for (int start = 0; start < totalItems; start += batchSize) {
+      int end =
+          (start + batchSize) < totalItems ? (start + batchSize) : totalItems;
 
-    // 创建一个定时器，每隔4秒向流中添加一个新的定时器实例
-    Timer.periodic(const Duration(milliseconds: 500), (Timer t) {
-      timerController.add(t);
-    });
+      List<RawInfo> batch = [];
+      for (int i = start; i < end; i++) {
+        batch.add(RawInfo(
+          materialId: dataList[0][i],
+          materialName: dataList[1][i],
+          scaleId: int.tryParse(dataList[2][i]) ?? 0,
+          categoryName: dataList[3][i],
+          ingredient: dataList[4][i],
+        ));
+      }
 
-    // 创建一个索引，用于跟踪当前发送到哪个批次了
-    int currentIndex = 0;
+      batches.add(importRawListToJson(ImportRawList(
+        rawInfo: batch,
+        createdBy: userName,
+      )));
+    }
 
-    // 监听定时器流，当有新的定时器实例时，发送下一批数据
-    timerController.stream.listen((Timer timer) {
-      debugPrint('Sending batch ${currentIndex + 1}...');
-      if (currentIndex < totalItems) {
-        int endIndex = currentIndex + batchSize;
-        endIndex = endIndex < totalItems ? endIndex : totalItems;
-        List<RawInfo> batch = [];
+    return batches;
+  }
 
-        for (int i = currentIndex; i < endIndex; i++) {
-          RawInfo rawInfo = RawInfo(
-            materialId: dataList[0][i],
-            materialName: dataList[1][i],
-            scaleId: int.tryParse(dataList[2][i]) ?? 0,
-            categoryName: dataList[3][i],
-            ingredient: dataList[4][i],
-          );
-          batch.add(rawInfo);
-        }
-
-        ImportRawList importRawList = ImportRawList(
-          rawInfo: batch,
-          createdBy: mySysUser.nickName!,
-        );
-
-        String jsonStr = importRawListToJson(importRawList);
-        PublicFunctions.importRawList(jsonStr);
-
-        currentIndex += batchSize;
-      } else {
-        // 所有数据发送完毕，关闭定时器流控制器
-        timerController.close();
-        timer.cancel();
-        eventBus.fire(EventImportRawOK(''));
+// 修复waitAndSendNext，避免阻塞
+  Future<void> waitAndSendNext() async {
+    final completer = Completer<void>();
+    final timer = Timer(const Duration(minutes: 1), () {
+      if (!completer.isCompleted) {
+        completer.complete();
       }
     });
+
+    // 使用事件监听代替循环等待
+    final subscription = eventBus.on<EventRespImportRawList>().listen((event) {
+      if (!completer.isCompleted) {
+        timer.cancel();
+        completer.complete();
+      }
+    });
+
+    await completer.future;
+    subscription.cancel();
   }
 
   bool checkRawExist(String materialId) {
@@ -2357,17 +2396,16 @@ class FormulationScalePageState extends State<FormulationScalePage>
     );
     if (result == null) return;
     File file = File(result.files.single.path!);
+    if (!mounted) return;
+    showTipInfo(localizedStrings.tipValidating, context);
     //读取xlsx文件
     ImportFmaResult importRes = await importFormulasFromExcel(file);
     if (!mounted) return;
     if (!importRes.isSuccess) {
       showTipInfo(importRes.errorMessage!, context);
-
       return;
     }
-
     showTipInfo(importRes.errorMessage!, context);
-
     sendFmaListInBatches(importRes.importFmaInfoList);
   }
 

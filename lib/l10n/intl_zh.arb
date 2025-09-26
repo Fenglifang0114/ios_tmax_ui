@@ -3563,6 +3563,18 @@
     "deleteFormulaWithDraftConfirm": "删除配方将清除其暂存记录，是否继续？",
     "@deleteFormulaWithDraftConfirm": {
         "description": "Confirm deletion of formula and associated drafts"
+    },
+    "finishBtn": "完成",
+    "@finishBtn": {
+        "description": "This is a finish button."
+    },
+    "duplicateHeaders": "存在重复的表头",
+    "@duplicateHeaders": {
+        "description": "Prompt when duplicate headers are found in Excel file"
+    },
+    "tipValidating": "正在验证数据...",
+    "@tipValidating": {
+        "description": "Tip for validating data"
     }
       
 }

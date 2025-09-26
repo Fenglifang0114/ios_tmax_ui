@@ -99,6 +99,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "设备信息 & 连接",
     ),
     "device_setting_title": MessageLookupByLibrary.simpleMessage("基本信息"),
+    "duplicateHeaders": MessageLookupByLibrary.simpleMessage("存在重复的表头"),
     "fAbandonBtn": MessageLookupByLibrary.simpleMessage("放弃"),
     "fAbandonIngredientsBtn": MessageLookupByLibrary.simpleMessage("放弃配料"),
     "fActualError": MessageLookupByLibrary.simpleMessage("实际误差"),
@@ -271,6 +272,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "fUpdatedAtCol": MessageLookupByLibrary.simpleMessage("更新时间"),
     "fWeightMode": MessageLookupByLibrary.simpleMessage("重量"),
     "fWgtUnit": MessageLookupByLibrary.simpleMessage("重量单位"),
+    "finishBtn": MessageLookupByLibrary.simpleMessage("完成"),
     "firmware_update": MessageLookupByLibrary.simpleMessage("串口更新软件"),
     "formulaDeleteError": MessageLookupByLibrary.simpleMessage("存在临时称重记录"),
     "formulaIdEmpty": MessageLookupByLibrary.simpleMessage("Formula Id 不能为空"),
@@ -1117,6 +1119,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tipTemporarySaveFormulaRecord": MessageLookupByLibrary.simpleMessage(
       "暂存记录",
     ),
+    "tipValidating": MessageLookupByLibrary.simpleMessage("正在验证数据..."),
     "titleChangePassword": MessageLookupByLibrary.simpleMessage("修改密码"),
     "titleConfidentialWeighingMode": MessageLookupByLibrary.simpleMessage(
       "保密称重模式",

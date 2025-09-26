@@ -4371,12 +4371,12 @@ class S {
     );
   }
 
-  /// `Get Raw Material Template`
+  /// `Get Ingredient Template`
   String get fGetRawTemplateBtn {
     return Intl.message(
-      'Get Raw Material Template',
+      'Get Ingredient Template',
       name: 'fGetRawTemplateBtn',
-      desc: 'Button to get raw material template',
+      desc: 'Button to get ingredient template',
       args: [],
     );
   }
@@ -8637,6 +8637,36 @@ class S {
       'Deleting the formula will clear its draft records. Continue?',
       name: 'deleteFormulaWithDraftConfirm',
       desc: 'Confirm deletion of formula and associated drafts',
+      args: [],
+    );
+  }
+
+  /// `Finish`
+  String get finishBtn {
+    return Intl.message(
+      'Finish',
+      name: 'finishBtn',
+      desc: 'This is a finish button.',
+      args: [],
+    );
+  }
+
+  /// `Duplicate headers`
+  String get duplicateHeaders {
+    return Intl.message(
+      'Duplicate headers',
+      name: 'duplicateHeaders',
+      desc: 'Prompt when duplicate headers are found in Excel file',
+      args: [],
+    );
+  }
+
+  /// `Validating data...`
+  String get tipValidating {
+    return Intl.message(
+      'Validating data...',
+      name: 'tipValidating',
+      desc: 'Tip for validating data',
       args: [],
     );
   }

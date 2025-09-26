@@ -947,7 +947,6 @@ class IndustryHomePageState extends State<IndustryHomePage>
                                 : null,
                             child: appCard(
                                 context,
-                                //增加翻译
                                 localizedStrings.fFormulaScaleTitle,
                                 Icons.format_color_fill_outlined,
                                 myTaouLicInfo.isValid,

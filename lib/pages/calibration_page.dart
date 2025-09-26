@@ -1438,7 +1438,7 @@ class CalibrationPageState extends State<CalibrationPage> {
               curStep == step5 && !isCalSuccess
                   ? localizedStrings.gTipCalibrationAgain
                   : curStep == step5 && isCalSuccess
-                      ? "完成"
+                      ? localizedStrings.finishBtn
                       : localizedStrings.fNextStepBtn,
               curStep == step4 && scaleRangeCtl.text == ''
                   ? null

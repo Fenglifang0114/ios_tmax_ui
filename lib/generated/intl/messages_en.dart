@@ -137,6 +137,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Device Info & Connection",
     ),
     "device_setting_title": MessageLookupByLibrary.simpleMessage("Basics"),
+    "duplicateHeaders": MessageLookupByLibrary.simpleMessage(
+      "Duplicate headers",
+    ),
     "fAbandonBtn": MessageLookupByLibrary.simpleMessage("Abandon"),
     "fAbandonIngredientsBtn": MessageLookupByLibrary.simpleMessage("Abandon"),
     "fActualError": MessageLookupByLibrary.simpleMessage("Actual Error"),
@@ -257,7 +260,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Get Formula Template",
     ),
     "fGetRawTemplateBtn": MessageLookupByLibrary.simpleMessage(
-      "Get Raw Material Template",
+      "Get Ingredient Template",
     ),
     "fHighSpeed": MessageLookupByLibrary.simpleMessage("High Speed"),
     "fHistoricalWeighingRecordsBtn": MessageLookupByLibrary.simpleMessage(
@@ -409,6 +412,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "fUpdatedAtCol": MessageLookupByLibrary.simpleMessage("Update Time"),
     "fWeightMode": MessageLookupByLibrary.simpleMessage("Weight"),
     "fWgtUnit": MessageLookupByLibrary.simpleMessage("Weight Unit"),
+    "finishBtn": MessageLookupByLibrary.simpleMessage("Finish"),
     "firmware_update": MessageLookupByLibrary.simpleMessage(
       "Update Firmware Serial",
     ),
@@ -1598,6 +1602,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tipTemporarySaveFormulaRecord": MessageLookupByLibrary.simpleMessage(
       "Temporary Storage Record",
     ),
+    "tipValidating": MessageLookupByLibrary.simpleMessage("Validating data..."),
     "titleChangePassword": MessageLookupByLibrary.simpleMessage(
       "Change password",
     ),

@@ -3,6 +3,7 @@
 import 'dart:io';
 
 import 'package:excel/excel.dart' as excel;
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/formula_from_db_data.dart';
@@ -76,135 +77,15 @@ Future<ExportResult> exportRawListToExcel(
 //配方模版导出
 Future<ExportResult> exportFmaTemplate(String filePath) async {
   try {
-    final tempExcel = excel.Excel.createExcel();
-    final sheet = tempExcel['Sheet1'];
+    File output = File(filePath); // 将文件路径转换为File对象
 
-    // 写入表头
-    sheet.appendRow([
-      excel.TextCellValue('Formula Id'),
-      excel.TextCellValue('Formula Name'),
-      excel.TextCellValue('Mode'),
-      excel.TextCellValue('Weight Unit'),
-      excel.TextCellValue('Category'),
-      excel.TextCellValue('Confidential'),
-      excel.TextCellValue('Need Container'),
-      excel.TextCellValue('Ingredient No.'),
-      excel.TextCellValue('Ingredient Id'),
-      excel.TextCellValue('Ingredient Name'),
-      excel.TextCellValue('Ingredient Weight/Percent'),
-      excel.TextCellValue('Allow Error'),
-    ]);
-
-    // 写入数据行
-
-    sheet.appendRow([
-      excel.TextCellValue('1001'),
-      excel.TextCellValue('F1001'),
-      excel.TextCellValue('weight'),
-      excel.TextCellValue('kg'),
-      excel.TextCellValue('mixed'),
-      excel.TextCellValue('yes'),
-      excel.TextCellValue('yes'),
-      excel.TextCellValue('1'),
-      excel.TextCellValue('TS-1001'),
-      excel.TextCellValue('Water'),
-      excel.TextCellValue('8.88'),
-      excel.TextCellValue('0.1'),
-    ]);
-    sheet.appendRow([
-      excel.TextCellValue('1001'),
-      excel.TextCellValue('F1001'),
-      excel.TextCellValue('weight'),
-      excel.TextCellValue('kg'),
-      excel.TextCellValue('mixed'),
-      excel.TextCellValue('yes'),
-      excel.TextCellValue('yes'),
-      excel.TextCellValue('2'),
-      excel.TextCellValue('TS-1002'),
-      excel.TextCellValue(''),
-      excel.TextCellValue('1.88'),
-      excel.TextCellValue('0.05'),
-    ]);
-    sheet.appendRow([
-      excel.TextCellValue('1001'),
-      excel.TextCellValue('F1001'),
-      excel.TextCellValue('weight'),
-      excel.TextCellValue('kg'),
-      excel.TextCellValue('mixed'),
-      excel.TextCellValue('yes'),
-      excel.TextCellValue('yes'),
-      excel.TextCellValue('3'),
-      excel.TextCellValue('TS-1003'),
-      excel.TextCellValue(''),
-      excel.TextCellValue('2.88'),
-      excel.TextCellValue('0.08'),
-    ]);
-    /////////////////
-    sheet.appendRow([
-      excel.TextCellValue('1002'),
-      excel.TextCellValue('F1002'),
-      excel.TextCellValue('percent'),
-      excel.TextCellValue(''),
-      excel.TextCellValue(''),
-      excel.TextCellValue('no'),
-      excel.TextCellValue('no'),
-      excel.TextCellValue('1'),
-      excel.TextCellValue('TS-1001'),
-      excel.TextCellValue('Water'),
-      excel.TextCellValue('30'),
-      excel.TextCellValue('2'),
-    ]);
-    sheet.appendRow([
-      excel.TextCellValue('1002'),
-      excel.TextCellValue('F1002'),
-      excel.TextCellValue('percent'),
-      excel.TextCellValue(''),
-      excel.TextCellValue(''),
-      excel.TextCellValue('no'),
-      excel.TextCellValue('no'),
-      excel.TextCellValue('2'),
-      excel.TextCellValue('TS-1002'),
-      excel.TextCellValue(''),
-      excel.TextCellValue('50'),
-      excel.TextCellValue('1.5'),
-    ]);
-    sheet.appendRow([
-      excel.TextCellValue('1002'),
-      excel.TextCellValue('F1002'),
-      excel.TextCellValue('percent'),
-      excel.TextCellValue(''),
-      excel.TextCellValue(''),
-      excel.TextCellValue('no'),
-      excel.TextCellValue('no'),
-      excel.TextCellValue('3'),
-      excel.TextCellValue('TS-1003'),
-      excel.TextCellValue(''),
-      excel.TextCellValue('20'),
-      excel.TextCellValue('0.5'),
-    ]);
-
-    sheet.appendRow([
-      excel.TextCellValue('This field is required and cannot be duplicated'),
-      excel.TextCellValue('This field is required'),
-      excel.TextCellValue('This field is required'),
-      excel.TextCellValue('This field is required when mode is weight'),
-      excel.TextCellValue('This field is not required'),
-      excel.TextCellValue('This field is required'),
-      excel.TextCellValue('This field is required  yes/no'),
-      excel.TextCellValue('This field is required'),
-      excel.TextCellValue('This field is required'),
-      excel.TextCellValue('This field is not required'),
-      excel.TextCellValue(
-          'This field is required > 0 and decimal format less than 3'),
-      excel.TextCellValue(
-          'This field is required > 0 and decimal format less than 3'),
-    ]);
-
-    final file = File(filePath);
-
-    // 将Excel数据保存到文件
-    await file.writeAsBytes(tempExcel.save()!);
-
+    // 读取预置的模板文件
+    final ByteData bytes =
+        await rootBundle.load('assets/template/formula_template.xlsx');
+    final buffer = bytes.buffer;
+    // 将模板文件保存到指定路径
+    await output.writeAsBytes(
+        buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes));
     return ExportResult(isSuccess: true);
   } catch (e) {
     String errorMessage = localizedStrings.gTipExportError;
@@ -221,40 +102,17 @@ Future<ExportResult> exportFmaTemplate(String filePath) async {
 
 Future<ExportResult> exportRawTemplate(String filePath) async {
   try {
-    final tempExcel = excel.Excel.createExcel();
-    final sheet = tempExcel['Sheet1'];
+    File output = File(filePath); // 将文件路径转换为File对象
 
-    // 写入表头
-    sheet.appendRow([
-      excel.TextCellValue('Ingredient Id'),
-      excel.TextCellValue('Ingredient Name'),
-      excel.TextCellValue('Device Name'),
-      excel.TextCellValue('Category'),
-      excel.TextCellValue('Ingredient Notes'),
-    ]);
+    // 读取预置的模板文件
+    final ByteData bytes =
+        await rootBundle.load('assets/template/ingredient_template.xlsx');
+    final buffer = bytes.buffer;
 
-    // 写入数据行
+    // 将模板文件保存到指定路径
 
-    sheet.appendRow([
-      excel.TextCellValue('TS-1001'),
-      excel.TextCellValue('Water'),
-      excel.TextCellValue('XD-101'),
-      excel.TextCellValue('Liquid'),
-      excel.TextCellValue('Slowly pour in while stirring.'),
-    ]);
-
-    sheet.appendRow([
-      excel.TextCellValue('This field is required and cannot be duplicated'),
-      excel.TextCellValue('This field is required'),
-      excel.TextCellValue('This field is not required'),
-      excel.TextCellValue('This field is not required'),
-      excel.TextCellValue('This field is not required'),
-    ]);
-
-    final file = File(filePath);
-
-    // 将Excel数据保存到文件
-    await file.writeAsBytes(tempExcel.save()!);
+    await output.writeAsBytes(
+        buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes));
 
     return ExportResult(isSuccess: true);
   } catch (e) {
