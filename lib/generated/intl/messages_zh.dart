@@ -675,7 +675,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "串口已断开连接",
     ),
     "gTipService": MessageLookupByLibrary.simpleMessage("服务"),
-    "gTipServiceOff": MessageLookupByLibrary.simpleMessage("服务未开启,请开启服务."),
+    "gTipServiceOff": MessageLookupByLibrary.simpleMessage(
+      "连接已断开,请重新打开应用或者开启服务.",
+    ),
     "gTipServiceStarted": MessageLookupByLibrary.simpleMessage("正在运行..."),
     "gTipServiceStatus": MessageLookupByLibrary.simpleMessage("服务状态:"),
     "gTipServiceStoped": MessageLookupByLibrary.simpleMessage("服务已停止"),

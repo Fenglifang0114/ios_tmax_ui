@@ -51,8 +51,9 @@ class LoginPageState extends State<LoginPage>
     }
   }
 
-  dynamic _eventbus1; // 监听事件
-  dynamic _eventbus2; // 监听事件
+  dynamic _eventbus1;
+  dynamic _eventbus2;
+  dynamic _eventbus3;
 
   @override
   void didChangeDependencies() {
@@ -170,6 +171,13 @@ class LoginPageState extends State<LoginPage>
       }
     });
 
+    _eventbus3 = eventBus.on<EventServiceOff>().listen((event) {
+      setState(() {
+        showServiceErrorDialog(context, localizedStrings.gTipServiceOff,
+            localizedStrings.gTitleConfirm);
+      });
+    });
+
     // 所有初始化完成后设置默认页面
   }
 
@@ -177,6 +185,14 @@ class LoginPageState extends State<LoginPage>
   void dispose() {
     _eventbus1.cancel();
     _eventbus2.cancel();
+    _eventbus3.cancel();
+
+    _usernameController.dispose();
+    _passwordController.dispose();
+    _rememberController.dispose();
+    _formKey.currentState?.dispose();
+    _isLoading = false;
+    isResize = false;
 
     trayManager.removeListener(this);
     windowManager.removeListener(this);

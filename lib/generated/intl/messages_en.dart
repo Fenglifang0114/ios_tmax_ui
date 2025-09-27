@@ -981,7 +981,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "gTipService": MessageLookupByLibrary.simpleMessage("Service"),
     "gTipServiceOff": MessageLookupByLibrary.simpleMessage(
-      "Service stoped,please start service.",
+      "Connection lost. Restart app/service..",
     ),
     "gTipServiceStarted": MessageLookupByLibrary.simpleMessage(
       "Service is running",

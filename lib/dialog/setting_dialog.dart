@@ -526,7 +526,7 @@ class ParameterSettingDialogState extends State<ParameterSettingDialog> {
               value: data,
               groupValue: _checkHiLow,
               onChanged: (value) {
-                debugPrint(value.toString());
+                // debugPrint(value.toString());
                 setState(() {
                   _checkHiLow = data;
                 });
@@ -915,7 +915,7 @@ class ParamSettingDialogState extends State<ParamSettingDialog> {
         value: radioId,
         groupValue: _checkSaveMode,
         onChanged: (value) {
-          debugPrint(value.toString());
+          // debugPrint(value.toString());
           setState(() {
             _checkSaveMode = radioId;
             if (radioId == 1) {
@@ -930,7 +930,7 @@ class ParamSettingDialogState extends State<ParamSettingDialog> {
         value: radioId,
         groupValue: _checkScaleMode,
         onChanged: (value) {
-          debugPrint(value.toString());
+          // debugPrint(value.toString());
           setState(() {
             _checkScaleMode = radioId;
           });
@@ -944,7 +944,7 @@ class ParamSettingDialogState extends State<ParamSettingDialog> {
             value: data,
             groupValue: _checkDateMode,
             onChanged: (value) {
-              debugPrint(value.toString());
+              // debugPrint(value.toString());
               setState(() {
                 _checkDateMode = data;
               });
@@ -961,7 +961,7 @@ class ParamSettingDialogState extends State<ParamSettingDialog> {
             value: data,
             groupValue: _checkDateSeparator,
             onChanged: (value) {
-              debugPrint(value.toString());
+              // debugPrint(value.toString());
               setState(() {
                 _checkDateSeparator = data;
               });
@@ -978,7 +978,7 @@ class ParamSettingDialogState extends State<ParamSettingDialog> {
             value: data,
             groupValue: _checkHiLow,
             onChanged: (value) {
-              debugPrint(value.toString());
+              // debugPrint(value.toString());
               setState(() {
                 _checkHiLow = data;
               });

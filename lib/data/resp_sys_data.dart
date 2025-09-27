@@ -628,7 +628,9 @@ Future<void> pasterScaleList(String jsonDataString) async {
     }
     myAllScalesList = List<Scale>.from(tempScalesList);
 
-    for (var key in manager.connections.keys) {
+    List<int> connectedScaleIds = manager.connectedScaleIds;
+
+    for (var key in connectedScaleIds) {
       final existingIndex =
           myAllScalesList.indexWhere((scale) => scale.scaleId == key);
       if (existingIndex == -1) {
@@ -638,7 +640,8 @@ Future<void> pasterScaleList(String jsonDataString) async {
     }
   } else {
     myAllScalesList.clear();
-    for (var key in manager.connections.keys) {
+    List<int> connectedScaleIds = manager.connectedScaleIds;
+    for (var key in connectedScaleIds) {
       manager.dispose(key);
     }
   }
@@ -720,6 +723,7 @@ void getNetScaleList(ScaleDataInfo scaleInfo, NetInfo netInfo) {
   newNetScale.scaleName = scaleInfo.scaleName!;
   NetScaleListMgr.addScale(myNetScaleList, newNetScale);
   String url = GetUrl.getUrl(scaleInfo.scaleId!);
+
   manager.connect(scaleInfo.scaleId!, url);
   if (myDefScaleInfo.defScaleId == scaleInfo.scaleId!) {
     DefScaleInfo.getDefScaleInfo(scaleInfo.scaleId!);

@@ -257,7 +257,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
 
     _eventbus11 = eventBus.on<EventRespGetDraftFmaWgtRecList>().listen((event) {
       if (mounted) {
-        debugPrint('getDraftFmaWgtRecList');
+        // debugPrint('getDraftFmaWgtRecList');
         String dataStr = event.obj;
         if (dataStr != '' && dataStr != 'null') {
           darfFmaInfoList = [];
@@ -2426,7 +2426,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
 
     // 监听定时器流，当有新的定时器实例时，发送下一批数据
     timerController.stream.listen((Timer timer) {
-      debugPrint('Sending batch ${currentIndex + 1}...');
+      // debugPrint('Sending batch ${currentIndex + 1}...');
       if (currentIndex < totalItems) {
         int endIndex = currentIndex + batchSize;
         endIndex = endIndex < totalItems ? endIndex : totalItems;

@@ -542,7 +542,7 @@ class TakeInPageState extends State<TakeInPage> {
       _scaleWidgetCache.remove(scaleId);
       _scaleWidgetKeys.remove(scaleId);
 
-      debugPrint('Removed scale widget cache for scaleId: $scaleId');
+      // debugPrint('Removed scale widget cache for scaleId: $scaleId');
     } else {
       mySelScaleIdList.add(scaleId);
       PublicFunctions.getWeight(scaleId);
@@ -599,9 +599,9 @@ class TakeInPageState extends State<TakeInPage> {
                     scaleId: scaleId,
                     scaleName: getScaleName(scaleId),
                   );
-                  debugPrint('Created new scale widget for scaleId: $scaleId');
+                  // debugPrint('Created new scale widget for scaleId: $scaleId');
                 } else {
-                  debugPrint('Reused scale widget for scaleId: $scaleId');
+                  // debugPrint('Reused scale widget for scaleId: $scaleId');
                 }
 
                 return _scaleWidgetCache[scaleId]!;

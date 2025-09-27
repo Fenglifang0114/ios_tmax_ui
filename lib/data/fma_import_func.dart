@@ -3,7 +3,6 @@
 import 'dart:io';
 import 'package:excel/excel.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/import_fma_data.dart';
 import 'package:t_max/data/language.dart';
@@ -89,7 +88,7 @@ Future<ImportFmaResult> importFormulasFromExcel(File file) async {
     for (int rowIdx = 1; rowIdx < sheet.maxRows; rowIdx++) {
       final row = sheet.rows[rowIdx];
       if (_isRowEmpty(row)) {
-        debugPrint('跳过空行: $rowIdx');
+        // debugPrint('跳过空行: $rowIdx');
         continue;
       }
 
@@ -307,9 +306,9 @@ Future<ImportFmaResult> importFormulasFromExcel(File file) async {
 
     // 7. 输出导入结果和性能数据
     stopwatch.stop();
-    final msg =
-        '导入完成：成功${validFormulas.length}个配方,耗时${stopwatch.elapsedMilliseconds}ms';
-    debugPrint(msg);
+    // final msg =
+    //     '导入完成：成功${validFormulas.length}个配方,耗时${stopwatch.elapsedMilliseconds}ms';
+    // debugPrint(msg);
 
     return ImportFmaResult(
         isSuccess: true,

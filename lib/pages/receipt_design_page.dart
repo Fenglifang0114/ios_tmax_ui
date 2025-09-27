@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui';
 import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
@@ -475,54 +476,63 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                             child: Scrollbar(
                               controller: scrollController,
                               // isAlwaysShown: true,
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                controller: scrollController,
-                                child: Container(
-                                  padding: const EdgeInsets.all(10),
-                                  width: 1700,
-                                  height: 1000,
-                                  decoration: BoxDecoration(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .surfaceBright,
-                                      border: Border.all(
-                                          width: 0.2,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onSurface)),
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.vertical, // 水平滚动
-                                    controller: scrollController1,
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          padding:
-                                              EdgeInsets.fromLTRB(28, 0, 28, 0),
-                                          //60mmX60
-                                          width: _getPageWidth(),
-                                          height: _getPageHeight(),
-                                          decoration: BoxDecoration(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .surfaceTint,
-                                              border: Border.all(
-                                                  width: 0.5,
+                              child: ScrollConfiguration(
+                                // 为水平滚动添加自定义行为
+                                behavior: _ScrollbarOnlyScrollBehavior(),
+
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  controller: scrollController,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(10),
+                                    width: 1700,
+                                    height: 1000,
+                                    decoration: BoxDecoration(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .surfaceBright,
+                                        border: Border.all(
+                                            width: 0.2,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface)),
+                                    child: ScrollConfiguration(
+                                      // 为水平滚动添加自定义行为
+                                      behavior: _ScrollbarOnlyScrollBehavior(),
+                                      child: SingleChildScrollView(
+                                        scrollDirection: Axis.vertical, // 水平滚动
+                                        controller: scrollController1,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              padding: EdgeInsets.fromLTRB(
+                                                  28, 0, 28, 0),
+                                              //60mmX60
+                                              width: _getPageWidth(),
+                                              height: _getPageHeight(),
+                                              decoration: BoxDecoration(
                                                   color: Theme.of(context)
                                                       .colorScheme
-                                                      .onSurface)),
-                                          child: Stack(
-                                            clipBehavior: Clip.none,
-                                            key: _parentKey,
-                                            children: [
-                                              _buildLines(), //屏蔽横线
-                                              ...floatButtonList,
-                                            ],
-                                          ),
-                                        )
-                                      ],
+                                                      .surfaceTint,
+                                                  border: Border.all(
+                                                      width: 0.5,
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .onSurface)),
+                                              child: Stack(
+                                                clipBehavior: Clip.none,
+                                                key: _parentKey,
+                                                children: [
+                                                  _buildLines(), //屏蔽横线
+                                                  ...floatButtonList,
+                                                ],
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -2771,4 +2781,36 @@ class Line {
   final Offset start;
   final Offset end;
   Line(this.start, this.end);
+}
+
+// 自定义滚动行为：只有滚动条本身可以触发滚动
+class _ScrollbarOnlyScrollBehavior extends MaterialScrollBehavior {
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+        // 空集合，禁用所有设备在内容区域的拖拽滚动
+        // 这样只有滚动条本身的拖拽才会触发滚动
+      };
+
+  @override
+  Widget buildScrollbar(
+      BuildContext context, Widget child, ScrollableDetails details) {
+    // 使用 RawScrollbar 确保滚动条本身可以交互
+    return RawScrollbar(
+      controller: details.controller,
+      thumbVisibility: true,
+      trackVisibility: true,
+      thickness: 12,
+      radius: const Radius.circular(6),
+      // 确保滚动条本身可以交互
+      interactive: true,
+      child: child,
+    );
+  }
+
+  @override
+  Widget buildOverscrollIndicator(
+      BuildContext context, Widget child, ScrollableDetails details) {
+    // 禁用过度滚动效果
+    return child;
+  }
 }

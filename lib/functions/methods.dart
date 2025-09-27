@@ -23,7 +23,7 @@ class PublicFunctions {
   }
 
   static void sendMsgChan0(String str) {
-    webchannel.sendMessage(str);
+    WebSocketManager().sendMessage(str);
   }
 
   static void addUser(String str) {

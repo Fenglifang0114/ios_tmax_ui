@@ -125,7 +125,7 @@ addUserDialog(BuildContext context) {
                                           value: 1,
                                           groupValue: _checkFemale,
                                           onChanged: (value) {
-                                            debugPrint(value.toString());
+                                            // debugPrint(value.toString());
                                             setState(() {
                                               errorText.text = "";
                                               _checkFemale = 1;
@@ -137,7 +137,7 @@ addUserDialog(BuildContext context) {
                                           value: 2,
                                           groupValue: _checkFemale,
                                           onChanged: (value) {
-                                            debugPrint(value.toString());
+                                            // debugPrint(value.toString());
                                             setState(() {
                                               errorText.text = "";
                                               _checkFemale = 2;

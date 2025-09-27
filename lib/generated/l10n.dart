@@ -3900,10 +3900,10 @@ class S {
     );
   }
 
-  /// `Service stoped,please start service.`
+  /// `Connection lost. Restart app/service..`
   String get gTipServiceOff {
     return Intl.message(
-      'Service stoped,please start service.',
+      'Connection lost. Restart app/service..',
       name: 'gTipServiceOff',
       desc: 'This is prompt for service stoped.',
       args: [],

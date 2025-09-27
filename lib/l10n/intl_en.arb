@@ -1668,7 +1668,7 @@
     "@gTipServiceStarted": {
         "description": "This is prompt for service status."
     },
-    "gTipServiceOff": "Service stoped,please start service.",
+    "gTipServiceOff": "Connection lost. Restart app/service..",
     "@gTipServiceOff": {
         "description": "This is prompt for service stoped."
     },

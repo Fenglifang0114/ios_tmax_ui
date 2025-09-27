@@ -1668,7 +1668,7 @@
     "@gTipServiceStarted": {
         "description": "This is prompt for service status."
     },
-    "gTipServiceOff": "服务未开启,请开启服务.",
+    "gTipServiceOff": "连接已断开,请重新打开应用或者开启服务.",
     "@gTipServiceOff": {
         "description": "This is prompt for service stoped."
     },
