@@ -372,36 +372,36 @@ class _DarftFmaTableState extends State<DarftFmaTable> {
 
         switch (_sortField) {
           case 'formulaId':
-            valueA = a.fmaInfo?.header?.formulaHeader?.formulaId ?? '';
-            valueB = b.fmaInfo?.header?.formulaHeader?.formulaId ?? '';
+            valueA = a.fmaInfo?.header?.formulaId ?? '';
+            valueB = b.fmaInfo?.header?.formulaId ?? '';
             break;
           case 'formulaName':
-            valueA = a.fmaInfo?.header?.formulaHeader?.formulaName ?? '';
-            valueB = b.fmaInfo?.header?.formulaHeader?.formulaName ?? '';
+            valueA = a.fmaInfo?.header?.formulaName ?? '';
+            valueB = b.fmaInfo?.header?.formulaName ?? '';
             break;
           case 'orderId':
             valueA = a.fmaRec?.header?.orderId ?? '';
             valueB = b.fmaRec?.header?.orderId ?? '';
             break;
           case 'confidential':
-            valueA = a.fmaInfo?.header?.formulaHeader?.isEncrypted ?? false;
-            valueB = b.fmaInfo?.header?.formulaHeader?.isEncrypted ?? false;
+            valueA = a.fmaInfo?.header?.isEncrypted ?? false;
+            valueB = b.fmaInfo?.header?.isEncrypted ?? false;
             break;
           case 'mode':
-            valueA = a.fmaInfo?.header?.formulaHeader?.formulaMode ?? '';
-            valueB = b.fmaInfo?.header?.formulaHeader?.formulaMode ?? '';
+            valueA = a.fmaInfo?.header?.formulaMode ?? '';
+            valueB = b.fmaInfo?.header?.formulaMode ?? '';
             break;
           case 'materialCount':
-            valueA = a.fmaInfo?.header?.formulaHeader?.materialCount ?? 0;
-            valueB = b.fmaInfo?.header?.formulaHeader?.materialCount ?? 0;
+            valueA = a.fmaInfo?.header?.materialCount ?? 0;
+            valueB = b.fmaInfo?.header?.materialCount ?? 0;
             break;
           case 'createdAt':
             valueA = a.fmaRec?.header?.createdAt ?? DateTime.now();
             valueB = b.fmaRec?.header?.createdAt ?? DateTime.now();
             break;
           case 'remark':
-            valueA = a.fmaInfo?.header?.formulaHeader?.remark ?? '';
-            valueB = b.fmaInfo?.header?.formulaHeader?.remark ?? '';
+            valueA = a.fmaInfo?.header?.remark ?? '';
+            valueB = b.fmaInfo?.header?.remark ?? '';
             break;
           default:
             valueA = 0;
@@ -509,11 +509,11 @@ class DarftFmaDataSource extends DataGridSource {
         DataGridCell<bool>(columnName: 'select', value: false),
         DataGridCell<String>(
           columnName: 'formulaId',
-          value: darftFma.fmaInfo?.header?.formulaHeader?.formulaId ?? '',
+          value: darftFma.fmaInfo?.header?.formulaId ?? '',
         ),
         DataGridCell<String>(
           columnName: 'formulaName',
-          value: darftFma.fmaInfo?.header?.formulaHeader?.formulaName ?? '',
+          value: darftFma.fmaInfo?.header?.formulaName ?? '',
         ),
         DataGridCell<String>(
           columnName: 'orderId',
@@ -521,21 +521,19 @@ class DarftFmaDataSource extends DataGridSource {
         ),
         DataGridCell<String>(
           columnName: 'confidential',
-          value: (darftFma.fmaInfo?.header?.formulaHeader?.isEncrypted ?? false)
+          value: (darftFma.fmaInfo?.header?.isEncrypted ?? false)
               ? localizedStrings.fConfidential
               : localizedStrings.fPublic,
         ),
         DataGridCell<String>(
           columnName: 'mode',
-          value: darftFma.fmaInfo?.header?.formulaHeader?.formulaMode == 'pct'
+          value: darftFma.fmaInfo?.header?.formulaMode == 'pct'
               ? localizedStrings.fPctMode
               : localizedStrings.fWeightMode,
         ),
         DataGridCell<String>(
           columnName: 'materialCount',
-          value: darftFma.fmaInfo?.header?.formulaHeader?.materialCount
-                  ?.toString() ??
-              '0',
+          value: darftFma.fmaInfo?.header?.materialCount?.toString() ?? '0',
         ),
         DataGridCell<String>(
           columnName: 'createdAt',
@@ -544,7 +542,7 @@ class DarftFmaDataSource extends DataGridSource {
         ),
         DataGridCell<String>(
           columnName: 'remark',
-          value: darftFma.fmaInfo?.header?.formulaHeader?.remark ?? '',
+          value: darftFma.fmaInfo?.header?.remark ?? '',
         ),
         DataGridCell<Widget>(columnName: 'delete', value: null),
       ]);
@@ -615,10 +613,9 @@ class DarftFmaDataSource extends DataGridSource {
         return Text(
           dataGridCell.value.toString(),
           style: textTheme.bodySmall?.copyWith(
-            color:
-                (darftFma.fmaInfo?.header?.formulaHeader?.isEncrypted ?? false)
-                    ? colorScheme.error
-                    : colorScheme.onTertiaryFixedVariant,
+            color: (darftFma.fmaInfo?.header?.isEncrypted ?? false)
+                ? colorScheme.error
+                : colorScheme.onTertiaryFixedVariant,
           ),
           overflow: TextOverflow.ellipsis,
         );

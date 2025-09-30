@@ -3575,6 +3575,10 @@
     "tipValidating": "Validating data...",
     "@tipValidating": {
         "description": "Tip for validating data"
-    }     
+    },
+    "deleteTypeUnusedConfirm": "Are you sure you want to delete all unused types?",
+    "@deleteTypeUnusedConfirm": {
+        "description": "Confirm deletion of types currently not in use"
+    }    
     
 }    

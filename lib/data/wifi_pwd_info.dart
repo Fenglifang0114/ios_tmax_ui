@@ -26,7 +26,7 @@ class WifiPwdInfoList {
         id: json["Id"],
         ssid: json["Ssid"],
         pwd: json["Pwd"],
-        createdAt: DateTime.parse(json["CreatedAt"]),
+        createdAt: DateTime.parse(json["CreatedAt"]).toLocal(),
       );
 }
 

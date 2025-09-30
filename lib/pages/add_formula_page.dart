@@ -160,8 +160,13 @@ class AddFormulaPageState extends State<AddFormulaPage> {
         }
       }
     });
+    _eventbus1 = eventBus.on<EventRespGetFormulaTypeList>().listen((event) {
+      if (mounted) {
+        setState(() {});
+      }
+    });
 
-    _eventbus5 = eventBus.on<EventRespGetRawDataList>().listen((event) {
+    _eventbus5 = eventBus.on<EventRespGetRawData>().listen((event) {
       if (mounted) {
         String dataStr = event.obj;
         if (dataStr != '' && dataStr != 'null') {
@@ -169,7 +174,7 @@ class AddFormulaPageState extends State<AddFormulaPage> {
             if (rawDataList.isNotEmpty) {
               selectedRawDataInfo = rawDataList.last;
               rawMaterialCtl.text =
-                  '${selectedRawDataInfo!.rawMaterial.materialId} ${selectedRawDataInfo!.rawMaterial.materialName}';
+                  '${selectedRawDataInfo!.materialId} ${selectedRawDataInfo!.materialName}';
               selectedIndex = -1; // 重置选中索引
               wgtCtl.text = '';
               errorCtl.text = '';
@@ -228,31 +233,6 @@ class AddFormulaPageState extends State<AddFormulaPage> {
       builder: (BuildContext context) {
         return FmaTypeMgrDialog();
       },
-    );
-  }
-
-  // 显示名称
-  showItemName(String itemName, bool showFlag) {
-    return Container(
-      height: 42,
-      alignment: Alignment.centerLeft,
-      child: RichText(
-        text: TextSpan(
-          children: [
-            !showFlag
-                ? TextSpan(
-                    text: '*', style: getTextStyle(color: colorScheme.error))
-                : TextSpan(
-                    text: '',
-                  ),
-            TextSpan(
-                text: ' $itemName',
-                style: Theme.of(context).textTheme.bodySmall!.apply(
-                    color: colorScheme.onSurface,
-                    overflow: TextOverflow.ellipsis)),
-          ],
-        ),
-      ),
     );
   }
 
@@ -457,7 +437,7 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                     ...rawDataList.map((RawDataInfo item) {
                       // 拼接 materialId 和 materialName
                       String displayText =
-                          '${item.rawMaterial.materialId} ${item.rawMaterial.materialName}';
+                          '${item.materialId} ${item.materialName}';
                       return DropdownMenuItem<String>(
                         // 使用拼接后的文本作为 value
                         value: displayText,
@@ -473,27 +453,22 @@ class AddFormulaPageState extends State<AddFormulaPage> {
               setState(() {
                 rawMaterialCtl.text = value.toString();
                 selectedRawDataInfo = rawDataList.firstWhere(
-                  (item) =>
-                      '${item.rawMaterial.materialId} ${item.rawMaterial.materialName}' ==
-                      value,
+                  (item) => '${item.materialId} ${item.materialName}' == value,
                   orElse: () {
                     return RawDataInfo(
                       // 根据 RawDataInfo 类的构造函数传入必要的参数
-                      rawMaterial: RawMaterial(
-                        materialId: '',
-                        materialName: '',
-                        categoryId: 0,
-                        ingredient: '',
-                        createdBy: '',
-                        updatedBy: '',
-                        remark: '',
-                        recId: -1,
-                        createdAt: DateTime.now(),
-                        updatedAt: DateTime.now(),
-                        remark1: '',
-                        // 其他必要的参数
-                      ),
-                      rawCategoryName: '',
+
+                      materialId: '',
+                      materialName: '',
+                      categoryId: 0,
+                      ingredient: '',
+                      createdBy: '',
+                      updatedBy: '',
+                      remark: '',
+                      recId: -1,
+                      createdAt: DateTime.now(),
+                      updatedAt: DateTime.now(),
+                      remark1: '',
                       // 其他必要的参数
                     );
                   },
@@ -535,7 +510,8 @@ class AddFormulaPageState extends State<AddFormulaPage> {
           width: width,
           height: 90,
           child: Column(children: [
-            showItemName(localizedStrings.fFmaIdLabel + ' ', false),
+            showItemNameWithStar(
+                context, localizedStrings.fFmaIdLabel + ' ', true),
             showInputBox(formulaCodeCtl, localizedStrings.fInputFormulaIdHint),
           ]),
         ),
@@ -545,7 +521,8 @@ class AddFormulaPageState extends State<AddFormulaPage> {
           width: width,
           height: 90,
           child: Column(children: [
-            showItemName(localizedStrings.fFmaModeCol + " ", false),
+            showItemNameWithStar(
+                context, localizedStrings.fFmaModeCol + " ", true),
             showModeDropDownButton([FormulaMode.wgt, FormulaMode.pct],
                 localizedStrings.fSelectFormulaModeHint, formulaModeCtl)
           ]),
@@ -562,7 +539,8 @@ class AddFormulaPageState extends State<AddFormulaPage> {
           width: width,
           height: 90,
           child: Column(children: [
-            showItemName(localizedStrings.fFmaNameLabel + " ", false),
+            showItemNameWithStar(
+                context, localizedStrings.fFmaNameLabel + " ", true),
             showInputBox(
                 formulaNameCtl, localizedStrings.fInputFormulaNameHint),
           ]),
@@ -573,7 +551,7 @@ class AddFormulaPageState extends State<AddFormulaPage> {
           width: width,
           height: 90,
           child: Column(children: [
-            showItemName(localizedStrings.fWgtUnit, false),
+            showItemNameWithStar(context, localizedStrings.fWgtUnit, true),
             formulaModeCtl.text == FormulaMode.wgt.name
                 ? showUnitDropDownButton(
                     [FormulaWgtUnit.g, FormulaWgtUnit.kg, FormulaWgtUnit.lb],
@@ -605,7 +583,8 @@ class AddFormulaPageState extends State<AddFormulaPage> {
           width: width,
           height: 90,
           child: Column(children: [
-            showItemName(localizedStrings.fFmaCategoryCol, true),
+            showItemNameWithStar(
+                context, localizedStrings.fFmaCategoryCol, false),
             Row(
               children: [
                 Expanded(
@@ -631,7 +610,7 @@ class AddFormulaPageState extends State<AddFormulaPage> {
           width: width / 3,
           height: 90,
           child: Column(children: [
-            showItemName('', true),
+            showItemNameWithStar(context, '', false),
             Row(
               children: [
                 Checkbox(
@@ -657,7 +636,7 @@ class AddFormulaPageState extends State<AddFormulaPage> {
           width: width / 3,
           height: 90,
           child: Column(children: [
-            showItemName('', true),
+            showItemNameWithStar(context, '', false),
             Row(
               children: [
                 Checkbox(
@@ -872,8 +851,7 @@ class AddFormulaPageState extends State<AddFormulaPage> {
               text: TextSpan(
                 children: [
                   showItemTitle(isSelected, localizedStrings.fFmaNameLabel),
-                  showItemContent(
-                      isSelected, item.rawDataInfo.rawMaterial.materialName),
+                  showItemContent(isSelected, item.rawDataInfo.materialName!),
                   TextSpan(text: '    '),
                   showItemTitle(
                       isSelected,
@@ -886,8 +864,7 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                   showItemContent(isSelected, item.error.toString()),
                   TextSpan(text: '    '),
                   showItemTitle(isSelected, localizedStrings.fIngredientRemark),
-                  showItemContent(
-                      isSelected, item.rawDataInfo.rawMaterial.ingredient),
+                  showItemContent(isSelected, item.rawDataInfo.ingredient!),
                 ],
               ),
             ),
@@ -906,7 +883,7 @@ class AddFormulaPageState extends State<AddFormulaPage> {
 
         selectedRawDataInfo = addFormulaRawList[index].rawDataInfo; // 更新选中的原料信息
         rawMaterialCtl.text =
-            '${selectedRawDataInfo!.rawMaterial.materialId} ${selectedRawDataInfo!.rawMaterial.materialName}';
+            '${selectedRawDataInfo!.materialId} ${selectedRawDataInfo!.materialName}';
         wgtCtl.text = addFormulaRawList[index].wgt.toString();
         errorCtl.text = addFormulaRawList[index].error.toString();
       }
@@ -1104,11 +1081,8 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                 Expanded(
                   flex: 1,
                   child: Column(children: [
-                    SizedBox(
-                      height: 42,
-                      child: showItemName(
-                          localizedStrings.fSelectRawMaterialHint, false),
-                    ),
+                    showItemNameWithStar(
+                        context, localizedStrings.fSelectRawMaterialHint, true),
                     showRawDropDownBtn(
                       localizedStrings.fSelectRawMaterialHint,
                     )
@@ -1128,8 +1102,8 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                   child: Column(children: [
                     SizedBox(
                       height: 42,
-                      child:
-                          showItemName(localizedStrings.fAllowableError, false),
+                      child: showItemNameWithStar(
+                          context, localizedStrings.fAllowableError, true),
                     ),
                     SizedBox(
                         height: 48,
@@ -1203,7 +1177,7 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                     child: SelectableText(
                       selectedRawDataInfo == null
                           ? ""
-                          : selectedRawDataInfo!.rawMaterial.ingredient,
+                          : selectedRawDataInfo!.ingredient!,
                       style: getTextStyle(),
                     ))),
 
@@ -1427,11 +1401,12 @@ class AddFormulaPageState extends State<AddFormulaPage> {
         child: Column(children: [
           SizedBox(
             height: 42,
-            child: showItemName(
+            child: showItemNameWithStar(
+                context,
                 formulaModeCtl.text == FormulaMode.wgt.name
                     ? localizedStrings.fWeightMode + ':'
                     : localizedStrings.fPctMode + ':',
-                false),
+                true),
           ),
           SizedBox(
               height: 48,
@@ -1643,7 +1618,7 @@ class AddFormulaPageState extends State<AddFormulaPage> {
     bool res = true;
     if (formulaDataList.isNotEmpty) {
       for (var item in formulaDataList) {
-        if (item.header!.formulaHeader!.formulaId == formulaCodeCtl.text) {
+        if (item.header!.formulaId == formulaCodeCtl.text) {
           showTipInfo(localizedStrings.fFormulaIdDuplicate, context);
           res = false;
           return;
@@ -1685,7 +1660,7 @@ class AddFormulaPageState extends State<AddFormulaPage> {
     for (var item in addFormulaRawList) {
       ReqFormulaDetail tempDetail = ReqFormulaDetail();
       tempDetail.formulaId = formulaCodeCtl.text;
-      tempDetail.materialId = item.rawDataInfo.rawMaterial.materialId;
+      tempDetail.materialId = item.rawDataInfo.materialId;
       tempDetail.materialWeight = item.wgt;
 
       tempDetail.materialPercentage = item.wgt;

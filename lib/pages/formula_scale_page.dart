@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/darf_fma_data_from_db.dart';
+import 'package:t_max/data/f_raw_name.dart';
 import 'package:t_max/data/fma_import_func.dart';
 import 'package:t_max/data/fma_rec_list_db_data.dart';
 import 'package:t_max/data/formula_common.dart';
@@ -116,6 +117,10 @@ class FormulationScalePageState extends State<FormulationScalePage>
   dynamic _eventbus18;
   dynamic _eventbus19;
   dynamic _eventbus20;
+  dynamic _eventbus21;
+  dynamic _eventbus22;
+  dynamic _eventbus23;
+  dynamic _eventbus24;
 
   @override
   void initState() {
@@ -129,10 +134,12 @@ class FormulationScalePageState extends State<FormulationScalePage>
         String dataStr = event.obj;
         if (dataStr != '') {
           setState(() {
+            clearRawSearch();
             rawTypeList = categoryTypeListFromJson(dataStr);
           });
         } else {
           setState(() {
+            clearRawSearch();
             rawTypeList = [];
           });
         }
@@ -143,11 +150,15 @@ class FormulationScalePageState extends State<FormulationScalePage>
         String dataStr = event.obj;
         if (dataStr != '') {
           setState(() {
+            clearFmaSearch();
             formulaTypeList = categoryTypeListFromJson(dataStr);
+            performFmaSearch(); // 调用搜索方法
           });
         } else {
           setState(() {
+            clearFmaSearch();
             formulaTypeList = [];
+            performFmaSearch(); // 调用搜索方法
           });
         }
       }
@@ -172,18 +183,34 @@ class FormulationScalePageState extends State<FormulationScalePage>
         }
       }
     });
+
     _eventbus4 = eventBus.on<EventRespAddRawData>().listen((event) {
       if (mounted) {
-        rawDataList = [];
-        searchRawList = [];
-
-        PublicFunctions.getRawList();
-        showTipInfo(localizedStrings.fSuccessMsg, context);
+        String res = event.obj;
+        if (res.startsWith('ok,')) {
+          showTipInfo(localizedStrings.fSuccessMsg, context);
+          String idStr = res.substring(3);
+          int id = int.parse(idStr);
+          PublicFunctions.getRawData(id);
+        }
       }
     });
-    _eventbus5 = eventBus.on<EventRespAddFormulaType>().listen((event) {
+    _eventbus5 = eventBus.on<EventRespDelFormula>().listen((event) {
       if (mounted) {
-        PublicFunctions.getFormulaTypeList();
+        //删除单条配方，返回配方的ID，用于删除配方和原料关系表
+        String res = event.obj;
+        //解析 "ok,52"，获取52
+        if (res.startsWith('ok,')) {
+          showTipInfo(localizedStrings.fSuccessMsg, context);
+          String idStr = res.substring(3);
+          int id = int.parse(idStr);
+          //删除配方和原料关系表中所有包含该配方ID的记录
+          formulaDataList.removeWhere((element) => element.header!.recId == id);
+          clearFmaSearch();
+          performFmaSearch();
+          selectedFormula = null;
+          showTipInfo(localizedStrings.fSuccessMsg, context);
+        }
       }
     });
 
@@ -192,9 +219,10 @@ class FormulationScalePageState extends State<FormulationScalePage>
         String dataStr = event.obj;
         if (dataStr != '' && dataStr != 'null') {
           setState(() {
+            clearFmaSearch();
             selectedFormula = null; // 重置选中的配方
-            selectedDetail.rawMaterialTypeName = null; // 重置选中的原料类型名称
             selectedDetail = Detail(); // 重置选中的原料
+            debugPrint(dataStr);
 
             List<FormulaInfoDb> tempFmaDataList =
                 formulaInfoDbFromJson(dataStr);
@@ -203,8 +231,8 @@ class FormulationScalePageState extends State<FormulationScalePage>
           });
         } else {
           setState(() {
+            clearFmaSearch();
             selectedFormula = null; // 重置选中的配方
-            selectedDetail.rawMaterialTypeName = null; // 重置选中的原料类型名称
             selectedDetail = Detail(); // 重置选中的原料
             formulaDataList = [];
             searchFmaList = [];
@@ -215,13 +243,14 @@ class FormulationScalePageState extends State<FormulationScalePage>
 
     _eventbus7 = eventBus.on<EventRespAddFormula>().listen((event) {
       if (mounted) {
-        selectedFormula = null;
-        formulaDataList = [];
-        searchFmaList = [];
-        selFormulas = [];
-
-        showTipInfo(localizedStrings.fSuccessMsg, context);
-        PublicFunctions.getFormulaList();
+        String res = event.obj;
+        if (res.startsWith('ok,')) {
+          showTipInfo(localizedStrings.fSuccessMsg, context);
+          String idStr = res.substring(3);
+          int id = int.parse(idStr);
+          PublicFunctions.getFmaData(id);
+          clearFmaSearch();
+        }
       }
     });
 
@@ -245,19 +274,19 @@ class FormulationScalePageState extends State<FormulationScalePage>
 
     _eventbus10 = eventBus.on<EventRespEditRawData>().listen((event) {
       if (mounted) {
-        showTipInfo(localizedStrings.fSuccessMsg, context);
-        rawDataList = [];
-        searchRawList = [];
-        formulaDataList = [];
-        searchFmaList = [];
-        PublicFunctions.getRawList();
-        PublicFunctions.getFormulaList();
+        String res = event.obj;
+        if (res.startsWith('ok,')) {
+          showTipInfo(localizedStrings.fSuccessMsg, context);
+          String idStr = res.substring(3);
+          int id = int.parse(idStr);
+          PublicFunctions.getRawData(id);
+        }
       }
     });
 
     _eventbus11 = eventBus.on<EventRespGetDraftFmaWgtRecList>().listen((event) {
       if (mounted) {
-        // debugPrint('getDraftFmaWgtRecList');
+        debugPrint('getDraftFmaWgtRecList');
         String dataStr = event.obj;
         if (dataStr != '' && dataStr != 'null') {
           darfFmaInfoList = [];
@@ -270,8 +299,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
             //在fmaRecFromDbList中查找对应的配方
             DarfFmaInfo tempDarfFma = DarfFmaInfo();
             for (var fmaRec in formulaDataList) {
-              if (fmaRec.header!.formulaHeader!.formulaId ==
-                  item.header!.formulaId) {
+              if (fmaRec.header!.formulaId == item.header!.formulaId) {
                 tempDarfFma.fmaRec = item;
                 tempDarfFma.fmaInfo = fmaRec;
                 break;
@@ -378,6 +406,95 @@ class FormulationScalePageState extends State<FormulationScalePage>
         PublicFunctions.getDraftRecords();
       }
     });
+    _eventbus21 = eventBus.on<EventRespDelRawData>().listen((event) {
+      if (mounted) {
+        String res = event.obj;
+        //解析 "ok,52"，获取52
+        if (res.startsWith('ok,')) {
+          showTipInfo(localizedStrings.fSuccessMsg, context);
+          String idStr = res.substring(3);
+          int id = int.parse(idStr);
+          //删除配方和原料关系表中所有包含该配方ID的记录
+          rawDataList.removeWhere((element) => element.recId == id);
+          clearRawSearch();
+          performRawSearch();
+          selectedRaw = null;
+          showTipInfo(localizedStrings.fSuccessMsg, context);
+        }
+      }
+    });
+    _eventbus22 = eventBus.on<EventRespEditFormula>().listen((event) {
+      if (mounted) {
+        String res = event.obj;
+        if (res.startsWith('ok,')) {
+          showTipInfo(localizedStrings.fSuccessMsg, context);
+          String idStr = res.substring(3);
+          int id = int.parse(idStr);
+          PublicFunctions.getFmaData(id);
+          selectedFormula = null;
+          clearFmaSearch();
+          performFmaSearch();
+        }
+      }
+    });
+    _eventbus23 = eventBus.on<EventRespGetRawData>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+        if (dataStr != '' && dataStr != 'null') {
+          setState(() {
+            _selectedRawIndex = -1; // 重置选中的原料 index
+            clearRawSearch();
+            List<RawDataInfo> temp = rawDataInfoFromJson(dataStr);
+            bool findRaw = false;
+            for (int i = 0; i < rawDataList.length; i++) {
+              if (rawDataList[i].recId == temp.first.recId) {
+                rawDataList[i] = temp.first;
+                findRaw = true;
+                break;
+              }
+            }
+            if (!findRaw) {
+              rawDataList.add(temp.first);
+            }
+
+            searchRawList = List.from(rawDataList);
+          });
+        } else {
+          setState(() {
+            _selectedRawIndex = -1; // 重置选中的原料 index
+          });
+        }
+      }
+    });
+    _eventbus24 = eventBus.on<EventRespGetFmaData>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+        if (dataStr != '' && dataStr != 'null') {
+          setState(() {
+            _selectedRawIndex = -1; // 重置选中的原料 index
+            List<FormulaInfoDb> tempFmaData = formulaInfoDbFromJson(dataStr);
+            bool findFma = false;
+            for (int i = 0; i < formulaDataList.length; i++) {
+              if (formulaDataList[i].header!.recId ==
+                  tempFmaData.first.header!.recId) {
+                formulaDataList[i] = tempFmaData.first;
+                findFma = true;
+                getDarftFmaInfo(tempFmaData.first.header!.recId!);
+                break;
+              }
+            }
+            if (!findFma) {
+              formulaDataList.add(tempFmaData.first);
+            }
+            searchFmaList = List.from(formulaDataList);
+          });
+        } else {
+          setState(() {
+            _selectedRawIndex = -1; // 重置选中的原料 index
+          });
+        }
+      }
+    });
 
     //初始化完成再做一次数据加载
 
@@ -399,6 +516,20 @@ class FormulationScalePageState extends State<FormulationScalePage>
         PublicFunctions.getDraftRecords();
       });
     });
+  }
+
+  void getDarftFmaInfo(int id) {
+    for (var item in darfFmaInfoList) {
+      if (item.fmaInfo!.header!.recId == id) {
+        darfFmaInfoList = [];
+        searchDarfFmaInfoList = [];
+        selDarftFmaList = [];
+        selectedDarfFma = null;
+
+        PublicFunctions.getDraftRecords();
+        break;
+      }
+    }
   }
 
   @override
@@ -447,6 +578,10 @@ class FormulationScalePageState extends State<FormulationScalePage>
     _eventbus18?.cancel();
     _eventbus19?.cancel();
     _eventbus20?.cancel();
+    _eventbus21?.cancel();
+    _eventbus22?.cancel();
+    _eventbus23?.cancel();
+    _eventbus24?.cancel();
   }
 
   void startTestScaleOnline() {
@@ -535,14 +670,24 @@ class FormulationScalePageState extends State<FormulationScalePage>
                                   FormulaTab(
                                     searchFmaList: searchFmaList,
                                     onFormulaSelected: (formula) {
-                                      setState(() => selectedFormula = formula);
+                                      if (formula == null) {
+                                        setState(() => selectedFormula = null);
+                                        return;
+                                      }
+
+                                      setState(() {
+                                        _selectedRawIndex = -1;
+                                        selectedDetail = Detail();
+                                        selectedFormula = formula;
+                                      });
                                     },
                                     onMultipleSelected: (selectedFormulas) {
                                       if (selectedFormulas.isEmpty) {
                                         setState(() => selFormulas = []);
                                       } else {
-                                        setState(() =>
-                                            selFormulas = selectedFormulas);
+                                        setState(() {
+                                          selFormulas = selectedFormulas;
+                                        });
                                       }
                                     },
                                     onDataChanged: _updateFmaDataSource,
@@ -557,11 +702,8 @@ class FormulationScalePageState extends State<FormulationScalePage>
                                           for (var formula in formulaDataList) {
                                             for (var detail
                                                 in formula.details!) {
-                                              if (detail
-                                                      .rawMaterialTypeName!
-                                                      .rawMaterial!
-                                                      .materialId ==
-                                                  raw.rawMaterial.materialId) {
+                                              if (detail.materialId ==
+                                                  raw.materialId) {
                                                 rawFormulaList.add(formula);
                                                 break;
                                               }
@@ -638,6 +780,13 @@ class FormulationScalePageState extends State<FormulationScalePage>
             ));
   }
 
+  void clearFmaSearch() {
+    _searchFmaIdCtl.clear();
+    searchFmaTypeCtl.clear();
+    searchFmaEncryptedCtl.clear();
+    isFmaEncryptedCtl.clear();
+  }
+
   // 搜索方法
   void performFmaSearch() {
     final String keyword = _searchFmaIdCtl.text.trim();
@@ -646,12 +795,12 @@ class FormulationScalePageState extends State<FormulationScalePage>
 
     setState(() {
       searchFmaList = formulaDataList.where((formula) {
-        final formulaId = formula.header!.formulaHeader!.formulaId!;
-        final formulaName = formula.header!.formulaHeader!.formulaName!;
+        final formulaId = formula.header!.formulaId!;
+        final formulaName = formula.header!.formulaName!;
         return formulaId.contains(keyword) || formulaName.contains(keyword);
       }).where((element) {
-        final formulaType = element.header!.formulaCategoryName!;
-        final formulaEncrypted = element.header!.formulaHeader!.isEncrypted!;
+        final formulaType = getFmaTypeName(element.header!.categoryId!);
+        final formulaEncrypted = element.header!.isEncrypted!;
 
         // 处理配方类别筛选
         bool typeMatch = formulaTypeFilter.isEmpty ||
@@ -669,6 +818,11 @@ class FormulationScalePageState extends State<FormulationScalePage>
     });
   }
 
+  void clearRawSearch() {
+    _searchRawIdCtl.clear();
+    rawTypeCtl.clear();
+  }
+
   // 搜索方法
   void performRawSearch() {
     final String keyword = _searchRawIdCtl.text.trim();
@@ -676,11 +830,12 @@ class FormulationScalePageState extends State<FormulationScalePage>
 
     setState(() {
       searchRawList = rawDataList.where((raw) {
-        final rawId = raw.rawMaterial.materialId;
-        final rawName = raw.rawMaterial.materialName;
+        final rawId = raw.materialId!;
+        final rawName = raw.materialName!;
         return rawId.contains(keyword) || rawName.contains(keyword);
       }).where((element) {
-        final rawType = element.rawCategoryName;
+        String type = getRawTypeName(element.categoryId!);
+        final rawType = type;
 
         // 处理配方类别筛选
         bool typeMatch =
@@ -725,9 +880,8 @@ class FormulationScalePageState extends State<FormulationScalePage>
 
   Widget showDarftRawWgtAndUnit(int index, Color? textColor) {
     // ... existing code ...
-    final formulaHeader = selectedDarfFma?.fmaInfo!.header?.formulaHeader;
-    final formulaDetail =
-        selectedDarfFma?.fmaInfo!.details?[index].formulaDetail;
+    final formulaHeader = selectedDarfFma?.fmaInfo!.header;
+    final formulaDetail = selectedDarfFma?.fmaInfo!.details?[index];
 
     if (formulaHeader != null && formulaDetail != null) {
       final weight = formulaDetail.materialWeight;
@@ -755,8 +909,8 @@ class FormulationScalePageState extends State<FormulationScalePage>
 
   Widget showRawWgtAndUnit(int index, Color? textColor) {
     // ... existing code ...
-    final formulaHeader = selectedFormula?.header?.formulaHeader;
-    final formulaDetail = selectedFormula?.details?[index].formulaDetail;
+    final formulaHeader = selectedFormula?.header;
+    final formulaDetail = selectedFormula?.details?[index];
 
     if (formulaHeader != null && formulaDetail != null) {
       final weight = formulaDetail.materialWeight;
@@ -794,6 +948,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
               setState(() {
                 _selectedRawIndex = index; // 更新选中的 index
                 selectedDetail = selectedDarfFma!.fmaInfo!.details![index];
+                print(selectedDetail.materialId);
               });
               // 这里添加点击事件的处理逻辑
               // print('点击了第 $index 项');
@@ -838,13 +993,10 @@ class FormulationScalePageState extends State<FormulationScalePage>
                   Expanded(
                     child: Text(
                       // 修改显示内容
-                      selectedDarfFma
-                              ?.fmaInfo!
-                              .details![index]
-                              .rawMaterialTypeName!
-                              .rawMaterial!
-                              .materialName! ??
-                          '',
+
+                      getRawName(selectedDarfFma
+                              ?.fmaInfo!.details![index].materialId! ??
+                          ""),
 
                       style: textTheme.bodySmall!.copyWith(
                         color: textColor,
@@ -853,9 +1005,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     ),
                   ),
                   // 修改显示内容
-                  selectedDarfFma
-                              ?.fmaInfo!.header!.formulaHeader!.isEncrypted ==
-                          true
+                  selectedDarfFma?.fmaInfo!.header!.isEncrypted == true
                       ? SizedBox()
                       : showDarftRawWgtAndUnit(index, textColor),
                   SizedBox(
@@ -926,9 +1076,8 @@ class FormulationScalePageState extends State<FormulationScalePage>
                   Expanded(
                     child: Text(
                       // 修改显示内容
-                      selectedFormula?.details![index].rawMaterialTypeName!
-                              .rawMaterial!.materialName! ??
-                          '',
+                      getRawName(
+                          selectedFormula?.details![index].materialId! ?? ""),
 
                       style: textTheme.bodySmall!.copyWith(
                         color: textColor,
@@ -937,7 +1086,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     ),
                   ),
                   // 修改显示内容
-                  selectedFormula?.header!.formulaHeader!.isEncrypted == true
+                  selectedFormula?.header!.isEncrypted == true
                       ? SizedBox()
                       : showRawWgtAndUnit(index, textColor),
                   SizedBox(
@@ -957,27 +1106,27 @@ class FormulationScalePageState extends State<FormulationScalePage>
       return false;
     }
     if (selScaleId == -1 &&
-        (selectedFormula.header!.formulaHeader!.isEncrypted! ||
-            selectedFormula.header!.formulaHeader!.needContainer!)) {
+        (selectedFormula.header!.isEncrypted! ||
+            selectedFormula.header!.needContainer!)) {
       showTipInfo(localizedStrings.gTipSelectDeviceFirst, context);
       return false;
     }
 
-    if (selectedFormula.header!.formulaHeader!.isEncrypted! ||
-        selectedFormula.header!.formulaHeader!.needContainer!) {
+    if (selectedFormula.header!.isEncrypted! ||
+        selectedFormula.header!.needContainer!) {
       if (!checkOnline(selScaleId)) {
         return false;
       }
     }
 
-    if (selectedFormula.header!.formulaHeader!.isEncrypted!) {
+    if (selectedFormula.header!.isEncrypted!) {
       return true;
     }
 
     List<Detail>? details = selectedFormula.details;
 
     for (var detail in details!) {
-      int scaleId = findScaleIdFromRaw(detail.formulaDetail!.materialId!);
+      int scaleId = findScaleIdFromRaw(detail.materialId!);
 
       if (scaleId == 0 && selScaleId == -1) {
         showTipInfo(localizedStrings.gTipSelectDeviceFirst, context);
@@ -1013,27 +1162,27 @@ class FormulationScalePageState extends State<FormulationScalePage>
       return false;
     }
     if (selScaleId == -1 &&
-        (darftFma.fmaInfo!.header!.formulaHeader!.isEncrypted! ||
-            darftFma.fmaInfo!.header!.formulaHeader!.needContainer!)) {
+        (darftFma.fmaInfo!.header!.isEncrypted! ||
+            darftFma.fmaInfo!.header!.needContainer!)) {
       showTipInfo(localizedStrings.gTipSelectDeviceFirst, context);
       return false;
     }
 
-    if (darftFma.fmaInfo!.header!.formulaHeader!.isEncrypted! ||
-        darftFma.fmaInfo!.header!.formulaHeader!.needContainer!) {
+    if (darftFma.fmaInfo!.header!.isEncrypted! ||
+        darftFma.fmaInfo!.header!.needContainer!) {
       if (!checkOnline(selScaleId)) {
         return false;
       }
     }
 
-    if (darftFma.fmaInfo!.header!.formulaHeader!.isEncrypted!) {
+    if (darftFma.fmaInfo!.header!.isEncrypted!) {
       return true;
     }
 
     List<Detail>? details = darftFma.fmaInfo!.details;
 
     for (var detail in details!) {
-      int scaleId = findScaleIdFromRaw(detail.formulaDetail!.materialId!);
+      int scaleId = findScaleIdFromRaw(detail.materialId!);
 
       if (scaleId == 0 && selScaleId == -1) {
         showTipInfo(localizedStrings.gTipSelectDeviceFirst, context);
@@ -1053,8 +1202,8 @@ class FormulationScalePageState extends State<FormulationScalePage>
 
   int findScaleIdFromRaw(String materialId) {
     for (var raw in rawDataList) {
-      if (raw.rawMaterial.materialId == materialId) {
-        return raw.rawMaterial.scaleId ?? 0;
+      if (raw.materialId == materialId) {
+        return raw.scaleId ?? 0;
       }
     }
 
@@ -1086,7 +1235,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 Expanded(
                   flex: 3,
                   child: Text(
-                    selectedFormula?.header?.formulaHeader?.formulaName ?? "",
+                    selectedFormula?.header?.formulaName ?? "",
                     style: textTheme.bodySmall!.copyWith(
                       color: colorScheme.onSurface,
                     ),
@@ -1107,7 +1256,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 Expanded(
                   flex: 1,
                   child: Text(
-                    selectedFormula?.header?.formulaHeader?.formulaId ?? "",
+                    selectedFormula?.header?.formulaId ?? "",
                     style: textTheme.bodySmall!.copyWith(
                       color: colorScheme.onSurface,
                     ),
@@ -1127,9 +1276,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 Expanded(
                   flex: 1,
                   child: Text(
-                    selectedFormula?.header?.formulaHeader?.materialCount
-                            .toString() ??
-                        "",
+                    selectedFormula?.header?.materialCount.toString() ?? "",
                     style: textTheme.bodySmall!.copyWith(
                       color: colorScheme.onSurface,
                     ),
@@ -1137,7 +1284,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     maxLines: 1,
                   ),
                 ),
-                selectedFormula?.header?.formulaHeader?.formulaMode != "pct"
+                selectedFormula?.header?.formulaMode != "pct"
                     ? Text(
                         "  ${localizedStrings.fTotalWeightLabel}: ",
                         style: getTextStyle(
@@ -1151,14 +1298,11 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 Expanded(
                   flex: 1,
                   child: Text(
-                    selectedFormula?.header?.formulaHeader?.formulaMode == "pct"
+                    selectedFormula?.header?.formulaMode == "pct"
                         ? ""
-                        : selectedFormula?.header?.formulaHeader?.totalWeight !=
-                                    null &&
-                                selectedFormula
-                                        ?.header?.formulaHeader?.formulaUnit !=
-                                    null
-                            ? " ${selectedFormula!.header!.formulaHeader!.totalWeight} ${selectedFormula!.header!.formulaHeader!.formulaUnit}"
+                        : selectedFormula?.header?.totalWeight != null &&
+                                selectedFormula?.header?.formulaUnit != null
+                            ? " ${selectedFormula!.header!.totalWeight} ${selectedFormula!.header!.formulaUnit}"
                             : " ",
                     style: textTheme.bodySmall!.copyWith(
                       color: colorScheme.onSurface,
@@ -1227,10 +1371,11 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     text: localizedStrings.fIngredientRemark,
                   ),
                   RawRemarkTextWidget(
-                    text: selectedDetail.rawMaterialTypeName == null
+                    text: selectedDetail == Detail()
                         ? ""
-                        : selectedDetail
-                            .rawMaterialTypeName!.rawMaterial!.ingredient!,
+                        : selectedDetail.materialId == null
+                            ? ""
+                            : getRawRemark(selectedDetail.materialId!),
                   )
                 ]),
               ),
@@ -1251,7 +1396,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     text: localizedStrings.fFmaRemark,
                   ),
                   RawRemarkTextWidget(
-                    text: selectedFormula?.header?.formulaHeader?.remark ?? "",
+                    text: selectedFormula?.header?.remark ?? "",
                   )
                 ]),
               ),
@@ -1324,9 +1469,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 Expanded(
                   flex: 3,
                   child: Text(
-                    selectedDarfFma
-                            ?.fmaInfo!.header!.formulaHeader?.formulaName ??
-                        "",
+                    selectedDarfFma?.fmaInfo!.header!.formulaName ?? "",
                     style: textTheme.bodySmall!.copyWith(
                       color: colorScheme.onSurface,
                     ),
@@ -1347,9 +1490,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 Expanded(
                   flex: 1,
                   child: Text(
-                    selectedDarfFma
-                            ?.fmaInfo!.header!.formulaHeader?.formulaId ??
-                        "",
+                    selectedDarfFma?.fmaInfo!.header!.formulaId ?? "",
                     style: textTheme.bodySmall!.copyWith(
                       color: colorScheme.onSurface,
                     ),
@@ -1369,8 +1510,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 Expanded(
                   flex: 1,
                   child: Text(
-                    selectedDarfFma
-                            ?.fmaInfo!.header!.formulaHeader?.materialCount
+                    selectedDarfFma?.fmaInfo!.header!.materialCount
                             .toString() ??
                         "",
                     style: textTheme.bodySmall!.copyWith(
@@ -1380,8 +1520,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     maxLines: 1,
                   ),
                 ),
-                selectedDarfFma?.fmaInfo!.header!.formulaHeader?.formulaMode !=
-                        "pct"
+                selectedDarfFma?.fmaInfo!.header!.formulaMode != "pct"
                     ? Text(
                         "  ${localizedStrings.fTotalWeightLabel}: ",
                         style: getTextStyle(
@@ -1395,17 +1534,14 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 Expanded(
                   flex: 1,
                   child: Text(
-                    selectedDarfFma
-                                ?.fmaInfo!.header!.formulaHeader?.formulaMode ==
-                            "pct"
+                    selectedDarfFma?.fmaInfo!.header!.formulaMode == "pct"
                         ? ""
-                        : selectedDarfFma?.fmaInfo!.header!.formulaHeader
-                                        ?.totalWeight !=
+                        : selectedDarfFma?.fmaInfo!.header!?.totalWeight !=
                                     null &&
-                                selectedDarfFma?.fmaInfo!.header!.formulaHeader
-                                        ?.formulaUnit !=
+                                selectedDarfFma
+                                        ?.fmaInfo!.header!?.formulaUnit !=
                                     null
-                            ? " ${selectedDarfFma!.fmaInfo!.header!.formulaHeader!.totalWeight} ${selectedDarfFma!.fmaInfo!.header!.formulaHeader!.formulaUnit}"
+                            ? " ${selectedDarfFma!.fmaInfo!.header!.totalWeight} ${selectedDarfFma!.fmaInfo!.header!.formulaUnit}"
                             : " ",
                     style: textTheme.bodySmall!.copyWith(
                       color: colorScheme.onSurface,
@@ -1473,10 +1609,11 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     text: localizedStrings.fIngredientRemark,
                   ),
                   RawRemarkTextWidget(
-                    text: selectedDetail.rawMaterialTypeName == null
+                    text: selectedDetail == Detail()
                         ? ""
-                        : selectedDetail
-                            .rawMaterialTypeName!.rawMaterial!.ingredient!,
+                        : selectedDetail.remark == null
+                            ? ""
+                            : selectedDetail.remark!,
                   )
                 ]),
               ),
@@ -1497,9 +1634,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     text: localizedStrings.fFmaRemark,
                   ),
                   RawRemarkTextWidget(
-                    text: selectedDarfFma
-                            ?.fmaInfo!.header!.formulaHeader?.remark ??
-                        "",
+                    text: selectedDarfFma?.fmaInfo!.header!.remark ?? "",
                   )
                 ]),
               ),
@@ -1518,9 +1653,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
     if (selectedFormula == null) {
       return;
     }
-    if (selectedFormula?.header?.formulaHeader?.isEncrypted == false) {
+    if (selectedFormula?.header?.isEncrypted == false) {
       //检查配方是重量模式还是百分比模式
-      if (selectedFormula?.header?.formulaHeader?.formulaMode == "pct") {
+      if (selectedFormula?.header?.formulaMode == "pct") {
         showDialog(
           context: context,
           builder: (context) {
@@ -1564,8 +1699,8 @@ class FormulationScalePageState extends State<FormulationScalePage>
             builder: (context) => FormulaPctWeighingPage(
               selectFormula: selectedFormula!,
               selScaleId: selScaleId,
-              totalFmaWgt: selectedFormula!.header!.formulaHeader!.totalWeight!,
-              fmaUnit: selectedFormula!.header!.formulaHeader!.formulaUnit!,
+              totalFmaWgt: selectedFormula!.header!.totalWeight!,
+              fmaUnit: selectedFormula!.header!.formulaUnit!,
               fromDarft: false,
             ),
           ),
@@ -1575,7 +1710,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
       }
     } else {
       //检查配方是重量模式还是百分比模式
-      if (selectedFormula?.header?.formulaHeader?.formulaMode == "pct") {
+      if (selectedFormula?.header?.formulaMode == "pct") {
         showDialog(
           context: context,
           builder: (context) {
@@ -1621,9 +1756,8 @@ class FormulationScalePageState extends State<FormulationScalePage>
             builder: (context) => FormulaSecretWeighingPage(
                 selectFormula: selectedFormula!,
                 selScaleId: selScaleId,
-                totalFmaWgt:
-                    selectedFormula!.header!.formulaHeader!.totalWeight!,
-                fmaUnit: selectedFormula!.header!.formulaHeader!.formulaUnit!,
+                totalFmaWgt: selectedFormula!.header!.totalWeight!,
+                fmaUnit: selectedFormula!.header!.formulaUnit!,
                 fromDraft: false,
                 selectDarftInfo: null // 这里传入null，因为不是草稿配方称重，所以不需要草稿信息
                 ),
@@ -1640,10 +1774,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
     if (selectedDarfFma == null) {
       return;
     }
-    if (selectedDarfFma?.fmaInfo?.header?.formulaHeader?.isEncrypted == false) {
+    if (selectedDarfFma?.fmaInfo?.header?.isEncrypted == false) {
       //检查配方是重量模式还是百分比模式
-      if (selectedDarfFma?.fmaInfo?.header?.formulaHeader?.formulaMode ==
-          "pct") {
+      if (selectedDarfFma?.fmaInfo?.header?.formulaMode == "pct") {
         showDialog(
           context: context,
           builder: (context) {
@@ -1686,10 +1819,8 @@ class FormulationScalePageState extends State<FormulationScalePage>
             builder: (context) => DarftFmaPctWgtPage(
               selectFormula: selectedDarfFma!.fmaInfo!,
               selScaleId: selScaleId,
-              totalFmaWgt:
-                  selectedDarfFma!.fmaInfo!.header!.formulaHeader!.totalWeight!,
-              fmaUnit:
-                  selectedDarfFma!.fmaInfo!.header!.formulaHeader!.formulaUnit!,
+              totalFmaWgt: selectedDarfFma!.fmaInfo!.header!.totalWeight!,
+              fmaUnit: selectedDarfFma!.fmaInfo!.header!.formulaUnit!,
               fromDarft: false,
               selectDarftInfo: selectedDarfFma!.fmaRec,
             ),
@@ -1698,8 +1829,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
       }
     } else {
       //检查配方是重量模式还是百分比模式
-      if (selectedDarfFma?.fmaInfo?.header?.formulaHeader?.formulaMode ==
-          "pct") {
+      if (selectedDarfFma?.fmaInfo?.header?.formulaMode == "pct") {
         showDialog(
           context: context,
           builder: (context) {
@@ -1742,10 +1872,8 @@ class FormulationScalePageState extends State<FormulationScalePage>
             builder: (context) => FormulaSecretWeighingPage(
               selectFormula: selectedDarfFma!.fmaInfo!,
               selScaleId: selScaleId,
-              totalFmaWgt:
-                  selectedDarfFma!.fmaInfo!.header!.formulaHeader!.totalWeight!,
-              fmaUnit:
-                  selectedDarfFma!.fmaInfo!.header!.formulaHeader!.formulaUnit!,
+              totalFmaWgt: selectedDarfFma!.fmaInfo!.header!.totalWeight!,
+              fmaUnit: selectedDarfFma!.fmaInfo!.header!.formulaUnit!,
               fromDraft: true,
               selectDarftInfo: selectedDarfFma!.fmaRec,
             ),
@@ -1834,9 +1962,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                                         .secondaryContainer,
                                     child: Center(
                                       child: Text(
-                                        formula.header?.formulaHeader
-                                                ?.formulaName ??
-                                            "",
+                                        formula.header?.formulaName ?? "",
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodySmall!
@@ -2146,7 +2272,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
       if (value == true) {
         List<int> recIds = [];
         for (var raw in selRawList) {
-          recIds.add(raw.rawMaterial.recId);
+          recIds.add(raw.recId!);
         }
         recIds = recIds.toSet().toList();
         PublicFunctions.deleteAllRawData(recIds);
@@ -2380,8 +2506,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
   }
 
   bool checkRawExist(String materialId) {
-    return rawDataList
-        .any((element) => element.rawMaterial.materialId == materialId);
+    return rawDataList.any((element) => element.materialId == materialId);
   }
 
   bool checkScaleExist(String scaleName) {
@@ -2426,7 +2551,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
 
     // 监听定时器流，当有新的定时器实例时，发送下一批数据
     timerController.stream.listen((Timer timer) {
-      // debugPrint('Sending batch ${currentIndex + 1}...');
+      debugPrint('Sending batch ${currentIndex + 1}...');
       if (currentIndex < totalItems) {
         int endIndex = currentIndex + batchSize;
         endIndex = endIndex < totalItems ? endIndex : totalItems;
@@ -2719,10 +2844,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
               ),
               onPressed: () {
                 setState(() {
-                  _searchFmaIdCtl.clear();
-                  searchFmaTypeCtl.clear();
-                  searchFmaEncryptedCtl.clear();
-                  isFmaEncryptedCtl.clear();
+                  clearFmaSearch();
                   performFmaSearch(); // 调用搜索方法
                 });
               },
@@ -2791,7 +2913,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
       if (value == true) {
         List<int> recIds = [];
         for (var fma in selFormulas) {
-          recIds.add(fma.header!.formulaHeader!.recId!);
+          recIds.add(fma.header!.recId!);
         }
         //去掉重复值
         recIds = recIds.toSet().toList();
@@ -2912,8 +3034,8 @@ class FormulationScalePageState extends State<FormulationScalePage>
 
     setState(() {
       searchDarfFmaInfoList = darfFmaInfoList.where((item) {
-        final formulaId = item.fmaInfo!.header!.formulaHeader!.formulaId!;
-        final formulaName = item.fmaInfo!.header!.formulaHeader!.formulaName!;
+        final formulaId = item.fmaInfo!.header!.formulaId!;
+        final formulaName = item.fmaInfo!.header!.formulaName!;
 
         return formulaId.contains(keyword) || formulaName.contains(keyword);
       }).toList();

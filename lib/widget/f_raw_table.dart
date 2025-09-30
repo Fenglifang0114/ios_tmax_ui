@@ -375,32 +375,32 @@ class _RawMaterialTableState extends State<RawMaterialTable> {
 
         switch (_sortField) {
           case 'materialId':
-            valueA = a.rawMaterial.materialId;
-            valueB = b.rawMaterial.materialId;
+            valueA = a.materialId;
+            valueB = b.materialId;
             break;
           case 'materialName':
-            valueA = a.rawMaterial.materialName;
-            valueB = b.rawMaterial.materialName;
+            valueA = a.materialName;
+            valueB = b.materialName;
             break;
           case 'scaleName':
-            valueA = _getScaleName(a.rawMaterial.scaleId);
-            valueB = _getScaleName(b.rawMaterial.scaleId);
+            valueA = _getScaleName(a.scaleId);
+            valueB = _getScaleName(b.scaleId);
             break;
           case 'category':
-            valueA = a.rawCategoryName;
-            valueB = b.rawCategoryName;
+            valueA = getRawTypeName(a.categoryId!);
+            valueB = getRawTypeName(b.categoryId!);
             break;
           case 'createdAt':
-            valueA = a.rawMaterial.createdAt;
-            valueB = b.rawMaterial.createdAt;
+            valueA = a.createdAt;
+            valueB = b.createdAt;
             break;
           case 'updatedAt':
-            valueA = a.rawMaterial.updatedAt;
-            valueB = b.rawMaterial.updatedAt;
+            valueA = a.updatedAt;
+            valueB = b.updatedAt;
             break;
           case 'ingredient':
-            valueA = a.rawMaterial.ingredient;
-            valueB = b.rawMaterial.ingredient;
+            valueA = a.ingredient;
+            valueB = b.ingredient;
             break;
           default:
             valueA = 0;
@@ -516,33 +516,31 @@ class RawMaterialDataSource extends DataGridSource {
         DataGridCell<bool>(columnName: 'select', value: false),
         DataGridCell<String>(
           columnName: 'materialId',
-          value: raw.rawMaterial.materialId,
+          value: raw.materialId,
         ),
         DataGridCell<String>(
           columnName: 'materialName',
-          value: raw.rawMaterial.materialName,
+          value: raw.materialName,
         ),
         DataGridCell<String>(
           columnName: 'scaleName',
-          value: _getScaleName(raw.rawMaterial.scaleId),
+          value: _getScaleName(raw.scaleId),
         ),
         DataGridCell<String>(
           columnName: 'category',
-          value: raw.rawCategoryName,
+          value: getRawTypeName(raw.categoryId!),
         ),
         DataGridCell<String>(
           columnName: 'createdAt',
-          value: DateFormat('yyyy-MM-dd HH:mm:ss')
-              .format(raw.rawMaterial.createdAt),
+          value: DateFormat('yyyy-MM-dd HH:mm:ss').format(raw.createdAt!),
         ),
         DataGridCell<String>(
           columnName: 'updatedAt',
-          value: DateFormat('yyyy-MM-dd HH:mm:ss')
-              .format(raw.rawMaterial.updatedAt),
+          value: DateFormat('yyyy-MM-dd HH:mm:ss').format(raw.updatedAt!),
         ),
         DataGridCell<String>(
           columnName: 'ingredient',
-          value: raw.rawMaterial.ingredient,
+          value: raw.ingredient,
         ),
         DataGridCell<Widget>(columnName: 'operation', value: null),
       ]);
@@ -569,8 +567,7 @@ class RawMaterialDataSource extends DataGridSource {
     final colorScheme = Theme.of(context).colorScheme;
 
     final bool isMultiSelected = _selectedRowIndexes.contains(rowIndex);
-    final bool isSingleSelected =
-        _selectedRaw?.rawMaterial.materialId == raw.rawMaterial.materialId;
+    final bool isSingleSelected = _selectedRaw?.materialId == raw.materialId;
 
     return DataGridRowAdapter(
       color: isSingleSelected
@@ -687,18 +684,17 @@ class RawMaterialDataSource extends DataGridSource {
       },
     ).then((value) {
       if (value == true) {
-        PublicFunctions.deleteRawData(raw.rawMaterial.recId);
+        PublicFunctions.deleteRawData(raw.recId!);
         onDataChanged();
       }
     });
   }
 
   bool _checkRawDelete(RawDataInfo raw) {
-    final targetMaterialId = raw.rawMaterial.materialId;
+    final targetMaterialId = raw.materialId;
     return formulaDataList.every((formula) {
       return formula.details?.every((detail) {
-            return detail.rawMaterialTypeName!.rawMaterial!.materialId !=
-                targetMaterialId;
+            return detail.materialId != targetMaterialId;
           }) ??
           true;
     });

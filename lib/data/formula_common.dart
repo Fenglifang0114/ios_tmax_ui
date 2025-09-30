@@ -18,6 +18,24 @@ List<FmaRecFromDb> fmaRecFromDbList = [];
 
 List<DarfFmaInfo> darfFmaInfoList = []; //暂存的配方称重记录和配方明细
 
+String getFmaTypeName(int fmaTypeId) {
+  for (var item in formulaTypeList) {
+    if (item.categoryId == fmaTypeId) {
+      return item.categoryName;
+    }
+  }
+  return '-';
+}
+
+String getRawTypeName(int rawTypeId) {
+  for (var item in rawTypeList) {
+    if (item.categoryId == rawTypeId) {
+      return item.categoryName;
+    }
+  }
+  return '-';
+}
+
 // 定义 EncryptedValue 枚举
 enum EncryptedValue {
   confidential,

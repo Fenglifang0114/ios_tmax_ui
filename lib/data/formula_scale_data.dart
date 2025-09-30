@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final rawDataInfo = rawDataInfoFromJson(jsonString);
-
 import 'dart:convert';
 
 List<RawDataInfo> rawDataInfoFromJson(String str) => List<RawDataInfo>.from(
@@ -11,62 +7,46 @@ String rawDataInfoToJson(List<RawDataInfo> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class RawDataInfo {
-  RawMaterial rawMaterial;
-  String rawCategoryName;
-
-  RawDataInfo({
-    required this.rawMaterial,
-    required this.rawCategoryName,
-  });
-
-  factory RawDataInfo.fromJson(Map<String, dynamic> json) => RawDataInfo(
-        rawMaterial: RawMaterial.fromJson(json["rawMaterial"]),
-        rawCategoryName: json["rawCategoryName"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "rawMaterial": rawMaterial.toJson(),
-        "rawCategoryName": rawCategoryName,
-      };
-}
-
-class RawMaterial {
-  int recId;
-  String materialId;
-  String materialName;
-  int categoryId;
-  String ingredient;
-  DateTime createdAt;
-  DateTime updatedAt;
-  String createdBy;
-  String updatedBy;
-  String remark;
-  String remark1;
+  int? recId;
+  String? materialId;
+  String? materialName;
+  int? categoryId;
+  String? ingredient;
+  DateTime? createdAt;
+  DateTime? updatedAt;
+  String? createdBy;
+  String? updatedBy;
+  String? remark;
+  String? remark1;
   int? scaleId;
 
-  RawMaterial({
-    required this.recId,
-    required this.materialId,
-    required this.materialName,
-    required this.categoryId,
-    required this.ingredient,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.createdBy,
-    required this.updatedBy,
-    required this.remark,
-    required this.remark1,
+  RawDataInfo({
+    this.recId,
+    this.materialId,
+    this.materialName,
+    this.categoryId,
+    this.ingredient,
+    this.createdAt,
+    this.updatedAt,
+    this.createdBy,
+    this.updatedBy,
+    this.remark,
+    this.remark1,
     this.scaleId,
   });
 
-  factory RawMaterial.fromJson(Map<String, dynamic> json) => RawMaterial(
+  factory RawDataInfo.fromJson(Map<String, dynamic> json) => RawDataInfo(
         recId: json["RecId"],
         materialId: json["MaterialID"],
         materialName: json["MaterialName"],
         categoryId: json["CategoryID"],
         ingredient: json["Ingredient"],
-        createdAt: DateTime.parse(json["CreatedAt"]).toLocal(),
-        updatedAt: DateTime.parse(json["UpdatedAt"]).toLocal(),
+        createdAt: json["CreatedAt"] == null
+            ? null
+            : DateTime.parse(json["CreatedAt"]).toLocal(),
+        updatedAt: json["UpdatedAt"] == null
+            ? null
+            : DateTime.parse(json["UpdatedAt"]).toLocal(),
         createdBy: json["CreatedBy"],
         updatedBy: json["UpdatedBy"],
         remark: json["Remark"],
@@ -80,8 +60,8 @@ class RawMaterial {
         "MaterialName": materialName,
         "CategoryID": categoryId,
         "Ingredient": ingredient,
-        "CreatedAt": createdAt.toIso8601String(),
-        "UpdatedAt": updatedAt.toIso8601String(),
+        "CreatedAt": createdAt?.toIso8601String(),
+        "UpdatedAt": updatedAt?.toIso8601String(),
         "CreatedBy": createdBy,
         "UpdatedBy": updatedBy,
         "Remark": remark,
@@ -141,8 +121,8 @@ class FormulaHeader {
       totalWeight: json['TotalWeight']?.toDouble() ?? 0.0,
       materialCount: json['MaterialCount'],
       isEncrypted: json['IsEncrypted'],
-      createdAt: DateTime.parse(json['CreatedAt']),
-      updatedAt: DateTime.parse(json['UpdatedAt']),
+      createdAt: DateTime.parse(json['CreatedAt']).toLocal(),
+      updatedAt: DateTime.parse(json['UpdatedAt']).toLocal(),
       createdBy: json['CreatedBy'] ?? '',
       updatedBy: json['UpdatedBy'] ?? '',
       remark: json['Remark'] ?? '',

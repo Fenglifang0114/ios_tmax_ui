@@ -232,6 +232,9 @@ class _ScaleConnection {
       if (kDebugMode) {
         print('$scaleId 收到消息:$data');
       }
+      if (data.contains('unknown req')) {
+        return;
+      }
       // debugPrint('ScaleId $scaleId 收到消息: $data');
       _handleMessage(data);
     }

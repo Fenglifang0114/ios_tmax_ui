@@ -25,6 +25,23 @@ class RawTypeMgrDialogState extends State<RawTypeMgrDialog> {
   dynamic _eventbus1;
   dynamic _eventbus2;
 
+  void showDeleteDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 点击对话框外部不关闭对话框
+      builder: (BuildContext context) {
+        return ShowDeleteTipDialog(
+          title: localizedStrings.fTipTitle,
+          msg: localizedStrings.deleteTypeUnusedConfirm,
+        );
+      },
+    ).then((value) {
+      if (value) {
+        PublicFunctions.delUnusedRawType();
+      }
+    });
+  }
+
   // 显示新增配方原料类型对话框
   void showAddRawTypeDialog() {
     showDialog(
@@ -67,13 +84,11 @@ class RawTypeMgrDialogState extends State<RawTypeMgrDialog> {
         String dataStr = event.obj;
         if (dataStr != '') {
           setState(() {
-            rawTypeList = categoryTypeListFromJson(dataStr);
             performSearch('');
             searchRawTypeCtl.clear();
           });
         } else {
           setState(() {
-            rawTypeList = [];
             performSearch('');
             searchRawTypeCtl.clear();
           });
@@ -204,6 +219,20 @@ class RawTypeMgrDialogState extends State<RawTypeMgrDialog> {
                         showTextButton(
                           context,
                           btnHeight,
+                          localizedStrings.gBtnClear,
+                          () {
+                            showDeleteDialog();
+                          },
+                          Theme.of(context).colorScheme.onPrimary,
+                          Theme.of(context).colorScheme.error,
+                          Theme.of(context).colorScheme.onPrimary,
+                        ),
+                        SizedBox(
+                          width: largePadding,
+                        ),
+                        showTextButton(
+                          context,
+                          btnHeight,
                           localizedStrings.gBtnAdd,
                           () {
                             showAddRawTypeDialog();
@@ -309,7 +338,9 @@ class RawTypeMgrDialogState extends State<RawTypeMgrDialog> {
                                             onPressed: () {
                                               //删除原料前，先判断是否有原料使用了这个类型
                                               for (var raw in rawDataList) {
-                                                if (raw.rawCategoryName ==
+                                                String rawType = getRawTypeName(
+                                                    raw.categoryId!);
+                                                if (rawType ==
                                                     searchRawTypeList[index]
                                                         .categoryName) {
                                                   showTipInfo(

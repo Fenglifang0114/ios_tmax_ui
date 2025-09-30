@@ -43,9 +43,14 @@ class RespSysMsgType {
   static const String respRawDataAdd = 'resp_raw_data_add';
   static const String respRawDataDelete = 'resp_raw_data_delete';
   static const String respRawDataEdit = 'resp_raw_data_edit';
+  static const String respRawData = 'resp_raw_data';
+  static const String respFmaData = 'resp_formula_data';
+
   static const String respFormulaTypeAdd = 'resp_formula_type_add';
   static const String respFmaTypeEdit = 'resp_fma_type_edit';
   static const String respFmaTypeDelete = 'resp_fma_type_delete';
+  static const String respFmaTypeUnusedDel = 'resp_fma_type_unused_del';
+  static const String respRawTypeUnusedDel = 'resp_raw_type_unused_del';
   static const String respFormulaList = 'resp_formula_list';
   static const String respFormulaAdd = 'resp_formula_add';
   static const String respFormulaUpdate = 'resp_formula_update';
@@ -112,12 +117,15 @@ class RespSysMsgType {
     RespSysMsgType.respRawTypeList: handleRawTypeList,
     RespSysMsgType.respFormulaTypeList: handleFormulaTypeList,
     RespSysMsgType.respRawList: handleRawList,
+    RespSysMsgType.respRawData: handleRawData,
     RespSysMsgType.respRawDataAdd: handleRawDataAdd,
     RespSysMsgType.respRawDataDelete: handleRawDataDelete,
     RespSysMsgType.respRawDataEdit: handleRawDataEdit,
     RespSysMsgType.respFormulaTypeAdd: handleFormulaTypeAdd,
     RespSysMsgType.respFmaTypeEdit: handleFmaTypeEdit,
     RespSysMsgType.respFmaTypeDelete: handleFmaTypeDelete,
+    RespSysMsgType.respFmaTypeUnusedDel: handleFmaTypeDelete,
+    RespSysMsgType.respRawTypeUnusedDel: handleRawTypeDelete,
     RespSysMsgType.respFormulaList: handleFormulaList,
     RespSysMsgType.respFormulaAdd: handleFormulaAdd,
     RespSysMsgType.respFormulaUpdate: handleFormulaUpdate,
@@ -156,6 +164,7 @@ class RespSysMsgType {
     RespSysMsgType.respDelManyRaw: handleRespDelManyRaw,
     RespSysMsgType.respDelManyFma: handleRespDelManyFma,
     RespSysMsgType.respDelManyDraft: handleRespDelManyDraft,
+    RespSysMsgType.respFmaData: handleFmaData,
   };
 
   static void handlePortsList(dynamic jsonData) {
@@ -330,6 +339,11 @@ class RespSysMsgType {
     eventBus.fire(EventRespGetRawDataList(dataString));
   }
 
+  static void handleRawData(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespGetRawData(dataString));
+  }
+
   static void handleRawDataAdd(dynamic jsonData) {
     String dataString = jsonData['MsgBody'];
     eventBus.fire(EventRespAddRawData(dataString));
@@ -337,11 +351,12 @@ class RespSysMsgType {
 
   static void handleRawDataDelete(dynamic jsonData) {
     String dataString = jsonData['MsgBody'];
-    eventBus.fire(EventRespAddRawData(dataString));
+    eventBus.fire(EventRespDelRawData(dataString));
   }
 
   static void handleRawDataEdit(dynamic jsonData) {
-    eventBus.fire(EventRespEditRawData(''));
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespEditRawData(dataString));
   }
 
   static void handleFormulaTypeAdd(dynamic jsonData) {
@@ -371,12 +386,17 @@ class RespSysMsgType {
 
   static void handleFormulaUpdate(dynamic jsonData) {
     String dataString = jsonData['MsgBody'];
-    eventBus.fire(EventRespAddFormula(dataString));
+    eventBus.fire(EventRespEditFormula(dataString));
+  }
+
+  static void handleFmaData(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespGetFmaData(dataString));
   }
 
   static void handleFormulaDelete(dynamic jsonData) {
     String dataString = jsonData['MsgBody'];
-    eventBus.fire(EventRespAddFormula(dataString));
+    eventBus.fire(EventRespDelFormula(dataString));
   }
 
   static void handleFormulaRecList(dynamic jsonData) {

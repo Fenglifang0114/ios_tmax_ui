@@ -137,7 +137,7 @@ class NewWgtDetail {
         scaleName: json["ScaleName"],
         createdAt: json["CreatedAt"] == null
             ? null
-            : DateTime.parse(json["CreatedAt"]),
+            : DateTime.parse(json["CreatedAt"]).toLocal(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -278,7 +278,7 @@ class Header {
         scaleName: json["ScaleName"],
         createdAt: json["CreatedAt"] == null
             ? null
-            : DateTime.parse(json["CreatedAt"]),
+            : DateTime.parse(json["CreatedAt"]).toLocal(),
       );
 
   Map<String, dynamic> toJson() => {

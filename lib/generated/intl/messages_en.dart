@@ -127,6 +127,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "deleteRawInUseConfirm": MessageLookupByLibrary.simpleMessage(
       "In-use ingredients are protected from deletion. Continue?",
     ),
+    "deleteTypeUnusedConfirm": MessageLookupByLibrary.simpleMessage(
+      "Are you sure you want to delete all unused types?",
+    ),
     "deviceNameNotExist": MessageLookupByLibrary.simpleMessage(
       "Device Name does not exist",
     ),

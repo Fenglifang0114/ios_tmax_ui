@@ -116,7 +116,7 @@ class Detail {
                 ? "Card"
                 : json["PluChangeType"],
         pluName: json["PluName"],
-        createdAt: DateTime.parse(json["CreatedAt"]),
+        createdAt: DateTime.parse(json["CreatedAt"]).toLocal(),
       );
 }
 
@@ -158,6 +158,6 @@ class Total {
                 : json["TaxKind"] == "1"
                     ? "Exclude"
                     : json["TaxKind"],
-        createdAt: DateTime.parse(json["CreatedAt"]),
+        createdAt: DateTime.parse(json["CreatedAt"]).toLocal(),
       );
 }

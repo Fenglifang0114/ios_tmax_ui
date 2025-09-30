@@ -733,7 +733,7 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
                   showTextButton(
                     context,
                     btnHeight,
-                    localizedStrings.gBtnConfirm,
+                    localizedStrings.gBtnStart,
                     !isDownloading && checkSelect()
                         ? () {
                             showDialog(
@@ -773,7 +773,7 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
                   showTextButton(
                     context,
                     btnHeight,
-                    localizedStrings.gBtnCancel,
+                    localizedStrings.gBtnExit,
                     isDownloading
                         ? null
                         : () {

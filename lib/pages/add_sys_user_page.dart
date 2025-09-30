@@ -7,6 +7,7 @@ import 'package:t_max/data/sys_user_req.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
+import 'package:t_max/widget/common_widget.dart';
 import 'package:t_max/widget/page_head.dart';
 import '../data/language.dart';
 
@@ -140,31 +141,6 @@ class AddSysUserPageState extends State<AddSysUserPage> {
     pwd2Ctl.dispose();
   }
 
-  // 显示名称
-  showItemName(String itemName, bool showFlag) {
-    return Container(
-      height: 42,
-      alignment: Alignment.centerLeft,
-      child: RichText(
-        text: TextSpan(
-          children: [
-            !showFlag
-                ? TextSpan(
-                    text: '*', style: getTextStyle(color: colorScheme.error))
-                : TextSpan(
-                    text: '',
-                  ),
-            TextSpan(
-                text: ' $itemName',
-                style: textTheme.bodySmall!.apply(
-                    color: colorScheme.onSurface,
-                    overflow: TextOverflow.ellipsis)),
-          ],
-        ),
-      ),
-    );
-  }
-
   showPwdName(String itemName, bool isRequired, int passwordIndex) {
     return SizedBox(
       height: 42,
@@ -256,10 +232,7 @@ class AddSysUserPageState extends State<AddSysUserPage> {
     if (initPageId == null && selectedRole == 'operator') {
       return false;
     }
-    if (userNameCtl.text.isEmpty ||
-        nickNameCtl.text.isEmpty ||
-        phoneCtl.text.isEmpty ||
-        emailCtl.text.isEmpty) {
+    if (userNameCtl.text.isEmpty || nickNameCtl.text.isEmpty) {
       return false;
     }
     //新增
@@ -324,9 +297,16 @@ class AddSysUserPageState extends State<AddSysUserPage> {
     tempUser.userId = widget.initUserInfo.userId;
     tempUser.userName = userNameCtl.text;
     tempUser.nickName = nickNameCtl.text;
-
     tempUser.phone = phoneCtl.text;
     tempUser.email = emailCtl.text;
+
+    if (tempUser.phone == "") {
+      tempUser.phone = " ";
+    }
+    if (tempUser.email == "") {
+      tempUser.email = " ";
+    }
+
     tempUser.isEnabled = true;
     tempUser.createdBy = widget.initUserInfo.createdBy;
     tempUser.createdTime = widget.initUserInfo.createdTime;
@@ -491,8 +471,8 @@ class AddSysUserPageState extends State<AddSysUserPage> {
                           width: inputWidth,
                           height: 90,
                           child: Column(children: [
-                            showItemName(
-                                localizedStrings.userAccount + ' ', false),
+                            showItemNameWithStar(context,
+                                localizedStrings.userAccount + ' ', true),
                             showInputBox(userNameCtl, ''),
                           ]),
                         ),
@@ -503,8 +483,8 @@ class AddSysUserPageState extends State<AddSysUserPage> {
                           width: inputWidth,
                           height: 90,
                           child: Column(children: [
-                            showItemName(
-                                localizedStrings.userUsername + ' ', false),
+                            showItemNameWithStar(context,
+                                localizedStrings.userUsername + ' ', true),
                             showInputBox(nickNameCtl, ''),
                           ]),
                         ),
@@ -515,7 +495,7 @@ class AddSysUserPageState extends State<AddSysUserPage> {
                           width: inputWidth,
                           height: 90,
                           child: Column(children: [
-                            showItemName(
+                            showItemNameWithStar(context,
                                 localizedStrings.userPhone + ' ', false),
                             showInputBox(phoneCtl, ''),
                           ]),
@@ -527,7 +507,7 @@ class AddSysUserPageState extends State<AddSysUserPage> {
                           width: inputWidth,
                           height: 90,
                           child: Column(children: [
-                            showItemName(
+                            showItemNameWithStar(context,
                                 localizedStrings.userEmail + ' ', false),
                             showInputBox(emailCtl, ''),
                           ]),

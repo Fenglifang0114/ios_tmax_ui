@@ -241,6 +241,7 @@ class ReqFormulaDetail {
 }
 
 class ReqFormulaHeader {
+  int? recId;
   int? formulaKey;
   String? formulaId;
   String? formulaName;
@@ -256,6 +257,7 @@ class ReqFormulaHeader {
   String? remark;
 
   ReqFormulaHeader({
+    this.recId,
     this.formulaKey,
     this.formulaId,
     this.formulaName,
@@ -273,6 +275,7 @@ class ReqFormulaHeader {
 
   factory ReqFormulaHeader.fromJson(Map<String, dynamic> json) =>
       ReqFormulaHeader(
+        recId: json["RecId"],
         formulaKey: json["FormulaKey"],
         formulaId: json["FormulaID"],
         formulaName: json["FormulaName"],
@@ -289,6 +292,7 @@ class ReqFormulaHeader {
       );
 
   Map<String, dynamic> toJson() => {
+        "RecId": recId,
         "FormulaKey": formulaKey,
         "FormulaID": formulaId,
         "FormulaName": formulaName,

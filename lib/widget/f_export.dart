@@ -38,24 +38,23 @@ Future<ExportResult> exportRawListToExcel(
 
       // 查找秤的名称
       for (var scale in myAllScalesList) {
-        if (scale.scaleId == raw.rawMaterial.scaleId) {
+        if (scale.scaleId == raw.scaleId) {
           scaleName = scale.scaleName;
           break;
         }
       }
+      String type = getRawTypeName(raw.categoryId!);
 
       sheet.appendRow([
-        excel.TextCellValue(rawList[rowIndex].rawMaterial.materialId),
-        excel.TextCellValue(rawList[rowIndex].rawMaterial.materialName),
+        excel.TextCellValue(rawList[rowIndex].materialId!),
+        excel.TextCellValue(rawList[rowIndex].materialName!),
         excel.TextCellValue(scaleName),
-        excel.TextCellValue(rawList[rowIndex].rawCategoryName == "-"
-            ? ""
-            : rawList[rowIndex].rawCategoryName),
-        excel.TextCellValue(rawList[rowIndex].rawMaterial.ingredient),
+        excel.TextCellValue(type == "-" ? "" : type),
+        excel.TextCellValue(rawList[rowIndex].ingredient!),
         excel.TextCellValue(DateFormat('yyyy-MM-dd HH:mm:ss')
-            .format(rawList[rowIndex].rawMaterial.createdAt)),
+            .format(rawList[rowIndex].createdAt!)),
         excel.TextCellValue(DateFormat('yyyy-MM-dd HH:mm:ss')
-            .format(rawList[rowIndex].rawMaterial.updatedAt)),
+            .format(rawList[rowIndex].updatedAt!)),
       ]);
     }
     final file = File(filePath);
@@ -126,6 +125,15 @@ Future<ExportResult> exportRawTemplate(String filePath) async {
   }
 }
 
+RawDataInfo getRawData(String rawId) {
+  for (var item in rawDataList) {
+    if (item.materialId == rawId) {
+      return item;
+    }
+  }
+  return rawDataList.first;
+}
+
 //配方导出
 
 Future<ExportResult> exportFormulaListToExcel(
@@ -156,28 +164,26 @@ Future<ExportResult> exportFormulaListToExcel(
     for (var rowIndex = 0; rowIndex < formulaList.length; rowIndex++) {
       FormulaInfoDb? fma = formulaList[rowIndex];
       List<Detail>? rawList = fma.details;
+      String fmaTypeName = getFmaTypeName(fma.header!.categoryId!);
       for (var i = 0; i < rawList!.length; i++) {
         Detail? raw = rawList[i];
+        RawDataInfo rawDataInfo = getRawData(raw.materialId!);
+        String rawTypeName = getRawTypeName(rawDataInfo.categoryId!);
         sheet.appendRow([
-          excel.TextCellValue(fma.header!.formulaHeader!.formulaId ?? ""),
-          excel.TextCellValue(fma.header!.formulaHeader!.formulaName ?? ""),
-          excel.TextCellValue(fma.header!.formulaHeader!.formulaMode == "wgt"
-              ? "weight"
-              : "percent"),
-          excel.TextCellValue(fma.header!.formulaHeader!.formulaUnit ?? ""),
-          excel.TextCellValue(fma.header!.formulaCategoryName == "-"
-              ? ""
-              : fma.header!.formulaCategoryName ?? ""),
+          excel.TextCellValue(fma.header!.formulaId ?? ""),
+          excel.TextCellValue(fma.header!.formulaName ?? ""),
           excel.TextCellValue(
-              fma.header!.formulaHeader!.isEncrypted! ? "yes" : "no"),
-          excel.TextCellValue(
-              fma.header!.formulaHeader!.needContainer! ? "yes" : "no"),
-          excel.TextCellValue(fma.header!.formulaHeader!.remark ?? ""),
-          excel.TextCellValue((raw.formulaDetail!.sequence!).toString()),
-          excel.TextCellValue(raw.formulaDetail!.materialId ?? ""),
-          excel.TextCellValue(raw.rawMaterialTypeName!.rawCategoryName ?? ""),
-          excel.TextCellValue(raw.formulaDetail!.materialWeight.toString()),
-          excel.TextCellValue(raw.formulaDetail!.allowableError.toString()),
+              fma.header!.formulaMode == "wgt" ? "weight" : "percent"),
+          excel.TextCellValue(fma.header!.formulaUnit ?? ""),
+          excel.TextCellValue(fmaTypeName == "-" ? "" : fmaTypeName),
+          excel.TextCellValue(fma.header!.isEncrypted! ? "yes" : "no"),
+          excel.TextCellValue(fma.header!.needContainer! ? "yes" : "no"),
+          excel.TextCellValue(fma.header!.remark ?? ""),
+          excel.TextCellValue((raw.sequence!).toString()),
+          excel.TextCellValue(raw.materialId ?? ""),
+          excel.TextCellValue(rawTypeName),
+          excel.TextCellValue(raw.materialWeight.toString()),
+          excel.TextCellValue(raw.allowableError.toString()),
         ]);
       }
     }

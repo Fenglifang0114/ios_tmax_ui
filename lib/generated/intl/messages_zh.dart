@@ -91,6 +91,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "deleteRawInUseConfirm": MessageLookupByLibrary.simpleMessage(
       "当前使用中的原料不会被删除，是否继续？",
     ),
+    "deleteTypeUnusedConfirm": MessageLookupByLibrary.simpleMessage(
+      "即将删除所有未使用的类型，是否继续？",
+    ),
     "deviceNameNotExist": MessageLookupByLibrary.simpleMessage(
       "Device Name 不存在",
     ),

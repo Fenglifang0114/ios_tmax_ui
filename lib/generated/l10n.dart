@@ -8670,6 +8670,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Are you sure you want to delete all unused types?`
+  String get deleteTypeUnusedConfirm {
+    return Intl.message(
+      'Are you sure you want to delete all unused types?',
+      name: 'deleteTypeUnusedConfirm',
+      desc: 'Confirm deletion of types currently not in use',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -37,30 +37,6 @@ class FormulaInfoDb {
 }
 
 class Detail {
-  FormulaDetail? formulaDetail;
-  RawMaterialTypeName? rawMaterialTypeName;
-
-  Detail({
-    this.formulaDetail,
-    this.rawMaterialTypeName,
-  });
-
-  factory Detail.fromJson(Map<String, dynamic> json) => Detail(
-        formulaDetail: json["FormulaDetail"] == null
-            ? null
-            : FormulaDetail.fromJson(json["FormulaDetail"]),
-        rawMaterialTypeName: json["RawMaterialTypeName"] == null
-            ? null
-            : RawMaterialTypeName.fromJson(json["RawMaterialTypeName"]),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "FormulaDetail": formulaDetail?.toJson(),
-        "RawMaterialTypeName": rawMaterialTypeName?.toJson(),
-      };
-}
-
-class FormulaDetail {
   int? recId;
   int? formulaRecId;
   String? materialId;
@@ -71,7 +47,7 @@ class FormulaDetail {
   String? remark;
   String? remark1;
 
-  FormulaDetail({
+  Detail({
     this.recId,
     this.formulaRecId,
     this.materialId,
@@ -83,14 +59,14 @@ class FormulaDetail {
     this.remark1,
   });
 
-  factory FormulaDetail.fromJson(Map<String, dynamic> json) => FormulaDetail(
+  factory Detail.fromJson(Map<String, dynamic> json) => Detail(
         recId: json["RecId"],
         formulaRecId: json["FormulaRecID"],
         materialId: json["MaterialID"],
-        materialWeight: (json["MaterialWeight"] as num?)?.toDouble(),
-        materialPercentage: (json["MaterialPercentage"] as num?)?.toDouble(),
+        materialWeight: json["MaterialWeight"]?.toDouble(),
+        materialPercentage: json["MaterialPercentage"]?.toDouble(),
         sequence: json["Sequence"],
-        allowableError: (json["AllowableError"] as num?)?.toDouble(),
+        allowableError: json["AllowableError"]?.toDouble(),
         remark: json["Remark"],
         remark1: json["Remark1"],
       );
@@ -108,116 +84,7 @@ class FormulaDetail {
       };
 }
 
-class RawMaterialTypeName {
-  RawMaterialDb? rawMaterial;
-  String? rawCategoryName;
-
-  RawMaterialTypeName({
-    this.rawMaterial,
-    this.rawCategoryName,
-  });
-
-  factory RawMaterialTypeName.fromJson(Map<String, dynamic> json) =>
-      RawMaterialTypeName(
-        rawMaterial: json["rawMaterial"] == null
-            ? null
-            : RawMaterialDb.fromJson(json["rawMaterial"]),
-        rawCategoryName: json["rawCategoryName"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "rawMaterial": rawMaterial?.toJson(),
-        "rawCategoryName": rawCategoryName,
-      };
-}
-
-class RawMaterialDb {
-  int? recId;
-  String? materialId;
-  String? materialName;
-  int? categoryId;
-  String? ingredient;
-  DateTime? createdAt;
-  DateTime? updatedAt;
-  String? createdBy;
-  String? updatedBy;
-  String? remark;
-  String? remark1;
-  int? scaleId;
-
-  RawMaterialDb({
-    this.recId,
-    this.materialId,
-    this.materialName,
-    this.categoryId,
-    this.ingredient,
-    this.createdAt,
-    this.updatedAt,
-    this.createdBy,
-    this.updatedBy,
-    this.remark,
-    this.remark1,
-    this.scaleId,
-  });
-
-  factory RawMaterialDb.fromJson(Map<String, dynamic> json) => RawMaterialDb(
-        recId: json["RecId"],
-        materialId: json["MaterialID"],
-        materialName: json["MaterialName"],
-        categoryId: json["CategoryID"],
-        ingredient: json["Ingredient"],
-        createdAt: json["CreatedAt"] == null
-            ? null
-            : DateTime.parse(json["CreatedAt"]).toLocal(),
-        updatedAt: json["UpdatedAt"] == null
-            ? null
-            : DateTime.parse(json["UpdatedAt"]).toLocal(),
-        createdBy: json["CreatedBy"],
-        updatedBy: json["UpdatedBy"],
-        remark: json["Remark"],
-        remark1: json["Remark1"],
-        scaleId: json["ScaleId"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "RecId": recId,
-        "MaterialID": materialId,
-        "MaterialName": materialName,
-        "CategoryID": categoryId,
-        "Ingredient": ingredient,
-        "CreatedAt": createdAt?.toIso8601String(),
-        "UpdatedAt": updatedAt?.toIso8601String(),
-        "CreatedBy": createdBy,
-        "UpdatedBy": updatedBy,
-        "Remark": remark,
-        "Remark1": remark1,
-        "ScaleId": scaleId,
-      };
-}
-
 class Header {
-  FormulaHeader? formulaHeader;
-  String? formulaCategoryName;
-
-  Header({
-    this.formulaHeader,
-    this.formulaCategoryName,
-  });
-
-  factory Header.fromJson(Map<String, dynamic> json) => Header(
-        formulaHeader: json["FormulaHeader"] == null
-            ? null
-            : FormulaHeader.fromJson(json["FormulaHeader"]),
-        formulaCategoryName: json["FormulaCategoryName"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "FormulaHeader": formulaHeader?.toJson(),
-        "FormulaCategoryName": formulaCategoryName,
-      };
-}
-
-class FormulaHeader {
   int? recId;
   int? formulaKey;
   String? formulaId;
@@ -237,8 +104,10 @@ class FormulaHeader {
   String? remark1;
   String? remark2;
   String? remark3;
+  bool? isUsed;
+  bool? isLatest;
 
-  FormulaHeader({
+  Header({
     this.recId,
     this.formulaKey,
     this.formulaId,
@@ -258,9 +127,11 @@ class FormulaHeader {
     this.remark1,
     this.remark2,
     this.remark3,
+    this.isUsed,
+    this.isLatest,
   });
 
-  factory FormulaHeader.fromJson(Map<String, dynamic> json) => FormulaHeader(
+  factory Header.fromJson(Map<String, dynamic> json) => Header(
         recId: json["RecId"],
         formulaKey: json["FormulaKey"],
         formulaId: json["FormulaID"],
@@ -268,7 +139,7 @@ class FormulaHeader {
         categoryId: json["CategoryID"],
         formulaMode: json["FormulaMode"],
         formulaUnit: json["FormulaUnit"],
-        totalWeight: (json["TotalWeight"] as num?)?.toDouble(),
+        totalWeight: json["TotalWeight"]?.toDouble(),
         materialCount: json["MaterialCount"],
         isEncrypted: json["IsEncrypted"],
         needContainer: json["NeedContainer"],
@@ -284,6 +155,8 @@ class FormulaHeader {
         remark1: json["Remark1"],
         remark2: json["Remark2"],
         remark3: json["Remark3"],
+        isUsed: json["IsUsed"],
+        isLatest: json["IsLatest"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -306,5 +179,7 @@ class FormulaHeader {
         "Remark1": remark1,
         "Remark2": remark2,
         "Remark3": remark3,
+        "IsUsed": isUsed,
+        "IsLatest": isLatest,
       };
 }

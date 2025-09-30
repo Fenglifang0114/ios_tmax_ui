@@ -14,14 +14,14 @@ bool isFormulaExist(String formulaId) {
     return false;
   }
   return formulaDataList
-      .any((formula) => formula.header!.formulaHeader!.formulaId == formulaId);
+      .any((formula) => formula.header!.formulaId == formulaId);
 }
 
 bool isRawExist(String rawId) {
   if (rawDataList.isEmpty) {
     return false;
   }
-  return rawDataList.any((raw) => raw.rawMaterial.materialId == rawId);
+  return rawDataList.any((raw) => raw.materialId == rawId);
 }
 
 // 优化后的导入函数：提前校验字段，过滤无效行
@@ -88,7 +88,7 @@ Future<ImportFmaResult> importFormulasFromExcel(File file) async {
     for (int rowIdx = 1; rowIdx < sheet.maxRows; rowIdx++) {
       final row = sheet.rows[rowIdx];
       if (_isRowEmpty(row)) {
-        // debugPrint('跳过空行: $rowIdx');
+        debugPrint('跳过空行: $rowIdx');
         continue;
       }
 
@@ -306,9 +306,9 @@ Future<ImportFmaResult> importFormulasFromExcel(File file) async {
 
     // 7. 输出导入结果和性能数据
     stopwatch.stop();
-    // final msg =
-    //     '导入完成：成功${validFormulas.length}个配方,耗时${stopwatch.elapsedMilliseconds}ms';
-    // debugPrint(msg);
+    final msg =
+        '导入完成：成功${validFormulas.length}个配方,耗时${stopwatch.elapsedMilliseconds}ms';
+    debugPrint(msg);
 
     return ImportFmaResult(
         isSuccess: true,
@@ -583,7 +583,7 @@ const List<String> rawHeaders = [
 List<String> getRawIdList() {
   List<String> idList = [];
   for (var i = 0; i < rawDataList.length; i++) {
-    var id = rawDataList[i].rawMaterial.materialId;
+    var id = rawDataList[i].materialId!;
 
     idList.add(id);
   }

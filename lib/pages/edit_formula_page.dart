@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:t_max/data/f_raw_name.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/formula_from_db_data.dart';
 
@@ -57,58 +58,48 @@ class EditFormulaPageState extends State<EditFormulaPage> {
   @override
   void initState() {
     super.initState();
-    formulaCodeCtl.text =
-        widget.editFormulaInfo.header!.formulaHeader!.formulaId!;
+    formulaCodeCtl.text = widget.editFormulaInfo.header!.formulaId!;
 
-    formulaNameCtl.text =
-        widget.editFormulaInfo.header!.formulaHeader!.formulaName!;
-    formulaModeCtl.text =
-        widget.editFormulaInfo.header!.formulaHeader!.formulaMode!;
-    formulaUnitCtl.text =
-        widget.editFormulaInfo.header!.formulaHeader!.formulaUnit!;
-    formulaTypeCtl.text = widget.editFormulaInfo.header!.formulaCategoryName!;
-    isEncrypted = widget.editFormulaInfo.header!.formulaHeader!.isEncrypted!;
-    needContainer =
-        widget.editFormulaInfo.header!.formulaHeader!.needContainer!;
-    remarkCtl.text = widget.editFormulaInfo.header!.formulaHeader!.remark!;
+    formulaNameCtl.text = widget.editFormulaInfo.header!.formulaName!;
+    formulaModeCtl.text = widget.editFormulaInfo.header!.formulaMode!;
+    formulaUnitCtl.text = widget.editFormulaInfo.header!.formulaUnit!;
+    int typeId = widget.editFormulaInfo.header!.categoryId!;
+    formulaTypeCtl.text = getFmaTypeName(typeId);
+    isEncrypted = widget.editFormulaInfo.header!.isEncrypted!;
+    needContainer = widget.editFormulaInfo.header!.needContainer!;
+    remarkCtl.text = widget.editFormulaInfo.header!.remark!;
 
     for (var rawInfo in widget.editFormulaInfo.details!) {
+      RawDataInfo thisRaw = getRawData(rawInfo.materialId!);
       addFormulaRawList.add(AddFormulaRawWgtInfo(
-          sequence: rawInfo.formulaDetail!.sequence!,
-          wgt: rawInfo.formulaDetail!.materialPercentage!,
-          error: rawInfo.formulaDetail!.allowableError!,
+          sequence: rawInfo.sequence!,
+          wgt: rawInfo.materialPercentage!.toDouble(),
+          error: rawInfo.allowableError!.toDouble(),
           isSelected: false,
           rawDataInfo: RawDataInfo(
-            rawMaterial: RawMaterial(
-                recId: rawInfo.formulaDetail!.recId!,
-                materialId: rawInfo.formulaDetail!.materialId!,
-                materialName: rawInfo.rawMaterialTypeName!.rawMaterial!
-                    .materialName!, //-------------------
-                categoryId: 0, // 假设为0，实际应用中可能需要从其他地方获取
-                ingredient:
-                    rawInfo.rawMaterialTypeName!.rawMaterial!.ingredient!,
-                createdBy: rawInfo.rawMaterialTypeName!.rawMaterial!.createdBy!,
-                updatedBy: rawInfo.rawMaterialTypeName!.rawMaterial!.updatedBy!,
-                remark: rawInfo.rawMaterialTypeName!.rawMaterial!.remark!,
-                createdAt: rawInfo.rawMaterialTypeName!.rawMaterial!.createdAt!,
-                updatedAt: rawInfo.rawMaterialTypeName!.rawMaterial!.updatedAt!,
-                remark1:
-                    rawInfo.formulaDetail!.remark1! // 假设为默认值，实际应用中可能需要从其他地方获取
+              recId: rawInfo.recId!,
+              materialId: rawInfo.materialId!,
+              materialName:
+                  getRawName(rawInfo.materialId!), //-------------------
+              categoryId: 0, // 假设为0，实际应用中可能需要从其他地方获取
+              ingredient: rawInfo.remark!,
+              createdBy: thisRaw.createdBy,
+              updatedBy: thisRaw.updatedBy,
+              remark: thisRaw.remark,
+              createdAt: thisRaw.createdAt,
+              updatedAt: thisRaw.updatedAt,
+              remark1: rawInfo.remark1! // 假设为默认值，实际应用中可能需要从其他地方获取
 
-                ),
-            rawCategoryName: rawInfo.rawMaterialTypeName!.rawCategoryName!,
-          )));
+              )));
     }
 
-    if (widget.editFormulaInfo.header!.formulaHeader!.formulaMode ==
-        FormulaMode.pct.name) {
+    if (widget.editFormulaInfo.header!.formulaMode == FormulaMode.pct.name) {
       totalWgt = 100;
     } else {
-      totalWgt =
-          widget.editFormulaInfo.header!.formulaHeader!.totalWeight!; // 总权重
+      totalWgt = widget.editFormulaInfo.header!.totalWeight!.toDouble(); // 总权重
     }
 
-    _eventbus5 = eventBus.on<EventRespGetRawDataList>().listen((event) {
+    _eventbus5 = eventBus.on<EventRespGetRawData>().listen((event) {
       if (mounted) {
         String dataStr = event.obj;
         if (dataStr != '' && dataStr != 'null') {
@@ -116,7 +107,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
             if (rawDataList.isNotEmpty) {
               selectedRawDataInfo = rawDataList.last;
               rawMaterialCtl.text =
-                  '${selectedRawDataInfo!.rawMaterial.materialId} ${selectedRawDataInfo!.rawMaterial.materialName}';
+                  '${selectedRawDataInfo!.materialId} ${selectedRawDataInfo!.materialName}';
               selectedIndex = -1; // 重置选中索引
               wgtCtl.text = '';
               errorCtl.text = '';
@@ -162,35 +153,6 @@ class EditFormulaPageState extends State<EditFormulaPage> {
       builder: (BuildContext context) {
         return FmaTypeMgrDialog();
       },
-    );
-  }
-
-  // 显示名称
-  showItemName(String itemName, bool showFlag) {
-    return Container(
-      height: 42,
-      alignment: Alignment.centerLeft,
-      child: RichText(
-        text: TextSpan(
-          children: [
-            !showFlag
-                ? TextSpan(
-                    text: '*',
-                    style: Theme.of(context).textTheme.bodySmall!.apply(
-                          color: Theme.of(context).colorScheme.error,
-                        ),
-                  )
-                : TextSpan(
-                    text: '',
-                  ),
-            TextSpan(
-                text: ' $itemName',
-                style: Theme.of(context).textTheme.bodySmall!.apply(
-                    color: Theme.of(context).colorScheme.onSurface,
-                    overflow: TextOverflow.ellipsis)),
-          ],
-        ),
-      ),
     );
   }
 
@@ -418,7 +380,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                   ...rawDataList.map((RawDataInfo item) {
                     // 拼接 materialId 和 materialName
                     String displayText =
-                        '${item.rawMaterial.materialId} ${item.rawMaterial.materialName}';
+                        '${item.materialId} ${item.materialName}';
                     return DropdownMenuItem<String>(
                       // 使用拼接后的文本作为 value
                       value: displayText,
@@ -436,27 +398,22 @@ class EditFormulaPageState extends State<EditFormulaPage> {
             setState(() {
               rawMaterialCtl.text = value.toString();
               selectedRawDataInfo = rawDataList.firstWhere(
-                (item) =>
-                    '${item.rawMaterial.materialId} ${item.rawMaterial.materialName}' ==
-                    value,
+                (item) => '${item.materialId} ${item.materialName}' == value,
                 orElse: () {
                   return RawDataInfo(
                     // 根据 RawDataInfo 类的构造函数传入必要的参数
-                    rawMaterial: RawMaterial(
-                      materialId: '',
-                      materialName: '',
-                      categoryId: 0,
-                      ingredient: '',
-                      createdBy: '',
-                      updatedBy: '',
-                      remark: '',
-                      recId: -1,
-                      createdAt: DateTime.now(),
-                      updatedAt: DateTime.now(),
-                      remark1: '',
-                      // 其他必要的参数
-                    ),
-                    rawCategoryName: '',
+
+                    materialId: '',
+                    materialName: '',
+                    categoryId: 0,
+                    ingredient: '',
+                    createdBy: '',
+                    updatedBy: '',
+                    remark: '',
+                    recId: -1,
+                    createdAt: DateTime.now(),
+                    updatedAt: DateTime.now(),
+                    remark1: '',
                     // 其他必要的参数
                   );
                 },
@@ -505,7 +462,8 @@ class EditFormulaPageState extends State<EditFormulaPage> {
           width: width,
           height: 90,
           child: Column(children: [
-            showItemName(localizedStrings.fFmaIdLabel + ' ', false),
+            showItemNameWithStar(
+                context, localizedStrings.fFmaIdLabel + ' ', true),
             showInputBox(formulaCodeCtl, localizedStrings.fInputFormulaIdHint,
                 enable: false),
           ]),
@@ -516,7 +474,8 @@ class EditFormulaPageState extends State<EditFormulaPage> {
           width: width,
           height: 90,
           child: Column(children: [
-            showItemName(localizedStrings.fFmaModeCol + " ", false),
+            showItemNameWithStar(
+                context, localizedStrings.fFmaModeCol + " ", true),
             showModeDropDownButton([FormulaMode.wgt, FormulaMode.pct],
                 localizedStrings.fSelectFormulaModeHint, formulaModeCtl)
           ]),
@@ -533,7 +492,8 @@ class EditFormulaPageState extends State<EditFormulaPage> {
           width: width,
           height: 90,
           child: Column(children: [
-            showItemName(localizedStrings.fFmaNameLabel + " ", false),
+            showItemNameWithStar(
+                context, localizedStrings.fFmaNameLabel + " ", true),
             showInputBox(
                 formulaNameCtl, localizedStrings.fInputFormulaNameHint),
           ]),
@@ -544,7 +504,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
           width: width,
           height: 90,
           child: Column(children: [
-            showItemName(localizedStrings.fWgtUnit, false),
+            showItemNameWithStar(context, localizedStrings.fWgtUnit, true),
             formulaModeCtl.text == FormulaMode.wgt.name
                 ? showUnitDropDownButton(
                     [FormulaWgtUnit.g, FormulaWgtUnit.kg, FormulaWgtUnit.lb],
@@ -581,7 +541,8 @@ class EditFormulaPageState extends State<EditFormulaPage> {
           width: width,
           height: 90,
           child: Column(children: [
-            showItemName(localizedStrings.fFmaCategoryCol, true),
+            showItemNameWithStar(
+                context, localizedStrings.fFmaCategoryCol, false),
             Row(
               children: [
                 Expanded(
@@ -609,7 +570,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
           width: width / 3,
           height: 90,
           child: Column(children: [
-            showItemName('', true),
+            showItemNameWithStar(context, '', false),
             Row(
               children: [
                 Checkbox(
@@ -637,7 +598,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
           width: width / 3,
           height: 90,
           child: Column(children: [
-            showItemName('', true),
+            showItemNameWithStar(context, '', false),
             Row(
               children: [
                 Checkbox(
@@ -747,7 +708,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                   selectedRawDataInfo =
                       addFormulaRawList[index].rawDataInfo; // 更新选中的原料信息
                   rawMaterialCtl.text =
-                      '${selectedRawDataInfo!.rawMaterial.materialId} ${selectedRawDataInfo!.rawMaterial.materialName}';
+                      '${selectedRawDataInfo!.materialId} ${selectedRawDataInfo!.materialName}';
                   wgtCtl.text = addFormulaRawList[index].wgt.toString();
                   errorCtl.text = addFormulaRawList[index].error.toString();
                 }
@@ -789,8 +750,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                                       ),
                                 ),
                                 TextSpan(
-                                  text:
-                                      item.rawDataInfo.rawMaterial.materialName,
+                                  text: item.rawDataInfo.materialName,
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodySmall!
@@ -890,7 +850,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                                       ),
                                 ),
                                 TextSpan(
-                                  text: item.rawDataInfo.rawMaterial.ingredient,
+                                  text: item.rawDataInfo.ingredient,
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodySmall!
@@ -1100,11 +1060,8 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                 Expanded(
                   flex: 1,
                   child: Column(children: [
-                    SizedBox(
-                      height: 42,
-                      child: showItemName(
-                          localizedStrings.fSelectRawMaterialHint, false),
-                    ),
+                    showItemNameWithStar(
+                        context, localizedStrings.fSelectRawMaterialHint, true),
                     showRawDropDownBtn(
                       localizedStrings.fSelectRawMaterialHint,
                     )
@@ -1116,14 +1073,12 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                 Expanded(
                     flex: 1,
                     child: Column(children: [
-                      SizedBox(
-                        height: 42,
-                        child: showItemName(
-                            formulaModeCtl.text == FormulaMode.wgt.name
-                                ? localizedStrings.fWeightMode + ':'
-                                : localizedStrings.fPctMode + ':',
-                            false),
-                      ),
+                      showItemNameWithStar(
+                          context,
+                          formulaModeCtl.text == FormulaMode.wgt.name
+                              ? localizedStrings.fWeightMode + ':'
+                              : localizedStrings.fPctMode + ':',
+                          true),
                       SizedBox(
                           height: 48,
                           child: Row(
@@ -1196,11 +1151,8 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                 Expanded(
                   flex: 1,
                   child: Column(children: [
-                    SizedBox(
-                      height: 42,
-                      child:
-                          showItemName(localizedStrings.fAllowableError, false),
-                    ),
+                    showItemNameWithStar(
+                        context, localizedStrings.fAllowableError, true),
                     SizedBox(
                         height: 48,
                         child: Row(children: [
@@ -1355,7 +1307,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                     child: SelectableText(
                       selectedRawDataInfo == null
                           ? ""
-                          : selectedRawDataInfo!.rawMaterial.ingredient,
+                          : selectedRawDataInfo!.ingredient!,
                       style: Theme.of(context).textTheme.bodySmall!.apply(
                             color: Theme.of(context).colorScheme.onSurface,
                           ),
@@ -1453,8 +1405,9 @@ class EditFormulaPageState extends State<EditFormulaPage> {
       }
     }
     ReqFormulaHeader tempHeader = ReqFormulaHeader(
+      recId: widget.editFormulaInfo.header!.recId,
       formulaId: formulaCodeCtl.text,
-      formulaKey: widget.editFormulaInfo.header!.formulaHeader!.formulaKey,
+      formulaKey: widget.editFormulaInfo.header!.formulaKey,
       formulaName: formulaNameCtl.text,
       categoryId: categoryId,
       formulaMode: formulaModeCtl.text,
@@ -1463,7 +1416,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
       materialCount: addFormulaRawList.length,
       isEncrypted: isEncrypted,
       needContainer: needContainer,
-      createdBy: widget.editFormulaInfo.header!.formulaHeader!.createdBy,
+      createdBy: widget.editFormulaInfo.header!.createdBy,
       updatedBy: mySysUser.nickName!,
       remark: remarkCtl.text,
     );
@@ -1475,7 +1428,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
     for (var item in addFormulaRawList) {
       ReqFormulaDetail tempDetail = ReqFormulaDetail();
       tempDetail.formulaId = formulaCodeCtl.text;
-      tempDetail.materialId = item.rawDataInfo.rawMaterial.materialId;
+      tempDetail.materialId = item.rawDataInfo.materialId;
       tempDetail.materialWeight = item.wgt;
 
       tempDetail.materialPercentage = item.wgt;

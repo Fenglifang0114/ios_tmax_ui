@@ -3,7 +3,7 @@ import 'package:t_max/data/formula_scale_data.dart';
 
 RawDataInfo getRawData(String rawId) {
   for (var item in rawDataList) {
-    if (item.rawMaterial.materialId == rawId) {
+    if (item.materialId == rawId) {
       return item;
     }
   }
@@ -13,8 +13,8 @@ RawDataInfo getRawData(String rawId) {
 String getRawCategoryName(String rawId) {
   int categoryId = 0;
   for (var item in rawDataList) {
-    if (item.rawMaterial.materialId == rawId) {
-      categoryId = item.rawMaterial.categoryId;
+    if (item.materialId == rawId) {
+      categoryId = item.categoryId!;
     }
   }
   for (var item in rawTypeList) {
@@ -27,8 +27,18 @@ String getRawCategoryName(String rawId) {
 
 String getRawName(String rawId) {
   for (var item in rawDataList) {
-    if (item.rawMaterial.materialId == rawId) {
-      return item.rawMaterial.materialName;
+    if (item.materialId == rawId) {
+      return item.materialName!;
+    }
+  }
+  return "";
+}
+
+String getRawRemark(String rawId) {
+  for (var item in rawDataList) {
+    if (item.materialId == rawId) {
+      print(item.ingredient);
+      return item.ingredient ?? "";
     }
   }
   return "";

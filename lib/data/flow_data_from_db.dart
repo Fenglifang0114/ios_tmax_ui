@@ -101,7 +101,7 @@ class FlowRateHeader {
         wgtUnit: json["WgtUnit"],
         createdAt: json["CreatedAt"] == null
             ? null
-            : DateTime.parse(json["CreatedAt"]),
+            : DateTime.parse(json["CreatedAt"]).toLocal(),
       );
 
   Map<String, dynamic> toJson() => {

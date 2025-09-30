@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/darf_fma_data_from_db.dart';
+import 'package:t_max/data/f_raw_name.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/formula_scale_data.dart';
 import 'package:t_max/data/formula_wgt_process_data.dart';
@@ -182,22 +183,22 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
 
 //百分比模式下初始化重量和单位
   void initTotalWgtUnit() {
-    if (myFmaInfo.header!.formulaHeader!.formulaMode == 'pct') {
+    if (myFmaInfo.header!.formulaMode == 'pct') {
       initTotalWeight = widget.totalFmaWgt;
       initTotalWeight = double.parse(initTotalWeight.toStringAsFixed(3));
-      myFmaInfo.header!.formulaHeader!.formulaUnit = widget.fmaUnit;
-      myFmaInfo.header!.formulaHeader!.totalWeight = initTotalWeight;
+      myFmaInfo.header!.formulaUnit = widget.fmaUnit;
+      myFmaInfo.header!.totalWeight = initTotalWeight;
       needTotalWgt = initTotalWeight;
     }
   }
 
   //初始化秤的列表
   void initScaleMap() {
-    if (myFmaInfo.header!.formulaHeader!.needContainer!) {
+    if (myFmaInfo.header!.needContainer!) {
       scaleMap[widget.selScaleId] = false;
     }
     for (var detail in myFmaInfo.details!) {
-      String materialId = detail.formulaDetail!.materialId!;
+      String materialId = detail.materialId!;
 
       // 如果已经处理过该原料，跳过
       if (rawScaleMap.containsKey(materialId)) {
@@ -224,8 +225,8 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
 
   int findScaleIdFromRaw(String materialId) {
     for (var raw in rawDataList) {
-      if (raw.rawMaterial.materialId == materialId) {
-        return raw.rawMaterial.scaleId ?? 0;
+      if (raw.materialId == materialId) {
+        return raw.scaleId ?? 0;
       }
     }
     return 0;
@@ -299,7 +300,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
       needTotalWgt = needTotalWgt * ratio; // 更新需要的总重量
       needTotalWgt = double.parse(needTotalWgt.toStringAsFixed(3)); // 保留三位小数
 
-      if (myFmaInfo.header!.formulaHeader!.formulaMode == 'pct') {
+      if (myFmaInfo.header!.formulaMode == 'pct') {
         for (var item in processWgtList) {
           if (item.no == 0) {
             continue;
@@ -415,7 +416,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
       needTotalWgt = needTotalWgt * ratio; // 更新需要的总重量
       needTotalWgt = double.parse(needTotalWgt.toStringAsFixed(3)); // 保留三位小数
 
-      if (widget.selectFormula.header!.formulaHeader!.formulaMode == 'pct') {
+      if (widget.selectFormula.header!.formulaMode == 'pct') {
         for (var item in processWgtList) {
           if (item.no == 0) {
             continue;
@@ -460,10 +461,10 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
     double maxValue = 0.0;
     double errorWgt = 0.0; //误差重量值
     double targetWgt = 0.0; //目标重量值
-    String fmode = myFmaInfo.header!.formulaHeader!.formulaMode ?? '';
-    needTotalWgt = myFmaInfo.header!.formulaHeader!.totalWeight!;
+    String fmode = myFmaInfo.header!.formulaMode ?? '';
+    needTotalWgt = myFmaInfo.header!.totalWeight!;
     //如果包含容器，第一个写容器  修改了此处
-    if (myFmaInfo.header!.formulaHeader!.needContainer!) {
+    if (myFmaInfo.header!.needContainer!) {
       FormulaWgtProcessData processWgt = FormulaWgtProcessData(
         no: 0,
         rawId: '-',
@@ -485,40 +486,36 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
 
     for (var detail in myFmaInfo.details!) {
       if (fmode == 'wgt') {
-        minValue = detail.formulaDetail!.materialWeight! -
-            detail.formulaDetail!.allowableError!;
-        maxValue = detail.formulaDetail!.materialWeight! +
-            detail.formulaDetail!.allowableError!;
-        errorWgt = detail.formulaDetail!.allowableError!;
-        targetWgt = detail.formulaDetail!.materialWeight!;
+        minValue = detail.materialWeight! - detail.allowableError!;
+        maxValue = detail.materialWeight! + detail.allowableError!;
+        errorWgt = detail.allowableError!;
+        targetWgt = detail.materialWeight!;
       } else {
-        minValue = initTotalWeight *
-                (detail.formulaDetail!.materialPercentage! / 100) -
-            detail.formulaDetail!.allowableError! * initTotalWeight / 100;
+        minValue = initTotalWeight * (detail.materialPercentage! / 100) -
+            detail.allowableError! * initTotalWeight / 100;
         minValue = double.parse(minValue.toStringAsFixed(3));
-        maxValue = initTotalWeight *
-                (detail.formulaDetail!.materialPercentage! / 100) +
-            detail.formulaDetail!.allowableError! * initTotalWeight / 100;
+        maxValue = initTotalWeight * (detail.materialPercentage! / 100) +
+            detail.allowableError! * initTotalWeight / 100;
         maxValue = double.parse(maxValue.toStringAsFixed(3));
-        errorWgt =
-            detail.formulaDetail!.allowableError! * initTotalWeight / 100;
+        errorWgt = detail.allowableError! * initTotalWeight / 100;
         errorWgt = double.parse(errorWgt.toStringAsFixed(3));
-        targetWgt =
-            initTotalWeight * (detail.formulaDetail!.materialPercentage! / 100);
+        targetWgt = initTotalWeight * (detail.materialPercentage! / 100);
         targetWgt = double.parse(targetWgt.toStringAsFixed(3));
       }
+
+      String rawName = getRawName(detail.materialId! ?? "");
       FormulaWgtProcessData processWgt = FormulaWgtProcessData(
-        no: detail.formulaDetail?.sequence,
-        rawId: detail.formulaDetail?.materialId,
-        rawName: detail.rawMaterialTypeName?.rawMaterial!.materialName,
+        no: detail.sequence,
+        rawId: detail.materialId,
+        rawName: rawName,
         fmaMode: fmode,
         targetWgt: targetWgt,
-        targetPct: detail.formulaDetail?.materialPercentage,
+        targetPct: detail.materialPercentage,
         currentWgt: 0.0,
         minWgt: minValue < 0 ? 0 : minValue,
         maxWgt: maxValue,
         errorWgt: errorWgt,
-        errorPct: detail.formulaDetail?.allowableError,
+        errorPct: detail.allowableError,
         currentErrorWgt: 0.0,
         currentErrorPct: 0.0,
         isOK: 'no', //no 未开始 low: 低，high: 高，ok: 正常 初始值都是 low
@@ -603,14 +600,14 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
       }
     });
 
-    _eventbus6 = eventBus.on<EventRespFormulaList>().listen((event) {
+    _eventbus6 = eventBus.on<EventRespGetFmaData>().listen((event) {
       if (mounted) {
         String dataStr = event.obj;
         if (dataStr != '' && dataStr != 'null') {
+          List<FormulaInfoDb> tempFmaData = formulaInfoDbFromJson(dataStr);
           setState(() {
-            for (var formula in formulaDataList) {
-              if (formula.header!.formulaHeader!.formulaId ==
-                  myFmaInfo.header!.formulaHeader!.formulaId) {
+            for (var formula in tempFmaData) {
+              if (formula.header!.formulaId == myFmaInfo.header!.formulaId) {
                 myFmaInfo = formula;
                 //不能清空，要记录下来当前的重量，重新去计算
                 List<FormulaWgtProcessData> oldProcessWgtList =
@@ -640,7 +637,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
             myReqWeightCountine = tempWeight;
 
             if (myReqWeightCountine.msgBody!.weightUnit !=
-                    myFmaInfo.header!.formulaHeader!.formulaUnit &&
+                    myFmaInfo.header!.formulaUnit &&
                 isShowTipDialog == false) {
               isShowTipDialog = true;
               showTipDialog();
@@ -718,7 +715,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
         return ShowUnitTipDialog(
           title: localizedStrings.fTipTitle,
           msg:
-              '${localizedStrings.fWgtUnit} ${myFmaInfo.header!.formulaHeader!.formulaUnit!}, ${localizedStrings.fSwitchUnitHint}',
+              '${localizedStrings.fWgtUnit} ${myFmaInfo.header!.formulaUnit!}, ${localizedStrings.fSwitchUnitHint}',
         );
       },
     ).then((value) {
@@ -791,15 +788,14 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
     RecHeader recHeader = RecHeader(
       recordId: recRecNumber, //配方订单编号
       recHeaderOperator: mySysUser.nickName!, //操作员
-      formulaId: myFmaInfo.header!.formulaHeader!.formulaId, //配方ID
-      formulaTypeName: myFmaInfo.header!.formulaHeader!.formulaName, //配方名称
-      totalWeight: myFmaInfo.header!.formulaHeader!.totalWeight!, //总重量
+      formulaId: myFmaInfo.header!.formulaId, //配方ID
+      formulaTypeName: myFmaInfo.header!.formulaName, //配方名称
+      totalWeight: myFmaInfo.header!.totalWeight!, //总重量
       actualFmaTotalWgt: needTotalWgt, //实际配方总重量包括修正的重量
       actualTotalWeight: actualTotalRawWgt, //实际原料总重量
-      totalWeightUnit: myFmaInfo.header!.formulaHeader!.formulaUnit, //总重量单位
+      totalWeightUnit: myFmaInfo.header!.formulaUnit, //总重量单位
 
-      totalMaterialWeightUnit:
-          myFmaInfo.header!.formulaHeader!.formulaUnit, //总原料重量单位
+      totalMaterialWeightUnit: myFmaInfo.header!.formulaUnit, //总原料重量单位
       isQualified: isAllOK ? 'yes' : 'no', //是否合格
       scaleId: widget.selScaleId, //秤ID
       scaleName: myScale.scaleName, //秤名称
@@ -901,7 +897,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
       recId: 0,
       orderId: recRecNumber, //配方订单编号
       createdBy: mySysUser.nickName!, //操作员
-      formulaId: myFmaInfo.header!.formulaHeader!.formulaId, //配方ID
+      formulaId: myFmaInfo.header!.formulaId, //配方ID
 
       status: 0,
       remark: '',
@@ -1190,8 +1186,8 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
   }
 
   Widget showRawWgtAndUnit(int index, Color? textColor) {
-    final formulaHeader = myFmaInfo.header?.formulaHeader;
-    final formulaDetail = myFmaInfo.details?[index].formulaDetail;
+    final formulaHeader = myFmaInfo.header;
+    final formulaDetail = myFmaInfo.details?[index];
 
     if (formulaHeader != null && formulaDetail != null) {
       final weight = formulaDetail.materialWeight;
@@ -1221,10 +1217,10 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
     if (data == null || data is! RawDataInfo) {
       return false;
     }
-    final targetMaterialId = data.rawMaterial.materialId;
+    final targetMaterialId = data.materialId;
     return formulaDataList.every((formula) {
       return formula.details?.every((detail) {
-            return detail.formulaDetail?.materialId != targetMaterialId;
+            return detail.materialId != targetMaterialId;
           }) ??
           true;
     });
@@ -1239,7 +1235,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
           double maxWidth = constraints.maxWidth;
           // 计算表格的实际宽度，减去左侧和右侧的边距
           int columnCount = 7; // 列数
-          if (myFmaInfo.header!.formulaHeader!.formulaMode == "pct") {
+          if (myFmaInfo.header!.formulaMode == "pct") {
             columnCount = 8;
           }
           double tableWidth = maxWidth - 45 - 80;
@@ -1361,7 +1357,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                     return showTableTitle(title.title);
                   },
                 ),
-                if (myFmaInfo.header!.formulaHeader!.formulaMode == "pct")
+                if (myFmaInfo.header!.formulaMode == "pct")
                   StickyTableColumn(
                     localizedStrings.fPctMode,
                     columnWidth: FixedColumnWidth(columnWidth),
@@ -1544,7 +1540,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                 //         //   context,
                 //         // ).showSnackBar(SnackBar(
                 //         //     content: Text(
-                //         //         "删除${(data as FormulaInfoDb)..header!.formulaHeader!.formulaName!}成功")));
+                //         //         "删除${(data as FormulaInfoDb).header!.formulaName!}成功")));
                 //       },
                 //       // color: Colors.red,
                 //       minWidth: 0,
@@ -1587,12 +1583,10 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
 
   showFCode() {
     String id = "";
-    if (myFmaInfo.header == null ||
-        myFmaInfo.header!.formulaHeader == null ||
-        myFmaInfo.header!.formulaHeader!.formulaId == null) {
+    if (myFmaInfo.header == null || myFmaInfo.header!.formulaId == null) {
       id = "";
     } else {
-      id = myFmaInfo.header!.formulaHeader!.formulaId!;
+      id = myFmaInfo.header!.formulaId!;
     }
     return Expanded(
       child: Text(
@@ -1606,12 +1600,10 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
 
   showFName() {
     String name = "";
-    if (myFmaInfo.header == null ||
-        myFmaInfo.header!.formulaHeader == null ||
-        myFmaInfo.header!.formulaHeader!.formulaName == null) {
+    if (myFmaInfo.header == null || myFmaInfo.header!.formulaName == null) {
       name = "";
     } else {
-      name = myFmaInfo.header!.formulaHeader!.formulaName!;
+      name = myFmaInfo.header!.formulaName!;
     }
     return Expanded(
       child: Text(
@@ -1651,9 +1643,9 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
 
   showTotalWgtAndUnit() {
     final header = myFmaInfo.header;
-    final formulaHeader = header?.formulaHeader;
-    final totalWeight = formulaHeader?.totalWeight;
-    final formulaUnit = formulaHeader?.formulaUnit;
+
+    final totalWeight = header?.totalWeight;
+    final formulaUnit = header?.formulaUnit;
 
     final displayText = totalWeight != null && formulaUnit != null
         ? '$totalWeight  $formulaUnit'
@@ -1747,11 +1739,9 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
           child: Container(
             alignment: Alignment.topLeft,
             child: SelectableText(
-              myFmaInfo.header == null ||
-                      myFmaInfo.header!.formulaHeader == null ||
-                      myFmaInfo.header!.formulaHeader!.remark == null
+              myFmaInfo.header == null || myFmaInfo.header!.remark == null
                   ? ""
-                  : myFmaInfo.header!.formulaHeader!.remark!,
+                  : myFmaInfo.header!.remark!,
               style: textTheme.bodySmall!.copyWith(
                 fontSize: 12,
                 color: colorScheme.onSurfaceVariant,
@@ -2580,12 +2570,10 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
   //重新计算需要的重量
   recalculateWgtList(double lastNeedTotalWgt) {
     //根据模式计算需要的重量
-    if (myFmaInfo.header == null ||
-        myFmaInfo.header!.formulaHeader == null ||
-        myFmaInfo.header!.formulaHeader!.formulaMode == null) {
+    if (myFmaInfo.header == null || myFmaInfo.header!.formulaMode == null) {
       return;
     }
-    String fmaMode = myFmaInfo.header!.formulaHeader!.formulaMode!;
+    String fmaMode = myFmaInfo.header!.formulaMode!;
 
     if (fmaMode == 'wgt') {
       //按重量
@@ -2640,9 +2628,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
       selectedProcessWgt = nextItem; // 更新选中的原料重量项
       _switchScaleByRawId(selectedProcessWgt.rawId!);
       //如果有容器
-      if (myFmaInfo.header != null &&
-          myFmaInfo.header!.formulaHeader != null &&
-          myFmaInfo.header!.formulaHeader!.needContainer!) {
+      if (myFmaInfo.header != null && myFmaInfo.header!.needContainer!) {
         clickedRow = selectedProcessWgt.no!; // 更新点击的行索引
       } else {
         clickedRow = selectedProcessWgt.no! - 1; // 更新点击的行索引
@@ -2681,9 +2667,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
       selectedProcessWgt = processWgtList[clickedRow]; // 更新选中的原料重量项
       _switchScaleByRawId(selectedProcessWgt.rawId!);
       //如果有容器
-      if (myFmaInfo.header != null &&
-          myFmaInfo.header!.formulaHeader != null &&
-          myFmaInfo.header!.formulaHeader!.needContainer!) {
+      if (myFmaInfo.header != null && myFmaInfo.header!.needContainer!) {
         clickedRow = selectedProcessWgt.no!; // 更新点击的行索引
       } else {
         clickedRow = selectedProcessWgt.no! - 1; // 更新点击的行索引
@@ -2698,8 +2682,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
       try {
         //先根据当前的重量计算出需要的总重量
         if (myFmaInfo.header != null &&
-            myFmaInfo.header!.formulaHeader != null &&
-            myFmaInfo.header!.formulaHeader!.totalWeight != null &&
+            myFmaInfo.header!.totalWeight != null &&
             selectedProcessWgt.targetWgt != null &&
             selectedProcessWgt.targetWgt! != 0) {
           double lastNeedTotalWgt = needTotalWgt;
@@ -2751,7 +2734,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
         targetItem.currentErrorWgt =
             double.parse(targetItem.currentErrorWgt!.toStringAsFixed(3));
         //百分比模式算出百分比
-        if (myFmaInfo.header!.formulaHeader!.formulaMode! == 'pct') {
+        if (myFmaInfo.header!.formulaMode! == 'pct') {
           //计算误差的百分比
           if (needTotalWgt > 0) {
             targetItem.currentErrorPct =

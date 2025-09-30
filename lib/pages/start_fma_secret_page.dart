@@ -3,6 +3,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:t_max/data/darf_fma_data_from_db.dart';
+import 'package:t_max/data/f_raw_name.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/formula_scale_data.dart';
 import 'package:t_max/data/formula_wgt_process_data.dart';
@@ -76,10 +77,10 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
 
   dynamic _eventbus1;
   dynamic _eventbus2;
-  dynamic _eventbus5;
+  dynamic _eventbus3;
 
-  dynamic _eventbus8;
-  dynamic _eventbus9;
+  dynamic _eventbus4;
+  dynamic _eventbus5;
 
   Timer? setWgtStartFalseTimer; // 用于每3秒将isWgtStart设置为false的定时器
   Timer? checkWgtStartTimer; // 用于每5秒检查isWgtStart的定时器
@@ -177,11 +178,11 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
 
 //百分比模式下初始化重量和单位
   void initTotalWgtUnit() {
-    if (myFmaInfo.header!.formulaHeader!.formulaMode == 'pct') {
+    if (myFmaInfo.header!.formulaMode == 'pct') {
       initTotalWeight = widget.totalFmaWgt;
       initTotalWeight = double.parse(initTotalWeight.toStringAsFixed(3));
-      myFmaInfo.header!.formulaHeader!.formulaUnit = widget.fmaUnit;
-      myFmaInfo.header!.formulaHeader!.totalWeight = initTotalWeight;
+      myFmaInfo.header!.formulaUnit = widget.fmaUnit;
+      myFmaInfo.header!.totalWeight = initTotalWeight;
       needTotalWgt = initTotalWeight;
     }
   }
@@ -191,10 +192,10 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
     double maxValue = 0.0;
     double errorWgt = 0.0; //误差重量值
     double targetWgt = 0.0; //目标重量值
-    String fmode = myFmaInfo.header!.formulaHeader!.formulaMode ?? '';
-    needTotalWgt = myFmaInfo.header!.formulaHeader!.totalWeight!;
+    String fmode = myFmaInfo.header!.formulaMode ?? '';
+    needTotalWgt = myFmaInfo.header!.totalWeight!;
     //如果包含容器，第一个写容器  修改了此处
-    if (myFmaInfo.header!.formulaHeader!.needContainer!) {
+    if (myFmaInfo.header!.needContainer!) {
       FormulaWgtProcessData processWgt = FormulaWgtProcessData(
         no: 0,
         rawId: '-',
@@ -216,40 +217,35 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
 
     for (var detail in myFmaInfo.details!) {
       if (fmode == 'wgt') {
-        minValue = detail.formulaDetail!.materialWeight! -
-            detail.formulaDetail!.allowableError!;
-        maxValue = detail.formulaDetail!.materialWeight! +
-            detail.formulaDetail!.allowableError!;
-        errorWgt = detail.formulaDetail!.allowableError!;
-        targetWgt = detail.formulaDetail!.materialWeight!;
+        minValue = detail.materialWeight! - detail.allowableError!;
+        maxValue = detail.materialWeight! + detail.allowableError!;
+        errorWgt = detail.allowableError!;
+        targetWgt = detail.materialWeight!;
       } else {
-        minValue = initTotalWeight *
-                (detail.formulaDetail!.materialPercentage! / 100) -
-            detail.formulaDetail!.allowableError! * initTotalWeight / 100;
+        minValue = initTotalWeight * (detail.materialPercentage! / 100) -
+            detail.allowableError! * initTotalWeight / 100;
         minValue = double.parse(minValue.toStringAsFixed(3));
-        maxValue = initTotalWeight *
-                (detail.formulaDetail!.materialPercentage! / 100) +
-            detail.formulaDetail!.allowableError! * initTotalWeight / 100;
+        maxValue = initTotalWeight * (detail.materialPercentage! / 100) +
+            detail.allowableError! * initTotalWeight / 100;
         maxValue = double.parse(maxValue.toStringAsFixed(3));
-        errorWgt =
-            detail.formulaDetail!.allowableError! * initTotalWeight / 100;
+        errorWgt = detail.allowableError! * initTotalWeight / 100;
         errorWgt = double.parse(errorWgt.toStringAsFixed(3));
-        targetWgt =
-            initTotalWeight * (detail.formulaDetail!.materialPercentage! / 100);
+        targetWgt = initTotalWeight * (detail.materialPercentage! / 100);
         targetWgt = double.parse(targetWgt.toStringAsFixed(3));
       }
+      String rawName = getRawName(detail.materialId!);
       FormulaWgtProcessData processWgt = FormulaWgtProcessData(
-        no: detail.formulaDetail?.sequence,
-        rawId: detail.formulaDetail?.materialId,
-        rawName: detail.rawMaterialTypeName?.rawMaterial!.materialName,
+        no: detail.sequence,
+        rawId: detail.materialId,
+        rawName: rawName,
         fmaMode: fmode,
         targetWgt: targetWgt,
-        targetPct: detail.formulaDetail?.materialPercentage,
+        targetPct: detail.materialPercentage,
         currentWgt: 0.0,
         minWgt: minValue < 0 ? 0 : minValue,
         maxWgt: maxValue,
         errorWgt: errorWgt,
-        errorPct: detail.formulaDetail?.allowableError,
+        errorPct: detail.allowableError,
         currentErrorWgt: 0.0,
         currentErrorPct: 0.0,
         isOK: 'no', //no 未开始 low: 低，high: 高，ok: 正常 初始值都是 low
@@ -343,7 +339,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
       needTotalWgt = needTotalWgt * ratio; // 更新需要的总重量
       needTotalWgt = double.parse(needTotalWgt.toStringAsFixed(3)); // 保留三位小数
 
-      if (myFmaInfo.header!.formulaHeader!.formulaMode == 'pct') {
+      if (myFmaInfo.header!.formulaMode == 'pct') {
         for (var item in processWgtList) {
           if (item.no == 0) {
             continue;
@@ -450,13 +446,13 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
       }
     });
 
-    _eventbus5 = eventBus.on<EventRespAddFormulaType>().listen((event) {
+    _eventbus3 = eventBus.on<EventRespAddFormulaType>().listen((event) {
       if (mounted) {
         PublicFunctions.getFormulaTypeList();
       }
     });
 
-    _eventbus8 = eventBus.on<EventReqWeightCountine>().listen((event) {
+    _eventbus4 = eventBus.on<EventReqWeightCountine>().listen((event) {
       if (mounted) {
         setState(() {
           ReqWeightCountine tempWeight = ReqWeightCountine();
@@ -467,7 +463,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
             // isCnting = true;
             isWgtStart = true;
             if (myReqWeightCountine.msgBody!.weightUnit !=
-                    myFmaInfo.header!.formulaHeader!.formulaUnit &&
+                    myFmaInfo.header!.formulaUnit &&
                 isShowTipDialog == false) {
               isShowTipDialog = true;
               showTipDialog();
@@ -493,7 +489,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
         });
       }
     });
-    _eventbus9 = eventBus.on<EventRespGetAutoNext>().listen((event) {
+    _eventbus5 = eventBus.on<EventRespGetAutoNext>().listen((event) {
       if (mounted) {
         String dataStr = event.obj;
         if (dataStr != '') {
@@ -519,11 +515,9 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
     super.dispose();
     _eventbus1.cancel();
     _eventbus2.cancel();
-
+    _eventbus3.cancel();
+    _eventbus4.cancel();
     _eventbus5.cancel();
-
-    _eventbus8.cancel();
-    _eventbus9.cancel();
 
     stopCntAliveTimer();
     setWgtStartFalseTimer?.cancel(); // 取消定时器
@@ -543,7 +537,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
         return ShowUnitTipDialog(
           title: localizedStrings.fTipTitle,
           msg:
-              '${localizedStrings.fWgtUnit} ${myFmaInfo.header!.formulaHeader!.formulaUnit!},${localizedStrings.fSwitchUnitHint}',
+              '${localizedStrings.fWgtUnit} ${myFmaInfo.header!.formulaUnit!},${localizedStrings.fSwitchUnitHint}',
         );
       },
     ).then((value) {
@@ -618,15 +612,14 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
     RecHeader recHeader = RecHeader(
       recordId: recRecNumber, //配方订单编号
       recHeaderOperator: mySysUser.nickName!, //操作员
-      formulaId: myFmaInfo.header!.formulaHeader!.formulaId, //配方ID
-      formulaTypeName: myFmaInfo.header!.formulaHeader!.formulaName, //配方名称
-      totalWeight: myFmaInfo.header!.formulaHeader!.totalWeight!, //总重量
+      formulaId: myFmaInfo.header!.formulaId, //配方ID
+      formulaTypeName: myFmaInfo.header!.formulaName, //配方名称
+      totalWeight: myFmaInfo.header!.totalWeight!, //总重量
       actualFmaTotalWgt: needTotalWgt, //实际配方总重量包括修正的重量
       actualTotalWeight: actualTotalRawWgt, //实际原料总重量
-      totalWeightUnit: myFmaInfo.header!.formulaHeader!.formulaUnit, //总重量单位
+      totalWeightUnit: myFmaInfo.header!.formulaUnit, //总重量单位
 
-      totalMaterialWeightUnit:
-          myFmaInfo.header!.formulaHeader!.formulaUnit, //总原料重量单位
+      totalMaterialWeightUnit: myFmaInfo.header!.formulaUnit, //总原料重量单位
       isQualified: isAllOK ? 'yes' : 'no', //是否合格
       scaleId: widget.selScaleId, //秤ID
       scaleName: myScale.scaleName, //秤名称
@@ -896,7 +889,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
       recId: 0,
       orderId: recRecNumber, //配方订单编号
       createdBy: mySysUser.nickName!, //操作员
-      formulaId: myFmaInfo.header!.formulaHeader!.formulaId, //配方ID
+      formulaId: myFmaInfo.header!.formulaId, //配方ID
 
       status: 0,
       remark: '',
@@ -1117,10 +1110,10 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
     if (data == null || data is! RawDataInfo) {
       return false;
     }
-    final targetMaterialId = data.rawMaterial.materialId;
+    final targetMaterialId = data.materialId;
     return formulaDataList.every((formula) {
       return formula.details?.every((detail) {
-            return detail.formulaDetail?.materialId != targetMaterialId;
+            return detail.materialId != targetMaterialId;
           }) ??
           true;
     });
@@ -1607,7 +1600,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
                 //         //   context,
                 //         // ).showSnackBar(SnackBar(
                 //         //     content: Text(
-                //         //         "删除${(data as FormulaInfoDb)..header!.formulaHeader!.formulaName!}成功")));
+                //         //         "删除${(data as FormulaInfoDb)..header!.formulaName!}成功")));
                 //       },
                 //       // color: Colors.red,
                 //       minWidth: 0,
@@ -1877,12 +1870,10 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
 
   showFCode() {
     String id = "";
-    if (myFmaInfo.header == null ||
-        myFmaInfo.header!.formulaHeader == null ||
-        myFmaInfo.header!.formulaHeader!.formulaId == null) {
+    if (myFmaInfo.header == null || myFmaInfo.header!.formulaId == null) {
       id = "";
     } else {
-      id = myFmaInfo.header!.formulaHeader!.formulaId!;
+      id = myFmaInfo.header!.formulaId!;
     }
     return Expanded(
       child: Text(
@@ -1899,12 +1890,10 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
 
   showFName() {
     String name = "";
-    if (myFmaInfo.header == null ||
-        myFmaInfo.header!.formulaHeader == null ||
-        myFmaInfo.header!.formulaHeader!.formulaName == null) {
+    if (myFmaInfo.header == null || myFmaInfo.header!.formulaName == null) {
       name = "";
     } else {
-      name = myFmaInfo.header!.formulaHeader!.formulaName!;
+      name = myFmaInfo.header!.formulaName!;
     }
     return Expanded(
       child: Text(
@@ -1950,9 +1939,8 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
 
   showTotalWgtAndUnit() {
     final header = myFmaInfo.header;
-    final formulaHeader = header?.formulaHeader;
-    final totalWeight = formulaHeader?.totalWeight;
-    final formulaUnit = formulaHeader?.formulaUnit;
+    final totalWeight = header?.totalWeight;
+    final formulaUnit = header?.formulaUnit;
 
     final displayText = totalWeight != null && formulaUnit != null
         ? '$totalWeight  $formulaUnit'
@@ -2316,9 +2304,9 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
                 children: [
                   showFmaItem(localizedStrings.fOrderNo, recRecNumber),
                   showFmaItem(localizedStrings.fFmaNameLabel,
-                      widget.selectFormula.header!.formulaHeader!.formulaName!),
+                      widget.selectFormula.header!.formulaName!),
                   showFmaItem(localizedStrings.fFmaIdLabel,
-                      widget.selectFormula.header!.formulaHeader!.formulaId!),
+                      widget.selectFormula.header!.formulaId!),
                 ],
               ),
             ),
@@ -2355,10 +2343,9 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
                       alignment: Alignment.topLeft,
                       child: SelectableText(
                         myFmaInfo.header == null ||
-                                myFmaInfo.header!.formulaHeader == null ||
-                                myFmaInfo.header!.formulaHeader!.remark == null
+                                myFmaInfo.header!.remark == null
                             ? ""
-                            : myFmaInfo.header!.formulaHeader!.remark!,
+                            : myFmaInfo.header!.remark!,
                         style: Theme.of(context).textTheme.bodySmall!.apply(
                               color: Theme.of(context)
                                   .colorScheme
@@ -2510,12 +2497,10 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
   //重新计算需要的重量
   recalculateWgtList(double lastNeedTotalWgt) {
     //根据模式计算需要的重量
-    if (myFmaInfo.header == null ||
-        myFmaInfo.header!.formulaHeader == null ||
-        myFmaInfo.header!.formulaHeader!.formulaMode == null) {
+    if (myFmaInfo.header == null || myFmaInfo.header!.formulaMode == null) {
       return;
     }
-    String fmaMode = myFmaInfo.header!.formulaHeader!.formulaMode!;
+    String fmaMode = myFmaInfo.header!.formulaMode!;
 
     if (fmaMode == 'wgt') {
       //按重量
@@ -2569,9 +2554,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
           .firstWhere((item) => item.isOK != 'ok' && item.no != 0);
       selectedProcessWgt = nextItem; // 更新选中的原料重量项
       //如果有容器
-      if (myFmaInfo.header != null &&
-          myFmaInfo.header!.formulaHeader != null &&
-          myFmaInfo.header!.formulaHeader!.needContainer!) {
+      if (myFmaInfo.header != null && myFmaInfo.header!.needContainer!) {
         clickedRow = selectedProcessWgt.no!; // 更新点击的行索引
       } else {
         clickedRow = selectedProcessWgt.no! - 1; // 更新点击的行索引
@@ -2609,9 +2592,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
 
       selectedProcessWgt = processWgtList[clickedRow]; // 更新选中的原料重量项
       //如果有容器
-      if (myFmaInfo.header != null &&
-          myFmaInfo.header!.formulaHeader != null &&
-          myFmaInfo.header!.formulaHeader!.needContainer!) {
+      if (myFmaInfo.header != null && myFmaInfo.header!.needContainer!) {
         clickedRow = selectedProcessWgt.no!; // 更新点击的行索引
       } else {
         clickedRow = selectedProcessWgt.no! - 1; // 更新点击的行索引
@@ -2626,8 +2607,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
       try {
         //先根据当前的重量计算出需要的总重量
         if (myFmaInfo.header != null &&
-            myFmaInfo.header!.formulaHeader != null &&
-            myFmaInfo.header!.formulaHeader!.totalWeight != null &&
+            myFmaInfo.header!.totalWeight != null &&
             selectedProcessWgt.targetWgt != null &&
             selectedProcessWgt.targetWgt! != 0) {
           double lastNeedTotalWgt = needTotalWgt;
@@ -2670,7 +2650,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
         targetItem.currentErrorWgt =
             double.parse(targetItem.currentErrorWgt!.toStringAsFixed(3));
         //百分比模式算出百分比
-        if (myFmaInfo.header!.formulaHeader!.formulaMode! == 'pct') {
+        if (myFmaInfo.header!.formulaMode! == 'pct') {
           //计算误差的百分比
           if (needTotalWgt > 0) {
             targetItem.currentErrorPct =

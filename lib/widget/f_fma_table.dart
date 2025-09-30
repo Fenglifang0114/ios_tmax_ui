@@ -393,36 +393,38 @@ class _FormulaTableState extends State<FormulaTable> {
       widget.searchFmaList.sort((a, b) {
         dynamic valueA;
         dynamic valueB;
+        String categoryA = getFmaTypeName(a.header!.categoryId!);
+        String categoryB = getFmaTypeName(b.header!.categoryId!);
 
         switch (_sortField) {
           case 'formulaId':
-            valueA = a.header!.formulaHeader!.formulaId;
-            valueB = b.header!.formulaHeader!.formulaId;
+            valueA = a.header!.formulaId;
+            valueB = b.header!.formulaId;
             break;
           case 'formulaName':
-            valueA = a.header!.formulaHeader!.formulaName;
-            valueB = b.header!.formulaHeader!.formulaName;
+            valueA = a.header!.formulaName;
+            valueB = b.header!.formulaName;
             break;
 
           case 'category':
-            valueA = a.header!.formulaCategoryName;
-            valueB = b.header!.formulaCategoryName;
+            valueA = categoryA;
+            valueB = categoryB;
             break;
           case 'confidential':
-            valueA = a.header!.formulaHeader!.isEncrypted;
-            valueB = b.header!.formulaHeader!.isEncrypted;
+            valueA = a.header!.isEncrypted;
+            valueB = b.header!.isEncrypted;
             break;
           case 'materialCount':
-            valueA = a.header!.formulaHeader!.materialCount ?? 0;
-            valueB = b.header!.formulaHeader!.materialCount ?? 0;
+            valueA = a.header!.materialCount ?? 0;
+            valueB = b.header!.materialCount ?? 0;
             break;
           case 'createdAt':
-            valueA = a.header!.formulaHeader!.createdAt;
-            valueB = b.header!.formulaHeader!.createdAt;
+            valueA = a.header!.createdAt;
+            valueB = b.header!.createdAt;
             break;
           case 'updatedAt':
-            valueA = a.header!.formulaHeader!.updatedAt;
-            valueB = b.header!.formulaHeader!.updatedAt;
+            valueA = a.header!.updatedAt;
+            valueB = b.header!.updatedAt;
             break;
 
           // 添加其他需要排序的字段
@@ -535,46 +537,45 @@ class FormulaDataSource extends DataGridSource {
         DataGridCell<bool>(columnName: 'select', value: false),
         DataGridCell<String>(
           columnName: 'formulaId',
-          value: formula.header?.formulaHeader?.formulaId ?? '',
+          value: formula.header?.formulaId ?? '',
         ),
         DataGridCell<String>(
           columnName: 'formulaName',
-          value: formula.header?.formulaHeader?.formulaName ?? '',
+          value: formula.header?.formulaName ?? '',
         ),
         DataGridCell<String>(
           columnName: 'category',
-          value: formula.header?.formulaCategoryName ?? '',
+          value: getFmaTypeName(formula.header!.categoryId!),
         ),
         DataGridCell<String>(
           columnName: 'confidential',
-          value: formula.header?.formulaHeader?.isEncrypted ?? false
+          value: formula.header?.isEncrypted ?? false
               ? localizedStrings.fConfidential
               : localizedStrings.fPublic,
         ),
         DataGridCell<String>(
           columnName: 'mode',
-          value: formula.header?.formulaHeader?.formulaMode == 'pct'
+          value: formula.header?.formulaMode == 'pct'
               ? localizedStrings.fPctMode
               : localizedStrings.fWeightMode,
         ),
         DataGridCell<String>(
           columnName: 'materialCount',
-          value:
-              formula.header?.formulaHeader?.materialCount?.toString() ?? '0',
+          value: formula.header?.materialCount?.toString() ?? '0',
         ),
         DataGridCell<String>(
           columnName: 'createdAt',
-          value: DateFormat('yyyy-MM-dd HH:mm:ss').format(
-              formula.header?.formulaHeader?.createdAt ?? DateTime.now()),
+          value: DateFormat('yyyy-MM-dd HH:mm:ss')
+              .format(formula.header?.createdAt ?? DateTime.now()),
         ),
         DataGridCell<String>(
           columnName: 'updatedAt',
-          value: DateFormat('yyyy-MM-dd HH:mm:ss').format(
-              formula.header?.formulaHeader?.updatedAt ?? DateTime.now()),
+          value: DateFormat('yyyy-MM-dd HH:mm:ss')
+              .format(formula.header?.updatedAt ?? DateTime.now()),
         ),
         DataGridCell<String>(
           columnName: 'remark',
-          value: formula.header?.formulaHeader?.remark ?? '',
+          value: formula.header?.remark ?? '',
         ),
         DataGridCell<Widget>(columnName: 'operation', value: null),
       ]);
@@ -592,8 +593,7 @@ class FormulaDataSource extends DataGridSource {
 
     final bool isMultiSelected = _selectedRowIndexes.contains(rowIndex);
     final bool isSingleSelected =
-        _selectedFormula?.header?.formulaHeader?.formulaId ==
-            formula.header?.formulaHeader?.formulaId;
+        _selectedFormula?.header?.formulaId == formula.header?.formulaId;
 
     return DataGridRowAdapter(
       color: isSingleSelected
@@ -661,7 +661,7 @@ class FormulaDataSource extends DataGridSource {
         return Text(
           dataGridCell.value.toString(),
           style: textTheme.bodySmall?.copyWith(
-            color: formula.header?.formulaHeader?.isEncrypted ?? false
+            color: formula.header?.isEncrypted ?? false
                 ? colorScheme.error
                 : colorScheme.onTertiaryFixedVariant,
           ),
@@ -696,7 +696,7 @@ class FormulaDataSource extends DataGridSource {
   }
 
   void _showHistoryRecords(FormulaInfoDb formula) {
-    final formulaKey = formula.header?.formulaHeader?.formulaKey;
+    final formulaKey = formula.header?.formulaKey;
     if (formulaKey == null) return;
 
     final hasHistory = fmaRecFromDbList
@@ -721,9 +721,8 @@ class FormulaDataSource extends DataGridSource {
   }
 
   void _editFormula(FormulaInfoDb formula) async {
-    final existDraft = darfFmaInfoList.any((fma) =>
-        fma.fmaInfo?.header?.formulaHeader?.formulaId ==
-        formula.header?.formulaHeader?.formulaId);
+    final existDraft = darfFmaInfoList.any(
+        (fma) => fma.fmaInfo?.header?.formulaId == formula.header?.formulaId);
 
     if (existDraft) {
       await Navigator.push(
@@ -745,9 +744,8 @@ class FormulaDataSource extends DataGridSource {
 
   void _deleteFormula(FormulaInfoDb formula) {
     Future.delayed(const Duration(seconds: 1), () {
-      final hasDraft = darfFmaInfoList.any((fma) =>
-          fma.fmaInfo?.header?.formulaHeader?.formulaId ==
-          formula.header?.formulaHeader?.formulaId);
+      final hasDraft = darfFmaInfoList.any(
+          (fma) => fma.fmaInfo?.header?.formulaId == formula.header?.formulaId);
       if (!context.mounted) {
         return;
       }
@@ -767,8 +765,7 @@ class FormulaDataSource extends DataGridSource {
         },
       ).then((value) {
         if (value == true) {
-          PublicFunctions.deleteFormulaData(
-              formula.header?.formulaHeader?.recId ?? -1);
+          PublicFunctions.deleteFormulaData(formula.header?.recId ?? -1);
           onDataChanged();
         }
       });

@@ -1,5 +1,6 @@
 // 展示配方详情弹框组件
 import 'package:flutter/material.dart';
+import 'package:t_max/data/f_raw_name.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/formula_from_db_data.dart';
 import 'package:t_max/data/language.dart';
@@ -127,8 +128,7 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                                         overflow: TextOverflow.ellipsis),
                               ),
                               TextSpan(
-                                text: widget.selectFormula.header!
-                                    .formulaHeader!.formulaId!,
+                                text: widget.selectFormula.header!.formulaId!,
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodySmall!
@@ -165,8 +165,8 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                                           overflow: TextOverflow.ellipsis),
                                 ),
                                 TextSpan(
-                                  text: widget.selectFormula.header!
-                                      .formulaHeader!.formulaName!,
+                                  text:
+                                      widget.selectFormula.header!.formulaName!,
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodySmall!
@@ -213,8 +213,8 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                                           overflow: TextOverflow.ellipsis),
                                 ),
                                 TextSpan(
-                                  text: widget.selectFormula.header!
-                                      .formulaHeader!.materialCount!
+                                  text: widget
+                                      .selectFormula.header!.materialCount!
                                       .toString(),
                                   style: Theme.of(context)
                                       .textTheme
@@ -233,11 +233,8 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                       SizedBox(
                         width: 20,
                       ),
-                      widget.selectFormula.header!.formulaHeader!.formulaMode ==
-                                  "wgt" &&
-                              widget.selectFormula.header!.formulaHeader!
-                                      .isEncrypted ==
-                                  false
+                      widget.selectFormula.header!.formulaMode == "wgt" &&
+                              widget.selectFormula.header!.isEncrypted == false
                           ? Expanded(
                               flex: 1,
                               child: Container(
@@ -262,7 +259,7 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                                       ),
                                       TextSpan(
                                         text:
-                                            '${widget.selectFormula.header!.formulaHeader!.totalWeight!.toString()}  ${widget.selectFormula.header!.formulaHeader!.formulaUnit!}',
+                                            '${widget.selectFormula.header!.totalWeight!.toString()}  ${widget.selectFormula.header!.formulaUnit!}',
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodySmall!
@@ -330,8 +327,7 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                                         : Theme.of(context).colorScheme.surface,
                                     child: Center(
                                       child: Text(
-                                        material.formulaDetail!.sequence
-                                            .toString(),
+                                        material.sequence.toString(),
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodySmall!
@@ -350,12 +346,12 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                                   ),
                                   SizedBox(
                                     width: widget.selectFormula.header!
-                                                .formulaHeader!.isEncrypted ==
+                                                .isEncrypted ==
                                             false
                                         ? 180
                                         : 260,
                                     child: Text(
-                                      '  ${material.rawMaterialTypeName!.rawMaterial!.materialName!}',
+                                      getRawName(material.materialId!),
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodySmall!
@@ -367,8 +363,7 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
-                                  widget.selectFormula.header!.formulaHeader!
-                                              .isEncrypted ==
+                                  widget.selectFormula.header!.isEncrypted ==
                                           false
                                       ? Container(
                                           // 设置最大宽度为 100
@@ -376,14 +371,11 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                                               maxWidth: 100),
                                           alignment: Alignment.centerRight,
                                           child: Text(
-                                            widget
-                                                        .selectFormula
-                                                        .header!
-                                                        .formulaHeader!
+                                            widget.selectFormula.header!
                                                         .formulaMode ==
                                                     'wgt'
-                                                ? '${material.formulaDetail!.materialWeight.toString()} ${widget.selectFormula.header!.formulaHeader!.formulaUnit!}'
-                                                : '${material.formulaDetail!.materialWeight.toString()} %',
+                                                ? '${material.materialWeight.toString()} ${widget.selectFormula.header!.formulaUnit!}'
+                                                : '${material.materialWeight.toString()} %',
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .bodySmall!
@@ -448,8 +440,7 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                           ),
                           alignment: Alignment.topLeft,
                           child: SelectableText(
-                            selectDetail!
-                                .rawMaterialTypeName!.rawMaterial!.ingredient!,
+                            getRawRemark(selectDetail!.materialId!),
                             style: TextStyle(
                                 color: Theme.of(context).colorScheme.onSurface,
                                 overflow: TextOverflow.ellipsis),
@@ -491,7 +482,7 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                           ),
                           alignment: Alignment.topLeft,
                           child: SelectableText(
-                            widget.selectFormula.header!.formulaHeader!.remark!,
+                            widget.selectFormula.header!.remark!,
                             style: Theme.of(context).textTheme.bodySmall!.apply(
                                 color: Theme.of(context).colorScheme.onSurface,
                                 overflow: TextOverflow.ellipsis),

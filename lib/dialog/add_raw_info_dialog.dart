@@ -74,7 +74,14 @@ class AddRawDialogState extends State<AddRawDialog> {
     super.dispose();
   }
 
-  showTypeDropDownButton(String hintText, TextEditingController valueCtl) {
+  TextStyle getTextStyle({Color? color}) {
+    return Theme.of(context).textTheme.bodySmall!.apply(
+          color: color ?? Theme.of(context).colorScheme.onSurface,
+        );
+  }
+
+  Widget showTypeDropDownButton(
+      String hintText, TextEditingController valueCtl) {
     return Container(
         height: 48,
         padding: const EdgeInsets.only(left: 10, right: 10),
@@ -279,28 +286,8 @@ class AddRawDialogState extends State<AddRawDialog> {
                   Expanded(
                       flex: 1,
                       child: Column(children: [
-                        SizedBox(
-                          height: 42,
-                          child: Row(children: [
-                            Expanded(
-                              child: Container(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  localizedStrings.fMaterialIdCol,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall!
-                                      .apply(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurface,
-                                      ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ),
-                          ]),
-                        ),
+                        showItemNameWithStar(
+                            context, localizedStrings.fMaterialIdCol, true),
                         SizedBox(
                           height: 48,
                           child: Row(children: [
@@ -353,28 +340,8 @@ class AddRawDialogState extends State<AddRawDialog> {
                   Expanded(
                       flex: 1,
                       child: Column(children: [
-                        SizedBox(
-                          height: 42,
-                          child: Row(children: [
-                            Expanded(
-                              child: Container(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  localizedStrings.fMaterialNameCol,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall!
-                                      .apply(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurface,
-                                      ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ),
-                          ]),
-                        ),
+                        showItemNameWithStar(
+                            context, localizedStrings.fMaterialNameCol, true),
                         SizedBox(
                           height: 48,
                           child: Row(children: [
@@ -403,8 +370,6 @@ class AddRawDialogState extends State<AddRawDialog> {
                                           BoxConstraints.tight(Size(40, 40)),
                                     ),
                                     onChanged: (value) {
-                                      // 处理输入变化事件
-                                      // print('Input changed: $value');
                                       setState(() {});
                                     },
                                     style: Theme.of(context)
@@ -436,28 +401,8 @@ class AddRawDialogState extends State<AddRawDialog> {
                   Expanded(
                       flex: 1,
                       child: Column(children: [
-                        SizedBox(
-                          height: 42,
-                          child: Row(children: [
-                            Expanded(
-                              child: Container(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  localizedStrings.fFmaCategoryCol,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall!
-                                      .apply(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurface,
-                                      ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ),
-                          ]),
-                        ),
+                        showItemNameWithStar(
+                            context, localizedStrings.fFmaCategoryCol, false),
                         showTypeDropDownButton(
                             localizedStrings.fPleaseSelectCategory, rawTypeCtl),
                       ])),
@@ -500,28 +445,8 @@ class AddRawDialogState extends State<AddRawDialog> {
                   Expanded(
                       flex: 1,
                       child: Column(children: [
-                        SizedBox(
-                          height: 42,
-                          child: Row(children: [
-                            Expanded(
-                              child: Container(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  localizedStrings.selectDevice,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall!
-                                      .apply(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurface,
-                                      ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ),
-                          ]),
-                        ),
+                        showItemNameWithStar(
+                            context, localizedStrings.selectDevice, false),
                         showScaleDropDownBtn(localizedStrings.selectDevice),
                       ])),
                   SizedBox(
@@ -585,8 +510,7 @@ class AddRawDialogState extends State<AddRawDialog> {
                               : () {
                                   // 检查原料是否已经存在
                                   for (var item in rawDataList) {
-                                    if (item.rawMaterial.materialId ==
-                                        rawCodeCtl.text) {
+                                    if (item.materialId == rawCodeCtl.text) {
                                       showTipInfo(
                                           localizedStrings.fRawIdDuplicate,
                                           context);
@@ -737,14 +661,14 @@ class EditRawDialogState extends State<EditRawDialog> {
   @override
   void initState() {
     super.initState();
-    rawCodeCtl.text = widget.rawData.rawMaterial.materialId;
-    rawNameCtl.text = widget.rawData.rawMaterial.materialName;
-    rawRemarkCtl.text = widget.rawData.rawMaterial.ingredient;
-    rawTypeCtl.text = widget.rawData.rawCategoryName;
-    scaleIdCtl.text = (widget.rawData.rawMaterial.scaleId == 0 ||
-            widget.rawData.rawMaterial.scaleId == null)
-        ? ""
-        : widget.rawData.rawMaterial.scaleId.toString();
+    rawCodeCtl.text = widget.rawData.materialId!;
+    rawNameCtl.text = widget.rawData.materialName!;
+    rawRemarkCtl.text = widget.rawData.ingredient!;
+    rawTypeCtl.text = getRawTypeName(widget.rawData.categoryId!);
+    scaleIdCtl.text =
+        (widget.rawData.scaleId == 0 || widget.rawData.scaleId == null)
+            ? ""
+            : widget.rawData.scaleId.toString();
     _eventbus1 = eventBus.on<EventRespGetRawTypeList>().listen((event) {
       if (mounted) {
         String dataStr = event.obj;
@@ -934,25 +858,8 @@ class EditRawDialogState extends State<EditRawDialog> {
                   Expanded(
                       flex: 1,
                       child: Column(children: [
-                        SizedBox(
-                          height: 42,
-                          child: Row(children: [
-                            Expanded(
-                              child: Container(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  localizedStrings.fMaterialIdCol,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color:
-                                        Theme.of(context).colorScheme.onSurface,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ]),
-                        ),
+                        showItemNameWithStar(
+                            context, localizedStrings.fMaterialIdCol, true),
                         SizedBox(
                           height: 48,
                           child: Row(children: [
@@ -1002,25 +909,8 @@ class EditRawDialogState extends State<EditRawDialog> {
                   Expanded(
                       flex: 1,
                       child: Column(children: [
-                        SizedBox(
-                          height: 42,
-                          child: Row(children: [
-                            Expanded(
-                              child: Container(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  localizedStrings.fMaterialNameCol,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color:
-                                        Theme.of(context).colorScheme.onSurface,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ]),
-                        ),
+                        showItemNameWithStar(
+                            context, localizedStrings.fMaterialNameCol, true),
                         SizedBox(
                           height: 48,
                           child: Row(children: [
@@ -1090,25 +980,8 @@ class EditRawDialogState extends State<EditRawDialog> {
                   Expanded(
                       flex: 1,
                       child: Column(children: [
-                        SizedBox(
-                          height: 42,
-                          child: Row(children: [
-                            Expanded(
-                              child: Container(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  localizedStrings.fFmaCategoryCol,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color:
-                                        Theme.of(context).colorScheme.onSurface,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ]),
-                        ),
+                        showItemNameWithStar(
+                            context, localizedStrings.fFmaCategoryCol, false),
                         showTypeDropDownButton(
                             localizedStrings.fPleaseSelectCategory, rawTypeCtl),
                       ])),
@@ -1151,28 +1024,8 @@ class EditRawDialogState extends State<EditRawDialog> {
                   Expanded(
                       flex: 1,
                       child: Column(children: [
-                        SizedBox(
-                          height: 42,
-                          child: Row(children: [
-                            Expanded(
-                              child: Container(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  localizedStrings.selectDevice,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall!
-                                      .apply(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurface,
-                                      ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ),
-                          ]),
-                        ),
+                        showItemNameWithStar(
+                            context, localizedStrings.selectDevice, false),
                         showScaleDropDownBtn(localizedStrings.selectDevice),
                       ])),
                   SizedBox(
@@ -1194,25 +1047,8 @@ class EditRawDialogState extends State<EditRawDialog> {
                   Expanded(
                       flex: 1,
                       child: Column(children: [
-                        SizedBox(
-                          height: 42,
-                          child: Row(children: [
-                            Expanded(
-                              child: Container(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  localizedStrings.fIngredientRemark,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color:
-                                        Theme.of(context).colorScheme.onSurface,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ]),
-                        ),
+                        showItemNameWithStar(
+                            context, localizedStrings.fIngredientRemark, false),
                         SizedBox(
                           height: 74,
                           child: Row(children: [
@@ -1281,36 +1117,36 @@ class EditRawDialogState extends State<EditRawDialog> {
                           borderRadius: BorderRadius.zero,
                         ),
                       ),
-                      onPressed: (rawCodeCtl.text.isEmpty ||
-                              rawNameCtl.text.isEmpty
-                          // ||   rawTypeCtl.text.isEmpty
-                          )
-                          ? null
-                          : () {
-                              int typeId = getRawTypeId(rawTypeCtl.text);
-                              if (typeId == -1) {
-                                return;
-                              }
-                              int scaleId = 0;
-                              if (scaleIdCtl.text.isNotEmpty) {
-                                scaleId = int.parse(scaleIdCtl.text);
-                              }
-                              EditRawData data = EditRawData(
-                                recId: widget.rawData.rawMaterial.recId,
-                                materialId: rawCodeCtl.text,
-                                materialName: rawNameCtl.text,
-                                categoryId: typeId,
-                                ingredient: rawRemarkCtl.text,
-                                createdBy: widget.rawData.rawMaterial.createdBy,
-                                updatedBy: mySysUser.nickName!,
-                                remark: "",
-                                remark1: "",
-                                scaleId: scaleId,
-                              );
-                              PublicFunctions.editRawData(data);
+                      onPressed:
+                          (rawCodeCtl.text.isEmpty || rawNameCtl.text.isEmpty
+                              // ||   rawTypeCtl.text.isEmpty
+                              )
+                              ? null
+                              : () {
+                                  int typeId = getRawTypeId(rawTypeCtl.text);
+                                  if (typeId == -1) {
+                                    return;
+                                  }
+                                  int scaleId = 0;
+                                  if (scaleIdCtl.text.isNotEmpty) {
+                                    scaleId = int.parse(scaleIdCtl.text);
+                                  }
+                                  EditRawData data = EditRawData(
+                                    recId: widget.rawData.recId!,
+                                    materialId: rawCodeCtl.text,
+                                    materialName: rawNameCtl.text,
+                                    categoryId: typeId,
+                                    ingredient: rawRemarkCtl.text,
+                                    createdBy: widget.rawData.createdBy!,
+                                    updatedBy: mySysUser.nickName!,
+                                    remark: "",
+                                    remark1: "",
+                                    scaleId: scaleId,
+                                  );
+                                  PublicFunctions.editRawData(data);
 
-                              Navigator.pop(context);
-                            },
+                                  Navigator.pop(context);
+                                },
                       child: Text(
                         localizedStrings.gBtnConfirm,
                         style: TextStyle(

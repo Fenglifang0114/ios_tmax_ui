@@ -3575,6 +3575,10 @@
     "tipValidating": "正在验证数据...",
     "@tipValidating": {
         "description": "Tip for validating data"
+    },
+    "deleteTypeUnusedConfirm": "即将删除所有未使用的类型，是否继续？",
+    "@deleteTypeUnusedConfirm": {
+        "description": "Confirm deletion of types currently not in use"
     }
       
 }

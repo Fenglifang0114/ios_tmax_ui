@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 
 //文本框
-showItemName(BuildContext context, String itemName, bool showFlag) {
+showItemNameWithStar(BuildContext context, String itemName, bool showFlag) {
   return Container(
     height: textContentHeight,
     alignment: Alignment.centerLeft,
@@ -17,8 +17,7 @@ showItemName(BuildContext context, String itemName, bool showFlag) {
               ? TextSpan(
                   text: '* ',
                   style: Theme.of(context).textTheme.bodyMedium!.apply(
-                        color:
-                            Theme.of(context).colorScheme.onSurface, // 设置输入文本颜色
+                        color: Theme.of(context).colorScheme.error, // 设置输入文本颜色
                       ),
                 )
               : TextSpan(

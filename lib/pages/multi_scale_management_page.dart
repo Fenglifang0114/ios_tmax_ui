@@ -438,7 +438,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
           height: regularPadding,
         ),
         buildItemInfo(
-            showItemName(context, localizedStrings.gSerialPort, false),
+            showItemNameWithStar(context, localizedStrings.gSerialPort, false),
             showDropDownButton(
               context,
               localizedStrings.gTipRefreshPort,
@@ -462,7 +462,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
                 }
               },
             ),
-            showItemName(context, localizedStrings.gBaudRate, false),
+            showItemNameWithStar(context, localizedStrings.gBaudRate, false),
             showDropDownButton(context, '', baudRateCtl, baudRateList, (value) {
               setState(() {
                 if (baudRateList.contains(value)) {
@@ -471,7 +471,8 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
               });
             })),
         buildItemInfo(
-            showItemName(context, localizedStrings.gSerialParity, false),
+            showItemNameWithStar(
+                context, localizedStrings.gSerialParity, false),
             showDropDownButton(context, '', protocolCtl, checkBitsList,
                 (value) {
               setState(() {
@@ -480,7 +481,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
                 }
               });
             }),
-            showItemName(context, localizedStrings.gStopBits, false),
+            showItemNameWithStar(context, localizedStrings.gStopBits, false),
             showDropDownButton(context, '', stopBitCtl, stopBitsList, (value) {
               setState(() {
                 if (stopBitsList.contains(value)) {
@@ -489,7 +490,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
               });
             })),
         buildItemInfo(
-          showItemName(context, localizedStrings.gDataBits, false),
+          showItemNameWithStar(context, localizedStrings.gDataBits, false),
           showDropDownButton(context, '', dataBitCtl, dataBitsList, (value) {
             setState(() {
               if (dataBitsList.contains(value)) {
@@ -497,7 +498,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
               }
             });
           }),
-          showItemName(context, "DC500", false),
+          showItemNameWithStar(context, "DC500", false),
           Container(
             width: inputWidth,
             alignment: Alignment.centerLeft,
@@ -577,11 +578,11 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
           height: regularPadding,
         ),
         buildItemInfo(
-            showItemName(context, localizedStrings.gIpAddress, false),
+            showItemNameWithStar(context, localizedStrings.gIpAddress, false),
             showInputBox(context, ipCtl, '', (value) {
               setState(() {});
             }, true),
-            showItemName(context, localizedStrings.gTipPort, false),
+            showItemNameWithStar(context, localizedStrings.gTipPort, false),
             Container(
               height: inputHeight,
               padding: const EdgeInsets.only(left: 16, right: 20),
@@ -974,7 +975,8 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
                 height: smallPadding,
               ),
               buildItemInfo(
-                  showItemName(context, localizedStrings.gScaleName, false),
+                  showItemNameWithStar(
+                      context, localizedStrings.gScaleName, false),
                   showScaleNameInputBox(
                       context,
                       scaleNameCtl,
@@ -989,7 +991,8 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
                       ), (value) {
                     setState(() {});
                   }, isRename),
-                  showItemName(context, localizedStrings.gModelName, false),
+                  showItemNameWithStar(
+                      context, localizedStrings.gModelName, false),
                   showInputBox(context, scaleModelCtl, '', (value) {
                     setState(() {});
                   }, false)),
@@ -997,11 +1000,13 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
                 height: smallPadding,
               ),
               buildItemInfo(
-                  showItemName(context, localizedStrings.gScaleSn, false),
+                  showItemNameWithStar(
+                      context, localizedStrings.gScaleSn, false),
                   showInputBox(context, snCtl, '', (value) {
                     setState(() {});
                   }, false),
-                  showItemName(context, localizedStrings.gDataBits, false),
+                  showItemNameWithStar(
+                      context, localizedStrings.gDataBits, false),
                   showDropDownButton(context, '', dataBitCtl, dataBitsList,
                       (value) {
                     setState(() {
@@ -1014,7 +1019,8 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
                 height: smallPadding,
               ),
               buildItemInfo(
-                  showItemName(context, localizedStrings.gSerialPort, false),
+                  showItemNameWithStar(
+                      context, localizedStrings.gSerialPort, false),
                   showDropDownButton(
                     context,
                     localizedStrings.gTipRefreshPort,
@@ -1038,7 +1044,8 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
                       }
                     },
                   ),
-                  showItemName(context, localizedStrings.gBaudRate, false),
+                  showItemNameWithStar(
+                      context, localizedStrings.gBaudRate, false),
                   showDropDownButton(context, '', baudRateCtl, baudRateList,
                       (value) {
                     setState(() {
@@ -1051,7 +1058,8 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
                 height: smallPadding,
               ),
               buildItemInfo(
-                  showItemName(context, localizedStrings.gSerialParity, false),
+                  showItemNameWithStar(
+                      context, localizedStrings.gSerialParity, false),
                   showDropDownButton(context, '', protocolCtl, checkBitsList,
                       (value) {
                     setState(() {
@@ -1060,7 +1068,8 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
                       }
                     });
                   }),
-                  showItemName(context, localizedStrings.gStopBits, false),
+                  showItemNameWithStar(
+                      context, localizedStrings.gStopBits, false),
                   showDropDownButton(context, '', stopBitCtl, stopBitsList,
                       (value) {
                     setState(() {
@@ -1114,7 +1123,8 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
                     height: regularPadding,
                   ),
                   buildItemInfo(
-                      showItemName(context, localizedStrings.gScaleName, false),
+                      showItemNameWithStar(
+                          context, localizedStrings.gScaleName, false),
                       showScaleNameInputBox(
                           context,
                           scaleNameCtl,
@@ -1129,7 +1139,8 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
                           ), (value) {
                         setState(() {});
                       }, isRename),
-                      showItemName(context, localizedStrings.gModelName, false),
+                      showItemNameWithStar(
+                          context, localizedStrings.gModelName, false),
                       showInputBox(context, scaleModelCtl, '', (value) {
                         setState(() {});
                       }, false)),
@@ -1137,11 +1148,13 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
                     height: regularPadding,
                   ),
                   buildItemInfo(
-                      showItemName(context, localizedStrings.gScaleSn, false),
+                      showItemNameWithStar(
+                          context, localizedStrings.gScaleSn, false),
                       showInputBox(context, snCtl, '', (value) {
                         setState(() {});
                       }, false),
-                      showItemName(context, localizedStrings.gTipPort, false),
+                      showItemNameWithStar(
+                          context, localizedStrings.gTipPort, false),
                       showInputBox(context, portCtl, '', (value) {
                         setState(() {});
                       }, false)),
@@ -1156,7 +1169,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
                           children: [
                             SizedBox(
                                 width: inputWidth,
-                                child: showItemName(context,
+                                child: showItemNameWithStar(context,
                                     localizedStrings.gIpAddress, false)),
                             SizedBox(
                                 width: inputWidth,

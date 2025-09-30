@@ -69,7 +69,8 @@ class ModifyPwdPageState extends State<ModifyPwdPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        showItemName(localizedStrings.userNewPassword, false),
+                        showItemNameWithStar(
+                            context, localizedStrings.userNewPassword, true),
                         showInputPwdBox(
                           pwd1Controller,
                           '',
@@ -77,8 +78,8 @@ class ModifyPwdPageState extends State<ModifyPwdPage> {
                         SizedBox(
                           height: largePadding,
                         ),
-                        showItemName(
-                            localizedStrings.userConfirmPassword, false),
+                        showItemNameWithStar(context,
+                            localizedStrings.userConfirmPassword, true),
                         showInputPwdBox(
                           pwd2Controller,
                           '',
@@ -144,31 +145,6 @@ class ModifyPwdPageState extends State<ModifyPwdPage> {
     return Theme.of(context).textTheme.labelMedium!.apply(
           color: color ?? colorScheme.onSurface,
         );
-  }
-
-  // 显示名称
-  showItemName(String itemName, bool showFlag) {
-    return Container(
-      height: 42,
-      alignment: Alignment.centerLeft,
-      child: RichText(
-        text: TextSpan(
-          children: [
-            !showFlag
-                ? TextSpan(
-                    text: '*', style: getTextStyle(color: colorScheme.error))
-                : TextSpan(
-                    text: '',
-                  ),
-            TextSpan(
-                text: ' $itemName',
-                style: Theme.of(context).textTheme.bodySmall!.apply(
-                    color: colorScheme.onSurface,
-                    overflow: TextOverflow.ellipsis)),
-          ],
-        ),
-      ),
-    );
   }
 
   showInputPwdBox(TextEditingController controller, String hintText) {

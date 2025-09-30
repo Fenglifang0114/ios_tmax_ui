@@ -647,9 +647,24 @@ class EventRespGetRawDataList {
   EventRespGetRawDataList(this.obj);
 }
 
+class EventRespGetRawData {
+  dynamic obj;
+  EventRespGetRawData(this.obj);
+}
+
+class EventRespGetFmaData {
+  dynamic obj;
+  EventRespGetFmaData(this.obj);
+}
+
 class EventRespAddRawData {
   dynamic obj;
   EventRespAddRawData(this.obj);
+}
+
+class EventRespDelRawData {
+  dynamic obj;
+  EventRespDelRawData(this.obj);
 }
 
 class EventRespEditRawData {
@@ -670,6 +685,16 @@ class EventRespFormulaList {
 class EventRespAddFormula {
   dynamic obj;
   EventRespAddFormula(this.obj);
+}
+
+class EventRespEditFormula {
+  dynamic obj;
+  EventRespEditFormula(this.obj);
+}
+
+class EventRespDelFormula {
+  dynamic obj;
+  EventRespDelFormula(this.obj);
 }
 
 class EventRespFormulaRecList {

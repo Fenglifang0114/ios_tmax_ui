@@ -295,6 +295,32 @@ class PublicFunctions {
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
 
+//删除未使用的配方类型
+  static void delUnusedFmaType() async {
+    myScaleCmd.cmdMode = "del_unused_fma_type";
+    myScaleCmd.cmdData = '';
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //删除未使用的原料类型
+  static void delUnusedRawType() async {
+    myScaleCmd.cmdMode = "del_unused_raw_type";
+    myScaleCmd.cmdData = '';
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  static void getRawData(int id) {
+    myScaleCmd.cmdMode = "get_raw_data";
+    myScaleCmd.cmdData = id.toString();
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  static void getFmaData(int id) {
+    myScaleCmd.cmdMode = "get_fma_data";
+    myScaleCmd.cmdData = id.toString();
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
   static void getRawList() {
     myScaleCmd.cmdMode = "get_raw_data_list";
     myScaleCmd.cmdData = '';

@@ -25,6 +25,23 @@ class FmaTypeMgrDialogState extends State<FmaTypeMgrDialog> {
   dynamic _eventbus1;
   dynamic _eventbus2;
 
+  void showDeleteDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 点击对话框外部不关闭对话框
+      builder: (BuildContext context) {
+        return ShowDeleteTipDialog(
+          title: localizedStrings.fTipTitle,
+          msg: localizedStrings.deleteTypeUnusedConfirm,
+        );
+      },
+    ).then((value) {
+      if (value) {
+        PublicFunctions.delUnusedFmaType();
+      }
+    });
+  }
+
   // 显示新增配方类型对话框
   void showAddFormulaTypeDialog() {
     showDialog(
@@ -82,7 +99,7 @@ class FmaTypeMgrDialogState extends State<FmaTypeMgrDialog> {
     _eventbus2 = eventBus.on<EventRespAddFormulaType>().listen((event) {
       if (mounted) {
         PublicFunctions.getFormulaTypeList();
-        showTipInfo(localizedStrings.fAddSuccessMsg, context);
+        showTipInfo(localizedStrings.fSuccessMsg, context);
       }
     });
   }
@@ -116,8 +133,8 @@ class FmaTypeMgrDialogState extends State<FmaTypeMgrDialog> {
               true,
               onClose: () {
                 PublicFunctions.getFormulaTypeList(); // 刷新类型列表
-                formulaDataList.clear();
-                PublicFunctions.getFormulaList(); // 刷新配方类型列表
+                // formulaDataList.clear();
+                // PublicFunctions.getFormulaList(); // 刷新配方类型列表
                 Navigator.pop(context);
               },
             ),
@@ -195,6 +212,20 @@ class FmaTypeMgrDialogState extends State<FmaTypeMgrDialog> {
                                       });
                                     }),
                               )),
+                        ),
+                        SizedBox(
+                          width: largePadding,
+                        ),
+                        showTextButton(
+                          context,
+                          btnHeight,
+                          localizedStrings.gBtnClear,
+                          () {
+                            showDeleteDialog();
+                          },
+                          Theme.of(context).colorScheme.onPrimary,
+                          Theme.of(context).colorScheme.error,
+                          Theme.of(context).colorScheme.onPrimary,
                         ),
                         SizedBox(
                           width: largePadding,
@@ -307,10 +338,9 @@ class FmaTypeMgrDialogState extends State<FmaTypeMgrDialog> {
                                             onPressed: () {
                                               //删除原料前，先判断是否有原料使用了这个类型
                                               for (var fma in formulaDataList) {
-                                                if (fma.header!
-                                                        .formulaCategoryName ==
+                                                if (fma.header!.categoryId ==
                                                     searchFmaTypeList[index]
-                                                        .categoryName) {
+                                                        .categoryId) {
                                                   showTipInfo(
                                                       localizedStrings
                                                           .fFormulaInUseDeleteErrorMsg,
@@ -547,6 +577,11 @@ class EditFormulaTypeDialog extends StatefulWidget {
 
 class EditFormulaTypeDialogState extends State<EditFormulaTypeDialog> {
   TextEditingController formulaTypeCtl = TextEditingController();
+  @override
+  initState() {
+    super.initState();
+    formulaTypeCtl.text = widget.categoryTypeInfo.categoryName;
+  }
 
   @override
   Widget build(BuildContext context) {
