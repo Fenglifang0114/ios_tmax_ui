@@ -37,7 +37,6 @@ String getRawName(String rawId) {
 String getRawRemark(String rawId) {
   for (var item in rawDataList) {
     if (item.materialId == rawId) {
-      print(item.ingredient);
       return item.ingredient ?? "";
     }
   }

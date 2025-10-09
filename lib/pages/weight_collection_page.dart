@@ -195,8 +195,8 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
         setState(() {
           List<PluDataFromDb> pluInfoList = event.obj;
           for (int i = 0; i < pluInfoList.length; i++) {
-            PluData newPlu = PluData(
-                0, 0, 0, 0, '', '', 0, 0, 0, 0, 0, 0, 0, '', false, '', 0, 0);
+            PluData newPlu = PluData(0, 0, 0, 0, '', '', 0, 0, 0, 0, 0, 0, 0,
+                '', false, '', 0, 0, '', '');
             newPlu.enabled = pluInfoList[i].enabled ?? true;
             if (!pluInfoList[i].enabled!) {
               continue;
@@ -1055,7 +1055,7 @@ void sendDataToDb(
   // 处理 PluData
   final tempPlu = selPlu ??
       PluData(null, null, null, null, null, null, null, null, null, null, null,
-          null, null, null, null, null, null, null);
+          null, null, null, null, null, null, null, '', '');
 
   final newAddRec = ReqAddWgtRec()
     ..mode = mySettingParam.scaleMode

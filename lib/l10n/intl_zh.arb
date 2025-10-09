@@ -1544,11 +1544,11 @@
     "@gPluPlu": {
         "description": "This is prompt for product edit."
     },
-    "gPluPluCode": "产品 Code",
+    "gPluPluCode": "产品编码",
     "@gPluPluCode": {
         "description": "This is prompt for product edit."
     },
-    "gPluItemCode": "条目 Code",
+    "gPluItemCode": "条目编码",
     "@gPluItemCode": {
         "description": "This is prompt for product edit."
     },

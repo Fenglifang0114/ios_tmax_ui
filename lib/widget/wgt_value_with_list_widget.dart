@@ -767,7 +767,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
 
   void _addWeightToReport() {
     PluData? tempPlu = PluData(null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null);
+        null, null, null, null, null, null, null, null, null, null, '', '');
     if (selectedPluData != null) {
       tempPlu = selectedPluData;
     }

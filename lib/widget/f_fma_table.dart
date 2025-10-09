@@ -696,11 +696,11 @@ class FormulaDataSource extends DataGridSource {
   }
 
   void _showHistoryRecords(FormulaInfoDb formula) {
-    final formulaKey = formula.header?.formulaKey;
-    if (formulaKey == null) return;
+    final formulaId = formula.header?.formulaId;
+    if (formulaId == null) return;
 
-    final hasHistory = fmaRecFromDbList
-        .any((record) => record.header?.formulaKey == formulaKey);
+    final hasHistory =
+        fmaRecFromDbList.any((record) => record.header?.formulaId == formulaId);
 
     if (!hasHistory) {
       showTipInfo(localizedStrings.fNoRecordTip, context);
@@ -708,7 +708,7 @@ class FormulaDataSource extends DataGridSource {
     }
 
     final formulaHistoryRecords = fmaRecFromDbList
-        .where((record) => record.header?.formulaKey == formulaKey)
+        .where((record) => record.header?.formulaId == formulaId)
         .toList();
 
     Navigator.push(

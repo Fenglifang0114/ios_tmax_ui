@@ -12,6 +12,7 @@ import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/icons.dart';
 import 'package:t_max/data/language.dart';
+import 'package:t_max/data/plu_data.dart';
 import 'package:t_max/data/plu_data_source.dart';
 import 'package:t_max/data/plu_field_status_data.dart';
 import 'package:t_max/data/scalecmd_data.dart';
@@ -23,6 +24,7 @@ import 'package:t_max/functions/methods.dart';
 import 'package:t_max/pages/update_firmware_page.dart';
 import 'package:t_max/widget/common_widget.dart';
 import 'package:t_max/widget/dialog_head_style.dart';
+import 'package:t_max/widget/f_open_file.dart';
 import 'package:t_max/widget/outline_btn_new.dart';
 import 'package:t_max/widget/show_error_dialog.dart';
 
@@ -54,10 +56,11 @@ class _PluEidtPageState extends State<PluEidtPage> {
   bool shouldToggleAll = false; // 是否全选
   String _sortField = ''; // 当前排序列名
   bool _sortAscending = true; // 排序方向
-  NationDataSource? _dataSource;
+  PluDataSource? _dataSource;
   List<PluDataModel> dataModels = <PluDataModel>[];
   List<PluDataModel> importPlu = <PluDataModel>[];
   TextEditingController pageController = TextEditingController(text: "1");
+  List<String> fieldOrder = [];
 
   final columnWidth = {
     'select': 50.0,
@@ -111,11 +114,8 @@ class _PluEidtPageState extends State<PluEidtPage> {
 
   List<PluDataModel> _getCurrentPageData() {
     final startIndex = (currentPage - 1) * pageSize;
-
     final endIndex = currentPage * pageSize;
-
     if (startIndex >= dataModels.length) return [];
-
     return dataModels.sublist(
       startIndex,
       endIndex > dataModels.length ? dataModels.length : endIndex,
@@ -125,7 +125,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
   // 更新数据源
 
   void _updateDataSource() {
-    _dataSource = NationDataSource(
+    _dataSource = PluDataSource(
       dataModels: _getCurrentPageData(),
       allSelectedNotifier: allSelectedNotifier,
       updateAllSelectedStatus: _updateAllSelectedStatus,
@@ -143,12 +143,10 @@ class _PluEidtPageState extends State<PluEidtPage> {
 
   void _initPagination() {
     _calculateTotalPages();
-
     _updateDataSource();
   }
 
   // 当数据变化时重新计算分页
-
   void _onDataChanged() {
     _calculateTotalPages();
     _updateDataSource();
@@ -207,7 +205,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
       ReqEnabledPlu reqEnabledPlu = ReqEnabledPlu();
       reqEnabledPlu.pluList = batch;
       reqEnabledPlu.enabled = enabled;
-      reqEnabledPlu.updateBy = mySysUser.userId;
+      reqEnabledPlu.updateBy = mySysUser.nickName;
       String jsonStr = reqEnabledPluToJson(reqEnabledPlu);
       PublicFunctions.enablePlu(jsonStr);
       // 等待100毫秒
@@ -231,42 +229,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
     'itemCode': true,
   };
 
-  // 根据列名返回显示名称
-  String getColumnName(String columnName) {
-    switch (columnName) {
-      case 'plu':
-        return localizedStrings.gPluPlu;
-      case 'productName':
-        return localizedStrings.gPluPluName;
-      case 'category':
-        return localizedStrings.gPluCategory;
-      case 'price':
-        return localizedStrings.gPluPrice;
-      case 'generalUnit':
-        return localizedStrings.gPluWgtUnit;
-      case 'taxType':
-        return localizedStrings.gPluTaxType;
-      case 'unitWeight':
-        return localizedStrings.gPluUnitWgt;
-      case 'pretare':
-        return localizedStrings.gPluPretare;
-      case 'limitHigh':
-        return localizedStrings.gPluLimitHigh;
-      case 'limitLow':
-        return localizedStrings.gPluLimitLow;
-
-      case 'productCode':
-        return localizedStrings.gPluPluCode;
-      case 'itemCode':
-        return localizedStrings.gPluItemCode;
-
-      default:
-        return columnName;
-    }
-  }
-
   // 处理删除单行
-
   void _handleEnabled(PluDataModel model) {
     setState(() {
       // 处理启用状态
@@ -281,7 +244,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
     ReqEnabledPlu reqEnabledPlu = ReqEnabledPlu();
     reqEnabledPlu.pluList = [model.pluData.recId ?? 0];
     reqEnabledPlu.enabled = model.pluData.enabled;
-    reqEnabledPlu.updateBy = mySysUser.userId;
+    reqEnabledPlu.updateBy = mySysUser.nickName;
     String jsonStr = reqEnabledPluToJson(reqEnabledPlu);
     PublicFunctions.enablePlu(jsonStr);
   }
@@ -291,7 +254,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
     super.didChangeDependencies();
     // 仅在数据源未初始化时创建实例
 
-    _dataSource ??= NationDataSource(
+    _dataSource ??= PluDataSource(
       dataModels: [], // 实际数据
       allSelectedNotifier: ValueNotifier(false),
       updateAllSelectedStatus: () {},
@@ -316,7 +279,11 @@ class _PluEidtPageState extends State<PluEidtPage> {
         }
       } else {}
     });
-
+    for (var key in _columnVisibility.keys) {
+      if (_columnVisibility[key] == true) {
+        fieldOrder.add(key);
+      }
+    }
     _initPagination();
     PublicFunctions.getProductList();
   }
@@ -345,41 +312,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
     _eventbus2 = eventBus.on<EventProductRecList>().listen((event) {
       if (mounted) {
         List<PluDataFromDb> pluInfoList = event.obj;
-        for (int i = 0; i < pluInfoList.length; i++) {
-          PluData newPlu = PluData(
-              0, 0, 0, 0, '', '', 0, 0, 0, 0, 0, 0, 0, '', false, '', 0, 0);
-          newPlu.enabled = pluInfoList[i].enabled ?? false;
-          newPlu.recId = pluInfoList[i].recId;
-          newPlu.plu = int.tryParse(pluInfoList[i].plu ?? '0') ?? 0;
-          newPlu.productCode =
-              int.tryParse(pluInfoList[i].productCode ?? '0') ?? 0;
-          newPlu.itemCode = int.tryParse(pluInfoList[i].itemCode ?? '0') ?? 0;
-          newPlu.category = pluInfoList[i].category;
-          newPlu.productName = pluInfoList[i].productName;
-          newPlu.price = double.tryParse(pluInfoList[i].price ?? '0') ?? 0;
-          newPlu.taxType = int.tryParse(pluInfoList[i].taxType ?? '0') ?? 0;
-          newPlu.generalUnit =
-              int.tryParse(pluInfoList[i].generalUnit ?? '0') ?? 0;
-          newPlu.unitWeight =
-              double.tryParse(pluInfoList[i].unitWeight ?? '0') ?? 0;
-          newPlu.pretare = double.tryParse(pluInfoList[i].pretare ?? '0') ?? 0;
-          newPlu.limitHigh =
-              double.tryParse(pluInfoList[i].limitHigh ?? '0') ?? 0;
-          newPlu.limitLow =
-              double.tryParse(pluInfoList[i].limitLow ?? '0') ?? 0;
-          newPlu.creatAt = pluInfoList[i].createdAt?.toIso8601String() ?? " ";
-          newPlu.updateAt = pluInfoList[i].updatedAt?.toIso8601String() ?? " ";
-          newPlu.createBy = pluInfoList[i].createBy;
-          newPlu.updateBy = pluInfoList[i].updateBy;
-
-          PluDataModel tempData = PluDataModel(pluData: newPlu);
-
-          dataModels.add(tempData);
-        }
-        setState(() {
-          _onDataChanged();
-          _getingData = false;
-        });
+        setPluToList(pluInfoList);
       }
     });
 
@@ -393,18 +326,15 @@ class _PluEidtPageState extends State<PluEidtPage> {
       if (mounted) {
         String jsonData = event.obj;
         // print('Received JSON data: $jsonData');
-
         PluDataFromDb? pluInfo =
             jsonDecode(jsonData) != null && jsonDecode(jsonData).isNotEmpty
                 ? PluDataFromDb.fromJson(jsonDecode(jsonData))
                 : null;
-
         if (pluInfo == null) {
           return;
         }
-
-        PluData newPlu = PluData(
-            0, 0, 0, 0, '', '', 0, 0, 0, 0, 0, 0, 0, '', false, '', 0, 0);
+        PluData newPlu = PluData(0, 0, 0, 0, '', '', 0, 0, 0, 0, 0, 0, 0, '',
+            false, '', 0, 0, '', '');
         newPlu.enabled = pluInfo.enabled ?? false;
         newPlu.recId = pluInfo.recId;
         newPlu.plu = int.tryParse(pluInfo.plu ?? '0') ?? 0;
@@ -423,6 +353,8 @@ class _PluEidtPageState extends State<PluEidtPage> {
         newPlu.updateAt = pluInfo.updatedAt?.toIso8601String() ?? " ";
         newPlu.createBy = pluInfo.createBy;
         newPlu.updateBy = pluInfo.updateBy;
+        newPlu.createUser = pluInfo.createUser;
+        newPlu.updateUser = pluInfo.updateUser;
 
         PluDataModel tempData = PluDataModel(pluData: newPlu);
 
@@ -440,17 +372,47 @@ class _PluEidtPageState extends State<PluEidtPage> {
     _eventbus2.cancel();
     _eventbus3.cancel();
     _eventbus4.cancel();
-
     allSelectedNotifier.dispose();
     gettingDataTimer?.cancel();
-
     dataModels.clear();
-
     super.dispose();
   }
 
-  // 更新全选状态
+  setPluToList(List<PluDataFromDb> pluInfoList) {
+    for (int i = 0; i < pluInfoList.length; i++) {
+      PluData newPlu = PluData(
+          0, 0, 0, 0, '', '', 0, 0, 0, 0, 0, 0, 0, '', false, '', 0, 0, '', '');
+      newPlu.enabled = pluInfoList[i].enabled ?? false;
+      newPlu.recId = pluInfoList[i].recId;
+      newPlu.plu = int.tryParse(pluInfoList[i].plu ?? '0') ?? 0;
+      newPlu.productCode = int.tryParse(pluInfoList[i].productCode ?? '0') ?? 0;
+      newPlu.itemCode = int.tryParse(pluInfoList[i].itemCode ?? '0') ?? 0;
+      newPlu.category = pluInfoList[i].category;
+      newPlu.productName = pluInfoList[i].productName;
+      newPlu.price = double.tryParse(pluInfoList[i].price ?? '0') ?? 0;
+      newPlu.taxType = int.tryParse(pluInfoList[i].taxType ?? '0') ?? 0;
+      newPlu.generalUnit = int.tryParse(pluInfoList[i].generalUnit ?? '0') ?? 0;
+      newPlu.unitWeight =
+          double.tryParse(pluInfoList[i].unitWeight ?? '0') ?? 0;
+      newPlu.pretare = double.tryParse(pluInfoList[i].pretare ?? '0') ?? 0;
+      newPlu.limitHigh = double.tryParse(pluInfoList[i].limitHigh ?? '0') ?? 0;
+      newPlu.limitLow = double.tryParse(pluInfoList[i].limitLow ?? '0') ?? 0;
+      newPlu.creatAt = pluInfoList[i].createdAt?.toIso8601String() ?? " ";
+      newPlu.updateAt = pluInfoList[i].updatedAt?.toIso8601String() ?? " ";
+      newPlu.createBy = pluInfoList[i].createBy;
+      newPlu.updateBy = pluInfoList[i].updateBy;
+      newPlu.createUser = pluInfoList[i].createUser;
+      newPlu.updateUser = pluInfoList[i].updateUser;
+      PluDataModel tempData = PluDataModel(pluData: newPlu);
+      dataModels.add(tempData);
+    }
+    setState(() {
+      _onDataChanged();
+      _getingData = false;
+    });
+  }
 
+  // 更新全选状态
   void _updateAllSelectedStatus() {
     final currentPageData = _getCurrentPageData();
     final allSelected = currentPageData.every((model) => model.isSelected);
@@ -585,14 +547,6 @@ class _PluEidtPageState extends State<PluEidtPage> {
                   _showSaveDatabaseDialog(context);
                 },
               ),
-              // const SizedBox(width: regularPadding),
-              // CustomGeneralButton(
-              //   text: buttonTexts[2],
-              //   maxWidth: buttonMaxWidths[2],
-              //   onPressed: () {
-              //     performImport();
-              //   },
-              // ),
               const SizedBox(width: regularPadding),
               CustomGeneralButton(
                 text: buttonTexts[3],
@@ -623,14 +577,6 @@ class _PluEidtPageState extends State<PluEidtPage> {
                 },
               ),
               const SizedBox(width: regularPadding),
-              // CustomGeneralButton(
-              //   text: buttonTexts[4],
-              //   maxWidth: buttonMaxWidths[4],
-              //   onPressed: () async {
-              //     String msg = await performExportTemplate();
-              //     showErrorDialog(context, msg);
-              //   },
-              // ),
             ],
           );
         },
@@ -638,91 +584,20 @@ class _PluEidtPageState extends State<PluEidtPage> {
     );
   }
 
-  Future<String> performExportTemplate() async {
+  Future<ExportResult> exportRawTemplate(String filePath) async {
     try {
-      final excel = Excel.createExcel();
-      final sheet = excel['Sheet1'];
-
-      List<String> selectedColumns = [];
-      for (var element in _columnVisibility.keys) {
-        if (_columnVisibility[element] == true) {
-          selectedColumns.add(element);
-        }
-      }
-
-      // 写入表头
-      sheet.appendRow([
-        if (selectedColumns.contains('plu')) TextCellValue('PLU'),
-        if (selectedColumns.contains('productCode'))
-          TextCellValue('ProductCode'),
-        if (selectedColumns.contains('itemCode')) TextCellValue('ItemCode'),
-        if (selectedColumns.contains('productName'))
-          TextCellValue('ProductName'),
-        if (selectedColumns.contains('generalUnit'))
-          TextCellValue('GeneralUnit'),
-        if (selectedColumns.contains('taxType')) TextCellValue('TaxType'),
-        if (selectedColumns.contains('price')) TextCellValue('Price'),
-        if (selectedColumns.contains('unitWeight')) TextCellValue('UnitWeight'),
-        if (selectedColumns.contains('pretare')) TextCellValue('PreTare'),
-        if (selectedColumns.contains('limitHigh')) TextCellValue('LimitHigh'),
-        if (selectedColumns.contains('limitLow')) TextCellValue('LimitLow'),
-      ]);
-
-      // 写入数据行
-
-      sheet.appendRow([
-        if (selectedColumns.contains('plu')) TextCellValue("1"),
-        if (selectedColumns.contains('productCode')) TextCellValue('1'),
-        if (selectedColumns.contains('itemCode')) TextCellValue('1'),
-        if (selectedColumns.contains('productName')) TextCellValue('Apple'),
-        if (selectedColumns.contains('generalUnit')) TextCellValue('1'),
-        if (selectedColumns.contains('taxType')) TextCellValue('1'),
-        if (selectedColumns.contains('price')) TextCellValue('8.88'),
-        if (selectedColumns.contains('unitWeight')) TextCellValue('8'),
-        if (selectedColumns.contains('pretare')) TextCellValue('0.88'),
-        if (selectedColumns.contains('limitHigh')) TextCellValue('10'),
-        if (selectedColumns.contains('limitLow')) TextCellValue('2'),
-      ]);
-
-      sheet.appendRow([
-        if (selectedColumns.contains('plu')) TextCellValue("1-99999"),
-        if (selectedColumns.contains('productCode'))
-          TextCellValue('Not in use yet'),
-        if (selectedColumns.contains('itemCode'))
-          TextCellValue('Not in use yet'),
-        if (selectedColumns.contains('productName'))
-          TextCellValue(
-              'The length is 30. Characters need scale support for display and only printer support for printing.'),
-        if (selectedColumns.contains('generalUnit'))
-          TextCellValue(
-              '''weighing scale: 0-g 1-kg 2-lb 3-oz 4-lboz 5-tj 6-hj 7-t\r\nprice scale: 0-kg  1-100g  2-pcs'''),
-        if (selectedColumns.contains('taxType'))
-          TextCellValue('0-tax1 1-tax2  2-tax3'),
-        if (selectedColumns.contains('price')) TextCellValue('unit Price'),
-        if (selectedColumns.contains('unitWeight')) TextCellValue('Unit: g'),
-        if (selectedColumns.contains('pretare')) TextCellValue('Unit: Kg'),
-        if (selectedColumns.contains('limitHigh'))
-          TextCellValue(
-              'With unit weight, upper & lower limit units are pcs and must be integers; without, they are the same as GeneralUnit.'),
-        if (selectedColumns.contains('limitLow'))
-          TextCellValue(
-              'With unit weight, upper & lower limit units are pcs and must be integers; without, they are the same as GeneralUnit.'),
-      ]);
-
-      // 让用户选择文件夹
-      final result = await FilePicker.platform.getDirectoryPath();
-      if (result != null) {
-        final String filePath = path.join(result, 'ProductTemplate.xlsx');
-        final file = File(filePath);
-
-        // 将Excel数据保存到文件
-        await file.writeAsBytes(excel.save()!);
-        return (filePath);
-      } else {
-        return (localizedStrings.gTipFolderNoSelected);
-      }
+      Excel excel = performExportTemplate(_columnVisibility);
+      File file = File(filePath);
+      await file.writeAsBytes(excel.save()!);
+      return ExportResult(isSuccess: true);
     } catch (e) {
-      return ('$e');
+      String errorMessage = localizedStrings.gTipExportError;
+      if (e is FileSystemException) {
+        errorMessage = localizedStrings.gTipExportFileError;
+      } else if (e is IOException) {
+        errorMessage = localizedStrings.gTipExportIOError;
+      }
+      return ExportResult(isSuccess: false, errorMessage: errorMessage);
     }
   }
 
@@ -736,53 +611,99 @@ class _PluEidtPageState extends State<PluEidtPage> {
           selectedColumns.add(element);
         }
       }
+      List<TextCellValue> row = [];
+      for (var field in fieldOrder) {
+        switch (field) {
+          case 'plu':
+            row.add(TextCellValue('PLU'));
+
+            break;
+          case 'productCode':
+            row.add(TextCellValue('ProductCode'));
+            break;
+          case 'itemCode':
+            row.add(TextCellValue('ItemCode'));
+            break;
+          case 'productName':
+            row.add(TextCellValue('ProductName'));
+            break;
+          case 'generalUnit':
+            row.add(TextCellValue('GeneralUnit'));
+            break;
+          case 'taxType':
+            row.add(TextCellValue('TaxType'));
+            break;
+          case 'price':
+            row.add(TextCellValue('Price'));
+            break;
+          case 'unitWeight':
+            row.add(TextCellValue('UnitWeight'));
+            break;
+          case 'pretare':
+            row.add(TextCellValue('PreTare'));
+            break;
+          case 'limitHigh':
+            row.add(TextCellValue('LimitHigh'));
+            break;
+          case 'limitLow':
+            row.add(TextCellValue('LimitLow'));
+            break;
+          case 'enable':
+            row.add(TextCellValue('Enable'));
+            break;
+        }
+      }
 
       // 写入表头
-      sheet.appendRow([
-        if (selectedColumns.contains('plu')) TextCellValue('PLU'),
-        if (selectedColumns.contains('productCode'))
-          TextCellValue('ProductCode'),
-        if (selectedColumns.contains('itemCode')) TextCellValue('ItemCode'),
-        if (selectedColumns.contains('productName'))
-          TextCellValue('ProductName'),
-        if (selectedColumns.contains('generalUnit'))
-          TextCellValue('GeneralUnit'),
-        if (selectedColumns.contains('taxType')) TextCellValue('TaxType'),
-        if (selectedColumns.contains('price')) TextCellValue('Price'),
-        if (selectedColumns.contains('unitWeight')) TextCellValue('UnitWeight'),
-        if (selectedColumns.contains('pretare')) TextCellValue('PreTare'),
-        if (selectedColumns.contains('limitHigh')) TextCellValue('LimitHigh'),
-        if (selectedColumns.contains('limitLow')) TextCellValue('LimitLow'),
-        TextCellValue('Enable'),
-      ]);
+      sheet.appendRow(row);
 
       // 写入数据行
       for (var dessert in desserts) {
-        sheet.appendRow([
-          if (selectedColumns.contains('plu'))
-            TextCellValue(dessert.plu?.toString() ?? ''),
-          if (selectedColumns.contains('productCode'))
-            TextCellValue(dessert.productCode?.toString() ?? ''),
-          if (selectedColumns.contains('itemCode'))
-            TextCellValue(dessert.itemCode?.toString() ?? ''),
-          if (selectedColumns.contains('productName'))
-            TextCellValue(dessert.productName ?? ''),
-          if (selectedColumns.contains('generalUnit'))
-            TextCellValue(dessert.generalUnit?.toString() ?? ''),
-          if (selectedColumns.contains('taxType'))
-            TextCellValue(dessert.taxType?.toString() ?? ''),
-          if (selectedColumns.contains('price'))
-            TextCellValue(dessert.price?.toString() ?? ''),
-          if (selectedColumns.contains('unitWeight'))
-            TextCellValue(dessert.unitWeight?.toString() ?? ''),
-          if (selectedColumns.contains('pretare'))
-            TextCellValue(dessert.pretare?.toString() ?? ''),
-          if (selectedColumns.contains('limitHigh'))
-            TextCellValue(dessert.limitHigh?.toString() ?? ''),
-          if (selectedColumns.contains('limitLow'))
-            TextCellValue(dessert.limitLow?.toString() ?? ''),
-          TextCellValue(dessert.enabled == true ? 'true' : 'false'),
-        ]);
+        List<TextCellValue> row = [];
+        for (var field in fieldOrder) {
+          switch (field) {
+            case 'plu':
+              row.add(TextCellValue(dessert.plu?.toString() ?? ''));
+              break;
+            case 'productCode':
+              row.add(TextCellValue(dessert.productCode?.toString() ?? ''));
+              break;
+            case 'itemCode':
+              row.add(TextCellValue(dessert.itemCode?.toString() ?? ''));
+              break;
+            case 'productName':
+              row.add(TextCellValue(dessert.productName ?? ''));
+              break;
+            case 'generalUnit':
+              row.add(TextCellValue(dessert.generalUnit?.toString() ?? ''));
+              break;
+            case 'taxType':
+              row.add(TextCellValue(dessert.taxType?.toString() ?? ''));
+              break;
+            case 'price':
+              row.add(TextCellValue(dessert.price?.toString() ?? ''));
+              break;
+            case 'unitWeight':
+              row.add(TextCellValue(dessert.unitWeight?.toString() ?? ''));
+              break;
+            case 'pretare':
+              row.add(TextCellValue(dessert.pretare?.toString() ?? ''));
+              break;
+            case 'limitHigh':
+              row.add(TextCellValue(dessert.limitHigh?.toString() ?? ''));
+              break;
+            case 'limitLow':
+              row.add(TextCellValue(dessert.limitLow?.toString() ?? ''));
+              break;
+            case 'enable':
+              row.add(
+                  TextCellValue(dessert.enabled == true ? 'true' : 'false'));
+              break;
+            default:
+              break;
+          }
+        }
+        sheet.appendRow(row);
       }
 
       // 让用户选择文件夹
@@ -914,6 +835,26 @@ class _PluEidtPageState extends State<PluEidtPage> {
           priceValue = roundToTwoDecimalPlaces(value);
         }
         // 根据标题与字段名的对应关系创建Dessert对象
+        String unit = rowData['GeneralUnit'].toString();
+        unit = unit.replaceAll(' ', '');
+        unit = unit.toLowerCase();
+        int unitInt = 0;
+        for (var entry in pluUnit.entries) {
+          if (entry.value == unit) {
+            unitInt = entry.key;
+            break;
+          }
+        }
+
+        String taxStr = rowData['TaxType'].toString();
+        int taxInt = 0;
+        for (var entry in pluTax.entries) {
+          if (entry.value == taxStr) {
+            taxInt = entry.key;
+            break;
+          }
+        }
+
         PluData dessert = PluData(
           rowData.containsKey('recId')
               ? int.tryParse(rowData['recId'].toString()) ?? 0
@@ -935,12 +876,8 @@ class _PluEidtPageState extends State<PluEidtPage> {
           rowData.containsKey('ProductName')
               ? rowData['ProductName'].toString()
               : '-',
-          rowData.containsKey('GeneralUnit')
-              ? int.tryParse(rowData['GeneralUnit'].toString()) ?? 0
-              : 0,
-          rowData.containsKey('TaxType')
-              ? int.tryParse(rowData['TaxType'].toString()) ?? 0
-              : 0,
+          rowData.containsKey('GeneralUnit') ? unitInt : 0,
+          rowData.containsKey('TaxType') ? taxInt : 0,
           rowData.containsKey('Price') ? priceValue : 0.0,
           rowData.containsKey('UnitWeight')
               ? double.tryParse(rowData['UnitWeight'].toString()) ?? 0
@@ -956,17 +893,15 @@ class _PluEidtPageState extends State<PluEidtPage> {
           rowData.containsKey('LimitLow')
               ? double.tryParse(rowData['LimitLow'].toString()) ?? 0
               : 0.0,
-          rowData.containsKey('creatAt') ? rowData['creatAt'].toString() : '',
+          '',
           rowData.containsKey('ebabled')
               ? rowData['ebabled'].toString() == '1'
               : true,
-          rowData.containsKey('updateAt') ? rowData['updateAt'].toString() : '',
-          rowData.containsKey('createBy')
-              ? int.tryParse(rowData['createBy'].toString()) ?? 0
-              : 0,
-          rowData.containsKey('updateBy')
-              ? int.tryParse(rowData['updateBy'].toString()) ?? 0
-              : 0,
+          '',
+          0,
+          0,
+          '',
+          '',
         );
         PluDataModel pluDataModel = PluDataModel(pluData: dessert);
 
@@ -1243,6 +1178,8 @@ class _PluEidtPageState extends State<PluEidtPage> {
         enabled: info.pluData.enabled,
         createBy: info.pluData.createBy,
         updateBy: info.pluData.updateBy,
+        createUser: mySysUser.nickName,
+        updateUser: mySysUser.nickName,
       ));
     }
     sendPluListInBatches(pluList, "1");
@@ -1293,6 +1230,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
       builder: (BuildContext context) {
         return AddPluInfoDialog(
             type: 0,
+            selField: fieldOrder,
             pluInfo: PluData(
               0,
               0,
@@ -1312,6 +1250,8 @@ class _PluEidtPageState extends State<PluEidtPage> {
               '',
               0,
               0,
+              '',
+              '',
             ),
             pluList: getPluList(),
             onSave: (PluData pluData) {
@@ -1411,9 +1351,19 @@ class _PluEidtPageState extends State<PluEidtPage> {
             isImporting
                 ? null
                 : () async {
-                    String msg = await performExportTemplate();
-                    if (mounted) {
-                      showErrorDialog(context, msg);
+                    // 让用户选择文件夹
+                    final result = await FilePicker.platform.getDirectoryPath();
+                    if (result == null) {
+                      return '';
+                    }
+                    final String filePath =
+                        path.join(result, 'ProductTemplate.xlsx');
+                    ExportResult msg = await exportRawTemplate(filePath);
+                    if (!mounted) return '';
+                    if (msg.isSuccess) {
+                      showExportDialog(filePath, context);
+                    } else {
+                      showTipInfo(msg.errorMessage!, context);
                     }
                   }),
         SizedBox(
@@ -1619,11 +1569,13 @@ class _PluEidtPageState extends State<PluEidtPage> {
         return MultiSelectDialog(
           options: colNamesMap,
           context: context,
+          selectedOptions: fieldOrder,
         );
       },
     ).then((value) {
       if (value != null) {
         List<String> selectedOptions = value;
+        fieldOrder = selectedOptions;
         for (var item in _columnVisibility.entries) {
           if (selectedOptions.contains(item.key)) {
             _columnVisibility[item.key] = true;
@@ -2037,6 +1989,8 @@ class _PluEidtPageState extends State<PluEidtPage> {
       enabled: modifyPlu.pluData.enabled,
       createBy: modifyPlu.pluData.createBy,
       updateBy: mySysUser.userId,
+      createUser: mySysUser.nickName,
+      updateUser: mySysUser.nickName,
     );
 
     String jsonData = jsonEncode(editPlus);
@@ -2049,6 +2003,68 @@ class _PluEidtPageState extends State<PluEidtPage> {
       pluList.add(item.pluData.plu!);
     }
     return pluList;
+  }
+
+  List<GridColumn> showFieldTitle(double itemWidth) {
+    List<GridColumn> fieldTitle = [];
+    for (int i = 0; i < fieldOrder.length; i++) {
+      String fieldName = fieldOrder[i];
+
+      switch (fieldName) {
+        case 'plu':
+          fieldTitle
+              .add(getColumnWidget(itemWidth, 'plu', localizedStrings.gPluPlu));
+          break;
+        case 'productName':
+          fieldTitle.add(getColumnWidget(
+              itemWidth, 'productName', localizedStrings.gPluPluName));
+          break;
+        case 'category':
+          fieldTitle.add(getColumnWidget(
+              itemWidth, 'category', localizedStrings.gPluCategory));
+          break;
+        case 'price':
+          fieldTitle.add(
+              getColumnWidget(itemWidth, 'price', localizedStrings.gPluPrice));
+          break;
+        case 'generalUnit':
+          fieldTitle.add(getColumnWidget(
+              itemWidth, 'generalUnit', localizedStrings.gPluWgtUnit));
+          break;
+        case 'taxType':
+          fieldTitle.add(getColumnWidget(
+              itemWidth, 'taxType', localizedStrings.gPluTaxType));
+          break;
+        case 'unitWeight':
+          fieldTitle.add(getColumnWidget(
+              itemWidth, 'unitWeight', localizedStrings.gPluUnitWgt));
+          break;
+        case 'pretare':
+          fieldTitle.add(getColumnWidget(
+              itemWidth, 'pretare', localizedStrings.gPluPretare));
+          break;
+        case 'limitHigh':
+          fieldTitle.add(getColumnWidget(
+              itemWidth, 'limitHigh', localizedStrings.gPluLimitHigh));
+          break;
+        case 'limitLow':
+          fieldTitle.add(getColumnWidget(
+              itemWidth, 'limitLow', localizedStrings.gPluLimitLow));
+          break;
+        case 'productCode':
+          fieldTitle.add(getColumnWidget(
+              itemWidth, 'productCode', localizedStrings.gPluPluCode));
+          break;
+        case 'itemCode':
+          fieldTitle.add(getColumnWidget(
+              itemWidth, 'itemCode', localizedStrings.gPluItemCode));
+          break;
+        default:
+          break;
+      }
+    }
+
+    return fieldTitle;
   }
 
   @override
@@ -2108,6 +2124,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
                           context: context,
                           builder: (context) => AddPluInfoDialog(
                             type: 1,
+                            selField: fieldOrder,
                             pluList: getPluList(),
                             pluInfo: dataRow.pluData,
                             onSave: (updatedPlu) {
@@ -2129,7 +2146,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
                       return true;
                     },
                     source: _dataSource ??
-                        NationDataSource(
+                        PluDataSource(
                           dataModels: _getCurrentPageData(),
                           allSelectedNotifier: allSelectedNotifier,
                           updateAllSelectedStatus: _updateAllSelectedStatus,
@@ -2165,42 +2182,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
                             },
                           ),
                         ),
-                      if (_columnVisibility['plu']!)
-                        getColumnWidget(
-                            itemWidth, 'plu', localizedStrings.gPluPlu),
-                      if (_columnVisibility['productName']!)
-                        getColumnWidget(itemWidth, 'productName',
-                            localizedStrings.gPluPluName),
-                      if (_columnVisibility['category']!)
-                        getColumnWidget(itemWidth, 'category',
-                            localizedStrings.gPluCategory),
-                      if (_columnVisibility['price']!)
-                        getColumnWidget(
-                            itemWidth, 'price', localizedStrings.gPluPrice),
-                      if (_columnVisibility['generalUnit']!)
-                        getColumnWidget(itemWidth, 'generalUnit',
-                            localizedStrings.gPluWgtUnit),
-                      if (_columnVisibility['taxType']!)
-                        getColumnWidget(
-                            itemWidth, 'taxType', localizedStrings.gPluTaxType),
-                      if (_columnVisibility['unitWeight']!)
-                        getColumnWidget(itemWidth, 'unitWeight',
-                            localizedStrings.gPluUnitWgt),
-                      if (_columnVisibility['pretare']!)
-                        getColumnWidget(
-                            itemWidth, 'pretare', localizedStrings.gPluPretare),
-                      if (_columnVisibility['limitHigh']!)
-                        getColumnWidget(itemWidth, 'limitHigh',
-                            localizedStrings.gPluLimitHigh),
-                      if (_columnVisibility['limitLow']!)
-                        getColumnWidget(itemWidth, 'limitLow',
-                            localizedStrings.gPluLimitLow),
-                      if (_columnVisibility['productCode']!)
-                        getColumnWidget(itemWidth, 'productCode',
-                            localizedStrings.gPluPluCode),
-                      if (_columnVisibility['itemCode']!)
-                        getColumnWidget(itemWidth, 'itemCode',
-                            localizedStrings.gPluItemCode),
+                      ...showFieldTitle(itemWidth),
                       GridColumn(
                         width: 120,
                         allowSorting: false,
@@ -2334,252 +2316,8 @@ class _PluEidtPageState extends State<PluEidtPage> {
   }
 }
 
-// 数据模型
-
-class PluDataModel {
-  final PluData pluData;
-  bool isSelected;
-
-  PluDataModel({
-    required this.pluData,
-    this.isSelected = false,
-  });
-
-  // 复制方法，用于编辑时创建新对象
-
-  PluDataModel copyWith({
-    PluData? pluData,
-    bool? isSelected,
-  }) {
-    return PluDataModel(
-      pluData: pluData ?? this.pluData,
-      isSelected: isSelected ?? this.isSelected,
-    );
-  }
-}
-
-class NationDataSource extends DataGridSource {
-  NationDataSource({
-    required List<PluDataModel> dataModels,
-    required this.allSelectedNotifier,
-    required this.updateAllSelectedStatus,
-    required this.onEnabled,
-    required Map<String, bool> columnVisibility,
-    required TextTheme textScheme,
-    required ColorScheme colorScheme,
-    required this.canSelect,
-    required this.enableTitle,
-    required this.disableTitle,
-  }) {
-    _dataModels = dataModels.map<DataGridRow>((e) {
-      final cells = <DataGridCell>[];
-      // 固定列 'select' 始终添加
-      if (canSelect) {
-        cells.add(
-          DataGridCell<bool>(columnName: 'select', value: e.isSelected),
-        );
-      }
-
-      // 根据列可见性动态添加其他列
-      columnVisibility.forEach((key, value) {
-        if (value) {
-          switch (key) {
-            case 'plu':
-              cells.add(
-                DataGridCell<int>(columnName: 'plu', value: e.pluData.plu),
-              );
-              break;
-            case 'productName':
-              cells.add(
-                DataGridCell<String>(
-                  columnName: 'productName',
-                  value: e.pluData.productName,
-                ),
-              );
-              break;
-            case 'category':
-              cells.add(
-                DataGridCell<String>(
-                  columnName: 'category',
-                  value: e.pluData.category,
-                ),
-              );
-              break;
-            case 'price':
-              cells.add(
-                DataGridCell<String>(
-                    columnName: 'price', value: e.pluData.price.toString()),
-              );
-              break;
-
-            case 'generalUnit':
-              cells.add(
-                DataGridCell<int>(
-                  columnName: 'generalUnit',
-                  value: e.pluData.generalUnit,
-                ),
-              );
-              break;
-            case 'taxType':
-              cells.add(
-                DataGridCell<int>(
-                  columnName: 'taxType',
-                  value: e.pluData.taxType,
-                ),
-              );
-              break;
-            case 'unitWeight':
-              cells.add(
-                DataGridCell<double>(
-                  columnName: 'unitWeight',
-                  value: e.pluData.unitWeight,
-                ),
-              );
-              break;
-            case 'pretare':
-              cells.add(
-                DataGridCell<double>(
-                  columnName: 'pretare',
-                  value: e.pluData.pretare,
-                ),
-              );
-              break;
-            case 'limitHigh':
-              cells.add(
-                DataGridCell<double>(
-                  columnName: 'limitHigh',
-                  value: e.pluData.limitHigh,
-                ),
-              );
-              break;
-            case 'limitLow':
-              cells.add(
-                DataGridCell<double>(
-                  columnName: 'limitLow',
-                  value: e.pluData.limitLow,
-                ),
-              );
-              break;
-
-            case 'productCode':
-              cells.add(
-                DataGridCell<int>(
-                  columnName: 'productCode',
-                  value: e.pluData.productCode,
-                ),
-              );
-              break;
-            case 'itemCode':
-              cells.add(
-                DataGridCell<int>(
-                  columnName: 'itemCode',
-                  value: e.pluData.itemCode,
-                ),
-              );
-              break;
-          }
-        }
-      });
-
-      cells.add(
-        DataGridCell<String>(
-            columnName: 'enable',
-            value: e.pluData.enabled == null
-                ? enableTitle
-                : e.pluData.enabled!
-                    ? enableTitle
-                    : disableTitle),
-      );
-      return DataGridRow(cells: cells);
-    }).toList();
-    _originalDataModels = dataModels;
-    myTextScheme = textScheme;
-    _colorScheme = colorScheme;
-  }
-
-  late List<PluDataModel> _originalDataModels;
-  final ValueNotifier<bool> allSelectedNotifier;
-  final VoidCallback updateAllSelectedStatus;
-
-  final Function(PluDataModel) onEnabled; // 删除回调
-  final bool canSelect;
-  final String enableTitle;
-  final String disableTitle;
-
-  List<DataGridRow> _dataModels = [];
-  late TextTheme myTextScheme;
-  late ColorScheme _colorScheme;
-
-  @override
-  List<DataGridRow> get rows => _dataModels;
-
-  @override
-  DataGridRowAdapter? buildRow(DataGridRow row) {
-    final index = _dataModels.indexOf(row);
-
-    final dataModel = _originalDataModels[index];
-    var colorScheme = _colorScheme;
-
-    return DataGridRowAdapter(
-      cells: row.getCells().map<Widget>((dataGridCell) {
-        if (dataGridCell.columnName == 'select' && canSelect) {
-          return Checkbox(
-            value: dataModel.isSelected,
-            onChanged: (bool? newValue) {
-              setState(() {
-                dataModel.isSelected = newValue ?? false;
-                updateAllSelectedStatus();
-              });
-            },
-          );
-        } else if (dataGridCell.columnName == 'enable') {
-          return Container(
-              alignment: Alignment.centerLeft,
-              padding: const EdgeInsets.all(8.0),
-              child: TextButton(
-                onPressed: () {
-                  onEnabled(dataModel);
-                },
-                child: Text(
-                  dataGridCell.value.toString(),
-                  style: TextStyle(
-                    fontFamily: "alibaba",
-                    color: dataModel.pluData.enabled == null
-                        ? colorScheme.onTertiaryFixedVariant
-                        : dataModel.pluData.enabled!
-                            ? colorScheme.onTertiaryFixedVariant
-                            : colorScheme.error,
-                    fontSize: 14,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                ),
-              ));
-        }
-
-        return MouseRegion(
-          cursor: SystemMouseCursors.click, // 手型光标
-          child: Container(
-            alignment: Alignment.centerLeft,
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              dataGridCell.value.toString(),
-              style: TextStyle(
-                fontFamily: "alibaba",
-                color: colorScheme.onSurfaceVariant,
-                fontSize: 14,
-              ),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-            ),
-          ),
-        );
-      }).toList(),
-    );
-  }
-
-  void setState(VoidCallback callback) {
-    callback();
-    notifyListeners();
-  }
+class ExportResult {
+  bool isSuccess;
+  String? errorMessage;
+  ExportResult({required this.isSuccess, this.errorMessage});
 }

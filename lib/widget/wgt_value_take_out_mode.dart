@@ -874,7 +874,7 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
 
   void _addWeightToReport(String wgtValue) {
     PluData? tempPlu = PluData(null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null);
+        null, null, null, null, null, null, null, null, null, null, '', '');
     if (selectedPluData != null) {
       tempPlu = selectedPluData;
     }

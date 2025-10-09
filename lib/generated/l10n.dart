@@ -3660,10 +3660,10 @@ class S {
     );
   }
 
-  /// `Unit Wight`
+  /// `Unit Weight`
   String get gPluUnitWgt {
     return Intl.message(
-      'Unit Wight',
+      'Unit Weight',
       name: 'gPluUnitWgt',
       desc: 'This is prompt for product edit.',
       args: [],

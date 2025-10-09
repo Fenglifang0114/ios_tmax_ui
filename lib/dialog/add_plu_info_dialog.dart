@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/language.dart';
+import 'package:t_max/data/plu_data.dart';
 import 'package:t_max/data/plu_data_source.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/widget/dialog_head_style.dart';
@@ -10,10 +11,12 @@ class AddPluInfoDialog extends StatefulWidget {
   const AddPluInfoDialog(
       {super.key,
       required this.type,
+      required this.selField,
       required this.pluList,
       required this.pluInfo,
       required this.onSave});
   final int type; // 0:添加 1:编辑
+  final List<String> selField;
   final List<int> pluList; //PLU的列表
   final PluData pluInfo;
   final Function(PluData) onSave;
@@ -34,6 +37,7 @@ class AddPluInfoDialogState extends State<AddPluInfoDialog> {
   TextEditingController categoryCtl = TextEditingController();
   TextEditingController pluCodeCtl = TextEditingController();
   TextEditingController itemCodeCtl = TextEditingController();
+  List<Widget> showFields = [];
 
   @override
   void initState() {
@@ -43,7 +47,14 @@ class AddPluInfoDialogState extends State<AddPluInfoDialog> {
       pluNameCtl.text = widget.pluInfo.productName!;
       priceCtl.text = widget.pluInfo.price.toString();
       wgtUnitCtl.text = widget.pluInfo.generalUnit.toString();
+      if (!pluUnit.containsKey(widget.pluInfo.generalUnit)) {
+        wgtUnitCtl.text = '0';
+      }
+
       taxTypeCtl.text = widget.pluInfo.taxType.toString();
+      if (!pluTax.containsKey(widget.pluInfo.taxType)) {
+        taxTypeCtl.text = '0';
+      }
       unitWgtCtl.text = widget.pluInfo.unitWeight.toString();
       pretareCtl.text = widget.pluInfo.pretare.toString();
       limitHighCtl.text = widget.pluInfo.limitHigh.toString();
@@ -56,8 +67,8 @@ class AddPluInfoDialogState extends State<AddPluInfoDialog> {
       pluCtl.text = '';
       pluNameCtl.text = '';
       priceCtl.text = '';
-      wgtUnitCtl.text = '';
-      taxTypeCtl.text = '';
+      wgtUnitCtl.text = '0';
+      taxTypeCtl.text = '0';
       unitWgtCtl.text = '0';
       pretareCtl.text = '0';
       limitHighCtl.text = '0';
@@ -66,10 +77,79 @@ class AddPluInfoDialogState extends State<AddPluInfoDialog> {
       pluCodeCtl.text = '0';
       itemCodeCtl.text = '0';
     }
+
     super.initState();
   }
 
+  @override
+  didChangeDependencies() {
+    super.didChangeDependencies();
+    _buildDynamicFields();
+  }
+
 //
+// 构建动态字段列表
+  _buildDynamicFields() {
+    List<String> selField = widget.selField;
+
+    if (selField.contains('plu')) {
+      showFields.add(_buildFieldItem(getColumnName('plu'), showPluInput()));
+    }
+    if (selField.contains('productName')) {
+      showFields.add(
+          _buildFieldItem(getColumnName('productName'), showPluNameInput()));
+    }
+    if (selField.contains('price')) {
+      showFields.add(
+          _buildFieldItem(getColumnName('price'), showDecimalInput(priceCtl)));
+    }
+    if (selField.contains('generalUnit')) {
+      showFields.add(
+          _buildFieldItem(getColumnName('generalUnit'), showWgtUnitInput()));
+    }
+    if (selField.contains('taxType')) {
+      showFields
+          .add(_buildFieldItem(getColumnName('taxType'), showTaxTypeInput()));
+    }
+    if (selField.contains('unitWeight')) {
+      showFields.add(_buildFieldItem(
+          '${getColumnName('unitWeight')}(g)', showDecimalInput(unitWgtCtl)));
+    }
+    if (selField.contains('pretare')) {
+      showFields.add(_buildFieldItem(
+          '${getColumnName('pretare')}(kg)', showDecimalInput(pretareCtl)));
+    }
+    if (selField.contains('limitHigh')) {
+      showFields.add(_buildFieldItem(
+          getColumnName('limitHigh'), showDecimalInput(limitHighCtl)));
+    }
+    if (selField.contains('limitLow')) {
+      showFields.add(_buildFieldItem(
+          getColumnName('limitLow'), showDecimalInput(limitLowCtl)));
+    }
+    if (selField.contains('category')) {
+      showFields
+          .add(_buildFieldItem(getColumnName('category'), showCategoryInput()));
+    }
+    if (selField.contains('productCode')) {
+      showFields.add(_buildFieldItem(
+          getColumnName('productCode'), showCodeInput(pluCodeCtl)));
+    }
+    if (selField.contains('itemCode')) {
+      showFields.add(_buildFieldItem(
+          getColumnName('itemCode'), showCodeInput(itemCodeCtl)));
+    }
+  }
+
+  Widget _buildFieldItem(String title, Widget inputWidget) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        showTitleName(title),
+        inputWidget,
+      ],
+    );
+  }
 
   @override
   void dispose() {
@@ -291,69 +371,64 @@ class AddPluInfoDialogState extends State<AddPluInfoDialog> {
   }
 
   Widget showWgtUnitInput() {
-    return TextField(
-      controller: wgtUnitCtl,
+    return DropdownButtonFormField<int>(
+      value: wgtUnitCtl.text.isNotEmpty ? int.tryParse(wgtUnitCtl.text) : null,
       decoration: InputDecoration(
         border: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(0.0))),
-        hintText:
-            'wgt:0-g,1-kg,2-lb,3-oz,4-lboz,5-tj,6-hj,7-t \r\nprice:0-kg,1-100g,2-pcs',
+          borderRadius: BorderRadius.all(Radius.circular(0.0)),
+        ),
+        hintText: '',
         hintStyle: getTextStyle(
           color: colorScheme.surfaceContainerHighest,
         ),
-        suffixIconConstraints: BoxConstraints.tight(Size(40, 40)),
       ),
-      inputFormatters: [
-        FilteringTextInputFormatter.digitsOnly,
-        LengthLimitingTextInputFormatter(1),
-        // 使用正则表达式验证输入格式
-        TextInputFormatter.withFunction((oldValue, newValue) {
-          if (newValue.text.isEmpty) return newValue;
-          final regExp = RegExp(r'^[0-7]');
-          if (regExp.hasMatch(newValue.text)) {
-            return newValue;
-          }
-          return oldValue;
-        }),
+      items: [
+        for (var entry in pluUnit.entries)
+          DropdownMenuItem<int>(
+            value: entry.key,
+            child: Text(
+              entry.value,
+              style: getTextStyle(color: colorScheme.onSurface),
+            ),
+          ),
       ],
-      keyboardType: TextInputType.number,
-      onChanged: (value) {},
-      style: getTextStyle(
-        color: colorScheme.onSurface,
-      ),
+      onChanged: (int? newValue) {
+        if (newValue != null) {
+          wgtUnitCtl.text = newValue.toString();
+        }
+      },
+      style: getTextStyle(color: colorScheme.onSurface),
     );
   }
 
   Widget showTaxTypeInput() {
-    return TextField(
-      controller: taxTypeCtl,
+    return DropdownButtonFormField<int>(
+      value: taxTypeCtl.text.isNotEmpty ? int.tryParse(taxTypeCtl.text) : null,
       decoration: InputDecoration(
         border: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(0.0))),
-        hintText: '0-tax1,1-tax2,2-tax3',
+          borderRadius: BorderRadius.all(Radius.circular(0.0)),
+        ),
+        hintText: '',
         hintStyle: getTextStyle(
           color: colorScheme.surfaceContainerHighest,
         ),
-        suffixIconConstraints: BoxConstraints.tight(Size(40, 40)),
       ),
-      inputFormatters: [
-        FilteringTextInputFormatter.digitsOnly,
-        LengthLimitingTextInputFormatter(1),
-        // 使用正则表达式验证输入格式
-        TextInputFormatter.withFunction((oldValue, newValue) {
-          if (newValue.text.isEmpty) return newValue;
-          final regExp = RegExp(r'^[0-2]');
-          if (regExp.hasMatch(newValue.text)) {
-            return newValue;
-          }
-          return oldValue;
-        }),
+      items: [
+        for (var entry in pluTax.entries)
+          DropdownMenuItem<int>(
+            value: entry.key,
+            child: Text(
+              entry.value,
+              style: getTextStyle(color: colorScheme.onSurface),
+            ),
+          ),
       ],
-      keyboardType: TextInputType.number,
-      onChanged: (value) {},
-      style: getTextStyle(
-        color: colorScheme.onSurface,
-      ),
+      onChanged: (int? newValue) {
+        if (newValue != null) {
+          taxTypeCtl.text = newValue.toString();
+        }
+      },
+      style: getTextStyle(color: colorScheme.onSurface),
     );
   }
 
@@ -530,25 +605,15 @@ class AddPluInfoDialogState extends State<AddPluInfoDialog> {
 
               // 中部
               Expanded(
-                  child: Container(
-                      padding: EdgeInsets.all(20),
-                      child: Column(children: [
-                        showFirstRow(),
-                        showSecondRow(),
-                        showThirdRow(),
-                        showFourthRow(),
-                        Container(
-                          height: 44,
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            localizedStrings.gPluWgtUnit +
-                                ":          weight:0-g,1-kg,2-lb,3-oz,4-lboz,5-tj,6-hj,7-t   price:0-kg,1-100g,2-pcs",
-                            style: getTextStyle(color: colorScheme.primary),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        )
-                      ]))),
-
+                child: GridView.count(
+                  padding: EdgeInsets.only(left: 20, right: 20),
+                  crossAxisCount: 3, // 每行3个
+                  crossAxisSpacing: 20, // 水平间距
+                  mainAxisSpacing: 10, // 垂直间距
+                  childAspectRatio: 2.7, // 宽高比
+                  children: showFields,
+                ),
+              ),
               // 底部
               Container(
                 height: 96,
@@ -599,7 +664,7 @@ class AddPluInfoDialogState extends State<AddPluInfoDialog> {
                             itemCodeCtl.text = '0';
                           }
                           PluData newPlu = PluData(0, 0, 0, 0, '', '', 0, 0, 0,
-                              0, 0, 0, 0, '', true, '', 0, 0);
+                              0, 0, 0, 0, '', true, '', 0, 0, '', '');
 
                           if (widget.type == 0) {
                             newPlu = PluData(
@@ -620,7 +685,9 @@ class AddPluInfoDialogState extends State<AddPluInfoDialog> {
                                 true,
                                 '',
                                 0,
-                                0);
+                                0,
+                                '',
+                                '');
                           } else {
                             newPlu = PluData(
                                 widget.pluInfo.recId,
@@ -640,7 +707,9 @@ class AddPluInfoDialogState extends State<AddPluInfoDialog> {
                                 widget.pluInfo.enabled,
                                 DateTime.now().toIso8601String(),
                                 widget.pluInfo.createBy,
-                                mySysUser.userId);
+                                mySysUser.userId,
+                                '',
+                                '');
                           }
 
                           widget.onSave(newPlu);

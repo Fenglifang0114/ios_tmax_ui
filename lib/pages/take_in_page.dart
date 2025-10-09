@@ -185,8 +185,8 @@ class TakeInPageState extends State<TakeInPage> {
         setState(() {
           List<PluDataFromDb> pluInfoList = event.obj;
           for (int i = 0; i < pluInfoList.length; i++) {
-            PluData newPlu = PluData(
-                0, 0, 0, 0, '', '', 0, 0, 0, 0, 0, 0, 0, '', false, '', 0, 0);
+            PluData newPlu = PluData(0, 0, 0, 0, '', '', 0, 0, 0, 0, 0, 0, 0,
+                '', false, '', 0, 0, '', '');
             newPlu.enabled = pluInfoList[i].enabled ?? true;
             if (!pluInfoList[i].enabled!) {
               continue;
@@ -215,6 +215,8 @@ class TakeInPageState extends State<TakeInPage> {
                 pluInfoList[i].updatedAt?.toIso8601String() ?? " ";
             newPlu.createBy = pluInfoList[i].createBy;
             newPlu.updateBy = pluInfoList[i].updateBy;
+            newPlu.createUser = pluInfoList[i].createUser;
+            newPlu.updateUser = pluInfoList[i].updateUser;
 
             myPluInfoList.add(newPlu);
           }
@@ -1072,6 +1074,8 @@ void sendDataToDb(
         '',
         0,
         0,
+        '',
+        '',
       );
 
   final newAddRec = ReqAddWgtRec()

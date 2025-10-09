@@ -1572,7 +1572,7 @@
     "@gPluPrice": {
         "description": "This is prompt for product edit."
     },
-    "gPluUnitWgt": "Unit Wight",
+    "gPluUnitWgt": "Unit Weight",
     "@gPluUnitWgt": {
         "description": "This is prompt for product edit."
     },

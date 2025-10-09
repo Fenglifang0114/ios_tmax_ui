@@ -1236,9 +1236,14 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
             isClosePort || isComSetting
                 ? null
                 : () {
-                    PublicFunctions.closeSerialPort(1);
+                    PublicFunctions.closeSerialPort(selScaleId);
                     setState(() {
                       isClosePort = true;
+                      for (var i = 0; i < myAllScalesList.length; i++) {
+                        if (myAllScalesList[i].scaleId == selScaleId) {
+                          myAllScalesList[i].isOnline = false;
+                        }
+                      }
                     });
                   },
             Theme.of(context).colorScheme.onPrimary,
@@ -1254,7 +1259,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
             !isClosePort || isComSetting
                 ? null
                 : () {
-                    PublicFunctions.openSerialPort(1);
+                    PublicFunctions.openSerialPort(selScaleId);
                     setState(() {
                       isClosePort = false;
                     });

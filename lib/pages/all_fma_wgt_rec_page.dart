@@ -527,6 +527,7 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
                               SortField.createdAt,
                             ),
                           ),
+                          Expanded(child: titleText(localizedStrings.operator)),
                           const SizedBox(width: 60, child: Text('')),
                         ],
                       ),
@@ -632,6 +633,12 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
                                             ? DateFormat('yyyy-MM-dd HH:mm:ss')
                                                 .format(rowData
                                                     .header!.recordSaveTime!)
+                                            : '')),
+                                    Expanded(
+                                        child: titleText(rowData
+                                                    .header!.headerOperator !=
+                                                null
+                                            ? rowData.header!.headerOperator!
                                             : '')),
                                     SizedBox(
                                       width: 60,
@@ -784,6 +791,7 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
                                                             detail.scaleName ??
                                                                 '-')),
                                                     Expanded(child: Text('')),
+                                                    Expanded(child: Text('')),
                                                     SizedBox(
                                                       width: 60,
                                                       child: Text(''),
@@ -897,7 +905,8 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
         'Allowable Error',
         'Actual Error',
         'Pass',
-        'Created Time'
+        'Created Time',
+        'Operator'
       ];
 
       List<List<dynamic>> csvData = [header];
@@ -930,7 +939,8 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
             headerData?.recordSaveTime != null
                 ? DateFormat('yyyy-MM-dd HH:mm:ss')
                     .format(headerData!.recordSaveTime!)
-                : ''
+                : '',
+            headerData?.headerOperator ?? ''
           ];
           csvData.add(headerRow);
 

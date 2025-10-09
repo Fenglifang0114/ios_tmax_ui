@@ -5,16 +5,20 @@ import '../data/plu_field_status_data.dart';
 
 class MultiSelectDialog extends StatefulWidget {
   final Map<String, FieldNameStatus> options;
+  final List<String> selectedOptions;
 
   const MultiSelectDialog(
-      {required this.options, super.key, required BuildContext context});
+      {required this.options,
+      required this.selectedOptions,
+      super.key,
+      required BuildContext context});
 
   @override
   MultiSelectDialogState createState() => MultiSelectDialogState();
 }
 
 class MultiSelectDialogState extends State<MultiSelectDialog> {
-  final List<String> _selectedOptions = [];
+  List<String> _selectedOptions = [];
 
   bool closeButtonEnabled = true;
   bool isSelectAll = false;
@@ -36,11 +40,7 @@ class MultiSelectDialogState extends State<MultiSelectDialog> {
     super.initState();
     // 在初始化时将options的所有键添加到_selectedOptions中
 
-    for (var entry in widget.options.entries) {
-      if (entry.value.isSelected) {
-        _selectedOptions.add(entry.key);
-      }
-    }
+    _selectedOptions = widget.selectedOptions;
   }
 
   // 全选方法

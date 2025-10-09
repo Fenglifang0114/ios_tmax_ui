@@ -579,6 +579,7 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
                               ),
                             ),
                           ),
+                          Expanded(child: titleText(localizedStrings.operator)),
                           const SizedBox(width: 60, child: Text('')),
                         ],
                       ),
@@ -707,6 +708,13 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
                                                   : '',
                                             ),
                                           ),
+                                          Expanded(
+                                              child: titleText(rowData.header!
+                                                          .headerOperator !=
+                                                      null
+                                                  ? rowData
+                                                      .header!.headerOperator!
+                                                  : '')),
                                           SizedBox(
                                             width: 60,
                                             child: IconButton(
@@ -738,167 +746,173 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
                                     Visibility(
                                       visible: _isExpanded[index],
                                       child: Column(
-                                        children:
-                                            rowData.details
-                                                    ?.asMap()
-                                                    .entries
-                                                    .map<Widget>((entry) {
-                                                  final detailIndex = entry.key;
-                                                  final detail = entry.value;
-                                                  return Column(
-                                                    children: [
-                                                      Container(
-                                                        height: 40,
-                                                        color: Colors.white,
-                                                        child: SizedBox(
-                                                          height: 38,
-                                                          child: Row(
-                                                            children: [
-                                                              const SizedBox(
-                                                                  width:
-                                                                      48), // 对齐复选框位置
-                                                              const Expanded(
-                                                                  child:
-                                                                      Text('')),
-                                                              Expanded(
-                                                                  child:
-                                                                      Text('')),
-                                                              Expanded(
-                                                                  child:
-                                                                      Text('')),
-                                                              Expanded(
-                                                                child:
-                                                                    subTitleText(
-                                                                  detail.sequence ==
-                                                                          0
-                                                                      ? localizedStrings
-                                                                          .fFmaContainer
-                                                                      : detail.materialName ??
-                                                                          "",
-                                                                ),
-                                                              ),
-                                                              Expanded(
-                                                                child:
-                                                                    subTitleText(
-                                                                  detail.materialId ??
-                                                                      '',
-                                                                ),
-                                                              ),
-                                                              Expanded(
-                                                                  child:
-                                                                      Text('')),
-                                                              Expanded(
-                                                                  child:
-                                                                      Text('')),
-                                                              Expanded(
-                                                                  child:
-                                                                      Text('')),
-                                                              Expanded(
-                                                                  child:
-                                                                      Text('')),
-                                                              Expanded(
-                                                                  child:
-                                                                      subTitleText(
-                                                                detail.sequence ==
-                                                                            0 ||
-                                                                        rowData.header!.isEncrypted.toString() ==
-                                                                            "true"
-                                                                    ? '-'
-                                                                    : "${detail.targetWgt.toString()} ${rowData.header!.totalWeightUnit!}",
-                                                              )),
-
-                                                              Expanded(
-                                                                  child:
-                                                                      subTitleText(
-                                                                (detail.sequence ==
-                                                                            0 ||
-                                                                        rowData.header!.isEncrypted.toString() !=
-                                                                            "true")
-                                                                    ? '${detail.actualWeight.toString()} ${rowData.header!.totalWeightUnit!}'
-                                                                    : "-",
-                                                              )),
-                                                              Expanded(
-                                                                child:
-                                                                    subTitleText(
-                                                                  detail.sequence ==
-                                                                              0 ||
-                                                                          rowData.header!.isEncrypted.toString() ==
-                                                                              "true"
-                                                                      ? '-'
-                                                                      : rowData.header!.formulaMode! ==
-                                                                              "pct"
-                                                                          ? "${double.parse((detail.allowableError! * rowData.header!.actualFmaTotalWgt! / 100).toStringAsFixed(3)).toString()} ${rowData.header!.totalWeightUnit!}"
-                                                                          : "${detail.allowableError!.toString()} ${rowData.header!.totalWeightUnit!}",
-                                                                ),
-                                                              ),
-                                                              Expanded(
-                                                                  child:
-                                                                      subTitleText(
-                                                                detail.sequence ==
-                                                                            0 ||
-                                                                        rowData.header!.isEncrypted.toString() ==
-                                                                            "true"
-                                                                    ? '-'
-                                                                    : "${detail.actualErrorWgt.toString()} ${rowData.header!.totalWeightUnit!}",
-                                                              )),
-                                                              Expanded(
-                                                                  child: Text(
-                                                                detail.sequence ==
-                                                                            0 ||
-                                                                        rowData.header!.isEncrypted.toString() ==
-                                                                            "true"
-                                                                    ? '-'
-                                                                    : detail.isQualified.toString() ==
-                                                                            "ok"
-                                                                        ? localizedStrings
-                                                                            .fQualified
-                                                                        : localizedStrings
-                                                                            .fUnqualified,
-                                                                style: Theme.of(
-                                                                        context)
-                                                                    .textTheme
-                                                                    .bodySmall!
-                                                                    .apply(
-                                                                        color: detail.isQualified.toString() ==
-                                                                                "ok"
-                                                                            ? Theme.of(context).colorScheme.onTertiaryFixedVariant
-                                                                            : Theme.of(context).colorScheme.error),
-                                                              )),
-                                                              Expanded(
-                                                                  child:
-                                                                      subTitleText(
-                                                                detail.scaleName ??
-                                                                    '-',
-                                                              )),
-                                                              Expanded(
-                                                                  child:
-                                                                      Text('')),
-                                                              SizedBox(
-                                                                width: 60,
-                                                                child: Text(''),
-                                                              ),
-                                                            ],
+                                        children: rowData.details
+                                                ?.asMap()
+                                                .entries
+                                                .map<Widget>((entry) {
+                                              final detailIndex = entry.key;
+                                              final detail = entry.value;
+                                              return Column(
+                                                children: [
+                                                  Container(
+                                                    height: 40,
+                                                    color: Colors.white,
+                                                    child: SizedBox(
+                                                      height: 38,
+                                                      child: Row(
+                                                        children: [
+                                                          const SizedBox(
+                                                              width:
+                                                                  48), // 对齐复选框位置
+                                                          const Expanded(
+                                                              child: Text('')),
+                                                          Expanded(
+                                                              child: Text('')),
+                                                          Expanded(
+                                                              child: Text('')),
+                                                          Expanded(
+                                                            child: subTitleText(
+                                                              detail.sequence ==
+                                                                      0
+                                                                  ? localizedStrings
+                                                                      .fFmaContainer
+                                                                  : detail.materialName ??
+                                                                      "",
+                                                            ),
                                                           ),
-                                                        ),
+                                                          Expanded(
+                                                            child: subTitleText(
+                                                              detail.materialId ??
+                                                                  '',
+                                                            ),
+                                                          ),
+                                                          Expanded(
+                                                              child: Text('')),
+                                                          Expanded(
+                                                              child: Text('')),
+                                                          Expanded(
+                                                              child: Text('')),
+                                                          Expanded(
+                                                              child: Text('')),
+                                                          Expanded(
+                                                              child:
+                                                                  subTitleText(
+                                                            detail.sequence ==
+                                                                        0 ||
+                                                                    rowData.header!
+                                                                            .isEncrypted
+                                                                            .toString() ==
+                                                                        "true"
+                                                                ? '-'
+                                                                : "${detail.targetWgt.toString()} ${rowData.header!.totalWeightUnit!}",
+                                                          )),
+
+                                                          Expanded(
+                                                              child:
+                                                                  subTitleText(
+                                                            (detail.sequence ==
+                                                                        0 ||
+                                                                    rowData.header!
+                                                                            .isEncrypted
+                                                                            .toString() !=
+                                                                        "true")
+                                                                ? '${detail.actualWeight.toString()} ${rowData.header!.totalWeightUnit!}'
+                                                                : "-",
+                                                          )),
+                                                          Expanded(
+                                                            child: subTitleText(
+                                                              detail.sequence ==
+                                                                          0 ||
+                                                                      rowData.header!
+                                                                              .isEncrypted
+                                                                              .toString() ==
+                                                                          "true"
+                                                                  ? '-'
+                                                                  : rowData.header!
+                                                                              .formulaMode! ==
+                                                                          "pct"
+                                                                      ? "${double.parse((detail.allowableError! * rowData.header!.actualFmaTotalWgt! / 100).toStringAsFixed(3)).toString()} ${rowData.header!.totalWeightUnit!}"
+                                                                      : "${detail.allowableError!.toString()} ${rowData.header!.totalWeightUnit!}",
+                                                            ),
+                                                          ),
+                                                          Expanded(
+                                                              child:
+                                                                  subTitleText(
+                                                            detail.sequence ==
+                                                                        0 ||
+                                                                    rowData.header!
+                                                                            .isEncrypted
+                                                                            .toString() ==
+                                                                        "true"
+                                                                ? '-'
+                                                                : "${detail.actualErrorWgt.toString()} ${rowData.header!.totalWeightUnit!}",
+                                                          )),
+                                                          Expanded(
+                                                              child: Text(
+                                                            detail.sequence ==
+                                                                        0 ||
+                                                                    rowData
+                                                                            .header!
+                                                                            .isEncrypted
+                                                                            .toString() ==
+                                                                        "true"
+                                                                ? '-'
+                                                                : detail.isQualified
+                                                                            .toString() ==
+                                                                        "ok"
+                                                                    ? localizedStrings
+                                                                        .fQualified
+                                                                    : localizedStrings
+                                                                        .fUnqualified,
+                                                            style: Theme.of(context).textTheme.bodySmall!.apply(
+                                                                color: detail
+                                                                            .isQualified
+                                                                            .toString() ==
+                                                                        "ok"
+                                                                    ? Theme.of(
+                                                                            context)
+                                                                        .colorScheme
+                                                                        .onTertiaryFixedVariant
+                                                                    : Theme.of(
+                                                                            context)
+                                                                        .colorScheme
+                                                                        .error),
+                                                          )),
+                                                          Expanded(
+                                                              child:
+                                                                  subTitleText(
+                                                            detail.scaleName ??
+                                                                '-',
+                                                          )),
+                                                          Expanded(
+                                                              child: Text('')),
+                                                          Expanded(
+                                                              child: Text('')),
+                                                          SizedBox(
+                                                            width: 60,
+                                                            child: Text(''),
+                                                          ),
+                                                        ],
                                                       ),
-                                                      // 判断是否为最后一个元素，不是则显示分割线
-                                                      if (detailIndex <
-                                                          (rowData.details
-                                                                      ?.length ??
-                                                                  0) -
-                                                              1)
-                                                        Divider(
-                                                          color: Theme.of(
-                                                                  context)
-                                                              .colorScheme
-                                                              .outlineVariant,
-                                                          thickness: 1,
-                                                          height: 1,
-                                                        )
-                                                    ],
-                                                  );
-                                                }).toList() ??
-                                                [],
+                                                    ),
+                                                  ),
+                                                  // 判断是否为最后一个元素，不是则显示分割线
+                                                  if (detailIndex <
+                                                      (rowData.details
+                                                                  ?.length ??
+                                                              0) -
+                                                          1)
+                                                    Divider(
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .outlineVariant,
+                                                      thickness: 1,
+                                                      height: 1,
+                                                    )
+                                                ],
+                                              );
+                                            }).toList() ??
+                                            [],
                                       ),
                                     ),
                                   ],
@@ -1016,7 +1030,8 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
         'Allowable Error',
         'Actual Error',
         'Pass',
-        'Created Time'
+        'Created Time',
+        'Operator',
       ];
 
       List<List<dynamic>> csvData = [header];
@@ -1062,7 +1077,8 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage>
           headerData?.recordSaveTime != null
               ? DateFormat('yyyy-MM-dd HH:mm:ss')
                   .format(headerData!.recordSaveTime!)
-              : ''
+              : '',
+          headerData?.headerOperator != null ? headerData!.headerOperator! : '',
         ];
         csvData.add(headerRow);
 

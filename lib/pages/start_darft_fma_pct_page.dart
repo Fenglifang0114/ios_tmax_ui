@@ -503,7 +503,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
         targetWgt = double.parse(targetWgt.toStringAsFixed(3));
       }
 
-      String rawName = getRawName(detail.materialId! ?? "");
+      String rawName = getRawName(detail.materialId!);
       FormulaWgtProcessData processWgt = FormulaWgtProcessData(
         no: detail.sequence,
         rawId: detail.materialId,

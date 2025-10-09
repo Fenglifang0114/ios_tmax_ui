@@ -948,7 +948,6 @@ class FormulationScalePageState extends State<FormulationScalePage>
               setState(() {
                 _selectedRawIndex = index; // 更新选中的 index
                 selectedDetail = selectedDarfFma!.fmaInfo!.details![index];
-                print(selectedDetail.materialId);
               });
               // 这里添加点击事件的处理逻辑
               // print('点击了第 $index 项');
@@ -1536,10 +1535,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
                   child: Text(
                     selectedDarfFma?.fmaInfo!.header!.formulaMode == "pct"
                         ? ""
-                        : selectedDarfFma?.fmaInfo!.header!?.totalWeight !=
+                        : selectedDarfFma?.fmaInfo!.header!.totalWeight !=
                                     null &&
-                                selectedDarfFma
-                                        ?.fmaInfo!.header!?.formulaUnit !=
+                                selectedDarfFma?.fmaInfo!.header!.formulaUnit !=
                                     null
                             ? " ${selectedDarfFma!.fmaInfo!.header!.totalWeight} ${selectedDarfFma!.fmaInfo!.header!.formulaUnit}"
                             : " ",

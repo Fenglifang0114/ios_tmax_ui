@@ -601,7 +601,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "gPluPretare": MessageLookupByLibrary.simpleMessage("Pretare"),
     "gPluPrice": MessageLookupByLibrary.simpleMessage("Price"),
     "gPluTaxType": MessageLookupByLibrary.simpleMessage("Tax Type"),
-    "gPluUnitWgt": MessageLookupByLibrary.simpleMessage("Unit Wight"),
+    "gPluUnitWgt": MessageLookupByLibrary.simpleMessage("Unit Weight"),
     "gPluWgtUnit": MessageLookupByLibrary.simpleMessage("Unit"),
     "gPosition": MessageLookupByLibrary.simpleMessage("Position"),
     "gPrintDirection": MessageLookupByLibrary.simpleMessage("Direction:"),

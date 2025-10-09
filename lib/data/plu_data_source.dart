@@ -21,6 +21,8 @@ class PluData {
   String? updateAt;
   int? createBy;
   int? updateBy;
+  String? createUser;
+  String? updateUser;
 
   PluData(
     this.recId,
@@ -41,6 +43,8 @@ class PluData {
     this.updateAt,
     this.createBy,
     this.updateBy,
+    this.createUser,
+    this.updateUser,
   );
 }
 
@@ -70,6 +74,8 @@ class PluDataFromDb {
   int? createBy;
   int? updateBy;
   bool? enabled;
+  String? createUser;
+  String? updateUser;
 
   PluDataFromDb({
     this.recId,
@@ -90,6 +96,8 @@ class PluDataFromDb {
     this.createBy,
     this.updateBy,
     this.enabled,
+    this.createUser,
+    this.updateUser,
   });
 
   PluDataFromDb copyWith({
@@ -111,6 +119,8 @@ class PluDataFromDb {
     int? createBy,
     int? updateBy,
     bool? enabled,
+    String? createUser,
+    String? updateUser,
   }) =>
       PluDataFromDb(
         recId: recId ?? this.recId,
@@ -131,6 +141,8 @@ class PluDataFromDb {
         createBy: createBy ?? this.createBy,
         updateBy: updateBy ?? this.updateBy,
         enabled: enabled ?? this.enabled,
+        createUser: createUser ?? this.createUser,
+        updateUser: updateUser ?? this.updateUser,
       );
 
   factory PluDataFromDb.fromJson(Map<String, dynamic> json) => PluDataFromDb(
@@ -156,6 +168,8 @@ class PluDataFromDb {
         createBy: json["CreateBy"],
         updateBy: json["UpdateBy"],
         enabled: json["Enabled"],
+        createUser: json["CreateUser"],
+        updateUser: json["UpdateUser"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -177,6 +191,8 @@ class PluDataFromDb {
         "CreateBy": createBy,
         "UpdateBy": updateBy,
         "Enabled": enabled,
+        "CreateUser": createUser,
+        "UpdateUser": updateUser,
       };
 }
 
@@ -185,7 +201,7 @@ String reqEnabledPluToJson(ReqEnabledPlu data) => json.encode(data.toJson());
 class ReqEnabledPlu {
   List<int>? pluList;
   bool? enabled;
-  int? updateBy;
+  String? updateBy;
 
   ReqEnabledPlu({
     this.pluList,
