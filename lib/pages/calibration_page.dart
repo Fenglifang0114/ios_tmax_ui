@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/data/downloadresponse.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/icons.dart';
+import 'package:t_max/data/log_data.dart';
 import 'package:t_max/data/received_wgt_value.dart';
 import 'package:t_max/data/reqweightdata_data.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
@@ -226,10 +228,29 @@ class CalibrationPageState extends State<CalibrationPage> {
           } else {
             if (curStep == step5) {
               setState(() {
-                isFinish = true;
-                isCalSuccess = true;
-                newWeight = double.parse(weightInfo!.weightVal.toString());
-                currentWgtUnit = weightInfo!.weightUnit.toString();
+                // 获取校准后的重量间隔200ms
+                Future.delayed(Duration(milliseconds: 200), () {
+                  setState(() {
+                    isFinish = true;
+                    isCalSuccess = true;
+                    newWeight = double.parse(weightInfo!.weightVal.toString());
+                    currentWgtUnit = weightInfo!.weightUnit.toString();
+
+                    CalLog calLog = CalLog(
+                        scaleId: selScaleId,
+                        type: "single",
+                        mode: "1", //标定点数量
+                        unit: currentWgtUnit,
+                        calValue: scaleRangeCtl.text,
+                        before: oldWeight.toString(),
+                        after: newWeight.toString(),
+                        calError: (newWeight - oldWeight).toStringAsFixed(3),
+                        calResult: 'ok');
+                    String jsonStr = json.encode(calLog);
+
+                    PublicFunctions.addCalLog(jsonStr);
+                  });
+                });
               });
             }
           }
@@ -285,7 +306,8 @@ class CalibrationPageState extends State<CalibrationPage> {
         ChannelResponse tempRespData = ChannelResponse('', '', 0);
         tempRespData = event.obj;
         if (mounted) {
-          if (tempRespData.msgBody.length > 1) {
+          if (tempRespData.msgBody.length > 1 ||
+              tempRespData.msgBody.contains('fail')) {
             // showTipInfo('fail,get parameter fail!', context);
             return;
           }
@@ -303,7 +325,8 @@ class CalibrationPageState extends State<CalibrationPage> {
         ChannelResponse tempRespData = ChannelResponse('', '', 0);
         tempRespData = event.obj;
         if (mounted) {
-          if (tempRespData.msgBody.length > 1) {
+          if (tempRespData.msgBody.length > 1 ||
+              tempRespData.msgBody.contains('fail')) {
             // showTipInfo('fail,get parameter fail!', context);
             return;
           }
@@ -321,7 +344,8 @@ class CalibrationPageState extends State<CalibrationPage> {
         ChannelResponse tempRespData = ChannelResponse('', '', 0);
         tempRespData = event.obj;
         if (mounted) {
-          if (tempRespData.msgBody.length > 7) {
+          if (tempRespData.msgBody.length > 7 ||
+              tempRespData.msgBody.contains('fail')) {
             showTipInfo(localizedStrings.gTipGetParameterFail, context);
             return;
           }
@@ -340,7 +364,8 @@ class CalibrationPageState extends State<CalibrationPage> {
         ChannelResponse tempRespData = ChannelResponse('', '', 0);
         tempRespData = event.obj;
         if (mounted) {
-          if (tempRespData.msgBody.length > 7) {
+          if (tempRespData.msgBody.length > 7 ||
+              tempRespData.msgBody.contains('fail')) {
             // showTipInfo('fail,get parameter fail!', context);
             return;
           }
@@ -357,7 +382,8 @@ class CalibrationPageState extends State<CalibrationPage> {
         ChannelResponse tempRespData = ChannelResponse('', '', 0);
         tempRespData = event.obj;
         if (mounted) {
-          if (tempRespData.msgBody.length > 7) {
+          if (tempRespData.msgBody.length > 7 ||
+              tempRespData.msgBody.contains('fail')) {
             // showTipInfo('fail,get parameter fail!', context);
             return;
           }
@@ -397,7 +423,8 @@ class CalibrationPageState extends State<CalibrationPage> {
         ChannelResponse tempRespData = ChannelResponse('', '', 0);
         tempRespData = event.obj;
         if (mounted) {
-          if (tempRespData.msgBody.length > 7) {
+          if (tempRespData.msgBody.length > 7 ||
+              tempRespData.msgBody.contains('fail')) {
             // showTipInfo('fail,get parameter fail!', context);
             return;
           }
@@ -415,7 +442,8 @@ class CalibrationPageState extends State<CalibrationPage> {
         ChannelResponse tempRespData = ChannelResponse('', '', 0);
         tempRespData = event.obj;
         if (mounted) {
-          if (tempRespData.msgBody.length > 1) {
+          if (tempRespData.msgBody.length > 1 ||
+              tempRespData.msgBody.contains('fail')) {
             // showTipInfo('fail,get parameter fail!', context);
 
             return;
@@ -447,7 +475,8 @@ class CalibrationPageState extends State<CalibrationPage> {
         ChannelResponse tempRespData = ChannelResponse('', '', 0);
         tempRespData = event.obj;
         if (mounted) {
-          if (tempRespData.msgBody.length > 7) {
+          if (tempRespData.msgBody.length > 7 ||
+              tempRespData.msgBody.contains('fail')) {
             // showTipInfo('fail,get parameter fail!', context);
             return;
           }

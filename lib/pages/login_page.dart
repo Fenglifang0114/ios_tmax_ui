@@ -39,6 +39,7 @@ class LoginPageState extends State<LoginPage>
   String backImgPath = 'assets/images/background.png';
   bool _showPassword = false;
   bool firstTime = true; // 第一次点击登录
+  bool _checkingUsers = true;
 
   Future<void> _submitLogin() async {
     firstTime = false;
@@ -47,13 +48,15 @@ class LoginPageState extends State<LoginPage>
       setState(() {
         _isLoading = true;
       });
-      PublicFunctions.login(_usernameController.text, _passwordController.text);
+      PublicFunctions.userLogin(
+          _usernameController.text, _passwordController.text, false);
     }
   }
 
   dynamic _eventbus1;
   dynamic _eventbus2;
   dynamic _eventbus3;
+  dynamic _eventbus4;
 
   @override
   void didChangeDependencies() {
@@ -131,6 +134,7 @@ class LoginPageState extends State<LoginPage>
 
     windowManager.setMinimumSize(Size(1320, 720));
     super.initState();
+    _checkingUsers = checkingUsers;
 
     _eventbus1 = eventBus.on<EventRespLogin>().listen((event) {
       if (mounted) {
@@ -177,6 +181,35 @@ class LoginPageState extends State<LoginPage>
             localizedStrings.gTitleConfirm);
       });
     });
+    _eventbus4 = eventBus.on<EventRespGetAllUsers>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+        List<SysUserFromDb> allUserList = sysUserFromDbFromJson(dataStr);
+        setState(() {
+          if (allUserList.length == 1) {
+            checkingUsers = false;
+            SysUserFromDb tempUser = allUserList[0];
+            mySysUser.userId = tempUser.userId;
+            mySysUser.userName = tempUser.userName;
+            mySysUser.password = tempUser.password;
+            mySysUser.nickName = tempUser.nickName;
+            mySysUser.roleId = tempUser.roleId;
+            mySysUser.isEnabled = tempUser.isEnabled;
+            mySysUser.email = tempUser.email;
+            mySysUser.phone = tempUser.phone;
+            mySysUser.initialPageId = tempUser.initialPageId;
+            mySysUser.isChanged = tempUser.isChanged;
+            mySysUser.pageIdList = allPageIdList;
+            mySysUser.roleName = "super_admin";
+            PublicFunctions.userLogin(mySysUser.userName!, '', true);
+            Navigator.pushReplacementNamed(context, '/home');
+          } else {
+            _checkingUsers = false;
+            checkingUsers = false;
+          }
+        });
+      }
+    });
 
     // 所有初始化完成后设置默认页面
   }
@@ -186,6 +219,7 @@ class LoginPageState extends State<LoginPage>
     _eventbus1.cancel();
     _eventbus2.cancel();
     _eventbus3.cancel();
+    _eventbus4.cancel();
 
     _usernameController.dispose();
     _passwordController.dispose();
@@ -212,6 +246,19 @@ class LoginPageState extends State<LoginPage>
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     TextTheme textTheme = Theme.of(context).textTheme;
     double tHeight = MediaQuery.of(context).size.height;
+    if (_checkingUsers) {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(),
+            ],
+          ),
+        ),
+      );
+    }
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(40), // 自定义高度

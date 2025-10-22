@@ -3579,6 +3579,242 @@
     "deleteTypeUnusedConfirm": "Are you sure you want to delete all unused types?",
     "@deleteTypeUnusedConfirm": {
         "description": "Confirm deletion of types currently not in use"
-    }    
+    },
+    "module": "Module",
+    "@module": {
+        "description": "Module"
+    },
+    "funcName": "Function Module", 
+    "@funcName": {
+        "description": "Function Module"
+    },
+    "operationType": "Operation Type",
+    "@operationType": {
+        "description": "Operation Type"
+    },
+    "operation": "Details",
+    "@operation": {
+        "description": "Details of the operation"
+    },
+    "operationResult": "Result",
+    "@operationResult": {
+        "description": "Operation Result"
+    },
+    "logManagement": "Log Management",
+    "@logManagement": {
+        "description": "Log Management"
+    },
+    "systemRecords": "System Records",
+    "@systemRecords": {
+        "description": "System Records"
+    },
+    "calibrationRecords": "Calibration Records",
+    "@calibrationRecords": {
+        "description": "Calibration Records"
+    },
+    "weighingRecords": "Weighing Records",
+    "@weighingRecords": {
+        "description": "Weighing Records"
+    },
+    "deleteLog": "Delete Log",
+    "@deleteLog": {
+        "description": "Delete Log"
+    },
+    "delete": "Delete",
+    "@delete": {
+        "description": "Delete"
+    },
+    "success": "Success",
+    "@success": {
+        "description": "Success"
+    },
+    "failure": "Failure",
+    "@failure": {
+        "description": "Failure"
+    },
+    "systemOperation": "System Operation",
+    "@systemOperation": {
+        "description": "System Operation"
+    },
+    "login": "Login",
+    "@login": {
+        "description": "Login"
+    },
+    "logout": "Logout",
+    "@logout": {
+        "description": "Logout"
+    }, 
+    "logDetails": "Log Details",
+    "@logDetails": {
+        "description": "Log Details"
+    },
+    "search": "Search",
+    "@search": {
+        "description": "Search"
+    },
+    "selected": "Selected",
+    "@selected": {
+        "description": "Selected"
+    },
+    "opUpdate": "Update",
+    "@opUpdate": {
+        "description": "Update Operation"
+    },
+     "opEnable": "Enable",
+     "@opEnable": {
+        "description": "Enable Operation"
+    },
+    "opDisable": "Disable",
+    "@opDisable": {
+        "description": "Disable Operation"
+    },
+    "opQuery": "Query",
+    "@opQuery": {
+        "description": "Query Operation"
+    },
+    "opIssue": "Download",
+    "@opIssue": {
+        "description": "Download Operation"
+    },
+    "opImport": "Import",
+    "@opImport": {
+        "description": "Import Operation"
+    },
+    "opExport": "Export",
+    "@opExport": {
+        "description": "Export Operation"
+    },
+    "opSetting": "Setting",
+    "@opSetting": {
+        "description": "Setting Operation"
+    },
+    "enableOrDisable": "Enable or Disable",
+    "@enableOrDisable": {
+        "description": "Whether to enable or disable"
+    },
+    "addFormula": "Add Formula",
+    "@addFormula": {
+        "description": "Add formula"
+    },
+    "deleteFormula": "Delete Formula",
+    "@deleteFormula": {
+        "description": "Delete formula"
+    },
+    "modifyFormula": "Modify Formula",
+    "@modifyFormula": {
+        "description": "Modify formula"
+    },
+    "addFormulaCategory": "Add Formula Category",
+    "@addFormulaCategory": {
+        "description": "Add formula category"
+    },
+    "deleteFormulaCategory": "Delete Formula Category",
+    "@deleteFormulaCategory": {
+        "description": "Delete formula category"
+    },
+    "modifyFormulaCategory": "Modify Formula Category",
+    "@modifyFormulaCategory": {
+        "description": "Modify formula category"
+    },
+    "clearUnusedFormulaCategory": "Clear Unused Formula Category",
+    "@clearUnusedFormulaCategory": {
+        "description": "Clear unused formula category"
+    },
+    "addIngredientCategory": "Add Ingredient Category",
+    "@addIngredientCategory": {
+        "description": "Add ingredient category"
+    },
+    "deleteIngredientCategory": "Delete Ingredient Category",
+    "@deleteIngredientCategory": {
+        "description": "Delete ingredient category"
+    },
+    "modifyIngredientCategory": "Modify Ingredient Category",
+    "@modifyIngredientCategory": {
+        "description": "Modify ingredient category"
+    },
+    "clearUnusedIngredientCategory": "Clear Unused Ingredient Category",
+    "@clearUnusedIngredientCategory": {
+        "description": "Clear unused ingredient category"
+    },
+    "addIngredient": "Add Ingredient",
+    "@addIngredient": {
+        "description": "Add ingredient"
+    },
+    "deleteIngredient": "Delete Ingredient",
+    "@deleteIngredient": {
+        "description": "Delete ingredient"
+    },
+    "modifyIngredient": "Modify Ingredient",
+    "@modifyIngredient": {
+        "description": "Modify ingredient"
+    },
+    "addFormulaWeighingRecord": "Add Formula Weighing Record",
+    "@addFormulaWeighingRecord": {
+        "description": "Add formula weighing record"
+    },
+    "deleteFormulaWeighingRecord": "Delete Formula Weighing Record",
+    "@deleteFormulaWeighingRecord": {
+        "description": "Delete formula weighing record"
+    },
+    "addTemporaryWeighingRecord": "Add Temporary Weighing Record",
+    "@addTemporaryWeighingRecord": {
+        "description": "Add temporary weighing record"
+    },
+    "deleteTemporaryWeighingRecord": "Delete Temporary Weighing Record",
+    "@deleteTemporaryWeighingRecord": {
+        "description": "Delete temporary weighing record"
+    },
+    "modifyTemporaryWeighingRecord": "Modify Temporary Weighing Record",
+    "@modifyTemporaryWeighingRecord": {
+        "description": "Modify temporary weighing record"
+    },
+    "setTime": "Set Time",
+    "@setTime": {
+        "description": "Set time"
+    },
+    "setName": "Set Name",
+    "@setName": {
+        "description": "Set name"
+    },
+    "setPower": "Set Power",
+    "@setPower": {
+        "description": "Set power"
+    },
+    "calibrationType": "Calibration Type",
+    "@calibrationType": {
+        "description": "Calibration Type"
+    },
+    "calibrationMode": "Calibration Mode",
+    "@calibrationMode": {
+        "description": "Calibration Mode"
+    },
+    "calibrationValue": "Calibration Value",
+    "@calibrationValue": {
+        "description": "Calibration Value"
+    },
+    "weightBeforeCalibration": "Weight Before Calibration",
+    "@weightBeforeCalibration": {
+        "description": "Weight Before Calibration"
+    },
+    "weightAfterCalibration": "Weight After Calibration",
+    "@weightAfterCalibration": {
+        "description": "Weight After Calibration"
+    },
+    "calibrationError": "Calibration Error",
+    "@calibrationError": {
+        "description": "Calibration Error"
+    },
+    "singlePoint": "Single Point",
+    "@singlePoint": {
+        "description": "Single Point Calibration"
+    },
+    "multiPoint": "Multi Point",
+    "@multiPoint": {
+        "description": "Multi Point Calibration"
+    },
+    "pleaseSetSuperAdmin": "Set up the Super Admin account before creating new accounts.",
+    "@pleaseSetSuperAdmin": {
+        "description": "Please set super administrator account"
+    }           
     
 }    

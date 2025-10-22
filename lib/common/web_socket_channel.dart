@@ -199,6 +199,7 @@ class WebSocketManager {
     // 获取必要数据
     PublicFunctions.getLicense();
     PublicFunctions.getScaleList();
+    PublicFunctions.getAllSysUsers();
 
     // 发送初始心跳
     _sendHeartbeat();

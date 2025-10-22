@@ -3,6 +3,8 @@ import 'dart:typed_data';
 
 import 'package:t_max/data/home_page_common_data.dart' as transparent_image;
 
+bool checkingUsers = true;
+
 const leftBarWidth = 240.0; //左侧菜单宽度
 const leftBarLittleWidth = 74.0; //左侧菜单宽度收缩后的宽度
 const leftBarIconHeight = 78.0; //左侧菜单图标部分高度

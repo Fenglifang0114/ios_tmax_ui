@@ -22,6 +22,20 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "addFormula": MessageLookupByLibrary.simpleMessage("Add Formula"),
+    "addFormulaCategory": MessageLookupByLibrary.simpleMessage(
+      "Add Formula Category",
+    ),
+    "addFormulaWeighingRecord": MessageLookupByLibrary.simpleMessage(
+      "Add Formula Weighing Record",
+    ),
+    "addIngredient": MessageLookupByLibrary.simpleMessage("Add Ingredient"),
+    "addIngredientCategory": MessageLookupByLibrary.simpleMessage(
+      "Add Ingredient Category",
+    ),
+    "addTemporaryWeighingRecord": MessageLookupByLibrary.simpleMessage(
+      "Add Temporary Weighing Record",
+    ),
     "admin": MessageLookupByLibrary.simpleMessage("Admin"),
     "advanced_setting_title": MessageLookupByLibrary.simpleMessage("Advanced"),
     "allowErrorEmpty": MessageLookupByLibrary.simpleMessage(
@@ -104,7 +118,24 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "cTipUlTime": MessageLookupByLibrary.simpleMessage("UL Time(mins)"),
     "cTipWeighingCount": MessageLookupByLibrary.simpleMessage("Weighing Count"),
+    "calibrationError": MessageLookupByLibrary.simpleMessage(
+      "Calibration Error",
+    ),
+    "calibrationMode": MessageLookupByLibrary.simpleMessage("Calibration Mode"),
+    "calibrationRecords": MessageLookupByLibrary.simpleMessage(
+      "Calibration Records",
+    ),
+    "calibrationType": MessageLookupByLibrary.simpleMessage("Calibration Type"),
+    "calibrationValue": MessageLookupByLibrary.simpleMessage(
+      "Calibration Value",
+    ),
     "choose_json_file": MessageLookupByLibrary.simpleMessage("Choose json"),
+    "clearUnusedFormulaCategory": MessageLookupByLibrary.simpleMessage(
+      "Clear Unused Formula Category",
+    ),
+    "clearUnusedIngredientCategory": MessageLookupByLibrary.simpleMessage(
+      "Clear Unused Ingredient Category",
+    ),
     "customization_setting_title": MessageLookupByLibrary.simpleMessage(
       "Applications",
     ),
@@ -121,11 +152,29 @@ class MessageLookup extends MessageLookupByLibrary {
     "def_fmt_sel_tip": MessageLookupByLibrary.simpleMessage(
       "Please select 1-10 print formats.",
     ),
+    "delete": MessageLookupByLibrary.simpleMessage("Delete"),
+    "deleteFormula": MessageLookupByLibrary.simpleMessage("Delete Formula"),
+    "deleteFormulaCategory": MessageLookupByLibrary.simpleMessage(
+      "Delete Formula Category",
+    ),
+    "deleteFormulaWeighingRecord": MessageLookupByLibrary.simpleMessage(
+      "Delete Formula Weighing Record",
+    ),
     "deleteFormulaWithDraftConfirm": MessageLookupByLibrary.simpleMessage(
       "Deleting the formula will clear its draft records. Continue?",
     ),
+    "deleteIngredient": MessageLookupByLibrary.simpleMessage(
+      "Delete Ingredient",
+    ),
+    "deleteIngredientCategory": MessageLookupByLibrary.simpleMessage(
+      "Delete Ingredient Category",
+    ),
+    "deleteLog": MessageLookupByLibrary.simpleMessage("Delete Log"),
     "deleteRawInUseConfirm": MessageLookupByLibrary.simpleMessage(
       "In-use ingredients are protected from deletion. Continue?",
+    ),
+    "deleteTemporaryWeighingRecord": MessageLookupByLibrary.simpleMessage(
+      "Delete Temporary Weighing Record",
     ),
     "deleteTypeUnusedConfirm": MessageLookupByLibrary.simpleMessage(
       "Are you sure you want to delete all unused types?",
@@ -142,6 +191,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "device_setting_title": MessageLookupByLibrary.simpleMessage("Basics"),
     "duplicateHeaders": MessageLookupByLibrary.simpleMessage(
       "Duplicate headers",
+    ),
+    "enableOrDisable": MessageLookupByLibrary.simpleMessage(
+      "Enable or Disable",
     ),
     "fAbandonBtn": MessageLookupByLibrary.simpleMessage("Abandon"),
     "fAbandonIngredientsBtn": MessageLookupByLibrary.simpleMessage("Abandon"),
@@ -415,6 +467,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "fUpdatedAtCol": MessageLookupByLibrary.simpleMessage("Update Time"),
     "fWeightMode": MessageLookupByLibrary.simpleMessage("Weight"),
     "fWgtUnit": MessageLookupByLibrary.simpleMessage("Weight Unit"),
+    "failure": MessageLookupByLibrary.simpleMessage("Failure"),
     "finishBtn": MessageLookupByLibrary.simpleMessage("Finish"),
     "firmware_update": MessageLookupByLibrary.simpleMessage(
       "Update Firmware Serial",
@@ -432,6 +485,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "formulaNameInconsistent": MessageLookupByLibrary.simpleMessage(
       "Formula names are inconsistent",
     ),
+    "funcName": MessageLookupByLibrary.simpleMessage("Function Module"),
     "gAlignment": MessageLookupByLibrary.simpleMessage("Alignment:"),
     "gAppInformation": MessageLookupByLibrary.simpleMessage("App Information"),
     "gAttribute": MessageLookupByLibrary.simpleMessage("Attribute"),
@@ -1197,6 +1251,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "l_var_title": MessageLookupByLibrary.simpleMessage("Variable"),
     "l_wgt_unit_expl": MessageLookupByLibrary.simpleMessage("WeightUnit"),
     "l_wgt_unit_var": MessageLookupByLibrary.simpleMessage("WeightUnit"),
+    "logDetails": MessageLookupByLibrary.simpleMessage("Log Details"),
+    "logManagement": MessageLookupByLibrary.simpleMessage("Log Management"),
+    "login": MessageLookupByLibrary.simpleMessage("Login"),
+    "logout": MessageLookupByLibrary.simpleMessage("Logout"),
     "max1000Rows": MessageLookupByLibrary.simpleMessage(
       " Please import up to 1000 rows of data at a time",
     ),
@@ -1266,8 +1324,34 @@ class MessageLookup extends MessageLookupByLibrary {
     "modeInvalid": MessageLookupByLibrary.simpleMessage(
       "Mode must be weight or percent",
     ),
+    "modifyFormula": MessageLookupByLibrary.simpleMessage("Modify Formula"),
+    "modifyFormulaCategory": MessageLookupByLibrary.simpleMessage(
+      "Modify Formula Category",
+    ),
+    "modifyIngredient": MessageLookupByLibrary.simpleMessage(
+      "Modify Ingredient",
+    ),
+    "modifyIngredientCategory": MessageLookupByLibrary.simpleMessage(
+      "Modify Ingredient Category",
+    ),
+    "modifyTemporaryWeighingRecord": MessageLookupByLibrary.simpleMessage(
+      "Modify Temporary Weighing Record",
+    ),
+    "module": MessageLookupByLibrary.simpleMessage("Module"),
+    "multiPoint": MessageLookupByLibrary.simpleMessage("Multi Point"),
     "new_license_text": MessageLookupByLibrary.simpleMessage("New License:"),
     "noDataImport": MessageLookupByLibrary.simpleMessage("No data to import"),
+    "opDisable": MessageLookupByLibrary.simpleMessage("Disable"),
+    "opEnable": MessageLookupByLibrary.simpleMessage("Enable"),
+    "opExport": MessageLookupByLibrary.simpleMessage("Export"),
+    "opImport": MessageLookupByLibrary.simpleMessage("Import"),
+    "opIssue": MessageLookupByLibrary.simpleMessage("Download"),
+    "opQuery": MessageLookupByLibrary.simpleMessage("Query"),
+    "opSetting": MessageLookupByLibrary.simpleMessage("Setting"),
+    "opUpdate": MessageLookupByLibrary.simpleMessage("Update"),
+    "operation": MessageLookupByLibrary.simpleMessage("Details"),
+    "operationResult": MessageLookupByLibrary.simpleMessage("Result"),
+    "operationType": MessageLookupByLibrary.simpleMessage("Operation Type"),
     "operator": MessageLookupByLibrary.simpleMessage("Operator"),
     "output_confirm_info": MessageLookupByLibrary.simpleMessage(
       "Please confirm the folder name!",
@@ -1411,6 +1495,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "percentNot100": MessageLookupByLibrary.simpleMessage(
       "Total percentage is not 100%",
     ),
+    "pleaseSetSuperAdmin": MessageLookupByLibrary.simpleMessage(
+      "Set up the Super Admin account before creating new accounts.",
+    ),
     "plu_edit": MessageLookupByLibrary.simpleMessage("PLU Edit"),
     "plu_error_message": MessageLookupByLibrary.simpleMessage(
       "PLU pretare cannot be empty.",
@@ -1451,10 +1538,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "scale_mgr_btn_def": MessageLookupByLibrary.simpleMessage("Set Default"),
     "scale_mgr_btn_rename": MessageLookupByLibrary.simpleMessage("Rename"),
     "scale_model": MessageLookupByLibrary.simpleMessage("Scale Model:"),
+    "search": MessageLookupByLibrary.simpleMessage("Search"),
     "selectDevice": MessageLookupByLibrary.simpleMessage("Select Device"),
     "select_firmware_btn": MessageLookupByLibrary.simpleMessage(
       "Select Firmware",
     ),
+    "selected": MessageLookupByLibrary.simpleMessage("Selected"),
     "sequenceNotContinuous": MessageLookupByLibrary.simpleMessage(
       "sequence numbers are not continuous",
     ),
@@ -1468,6 +1557,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "serial_page_weight": MessageLookupByLibrary.simpleMessage("Weight mode"),
     "server_ip": MessageLookupByLibrary.simpleMessage("Server Ip:"),
     "server_port": MessageLookupByLibrary.simpleMessage("Server Port:"),
+    "setName": MessageLookupByLibrary.simpleMessage("Set Name"),
+    "setPower": MessageLookupByLibrary.simpleMessage("Set Power"),
+    "setTime": MessageLookupByLibrary.simpleMessage("Set Time"),
     "set_ethernet_ip_title": MessageLookupByLibrary.simpleMessage(
       "Ethernet IP Setting",
     ),
@@ -1480,6 +1572,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "show_reduced_weight": MessageLookupByLibrary.simpleMessage(
       "Reduced weight:",
     ),
+    "singlePoint": MessageLookupByLibrary.simpleMessage("Single Point"),
     "stable_time_error_tip": MessageLookupByLibrary.simpleMessage(
       "The value must be under 20 seconds.",
     ),
@@ -1552,7 +1645,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "subTitleWifiSetting": MessageLookupByLibrary.simpleMessage(
       "Obtain static/dynamic IP addresses and connect to Wi-Fi.",
     ),
+    "success": MessageLookupByLibrary.simpleMessage("Success"),
     "superAdmin": MessageLookupByLibrary.simpleMessage("Super Admin"),
+    "systemOperation": MessageLookupByLibrary.simpleMessage("System Operation"),
+    "systemRecords": MessageLookupByLibrary.simpleMessage("System Records"),
     "tipAccountExist": MessageLookupByLibrary.simpleMessage(
       "Account already exists",
     ),
@@ -1659,6 +1755,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "user_phone": MessageLookupByLibrary.simpleMessage("Phone:"),
     "user_remarks": MessageLookupByLibrary.simpleMessage("User Notes:"),
     "user_sex": MessageLookupByLibrary.simpleMessage("Gender:"),
+    "weighingRecords": MessageLookupByLibrary.simpleMessage("Weighing Records"),
+    "weightAfterCalibration": MessageLookupByLibrary.simpleMessage(
+      "Weight After Calibration",
+    ),
+    "weightBeforeCalibration": MessageLookupByLibrary.simpleMessage(
+      "Weight Before Calibration",
+    ),
     "weightPercentEmpty": MessageLookupByLibrary.simpleMessage(
       "Ingredient Weight/Percent is empty",
     ),

@@ -52,6 +52,7 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
   final TextEditingController searchRoleCtl = TextEditingController();
   List<SysUserFromDb> searchUserList = [];
   List<SysUserFromDb> allUserList = [];
+  SysUserFromDb? superAdminUser;
 
   Set<int> selectedUserRows = {};
   bool selectUserAll = false; // 添加全选状态
@@ -84,11 +85,23 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
       if (mounted) {
         String dataStr = event.obj;
         allUserList = sysUserFromDbFromJson(dataStr);
+        if (allUserList.length == 1 && allUserList[0].isChanged == false) {
+          superAdminUser = allUserList[0];
+          allUserList = [];
+        }
         setState(() {
           searchUserList = List.from(allUserList);
           selectedUserRows.clear();
           selectUserAll = false;
+          if (allUserList.isNotEmpty && mySysUser.roleId == superAdminRoleId) {
+            for (var user in allUserList) {
+              if (user.userId == mySysUser.userId) {
+                mySysUser.isChanged = user.isChanged;
+              }
+            }
+          }
         });
+        eventBus.fire(EventMySysUser(""));
       }
     });
     _eventbus2 = eventBus.on<EventRespDeleteSysUser>().listen((event) {
@@ -142,8 +155,7 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
         body: Container(
-            color: colorScheme.surfaceDim, //对接时修改颜色值
-
+            color: colorScheme.surfaceDim,
             child: Column(
               children: [
                 thisPageHeadInfo(context, width - headWidthPadding,
@@ -881,6 +893,19 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
           width: regularPadding,
         ),
         showTextButton(context, 40, localizedStrings.gBtnAdd, () {
+          if (mySysUser.roleId == superAdminRoleId && !mySysUser.isChanged!) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => AddSysUserPage(
+                          sysUserList: allUserList,
+                          initUserInfo: superAdminUser ?? SysUserFromDb(),
+                          type: 2,
+                          isSuperAccount: true,
+                        )));
+            showTipInfo(localizedStrings.pleaseSetSuperAdmin, context);
+            return;
+          }
           Navigator.push(
               context,
               MaterialPageRoute(

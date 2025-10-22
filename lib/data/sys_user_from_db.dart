@@ -21,6 +21,7 @@ class SysUserDetailFromDb {
   int? roleId;
   String? roleName;
   int? initialPageId;
+  bool? isChanged;
   List<int>? pageIdList;
 
   SysUserDetailFromDb({
@@ -34,6 +35,7 @@ class SysUserDetailFromDb {
     this.roleId,
     this.roleName,
     this.initialPageId,
+    this.isChanged,
     this.pageIdList,
   });
 
@@ -49,6 +51,7 @@ class SysUserDetailFromDb {
         roleId: json["roleId"],
         roleName: json["roleName"],
         initialPageId: json["initialPageId"],
+        isChanged: json["isChanged"] ?? false,
         pageIdList: json["pageIdList"] == null
             ? []
             : List<int>.from(json["pageIdList"]!.map((x) => x)),
@@ -65,6 +68,7 @@ class SysUserDetailFromDb {
         "roleId": roleId,
         "roleName": roleName,
         "initialPageId": initialPageId,
+        "isChanged": isChanged,
         "pageIdList": pageIdList == null
             ? []
             : List<dynamic>.from(pageIdList!.map((x) => x)),
@@ -99,6 +103,7 @@ class SysUserFromDb {
   DateTime? updatedTime;
   int? createdBy;
   int? updatedBy;
+  bool? isChanged;
 
   SysUserFromDb({
     this.userId,
@@ -115,6 +120,7 @@ class SysUserFromDb {
     this.updatedTime,
     this.createdBy,
     this.updatedBy,
+    this.isChanged,
   });
 
   factory SysUserFromDb.fromJson(Map<String, dynamic> json) => SysUserFromDb(
@@ -136,6 +142,7 @@ class SysUserFromDb {
             : DateTime.parse(json["UpdatedTime"]).toLocal(),
         createdBy: json["CreatedBy"],
         updatedBy: json["UpdatedBy"],
+        isChanged: json["IsChanged"] ?? false,
       );
 
   Map<String, dynamic> toJson() => {
@@ -153,5 +160,6 @@ class SysUserFromDb {
         "UpdatedTime": updatedTime?.toIso8601String(),
         "CreatedBy": createdBy,
         "UpdatedBy": updatedBy,
+        "IsChanged": isChanged,
       };
 }

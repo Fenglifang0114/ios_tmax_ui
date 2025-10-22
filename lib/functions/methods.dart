@@ -26,6 +26,96 @@ class PublicFunctions {
     WebSocketManager().sendMessage(str);
   }
 
+  //获取系统日志
+  static void getSysLog(String jsonStr) {
+    myScaleCmd.cmdMode = "get_sys_log";
+    myScaleCmd.cmdData = jsonStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //获取称重日志列表
+  static void getWgtLogList(String jsonStr) {
+    myScaleCmd.cmdMode = "get_scale_log";
+    myScaleCmd.cmdData = jsonStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //获取标定日志列表
+  static void getCalLogList(String jsonStr) {
+    myScaleCmd.cmdMode = "get_cal_log";
+    myScaleCmd.cmdData = jsonStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //导出系统日志
+  static void exportSysLog(String jsonStr) {
+    myScaleCmd.cmdMode = "export_sys_log";
+    myScaleCmd.cmdData = jsonStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //导出称重日志
+  static void exportWgtLog(String jsonStr) {
+    myScaleCmd.cmdMode = "export_scale_log";
+    myScaleCmd.cmdData = jsonStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //导出称重日志
+  static void exportCalLog(String jsonStr) {
+    myScaleCmd.cmdMode = "export_cal_log";
+    myScaleCmd.cmdData = jsonStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //增加标定
+  static void addCalLog(String jsonStr) {
+    myScaleCmd.cmdMode = "add_cal_log";
+    myScaleCmd.cmdData = jsonStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //删除系统日志
+  static void deleteSysLog(String jsonStr) {
+    myScaleCmd.cmdMode = "del_sys_log";
+    myScaleCmd.cmdData = jsonStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //删除称重日志
+  static void deleteWgtLog(String jsonStr) {
+    myScaleCmd.cmdMode = "del_scale_log";
+    myScaleCmd.cmdData = jsonStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //删除标定日志
+  static void deleteCalLog(String jsonStr) {
+    myScaleCmd.cmdMode = "del_cal_log";
+    myScaleCmd.cmdData = jsonStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //删除所有系统日志
+  static void deleteAllSysLog() {
+    myScaleCmd.cmdMode = "del_all_sys_log";
+    myScaleCmd.cmdData = "";
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  static void deleteAllWgtLog() {
+    myScaleCmd.cmdMode = "del_all_scale_log";
+    myScaleCmd.cmdData = "";
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //删除所有标定日志
+  static void deleteAllCalLog() {
+    myScaleCmd.cmdMode = "del_all_cal_log";
+    myScaleCmd.cmdData = "";
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
   static void addUser(String str) {
     myScaleCmd.cmdMode = "add_user";
     myScaleCmd.cmdData = str;
@@ -528,11 +618,18 @@ class PublicFunctions {
   }
 
   //验证登录
-  static void login(String userName, String password) {
-    SysUserReq sysUserReq = SysUserReq(userName, password);
+  static void userLogin(String userName, String password, bool autoLogin) {
+    SysUserReq sysUserReq = SysUserReq(userName, password, autoLogin);
     String jsonStr = jsonEncode(sysUserReq);
     myScaleCmd.cmdMode = "login";
     myScaleCmd.cmdData = jsonStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //登出
+  static void logout() {
+    myScaleCmd.cmdMode = "logout";
+    myScaleCmd.cmdData = '';
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
 

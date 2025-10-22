@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:t_max/data/cominfoslist_data.dart';
 import 'package:t_max/data/comscaleinfo_data.dart';
+import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/license_data.dart';
 import 'package:t_max/data/modifyresult_data.dart';
 import 'package:t_max/data/pak_info_data.dart';
@@ -10,7 +11,7 @@ import 'package:t_max/data/plu_data_source.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/data/scalelist_data.dart';
 import 'package:t_max/data/settingparam_data.dart';
-import 'package:t_max/data/userinfo_data.dart';
+
 import 'package:t_max/data/wifi_list_info.dart';
 import '../data/ipinfodata.dart';
 import '../data/manager_scale_channel.dart';
@@ -22,7 +23,7 @@ class RespSysMsgType {
   static const String respScalesList = 'resp_scales_list';
   static const String respScaleModify = 'resp_scale_modify';
   static const String respProductList = 'resp_product_list';
-  static const String respUserList = 'resp_user_list';
+
   static const String respGetLicense = 'resp_get_license';
   static const String respCheckLicenseKey = 'resp_check_license_key';
   static const String respGetApList = 'resp_get_ap_list';
@@ -94,12 +95,26 @@ class RespSysMsgType {
   static const String respDelManyDraft = 'resp_many_draft_fma_del';
   static const String respDelManyFma = 'resp_many_fma_del';
 
+  static const String respGetSysLogList = 'resp_get_sys_log_list';
+  static const String respGetWgtLogList = 'resp_get_scale_log_list';
+  static const String respDelSysLog = 'resp_del_sys_log';
+  static const String respDelAllSysLog = 'resp_del_all_sys_log';
+  static const String respExportSysLog = 'resp_export_sys_log';
+  static const String respExportWgtLog = 'resp_export_scale_log';
+
+  static const String respDelScaleLog = 'resp_del_scale_log';
+  static const String respDelAllScaleLog = 'resp_del_all_scale_log';
+  static const String respGetCalLogList = 'resp_get_cal_log_list';
+
+  static const String respDelAllCalLog = 'resp_del_all_cal_log';
+  static const String respDelCalLog = 'resp_del_cal_log';
+  static const String respExportCalLog = 'resp_export_cal_log';
+
   static final Map<String, Function> handlers = {
     RespSysMsgType.respPortsList: handlePortsList,
     RespSysMsgType.respScalesList: handleScalesList,
     RespSysMsgType.respScaleModify: handleScaleModify,
     RespSysMsgType.respProductList: handleProductList,
-    RespSysMsgType.respUserList: handleUserList,
     RespSysMsgType.respGetLicense: handleGetLicense,
     RespSysMsgType.respCheckLicenseKey: handleCheckLicenseKey,
     RespSysMsgType.respGetApList: handleGetApList,
@@ -165,6 +180,18 @@ class RespSysMsgType {
     RespSysMsgType.respDelManyFma: handleRespDelManyFma,
     RespSysMsgType.respDelManyDraft: handleRespDelManyDraft,
     RespSysMsgType.respFmaData: handleFmaData,
+    RespSysMsgType.respGetSysLogList: handleRespGetSysLogList,
+    RespSysMsgType.respGetWgtLogList: handleRespGetWgtLogList,
+    RespSysMsgType.respDelSysLog: handleRespDelSysLog,
+    RespSysMsgType.respDelAllSysLog: handleRespDelSysLog,
+    RespSysMsgType.respExportSysLog: handleRespExportSysLog,
+    RespSysMsgType.respDelScaleLog: handleRespDelWgtLog,
+    RespSysMsgType.respDelAllScaleLog: handleRespDelWgtLog,
+    RespSysMsgType.respExportWgtLog: handleRespExportWgtLog,
+    RespSysMsgType.respGetCalLogList: handleRespGetCalLogList,
+    RespSysMsgType.respDelCalLog: handleRespDelCalLog,
+    RespSysMsgType.respDelAllCalLog: handleRespDelAllCalLog,
+    RespSysMsgType.respExportCalLog: handleRespExportCalLog,
   };
 
   static void handlePortsList(dynamic jsonData) {
@@ -190,10 +217,6 @@ class RespSysMsgType {
 
   static void handleProductList(dynamic jsonData) {
     pasterProductList(jsonData['MsgBody']);
-  }
-
-  static void handleUserList(dynamic jsonData) {
-    pasterUserList(jsonData['MsgBody']);
   }
 
   static void handleGetLicense(dynamic jsonData) {
@@ -533,18 +556,6 @@ class RespSysMsgType {
     }
   }
 
-  static void pasterUserList(String jsonDataString) {
-    String jsonStrings = jsonDataString;
-    final jsonResponse = json.decode(jsonStrings);
-    myUserInfoList = UserInfoList.fromJson(jsonResponse);
-    if (myUserInfoList.userInfo!.isNotEmpty) {
-      eventBus.fire(EventUserInfoList(myUserInfoList));
-    } else {
-      myUserInfoList.userInfo?.clear();
-      eventBus.fire(EventUserInfoList(myUserInfoList));
-    }
-  }
-
   static void handleAddSysUser(dynamic jsonData) {
     String dataString = jsonData['MsgBody'];
     eventBus.fire(EventRespAddSysUser(dataString));
@@ -567,6 +578,7 @@ class RespSysMsgType {
 
   static void handleChangePassword(dynamic jsonData) {
     String dataString = jsonData['MsgBody'];
+    mySysUser.isChanged = true;
     eventBus.fire(EventRespChangePassword(dataString));
   }
 
@@ -583,6 +595,56 @@ class RespSysMsgType {
   static void handleGetUserDetail(dynamic jsonData) {
     String dataString = jsonData['MsgBody'];
     eventBus.fire(EventRespGetUserDetail(dataString));
+  }
+
+  static void handleRespGetSysLogList(dynamic jsonData) {
+    String data = jsonData['MsgBody'];
+    eventBus.fire(EventRespGetSysLogList(data));
+  }
+
+  static void handleRespGetCalLogList(dynamic jsonData) {
+    String data = jsonData['MsgBody'];
+    eventBus.fire(EventRespGetCalLogList(data));
+  }
+
+  static void handleRespGetWgtLogList(dynamic jsonData) {
+    String data = jsonData['MsgBody'];
+    eventBus.fire(EventRespGetWgtLogList(data));
+  }
+
+  static void handleRespDelSysLog(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespDelSysLog(dataString));
+  }
+
+  static void handleRespDelCalLog(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespDelCalLog(dataString));
+  }
+
+  static void handleRespDelAllCalLog(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespDelCalLog(dataString));
+  }
+
+  static void handleRespDelWgtLog(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespDelWgtLog(dataString));
+  }
+
+  static void handleRespExportSysLog(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespExportSysLog(dataString));
+  }
+
+  static void handleRespExportWgtLog(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespExportWgtLog(dataString));
+  }
+
+  static void handleRespExportCalLog(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespExportCalLog(dataString));
   }
 
   static void handleRespPluAdd(dynamic jsonData) {

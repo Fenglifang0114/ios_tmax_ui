@@ -187,15 +187,13 @@ class MyApp extends StatelessWidget {
       supportedLocales: S.delegate.supportedLocales,
       // locale: Locale('en', 'US'),
       locale: Locale(savedLanguage.split('_')[0], savedLanguage.split('_')[1]),
-      //去掉右上角debug图标
       debugShowCheckedModeBanner: false,
       initialRoute: '/login',
       routes: {
-        '/login': (context) => const LoginPage(),
+        '/login': (context) => LoginPage(),
         '/home': (context) => MyHomePage(),
       },
-      // home:LoginPage()
-    ); //mySystemVersionInfo.getHomePage()); //const TrialPage());
+    );
   }
 
   Future<bool> checkServerExists() async {
@@ -204,8 +202,6 @@ class MyApp extends StatelessWidget {
       channel.close();
       return true;
     } catch (e) {
-      // print("检查WebSocket服务器是否启动时出错: $e");
-
       return false;
     }
   }

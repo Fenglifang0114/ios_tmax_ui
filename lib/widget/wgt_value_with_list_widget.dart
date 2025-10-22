@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:t_max/data/const_var_data.dart';
 import 'package:t_max/data/downloadresponse.dart';
+import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/icons.dart';
 import 'package:t_max/data/language.dart';
@@ -14,7 +15,7 @@ import 'package:t_max/data/record_data.dart';
 import 'package:t_max/data/reqweightdata_data.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/data/settingparam_data.dart';
-import 'package:t_max/data/userinfo_data.dart';
+
 import 'package:t_max/data/weight_report_data.dart';
 import 'package:t_max/data/weight_rpt.dart';
 import 'package:t_max/data/wgt_rpt_data_source.dart';
@@ -61,7 +62,6 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
 
   final int cstManualSave = 1;
   final int cstStableSave = 2;
-  UserInfo tmpUserInfo = UserInfo();
 
   int _stableSaveTime = 0;
   bool firstGetRec = true;
@@ -802,16 +802,8 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
 
       (weightInfo!.weightVal == '---------') ? (" ") : (weightInfo!.weightVal!),
       (weightInfo?.weightUnit == '----') ? (" ") : (weightInfo!.weightUnit!),
-      (tmpUserInfo.id == null)
-          ? ""
-          : (tmpUserInfo.id.toString().contains("Please")
-              ? ""
-              : tmpUserInfo.id.toString()),
-      (tmpUserInfo.name == null)
-          ? ""
-          : (tmpUserInfo.name.toString().contains("Please")
-              ? ""
-              : tmpUserInfo.name.toString()),
+      mySysUser.userName ?? "",
+      mySysUser.nickName ?? "",
 
       tempDefScaleInfo.scaleName, //此处应该是秤机种名
       getDateTime(mySettingParam.dateSeparator, dateformat),

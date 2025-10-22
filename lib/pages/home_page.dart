@@ -50,13 +50,14 @@ class MyHomePageState extends State<MyHomePage>
   bool isResize = false;
   DateTime dataTimeNow = DateTime.now();
 
-  dynamic _eventbus1; // 监听事件
-  dynamic _eventbus4; // 监听事件
-  dynamic _eventbus5; // 监听事件
-  dynamic _eventbus6; // 监听事件
-  dynamic _eventbus7; // 监听事件
-  dynamic _eventbus8; // 监听事件
-  dynamic _eventbus9; // 监听事件
+  dynamic _eventbus1;
+  dynamic _eventbus2;
+  dynamic _eventbus4;
+  dynamic _eventbus5;
+  dynamic _eventbus6;
+  dynamic _eventbus7;
+  dynamic _eventbus8;
+  dynamic _eventbus9;
   ScrollController scrollController = ScrollController();
   bool isHovering = false; // 用于控制鼠标悬停状态
 
@@ -136,6 +137,11 @@ class MyHomePageState extends State<MyHomePage>
     });
     setState(() {
       dataTimeNow = DateTime.now();
+    });
+    _eventbus2 = eventBus.on<EventMySysUser>().listen((event) {
+      if (mounted) {
+        setState(() {});
+      }
     });
 
     _eventbus4 = eventBus.on<EventGetFactoryInfo>().listen((event) {
@@ -340,43 +346,6 @@ class MyHomePageState extends State<MyHomePage>
       onTap: () => _navigateContent(item.routeName!), // 点击回调
     );
   }
-
-  // Widget showNavigationBar(List<RouteData> demos) {
-  //   return MouseRegion(
-  //     onEnter: (_) {
-  //       setState(() {
-  //         _isHovering = true;
-  //       });
-  //     },
-  //     onExit: (_) {
-  //       setState(() {
-  //         _isHovering = false;
-  //       });
-  //     },
-  //     child: ScrollbarTheme(
-  //       data: ScrollbarThemeData(
-  //         thumbColor:
-  //             WidgetStateProperty.all(Theme.of(context).colorScheme.onPrimary),
-  //         radius: const Radius.circular(4.0), // 设置滚动条圆角
-  //       ),
-  //       child: Scrollbar(
-  //         thumbVisibility: _isHovering,
-  //         controller: _scrollController,
-  //         child: ListView.builder(
-  //           controller: _scrollController,
-  //           primary: false,
-  //           itemBuilder: (context, index) => MenuItem(
-  //             demo: demos[index],
-  //             isExpanded: true,
-  //             isSelected: demos[index].routeName! == _selectedNavRoute,
-  //             onTap: () => _navigateContent(demos[index].routeName!),
-  //           ),
-  //           itemCount: demos.length,
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -650,24 +619,47 @@ class MyHomePageState extends State<MyHomePage>
           ),
         if (mySysUser.roleId == 1 || mySysUser.roleId == 2)
           PopupMenuDivider(height: 1.0),
-        PopupMenuItem(
-          value: '2',
-          child: Text(
-            localizedStrings.titleChangePassword,
-            style: textTheme.bodySmall!.apply(
-              // 根据选中状态改变颜色
-              color: colorScheme.surface,
+        if (mySysUser.roleId == 1 || mySysUser.roleId == 2)
+          PopupMenuItem(
+            value: '5',
+            child: Text(
+              localizedStrings.logManagement,
+              style: textTheme.bodySmall!.apply(
+                // 根据选中状态改变颜色
+                color: colorScheme.surface,
+              ),
             ),
+            onTap: () {
+              Future.delayed(
+                Duration.zero,
+                () {
+                  _navigateContent('/settingsLog');
+                },
+              );
+            },
           ),
-          onTap: () {
-            Future.delayed(
-              Duration.zero,
-              () {
-                showModifyPwdDialog();
-              },
-            );
-          },
-        ),
+        if (mySysUser.roleId == 1 || mySysUser.roleId == 2)
+          PopupMenuDivider(height: 1.0),
+        if ((mySysUser.roleId == superAdminRoleId && mySysUser.isChanged!) ||
+            (mySysUser.roleId != superAdminRoleId))
+          PopupMenuItem(
+            value: '2',
+            child: Text(
+              localizedStrings.titleChangePassword,
+              style: textTheme.bodySmall!.apply(
+                // 根据选中状态改变颜色
+                color: colorScheme.surface,
+              ),
+            ),
+            onTap: () {
+              Future.delayed(
+                Duration.zero,
+                () {
+                  showModifyPwdDialog();
+                },
+              );
+            },
+          ),
         PopupMenuDivider(height: 1.0),
         PopupMenuItem(
           value: '3',
@@ -687,24 +679,29 @@ class MyHomePageState extends State<MyHomePage>
             );
           },
         ),
-        PopupMenuDivider(height: 1.0),
-        PopupMenuItem(
-          value: '4',
-          child: Text(
-            localizedStrings.titleLogout,
-            style: textTheme.bodySmall!.apply(
-              // 根据选中状态改变颜色
-              color: colorScheme.surface,
+        if ((mySysUser.roleId == superAdminRoleId && mySysUser.isChanged!) ||
+            (mySysUser.roleId != superAdminRoleId))
+          PopupMenuDivider(height: 1.0),
+        if ((mySysUser.roleId == superAdminRoleId && mySysUser.isChanged!) ||
+            (mySysUser.roleId != superAdminRoleId))
+          PopupMenuItem(
+            value: '4',
+            child: Text(
+              localizedStrings.titleLogout,
+              style: textTheme.bodySmall!.apply(
+                // 根据选中状态改变颜色
+                color: colorScheme.surface,
+              ),
             ),
+            onTap: () {
+              firstLogin = true;
+              PublicFunctions.logout();
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                '/login',
+                (Route<dynamic> route) => false,
+              );
+            },
           ),
-          onTap: () {
-            firstLogin = true;
-            Navigator.of(context).pushNamedAndRemoveUntil(
-              '/login',
-              (Route<dynamic> route) => false,
-            );
-          },
-        ),
         PopupMenuDivider(height: 1.0),
       ],
     );

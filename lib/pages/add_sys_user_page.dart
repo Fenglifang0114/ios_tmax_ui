@@ -60,11 +60,18 @@ class AddSysUserPageState extends State<AddSysUserPage> {
   void initUser() {
     if (widget.type == 2) {
       PublicFunctions.getUserInfo(widget.initUserInfo.userName!);
-      userNameCtl.text = widget.initUserInfo.userName!;
-      nickNameCtl.text = widget.initUserInfo.nickName!;
+      if (widget.isSuperAccount && widget.initUserInfo.isChanged == false) {
+        userNameCtl.text = "";
+        nickNameCtl.text = "";
+        phoneCtl.text = "";
+        emailCtl.text = "";
+      } else {
+        userNameCtl.text = widget.initUserInfo.userName!;
+        nickNameCtl.text = widget.initUserInfo.nickName!;
+        phoneCtl.text = widget.initUserInfo.phone!;
+        emailCtl.text = widget.initUserInfo.email!;
+      }
 
-      phoneCtl.text = widget.initUserInfo.phone!;
-      emailCtl.text = widget.initUserInfo.email!;
       int roleId = widget.initUserInfo.roleId!;
 
       if (widget.isSuperAccount) {
@@ -241,6 +248,14 @@ class AddSysUserPageState extends State<AddSysUserPage> {
         return false;
       } else {
         return true;
+      }
+    }
+    if (widget.isSuperAccount && widget.initUserInfo.isChanged == false) {
+      if (pwd1Ctl.text.isEmpty || pwd2Ctl.text.isEmpty) {
+        return false;
+      }
+      if (pwd1Ctl.text != pwd2Ctl.text) {
+        return false;
       }
     }
     if ((pwd1Ctl.text.isEmpty && pwd2Ctl.text.isNotEmpty) ||

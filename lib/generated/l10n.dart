@@ -8680,6 +8680,561 @@ class S {
       args: [],
     );
   }
+
+  /// `Module`
+  String get module {
+    return Intl.message('Module', name: 'module', desc: 'Module', args: []);
+  }
+
+  /// `Function Module`
+  String get funcName {
+    return Intl.message(
+      'Function Module',
+      name: 'funcName',
+      desc: 'Function Module',
+      args: [],
+    );
+  }
+
+  /// `Operation Type`
+  String get operationType {
+    return Intl.message(
+      'Operation Type',
+      name: 'operationType',
+      desc: 'Operation Type',
+      args: [],
+    );
+  }
+
+  /// `Details`
+  String get operation {
+    return Intl.message(
+      'Details',
+      name: 'operation',
+      desc: 'Details of the operation',
+      args: [],
+    );
+  }
+
+  /// `Result`
+  String get operationResult {
+    return Intl.message(
+      'Result',
+      name: 'operationResult',
+      desc: 'Operation Result',
+      args: [],
+    );
+  }
+
+  /// `Log Management`
+  String get logManagement {
+    return Intl.message(
+      'Log Management',
+      name: 'logManagement',
+      desc: 'Log Management',
+      args: [],
+    );
+  }
+
+  /// `System Records`
+  String get systemRecords {
+    return Intl.message(
+      'System Records',
+      name: 'systemRecords',
+      desc: 'System Records',
+      args: [],
+    );
+  }
+
+  /// `Calibration Records`
+  String get calibrationRecords {
+    return Intl.message(
+      'Calibration Records',
+      name: 'calibrationRecords',
+      desc: 'Calibration Records',
+      args: [],
+    );
+  }
+
+  /// `Weighing Records`
+  String get weighingRecords {
+    return Intl.message(
+      'Weighing Records',
+      name: 'weighingRecords',
+      desc: 'Weighing Records',
+      args: [],
+    );
+  }
+
+  /// `Delete Log`
+  String get deleteLog {
+    return Intl.message(
+      'Delete Log',
+      name: 'deleteLog',
+      desc: 'Delete Log',
+      args: [],
+    );
+  }
+
+  /// `Delete`
+  String get delete {
+    return Intl.message('Delete', name: 'delete', desc: 'Delete', args: []);
+  }
+
+  /// `Success`
+  String get success {
+    return Intl.message('Success', name: 'success', desc: 'Success', args: []);
+  }
+
+  /// `Failure`
+  String get failure {
+    return Intl.message('Failure', name: 'failure', desc: 'Failure', args: []);
+  }
+
+  /// `System Operation`
+  String get systemOperation {
+    return Intl.message(
+      'System Operation',
+      name: 'systemOperation',
+      desc: 'System Operation',
+      args: [],
+    );
+  }
+
+  /// `Login`
+  String get login {
+    return Intl.message('Login', name: 'login', desc: 'Login', args: []);
+  }
+
+  /// `Logout`
+  String get logout {
+    return Intl.message('Logout', name: 'logout', desc: 'Logout', args: []);
+  }
+
+  /// `Log Details`
+  String get logDetails {
+    return Intl.message(
+      'Log Details',
+      name: 'logDetails',
+      desc: 'Log Details',
+      args: [],
+    );
+  }
+
+  /// `Search`
+  String get search {
+    return Intl.message('Search', name: 'search', desc: 'Search', args: []);
+  }
+
+  /// `Selected`
+  String get selected {
+    return Intl.message(
+      'Selected',
+      name: 'selected',
+      desc: 'Selected',
+      args: [],
+    );
+  }
+
+  /// `Update`
+  String get opUpdate {
+    return Intl.message(
+      'Update',
+      name: 'opUpdate',
+      desc: 'Update Operation',
+      args: [],
+    );
+  }
+
+  /// `Enable`
+  String get opEnable {
+    return Intl.message(
+      'Enable',
+      name: 'opEnable',
+      desc: 'Enable Operation',
+      args: [],
+    );
+  }
+
+  /// `Disable`
+  String get opDisable {
+    return Intl.message(
+      'Disable',
+      name: 'opDisable',
+      desc: 'Disable Operation',
+      args: [],
+    );
+  }
+
+  /// `Query`
+  String get opQuery {
+    return Intl.message(
+      'Query',
+      name: 'opQuery',
+      desc: 'Query Operation',
+      args: [],
+    );
+  }
+
+  /// `Download`
+  String get opIssue {
+    return Intl.message(
+      'Download',
+      name: 'opIssue',
+      desc: 'Download Operation',
+      args: [],
+    );
+  }
+
+  /// `Import`
+  String get opImport {
+    return Intl.message(
+      'Import',
+      name: 'opImport',
+      desc: 'Import Operation',
+      args: [],
+    );
+  }
+
+  /// `Export`
+  String get opExport {
+    return Intl.message(
+      'Export',
+      name: 'opExport',
+      desc: 'Export Operation',
+      args: [],
+    );
+  }
+
+  /// `Setting`
+  String get opSetting {
+    return Intl.message(
+      'Setting',
+      name: 'opSetting',
+      desc: 'Setting Operation',
+      args: [],
+    );
+  }
+
+  /// `Enable or Disable`
+  String get enableOrDisable {
+    return Intl.message(
+      'Enable or Disable',
+      name: 'enableOrDisable',
+      desc: 'Whether to enable or disable',
+      args: [],
+    );
+  }
+
+  /// `Add Formula`
+  String get addFormula {
+    return Intl.message(
+      'Add Formula',
+      name: 'addFormula',
+      desc: 'Add formula',
+      args: [],
+    );
+  }
+
+  /// `Delete Formula`
+  String get deleteFormula {
+    return Intl.message(
+      'Delete Formula',
+      name: 'deleteFormula',
+      desc: 'Delete formula',
+      args: [],
+    );
+  }
+
+  /// `Modify Formula`
+  String get modifyFormula {
+    return Intl.message(
+      'Modify Formula',
+      name: 'modifyFormula',
+      desc: 'Modify formula',
+      args: [],
+    );
+  }
+
+  /// `Add Formula Category`
+  String get addFormulaCategory {
+    return Intl.message(
+      'Add Formula Category',
+      name: 'addFormulaCategory',
+      desc: 'Add formula category',
+      args: [],
+    );
+  }
+
+  /// `Delete Formula Category`
+  String get deleteFormulaCategory {
+    return Intl.message(
+      'Delete Formula Category',
+      name: 'deleteFormulaCategory',
+      desc: 'Delete formula category',
+      args: [],
+    );
+  }
+
+  /// `Modify Formula Category`
+  String get modifyFormulaCategory {
+    return Intl.message(
+      'Modify Formula Category',
+      name: 'modifyFormulaCategory',
+      desc: 'Modify formula category',
+      args: [],
+    );
+  }
+
+  /// `Clear Unused Formula Category`
+  String get clearUnusedFormulaCategory {
+    return Intl.message(
+      'Clear Unused Formula Category',
+      name: 'clearUnusedFormulaCategory',
+      desc: 'Clear unused formula category',
+      args: [],
+    );
+  }
+
+  /// `Add Ingredient Category`
+  String get addIngredientCategory {
+    return Intl.message(
+      'Add Ingredient Category',
+      name: 'addIngredientCategory',
+      desc: 'Add ingredient category',
+      args: [],
+    );
+  }
+
+  /// `Delete Ingredient Category`
+  String get deleteIngredientCategory {
+    return Intl.message(
+      'Delete Ingredient Category',
+      name: 'deleteIngredientCategory',
+      desc: 'Delete ingredient category',
+      args: [],
+    );
+  }
+
+  /// `Modify Ingredient Category`
+  String get modifyIngredientCategory {
+    return Intl.message(
+      'Modify Ingredient Category',
+      name: 'modifyIngredientCategory',
+      desc: 'Modify ingredient category',
+      args: [],
+    );
+  }
+
+  /// `Clear Unused Ingredient Category`
+  String get clearUnusedIngredientCategory {
+    return Intl.message(
+      'Clear Unused Ingredient Category',
+      name: 'clearUnusedIngredientCategory',
+      desc: 'Clear unused ingredient category',
+      args: [],
+    );
+  }
+
+  /// `Add Ingredient`
+  String get addIngredient {
+    return Intl.message(
+      'Add Ingredient',
+      name: 'addIngredient',
+      desc: 'Add ingredient',
+      args: [],
+    );
+  }
+
+  /// `Delete Ingredient`
+  String get deleteIngredient {
+    return Intl.message(
+      'Delete Ingredient',
+      name: 'deleteIngredient',
+      desc: 'Delete ingredient',
+      args: [],
+    );
+  }
+
+  /// `Modify Ingredient`
+  String get modifyIngredient {
+    return Intl.message(
+      'Modify Ingredient',
+      name: 'modifyIngredient',
+      desc: 'Modify ingredient',
+      args: [],
+    );
+  }
+
+  /// `Add Formula Weighing Record`
+  String get addFormulaWeighingRecord {
+    return Intl.message(
+      'Add Formula Weighing Record',
+      name: 'addFormulaWeighingRecord',
+      desc: 'Add formula weighing record',
+      args: [],
+    );
+  }
+
+  /// `Delete Formula Weighing Record`
+  String get deleteFormulaWeighingRecord {
+    return Intl.message(
+      'Delete Formula Weighing Record',
+      name: 'deleteFormulaWeighingRecord',
+      desc: 'Delete formula weighing record',
+      args: [],
+    );
+  }
+
+  /// `Add Temporary Weighing Record`
+  String get addTemporaryWeighingRecord {
+    return Intl.message(
+      'Add Temporary Weighing Record',
+      name: 'addTemporaryWeighingRecord',
+      desc: 'Add temporary weighing record',
+      args: [],
+    );
+  }
+
+  /// `Delete Temporary Weighing Record`
+  String get deleteTemporaryWeighingRecord {
+    return Intl.message(
+      'Delete Temporary Weighing Record',
+      name: 'deleteTemporaryWeighingRecord',
+      desc: 'Delete temporary weighing record',
+      args: [],
+    );
+  }
+
+  /// `Modify Temporary Weighing Record`
+  String get modifyTemporaryWeighingRecord {
+    return Intl.message(
+      'Modify Temporary Weighing Record',
+      name: 'modifyTemporaryWeighingRecord',
+      desc: 'Modify temporary weighing record',
+      args: [],
+    );
+  }
+
+  /// `Set Time`
+  String get setTime {
+    return Intl.message(
+      'Set Time',
+      name: 'setTime',
+      desc: 'Set time',
+      args: [],
+    );
+  }
+
+  /// `Set Name`
+  String get setName {
+    return Intl.message(
+      'Set Name',
+      name: 'setName',
+      desc: 'Set name',
+      args: [],
+    );
+  }
+
+  /// `Set Power`
+  String get setPower {
+    return Intl.message(
+      'Set Power',
+      name: 'setPower',
+      desc: 'Set power',
+      args: [],
+    );
+  }
+
+  /// `Calibration Type`
+  String get calibrationType {
+    return Intl.message(
+      'Calibration Type',
+      name: 'calibrationType',
+      desc: 'Calibration Type',
+      args: [],
+    );
+  }
+
+  /// `Calibration Mode`
+  String get calibrationMode {
+    return Intl.message(
+      'Calibration Mode',
+      name: 'calibrationMode',
+      desc: 'Calibration Mode',
+      args: [],
+    );
+  }
+
+  /// `Calibration Value`
+  String get calibrationValue {
+    return Intl.message(
+      'Calibration Value',
+      name: 'calibrationValue',
+      desc: 'Calibration Value',
+      args: [],
+    );
+  }
+
+  /// `Weight Before Calibration`
+  String get weightBeforeCalibration {
+    return Intl.message(
+      'Weight Before Calibration',
+      name: 'weightBeforeCalibration',
+      desc: 'Weight Before Calibration',
+      args: [],
+    );
+  }
+
+  /// `Weight After Calibration`
+  String get weightAfterCalibration {
+    return Intl.message(
+      'Weight After Calibration',
+      name: 'weightAfterCalibration',
+      desc: 'Weight After Calibration',
+      args: [],
+    );
+  }
+
+  /// `Calibration Error`
+  String get calibrationError {
+    return Intl.message(
+      'Calibration Error',
+      name: 'calibrationError',
+      desc: 'Calibration Error',
+      args: [],
+    );
+  }
+
+  /// `Single Point`
+  String get singlePoint {
+    return Intl.message(
+      'Single Point',
+      name: 'singlePoint',
+      desc: 'Single Point Calibration',
+      args: [],
+    );
+  }
+
+  /// `Multi Point`
+  String get multiPoint {
+    return Intl.message(
+      'Multi Point',
+      name: 'multiPoint',
+      desc: 'Multi Point Calibration',
+      args: [],
+    );
+  }
+
+  /// `Set up the Super Admin account before creating new accounts.`
+  String get pleaseSetSuperAdmin {
+    return Intl.message(
+      'Set up the Super Admin account before creating new accounts.',
+      name: 'pleaseSetSuperAdmin',
+      desc: 'Please set super administrator account',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

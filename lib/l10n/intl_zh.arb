@@ -2632,7 +2632,7 @@
     "@gScaleName": {
         "description": "This is the prompt for the scale name."
     },
-    "gModelName": "型号名称",
+    "gModelName": "型号",
     "@gModelName": {
         "description": "This is a prompt for model name."
     },
@@ -3579,8 +3579,243 @@
     "deleteTypeUnusedConfirm": "即将删除所有未使用的类型，是否继续？",
     "@deleteTypeUnusedConfirm": {
         "description": "Confirm deletion of types currently not in use"
+    },
+    "module": "模块",
+    "@module": {
+        "description": "Module"
+    },
+    "funcName": "功能模块", 
+    "@funcName": {
+        "description": "Function Module"
+    },
+    "operationType": "操作类型",
+    "@operationType": {
+        "description": "Operation Type"
+    },
+    "operation": "具体操作",
+    "@operation": {
+        "description": "Specific Operation"
+    },
+    "operationResult": "结果",
+    "@operationResult": {
+        "description": "Operation Result"
+    },
+    "logManagement": "日志管理",
+    "@logManagement": {
+        "description": "Log Management"
+    },
+    "systemRecords": "系统记录",
+    "@systemRecords": {
+        "description": "System Records"
+    },
+    "calibrationRecords": "标定记录",
+    "@calibrationRecords": {
+        "description": "Calibration Records"
+    },
+    "weighingRecords": "称重记录",
+    "@weighingRecords": {
+        "description": "Weighing Records"
+    },
+    "deleteLog": "删除日志",
+    "@deleteLog": {
+        "description": "Delete Log"
+    },
+    "delete": "删除",
+    "@delete": {
+        "description": "Delete"
+    },
+    "success": "成功",
+    "@success": {
+        "description": "Success"
+    },
+    "failure": "失败",
+    "@failure": {
+        "description": "Failure"
+    },
+    "systemOperation": "系统操作",
+    "@systemOperation": {
+        "description": "System Operation"
+    },
+    "login": "登录",
+    "@login": {
+        "description": "Login"
+    },
+    "logout": "登出",
+    "@logout": {
+        "description": "Logout"
+    }, 
+    "logDetails": "日志详情",
+    "@logDetails": {
+        "description": "Log Details"
+    },
+    "search": "搜索",
+    "@search": {
+        "description": "Search"
+    },
+    "selected": "已选",
+    "@selected": {
+        "description": "Selected"
+    },
+    "opUpdate": "更新",
+    "@opUpdate": {
+        "description": "Update Operation"
+    },
+     "opEnable": "启用",
+     "@opEnable": {
+        "description": "Enable Operation"
+    },
+    "opDisable": "禁用",
+    "@opDisable": {
+        "description": "Disable Operation"
+    },
+    "opQuery": "查询",
+    "@opQuery": {
+        "description": "Query Operation"
+    },
+    "opIssue": "下发",
+    "@opIssue": {
+        "description": "Issue Operation"
+    },
+    "opImport": "导入",
+    "@opImport": {
+        "description": "Import Operation"
+    },
+    "opExport": "导出",
+    "@opExport": {
+        "description": "Export Operation"
+    },
+    "opSetting": "设置",
+    "@opSetting": {
+        "description": "Setting Operation"
+    },
+    "enableOrDisable": "启用或禁用",
+    "@enableOrDisable": {
+        "description": "Whether to enable or disable"
+    },
+    "addFormula": "新增配方",
+    "@addFormula": {
+        "description": "Add formula"
+    },
+    "deleteFormula": "删除配方",
+    "@deleteFormula": {
+        "description": "Delete formula"
+    },
+    "modifyFormula": "修改配方",
+    "@modifyFormula": {
+        "description": "Modify formula"
+    },
+    "addFormulaCategory": "新增配方类别",
+    "@addFormulaCategory": {
+        "description": "Add formula category"
+    },
+    "deleteFormulaCategory": "删除配方类别",
+    "@deleteFormulaCategory": {
+        "description": "Delete formula category"
+    },
+    "modifyFormulaCategory": "修改配方类别",
+    "@modifyFormulaCategory": {
+        "description": "Modify formula category"
+    },
+    "clearUnusedFormulaCategory": "清除未使用配方类别",
+    "@clearUnusedFormulaCategory": {
+        "description": "Clear unused formula category"
+    },
+    "addIngredientCategory": "新增原料类别",
+    "@addIngredientCategory": {
+        "description": "Add ingredient category"
+    },
+    "deleteIngredientCategory": "删除原料类别",
+    "@deleteIngredientCategory": {
+        "description": "Delete ingredient category"
+    },
+    "modifyIngredientCategory": "修改原料类别",
+    "@modifyIngredientCategory": {
+        "description": "Modify ingredient category"
+    },
+    "clearUnusedIngredientCategory": "清除未使用原料类别",
+    "@clearUnusedIngredientCategory": {
+        "description": "Clear unused ingredient category"
+    },
+    "addIngredient": "新增原料",
+    "@addIngredient": {
+        "description": "Add ingredient"
+    },
+    "deleteIngredient": "删除原料",
+    "@deleteIngredient": {
+        "description": "Delete ingredient"
+    },
+    "modifyIngredient": "修改原料",
+    "@modifyIngredient": {
+        "description": "Modify ingredient"
+    },
+    "addFormulaWeighingRecord": "新增配方称重记录",
+    "@addFormulaWeighingRecord": {
+        "description": "Add formula weighing record"
+    },
+    "deleteFormulaWeighingRecord": "删除配方称重记录",
+    "@deleteFormulaWeighingRecord": {
+        "description": "Delete formula weighing record"
+    },
+    "addTemporaryWeighingRecord": "新增暂存称重记录",
+    "@addTemporaryWeighingRecord": {
+        "description": "Add temporary weighing record"
+    },
+    "deleteTemporaryWeighingRecord": "删除暂存称重记录",
+    "@deleteTemporaryWeighingRecord": {
+        "description": "Delete temporary weighing record"
+    },
+    "modifyTemporaryWeighingRecord": "修改暂存称重记录",
+    "@modifyTemporaryWeighingRecord": {
+        "description": "Modify temporary weighing record"
+    },
+    "setTime": "设置时间",
+    "@setTime": {
+        "description": "Set time"
+    },
+    "setName": "设置名称",
+    "@setName": {
+        "description": "Set name"
+    },
+    "setPower": "设置功率",
+    "@setPower": {
+        "description": "Set power"
+    },
+    "calibrationType": "标定类型",
+    "@calibrationType": {
+        "description": "Calibration Type"
+    },
+    "calibrationMode": "标定模式",
+    "@calibrationMode": {
+        "description": "Calibration Mode"
+    },
+    "calibrationValue": "标定值",
+    "@calibrationValue": {
+        "description": "Calibration Value"
+    },
+    "weightBeforeCalibration": "标定前重量",
+    "@weightBeforeCalibration": {
+        "description": "Weight Before Calibration"
+    },
+    "weightAfterCalibration": "标定后重量",
+    "@weightAfterCalibration": {
+        "description": "Weight After Calibration"
+    },
+    "calibrationError": "标定误差",
+    "@calibrationError": {
+        "description": "Calibration Error"
+    },
+    "singlePoint": "单点标定",
+    "@singlePoint": {
+        "description": "Single Point Calibration"
+    },
+    "multiPoint": "多点标定",
+    "@multiPoint": {
+        "description": "Multi Point Calibration"
+    },
+    "pleaseSetSuperAdmin": "新建账号前,请先设置超级管理员",
+    "@pleaseSetSuperAdmin": {
+        "description": "Please set super administrator account"
     }
-      
 }
 
 

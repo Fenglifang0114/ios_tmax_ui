@@ -22,6 +22,7 @@ import 'package:t_max/pages/plu_edit_page.dart';
 import 'package:t_max/pages/receipt_design_page.dart';
 import 'package:t_max/pages/retail_report_page.dart';
 import 'package:t_max/pages/set_system_time.dart';
+import 'package:t_max/pages/sys_log_page.dart';
 import 'package:t_max/pages/sys_user_manager.dart';
 import 'package:t_max/pages/take_in_page.dart';
 import 'package:t_max/pages/take_out_page.dart';
@@ -388,9 +389,6 @@ bool isFreeApp(int pId) => freeAppMenuIds.contains(pId);
 
 Widget buildPageContent(dynamic Function(String) navigateContent,
     String? pageName, String? lastRouteName) {
-  // if (pageName == '/settingsApps') {
-  //   return AppsPage(onNavigate: navigateContent, lastRouteName: lastRouteName!);
-  // }
   if (pageName == '/settingsConfig') {
     return ConfigurationPage(
         onNavigate: navigateContent, lastRouteName: lastRouteName!);
@@ -400,10 +398,10 @@ Widget buildPageContent(dynamic Function(String) navigateContent,
         onNavigate: navigateContent, lastRouteName: lastRouteName!);
   }
 
-  // if (pageName == '/settingsAppsSetting') {
-  //   return AppsSettingPage(
-  //       onNavigate: navigateContent, lastRouteName: lastRouteName!);
-  // }
+  if (pageName == '/settingsLog') {
+    return SysLogPage(
+        onNavigate: navigateContent, lastRouteName: lastRouteName!);
+  }
 
   int pageId = 9999;
   for (var item in getAllConfigMenus()) {

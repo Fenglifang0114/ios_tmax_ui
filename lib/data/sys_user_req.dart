@@ -4,13 +4,15 @@ import 'dart:convert';
 class SysUserReq {
   String userName = '';
   String password = '';
+  bool autoLogin = false;
 
-  SysUserReq(this.userName, this.password);
+  SysUserReq(this.userName, this.password, this.autoLogin);
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['UserName'] = userName;
     data['Password'] = password;
+    data['AutoLogin'] = autoLogin;
     return data;
   }
 }

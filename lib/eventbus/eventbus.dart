@@ -47,6 +47,11 @@ class EventDialogData {
   EventDialogData(this.obj);
 }
 
+class EventMySysUser {
+  dynamic obj;
+  EventMySysUser(this.obj);
+}
+
 class EventPLuDataSavedOK {
   dynamic obj;
   EventPLuDataSavedOK(this.obj);
@@ -855,4 +860,59 @@ class EventImportRawOK {
 class EventImportFmaOK {
   dynamic obj;
   EventImportFmaOK(this.obj);
+}
+
+class EventRespGetSysLogList {
+  dynamic obj;
+  EventRespGetSysLogList(this.obj);
+}
+
+class EventRespGetCalLogList {
+  dynamic obj;
+  EventRespGetCalLogList(this.obj);
+}
+
+class EventRespGetWgtLogList {
+  dynamic obj;
+  EventRespGetWgtLogList(this.obj);
+}
+
+class EventRespDelSysLog {
+  dynamic obj;
+  EventRespDelSysLog(this.obj);
+}
+
+class EventRespDelCalLog {
+  dynamic obj;
+  EventRespDelCalLog(this.obj);
+}
+
+class EventRespDelAllCalLog {
+  dynamic obj;
+  EventRespDelAllCalLog(this.obj);
+}
+
+class EventRespDelWgtLog {
+  dynamic obj;
+  EventRespDelWgtLog(this.obj);
+}
+
+class EventRespDelAllScaleLog {
+  dynamic obj;
+  EventRespDelAllScaleLog(this.obj);
+}
+
+class EventRespExportSysLog {
+  dynamic obj;
+  EventRespExportSysLog(this.obj);
+}
+
+class EventRespExportWgtLog {
+  dynamic obj;
+  EventRespExportWgtLog(this.obj);
+}
+
+class EventRespExportCalLog {
+  dynamic obj;
+  EventRespExportCalLog(this.obj);
 }
