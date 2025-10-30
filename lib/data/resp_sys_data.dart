@@ -23,6 +23,11 @@ class RespSysMsgType {
   static const String respScalesList = 'resp_scales_list';
   static const String respScaleModify = 'resp_scale_modify';
   static const String respProductList = 'resp_product_list';
+  static const String respPluList = 'resp_plu_list';
+  static const String respPluSetting = 'resp_plu_setting';
+
+  static const String respProductDel = 'resp_product_del';
+  static const String respDownAllPlu = 'resp_down_all_plu';
 
   static const String respGetLicense = 'resp_get_license';
   static const String respCheckLicenseKey = 'resp_check_license_key';
@@ -109,12 +114,16 @@ class RespSysMsgType {
   static const String respDelAllCalLog = 'resp_del_all_cal_log';
   static const String respDelCalLog = 'resp_del_cal_log';
   static const String respExportCalLog = 'resp_export_cal_log';
+  static const String respCheckPluExist = 'resp_check_plu_exist';
+  static const String respExportPluList = 'resp_export_plu_list';
 
   static final Map<String, Function> handlers = {
     RespSysMsgType.respPortsList: handlePortsList,
     RespSysMsgType.respScalesList: handleScalesList,
     RespSysMsgType.respScaleModify: handleScaleModify,
     RespSysMsgType.respProductList: handleProductList,
+    RespSysMsgType.respPluList: handlePluList,
+    RespSysMsgType.respPluSetting: handlePluSetting,
     RespSysMsgType.respGetLicense: handleGetLicense,
     RespSysMsgType.respCheckLicenseKey: handleCheckLicenseKey,
     RespSysMsgType.respGetApList: handleGetApList,
@@ -192,6 +201,10 @@ class RespSysMsgType {
     RespSysMsgType.respDelCalLog: handleRespDelCalLog,
     RespSysMsgType.respDelAllCalLog: handleRespDelAllCalLog,
     RespSysMsgType.respExportCalLog: handleRespExportCalLog,
+    RespSysMsgType.respProductDel: handleRespProductDel,
+    RespSysMsgType.respCheckPluExist: handleRespCheckPluExist,
+    RespSysMsgType.respExportPluList: handleRespExportPluList,
+    RespSysMsgType.respDownAllPlu: handleRespDownAllPlu,
   };
 
   static void handlePortsList(dynamic jsonData) {
@@ -217,6 +230,14 @@ class RespSysMsgType {
 
   static void handleProductList(dynamic jsonData) {
     pasterProductList(jsonData['MsgBody']);
+  }
+
+  static void handlePluList(dynamic jsonData) {
+    eventBus.fire(EventPLuList(jsonData['MsgBody']));
+  }
+
+  static void handlePluSetting(dynamic jsonData) {
+    eventBus.fire(EventRespPluSetting(jsonData['MsgBody']));
   }
 
   static void handleGetLicense(dynamic jsonData) {
@@ -645,6 +666,26 @@ class RespSysMsgType {
   static void handleRespExportCalLog(dynamic jsonData) {
     String dataString = jsonData['MsgBody'];
     eventBus.fire(EventRespExportCalLog(dataString));
+  }
+
+  static void handleRespProductDel(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespProductDel(dataString));
+  }
+
+  static void handleRespCheckPluExist(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespExistPlu(dataString));
+  }
+
+  static void handleRespExportPluList(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespExportPluList(dataString));
+  }
+
+  static void handleRespDownAllPlu(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespDownAllPlu(dataString));
   }
 
   static void handleRespPluAdd(dynamic jsonData) {

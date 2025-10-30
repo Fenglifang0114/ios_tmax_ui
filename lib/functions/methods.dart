@@ -183,6 +183,37 @@ class PublicFunctions {
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
 
+  static void getPluByPage(String jsonStr) {
+    myScaleCmd.cmdMode = "get_plu_by_page";
+    myScaleCmd.cmdData = jsonStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  static void clearAllProduct() {
+    myScaleCmd.cmdMode = "clear_product";
+    myScaleCmd.cmdData = '';
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  static void checkPluExist(int id, String plu) {
+    myScaleCmd.cmdMode = "check_plu_exist";
+    myScaleCmd.cmdData = "$id,$plu";
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  static void exportProduct(String jsonStr) {
+    myScaleCmd.cmdMode = "export_product";
+    myScaleCmd.cmdData = jsonStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+//下发所有商品
+  static void downAllPlu(String filePath) {
+    myScaleCmd.cmdMode = "down_all_plu";
+    myScaleCmd.cmdData = filePath;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
   static void getLastProductRec() {
     myScaleCmd.cmdMode = "get_last_product_rec";
     myScaleCmd.cmdData = "";
@@ -201,8 +232,20 @@ class PublicFunctions {
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
 
+  static void getPluSetting() {
+    myScaleCmd.cmdMode = "get_plu_setting";
+    myScaleCmd.cmdData = "";
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
   static void modifyProduct(String str) {
     myScaleCmd.cmdMode = "modify_product";
+    myScaleCmd.cmdData = str;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  static void setPluFields(String str) {
+    myScaleCmd.cmdMode = "set_plu_fields";
     myScaleCmd.cmdData = str;
     sendMsgChan0(jsonEncode(myScaleCmd));
   }

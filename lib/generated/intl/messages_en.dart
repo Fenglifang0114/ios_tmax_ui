@@ -189,6 +189,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Device Info & Connection",
     ),
     "device_setting_title": MessageLookupByLibrary.simpleMessage("Basics"),
+    "downAllPluTip": MessageLookupByLibrary.simpleMessage(
+      "All PLU will be erased and reloaded. Continue?",
+    ),
     "duplicateHeaders": MessageLookupByLibrary.simpleMessage(
       "Duplicate headers",
     ),
@@ -225,6 +228,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "fAverageSpeed": MessageLookupByLibrary.simpleMessage("Avg.Speed"),
     "fBackBtn": MessageLookupByLibrary.simpleMessage("Back"),
     "fClearBtn": MessageLookupByLibrary.simpleMessage("Clear"),
+    "fClearDataBtn": MessageLookupByLibrary.simpleMessage(
+      "All data will be cleared. Please confirm ...",
+    ),
     "fClearSearchConditionBtn": MessageLookupByLibrary.simpleMessage(
       "Clear search conditions",
     ),
@@ -645,7 +651,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "gPluItemCode": MessageLookupByLibrary.simpleMessage("Item Code"),
     "gPluLimitHigh": MessageLookupByLibrary.simpleMessage("Limit High"),
     "gPluLimitLow": MessageLookupByLibrary.simpleMessage("Limit Low"),
-    "gPluName": MessageLookupByLibrary.simpleMessage("PLU Name:"),
+    "gPluName": MessageLookupByLibrary.simpleMessage("PLU Name"),
     "gPluNameLength": MessageLookupByLibrary.simpleMessage(
       "Product name max length:",
     ),
@@ -1062,7 +1068,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipStableText": MessageLookupByLibrary.simpleMessage("Stable Text"),
     "gTipStableTime": MessageLookupByLibrary.simpleMessage("Stable Time (s)"),
     "gTipStandaloneMode": MessageLookupByLibrary.simpleMessage(
-      "Standalone Mode",
+      "Weight Independent Mode",
     ),
     "gTipStartService": MessageLookupByLibrary.simpleMessage("Start Service"),
     "gTipStopService": MessageLookupByLibrary.simpleMessage("Stop Service"),
@@ -1102,7 +1108,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "1. Real time display of weighing data on the scale (supporting all units including PCS and PCT);\n2. Click [TARE] and [ZERO] allows for weighing and zeroing operations on the scale;\n3. Click the List button in the upper left corner to view the list of connected devices and make changes.\n\nNote：\n1.This function can be used by connecting to a serial port, Ethernet, or WiFi.\n2.Switching units is done on the scale.\n",
     ),
     "gTipWeightSummationMode": MessageLookupByLibrary.simpleMessage(
-      "Weight Summation Mode",
+      "Weight Summary Mode",
     ),
     "gTipWeightUnit": MessageLookupByLibrary.simpleMessage("Weight Unit"),
     "gTipWgtDataCollectionHelp": MessageLookupByLibrary.simpleMessage(

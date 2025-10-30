@@ -19,6 +19,7 @@ import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/dialog/setting_dialog.dart';
 import 'package:t_max/dialog/weight_report_feilds_setting.dart';
 import 'package:t_max/widget/page_info.dart';
+import 'package:t_max/widget/plu_select.dart';
 import 'package:t_max/widget/scale_list.dart';
 import 'package:t_max/widget/total_wgt_common.dart';
 import 'package:t_max/widget/wgt_value_with_list_widget.dart';
@@ -568,12 +569,11 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
               height: 72,
               child: Row(
                 children: [
-                  showSelectPluWidget(context, width - 2 * regularPadding, 40,
-                      (PluData pluData) {
+                  showSelPluWidget(width - 2 * regularPadding, 40, (value) {
                     setState(() {
-                      selectedPluData = pluData;
+                      selectedPluData = value;
                     });
-                  })
+                  }),
                 ],
               ),
             ),

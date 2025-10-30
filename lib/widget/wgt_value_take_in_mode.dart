@@ -23,6 +23,7 @@ import 'package:t_max/data/wgt_value_data.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
+import 'package:t_max/widget/plu_select.dart';
 
 class ScaleWgtTakeInWidget extends StatefulWidget {
   final int scaleId;
@@ -442,120 +443,11 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
                             ),
                           ),
                           if (mySettingParam.wgtMode == 0)
-                            Container(
-                              width: 140,
-                              height: 40,
-                              alignment: Alignment.centerLeft,
-                              child: Autocomplete<PluData>(
-                                fieldViewBuilder: (BuildContext context,
-                                    TextEditingController textEditingController,
-                                    FocusNode focusNode,
-                                    VoidCallback onFieldSubmitted) {
-                                  return TextField(
-                                    controller: textEditingController,
-                                    focusNode: focusNode,
-                                    onSubmitted: (String value) {
-                                      onFieldSubmitted();
-                                    },
-                                    maxLines: 1,
-                                    textAlignVertical: TextAlignVertical.top,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall!
-                                        .apply(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onSurface,
-                                        ),
-                                    // 设置输入框的装饰
-                                    decoration: InputDecoration(
-                                      // 去掉下划线
-                                      border: OutlineInputBorder(
-                                        gapPadding: 2,
-                                        // 添加四周边框
-                                        borderRadius: BorderRadius.circular(0),
-                                        borderSide: BorderSide(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .outline,
-                                          width: 1,
-                                        ),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        // 聚焦时的边框样式
-                                        borderRadius: BorderRadius.circular(0),
-                                        borderSide: BorderSide(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                          width: 1,
-                                        ),
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                        // 正常状态的边框样式
-                                        borderRadius: BorderRadius.circular(0),
-                                        borderSide: BorderSide(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .outlineVariant,
-                                          width: 1,
-                                        ),
-                                      ),
-                                      // 可以添加提示文本等其他装饰属性
-                                      hintText:
-                                          'PLU', //localizedStrings.fSearchHint,
-                                      hintStyle: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurfaceVariant,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                optionsBuilder:
-                                    (TextEditingValue textEditingValue) {
-                                  if (textEditingValue.text == '') {
-                                    return const Iterable<PluData>.empty();
-                                  }
-
-                                  final resultSet = <PluData>{};
-                                  resultSet.addAll(
-                                      myPluInfoList.where((PluData data) {
-                                    // 进行模糊查找，这里同时匹配productName和plu转成字符串后的内容
-                                    return data.productName!
-                                            .toLowerCase()
-                                            .contains(textEditingValue.text
-                                                .toLowerCase()) ||
-                                        data.plu
-                                            .toString()
-                                            .contains(textEditingValue.text);
-                                  }));
-
-                                  List<PluData> newList = [];
-                                  final seenRecIds = <int>{};
-                                  for (var item in resultSet) {
-                                    // 检查 recId 是否不为 null 且未在 seenRecIds 中出现过
-                                    if (item.recId != null &&
-                                        seenRecIds.add(item.recId!)) {
-                                      newList.add(item);
-                                      seenRecIds.add(item.recId!);
-                                    }
-                                  }
-
-                                  return newList.toList()
-                                    ..sort((a, b) => a.plu!.compareTo(b.plu!));
-                                },
-                                onSelected: (PluData selection) {
-                                  setState(() {
-                                    selectedPluData = selection;
-                                  });
-                                },
-                                displayStringForOption: (PluData option) =>
-                                    '${option.plu}:${option.productName}',
-                              ),
-                            ),
+                            showSelPluWidget(140, 40, (value) {
+                              setState(() {
+                                selectedPluData = value;
+                              });
+                            }),
                         ])),
                 Container(
                   height: 1,

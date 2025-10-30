@@ -59,6 +59,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
   bool _isNetPort = false;
   bool isDel = false; //是否执行删除
   bool isDC500 = false; //是否是旧的版本的秤
+  bool isAddNewScale = false;
 
   dynamic _eventbus1;
   dynamic _eventbus2;
@@ -159,6 +160,15 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
           String dataStr = event.obj;
           if (dataStr.isNotEmpty) {
             if (dataStr.contains('scale list')) {
+              if (isAddNewScale) {
+                isAddNewScale = false;
+                for (Scale tempScale in myAllScalesList) {
+                  //找出scaleId最大的
+                  if (tempScale.scaleId > selScaleId) {
+                    selScaleId = tempScale.scaleId;
+                  }
+                }
+              }
               return;
             }
             dataStr.contains('ok')
@@ -1382,6 +1392,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
     myAddNetScale.scaleModel = 'TMax';
     myAddNetScale.mediaConf = myMediaConf;
     PublicFunctions.sendAddScale(jsonEncode(myAddNetScale));
+    isAddNewScale = true;
   }
 
   void addComScale() {
@@ -1403,6 +1414,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
     addNetScale.mediaConf = myMediaConf;
     PublicFunctions.sendAddScale(jsonEncode(addNetScale));
     isDC500 = false;
+    isAddNewScale = true;
   }
 
   bool isValidScaleName(String name) {

@@ -285,6 +285,10 @@ String deleteSvgIcon() {
   return 'assets/images/delete.svg';
 }
 
+String clearSvgIcon() {
+  return 'assets/images/clear.svg';
+}
+
 String reportSettingSvgIcon() {
   return 'assets/images/reportSetting.svg';
 }

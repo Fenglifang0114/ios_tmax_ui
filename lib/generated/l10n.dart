@@ -938,10 +938,10 @@ class S {
     );
   }
 
-  /// `PLU Name:`
+  /// `PLU Name`
   String get gPluName {
     return Intl.message(
-      'PLU Name:',
+      'PLU Name',
       name: 'gPluName',
       desc: 'This is a prompt about PLU name.',
       args: [],
@@ -7256,20 +7256,20 @@ class S {
     );
   }
 
-  /// `Standalone Mode`
+  /// `Weight Independent Mode`
   String get gTipStandaloneMode {
     return Intl.message(
-      'Standalone Mode',
+      'Weight Independent Mode',
       name: 'gTipStandaloneMode',
       desc: 'This is a tip indicating the standalone operation mode.',
       args: [],
     );
   }
 
-  /// `Weight Summation Mode`
+  /// `Weight Summary Mode`
   String get gTipWeightSummationMode {
     return Intl.message(
-      'Weight Summation Mode',
+      'Weight Summary Mode',
       name: 'gTipWeightSummationMode',
       desc: 'This is a tip indicating the weight summation operation mode.',
       args: [],
@@ -9232,6 +9232,26 @@ class S {
       'Set up the Super Admin account before creating new accounts.',
       name: 'pleaseSetSuperAdmin',
       desc: 'Please set super administrator account',
+      args: [],
+    );
+  }
+
+  /// `All data will be cleared. Please confirm ...`
+  String get fClearDataBtn {
+    return Intl.message(
+      'All data will be cleared. Please confirm ...',
+      name: 'fClearDataBtn',
+      desc: 'Clear all data',
+      args: [],
+    );
+  }
+
+  /// `All PLU will be erased and reloaded. Continue?`
+  String get downAllPluTip {
+    return Intl.message(
+      'All PLU will be erased and reloaded. Continue?',
+      name: 'downAllPluTip',
+      desc: 'Download all PLU',
       args: [],
     );
   }

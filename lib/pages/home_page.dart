@@ -234,7 +234,7 @@ class MyHomePageState extends State<MyHomePage>
   @override
   void dispose() {
     _eventbus1.cancel();
-
+    _eventbus2.cancel();
     _eventbus4.cancel();
     _eventbus5.cancel();
     _eventbus6.cancel();

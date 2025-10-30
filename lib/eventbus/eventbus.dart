@@ -197,6 +197,11 @@ class EventProductRecList {
   EventProductRecList(this.obj);
 }
 
+class EventPLuList {
+  dynamic obj;
+  EventPLuList(this.obj);
+}
+
 class EventProductRecInfo {
   dynamic obj;
   EventProductRecInfo(this.obj);
@@ -915,4 +920,29 @@ class EventRespExportWgtLog {
 class EventRespExportCalLog {
   dynamic obj;
   EventRespExportCalLog(this.obj);
+}
+
+class EventRespProductDel {
+  dynamic obj;
+  EventRespProductDel(this.obj);
+}
+
+class EventRespExistPlu {
+  dynamic obj;
+  EventRespExistPlu(this.obj);
+}
+
+class EventRespExportPluList {
+  dynamic obj;
+  EventRespExportPluList(this.obj);
+}
+
+class EventRespPluSetting {
+  dynamic obj;
+  EventRespPluSetting(this.obj);
+}
+
+class EventRespDownAllPlu {
+  dynamic obj;
+  EventRespDownAllPlu(this.obj);
 }

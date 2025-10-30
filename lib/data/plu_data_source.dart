@@ -238,3 +238,140 @@ class ReqDelPlu {
         "RecId": recId == null ? [] : List<dynamic>.from(recId!.map((x) => x)),
       };
 }
+
+String reqAddPluToJson(ReqImportPlu data) => json.encode(data.toJson());
+
+class ReqImportPlu {
+  List<PluDataFromDb>? pluList;
+  int? total;
+  int? index;
+
+  ReqImportPlu({
+    this.pluList,
+    this.total,
+    this.index,
+  });
+
+  Map<String, dynamic> toJson() => {
+        "PluList": pluList == null
+            ? []
+            : List<dynamic>.from(pluList!.map((x) => x.toJson())),
+        "Total": total,
+        "Index": index,
+      };
+}
+
+class ReqGetPluByPage {
+  int? pageSize;
+  int? page;
+  String? fieldName;
+  String? direction;
+  SearchPlu? search;
+
+  ReqGetPluByPage({
+    this.pageSize,
+    this.page,
+    this.fieldName,
+    this.direction,
+    this.search,
+  });
+
+  Map<String, dynamic> toJson() => {
+        "PageSize": pageSize,
+        "Page": page,
+        "FieldName": fieldName,
+        "Direction": direction,
+        "Search": search?.toJson(),
+      };
+}
+
+class SearchPlu {
+  String? plu;
+  String? category;
+  String? pluName;
+  bool? enabled;
+  bool? setEnabled;
+
+  SearchPlu({
+    this.plu,
+    this.category,
+    this.pluName,
+    this.enabled,
+    this.setEnabled,
+  });
+
+  Map<String, dynamic> toJson() => {
+        "Plu": plu,
+        "Category": category,
+        "PluName": pluName,
+        "Enabled": enabled,
+        "SetEnabled": setEnabled,
+      };
+}
+
+RevGetPlu reqAddPluFromJson(String str) => RevGetPlu.fromJson(json.decode(str));
+
+class RevGetPlu {
+  List<PluDataFromDb>? pluList;
+  int? total;
+
+  RevGetPlu({
+    this.pluList,
+    this.total,
+  });
+
+  factory RevGetPlu.fromJson(Map<String, dynamic> json) => RevGetPlu(
+        pluList: json["PluList"] == null
+            ? []
+            : List<PluDataFromDb>.from(
+                json["PluList"]!.map((x) => PluDataFromDb.fromJson(x))),
+        total: json["Total"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "PluList": pluList == null
+            ? []
+            : List<dynamic>.from(pluList!.map((x) => x.toJson())),
+        "Total": total,
+      };
+}
+
+class ExportPlu {
+  Map<String, String>? translation;
+  SearchPlu? searchPlu;
+  String? path;
+
+  ExportPlu({
+    this.translation,
+    this.searchPlu,
+    this.path,
+  });
+  Map<String, dynamic> toJson() => {
+        "Translation": translation,
+        "SearchPlu": searchPlu?.toJson(),
+        "Path": path,
+      };
+}
+
+SetPluFields setPluFieldsFromJson(String str) =>
+    SetPluFields.fromJson(json.decode(str));
+
+String setPluFieldsToJson(SetPluFields data) => json.encode(data.toJson());
+
+class SetPluFields {
+  List<String>? selPlu;
+
+  SetPluFields({
+    this.selPlu,
+  });
+
+  factory SetPluFields.fromJson(Map<String, dynamic> json) => SetPluFields(
+        selPlu: json["plu"] == null
+            ? []
+            : List<String>.from(json["plu"]!.map((x) => x)),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "plu": selPlu == null ? [] : List<dynamic>.from(selPlu!.map((x) => x)),
+      };
+}

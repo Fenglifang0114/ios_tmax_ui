@@ -5,6 +5,8 @@ import 'package:t_max/data/language.dart';
 import 'package:t_max/data/plu_data.dart';
 import 'package:t_max/data/plu_data_source.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
+import 'package:t_max/eventbus/eventbus.dart';
+import 'package:t_max/functions/methods.dart';
 import 'package:t_max/widget/dialog_head_style.dart';
 
 class AddPluInfoDialog extends StatefulWidget {
@@ -38,6 +40,8 @@ class AddPluInfoDialogState extends State<AddPluInfoDialog> {
   TextEditingController pluCodeCtl = TextEditingController();
   TextEditingController itemCodeCtl = TextEditingController();
   List<Widget> showFields = [];
+
+  dynamic _eventbus1;
 
   @override
   void initState() {
@@ -78,6 +82,20 @@ class AddPluInfoDialogState extends State<AddPluInfoDialog> {
       itemCodeCtl.text = '0';
     }
 
+    _eventbus1 = eventBus.on<EventRespExistPlu>().listen((event) {
+      if (mounted) {
+        String res = event.obj;
+        setState(() {
+          if (res == 'true') {
+            showTipInfo(localizedStrings.fPluExist, context);
+            return;
+          } else {
+            savePluInfo();
+          }
+        });
+      }
+    });
+
     super.initState();
   }
 
@@ -85,6 +103,24 @@ class AddPluInfoDialogState extends State<AddPluInfoDialog> {
   didChangeDependencies() {
     super.didChangeDependencies();
     _buildDynamicFields();
+  }
+
+  @override
+  void dispose() {
+    _eventbus1.cancel();
+    pluCtl.dispose();
+    pluNameCtl.dispose();
+    priceCtl.dispose();
+    wgtUnitCtl.dispose();
+    taxTypeCtl.dispose();
+    unitWgtCtl.dispose();
+    pretareCtl.dispose();
+    limitHighCtl.dispose();
+    limitLowCtl.dispose();
+    categoryCtl.dispose();
+    pluCodeCtl.dispose();
+    itemCodeCtl.dispose();
+    super.dispose();
   }
 
 //
@@ -151,24 +187,6 @@ class AddPluInfoDialogState extends State<AddPluInfoDialog> {
     );
   }
 
-  @override
-  void dispose() {
-    pluCtl.dispose();
-    pluNameCtl.dispose();
-    priceCtl.dispose();
-    wgtUnitCtl.dispose();
-    taxTypeCtl.dispose();
-    unitWgtCtl.dispose();
-    pretareCtl.dispose();
-    limitHighCtl.dispose();
-    limitLowCtl.dispose();
-    categoryCtl.dispose();
-    pluCodeCtl.dispose();
-    itemCodeCtl.dispose();
-
-    super.dispose();
-  }
-
   Widget customTitle(String title) {
     return Text(
       title,
@@ -184,6 +202,19 @@ class AddPluInfoDialogState extends State<AddPluInfoDialog> {
     return SizedBox(
       height: 42,
       child: Row(children: [
+        if (title == getColumnName('plu') ||
+            title == getColumnName('productName'))
+          SizedBox(
+            width: 8,
+            child: Text(
+              "*",
+              style: Theme.of(context).textTheme.bodySmall!.apply(
+                    color: Theme.of(context).colorScheme.error,
+                  ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
         Expanded(
           child: Container(
             alignment: Alignment.centerLeft,
@@ -432,130 +463,8 @@ class AddPluInfoDialogState extends State<AddPluInfoDialog> {
     );
   }
 
-  Widget showFirstRow() {
-    return SizedBox(
-      height: 90,
-      child: Row(children: [
-        Expanded(
-            flex: 1,
-            child: Column(children: [showTitleName('Plu'), showPluInput()])),
-        SizedBox(
-          width: 20,
-        ),
-        Expanded(
-            flex: 1,
-            child: Column(
-                children: [showTitleName('Plu Name'), showPluNameInput()])),
-        SizedBox(
-          width: 20,
-        ),
-        Expanded(
-            flex: 1,
-            child: Column(children: [
-              showTitleName('Price'),
-              showDecimalInput(priceCtl)
-            ])),
-      ]),
-    );
-  }
-
-  Widget showSecondRow() {
-    return SizedBox(
-      height: 90,
-      child: Row(children: [
-        Expanded(
-            flex: 1,
-            child: Column(
-                children: [showTitleName('General Unit'), showWgtUnitInput()])),
-        SizedBox(
-          width: 20,
-        ),
-        Expanded(
-            flex: 1,
-            child: Column(
-                children: [showTitleName('Tax Type'), showTaxTypeInput()])),
-        SizedBox(
-          width: 20,
-        ),
-        Expanded(
-            flex: 1,
-            child: Column(children: [
-              showTitleName('Unit Weight (g)'),
-              showDecimalInput(unitWgtCtl)
-            ])),
-      ]),
-    );
-  }
-
-  Widget showThirdRow() {
-    return SizedBox(
-      height: 90,
-      child: Row(children: [
-        Expanded(
-            flex: 1,
-            child: Column(children: [
-              showTitleName('pretare (kg)'),
-              showDecimalInput(pretareCtl)
-            ])),
-        SizedBox(
-          width: 20,
-        ),
-        Expanded(
-            flex: 1,
-            child: Column(children: [
-              showTitleName('Limit High'),
-              showDecimalInput(limitHighCtl)
-            ])),
-        SizedBox(
-          width: 20,
-        ),
-        Expanded(
-            flex: 1,
-            child: Column(children: [
-              showTitleName('Limit Low'),
-              showDecimalInput(limitLowCtl)
-            ])),
-      ]),
-    );
-  }
-
-  Widget showFourthRow() {
-    return SizedBox(
-      height: 90,
-      child: Row(children: [
-        Expanded(
-            flex: 1,
-            child: Column(
-                children: [showTitleName('Category'), showCategoryInput()])),
-        SizedBox(
-          width: 20,
-        ),
-        Expanded(
-            flex: 1,
-            child: Column(children: [
-              showTitleName('Product Code'),
-              showCodeInput(pluCodeCtl)
-            ])),
-        SizedBox(
-          width: 20,
-        ),
-        Expanded(
-            flex: 1,
-            child: Column(children: [
-              showTitleName('Item Code'),
-              showCodeInput(itemCodeCtl)
-            ])),
-      ]),
-    );
-  }
-
   bool checkOk() {
-    if (pluCtl.text.isEmpty ||
-        pluNameCtl.text.isEmpty ||
-        wgtUnitCtl.text.isEmpty ||
-        priceCtl.text.isEmpty ||
-        taxTypeCtl.text.isEmpty ||
-        unitWgtCtl.text.isEmpty) {
+    if (pluCtl.text.isEmpty || pluNameCtl.text.isEmpty) {
       return false;
     }
     return true;
@@ -580,6 +489,82 @@ class AddPluInfoDialogState extends State<AddPluInfoDialog> {
     }
 
     return false;
+  }
+
+  void savePluInfo() {
+    if (priceCtl.text.isEmpty) {
+      priceCtl.text = '0';
+    }
+
+    if (pretareCtl.text.isEmpty) {
+      pretareCtl.text = '0';
+    }
+    if (limitHighCtl.text.isEmpty) {
+      limitHighCtl.text = '0';
+    }
+    if (limitLowCtl.text.isEmpty) {
+      limitLowCtl.text = '0';
+    }
+    if (categoryCtl.text.isEmpty) {
+      categoryCtl.text = '-';
+    }
+    if (pluCodeCtl.text.isEmpty) {
+      pluCodeCtl.text = '0';
+    }
+    if (itemCodeCtl.text.isEmpty) {
+      itemCodeCtl.text = '0';
+    }
+    PluData newPlu = PluData(
+        0, 0, 0, 0, '', '', 0, 0, 0, 0, 0, 0, 0, '', true, '', 0, 0, '', '');
+
+    if (widget.type == 0) {
+      newPlu = PluData(
+          0,
+          int.parse(pluCtl.text),
+          int.parse(pluCodeCtl.text),
+          int.parse(itemCodeCtl.text),
+          categoryCtl.text,
+          pluNameCtl.text,
+          int.parse(wgtUnitCtl.text),
+          int.parse(taxTypeCtl.text),
+          double.parse(priceCtl.text),
+          double.parse(unitWgtCtl.text),
+          double.parse(pretareCtl.text),
+          double.parse(limitHighCtl.text),
+          double.parse(limitLowCtl.text),
+          '',
+          true,
+          '',
+          0,
+          0,
+          '',
+          '');
+    } else {
+      newPlu = PluData(
+          widget.pluInfo.recId,
+          int.parse(pluCtl.text),
+          int.parse(pluCodeCtl.text),
+          int.parse(itemCodeCtl.text),
+          categoryCtl.text,
+          pluNameCtl.text,
+          int.parse(wgtUnitCtl.text),
+          int.parse(taxTypeCtl.text),
+          double.parse(priceCtl.text),
+          double.parse(unitWgtCtl.text),
+          double.parse(pretareCtl.text),
+          double.parse(limitHighCtl.text),
+          double.parse(limitLowCtl.text),
+          widget.pluInfo.creatAt,
+          widget.pluInfo.enabled,
+          DateTime.now().toIso8601String(),
+          widget.pluInfo.createBy,
+          mySysUser.userId,
+          '',
+          '');
+    }
+
+    widget.onSave(newPlu);
+    Navigator.pop(context);
   }
 
   @override
@@ -644,76 +629,12 @@ class AddPluInfoDialogState extends State<AddPluInfoDialog> {
                             showTipInfo(localizedStrings.fPluExist, context);
                             return;
                           }
-
-                          if (pretareCtl.text.isEmpty) {
-                            pretareCtl.text = '0';
-                          }
-                          if (limitHighCtl.text.isEmpty) {
-                            limitHighCtl.text = '0';
-                          }
-                          if (limitLowCtl.text.isEmpty) {
-                            limitLowCtl.text = '0';
-                          }
-                          if (categoryCtl.text.isEmpty) {
-                            categoryCtl.text = '-';
-                          }
-                          if (pluCodeCtl.text.isEmpty) {
-                            pluCodeCtl.text = '0';
-                          }
-                          if (itemCodeCtl.text.isEmpty) {
-                            itemCodeCtl.text = '0';
-                          }
-                          PluData newPlu = PluData(0, 0, 0, 0, '', '', 0, 0, 0,
-                              0, 0, 0, 0, '', true, '', 0, 0, '', '');
-
                           if (widget.type == 0) {
-                            newPlu = PluData(
-                                0,
-                                int.parse(pluCtl.text),
-                                int.parse(pluCodeCtl.text),
-                                int.parse(itemCodeCtl.text),
-                                categoryCtl.text,
-                                pluNameCtl.text,
-                                int.parse(wgtUnitCtl.text),
-                                int.parse(taxTypeCtl.text),
-                                double.parse(priceCtl.text),
-                                double.parse(unitWgtCtl.text),
-                                double.parse(pretareCtl.text),
-                                double.parse(limitHighCtl.text),
-                                double.parse(limitLowCtl.text),
-                                '',
-                                true,
-                                '',
-                                0,
-                                0,
-                                '',
-                                '');
+                            PublicFunctions.checkPluExist(0, pluCtl.text);
                           } else {
-                            newPlu = PluData(
-                                widget.pluInfo.recId,
-                                int.parse(pluCtl.text),
-                                int.parse(pluCodeCtl.text),
-                                int.parse(itemCodeCtl.text),
-                                categoryCtl.text,
-                                pluNameCtl.text,
-                                int.parse(wgtUnitCtl.text),
-                                int.parse(taxTypeCtl.text),
-                                double.parse(priceCtl.text),
-                                double.parse(unitWgtCtl.text),
-                                double.parse(pretareCtl.text),
-                                double.parse(limitHighCtl.text),
-                                double.parse(limitLowCtl.text),
-                                widget.pluInfo.creatAt,
-                                widget.pluInfo.enabled,
-                                DateTime.now().toIso8601String(),
-                                widget.pluInfo.createBy,
-                                mySysUser.userId,
-                                '',
-                                '');
+                            PublicFunctions.checkPluExist(
+                                widget.pluInfo.recId!, pluCtl.text);
                           }
-
-                          widget.onSave(newPlu);
-                          Navigator.pop(context);
                         },
                         child: Text(
                           localizedStrings.gBtnConfirm,

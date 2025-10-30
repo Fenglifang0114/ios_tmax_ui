@@ -21,15 +21,20 @@ class SysLogPage extends StatefulWidget {
 class _SysLogPageState extends State<SysLogPage>
     with SingleTickerProviderStateMixin {
   late TabController _mainTabController;
+  bool isExit = false;
 
   @override
   void initState() {
     super.initState();
-    _mainTabController = TabController(length: 3, vsync: this);
+    _mainTabController = TabController(
+      length: 3,
+      vsync: this,
+    );
   }
 
   @override
   void dispose() {
+    _mainTabController.removeListener(() {});
     _mainTabController.dispose();
     super.dispose();
   }
@@ -48,16 +53,18 @@ class _SysLogPageState extends State<SysLogPage>
                   width - headWidthPadding,
                   localizedStrings.logManagement,
                 ),
-                Expanded(
-                  child: TabBarView(
-                    controller: _mainTabController,
-                    children: const [
-                      SysLogTabPage(contentType: ''),
-                      ScaleCalLogTabPage(contentType: ''),
-                      ScaleWgtLogTabPage(contentType: ''),
-                    ],
+                if (!isExit)
+                  Expanded(
+                    child: TabBarView(
+                      controller: _mainTabController,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: const [
+                        SysLogTabPage(contentType: ''),
+                        ScaleCalLogTabPage(contentType: ''),
+                        ScaleWgtLogTabPage(contentType: ''),
+                      ],
+                    ),
                   ),
-                ),
               ],
             )));
   }
@@ -101,7 +108,14 @@ class _SysLogPageState extends State<SysLogPage>
         SizedBox(
           child: IconButton(
               onPressed: () {
-                widget.onNavigate(widget.lastRouteName);
+                setState(() {
+                  isExit = true;
+                });
+                Future.delayed(Duration.zero, () {
+                  setState(() {
+                    widget.onNavigate(widget.lastRouteName);
+                  });
+                });
               },
               icon: getSvgIcon(returnSvgIcon(), 28, 28,
                   Theme.of(context).colorScheme.primary)),

@@ -352,7 +352,7 @@
     "@gSelectAll": {
         "description": "This is a prompt for selecting all items."
     },
-    "gPluName": "PLU 名字:",
+    "gPluName": "PLU 名字",
     "@gPluName": {
         "description": "This is a prompt about PLU name."
     },
@@ -3004,7 +3004,7 @@
     "@gTitleDeviceList": {
         "description": "This is the title for the device list."
     },    
-    "gTipStandaloneMode": "独立模式",
+    "gTipStandaloneMode": "重量独立模式",
     "@gTipStandaloneMode": {
         "description": "This is a tip indicating the standalone operation mode."
     },
@@ -3815,7 +3815,15 @@
     "pleaseSetSuperAdmin": "新建账号前,请先设置超级管理员",
     "@pleaseSetSuperAdmin": {
         "description": "Please set super administrator account"
-    }
+    },
+    "fClearDataBtn": "即将清空所有数据，请确认！",
+    "@fClearDataBtn": {
+        "description": "Clear all data"
+    },
+    "downAllPluTip": "即将清空设备PLU并重新下载所有PLU，确认吗？",
+    "@downAllPluTip": {
+        "description": "Download all PLU"
+    } 
 }
 
 

@@ -352,7 +352,7 @@
     "@gSelectAll": {
         "description": "This is a prompt for selecting all items."
     },
-    "gPluName": "PLU Name:",
+    "gPluName": "PLU Name",
     "@gPluName": {
         "description": "This is a prompt about PLU name."
     },
@@ -3004,11 +3004,11 @@
     "@gTitleDeviceList": {
         "description": "This is the title for the device list."
     },    
-    "gTipStandaloneMode": "Standalone Mode",
+    "gTipStandaloneMode": "Weight Independent Mode",
     "@gTipStandaloneMode": {
         "description": "This is a tip indicating the standalone operation mode."
     },
-    "gTipWeightSummationMode": "Weight Summation Mode",
+    "gTipWeightSummationMode": "Weight Summary Mode",
     "@gTipWeightSummationMode": {
         "description": "This is a tip indicating the weight summation operation mode."
     },
@@ -3815,6 +3815,16 @@
     "pleaseSetSuperAdmin": "Set up the Super Admin account before creating new accounts.",
     "@pleaseSetSuperAdmin": {
         "description": "Please set super administrator account"
-    }           
+    },
+    "fClearDataBtn": "All data will be cleared. Please confirm ...",
+    "@fClearDataBtn": {
+        "description": "Clear all data"
+    },
+    "downAllPluTip": "All PLU will be erased and reloaded. Continue?",
+    "@downAllPluTip": {
+        "description": "Download all PLU"
+    } 
+    
+
     
 }    

@@ -72,13 +72,30 @@ String getColumnName(String columnName) {
   }
 }
 
+Map<String, String> getTranslationMap() {
+  return {
+    'plu': getColumnName('plu'),
+    'productName': getColumnName('productName'),
+    'category': getColumnName('category'),
+    'price': getColumnName('price'),
+    'generalUnit': getColumnName('generalUnit'),
+    'taxType': getColumnName('taxType'),
+    'unitWeight': getColumnName('unitWeight'),
+    'pretare': getColumnName('pretare'),
+    'limitHigh': getColumnName('limitHigh'),
+    'limitLow': getColumnName('limitLow'),
+    'productCode': getColumnName('productCode'),
+    'itemCode': getColumnName('itemCode'),
+  };
+}
+
 class PluDataSource extends DataGridSource {
   PluDataSource({
     required List<PluDataModel> dataModels,
     required this.allSelectedNotifier,
     required this.updateAllSelectedStatus,
     required this.onEnabled,
-    required Map<String, bool> columnVisibility,
+    required this.orderField,
     required TextTheme textScheme,
     required ColorScheme colorScheme,
     required this.canSelect,
@@ -95,105 +112,103 @@ class PluDataSource extends DataGridSource {
       }
 
       // 根据列可见性动态添加其他列
-      columnVisibility.forEach((key, value) {
-        if (value) {
-          switch (key) {
-            case 'plu':
-              cells.add(
-                DataGridCell<int>(columnName: 'plu', value: e.pluData.plu),
-              );
-              break;
-            case 'productName':
-              cells.add(
-                DataGridCell<String>(
-                  columnName: 'productName',
-                  value: e.pluData.productName,
-                ),
-              );
-              break;
-            case 'category':
-              cells.add(
-                DataGridCell<String>(
-                  columnName: 'category',
-                  value: e.pluData.category,
-                ),
-              );
-              break;
-            case 'price':
-              cells.add(
-                DataGridCell<String>(
-                    columnName: 'price', value: e.pluData.price.toString()),
-              );
-              break;
+      for (final key in orderField) {
+        switch (key) {
+          case 'plu':
+            cells.add(
+              DataGridCell<int>(columnName: 'plu', value: e.pluData.plu),
+            );
+            break;
+          case 'productName':
+            cells.add(
+              DataGridCell<String>(
+                columnName: 'productName',
+                value: e.pluData.productName,
+              ),
+            );
+            break;
+          case 'category':
+            cells.add(
+              DataGridCell<String>(
+                columnName: 'category',
+                value: e.pluData.category,
+              ),
+            );
+            break;
+          case 'price':
+            cells.add(
+              DataGridCell<String>(
+                  columnName: 'price', value: e.pluData.price.toString()),
+            );
+            break;
 
-            case 'generalUnit':
-              cells.add(
-                DataGridCell<String>(
-                  columnName: 'generalUnit',
-                  value: getPluUnit(e.pluData.generalUnit!),
-                ),
-              );
-              break;
-            case 'taxType':
-              cells.add(
-                DataGridCell<String>(
-                  columnName: 'taxType',
-                  value: getPluTax(e.pluData.taxType!),
-                ),
-              );
-              break;
-            case 'unitWeight':
-              cells.add(
-                DataGridCell<double>(
-                  columnName: 'unitWeight',
-                  value: e.pluData.unitWeight,
-                ),
-              );
-              break;
-            case 'pretare':
-              cells.add(
-                DataGridCell<double>(
-                  columnName: 'pretare',
-                  value: e.pluData.pretare,
-                ),
-              );
-              break;
-            case 'limitHigh':
-              cells.add(
-                DataGridCell<double>(
-                  columnName: 'limitHigh',
-                  value: e.pluData.limitHigh,
-                ),
-              );
-              break;
-            case 'limitLow':
-              cells.add(
-                DataGridCell<double>(
-                  columnName: 'limitLow',
-                  value: e.pluData.limitLow,
-                ),
-              );
-              break;
+          case 'generalUnit':
+            cells.add(
+              DataGridCell<String>(
+                columnName: 'generalUnit',
+                value: getPluUnit(e.pluData.generalUnit!),
+              ),
+            );
+            break;
+          case 'taxType':
+            cells.add(
+              DataGridCell<String>(
+                columnName: 'taxType',
+                value: getPluTax(e.pluData.taxType!),
+              ),
+            );
+            break;
+          case 'unitWeight':
+            cells.add(
+              DataGridCell<double>(
+                columnName: 'unitWeight',
+                value: e.pluData.unitWeight,
+              ),
+            );
+            break;
+          case 'pretare':
+            cells.add(
+              DataGridCell<double>(
+                columnName: 'pretare',
+                value: e.pluData.pretare,
+              ),
+            );
+            break;
+          case 'limitHigh':
+            cells.add(
+              DataGridCell<double>(
+                columnName: 'limitHigh',
+                value: e.pluData.limitHigh,
+              ),
+            );
+            break;
+          case 'limitLow':
+            cells.add(
+              DataGridCell<double>(
+                columnName: 'limitLow',
+                value: e.pluData.limitLow,
+              ),
+            );
+            break;
 
-            case 'productCode':
-              cells.add(
-                DataGridCell<int>(
-                  columnName: 'productCode',
-                  value: e.pluData.productCode,
-                ),
-              );
-              break;
-            case 'itemCode':
-              cells.add(
-                DataGridCell<int>(
-                  columnName: 'itemCode',
-                  value: e.pluData.itemCode,
-                ),
-              );
-              break;
-          }
+          case 'productCode':
+            cells.add(
+              DataGridCell<int>(
+                columnName: 'productCode',
+                value: e.pluData.productCode,
+              ),
+            );
+            break;
+          case 'itemCode':
+            cells.add(
+              DataGridCell<int>(
+                columnName: 'itemCode',
+                value: e.pluData.itemCode,
+              ),
+            );
+            break;
         }
-      });
+      }
 
       cells.add(
         DataGridCell<String>(
@@ -214,6 +229,7 @@ class PluDataSource extends DataGridSource {
   late List<PluDataModel> _originalDataModels;
   final ValueNotifier<bool> allSelectedNotifier;
   final VoidCallback updateAllSelectedStatus;
+  final List<String> orderField;
 
   final Function(PluDataModel) onEnabled; // 删除回调
   final bool canSelect;
