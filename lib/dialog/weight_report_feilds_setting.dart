@@ -18,8 +18,8 @@ class ReportSettingDialogState extends State<ReportSettingDialog> {
   @override
   void initState() {
     myReportFeildsMap.forEach((key, value) {
-      tempFeildMap[key] = ReportShowName(
-          myReportFeildsMap[key]!.showName, myReportFeildsMap[key]!.isSelect);
+      tempFeildMap[key] =
+          ReportShowName(getRptTitleName(key), myReportFeildsMap[key]!);
     });
 
     isSelectAll = tempFeildMap.values.every((element) => element.isSelect);
@@ -39,6 +39,9 @@ class ReportSettingDialogState extends State<ReportSettingDialog> {
         reportShowName.isSelect = value;
       });
     });
+    tempFeildMap['Id']!.isSelect = true;
+    tempFeildMap['Weight']!.isSelect = true;
+    tempFeildMap['Weight Unit']!.isSelect = true;
   }
 
   @override
@@ -122,6 +125,10 @@ class ReportSettingDialogState extends State<ReportSettingDialog> {
                                             break;
                                           }
                                         }
+                                        tempFeildMap['Id']!.isSelect = true;
+                                        tempFeildMap['Weight']!.isSelect = true;
+                                        tempFeildMap['Weight Unit']!.isSelect =
+                                            true;
                                         // 检查是否全选
                                         isSelectAll = tempFeildMap.values.every(
                                             (element) => element.isSelect);
@@ -175,7 +182,7 @@ class ReportSettingDialogState extends State<ReportSettingDialog> {
                       ),
                       onPressed: () {
                         tempFeildMap.forEach((key, value) {
-                          myReportFeildsMap[key]!.isSelect = value.isSelect;
+                          myReportFeildsMap[key] = value.isSelect;
                         });
                         Navigator.of(context).pop(true);
                       },

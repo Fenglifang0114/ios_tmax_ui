@@ -372,29 +372,26 @@ class ReqAddWgtRec {
 
 //请求导出所有数据
 
-ReqExportAllWgtRecs reqExportAllWgtRecsFromJson(String str) =>
-    ReqExportAllWgtRecs.fromJson(json.decode(str));
-
 String reqExportAllWgtRecsToJson(ReqExportAllWgtRecs data) =>
     json.encode(data.toJson());
 
 class ReqExportAllWgtRecs {
   int? mode;
   String? path;
+  List<String>? fieldName;
+  Map<String, String>? translation;
 
   ReqExportAllWgtRecs({
     this.mode,
     this.path,
+    this.fieldName,
+    this.translation,
   });
-
-  factory ReqExportAllWgtRecs.fromJson(Map<String, dynamic> json) =>
-      ReqExportAllWgtRecs(
-        mode: json["Mode"],
-        path: json["Path"],
-      );
 
   Map<String, dynamic> toJson() => {
         "Mode": mode,
         "Path": path,
+        "FieldName": fieldName,
+        "Translation": translation,
       };
 }

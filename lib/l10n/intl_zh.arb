@@ -2628,7 +2628,7 @@
     "@gTipOffline": {
         "description": "This is a prompt for offline information."
     },
-    "gScaleName": "Scale Name",
+    "gScaleName": "设备名称",
     "@gScaleName": {
         "description": "This is the prompt for the scale name."
     },

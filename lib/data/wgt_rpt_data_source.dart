@@ -74,7 +74,7 @@ class WeightReportDataSource extends DataGridSource {
       for (GridColumn column in columns) {
         String columnName = column.columnName;
         cells.add(DataGridCell<String>(
-          columnName: myReportFeildsMap[columnName]!.showName,
+          columnName: getRptTitleName(columnName),
           value: getValueForColumn(reportData, columnName),
         ));
       }

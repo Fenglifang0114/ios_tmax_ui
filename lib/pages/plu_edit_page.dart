@@ -37,7 +37,7 @@ class PluEidtPage extends StatefulWidget {
 class _PluEidtPageState extends State<PluEidtPage> {
   ColorScheme get colorScheme => Theme.of(context).colorScheme;
   TextTheme get textTheme => Theme.of(context).textTheme;
-  bool _getingData = false;
+
   Timer? gettingDataTimer;
   dynamic _eventbus1;
   dynamic _eventbus2;
@@ -53,7 +53,6 @@ class _PluEidtPageState extends State<PluEidtPage> {
   bool isSendDb = false;
   bool isImporting = false;
 
-  String _saveType = "1";
   String _downloadType = "1";
 
   bool shouldToggleAll = false; // 是否全选
@@ -330,9 +329,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
         });
         dataModels.clear();
         getCurrentPageDataFormDb();
-        setState(() {
-          _getingData = false;
-        });
+
         if (isImportAll) {
           isImportAll = false;
           showErrorDialog(context, localizedStrings.gTipImportPluSame);
@@ -484,7 +481,6 @@ class _PluEidtPageState extends State<PluEidtPage> {
     }
     setState(() {
       _onDataChanged();
-      _getingData = false;
     });
   }
 
@@ -764,155 +760,6 @@ class _PluEidtPageState extends State<PluEidtPage> {
   double roundToTwoDecimalPlaces(double num) {
     double multiplier = 100;
     return (num * multiplier).round() / multiplier;
-  }
-
-  //保存到数据库的类型：全部下发，增量下发
-  // 保存到数据库对话框，选择保存类型
-  void _showSaveDatabaseDialog(BuildContext context) {
-    String localSaveType = _saveType; // 临时变量用于管理对话框内的状态
-
-    showDialog(
-      context: context,
-      builder: (BuildContext ctx) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return Dialog(
-              backgroundColor: Colors.transparent,
-              child: Container(
-                width: 500,
-                height: 300,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
-                  borderRadius: BorderRadius.circular(0),
-                ),
-                child: Column(
-                  children: [
-                    // 头部
-                    ...dialogHeadStyle(
-                        context, localizedStrings.gTitleConfirm, false),
-
-                    // 中部
-                    Expanded(
-                      child: Container(
-                        padding: EdgeInsets.all(20),
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              width: 400,
-                              child: RadioListTile(
-                                title: Text(
-                                  localizedStrings.gTipDownloadAllPlu,
-                                  style: getTextStyle(),
-                                ),
-                                value: '1',
-                                groupValue: localSaveType,
-                                onChanged: (value) {
-                                  setState(() {
-                                    localSaveType = '1';
-                                  });
-                                },
-                              ),
-                            ),
-                            SizedBox(
-                              width: 400,
-                              child: RadioListTile(
-                                title: Text(
-                                  localizedStrings.gTipUpdatePlu,
-                                  style: getTextStyle(),
-                                ),
-                                value: '2',
-                                groupValue: localSaveType,
-                                onChanged: (value) {
-                                  setState(() {
-                                    localSaveType = '2';
-                                  });
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    // 底部
-                    Container(
-                      height: 96,
-                      width: 400,
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                foregroundColor:
-                                    Theme.of(context).colorScheme.onPrimary,
-                                backgroundColor:
-                                    Theme.of(context).colorScheme.primary,
-                                fixedSize: const Size(double.infinity, 48),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.zero,
-                                ),
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _saveType = localSaveType; // 更新外部状态
-                                });
-                                Navigator.of(ctx).pop(false);
-                                setState(() {
-                                  isSendDb = true;
-                                });
-                                sendAllData(_saveType);
-                              },
-                              child: Text(
-                                localizedStrings.gTitleConfirm,
-                                style: getTextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 20),
-                          Expanded(
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                foregroundColor: Theme.of(context)
-                                    .colorScheme
-                                    .onSurfaceVariant,
-                                backgroundColor: Theme.of(context)
-                                    .colorScheme
-                                    .surfaceContainerHighest,
-                                fixedSize: const Size(double.infinity, 48),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.zero,
-                                ),
-                              ),
-                              onPressed: () {
-                                Navigator.of(ctx).pop(false);
-                              },
-                              child: Text(
-                                localizedStrings.gBtnCancel,
-                                style: getTextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
   }
 
   String checkImportData(List<PluDataModel> dataSource) {

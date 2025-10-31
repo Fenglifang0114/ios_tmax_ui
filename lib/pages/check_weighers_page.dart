@@ -12,12 +12,14 @@ import 'package:t_max/data/new_get_recs.dart';
 import 'package:t_max/data/plu_data_source.dart';
 import 'package:t_max/data/reqweightdata_data.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
+import 'package:t_max/data/sel_scales_in_app.dart';
 import 'package:t_max/data/settingparam_data.dart';
 import 'package:t_max/data/weight_report_data.dart';
 import 'package:t_max/data/wgt_value_data.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/dialog/setting_dialog.dart';
 import 'package:t_max/dialog/weight_report_feilds_setting.dart';
+import 'package:t_max/widget/f_open_file.dart';
 import 'package:t_max/widget/page_info.dart';
 import 'package:t_max/widget/scale_list.dart';
 import 'package:t_max/widget/total_wgt_common.dart';
@@ -56,6 +58,7 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
   bool needUpdate = false;
   // 添加定时器变量
   Timer? _scaleCheckTimer;
+  bool firstGetSelScale = true;
 
   dynamic eventBus1;
   dynamic eventBus2;
@@ -101,6 +104,10 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
       if (mounted) {
         setState(() {
           mySettingParam = event.obj;
+          if (firstGetSelScale) {
+            firstGetSelScale = false;
+            getSelScaleInApp();
+          }
         });
       }
     });
@@ -218,7 +225,8 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
       if (mounted) {
         String resString = event.obj;
         if (resString.contains('ok')) {
-          showTipInfo(localizedStrings.gTipExportSuccess, context);
+          String filePath = resString.split(',')[1];
+          showExportDialog(filePath, context);
         } else {
           showTipInfo(
               '${localizedStrings.gTipExportFail} ：$resString', context);
@@ -231,8 +239,7 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
   void didChangeDependencies() {
     setState(() {
       for (var item in myReportFeildsMap.keys) {
-        _tableState.visibleColumns[item]!.isSelect =
-            myReportFeildsMap[item]!.isSelect;
+        _tableState.visibleColumns[item]!.isSelect = myReportFeildsMap[item]!;
       }
     });
     super.didChangeDependencies();
@@ -240,6 +247,7 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
 
   @override
   void dispose() {
+    setSelScaleInApp();
     eventBus1.cancel();
     eventBus2.cancel();
     eventBus3.cancel();
@@ -264,6 +272,19 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
     _scaleCheckTimer?.cancel();
 
     super.dispose();
+  }
+
+  setSelScaleInApp() async {
+    await AppSelScalesManager.setIntList(AppNames.chwe, mySelScaleIdList);
+  }
+
+  getSelScaleInApp() async {
+    List<int> savedScales = await AppSelScalesManager.getIntList(AppNames.chwe);
+    for (var item in myAllScalesList) {
+      if (savedScales.contains(item.scaleId)) {
+        addOrRemoveSelScale(item.scaleId);
+      }
+    }
   }
 
   // 更新总重量和稳定状态
@@ -594,7 +615,10 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
                                 outputFile = "$outputFile.csv";
                               }
                               PublicFunctions.exportAllRecords(
-                                  mySettingParam.scaleMode, outputFile);
+                                  mySettingParam.scaleMode,
+                                  outputFile,
+                                  mySelFields(),
+                                  mySelMap());
                             }
                           },
                           icon: getSvgIcon(
@@ -763,7 +787,7 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
         setState(() {
           for (var item in myReportFeildsMap.keys) {
             _tableState.visibleColumns[item]!.isSelect =
-                myReportFeildsMap[item]!.isSelect;
+                myReportFeildsMap[item]!;
           }
         });
       }

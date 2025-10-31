@@ -471,7 +471,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "gRptWeight": MessageLookupByLibrary.simpleMessage("重量"),
     "gRptWeightUnit": MessageLookupByLibrary.simpleMessage("重量单位"),
     "gSaveFormat": MessageLookupByLibrary.simpleMessage("保存格式"),
-    "gScaleName": MessageLookupByLibrary.simpleMessage("Scale Name"),
+    "gScaleName": MessageLookupByLibrary.simpleMessage("设备名称"),
     "gScaleSn": MessageLookupByLibrary.simpleMessage("设备序列号"),
     "gSelectAll": MessageLookupByLibrary.simpleMessage("全选"),
     "gSerialParity": MessageLookupByLibrary.simpleMessage("校验位"),

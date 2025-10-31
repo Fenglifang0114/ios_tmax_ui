@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/received_wgt_value.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
+import 'package:t_max/data/sel_scales_in_app.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/widget/scale_list.dart';
 import 'package:t_max/widget/wgt_value_widget.dart';
@@ -60,7 +61,14 @@ class WeightModePageState extends State<WeightModePage> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    getSelScaleInApp();
+  }
+
+  @override
   void dispose() {
+    setSelScaleInApp();
     eventBus5.cancel();
     eventBus6.cancel();
     _scaleCheckTimer?.cancel();
@@ -70,6 +78,20 @@ class WeightModePageState extends State<WeightModePage> {
     }
 
     super.dispose();
+  }
+
+  setSelScaleInApp() async {
+    await AppSelScalesManager.setIntList(AppNames.weighing, mySelScaleIdList);
+  }
+
+  getSelScaleInApp() async {
+    List<int> savedScales =
+        await AppSelScalesManager.getIntList(AppNames.weighing);
+    for (var item in myAllScalesList) {
+      if (savedScales.contains(item.scaleId)) {
+        addOrRemoveSelScale(item.scaleId);
+      }
+    }
   }
 
   @override

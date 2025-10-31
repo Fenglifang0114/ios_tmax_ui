@@ -55,85 +55,91 @@ class ReportFields {
   ReportFields(this.filedsList);
 }
 
-Map<String, ReportShowName> myReportFeildsMap = {
-  'Id': ReportShowName('Id', true),
-  'Date Time': ReportShowName(localizedStrings.gRptDateTime, true),
-  'PLU': ReportShowName('PLU', true),
-  'Product Code': ReportShowName(localizedStrings.gPluPluCode, false),
-  'Item Code': ReportShowName(localizedStrings.gPluItemCode, false),
-  'PLU Name': ReportShowName(localizedStrings.gPluPluName, true),
-  'Price': ReportShowName(localizedStrings.gPluPrice, false),
-  'GeneralUnit': ReportShowName(localizedStrings.gPluWgtUnit, false),
-  'TaxType': ReportShowName(localizedStrings.gPluTaxType, false),
-  'UnitWeight': ReportShowName(localizedStrings.gPluUnitWgt, false),
-  'LimitHigh': ReportShowName(localizedStrings.gPluLimitHigh, false),
-  'LimitLow': ReportShowName(localizedStrings.gPluLimitLow, false),
-  'Weight': ReportShowName(localizedStrings.gRptWeight, true),
-  'Weight Unit': ReportShowName(localizedStrings.gRptWeightUnit, true),
-  'Pretare': ReportShowName(localizedStrings.gPluPretare, false),
-  // 'User NO.': ReportShowName('User NO.', false),
-  'User Name': ReportShowName(localizedStrings.operator, true),
-  'Scale Name': ReportShowName(localizedStrings.gScaleName, true),
-};
-
 class ReportShowName {
   String showName;
   bool isSelect;
   ReportShowName(this.showName, this.isSelect);
 }
 
-// ReportFields myReportFields = ReportFields([]);
-
-// 更新 myReportFeildsMap 的函数
-void updateMyReportFeildsMap() {
-  myReportFeildsMap.updateAll((key, value) {
-    switch (key) {
-      case 'Product Code':
-        value.showName = localizedStrings.gPluPluCode;
-        break;
-      case 'Item Code':
-        value.showName = localizedStrings.gPluItemCode;
-        break;
-      case 'PLU Name':
-        value.showName = localizedStrings.gPluPluName;
-        break;
-      case 'Price':
-        value.showName = localizedStrings.gPluPrice;
-        break;
-      case 'GeneralUnit':
-        value.showName = localizedStrings.gPluWgtUnit;
-        break;
-      case 'TaxType':
-        value.showName = localizedStrings.gPluTaxType;
-        break;
-      case 'UnitWeight':
-        value.showName = localizedStrings.gPluUnitWgt;
-        break;
-      case 'LimitHigh':
-        value.showName = localizedStrings.gPluLimitHigh;
-        break;
-      case 'LimitLow':
-        value.showName = localizedStrings.gPluLimitLow;
-        break;
-      case 'Pretare':
-        value.showName = localizedStrings.gPluPretare;
-        break;
-      case 'Scale Name':
-        value.showName = localizedStrings.gScaleName;
-        break;
-      case 'User Name':
-        value.showName = localizedStrings.operator;
-        break;
-      case 'Weight':
-        value.showName = localizedStrings.gRptWeight;
-        break;
-      case 'Weight Unit':
-        value.showName = localizedStrings.gRptWeightUnit;
-        break;
-      case 'Date Time':
-        value.showName = localizedStrings.gRptDateTime;
-        break;
+List<String> mySelFields() {
+  List<String> selFields = [];
+  for (var item in myReportFeildsMap.keys) {
+    if (myReportFeildsMap[item]!) {
+      selFields.add(item);
     }
-    return value;
-  });
+  }
+  return selFields;
 }
+
+Map<String, String> mySelMap() {
+  Map<String, String> mySelMap = {};
+  for (var item in myReportFeildsMap.keys) {
+    mySelMap[item] = getRptTitleName(item);
+  }
+
+  return mySelMap;
+}
+
+String getRptTitleName(String rptName) {
+  switch (rptName) {
+    case 'Id':
+      return 'Id';
+    case 'Date Time':
+      return localizedStrings.gRptDateTime;
+    case 'PLU':
+      return 'PLU';
+    case 'Product Code':
+      return localizedStrings.gPluPluCode;
+    case 'Item Code':
+      return localizedStrings.gPluItemCode;
+    case 'PLU Name':
+      return localizedStrings.gPluPluName;
+    case 'Price':
+      return localizedStrings.gPluPrice;
+    case 'GeneralUnit':
+      return localizedStrings.gPluWgtUnit;
+    case 'TaxType':
+      return localizedStrings.gPluTaxType;
+    case 'UnitWeight':
+      return localizedStrings.gPluUnitWgt;
+    case 'LimitHigh':
+      return localizedStrings.gPluLimitHigh;
+    case 'LimitLow':
+      return localizedStrings.gPluLimitLow;
+    case 'Weight':
+      return localizedStrings.gRptWeight;
+    case 'Weight Unit':
+      return localizedStrings.gRptWeightUnit;
+    case 'Pretare':
+      return localizedStrings.gPluPretare;
+    case 'User Name':
+      return localizedStrings.operator;
+    case 'Scale Name':
+      return localizedStrings.gScaleName;
+    case 'Category':
+      return localizedStrings.gPluCategory;
+  }
+  return rptName;
+}
+
+Map<String, bool> myReportFeildsMap = {
+  'Id': true,
+  'Date Time': true,
+  'PLU': true,
+  'Product Code': false,
+  'Item Code': false,
+  'PLU Name': true,
+  'Price': false,
+  'GeneralUnit': false,
+  'TaxType': false,
+  'UnitWeight': false,
+  'LimitHigh': false,
+  'LimitLow': false,
+  'Weight': true,
+  'Weight Unit': true,
+  'Pretare': false,
+  'User Name': true,
+  'Scale Name': true,
+};
+
+// ReportFields myReportFields = ReportFields([]);

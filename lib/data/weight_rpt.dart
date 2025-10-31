@@ -143,7 +143,7 @@ Future<void> creatCsvFile(
     String path, List<WeightReportData> myWeightReportData) async {
   // 获取选中的字段名称列表
   List<String> selectedShowNameList = myReportFeildsMap.entries
-      .where((entry) => entry.value.isSelect)
+      .where((entry) => entry.value)
       .map((entry) => entry.key)
       .toList();
 
@@ -152,9 +152,7 @@ Future<void> creatCsvFile(
   var sink = file.openWrite();
 
   // 写入标题行
-  sink.write(selectedShowNameList
-      .map((key) => myReportFeildsMap[key]!.showName)
-      .join(','));
+  sink.write(selectedShowNameList.map((key) => getRptTitleName(key)).join(','));
   sink.writeln();
 
   // 写入数据行
@@ -338,7 +336,7 @@ List<GridColumn> getColumns() {
   //     .map((ReportShowName reportShowName) => reportShowName.showName)
   //     .toList();
   List<String> columnNames = myReportFeildsMap.entries
-      .where((entry) => entry.value.isSelect)
+      .where((entry) => entry.value)
       .map((entry) => entry.key)
       .toList();
 
@@ -360,7 +358,7 @@ List<GridColumn> getColumns() {
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           alignment: Alignment.center,
           child: Text(
-            myReportFeildsMap[columnName]!.showName,
+            getRptTitleName(columnName),
             overflow: TextOverflow.ellipsis,
           ),
         ),

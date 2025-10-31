@@ -12,12 +12,14 @@ import 'package:t_max/data/new_get_recs.dart';
 import 'package:t_max/data/plu_data_source.dart';
 import 'package:t_max/data/reqweightdata_data.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
+import 'package:t_max/data/sel_scales_in_app.dart';
 import 'package:t_max/data/settingparam_data.dart';
 import 'package:t_max/data/weight_report_data.dart';
 import 'package:t_max/data/wgt_value_data.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/dialog/setting_dialog.dart';
 import 'package:t_max/dialog/weight_report_feilds_setting.dart';
+import 'package:t_max/widget/f_open_file.dart';
 import 'package:t_max/widget/page_info.dart';
 import 'package:t_max/widget/plu_select.dart';
 import 'package:t_max/widget/scale_list.dart';
@@ -63,6 +65,7 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
   bool firstGetRec = true;
   bool totalWgtStble = false;
   bool needUpdate = false;
+  bool firstGetSelScale = true;
 
   dynamic eventBus1;
   dynamic eventBus2;
@@ -112,6 +115,10 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
       if (mounted) {
         setState(() {
           mySettingParam = event.obj;
+          if (firstGetSelScale) {
+            firstGetSelScale = false;
+            getSelScaleInApp();
+          }
         });
       }
     });
@@ -251,7 +258,8 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
       if (mounted) {
         String resString = event.obj;
         if (resString.contains('ok')) {
-          showTipInfo(localizedStrings.gTipExportSuccess, context);
+          String filePath = resString.split(',')[1];
+          showExportDialog(filePath, context);
         } else {
           showTipInfo(
               '${localizedStrings.gTipExportFail} ：$resString', context);
@@ -264,15 +272,16 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
   void didChangeDependencies() {
     setState(() {
       for (var item in myReportFeildsMap.keys) {
-        _tableState.visibleColumns[item]!.isSelect =
-            myReportFeildsMap[item]!.isSelect;
+        _tableState.visibleColumns[item]!.isSelect = myReportFeildsMap[item]!;
       }
     });
+
     super.didChangeDependencies();
   }
 
   @override
   void dispose() {
+    setSelScaleInApp(mySelScaleIdList);
     eventBus1.cancel();
     eventBus2.cancel();
     eventBus3.cancel();
@@ -299,6 +308,19 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     _tableState.dispose();
 
     super.dispose();
+  }
+
+  setSelScaleInApp(mySelScaleIdList) async {
+    await AppSelScalesManager.setIntList(AppNames.weda, mySelScaleIdList);
+  }
+
+  getSelScaleInApp() async {
+    List<int> savedScales = await AppSelScalesManager.getIntList(AppNames.weda);
+    for (var item in myAllScalesList) {
+      if (savedScales.contains(item.scaleId)) {
+        addOrRemoveSelScale(item.scaleId);
+      }
+    }
   }
 
   // 添加定时器，每 2 秒计算一次总重量
@@ -545,8 +567,6 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     if (mySelScaleIdList.contains(scaleId)) {
       mySelScaleIdList.remove(scaleId);
       PublicFunctions.stopWeight(scaleId);
-
-      // 从缓存和keys中移除
       _scaleWidgetCache.remove(scaleId);
       _scaleWidgetKeys.remove(scaleId);
     } else {
@@ -808,8 +828,12 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                               if (!outputFile.contains(".csv")) {
                                 outputFile = "$outputFile.csv";
                               }
+
                               PublicFunctions.exportAllRecords(
-                                  mySettingParam.scaleMode, outputFile);
+                                  mySettingParam.scaleMode,
+                                  outputFile,
+                                  mySelFields(),
+                                  mySelMap());
                             }
                           },
                           icon: getSvgIcon(
@@ -977,7 +1001,7 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
         setState(() {
           for (var item in myReportFeildsMap.keys) {
             _tableState.visibleColumns[item]!.isSelect =
-                myReportFeildsMap[item]!.isSelect;
+                myReportFeildsMap[item]!;
           }
         });
       }

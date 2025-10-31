@@ -576,8 +576,10 @@ class PublicFunctions {
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
 
-  static void exportAllRecords(int mode, String path) {
-    ReqExportAllWgtRecs req = ReqExportAllWgtRecs(mode: mode, path: path);
+  static void exportAllRecords(
+      int mode, String path, List<String> fieldName, Map<String, String> map) {
+    ReqExportAllWgtRecs req = ReqExportAllWgtRecs(
+        mode: mode, path: path, fieldName: fieldName, translation: map);
     String reqStr = reqExportAllWgtRecsToJson(req);
     myScaleCmd.cmdMode = "export_all_recs";
     myScaleCmd.cmdData = reqStr; //根据scale model scale sn  scale name(别名)

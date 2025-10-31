@@ -15,6 +15,24 @@ import 'package:t_max/functions/methods.dart';
 
 //显示表格
 
+Map<String, String> pluUnitSwitch = {
+  '0': "kg",
+  '1': "100g",
+  '2': "pcs",
+  '3': "lb",
+  '4': "g",
+  '5': "oz",
+  '6': "lboz",
+  '7': "tj",
+  '8': "hj",
+  '9': "t",
+};
+Map<String, String> pluTaxSwitch = {
+  '0': "tax1",
+  '1': "tax2",
+  '2': "tax3",
+};
+
 class WgtDataTable extends StatelessWidget {
   const WgtDataTable({super.key});
 
@@ -124,7 +142,8 @@ class WgtDataTable extends StatelessWidget {
                                               // color: Colors.grey[100],
                                               child: DataTable(
                                                   columns: _buildColumns(
-                                                      context, tableState),
+                                                      context, tableState,
+                                                      isShowSort: false),
                                                   rows: [
                                                     DataRow(
                                                       cells:
@@ -319,7 +338,8 @@ class WgtDataTable extends StatelessWidget {
     );
   }
 
-  List<DataColumn> _buildColumns(BuildContext context, TableState tableState) {
+  List<DataColumn> _buildColumns(BuildContext context, TableState tableState,
+      {bool? isShowSort = true}) {
     return [
       if (tableState.visibleColumns['Id']!.isSelect)
         getDataColumn(
@@ -328,6 +348,7 @@ class WgtDataTable extends StatelessWidget {
           width: 60,
           columnKey: 'Id',
           tableState: tableState,
+          isShowSort: isShowSort,
         ),
       if (tableState.visibleColumns['Date Time']!.isSelect)
         getDataColumn(
@@ -335,6 +356,7 @@ class WgtDataTable extends StatelessWidget {
           tableState.visibleColumns['Date Time']!.showName,
           columnKey: 'Date Time',
           tableState: tableState,
+          isShowSort: isShowSort,
         ),
       if (tableState.visibleColumns['PLU']!.isSelect)
         getDataColumn(
@@ -342,6 +364,7 @@ class WgtDataTable extends StatelessWidget {
           tableState.visibleColumns['PLU']!.showName,
           columnKey: 'PLU',
           tableState: tableState,
+          isShowSort: isShowSort,
         ),
       if (tableState.visibleColumns['Product Code']!.isSelect)
         getDataColumn(
@@ -349,6 +372,7 @@ class WgtDataTable extends StatelessWidget {
           tableState.visibleColumns['Product Code']!.showName,
           columnKey: 'Product Code',
           tableState: tableState,
+          isShowSort: isShowSort,
         ),
       if (tableState.visibleColumns['Item Code']!.isSelect)
         getDataColumn(
@@ -356,6 +380,7 @@ class WgtDataTable extends StatelessWidget {
           tableState.visibleColumns['Item Code']!.showName,
           columnKey: 'Item Code',
           tableState: tableState,
+          isShowSort: isShowSort,
         ),
       if (tableState.visibleColumns['PLU Name']!.isSelect)
         getDataColumn(
@@ -363,6 +388,7 @@ class WgtDataTable extends StatelessWidget {
           tableState.visibleColumns['PLU Name']!.showName,
           columnKey: 'PLU Name',
           tableState: tableState,
+          isShowSort: isShowSort,
         ),
       if (tableState.visibleColumns['Price']!.isSelect)
         getDataColumn(
@@ -370,6 +396,7 @@ class WgtDataTable extends StatelessWidget {
           tableState.visibleColumns['Price']!.showName,
           columnKey: 'Price',
           tableState: tableState,
+          isShowSort: isShowSort,
         ),
       if (tableState.visibleColumns['GeneralUnit']!.isSelect)
         getDataColumn(
@@ -377,6 +404,7 @@ class WgtDataTable extends StatelessWidget {
           tableState.visibleColumns['GeneralUnit']!.showName,
           columnKey: 'GeneralUnit',
           tableState: tableState,
+          isShowSort: isShowSort,
         ),
       if (tableState.visibleColumns['TaxType']!.isSelect)
         getDataColumn(
@@ -384,6 +412,7 @@ class WgtDataTable extends StatelessWidget {
           tableState.visibleColumns['TaxType']!.showName,
           columnKey: 'TaxType',
           tableState: tableState,
+          isShowSort: isShowSort,
         ),
       if (tableState.visibleColumns['UnitWeight']!.isSelect)
         getDataColumn(
@@ -391,6 +420,7 @@ class WgtDataTable extends StatelessWidget {
           tableState.visibleColumns['UnitWeight']!.showName,
           columnKey: 'UnitWeight',
           tableState: tableState,
+          isShowSort: isShowSort,
         ),
       if (tableState.visibleColumns['LimitHigh']!.isSelect)
         getDataColumn(
@@ -398,6 +428,7 @@ class WgtDataTable extends StatelessWidget {
           tableState.visibleColumns['LimitHigh']!.showName,
           columnKey: 'LimitHigh',
           tableState: tableState,
+          isShowSort: isShowSort,
         ),
       if (tableState.visibleColumns['LimitLow']!.isSelect)
         getDataColumn(
@@ -405,6 +436,7 @@ class WgtDataTable extends StatelessWidget {
           tableState.visibleColumns['LimitLow']!.showName,
           columnKey: 'LimitLow',
           tableState: tableState,
+          isShowSort: isShowSort,
         ),
       if (tableState.visibleColumns['Weight']!.isSelect)
         getDataColumn(
@@ -412,6 +444,7 @@ class WgtDataTable extends StatelessWidget {
           tableState.visibleColumns['Weight']!.showName,
           columnKey: 'Weight',
           tableState: tableState,
+          isShowSort: isShowSort,
         ),
       if (tableState.visibleColumns['Weight Unit']!.isSelect)
         getDataColumn(
@@ -419,6 +452,7 @@ class WgtDataTable extends StatelessWidget {
           tableState.visibleColumns['Weight Unit']!.showName,
           columnKey: 'Weight Unit',
           tableState: tableState,
+          isShowSort: isShowSort,
         ),
       if (tableState.visibleColumns['Pretare']!.isSelect)
         getDataColumn(
@@ -426,6 +460,7 @@ class WgtDataTable extends StatelessWidget {
           tableState.visibleColumns['Pretare']!.showName,
           columnKey: 'Pretare',
           tableState: tableState,
+          isShowSort: isShowSort,
         ),
       if (tableState.visibleColumns['User Name']!.isSelect)
         getDataColumn(
@@ -433,6 +468,7 @@ class WgtDataTable extends StatelessWidget {
           tableState.visibleColumns['User Name']!.showName,
           columnKey: 'User Name',
           tableState: tableState,
+          isShowSort: isShowSort,
         ),
       if (tableState.visibleColumns['Scale Name']!.isSelect)
         getDataColumn(
@@ -440,13 +476,17 @@ class WgtDataTable extends StatelessWidget {
           tableState.visibleColumns['Scale Name']!.showName,
           columnKey: 'Scale Name',
           tableState: tableState,
+          isShowSort: isShowSort,
         ),
       DataColumn(label: Container(width: 90)),
     ];
   }
 
   DataColumn getDataColumn(BuildContext context, String title,
-      {double? width, String? columnKey, required TableState tableState}) {
+      {double? width,
+      String? columnKey,
+      required TableState tableState,
+      bool? isShowSort = true}) {
     width ??= 150;
     final isSorted = sortColumnName == columnKey;
     return DataColumn(
@@ -479,7 +519,7 @@ class WgtDataTable extends StatelessWidget {
                 textAlign: TextAlign.left,
                 overflow: TextOverflow.ellipsis,
               ),
-              if (isSorted)
+              if (isSorted && isShowSort!)
                 Icon(
                   sortDirectValue == DataGridSortDirection.ascending
                       ? Icons.arrow_upward
@@ -548,16 +588,33 @@ class WgtDataTable extends StatelessWidget {
       ));
     }
     if (tableState.visibleColumns['GeneralUnit']!.isSelect) {
-      cells.add(getDataCell(
-        context,
-        item.scaleRec.header!.generalUnit.toString(),
-      ));
+      if (pluUnitSwitch
+          .containsKey(item.scaleRec.header!.generalUnit.toString())) {
+        cells.add(getDataCell(
+          context,
+          pluUnitSwitch[item.scaleRec.header!.generalUnit.toString()]
+              .toString(),
+        ));
+      } else {
+        cells.add(getDataCell(
+          context,
+          item.scaleRec.header!.generalUnit.toString(),
+        ));
+      }
     }
+
     if (tableState.visibleColumns['TaxType']!.isSelect) {
-      cells.add(getDataCell(
-        context,
-        item.scaleRec.header!.taxType.toString(),
-      ));
+      if (pluTaxSwitch.containsKey(item.scaleRec.header!.taxType.toString())) {
+        cells.add(getDataCell(
+          context,
+          pluTaxSwitch[item.scaleRec.header!.taxType.toString()].toString(),
+        ));
+      } else {
+        cells.add(getDataCell(
+          context,
+          item.scaleRec.header!.taxType.toString(),
+        ));
+      }
     }
     if (tableState.visibleColumns['UnitWeight']!.isSelect) {
       cells.add(getDataCell(
@@ -753,6 +810,12 @@ class WgtDataTable extends StatelessWidget {
       cells.add(getDataCellDetail(
         context,
         '',
+      ));
+    }
+    if (tableState.visibleColumns['User Name']!.isSelect) {
+      cells.add(getDataCell(
+        context,
+        "",
       ));
     }
 

@@ -12,12 +12,14 @@ import 'package:t_max/data/new_get_recs.dart';
 import 'package:t_max/data/plu_data_source.dart';
 import 'package:t_max/data/reqweightdata_data.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
+import 'package:t_max/data/sel_scales_in_app.dart';
 import 'package:t_max/data/settingparam_data.dart';
 import 'package:t_max/data/weight_report_data.dart';
 import 'package:t_max/data/wgt_value_data.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/dialog/setting_dialog.dart';
 import 'package:t_max/dialog/weight_report_feilds_setting.dart';
+import 'package:t_max/widget/f_open_file.dart';
 import 'package:t_max/widget/page_info.dart';
 import 'package:t_max/widget/plu_select.dart';
 import 'package:t_max/widget/scale_list.dart';
@@ -60,6 +62,7 @@ class TakeOutPageState extends State<TakeOutPage> {
   bool firstGetRec = true;
   bool totalWgtStble = false;
   bool needUpdate = false;
+  bool firstGetSelScale = true;
 
   dynamic eventBus1;
   dynamic eventBus2;
@@ -109,6 +112,10 @@ class TakeOutPageState extends State<TakeOutPage> {
       if (mounted) {
         setState(() {
           mySettingParam = event.obj;
+          if (firstGetSelScale) {
+            firstGetSelScale = false;
+            getSelScaleInApp();
+          }
         });
       }
     });
@@ -243,7 +250,8 @@ class TakeOutPageState extends State<TakeOutPage> {
       if (mounted) {
         String resString = event.obj;
         if (resString.contains('ok')) {
-          showTipInfo(localizedStrings.gTipExportSuccess, context);
+          String filePath = resString.split(',')[1];
+          showExportDialog(filePath, context);
         } else {
           showTipInfo(
               '${localizedStrings.gTipExportFail} ：$resString', context);
@@ -256,8 +264,7 @@ class TakeOutPageState extends State<TakeOutPage> {
   void didChangeDependencies() {
     setState(() {
       for (var item in myReportFeildsMap.keys) {
-        _tableState.visibleColumns[item]!.isSelect =
-            myReportFeildsMap[item]!.isSelect;
+        _tableState.visibleColumns[item]!.isSelect = myReportFeildsMap[item]!;
       }
     });
     super.didChangeDependencies();
@@ -265,6 +272,7 @@ class TakeOutPageState extends State<TakeOutPage> {
 
   @override
   void dispose() {
+    setSelScaleInApp();
     eventBus1.cancel();
     eventBus2.cancel();
     eventBus3.cancel();
@@ -293,6 +301,19 @@ class TakeOutPageState extends State<TakeOutPage> {
     _scaleCheckTimer?.cancel();
 
     super.dispose();
+  }
+
+  setSelScaleInApp() async {
+    await AppSelScalesManager.setIntList(AppNames.taou, mySelScaleIdList);
+  }
+
+  getSelScaleInApp() async {
+    List<int> savedScales = await AppSelScalesManager.getIntList(AppNames.taou);
+    for (var item in myAllScalesList) {
+      if (savedScales.contains(item.scaleId)) {
+        addOrRemoveSelScale(item.scaleId);
+      }
+    }
   }
 
   // 添加定时器，每 2 秒计算一次总重量
@@ -809,7 +830,10 @@ class TakeOutPageState extends State<TakeOutPage> {
                                 outputFile = "$outputFile.csv";
                               }
                               PublicFunctions.exportAllRecords(
-                                  mySettingParam.scaleMode, outputFile);
+                                  mySettingParam.scaleMode,
+                                  outputFile,
+                                  mySelFields(),
+                                  mySelMap());
                             }
                           },
                           icon: getSvgIcon(
@@ -978,7 +1002,7 @@ class TakeOutPageState extends State<TakeOutPage> {
         setState(() {
           for (var item in myReportFeildsMap.keys) {
             _tableState.visibleColumns[item]!.isSelect =
-                myReportFeildsMap[item]!.isSelect;
+                myReportFeildsMap[item]!;
           }
         });
       }

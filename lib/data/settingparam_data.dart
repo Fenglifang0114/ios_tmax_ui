@@ -49,7 +49,8 @@ class SettingParam {
   }
 }
 
-SettingParam mySettingParam = SettingParam(0, "", "", "", "", "", 0, "", "", 0);
+SettingParam mySettingParam =
+    SettingParam(0, "0", "1", "1", "0", "0", 0, "", "", 0);
 
 final String wgtCollectionMode = '0';
 final String wgtCheckMode = '1';
