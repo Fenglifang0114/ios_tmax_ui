@@ -168,6 +168,10 @@
     "@gOpenJson": {
         "description": "This is a button about open print format. "
     },
+    "gBarcodeMgr": "条码管理",
+    "@gBarcodeMgr": {
+        "description": "This is a prompt for barcode manager."
+    },
     "gBarcodeEdit": "条码编辑",
     "@gBarcodeEdit": {
         "description": "This is a button about barcode edit."
@@ -3823,7 +3827,11 @@
     "downAllPluTip": "即将清空设备PLU并重新下载所有PLU，确认吗？",
     "@downAllPluTip": {
         "description": "Download all PLU"
-    } 
+    },
+    "tipForceClearTare": "确认强制清除扣重？请先清空秤盘。",
+    "@tipForceClearTare": {
+        "description": "Force clear tare"
+    }
 }
 
 

@@ -24,6 +24,7 @@ class WeightModePageState extends State<WeightModePage> {
   List<int> mySelScaleIdList = [];
 
   Map<int, ReceiveWgtInfo> myScaleWgtMap = {};
+  bool isFirstLoad = true;
 
   dynamic eventBus5;
   dynamic eventBus6;
@@ -63,7 +64,10 @@ class WeightModePageState extends State<WeightModePage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    getSelScaleInApp();
+    if (isFirstLoad) {
+      getSelScaleInApp();
+      isFirstLoad = false;
+    }
   }
 
   @override

@@ -38,16 +38,18 @@ BarCodeRowData myBarCodeRowData = BarCodeRowData(
   7,
 );
 
-class BarCodeRowDataList {
+class BarCodeRowDataInfo {
   List<BarCodeRowData> barCodeRowDataList = [];
   String barCodeName = '';
   String barCodeType = '';
+  bool? isExpand = false;
 
-  BarCodeRowDataList(
+  BarCodeRowDataInfo(
       this.barCodeRowDataList, this.barCodeName, this.barCodeType);
-  BarCodeRowDataList.fromJson(Map<String, dynamic> json) {
+  BarCodeRowDataInfo.fromJson(Map<String, dynamic> json) {
     barCodeName = json['BarCodeName'];
     barCodeType = json['BarCodeType'];
+    isExpand = json['isExpand'];
     if (json['BarCodeRowDataList'] != null) {
       var list = json['BarCodeRowDataList'] as List;
       List<BarCodeRowData> barcodelist =
@@ -60,16 +62,17 @@ class BarCodeRowDataList {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['BarCodeName'] = barCodeName;
     data['BarCodeType'] = barCodeType;
+    data['isExpand'] = isExpand;
     data['BarCodeRowDataList'] =
         barCodeRowDataList.map((v) => v.toJson()).toList();
     return data;
   }
 }
 
-BarCodeRowDataList myBarCodeRowDataList = BarCodeRowDataList([], '', '');
+BarCodeRowDataInfo myBarCodeRowDataList = BarCodeRowDataInfo([], '', '');
 
 class BarCodeListList {
-  List<BarCodeRowDataList> barCodeListList = [];
+  List<BarCodeRowDataInfo> barCodeListList = [];
 
   BarCodeListList(this.barCodeListList);
   // BarCodeListList.fromJson(Map<String, dynamic> json) {
@@ -82,9 +85,9 @@ class BarCodeListList {
   // }
 
   factory BarCodeListList.fromJson(List<dynamic> parsedJson) {
-    List<BarCodeRowDataList> barCodeListList = <BarCodeRowDataList>[];
+    List<BarCodeRowDataInfo> barCodeListList = <BarCodeRowDataInfo>[];
     barCodeListList =
-        parsedJson.map((i) => BarCodeRowDataList.fromJson(i)).toList();
+        parsedJson.map((i) => BarCodeRowDataInfo.fromJson(i)).toList();
     return BarCodeListList(barCodeListList);
   }
 

@@ -336,6 +336,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "gBarcode": MessageLookupByLibrary.simpleMessage("条码:"),
     "gBarcodeEdit": MessageLookupByLibrary.simpleMessage("条码编辑"),
     "gBarcodeHeight": MessageLookupByLibrary.simpleMessage("条码高度:"),
+    "gBarcodeMgr": MessageLookupByLibrary.simpleMessage("条码管理"),
     "gBarcodeName": MessageLookupByLibrary.simpleMessage("条码名字"),
     "gBarcodeSelect": MessageLookupByLibrary.simpleMessage("输入名字创建或查找"),
     "gBarcodeType": MessageLookupByLibrary.simpleMessage("条码类型"),
@@ -1176,6 +1177,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tipEnsureWeightCorrect": MessageLookupByLibrary.simpleMessage(
       "请确保当前重量数据正确，是否继续？",
+    ),
+    "tipForceClearTare": MessageLookupByLibrary.simpleMessage(
+      "确认强制清除扣重？请先清空秤盘。",
     ),
     "tipFormulaDataError": MessageLookupByLibrary.simpleMessage("配方数据错误！"),
     "tipImporting": MessageLookupByLibrary.simpleMessage("检查完成，正在导入中..."),

@@ -504,6 +504,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "gBarcode": MessageLookupByLibrary.simpleMessage("BarCode:"),
     "gBarcodeEdit": MessageLookupByLibrary.simpleMessage("BarCode Edit"),
     "gBarcodeHeight": MessageLookupByLibrary.simpleMessage("BarCode Height:"),
+    "gBarcodeMgr": MessageLookupByLibrary.simpleMessage("Barcode Management"),
     "gBarcodeName": MessageLookupByLibrary.simpleMessage("BarCode Name"),
     "gBarcodeSelect": MessageLookupByLibrary.simpleMessage(
       "Enter name to create/select.",
@@ -1663,6 +1664,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tipEnsureWeightCorrect": MessageLookupByLibrary.simpleMessage(
       "Please ensure the current weight data is correct. Do you want to continue?",
+    ),
+    "tipForceClearTare": MessageLookupByLibrary.simpleMessage(
+      "Confirm force clear tare? Please ensure the scale pan is empty.",
     ),
     "tipFormulaDataError": MessageLookupByLibrary.simpleMessage(
       "Formula data error!",

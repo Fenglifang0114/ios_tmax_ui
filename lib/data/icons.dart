@@ -336,3 +336,7 @@ String disabledSvgIcon() {
 String downloadToScaleSvgIcon() {
   return 'assets/images/downloadToScale.svg';
 }
+
+String barcodeSvgIcon() {
+  return 'assets/images/barcode.svg';
+}

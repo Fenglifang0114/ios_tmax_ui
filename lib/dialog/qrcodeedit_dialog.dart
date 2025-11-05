@@ -449,7 +449,7 @@ class MyQrcodeDialogState extends State<MyQrcodeDialog> {
       tempRowDataList.add(
           BarCodeRowData(type, content, defaultvalue, alignment, maxlength));
     }
-    myBarCodeListList.barCodeListList.add(BarCodeRowDataList(
+    myBarCodeListList.barCodeListList.add(BarCodeRowDataInfo(
       tempRowDataList,
       _qrCodeNameController.text,
       'Qrcode',

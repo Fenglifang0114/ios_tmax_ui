@@ -477,6 +477,16 @@ class S {
     );
   }
 
+  /// `Barcode Management`
+  String get gBarcodeMgr {
+    return Intl.message(
+      'Barcode Management',
+      name: 'gBarcodeMgr',
+      desc: 'This is a prompt for barcode manager.',
+      args: [],
+    );
+  }
+
   /// `BarCode Edit`
   String get gBarcodeEdit {
     return Intl.message(
@@ -9252,6 +9262,16 @@ class S {
       'All PLU will be erased and reloaded. Continue?',
       name: 'downAllPluTip',
       desc: 'Download all PLU',
+      args: [],
+    );
+  }
+
+  /// `Confirm force clear tare? Please ensure the scale pan is empty.`
+  String get tipForceClearTare {
+    return Intl.message(
+      'Confirm force clear tare? Please ensure the scale pan is empty.',
+      name: 'tipForceClearTare',
+      desc: 'Force clear tare',
       args: [],
     );
   }

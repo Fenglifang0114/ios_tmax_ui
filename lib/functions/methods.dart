@@ -828,20 +828,6 @@ class PublicFunctions {
     sendMsg(scaleId, jsonEncode(myScaleCmd));
   }
 
-  static performZero() {
-    myScaleCmd.cmdMode = "zero";
-    myScaleCmd.cmdData = "";
-    sendMsg(myDefScaleInfo.defScaleId!, jsonEncode(myScaleCmd));
-    writelog(jsonEncode(myScaleCmd));
-  }
-
-  static performTare() {
-    myScaleCmd.cmdMode = "tare";
-    myScaleCmd.cmdData = "";
-    sendMsg(myDefScaleInfo.defScaleId!, jsonEncode(myScaleCmd));
-    writelog(jsonEncode(myScaleCmd));
-  }
-
   static performZeroWithScaleId(int scaleId) {
     myScaleCmd.cmdMode = "zero";
     myScaleCmd.cmdData = "";
@@ -1218,6 +1204,12 @@ class PublicFunctions {
 
   static void getGravityAcceleration(int scaleId) {
     myScaleCmd.cmdMode = "get_grav_acc";
+    myScaleCmd.cmdData = '';
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
+  static void forceUntare(int scaleId) {
+    myScaleCmd.cmdMode = "force_untare";
     myScaleCmd.cmdData = '';
     sendMsg(scaleId, jsonEncode(myScaleCmd));
   }

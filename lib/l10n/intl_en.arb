@@ -168,6 +168,10 @@
     "@gOpenJson": {
         "description": "This is a button about open print format. "
     },
+    "gBarcodeMgr": "Barcode Management",
+    "@gBarcodeMgr": {
+        "description": "This is a prompt for barcode manager."
+    },
     "gBarcodeEdit": "BarCode Edit",
     "@gBarcodeEdit": {
         "description": "This is a button about barcode edit."
@@ -3823,8 +3827,11 @@
     "downAllPluTip": "All PLU will be erased and reloaded. Continue?",
     "@downAllPluTip": {
         "description": "Download all PLU"
+    },
+    "tipForceClearTare": "Confirm force clear tare? Please ensure the scale pan is empty.",
+    "@tipForceClearTare": {
+        "description": "Force clear tare"
     } 
-    
 
     
 }    

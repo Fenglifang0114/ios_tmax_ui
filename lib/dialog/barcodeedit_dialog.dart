@@ -839,7 +839,7 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
       tempRowDataList.add(
           BarCodeRowData(type, content, defaultvalue, alignment, maxlength));
     }
-    myBarCodeListList.barCodeListList.add(BarCodeRowDataList(
+    myBarCodeListList.barCodeListList.add(BarCodeRowDataInfo(
       tempRowDataList,
       _barCodeNameController.text,
       _selectBarcode,

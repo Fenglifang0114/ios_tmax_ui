@@ -102,6 +102,9 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
   ColorScheme get colorScheme => Theme.of(context).colorScheme;
   TextTheme get textTheme => Theme.of(context).textTheme;
 
+  Timer? _tareLongPressTimer;
+  bool _isTareLongPressing = false;
+
   // 启动发送存活消息的定时器
   void startCntAliveTimer(int time) {
     _cntAliveTimer?.cancel();
@@ -502,6 +505,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
 
     autoNextStepNotifier.dispose();
     stableTimeCtl.dispose();
+    _tareLongPressTimer?.cancel();
   }
 
   // 如果是暂存的配方数据，则需要将暂存的数据赋值给processWgtList
@@ -2202,33 +2206,120 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                       child: SizedBox(
                         child: Row(children: [
                           Expanded(
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                foregroundColor: colorScheme.primary,
-                                backgroundColor: colorScheme.surface,
-                                fixedSize: const Size(double.infinity, 48),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.zero, // 可以根据需要调整圆角
+                            child: GestureDetector(
+                              onLongPressStart: (details) {
+                                // 开始长按时启动2秒计时器
+                                _tareLongPressTimer?.cancel();
+                                setState(() {
+                                  _isTareLongPressing = true;
+                                });
+                                _tareLongPressTimer =
+                                    Timer(Duration(seconds: 2), () {
+                                  // 2秒后执行长按操作
+                                  showDialog(
+                                    context: context,
+                                    barrierDismissible: false, // 点击对话框外部不关闭对话框
+                                    builder: (BuildContext context) {
+                                      return ShowNormalTipDialog(
+                                        title: localizedStrings.fTipTitle,
+                                        msg: localizedStrings.tipForceClearTare,
+                                      );
+                                    },
+                                  ).then((value) {
+                                    if (value == null) {
+                                      return;
+                                    }
+                                    if (value) {
+                                      PublicFunctions.forceUntare(
+                                          myScale.scaleId);
+                                    }
+                                  });
+                                });
+                              },
+                              onLongPressEnd: (details) {
+                                // 结束长按时取消计时器
+                                _tareLongPressTimer?.cancel();
+                                setState(() {
+                                  _isTareLongPressing = false;
+                                });
+                              },
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: colorScheme.primary,
+                                  backgroundColor: colorScheme.surface,
+                                  fixedSize: const Size(double.infinity, 48),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.zero,
                                     side: BorderSide(
                                       color: colorScheme.primary,
-                                    )),
-                              ),
-                              onPressed: () {
-                                PublicFunctions.performTareWithScaleId(
-                                    myScale.scaleId);
-                              },
-                              child: Text(
-                                localizedStrings.gBtnTare,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall!
-                                    .apply(
-                                      color: colorScheme.primary,
                                     ),
-                                overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                onPressed: () {
+                                  PublicFunctions.performTareWithScaleId(
+                                      myScale.scaleId);
+                                },
+                                child: Text(
+                                  localizedStrings.gBtnTare,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .apply(
+                                        color: colorScheme.primary,
+                                      ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
                             ),
+                            // child: ElevatedButton(
+                            //   style: ElevatedButton.styleFrom(
+                            //     foregroundColor: colorScheme.primary,
+                            //     backgroundColor: colorScheme.surface,
+                            //     fixedSize: const Size(double.infinity, 48),
+                            //     shape: RoundedRectangleBorder(
+                            //         borderRadius:
+                            //             BorderRadius.zero, // 可以根据需要调整圆角
+                            //         side: BorderSide(
+                            //           color: colorScheme.primary,
+                            //         )),
+                            //   ),
+                            //   onPressed: () {
+                            //     PublicFunctions.performTareWithScaleId(
+                            //         myScale.scaleId);
+                            //   },
+                            //   onLongPress: () {
+                            //     showDialog(
+                            //       context: context,
+                            //       barrierDismissible: false, // 点击对话框外部不关闭对话框
+                            //       builder: (BuildContext context) {
+                            //         return ShowNormalTipDialog(
+                            //           title: localizedStrings.fTipTitle,
+                            //           msg: localizedStrings.tipForceClearTare,
+                            //         );
+                            //       },
+                            //     ).then((value) {
+                            //       if (value == null) {
+                            //         return;
+                            //       }
+                            //       if (value) {
+                            //         PublicFunctions.forceUntare(
+                            //             myScale.scaleId);
+                            //       } else {
+                            //         return;
+                            //       }
+                            //     });
+                            //   },
+                            //   child: Text(
+                            //     localizedStrings.gBtnTare,
+                            //     style: Theme.of(context)
+                            //         .textTheme
+                            //         .bodySmall!
+                            //         .apply(
+                            //           color: colorScheme.primary,
+                            //         ),
+                            //     overflow: TextOverflow.ellipsis,
+                            //   ),
+                            // ),
                           ),
                         ]),
                       )),
