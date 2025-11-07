@@ -7,9 +7,14 @@ import '../../eventbus/eventbus.dart';
 class RowDataWidget extends StatefulWidget {
   final BarCodeRowData rowData;
   final List<BarCodeRowData> rowDataList;
+  //回调
+  final ValueChanged<bool>? onChanged;
 
   const RowDataWidget(
-      {super.key, required this.rowData, required this.rowDataList});
+      {super.key,
+      required this.rowData,
+      required this.rowDataList,
+      required this.onChanged});
 
   @override
   RowDataWidgetState createState() => RowDataWidgetState();
@@ -39,7 +44,8 @@ class RowDataWidgetState extends State<RowDataWidget> {
   late TextEditingController _textEditingController;
   late TextEditingController _defaultvalueController;
   late TextEditingController _maxLengthController;
-  late TextEditingController _textMaxLengthController;
+  final TextEditingController _textMaxLengthController =
+      TextEditingController(text: '-');
 
   @override
   void initState() {
@@ -52,7 +58,6 @@ class RowDataWidgetState extends State<RowDataWidget> {
         TextEditingController(text: widget.rowData.defaultvalue);
     _maxLengthController =
         TextEditingController(text: widget.rowData.maxlength.toString());
-    _textMaxLengthController = TextEditingController(text: '-');
 
     eventBus.on<EventBarcodetypedata>().listen((event) {
       if (mounted) {
@@ -68,6 +73,8 @@ class RowDataWidgetState extends State<RowDataWidget> {
     _defaultvalueController.dispose();
     _maxLengthController.dispose();
     _textEditingController.dispose();
+    _textMaxLengthController.dispose();
+
     super.dispose();
   }
 
@@ -86,6 +93,7 @@ class RowDataWidgetState extends State<RowDataWidget> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Expanded(
+          flex: 1,
           child: DropdownButton<String>(
             value: _selectedType,
             underline: Container(),
@@ -93,6 +101,16 @@ class RowDataWidgetState extends State<RowDataWidget> {
               setState(() {
                 _selectedType = newValue!;
                 widget.rowData.type = _selectedType;
+                if (_selectedType == 'TEXT') {
+                  widget.rowData.maxlength = 7;
+                  widget.rowData.defaultvalue = "";
+                  widget.rowData.alignment = 'Left';
+                } else {
+                  widget.rowData.content = "";
+                  if (widget.rowData.alignment == '--') {
+                    widget.rowData.alignment = 'Left';
+                  }
+                }
               });
             },
             items: _types.map((String value) {
@@ -100,46 +118,50 @@ class RowDataWidgetState extends State<RowDataWidget> {
                 value: value,
                 child: Text(
                   value,
-                  style: const TextStyle(fontSize: 14),
+                  style: Theme.of(context).textTheme.bodySmall,
+                  overflow: TextOverflow.ellipsis,
                 ),
               );
             }).toList(),
           ),
         ),
-        const SizedBox(
-          width: 10,
-        ),
         Expanded(
-          child: TextField(
-            enabled: (_selectedType == 'TEXT') ? true : false,
-            controller: _textEditingController,
-            decoration: const InputDecoration(hintText: 'Enter text'),
-            textAlign: TextAlign.center,
-            onChanged: (value) {
-              widget.rowData.content = value;
-            },
-          ),
-        ),
-        const SizedBox(
-          width: 10,
-        ),
+            flex: 1,
+            child: Container(
+              margin: EdgeInsets.only(right: 20),
+              child: TextField(
+                enabled: (_selectedType == 'TEXT') ? true : false,
+                controller: _textEditingController,
+                decoration: const InputDecoration(
+                    hintText: 'Enter text',
+                    contentPadding: EdgeInsets.only(left: 10)),
+                textAlign: TextAlign.left,
+                onChanged: (value) {
+                  widget.rowData.content = value;
+                },
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            )),
         Expanded(
-          child: TextField(
-            enabled: (_selectedType == 'TEXT') ? false : true,
-            controller: _defaultvalueController,
-            decoration: const InputDecoration(
-              hintText: 'default value',
+          flex: 1,
+          child: Container(
+            margin: EdgeInsets.only(right: 20),
+            child: TextField(
+              enabled: (_selectedType == 'TEXT') ? false : true,
+              controller: _defaultvalueController,
+              decoration: const InputDecoration(
+                  hintText: 'default value',
+                  contentPadding: EdgeInsets.only(left: 10)),
+              textAlign: TextAlign.left,
+              onChanged: (value) {
+                widget.rowData.defaultvalue = value;
+              },
+              style: Theme.of(context).textTheme.bodySmall,
             ),
-            textAlign: TextAlign.center,
-            onChanged: (value) {
-              widget.rowData.defaultvalue = value;
-            },
           ),
         ),
-        const SizedBox(
-          width: 10,
-        ),
         Expanded(
+          flex: 1,
           child: DropdownButton<String>(
             value: _selectedAlignment,
             underline: Container(),
@@ -154,57 +176,59 @@ class RowDataWidgetState extends State<RowDataWidget> {
             items: _alignments.map((String value) {
               return DropdownMenuItem<String>(
                 value: value,
-                child: Text(value),
+                child: Text(_selectedType == 'TEXT' ? '--' : value,
+                    style: Theme.of(context).textTheme.bodySmall,
+                    overflow: TextOverflow.ellipsis),
               );
             }).toList(),
           ),
         ),
-        const SizedBox(
-          width: 10,
-        ),
         Expanded(
-          child: TextField(
-            enabled: (_selectedType == 'TEXT') ? false : true,
-            keyboardType: TextInputType.number,
-            controller: (_selectedType == 'TEXT')
-                ? _textMaxLengthController
-                : _maxLengthController,
-            decoration: const InputDecoration(hintText: 'Enter max length'),
-            textAlign: TextAlign.center,
-            onChanged: (value) {
-              if (value.isNotEmpty) {
-                RegExp regex = RegExp(r"^[1-9]$|^[1-4]\d$|^50$"); //1-50限制大小
-                if (regex.hasMatch(value)) {
-                  int tempvalue = int.parse(value.toString());
-                  widget.rowData.maxlength = tempvalue;
+          flex: 1,
+          child: Container(
+            padding: EdgeInsets.only(right: 20),
+            child: TextField(
+              enabled: (_selectedType == 'TEXT') ? false : true,
+              keyboardType: TextInputType.number,
+              controller: (_selectedType == 'TEXT')
+                  ? _textMaxLengthController
+                  : _maxLengthController,
+              decoration: const InputDecoration(
+                  hintText: 'Enter max length',
+                  contentPadding: EdgeInsets.only(left: 10)),
+              textAlign: TextAlign.left,
+              onChanged: (value) {
+                if (value.isNotEmpty) {
+                  RegExp regex = RegExp(r"^[1-9]$|^[1-4]\d$|^50$"); //1-50限制大小
+                  if (regex.hasMatch(value)) {
+                    int tempvalue = int.parse(value.toString());
+                    widget.rowData.maxlength = tempvalue;
+                    widget.rowData.defaultvalue = "";
+                  }
                 }
-              }
-            },
+              },
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
           ),
         ),
-        const SizedBox(
-          width: 10,
-        ),
-        IconButton(
-          icon: Icon(
-            Icons.delete,
-            color: Theme.of(context).colorScheme.primary,
+        SizedBox(
+          width: 50,
+          child: IconButton(
+            icon: Icon(
+              Icons.delete,
+              color: Theme.of(context).colorScheme.error,
+            ),
+            onPressed: widget.rowData.canDelete
+                ? () {
+                    setState(() {
+                      widget.rowDataList
+                          .removeWhere((rowData) => rowData == widget.rowData);
+                    });
+                    widget.onChanged!(true);
+                  }
+                : null,
           ),
-          onPressed: widget.rowData.canDelete
-              ? () {
-                  setState(() {
-                    widget.rowDataList
-                        .removeWhere((rowData) => rowData == widget.rowData);
-                    myBarCodeRowDataList.barCodeRowDataList =
-                        widget.rowDataList;
-                    eventBus.fire(
-                        EventCurrentBarCodeRowDataList(myBarCodeRowDataList));
-                    // widget.rowData.canDelete = false;
-                    // widget.rowData.canDelete = false;
-                  });
-                }
-              : null,
-        ),
+        )
       ],
     );
   }

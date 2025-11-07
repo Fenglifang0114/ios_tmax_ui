@@ -663,11 +663,9 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                               return const MyBarCodeDialog();
                             },
                           ).then((value) {
-                            if (value != null) {
-                              setState(() {
-                                // rowDataList = value;
-                              });
-                            }
+                            setState(() {
+                              _saveBarCodeNameToList();
+                            });
                           });
                         },
                             Theme.of(context).colorScheme.onPrimary,
@@ -731,11 +729,9 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
                               return const MyQrcodeDialog();
                             },
                           ).then((value) {
-                            if (value != null) {
-                              setState(() {
-                                // rowDataList = value;
-                              });
-                            }
+                            setState(() {
+                              _saveQrcodeNameToList();
+                            });
                           });
                         },
                             Theme.of(context).colorScheme.onPrimary,
@@ -1517,6 +1513,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       count = 0;
       floatButtonList.clear();
       _parentKey = GlobalKey();
+      myTextData.tabOrder = 9999;
     });
   }
 
@@ -2399,39 +2396,13 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   List<Widget> _selectItem() {
     return [
       const SizedBox(height: 100),
-      Container(
+      SizedBox(
         height: 50,
-        color: Theme.of(context).colorScheme.surfaceBright,
         child: Text(
           localizedStrings.gMsgNoElement,
-          style: TextStyle(
-              fontSize: 20,
-              color: Theme.of(context).colorScheme.error,
-              fontWeight: FontWeight.normal),
-        ),
-      ),
-      Container(
-        height: 50,
-        color: Theme.of(context).colorScheme.surfaceBright,
-        child: Text(
-          localizedStrings.gOperationSteps,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
-        ),
-      ),
-      Container(
-        height: 50,
-        color: Theme.of(context).colorScheme.surfaceBright,
-        child: Text(
-          localizedStrings.gMsgStep1,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
-        ),
-      ),
-      Container(
-        height: 80,
-        color: Theme.of(context).colorScheme.surfaceBright,
-        child: Text(
-          localizedStrings.gMsgStep2,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                color: Theme.of(context).colorScheme.error,
+              ),
         ),
       ),
     ];
@@ -2452,6 +2423,7 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
       onEditingComplete: () {
         _onSubmit(controller.text, num);
       },
+      style:Theme.of(context).textTheme.bodySmall,
       focusNode: (num == 0)
           ? _focusNodeContent
           : (num == 1)
@@ -2830,6 +2802,9 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   }
 
   List<Widget> _barCodeproperties() {
+    if (!_savedBarCodeNames.contains(_selectedBarcode)) {
+      _selectedBarcode = "--";
+    }
     return [
       buildAttitudeText(context, localizedStrings.gAttribute),
       buildDivider(),
@@ -2865,6 +2840,9 @@ class _LabelDesignPageState extends State<LabelDesignPage> {
   }
 
   List<Widget> _qrcodeproperties() {
+    if (!_savedQrcodeNames.contains(_selectedQrcode)) {
+      _selectedQrcode = "--";
+    }
     return [
       buildAttitudeText(context, localizedStrings.gAttribute),
       buildDivider(),

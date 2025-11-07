@@ -103,7 +103,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
   TextTheme get textTheme => Theme.of(context).textTheme;
 
   Timer? _tareLongPressTimer;
-  bool _isTareLongPressing = false;
+  bool isTareLongPressing = false;
 
   // 启动发送存活消息的定时器
   void startCntAliveTimer(int time) {
@@ -2211,7 +2211,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                                 // 开始长按时启动2秒计时器
                                 _tareLongPressTimer?.cancel();
                                 setState(() {
-                                  _isTareLongPressing = true;
+                                  isTareLongPressing = true;
                                 });
                                 _tareLongPressTimer =
                                     Timer(Duration(seconds: 2), () {
@@ -2240,7 +2240,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                                 // 结束长按时取消计时器
                                 _tareLongPressTimer?.cancel();
                                 setState(() {
-                                  _isTareLongPressing = false;
+                                  isTareLongPressing = false;
                                 });
                               },
                               child: ElevatedButton(

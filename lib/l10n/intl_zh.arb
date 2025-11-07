@@ -168,6 +168,10 @@
     "@gOpenJson": {
         "description": "This is a button about open print format. "
     },
+    "gQrcodeMgr": "二维码管理",
+    "@gQrcodeMgr": {
+        "description": "This is a prompt for qrcode manager."
+    },
     "gBarcodeMgr": "条码管理",
     "@gBarcodeMgr": {
         "description": "This is a prompt for barcode manager."
@@ -175,10 +179,14 @@
     "gBarcodeEdit": "条码编辑",
     "@gBarcodeEdit": {
         "description": "This is a button about barcode edit."
-    },
+    },   
     "gBarcodeType": "条码类型",
     "@gBarcodeType": {
         "description": "This is a button about barcode type."
+    },
+    "gQrcodeType": "二维码类型",
+    "@gQrcodeType": {
+      "description": "This is a button about qrcode type."
     },
     "gBarcodeName": "条码名字",
     "@gBarcodeName": {
@@ -243,19 +251,7 @@
     "gMsgNoElement": "没有选择元素.",
     "@gMsgNoElement": {
         "description": "This is a prompt regarding no item being selected."
-    },
-    "gOperationSteps": "操作步骤:",
-    "@gOperationSteps": {
-        "description": "This is a prompt about operation steps."
-    },
-    "gMsgStep1": "1. 请在左侧点击一个或者多个元素;",
-    "@gMsgStep1": {
-        "description": "This is a prompt about operation step 1."
-    },
-    "gMsgStep2": "2. 选择的元素会显示在画面上，可以在这里编辑他们的属性。",
-    "@gMsgStep2": {
-        "description": "This is a prompt about operation step 2."
-    },
+    }, 
     "gPageWidth": "宽度",
     "@gPageWidth": {
         "description": "This is a prompt about the page width."
@@ -3831,6 +3827,54 @@
     "tipForceClearTare": "确认强制清除扣重？请先清空秤盘。",
     "@tipForceClearTare": {
         "description": "Force clear tare"
+    },
+    "noBarCodeDataTip": "暂无数据",
+    "@noBarCodeDataTip": {
+        "description": "No data"
+    },
+    "searchName": "搜索名称",
+    "@searchName": {
+        "description": "Label for search name field"
+    },
+    "invalidName": "名称无效，请输入有效名称。",
+    "@invalidName": {
+        "description": "Error message for invalid name input"
+    },
+    "contentMissing": "内容缺失。",
+    "@contentMissing": {
+        "description": "Error message when content is missing"
+    },
+    "variableAlignmentEmpty": "变量对齐不能为空或长度为0，请检查。",
+    "@variableAlignmentEmpty": {
+        "description": "Error message when variable alignment is empty"
+    },
+    "nameAlreadyExists": "名称已存在，请检查。",
+    "@nameAlreadyExists": {
+        "description": "Error message when name already exists"
+    },
+    "nameNotEntered": "名称未输入或内容为空，请检查！",
+    "@nameNotEntered": {
+        "description": "Error message when name is not entered"
+    },
+    "contentNotMeetBarcode": "内容不符合条码要求！",
+    "@contentNotMeetBarcode": {
+        "description": "Error message when content doesn't meet barcode requirements"
+    },
+    "defaultValueNotMeetBarcode": "默认值不符合条码要求！",
+    "@defaultValueNotMeetBarcode": {
+        "description": "Error message when default value doesn't meet barcode requirements"
+    },
+    "barcodeExceedsMaxLengthShort": "条码超出最大长度",
+    "@barcodeExceedsMaxLengthShort": {
+        "description": "Short error message when barcode exceeds maximum length"
+    },
+    "barcodeLengthShouldBe": "条码长度应为",
+    "@barcodeLengthShouldBe": {
+        "description": "Message indicating the required barcode length"
+    },
+    "savedSuccessfully": "保存成功！",
+    "@savedSuccessfully": {
+        "description": "Success message when data is saved successfully"
     }
 }
 

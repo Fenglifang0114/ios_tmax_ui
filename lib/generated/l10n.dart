@@ -477,6 +477,16 @@ class S {
     );
   }
 
+  /// `QrCode Management`
+  String get gQrcodeMgr {
+    return Intl.message(
+      'QrCode Management',
+      name: 'gQrcodeMgr',
+      desc: 'This is a prompt for qrcode manager.',
+      args: [],
+    );
+  }
+
   /// `Barcode Management`
   String get gBarcodeMgr {
     return Intl.message(
@@ -503,6 +513,16 @@ class S {
       'BarCode Type',
       name: 'gBarcodeType',
       desc: 'This is a button about barcode type.',
+      args: [],
+    );
+  }
+
+  /// `QrCode Type`
+  String get gQrcodeType {
+    return Intl.message(
+      'QrCode Type',
+      name: 'gQrcodeType',
+      desc: 'This is a button about qrcode type.',
       args: [],
     );
   }
@@ -664,36 +684,6 @@ class S {
       'No element selected.',
       name: 'gMsgNoElement',
       desc: 'This is a prompt regarding no item being selected.',
-      args: [],
-    );
-  }
-
-  /// `Operation Steps:`
-  String get gOperationSteps {
-    return Intl.message(
-      'Operation Steps:',
-      name: 'gOperationSteps',
-      desc: 'This is a prompt about operation steps.',
-      args: [],
-    );
-  }
-
-  /// `1. Please click on one or more elements on the left panel;`
-  String get gMsgStep1 {
-    return Intl.message(
-      '1. Please click on one or more elements on the left panel;',
-      name: 'gMsgStep1',
-      desc: 'This is a prompt about operation step 1.',
-      args: [],
-    );
-  }
-
-  /// `2. The selected elements will be displayed in the center of the page, and you can edit their attributes here. `
-  String get gMsgStep2 {
-    return Intl.message(
-      '2. The selected elements will be displayed in the center of the page, and you can edit their attributes here. ',
-      name: 'gMsgStep2',
-      desc: 'This is a prompt about operation step 2.',
       args: [],
     );
   }
@@ -9272,6 +9262,127 @@ class S {
       'Confirm force clear tare? Please ensure the scale pan is empty.',
       name: 'tipForceClearTare',
       desc: 'Force clear tare',
+      args: [],
+    );
+  }
+
+  /// `No data`
+  String get noBarCodeDataTip {
+    return Intl.message(
+      'No data',
+      name: 'noBarCodeDataTip',
+      desc: 'No data',
+      args: [],
+    );
+  }
+
+  /// `Search Name`
+  String get searchName {
+    return Intl.message(
+      'Search Name',
+      name: 'searchName',
+      desc: 'Label for search name field',
+      args: [],
+    );
+  }
+
+  /// `The name is invalid. Please enter a valid name.`
+  String get invalidName {
+    return Intl.message(
+      'The name is invalid. Please enter a valid name.',
+      name: 'invalidName',
+      desc: 'Error message for invalid name input',
+      args: [],
+    );
+  }
+
+  /// `Content missing.`
+  String get contentMissing {
+    return Intl.message(
+      'Content missing.',
+      name: 'contentMissing',
+      desc: 'Error message when content is missing',
+      args: [],
+    );
+  }
+
+  /// `Variable alignment cannot be empty or have a length of 0. Please check.`
+  String get variableAlignmentEmpty {
+    return Intl.message(
+      'Variable alignment cannot be empty or have a length of 0. Please check.',
+      name: 'variableAlignmentEmpty',
+      desc: 'Error message when variable alignment is empty',
+      args: [],
+    );
+  }
+
+  /// `The name already exists. Please check.`
+  String get nameAlreadyExists {
+    return Intl.message(
+      'The name already exists. Please check.',
+      name: 'nameAlreadyExists',
+      desc: 'Error message when name already exists',
+      args: [],
+    );
+  }
+
+  /// `The name not entered or content is empty, please check!`
+  String get nameNotEntered {
+    return Intl.message(
+      'The name not entered or content is empty, please check!',
+      name: 'nameNotEntered',
+      desc: 'Error message when name is not entered',
+      args: [],
+    );
+  }
+
+  /// `The content does not meet barcode requirements!`
+  String get contentNotMeetBarcode {
+    return Intl.message(
+      'The content does not meet barcode requirements!',
+      name: 'contentNotMeetBarcode',
+      desc: 'Error message when content doesn\'t meet barcode requirements',
+      args: [],
+    );
+  }
+
+  /// `The default value does not meet barcode requirements!`
+  String get defaultValueNotMeetBarcode {
+    return Intl.message(
+      'The default value does not meet barcode requirements!',
+      name: 'defaultValueNotMeetBarcode',
+      desc:
+          'Error message when default value doesn\'t meet barcode requirements',
+      args: [],
+    );
+  }
+
+  /// `Barcode exceeds maximum length`
+  String get barcodeExceedsMaxLengthShort {
+    return Intl.message(
+      'Barcode exceeds maximum length',
+      name: 'barcodeExceedsMaxLengthShort',
+      desc: 'Short error message when barcode exceeds maximum length',
+      args: [],
+    );
+  }
+
+  /// `The length of the barcode should be`
+  String get barcodeLengthShouldBe {
+    return Intl.message(
+      'The length of the barcode should be',
+      name: 'barcodeLengthShouldBe',
+      desc: 'Message indicating the required barcode length',
+      args: [],
+    );
+  }
+
+  /// `Saved successfully!`
+  String get savedSuccessfully {
+    return Intl.message(
+      'Saved successfully!',
+      name: 'savedSuccessfully',
+      desc: 'Success message when data is saved successfully',
       args: [],
     );
   }

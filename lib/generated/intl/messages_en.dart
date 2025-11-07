@@ -52,6 +52,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "appVersionTitle": MessageLookupByLibrary.simpleMessage("Version"),
     "appWebTitle": MessageLookupByLibrary.simpleMessage("Website"),
     "application_title": MessageLookupByLibrary.simpleMessage("Applications"),
+    "barcodeExceedsMaxLengthShort": MessageLookupByLibrary.simpleMessage(
+      "Barcode exceeds maximum length",
+    ),
+    "barcodeLengthShouldBe": MessageLookupByLibrary.simpleMessage(
+      "The length of the barcode should be",
+    ),
     "batch_delivery_title": MessageLookupByLibrary.simpleMessage(
       "Batch Delivery",
     ),
@@ -136,6 +142,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "clearUnusedIngredientCategory": MessageLookupByLibrary.simpleMessage(
       "Clear Unused Ingredient Category",
     ),
+    "contentMissing": MessageLookupByLibrary.simpleMessage("Content missing."),
+    "contentNotMeetBarcode": MessageLookupByLibrary.simpleMessage(
+      "The content does not meet barcode requirements!",
+    ),
     "customization_setting_title": MessageLookupByLibrary.simpleMessage(
       "Applications",
     ),
@@ -151,6 +161,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "def_fmt_sel_tip": MessageLookupByLibrary.simpleMessage(
       "Please select 1-10 print formats.",
+    ),
+    "defaultValueNotMeetBarcode": MessageLookupByLibrary.simpleMessage(
+      "The default value does not meet barcode requirements!",
     ),
     "delete": MessageLookupByLibrary.simpleMessage("Delete"),
     "deleteFormula": MessageLookupByLibrary.simpleMessage("Delete Formula"),
@@ -632,15 +645,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "gMsgSerialError": MessageLookupByLibrary.simpleMessage(
       "Serial port has been disconnected. Please check the settings.",
     ),
-    "gMsgStep1": MessageLookupByLibrary.simpleMessage(
-      "1. Please click on one or more elements on the left panel;",
-    ),
-    "gMsgStep2": MessageLookupByLibrary.simpleMessage(
-      "2. The selected elements will be displayed in the center of the page, and you can edit their attributes here. ",
-    ),
     "gNetmask": MessageLookupByLibrary.simpleMessage("NetMask"),
     "gOpenJson": MessageLookupByLibrary.simpleMessage("Open Json"),
-    "gOperationSteps": MessageLookupByLibrary.simpleMessage("Operation Steps:"),
     "gPageHeight": MessageLookupByLibrary.simpleMessage("Height"),
     "gPageWidth": MessageLookupByLibrary.simpleMessage("Width"),
     "gParameterSettingsTitle": MessageLookupByLibrary.simpleMessage(
@@ -670,7 +676,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "gProgress": MessageLookupByLibrary.simpleMessage("Progress"),
     "gQrcode": MessageLookupByLibrary.simpleMessage("QRcode:"),
     "gQrcodeEdit": MessageLookupByLibrary.simpleMessage("Qrcode Edit"),
+    "gQrcodeMgr": MessageLookupByLibrary.simpleMessage("QrCode Management"),
     "gQrcodeName": MessageLookupByLibrary.simpleMessage("Qrcode Name"),
+    "gQrcodeType": MessageLookupByLibrary.simpleMessage("QrCode Type"),
     "gQrcodeWidth": MessageLookupByLibrary.simpleMessage("Qrcode Width:"),
     "gReceiptFormat": MessageLookupByLibrary.simpleMessage("Receipt Format"),
     "gRotation": MessageLookupByLibrary.simpleMessage("Rotation:"),
@@ -1207,6 +1215,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "ingredientNoInvalid": MessageLookupByLibrary.simpleMessage(
       "Ingredient No. must be a positive integer",
     ),
+    "invalidName": MessageLookupByLibrary.simpleMessage(
+      "The name is invalid. Please enter a valid name.",
+    ),
     "jump_confirm_info": MessageLookupByLibrary.simpleMessage(
       "Please confirm to go to the default print format page.",
     ),
@@ -1346,7 +1357,14 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "module": MessageLookupByLibrary.simpleMessage("Module"),
     "multiPoint": MessageLookupByLibrary.simpleMessage("Multi Point"),
+    "nameAlreadyExists": MessageLookupByLibrary.simpleMessage(
+      "The name already exists. Please check.",
+    ),
+    "nameNotEntered": MessageLookupByLibrary.simpleMessage(
+      "The name not entered or content is empty, please check!",
+    ),
     "new_license_text": MessageLookupByLibrary.simpleMessage("New License:"),
+    "noBarCodeDataTip": MessageLookupByLibrary.simpleMessage("No data"),
     "noDataImport": MessageLookupByLibrary.simpleMessage("No data to import"),
     "opDisable": MessageLookupByLibrary.simpleMessage("Disable"),
     "opEnable": MessageLookupByLibrary.simpleMessage("Enable"),
@@ -1542,10 +1560,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "report_show_btn": MessageLookupByLibrary.simpleMessage("Show Reports"),
     "save_as": MessageLookupByLibrary.simpleMessage("Save as"),
     "save_mode": MessageLookupByLibrary.simpleMessage("Save Mode"),
+    "savedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Saved successfully!",
+    ),
     "scale_mgr_btn_def": MessageLookupByLibrary.simpleMessage("Set Default"),
     "scale_mgr_btn_rename": MessageLookupByLibrary.simpleMessage("Rename"),
     "scale_model": MessageLookupByLibrary.simpleMessage("Scale Model:"),
     "search": MessageLookupByLibrary.simpleMessage("Search"),
+    "searchName": MessageLookupByLibrary.simpleMessage("Search Name"),
     "selectDevice": MessageLookupByLibrary.simpleMessage("Select Device"),
     "select_firmware_btn": MessageLookupByLibrary.simpleMessage(
       "Select Firmware",
@@ -1765,6 +1787,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "user_phone": MessageLookupByLibrary.simpleMessage("Phone:"),
     "user_remarks": MessageLookupByLibrary.simpleMessage("User Notes:"),
     "user_sex": MessageLookupByLibrary.simpleMessage("Gender:"),
+    "variableAlignmentEmpty": MessageLookupByLibrary.simpleMessage(
+      "Variable alignment cannot be empty or have a length of 0. Please check.",
+    ),
     "weighingRecords": MessageLookupByLibrary.simpleMessage("Weighing Records"),
     "weightAfterCalibration": MessageLookupByLibrary.simpleMessage(
       "Weight After Calibration",

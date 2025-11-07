@@ -168,6 +168,10 @@
     "@gOpenJson": {
         "description": "This is a button about open print format. "
     },
+    "gQrcodeMgr": "QrCode Management",
+    "@gQrcodeMgr": {
+        "description": "This is a prompt for qrcode manager."
+    },
     "gBarcodeMgr": "Barcode Management",
     "@gBarcodeMgr": {
         "description": "This is a prompt for barcode manager."
@@ -179,6 +183,10 @@
     "gBarcodeType": "BarCode Type",
     "@gBarcodeType": {
         "description": "This is a button about barcode type."
+    },
+    "gQrcodeType": "QrCode Type",
+    "@gQrcodeType": {
+      "description": "This is a button about qrcode type."
     },
     "gBarcodeName": "BarCode Name",
     "@gBarcodeName": {
@@ -243,19 +251,7 @@
     "gMsgNoElement": "No element selected.",
     "@gMsgNoElement": {
         "description": "This is a prompt regarding no item being selected."
-    },
-    "gOperationSteps": "Operation Steps:",
-    "@gOperationSteps": {
-        "description": "This is a prompt about operation steps."
-    },
-    "gMsgStep1": "1. Please click on one or more elements on the left panel;",
-    "@gMsgStep1": {
-        "description": "This is a prompt about operation step 1."
-    },
-    "gMsgStep2": "2. The selected elements will be displayed in the center of the page, and you can edit their attributes here. ",
-    "@gMsgStep2": {
-        "description": "This is a prompt about operation step 2."
-    },
+    }, 
     "gPageWidth": "Width",
     "@gPageWidth": {
         "description": "This is a prompt about the page width."
@@ -3831,7 +3827,55 @@
     "tipForceClearTare": "Confirm force clear tare? Please ensure the scale pan is empty.",
     "@tipForceClearTare": {
         "description": "Force clear tare"
-    } 
+    },
+    "noBarCodeDataTip": "No data",
+    "@noBarCodeDataTip": {
+        "description": "No data"
+    },
+    "searchName": "Search Name",
+    "@searchName": {
+        "description": "Label for search name field"
+    },
+    "invalidName": "The name is invalid. Please enter a valid name.",
+    "@invalidName": {
+        "description": "Error message for invalid name input"
+    },
+    "contentMissing": "Content missing.",
+    "@contentMissing": {
+        "description": "Error message when content is missing"
+    },
+    "variableAlignmentEmpty": "Variable alignment cannot be empty or have a length of 0. Please check.",
+    "@variableAlignmentEmpty": {
+        "description": "Error message when variable alignment is empty"
+    },
+    "nameAlreadyExists": "The name already exists. Please check.",
+    "@nameAlreadyExists": {
+        "description": "Error message when name already exists"
+    },
+    "nameNotEntered": "The name not entered or content is empty, please check!",
+    "@nameNotEntered": {
+        "description": "Error message when name is not entered"
+    },
+    "contentNotMeetBarcode": "The content does not meet barcode requirements!",
+    "@contentNotMeetBarcode": {
+        "description": "Error message when content doesn't meet barcode requirements"
+    },
+    "defaultValueNotMeetBarcode": "The default value does not meet barcode requirements!",
+    "@defaultValueNotMeetBarcode": {
+        "description": "Error message when default value doesn't meet barcode requirements"
+    },
+    "barcodeExceedsMaxLengthShort": "Barcode exceeds maximum length",
+    "@barcodeExceedsMaxLengthShort": {
+        "description": "Short error message when barcode exceeds maximum length"
+    },
+    "barcodeLengthShouldBe": "The length of the barcode should be",
+    "@barcodeLengthShouldBe": {
+        "description": "Message indicating the required barcode length"
+    },
+    "savedSuccessfully": "Saved successfully!",
+    "@savedSuccessfully": {
+        "description": "Success message when data is saved successfully"
+    }
 
     
 }    

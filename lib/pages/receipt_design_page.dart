@@ -2179,39 +2179,14 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
   _selectItem() {
     return [
       const SizedBox(height: 100),
-      Container(
+      SizedBox(
         height: 50,
-        color: Theme.of(context).colorScheme.surfaceBright,
         child: Text(
           localizedStrings.gMsgNoElement,
           style: TextStyle(
               fontSize: 20,
               color: Theme.of(context).colorScheme.error,
               fontWeight: FontWeight.normal),
-        ),
-      ),
-      Container(
-        height: 50,
-        color: Theme.of(context).colorScheme.surfaceBright,
-        child: Text(
-          localizedStrings.gOperationSteps,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
-        ),
-      ),
-      Container(
-        height: 50,
-        color: Theme.of(context).colorScheme.surfaceBright,
-        child: Text(
-          localizedStrings.gMsgStep1,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
-        ),
-      ),
-      Container(
-        height: 80,
-        color: Theme.of(context).colorScheme.surfaceBright,
-        child: Text(
-          localizedStrings.gMsgStep2,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
         ),
       ),
     ];

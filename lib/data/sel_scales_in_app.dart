@@ -31,17 +31,3 @@ class AppSelScalesManager {
     return stringList.map((e) => int.tryParse(e) ?? 0).toList();
   }
 }
-
-// 使用示例类
-class AppDataManagerExample {
-  static void exampleUsage() async {
-    // 设置单个应用的数据
-    await AppSelScalesManager.setIntList(AppNames.weighing, [1, 2, 3, 4, 5]);
-    await AppSelScalesManager.setIntList(AppNames.weda, [10, 20, 30]);
-
-    // 获取单个应用的数据
-    List<int> weighingData =
-        await AppSelScalesManager.getIntList(AppNames.weighing);
-    print('Weighing data: $weighingData'); // 输出: Weighing data: [1, 2, 3, 4, 5]
-  }
-}
