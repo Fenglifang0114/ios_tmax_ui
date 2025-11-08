@@ -2312,23 +2312,47 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                       child: SizedBox(
                         child: Row(children: [
                           Expanded(
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                foregroundColor: colorScheme.primary,
-                                backgroundColor: colorScheme.surface,
-                                fixedSize: const Size(double.infinity, 48),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.zero, // 可以根据需要调整圆角
-                                    side: BorderSide(
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                    )),
-                              ),
+                            child: RawMaterialButton(
                               onPressed: () {
                                 PublicFunctions.performTareWithScaleId(
                                     myScale.scaleId);
                               },
+                              onLongPress: () {
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (BuildContext context) {
+                                    return ShowNormalTipDialog(
+                                      title: localizedStrings.fTipTitle,
+                                      msg: localizedStrings.tipForceClearTare,
+                                    );
+                                  },
+                                ).then((value) {
+                                  if (value == null) {
+                                    return;
+                                  }
+                                  if (value) {
+                                    PublicFunctions.forceUntare(
+                                        myScale.scaleId);
+                                  }
+                                });
+                              },
+                              fillColor: colorScheme.surface,
+                              textStyle:
+                                  Theme.of(context).textTheme.bodySmall!.apply(
+                                        color: colorScheme.primary,
+                                      ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.zero,
+                                side: BorderSide(
+                                  color: colorScheme.primary,
+                                ),
+                              ),
+                              constraints: BoxConstraints(
+                                minWidth: double.infinity,
+                                minHeight: 48,
+                              ),
+                              elevation: 0,
                               child: Text(
                                 localizedStrings.gBtnTare,
                                 style: Theme.of(context)

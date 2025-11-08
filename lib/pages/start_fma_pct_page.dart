@@ -2206,121 +2206,55 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                       child: SizedBox(
                         child: Row(children: [
                           Expanded(
-                            child: GestureDetector(
-                              onLongPressStart: (details) {
-                                // 开始长按时启动2秒计时器
-                                _tareLongPressTimer?.cancel();
-                                setState(() {
-                                  isTareLongPressing = true;
-                                });
-                                _tareLongPressTimer =
-                                    Timer(Duration(seconds: 2), () {
-                                  // 2秒后执行长按操作
-                                  showDialog(
-                                    context: context,
-                                    barrierDismissible: false, // 点击对话框外部不关闭对话框
-                                    builder: (BuildContext context) {
-                                      return ShowNormalTipDialog(
-                                        title: localizedStrings.fTipTitle,
-                                        msg: localizedStrings.tipForceClearTare,
-                                      );
-                                    },
-                                  ).then((value) {
-                                    if (value == null) {
-                                      return;
-                                    }
-                                    if (value) {
-                                      PublicFunctions.forceUntare(
-                                          myScale.scaleId);
-                                    }
-                                  });
-                                });
-                              },
-                              onLongPressEnd: (details) {
-                                // 结束长按时取消计时器
-                                _tareLongPressTimer?.cancel();
-                                setState(() {
-                                  isTareLongPressing = false;
-                                });
-                              },
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  foregroundColor: colorScheme.primary,
-                                  backgroundColor: colorScheme.surface,
-                                  fixedSize: const Size(double.infinity, 48),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.zero,
-                                    side: BorderSide(
+                              child: RawMaterialButton(
+                            onPressed: () {
+                              PublicFunctions.performTareWithScaleId(
+                                  myScale.scaleId);
+                            },
+                            onLongPress: () {
+                              showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (BuildContext context) {
+                                  return ShowNormalTipDialog(
+                                    title: localizedStrings.fTipTitle,
+                                    msg: localizedStrings.tipForceClearTare,
+                                  );
+                                },
+                              ).then((value) {
+                                if (value == null) {
+                                  return;
+                                }
+                                if (value) {
+                                  PublicFunctions.forceUntare(myScale.scaleId);
+                                }
+                              });
+                            },
+                            fillColor: colorScheme.surface,
+                            textStyle:
+                                Theme.of(context).textTheme.bodySmall!.apply(
                                       color: colorScheme.primary,
                                     ),
-                                  ),
-                                ),
-                                onPressed: () {
-                                  PublicFunctions.performTareWithScaleId(
-                                      myScale.scaleId);
-                                },
-                                child: Text(
-                                  localizedStrings.gBtnTare,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall!
-                                      .apply(
-                                        color: colorScheme.primary,
-                                      ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.zero,
+                              side: BorderSide(
+                                color: colorScheme.primary,
                               ),
                             ),
-                            // child: ElevatedButton(
-                            //   style: ElevatedButton.styleFrom(
-                            //     foregroundColor: colorScheme.primary,
-                            //     backgroundColor: colorScheme.surface,
-                            //     fixedSize: const Size(double.infinity, 48),
-                            //     shape: RoundedRectangleBorder(
-                            //         borderRadius:
-                            //             BorderRadius.zero, // 可以根据需要调整圆角
-                            //         side: BorderSide(
-                            //           color: colorScheme.primary,
-                            //         )),
-                            //   ),
-                            //   onPressed: () {
-                            //     PublicFunctions.performTareWithScaleId(
-                            //         myScale.scaleId);
-                            //   },
-                            //   onLongPress: () {
-                            //     showDialog(
-                            //       context: context,
-                            //       barrierDismissible: false, // 点击对话框外部不关闭对话框
-                            //       builder: (BuildContext context) {
-                            //         return ShowNormalTipDialog(
-                            //           title: localizedStrings.fTipTitle,
-                            //           msg: localizedStrings.tipForceClearTare,
-                            //         );
-                            //       },
-                            //     ).then((value) {
-                            //       if (value == null) {
-                            //         return;
-                            //       }
-                            //       if (value) {
-                            //         PublicFunctions.forceUntare(
-                            //             myScale.scaleId);
-                            //       } else {
-                            //         return;
-                            //       }
-                            //     });
-                            //   },
-                            //   child: Text(
-                            //     localizedStrings.gBtnTare,
-                            //     style: Theme.of(context)
-                            //         .textTheme
-                            //         .bodySmall!
-                            //         .apply(
-                            //           color: colorScheme.primary,
-                            //         ),
-                            //     overflow: TextOverflow.ellipsis,
-                            //   ),
-                            // ),
-                          ),
+                            constraints: BoxConstraints(
+                              minWidth: double.infinity,
+                              minHeight: 48,
+                            ),
+                            elevation: 0,
+                            child: Text(
+                              localizedStrings.gBtnTare,
+                              style:
+                                  Theme.of(context).textTheme.bodySmall!.apply(
+                                        color: colorScheme.primary,
+                                      ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          )),
                         ]),
                       )),
                   SizedBox(
