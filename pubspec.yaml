@@ -94,6 +94,7 @@ dependencies:
   flutter_pickers: ^2.1.9
   adoptive_calendar: ^0.2.0
   win32: ^5.13.0
+  image_picker: ^1.2.0
 
 
 

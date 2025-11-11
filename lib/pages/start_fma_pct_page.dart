@@ -8,7 +8,6 @@ import 'package:t_max/data/formula_wgt_process_data.dart';
 import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/get_auto_next_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
-import 'package:t_max/data/icons.dart';
 import 'package:t_max/data/req_add_fma_rec_data.dart';
 import 'package:t_max/data/req_formula_data.dart';
 import 'package:t_max/data/reqweightdata_data.dart';
