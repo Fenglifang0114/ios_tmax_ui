@@ -2807,6 +2807,37 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                 .labelMedium!
                 .apply(color: colorScheme.onSurface),
           )),
+          SizedBox(
+            height: 40,
+            child: IconButton(
+                icon: Icon(
+                  Icons.cleaning_services_outlined,
+                  color: colorScheme.primary,
+                ),
+                tooltip: localizedStrings.btnForceClearTare,
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (BuildContext context) {
+                      return ShowNormalTipDialog(
+                        title: localizedStrings.fTipTitle,
+                        msg: localizedStrings.tipForceClearTare,
+                      );
+                    },
+                  ).then((value) {
+                    if (value == null) {
+                      return;
+                    }
+                    if (value) {
+                      PublicFunctions.forceUntare(myScale.scaleId);
+                    }
+                  });
+                }),
+          ),
+          SizedBox(
+            width: regularPadding,
+          ),
           Text(
             localizedStrings.gTipAutoTare,
             style: getTextStyle(),

@@ -55,6 +55,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "batch_down_slt_folder": MessageLookupByLibrary.simpleMessage("选择文件夹"),
     "bt_setting_title": MessageLookupByLibrary.simpleMessage("蓝牙设置"),
     "btnContinueWeighing": MessageLookupByLibrary.simpleMessage("继续称重"),
+    "btnForceClearTare": MessageLookupByLibrary.simpleMessage("强制清除扣重"),
     "btnFreeFormulaMode": MessageLookupByLibrary.simpleMessage("自由配方模式"),
     "btnLogin": MessageLookupByLibrary.simpleMessage("登录"),
     "btnNormalMode": MessageLookupByLibrary.simpleMessage("正常模式"),

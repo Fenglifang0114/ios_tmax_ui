@@ -8,6 +8,7 @@ import 'package:t_max/data/formula_wgt_process_data.dart';
 import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/get_auto_next_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
+import 'package:t_max/data/icons.dart';
 import 'package:t_max/data/req_add_fma_rec_data.dart';
 import 'package:t_max/data/req_formula_data.dart';
 import 'package:t_max/data/reqweightdata_data.dart';
@@ -2699,6 +2700,37 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                 .labelMedium!
                 .apply(color: colorScheme.onSurface),
           )),
+          SizedBox(
+            height: 40,
+            child: IconButton(
+                icon: Icon(
+                  Icons.cleaning_services_outlined,
+                  color: colorScheme.primary,
+                ),
+                tooltip: localizedStrings.btnForceClearTare,
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (BuildContext context) {
+                      return ShowNormalTipDialog(
+                        title: localizedStrings.fTipTitle,
+                        msg: localizedStrings.tipForceClearTare,
+                      );
+                    },
+                  ).then((value) {
+                    if (value == null) {
+                      return;
+                    }
+                    if (value) {
+                      PublicFunctions.forceUntare(myScale.scaleId);
+                    }
+                  });
+                }),
+          ),
+          SizedBox(
+            width: regularPadding,
+          ),
           Text(
             localizedStrings.gTipAutoTare,
             style: getTextStyle(),

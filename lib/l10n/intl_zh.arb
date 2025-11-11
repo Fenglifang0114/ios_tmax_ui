@@ -3827,6 +3827,10 @@
     "tipForceClearTare": "确认强制清除扣重？请先清空秤盘。",
     "@tipForceClearTare": {
         "description": "Force clear tare"
+    }, 
+    "btnForceClearTare": "强制清除扣重",
+    "@btnForceClearTare": {
+        "description": "Force clear tare"
     },
     "noBarCodeDataTip": "暂无数据",
     "@noBarCodeDataTip": {

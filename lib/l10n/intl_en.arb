@@ -3827,6 +3827,10 @@
     "tipForceClearTare": "Confirm force clear tare? Please ensure the scale pan is empty.",
     "@tipForceClearTare": {
         "description": "Force clear tare"
+    }, 
+    "btnForceClearTare": "Force clear tare",
+    "@btnForceClearTare": {
+        "description": "Force clear tare"
     },
     "noBarCodeDataTip": "No data",
     "@noBarCodeDataTip": {

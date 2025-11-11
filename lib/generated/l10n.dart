@@ -9266,6 +9266,16 @@ class S {
     );
   }
 
+  /// `Force clear tare`
+  String get btnForceClearTare {
+    return Intl.message(
+      'Force clear tare',
+      name: 'btnForceClearTare',
+      desc: 'Force clear tare',
+      args: [],
+    );
+  }
+
   /// `No data`
   String get noBarCodeDataTip {
     return Intl.message(

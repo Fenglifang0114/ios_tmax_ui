@@ -71,6 +71,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "btnContinueWeighing": MessageLookupByLibrary.simpleMessage(
       "Continue Weighing",
     ),
+    "btnForceClearTare": MessageLookupByLibrary.simpleMessage(
+      "Force clear tare",
+    ),
     "btnFreeFormulaMode": MessageLookupByLibrary.simpleMessage(
       "Free formula mode",
     ),
