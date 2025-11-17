@@ -2608,7 +2608,7 @@
     "@gTipFree": {
         "description": "This is a free tip message."
     },
-    "gTitleAppConfig": "Application Configuration",
+    "gTitleAppConfig": "Application",
     "@gTitleAppConfig": {
         "description": "This is the title for application configuration."
     },
@@ -3879,7 +3879,5 @@
     "savedSuccessfully": "Saved successfully!",
     "@savedSuccessfully": {
         "description": "Success message when data is saved successfully"
-    }
-
-    
+    } 
 }    

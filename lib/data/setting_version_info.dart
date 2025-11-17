@@ -1,10 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+
 import 'package:flutter/services.dart';
-import 'package:t_max/pages/home_page.dart';
-import 'package:t_max/pages/home_page_industry.dart';
-import '../pages/home_page_retail.dart';
+
 import 'company_info.dart';
 import 'encrypt_data.dart';
 
@@ -17,16 +15,6 @@ const String appTIndustrial = "T-Connect";
 const String appTRetail = "T-Connect";
 
 class SystemVersionInfo {
-  Widget getHomePage() {
-    if (mySystemVersion == tConfig) {
-      return const MyHomePage();
-    } else if (mySystemVersion == tIndustry) {
-      return const IndustryHomePage();
-    } else {
-      return const RetailHomePage();
-    }
-  }
-
   Future<void> openAppNameJson() async {
     String appNameData =
         await rootBundle.loadString('assets/template/app_name.json');

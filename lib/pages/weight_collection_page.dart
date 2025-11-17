@@ -32,7 +32,10 @@ import '../data/language.dart';
 import '../widget/page_head.dart';
 
 class WeightDataCollectionPage extends StatefulWidget {
-  const WeightDataCollectionPage({super.key});
+  final Function(String) onNavigate;
+  final String lastRouteName;
+  const WeightDataCollectionPage(
+      {super.key, required this.onNavigate, required this.lastRouteName});
   @override
   State<WeightDataCollectionPage> createState() =>
       WeightDataCollectionPageState();
@@ -1028,7 +1031,11 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                subTitle(context, maxWidth, pageTitle),
+                subTitle(context, pageTitle, () {
+                  Future.delayed(Duration.zero, () {
+                    widget.onNavigate(widget.lastRouteName);
+                  });
+                }),
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                   Text(
                     mySettingParam.wgtMode == 0

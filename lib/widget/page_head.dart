@@ -335,8 +335,8 @@ Widget pageHeadDefScale(dynamic context, String pageTitle, String helpInfo) {
       ));
 }
 
-Widget pageHeadInfo(
-    dynamic context, double maxWidth, String pageTitle, String helpInfo,
+Widget pageHeadInfo(dynamic context, double maxWidth, String pageTitle,
+    String helpInfo, Function() onExit,
     {bool showHelp = true}) {
   return Container(
       height: pageTopTitleHeight,
@@ -346,7 +346,7 @@ Widget pageHeadInfo(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              subTitle(context, maxWidth, pageTitle),
+              subTitle(context, pageTitle, onExit),
               if (showHelp)
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                   PageInfoButton(helpInfo: helpInfo, onRefresh: () {}),
@@ -365,11 +365,7 @@ Widget pageHeadInfo(
       ]));
 }
 
-Widget subTitle(
-  dynamic context,
-  double maxWidth,
-  String pageTitle,
-) {
+Widget subTitle(dynamic context, String pageTitle, Function() onExit) {
   return Row(
     children: [
       SizedBox(
@@ -378,7 +374,7 @@ Widget subTitle(
       SizedBox(
         child: IconButton(
             onPressed: () {
-              Navigator.pop(context);
+              onExit();
             },
             icon: getSvgIcon(returnSvgIcon(), 28, 28,
                 Theme.of(context).colorScheme.primary)),
@@ -387,7 +383,6 @@ Widget subTitle(
         width: regularPadding,
       ),
       SizedBox(
-        width: maxWidth,
         child: Text(
           pageTitle,
           style: Theme.of(context).textTheme.labelMedium!.apply(

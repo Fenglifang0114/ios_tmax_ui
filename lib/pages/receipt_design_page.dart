@@ -36,7 +36,13 @@ const String recieptMode = "P";
 
 class ReceiptDesignPage extends StatefulWidget {
   final String type;
-  const ReceiptDesignPage({super.key, required this.type});
+  final Function(String) onNavigate;
+  final String lastRouteName;
+  const ReceiptDesignPage(
+      {super.key,
+      required this.type,
+      required this.onNavigate,
+      required this.lastRouteName});
 
   @override
   State<ReceiptDesignPage> createState() => _ReceiptDesignPageState();
@@ -450,7 +456,12 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                       context,
                       width - headWidthPadding,
                       localizedStrings.menuReceiptDesign,
-                      localizedStrings.gTipReceiptDesignPageHelp),
+                      localizedStrings.gTipReceiptDesignPageHelp, () {
+                    formAppSetting = false;
+                    Future.delayed(Duration.zero, () {
+                      widget.onNavigate(widget.lastRouteName);
+                    });
+                  }),
                 Expanded(
                     child: Column(
                   children: [

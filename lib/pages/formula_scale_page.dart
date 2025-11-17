@@ -56,7 +56,10 @@ extension EncryptedValueExtension on EncryptedValue {
 }
 
 class FormulationScalePage extends StatefulWidget {
-  const FormulationScalePage({super.key});
+  final Function(String) onNavigate;
+  final String lastRouteName;
+  const FormulationScalePage(
+      {super.key, required this.onNavigate, required this.lastRouteName});
   @override
   State<FormulationScalePage> createState() => FormulationScalePageState();
 }
@@ -96,6 +99,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
   Timer? _onlineTimer;
 
   bool sendNext = false;
+  bool isExit = false;
 
   dynamic _eventbus1;
   dynamic _eventbus2;
@@ -637,7 +641,15 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     context,
                     width - headWidthPadding,
                     localizedStrings.menuFormula,
-                    localizedStrings.gTipFmaPageHelp),
+                    localizedStrings.gTipFmaPageHelp, () {
+                  setState(() {
+                    isExit = true;
+                  });
+                  formAppSetting = false;
+                  Future.delayed(Duration.zero, () {
+                    widget.onNavigate(widget.lastRouteName);
+                  });
+                }),
                 Container(
                   height: regularPadding,
                   color: colorScheme.surfaceDim,
@@ -657,9 +669,12 @@ class FormulationScalePageState extends State<FormulationScalePage>
                               height: 1,
                             ),
                             //////////////////////////搜索部分
-                            if (_selectedTabIndex == 0) showFormulaSearch(),
-                            if (_selectedTabIndex == 1) showRawSearch(),
-                            if (_selectedTabIndex == 2) showDarftFmaSearch(),
+                            if (_selectedTabIndex == 0 && !isExit)
+                              showFormulaSearch(),
+                            if (_selectedTabIndex == 1 && !isExit)
+                              showRawSearch(),
+                            if (_selectedTabIndex == 2 && !isExit)
+                              showDarftFmaSearch(),
 
                             //////////////////////////表格部分
                             Expanded(

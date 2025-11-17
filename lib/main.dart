@@ -98,7 +98,15 @@ Future<void> initPageId() async {
 
     selectedConfigPaidMenuIds = configPages;
     selectedAppsPaidMenuIds = appPages;
+
+    if (!selectedConfigPaidMenuIds.contains(0)) {
+      selectedConfigPaidMenuIds.add(0);
+    }
+
     defualtSelectPage = pageIds['defaultPageId'];
+    if (defualtSelectPage == '/settingsConfig') {
+      defualtSelectPage = '/multiScaleManagement';
+    }
   }
 }
 

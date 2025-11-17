@@ -30,7 +30,10 @@ const String srvinstalled = "status2"; //服务已安装  服务未启动
 const String srvStarted = "status3"; //服务已安装 服务已启动
 
 class RetailReportPage extends StatefulWidget {
-  const RetailReportPage({super.key});
+  final Function(String) onNavigate;
+  final String lastRouteName;
+  const RetailReportPage(
+      {super.key, required this.onNavigate, required this.lastRouteName});
 
   @override
   RetailReportPageState createState() => RetailReportPageState();
@@ -315,8 +318,7 @@ class RetailReportPageState extends State<RetailReportPage> {
 
   ColorScheme get colorScheme => Theme.of(context).colorScheme;
 
-  Widget myHeadInfo(
-      dynamic context, double maxWidth, String pageTitle, String helpInfo,
+  Widget myHeadInfo(dynamic context, String pageTitle, String helpInfo,
       {bool showHelp = true}) {
     return Container(
         height: pageTopTitleHeight,
@@ -326,7 +328,9 @@ class RetailReportPageState extends State<RetailReportPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                subTitle(context, maxWidth, pageTitle),
+                Expanded(
+                  child: subTitle(context, pageTitle),
+                ),
                 Row(
                   children: [
                     SizedBox(
@@ -365,7 +369,6 @@ class RetailReportPageState extends State<RetailReportPage> {
 
   Widget subTitle(
     dynamic context,
-    double maxWidth,
     String pageTitle,
   ) {
     return Row(
@@ -376,7 +379,9 @@ class RetailReportPageState extends State<RetailReportPage> {
         SizedBox(
           child: IconButton(
               onPressed: () {
-                Navigator.pop(context);
+                Future.delayed(Duration.zero, () {
+                  widget.onNavigate(widget.lastRouteName);
+                });
               },
               icon: getSvgIcon(returnSvgIcon(), 28, 28,
                   Theme.of(context).colorScheme.primary)),
@@ -384,8 +389,7 @@ class RetailReportPageState extends State<RetailReportPage> {
         SizedBox(
           width: regularPadding,
         ),
-        SizedBox(
-          width: maxWidth,
+        Expanded(
           child: Text(
             pageTitle,
             style: Theme.of(context).textTheme.labelMedium!.apply(
@@ -414,70 +418,73 @@ class RetailReportPageState extends State<RetailReportPage> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                myHeadInfo(
-                    context,
-                    maxWidth - headWidthPadding,
-                    localizedStrings.menuRetailReport,
+                myHeadInfo(context, localizedStrings.menuRetailReport,
                     localizedStrings.gTipRetailDetailPageHelp),
                 Container(
                   height: regularPadding,
                   color: colorScheme.surfaceDim,
                 ),
-                showContent(maxWidth, maxheight),
+                showContent(maxheight),
               ])),
     );
   }
 
-  Widget showContent(double maxWidth, double maxheight) {
+  Widget showContent(double maxheight) {
     return Expanded(
-      child: Padding(
-          padding: const EdgeInsets.only(right: regularPadding),
+      child: SizedBox(
           child: Row(
-            children: [
-              showScaleList(),
-              Container(
-                width: regularPadding,
-                color: colorScheme.surfaceDim,
-              ),
-              Expanded(
-                child: Column(
-                  children: [
-                    showBtnList(),
-                    showDataList(maxWidth, maxheight),
-                  ],
-                ),
-              )
-            ],
-          )),
+        children: [
+          showScaleList(),
+          Container(
+            width: regularPadding,
+            color: colorScheme.surfaceDim,
+          ),
+          Expanded(
+            child: Column(
+              children: [
+                showBtnList(),
+                Expanded(
+                  child: showDataList(),
+                )
+              ],
+            ),
+          )
+        ],
+      )),
     );
   }
 
   Widget showBtnList() {
-    return Container(
+    return SizedBox(
       height: pageTopTitleHeight,
-      padding: const EdgeInsets.only(left: regularPadding),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           showInstallRow(),
-          Row(
-            children: [
-              showTextButton(context, 40, localizedStrings.rRefreshListBtn, () {
-                PublicFunctions.getDetailListSrv1();
-              }, colorScheme.onPrimary, colorScheme.primary,
-                  colorScheme.onPrimary),
-              SizedBox(
-                width: largePadding,
-              ),
-              showTextButton(
-                  context,
-                  40,
-                  localizedStrings.gBtnExport,
-                  exportFlag ? exportToCsv : null,
-                  colorScheme.onPrimary,
-                  colorScheme.primary,
-                  colorScheme.onPrimary)
-            ],
+          Spacer(),
+          SizedBox(
+            child: Row(
+              children: [
+                showTextButton(context, 40, localizedStrings.rRefreshListBtn,
+                    () {
+                  PublicFunctions.getDetailListSrv1();
+                }, colorScheme.onPrimary, colorScheme.primary,
+                    colorScheme.onPrimary),
+                SizedBox(
+                  width: largePadding,
+                ),
+                showTextButton(
+                    context,
+                    40,
+                    localizedStrings.gBtnExport,
+                    exportFlag ? exportToCsv : null,
+                    colorScheme.onPrimary,
+                    colorScheme.primary,
+                    colorScheme.onPrimary)
+              ],
+            ),
+          ),
+          SizedBox(
+            width: largePadding,
           ),
         ],
       ),
@@ -486,7 +493,6 @@ class RetailReportPageState extends State<RetailReportPage> {
 
   Widget showScaleList() {
     return Container(
-      width: appScaleListWidth,
       color: Theme.of(context).colorScheme.surfaceTint,
       child: SizedBox(
         height: MediaQuery.of(context).size.height,
@@ -513,51 +519,56 @@ class RetailReportPageState extends State<RetailReportPage> {
     );
   }
 
-  Widget showDataList(double maxWidth, double maxheight) {
-    return SizedBox(
-      width: maxWidth,
-      height: maxheight - 254,
-      child: Scrollbar(
-        controller: _scrollController,
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
+  Widget showDataList() {
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        double maxWidth = constraints.maxWidth;
+        double maxHeight = constraints.maxHeight;
+        return Scrollbar(
           controller: _scrollController,
-          child: Container(
-            padding: const EdgeInsets.all(10),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.vertical, // 垂直滚动
-              controller: _scrollController1,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: maxWidth < 1000 ? 1000 : maxWidth,
-                    height: maxheight - 110,
-                    child: ListView.builder(
-                      itemCount: transactions.length,
-                      itemBuilder: (context, index) {
-                        return Column(
-                          children: [
-                            buildCartTitle(transactions[index]),
-                            if (transactions[index].isExpanded)
-                              buildCardDetail(transactions[index]),
-                          ],
-                        );
-                      },
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            controller: _scrollController,
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical, // 垂直滚动
+                controller: _scrollController1,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: maxWidth < 1000 ? 1000 : maxWidth,
+                      height: maxHeight - 110,
+                      child: ListView.builder(
+                        itemCount: transactions.length,
+                        itemBuilder: (context, index) {
+                          return Column(
+                            children: [
+                              buildCartTitle(transactions[index]),
+                              if (transactions[index].isExpanded)
+                                buildCardDetail(transactions[index]),
+                            ],
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
   Widget showInstallRow() {
     return Row(
       children: [
+        SizedBox(
+          width: smallPadding,
+        ),
         CustomGeneralButton(
           text: localizedStrings.gTipInstallService,
           maxWidth: 200,
@@ -566,7 +577,7 @@ class RetailReportPageState extends State<RetailReportPage> {
           },
         ),
         SizedBox(
-          width: largePadding,
+          width: smallPadding,
         ),
         CustomGeneralButton(
           text: localizedStrings.gTipStartService,
@@ -576,7 +587,7 @@ class RetailReportPageState extends State<RetailReportPage> {
           },
         ),
         SizedBox(
-          width: largePadding,
+          width: smallPadding,
         ),
         CustomGeneralButton(
           text: localizedStrings.gTipStopService,
@@ -586,7 +597,7 @@ class RetailReportPageState extends State<RetailReportPage> {
           },
         ),
         SizedBox(
-          width: largePadding,
+          width: smallPadding,
         ),
         CustomGeneralButton(
           text: localizedStrings.gTipUninstallService,

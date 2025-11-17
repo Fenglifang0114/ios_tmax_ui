@@ -1,6 +1,7 @@
 //主界面公用的常量
 import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
 import 'package:t_max/data/home_page_common_data.dart' as transparent_image;
 
 bool checkingUsers = true;
@@ -49,89 +50,94 @@ final Uint8List kTransparentImage = transparent_image.kTransparentImage;
 
 //全局变量
 
-String defualtSelectPage = '/settingsConfig'; //当前选中的页面ID
+GlobalKey<NavigatorState> contentNavigatorKey = GlobalKey();
+
+String defualtSelectPage = '/multiScaleManagement'; //当前选中的页面ID
+
+bool showLeftNavigationBar = true; // 控制导航栏显示
+bool formAppSetting = false; // 是否是app设置页面
 
 // 存储用户选择要添加的付费菜单 ID
-Set<int> selectedConfigPaidMenuIds = {};
+Set<int> selectedConfigPaidMenuIds = {0};
 
 enum PageId { home, config, apps, appsSetting, systemSetting }
 
 //免费的Config菜单Id
 Set<int> freeConfigMenuIds = {
-  MenuId.multiScaleManagement.index,
-  MenuId.setSystemTimePage.index,
-  MenuId.btSettingPage.index,
-  MenuId.wifiSettingPage.index,
-  MenuId.updateFirmwarePage.index,
-  MenuId.calibrationPage.index,
-  MenuId.pluEditPage.index,
-  MenuId.downReciptPage.index,
-  MenuId.downloadLabelPage.index,
+  MenuId.multiScaleManagement,
+  MenuId.setSystemTimePage,
+  MenuId.btSettingPage,
+  MenuId.wifiSettingPage,
+  MenuId.updateFirmwarePage,
+  MenuId.calibrationPage,
+  MenuId.pluEditPage,
+  MenuId.downReciptPage,
+  MenuId.downloadLabelPage,
 };
 
 //付费的Config菜单Id
 Set<int> paidConfigMenuIds = {
-  MenuId.labelDesignPage.index,
-  MenuId.receiptDesignPage.index,
-  MenuId.serialOutputDesignPage.index,
-  MenuId.basicDataCollectionPage.index,
-  // MenuId.parameterSettingPage.index,
+  MenuId.labelDesignPage,
+  MenuId.receiptDesignPage,
+  MenuId.serialOutputDesignPage,
+  MenuId.basicDataCollectionPage,
+  // MenuId.parameterSettingPage,
 };
 
 // 存储用户选择要添加的付费菜单 ID
 Set<int> selectedAppsPaidMenuIds = {
-  MenuId.weightModePage.index,
-  MenuId.retailReportPage.index,
+  MenuId.weightModePage,
+  MenuId.retailReportPage,
 };
 
 //免费的appId
 Set<int> freeAppMenuIds = {
-  MenuId.weightModePage.index,
-  MenuId.retailReportPage.index,
+  MenuId.weightModePage,
+  MenuId.retailReportPage,
 };
 
 //零售的appId
 Set<int> retailAppMenuIds = {
-  MenuId.appLabelDesignPage.index,
-  MenuId.appRcpDesignPage.index,
+  MenuId.appLabelDesignPage,
+  MenuId.appRcpDesignPage,
 };
 
 //零售的appId 付费的
 Set<int> industrialAppMenuIds = {
-  MenuId.weightDataCollectionPage.index,
-  MenuId.checkWeighersPage.index,
-  MenuId.takeInPage.index,
-  MenuId.takeOutPage.index,
-  MenuId.formulationScalePage.index,
-  MenuId.flowRatePage.index,
+  MenuId.weightDataCollectionPage,
+  MenuId.checkWeighersPage,
+  MenuId.takeInPage,
+  MenuId.takeOutPage,
+  MenuId.formulationScalePage,
+  MenuId.flowRatePage,
 };
 
 //如何定义一个枚举类型 比如  home  = 1  config = 2  apps = 3  appsSetting = 4  systemSetting = 5
 // ... 已有代码 ...
 
-enum MenuId {
-  multiScaleManagement,
-  setSystemTimePage,
-  btSettingPage,
-  wifiSettingPage,
-  updateFirmwarePage,
-  labelDesignPage,
-  receiptDesignPage,
-  serialOutputDesignPage,
-  basicDataCollectionPage,
-  // parameterSettingPage,
-  weightModePage,
-  pluEditPage,
-  downloadLabelPage,
-  downReciptPage,
-  retailReportPage,
-  weightDataCollectionPage,
-  checkWeighersPage,
-  takeInPage,
-  takeOutPage,
-  formulationScalePage,
-  flowRatePage,
-  calibrationPage,
-  appLabelDesignPage,
-  appRcpDesignPage,
+class MenuId {
+  static const int multiScaleManagement = 0;
+  static const int setSystemTimePage = 1;
+  static const int btSettingPage = 2;
+  static const int wifiSettingPage = 3;
+  static const int updateFirmwarePage = 4;
+  static const int labelDesignPage = 5;
+  static const int receiptDesignPage = 6;
+  static const int serialOutputDesignPage = 7;
+  static const int basicDataCollectionPage = 8;
+  static const int weightModePage = 9;
+  static const int pluEditPage = 10;
+  static const int downloadLabelPage = 11;
+  static const int downReciptPage = 12;
+  static const int retailReportPage = 13;
+  static const int weightDataCollectionPage = 14;
+  static const int checkWeighersPage = 15;
+  static const int takeInPage = 16;
+  static const int takeOutPage = 17;
+  static const int formulationScalePage = 18;
+  static const int flowRatePage = 19;
+  static const int calibrationPage = 20;
+  static const int appLabelDesignPage = 21;
+  static const int appRcpDesignPage = 22;
+  static const int appConfigPage = 23;
 }

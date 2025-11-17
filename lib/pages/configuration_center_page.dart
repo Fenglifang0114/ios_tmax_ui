@@ -6,14 +6,11 @@ import 'package:flutter/scheduler.dart';
 import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/icons.dart';
-import 'package:t_max/data/language.dart';
 import 'package:t_max/data/license_data.dart';
 import 'package:t_max/data/routes_data.dart';
 import 'package:t_max/dialog/license_info.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
-import 'package:t_max/pages/apps_setting_page.dart';
-import 'package:t_max/widget/common_widget.dart';
 import 'package:t_max/widget/show_license_res.dart';
 
 class ConfigurationPage extends StatefulWidget {
@@ -127,7 +124,9 @@ class _ConfigurationPageState extends State<ConfigurationPage>
       bool isAppCertified = getIsAppCertified(initAppRoute.id);
 
       if (isPermission && (isFree || isAppCertified)) {
-        goAppPage(initAppRoute, context, widget.onNavigate);
+        formAppSetting = true;
+        String route = "/settingsApp${initAppRoute.routeName!}";
+        widget.onNavigate(route);
       }
     }
   }
@@ -138,7 +137,7 @@ class _ConfigurationPageState extends State<ConfigurationPage>
     _tabController = TabController(
         length: 2,
         vsync: this,
-        initialIndex: 0); //管理员初始化为initialIndex: 0 操作员initialIndex: 1
+        initialIndex: 1); //管理员初始化为initialIndex: 0 操作员initialIndex: 1
 
     eventbus2 = eventBus.on<EventRespUpdateLic>().listen((event) {
       if (mounted) {
@@ -181,33 +180,6 @@ class _ConfigurationPageState extends State<ConfigurationPage>
     }
   }
 
-  // 共用激活功能
-  Future<void> commonActivateFunction() async {
-    await validLicense();
-    if (licList.isNotEmpty) {
-      mapActiveMenusRes = ValueNotifier({});
-      PublicFunctions.checkLicenseKey(licList[0]);
-      activationFileCtl.text = "";
-      showLicenseResDialog();
-    }
-  }
-
-  //验证新日期是否可用，true 可用，直接更新，false 询问是否更新
-  bool isLongerValidityPeriod(String oldLicenseDate, String newLicenseDate) {
-    bool res = false;
-    DateTime dateTimeOld = DateTime.parse(oldLicenseDate);
-    DateTime dateTimeNew = DateTime.parse(newLicenseDate);
-
-    if (dateTimeOld.isBefore(dateTimeNew)) {
-      res = true;
-    }
-    return res;
-  }
-
-  void updateLicenseInfo() {
-    PublicFunctions.updateLicense(licList[0]);
-  }
-
   bool getIsAddedConfig(int id) {
     for (var element in getCurrentConfigMenus()) {
       if (element.id == id) {
@@ -215,98 +187,6 @@ class _ConfigurationPageState extends State<ConfigurationPage>
       }
     }
     return false;
-  }
-
-  Widget buildConfigInfo(BuildContext context, int id) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-    final smallPadding = 8.0;
-    final iconAppSize = 36.0;
-
-    if (selectedConfigPaidMenuIds.isEmpty) return SizedBox();
-
-    RouteData tempMenu =
-        allConfigMenus.firstWhere((element) => element.id == id);
-
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      onEnter: (event) {
-        setState(() {
-          isHoveredListConfig[id] = true;
-        });
-      },
-      onExit: (event) {
-        setState(() {
-          isHoveredListConfig[id] = false;
-        });
-      },
-      child: GestureDetector(
-        onTap: () {
-          widget.onNavigate(tempMenu.routeName!);
-        },
-        child: AnimatedContainer(
-            padding: EdgeInsets.all(20),
-            duration: const Duration(milliseconds: 200),
-            decoration: BoxDecoration(
-              color: isHoveredListConfig[id]!
-                  ? colorScheme.primary
-                  : colorScheme.surface,
-              border:
-                  Border.all(width: 1, color: colorScheme.surfaceContainerLow),
-            ),
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 36,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      getSvgIcon(
-                          tempMenu.iconPath,
-                          iconAppSize,
-                          iconAppSize,
-                          isHoveredListConfig[id]!
-                              ? Theme.of(context).colorScheme.onPrimary
-                              : Theme.of(context).colorScheme.primary),
-                      SizedBox(
-                        width: smallPadding,
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  height: 48,
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    tempMenu.title,
-                    style: textTheme.labelMedium!.apply(
-                        color: isHoveredListConfig[id]!
-                            ? Theme.of(context).colorScheme.onPrimary
-                            : colorScheme.onSurface),
-                    textAlign: TextAlign.left,
-                    overflow: TextOverflow.ellipsis, // 超出部分用省略号表示
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    alignment: Alignment.topLeft,
-                    child: SelectableText(
-                      tempMenu.subtitle,
-                      textAlign: TextAlign.left,
-                      style: textTheme.bodySmall!.apply(
-                          color: isHoveredListConfig[id]!
-                              ? Theme.of(context).colorScheme.onPrimary
-                              : colorScheme.onSurfaceVariant),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: smallPadding,
-                ),
-              ],
-            )),
-      ),
-    );
   }
 
   Widget buildAppInfo(
@@ -334,7 +214,11 @@ class _ConfigurationPageState extends State<ConfigurationPage>
       child: GestureDetector(
           onTap: () {
             // 点击卡片跳转页面
-            goAppPage(tempMenu, context, widget.onNavigate);
+            formAppSetting = true;
+            String route = "/settingsApp${tempMenu.routeName!}";
+            widget.onNavigate(route);
+
+            // goAppPage(tempMenu, context, widget.onNavigate);
           },
           child: AnimatedContainer(
               padding: EdgeInsets.all(20),
@@ -414,52 +298,6 @@ class _ConfigurationPageState extends State<ConfigurationPage>
             right: regularPadding,
             bottom: regularPadding),
         child: Column(children: [
-          Container(
-            height: 64,
-            alignment: Alignment.centerLeft,
-            child: Row(
-              children: [
-                // 使用 Expanded 包裹 TabBar
-                Expanded(
-                  child: TabBar(
-                    controller: _tabController,
-                    isScrollable: true,
-                    tabAlignment: TabAlignment.start,
-                    // 调整指示器内边距，使标题左对齐
-                    indicatorPadding: EdgeInsets.zero,
-                    labelStyle: Theme.of(context)
-                        .textTheme
-                        .titleMedium!
-                        .apply(color: colorScheme.primary),
-                    unselectedLabelStyle: Theme.of(context)
-                        .textTheme
-                        .bodyLarge!
-                        .apply(color: colorScheme.onSurface),
-                    dividerHeight: 0,
-
-                    tabs: [
-                      Tab(text: localizedStrings.menuConfiguration),
-                      Tab(text: localizedStrings.menuApplications),
-                    ],
-                  ),
-                ),
-                if (mySysUser.roleId == adminRoleId ||
-                    mySysUser.roleId == superAdminRoleId)
-                  showTextButton(
-                      context, btnHeight, localizedStrings.gBtnConfigSetting,
-                      () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const AppsSettingPage()),
-                    ).then((value) {
-                      setState(() {});
-                    });
-                  }, colorScheme.onPrimary, colorScheme.primary,
-                      colorScheme.onPrimary)
-              ],
-            ),
-          ),
           Divider(
             height: 1,
             color: colorScheme.surfaceDim,
@@ -468,90 +306,46 @@ class _ConfigurationPageState extends State<ConfigurationPage>
             height: largePadding,
           ),
           Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                // 第一个 Tab 页内容
-                Container(
-                  padding: EdgeInsets.only(
-                      left: regularPadding,
-                      right: regularPadding,
-                      bottom: regularPadding),
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      // 计算可用高度
-                      final availableWidth = constraints.maxWidth;
-                      // 计算每个元素的宽度，减去元素间的间距后平分
-                      final itemWidth = calculateColumnCount(
-                          availableWidth, minColumnWidth, spacing);
-                      return SingleChildScrollView(
-                        child: Wrap(
-                          spacing: spacing, // 元素间的水平间距
-                          runSpacing: runSpacing, // 元素间的垂直间距
-                          children: allConfigMenus.where((menu) {
-                            bool isAdded =
-                                selectedConfigPaidMenuIds.contains(menu.id);
-                            bool isConfigCertified = myTConLicInfo.isValid;
-                            bool isFree = isFreeConfig(menu.id);
-                            bool isPermission = getUserPermission(menu.id);
-                            return isAdded &&
-                                isPermission &&
-                                (isConfigCertified || isFree);
-                          }).map((menu) {
-                            return SizedBox(
-                              width: itemWidth,
-                              height: minColumnHeight, // 固定元素高度
-                              child: buildConfigInfo(context, menu.id),
-                            );
-                          }).toList(),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                // 第二个 Tab 页内容
-                Center(
-                    child: Container(
-                  alignment: Alignment.topLeft,
-                  padding: EdgeInsets.only(
-                    left: regularPadding,
-                    right: regularPadding,
-                    bottom: regularPadding,
-                  ),
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      // 计算每个元素的宽度，减去元素间的间距后平分
-                      final availableWidth = constraints.maxWidth;
-                      final double itemWidth = calculateColumnCount(
-                          availableWidth, minColumnWidth, spacing);
-                      return SingleChildScrollView(
-                        child: Wrap(
-                          spacing: spacing, // 元素间的水平间距
-                          runSpacing: runSpacing, // 元素间的垂直间距
-                          children: allAppsMenus.where((menu) {
-                            bool isAdded =
-                                selectedAppsPaidMenuIds.contains(menu.id);
-                            bool isConfigCertified = getIsAppCertified(menu.id);
-                            bool isFree = isFreeApp(menu.id);
-                            bool isPermission = getUserPermission(menu.id);
+            child: Center(
+                child: Container(
+              alignment: Alignment.topLeft,
+              padding: EdgeInsets.only(
+                left: regularPadding,
+                right: regularPadding,
+                bottom: regularPadding,
+              ),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  // 计算每个元素的宽度，减去元素间的间距后平分
+                  final availableWidth = constraints.maxWidth;
+                  final double itemWidth = calculateColumnCount(
+                      availableWidth, minColumnWidth, spacing);
+                  return SingleChildScrollView(
+                    child: Wrap(
+                      spacing: spacing, // 元素间的水平间距
+                      runSpacing: runSpacing, // 元素间的垂直间距
+                      children: allAppsMenus.where((menu) {
+                        bool isAdded =
+                            selectedAppsPaidMenuIds.contains(menu.id);
+                        bool isConfigCertified = getIsAppCertified(menu.id);
+                        bool isFree = isFreeApp(menu.id);
+                        bool isPermission = getUserPermission(menu.id);
 
-                            return isAdded &&
-                                isPermission &&
-                                (isConfigCertified || isFree);
-                          }).map((menu) {
-                            return SizedBox(
-                              width: itemWidth,
-                              height: minColumnHeight, // 固定元素高度
-                              child: buildAppInfo(context, menu.id),
-                            );
-                          }).toList(),
-                        ),
-                      );
-                    },
-                  ),
-                )),
-              ],
-            ),
+                        return isAdded &&
+                            isPermission &&
+                            (isConfigCertified || isFree);
+                      }).map((menu) {
+                        return SizedBox(
+                          width: itemWidth,
+                          height: minColumnHeight, // 固定元素高度
+                          child: buildAppInfo(context, menu.id),
+                        );
+                      }).toList(),
+                    ),
+                  );
+                },
+              ),
+            )),
           ),
         ]),
       ),

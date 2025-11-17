@@ -6258,10 +6258,10 @@ class S {
     );
   }
 
-  /// `Application Configuration`
+  /// `Application`
   String get gTitleAppConfig {
     return Intl.message(
-      'Application Configuration',
+      'Application',
       name: 'gTitleAppConfig',
       desc: 'This is the title for application configuration.',
       args: [],

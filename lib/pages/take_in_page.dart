@@ -32,7 +32,10 @@ import '../data/language.dart';
 import '../widget/page_head.dart';
 
 class TakeInPage extends StatefulWidget {
-  const TakeInPage({super.key});
+  final Function(String) onNavigate;
+  final String lastRouteName;
+  const TakeInPage(
+      {super.key, required this.onNavigate, required this.lastRouteName});
   @override
   State<TakeInPage> createState() => TakeInPageState();
 }
@@ -1030,7 +1033,9 @@ class TakeInPageState extends State<TakeInPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                subTitle(context, maxWidth, pageTitle),
+                subTitle(context, pageTitle, () {
+                  widget.onNavigate(widget.lastRouteName);
+                }),
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                   Text(
                     mySettingParam.wgtMode == 0

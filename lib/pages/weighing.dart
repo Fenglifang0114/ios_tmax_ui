@@ -15,7 +15,10 @@ import '../data/language.dart';
 import '../widget/page_head.dart';
 
 class WeightModePage extends StatefulWidget {
-  const WeightModePage({super.key});
+  final Function(String) onNavigate;
+  final String lastRouteName;
+  const WeightModePage(
+      {super.key, required this.onNavigate, required this.lastRouteName});
   @override
   State<WeightModePage> createState() => WeightModePageState();
 }
@@ -114,7 +117,12 @@ class WeightModePageState extends State<WeightModePage> {
                     context,
                     width - headWidthPadding,
                     localizedStrings.menuWeighing,
-                    localizedStrings.gTipWeighingPageHelp),
+                    localizedStrings.gTipWeighingPageHelp, () {
+                  formAppSetting = false;
+                  Future.delayed(Duration.zero, () {
+                    widget.onNavigate(widget.lastRouteName);
+                  });
+                }),
                 Container(
                   height: regularPadding,
                   color: Theme.of(context).colorScheme.surfaceDim,
@@ -164,8 +172,9 @@ class WeightModePageState extends State<WeightModePage> {
                           ),
                         ),
                       ),
-                      firstLayout(
-                          context, width - scaleListWidth - regularPadding * 2)
+                      Expanded(
+                        child: firstLayout(context),
+                      ),
                     ],
                   ),
                 )),
@@ -235,9 +244,8 @@ class WeightModePageState extends State<WeightModePage> {
     return scaleName;
   }
 
-  Widget firstLayout(context, width) {
+  Widget firstLayout(context) {
     return Container(
-      width: width,
       padding:
           const EdgeInsets.only(left: regularPadding, bottom: regularPadding),
       color: Theme.of(context).colorScheme.surfaceDim,

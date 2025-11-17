@@ -3880,9 +3880,4 @@
     "@savedSuccessfully": {
         "description": "Success message when data is saved successfully"
     }
-}
-
-
-
-
-    
+}   

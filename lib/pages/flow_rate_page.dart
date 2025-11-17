@@ -66,7 +66,10 @@ class RateInfo {
 }
 
 class FlowRatePage extends StatefulWidget {
-  const FlowRatePage({super.key});
+  final Function(String) onNavigate;
+  final String lastRouteName;
+  const FlowRatePage(
+      {super.key, required this.onNavigate, required this.lastRouteName});
   @override
   State<FlowRatePage> createState() => FlowRatePageState();
 }
@@ -998,12 +1001,13 @@ class FlowRatePageState extends State<FlowRatePage>
   }
 
   Widget _buildPageHeadInfo(BuildContext context, double width) {
-    return pageHeadInfo(
-      context,
-      width - headWidthPadding,
-      localizedStrings.fFlowRate,
-      localizedStrings.gTipFlowRatePageHelp,
-    );
+    return pageHeadInfo(context, width - headWidthPadding,
+        localizedStrings.fFlowRate, localizedStrings.gTipFlowRatePageHelp, () {
+      formAppSetting = false;
+      Future.delayed(Duration.zero, () {
+        widget.onNavigate(widget.lastRouteName);
+      });
+    });
   }
 
   Widget _buildSpacer(BuildContext context) {

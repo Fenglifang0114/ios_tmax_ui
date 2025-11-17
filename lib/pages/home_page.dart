@@ -41,10 +41,8 @@ class MyHomePage extends StatefulWidget {
 
 class MyHomePageState extends State<MyHomePage>
     with TrayListener, WindowListener {
-  final GlobalKey<NavigatorState> _contentNavigatorKey = GlobalKey();
   String _selectedNavRoute = '/';
   String lastRouteName = defualtSelectPage; //除了设置外的最后一个路由
-  bool _showNavigation = false; // 控制导航栏显示
 
   bool isLeftBarCollapsed = false;
   bool isResize = false;
@@ -67,7 +65,12 @@ class MyHomePageState extends State<MyHomePage>
     localizedStrings = S.of(context);
     Future.delayed(const Duration(milliseconds: 10), () {
       setState(() {
-        _navigateContent(defualtSelectPage);
+        if (mySysUser.roleId == superAdminRoleId ||
+            mySysUser.roleId == adminRoleId) {
+          _navigateContent('/multiScaleManagement');
+        } else {
+          _navigateContent(defualtSelectPage);
+        }
       });
     });
   }
@@ -251,15 +254,19 @@ class MyHomePageState extends State<MyHomePage>
   void _navigateContent(String routeName) {
     setState(() {
       _selectedNavRoute = routeName;
-      _showNavigation = !routeName.startsWith('/settings'); // 控制导航栏显示
+      showLeftNavigationBar = !routeName.startsWith('/settings'); // 控制导航栏显示
     });
 
     if (routeName.contains('/settings')) {
-      // _contentNavigatorKey.currentState?.pushNamed(routeName);
-      _contentNavigatorKey.currentState?.pushReplacementNamed(routeName);
+      if (routeName.contains('/settingsApp')) {
+        routeName = routeName.replaceAll('/settingsApp', '');
+      }
+
+      contentNavigatorKey.currentState?.pushReplacementNamed(routeName);
     } else {
       lastRouteName = routeName;
-      _contentNavigatorKey.currentState?.pushReplacementNamed(routeName);
+      contentNavigatorKey.currentState?.pushReplacementNamed(routeName);
+      // _navigateContent('/settingsConfig');
     }
   }
 
@@ -291,6 +298,23 @@ class MyHomePageState extends State<MyHomePage>
         (item) => item is RouteData,
         orElse: () => RouteData(
           id: 0,
+          title: '',
+          subtitle: '',
+          routeName: '',
+          iconPath: '',
+        ),
+      ) as RouteData?;
+
+      return effectiveRoute != null
+          ? _buildMenuItem(effectiveRoute, showIcon: true)
+          : Container();
+    }
+
+    if (group.title == localizedStrings.menuApplications) {
+      final effectiveRoute = group.children.firstWhere(
+        (item) => item is RouteData,
+        orElse: () => RouteData(
+          id: MenuId.appConfigPage,
           title: '',
           subtitle: '',
           routeName: '',
@@ -343,7 +367,9 @@ class MyHomePageState extends State<MyHomePage>
       demo: item,
       isExpanded: true,
       isSelected: item.routeName == _selectedNavRoute, // 选中状态
-      onTap: () => _navigateContent(item.routeName!), // 点击回调
+      onTap: () {
+        _navigateContent(item.routeName!);
+      }, // 点击回调
     );
   }
 
@@ -359,7 +385,7 @@ class MyHomePageState extends State<MyHomePage>
       body: Row(
         children: [
           // 动态显示的左侧导航栏
-          if (_showNavigation)
+          if (showLeftNavigationBar)
             Container(
               width: leftBarWidth,
               color: Theme.of(context).colorScheme.primary, // 可替换为实际内容
@@ -397,7 +423,6 @@ class MyHomePageState extends State<MyHomePage>
                   ),
                 ),
                 Expanded(
-                  // child: showNavigationBar(getCurrentConfigMenus()),
                   child: showNavigationBar(),
                 ),
                 SizedBox(
@@ -432,7 +457,7 @@ class MyHomePageState extends State<MyHomePage>
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _showNavigation
+                        showLeftNavigationBar
                             ? Container(
                                 padding: EdgeInsets.only(left: largePadding),
                                 child: Text(
@@ -476,39 +501,6 @@ class MyHomePageState extends State<MyHomePage>
                                     onRefresh: () {},
                                     color: colorScheme.surfaceContainerHighest),
                               ),
-                            Tooltip(
-                              message: localizedStrings.menuConfiguration,
-                              child: IconButton(
-                                icon: getSvgIcon(
-                                    appsSvgIcon(),
-                                    topIconSize,
-                                    topIconSize,
-                                    colorScheme.surfaceContainerHighest),
-                                onPressed: () {
-                                  _navigateContent('/settingsConfig');
-                                },
-                              ),
-                            ),
-                            Tooltip(
-                              message: localizedStrings.menuSystemInformation,
-                              child: IconButton(
-                                icon: getSvgIcon(
-                                    infoSvgIcon(),
-                                    topIconSize,
-                                    topIconSize,
-                                    colorScheme.surfaceContainerHighest),
-                                onPressed: () {
-                                  // showLicenseDialog(context);
-                                  showDialog(
-                                    context: context,
-                                    barrierDismissible: false, // 允许点击空白处关闭对话框
-                                    builder: (context) {
-                                      return const CompanyInfoDialog();
-                                    },
-                                  );
-                                },
-                              ),
-                            ),
                             SizedBox(
                               width: regularPadding,
                             ),
@@ -535,7 +527,30 @@ class MyHomePageState extends State<MyHomePage>
                             showSysSetting(colorScheme, textTheme),
                             SizedBox(
                               width: regularPadding,
-                            )
+                            ),
+                            Tooltip(
+                              message: localizedStrings.menuSystemInformation,
+                              child: IconButton(
+                                icon: getSvgIcon(
+                                    infoSvgIcon(),
+                                    topIconSize,
+                                    topIconSize,
+                                    colorScheme.surfaceContainerHighest),
+                                onPressed: () {
+                                  // showLicenseDialog(context);
+                                  showDialog(
+                                    context: context,
+                                    barrierDismissible: false, // 允许点击空白处关闭对话框
+                                    builder: (context) {
+                                      return const CompanyInfoDialog();
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
+                            SizedBox(
+                              width: regularPadding,
+                            ),
                           ],
                         ),
                       ]),
@@ -547,35 +562,23 @@ class MyHomePageState extends State<MyHomePage>
                 ),
                 // 内容区域导航器
                 Expanded(
-                    child: Row(children: [
-                  Container(
-                    width: regularPadding,
-                    color: colorScheme.surfaceDim,
-                  ),
-                  Expanded(
-                    child: Navigator(
-                      key: _contentNavigatorKey,
-                      initialRoute: _selectedNavRoute,
-                      onGenerateRoute: (settings) {
-                        final pageContent = buildPageContent(
-                            _navigateContent, settings.name, lastRouteName);
-
-                        return MaterialPageRoute(
-                          builder: (context) => pageContent,
-                          settings: settings,
-                        );
-                      },
-                    ),
-                  ),
-                  Container(
-                    width: regularPadding,
-                    color: colorScheme.surfaceDim,
-                  ),
-                ])),
-                Container(
-                  height: regularPadding,
+                    child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: regularPadding),
                   color: colorScheme.surfaceDim,
-                ),
+                  child: Navigator(
+                    key: contentNavigatorKey,
+                    initialRoute: _selectedNavRoute,
+                    onGenerateRoute: (settings) {
+                      final pageContent = buildPageContent(
+                          _navigateContent, settings.name, lastRouteName);
+
+                      return MaterialPageRoute(
+                        builder: (context) => pageContent,
+                        settings: settings,
+                      );
+                    },
+                  ),
+                ))
               ],
             ),
           ),
@@ -634,6 +637,27 @@ class MyHomePageState extends State<MyHomePage>
                 Duration.zero,
                 () {
                   _navigateContent('/settingsLog');
+                },
+              );
+            },
+          ),
+        if (mySysUser.roleId == 1 || mySysUser.roleId == 2)
+          PopupMenuDivider(height: 1.0),
+        if (mySysUser.roleId == 1 || mySysUser.roleId == 2)
+          PopupMenuItem(
+            value: '6',
+            child: Text(
+              localizedStrings.gBtnConfigSetting,
+              style: textTheme.bodySmall!.apply(
+                // 根据选中状态改变颜色
+                color: colorScheme.surface,
+              ),
+            ),
+            onTap: () {
+              Future.delayed(
+                Duration.zero,
+                () {
+                  _navigateContent('/settingsFunction');
                 },
               );
             },
@@ -722,6 +746,9 @@ class MyHomePageState extends State<MyHomePage>
           break;
         }
       }
+    }
+    if (routeName == '/setConfig') {
+      pageId = MenuId.appConfigPage;
     }
     return pageId;
   }

@@ -1001,8 +1001,9 @@ class AddSysUserPageState extends State<AddSysUserPage> {
                   widget.type == 1
                       ? localizedStrings.userAdd
                       : localizedStrings.userUpdate,
-                  '',
-                  showHelp: false),
+                  '', () {
+                Navigator.pop(context);
+              }, showHelp: false),
               Divider(
                 height: 1,
                 color: colorScheme.surfaceDim,

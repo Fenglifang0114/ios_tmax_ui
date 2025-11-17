@@ -28,7 +28,13 @@ import 'package:t_max/widget/page_head.dart';
 
 class LabelDesignPage extends StatefulWidget {
   final String type;
-  const LabelDesignPage({super.key, required this.type});
+  final Function(String) onNavigate;
+  final String lastRouteName;
+  const LabelDesignPage(
+      {super.key,
+      required this.type,
+      required this.onNavigate,
+      required this.lastRouteName});
   @override
   LabelDesignPageState createState() => LabelDesignPageState();
 }
@@ -3443,7 +3449,12 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                             context,
                             width - headWidthPadding,
                             localizedStrings.menuLabelDesign,
-                            localizedStrings.gTipLabelDesignPageHelp),
+                            localizedStrings.gTipLabelDesignPageHelp, () {
+                          formAppSetting = false;
+                          Future.delayed(Duration.zero, () {
+                            widget.onNavigate(widget.lastRouteName);
+                          });
+                        }),
                       Expanded(
                           child: Container(
                         color: Theme.of(context).colorScheme.surfaceBright,

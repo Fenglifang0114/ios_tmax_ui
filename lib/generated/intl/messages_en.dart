@@ -1140,9 +1140,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTitleAddedConfigFunction": MessageLookupByLibrary.simpleMessage(
       "Added Configuration Functions",
     ),
-    "gTitleAppConfig": MessageLookupByLibrary.simpleMessage(
-      "Application Configuration",
-    ),
+    "gTitleAppConfig": MessageLookupByLibrary.simpleMessage("Application"),
     "gTitleConfigFunctionCharge": MessageLookupByLibrary.simpleMessage(
       "Configuration Function Charging Method",
     ),

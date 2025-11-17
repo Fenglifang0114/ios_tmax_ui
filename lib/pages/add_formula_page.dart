@@ -1964,8 +1964,11 @@ class AddFormulaPageState extends State<AddFormulaPage> {
           child: Column(
             children: [
               pageHeadInfo(context, width - headWidthPadding,
-                  localizedStrings.fAddFmaBtn, '',
-                  showHelp: false),
+                  localizedStrings.fAddFmaBtn, '', () {
+                if (mounted) {
+                  Navigator.pop(context);
+                }
+              }, showHelp: false),
               Divider(
                 height: 1,
                 color: colorScheme.surfaceDim,

@@ -81,7 +81,9 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
                     context,
                     width - headWidthPadding,
                     localizedStrings.menuLabelFormatDownload,
-                    localizedStrings.gTipLabelFmtDownPageHelp),
+                    localizedStrings.gTipLabelFmtDownPageHelp, () {
+                  Navigator.pop(context);
+                }),
                 Expanded(
                     child: Container(
                   color: Theme.of(context).colorScheme.surfaceTint,

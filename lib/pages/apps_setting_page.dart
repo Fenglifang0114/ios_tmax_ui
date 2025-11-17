@@ -18,9 +18,10 @@ import 'package:t_max/widget/dialog_head_style.dart';
 import 'package:t_max/widget/show_license_res.dart';
 
 class AppsSettingPage extends StatefulWidget {
-  const AppsSettingPage({
-    super.key,
-  });
+  final Function(String) onNavigate;
+  final String lastRouteName;
+  const AppsSettingPage(
+      {super.key, required this.onNavigate, required this.lastRouteName});
 
   @override
   State<AppsSettingPage> createState() => _AppsSettingPageState();
@@ -56,7 +57,6 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
   bool isFilePickerBusy = false;
 
   //做一个map 存放功能和激活的日期，描述
-
   ValueNotifier<Map<String, ShowAppActiveInfo>> mapActiveMenusRes =
       ValueNotifier({});
 
@@ -426,6 +426,10 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
                                     .onSurfaceVariant,
                             onPressed: (isFreeConfig(id))
                                 ? () {
+                                    if (id == 0) {
+                                      //多秤管理要默认开启，且不允许关闭
+                                      return;
+                                    }
                                     if (!isAdded) {
                                       addSelectConfig(id);
                                     } else {
@@ -694,7 +698,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
       selectedConfigPaidMenuIds.add(id);
     });
     writePageIdsToJson(
-        selectedConfigPaidMenuIds, selectedAppsPaidMenuIds, '/settingsConfig');
+        selectedConfigPaidMenuIds, selectedAppsPaidMenuIds, '/setConfig');
   }
 
   void removeSelectConfig(int id) {
@@ -702,7 +706,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
       selectedConfigPaidMenuIds.remove(id);
     });
     writePageIdsToJson(
-        selectedConfigPaidMenuIds, selectedAppsPaidMenuIds, '/settingsConfig');
+        selectedConfigPaidMenuIds, selectedAppsPaidMenuIds, '/setConfig');
   }
 
   void addSelectApp(int id) {
@@ -710,7 +714,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
       selectedAppsPaidMenuIds.add(id);
     });
     writePageIdsToJson(
-        selectedConfigPaidMenuIds, selectedAppsPaidMenuIds, '/settingsConfig');
+        selectedConfigPaidMenuIds, selectedAppsPaidMenuIds, '/setConfig');
   }
 
   void removeSelectApp(int id) {
@@ -718,7 +722,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
       selectedAppsPaidMenuIds.remove(id);
     });
     writePageIdsToJson(
-        selectedConfigPaidMenuIds, selectedAppsPaidMenuIds, '/settingsConfig');
+        selectedConfigPaidMenuIds, selectedAppsPaidMenuIds, '/setConfig');
   }
 
   // 显示激活弹框，在弹框内选择文件
@@ -897,8 +901,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
     );
   }
 
-  Widget myPageHeadInfo(
-      dynamic context, double maxWidth, String pageTitle, String helpInfo) {
+  Widget myPageHeadInfo(dynamic context, String pageTitle, String helpInfo) {
     return Container(
         height: pageTopTitleHeight,
         color: Theme.of(context).colorScheme.surface,
@@ -907,7 +910,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                subTitle(context, maxWidth, pageTitle),
+                subTitle(context, pageTitle),
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                   const SizedBox(
                     width: largePadding,
@@ -941,11 +944,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
                     36,
                   ),
                   const SizedBox(
-                    width: largePadding,
-                  ),
-                  // PageInfoButton(helpInfo: helpInfo, onRefresh: () {}),
-                  const SizedBox(
-                    width: largePadding,
+                    width: regularPadding,
                   ),
                 ])
               ],
@@ -962,34 +961,62 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
 
   Widget subTitle(
     dynamic context,
-    double maxWidth,
     String pageTitle,
   ) {
     return Row(
       children: [
         SizedBox(
-          width: largePadding,
+          width: smallPadding,
         ),
         SizedBox(
           child: IconButton(
               onPressed: () {
-                Navigator.pop(context);
+                Future.delayed(Duration.zero, () {
+                  setState(() {
+                    widget.onNavigate(widget.lastRouteName);
+                  });
+                });
               },
               icon: getSvgIcon(returnSvgIcon(), 28, 28,
                   Theme.of(context).colorScheme.primary)),
         ),
         SizedBox(
-          width: regularPadding,
+          width: smallPadding,
         ),
+
+        TextButton(
+            onPressed: () {
+              setState(() {
+                pressedConfig = true; // 抬起时更新状态
+              });
+            },
+            child: Text(localizedStrings.menuConfiguration,
+                style: Theme.of(context).textTheme.labelLarge!.apply(
+                    color: pressedConfig
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context).colorScheme.onSurface))),
+
         SizedBox(
-          width: maxWidth,
-          child: Text(
-            pageTitle,
-            style: Theme.of(context).textTheme.labelMedium!.apply(
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-            overflow: TextOverflow.ellipsis,
+          height: 20,
+          child: VerticalDivider(
+            thickness: 2,
+            color: Theme.of(context).colorScheme.outline, // 颜色
           ),
+        ), // 按钮间距
+        TextButton(
+            onPressed: () {
+              setState(() {
+                pressedConfig = false; // 抬起时更新状态
+              });
+            },
+            child: Text(localizedStrings.gTitleAppConfig,
+                style: Theme.of(context).textTheme.labelLarge!.apply(
+                    color: !pressedConfig
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context).colorScheme.onSurface))),
+
+        SizedBox(
+          width: regularPadding,
         ),
       ],
     );
@@ -999,101 +1026,17 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     allAppsMenus = getAllAppsMenus();
-    double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
       body: Column(children: [
         // 第一部分，固定高度 64
-        myPageHeadInfo(
-            context, width - 700, localizedStrings.gBtnConfigSetting, ''),
-        Container(
-          height: regularPadding,
-          color: Theme.of(context).colorScheme.surfaceContainerLow,
-        ),
+        myPageHeadInfo(context, localizedStrings.gBtnConfigSetting, ''),
+
         // 第二部分和第三部分按 13:10 比例分配剩余空间
         Expanded(
           child: Container(
               color: colorScheme.surface,
               child: Row(children: [
-                Container(
-                  width: 80,
-                  padding: EdgeInsets.only(top: regularPadding),
-                  color: colorScheme.surface,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      // 第一个图标按钮
-                      Tooltip(
-                        message: localizedStrings.menuConfiguration,
-                        child: InkWell(
-                          onTapUp: (_) {
-                            setState(() {
-                              pressedConfig = true; // 抬起时更新状态
-                            });
-                          },
-                          onTapCancel: () {
-                            setState(() {
-                              pressedConfig = false; // 取消点击时更新状态
-                            });
-                          },
-                          child: Container(
-                            width: 44,
-                            height: 44,
-                            color: pressedConfig
-                                ? colorScheme.primary
-                                : colorScheme.surfaceDim,
-                            child: Center(
-                              child: getSvgIcon(
-                                  configSettingSvgIcon(),
-                                  22,
-                                  22,
-                                  pressedConfig
-                                      ? colorScheme.onPrimary
-                                      : colorScheme.onSurface),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 20), // 按钮间距
-                      // 第二个图标按钮
-                      Tooltip(
-                        message: localizedStrings.gTitleAppConfig,
-                        child: InkWell(
-                          onTapUp: (_) {
-                            setState(() {
-                              pressedConfig = false; // 抬起时更新状态
-                            });
-                          },
-                          onTapCancel: () {
-                            setState(() {
-                              pressedConfig = true; // 取消点击时更新状态
-                            });
-                          },
-                          child: Container(
-                            width: 44,
-                            height: 44,
-                            color: !pressedConfig
-                                ? colorScheme.primary
-                                : colorScheme.surfaceDim,
-                            child: Center(
-                              child: getSvgIcon(
-                                  appSettingSvgIcon(),
-                                  22,
-                                  22,
-                                  !pressedConfig
-                                      ? colorScheme.onPrimary
-                                      : colorScheme.onSurface),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  width: regularPadding,
-                  color: colorScheme.surfaceDim,
-                ),
                 if (pressedConfig) showConfigSettingWidget(),
                 if (!pressedConfig) showAppSettingsWidget()
               ])),
@@ -1109,39 +1052,22 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
           left: regularPadding, right: regularPadding, bottom: regularPadding),
       child: Column(children: [
         Container(
-            height: 112,
-            color: Theme.of(context).colorScheme.surface,
-            child:
-                Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-              Container(
-                height: btnHeight,
-                alignment: Alignment.centerLeft,
-                child: Row(children: [
-                  Text(
-                    localizedStrings.menuConfiguration,
-                    style: Theme.of(context)
-                        .textTheme
-                        .labelLarge!
-                        .apply(color: Theme.of(context).colorScheme.onSurface),
-                  ),
-                ]),
+          height: 40,
+          color: Theme.of(context).colorScheme.surface,
+          child: Row(children: [
+            Expanded(
+              child: SelectableText(
+                localizedStrings.gSubtitleConfigFunctionCharge,
+                style: Theme.of(context).textTheme.bodySmall!.apply(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant),
               ),
-              Row(children: [
-                Expanded(
-                  child: SelectableText(
-                    localizedStrings.gSubtitleConfigFunctionCharge,
-                    style: Theme.of(context).textTheme.bodySmall!.apply(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant),
-                  ),
-                )
-              ]),
-            ])),
+            )
+          ]),
+        ),
         Expanded(
             child: Container(
                 padding: EdgeInsets.only(
-                    left: regularPadding,
-                    right: regularPadding,
-                    bottom: regularPadding),
+                    right: regularPadding, bottom: regularPadding),
                 child: ListView(
                   children: [
                     Container(
@@ -1262,43 +1188,22 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
           left: regularPadding, right: regularPadding, bottom: regularPadding),
       child: Column(children: [
         Container(
-            height: 112,
-            color: Theme.of(context).colorScheme.surface,
-            child:
-                Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-              Container(
-                height: btnHeight,
-                alignment: Alignment.centerLeft,
-                child: Row(children: [
-                  Text(
-                    localizedStrings.gTitleAppConfig,
-                    style: Theme.of(context)
-                        .textTheme
-                        .labelLarge!
-                        .apply(color: Theme.of(context).colorScheme.onSurface),
-                  ),
-                ]),
+          height: 40,
+          color: Theme.of(context).colorScheme.surface,
+          child: Row(children: [
+            Expanded(
+              child: SelectableText(
+                localizedStrings.gSubtitleAppsCharge,
+                style: Theme.of(context).textTheme.bodySmall!.apply(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant),
               ),
-              Row(children: [
-                Expanded(
-                  child: SelectableText(
-                    localizedStrings.gSubtitleAppsCharge,
-                    style: Theme.of(context).textTheme.bodySmall!.apply(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant),
-                  ),
-                )
-              ]),
-            ])),
-        Divider(height: 1, color: Theme.of(context).colorScheme.surfaceDim),
-        SizedBox(
-          height: regularPadding,
+            )
+          ]),
         ),
         Expanded(
             child: Container(
                 padding: EdgeInsets.only(
-                    left: regularPadding,
-                    right: regularPadding,
-                    bottom: regularPadding),
+                    right: regularPadding, bottom: regularPadding),
                 child: ListView(
                   children: [
                     Container(

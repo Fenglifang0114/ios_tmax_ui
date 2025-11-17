@@ -31,7 +31,10 @@ import '../data/language.dart';
 import '../widget/page_head.dart';
 
 class CheckWeighersPage extends StatefulWidget {
-  const CheckWeighersPage({super.key});
+  final Function(String) onNavigate;
+  final String lastRouteName;
+  const CheckWeighersPage(
+      {super.key, required this.onNavigate, required this.lastRouteName});
   @override
   State<CheckWeighersPage> createState() => CheckWeighersPageState();
 }
@@ -814,7 +817,9 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                subTitle(context, maxWidth, pageTitle),
+                subTitle(context, pageTitle, () {
+                  widget.onNavigate(widget.lastRouteName);
+                }),
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                   const SizedBox(
                     width: largePadding,

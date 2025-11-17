@@ -20,53 +20,55 @@ SvgPicture getSvgIcon(
 }
 
 String getMenuIconPath(int pageId) {
-  if (pageId == MenuId.multiScaleManagement.index) {
+  if (pageId == MenuId.multiScaleManagement) {
     return multiScaleSvgIcon();
-  } else if (pageId == MenuId.setSystemTimePage.index) {
+  } else if (pageId == MenuId.setSystemTimePage) {
     return dateTimeSvgIcon();
-  } else if (pageId == MenuId.btSettingPage.index) {
+  } else if (pageId == MenuId.btSettingPage) {
     return btSettingSvgIcon();
-  } else if (pageId == MenuId.wifiSettingPage.index) {
+  } else if (pageId == MenuId.wifiSettingPage) {
     return wifiSettingSvgIcon();
-  } else if (pageId == MenuId.updateFirmwarePage.index) {
+  } else if (pageId == MenuId.updateFirmwarePage) {
     return firmwareSvgIcon();
-  } else if (pageId == MenuId.pluEditPage.index) {
+  } else if (pageId == MenuId.pluEditPage) {
     return pluEditSvgIcon();
-  } else if (pageId == MenuId.takeInPage.index) {
+  } else if (pageId == MenuId.takeInPage) {
     return takeInSvgIcon();
-  } else if (pageId == MenuId.takeOutPage.index) {
+  } else if (pageId == MenuId.takeOutPage) {
     return takeOutSvgIcon();
-  } else if (pageId == MenuId.checkWeighersPage.index) {
+  } else if (pageId == MenuId.checkWeighersPage) {
     return checkScaleSvgIcon();
-  } else if (pageId == MenuId.retailReportPage.index) {
+  } else if (pageId == MenuId.retailReportPage) {
     return detailReportSvgIcon();
-  } else if (pageId == MenuId.formulationScalePage.index) {
+  } else if (pageId == MenuId.formulationScalePage) {
     return formulaModeSvgIcon();
-  } else if (pageId == MenuId.labelDesignPage.index) {
+  } else if (pageId == MenuId.labelDesignPage) {
     return labelDesignSvgIcon();
-  } else if (pageId == MenuId.downloadLabelPage.index) {
+  } else if (pageId == MenuId.downloadLabelPage) {
     return labelDownloadSvgIcon();
-  } else if (pageId == MenuId.pluEditPage.index) {
+  } else if (pageId == MenuId.pluEditPage) {
     return pluEditSvgIcon();
-  } else if (pageId == MenuId.flowRatePage.index) {
+  } else if (pageId == MenuId.flowRatePage) {
     return rateSpeedSvgIcon();
-  } else if (pageId == MenuId.receiptDesignPage.index) {
+  } else if (pageId == MenuId.receiptDesignPage) {
     return reciptDesignSvgIcon();
-  } else if (pageId == MenuId.downReciptPage.index) {
+  } else if (pageId == MenuId.downReciptPage) {
     return reciptDownloadSvgIcon();
-  } else if (pageId == MenuId.weightModePage.index) {
+  } else if (pageId == MenuId.weightModePage) {
     return weighingSvgIcon();
-  } else if (pageId == MenuId.weightDataCollectionPage.index) {
+  } else if (pageId == MenuId.weightDataCollectionPage) {
     return wgtCollectionSvgIcon();
-  } else if (pageId == MenuId.serialOutputDesignPage.index) {
+  } else if (pageId == MenuId.serialOutputDesignPage) {
     return serialSvgIcon();
-  } else if (pageId == MenuId.basicDataCollectionPage.index) {
+  } else if (pageId == MenuId.basicDataCollectionPage) {
     return basicDataSvgIcon();
   }
-  //  else if (pageId == MenuId.parameterSettingPage.index) {
-  //   return parameterSvgIcon();
-  // }
+
   return '';
+}
+
+String appSvgIcon() {
+  return 'assets/images/app.svg';
 }
 
 String multiScaleSvgIcon() {
