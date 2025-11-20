@@ -52,7 +52,7 @@ final Uint8List kTransparentImage = transparent_image.kTransparentImage;
 
 GlobalKey<NavigatorState> contentNavigatorKey = GlobalKey();
 
-String defualtSelectPage = '/multiScaleManagement'; //当前选中的页面ID
+String defualtSelectPage = '/setConfig'; //当前选中的页面ID
 
 bool showLeftNavigationBar = true; // 控制导航栏显示
 bool formAppSetting = false; // 是否是app设置页面

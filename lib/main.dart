@@ -105,7 +105,7 @@ Future<void> initPageId() async {
 
     defualtSelectPage = pageIds['defaultPageId'];
     if (defualtSelectPage == '/settingsConfig') {
-      defualtSelectPage = '/multiScaleManagement';
+      defualtSelectPage = '/setConfig';
     }
   }
 }
@@ -193,8 +193,8 @@ class MyApp extends StatelessWidget {
       ],
       // 应用支持的语言列表
       supportedLocales: S.delegate.supportedLocales,
-      // locale: Locale('en', 'US'),
-      locale: Locale(savedLanguage.split('_')[0], savedLanguage.split('_')[1]),
+      locale: Locale(savedLanguage.split('_')[0],
+          savedLanguage.split('_')[1]), // locale: Locale('en', 'US'),
       debugShowCheckedModeBanner: false,
       initialRoute: '/login',
       routes: {

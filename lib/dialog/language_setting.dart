@@ -38,6 +38,10 @@ class LanguageSettingPageState extends State<LanguageSettingPage> {
 
   void saveLanguageSetting(String language) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    String savedLanguage = prefs.getString('language') ?? '';
+    if (savedLanguage == language) {
+      return;
+    }
     await prefs.setString('language', language);
   }
 
@@ -102,33 +106,44 @@ class LanguageSettingPageState extends State<LanguageSettingPage> {
                       ],
                     ))),
             showTextButton(context, btnHeight, localizedStrings.gBtnConfirm,
-                () {
+                () async {
               String value = languageCtl.text;
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              String savedLanguage = prefs.getString('language') ?? '';
+              String language = '';
+
               setState(() {
                 if (value == "中文") {
                   S.load(const Locale('zh', 'CN'));
-                  saveLanguageSetting('zh_CN');
+                  language = 'zh_CN';
+                  saveLanguageSetting(language);
                 } else if (value == "English") {
                   S.load(const Locale('en', 'US'));
-                  saveLanguageSetting('en_US');
-                } else if (value == "Русский") {
-                  S.load(const Locale('ru', 'RU'));
-                  saveLanguageSetting('ru_RU');
-                } else if (value == "日本語") {
-                  S.load(const Locale('ja', 'JP'));
-                  saveLanguageSetting('ja_JP');
-                } else if (value == "Italiano") {
-                  S.load(const Locale('it', 'IT'));
-                  saveLanguageSetting('it_IT');
-                } else if (value == "Português") {
-                  S.load(const Locale('pt', 'PT'));
-                  saveLanguageSetting('pt_PT');
-                } else if (value == "Français") {
-                  S.load(const Locale('fr', 'FR'));
-                  saveLanguageSetting('fr_FR');
+                  language = 'en_US';
+                  saveLanguageSetting(language);
                 }
+
+                // else if (value == "Русский") {
+                //   S.load(const Locale('ru', 'RU'));
+                //   saveLanguageSetting('ru_RU');
+                // } else if (value == "日本語") {
+                //   S.load(const Locale('ja', 'JP'));
+                //   saveLanguageSetting('ja_JP');
+                // } else if (value == "Italiano") {
+                //   S.load(const Locale('it', 'IT'));
+                //   saveLanguageSetting('it_IT');
+                // } else if (value == "Português") {
+                //   S.load(const Locale('pt', 'PT'));
+                //   saveLanguageSetting('pt_PT');
+                // } else if (value == "Français") {
+                //   S.load(const Locale('fr', 'FR'));
+                //   saveLanguageSetting('fr_FR');
+                // }
               });
-              Navigator.pop(context);
+
+              bool isChanged = savedLanguage != language;
+
+              Navigator.pop(context, isChanged);
             },
                 Theme.of(context).colorScheme.onPrimary,
                 Theme.of(context).colorScheme.primary,

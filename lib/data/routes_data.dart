@@ -411,23 +411,24 @@ bool isFreeApp(int pId) => freeAppMenuIds.contains(pId);
 
 Widget buildPageContent(dynamic Function(String) navigateContent,
     String? pageName, String? lastRouteName) {
+  lastRouteName ??= '/setConfig';
   if (pageName == '/setConfig') {
     return ConfigurationPage(
-        onNavigate: navigateContent, lastRouteName: lastRouteName!);
+        onNavigate: navigateContent, lastRouteName: lastRouteName);
   }
   if (pageName == '/settingsUser') {
     return SysUserManagerPage(
-        onNavigate: navigateContent, lastRouteName: lastRouteName!);
+        onNavigate: navigateContent, lastRouteName: lastRouteName);
   }
 
   if (pageName == '/settingsLog') {
     return SysLogPage(
-        onNavigate: navigateContent, lastRouteName: lastRouteName!);
+        onNavigate: navigateContent, lastRouteName: lastRouteName);
   }
 
   if (pageName == '/settingsFunction') {
     return AppsSettingPage(
-        onNavigate: navigateContent, lastRouteName: lastRouteName!);
+        onNavigate: navigateContent, lastRouteName: lastRouteName);
     // return ConfigurationPage(
     //     onNavigate: navigateContent, lastRouteName: lastRouteName!);
   }
@@ -466,13 +467,13 @@ Widget buildPageContent(dynamic Function(String) navigateContent,
     return LabelDesignPage(
       type: formAppSetting ? "app" : "config",
       onNavigate: navigateContent,
-      lastRouteName: lastRouteName!,
+      lastRouteName: lastRouteName,
     );
   } else if (pageId == MenuId.receiptDesignPage) {
     return ReceiptDesignPage(
       type: formAppSetting ? "app" : "config",
       onNavigate: navigateContent,
-      lastRouteName: lastRouteName!,
+      lastRouteName: lastRouteName,
     );
   } else if (pageId == MenuId.serialOutputDesignPage) {
     return CustomSerialProtocol();
@@ -485,7 +486,7 @@ Widget buildPageContent(dynamic Function(String) navigateContent,
   else if (pageId == MenuId.weightModePage) {
     return WeightModePage(
       onNavigate: navigateContent,
-      lastRouteName: lastRouteName!,
+      lastRouteName: lastRouteName,
     );
   } else if (pageId == MenuId.pluEditPage) {
     return PluEidtPage();
@@ -496,37 +497,37 @@ Widget buildPageContent(dynamic Function(String) navigateContent,
   } else if (pageId == MenuId.retailReportPage) {
     return RetailReportPage(
       onNavigate: navigateContent,
-      lastRouteName: lastRouteName!,
+      lastRouteName: lastRouteName,
     );
   } else if (pageId == MenuId.weightDataCollectionPage) {
     return WeightDataCollectionPage(
       onNavigate: navigateContent,
-      lastRouteName: lastRouteName!,
+      lastRouteName: lastRouteName,
     );
   } else if (pageId == MenuId.checkWeighersPage) {
     return CheckWeighersPage(
       onNavigate: navigateContent,
-      lastRouteName: lastRouteName!,
+      lastRouteName: lastRouteName,
     );
   } else if (pageId == MenuId.takeInPage) {
     return TakeInPage(
       onNavigate: navigateContent,
-      lastRouteName: lastRouteName!,
+      lastRouteName: lastRouteName,
     );
   } else if (pageId == MenuId.takeOutPage) {
     return TakeOutPage(
       onNavigate: navigateContent,
-      lastRouteName: lastRouteName!,
+      lastRouteName: lastRouteName,
     );
   } else if (pageId == MenuId.formulationScalePage) {
     return FormulationScalePage(
       onNavigate: navigateContent,
-      lastRouteName: lastRouteName!,
+      lastRouteName: lastRouteName,
     );
   } else if (pageId == MenuId.flowRatePage) {
     return FlowRatePage(
       onNavigate: navigateContent,
-      lastRouteName: lastRouteName!,
+      lastRouteName: lastRouteName,
     );
   } else if (pageId == MenuId.multiScaleManagement) {
     return MultiScaleManagement();

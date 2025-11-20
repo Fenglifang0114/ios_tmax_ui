@@ -661,6 +661,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipNoDevice": MessageLookupByLibrary.simpleMessage("没有发现设备，请添加设备"),
     "gTipNoDeviceAddFirst": MessageLookupByLibrary.simpleMessage("没有设备，请先添加设备"),
     "gTipOffline": MessageLookupByLibrary.simpleMessage("断线"),
+    "gTipOnline": MessageLookupByLibrary.simpleMessage("在线"),
     "gTipParameterSettingPageHelp": MessageLookupByLibrary.simpleMessage(
       "1.一共有5个参数设置：称重信息、出厂参数、串口参数、价格参数、其他；\n2.“可编辑”列中显示“是”的参数，可以根据“描述”列中的提示内容在“值”列中进行编辑；\n3.设置完所有参数后，点击右下角的按钮确认提交。",
     ),

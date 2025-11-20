@@ -2624,8 +2624,8 @@
     "@gBtnAdd": {
         "description": "This is a button for adding new items."
     },
-    "gOnlineTip": "在线",
-    "@gOnlineTip": {
+    "gTipOnline": "在线",
+    "@gTipOnline": {
         "description": "This is a prompt for online information."
     },
     "gTipOffline": "断线",
