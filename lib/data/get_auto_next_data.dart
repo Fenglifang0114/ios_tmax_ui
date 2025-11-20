@@ -17,12 +17,14 @@ class GetAutoNextFormDb {
   bool autoNext;
   int stableTime;
   bool autoTare;
+  bool checkCode;
 
   GetAutoNextFormDb({
     required this.recId,
     required this.autoNext,
     required this.stableTime,
     required this.autoTare,
+    required this.checkCode,
   });
 
   factory GetAutoNextFormDb.fromJson(Map<String, dynamic> json) =>
@@ -31,6 +33,7 @@ class GetAutoNextFormDb {
         autoNext: json["AutoNext"],
         stableTime: json["StableTime"],
         autoTare: json["AutoTare"],
+        checkCode: json["CheckCode"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -38,6 +41,7 @@ class GetAutoNextFormDb {
         "AutoNext": autoNext,
         "StableTime": stableTime,
         "AutoTare": autoTare,
+        "CheckCode": checkCode,
       };
 }
 
@@ -47,22 +51,24 @@ class ReqAutoNext {
   bool autoNext;
   int stableTime;
   bool autoTare;
+  bool checkCode;
 
-  ReqAutoNext({
-    required this.autoNext,
-    required this.stableTime,
-    required this.autoTare,
-  });
+  ReqAutoNext(
+      {required this.autoNext,
+      required this.stableTime,
+      required this.autoTare,
+      required this.checkCode});
 
   factory ReqAutoNext.fromJson(Map<String, dynamic> json) => ReqAutoNext(
-        autoNext: json["AutoNext"],
-        stableTime: json["StableTime"],
-        autoTare: json["AutoTare"],
-      );
+      autoNext: json["AutoNext"],
+      stableTime: json["StableTime"],
+      autoTare: json["AutoTare"],
+      checkCode: json["CheckCode"]);
 
   Map<String, dynamic> toJson() => {
         "AutoNext": autoNext,
         "StableTime": stableTime,
         "AutoTare": autoTare,
+        "CheckCode": checkCode,
       };
 }

@@ -20,6 +20,7 @@ import 'package:t_max/functions/methods.dart';
 import 'package:t_max/data/formula_from_db_data.dart';
 import 'package:t_max/pages/edit_darft_fma_page.dart';
 import 'package:t_max/widget/common_widget.dart';
+import 'package:t_max/widget/fma_parameter_setting.dart';
 import 'package:t_max/widget/fma_process_bar.dart';
 import 'package:t_max/widget/sticky_table.dart';
 import '../data/language.dart';
@@ -66,6 +67,9 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
   bool isEnableNext = true; //是否禁用下一个
   bool isFinish = false; //是否完成
   bool autoNextStep = false;
+  bool checkCodeflag = false; //是否开启校验码  开启后，需要扫描或者输入校验码才能继续
+  bool checkCodeOk = true; //当前校验码是否正确
+  bool checkCodeDialogShowing = false; //校验码对话框是否正在显示
 
   Map<int, bool> scaleMap = {}; //scaleId , isWgtStart
   Map<String, int> rawScaleMap = {}; //原料名称，秤ID
@@ -158,6 +162,9 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
           checkValueIsOk() == 'ok') {
         stableDurationCounter++;
         if (stableDurationCounter >= stableTime * 20) {
+          if (checkCodeflag && !checkCodeOk) {
+            return;
+          }
           final isOk = checkValueIsOk();
           if (isOk == "ok") {
             nextStep(isOk); // 执行下一步操作
@@ -504,6 +511,8 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
       }
 
       String rawName = getRawName(detail.materialId!);
+      String rawCheckCode = getRawCheckCode(detail.materialId!);
+
       FormulaWgtProcessData processWgt = FormulaWgtProcessData(
         no: detail.sequence,
         rawId: detail.materialId,
@@ -519,6 +528,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
         currentErrorWgt: 0.0,
         currentErrorPct: 0.0,
         isOK: 'no', //no 未开始 low: 低，high: 高，ok: 正常 初始值都是 low
+        checkCode: rawCheckCode,
       );
       processWgtList.add(processWgt);
     }
@@ -670,11 +680,17 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
         String dataStr = event.obj;
         if (dataStr != '') {
           setState(() {
-            autoNextStep = getAutoNextFormDbFromJson(dataStr).autoNext;
+            GetAutoNextFormDb getInfoFormDb =
+                getAutoNextFormDbFromJson(dataStr);
+            autoNextStep = getInfoFormDb.autoNext;
             autoNextStepNotifier.value = autoNextStep;
-            stableTime = getAutoNextFormDbFromJson(dataStr).stableTime;
+            stableTime = getInfoFormDb.stableTime;
             stableTimeCtl.text = stableTime.toString();
-            autoTare = getAutoNextFormDbFromJson(dataStr).autoTare;
+            autoTare = getInfoFormDb.autoTare;
+            checkCodeflag = getInfoFormDb.checkCode;
+            if (checkCodeflag) {
+              showCheckCodeDialog();
+            }
           });
         } else {
           setState(() {
@@ -752,6 +768,10 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
 
           initWgtList();
         });
+        if (checkCodeflag) {
+          checkCodeflag = false;
+          showCheckCodeDialog();
+        }
       }
     });
   }
@@ -842,6 +862,17 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
       isFinish = true;
       isEnableNext = false;
     });
+  }
+
+  bool getCanSaveFlag() {
+    bool hasRawWeight = false;
+    for (var wgtRec in processWgtList) {
+      if (wgtRec.no != 0 && wgtRec.currentWgt! > 0) {
+        hasRawWeight = true;
+        break;
+      }
+    }
+    return hasRawWeight;
   }
 
   void performDarfFmaSave() {
@@ -976,6 +1007,10 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
             stopAllWgt();
             Navigator.pop(context);
           });
+        } else {
+          if (checkCodeflag && !checkCodeOk) {
+            showCheckCodeDialog();
+          }
         }
       });
     } else {
@@ -2589,6 +2624,9 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
       _switchScaleByRawId(selectedProcessWgt.rawId!);
     }
     currentRawWgt = 0.0;
+    if (checkCodeflag) {
+      showCheckCodeDialog();
+    }
   }
 
   //重新计算需要的重量
@@ -2639,6 +2677,43 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
     }
   }
 
+  void handleSkipRaw() {
+    // 从当前行的下一行开始向后查找
+    int nextIndex = -1;
+    for (int i = clickedRow + 1; i < processWgtList.length; i++) {
+      if (processWgtList[i].isOK != 'ok') {
+        nextIndex = i;
+        break;
+      }
+    }
+
+    // 如果向后没找到，就从第一行开始查找
+    if (nextIndex == -1) {
+      for (int i = 0; i < processWgtList.length; i++) {
+        if (processWgtList[i].isOK != 'ok') {
+          nextIndex = i;
+          break;
+        }
+      }
+    }
+
+    // 如果找到了合适的行，更新选中行和选中的原料重量项
+    if (nextIndex != -1) {
+      clickedRow = nextIndex;
+      selectedProcessWgt = processWgtList[clickedRow];
+      _switchScaleByRawId(selectedProcessWgt.rawId!);
+    } else {
+      // 若都没找到，回到第一行
+      clickedRow = 0;
+      selectedProcessWgt = processWgtList[0];
+      _switchScaleByRawId(selectedProcessWgt.rawId!);
+    }
+    currentRawWgt = 0.0;
+    if (checkCodeflag) {
+      showCheckCodeDialog();
+    }
+  }
+
 //查找下一个原料
   void findNextRaw() {
     //修改了此处
@@ -2661,6 +2736,9 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
       // print(clickedRow);
 
       currentRawWgt = 0.000;
+      if (checkCodeflag) {
+        showCheckCodeDialog();
+      }
     } catch (e) {
       // 如果没有 isOK 不为 'ok' 的项，说明配方完成了
       setState(() {
@@ -2669,6 +2747,43 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
       showTipInfo(localizedStrings.fFormulaCompletionMsg, context);
       return;
     }
+  }
+
+  void showCheckCodeDialog() {
+    if (checkCodeDialogShowing || selectedProcessWgt.no == 0) {
+      return;
+    }
+    checkCodeDialogShowing = true;
+    checkCodeOk = false;
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return ShowCheckCodeDialog(
+            title: localizedStrings.ingredientVerification,
+            rawId: selectedProcessWgt.rawId!,
+            rawName: selectedProcessWgt.rawName!,
+            rawCode: selectedProcessWgt.checkCode!,
+            canSave: getCanSaveFlag(),
+          );
+        }).then((value) {
+      if (value != null) {
+        checkCodeDialogShowing = false;
+        if (value == "ok") {
+          setState(() {
+            checkCodeOk = true;
+          });
+        } else if (value == "skip") {
+          handleSkipRaw();
+        } else if (value == "set") {
+          showSettigDialog();
+        } else if (value == "abandon") {
+          performAbandonBtn();
+        } else if (value == "save") {
+          performDarfFmaSave();
+        }
+      }
+    });
   }
 
   //重量正常的时候，往下走，不从第一个开始
@@ -2698,6 +2813,10 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
       }
       currentRawWgt = 0.000;
     });
+
+    if (checkCodeflag) {
+      showCheckCodeDialog();
+    }
   }
 
   handleReviseWgt(double tmpCurrWgt) {
@@ -2836,120 +2955,17 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                 }),
           ),
           SizedBox(
-            width: regularPadding,
+            height: 40,
+            child: IconButton(
+                icon: Icon(
+                  Icons.settings_outlined,
+                  color: colorScheme.primary,
+                ),
+                tooltip: localizedStrings.gParameterSettingsTitle,
+                onPressed: () {
+                  showSettigDialog();
+                }),
           ),
-          Text(
-            localizedStrings.gTipAutoTare,
-            style: getTextStyle(),
-          ),
-          SizedBox(
-            width: regularPadding,
-          ),
-          IconButton(
-              onPressed: () {
-                setState(() {
-                  autoTare = !autoTare;
-                });
-                setAutoNext();
-              },
-              icon: Icon(
-                autoTare ? Icons.toggle_on_outlined : Icons.toggle_off_outlined,
-                color: autoTare
-                    ? colorScheme.onTertiaryFixedVariant
-                    : colorScheme.onSurface,
-              )),
-          SizedBox(
-            width: regularPadding,
-          ),
-          Text(
-            localizedStrings.gTipAutoNextStep,
-            style: Theme.of(context)
-                .textTheme
-                .bodySmall!
-                .apply(color: colorScheme.onSurface),
-          ),
-          SizedBox(
-            width: regularPadding,
-          ),
-          IconButton(
-              onPressed: () {
-                setState(() {
-                  autoNextStep = !autoNextStep;
-                  autoNextStepNotifier.value = autoNextStep;
-                  if (autoNextStep) {
-                    stableTimeCtl.text = stableTime.toString();
-                  }
-                });
-                setAutoNext();
-              },
-              icon: Icon(
-                autoNextStep
-                    ? Icons.toggle_on_outlined
-                    : Icons.toggle_off_outlined,
-                color: autoNextStep
-                    ? colorScheme.onTertiaryFixedVariant
-                    : colorScheme.onSurface,
-              )),
-          SizedBox(
-            width: regularPadding,
-          ),
-          if (autoNextStep)
-            Text(
-              localizedStrings.gTipStableTime,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodySmall!
-                  .apply(color: colorScheme.onSurface),
-            ),
-          if (autoNextStep)
-            SizedBox(
-              width: regularPadding,
-            ),
-          if (autoNextStep)
-            SizedBox(
-              width: 65,
-              height: 35,
-              child: DropdownButtonFormField<String>(
-                borderRadius: BorderRadius.circular(0),
-                decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 5, horizontal: 10), // 调整垂直和水平内边距
-                    enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .outlineVariant, // 设置边框颜色
-                          width: 1.0, // 设置边框宽度
-                        ),
-                        borderRadius: BorderRadius.all(Radius.circular(0.0))),
-                    border: OutlineInputBorder()),
-                isExpanded: true,
-                value: stableTimeCtl.text == "" ? null : stableTimeCtl.text,
-                items: [
-                  ...['1', '2', '5', '10'].map((String item) {
-                    return DropdownMenuItem<String>(
-                      value: item,
-                      child: Text(
-                        item,
-                        style: textTheme.bodySmall!
-                            .apply(color: colorScheme.onSurface),
-                      ),
-                    );
-                  })
-                ],
-                onChanged: (value) {
-                  setState(() {
-                    stableTimeCtl.text = value!;
-                    stableTime = int.tryParse(stableTimeCtl.text) ?? 1;
-                    setAutoNext();
-                  });
-                },
-                style: Theme.of(context)
-                    .textTheme
-                    .bodySmall!
-                    .apply(color: colorScheme.onSurface),
-              ),
-            ),
           SizedBox(
             width: 20,
           )
@@ -2958,9 +2974,47 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
     );
   }
 
+  void showSettigDialog() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return FmaParameterSettingDialog(
+            autoNextStep: autoNextStep,
+            autoTare: autoTare,
+            stableTime: stableTime,
+            checkCode: checkCodeflag,
+          );
+        }).then((value) {
+      if (value != null && value != false) {
+        setState(() {
+          autoNextStep = value.autoNextStep;
+          autoTare = value.autoTare;
+          stableTime = value.stableTime;
+          checkCodeflag = value.checkCode;
+          stableTimeCtl.text = stableTime.toString();
+          autoNextStepNotifier.value = autoNextStep;
+        });
+
+        setAutoNext();
+        if (checkCodeflag && selectedProcessWgt.no != 0) {
+          checkCodeOk == false;
+          showCheckCodeDialog();
+        }
+      } else {
+        if (checkCodeflag && selectedProcessWgt.no != 0) {
+          checkCodeOk == false;
+          showCheckCodeDialog();
+        }
+      }
+    });
+  }
+
   void setAutoNext() {
     ReqAutoNext reqAutoNext = ReqAutoNext(
-        autoNext: autoNextStep, stableTime: stableTime, autoTare: autoTare);
+        autoNext: autoNextStep,
+        stableTime: stableTime,
+        autoTare: autoTare,
+        checkCode: checkCodeflag);
     PublicFunctions.updateAutoNext(reqAutoNextToJson(reqAutoNext));
   }
 

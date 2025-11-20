@@ -2016,6 +2016,10 @@
     "@fMaterialIdCol": {
         "description": "Table column title for material ID"
     },
+    "fMaterialCodeCol": "原料验证码",
+    "@fMaterialCodeCol": {
+        "description": "Table column title for material code"
+    },
     "fEditMaterial": "编辑原料",
     "@fEditMaterial": {
         "description": "Edit component page"
@@ -3879,5 +3883,17 @@
     "savedSuccessfully": "保存成功！",
     "@savedSuccessfully": {
         "description": "Success message when data is saved successfully"
+    },
+    "ingredientVerification": "原料验证",
+    "@ingredientVerification": {
+        "description": "Ingredient Verification"
+    },
+    "skipThisIngredient": "跳过此原料",
+    "@skipThisIngredient": {
+        "description": "Skip this ingredient"
+    },
+    "noPermission": "没有权限",
+    "@noPermission": {
+        "description": "No permission"
     }
 }   

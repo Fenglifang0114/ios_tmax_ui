@@ -256,6 +256,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "fInputWeightHint": MessageLookupByLibrary.simpleMessage("请输入重量"),
     "fInvolvedFmas": MessageLookupByLibrary.simpleMessage("所涉及配方"),
     "fLowSpeed": MessageLookupByLibrary.simpleMessage("慢速"),
+    "fMaterialCodeCol": MessageLookupByLibrary.simpleMessage("原料验证码"),
     "fMaterialCountCol": MessageLookupByLibrary.simpleMessage("原料数量"),
     "fMaterialIdCol": MessageLookupByLibrary.simpleMessage("原料编号"),
     "fMaterialNameCol": MessageLookupByLibrary.simpleMessage("原料名称"),
@@ -841,6 +842,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "ingredientNoInvalid": MessageLookupByLibrary.simpleMessage(
       "Ingredient No. 必须为正整数",
     ),
+    "ingredientVerification": MessageLookupByLibrary.simpleMessage("原料验证"),
     "invalidName": MessageLookupByLibrary.simpleMessage("名称无效，请输入有效名称。"),
     "jump_confirm_info": MessageLookupByLibrary.simpleMessage(
       "请确认跳转默认打印格式下发页面.",
@@ -948,6 +950,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "new_license_text": MessageLookupByLibrary.simpleMessage("新认证:"),
     "noBarCodeDataTip": MessageLookupByLibrary.simpleMessage("暂无数据"),
     "noDataImport": MessageLookupByLibrary.simpleMessage("没有数据可导入"),
+    "noPermission": MessageLookupByLibrary.simpleMessage("没有权限"),
     "opDisable": MessageLookupByLibrary.simpleMessage("禁用"),
     "opEnable": MessageLookupByLibrary.simpleMessage("启用"),
     "opExport": MessageLookupByLibrary.simpleMessage("导出"),
@@ -1118,6 +1121,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "show_increment_weight": MessageLookupByLibrary.simpleMessage("增量:"),
     "show_reduced_weight": MessageLookupByLibrary.simpleMessage("减少量:"),
     "singlePoint": MessageLookupByLibrary.simpleMessage("单点标定"),
+    "skipThisIngredient": MessageLookupByLibrary.simpleMessage("跳过此原料"),
     "stable_time_error_tip": MessageLookupByLibrary.simpleMessage("20秒以内."),
     "subTitleBasicDataCollection": MessageLookupByLibrary.simpleMessage(
       "读取秤的运行数据，以了解任何异常活动。",

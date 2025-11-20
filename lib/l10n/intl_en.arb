@@ -2016,6 +2016,10 @@
     "@fMaterialIdCol": {
         "description": "Table column title for material ID"
     },
+    "fMaterialCodeCol": "Ingredient Code",
+    "@fMaterialCodeCol": {
+        "description": "Table column title for material code"
+    },
     "fEditMaterial": "Edit Ingredient",
     "@fEditMaterial": {
         "description": "Edit Ingredient page"
@@ -3879,5 +3883,17 @@
     "savedSuccessfully": "Saved successfully!",
     "@savedSuccessfully": {
         "description": "Success message when data is saved successfully"
-    } 
+    },
+    "ingredientVerification": "Ingredient Verification",
+    "@ingredientVerification": {
+        "description": "Ingredient Verification"
+    },
+    "skipThisIngredient": "Skip Ingredient",
+    "@skipThisIngredient": {
+        "description": "Skip this ingredient"
+    },
+    "noPermission": "No permission",
+    "@noPermission": {
+        "description": "No permission"
+    }
 }    

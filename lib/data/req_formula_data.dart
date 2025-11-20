@@ -71,6 +71,7 @@ class AddRawData {
   String remark;
   String remark1;
   int? scaleId;
+  String? checkCode;
 
   AddRawData({
     required this.materialId,
@@ -82,6 +83,7 @@ class AddRawData {
     required this.remark,
     required this.remark1,
     this.scaleId,
+    this.checkCode,
   });
 
   Map<String, dynamic> toJson() => {
@@ -94,6 +96,7 @@ class AddRawData {
         "Remark": remark,
         "Remark1": remark1,
         "ScaleId": scaleId,
+        "CheckCode": checkCode,
       };
 }
 
@@ -110,6 +113,7 @@ class EditRawData {
   String remark;
   String remark1;
   int? scaleId;
+  String? checkCode;
 
   EditRawData(
       {required this.recId,
@@ -121,7 +125,8 @@ class EditRawData {
       required this.updatedBy,
       required this.remark,
       required this.remark1,
-      this.scaleId});
+      this.scaleId,
+      this.checkCode});
 
   Map<String, dynamic> toJson() => {
         "RecID": recId,
@@ -134,6 +139,7 @@ class EditRawData {
         "Remark": remark,
         "Remark1": remark1,
         "ScaleId": scaleId,
+        "CheckCode": checkCode,
       };
 }
 
@@ -363,6 +369,7 @@ class RawInfo {
   String? scaleName;
   int? categoryId;
   int? scaleId;
+  String? checkCode;
 
   RawInfo({
     this.materialId,
@@ -372,6 +379,7 @@ class RawInfo {
     this.scaleName,
     this.categoryId,
     this.scaleId,
+    this.checkCode,
   });
 
   factory RawInfo.fromJson(Map<String, dynamic> json) => RawInfo(
@@ -382,6 +390,7 @@ class RawInfo {
         scaleName: json["ScaleName"],
         categoryId: json["CategoryId"],
         scaleId: json["ScaleId"],
+        checkCode: json["CheckCode"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -392,5 +401,6 @@ class RawInfo {
         "ScaleName": scaleName,
         "CategoryId": categoryId,
         "ScaleId": scaleId,
+        "CheckCode": checkCode,
       };
 }

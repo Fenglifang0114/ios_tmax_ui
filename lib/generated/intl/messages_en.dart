@@ -394,6 +394,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "fInvolvedFmas": MessageLookupByLibrary.simpleMessage("Involved Formulas"),
     "fLowSpeed": MessageLookupByLibrary.simpleMessage("Low Speed"),
+    "fMaterialCodeCol": MessageLookupByLibrary.simpleMessage("Ingredient Code"),
     "fMaterialCountCol": MessageLookupByLibrary.simpleMessage(
       "Ingredient Quantity",
     ),
@@ -1216,6 +1217,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "ingredientNoInvalid": MessageLookupByLibrary.simpleMessage(
       "Ingredient No. must be a positive integer",
     ),
+    "ingredientVerification": MessageLookupByLibrary.simpleMessage(
+      "Ingredient Verification",
+    ),
     "invalidName": MessageLookupByLibrary.simpleMessage(
       "The name is invalid. Please enter a valid name.",
     ),
@@ -1367,6 +1371,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "new_license_text": MessageLookupByLibrary.simpleMessage("New License:"),
     "noBarCodeDataTip": MessageLookupByLibrary.simpleMessage("No data"),
     "noDataImport": MessageLookupByLibrary.simpleMessage("No data to import"),
+    "noPermission": MessageLookupByLibrary.simpleMessage("No permission"),
     "opDisable": MessageLookupByLibrary.simpleMessage("Disable"),
     "opEnable": MessageLookupByLibrary.simpleMessage("Enable"),
     "opExport": MessageLookupByLibrary.simpleMessage("Export"),
@@ -1603,6 +1608,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Reduced weight:",
     ),
     "singlePoint": MessageLookupByLibrary.simpleMessage("Single Point"),
+    "skipThisIngredient": MessageLookupByLibrary.simpleMessage(
+      "Skip Ingredient",
+    ),
     "stable_time_error_tip": MessageLookupByLibrary.simpleMessage(
       "The value must be under 20 seconds.",
     ),

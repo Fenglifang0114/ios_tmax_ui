@@ -2863,6 +2863,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
               },
               iconSize: 24,
             )),
+
         Spacer(),
         showAddFormulaIconBtn(
             localizedStrings.fAddFmaBtn, Icons.add_box_outlined, () {

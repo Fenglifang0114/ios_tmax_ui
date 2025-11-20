@@ -727,3 +727,256 @@ getCustomDialogTitle(
     )
   ];
 }
+
+// 定义验证原料的弹框
+class ShowCheckCodeDialog extends StatefulWidget {
+  const ShowCheckCodeDialog(
+      {super.key,
+      required this.title,
+      required this.rawId,
+      required this.rawName,
+      required this.rawCode,
+      required this.canSave});
+  final String title;
+  final String rawId;
+  final String rawName;
+  final String rawCode;
+  final bool canSave;
+
+  @override
+  ShowCheckCodeDialogState createState() => ShowCheckCodeDialogState();
+}
+
+class ShowCheckCodeDialogState extends State<ShowCheckCodeDialog> {
+  TextEditingController checkCodeCtl = TextEditingController();
+  late FocusNode _checkCodeFocusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkCodeFocusNode = FocusNode();
+
+    // 在下一帧请求焦点，确保组件已构建完成
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkCodeFocusNode.requestFocus();
+    });
+  }
+
+  @override
+  void dispose() {
+    _checkCodeFocusNode.dispose();
+    checkCodeCtl.dispose();
+    super.dispose();
+  }
+
+  Widget showTextTitle(String title) {
+    return Text(
+      title,
+      style: Theme.of(context).textTheme.bodySmall!.apply(
+            color: Theme.of(context).colorScheme.onSurface, // 设置文本颜色
+          ),
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+
+  Widget showName(String title) {
+    return Text(
+      title,
+      style: Theme.of(context).textTheme.titleLarge!.apply(
+            color: Theme.of(context).colorScheme.primary, // 设置文本颜色
+          ),
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      child: Container(
+        width: 600,
+        height: 350,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(0),
+        ),
+        child: Column(
+          children: [
+            // 头部
+            ...fmaDialogHeadStyle(
+                context, widget.title, localizedStrings.gParameterSettingsTitle,
+                () {
+              Navigator.pop(context, "set");
+            }),
+
+            // 中部
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.all(regularPadding),
+                child: Column(children: [
+                  Expanded(
+                    child: Row(children: [
+                      Expanded(
+                          child: Align(
+                              alignment: Alignment.center,
+                              child: showName(widget.rawName))),
+                    ]),
+                  ),
+                  SizedBox(
+                    height: 40,
+                    child: Row(children: [
+                      Expanded(
+                          flex: 2,
+                          child: Align(
+                              alignment: Alignment.centerRight,
+                              child: showTextTitle(
+                                  localizedStrings.fMaterialIdCol + ":  "))),
+                      Expanded(
+                          flex: 3,
+                          child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: showTextTitle(widget.rawId))),
+                    ]),
+                  ),
+                  SizedBox(
+                    height: 40,
+                    child: Row(children: [
+                      Expanded(
+                          flex: 2,
+                          child: Align(
+                              alignment: Alignment.centerRight,
+                              child: showTextTitle(
+                                  localizedStrings.fMaterialCodeCol + ":  "))),
+                      Expanded(
+                        flex: 3,
+                        child: TextField(
+                          controller: checkCodeCtl,
+                          focusNode: _checkCodeFocusNode,
+                          autofocus: true,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(0.0))),
+                            hintText: localizedStrings.fMaterialCodeCol,
+                            hintStyle:
+                                Theme.of(context).textTheme.bodySmall!.apply(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .surfaceContainerHighest, // 设置提示文本颜色
+                                    ),
+                          ),
+                          style: Theme.of(context).textTheme.bodySmall!.apply(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurface, // 设置输入文本颜色
+                              ),
+                          onChanged: (value) {
+                            if (value.isNotEmpty && value == widget.rawCode) {
+                              Navigator.pop(context, "ok");
+                            }
+                          },
+                        ),
+                      ),
+                    ]),
+                  ),
+                ]),
+              ),
+            ),
+
+            // 底部
+            Container(
+              height: 96,
+              width: 600,
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor:
+                            Theme.of(context).colorScheme.onPrimary,
+                        backgroundColor: Theme.of(context).colorScheme.error,
+                        fixedSize: const Size(double.infinity, 48),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.zero,
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context, "skip");
+                      },
+                      child: Text(
+                        localizedStrings.skipThisIngredient,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.normal,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 20),
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor:
+                            Theme.of(context).colorScheme.onPrimary,
+                        backgroundColor: Theme.of(context).colorScheme.error,
+                        fixedSize: const Size(double.infinity, 48),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.zero,
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context, "abandon");
+                      },
+                      child: Text(
+                        localizedStrings.fAbandonIngredientsBtn,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.normal,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 20),
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor:
+                            Theme.of(context).colorScheme.onPrimary,
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        fixedSize: const Size(double.infinity, 48),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.zero,
+                        ),
+                      ),
+                      onPressed: widget.canSave
+                          ? () {
+                              Navigator.pop(context, "save");
+                            }
+                          : null,
+                      child: Text(
+                        localizedStrings.btnTemporarySave,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.normal,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

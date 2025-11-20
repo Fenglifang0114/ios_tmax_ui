@@ -113,7 +113,6 @@ Set<int> industrialAppMenuIds = {
 };
 
 //如何定义一个枚举类型 比如  home  = 1  config = 2  apps = 3  appsSetting = 4  systemSetting = 5
-// ... 已有代码 ...
 
 class MenuId {
   static const int multiScaleManagement = 0;

@@ -89,6 +89,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
 
   bool autoNextStep = false;
   bool autoTare = false;
+  bool checkCode = false;
   final TextEditingController stableTimeCtl = TextEditingController();
   Timer? autoNextStepTimer;
   int stableDurationCounter = 0; // 稳定时长计数器
@@ -2815,6 +2816,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
       autoNext: autoNextStep,
       stableTime: stableTime,
       autoTare: true,
+      checkCode: checkCode,
     );
 
     PublicFunctions.updateAutoNext(reqAutoNextToJson(reqAutoNext));

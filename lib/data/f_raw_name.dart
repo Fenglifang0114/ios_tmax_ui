@@ -34,6 +34,15 @@ String getRawName(String rawId) {
   return "";
 }
 
+String getRawCheckCode(String rawId) {
+  for (var item in rawDataList) {
+    if (item.materialId == rawId) {
+      return item.checkCode!;
+    }
+  }
+  return "";
+}
+
 String getRawRemark(String rawId) {
   for (var item in rawDataList) {
     if (item.materialId == rawId) {

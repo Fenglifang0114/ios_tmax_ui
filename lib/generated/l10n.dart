@@ -4771,6 +4771,16 @@ class S {
     );
   }
 
+  /// `Ingredient Code`
+  String get fMaterialCodeCol {
+    return Intl.message(
+      'Ingredient Code',
+      name: 'fMaterialCodeCol',
+      desc: 'Table column title for material code',
+      args: [],
+    );
+  }
+
   /// `Edit Ingredient`
   String get fEditMaterial {
     return Intl.message(
@@ -9393,6 +9403,36 @@ class S {
       'Saved successfully!',
       name: 'savedSuccessfully',
       desc: 'Success message when data is saved successfully',
+      args: [],
+    );
+  }
+
+  /// `Ingredient Verification`
+  String get ingredientVerification {
+    return Intl.message(
+      'Ingredient Verification',
+      name: 'ingredientVerification',
+      desc: 'Ingredient Verification',
+      args: [],
+    );
+  }
+
+  /// `Skip Ingredient`
+  String get skipThisIngredient {
+    return Intl.message(
+      'Skip Ingredient',
+      name: 'skipThisIngredient',
+      desc: 'Skip this ingredient',
+      args: [],
+    );
+  }
+
+  /// `No permission`
+  String get noPermission {
+    return Intl.message(
+      'No permission',
+      name: 'noPermission',
+      desc: 'No permission',
       args: [],
     );
   }

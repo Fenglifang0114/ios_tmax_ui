@@ -19,6 +19,7 @@ class RawDataInfo {
   String? remark;
   String? remark1;
   int? scaleId;
+  String? checkCode;
 
   RawDataInfo({
     this.recId,
@@ -33,6 +34,7 @@ class RawDataInfo {
     this.remark,
     this.remark1,
     this.scaleId,
+    this.checkCode,
   });
 
   factory RawDataInfo.fromJson(Map<String, dynamic> json) => RawDataInfo(
@@ -52,6 +54,7 @@ class RawDataInfo {
         remark: json["Remark"],
         remark1: json["Remark1"],
         scaleId: json["ScaleId"],
+        checkCode: json["CheckCode"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -67,6 +70,7 @@ class RawDataInfo {
         "Remark": remark,
         "Remark1": remark1,
         "ScaleId": scaleId,
+        "CheckCode": checkCode,
       };
 }
 
@@ -503,24 +507,3 @@ class FormulaWgtRecList {
     };
   }
 }
-
-// // 发送数据示例
-// Future<void> sendData(Map<String, dynamic> data, String url) async {
-//   final response = await http.post(
-//     Uri.parse(url),
-//     headers: <String, String>{
-//       'Content-Type': 'application/json; charset=UTF-8',
-//     },
-//     body: jsonEncode(data),
-//   );
-
-//   if (response.statusCode == 200) {
-//     print('数据发送成功');
-//   } else {
-//     print('数据发送失败: ${response.statusCode}');
-//   }
-// }
-
-// To parse this JSON data, do
-//
-//     final formulaInfoDb = formulaInfoDbFromJson(jsonString);

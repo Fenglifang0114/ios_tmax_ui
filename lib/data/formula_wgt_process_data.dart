@@ -18,6 +18,7 @@ class FormulaWgtProcessData {
   String? scaleName; //秤名
   String? scaleModel; //秤型
   String? scaleSn; //秤序列号
+  String? checkCode; //校验码
 
   FormulaWgtProcessData({
     this.no,
@@ -38,5 +39,6 @@ class FormulaWgtProcessData {
     this.scaleName,
     this.scaleModel,
     this.scaleSn,
+    this.checkCode,
   });
 }

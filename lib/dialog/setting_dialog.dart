@@ -720,40 +720,6 @@ class ParamSettingDialogState extends State<ParamSettingDialog> {
                                 ],
                               ),
                               const SizedBox(height: 5),
-                              // Row(
-                              //   children: [
-                              //     SizedBox(
-                              //       width: 200,
-                              //       child: Text(
-                              //         localizedStrings.zero_range,
-                              //         overflow: TextOverflow.ellipsis,
-                              //         maxLines: 1,
-                              //       ),
-                              //     ),
-                              //     SizedBox(
-                              //       width: 200,
-                              //       height: 40,
-                              //       child: TextField(
-                              //         controller: zeroRange,
-                              //         maxLength: 8,
-                              //         maxLengthEnforcement:
-                              //             MaxLengthEnforcement.enforced,
-                              //         maxLines: 1,
-                              //         inputFormatters: [
-                              //           FilteringTextInputFormatter.allow(
-                              //               RegExp(r'^\d+(\.)?[0-9]{0,7}'))
-                              //         ], //数字包括小数,
-                              //         textAlignVertical: TextAlignVertical.top,
-                              //         decoration: const InputDecoration(
-                              //           counterText: "",
-                              //           // hintText: "请输入机种类型，如：ztp",
-                              //           // border: OutlineInputBorder(),
-                              //         ),
-                              //         onChanged: (value) {},
-                              //       ),
-                              //     ),
-                              //   ],
-                              // ),
                               const SizedBox(height: 5),
                               (mySettingParam.scaleMode == 1)
                                   ? Row(

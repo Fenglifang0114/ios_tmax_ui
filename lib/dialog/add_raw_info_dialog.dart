@@ -40,6 +40,7 @@ class AddRawDialogState extends State<AddRawDialog> {
   TextEditingController rawRemarkCtl = TextEditingController();
   TextEditingController rawTypeCtl = TextEditingController();
   TextEditingController scaleNameCtl = TextEditingController();
+  TextEditingController checkCodeCtl = TextEditingController();
   dynamic _eventbus1;
 
   @override
@@ -70,6 +71,8 @@ class AddRawDialogState extends State<AddRawDialog> {
     rawNameCtl.dispose();
     rawRemarkCtl.dispose();
     rawTypeCtl.dispose();
+    scaleNameCtl.dispose();
+    checkCodeCtl.dispose();
 
     super.dispose();
   }
@@ -452,7 +455,60 @@ class AddRawDialogState extends State<AddRawDialog> {
                   SizedBox(
                     width: largePadding,
                   ),
-                  Expanded(flex: 1, child: SizedBox()),
+                  Expanded(
+                      flex: 1,
+                      child: Column(children: [
+                        showItemNameWithStar(context, "Check Code", false),
+                        SizedBox(
+                          height: 48,
+                          child: Row(children: [
+                            Expanded(
+                              child: Container(
+                                  padding: const EdgeInsets.only(
+                                      left: 10, right: 10),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .outline, // 设置边框颜色
+                                      width: 1, // 设置边框宽度
+                                    ),
+                                  ),
+                                  alignment: Alignment.centerLeft,
+                                  child: TextField(
+                                    controller: checkCodeCtl,
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      hintText: '',
+                                      contentPadding:
+                                          EdgeInsets.symmetric(vertical: 10),
+                                      hintStyle: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall!
+                                          .copyWith(
+                                            fontSize: 12,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .surfaceContainerHighest,
+                                          ),
+                                      suffixIconConstraints:
+                                          BoxConstraints.tight(Size(40, 40)),
+                                    ),
+                                    onChanged: (value) {
+                                      setState(() {});
+                                    },
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  )),
+                            ),
+                          ]),
+                        ),
+                      ])),
                   SizedBox(
                     width: largePadding,
                   ),
@@ -536,7 +592,9 @@ class AddRawDialogState extends State<AddRawDialog> {
                                       updatedBy: mySysUser.nickName!,
                                       remark: "",
                                       remark1: "",
-                                      scaleId: scaleId);
+                                      scaleId: scaleId,
+                                      checkCode: checkCodeCtl.text);
+
                                   PublicFunctions.addRawData(data);
                                   Navigator.pop(context);
                                 },
@@ -655,6 +713,7 @@ class EditRawDialogState extends State<EditRawDialog> {
   TextEditingController rawRemarkCtl = TextEditingController();
   TextEditingController rawTypeCtl = TextEditingController();
   TextEditingController scaleIdCtl = TextEditingController();
+  TextEditingController checkCodeCtl = TextEditingController();
 
   dynamic _eventbus1;
 
@@ -663,12 +722,14 @@ class EditRawDialogState extends State<EditRawDialog> {
     super.initState();
     rawCodeCtl.text = widget.rawData.materialId!;
     rawNameCtl.text = widget.rawData.materialName!;
+
     rawRemarkCtl.text = widget.rawData.ingredient!;
     rawTypeCtl.text = getRawTypeName(widget.rawData.categoryId!);
     scaleIdCtl.text =
         (widget.rawData.scaleId == 0 || widget.rawData.scaleId == null)
             ? ""
             : widget.rawData.scaleId.toString();
+    checkCodeCtl.text = widget.rawData.checkCode!;
     _eventbus1 = eventBus.on<EventRespGetRawTypeList>().listen((event) {
       if (mounted) {
         String dataStr = event.obj;
@@ -1031,7 +1092,60 @@ class EditRawDialogState extends State<EditRawDialog> {
                   SizedBox(
                     width: largePadding,
                   ),
-                  Expanded(flex: 1, child: SizedBox()),
+                  Expanded(
+                      flex: 1,
+                      child: Column(children: [
+                        showItemNameWithStar(context, "Check Code", false),
+                        SizedBox(
+                          height: 48,
+                          child: Row(children: [
+                            Expanded(
+                              child: Container(
+                                  padding: const EdgeInsets.only(
+                                      left: 10, right: 10),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .outline, // 设置边框颜色
+                                      width: 1, // 设置边框宽度
+                                    ),
+                                  ),
+                                  alignment: Alignment.centerLeft,
+                                  child: TextField(
+                                    controller: checkCodeCtl,
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      hintText: '',
+                                      contentPadding:
+                                          EdgeInsets.symmetric(vertical: 10),
+                                      hintStyle: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall!
+                                          .copyWith(
+                                            fontSize: 12,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .surfaceContainerHighest,
+                                          ),
+                                      suffixIconConstraints:
+                                          BoxConstraints.tight(Size(40, 40)),
+                                    ),
+                                    onChanged: (value) {
+                                      setState(() {});
+                                    },
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  )),
+                            ),
+                          ]),
+                        ),
+                      ])),
                   SizedBox(
                     width: largePadding,
                   ),
@@ -1142,6 +1256,7 @@ class EditRawDialogState extends State<EditRawDialog> {
                                     remark: "",
                                     remark1: "",
                                     scaleId: scaleId,
+                                    checkCode: checkCodeCtl.text,
                                   );
                                   PublicFunctions.editRawData(data);
 
