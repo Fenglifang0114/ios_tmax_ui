@@ -205,11 +205,17 @@ class MessageLookup extends MessageLookupByLibrary {
       "Device Info & Connection",
     ),
     "device_setting_title": MessageLookupByLibrary.simpleMessage("Basics"),
+    "disableIngredientVerification": MessageLookupByLibrary.simpleMessage(
+      "Disable Ingredient Verification",
+    ),
     "downAllPluTip": MessageLookupByLibrary.simpleMessage(
       "All PLU will be erased and reloaded. Continue?",
     ),
     "duplicateHeaders": MessageLookupByLibrary.simpleMessage(
       "Duplicate headers",
+    ),
+    "enableIngredientVerification": MessageLookupByLibrary.simpleMessage(
+      "Enable Ingredient Verification",
     ),
     "enableOrDisable": MessageLookupByLibrary.simpleMessage(
       "Enable or Disable",
@@ -1798,6 +1804,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "user_sex": MessageLookupByLibrary.simpleMessage("Gender:"),
     "variableAlignmentEmpty": MessageLookupByLibrary.simpleMessage(
       "Variable alignment cannot be empty or have a length of 0. Please check.",
+    ),
+    "verificationCode": MessageLookupByLibrary.simpleMessage(
+      "Verification code",
     ),
     "weighingRecords": MessageLookupByLibrary.simpleMessage("Weighing Records"),
     "weightAfterCalibration": MessageLookupByLibrary.simpleMessage(

@@ -2612,7 +2612,7 @@
     "@gTipFree": {
         "description": "This is a free tip message."
     },
-    "gTitleAppConfig": "应用配置",
+    "gTitleAppConfig": "应用",
     "@gTitleAppConfig": {
         "description": "This is the title for application configuration."
     },
@@ -3895,5 +3895,18 @@
     "noPermission": "没有权限",
     "@noPermission": {
         "description": "No permission"
+    },
+    "disableIngredientVerification": "关闭原料验证",
+    "@disableIngredientVerification": {
+        "description": "Toggle ingredient verification"
+    },
+    "enableIngredientVerification": "开启原料验证",
+    "@enableIngredientVerification": {
+        "description": "Toggle ingredient verification"
+    },
+    "verificationCode": "验证码",
+    "@verificationCode": {
+        "description": "Label for verification code field"
     }
+
 }   

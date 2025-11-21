@@ -3895,5 +3895,19 @@
     "noPermission": "No permission",
     "@noPermission": {
         "description": "No permission"
+    },
+    "disableIngredientVerification": "Disable Ingredient Verification",
+    "@disableIngredientVerification": {
+        "description": "Toggle ingredient verification"
+    },
+    "enableIngredientVerification": "Enable Ingredient Verification",
+    "@enableIngredientVerification": {
+        "description": "Toggle ingredient verification"
+    },
+    "verificationCode": "Verification code",
+    "@verificationCode": {
+        "description": "Label for verification code field"
     }
+
+
 }    

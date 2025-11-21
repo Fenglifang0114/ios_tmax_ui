@@ -9436,6 +9436,36 @@ class S {
       args: [],
     );
   }
+
+  /// `Disable Ingredient Verification`
+  String get disableIngredientVerification {
+    return Intl.message(
+      'Disable Ingredient Verification',
+      name: 'disableIngredientVerification',
+      desc: 'Toggle ingredient verification',
+      args: [],
+    );
+  }
+
+  /// `Enable Ingredient Verification`
+  String get enableIngredientVerification {
+    return Intl.message(
+      'Enable Ingredient Verification',
+      name: 'enableIngredientVerification',
+      desc: 'Toggle ingredient verification',
+      args: [],
+    );
+  }
+
+  /// `Verification code`
+  String get verificationCode {
+    return Intl.message(
+      'Verification code',
+      name: 'verificationCode',
+      desc: 'Label for verification code field',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

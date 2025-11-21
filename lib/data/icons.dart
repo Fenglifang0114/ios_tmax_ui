@@ -342,3 +342,11 @@ String downloadToScaleSvgIcon() {
 String barcodeSvgIcon() {
   return 'assets/images/barcode.svg';
 }
+
+String checkCodeSvgIcon() {
+  return 'assets/images/checkCode.svg';
+}
+
+String networkSvgIcon() {
+  return 'assets/images/network.svg';
+}

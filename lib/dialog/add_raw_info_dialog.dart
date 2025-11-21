@@ -458,7 +458,8 @@ class AddRawDialogState extends State<AddRawDialog> {
                   Expanded(
                       flex: 1,
                       child: Column(children: [
-                        showItemNameWithStar(context, "Check Code", false),
+                        showItemNameWithStar(
+                            context, localizedStrings.verificationCode, false),
                         SizedBox(
                           height: 48,
                           child: Row(children: [
@@ -1095,7 +1096,8 @@ class EditRawDialogState extends State<EditRawDialog> {
                   Expanded(
                       flex: 1,
                       child: Column(children: [
-                        showItemNameWithStar(context, "Check Code", false),
+                        showItemNameWithStar(
+                            context, localizedStrings.verificationCode, false),
                         SizedBox(
                           height: 48,
                           child: Row(children: [

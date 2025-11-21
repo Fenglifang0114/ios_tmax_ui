@@ -145,10 +145,16 @@ class MessageLookup extends MessageLookupByLibrary {
       "设备信息 & 连接",
     ),
     "device_setting_title": MessageLookupByLibrary.simpleMessage("基本信息"),
+    "disableIngredientVerification": MessageLookupByLibrary.simpleMessage(
+      "关闭原料验证",
+    ),
     "downAllPluTip": MessageLookupByLibrary.simpleMessage(
       "即将清空设备PLU并重新下载所有PLU，确认吗？",
     ),
     "duplicateHeaders": MessageLookupByLibrary.simpleMessage("存在重复的表头"),
+    "enableIngredientVerification": MessageLookupByLibrary.simpleMessage(
+      "开启原料验证",
+    ),
     "enableOrDisable": MessageLookupByLibrary.simpleMessage("启用或禁用"),
     "fAbandonBtn": MessageLookupByLibrary.simpleMessage("放弃"),
     "fAbandonIngredientsBtn": MessageLookupByLibrary.simpleMessage("放弃配料"),
@@ -785,7 +791,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTitleAddedConfigFunction": MessageLookupByLibrary.simpleMessage(
       "已添加配置功能",
     ),
-    "gTitleAppConfig": MessageLookupByLibrary.simpleMessage("应用配置"),
+    "gTitleAppConfig": MessageLookupByLibrary.simpleMessage("应用"),
     "gTitleConfigFunctionCharge": MessageLookupByLibrary.simpleMessage(
       "配置功能收费方式",
     ),
@@ -1265,6 +1271,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "variableAlignmentEmpty": MessageLookupByLibrary.simpleMessage(
       "变量对齐不能为空或长度为0，请检查。",
     ),
+    "verificationCode": MessageLookupByLibrary.simpleMessage("验证码"),
     "weighingRecords": MessageLookupByLibrary.simpleMessage("称重记录"),
     "weightAfterCalibration": MessageLookupByLibrary.simpleMessage("标定后重量"),
     "weightBeforeCalibration": MessageLookupByLibrary.simpleMessage("标定前重量"),

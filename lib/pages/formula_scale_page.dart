@@ -10,6 +10,7 @@ import 'package:t_max/data/fma_rec_list_db_data.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/formula_scale_data.dart';
 import 'package:t_max/data/g_data.dart';
+import 'package:t_max/data/get_auto_next_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/icons.dart';
 import 'package:t_max/data/import_fma_data.dart';
@@ -100,6 +101,11 @@ class FormulationScalePageState extends State<FormulationScalePage>
 
   bool sendNext = false;
   bool isExit = false;
+  bool checkCode = false;
+
+  bool autoNextStep = false;
+  int stableTime = 0;
+  bool autoTare = false;
 
   dynamic _eventbus1;
   dynamic _eventbus2;
@@ -125,6 +131,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
   dynamic _eventbus22;
   dynamic _eventbus23;
   dynamic _eventbus24;
+  dynamic _eventbus25;
 
   @override
   void initState() {
@@ -500,10 +507,27 @@ class FormulationScalePageState extends State<FormulationScalePage>
       }
     });
 
+    _eventbus25 = eventBus.on<EventRespGetAutoNext>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+        if (dataStr != '') {
+          setState(() {
+            GetAutoNextFormDb getInfoFormDb =
+                getAutoNextFormDbFromJson(dataStr);
+            autoNextStep = getInfoFormDb.autoNext;
+            stableTime = getInfoFormDb.stableTime;
+            autoTare = getInfoFormDb.autoTare;
+            checkCode = getInfoFormDb.checkCode;
+          });
+        }
+      }
+    });
+
     //初始化完成再做一次数据加载
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // 在这里调用数据加载的方法
+      PublicFunctions.getAutoNext();
       PublicFunctions.getRawTypeList();
       PublicFunctions.getFormulaTypeList();
       PublicFunctions.getRawList();
@@ -586,6 +610,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
     _eventbus22?.cancel();
     _eventbus23?.cancel();
     _eventbus24?.cancel();
+    _eventbus25?.cancel();
   }
 
   void startTestScaleOnline() {
@@ -1224,6 +1249,16 @@ class FormulationScalePageState extends State<FormulationScalePage>
     return 0;
   }
 
+  void setAutoNext() {
+    ReqAutoNext reqAutoNext = ReqAutoNext(
+        autoNext: autoNextStep,
+        stableTime: stableTime,
+        autoTare: autoTare,
+        checkCode: checkCode);
+
+    PublicFunctions.updateAutoNext(reqAutoNextToJson(reqAutoNext));
+  }
+
   showFormulaBottom() {
     return Expanded(
       flex: 4,
@@ -1235,7 +1270,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
               color: colorScheme.surface,
               child: Row(children: [
                 const SizedBox(
-                  width: 20,
+                  width: regularPadding,
                 ),
                 Text(
                   localizedStrings.fFmaNameLabel + "：",
@@ -1325,11 +1360,52 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     maxLines: 1,
                   ),
                 ),
+                if (mySysUser.roleId == superAdminRoleId ||
+                    mySysUser.roleId == adminRoleId)
+                  Container(
+                      width: 44,
+                      height: 36,
+                      padding: const EdgeInsets.only(left: smallPadding),
+                      child: Tooltip(
+                        message: checkCode
+                            ? localizedStrings.disableIngredientVerification
+                            : localizedStrings.enableIngredientVerification,
+                        child: IconButton(
+                          iconSize: 24,
+                          color: colorScheme.onPrimary,
+                          hoverColor: colorScheme.primary.withAlpha(20),
+                          style: IconButton.styleFrom(
+                            backgroundColor: checkCode
+                                ? colorScheme.primary
+                                : colorScheme.surfaceContainerLow,
+                            shape: RoundedRectangleBorder(
+                              // 设置为矩形形状
+                              borderRadius: BorderRadius.zero, // 没有圆角，即正方形
+                            ),
+                            fixedSize: const Size(36, 36), // 设置固定大小
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              checkCode = !checkCode;
+                            });
+                            setAutoNext();
+                          },
+                          icon: getSvgIcon(
+                              checkCodeSvgIcon(),
+                              24,
+                              24,
+                              checkCode
+                                  ? colorScheme.onPrimary
+                                  : colorScheme.outline),
+                        ),
+                      )),
+
                 const SizedBox(
-                  width: 20,
+                  width: regularPadding,
                 ),
+
                 SizedBox(
-                  width: 200,
+                  width: 150,
                   height: 36,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -2894,6 +2970,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
           //导出配方
           exportFormula();
         }),
+        SizedBox(
+          width: 12,
+        ),
         buildIconBtn(localizedStrings.fGetFmaTemplateBtn, rawTemplateSvgIcon(),
             getFmaTemplate),
         SizedBox(
