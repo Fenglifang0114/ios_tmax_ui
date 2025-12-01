@@ -3907,6 +3907,14 @@
     "verificationCode": "验证码",
     "@verificationCode": {
         "description": "Label for verification code field"
+    },
+    "gNetwork": "网络",
+    "@gNetwork": {
+        "description": "Network"
+    },
+    "ipAddressAndPortIsAlreadyInUse": "IP地址和端口已被使用",
+    "@ipAddressAndPortIsAlreadyInUse": {
+        "description": "Error message when IP address and port are already in use"
     }
 
 }   

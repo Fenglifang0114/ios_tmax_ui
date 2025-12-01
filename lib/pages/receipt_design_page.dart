@@ -211,10 +211,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
   List<String> paths = [];
   List<DataRow> dataRows = [];
 
-  final List<String> _printers = [
-    'ESC/POS',
-    'EPM205',
-  ];
+  final List<String> _printers = ['ESC/POS', 'EPM205', 'LP50', 'ZEBRA'];
 
   final List<String> _printDirections = [
     'Forward',

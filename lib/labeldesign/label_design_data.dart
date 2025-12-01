@@ -236,19 +236,19 @@ DraggableElement addElementToList(String name, String lastFontSize) {
     fontReverse: fontReverse,
   );
 
-  if (type == 'DATA') {
+  if (type == 'DATA' || type == 'data') {
     element.type = ElementType.data;
-  } else if (type == "TEXT") {
+  } else if (type == "TEXT" || type == "text") {
     element.type = ElementType.text;
-  } else if (type == "BarCode") {
+  } else if (type == "BarCode" || type == "barcode") {
     element.type = ElementType.barcode;
-  } else if (type == "Qrcode") {
+  } else if (type == "Qrcode" || type == "qrcode") {
     element.type = ElementType.qrcode;
     element.size = Size(3 * 21, 3 * 21);
-  } else if (type == "Line") {
+  } else if (type == "Line" || type == "line") {
     element.type = ElementType.line;
     element.size = Size(100, 2);
-  } else if (type == "IMG") {
+  } else if (type == "IMG" || type == "img") {
     element.type = ElementType.img;
     element.varName = "";
   }

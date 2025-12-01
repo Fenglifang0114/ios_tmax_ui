@@ -1373,22 +1373,25 @@ class AddScaleDialog1State extends State<AddScaleDialog1> {
                               Navigator.pop(context, 'wifi');
                             },
                             child: Container(
-                              width: 140,
-                              height: 120,
-                              alignment: Alignment.center,
-                              color: isWifiHovered
-                                  ? Theme.of(context).colorScheme.primary
-                                  : Theme.of(context)
-                                      .colorScheme
-                                      .surfaceContainerLow,
-                              child: Icon(
-                                Icons.wifi,
-                                size: btnHeight,
+                                width: 140,
+                                height: 120,
+                                alignment: Alignment.center,
                                 color: isWifiHovered
-                                    ? Theme.of(context).colorScheme.onPrimary
-                                    : Theme.of(context).colorScheme.primary,
-                              ),
-                            ),
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(context)
+                                        .colorScheme
+                                        .surfaceContainerLow,
+                                child: getSvgIcon(
+                                    networkSvgIcon(),
+                                    btnHeight,
+                                    btnHeight,
+                                    isWifiHovered
+                                        ? Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary
+                                        : Theme.of(context)
+                                            .colorScheme
+                                            .primary)),
                           ),
                         ),
                         SizedBox(

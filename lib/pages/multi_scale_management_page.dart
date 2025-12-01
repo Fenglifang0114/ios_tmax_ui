@@ -60,6 +60,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
   bool isDel = false; //是否执行删除
   bool isDC500 = false; //是否是旧的版本的秤
   bool isAddNewScale = false;
+  bool editWifiInfo = false; //是否是修改wifi信息
 
   dynamic _eventbus1;
   dynamic _eventbus2;
@@ -367,19 +368,16 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
     tempCurrentPort = myCurrentPort;
 
     return Scaffold(
-        body: isAddScale && addScaleType != ""
-            ? showAddScaleInfo(maxWidth)
-            : showNormalScaleInfo(maxWidth));
+        body: editWifiInfo
+            ? showEditWifiInfo(maxWidth)
+            : isAddScale && addScaleType != ""
+                ? showAddScaleInfo(maxWidth)
+                : showNormalScaleInfo(maxWidth));
   }
 
 //正常显示
   Widget showNormalScaleInfo(double maxWidth) {
     return Column(children: [
-      // pageHeadInfo(
-      //     context,
-      //     maxWidth - headWidthPadding,
-      //     localizedStrings.menuMultiScaleManagement,
-      //     localizedStrings.gTipScaleMgrPageHelp),
       Expanded(
           child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Container(
@@ -410,7 +408,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
                   ? SizedBox()
                   : getScaleType() == comScaleType
                       ? showSerialScaleInfo()
-                      : showDetailScaleInfo(), //网络秤
+                      : showNetworkScaleInfo(), //网络秤
             ],
           ),
         ),
@@ -437,6 +435,16 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
         child: addScaleType == "com"
             ? showAddComScaleInfo()
             : showAddNetScaleInfo(),
+      ),
+    ]);
+  }
+
+  showEditWifiInfo(double maxWidth) {
+    return Column(children: [
+      subTitleInfo(context, maxWidth - headWidthPadding,
+          localizedStrings.gBtnModify, localizedStrings.gTipScaleMgrPageHelp),
+      Expanded(
+        child: showEditNetScaleInfo(),
       ),
     ]);
   }
@@ -677,6 +685,91 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
     );
   }
 
+  Widget showEditNetScaleInfo() {
+    return ListView(
+      children: [
+        SizedBox(
+          height: regularPadding,
+        ),
+        buildItemInfo(
+            showItemNameWithStar(context, localizedStrings.gIpAddress, false),
+            showInputBox(context, ipCtl, '', (value) {
+              setState(() {});
+            }, true),
+            showItemNameWithStar(context, localizedStrings.gTipPort, false),
+            Container(
+              height: inputHeight,
+              padding: const EdgeInsets.only(left: 16, right: 20),
+              decoration: BoxDecoration(
+                border: Border.all(
+                    color:
+                        Theme.of(context).colorScheme.outlineVariant), // 设置边框颜色
+                borderRadius: BorderRadius.circular(0), // 设置圆角
+              ),
+              child: TextField(
+                controller: portCtl,
+                decoration: InputDecoration(
+                  hintStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface, // 设置提示文本颜色
+                  ),
+                  border: InputBorder.none, // 移除默认边框
+                ),
+                inputFormatters: [
+                  LengthLimitingTextInputFormatter(5),
+                  FilteringTextInputFormatter.allow(RegExp(
+                      r'^([1-9]|[1-9]\d|[1-9]\d{2}|[1-9]\d{3}|[1-5]\d{4}|6[0-4]\d{3}|65[0-4]\d{2}|655[0-2]\d|6553[0-5])$')), // 允许输入数字
+                ],
+                style: Theme.of(context).textTheme.bodySmall!.apply(
+                      color:
+                          Theme.of(context).colorScheme.onSurface, // 设置输入文本颜色
+                    ),
+                onChanged: (value) {
+                  setState(() {});
+                }, // 监听文本变化,
+              ),
+            )),
+        SizedBox(
+          height: regularPadding,
+        ),
+        SizedBox(
+          height: regularPadding,
+        ),
+        SizedBox(
+          height: regularPadding,
+        ),
+        SizedBox(
+          height: regularPadding,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            showTextButton(
+                context,
+                btnHeight,
+                localizedStrings.gBtnConfirm,
+                portCtl.text.isNotEmpty && _isValidIP
+                    ? () {
+                        editNetScale();
+                      }
+                    : null,
+                Theme.of(context).colorScheme.onPrimary,
+                Theme.of(context).colorScheme.primary,
+                Theme.of(context).colorScheme.onPrimary),
+            const SizedBox(width: regularPadding),
+            showTextButton(context, btnHeight, localizedStrings.gBtnCancel, () {
+              setState(() {
+                editWifiInfo = false;
+              });
+            },
+                Theme.of(context).colorScheme.onPrimary,
+                Theme.of(context).colorScheme.onSurfaceVariant,
+                Theme.of(context).colorScheme.onPrimary),
+          ],
+        )
+      ],
+    );
+  }
+
   Widget showAddScaleBtn() {
     return Container(
         padding: const EdgeInsets.symmetric(horizontal: regularPadding),
@@ -859,48 +952,51 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
                               height: scaleItemHeight,
                               alignment: Alignment.center,
                               child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(4)),
-                                  color: !isSelect
-                                      ? Theme.of(context)
-                                          .colorScheme
-                                          .surfaceContainerLowest
-                                      : Theme.of(context)
-                                          .colorScheme
-                                          .surface
-                                          .withValues(alpha: 0.1),
-                                ),
-                                width: scaleInnerItemHeight,
-                                height: scaleInnerItemHeight,
-                                child: scale.tMedia == 0
-                                    ? Container(
-                                        alignment: Alignment.center,
-                                        width: iconMenuSize,
-                                        height: iconMenuSize,
-                                        child: getSvgIcon(
-                                            serialPortSvgIcon(),
-                                            iconMenuSize,
-                                            iconMenuSize,
-                                            (!isSelect)
-                                                ? Theme.of(context)
-                                                    .colorScheme
-                                                    .primary
-                                                : Theme.of(context)
-                                                    .colorScheme
-                                                    .onPrimary))
-                                    : Icon(
-                                        size: iconMenuSize,
-                                        Icons.wifi,
-                                        color: !isSelect
-                                            ? Theme.of(context)
-                                                .colorScheme
-                                                .primary
-                                            : Theme.of(context)
-                                                .colorScheme
-                                                .onPrimary,
-                                      ),
-                              )),
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(4)),
+                                    color: !isSelect
+                                        ? Theme.of(context)
+                                            .colorScheme
+                                            .surfaceContainerLowest
+                                        : Theme.of(context)
+                                            .colorScheme
+                                            .surface
+                                            .withValues(alpha: 0.1),
+                                  ),
+                                  width: scaleInnerItemHeight,
+                                  height: scaleInnerItemHeight,
+                                  child: scale.tMedia == 0
+                                      ? Container(
+                                          alignment: Alignment.center,
+                                          width: iconMenuSize,
+                                          height: iconMenuSize,
+                                          child: getSvgIcon(
+                                              serialPortSvgIcon(),
+                                              iconMenuSize,
+                                              iconMenuSize,
+                                              (!isSelect)
+                                                  ? Theme.of(context)
+                                                      .colorScheme
+                                                      .primary
+                                                  : Theme.of(context)
+                                                      .colorScheme
+                                                      .onPrimary))
+                                      : Container(
+                                          alignment: Alignment.center,
+                                          width: iconMenuSize,
+                                          height: iconMenuSize,
+                                          child: getSvgIcon(
+                                              networkSvgIcon(),
+                                              iconMenuSize,
+                                              iconMenuSize,
+                                              (!isSelect)
+                                                  ? Theme.of(context)
+                                                      .colorScheme
+                                                      .primary
+                                                  : Theme.of(context)
+                                                      .colorScheme
+                                                      .onPrimary)))),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1121,7 +1217,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
     PublicFunctions.sendModifyInfo(jsonEncode(myModifyScale));
   }
 
-  Widget showDetailScaleInfo() {
+  Widget showNetworkScaleInfo() {
     return Expanded(
         child: SizedBox(
             width: double.infinity,
@@ -1378,8 +1474,50 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
             Theme.of(context).colorScheme.onPrimary,
             Theme.of(context).colorScheme.onTertiaryFixedVariant,
             Theme.of(context).colorScheme.onPrimary),
+        const SizedBox(width: regularPadding),
+        showTextButton(
+            context,
+            btnHeight,
+            localizedStrings.gBtnModify,
+            !isAddScale && !isTesting && !isDel && !isComSetting
+                ? () {
+                    PublicFunctions.checkSerialPort(selScaleId);
+                    setState(() {
+                      editWifiInfo = true;
+                    });
+                  }
+                : null,
+            Theme.of(context).colorScheme.onPrimary,
+            Theme.of(context).colorScheme.primary,
+            Theme.of(context).colorScheme.onPrimary),
       ],
     );
+  }
+
+  void editNetScale() {
+    myNetInfo.ip = ipCtl.text;
+    myNetInfo.port = int.tryParse(portCtl.text)!;
+
+    //查找是否有一样的端口和IP
+    for (var scale in myAllScalesList) {
+      if (scale.tMedia == netScaleType) {
+        final netConfig = scale.mediaConfig as NetworkMediaConfig;
+        if (netConfig.ipAddress == ipCtl.text &&
+            netConfig.port.toString() == portCtl.text) {
+          showTipInfo(localizedStrings.ipAddressAndPortIsAlreadyInUse , context);
+          return;
+        }
+      }
+    }
+
+    String netInfoStr = jsonEncode(myNetInfo);
+    myMediaConf.mediaInfoJson = netInfoStr;
+    myMediaConf.type = 1;
+    myAddNetScale.scaleId = selScaleId;
+    myAddNetScale.scaleModel = 'TMax';
+    myAddNetScale.mediaConf = myMediaConf;
+    PublicFunctions.sendModifyInfo(jsonEncode(myAddNetScale));
+    editWifiInfo = false;
   }
 
   void addNetScale() {
@@ -1527,7 +1665,7 @@ class AddScaleDialogState extends State<AddScaleDialog> {
                         Navigator.pop(context, '');
                       })
                 ])),
-            // 分割线
+
             Divider(
               height: 1,
               color: Theme.of(context).colorScheme.surfaceContainerLow,
@@ -1612,22 +1750,22 @@ class AddScaleDialogState extends State<AddScaleDialog> {
                                 child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Icon(
-                                        Icons.wifi,
-                                        size: btnHeight,
-                                        color: isWifiHovered
-                                            ? Theme.of(context)
-                                                .colorScheme
-                                                .onPrimary
-                                            : Theme.of(context)
-                                                .colorScheme
-                                                .primary,
-                                      ),
+                                      getSvgIcon(
+                                          networkSvgIcon(),
+                                          btnHeight,
+                                          btnHeight,
+                                          isWifiHovered
+                                              ? Theme.of(context)
+                                                  .colorScheme
+                                                  .onPrimary
+                                              : Theme.of(context)
+                                                  .colorScheme
+                                                  .primary),
                                       SizedBox(
                                         height: regularPadding,
                                       ),
                                       Text(
-                                        'Wi-Fi',
+                                        localizedStrings.gNetwork,
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyMedium!

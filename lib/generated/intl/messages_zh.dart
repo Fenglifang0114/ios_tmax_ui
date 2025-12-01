@@ -450,6 +450,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "gMsgRefresh": MessageLookupByLibrary.simpleMessage("刷新"),
     "gMsgSerialError": MessageLookupByLibrary.simpleMessage("串口连接已断开，请检查设置."),
     "gNetmask": MessageLookupByLibrary.simpleMessage("子网掩码"),
+    "gNetwork": MessageLookupByLibrary.simpleMessage("网络"),
     "gOpenJson": MessageLookupByLibrary.simpleMessage("打开 Json"),
     "gPageHeight": MessageLookupByLibrary.simpleMessage("高度"),
     "gPageWidth": MessageLookupByLibrary.simpleMessage("宽度"),
@@ -851,6 +852,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "ingredientVerification": MessageLookupByLibrary.simpleMessage("原料验证"),
     "invalidName": MessageLookupByLibrary.simpleMessage("名称无效，请输入有效名称。"),
+    "ipAddressAndPortIsAlreadyInUse": MessageLookupByLibrary.simpleMessage(
+      "IP地址和端口已被使用",
+    ),
     "jump_confirm_info": MessageLookupByLibrary.simpleMessage(
       "请确认跳转默认打印格式下发页面.",
     ),

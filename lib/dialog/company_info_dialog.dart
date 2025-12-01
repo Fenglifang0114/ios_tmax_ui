@@ -38,8 +38,8 @@ class CompanyInfoDialogState extends State<CompanyInfoDialog> {
     return Dialog(
       backgroundColor: Colors.transparent,
       child: Container(
-        width: 610,
-        height: 493,
+        width: 600,
+        height: 350,
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(0),
@@ -65,11 +65,9 @@ class CompanyInfoDialogState extends State<CompanyInfoDialog> {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         localizedStrings.gAppInformation,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
+                        style: Theme.of(context).textTheme.bodyMedium!.apply(
+                            color: Theme.of(context).colorScheme.onSurface,
+                            fontWeightDelta: 2),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -89,12 +87,7 @@ class CompanyInfoDialogState extends State<CompanyInfoDialog> {
               height: 1,
               color: Theme.of(context).colorScheme.surfaceContainerLow,
             ),
-            // Center(
-            //   child: Text(myAppName.appName!,
-            //       style: Theme.of(context).textTheme.titleLarge!.apply(
-            //           color: Theme.of(context).colorScheme.primary,
-            //           fontSizeFactor: 1.5)),
-            // ),
+
             const SizedBox(
               height: largePadding,
             ),
@@ -135,7 +128,8 @@ class CompanyInfoDialogState extends State<CompanyInfoDialog> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Expanded(child: leftInfoText("$title:")),
+        SizedBox(width: largePadding),
+        SizedBox(child: leftInfoText("$title:")),
         SizedBox(
           width: largePadding,
         ),

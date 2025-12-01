@@ -1167,9 +1167,9 @@ class LabelDesignPageState extends State<LabelDesignPage> {
     // csvData.add(['Time', 'Name']);
     //打印正向或者反向
     if (_selectedPrintDirection == 'Forward') {
-      csvData.add(['ROTATE', '0']);
+      csvData.add(['ROTATE', 'Forward']);
     } else {
-      csvData.add(['ROTATE', '2']);
+      csvData.add(['ROTATE', 'Backward']);
     }
     //打印纸张大小
     csvData.add(['P', _widthController.text, _heightController.text]);
@@ -1177,7 +1177,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
     // csvData.add(['L', '147', '124', '247', '184', '2', '0', '0']);
 
     for (var i = 0; i < elements.length; i++) {
-      if (elements[i].type.name == 'TEXT') {
+      if (elements[i].type.name == 'text') {
         int fontsize = int.parse(elements[i].fontSize ?? '0');
         List fontlist = getFontSize(fontsize);
         csvData.add([
@@ -1191,11 +1191,11 @@ class LabelDesignPageState extends State<LabelDesignPage> {
           fontlist[2],
           _getstyle(elements[i].fontBold!, elements[i].fontReverse!),
           _getRotation(elements[i].rotation!),
-          elements[i].type,
+          'TEXT',
           elements[i].content,
           elements[i].index,
         ]);
-      } else if (elements[i].type.name == 'DATA') {
+      } else if (elements[i].type.name == 'data') {
         int fontsize = int.parse(elements[i].fontSize ?? '0');
         List fontlist = getFontSize(fontsize);
         csvData.add([
@@ -1209,14 +1209,14 @@ class LabelDesignPageState extends State<LabelDesignPage> {
           fontlist[2],
           _getstyle(elements[i].fontBold!, elements[i].fontReverse!),
           _getRotation(elements[i].rotation!),
-          elements[i].type,
+          'DATA',
           elements[i].varName,
           elements[i].defaultValue,
           elements[i].alignment,
           elements[i].maxLength,
           elements[i].index,
         ]);
-      } else if (elements[i].type.name == 'BarCode') {
+      } else if (elements[i].type.name == 'barcode') {
         String tempContent = '';
         if (elements[i].style == 0) {
           tempContent = _barcodeContent(elements[i].varcontent!);
@@ -1280,7 +1280,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
           tempContent,
           elements[i].index,
         ]);
-      } else if (elements[i].type.name == 'Line') {
+      } else if (elements[i].type.name == 'line') {
         if (elements[i].lineWidth! <= elements[i].x2Pos!) {
           csvData.add([
             'L',
@@ -1594,17 +1594,17 @@ class LabelDesignPageState extends State<LabelDesignPage> {
         elements.add(DraggableElement(
           position: Offset(formData.xPos.toDouble(), formData.yPos.toDouble()),
           size: Size(formData.width.toDouble(), formData.height.toDouble()),
-          type: formData.type == "TEXT"
+          type: formData.type == "TEXT" || formData.type == "text"
               ? ElementType.text
-              : formData.type == "DATA"
+              : formData.type == "DATA" || formData.type == "data"
                   ? ElementType.data
-                  : formData.type == "BarCode"
+                  : formData.type == "BarCode" || formData.type == "barcode"
                       ? ElementType.barcode
-                      : formData.type == "Qrcode"
+                      : formData.type == "Qrcode" || formData.type == "qrcode"
                           ? ElementType.qrcode
-                          : formData.type == "Line"
+                          : formData.type == "Line" || formData.type == "line"
                               ? ElementType.line
-                              : formData.type == "IMG"
+                              : formData.type == "IMG" || formData.type == "img"
                                   ? ElementType.img
                                   : ElementType.text,
           index: (i),
@@ -1698,7 +1698,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
       if (formData.width == 20 || formData.height == 50) {
         formData.width = 70;
         formData.height = 30;
-        if (formData.type == "BarCode") {
+        if (formData.type == "BarCode" || formData.type == "barcode") {
           formData.height = 50;
         }
       }

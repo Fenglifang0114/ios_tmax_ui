@@ -557,48 +557,57 @@ class _NewAllScaleListWidgetState extends State<NewAllScaleListWidget> {
                                           height: scaleItemHeight,
                                           alignment: Alignment.center,
                                           child: Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(4)),
-                                              color: !isSelect
-                                                  ? Theme.of(context)
-                                                      .colorScheme
-                                                      .surfaceContainerLowest
-                                                  : Theme.of(context)
-                                                      .colorScheme
-                                                      .surface
-                                                      .withValues(alpha: 0.1),
-                                            ),
-                                            width: scaleInnerItemHeight,
-                                            height: scaleInnerItemHeight,
-                                            child: scale.tMedia == 0
-                                                ? Container(
-                                                    alignment: Alignment.center,
-                                                    width: iconMenuSize,
-                                                    height: iconMenuSize,
-                                                    child: getSvgIcon(
-                                                        serialPortSvgIcon(),
-                                                        iconMenuSize,
-                                                        iconMenuSize,
-                                                        (!isSelect)
-                                                            ? Theme.of(context)
-                                                                .colorScheme
-                                                                .primary
-                                                            : Theme.of(context)
-                                                                .colorScheme
-                                                                .onPrimary))
-                                                : Icon(
-                                                    size: iconMenuSize,
-                                                    Icons.wifi,
-                                                    color: !isSelect
-                                                        ? Theme.of(context)
-                                                            .colorScheme
-                                                            .primary
-                                                        : Theme.of(context)
-                                                            .colorScheme
-                                                            .onPrimary,
-                                                  ),
-                                          )),
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(4)),
+                                                color: !isSelect
+                                                    ? Theme.of(context)
+                                                        .colorScheme
+                                                        .surfaceContainerLowest
+                                                    : Theme.of(context)
+                                                        .colorScheme
+                                                        .surface
+                                                        .withValues(alpha: 0.1),
+                                              ),
+                                              width: scaleInnerItemHeight,
+                                              height: scaleInnerItemHeight,
+                                              child: scale.tMedia == 0
+                                                  ? Container(
+                                                      alignment:
+                                                          Alignment.center,
+                                                      width: iconMenuSize,
+                                                      height: iconMenuSize,
+                                                      child: getSvgIcon(
+                                                          serialPortSvgIcon(),
+                                                          iconMenuSize,
+                                                          iconMenuSize,
+                                                          (!isSelect)
+                                                              ? Theme.of(
+                                                                      context)
+                                                                  .colorScheme
+                                                                  .primary
+                                                              : Theme.of(
+                                                                      context)
+                                                                  .colorScheme
+                                                                  .onPrimary))
+                                                  : Container(
+                                                      alignment:
+                                                          Alignment.center,
+                                                      width: iconMenuSize,
+                                                      height: iconMenuSize,
+                                                      child: getSvgIcon(
+                                                          networkSvgIcon(),
+                                                          iconMenuSize,
+                                                          iconMenuSize,
+                                                          (!isSelect)
+                                                              ? Theme.of(
+                                                                      context)
+                                                                  .colorScheme
+                                                                  .primary
+                                                              : Theme.of(
+                                                                      context)
+                                                                  .colorScheme
+                                                                  .onPrimary)))),
                                       Expanded(
                                         child: Column(
                                           crossAxisAlignment:
@@ -760,17 +769,21 @@ class _NewComScaleListWidgetState extends State<NewComScaleListWidget> {
                                                             : Theme.of(context)
                                                                 .colorScheme
                                                                 .onPrimary))
-                                                : Icon(
-                                                    size: iconMenuSize,
-                                                    Icons.wifi,
-                                                    color: !isSelect
-                                                        ? Theme.of(context)
-                                                            .colorScheme
-                                                            .primary
-                                                        : Theme.of(context)
-                                                            .colorScheme
-                                                            .onPrimary,
-                                                  ),
+                                                : Container(
+                                                    alignment: Alignment.center,
+                                                    width: iconMenuSize,
+                                                    height: iconMenuSize,
+                                                    child: getSvgIcon(
+                                                        networkSvgIcon(),
+                                                        iconMenuSize,
+                                                        iconMenuSize,
+                                                        (!isSelect)
+                                                            ? Theme.of(context)
+                                                                .colorScheme
+                                                                .primary
+                                                            : Theme.of(context)
+                                                                .colorScheme
+                                                                .onPrimary)),
                                           )),
                                       Expanded(
                                         child: Column(
@@ -950,17 +963,21 @@ class _NewMutiScaleListWidgetState extends State<NewMutiScaleListWidget> {
                                                             : Theme.of(context)
                                                                 .colorScheme
                                                                 .onPrimary))
-                                                : Icon(
-                                                    size: iconMenuSize,
-                                                    Icons.wifi,
-                                                    color: !isSelect
-                                                        ? Theme.of(context)
-                                                            .colorScheme
-                                                            .primary
-                                                        : Theme.of(context)
-                                                            .colorScheme
-                                                            .onPrimary,
-                                                  ),
+                                                : Container(
+                                                    alignment: Alignment.center,
+                                                    width: iconMenuSize,
+                                                    height: iconMenuSize,
+                                                    child: getSvgIcon(
+                                                        networkSvgIcon(),
+                                                        iconMenuSize,
+                                                        iconMenuSize,
+                                                        (!isSelect)
+                                                            ? Theme.of(context)
+                                                                .colorScheme
+                                                                .primary
+                                                            : Theme.of(context)
+                                                                .colorScheme
+                                                                .onPrimary)),
                                           )),
                                       Expanded(
                                         child: Column(
@@ -1192,17 +1209,21 @@ class _NewMutiScaleListWifiWidgetState
                                                             : Theme.of(context)
                                                                 .colorScheme
                                                                 .onPrimary))
-                                                : Icon(
-                                                    size: iconMenuSize,
-                                                    Icons.wifi,
-                                                    color: !isSelect
-                                                        ? Theme.of(context)
-                                                            .colorScheme
-                                                            .primary
-                                                        : Theme.of(context)
-                                                            .colorScheme
-                                                            .onPrimary,
-                                                  ),
+                                                : Container(
+                                                    alignment: Alignment.center,
+                                                    width: iconMenuSize,
+                                                    height: iconMenuSize,
+                                                    child: getSvgIcon(
+                                                        networkSvgIcon(),
+                                                        iconMenuSize,
+                                                        iconMenuSize,
+                                                        (!isSelect)
+                                                            ? Theme.of(context)
+                                                                .colorScheme
+                                                                .primary
+                                                            : Theme.of(context)
+                                                                .colorScheme
+                                                                .onPrimary)),
                                           )),
                                       Expanded(
                                         child: Column(

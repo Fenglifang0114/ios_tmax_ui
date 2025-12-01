@@ -9466,6 +9466,21 @@ class S {
       args: [],
     );
   }
+
+  /// `Network`
+  String get gNetwork {
+    return Intl.message('Network', name: 'gNetwork', desc: 'Network', args: []);
+  }
+
+  /// `IP address and port is already in use`
+  String get ipAddressAndPortIsAlreadyInUse {
+    return Intl.message(
+      'IP address and port is already in use',
+      name: 'ipAddressAndPortIsAlreadyInUse',
+      desc: 'Error message when IP address and port are already in use',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

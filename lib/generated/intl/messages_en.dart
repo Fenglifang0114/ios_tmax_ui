@@ -656,6 +656,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Serial port has been disconnected. Please check the settings.",
     ),
     "gNetmask": MessageLookupByLibrary.simpleMessage("NetMask"),
+    "gNetwork": MessageLookupByLibrary.simpleMessage("Network"),
     "gOpenJson": MessageLookupByLibrary.simpleMessage("Open Json"),
     "gPageHeight": MessageLookupByLibrary.simpleMessage("Height"),
     "gPageWidth": MessageLookupByLibrary.simpleMessage("Width"),
@@ -1228,6 +1229,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "invalidName": MessageLookupByLibrary.simpleMessage(
       "The name is invalid. Please enter a valid name.",
+    ),
+    "ipAddressAndPortIsAlreadyInUse": MessageLookupByLibrary.simpleMessage(
+      "IP address and port is already in use",
     ),
     "jump_confirm_info": MessageLookupByLibrary.simpleMessage(
       "Please confirm to go to the default print format page.",

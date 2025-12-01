@@ -3907,7 +3907,13 @@
     "verificationCode": "Verification code",
     "@verificationCode": {
         "description": "Label for verification code field"
+    },
+    "gNetwork": "Network",
+    "@gNetwork": {
+        "description": "Network"
+    },
+    "ipAddressAndPortIsAlreadyInUse": "IP address and port is already in use",
+    "@ipAddressAndPortIsAlreadyInUse": {
+        "description": "Error message when IP address and port are already in use"
     }
-
-
 }    
