@@ -1475,21 +1475,21 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
             Theme.of(context).colorScheme.onTertiaryFixedVariant,
             Theme.of(context).colorScheme.onPrimary),
         const SizedBox(width: regularPadding),
-        showTextButton(
-            context,
-            btnHeight,
-            localizedStrings.gBtnModify,
-            !isAddScale && !isTesting && !isDel && !isComSetting
-                ? () {
-                    PublicFunctions.checkSerialPort(selScaleId);
-                    setState(() {
-                      editWifiInfo = true;
-                    });
-                  }
-                : null,
-            Theme.of(context).colorScheme.onPrimary,
-            Theme.of(context).colorScheme.primary,
-            Theme.of(context).colorScheme.onPrimary),
+        // showTextButton(
+        //     context,
+        //     btnHeight,
+        //     localizedStrings.gBtnModify,
+        //     !isAddScale && !isTesting && !isDel && !isComSetting
+        //         ? () {
+        //             PublicFunctions.checkSerialPort(selScaleId);
+        //             setState(() {
+        //               editWifiInfo = true;
+        //             });
+        //           }
+        //         : null,
+        //     Theme.of(context).colorScheme.onPrimary,
+        //     Theme.of(context).colorScheme.primary,
+        //     Theme.of(context).colorScheme.onPrimary),
       ],
     );
   }
@@ -1504,7 +1504,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
         final netConfig = scale.mediaConfig as NetworkMediaConfig;
         if (netConfig.ipAddress == ipCtl.text &&
             netConfig.port.toString() == portCtl.text) {
-          showTipInfo(localizedStrings.ipAddressAndPortIsAlreadyInUse , context);
+          showTipInfo(localizedStrings.ipAddressAndPortIsAlreadyInUse, context);
           return;
         }
       }

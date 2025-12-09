@@ -1013,6 +1013,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
   final List<String> _printers = [
     'EPM205',
     'ZEBRA',
+    'LP50',
   ];
 
   void getLanguageVarMap() {
@@ -1155,26 +1156,28 @@ class LabelDesignPageState extends State<LabelDesignPage> {
 //在中间部分添加可拖拽控件，并添加到floatButtonList数组里，方便显示
   void addFloatButton(name) {
     DraggableElement element = addElementToList(name, lastFontSize);
+
     setState(() {
       elements.add(element);
     });
   }
 
   String csv = "";
+
   void _exportCSV() async {
-    // var path = 'C:\\Users\\Test-Team\\Desktop\\text1111';
     List<List<dynamic>> csvData = <List<dynamic>>[];
     // csvData.add(['Time', 'Name']);
     //打印正向或者反向
     if (_selectedPrintDirection == 'Forward') {
-      csvData.add(['ROTATE', 'Forward']);
+      csvData.add(['ROTATE', '0']);
     } else {
-      csvData.add(['ROTATE', 'Backward']);
+      csvData.add(['ROTATE', '0']);
     }
+    int width = int.parse(_widthController.text) * 8;
+    int height = int.parse(_heightController.text) * 8;
+
     //打印纸张大小
-    csvData.add(['P', _widthController.text, _heightController.text]);
-    // csvData.add(['R', '147', '124', '247', '184', '2', '0', '0']);
-    // csvData.add(['L', '147', '124', '247', '184', '2', '0', '0']);
+    csvData.add(['P', width.toString(), height.toString()]);
 
     for (var i = 0; i < elements.length; i++) {
       if (elements[i].type.name == 'text') {
@@ -1182,8 +1185,8 @@ class LabelDesignPageState extends State<LabelDesignPage> {
         List fontlist = getFontSize(fontsize);
         csvData.add([
           'TB',
-          elements[i].xPos,
-          elements[i].yPos,
+          elements[i].position.dx.toInt(),
+          elements[i].position.dy.toInt(),
           elements[i].width,
           elements[i].height,
           fontlist[0],
@@ -1200,8 +1203,8 @@ class LabelDesignPageState extends State<LabelDesignPage> {
         List fontlist = getFontSize(fontsize);
         csvData.add([
           'TB',
-          elements[i].xPos,
-          elements[i].yPos,
+          elements[i].position.dx.toInt(),
+          elements[i].position.dy.toInt(),
           elements[i].width,
           elements[i].height,
           fontlist[0],
@@ -1247,10 +1250,10 @@ class LabelDesignPageState extends State<LabelDesignPage> {
         }
         csvData.add([
           'B',
-          elements[i].xPos,
-          elements[i].yPos,
-          elements[i].width,
-          elements[i].height,
+          elements[i].position.dx.toInt(),
+          elements[i].position.dy.toInt(),
+          elements[i].width!.toInt(),
+          elements[i].height!.toInt(),
           '2',
           barcodeType,
           _getRotation(elements[i].rotation!),
@@ -1258,7 +1261,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
           tempContent,
           elements[i].index,
         ]);
-      } else if (elements[i].type.name == 'Qrcode') {
+      } else if (elements[i].type.name == 'qrcode') {
         String tempContent = '';
         if (elements[i].style == 0) {
           tempContent = _barcodeContent(elements[i].varcontent!);
@@ -1271,8 +1274,8 @@ class LabelDesignPageState extends State<LabelDesignPage> {
 
         csvData.add([
           'QR',
-          elements[i].xPos,
-          elements[i].yPos,
+          elements[i].position.dx.toInt(),
+          elements[i].position.dy.toInt(),
           version,
           elements[i].qrWidth.toString(),
           errorlevel,
@@ -1284,10 +1287,10 @@ class LabelDesignPageState extends State<LabelDesignPage> {
         if (elements[i].lineWidth! <= elements[i].x2Pos!) {
           csvData.add([
             'L',
-            elements[i].xPos,
-            elements[i].yPos,
-            (elements[i].x2Pos! + elements[i].xPos!).toInt(),
-            elements[i].yPos,
+            elements[i].position.dx.toInt(),
+            elements[i].position.dy.toInt(),
+            (elements[i].x2Pos! + elements[i].position.dx.toInt()).toInt(),
+            elements[i].position.dy.toInt(),
             elements[i].lineWidth!.toInt(),
             0, //线类型
             elements[i].index,
@@ -1295,10 +1298,10 @@ class LabelDesignPageState extends State<LabelDesignPage> {
         } else {
           csvData.add([
             'L',
-            elements[i].xPos,
-            elements[i].yPos,
-            elements[i].xPos,
-            (elements[i].lineWidth! + elements[i].yPos!).toInt(),
+            elements[i].position.dx.toInt(),
+            elements[i].position.dy.toInt(),
+            elements[i].position.dx.toInt(),
+            (elements[i].lineWidth! + elements[i].position.dy.toInt()).toInt(),
             elements[i].x2Pos!.toInt(),
             0, //线类型
             elements[i].index,
@@ -1451,13 +1454,6 @@ class LabelDesignPageState extends State<LabelDesignPage> {
 
     return [fontsize, width, height];
   }
-
-  // Future<void> _saveFormatToJson(String path) async {
-  //   List<FmtContent> fmtContentList = [];
-  //   fmtContentList = await generateFmtList(elements);
-
-  //   _savePageToJson(fmtContentList, path);
-  // }
 
   void _saveFormatToJson(String path) {
     List formatDataList = [];
@@ -2111,6 +2107,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                             if (!outputFile.contains(".fmt")) {
                               outputFile = "$outputFile.fmt";
                             }
+
                             _exportCSV();
                             _saveFormatToCsv(csv, outputFile);
                             String jsonFilePath =
