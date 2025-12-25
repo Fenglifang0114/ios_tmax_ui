@@ -737,6 +737,11 @@ class EventRespFormulaRecList {
   EventRespFormulaRecList(this.obj);
 }
 
+class EventRespOneFmaRecList {
+  dynamic obj;
+  EventRespOneFmaRecList(this.obj);
+}
+
 class EventRespFormulaRecAdd {
   dynamic obj;
   EventRespFormulaRecAdd(this.obj);

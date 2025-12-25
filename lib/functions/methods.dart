@@ -599,6 +599,13 @@ class PublicFunctions {
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
 
+  //根据配方ID获取配方称重记录
+  static void getOneFmaRecsById(String fmaId) {
+    myScaleCmd.cmdMode = "get_fma_rec_by_id";
+    myScaleCmd.cmdData = fmaId;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
   // 增加流速数据
   static void addFlowRateData(String reqFlowRate) {
     myScaleCmd.cmdMode = "add_flow_rate";

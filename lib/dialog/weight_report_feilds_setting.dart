@@ -50,7 +50,7 @@ class ReportSettingDialogState extends State<ReportSettingDialog> {
       backgroundColor: Colors.transparent,
       child: Container(
         width: 630,
-        height: 493,
+        height: 530,
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(0),
@@ -109,7 +109,7 @@ class ReportSettingDialogState extends State<ReportSettingDialog> {
                           children: tempFeildMap.values
                               .map((ReportShowName reportShowName) {
                             return SizedBox(
-                              width: 150, // 每行 3 个元素
+                              width: 200, // 每行 3 个元素
                               child: Row(
                                 // mainAxisSize: MainAxisSize.min,
                                 children: [

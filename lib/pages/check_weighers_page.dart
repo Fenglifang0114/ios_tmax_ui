@@ -902,9 +902,11 @@ void sendDataToDb(
     pretare: tempPlu.pretare?.toString() ?? '',
     limitHigh: tempPlu.limitHigh?.toString() ?? '',
     limitLow: tempPlu.limitLow?.toString() ?? '',
-    weight: baseUnit == 'g'
-        ? totalWeight.toStringAsFixed(0)
-        : totalWeight.toString(),
+    weight: totalWeight.toString(),
+
+    //  baseUnit == 'g'
+    //     ? totalWeight.toStringAsFixed(0)
+    //     : totalWeight.toString(),
     weightUnit: baseUnit,
     userNo: mySysUser.userId.toString(),
     userName: mySysUser.nickName,
@@ -934,9 +936,10 @@ void sendDataToDb(
     for (final scaleId in scaleWgtMapDetail.keys) {
       final tempScale = scaleIdToScaleMap[scaleId]!;
       final weightInfo = scaleWgtMapDetail[scaleId]!;
-      final weight = baseUnit == 'g'
-          ? double.parse(weightInfo.weight).toStringAsFixed(0)
-          : weightInfo.weight;
+      final weight = weightInfo.weight;
+      // baseUnit == 'g'
+      //     ? double.parse(weightInfo.weight).toStringAsFixed(0)
+      //     : weightInfo.weight;
 
       newAddRec.detailRec!.add(NewWgtDetail(
         no: seq,

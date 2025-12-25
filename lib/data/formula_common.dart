@@ -14,8 +14,6 @@ List<RawDataInfo> rawDataList = [];
 List<FormulaInfoDb> formulaDataList = [];
 List<FormulaInfoDb> searchFmaList = [];
 
-List<FmaRecFromDb> fmaRecFromDbList = [];
-
 List<DarfFmaInfo> darfFmaInfoList = []; //暂存的配方称重记录和配方明细
 
 RptPrintSetting rptPrintSetting = RptPrintSetting(); //打印设置

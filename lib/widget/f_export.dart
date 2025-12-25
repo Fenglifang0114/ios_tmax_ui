@@ -21,14 +21,14 @@ Future<ExportResult> exportRawListToExcel(
 
     // 写入表头
     sheet.appendRow([
-      excel.TextCellValue(localizedStrings.fMaterialIdCol),
-      excel.TextCellValue(localizedStrings.fMaterialNameCol),
-      excel.TextCellValue(localizedStrings.fMaterialCodeCol),
-      excel.TextCellValue(localizedStrings.gDeviceName),
-      excel.TextCellValue(localizedStrings.fFmaCategoryCol),
-      excel.TextCellValue(localizedStrings.fIngredientRemark),
-      excel.TextCellValue(localizedStrings.fCreatedTimeCol),
-      excel.TextCellValue(localizedStrings.fUpdateTimeCol),
+      excel.TextCellValue('Ingredient ID'),
+      excel.TextCellValue('Ingredient Name'),
+      excel.TextCellValue('Verification Code'),
+      excel.TextCellValue('Device Name'),
+      excel.TextCellValue('Category'),
+      excel.TextCellValue('Ingredient Notes'),
+      excel.TextCellValue('Create Time'),
+      excel.TextCellValue('Update Time'),
     ]);
 
     // 写入数据行

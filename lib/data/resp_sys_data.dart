@@ -62,6 +62,7 @@ class RespSysMsgType {
   static const String respFormulaUpdate = 'resp_formula_update';
   static const String respFormulaDelete = 'resp_formula_delete';
   static const String respFormulaRecList = 'resp_formula_rec_list';
+  static const String respOneFmaRecList = 'resp_one_fma_rec_list';
   static const String respFormulaRecAdd = 'resp_formula_rec_add';
   static const String respRawTypeAdd = 'resp_raw_type_add';
   static const String respRawTypeEdit = 'resp_raw_type_edit';
@@ -163,6 +164,7 @@ class RespSysMsgType {
     RespSysMsgType.respFormulaUpdate: handleFormulaUpdate,
     RespSysMsgType.respFormulaDelete: handleFormulaDelete,
     RespSysMsgType.respFormulaRecList: handleFormulaRecList,
+    RespSysMsgType.respOneFmaRecList: handleOneFmaRecList,
     RespSysMsgType.respFormulaRecAdd: handleFormulaRecAdd,
     RespSysMsgType.respRawTypeAdd: handleRawTypeAdd,
     RespSysMsgType.respRawTypeEdit: handleRawTypeEdit,
@@ -490,6 +492,11 @@ class RespSysMsgType {
   static void handleFormulaRecList(dynamic jsonData) {
     String dataString = jsonData['MsgBody'];
     eventBus.fire(EventRespFormulaRecList(dataString));
+  }
+
+  static void handleOneFmaRecList(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespOneFmaRecList(dataString));
   }
 
   static void handleFormulaRecAdd(dynamic jsonData) {

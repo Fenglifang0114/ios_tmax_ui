@@ -1,20 +1,15 @@
-import 'dart:io';
-import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:path_provider/path_provider.dart';
 import 'package:printing/printing.dart';
 import 'package:t_max/data/fma_rec_list_db_data.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/language.dart';
 import 'package:t_max/widget/dialog_head_style.dart';
-import 'package:win32/win32.dart';
 
 class FormulaReportPrint extends StatefulWidget {
   const FormulaReportPrint({super.key, required this.fmaData});
@@ -28,8 +23,8 @@ class _FormulaReportPrintState extends State<FormulaReportPrint> {
   final GlobalKey boundaryKey = GlobalKey();
   Uint8List _imageBytes = Uint8List(0);
 
-  double _contentWidth = 850;
-  double _contentHeight = 300;
+  double contentWidth = 850;
+  double contentHeight = 300;
   String _operatorName = '';
   String _createTime = '';
   String _fmaTotalWgt = '';
@@ -424,9 +419,9 @@ class _FormulaReportPrintState extends State<FormulaReportPrint> {
                     child: RepaintBoundary(
                       key: boundaryKey,
                       child: Container(
-                        width: _contentWidth,
+                        width: contentWidth,
                         constraints: BoxConstraints(
-                          minHeight: _contentHeight,
+                          minHeight: contentHeight,
                         ),
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -700,44 +695,44 @@ class _FormulaReportPrintState extends State<FormulaReportPrint> {
   }
 
   // 保存图片到设备
-  Future<void> _saveImage() async {
-    if (_imageBytes.isEmpty) {
-      // setState(() {
-      //   _statusMessage = '请先截图再保存';
-      // });
-      return;
-    }
+  // Future<void> _saveImage() async {
+  //   if (_imageBytes.isEmpty) {
+  //     // setState(() {
+  //     //   _statusMessage = '请先截图再保存';
+  //     // });
+  //     return;
+  //   }
 
-    try {
-      // setState(() {
-      //   _statusMessage = '正在保存图片...';
-      // });
+  //   try {
+  //     // setState(() {
+  //     //   _statusMessage = '正在保存图片...';
+  //     // });
 
-      // 获取保存路径
-      final directory = await getApplicationDocumentsDirectory();
-      final filePath =
-          '${directory.path}/widget_screenshot_${DateTime.now().millisecondsSinceEpoch}.png';
-      final file = File(filePath);
+  //     // 获取保存路径
+  //     final directory = await getApplicationDocumentsDirectory();
+  //     final filePath =
+  //         '${directory.path}/widget_screenshot_${DateTime.now().millisecondsSinceEpoch}.png';
+  //     final file = File(filePath);
 
-      await file.writeAsBytes(_imageBytes);
+  //     await file.writeAsBytes(_imageBytes);
 
-      // setState(() {
-      //   _statusMessage = '图片已保存到: $filePath';
-      // });
-    } catch (e) {
-      // setState(() {
-      //   _statusMessage = '保存失败: $e';
-      // });
-      return;
-    }
-  }
+  //     // setState(() {
+  //     //   _statusMessage = '图片已保存到: $filePath';
+  //     // });
+  //   } catch (e) {
+  //     // setState(() {
+  //     //   _statusMessage = '保存失败: $e';
+  //     // });
+  //     return;
+  //   }
+  // }
 
   // 清除图片
-  void _clearImage() {
-    setState(() {
-      _imageBytes = Uint8List(0);
-    });
-  }
+  // void _clearImage() {
+  //   setState(() {
+  //     _imageBytes = Uint8List(0);
+  //   });
+  // }
 }
 
 ///////////////////////////////////////////////////////////////////////////////

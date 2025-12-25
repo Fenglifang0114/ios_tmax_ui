@@ -4,19 +4,17 @@ import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:t_max/data/comscaleinfo_data.dart';
 import 'package:t_max/data/fma_rec_list_db_data.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/language.dart';
-import 'package:t_max/data/manager_scale_channel.dart';
 import 'package:t_max/data/plu_field_status_data.dart';
-import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/data/formula_from_db_data.dart';
 import 'package:t_max/dialog/fma_rpt_print_setting.dart';
 import 'package:t_max/dialog/fma_server_setting.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/pages/fma_report_print.dart';
+import 'package:t_max/widget/f_open_file.dart';
 
 // 定义 EncryptedValue 枚举
 enum EncryptedValue {
@@ -72,9 +70,6 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
   final TextEditingController rawTypeCtl = TextEditingController();
   FormulaInfoDb? selectedFormula;
   Detail selectedDetail = Detail();
-  NetScaleInfoLocal defNetScaleInfo = NetScaleInfoLocal();
-  List<NetScaleInfoLocal> scaleNetItems = [];
-  int selScaleId = -1;
 
   ScrollController scrollController = ScrollController();
   ScrollController scrollController1 = ScrollController();
@@ -85,8 +80,8 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
 
   // 分页相关状态
   int _currentPage = 1;
-  final int _rowsPerPage = 20; // 每页显示20行
   int _totalPages = 1;
+  final int _rowsPerPage = 20; // 每页显示20行
 
   // 排序相关状态
   SortField? _sortField;
@@ -95,22 +90,17 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
   // 用于分页和排序的数据列表
   List<FmaRecFromDb> _filteredAndSortedList = [];
   UploadServerInfo uploadServerInfo = UploadServerInfo();
+  List<FmaRecFromDb> newFmaRecDbList = [];
 
   dynamic _eventBus1;
+  dynamic _eventbus2;
 
-  void initScaleList() {
-    scaleNetItems = myNetScaleList;
-    selScaleId = myDefScaleInfo.defScaleId!;
-    if (myNetScaleList.isNotEmpty) {
-      defNetScaleInfo = NetScaleListMgr.findScaleInfo(
-          myNetScaleList, myDefScaleInfo.defScaleId!);
-    }
-
+  void initRecsList() {
     // 初始化展开状态和选中状态列表
-    for (var i = 0; i < fmaRecFromDbList.length; i++) {
+    for (var i = 0; i < newFmaRecDbList.length; i++) {
       _isExpanded.add(false);
     }
-    _selectedRows = List.generate(fmaRecFromDbList.length, (index) => false);
+    _selectedRows = List.generate(newFmaRecDbList.length, (index) => false);
 
     // 初始化分页和排序
     _updateFilteredAndSortedList();
@@ -119,11 +109,10 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
   @override
   void initState() {
     super.initState();
-    initScaleList();
+    PublicFunctions.getFormulaRecList();
+    initRecsList();
     _tabController = TabController(length: 2, vsync: this);
-
     PublicFunctions.getUploadServerConfig();
-
     _eventBus1 = eventBus.on<EventRespUploadServerGet>().listen((event) {
       if (mounted) {
         String jsonStr = event.obj;
@@ -133,6 +122,20 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
           } catch (e) {
             uploadServerInfo = UploadServerInfo();
           }
+        }
+      }
+    });
+    _eventbus2 = eventBus.on<EventRespFormulaRecList>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+        if (dataStr != '' && dataStr != 'null') {
+          setState(() {
+            List<FmaRecFromDb> tempFmaRecList = fmaRecFromDbFromJson(dataStr);
+            newFmaRecDbList.addAll(tempFmaRecList);
+            initRecsList();
+          });
+        } else {
+          newFmaRecDbList = [];
         }
       }
     });
@@ -175,7 +178,7 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
   // 更新过滤和排序后的列表
   void _updateFilteredAndSortedList() {
     // 复制原始列表
-    _filteredAndSortedList = List.from(fmaRecFromDbList);
+    _filteredAndSortedList = List.from(newFmaRecDbList);
 
     // 应用排序
     if (_sortField != null && _sortDirection != SortDirection.none) {
@@ -375,6 +378,7 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
     scrollController.dispose();
     scrollController1.dispose();
     _eventBus1?.cancel();
+    _eventbus2?.cancel();
     super.dispose();
   }
 
@@ -997,22 +1001,22 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
     try {
       final header = [
         'No.',
-        'Formula Id',
-        'Formula Name',
-        'Barcode',
-        'Ingredient Name',
-        'Ingredient Id',
-        'Mode',
-        'Confidential',
-        'Formula Total Weight',
-        'Actual Total Weight',
-        'Ingredient Weight',
-        'Actual Ingredient Weight',
-        'Allowable Error',
-        'Actual Error',
-        'Pass',
-        'Created Time',
-        'Operator'
+        localizedStrings.fFmaIdLabel,
+        localizedStrings.fFmaNameLabel,
+        localizedStrings.fFmaBarcode,
+        localizedStrings.fMaterialNameCol,
+        localizedStrings.fMaterialIdCol,
+        localizedStrings.fFmaModeCol,
+        localizedStrings.fConfidential,
+        localizedStrings.fFormulaTotalWeight,
+        localizedStrings.fActualTotalWeight,
+        localizedStrings.fMaterialSingleWeight,
+        localizedStrings.fActualSingleWeight,
+        localizedStrings.fAllowableError,
+        localizedStrings.fActualError,
+        localizedStrings.fQualificationStatus,
+        localizedStrings.fCreatedAtCol,
+        localizedStrings.operator,
       ];
 
       List<List<dynamic>> csvData = [header];
@@ -1102,7 +1106,7 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
       final file = File(path);
       await file.writeAsString(csv);
       if (!mounted) return;
-      showTipInfo(localizedStrings.fSaveSuccess, context);
+      showExportDialog(path, context);
     } catch (e) {
       // 处理导出错误
     }

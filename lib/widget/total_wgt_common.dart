@@ -923,7 +923,11 @@ class TableState with ChangeNotifier {
   void toggleExpanded(int id) {
     final index = _allData.indexWhere((item) => item.id == id);
     if (index != -1) {
-      _allData[index].isExpanded = !_allData[index].isExpanded;
+      bool isExpanded = _allData[index].isExpanded;
+      for (var item in _allData) {
+        item.isExpanded = false;
+      }
+      _allData[index].isExpanded = !isExpanded;
       notifyListeners();
     }
   }

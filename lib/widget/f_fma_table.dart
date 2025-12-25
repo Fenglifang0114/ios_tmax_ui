@@ -709,23 +709,10 @@ class FormulaDataSource extends DataGridSource {
     final formulaId = formula.header?.formulaId;
     if (formulaId == null) return;
 
-    final hasHistory =
-        fmaRecFromDbList.any((record) => record.header?.formulaId == formulaId);
-
-    if (!hasHistory) {
-      showTipInfo(localizedStrings.fNoRecordTip, context);
-      return;
-    }
-
-    final formulaHistoryRecords = fmaRecFromDbList
-        .where((record) => record.header?.formulaId == formulaId)
-        .toList();
-
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            OneFmaWgtRecPage(oneFmaRecList: formulaHistoryRecords),
+        builder: (context) => OneFmaWgtRecPage(fmaId: formulaId),
       ),
     );
   }

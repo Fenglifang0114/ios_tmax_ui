@@ -1,14 +1,11 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/darf_fma_data_from_db.dart';
 import 'package:t_max/data/f_raw_name.dart';
-import 'package:t_max/data/fma_import_func.dart';
 import 'package:t_max/data/fma_import_raw.dart';
-import 'package:t_max/data/fma_rec_list_db_data.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/formula_scale_data.dart';
 import 'package:t_max/data/g_data.dart';
@@ -119,8 +116,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
   dynamic _eventbus5;
   dynamic _eventbus6;
   dynamic _eventbus7;
-  dynamic _eventbus8;
-  dynamic _eventbus9;
+
   dynamic _eventbus10;
   dynamic _eventbus11;
   dynamic _eventbus12;
@@ -271,24 +267,6 @@ class FormulationScalePageState extends State<FormulationScalePage>
       }
     });
 
-    _eventbus8 = eventBus.on<EventRespFormulaRecList>().listen((event) {
-      if (mounted) {
-        String dataStr = event.obj;
-        if (dataStr != '' && dataStr != 'null') {
-          List<FmaRecFromDb> tempFmaRecList = fmaRecFromDbFromJson(dataStr);
-          fmaRecFromDbList.addAll(tempFmaRecList);
-        } else {
-          fmaRecFromDbList = [];
-        }
-      }
-    });
-    _eventbus9 = eventBus.on<EventRespFormulaRecAdd>().listen((event) {
-      if (mounted) {
-        fmaRecFromDbList = [];
-        PublicFunctions.getFormulaRecList();
-      }
-    });
-
     _eventbus10 = eventBus.on<EventRespEditRawData>().listen((event) {
       if (mounted) {
         String res = event.obj;
@@ -322,7 +300,6 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 break;
               }
             }
-
             darfFmaInfoList.add(tempDarfFma);
           }
 
@@ -557,7 +534,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
       });
 
       Future.delayed(const Duration(milliseconds: 1500), () {
-        PublicFunctions.getFormulaRecList();
+        // PublicFunctions.getFormulaRecList();
       });
       //等1秒再获取配方称重记录
       Future.delayed(const Duration(milliseconds: 2000), () {
@@ -596,7 +573,6 @@ class FormulationScalePageState extends State<FormulationScalePage>
     formulaTypeList.clear();
     rawDataList.clear();
     formulaDataList.clear();
-    fmaRecFromDbList.clear();
     darfFmaInfoList.clear();
 
     searchFmaList.clear();
@@ -613,8 +589,6 @@ class FormulationScalePageState extends State<FormulationScalePage>
     _eventbus5?.cancel();
     _eventbus6?.cancel();
     _eventbus7?.cancel();
-    _eventbus8?.cancel();
-    _eventbus9?.cancel();
     _eventbus10?.cancel();
     _eventbus11?.cancel();
     _eventbus12?.cancel();
