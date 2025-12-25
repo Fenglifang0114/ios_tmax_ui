@@ -1,79 +1,79 @@
 import 'package:flutter/material.dart';
 
 themeColor(Map<String, dynamic> colorTheme, bool isDarkMode) {
-  const regular = FontWeight.normal;
+  const regular = FontWeight.w500;
   const medium = FontWeight.w600;
-  const semiBold = FontWeight.w700;
+  const semiBold = FontWeight.w600;
   const bold = FontWeight.w800;
 
   const TextTheme textTheme = TextTheme(
     headlineLarge: TextStyle(
-      fontFamily: 'alibaba',
+      fontFamily: 'HarmonyOS',
       fontWeight: semiBold,
       fontSize: 62.0,
     ),
     headlineMedium: TextStyle(
-      fontFamily: 'alibaba',
+      fontFamily: 'HarmonyOS',
       fontWeight: semiBold,
       fontSize: 32.0,
     ),
     headlineSmall: TextStyle(
-      fontFamily: 'alibaba',
+      fontFamily: 'HarmonyOS',
       fontWeight: semiBold,
       fontSize: 28.0,
     ),
     titleLarge: TextStyle(
-      fontFamily: 'alibaba',
+      fontFamily: 'HarmonyOS',
       fontWeight: semiBold,
       fontSize: 24.0,
     ),
     titleMedium: TextStyle(
-      fontFamily: 'alibaba',
+      fontFamily: 'HarmonyOS',
       fontWeight: semiBold,
       fontSize: 18.0,
     ),
     titleSmall: TextStyle(
-      fontFamily: 'alibaba',
+      fontFamily: 'HarmonyOS',
       fontWeight: semiBold,
       fontSize: 16.0,
     ),
     bodyLarge: TextStyle(
-      fontFamily: 'alibaba',
+      fontFamily: 'HarmonyOS',
       fontWeight: regular,
       fontSize: 18.0,
     ),
     bodyMedium: TextStyle(
-      fontFamily: 'alibaba',
+      fontFamily: 'HarmonyOS',
       fontWeight: regular,
       fontSize: 16.0,
     ),
     bodySmall: TextStyle(
-      fontFamily: 'alibaba',
+      fontFamily: 'HarmonyOS',
       fontWeight: regular,
       fontSize: 14.0,
     ),
     labelLarge: TextStyle(
-      fontFamily: 'alibaba',
+      fontFamily: 'HarmonyOS',
       fontWeight: medium,
       fontSize: 18.0,
     ),
     labelMedium: TextStyle(
-      fontFamily: 'alibaba',
+      fontFamily: 'HarmonyOS',
       fontWeight: medium,
       fontSize: 16.0,
     ),
     labelSmall: TextStyle(
-      fontFamily: 'alibaba',
+      fontFamily: 'HarmonyOS',
       fontWeight: medium,
       fontSize: 14.0,
     ),
     displayLarge: TextStyle(
-      fontFamily: 'alibaba',
+      fontFamily: 'HarmonyOS',
       fontWeight: bold,
       fontSize: 32.0,
     ),
     displayMedium: TextStyle(
-      fontFamily: 'alibaba',
+      fontFamily: 'HarmonyOS',
       fontWeight: regular,
       fontSize: 24.0,
     ),
@@ -171,7 +171,7 @@ themeColor(Map<String, dynamic> colorTheme, bool isDarkMode) {
 // 下面是备份
 // themeColor(Map<String, dynamic> colorTheme) {
 //   return ThemeData(
-//       fontFamily: "alibaba",
+//       fontFamily: "HarmonyOS",
 //       colorScheme: ColorScheme(
 //         primary: Color(0xFF004D8A),
 //         // Color(

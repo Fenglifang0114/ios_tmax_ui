@@ -350,3 +350,11 @@ String checkCodeSvgIcon() {
 String networkSvgIcon() {
   return 'assets/images/network.svg';
 }
+
+String fmaBarcodeIcon() {
+  return 'assets/images/fmaBarcode.svg';
+}
+
+String recordsIcon() {
+  return 'assets/images/records.svg';
+}

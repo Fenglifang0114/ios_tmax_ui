@@ -116,6 +116,14 @@ class RespSysMsgType {
   static const String respExportCalLog = 'resp_export_cal_log';
   static const String respCheckPluExist = 'resp_check_plu_exist';
   static const String respExportPluList = 'resp_export_plu_list';
+  static const String respFormulasListByBarcode =
+      'resp_formula_list_by_barcode';
+  static const String respCheckFmaIdAndBarcode =
+      'resp_check_fma_id_and_barcode';
+  static const String respFormulaRecByOrder = 'resp_formula_rec_by_order';
+  static const String respUploadServerGet = 'resp_upload_server_get';
+  static const String respUploadServerEdit = 'resp_upload_server_edit';
+  static const String respGetReportPrint = 'resp_get_set_report_print';
 
   static final Map<String, Function> handlers = {
     RespSysMsgType.respPortsList: handlePortsList,
@@ -205,6 +213,12 @@ class RespSysMsgType {
     RespSysMsgType.respCheckPluExist: handleRespCheckPluExist,
     RespSysMsgType.respExportPluList: handleRespExportPluList,
     RespSysMsgType.respDownAllPlu: handleRespDownAllPlu,
+    RespSysMsgType.respFormulasListByBarcode: handleRespFormulasListByBarcode,
+    RespSysMsgType.respCheckFmaIdAndBarcode: handleRespCheckFmaIdAndBarcode,
+    RespSysMsgType.respFormulaRecByOrder: handleRespFormulaRecByOrder,
+    RespSysMsgType.respUploadServerGet: handleRespUploadServerGet,
+    RespSysMsgType.respUploadServerEdit: handleRespUploadServerEdit,
+    RespSysMsgType.respGetReportPrint: handleRespGetReportPrint,
   };
 
   static void handlePortsList(dynamic jsonData) {
@@ -406,6 +420,36 @@ class RespSysMsgType {
   static void handleFormulaTypeAdd(dynamic jsonData) {
     String dataString = jsonData['MsgBody'];
     eventBus.fire(EventRespAddFormulaType(dataString));
+  }
+
+  static void handleRespFormulasListByBarcode(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespFormulasListByBarcode(dataString));
+  }
+
+  static void handleRespCheckFmaIdAndBarcode(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespCheckFmaIdAndBarcode(dataString));
+  }
+
+  static void handleRespFormulaRecByOrder(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespFormulaRecByOrder(dataString));
+  }
+
+  static void handleRespUploadServerGet(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespUploadServerGet(dataString));
+  }
+
+  static void handleRespUploadServerEdit(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespUploadServerEdit(dataString));
+  }
+
+  static void handleRespGetReportPrint(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespGetReportPrint(dataString));
   }
 
   static void handleFmaTypeEdit(dynamic jsonData) {

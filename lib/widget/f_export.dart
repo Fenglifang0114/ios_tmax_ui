@@ -21,13 +21,14 @@ Future<ExportResult> exportRawListToExcel(
 
     // 写入表头
     sheet.appendRow([
-      excel.TextCellValue('Ingredient Id'),
-      excel.TextCellValue('Ingredient Name'),
-      excel.TextCellValue('Device Name'),
-      excel.TextCellValue('Category'),
-      excel.TextCellValue('Ingredient Notes'),
-      excel.TextCellValue('Create Time'),
-      excel.TextCellValue('Update Time'),
+      excel.TextCellValue(localizedStrings.fMaterialIdCol),
+      excel.TextCellValue(localizedStrings.fMaterialNameCol),
+      excel.TextCellValue(localizedStrings.fMaterialCodeCol),
+      excel.TextCellValue(localizedStrings.gDeviceName),
+      excel.TextCellValue(localizedStrings.fFmaCategoryCol),
+      excel.TextCellValue(localizedStrings.fIngredientRemark),
+      excel.TextCellValue(localizedStrings.fCreatedTimeCol),
+      excel.TextCellValue(localizedStrings.fUpdateTimeCol),
     ]);
 
     // 写入数据行
@@ -46,11 +47,12 @@ Future<ExportResult> exportRawListToExcel(
       String type = getRawTypeName(raw.categoryId!);
 
       sheet.appendRow([
-        excel.TextCellValue(rawList[rowIndex].materialId!),
-        excel.TextCellValue(rawList[rowIndex].materialName!),
+        excel.TextCellValue(rawList[rowIndex].materialId ?? ""),
+        excel.TextCellValue(rawList[rowIndex].materialName ?? ""),
+        excel.TextCellValue(rawList[rowIndex].checkCode ?? ""),
         excel.TextCellValue(scaleName),
         excel.TextCellValue(type == "-" ? "" : type),
-        excel.TextCellValue(rawList[rowIndex].ingredient!),
+        excel.TextCellValue(rawList[rowIndex].ingredient ?? ""),
         excel.TextCellValue(DateFormat('yyyy-MM-dd HH:mm:ss')
             .format(rawList[rowIndex].createdAt!)),
         excel.TextCellValue(DateFormat('yyyy-MM-dd HH:mm:ss')
@@ -146,6 +148,7 @@ Future<ExportResult> exportFormulaListToExcel(
     sheet.appendRow([
       excel.TextCellValue('Formula Id'),
       excel.TextCellValue('Formula Name'),
+      excel.TextCellValue('Barcode'),
       excel.TextCellValue('Mode'),
       excel.TextCellValue('Weight Unit'),
       excel.TextCellValue('Category'),
@@ -155,8 +158,8 @@ Future<ExportResult> exportFormulaListToExcel(
       excel.TextCellValue('Ingredient No.'),
       excel.TextCellValue('Ingredient Id'),
       excel.TextCellValue('Ingredient Name'),
-      excel.TextCellValue('Ingredient Weight/Percent'),
-      excel.TextCellValue('Allow Error'),
+      excel.TextCellValue('Ingredient Weight/Percentage'),
+      excel.TextCellValue('Allowable Error'),
     ]);
 
     // 写入数据行
@@ -172,6 +175,7 @@ Future<ExportResult> exportFormulaListToExcel(
         sheet.appendRow([
           excel.TextCellValue(fma.header!.formulaId ?? ""),
           excel.TextCellValue(fma.header!.formulaName ?? ""),
+          excel.TextCellValue(fma.header!.formulaBarcode ?? ""),
           excel.TextCellValue(
               fma.header!.formulaMode == "wgt" ? "weight" : "percent"),
           excel.TextCellValue(fma.header!.formulaUnit ?? ""),

@@ -192,86 +192,108 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Expanded(
-                        flex: 1,
-                        child: Container(
-                          height: 42,
-                          alignment: Alignment.centerLeft,
-                          child: RichText(
-                            text: TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: localizedStrings.fIngredientCountLabel +
-                                      ': ',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall!
-                                      .apply(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onSurfaceVariant,
-                                          overflow: TextOverflow.ellipsis),
-                                ),
-                                TextSpan(
-                                  text: widget
-                                      .selectFormula.header!.materialCount!
-                                      .toString(),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall!
-                                      .apply(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onSurface,
-                                          overflow: TextOverflow.ellipsis),
-                                ),
-                              ],
-                            ),
+                      Container(
+                        height: 42,
+                        alignment: Alignment.centerLeft,
+                        child: RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: localizedStrings.fIngredientCountLabel +
+                                    ': ',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .apply(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurfaceVariant,
+                                        overflow: TextOverflow.ellipsis),
+                              ),
+                              TextSpan(
+                                text: widget
+                                    .selectFormula.header!.materialCount!
+                                    .toString(),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .apply(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
+                                        overflow: TextOverflow.ellipsis),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                      SizedBox(
-                        width: 20,
+                      Container(
+                        height: 42,
+                        alignment: Alignment.centerLeft,
+                        child: RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: localizedStrings.fFmaBarcode + ': ',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .apply(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurfaceVariant,
+                                        overflow: TextOverflow.ellipsis),
+                              ),
+                              TextSpan(
+                                text: widget
+                                    .selectFormula.header!.formulaBarcode!
+                                    .toString(),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .apply(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
+                                        overflow: TextOverflow.ellipsis),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                       widget.selectFormula.header!.formulaMode == "wgt" &&
                               widget.selectFormula.header!.isEncrypted == false
-                          ? Expanded(
-                              flex: 1,
-                              child: Container(
-                                height: 42,
-                                alignment: Alignment.centerLeft,
-                                child: RichText(
-                                  text: TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: localizedStrings
-                                                .fFormulaTotalWeightLabel +
-                                            ': ',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodySmall!
-                                            .apply(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .onSurfaceVariant,
-                                                overflow:
-                                                    TextOverflow.ellipsis),
-                                      ),
-                                      TextSpan(
-                                        text:
-                                            '${widget.selectFormula.header!.totalWeight!.toString()}  ${widget.selectFormula.header!.formulaUnit!}',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodySmall!
-                                            .apply(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .onSurface,
-                                                overflow:
-                                                    TextOverflow.ellipsis),
-                                      ),
-                                    ],
-                                  ),
+                          ? Container(
+                              height: 42,
+                              alignment: Alignment.centerLeft,
+                              child: RichText(
+                                text: TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: localizedStrings.fTotalWeightLabel +
+                                          ': ',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall!
+                                          .apply(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onSurfaceVariant,
+                                              overflow: TextOverflow.ellipsis),
+                                    ),
+                                    TextSpan(
+                                      text:
+                                          '${widget.selectFormula.header!.totalWeight!.toString()}  ${widget.selectFormula.header!.formulaUnit!}',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall!
+                                          .apply(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onSurface,
+                                              overflow: TextOverflow.ellipsis),
+                                    ),
+                                  ],
                                 ),
                               ),
                             )
@@ -344,12 +366,13 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                                       ),
                                     ),
                                   ),
+                                  SizedBox(width: 10),
                                   SizedBox(
                                     width: widget.selectFormula.header!
                                                 .isEncrypted ==
                                             false
-                                        ? 180
-                                        : 260,
+                                        ? 170
+                                        : 250,
                                     child: Text(
                                       getRawName(material.materialId!),
                                       style: Theme.of(context)

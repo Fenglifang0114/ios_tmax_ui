@@ -410,6 +410,7 @@ class SysLogTranslator {
       "device_time_set": localizedStrings.setTime,
       "bt_set_name": localizedStrings.setName,
       "bt_set_power": localizedStrings.setPower,
+      "fma_wgt_rec_upload": localizedStrings.uploadFmaWgtRecord,
 
       //操作结果
       "ok": localizedStrings.success,
@@ -428,6 +429,7 @@ class SysLogTranslator {
       "import": localizedStrings.opImport,
       "export": localizedStrings.opExport,
       "setting": localizedStrings.opSetting,
+      "upload": localizedStrings.opUpload,
     };
   }
 

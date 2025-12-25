@@ -12,6 +12,18 @@ class TypeName {
   }
 }
 
+//通过barcode获取的配方数据
+class GetFmaDataByBarcode {
+  String barcode;
+  GetFmaDataByBarcode(this.barcode);
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['Barcode'] = barcode;
+    return data;
+  }
+}
+
 //配方秤中的类型添加字段
 class TypeIdAndName {
   String name;
@@ -261,6 +273,7 @@ class ReqFormulaHeader {
   String? createdBy;
   String? updatedBy;
   String? remark;
+  String? formulaBarcode;
 
   ReqFormulaHeader({
     this.recId,
@@ -277,6 +290,7 @@ class ReqFormulaHeader {
     this.createdBy,
     this.updatedBy,
     this.remark,
+    this.formulaBarcode,
   });
 
   factory ReqFormulaHeader.fromJson(Map<String, dynamic> json) =>
@@ -295,6 +309,7 @@ class ReqFormulaHeader {
         createdBy: json["CreatedBy"],
         updatedBy: json["UpdatedBy"],
         remark: json["Remark"],
+        formulaBarcode: json["FormulaBarcode"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -312,6 +327,7 @@ class ReqFormulaHeader {
         "CreatedBy": createdBy,
         "UpdatedBy": updatedBy,
         "Remark": remark,
+        "FormulaBarcode": formulaBarcode,
       };
 }
 
@@ -402,5 +418,30 @@ class RawInfo {
         "CategoryId": categoryId,
         "ScaleId": scaleId,
         "CheckCode": checkCode,
+      };
+}
+
+class ReqCheckFmaIdAndBarcode {
+  int? recId;
+  String? formulaId;
+  String? formulaBarcode;
+
+  ReqCheckFmaIdAndBarcode({
+    this.recId,
+    this.formulaId,
+    this.formulaBarcode,
+  });
+
+  factory ReqCheckFmaIdAndBarcode.fromJson(Map<String, dynamic> json) =>
+      ReqCheckFmaIdAndBarcode(
+        recId: json["RecId"],
+        formulaId: json["FormulaID"],
+        formulaBarcode: json["FormulaBarcode"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "RecId": recId,
+        "FormulaID": formulaId,
+        "FormulaBarcode": formulaBarcode,
       };
 }

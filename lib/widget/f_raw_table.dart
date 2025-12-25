@@ -382,6 +382,10 @@ class _RawMaterialTableState extends State<RawMaterialTable> {
             valueA = a.materialName;
             valueB = b.materialName;
             break;
+          case 'checkCode':
+            valueA = a.checkCode;
+            valueB = b.checkCode;
+            break;
           case 'scaleName':
             valueA = _getScaleName(a.scaleId);
             valueB = _getScaleName(b.scaleId);
@@ -448,7 +452,9 @@ class _RawMaterialTableState extends State<RawMaterialTable> {
           textTheme, colorScheme),
       getColumnWidget(300, 'materialName', localizedStrings.fMaterialNameCol,
           textTheme, colorScheme),
-      getColumnWidget(130, 'scaleName', localizedStrings.gDeviceName, textTheme,
+      getColumnWidget(200, 'checkCode', localizedStrings.verificationCode,
+          textTheme, colorScheme),
+      getColumnWidget(150, 'scaleName', localizedStrings.gDeviceName, textTheme,
           colorScheme),
       getColumnWidget(200, 'category', localizedStrings.fRawMaterialTypeNameCol,
           textTheme, colorScheme),
@@ -521,6 +527,10 @@ class RawMaterialDataSource extends DataGridSource {
         DataGridCell<String>(
           columnName: 'materialName',
           value: raw.materialName,
+        ),
+        DataGridCell<String>(
+          columnName: 'checkCode',
+          value: raw.checkCode,
         ),
         DataGridCell<String>(
           columnName: 'scaleName',

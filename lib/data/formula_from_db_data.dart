@@ -106,6 +106,7 @@ class Header {
   String? remark3;
   bool? isUsed;
   bool? isLatest;
+  String? formulaBarcode;
 
   Header({
     this.recId,
@@ -129,6 +130,7 @@ class Header {
     this.remark3,
     this.isUsed,
     this.isLatest,
+    this.formulaBarcode,
   });
 
   factory Header.fromJson(Map<String, dynamic> json) => Header(
@@ -157,6 +159,7 @@ class Header {
         remark3: json["Remark3"],
         isUsed: json["IsUsed"],
         isLatest: json["IsLatest"],
+        formulaBarcode: json["FormulaBarcode"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -181,5 +184,85 @@ class Header {
         "Remark3": remark3,
         "IsUsed": isUsed,
         "IsLatest": isLatest,
+        "FormulaBarcode": formulaBarcode,
+      };
+}
+
+RptPrintSetting rptPrintSettingFromJson(String str) =>
+    RptPrintSetting.fromJson(json.decode(str));
+
+String rptPrintSettingToJson(RptPrintSetting data) =>
+    json.encode(data.toJson());
+
+class RptPrintSetting {
+  int? recId;
+  bool? formulaId;
+  bool? formulaName;
+  bool? formulaBarcode;
+  bool? orderId;
+  bool? saveTime;
+  bool? operator;
+  bool? rawId;
+  bool? rawName;
+  bool? pass;
+  bool? fmaTotalWgt;
+  bool? actualTotalWgt;
+  bool? deviceName;
+  bool? rawActualErr;
+  bool? rawActualWgt;
+
+  RptPrintSetting({
+    this.recId,
+    this.formulaId,
+    this.formulaName,
+    this.formulaBarcode,
+    this.orderId,
+    this.saveTime,
+    this.operator,
+    this.rawId,
+    this.rawName,
+    this.pass,
+    this.fmaTotalWgt,
+    this.actualTotalWgt,
+    this.deviceName,
+    this.rawActualErr,
+    this.rawActualWgt,
+  });
+
+  factory RptPrintSetting.fromJson(Map<String, dynamic> json) =>
+      RptPrintSetting(
+        recId: json["RecID"],
+        formulaId: json["FormulaID"],
+        formulaName: json["FormulaName"],
+        formulaBarcode: json["FormulaBarcode"],
+        orderId: json["OrderId"],
+        saveTime: json["SaveTime"],
+        operator: json["Operator"],
+        rawId: json["RawId"],
+        rawName: json["RawName"],
+        pass: json["Pass"],
+        fmaTotalWgt: json["FmaTotalWgt"],
+        actualTotalWgt: json["ActualTotalWgt"],
+        deviceName: json["DeviceName"],
+        rawActualErr: json["RawActualErr"],
+        rawActualWgt: json["RawActualWgt"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "RecID": recId,
+        "FormulaID": formulaId,
+        "FormulaName": formulaName,
+        "FormulaBarcode": formulaBarcode,
+        "OrderId": orderId,
+        "SaveTime": saveTime,
+        "Operator": operator,
+        "RawId": rawId,
+        "RawName": rawName,
+        "Pass": pass,
+        "FmaTotalWgt": fmaTotalWgt,
+        "ActualTotalWgt": actualTotalWgt,
+        "DeviceName": deviceName,
+        "RawActualErr": rawActualErr,
+        "RawActualWgt": rawActualWgt,
       };
 }

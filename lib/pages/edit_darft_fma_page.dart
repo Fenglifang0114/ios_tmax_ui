@@ -36,6 +36,8 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
   TextEditingController formulaUnitCtl = TextEditingController(text: 'g');
   TextEditingController formulaTypeCtl = TextEditingController();
   TextEditingController rawMaterialCtl = TextEditingController();
+  TextEditingController formulaBarcodeCtl = TextEditingController(); // 配方条码
+
   TextEditingController wgtCtl = TextEditingController(); // 权重
   TextEditingController errorCtl = TextEditingController(); // 误差
   TextEditingController remarkCtl = TextEditingController(); // 备注
@@ -58,7 +60,7 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
   void initState() {
     super.initState();
     formulaCodeCtl.text = widget.editFormulaInfo.header!.formulaId!;
-
+    formulaBarcodeCtl.text = widget.editFormulaInfo.header!.formulaBarcode!;
     formulaNameCtl.text = widget.editFormulaInfo.header!.formulaName!;
     formulaModeCtl.text = widget.editFormulaInfo.header!.formulaMode!;
     formulaUnitCtl.text = widget.editFormulaInfo.header!.formulaUnit!;
@@ -563,6 +565,16 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
           width: width / 3,
           height: 90,
           child: Column(children: [
+            showItemNameWithStar(
+                context, localizedStrings.fFmaBarcode + " ", false),
+            showInputBox(formulaBarcodeCtl, localizedStrings.fFmaBarcode,
+                enable: false),
+          ]),
+        ),
+        SizedBox(
+          width: width / 3,
+          height: 90,
+          child: Column(children: [
             showItemNameWithStar(context, '', false),
             Row(
               children: [
@@ -619,10 +631,6 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
             ),
           ]),
         ),
-        SizedBox(
-          width: width / 3,
-          child: SizedBox(),
-        )
       ]),
     ]);
   }
@@ -1428,6 +1436,7 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
       createdBy: widget.editFormulaInfo.header!.createdBy,
       updatedBy: mySysUser.nickName!,
       remark: remarkCtl.text,
+      formulaBarcode: formulaBarcodeCtl.text,
     );
     ReqFormulaAddInfo tempReqAddF = ReqFormulaAddInfo(
       header: tempHeader,

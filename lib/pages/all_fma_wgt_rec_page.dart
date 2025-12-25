@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
@@ -8,8 +9,14 @@ import 'package:t_max/data/fma_rec_list_db_data.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/language.dart';
 import 'package:t_max/data/manager_scale_channel.dart';
+import 'package:t_max/data/plu_field_status_data.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/data/formula_from_db_data.dart';
+import 'package:t_max/dialog/fma_rpt_print_setting.dart';
+import 'package:t_max/dialog/fma_server_setting.dart';
+import 'package:t_max/eventbus/eventbus.dart';
+import 'package:t_max/functions/methods.dart';
+import 'package:t_max/pages/fma_report_print.dart';
 
 // 定义 EncryptedValue 枚举
 enum EncryptedValue {
@@ -37,6 +44,7 @@ enum SortField {
   totalWeight,
   actualWeight,
   createdAt,
+  fmaBarcode,
 }
 
 // 定义排序方向枚举
@@ -86,6 +94,9 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
 
   // 用于分页和排序的数据列表
   List<FmaRecFromDb> _filteredAndSortedList = [];
+  UploadServerInfo uploadServerInfo = UploadServerInfo();
+
+  dynamic _eventBus1;
 
   void initScaleList() {
     scaleNetItems = myNetScaleList;
@@ -110,6 +121,55 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
     super.initState();
     initScaleList();
     _tabController = TabController(length: 2, vsync: this);
+
+    PublicFunctions.getUploadServerConfig();
+
+    _eventBus1 = eventBus.on<EventRespUploadServerGet>().listen((event) {
+      if (mounted) {
+        String jsonStr = event.obj;
+        if (jsonStr != "" && jsonStr != "fail") {
+          try {
+            uploadServerInfo = UploadServerInfo.fromJson(jsonDecode(jsonStr));
+          } catch (e) {
+            uploadServerInfo = UploadServerInfo();
+          }
+        }
+      }
+    });
+  }
+
+  Map<String, FieldNameStatus> getrptFields() {
+    Map<String, FieldNameStatus> rptFields = {
+      "formulaId": FieldNameStatus(
+          localizedStrings.fFmaIdLabel, rptPrintSetting.formulaId ?? true),
+      "formulaName": FieldNameStatus(
+          localizedStrings.fFmaNameLabel, rptPrintSetting.formulaName ?? true),
+      "formulaBarcode": FieldNameStatus(
+          localizedStrings.fFmaBarcode, rptPrintSetting.formulaBarcode ?? true),
+      "orderId": FieldNameStatus("NO.", rptPrintSetting.orderId ?? true),
+      "saveTime": FieldNameStatus(
+          localizedStrings.fCreatedAtCol, rptPrintSetting.saveTime ?? true),
+      "operator": FieldNameStatus(
+          localizedStrings.operator, rptPrintSetting.operator ?? true),
+      "rawId": FieldNameStatus(
+          localizedStrings.fMaterialIdCol, rptPrintSetting.rawId ?? true),
+      "rawName": FieldNameStatus(
+          localizedStrings.fMaterialNameCol, rptPrintSetting.rawName ?? true),
+      "pass": FieldNameStatus(
+          localizedStrings.fQualificationStatus, rptPrintSetting.pass ?? true),
+      "fmaTotalWgt": FieldNameStatus(localizedStrings.fFormulaTotalWeight,
+          rptPrintSetting.fmaTotalWgt ?? true),
+      "actualTotalWgt": FieldNameStatus(localizedStrings.fActualTotalWeight,
+          rptPrintSetting.actualTotalWgt ?? true),
+      "deviceName": FieldNameStatus(
+          localizedStrings.gDeviceName, rptPrintSetting.deviceName ?? true),
+      "rawActualErr": FieldNameStatus(
+          localizedStrings.fActualError, rptPrintSetting.rawActualErr ?? true),
+      "rawActualWgt": FieldNameStatus(localizedStrings.fActualSingleWeight,
+          rptPrintSetting.rawActualWgt ?? true),
+    };
+
+    return rptFields;
   }
 
   // 更新过滤和排序后的列表
@@ -134,6 +194,10 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
           case SortField.fmaName:
             comparisonResult = (a.header?.formulaName ?? "")
                 .compareTo(b.header?.formulaName ?? "");
+            break;
+          case SortField.fmaBarcode:
+            comparisonResult = (a.header?.formulaBarcode ?? "")
+                .compareTo(b.header?.formulaBarcode ?? "");
             break;
           case SortField.totalWeight:
             comparisonResult = (a.header?.actualFmaTotalWgt ?? 0)
@@ -310,6 +374,7 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
     _tabController.dispose();
     scrollController.dispose();
     scrollController1.dispose();
+    _eventBus1?.cancel();
     super.dispose();
   }
 
@@ -387,7 +452,7 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
             ],
           ),
           Text(
-            '${'            当前'} ${_getCurrentPageData().length}${'条'}   ${'   共'} ${_filteredAndSortedList.length} ${'条'}',
+            '${'            Current'} ${_getCurrentPageData().length}${'  Item'}   ${'   Total'} ${_filteredAndSortedList.length} ${'Item'}',
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ],
@@ -484,6 +549,12 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
                             ),
                           ),
                           Expanded(
+                            child: _buildSortableHeader(
+                              localizedStrings.fFmaBarcode,
+                              SortField.fmaBarcode,
+                            ),
+                          ),
+                          Expanded(
                               child:
                                   titleText(localizedStrings.fMaterialNameCol)),
                           Expanded(
@@ -528,7 +599,7 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
                             ),
                           ),
                           Expanded(child: titleText(localizedStrings.operator)),
-                          const SizedBox(width: 60, child: Text('')),
+                          const SizedBox(width: 100, child: Text('')),
                         ],
                       ),
                     ),
@@ -574,6 +645,10 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
                                     Expanded(
                                         child: titleText(
                                             rowData.header!.formulaName ?? "")),
+                                    Expanded(
+                                        child: titleText(
+                                            rowData.header!.formulaBarcode ??
+                                                "")),
                                     Expanded(child: Text('')),
                                     Expanded(child: Text('')),
                                     Expanded(
@@ -641,21 +716,50 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
                                             ? rowData.header!.headerOperator!
                                             : '')),
                                     SizedBox(
-                                      width: 60,
-                                      child: IconButton(
-                                        icon: Icon(
-                                          _isExpanded[originalIndex]
-                                              ? Icons.expand_less
-                                              : Icons.expand_more,
-                                        ),
-                                        onPressed: () {
-                                          setState(() {
-                                            _isExpanded[originalIndex] =
-                                                !_isExpanded[originalIndex];
-                                          });
-                                        },
-                                      ),
-                                    ),
+                                        width: 100,
+                                        child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              IconButton(
+                                                  icon: Icon(
+                                                    Icons.print,
+                                                    color: rowData.header!
+                                                            .isEncrypted!
+                                                        ? Theme.of(context)
+                                                            .colorScheme
+                                                            .outline
+                                                        : Theme.of(context)
+                                                            .colorScheme
+                                                            .primary,
+                                                  ),
+                                                  onPressed: () {
+                                                    if (rowData
+                                                        .header!.isEncrypted!) {
+                                                      return;
+                                                    }
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (context) =>
+                                                          FormulaReportPrint(
+                                                              fmaData: rowData),
+                                                    );
+                                                  }),
+                                              IconButton(
+                                                icon: Icon(
+                                                  _isExpanded[originalIndex]
+                                                      ? Icons.expand_less
+                                                      : Icons.expand_more,
+                                                ),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    _isExpanded[originalIndex] =
+                                                        !_isExpanded[
+                                                            originalIndex];
+                                                  });
+                                                },
+                                              ),
+                                            ])),
                                   ],
                                 ),
                               ),
@@ -690,6 +794,7 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
                                                         width: 48), // 对齐复选框位置
                                                     const Expanded(
                                                         child: Text('')),
+                                                    Expanded(child: Text('')),
                                                     Expanded(child: Text('')),
                                                     Expanded(child: Text('')),
                                                     Expanded(
@@ -793,7 +898,7 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
                                                     Expanded(child: Text('')),
                                                     Expanded(child: Text('')),
                                                     SizedBox(
-                                                      width: 60,
+                                                      width: 100,
                                                       child: Text(''),
                                                     ),
                                                   ],
@@ -894,6 +999,7 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
         'No.',
         'Formula Id',
         'Formula Name',
+        'Barcode',
         'Ingredient Name',
         'Ingredient Id',
         'Mode',
@@ -921,6 +1027,7 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
             headerData?.recordId ?? "",
             headerData?.formulaId ?? "",
             headerData?.formulaName ?? "",
+            headerData?.formulaBarcode ?? "",
             "",
             "",
             headerData?.formulaMode == 'wgt'
@@ -947,6 +1054,7 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
           if (rowData.details != null) {
             for (final detail in rowData.details!) {
               final detailRow = [
+                "",
                 "",
                 "",
                 "",
@@ -1006,6 +1114,84 @@ class AllFmaWgtRecPageState extends State<AllFmaWgtRecPage>
       color: Theme.of(context).colorScheme.surface,
       child: Row(children: [
         const Spacer(),
+        SizedBox(
+          width: 160,
+          height: 40,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              fixedSize: const Size(double.infinity, 48),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.zero,
+              ),
+            ),
+            onPressed: () {
+              Map<String, FieldNameStatus> rptFields = getrptFields();
+              List<String> selectedFields = [];
+
+              for (String fieldName in rptFields.keys) {
+                if (rptFields[fieldName]!.isSelected) {
+                  selectedFields.add(fieldName);
+                }
+              }
+
+              showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) => PrintRptSelectDialog(
+                        options: rptFields,
+                        selectedOptions: selectedFields,
+                        context: context,
+                      )).then((value) {
+                if (value != null) {
+                  uploadServerInfo = value;
+                }
+              });
+            },
+            child: Text(
+              localizedStrings.printSettings,
+              style: Theme.of(context).textTheme.bodySmall!.apply(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ),
+        const SizedBox(width: 20),
+        SizedBox(
+          width: 160,
+          height: 40,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              fixedSize: const Size(double.infinity, 48),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.zero,
+              ),
+            ),
+            onPressed: () {
+              showDialog(
+                      context: context,
+                      builder: (context) =>
+                          FmaServerSettingDialog(info: uploadServerInfo))
+                  .then((value) {
+                if (value != null) {
+                  uploadServerInfo = value;
+                }
+              });
+            },
+            child: Text(
+              localizedStrings.autoSync, //Sync Settings
+              style: Theme.of(context).textTheme.bodySmall!.apply(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ),
+        const SizedBox(width: 20),
         SizedBox(
           width: 200,
           height: 40,

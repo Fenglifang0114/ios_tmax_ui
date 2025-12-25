@@ -405,6 +405,10 @@ class _FormulaTableState extends State<FormulaTable> {
             valueA = a.header!.formulaName;
             valueB = b.header!.formulaName;
             break;
+          case 'fmaBarcode':
+            valueA = a.header!.formulaBarcode;
+            valueB = b.header!.formulaBarcode;
+            break;
 
           case 'category':
             valueA = categoryA;
@@ -464,6 +468,8 @@ class _FormulaTableState extends State<FormulaTable> {
       getColumnWidget(120, 'formulaId', localizedStrings.fFmaIdLabel, textTheme,
           colorScheme),
       getColumnWidget(300, 'formulaName', localizedStrings.fFmaNameLabel,
+          textTheme, colorScheme),
+      getColumnWidget(150, 'fmaBarcode', localizedStrings.fFmaBarcode,
           textTheme, colorScheme),
       getColumnWidget(150, 'category', localizedStrings.fFmaCategoryCol,
           textTheme, colorScheme),
@@ -542,6 +548,10 @@ class FormulaDataSource extends DataGridSource {
         DataGridCell<String>(
           columnName: 'formulaName',
           value: formula.header?.formulaName ?? '',
+        ),
+        DataGridCell<String>(
+          columnName: 'fmaBarcode',
+          value: formula.header?.formulaBarcode ?? '',
         ),
         DataGridCell<String>(
           columnName: 'category',

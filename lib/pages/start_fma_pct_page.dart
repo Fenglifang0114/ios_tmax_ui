@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/darf_fma_data_from_db.dart';
 import 'package:t_max/data/f_raw_name.dart';
+import 'package:t_max/data/fma_rec_list_db_data.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/formula_scale_data.dart';
 import 'package:t_max/data/formula_wgt_process_data.dart';
@@ -17,6 +19,7 @@ import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/data/formula_from_db_data.dart';
 import 'package:t_max/pages/edit_darft_fma_page.dart';
+import 'package:t_max/pages/fma_report_print.dart';
 import 'package:t_max/widget/common_widget.dart';
 import 'package:t_max/widget/fma_parameter_setting.dart';
 import 'package:t_max/widget/fma_process_bar.dart';
@@ -70,6 +73,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
   bool checkCodeflag = false; //是否开启校验码  开启后，需要扫描或者输入校验码才能继续
   bool checkCodeOk = true; //当前校验码是否正确
   bool checkCodeDialogShowing = false;
+  bool isPrint = false; //是否打印配方
 
   double initTotalWeight = 1000.0; //总重量百分比模式传入的总重量
   double currentRawWgt = 0.000; //当前的原料重量 默认为0
@@ -83,6 +87,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
   dynamic _eventbus4;
   dynamic _eventbus5;
   dynamic _eventbus6;
+  dynamic _eventbus7;
 
   Timer? setWgtStartFalseTimer; // 用于每3秒将isWgtStart设置为false的定时器
   Timer? checkWgtStartTimer; // 用于每5秒检查isWgtStart的定时器
@@ -490,6 +495,31 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
         }
       }
     });
+
+    _eventbus7 = eventBus.on<EventRespFormulaRecByOrder>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+        if (dataStr != '' && dataStr != 'fail') {
+          setState(() {
+            dynamic jsonData = json.decode(dataStr);
+            FmaRecFromDb reportData = FmaRecFromDb.fromJson(jsonData);
+            print(reportData.header!.actualFmaTotalWgt);
+            if (isPrint) {
+              isPrint = false;
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (BuildContext context) {
+                  return FormulaReportPrint(
+                    fmaData: reportData,
+                  );
+                },
+              );
+            }
+          });
+        }
+      }
+    });
   }
 
   /// 销毁EventBus订阅
@@ -500,6 +530,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
     _eventbus4.cancel();
     _eventbus5.cancel();
     _eventbus6.cancel();
+    _eventbus7.cancel();
   }
 
   @override
@@ -690,6 +721,21 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
     });
   }
 
+  void restartWgt() {
+    setState(() {
+      //清空所有称重数据
+      processWgtList.clear();
+      currentRawWgt = 0.0;
+      clickedRow = 0;
+      isEnableNext = true;
+
+      initWgtList();
+    });
+    if (checkCodeflag) {
+      showCheckCodeDialog();
+    }
+  }
+
   // 显示新增配方类型对话框
   void showDeleteDialog() {
     showDialog(
@@ -703,18 +749,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
       },
     ).then((value) {
       if (value) {
-        setState(() {
-          //清空所有称重数据
-          processWgtList.clear();
-          currentRawWgt = 0.0;
-          clickedRow = 0;
-          isEnableNext = true;
-
-          initWgtList();
-        });
-        if (checkCodeflag) {
-          showCheckCodeDialog();
-        }
+        restartWgt();
       }
     });
   }
@@ -801,7 +836,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
     PublicFunctions.addFormulaRec(reqAddFmaRecToJson(reqAddFmaRec));
 
     setState(() {
-      isFinish = true;
+      // isFinish = true;
       isEnableNext = false;
     });
   }
@@ -897,38 +932,31 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
     }
   }
 
-  void performFinishBtn() {
+  //自动保存配方
+  void saveFormula() {
     bool isAllOK = checkAllOK();
     if (!isAllOK) {
-      showDialog(
-        context: context,
-        barrierDismissible: false, // 点击对话框外部不关闭对话框
-        builder: (BuildContext context) {
-          return ShowNormalTipDialog(
-            title: localizedStrings.fTipTitle,
-            msg: localizedStrings.fFormulaUnqualifiedMsg,
-          );
-        },
-      ).then((value) {
-        if (value == null) {
-          return;
-        }
-        if (value) {
-          // 保存
-          saveFmaRec(isAllOK);
-          stopAllWgt();
-          if (mounted) {
-            Navigator.pop(context);
-          }
-        } else {
-          return;
-        }
-      });
-    } else {
-      saveFmaRec(isAllOK);
-      stopAllWgt();
-      Navigator.pop(context);
+      return;
     }
+    saveFmaRec(isAllOK);
+  }
+
+//完成称重
+  void performFinishBtn() {
+    stopAllWgt();
+    Navigator.pop(context);
+  }
+
+  //打印配方
+  void performPrintBtn() {
+    isPrint = true;
+    PublicFunctions.getFmaByOrderId(recRecNumber);
+  }
+
+  //重新称重
+  void performReWgtBtn() {
+    restartWgt();
+    createRecNumber();
   }
 
   void stopAllWgt() {
@@ -972,69 +1000,107 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
         height: 76,
         color: colorScheme.surface,
         child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: maxWidth),
-            child: showTextButton(
-                context,
-                btnHeight,
-                localizedStrings.fCompleteIngredientsBtn,
-                !isFinish
-                    ? () {
-                        performFinishBtn();
-                      }
-                    : null,
-                colorScheme.onPrimary,
-                colorScheme.primary,
-                colorScheme.onPrimary),
-          ),
-          SizedBox(width: regularPadding),
-          ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: maxWidth),
-            child: showTextButton(
-                context,
-                btnHeight,
-                localizedStrings.btnTemporarySave,
-                !isEnableNext
-                    ? null
-                    : () {
-                        performDarfFmaSave();
-                      },
-                colorScheme.onPrimary,
-                colorScheme.primary,
-                colorScheme.onPrimary),
-          ),
-          SizedBox(width: regularPadding),
-          ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: maxWidth),
-            child: showTextButton(
-                context,
-                btnHeight,
-                localizedStrings.fAbandonIngredientsBtn,
-                !isFinish
-                    ? () {
-                        performAbandonBtn();
-                      }
-                    : null,
-                colorScheme.onPrimary,
-                colorScheme.error,
-                colorScheme.onPrimary),
-          ),
-          SizedBox(width: regularPadding),
-          ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: maxWidth),
-            child: showTextButton(
-                context,
-                btnHeight,
-                localizedStrings.btnRestart,
-                !isFinish
-                    ? () {
-                        showDeleteDialog();
-                      }
-                    : null,
-                colorScheme.onPrimary,
-                colorScheme.error,
-                colorScheme.onPrimary),
-          ),
+          if (checkAllOK())
+            ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: maxWidth),
+              child: showTextButton(
+                  context,
+                  btnHeight,
+                  localizedStrings.fCompleteIngredientsBtn,
+                  !isFinish
+                      ? () {
+                          performFinishBtn();
+                        }
+                      : null,
+                  colorScheme.onPrimary,
+                  colorScheme.primary,
+                  colorScheme.onPrimary),
+            ),
+          if (checkAllOK()) SizedBox(width: regularPadding),
+          if (checkAllOK())
+            ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: maxWidth),
+              child: showTextButton(
+                  context,
+                  btnHeight,
+                  localizedStrings.fPrintFmaBtn,
+                  !isFinish
+                      ? () {
+                          performPrintBtn();
+                        }
+                      : null,
+                  colorScheme.onPrimary,
+                  colorScheme.primary,
+                  colorScheme.onPrimary),
+            ),
+          if (checkAllOK()) SizedBox(width: regularPadding),
+          if (checkAllOK())
+            ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: maxWidth),
+              child: showTextButton(
+                  context,
+                  btnHeight,
+                  localizedStrings.fRepeatWeighingBtn,
+                  !isFinish
+                      ? () {
+                          performReWgtBtn();
+                        }
+                      : null,
+                  colorScheme.onPrimary,
+                  colorScheme.primary,
+                  colorScheme.onPrimary),
+            ),
+          if (!checkAllOK()) SizedBox(width: regularPadding),
+          if (!checkAllOK())
+            ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: maxWidth),
+              child: showTextButton(
+                  context,
+                  btnHeight,
+                  localizedStrings.btnTemporarySave,
+                  !isEnableNext
+                      ? null
+                      : () {
+                          performDarfFmaSave();
+                        },
+                  colorScheme.onPrimary,
+                  colorScheme.primary,
+                  colorScheme.onPrimary),
+            ),
+          if (!checkAllOK()) SizedBox(width: regularPadding),
+          if (!checkAllOK())
+            ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: maxWidth),
+              child: showTextButton(
+                  context,
+                  btnHeight,
+                  localizedStrings.fAbandonIngredientsBtn,
+                  !isFinish
+                      ? () {
+                          performAbandonBtn();
+                        }
+                      : null,
+                  colorScheme.onPrimary,
+                  colorScheme.error,
+                  colorScheme.onPrimary),
+            ),
+          if (!checkAllOK()) SizedBox(width: regularPadding),
+          if (!checkAllOK())
+            ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: maxWidth),
+              child: showTextButton(
+                  context,
+                  btnHeight,
+                  localizedStrings.btnRestart,
+                  !isFinish
+                      ? () {
+                          showDeleteDialog();
+                        }
+                      : null,
+                  colorScheme.onPrimary,
+                  colorScheme.error,
+                  colorScheme.onPrimary),
+            ),
         ]));
   }
 
@@ -1521,23 +1587,6 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
         }));
   }
 
-  showFCode() {
-    String id = "";
-    if (myFmaInfo.header == null || myFmaInfo.header!.formulaId == null) {
-      id = "";
-    } else {
-      id = myFmaInfo.header!.formulaId!;
-    }
-    return Expanded(
-      child: Text(
-        id,
-        style: getTitleTextStyle(),
-        overflow: TextOverflow.ellipsis,
-        maxLines: 1,
-      ),
-    );
-  }
-
   showFName() {
     String name = "";
     if (myFmaInfo.header == null || myFmaInfo.header!.formulaName == null) {
@@ -1605,57 +1654,71 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
     return Expanded(
       flex: 9,
       child: Column(children: [
+        showFormulaName(),
         SizedBox(
           height: 28,
-          child: Row(children: [
+          child:
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            // 显示标签部分
             Expanded(
-              flex: 1,
-              child: Container(
-                height: 28,
-                color: colorScheme.surface,
-                alignment: Alignment.centerLeft,
-                child: Row(children: [
-                  // 显示标签部分
-                  Flexible(
-                    fit: FlexFit.loose,
-                    child: Text(
-                      localizedStrings.fFmaIdLabel + ": ",
-                      style: getTitleTextStyle(
-                          color: colorScheme.onSurfaceVariant),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                    ),
+              child: RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: localizedStrings.fFmaIdLabel + ": ",
+                        style: getTitleTextStyle(
+                            color: colorScheme.onSurfaceVariant),
+                      ),
+                      TextSpan(
+                        text: myFmaInfo.header!.formulaId!,
+                        style: getTitleTextStyle(),
+                      ),
+                      TextSpan(
+                        text: '  ',
+                        style: getTitleTextStyle(),
+                      ),
+                    ],
                   ),
-                  // 显示编号内容部分，用 Expanded 约束宽度
-                  showFCode()
-                ]),
-              ),
+                  overflow: TextOverflow.ellipsis),
             ),
+
             Expanded(
-              flex: 1,
-              child: Container(
-                height: 28,
-                color: colorScheme.surface,
-                alignment: Alignment.centerLeft,
-                child: Row(children: [
-                  Flexible(
-                    fit: FlexFit.loose,
-                    child: Text(
-                      localizedStrings.fTotalWeightLabel + ": ",
-                      style: getTitleTextStyle(
-                          color: colorScheme.onSurfaceVariant),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                    ),
+              child: RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: localizedStrings.fFmaBarcode + ": ",
+                        style: getTitleTextStyle(
+                            color: colorScheme.onSurfaceVariant),
+                      ),
+                      TextSpan(
+                        text: myFmaInfo.header!.formulaBarcode!,
+                        style: getTitleTextStyle(),
+                      ),
+                    ],
                   ),
-                  // 显示编号内容部分，用 Expanded 约束宽度
-                  showTotalWgtAndUnit()
-                ]),
-              ),
-            ),
+                  overflow: TextOverflow.ellipsis),
+            )
           ]),
         ),
-        showFormulaName(),
+        Container(
+          height: 28,
+          color: colorScheme.surface,
+          alignment: Alignment.centerLeft,
+          child: Row(children: [
+            Flexible(
+              fit: FlexFit.loose,
+              child: Text(
+                localizedStrings.fTotalWeightLabel + ": ",
+                style: getTitleTextStyle(color: colorScheme.onSurfaceVariant),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+            ),
+            // 显示编号内容部分，用 Expanded 约束宽度
+            showTotalWgtAndUnit()
+          ]),
+        ),
         Container(
           height: 40,
           color: colorScheme.surface,
@@ -2630,6 +2693,8 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
         isEnableNext = false; // 禁用按钮
       });
       showTipInfo(localizedStrings.fFormulaCompletionMsg, context);
+      //自动保存配方
+      saveFormula();
       return;
     }
   }

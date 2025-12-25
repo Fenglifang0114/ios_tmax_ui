@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:t_max/data/darf_fma_data_from_db.dart';
 import 'package:t_max/data/f_raw_name.dart';
 import 'package:t_max/data/fma_import_func.dart';
+import 'package:t_max/data/fma_import_raw.dart';
 import 'package:t_max/data/fma_rec_list_db_data.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/formula_scale_data.dart';
@@ -36,6 +38,7 @@ import 'package:t_max/widget/formula_widget.dart';
 import 'package:t_max/data/formula_from_db_data.dart';
 import 'package:t_max/widget/page_head.dart';
 import 'package:t_max/widget/scale_list.dart';
+import 'package:t_max/widget/search_fma_barcode.dart';
 import '../data/language.dart';
 
 // 定义 EncryptedValue 枚举
@@ -79,6 +82,8 @@ class FormulationScalePageState extends State<FormulationScalePage>
   final TextEditingController rawTypeCtl = TextEditingController();
   final TextEditingController _searchRawIdCtl = TextEditingController();
   final TextEditingController _searchDarftIdCtl = TextEditingController();
+
+  final TextEditingController fmaBarcodeCtl = TextEditingController(); //配方条码
 
   FormulaInfoDb? selectedFormula; //选中的配方，用于展示原料列表
   Detail selectedDetail = Detail(); //配方中选中的原料
@@ -132,6 +137,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
   dynamic _eventbus23;
   dynamic _eventbus24;
   dynamic _eventbus25;
+  dynamic _eventbus26;
 
   @override
   void initState() {
@@ -523,6 +529,19 @@ class FormulationScalePageState extends State<FormulationScalePage>
       }
     });
 
+    _eventbus26 = eventBus.on<EventRespGetReportPrint>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+        if (dataStr != '') {
+          try {
+            rptPrintSetting = rptPrintSettingFromJson(dataStr);
+          } catch (e) {
+            return;
+          }
+        }
+      }
+    });
+
     //初始化完成再做一次数据加载
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -531,6 +550,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
       PublicFunctions.getRawTypeList();
       PublicFunctions.getFormulaTypeList();
       PublicFunctions.getRawList();
+      PublicFunctions.getPrintSetting();
 
       Future.delayed(const Duration(milliseconds: 500), () {
         PublicFunctions.getFormulaList();
@@ -611,6 +631,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
     _eventbus23?.cancel();
     _eventbus24?.cancel();
     _eventbus25?.cancel();
+    _eventbus26?.cancel();
   }
 
   void startTestScaleOnline() {
@@ -714,7 +735,6 @@ class FormulationScalePageState extends State<FormulationScalePage>
                                         setState(() => selectedFormula = null);
                                         return;
                                       }
-
                                       setState(() {
                                         _selectedRawIndex = -1;
                                         selectedDetail = Detail();
@@ -2305,7 +2325,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
           iconSize: 24,
           color: colorScheme.onPrimary,
           style: IconButton.styleFrom(
-            backgroundColor: colorScheme.primary,
+            backgroundColor: colorScheme.onTertiaryFixedVariant,
             shape: RoundedRectangleBorder(
               // 设置为矩形形状
               borderRadius: BorderRadius.zero, // 没有圆角，即正方形
@@ -2315,7 +2335,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
           onPressed: () {
             showAddRawInfoDialog();
           },
-          icon: Icon(Icons.add_box_outlined),
+          icon: getSvgIcon(takeInSvgIcon(), 24, 24, colorScheme.onPrimary),
         ),
         SizedBox(
           width: regularPadding,
@@ -2333,11 +2353,13 @@ class FormulationScalePageState extends State<FormulationScalePage>
         SizedBox(
           width: regularPadding,
         ),
-        buildDelIconBtn(selRawList.isEmpty
-            ? null
-            : () {
-                _deleteSelectedRaw();
-              }),
+        buildDelIconBtn(
+            selRawList.isEmpty
+                ? null
+                : () {
+                    _deleteSelectedRaw();
+                  },
+            selRawList.isEmpty),
 
         SizedBox(
           width: 20,
@@ -2378,7 +2400,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
         focusColor: colorScheme.outline,
         hoverColor: colorScheme.outline,
         style: IconButton.styleFrom(
-          backgroundColor: colorScheme.surfaceContainerLow,
+          backgroundColor: colorScheme.primary,
           shape: RoundedRectangleBorder(
             // 设置为矩形形状
             borderRadius: BorderRadius.zero, // 没有圆角，即正方形
@@ -2388,7 +2410,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
         onPressed: () {
           onPressed();
         },
-        icon: getSvgIcon(iconPath, 24, 24, colorScheme.primary),
+        icon: getSvgIcon(iconPath, 24, 24, colorScheme.onPrimary),
       ),
     );
   }
@@ -2400,7 +2422,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
           iconSize: 24,
           color: colorScheme.onPrimary,
           style: IconButton.styleFrom(
-            backgroundColor: colorScheme.primary,
+            backgroundColor: colorScheme.onTertiaryFixedVariant,
             shape: RoundedRectangleBorder(
               // 设置为矩形形状
               borderRadius: BorderRadius.zero, // 没有圆角，即正方形
@@ -2408,20 +2430,20 @@ class FormulationScalePageState extends State<FormulationScalePage>
             fixedSize: const Size(40, 40), // 设置固定大小
           ),
           onPressed: onPressed,
-          icon: Icon(icon),
+          icon: getSvgIcon(takeInSvgIcon(), 24, 24, colorScheme.onPrimary),
         ));
   }
 
-  showIconButton(String tip, IconData icon, Function() onPressed) {
+  showIconButton(String tip, String iconPath, Function() onPressed) {
     return Tooltip(
       message: tip, // 提示信息
       child: IconButton(
         iconSize: 24,
-        color: colorScheme.onPrimary,
+        color: colorScheme.primary,
         focusColor: colorScheme.outline,
         hoverColor: colorScheme.outline,
         style: IconButton.styleFrom(
-          backgroundColor: Color(0xFFF3F3F3),
+          backgroundColor: colorScheme.primary,
           shape: RoundedRectangleBorder(
             // 设置为矩形形状
             borderRadius: BorderRadius.zero, // 没有圆角，即正方形
@@ -2429,10 +2451,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
           fixedSize: const Size(40, 40), // 设置固定大小
         ),
         onPressed: onPressed,
-        icon: Icon(
-          icon,
-          color: colorScheme.primary,
-        ),
+        icon: getSvgIcon(iconPath, 24, 24, colorScheme.onPrimary),
       ),
     );
   }
@@ -2500,6 +2519,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
 
     //读取csv文件
     ImportRawResult resImport = await importRawFromExcel(file);
+
     if (!mounted) return;
     if (!resImport.isSuccess) {
       showTipInfo(resImport.errorMessage!, context);
@@ -2561,6 +2581,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
           scaleId: int.tryParse(dataList[2][i]) ?? 0,
           categoryName: dataList[3][i],
           ingredient: dataList[4][i],
+          checkCode: dataList[5][i],
         ));
       }
 
@@ -2950,8 +2971,42 @@ class FormulationScalePageState extends State<FormulationScalePage>
           width: 12,
         ),
         //配方称重记录
-        showIconButton(localizedStrings.fHistoricalWeighingRecordsBtn,
-            Icons.library_books_outlined, () {
+        showIconButton(localizedStrings.fFmaBarcode, fmaBarcodeIcon(), () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return SearchFmaBarcodeDialog();
+            },
+          ).then((fmaValue) {
+            if (fmaValue != null) {
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return ShowFormulaDetailDialog(
+                      selectFormula: fmaValue,
+                      selectScaleId: selScaleId,
+                    );
+                  }).then((value) {
+                if (value) {
+                  selectedFormula = fmaValue;
+                  //判断秤是否在线
+                  bool isOk = checkScaleOnline(selectedFormula);
+                  if (!isOk) {
+                    return;
+                  }
+                  stopTestScaleOnline();
+                  startWeighting();
+                }
+              });
+            }
+          });
+        }),
+        SizedBox(
+          width: 12,
+        ),
+        //配方称重记录
+        showIconButton(
+            localizedStrings.fHistoricalWeighingRecordsBtn, recordsIcon(), () {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => AllFmaWgtRecPage()));
         }),
@@ -2959,14 +3014,13 @@ class FormulationScalePageState extends State<FormulationScalePage>
           width: 12,
         ),
         //导入配方
-        showIconButton(localizedStrings.gBtnImport,
-            Icons.file_download_outlined, importFormula),
+        showIconButton(
+            localizedStrings.gBtnImport, importSvgIcon(), importFormula),
         SizedBox(
           width: 12,
         ),
         //导出配方
-        showIconButton(localizedStrings.gBtnExport, Icons.file_upload_outlined,
-            () {
+        showIconButton(localizedStrings.gBtnExport, exportSvgIcon(), () {
           //导出配方
           exportFormula();
         }),
@@ -2978,11 +3032,13 @@ class FormulationScalePageState extends State<FormulationScalePage>
         SizedBox(
           width: regularPadding,
         ),
-        buildDelIconBtn(selFormulas.isEmpty
-            ? null
-            : () {
-                _deleteSelectedFmas();
-              }),
+        buildDelIconBtn(
+            selFormulas.isEmpty
+                ? null
+                : () {
+                    _deleteSelectedFmas();
+                  },
+            selFormulas.isEmpty),
 
         SizedBox(
           width: 20,
@@ -2990,6 +3046,8 @@ class FormulationScalePageState extends State<FormulationScalePage>
       ]),
     );
   }
+
+  showDetailFmaInfo(FormulaInfoDb fmaData) {}
 
   _deleteSelectedFmas() {
     if (selFormulas.isEmpty) return;
@@ -3070,11 +3128,13 @@ class FormulationScalePageState extends State<FormulationScalePage>
                   }),
             )),
         Spacer(),
-        buildDelIconBtn(selDarftFmaList.isEmpty
-            ? null
-            : () {
-                _deleteDarftFma();
-              }),
+        buildDelIconBtn(
+            selDarftFmaList.isEmpty
+                ? null
+                : () {
+                    _deleteDarftFma();
+                  },
+            selDarftFmaList.isEmpty),
         SizedBox(
           width: 20,
         ),
@@ -3082,10 +3142,10 @@ class FormulationScalePageState extends State<FormulationScalePage>
     );
   }
 
-  Widget buildDelIconBtn(Function()? onPressed) {
+  Widget buildDelIconBtn(Function()? onPressed, bool isDisabled) {
     return IconButton(
       iconSize: 24,
-      color: colorScheme.onPrimary,
+      color: colorScheme.outline,
       style: IconButton.styleFrom(
         backgroundColor: colorScheme.error,
         disabledBackgroundColor: colorScheme.surfaceContainerLow,
@@ -3095,7 +3155,8 @@ class FormulationScalePageState extends State<FormulationScalePage>
         fixedSize: const Size(40, 40),
       ),
       onPressed: onPressed,
-      icon: Icon(Icons.delete_forever_outlined),
+      icon: getSvgIcon(deleteSvgIcon(), 24, 24,
+          isDisabled ? colorScheme.outline : colorScheme.onPrimary),
     );
   }
 

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/data/f_raw_name.dart';
@@ -36,6 +38,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
   TextEditingController formulaUnitCtl = TextEditingController(text: 'g');
   TextEditingController formulaTypeCtl = TextEditingController();
   TextEditingController rawMaterialCtl = TextEditingController();
+  TextEditingController formulaBarcodeCtl = TextEditingController(); // 配方条码
   TextEditingController wgtCtl = TextEditingController(); // 权重
   TextEditingController errorCtl = TextEditingController(); // 误差
   TextEditingController remarkCtl = TextEditingController(); // 备注
@@ -52,14 +55,14 @@ class EditFormulaPageState extends State<EditFormulaPage> {
   };
 
   int selectedIndex = -1;
-
+  dynamic _eventbus1;
   dynamic _eventbus5;
 
   @override
   void initState() {
     super.initState();
     formulaCodeCtl.text = widget.editFormulaInfo.header!.formulaId!;
-
+    formulaBarcodeCtl.text = widget.editFormulaInfo.header!.formulaBarcode!;
     formulaNameCtl.text = widget.editFormulaInfo.header!.formulaName!;
     formulaModeCtl.text = widget.editFormulaInfo.header!.formulaMode!;
     formulaUnitCtl.text = widget.editFormulaInfo.header!.formulaUnit!;
@@ -98,6 +101,28 @@ class EditFormulaPageState extends State<EditFormulaPage> {
     } else {
       totalWgt = widget.editFormulaInfo.header!.totalWeight!.toDouble(); // 总权重
     }
+    _eventbus1 = eventBus.on<EventRespCheckFmaIdAndBarcode>().listen((event) {
+      if (mounted) {
+        setState(() {
+          String dataStr = event.obj;
+          if (dataStr != '' && dataStr.contains(',')) {
+            List<String> dataList = dataStr.split(',');
+            if (dataList.length >= 2) {
+              if (dataList[0] == "false" && dataList[1] == "false") {
+                showTipInfo(
+                    localizedStrings.fFormulaIdAndBarcodeDuplicate, context);
+              } else if (dataList[0] == "false" && dataList[1] == "true") {
+                showTipInfo(localizedStrings.fFormulaIdDuplicate, context);
+              } else if (dataList[0] == "true" && dataList[1] == "false") {
+                showTipInfo(localizedStrings.fFormulaBarcodeDuplicate, context);
+              } else if (dataList[0] == "true" && dataList[1] == "true") {
+                saveFormula(1);
+              }
+            }
+          }
+        });
+      }
+    });
 
     _eventbus5 = eventBus.on<EventRespGetRawData>().listen((event) {
       if (mounted) {
@@ -121,7 +146,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
   @override
   void dispose() {
     super.dispose();
-
+    _eventbus1.cancel();
     _eventbus5.cancel();
     formulaCodeCtl.dispose();
     formulaNameCtl.dispose();
@@ -570,6 +595,15 @@ class EditFormulaPageState extends State<EditFormulaPage> {
           width: width / 3,
           height: 90,
           child: Column(children: [
+            showItemNameWithStar(
+                context, localizedStrings.fFmaBarcode + " ", false),
+            showInputBox(formulaBarcodeCtl, localizedStrings.fFmaBarcode),
+          ]),
+        ),
+        SizedBox(
+          width: width / 3,
+          height: 90,
+          child: Column(children: [
             showItemNameWithStar(context, '', false),
             Row(
               children: [
@@ -601,6 +635,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
             showItemNameWithStar(context, '', false),
             Row(
               children: [
+                SizedBox(width: 10),
                 Checkbox(
                   value: needContainer, // 假设这是一个状态变量，用于跟踪复选框的状态
                   onChanged: (bool? newValue) {
@@ -622,10 +657,6 @@ class EditFormulaPageState extends State<EditFormulaPage> {
             ),
           ]),
         ),
-        SizedBox(
-          width: width / 3,
-          child: SizedBox(),
-        )
       ]),
     ]);
   }
@@ -1390,6 +1421,17 @@ class EditFormulaPageState extends State<EditFormulaPage> {
     });
   }
 
+  //保存之前先检查是否有重复的配方ID和重复的Barcode
+  void checkFmaIdAndBarcode() {
+    ReqCheckFmaIdAndBarcode reqCheckFmaIdAndBarcode = ReqCheckFmaIdAndBarcode(
+      recId: widget.editFormulaInfo.header!.recId, //新增用0表示新增
+      formulaId: formulaCodeCtl.text,
+      formulaBarcode: formulaBarcodeCtl.text,
+    );
+
+    PublicFunctions.checkFmaIdAndBarcode(jsonEncode(reqCheckFmaIdAndBarcode));
+  }
+
   //保存功能
   void saveFormula(int func) {
     if (formulaDataList.isEmpty) {
@@ -1419,6 +1461,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
       createdBy: widget.editFormulaInfo.header!.createdBy,
       updatedBy: mySysUser.nickName!,
       remark: remarkCtl.text,
+      formulaBarcode: formulaBarcodeCtl.text,
     );
     ReqFormulaAddInfo tempReqAddF = ReqFormulaAddInfo(
       header: tempHeader,
@@ -1562,7 +1605,8 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                             totalWgt != 100)
                         ? null
                         : () {
-                            saveFormula(1);
+                            checkFmaIdAndBarcode();
+                            // saveFormula(1);
                           },
                 child: Text(
                   localizedStrings.gBtnSave,

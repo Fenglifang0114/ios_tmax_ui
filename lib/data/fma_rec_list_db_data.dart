@@ -213,6 +213,7 @@ class HeaderRec {
   String? scaleName;
   String? scaleModel;
   String? scaleSn;
+  String? formulaBarcode;
 
   HeaderRec({
     this.recId,
@@ -245,6 +246,7 @@ class HeaderRec {
     this.scaleName,
     this.scaleModel,
     this.scaleSn,
+    this.formulaBarcode,
   });
 
   factory HeaderRec.fromJson(Map<String, dynamic> json) => HeaderRec(
@@ -284,6 +286,7 @@ class HeaderRec {
         scaleName: json["ScaleName"],
         scaleModel: json["ScaleModel"],
         scaleSn: json["ScaleSn"],
+        formulaBarcode: json["FormulaBarcode"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -317,5 +320,69 @@ class HeaderRec {
         "ScaleName": scaleName,
         "ScaleModel": scaleModel,
         "ScaleSn": scaleSn,
+        "FormulaBarcode": formulaBarcode,
+      };
+}
+
+UploadServerInfo uploadServerInfoFromJson(String str) =>
+    UploadServerInfo.fromJson(json.decode(str));
+
+String uploadServerInfoToJson(UploadServerInfo data) =>
+    json.encode(data.toJson());
+
+class UploadServerInfo {
+  int? recId;
+  String? ip;
+  String? shareName;
+  String? username;
+  String? password;
+  bool? enable;
+  DateTime? createdAt;
+  DateTime? updatedAt;
+  String? createdBy;
+  String? updatedBy;
+
+  UploadServerInfo({
+    this.recId,
+    this.ip,
+    this.shareName,
+    this.username,
+    this.password,
+    this.enable,
+    this.createdAt,
+    this.updatedAt,
+    this.createdBy,
+    this.updatedBy,
+  });
+
+  factory UploadServerInfo.fromJson(Map<String, dynamic> json) =>
+      UploadServerInfo(
+        recId: json["RecId"],
+        ip: json["Ip"],
+        shareName: json["ShareName"],
+        username: json["Username"],
+        password: json["Password"],
+        enable: json["Enable"],
+        createdAt: json["CreatedAt"] == null
+            ? null
+            : DateTime.parse(json["CreatedAt"]),
+        updatedAt: json["UpdatedAt"] == null
+            ? null
+            : DateTime.parse(json["UpdatedAt"]),
+        createdBy: json["CreatedBy"],
+        updatedBy: json["UpdatedBy"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "RecId": recId,
+        "Ip": ip,
+        "ShareName": shareName,
+        "Username": username,
+        "Password": password,
+        "Enable": enable,
+        "CreatedAt": createdAt?.toIso8601String(),
+        "UpdatedAt": updatedAt?.toIso8601String(),
+        "CreatedBy": createdBy,
+        "UpdatedBy": updatedBy,
       };
 }

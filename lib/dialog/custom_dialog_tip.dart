@@ -750,6 +750,7 @@ class ShowCheckCodeDialog extends StatefulWidget {
 class ShowCheckCodeDialogState extends State<ShowCheckCodeDialog> {
   TextEditingController checkCodeCtl = TextEditingController();
   late FocusNode _checkCodeFocusNode;
+  String errorText = '';
 
   @override
   void initState() {
@@ -872,14 +873,43 @@ class ShowCheckCodeDialogState extends State<ShowCheckCodeDialog> {
                                     .onSurface, // 设置输入文本颜色
                               ),
                           onChanged: (value) {
+                            setState(() {
+                              errorText = '';
+                            });
+
                             if (value.isNotEmpty && value == widget.rawCode) {
                               Navigator.pop(context, "ok");
+                            }
+                          },
+                          onSubmitted: (value) {
+                            if (value.isNotEmpty && value == widget.rawCode) {
+                              Navigator.pop(context, "ok");
+                            } else {
+                              setState(() {
+                                errorText =
+                                    localizedStrings.verificationCodeMismatch;
+                                checkCodeCtl.text = "";
+                                _checkCodeFocusNode.requestFocus();
+                              });
                             }
                           },
                         ),
                       ),
                     ]),
                   ),
+                  SizedBox(
+                    height: 14,
+                  ),
+                  SizedBox(
+                    height: 40,
+                    child: Text(
+                      errorText,
+                      style: Theme.of(context).textTheme.bodySmall!.apply(
+                            color:
+                                Theme.of(context).colorScheme.error, // 设置输入文本颜色
+                          ),
+                    ),
+                  )
                 ]),
               ),
             ),

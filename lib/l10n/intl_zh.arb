@@ -1868,6 +1868,10 @@
     "@fFmaIdLabel": {
         "description": "Label for formula ID field"
     },
+    "fFmaBarcode": "验证条码",
+    "@fFmaBarcode": {
+        "description": "Label for formula barcode field"
+    },
     "fIngredientCountLabel": "原料数量",
     "@fIngredientCountLabel": {
         "description": "Label for ingredient count display"
@@ -1879,6 +1883,14 @@
     "fStartWeighingBtn": "开始称重",
     "@fStartWeighingBtn": {
         "description": "Button to start the weighing process"
+    },
+    "fNoFmaFound": "未查询到配方",
+    "@fNoFmaFound": {
+        "description": "Display text when no formula is found"
+    },
+    "fRepeatWeighingBtn": "重复称重", 
+     "@fRepeatWeighingBtn": { 
+        "description": "Label for repeat weighing button"
     },
     "fIngredientOrder": "配料顺序",
     "@fIngredientOrder": {
@@ -1895,6 +1907,10 @@
     "fInvolvedFmas": "所涉及配方",
     "@fInvolvedFmas": {
         "description": "Section title for formulas involving the raw material"
+    },
+    "fPrintFmaBtn": "打印配方",
+    "@fPrintFmaBtn": {
+        "description": "Button to print the formula"
     },
     "fScaleList": "秤列表",
     "@fScaleList": {
@@ -2091,6 +2107,14 @@
     "fFormulaIdDuplicate": "配方ID重复",
     "@fFormulaIdDuplicate": {
         "description": "Error message for duplicate formula ID"
+    },
+    "fFormulaBarcodeDuplicate": "配方验证条码重复",
+    "@fFormulaBarcodeDuplicate": {
+        "description": "Error message for duplicate formula barcode"
+    },
+    "fFormulaIdAndBarcodeDuplicate": "配方ID和验证条码重复",
+    "@fFormulaIdAndBarcodeDuplicate": {
+        "description": "Error message for duplicate formula ID and barcode"
     },
     "fFormulaNameDuplicate": "配方名称重复",
     "@fFormulaNameDuplicate": {
@@ -3476,6 +3500,10 @@
     "@formulaIdExists": {
         "description": "Prompt when Formula Id already exists in the system"
     },
+    "formulaBarcodeExists": "验证条码已存在",
+    "@formulaBarcodeExists": {
+        "description": "Prompt when Formula Barcode already exists in the system"
+    },
     "formulaNameEmpty": "Formula Name 不能为空",
     "@formulaNameEmpty": {
         "description": "Prompt when Formula Name cell is empty"
@@ -3527,6 +3555,10 @@
     "formulaNameInconsistent": "配方名不一致",
     "@formulaNameInconsistent": {
         "description": "Prompt when formula names within the same group are inconsistent"
+    },
+    "formulaBarcodeInconsistent": "验证条码不一致",
+    "@formulaBarcodeInconsistent": {
+        "description": "Prompt when formula barcodes within the same group are inconsistent"
     },
     "sequenceNotContinuous": "原料序列号不连续",
     "@sequenceNotContinuous": {
@@ -3692,6 +3724,10 @@
     "@opSetting": {
         "description": "Setting Operation"
     },
+    "opUpload": "上传",
+    "@opUpload": {
+        "description": "Upload Operation"
+    },
     "enableOrDisable": "启用或禁用",
     "@enableOrDisable": {
         "description": "Whether to enable or disable"
@@ -3771,6 +3807,10 @@
     "modifyTemporaryWeighingRecord": "修改暂存称重记录",
     "@modifyTemporaryWeighingRecord": {
         "description": "Modify temporary weighing record"
+    },
+    "uploadFmaWgtRecord": "上传配方称重记录",
+    "@uploadFmaWgtRecord": {
+        "description": "Upload formula weighing record"
     },
     "setTime": "设置时间",
     "@setTime": {
@@ -3915,6 +3955,30 @@
     "ipAddressAndPortIsAlreadyInUse": "IP地址和端口已被使用",
     "@ipAddressAndPortIsAlreadyInUse": {
         "description": "Error message when IP address and port are already in use"
+    },
+    "autoSync": "自动传输",
+    "@autoSync": {
+        "description": "Auto Sync"
+    },
+    "enableRecordAutoSync": "开启记录自动传输",
+    "@enableRecordAutoSync": {
+        "description": "Enable Record Auto Sync"
+    },    
+    "sharedFolderPath": "共享文件夹路径",
+    "@sharedFolderPath": {
+        "description": "Shared Folder Path"
+    },
+    "verificationCodeMismatch": "验证码错误，请重新扫描",
+    "@verificationCodeMismatch": {
+        "description": "Verification code mismatch"
+    },
+    "printSettings": "打印设置",
+    "@printSettings": {
+        "description": "Print Settings"
+    },
+    "gPrint": "打印",
+    "@gPrint": {
+        "description": "Print"
     }
 
 }   

@@ -1868,6 +1868,10 @@
     "@fFmaIdLabel": {
         "description": "Label for formula ID field"
     },
+    "fFmaBarcode": "Barcode",
+    "@fFmaBarcode": {
+        "description": "Label for formula barcode field"
+    },
     "fIngredientCountLabel": "Quantity",
     "@fIngredientCountLabel": {
         "description": "Label for ingredient count display"
@@ -1879,6 +1883,14 @@
     "fStartWeighingBtn": "Start Weighing",
     "@fStartWeighingBtn": {
         "description": "Button to start the weighing process"
+    },
+    "fNoFmaFound": "No formula found",
+    "@fNoFmaFound": {
+        "description": "Display text when no formula is found"
+    },
+    "fRepeatWeighingBtn": "Repeat Weighing", 
+     "@fRepeatWeighingBtn": { 
+        "description": "Label for repeat weighing button"
     },
     "fIngredientOrder": "Order",
     "@fIngredientOrder": {
@@ -1896,6 +1908,10 @@
     "@fInvolvedFmas": {
         "description": "Section title for formulas involving the raw material"
     },
+    "fPrintFmaBtn": "Print Formula",
+    "@fPrintFmaBtn": {
+        "description": "Button to print the formula"
+    },    
     "fScaleList": "Scale List",
     "@fScaleList": {
         "description": "Title for the scale list panel"
@@ -2016,7 +2032,7 @@
     "@fMaterialIdCol": {
         "description": "Table column title for material ID"
     },
-    "fMaterialCodeCol": "Ingredient Code",
+    "fMaterialCodeCol": "Verification Code",
     "@fMaterialCodeCol": {
         "description": "Table column title for material code"
     },
@@ -2091,6 +2107,14 @@
     "fFormulaIdDuplicate": "Formula ID already exists",
     "@fFormulaIdDuplicate": {
         "description": "Error message for duplicate formula ID"
+    },
+    "fFormulaBarcodeDuplicate": "Formula barcode already exists",
+    "@fFormulaBarcodeDuplicate": {
+        "description": "Error message for duplicate formula barcode"
+    },
+    "fFormulaIdAndBarcodeDuplicate": "Formula ID and barcode already exist",
+    "@fFormulaIdAndBarcodeDuplicate": {
+        "description": "Error message for duplicate formula ID and barcode"
     },
     "fFormulaNameDuplicate": "Formula name already exists",
     "@fFormulaNameDuplicate": {
@@ -3476,6 +3500,10 @@
     "@formulaIdExists": {
         "description": "Prompt when Formula Id already exists in the system"
     },
+    "formulaBarcodeExists": "Formula Barcode already exists",
+    "@formulaBarcodeExists": {
+        "description": "Prompt when Formula Barcode already exists in the system"
+    },
     "formulaNameEmpty": "Formula Name is empty",
     "@formulaNameEmpty": {
         "description": "Prompt when Formula Name cell is empty"
@@ -3527,6 +3555,10 @@
     "formulaNameInconsistent": "Formula names are inconsistent",
     "@formulaNameInconsistent": {
         "description": "Prompt when formula names within the same group are inconsistent"
+    },
+    "formulaBarcodeInconsistent": "Barcodes are inconsistent",
+    "@formulaBarcodeInconsistent": {
+        "description": "Prompt when formula barcodes within the same group are inconsistent"
     },
     "sequenceNotContinuous": "sequence numbers are not continuous",
     "@sequenceNotContinuous": {
@@ -3692,6 +3724,10 @@
     "@opSetting": {
         "description": "Setting Operation"
     },
+    "opUpload": "Upload",     
+    "@opUpload": {
+        "description": "Upload Operation"
+    },
     "enableOrDisable": "Enable or Disable",
     "@enableOrDisable": {
         "description": "Whether to enable or disable"
@@ -3771,6 +3807,10 @@
     "modifyTemporaryWeighingRecord": "Modify Temporary Weighing Record",
     "@modifyTemporaryWeighingRecord": {
         "description": "Modify temporary weighing record"
+    },
+    "uploadFmaWgtRecord": "Upload Formula Weighing Record",
+    "@uploadFmaWgtRecord": {
+        "description": "Upload formula weighing record"
     },
     "setTime": "Set Time",
     "@setTime": {
@@ -3915,5 +3955,29 @@
     "ipAddressAndPortIsAlreadyInUse": "IP address and port is already in use",
     "@ipAddressAndPortIsAlreadyInUse": {
         "description": "Error message when IP address and port are already in use"
+    },
+    "autoSync": "Auto Sync",
+    "@autoSync": {
+        "description": "Auto Sync"
+    },
+    "enableRecordAutoSync": "Enable Record Auto Sync",
+    "@enableRecordAutoSync": {
+        "description": "Enable Record Auto Sync"
+    },    
+    "sharedFolderPath": "Shared Folder Path",
+    "@sharedFolderPath": {
+        "description": "Shared Folder Path"
+    },
+    "verificationCodeMismatch": "Verification code mismatch, please scan again",
+    "@verificationCodeMismatch": {
+        "description": "Verification code mismatch"
+    },
+    "printSettings": "Print Settings",
+    "@printSettings": {
+        "description": "Print Settings"
+    },
+    "gPrint": "Print",
+    "@gPrint": {
+        "description": "Print"
     }
 }    

@@ -62,6 +62,7 @@ class RetailReportPageState extends State<RetailReportPage> {
 
   Timer? _statusTimer;
   List<int> mySelScaleIdList = [];
+  bool isFirstLoad = true;
 
   // 开始定时器
   void startTimer() {
@@ -81,9 +82,7 @@ class RetailReportPageState extends State<RetailReportPage> {
   @override
   void initState() {
     initScaleList();
-
     srvStatusMsg = localizedStrings.gTipWait;
-
     PublicFunctions.getScaleSrvList(999999999);
     netScaleOpenBill();
     // PublicFunctions.getDetailList();
@@ -176,6 +175,10 @@ class RetailReportPageState extends State<RetailReportPage> {
                   break;
                 case srvStarted:
                   srvStatusMsg = localizedStrings.gTipServiceStarted;
+                  if (isFirstLoad) {
+                    isFirstLoad = false;
+                    PublicFunctions.getDetailListSrv1();
+                  }
 
                   break;
               }
@@ -539,7 +542,7 @@ class RetailReportPageState extends State<RetailReportPage> {
                   children: [
                     SizedBox(
                       width: maxWidth < 1000 ? 1000 : maxWidth,
-                      height: maxHeight - 110,
+                      height: maxHeight - 30,
                       child: ListView.builder(
                         itemCount: transactions.length,
                         itemBuilder: (context, index) {

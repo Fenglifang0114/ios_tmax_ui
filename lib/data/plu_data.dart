@@ -273,7 +273,7 @@ class PluDataSource extends DataGridSource {
                 child: Text(
                   dataGridCell.value.toString(),
                   style: TextStyle(
-                    fontFamily: "alibaba",
+                    fontFamily: "HarmonyOS",
                     color: dataModel.pluData.enabled == null
                         ? colorScheme.onTertiaryFixedVariant
                         : dataModel.pluData.enabled!
@@ -295,7 +295,7 @@ class PluDataSource extends DataGridSource {
             child: Text(
               dataGridCell.value.toString(),
               style: TextStyle(
-                fontFamily: "alibaba",
+                fontFamily: "HarmonyOS",
                 color: colorScheme.onSurfaceVariant,
                 fontSize: 14,
               ),

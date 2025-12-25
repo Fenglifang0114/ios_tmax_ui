@@ -389,6 +389,14 @@ class PublicFunctions {
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
 
+  //根据条码获取配方
+  static void getFmaByBarcode(String barcode) {
+    myScaleCmd.cmdMode = "get_formula_by_barcode";
+    GetFmaDataByBarcode myGetFmaDataByBarcode = GetFmaDataByBarcode(barcode);
+    myScaleCmd.cmdData = jsonEncode(myGetFmaDataByBarcode);
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
 //编辑配方类型
   static void editFmaType(String newName, int rawId) {
     myScaleCmd.cmdMode = "edit_formula_type";
@@ -451,6 +459,22 @@ class PublicFunctions {
   static void getFmaData(int id) {
     myScaleCmd.cmdMode = "get_fma_data";
     myScaleCmd.cmdData = id.toString();
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //获取打印设置
+
+  static void getPrintSetting() {
+    myScaleCmd.cmdMode = "get_report_print_setting";
+    myScaleCmd.cmdData = '';
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //编辑打印设置
+
+  static void updateReportPrintSetting(String jsonStr) {
+    myScaleCmd.cmdMode = "update_report_print_setting";
+    myScaleCmd.cmdData = jsonStr;
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
 
@@ -517,8 +541,14 @@ class PublicFunctions {
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
 
-  //增加配方
+  //检查ID和条码是否重复
+  static void checkFmaIdAndBarcode(String jsonStr) {
+    myScaleCmd.cmdMode = "check_fma_id_and_barcode";
+    myScaleCmd.cmdData = jsonStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
 
+  //增加配方
   static void addFormulaData(String jsonStr) {
     myScaleCmd.cmdMode = "add_formula_data";
     myScaleCmd.cmdData = jsonStr;
@@ -536,6 +566,20 @@ class PublicFunctions {
   static void getFormulaList() {
     myScaleCmd.cmdMode = "get_formula_list";
     myScaleCmd.cmdData = '';
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //获取配方服务器配置
+  static void getUploadServerConfig() {
+    myScaleCmd.cmdMode = "upload_server_get";
+    myScaleCmd.cmdData = '';
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //编辑称重服务器配置
+  static void editUploadServerConfig(String jsonStr) {
+    myScaleCmd.cmdMode = "upload_server_edit";
+    myScaleCmd.cmdData = jsonStr;
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
 
@@ -599,6 +643,13 @@ class PublicFunctions {
 
     myScaleCmd.cmdMode = "get_all_wgt_rec_list";
     myScaleCmd.cmdData = reqGetAllWgtRecsToJson(reqGetAllWgtRecs);
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //通过配方单号获取称重记录
+  static void getFmaByOrderId(String orderId) {
+    myScaleCmd.cmdMode = "get_fma_rec_by_order";
+    myScaleCmd.cmdData = orderId;
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
 

@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/formula_scale_data.dart';
+import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/icons.dart';
 import 'package:t_max/data/req_formula_data.dart';
@@ -34,6 +36,8 @@ class AddFormulaPageState extends State<AddFormulaPage> {
   TextEditingController formulaUnitCtl = TextEditingController(text: 'g');
   TextEditingController formulaTypeCtl = TextEditingController();
   TextEditingController rawMaterialCtl = TextEditingController();
+  TextEditingController formulaBarcodeCtl = TextEditingController();
+
   TextEditingController wgtCtl = TextEditingController(); // 权重
   TextEditingController errorCtl = TextEditingController(); // 误差
   TextEditingController remarkCtl = TextEditingController(); // 备注
@@ -51,10 +55,11 @@ class AddFormulaPageState extends State<AddFormulaPage> {
   };
 
   int selectedIndex = -1;
-
   int selScaleId = -1;
-  dynamic _eventbus1;
 
+  dynamic _eventbus1;
+  dynamic _eventbus2;
+  dynamic _eventbus3;
   dynamic _eventbus5;
 
   Timer? checkWgtStartTimer; // 用于每5秒检查isWgtStart的定时器
@@ -160,9 +165,32 @@ class AddFormulaPageState extends State<AddFormulaPage> {
         }
       }
     });
-    _eventbus1 = eventBus.on<EventRespGetFormulaTypeList>().listen((event) {
+    _eventbus2 = eventBus.on<EventRespGetFormulaTypeList>().listen((event) {
       if (mounted) {
         setState(() {});
+      }
+    });
+
+    _eventbus3 = eventBus.on<EventRespCheckFmaIdAndBarcode>().listen((event) {
+      if (mounted) {
+        setState(() {
+          String dataStr = event.obj;
+          if (dataStr != '' && dataStr.contains(',')) {
+            List<String> dataList = dataStr.split(',');
+            if (dataList.length >= 2) {
+              if (dataList[0] == "false" && dataList[1] == "false") {
+                showTipInfo(
+                    localizedStrings.fFormulaIdAndBarcodeDuplicate, context);
+              } else if (dataList[0] == "false" && dataList[1] == "true") {
+                showTipInfo(localizedStrings.fFormulaIdDuplicate, context);
+              } else if (dataList[0] == "true" && dataList[1] == "false") {
+                showTipInfo(localizedStrings.fFormulaBarcodeDuplicate, context);
+              } else if (dataList[0] == "true" && dataList[1] == "true") {
+                saveFormula(1);
+              }
+            }
+          }
+        });
       }
     });
 
@@ -192,6 +220,8 @@ class AddFormulaPageState extends State<AddFormulaPage> {
     _scrollController1.dispose();
     _scrollController.dispose();
     _eventbus1.cancel();
+    _eventbus2.cancel();
+    _eventbus3?.cancel();
 
     _eventbus5.cancel();
     formulaCodeCtl.dispose();
@@ -385,7 +415,12 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                     ...formulaTypeList.map((CategoryTypeList item) {
                       return DropdownMenuItem<String>(
                         value: item.categoryName,
-                        child: Text(item.categoryName, style: getTextStyle()),
+                        child: Text(
+                          item.categoryName,
+                          style: getTextStyle(),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       );
                     })
                   ],
@@ -575,6 +610,44 @@ class AddFormulaPageState extends State<AddFormulaPage> {
     ]);
   }
 
+  //显示自由模式和barcode
+  showBarcodeAndFreeMode(double width) {
+    return Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+      Row(children: [
+        SizedBox(
+          width: width,
+          height: 90,
+          child: Column(children: [
+            showItemNameWithStar(
+                context, localizedStrings.fFmaBarcode + " ", false),
+            showInputBox(formulaBarcodeCtl, localizedStrings.fFmaBarcode),
+          ]),
+        ),
+      ]),
+      Row(children: [
+        SizedBox(
+          width: width,
+          height: 90,
+          child: Column(children: [
+            showItemNameWithStar(context, '', false),
+            SizedBox(
+              width: width,
+              child: showTextButton(
+                  context,
+                  btnHeight,
+                  freeMode
+                      ? localizedStrings.btnNormalMode
+                      : localizedStrings.btnFreeFormulaMode, () {
+                performSwitchFreeMode();
+              }, colorScheme.onPrimary, colorScheme.primary,
+                  colorScheme.onPrimary),
+            )
+          ]),
+        ),
+      ]),
+    ]);
+  }
+
 // 显示类型和加密  容器
   showTypeAndEncrypt(double width) {
     return Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
@@ -607,7 +680,7 @@ class AddFormulaPageState extends State<AddFormulaPage> {
       ]),
       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         SizedBox(
-          width: width / 3,
+          width: width / 2,
           height: 90,
           child: Column(children: [
             showItemNameWithStar(context, '', false),
@@ -633,7 +706,7 @@ class AddFormulaPageState extends State<AddFormulaPage> {
           ]),
         ),
         SizedBox(
-          width: width / 3,
+          width: width / 2,
           height: 90,
           child: Column(children: [
             showItemNameWithStar(context, '', false),
@@ -658,17 +731,6 @@ class AddFormulaPageState extends State<AddFormulaPage> {
             ),
           ]),
         ),
-        SizedBox(
-            width: width / 3,
-            child: showTextButton(
-                context,
-                btnHeight,
-                freeMode
-                    ? localizedStrings.btnNormalMode
-                    : localizedStrings.btnFreeFormulaMode, () {
-              performSwitchFreeMode();
-            }, colorScheme.onPrimary, colorScheme.primary,
-                colorScheme.onPrimary))
       ]),
     ]);
   }
@@ -1613,22 +1675,19 @@ class AddFormulaPageState extends State<AddFormulaPage> {
     });
   }
 
+  //保存之前先检查是否有重复的配方ID和重复的Barcode
+  void checkFmaIdAndBarcode() {
+    ReqCheckFmaIdAndBarcode reqCheckFmaIdAndBarcode = ReqCheckFmaIdAndBarcode(
+      recId: 0, //新增用0表示新增
+      formulaId: formulaCodeCtl.text,
+      formulaBarcode: formulaBarcodeCtl.text,
+    );
+
+    PublicFunctions.checkFmaIdAndBarcode(jsonEncode(reqCheckFmaIdAndBarcode));
+  }
+
   //保存功能
   void saveFormula(int func) {
-    bool res = true;
-    if (formulaDataList.isNotEmpty) {
-      for (var item in formulaDataList) {
-        if (item.header!.formulaId == formulaCodeCtl.text) {
-          showTipInfo(localizedStrings.fFormulaIdDuplicate, context);
-          res = false;
-          return;
-        }
-      }
-    }
-    if (!res) {
-      return;
-    }
-
     //查找配方类别的ID
     int categoryId = 0;
     for (var item in formulaTypeList) {
@@ -1648,9 +1707,10 @@ class AddFormulaPageState extends State<AddFormulaPage> {
       materialCount: addFormulaRawList.length,
       isEncrypted: isEncrypted,
       needContainer: needContainer,
-      createdBy: 'admin',
-      updatedBy: 'admin',
+      createdBy: mySysUser.nickName,
+      updatedBy: mySysUser.nickName,
       remark: remarkCtl.text,
+      formulaBarcode: formulaBarcodeCtl.text,
     );
     ReqFormulaAddInfo tempReqAddF = ReqFormulaAddInfo(
       header: tempHeader,
@@ -1815,7 +1875,8 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                         : () {
                             //先判断是否有重复的ID和名称
                             //先判断formulaDataList是否为空
-                            saveFormula(1);
+                            checkFmaIdAndBarcode();
+                            // saveFormula(1);
                             //清空所有的内容，做一个干净的配方
                           },
                 child: Text(
@@ -1916,7 +1977,8 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                       children: [
                         showCodeAndMode(widthFor3Item),
                         showNameAndUnit(widthFor3Item),
-                        showTypeAndEncrypt(widthFor3Item + 200),
+                        showTypeAndEncrypt(widthFor3Item + 150),
+                        showBarcodeAndFreeMode(widthFor3Item),
                       ])),
               Divider(
                 height: 1,
@@ -1956,7 +2018,7 @@ class AddFormulaPageState extends State<AddFormulaPage> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final double widthFor3Item =
-        (width - 300) / 3 > 380 ? 380 : (width - 300) / 3;
+        (width - 250) / 4 > 380 ? 380 : (width - 250) / 4;
     return Scaffold(
         backgroundColor: colorScheme.surfaceContainerLow,
         body: Container(

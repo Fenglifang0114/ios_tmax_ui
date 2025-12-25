@@ -1,9 +1,11 @@
 //暂存的配方走这条路
 
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/darf_fma_data_from_db.dart';
 import 'package:t_max/data/f_raw_name.dart';
+import 'package:t_max/data/fma_rec_list_db_data.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/formula_scale_data.dart';
 import 'package:t_max/data/formula_wgt_process_data.dart';
@@ -19,6 +21,7 @@ import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/data/formula_from_db_data.dart';
 import 'package:t_max/pages/edit_darft_fma_page.dart';
+import 'package:t_max/pages/fma_report_print.dart';
 import 'package:t_max/widget/common_widget.dart';
 import 'package:t_max/widget/fma_parameter_setting.dart';
 import 'package:t_max/widget/fma_process_bar.dart';
@@ -65,11 +68,12 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
   bool enableSelRaw = false; //是否启用选择原料  按顺序制作，需要添加补充的时候再去做选择物料
   bool autoTare = false; //是否开启自动扣重  归零和扣重不能使用
   bool isEnableNext = true; //是否禁用下一个
-  bool isFinish = false; //是否完成
+
   bool autoNextStep = false;
   bool checkCodeflag = false; //是否开启校验码  开启后，需要扫描或者输入校验码才能继续
   bool checkCodeOk = true; //当前校验码是否正确
   bool checkCodeDialogShowing = false; //校验码对话框是否正在显示
+  bool isPrint = false; //是否打印配方
 
   Map<int, bool> scaleMap = {}; //scaleId , isWgtStart
   Map<String, int> rawScaleMap = {}; //原料名称，秤ID
@@ -83,7 +87,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
 
   dynamic _eventbus5;
   dynamic _eventbus6;
-
+  dynamic _eventbus7; // 配方打印事件
   dynamic _eventbus8;
   dynamic _eventbus9;
 
@@ -635,6 +639,31 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
       }
     });
 
+    _eventbus7 = eventBus.on<EventRespFormulaRecByOrder>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+        if (dataStr != '' && dataStr != 'fail') {
+          setState(() {
+            dynamic jsonData = json.decode(dataStr);
+            FmaRecFromDb reportData = FmaRecFromDb.fromJson(jsonData);
+            // print(reportData.header!.actualFmaTotalWgt);
+            if (isPrint) {
+              isPrint = false;
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (BuildContext context) {
+                  return FormulaReportPrint(
+                    fmaData: reportData,
+                  );
+                },
+              );
+            }
+          });
+        }
+      }
+    });
+
     _eventbus8 = eventBus.on<EventReqWeightCountine>().listen((event) {
       if (mounted) {
         setState(() {
@@ -708,7 +737,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
     _eventbus2.cancel();
     _eventbus5.cancel();
     _eventbus6.cancel();
-
+    _eventbus7.cancel();
     _eventbus8.cancel();
     _eventbus9.cancel();
 
@@ -797,6 +826,15 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
     return true;
   }
 
+  //自动保存配方
+  void saveFormula() {
+    bool isAllOK = checkAllOK();
+    if (!isAllOK) {
+      return;
+    }
+    saveFmaRec(isAllOK);
+  }
+
   saveFmaRec(bool isAllOK) {
     //通过当前原料的重量计算总的原料的实际重量
     double actualTotalRawWgt = 0.0;
@@ -859,7 +897,6 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
     PublicFunctions.deleteDraftRecord(recRecNumber);
 
     setState(() {
-      isFinish = true;
       isEnableNext = false;
     });
   }
@@ -956,67 +993,40 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
     }
   }
 
+  //完成称重
   void performFinishBtn() {
-    bool isAllOK = checkAllOK();
-    if (!isAllOK) {
-      showDialog(
-        context: context,
-        barrierDismissible: false, // 点击对话框外部不关闭对话框
-        builder: (BuildContext context) {
-          return ShowNormalTipDialog(
-            title: localizedStrings.fTipTitle,
-            msg: localizedStrings.fFormulaUnqualifiedMsg,
-          );
-        },
-      ).then((value) {
-        if (value == null) {
-          return;
-        }
-        if (value) {
-          // 保存
-          saveFmaRec(isAllOK);
-          stopAllWgt();
-          if (mounted) {
-            Navigator.pop(context);
-          }
-        } else {
-          return;
-        }
-      });
-    } else {
-      saveFmaRec(isAllOK);
-      stopAllWgt();
-      Navigator.pop(context);
-    }
+    stopAllWgt();
+    Navigator.pop(context);
+  }
+
+  //打印配方
+  void performPrintBtn() {
+    isPrint = true;
+    PublicFunctions.getFmaByOrderId(recRecNumber);
   }
 
   void performAbandonBtn() {
-    if (!isFinish) {
-      showDialog(
-        context: context,
-        barrierDismissible: false, // 点击对话框外部不关闭对话框
-        builder: (BuildContext context) {
-          return ShowDeleteTipDialog(
-            title: localizedStrings.fTipTitle,
-            msg: localizedStrings.fClearWeighingDataMsg,
-          );
-        },
-      ).then((value) {
-        if (value) {
-          setState(() {
-            stopAllWgt();
-            Navigator.pop(context);
-          });
-        } else {
-          if (checkCodeflag && !checkCodeOk) {
-            showCheckCodeDialog();
-          }
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 点击对话框外部不关闭对话框
+      builder: (BuildContext context) {
+        return ShowDeleteTipDialog(
+          title: localizedStrings.fTipTitle,
+          msg: localizedStrings.fClearWeighingDataMsg,
+        );
+      },
+    ).then((value) {
+      if (value) {
+        setState(() {
+          stopAllWgt();
+          Navigator.pop(context);
+        });
+      } else {
+        if (checkCodeflag && !checkCodeOk) {
+          showCheckCodeDialog();
         }
-      });
-    } else {
-      stopAllWgt();
-      Navigator.pop(context);
-    }
+      }
+    });
   }
 
   final double maxWidth = 360; //最大宽度
@@ -1025,70 +1035,65 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
         height: 76,
         color: colorScheme.surface,
         child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: maxWidth),
-            child: showTextButton(
-                context,
-                btnHeight,
-                localizedStrings.fCompleteIngredientsBtn,
-                !isFinish
-                    ? () {
-                        performFinishBtn();
-                      }
-                    : null,
-                colorScheme.onPrimary,
-                colorScheme.primary,
-                colorScheme.onPrimary),
-          ),
-          SizedBox(width: regularPadding),
-          ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: maxWidth),
-            child: showTextButton(
-                context,
-                btnHeight,
-                localizedStrings.btnTemporarySave,
-                !isEnableNext
-                    ? null
-                    : () {
-                        //已完成，不能暂存，只能结束
-                        performDarfFmaSave();
-                      },
-                colorScheme.onPrimary,
-                colorScheme.primary,
-                colorScheme.onPrimary),
-          ),
-          SizedBox(width: regularPadding),
-          ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: maxWidth),
-            child: showTextButton(
-                context,
-                btnHeight,
-                localizedStrings.fAbandonIngredientsBtn,
-                !isFinish
-                    ? () {
-                        performAbandonBtn();
-                      }
-                    : null,
-                colorScheme.onPrimary,
-                colorScheme.error,
-                colorScheme.onPrimary),
-          ),
-          SizedBox(width: regularPadding),
-          ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: maxWidth),
-            child: showTextButton(
-                context,
-                btnHeight,
-                localizedStrings.btnRestart,
-                !isFinish
-                    ? () {
-                        showDeleteDialog();
-                      }
-                    : null,
-                colorScheme.onPrimary,
-                colorScheme.error,
-                colorScheme.onPrimary),
-          ),
+          if (checkAllOK())
+            ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: maxWidth),
+              child: showTextButton(
+                  context, btnHeight, localizedStrings.fCompleteIngredientsBtn,
+                  () {
+                performFinishBtn();
+              }, colorScheme.onPrimary, colorScheme.primary,
+                  colorScheme.onPrimary),
+            ),
+          if (checkAllOK()) SizedBox(width: regularPadding),
+          if (checkAllOK())
+            ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: maxWidth),
+              child: showTextButton(
+                  context, btnHeight, localizedStrings.fPrintFmaBtn, () {
+                performPrintBtn();
+              }, colorScheme.onPrimary, colorScheme.primary,
+                  colorScheme.onPrimary),
+            ),
+          if (!checkAllOK()) SizedBox(width: regularPadding),
+          if (!checkAllOK())
+            ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: maxWidth),
+              child: showTextButton(
+                  context,
+                  btnHeight,
+                  localizedStrings.btnTemporarySave,
+                  !isEnableNext
+                      ? null
+                      : () {
+                          //已完成，不能暂存，只能结束
+                          performDarfFmaSave();
+                        },
+                  colorScheme.onPrimary,
+                  colorScheme.primary,
+                  colorScheme.onPrimary),
+            ),
+          if (!checkAllOK()) SizedBox(width: regularPadding),
+          if (!checkAllOK())
+            ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: maxWidth),
+              child: showTextButton(
+                  context, btnHeight, localizedStrings.fAbandonIngredientsBtn,
+                  () {
+                performAbandonBtn();
+              }, colorScheme.onPrimary, colorScheme.error,
+                  colorScheme.onPrimary),
+            ),
+          if (!checkAllOK()) SizedBox(width: regularPadding),
+          if (!checkAllOK())
+            ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: maxWidth),
+              child: showTextButton(
+                  context, btnHeight, localizedStrings.btnRestart, () {
+                showDeleteDialog();
+              }, colorScheme.onPrimary, colorScheme.error,
+                  colorScheme.onPrimary),
+            ),
         ]));
   }
 
@@ -1700,6 +1705,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
     return Expanded(
       flex: 9,
       child: Column(children: [
+        showFormulaName(),
         SizedBox(
           height: 28,
           child: Row(children: [
@@ -1728,31 +1734,42 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
               ),
             ),
             Expanded(
-              flex: 1,
-              child: Container(
-                height: 28,
-                color: colorScheme.surface,
-                alignment: Alignment.centerLeft,
-                child: Row(children: [
-                  Flexible(
-                    fit: FlexFit.loose,
-                    child: Text(
-                      localizedStrings.fTotalWeightLabel + ": ",
-                      style: getTitleTextStyle(
-                        color: colorScheme.onSurfaceVariant,
+              child: RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: localizedStrings.fFmaBarcode + ": ",
+                        style: getTitleTextStyle(
+                            color: colorScheme.onSurfaceVariant),
                       ),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                    ),
+                      TextSpan(
+                        text: myFmaInfo.header!.formulaBarcode!,
+                        style: getTitleTextStyle(),
+                      ),
+                    ],
                   ),
-                  // 显示编号内容部分，用 Expanded 约束宽度
-                  showTotalWgtAndUnit()
-                ]),
-              ),
-            ),
+                  overflow: TextOverflow.ellipsis),
+            )
           ]),
         ),
-        showFormulaName(),
+        Container(
+          height: 28,
+          color: colorScheme.surface,
+          alignment: Alignment.centerLeft,
+          child: Row(children: [
+            Flexible(
+              fit: FlexFit.loose,
+              child: Text(
+                localizedStrings.fTotalWeightLabel + ": ",
+                style: getTitleTextStyle(color: colorScheme.onSurfaceVariant),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+            ),
+            // 显示编号内容部分，用 Expanded 约束宽度
+            showTotalWgtAndUnit()
+          ]),
+        ),
         Container(
           height: 40,
           color: colorScheme.surface,
@@ -2745,6 +2762,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
         isEnableNext = false; // 禁用按钮
       });
       showTipInfo(localizedStrings.fFormulaCompletionMsg, context);
+      saveFormula();
       return;
     }
   }

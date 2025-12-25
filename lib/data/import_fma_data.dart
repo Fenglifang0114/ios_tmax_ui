@@ -41,6 +41,7 @@ class ImportFmaInfo {
   bool? needContainer;
   List<Ingredient>? ingredients;
   String? notes;
+  String? barcode;
 
   ImportFmaInfo({
     this.formulaId,
@@ -52,6 +53,7 @@ class ImportFmaInfo {
     this.needContainer,
     this.ingredients,
     this.notes,
+    this.barcode,
   });
 
   factory ImportFmaInfo.fromJson(Map<String, dynamic> json) => ImportFmaInfo(
@@ -67,6 +69,7 @@ class ImportFmaInfo {
             : List<Ingredient>.from(
                 json["Ingredients"]!.map((x) => Ingredient.fromJson(x))),
         notes: json["Notes"],
+        barcode: json["Barcode"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -81,6 +84,7 @@ class ImportFmaInfo {
             ? []
             : List<dynamic>.from(ingredients!.map((x) => x.toJson())),
         "Notes": notes,
+        "Barcode": barcode,
       };
 }
 

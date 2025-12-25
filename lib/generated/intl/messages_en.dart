@@ -52,6 +52,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "appVersionTitle": MessageLookupByLibrary.simpleMessage("Version"),
     "appWebTitle": MessageLookupByLibrary.simpleMessage("Website"),
     "application_title": MessageLookupByLibrary.simpleMessage("Applications"),
+    "autoSync": MessageLookupByLibrary.simpleMessage("Auto Sync"),
     "barcodeExceedsMaxLengthShort": MessageLookupByLibrary.simpleMessage(
       "Barcode exceeds maximum length",
     ),
@@ -220,6 +221,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "enableOrDisable": MessageLookupByLibrary.simpleMessage(
       "Enable or Disable",
     ),
+    "enableRecordAutoSync": MessageLookupByLibrary.simpleMessage(
+      "Enable Record Auto Sync",
+    ),
     "fAbandonBtn": MessageLookupByLibrary.simpleMessage("Abandon"),
     "fAbandonIngredientsBtn": MessageLookupByLibrary.simpleMessage("Abandon"),
     "fActualError": MessageLookupByLibrary.simpleMessage("Actual Error"),
@@ -303,6 +307,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "fFlowRateMeasurement": MessageLookupByLibrary.simpleMessage(
       "Liquid Filling Speed",
     ),
+    "fFmaBarcode": MessageLookupByLibrary.simpleMessage("Barcode"),
     "fFmaCategoryCol": MessageLookupByLibrary.simpleMessage("Category"),
     "fFmaContainer": MessageLookupByLibrary.simpleMessage("Container"),
     "fFmaIdLabel": MessageLookupByLibrary.simpleMessage("ID"),
@@ -310,12 +315,18 @@ class MessageLookup extends MessageLookupByLibrary {
     "fFmaModeCol": MessageLookupByLibrary.simpleMessage("Mode"),
     "fFmaNameLabel": MessageLookupByLibrary.simpleMessage("Name"),
     "fFmaRemark": MessageLookupByLibrary.simpleMessage("Formula Notes"),
+    "fFormulaBarcodeDuplicate": MessageLookupByLibrary.simpleMessage(
+      "Formula barcode already exists",
+    ),
     "fFormulaCompletedTip": MessageLookupByLibrary.simpleMessage(
       "Formula completed",
     ),
     "fFormulaCompletionMsg": MessageLookupByLibrary.simpleMessage("Completed!"),
     "fFormulaDetailsTitle": MessageLookupByLibrary.simpleMessage(
       "Formula Details",
+    ),
+    "fFormulaIdAndBarcodeDuplicate": MessageLookupByLibrary.simpleMessage(
+      "Formula ID and barcode already exist",
     ),
     "fFormulaIdDuplicate": MessageLookupByLibrary.simpleMessage(
       "Formula ID already exists",
@@ -400,7 +411,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "fInvolvedFmas": MessageLookupByLibrary.simpleMessage("Involved Formulas"),
     "fLowSpeed": MessageLookupByLibrary.simpleMessage("Low Speed"),
-    "fMaterialCodeCol": MessageLookupByLibrary.simpleMessage("Ingredient Code"),
+    "fMaterialCodeCol": MessageLookupByLibrary.simpleMessage(
+      "Verification Code",
+    ),
     "fMaterialCountCol": MessageLookupByLibrary.simpleMessage(
       "Ingredient Quantity",
     ),
@@ -416,11 +429,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "fNetScale": MessageLookupByLibrary.simpleMessage("Network Scale"),
     "fNextStepBtn": MessageLookupByLibrary.simpleMessage("Next Step"),
     "fNo": MessageLookupByLibrary.simpleMessage("NO."),
+    "fNoFmaFound": MessageLookupByLibrary.simpleMessage("No formula found"),
     "fNoRecordTip": MessageLookupByLibrary.simpleMessage("No records"),
     "fOrderNo": MessageLookupByLibrary.simpleMessage("No."),
     "fPctMode": MessageLookupByLibrary.simpleMessage("Percentage"),
     "fPleaseSelectCategory": MessageLookupByLibrary.simpleMessage("Category"),
     "fPluExist": MessageLookupByLibrary.simpleMessage("PLU already exists"),
+    "fPrintFmaBtn": MessageLookupByLibrary.simpleMessage("Print Formula"),
     "fPublic": MessageLookupByLibrary.simpleMessage("Public"),
     "fQualificationStatus": MessageLookupByLibrary.simpleMessage("Pass"),
     "fQualified": MessageLookupByLibrary.simpleMessage("√"),
@@ -445,6 +460,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "fRecordTitle": MessageLookupByLibrary.simpleMessage("Formula Records"),
     "fRemarkCol": MessageLookupByLibrary.simpleMessage("Notes"),
+    "fRepeatWeighingBtn": MessageLookupByLibrary.simpleMessage(
+      "Repeat Weighing",
+    ),
     "fReviseBtn": MessageLookupByLibrary.simpleMessage("Correct"),
     "fSaveAndExitBtn": MessageLookupByLibrary.simpleMessage("Save and Exit"),
     "fSaveAndNewBtn": MessageLookupByLibrary.simpleMessage("Save and New"),
@@ -500,6 +518,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "finishBtn": MessageLookupByLibrary.simpleMessage("Finish"),
     "firmware_update": MessageLookupByLibrary.simpleMessage(
       "Update Firmware Serial",
+    ),
+    "formulaBarcodeExists": MessageLookupByLibrary.simpleMessage(
+      "Formula Barcode already exists",
+    ),
+    "formulaBarcodeInconsistent": MessageLookupByLibrary.simpleMessage(
+      "Barcodes are inconsistent",
     ),
     "formulaDeleteError": MessageLookupByLibrary.simpleMessage(
       "Temporary weighing records exist.",
@@ -682,6 +706,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "gPluUnitWgt": MessageLookupByLibrary.simpleMessage("Unit Weight"),
     "gPluWgtUnit": MessageLookupByLibrary.simpleMessage("Unit"),
     "gPosition": MessageLookupByLibrary.simpleMessage("Position"),
+    "gPrint": MessageLookupByLibrary.simpleMessage("Print"),
     "gPrintDirection": MessageLookupByLibrary.simpleMessage("Direction:"),
     "gPrinter": MessageLookupByLibrary.simpleMessage("Printer Protocol:"),
     "gProgress": MessageLookupByLibrary.simpleMessage("Progress"),
@@ -1390,6 +1415,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "opQuery": MessageLookupByLibrary.simpleMessage("Query"),
     "opSetting": MessageLookupByLibrary.simpleMessage("Setting"),
     "opUpdate": MessageLookupByLibrary.simpleMessage("Update"),
+    "opUpload": MessageLookupByLibrary.simpleMessage("Upload"),
     "operation": MessageLookupByLibrary.simpleMessage("Details"),
     "operationResult": MessageLookupByLibrary.simpleMessage("Result"),
     "operationType": MessageLookupByLibrary.simpleMessage("Operation Type"),
@@ -1551,6 +1577,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "plu_remarks": MessageLookupByLibrary.simpleMessage("PLu Remarks:"),
     "pretare": MessageLookupByLibrary.simpleMessage("Pretare:"),
+    "printSettings": MessageLookupByLibrary.simpleMessage("Print Settings"),
     "product_information": MessageLookupByLibrary.simpleMessage(
       "Product Information",
     ),
@@ -1607,6 +1634,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "setTime": MessageLookupByLibrary.simpleMessage("Set Time"),
     "set_ethernet_ip_title": MessageLookupByLibrary.simpleMessage(
       "Ethernet IP Setting",
+    ),
+    "sharedFolderPath": MessageLookupByLibrary.simpleMessage(
+      "Shared Folder Path",
     ),
     "show_current_weight": MessageLookupByLibrary.simpleMessage(
       "Current weight:",
@@ -1766,6 +1796,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "txt_serial_port_connected_fail": MessageLookupByLibrary.simpleMessage(
       "Unable to connect",
     ),
+    "uploadFmaWgtRecord": MessageLookupByLibrary.simpleMessage(
+      "Upload Formula Weighing Record",
+    ),
     "userAccount": MessageLookupByLibrary.simpleMessage("Account"),
     "userAdd": MessageLookupByLibrary.simpleMessage("Add user"),
     "userAppPermissions": MessageLookupByLibrary.simpleMessage(
@@ -1811,6 +1844,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "verificationCode": MessageLookupByLibrary.simpleMessage(
       "Verification code",
+    ),
+    "verificationCodeMismatch": MessageLookupByLibrary.simpleMessage(
+      "Verification code mismatch, please scan again",
     ),
     "weighingRecords": MessageLookupByLibrary.simpleMessage("Weighing Records"),
     "weightAfterCalibration": MessageLookupByLibrary.simpleMessage(

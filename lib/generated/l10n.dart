@@ -4401,6 +4401,16 @@ class S {
     );
   }
 
+  /// `Barcode`
+  String get fFmaBarcode {
+    return Intl.message(
+      'Barcode',
+      name: 'fFmaBarcode',
+      desc: 'Label for formula barcode field',
+      args: [],
+    );
+  }
+
   /// `Quantity`
   String get fIngredientCountLabel {
     return Intl.message(
@@ -4427,6 +4437,26 @@ class S {
       'Start Weighing',
       name: 'fStartWeighingBtn',
       desc: 'Button to start the weighing process',
+      args: [],
+    );
+  }
+
+  /// `No formula found`
+  String get fNoFmaFound {
+    return Intl.message(
+      'No formula found',
+      name: 'fNoFmaFound',
+      desc: 'Display text when no formula is found',
+      args: [],
+    );
+  }
+
+  /// `Repeat Weighing`
+  String get fRepeatWeighingBtn {
+    return Intl.message(
+      'Repeat Weighing',
+      name: 'fRepeatWeighingBtn',
+      desc: 'Label for repeat weighing button',
       args: [],
     );
   }
@@ -4467,6 +4497,16 @@ class S {
       'Involved Formulas',
       name: 'fInvolvedFmas',
       desc: 'Section title for formulas involving the raw material',
+      args: [],
+    );
+  }
+
+  /// `Print Formula`
+  String get fPrintFmaBtn {
+    return Intl.message(
+      'Print Formula',
+      name: 'fPrintFmaBtn',
+      desc: 'Button to print the formula',
       args: [],
     );
   }
@@ -4771,10 +4811,10 @@ class S {
     );
   }
 
-  /// `Ingredient Code`
+  /// `Verification Code`
   String get fMaterialCodeCol {
     return Intl.message(
-      'Ingredient Code',
+      'Verification Code',
       name: 'fMaterialCodeCol',
       desc: 'Table column title for material code',
       args: [],
@@ -4957,6 +4997,26 @@ class S {
       'Formula ID already exists',
       name: 'fFormulaIdDuplicate',
       desc: 'Error message for duplicate formula ID',
+      args: [],
+    );
+  }
+
+  /// `Formula barcode already exists`
+  String get fFormulaBarcodeDuplicate {
+    return Intl.message(
+      'Formula barcode already exists',
+      name: 'fFormulaBarcodeDuplicate',
+      desc: 'Error message for duplicate formula barcode',
+      args: [],
+    );
+  }
+
+  /// `Formula ID and barcode already exist`
+  String get fFormulaIdAndBarcodeDuplicate {
+    return Intl.message(
+      'Formula ID and barcode already exist',
+      name: 'fFormulaIdAndBarcodeDuplicate',
+      desc: 'Error message for duplicate formula ID and barcode',
       args: [],
     );
   }
@@ -8426,6 +8486,16 @@ class S {
     );
   }
 
+  /// `Formula Barcode already exists`
+  String get formulaBarcodeExists {
+    return Intl.message(
+      'Formula Barcode already exists',
+      name: 'formulaBarcodeExists',
+      desc: 'Prompt when Formula Barcode already exists in the system',
+      args: [],
+    );
+  }
+
   /// `Formula Name is empty`
   String get formulaNameEmpty {
     return Intl.message(
@@ -8552,6 +8622,17 @@ class S {
       'Formula names are inconsistent',
       name: 'formulaNameInconsistent',
       desc: 'Prompt when formula names within the same group are inconsistent',
+      args: [],
+    );
+  }
+
+  /// `Barcodes are inconsistent`
+  String get formulaBarcodeInconsistent {
+    return Intl.message(
+      'Barcodes are inconsistent',
+      name: 'formulaBarcodeInconsistent',
+      desc:
+          'Prompt when formula barcodes within the same group are inconsistent',
       args: [],
     );
   }
@@ -8926,6 +9007,16 @@ class S {
     );
   }
 
+  /// `Upload`
+  String get opUpload {
+    return Intl.message(
+      'Upload',
+      name: 'opUpload',
+      desc: 'Upload Operation',
+      args: [],
+    );
+  }
+
   /// `Enable or Disable`
   String get enableOrDisable {
     return Intl.message(
@@ -9122,6 +9213,16 @@ class S {
       'Modify Temporary Weighing Record',
       name: 'modifyTemporaryWeighingRecord',
       desc: 'Modify temporary weighing record',
+      args: [],
+    );
+  }
+
+  /// `Upload Formula Weighing Record`
+  String get uploadFmaWgtRecord {
+    return Intl.message(
+      'Upload Formula Weighing Record',
+      name: 'uploadFmaWgtRecord',
+      desc: 'Upload formula weighing record',
       args: [],
     );
   }
@@ -9480,6 +9581,61 @@ class S {
       desc: 'Error message when IP address and port are already in use',
       args: [],
     );
+  }
+
+  /// `Auto Sync`
+  String get autoSync {
+    return Intl.message(
+      'Auto Sync',
+      name: 'autoSync',
+      desc: 'Auto Sync',
+      args: [],
+    );
+  }
+
+  /// `Enable Record Auto Sync`
+  String get enableRecordAutoSync {
+    return Intl.message(
+      'Enable Record Auto Sync',
+      name: 'enableRecordAutoSync',
+      desc: 'Enable Record Auto Sync',
+      args: [],
+    );
+  }
+
+  /// `Shared Folder Path`
+  String get sharedFolderPath {
+    return Intl.message(
+      'Shared Folder Path',
+      name: 'sharedFolderPath',
+      desc: 'Shared Folder Path',
+      args: [],
+    );
+  }
+
+  /// `Verification code mismatch, please scan again`
+  String get verificationCodeMismatch {
+    return Intl.message(
+      'Verification code mismatch, please scan again',
+      name: 'verificationCodeMismatch',
+      desc: 'Verification code mismatch',
+      args: [],
+    );
+  }
+
+  /// `Print Settings`
+  String get printSettings {
+    return Intl.message(
+      'Print Settings',
+      name: 'printSettings',
+      desc: 'Print Settings',
+      args: [],
+    );
+  }
+
+  /// `Print`
+  String get gPrint {
+    return Intl.message('Print', name: 'gPrint', desc: 'Print', args: []);
   }
 }
 

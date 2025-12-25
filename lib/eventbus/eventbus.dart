@@ -687,6 +687,31 @@ class EventRespAddFormulaType {
   EventRespAddFormulaType(this.obj);
 }
 
+class EventRespFormulasListByBarcode {
+  dynamic obj;
+  EventRespFormulasListByBarcode(this.obj);
+}
+
+class EventRespCheckFmaIdAndBarcode {
+  dynamic obj;
+  EventRespCheckFmaIdAndBarcode(this.obj);
+}
+
+class EventRespFormulaRecByOrder {
+  dynamic obj;
+  EventRespFormulaRecByOrder(this.obj);
+}
+
+class EventRespUploadServerGet {
+  dynamic obj;
+  EventRespUploadServerGet(this.obj);
+}
+
+class EventRespUploadServerEdit {
+  dynamic obj;
+  EventRespUploadServerEdit(this.obj);
+}
+
 class EventRespFormulaList {
   dynamic obj;
   EventRespFormulaList(this.obj);
@@ -760,6 +785,11 @@ class EventSaveTakeInOutWgt {
 class EventRespGetAutoNext {
   dynamic obj;
   EventRespGetAutoNext(this.obj);
+}
+
+class EventRespGetReportPrint {
+  dynamic obj;
+  EventRespGetReportPrint(this.obj);
 }
 
 class EventRespGetDraftFmaWgtRecList {

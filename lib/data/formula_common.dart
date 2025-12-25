@@ -18,6 +18,8 @@ List<FmaRecFromDb> fmaRecFromDbList = [];
 
 List<DarfFmaInfo> darfFmaInfoList = []; //暂存的配方称重记录和配方明细
 
+RptPrintSetting rptPrintSetting = RptPrintSetting(); //打印设置
+
 String getFmaTypeName(int fmaTypeId) {
   for (var item in formulaTypeList) {
     if (item.categoryId == fmaTypeId) {
