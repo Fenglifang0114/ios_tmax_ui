@@ -171,7 +171,6 @@ Future<ExportResult> exportFormulaListToExcel(
       for (var i = 0; i < rawList!.length; i++) {
         Detail? raw = rawList[i];
         RawDataInfo rawDataInfo = getRawData(raw.materialId!);
-        String rawTypeName = getRawTypeName(rawDataInfo.categoryId!);
         sheet.appendRow([
           excel.TextCellValue(fma.header!.formulaId ?? ""),
           excel.TextCellValue(fma.header!.formulaName ?? ""),
@@ -185,7 +184,7 @@ Future<ExportResult> exportFormulaListToExcel(
           excel.TextCellValue(fma.header!.remark ?? ""),
           excel.TextCellValue((raw.sequence!).toString()),
           excel.TextCellValue(raw.materialId ?? ""),
-          excel.TextCellValue(rawTypeName),
+          excel.TextCellValue(rawDataInfo.materialName ?? ""),
           excel.TextCellValue(raw.materialWeight.toString()),
           excel.TextCellValue(raw.allowableError.toString()),
         ]);
